@@ -1,59 +1,37 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 6/6] ASoC: Tegra: Harmony: Support both int and ext mics
-Date: Fri, 4 Feb 2011 09:20:26 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0310C8EB68@HQMAIL01.nvidia.com>
-References: <1296766578-13988-1-git-send-email-swarren@nvidia.com>
- <1296766578-13988-6-git-send-email-swarren@nvidia.com>
- <20110203225235.GD4586@opensource.wolfsonmicro.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH 3/3] USB: ehci: tegra: Align DMA transfers to 32 bytes
+Date: Fri, 4 Feb 2011 11:49:54 -0800
+Message-ID: <20110204194954.GA25180@kroah.com>
+References: <1295559715-14264-1-git-send-email-rmorell@nvidia.com>
+ <1296097609-32302-4-git-send-email-rmorell@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110203225235.GD4586-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1296097609-32302-4-git-send-email-rmorell@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Robert Morell <rmorell@nvidia.com>
+Cc: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, Benoit Goby <benoit@android.com>, Alan Stern <stern@rowland.harvard.edu>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Matthew Wilcox <willy@linux.intel.com>, Ming Lei <tom.leiming@gmail.com>, Jacob Pan <jacob.jun.pan@intel.com>, Oliver Neukum <oliver@neukum.org>, Olof Johansson <olof@lixom.net>, Erik Gilling <konkers@android.com>, Colin Cross <ccross@android.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Thursday, February 03, 2011 3:53 PM:
-> On Thu, Feb 03, 2011 at 01:56:18PM -0700, Stephen Warren wrote:
+On Wed, Jan 26, 2011 at 07:06:49PM -0800, Robert Morell wrote:
+> The Tegra2 USB controller doesn't properly deal with misaligned DMA
+> buffers, causing corruption.  This is especially prevalent with USB
+> network adapters, where skbuff alignment is often in the middle of a
+> 4-byte dword.
 > 
-> > At present, I'm not sure how best to resolve this. Downstream drivers
-> > directly tweaked the wm8903's registers so that both ADCs processed the
-> > same input channel.
+> To avoid this, allocate a temporary buffer for the DMA if the provided
+> buffer isn't sufficiently aligned.
 > 
-> The CODEC driver needs to have support for routing the left and right
-> channels like things like the WM8993 do.
-> 
-> >  	{"IN1L", NULL, "Mic Jack"},
-> > +	{"IN1R", NULL, "Mic Jack"},
-> 
-> This looks odd - I'd expect to see separate widgets for the internal
-> microphone rather than using the same widget.
+> Signed-off-by: Robert Morell <rmorell@nvidia.com>
+> ---
+>  drivers/usb/host/ehci-tegra.c |   90 +++++++++++++++++++++++++++++++++++++++++
 
-Yes, separate widgets would make sense.
+This file doesn't seem to be in any tree that I can find, including my
+own, so I can't apply this patch.
 
-However, I wonder how this interacts with mic detection using micbias current.
-There is only one mic bias signal, routed to a subset of the mics using the
-two per-mic enable GPIOs. Should I just hook up the mic bias detection to
-both jacks somehow, or is the only option to just punt on jack detection?
+What am I supposed to do with it?
 
-There are no physical plug detection mechanisms on this board.
+confused,
 
-> This would greatly simplify the driver code without really impacting the
-> level of configuration applications need to do (and allowing them to use
-> both simultaneously if they want to).
-
-I guess you could, although even with L/R routing implemented for the
-single-mic case, I think the only option for dual-mic would be to capture
-each mic on its own channel, which seems like an unlikely use case to me.
-But who knows, maybe it could be useful for e.g. noise-cancelling in SW?
-
--- 
-nvpublic
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
