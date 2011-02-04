@@ -1,51 +1,46 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/6] ASoC: Tegra: Harmony: Add headphone jack detection
-Date: Fri, 4 Feb 2011 12:32:14 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0310F5FB00@HQMAIL01.nvidia.com>
-References: <1296766578-13988-1-git-send-email-swarren@nvidia.com>
- <20110203223530.GA4586@opensource.wolfsonmicro.com>
- <74CDBE0F657A3D45AFBB94109FB122FF0310C8EA93@HQMAIL01.nvidia.com>
+From: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH 3/3] USB: ehci: tegra: Align DMA transfers to 32 bytes
+Date: Fri, 4 Feb 2011 12:35:40 -0800
+Message-ID: <20110204203540.GA13203@suse.de>
+References: <1295559715-14264-1-git-send-email-rmorell@nvidia.com>
+ <1296097609-32302-4-git-send-email-rmorell@nvidia.com>
+ <20110204194954.GA25180@kroah.com>
+ <AANLkTinRtch4Pvr3GLz5wZU2xkG3FMJxxzSNAdParA7j@mail.gmail.com>
+ <20110204201616.GA12482@suse.de>
+ <20110204202640.GC1744@morell.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0310C8EA93-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20110204202640.GC1744-f3YH7lVHJt/FT5IIyIEb6QC/G2K4zDHf@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Sarah Sharp <sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Matthew Wilcox <willy-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Ming Lei <tom.leiming-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jacob Pan <jacob.jun.pan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Oliver Neukum <oliver-GvhC2dPhHPQdnm+yROfE0A@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Thursday, February 03, 2011 4:25 PM:
+On Fri, Feb 04, 2011 at 12:26:40PM -0800, rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote:
+> On Fri, Feb 04, 2011 at 12:16:16PM -0800, Greg KH wrote:
+> > On Fri, Feb 04, 2011 at 12:14:54PM -0800, Olof Johansson wrote:
+> > > On Fri, Feb 4, 2011 at 11:49 AM, Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org> wrote:
+> > > > This file doesn't seem to be in any tree that I can find, including my
+> > > > own, so I can't apply this patch.
+> > > >
+> > > > What am I supposed to do with it?
+> > > 
+> > > It hasn't been posted for upstream yet, so nothing for you to do. The
+> > > driver will be posted for review soon, hopefully in time for .39.
+> > 
+> > Then why would someone send me a patch for it already?
 > 
-> Mark Brown wrote at Thursday, February 03, 2011 3:36 PM:
-> > On Thu, Feb 03, 2011 at 01:56:13PM -0700, Stephen Warren wrote:
-> >
-> > > +static struct snd_soc_jack harmony_hp_jack;
-> > > +
-> >
-> > Since you've changed to using a platform device you should really be
-> > dynamically allocating this I guess.  But this isn't actually a
-> > practical problem so not worth caring about.
-> 
-> Uggh. The code may as well be consistent. I'll fix this up and resubmit
-> if you haven't already applied it.
+> Sorry, this is my fault.  My immediate need is to get this merged into
+> our release linux-tegra-2.6.36 branch, but wanted to get broad review
+> for the change since it affects USB core code.  I figured that it will
+> be easier to push the full driver into the USB tree with this part out
+> of the way already, anyway.
 
-Hmm. Looking at this a bit more, solving it fully is kinda nasty; I'd have
-to move not only that jack definition, but also all the pins and gpios into
-struct tegra_harmony, since snd_soc_jack_add_{pins,gpios} modify all of
-those structures. But, there would still have to be static const "template"
-copies of those data structures to initialize the copies in struct
-tegra_harmony.
-
-The same thing then applies to some of the subsequent changes, for the
-mic jacks etc.
-
-That seems like a lot of overhead, both code-wise, and runtime space-wise,
-to solve a problem that as you mention isn't a practical concern.
-
--- 
-nvpublic
+Ok, that makes more sense, but next time, please say something,
+as I wasted a lot of time trying to figure out why this patch wasn't
+applying correctly :(
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
