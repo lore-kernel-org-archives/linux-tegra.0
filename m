@@ -1,39 +1,72 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH 6/6] ASoC: Tegra: Harmony: Support both
-	int and ext mics
-Date: Wed, 9 Feb 2011 12:15:57 +0000
-Message-ID: <20110209121555.GA27669@sirena.org.uk>
-References: <1296766578-13988-1-git-send-email-swarren@nvidia.com> <1296766578-13988-6-git-send-email-swarren@nvidia.com> <20110203225235.GD4586@opensource.wolfsonmicro.com> <74CDBE0F657A3D45AFBB94109FB122FF0310C8EB68@HQMAIL01.nvidia.com> <20110207111310.GA31475@sirena.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF0310F5FFAC@HQMAIL01.nvidia.com> <20110208205848.GA23844@sirena.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF0310F60084@HQMAIL01.nvidia.com>
+From: Matthieu CASTET <matthieu.castet-ITF29qwbsa/QT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/4] usb: host: ehci-hcd: Add controller_resets_phy quirk
+Date: Wed, 9 Feb 2011 17:01:57 +0100
+Message-ID: <4D52BA75.5010409@parrot.com>
+References: <1297228927-23497-1-git-send-email-benoit@android.com> <1297228927-23497-3-git-send-email-benoit@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0310F60084-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1297228927-23497-3-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 08, 2011 at 03:32:00PM -0800, Stephen Warren wrote:
+Benoit Goby a =E9crit :
+> From: Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra quirk: Resetting the controller has the side effect of resettin=
+g
+> the PHY. Only reset the controller when doing so won't also reset the
+> phy.
+>=20
+> Signed-off-by: Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/usb/host/ehci-hcd.c |    3 ++-
+>  drivers/usb/host/ehci.h     |    1 +
+>  2 files changed, 3 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.=
+c
+> index 30515d3..7afa345 100644
+> --- a/drivers/usb/host/ehci-hcd.c
+> +++ b/drivers/usb/host/ehci-hcd.c
+> @@ -275,7 +275,8 @@ static int ehci_reset (struct ehci_hcd *ehci)
+> =20
+>  	command |=3D CMD_RESET;
+>  	dbg_cmd (ehci, "reset", command);
+> -	ehci_writel(ehci, command, &ehci->regs->command);
+> +	if (!ehci->controller_resets_phy)
+> +		ehci_writel(ehci, command, &ehci->regs->command);
+>  	ehci_to_hcd(ehci)->state =3D HC_STATE_HALT;
+>  	ehci->next_statechange =3D jiffies;
+>  	retval =3D handshake (ehci, &ehci->regs->command,
+> diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
+> index f86d3fa..8854491 100644
+> --- a/drivers/usb/host/ehci.h
+> +++ b/drivers/usb/host/ehci.h
+> @@ -134,6 +134,7 @@ struct ehci_hcd {			/* one per controller */
+>  	unsigned		amd_pll_fix:1;
+>  	unsigned		fs_i_thresh:1;	/* Intel iso scheduling */
+>  	unsigned		use_dummy_qh:1;	/* AMD Frame List table quirk*/
+> +	unsigned		controller_resets_phy:1; /* Tegra quirk */
+> =20
+>  	/* required for usb32 quirk */
+>  	#define OHCI_CTRL_HCFS          (3 << 6)
+Instead of something that prevent reset, shouldn't tdi platform have a=20
+callback to restore phy config ?
 
-> Well, one other option is to completely ignore (and disable) the internal
-> mic, and just support the external mic (jack). Then, mic detection could
-> be implemented. The advantage here is similarity to other boards without
-> the mic bias sharing issue. Plus, the jack is probably far more useful
-> than the internal mic on this board:
+And I think we should use ehci_is_TDI(ehci) condition. No need to=20
+introduce another flags. The problem is common to all tdi core.
 
-> I honestly don't know how many boards (if any) actually have anything
-> plugged into the internal mic header on the board. Mine certainly
-> didn't originally; I used a PC speaker I stole from somewhere else as
-> the internal mic;-)
+Matthieu
 
-That's certainly a sensible option if we don't know that many systems
-were shipped with the internal mic connected.  We could do something
-like what the AT91SAM9G20 platform does with ifdefed code for the mic
-(in that case there's no mic support in the hardware but the CODEC is
-in a low density package so it's relatively common for users to lift
-pins to flying wire in a mic) I guess.
+
+PS : This may help to remove ehci_msm_run.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
