@@ -1,97 +1,304 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH v4 12/15] ARM: tegra: Allow overriding arch_reset
-Date: Wed,  9 Feb 2011 22:43:21 -0800
-Message-ID: <1297320204-31882-13-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v4 02/15] ARM: tegra: Add api to control internal powergating
+Date: Wed,  9 Feb 2011 22:43:11 -0800
+Message-ID: <1297320204-31882-3-git-send-email-ccross@android.com>
 References: <1297320204-31882-1-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1297320204-31882-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1297320204-31882-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/board.h               |    2 ++
- arch/arm/mach-tegra/common.c              |   13 +++++++++++++
- arch/arm/mach-tegra/include/mach/system.h |   10 ++--------
- 3 files changed, 17 insertions(+), 8 deletions(-)
+ arch/arm/mach-tegra/Makefile                 |    1 +
+ arch/arm/mach-tegra/include/mach/powergate.h |   40 +++++
+ arch/arm/mach-tegra/powergate.c              |  212 ++++++++++++++++++++++++++
+ 3 files changed, 253 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/include/mach/powergate.h
+ create mode 100644 arch/arm/mach-tegra/powergate.c
 
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index 0de565c..b3f9c94 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -23,6 +23,8 @@
- 
- #include <linux/types.h>
- 
-+void tegra_assert_system_reset(char mode, const char *cmd);
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index cdbc68e..00a6ba3 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -5,6 +5,7 @@ obj-y                                   += clock.o
+ obj-y                                   += timer.o
+ obj-y                                   += gpio.o
+ obj-y                                   += pinmux.o
++obj-y                                   += powergate.o
+ obj-y					+= fuse.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+diff --git a/arch/arm/mach-tegra/include/mach/powergate.h b/arch/arm/mach-tegra/include/mach/powergate.h
+new file mode 100644
+index 0000000..401d1b7
+--- /dev/null
++++ b/arch/arm/mach-tegra/include/mach/powergate.h
+@@ -0,0 +1,40 @@
++/*
++ * drivers/regulator/tegra-regulator.c
++ *
++ * Copyright (c) 2010 Google, Inc
++ *
++ * Author:
++ *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
 +
- void __init tegra_common_init(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 7c91e2b..84a7197 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -26,11 +26,24 @@
- 
- #include <mach/iomap.h>
- #include <mach/dma.h>
-+#include <mach/system.h>
- 
- #include "board.h"
- #include "clock.h"
- #include "fuse.h"
- 
-+void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
++#ifndef _MACH_TEGRA_POWERGATE_H_
++#define _MACH_TEGRA_POWERGATE_H_
 +
-+void tegra_assert_system_reset(char mode, const char *cmd)
++#define TEGRA_POWERGATE_CPU	0
++#define TEGRA_POWERGATE_3D	1
++#define TEGRA_POWERGATE_VENC	2
++#define TEGRA_POWERGATE_PCIE	3
++#define TEGRA_POWERGATE_VDEC	4
++#define TEGRA_POWERGATE_L2	5
++#define TEGRA_POWERGATE_MPE	6
++#define TEGRA_NUM_POWERGATE	7
++
++int tegra_powergate_power_on(int id);
++int tegra_powergate_power_off(int id);
++bool tegra_powergate_is_powered(int id);
++int tegra_powergate_remove_clamping(int id);
++
++/* Must be called with clk disabled, and returns with clk enabled */
++int tegra_powergate_sequence_power_up(int id, struct clk *clk);
++
++#endif /* _MACH_TEGRA_POWERGATE_H_ */
+diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powergate.c
+new file mode 100644
+index 0000000..3cee9aa
+--- /dev/null
++++ b/arch/arm/mach-tegra/powergate.c
+@@ -0,0 +1,212 @@
++/*
++ * drivers/powergate/tegra-powergate.c
++ *
++ * Copyright (c) 2010 Google, Inc
++ *
++ * Author:
++ *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/debugfs.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/seq_file.h>
++#include <linux/spinlock.h>
++
++#include <mach/clk.h>
++#include <mach/iomap.h>
++#include <mach/powergate.h>
++
++#define PWRGATE_TOGGLE		0x30
++#define  PWRGATE_TOGGLE_START	(1 << 8)
++
++#define REMOVE_CLAMPING		0x34
++
++#define PWRGATE_STATUS		0x38
++
++static DEFINE_SPINLOCK(tegra_powergate_lock);
++
++static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
++
++static u32 pmc_read(unsigned long reg)
 +{
-+	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
-+	u32 reg;
-+
-+	reg = readl(reset);
-+	reg |= 0x04;
-+	writel(reg, reset);
++	return readl(pmc + reg);
 +}
 +
- static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
- 	/* name		parent		rate		enabled */
- 	{ "clk_m",	NULL,		0,		true },
-diff --git a/arch/arm/mach-tegra/include/mach/system.h b/arch/arm/mach-tegra/include/mach/system.h
-index 84d5d46..d0183d8 100644
---- a/arch/arm/mach-tegra/include/mach/system.h
-+++ b/arch/arm/mach-tegra/include/mach/system.h
-@@ -24,16 +24,10 @@
- #include <mach/hardware.h>
- #include <mach/iomap.h>
- 
--static inline void arch_idle(void)
--{
--}
-+extern void (*arch_reset)(char mode, const char *cmd);
- 
--static inline void arch_reset(char mode, const char *cmd)
-+static inline void arch_idle(void)
- {
--	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
--	u32 reg = readl(reset);
--	reg |= 0x04;
--	writel(reg, reset);
- }
- 
- #endif
++static void pmc_write(u32 val, unsigned long reg)
++{
++	writel(val, pmc + reg);
++}
++
++static int tegra_powergate_set(int id, bool new_state)
++{
++	bool status;
++	unsigned long flags;
++
++	spin_lock_irqsave(&tegra_powergate_lock, flags);
++
++	status = pmc_read(PWRGATE_STATUS) & (1 << id);
++
++	if (status == new_state) {
++		spin_unlock_irqrestore(&tegra_powergate_lock, flags);
++		return -EINVAL;
++	}
++
++	pmc_write(PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
++
++	spin_unlock_irqrestore(&tegra_powergate_lock, flags);
++
++	return 0;
++}
++
++int tegra_powergate_power_on(int id)
++{
++	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++		return -EINVAL;
++
++	return tegra_powergate_set(id, true);
++}
++
++int tegra_powergate_power_off(int id)
++{
++	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++		return -EINVAL;
++
++	return tegra_powergate_set(id, false);
++}
++
++bool tegra_powergate_is_powered(int id)
++{
++	u32 status;
++
++	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++		return -EINVAL;
++
++	status = pmc_read(PWRGATE_STATUS) & (1 << id);
++	return !!status;
++}
++
++int tegra_powergate_remove_clamping(int id)
++{
++	u32 mask;
++
++	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++		return -EINVAL;
++
++	/*
++	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
++	 * swapped relatively to the partition ids
++	 */
++	if (id ==  TEGRA_POWERGATE_VDEC)
++		mask = (1 << TEGRA_POWERGATE_PCIE);
++	else if	(id == TEGRA_POWERGATE_PCIE)
++		mask = (1 << TEGRA_POWERGATE_VDEC);
++	else
++		mask = (1 << id);
++
++	pmc_write(mask, REMOVE_CLAMPING);
++
++	return 0;
++}
++
++/* Must be called with clk disabled, and returns with clk enabled */
++int tegra_powergate_sequence_power_up(int id, struct clk *clk)
++{
++	int ret;
++
++	tegra_periph_reset_assert(clk);
++
++	ret = tegra_powergate_power_on(id);
++	if (ret)
++		goto err_power;
++
++	ret = clk_enable(clk);
++	if (ret)
++		goto err_clk;
++
++	udelay(10);
++
++	ret = tegra_powergate_remove_clamping(id);
++	if (ret)
++		goto err_clamp;
++
++	udelay(10);
++	tegra_periph_reset_deassert(clk);
++
++	return 0;
++
++err_clamp:
++	clk_disable(clk);
++err_clk:
++	tegra_powergate_power_off(id);
++err_power:
++	return ret;
++}
++
++#ifdef CONFIG_DEBUG_FS
++
++static const char * const powergate_name[] = {
++	[TEGRA_POWERGATE_CPU]	= "cpu",
++	[TEGRA_POWERGATE_3D]	= "3d",
++	[TEGRA_POWERGATE_VENC]	= "venc",
++	[TEGRA_POWERGATE_VDEC]	= "vdec",
++	[TEGRA_POWERGATE_PCIE]	= "pcie",
++	[TEGRA_POWERGATE_L2]	= "l2",
++	[TEGRA_POWERGATE_MPE]	= "mpe",
++};
++
++static int powergate_show(struct seq_file *s, void *data)
++{
++	int i;
++
++	seq_printf(s, " powergate powered\n");
++	seq_printf(s, "------------------\n");
++
++	for (i = 0; i < TEGRA_NUM_POWERGATE; i++)
++		seq_printf(s, " %9s %7s\n", powergate_name[i],
++			tegra_powergate_is_powered(i) ? "yes" : "no");
++	return 0;
++}
++
++static int powergate_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, powergate_show, inode->i_private);
++}
++
++static const struct file_operations powergate_fops = {
++	.open		= powergate_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
++static int __init powergate_debugfs_init(void)
++{
++	struct dentry *d;
++	int err = -ENOMEM;
++
++	d = debugfs_create_file("powergate", S_IRUGO, NULL, NULL,
++		&powergate_fops);
++	if (!d)
++		return -ENOMEM;
++
++	return err;
++}
++
++late_initcall(powergate_debugfs_init);
++
++#endif
 -- 
 1.7.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
