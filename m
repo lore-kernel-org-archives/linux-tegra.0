@@ -1,122 +1,137 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v4 01/15] ARM: tegra: Centralize macros to define debug uart base
-Date: Wed,  9 Feb 2011 22:43:10 -0800
-Message-ID: <1297320204-31882-2-git-send-email-ccross@android.com>
+Subject: [PATCH v4 10/15] ARM: tegra: iomap: Add missing devices, fix use of SZ_8, SZ_64
+Date: Wed,  9 Feb 2011 22:43:19 -0800
+Message-ID: <1297320204-31882-11-git-send-email-ccross@android.com>
 References: <1297320204-31882-1-git-send-email-ccross@android.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1297320204-31882-1-git-send-email-ccross@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, olof@lixom.net, konkers@android.com, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jeremy Kerr <jeremy.kerr@canonical.com>, Gary King <gking@nvidia.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, olof@lixom.net, konkers@android.com, Gary King <gking@nvidia.com>, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Gary King <gking@nvidia.com>
+
+Adds gart, hdmi, avp, host1x, and pwm controllers to mach/iomap.h
+There is no SZ_8 or SZ_64, replace them with constants
+
+Signed-off-by: Gary King <gking@nvidia.com>
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/include/mach/debug-macro.S |   25 ++++-------------------
- arch/arm/mach-tegra/include/mach/iomap.h       |   14 +++++++++++++
- arch/arm/mach-tegra/include/mach/uncompress.h  |   18 +---------------
- 3 files changed, 21 insertions(+), 36 deletions(-)
+ arch/arm/mach-tegra/include/mach/iomap.h |   55 ++++++++++++++++++++++++------
+ 1 files changed, 44 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/mach-tegra/include/mach/debug-macro.S
-index a0e7c12..e0ebe65 100644
---- a/arch/arm/mach-tegra/include/mach/debug-macro.S
-+++ b/arch/arm/mach-tegra/include/mach/debug-macro.S
-@@ -19,30 +19,15 @@
-  */
- 
- #include <mach/io.h>
-+#include <mach/iomap.h>
- 
- 	.macro  addruart, rp, rv
-         ldr     \rp, =IO_APB_PHYS       @ physical
-         ldr     \rv, =IO_APB_VIRT        @ virtual
--#if defined(CONFIG_TEGRA_DEBUG_UART_NONE)
--#error "A debug UART must be selected in the kernel config to use DEBUG_LL"
--#elif defined(CONFIG_TEGRA_DEBUG_UARTA)
--        orr     \rp, \rp, #0x6000
--        orr     \rv, \rv, #0x6000
--#elif defined(CONFIG_TEGRA_DEBUG_UARTB)
--        orr     \rp, \rp, #0x6000
--	orr	\rp, \rp, #0x40
--        orr     \rv, \rv, #0x6000
--	orr	\rv, \rv, #0x40
--#elif defined(CONFIG_TEGRA_DEBUG_UARTC)
--        orr     \rp, \rp, #0x6200
--        orr     \rv, \rv, #0x6200
--#elif defined(CONFIG_TEGRA_DEBUG_UARTD)
--        orr     \rp, \rp, #0x6300
--        orr     \rv, \rv, #0x6300
--#elif defined(CONFIG_TEGRA_DEBUG_UARTE)
--        orr     \rp, \rp, #0x6400
--        orr     \rv, \rv, #0x6400
--#endif
-+	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF)
-+	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
-+	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF)
-+	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
- 	.endm
- 
- #define UART_SHIFT	2
 diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
-index 44a4f4b..325eca3 100644
+index 325eca3..26f2363 100644
 --- a/arch/arm/mach-tegra/include/mach/iomap.h
 +++ b/arch/arm/mach-tegra/include/mach/iomap.h
-@@ -221,4 +221,18 @@
- #define TEGRA_SDMMC4_BASE		0xC8000600
- #define TEGRA_SDMMC4_SIZE		SZ_512
+@@ -26,6 +26,9 @@
+ #define TEGRA_IRAM_BASE			0x40000000
+ #define TEGRA_IRAM_SIZE			SZ_256K
  
-+#if defined(CONFIG_TEGRA_DEBUG_UART_NONE)
-+# define TEGRA_DEBUG_UART_BASE 0
-+#elif defined(CONFIG_TEGRA_DEBUG_UARTA)
-+# define TEGRA_DEBUG_UART_BASE TEGRA_UARTA_BASE
-+#elif defined(CONFIG_TEGRA_DEBUG_UARTB)
-+# define TEGRA_DEBUG_UART_BASE TEGRA_UARTB_BASE
-+#elif defined(CONFIG_TEGRA_DEBUG_UARTC)
-+# define TEGRA_DEBUG_UART_BASE TEGRA_UARTC_BASE
-+#elif defined(CONFIG_TEGRA_DEBUG_UARTD)
-+# define TEGRA_DEBUG_UART_BASE TEGRA_UARTD_BASE
-+#elif defined(CONFIG_TEGRA_DEBUG_UARTE)
-+# define TEGRA_DEBUG_UART_BASE TEGRA_UARTE_BASE
-+#endif
++#define TEGRA_HOST1X_BASE		0x50000000
++#define TEGRA_HOST1X_SIZE		0x24000
 +
- #endif
-diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-index 6c4dd81..4e83237 100644
---- a/arch/arm/mach-tegra/include/mach/uncompress.h
-+++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-@@ -26,23 +26,9 @@
+ #define TEGRA_ARM_PERIF_BASE		0x50040000
+ #define TEGRA_ARM_PERIF_SIZE		SZ_8K
  
- #include <mach/iomap.h>
+@@ -35,38 +38,56 @@
+ #define TEGRA_ARM_INT_DIST_BASE		0x50041000
+ #define TEGRA_ARM_INT_DIST_SIZE		SZ_4K
  
--#if defined(CONFIG_TEGRA_DEBUG_UARTA)
--#define DEBUG_UART_BASE TEGRA_UARTA_BASE
--#elif defined(CONFIG_TEGRA_DEBUG_UARTB)
--#define DEBUG_UART_BASE TEGRA_UARTB_BASE
--#elif defined(CONFIG_TEGRA_DEBUG_UARTC)
--#define DEBUG_UART_BASE TEGRA_UARTC_BASE
--#elif defined(CONFIG_TEGRA_DEBUG_UARTD)
--#define DEBUG_UART_BASE TEGRA_UARTD_BASE
--#elif defined(CONFIG_TEGRA_DEBUG_UARTE)
--#define DEBUG_UART_BASE TEGRA_UARTE_BASE
--#else
--#define DEBUG_UART_BASE NULL
--#endif
--
- static void putc(int c)
- {
--	volatile u8 *uart = (volatile u8 *)DEBUG_UART_BASE;
-+	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
- 	int shift = 2;
++#define TEGRA_MPE_BASE			0x54040000
++#define TEGRA_MPE_SIZE			SZ_256K
++
++#define TEGRA_VI_BASE			0x54080000
++#define TEGRA_VI_SIZE			SZ_256K
++
++#define TEGRA_ISP_BASE			0x54100000
++#define TEGRA_ISP_SIZE			SZ_256K
++
+ #define TEGRA_DISPLAY_BASE		0x54200000
+ #define TEGRA_DISPLAY_SIZE		SZ_256K
  
- 	if (uart == NULL)
-@@ -59,7 +45,7 @@ static inline void flush(void)
+ #define TEGRA_DISPLAY2_BASE		0x54240000
+ #define TEGRA_DISPLAY2_SIZE		SZ_256K
  
- static inline void arch_decomp_setup(void)
- {
--	volatile u8 *uart = (volatile u8 *)DEBUG_UART_BASE;
-+	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
- 	int shift = 2;
++#define TEGRA_HDMI_BASE			0x54280000
++#define TEGRA_HDMI_SIZE			SZ_256K
++
++#define TEGRA_GART_BASE			0x58000000
++#define TEGRA_GART_SIZE			SZ_32M
++
++#define TEGRA_RES_SEMA_BASE		0x60001000
++#define TEGRA_RES_SEMA_SIZE		SZ_4K
++
+ #define TEGRA_PRIMARY_ICTLR_BASE	0x60004000
+-#define TEGRA_PRIMARY_ICTLR_SIZE	SZ_64
++#define TEGRA_PRIMARY_ICTLR_SIZE	64
  
- 	if (uart == NULL)
+ #define TEGRA_SECONDARY_ICTLR_BASE	0x60004100
+-#define TEGRA_SECONDARY_ICTLR_SIZE	SZ_64
++#define TEGRA_SECONDARY_ICTLR_SIZE	64
+ 
+ #define TEGRA_TERTIARY_ICTLR_BASE	0x60004200
+-#define TEGRA_TERTIARY_ICTLR_SIZE	SZ_64
++#define TEGRA_TERTIARY_ICTLR_SIZE	64
+ 
+ #define TEGRA_QUATERNARY_ICTLR_BASE	0x60004300
+-#define TEGRA_QUATERNARY_ICTLR_SIZE	SZ_64
++#define TEGRA_QUATERNARY_ICTLR_SIZE	64
+ 
+ #define TEGRA_TMR1_BASE			0x60005000
+-#define TEGRA_TMR1_SIZE			SZ_8
++#define TEGRA_TMR1_SIZE			8
+ 
+ #define TEGRA_TMR2_BASE			0x60005008
+-#define TEGRA_TMR2_SIZE			SZ_8
++#define TEGRA_TMR2_SIZE			8
+ 
+ #define TEGRA_TMRUS_BASE		0x60005010
+-#define TEGRA_TMRUS_SIZE		SZ_64
++#define TEGRA_TMRUS_SIZE		64
+ 
+ #define TEGRA_TMR3_BASE			0x60005050
+-#define TEGRA_TMR3_SIZE			SZ_8
++#define TEGRA_TMR3_SIZE			8
+ 
+ #define TEGRA_TMR4_BASE			0x60005058
+-#define TEGRA_TMR4_SIZE			SZ_8
++#define TEGRA_TMR4_SIZE			8
+ 
+ #define TEGRA_CLK_RESET_BASE		0x60006000
+ #define TEGRA_CLK_RESET_SIZE		SZ_4K
+@@ -114,10 +135,10 @@
+ #define TEGRA_I2S2_SIZE			SZ_256
+ 
+ #define TEGRA_UARTA_BASE		0x70006000
+-#define TEGRA_UARTA_SIZE		SZ_64
++#define TEGRA_UARTA_SIZE		64
+ 
+ #define TEGRA_UARTB_BASE		0x70006040
+-#define TEGRA_UARTB_SIZE		SZ_64
++#define TEGRA_UARTB_SIZE		64
+ 
+ #define TEGRA_UARTC_BASE		0x70006200
+ #define TEGRA_UARTC_SIZE		SZ_256
+@@ -140,6 +161,18 @@
+ #define TEGRA_PWFM_BASE			0x7000A000
+ #define TEGRA_PWFM_SIZE			SZ_256
+ 
++#define TEGRA_PWFM0_BASE		0x7000A000
++#define TEGRA_PWFM0_SIZE		4
++
++#define TEGRA_PWFM1_BASE		0x7000A010
++#define TEGRA_PWFM1_SIZE		4
++
++#define TEGRA_PWFM2_BASE		0x7000A020
++#define TEGRA_PWFM2_SIZE		4
++
++#define TEGRA_PWFM3_BASE		0x7000A030
++#define TEGRA_PWFM3_SIZE		4
++
+ #define TEGRA_MIPI_BASE			0x7000B000
+ #define TEGRA_MIPI_SIZE			SZ_256
+ 
 -- 
 1.7.3.1
