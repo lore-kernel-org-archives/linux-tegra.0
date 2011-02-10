@@ -1,84 +1,177 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 7/7] ASoC: Tegra: Add MODULE_ALIAS
-Date: Thu, 10 Feb 2011 15:37:19 -0700
-Message-ID: <1297377439-27382-7-git-send-email-swarren@nvidia.com>
-References: <1297377439-27382-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1297377439-27382-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: [patch 47/75] arm: tegra: Remove unused function which fiddles with
+	irq_desc
+Date: Thu, 10 Feb 2011 23:37:40 -0000
+Message-ID: <20110210223258.848294582@linutronix.de>
+References: <20110210222908.661199947@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline; filename=arm-tegra.patch
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-tegra@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
-With the appropriate MODULE_ALIAS in place, the audio modules will be
-automatically loaded; there is no longer a need for manual modprobes.
+These functions are unused and in the way of cleanups in the core
+code. If you have special requirements vs. irqs and PM then please
+talk to me. Access to the generic core internals is going away.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Colin Cross <ccross@android.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- sound/soc/tegra/harmony.c   |    1 +
- sound/soc/tegra/tegra_das.c |    1 +
- sound/soc/tegra/tegra_i2s.c |    1 +
- sound/soc/tegra/tegra_pcm.c |    5 ++++-
- 4 files changed, 7 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/gpio.c |   63 ---------------------------------------------
+ arch/arm/mach-tegra/irq.c  |   58 -----------------------------------------
+ 2 files changed, 121 deletions(-)
 
-diff --git a/sound/soc/tegra/harmony.c b/sound/soc/tegra/harmony.c
-index c54d420..e6216b4 100644
---- a/sound/soc/tegra/harmony.c
-+++ b/sound/soc/tegra/harmony.c
-@@ -390,3 +390,4 @@ module_exit(snd_tegra_harmony_exit);
- MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("Harmony machine ASoC driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/tegra/tegra_das.c b/sound/soc/tegra/tegra_das.c
-index 01eb9c9..9f24ef7 100644
---- a/sound/soc/tegra/tegra_das.c
-+++ b/sound/soc/tegra/tegra_das.c
-@@ -262,3 +262,4 @@ module_exit(tegra_das_modexit);
- MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("Tegra DAS driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
-index 870ee36..4f5e2c9 100644
---- a/sound/soc/tegra/tegra_i2s.c
-+++ b/sound/soc/tegra/tegra_i2s.c
-@@ -500,3 +500,4 @@ module_exit(snd_tegra_i2s_exit);
- MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("Tegra I2S ASoC driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
-index 663ea9f..40540b1 100644
---- a/sound/soc/tegra/tegra_pcm.c
-+++ b/sound/soc/tegra/tegra_pcm.c
-@@ -39,6 +39,8 @@
+Index: linux-2.6-tip/arch/arm/mach-tegra/gpio.c
+===================================================================
+--- linux-2.6-tip.orig/arch/arm/mach-tegra/gpio.c
++++ linux-2.6-tip/arch/arm/mach-tegra/gpio.c
+@@ -253,69 +253,6 @@ static void tegra_gpio_irq_handler(unsig
+ }
  
- #include "tegra_pcm.h"
- 
-+#define DRV_NAME "tegra-pcm-audio"
-+
- static const struct snd_pcm_hardware tegra_pcm_hardware = {
- 	.info			= SNDRV_PCM_INFO_MMAP |
- 				  SNDRV_PCM_INFO_MMAP_VALID |
-@@ -377,7 +379,7 @@ static int __devexit tegra_pcm_platform_remove(struct platform_device *pdev)
- 
- static struct platform_driver tegra_pcm_driver = {
- 	.driver = {
--		.name = "tegra-pcm-audio",
-+		.name = DRV_NAME,
- 		.owner = THIS_MODULE,
- 	},
- 	.probe = tegra_pcm_platform_probe,
-@@ -399,3 +401,4 @@ module_exit(snd_tegra_pcm_exit);
- MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("Tegra PCM ASoC driver");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:" DRV_NAME);
--- 
-1.7.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ #ifdef CONFIG_PM
+-void tegra_gpio_resume(void)
+-{
+-	unsigned long flags;
+-	int b, p, i;
+-
+-	local_irq_save(flags);
+-
+-	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
+-		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+-
+-		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+-			unsigned int gpio = (b<<5) | (p<<3);
+-			__raw_writel(bank->cnf[p], GPIO_CNF(gpio));
+-			__raw_writel(bank->out[p], GPIO_OUT(gpio));
+-			__raw_writel(bank->oe[p], GPIO_OE(gpio));
+-			__raw_writel(bank->int_lvl[p], GPIO_INT_LVL(gpio));
+-			__raw_writel(bank->int_enb[p], GPIO_INT_ENB(gpio));
+-		}
+-	}
+-
+-	local_irq_restore(flags);
+-
+-	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
+-		struct irq_desc *desc = irq_to_desc(i);
+-		if (!desc || (desc->status & IRQ_WAKEUP))
+-			continue;
+-		enable_irq(i);
+-	}
+-}
+-
+-void tegra_gpio_suspend(void)
+-{
+-	unsigned long flags;
+-	int b, p, i;
+-
+-	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
+-		struct irq_desc *desc = irq_to_desc(i);
+-		if (!desc)
+-			continue;
+-		if (desc->status & IRQ_WAKEUP) {
+-			int gpio = i - INT_GPIO_BASE;
+-			pr_debug("gpio %d.%d is wakeup\n", gpio/8, gpio&7);
+-			continue;
+-		}
+-		disable_irq(i);
+-	}
+-
+-	local_irq_save(flags);
+-	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
+-		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+-
+-		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+-			unsigned int gpio = (b<<5) | (p<<3);
+-			bank->cnf[p] = __raw_readl(GPIO_CNF(gpio));
+-			bank->out[p] = __raw_readl(GPIO_OUT(gpio));
+-			bank->oe[p] = __raw_readl(GPIO_OE(gpio));
+-			bank->int_enb[p] = __raw_readl(GPIO_INT_ENB(gpio));
+-			bank->int_lvl[p] = __raw_readl(GPIO_INT_LVL(gpio));
+-		}
+-	}
+-	local_irq_restore(flags);
+-}
+-
+ static int tegra_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+ {
+ 	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+Index: linux-2.6-tip/arch/arm/mach-tegra/irq.c
+===================================================================
+--- linux-2.6-tip.orig/arch/arm/mach-tegra/irq.c
++++ linux-2.6-tip/arch/arm/mach-tegra/irq.c
+@@ -111,61 +111,3 @@ void __init tegra_init_irq(void)
+ 		set_irq_flags(i, IRQF_VALID);
+ 	}
+ }
+-
+-#ifdef CONFIG_PM
+-static u32 cop_ier[PPI_NR];
+-static u32 cpu_ier[PPI_NR];
+-static u32 cpu_iep[PPI_NR];
+-
+-void tegra_irq_suspend(void)
+-{
+-	unsigned long flags;
+-	int i;
+-
+-	for (i = INT_PRI_BASE; i < INT_GPIO_BASE; i++) {
+-		struct irq_desc *desc = irq_to_desc(i);
+-		if (!desc)
+-			continue;
+-		if (desc->status & IRQ_WAKEUP) {
+-			pr_debug("irq %d is wakeup\n", i);
+-			continue;
+-		}
+-		disable_irq(i);
+-	}
+-
+-	local_irq_save(flags);
+-	for (i = 0; i < PPI_NR; i++) {
+-		void __iomem *ictlr = ictlr_to_virt(i);
+-		cpu_ier[i] = readl(ictlr + ICTLR_CPU_IER);
+-		cpu_iep[i] = readl(ictlr + ICTLR_CPU_IEP_CLASS);
+-		cop_ier[i] = readl(ictlr + ICTLR_COP_IER);
+-		writel(~0, ictlr + ICTLR_COP_IER_CLR);
+-	}
+-	local_irq_restore(flags);
+-}
+-
+-void tegra_irq_resume(void)
+-{
+-	unsigned long flags;
+-	int i;
+-
+-	local_irq_save(flags);
+-	for (i = 0; i < PPI_NR; i++) {
+-		void __iomem *ictlr = ictlr_to_virt(i);
+-		writel(cpu_iep[i], ictlr + ICTLR_CPU_IEP_CLASS);
+-		writel(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+-		writel(cpu_ier[i], ictlr + ICTLR_CPU_IER_SET);
+-		writel(0, ictlr + ICTLR_COP_IEP_CLASS);
+-		writel(~0ul, ictlr + ICTLR_COP_IER_CLR);
+-		writel(cop_ier[i], ictlr + ICTLR_COP_IER_SET);
+-	}
+-	local_irq_restore(flags);
+-
+-	for (i = INT_PRI_BASE; i < INT_GPIO_BASE; i++) {
+-		struct irq_desc *desc = irq_to_desc(i);
+-		if (!desc || (desc->status & IRQ_WAKEUP))
+-			continue;
+-		enable_irq(i);
+-	}
+-}
+-#endif
