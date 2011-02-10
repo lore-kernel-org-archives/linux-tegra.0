@@ -1,32 +1,60 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v4 10/15] ARM: tegra: iomap: Add missing devices, fix
- use of SZ_8, SZ_64
-Date: Thu, 10 Feb 2011 08:45:21 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0310F60414@HQMAIL01.nvidia.com>
-References: <1297320204-31882-1-git-send-email-ccross@android.com>
- <1297320204-31882-11-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH 3/7] ASoC: WM8903: Handle micdet_cfg more safely
+Date: Thu, 10 Feb 2011 15:37:15 -0700
+Message-ID: <1297377439-27382-3-git-send-email-swarren@nvidia.com>
+References: <1297377439-27382-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1297320204-31882-11-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1297377439-27382-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin Cross wrote at Wednesday, February 09, 2011 11:43 PM:
-> 
-> From: Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Adds gart, hdmi, avp, host1x, and pwm controllers to mach/iomap.h
-> There is no SZ_8 or SZ_64, replace them with constants
+The WM8903 mic detection circuit will interrupt when:
+a) It is first enabled, and a mic is detected as present.
+b) Whenever a mic is plugged in or removed.
 
-Can't we add those SZ_* constants?
+The current code makes it easy to miss case (a) by misconfiguring micdet_cfg
+via platform data.
 
+Specifically, if WM8903_MICDET_ENA and WM8903_MICBIAS_ENA are both part of
+micdet_cfg, and a mic is plugged in when the driver initializes, the interrupt
+will fire almost immediately. However, at that point, the micdet interrupt is
+probably still masked, and hence wm8903_irq does not handle it. However, the
+act of reading the interrupt status register in the ISR clears the micdet
+interrupt status, so it is lost.
+
+To avoid this, refuse to write any fields from micdet_cfg to the register
+except those simply configuring detection thresholds; actual enabling of mic
+detecion should always be implemented by calling wm8903_mic_detect().
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/codecs/wm8903.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index a6ca1d4..f1a4665 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1918,12 +1918,9 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 		}
+ 
+ 		snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
+-			      pdata->micdet_cfg);
+-
+-		/* Microphone detection needs the WSEQ clock */
+-		if (pdata->micdet_cfg)
+-			snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
+-					    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
++			      pdata->micdet_cfg &
++			       (WM8903_MICDET_THR_MASK |
++				WM8903_MICSHORT_THR_MASK));
+ 
+ 		wm8903->mic_delay = pdata->micdet_delay;
+ 	}
 -- 
-nvpublic
+1.7.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
