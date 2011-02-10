@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/7] ASoC: Tegra: Harmony: Implement mic detection
-Date: Thu, 10 Feb 2011 15:37:16 -0700
-Message-ID: <1297377439-27382-4-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 2/7] ASoC: WM8903: Fix mic detection enable logic
+Date: Thu, 10 Feb 2011 15:37:14 -0700
+Message-ID: <1297377439-27382-2-git-send-email-swarren@nvidia.com>
 References: <1297377439-27382-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1297377439-27382-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,72 +10,27 @@ To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kD
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Add jack definition for mic jack
-* Request wm8903 to enable mic detection
-* Force mic bias on, since it's required for mic detection
+The mic detection HW should be enabled when either mic or short detection
+is required, not when only both are required.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/harmony.c |   25 ++++++++++++++++++++++---
- 1 files changed, 22 insertions(+), 3 deletions(-)
+ sound/soc/codecs/wm8903.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/sound/soc/tegra/harmony.c b/sound/soc/tegra/harmony.c
-index 2a473a8..2fbfa10 100644
---- a/sound/soc/tegra/harmony.c
-+++ b/sound/soc/tegra/harmony.c
-@@ -43,6 +43,8 @@
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index 2f91227..a6ca1d4 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1610,7 +1610,7 @@ int wm8903_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
+ 			    WM8903_MICDET_EINT | WM8903_MICSHRT_EINT,
+ 			    irq_mask);
  
-+#include "../codecs/wm8903.h"
-+
- #include "tegra_das.h"
- #include "tegra_i2s.h"
- #include "tegra_pcm.h"
-@@ -142,6 +144,15 @@ static struct snd_soc_jack_gpio harmony_hp_jack_gpios[] = {
- 	}
- };
- 
-+static struct snd_soc_jack harmony_mic_jack;
-+
-+static struct snd_soc_jack_pin harmony_mic_jack_pins[] = {
-+	{
-+		.pin = "Mic Jack",
-+		.mask = SND_JACK_MICROPHONE,
-+	},
-+};
-+
- static int harmony_event_int_spk(struct snd_soc_dapm_widget *w,
- 					struct snd_kcontrol *k, int event)
- {
-@@ -206,9 +217,6 @@ static int harmony_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 	snd_soc_dapm_add_routes(dapm, harmony_audio_map,
- 				ARRAY_SIZE(harmony_audio_map));
- 
--	snd_soc_dapm_enable_pin(dapm, "Mic Jack");
--	snd_soc_dapm_sync(dapm);
--
- 	harmony_hp_jack_gpios[0].gpio = pdata->gpio_hp_det;
- 	snd_soc_jack_new(codec, "Headphone Jack", SND_JACK_HEADPHONE,
- 			 &harmony_hp_jack);
-@@ -219,6 +227,17 @@ static int harmony_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 			       ARRAY_SIZE(harmony_hp_jack_gpios),
- 			       harmony_hp_jack_gpios);
- 
-+	snd_soc_jack_new(codec, "Mic Jack", SND_JACK_MICROPHONE,
-+			 &harmony_mic_jack);
-+	snd_soc_jack_add_pins(&harmony_mic_jack,
-+			      ARRAY_SIZE(harmony_mic_jack_pins),
-+			      harmony_mic_jack_pins);
-+	wm8903_mic_detect(codec, &harmony_mic_jack, SND_JACK_MICROPHONE, 0);
-+
-+	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
-+
-+	snd_soc_dapm_sync(dapm);
-+
- 	return 0;
- }
- 
+-	if (det && shrt) {
++	if (det || shrt) {
+ 		/* Enable mic detection, this may not have been set through
+ 		 * platform data (eg, if the defaults are OK). */
+ 		snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
 -- 
 1.7.1
 
