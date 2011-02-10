@@ -1,120 +1,142 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v4 06/15] ARM: tegra: pinmux: Add missing drive pingroups and
-	fix suspend
-Date: Wed,  9 Feb 2011 22:43:15 -0800
-Message-ID: <1297320204-31882-7-git-send-email-ccross@android.com>
+Subject: [PATCH v4 04/15] ARM: tegra: Add prototypes for subsystem suspend functions
+Date: Wed,  9 Feb 2011 22:43:13 -0800
+Message-ID: <1297320204-31882-5-git-send-email-ccross@android.com>
 References: <1297320204-31882-1-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1297320204-31882-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, olof@lixom.net, konkers@android.com, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Gary King <gking@nvidia.com>
-
-Adds missing drive pingroups, saves all drive pingroups in
-suspend, and restores the pinmux registers in the proper order.
-
-Signed-off-by: Gary King <gking@nvidia.com>
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/include/mach/pinmux-t2.h |   10 ++++++++++
- arch/arm/mach-tegra/pinmux-t2-tables.c       |   25 +++++++++++++++++++++----
- 2 files changed, 31 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/dma.c                  |    1 +
+ arch/arm/mach-tegra/gpio.c                 |    1 +
+ arch/arm/mach-tegra/include/mach/suspend.h |   38 ++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/irq.c                  |    1 +
+ arch/arm/mach-tegra/pinmux-t2-tables.c     |    1 +
+ arch/arm/mach-tegra/tegra2_clocks.c        |    1 +
+ arch/arm/mach-tegra/timer.c                |    1 +
+ 7 files changed, 44 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/include/mach/suspend.h
 
-diff --git a/arch/arm/mach-tegra/include/mach/pinmux-t2.h b/arch/arm/mach-tegra/include/mach/pinmux-t2.h
-index e5b9d74..4c26263 100644
---- a/arch/arm/mach-tegra/include/mach/pinmux-t2.h
-+++ b/arch/arm/mach-tegra/include/mach/pinmux-t2.h
-@@ -167,6 +167,16 @@ enum tegra_drive_pingroup {
- 	TEGRA_DRIVE_PINGROUP_XM2D,
- 	TEGRA_DRIVE_PINGROUP_XM2CLK,
- 	TEGRA_DRIVE_PINGROUP_MEMCOMP,
-+	TEGRA_DRIVE_PINGROUP_SDIO1,
-+	TEGRA_DRIVE_PINGROUP_CRT,
-+	TEGRA_DRIVE_PINGROUP_DDC,
-+	TEGRA_DRIVE_PINGROUP_GMA,
-+	TEGRA_DRIVE_PINGROUP_GMB,
-+	TEGRA_DRIVE_PINGROUP_GMC,
-+	TEGRA_DRIVE_PINGROUP_GMD,
-+	TEGRA_DRIVE_PINGROUP_GME,
-+	TEGRA_DRIVE_PINGROUP_OWR,
-+	TEGRA_DRIVE_PINGROUP_UAD,
- 	TEGRA_MAX_DRIVE_PINGROUP,
- };
+diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
+index edda6ec..a2a252d 100644
+--- a/arch/arm/mach-tegra/dma.c
++++ b/arch/arm/mach-tegra/dma.c
+@@ -30,6 +30,7 @@
+ #include <mach/dma.h>
+ #include <mach/irqs.h>
+ #include <mach/iomap.h>
++#include <mach/suspend.h>
+ 
+ #define APB_DMA_GEN				0x000
+ #define GEN_ENABLE				(1<<31)
+diff --git a/arch/arm/mach-tegra/gpio.c b/arch/arm/mach-tegra/gpio.c
+index ad80488..132dcd6 100644
+--- a/arch/arm/mach-tegra/gpio.c
++++ b/arch/arm/mach-tegra/gpio.c
+@@ -25,6 +25,7 @@
+ #include <linux/gpio.h>
+ 
+ #include <mach/iomap.h>
++#include <mach/suspend.h>
+ 
+ #define GPIO_BANK(x)		((x) >> 5)
+ #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
+diff --git a/arch/arm/mach-tegra/include/mach/suspend.h b/arch/arm/mach-tegra/include/mach/suspend.h
+new file mode 100644
+index 0000000..5af8715
+--- /dev/null
++++ b/arch/arm/mach-tegra/include/mach/suspend.h
+@@ -0,0 +1,38 @@
++/*
++ * arch/arm/mach-tegra/include/mach/suspend.h
++ *
++ * Copyright (C) 2010 Google, Inc.
++ *
++ * Author:
++ *	Colin Cross <ccross@google.com>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++
++#ifndef _MACH_TEGRA_SUSPEND_H_
++#define _MACH_TEGRA_SUSPEND_H_
++
++void tegra_pinmux_suspend(void);
++void tegra_irq_suspend(void);
++void tegra_gpio_suspend(void);
++void tegra_clk_suspend(void);
++void tegra_dma_suspend(void);
++void tegra_timer_suspend(void);
++
++void tegra_pinmux_resume(void);
++void tegra_irq_resume(void);
++void tegra_gpio_resume(void);
++void tegra_clk_resume(void);
++void tegra_dma_resume(void);
++void tegra_timer_resume(void);
++
++#endif /* _MACH_TEGRA_SUSPEND_H_ */
+diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
+index 17c74d2..5f065f9 100644
+--- a/arch/arm/mach-tegra/irq.c
++++ b/arch/arm/mach-tegra/irq.c
+@@ -26,6 +26,7 @@
+ #include <asm/hardware/gic.h>
+ 
+ #include <mach/iomap.h>
++#include <mach/suspend.h>
+ 
+ #include "board.h"
  
 diff --git a/arch/arm/mach-tegra/pinmux-t2-tables.c b/arch/arm/mach-tegra/pinmux-t2-tables.c
-index 4d97d5c..a475367 100644
+index a6ea34e..4d97d5c 100644
 --- a/arch/arm/mach-tegra/pinmux-t2-tables.c
 +++ b/arch/arm/mach-tegra/pinmux-t2-tables.c
-@@ -66,6 +66,16 @@ const struct tegra_drive_pingroup_desc tegra_soc_drive_pingroups[TEGRA_MAX_DRIVE
- 	DRIVE_PINGROUP(XM2D,		0x8cc),
- 	DRIVE_PINGROUP(XM2CLK,		0x8d0),
- 	DRIVE_PINGROUP(MEMCOMP,		0x8d4),
-+	DRIVE_PINGROUP(SDIO1,		0x8e0),
-+	DRIVE_PINGROUP(CRT,		0x8ec),
-+	DRIVE_PINGROUP(DDC,		0x8f0),
-+	DRIVE_PINGROUP(GMA,		0x8f4),
-+	DRIVE_PINGROUP(GMB,		0x8f8),
-+	DRIVE_PINGROUP(GMC,		0x8fc),
-+	DRIVE_PINGROUP(GMD,		0x900),
-+	DRIVE_PINGROUP(GME,		0x904),
-+	DRIVE_PINGROUP(OWR,		0x908),
-+	DRIVE_PINGROUP(UAD,		0x90c),
- };
+@@ -29,6 +29,7 @@
  
- #define PINGROUP(pg_name, vdd, f0, f1, f2, f3, f_safe,		\
-@@ -217,7 +227,8 @@ const struct tegra_pingroup_desc tegra_soc_pingroups[TEGRA_MAX_PINGROUP] = {
- #define PULLUPDOWN_REG_NUM     5
+ #include <mach/iomap.h>
+ #include <mach/pinmux.h>
++#include <mach/suspend.h>
  
- static u32 pinmux_reg[TRISTATE_REG_NUM + PIN_MUX_CTL_REG_NUM +
--		     PULLUPDOWN_REG_NUM];
-+		      PULLUPDOWN_REG_NUM +
-+		      ARRAY_SIZE(tegra_soc_drive_pingroups)];
+ #define DRIVE_PINGROUP(pg_name, r)				\
+ 	[TEGRA_DRIVE_PINGROUP_ ## pg_name] = {			\
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index f0dae6d..2dd2b03 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -27,6 +27,7 @@
+ #include <linux/clkdev.h>
  
- static inline unsigned long pg_readl(unsigned long offset)
- {
-@@ -234,14 +245,17 @@ void tegra_pinmux_suspend(void)
- 	unsigned int i;
- 	u32 *ctx = pinmux_reg;
+ #include <mach/iomap.h>
++#include <mach/suspend.h>
  
--	for (i = 0; i < TRISTATE_REG_NUM; i++)
--		*ctx++ = pg_readl(TRISTATE_REG_A + i*4);
--
- 	for (i = 0; i < PIN_MUX_CTL_REG_NUM; i++)
- 		*ctx++ = pg_readl(PIN_MUX_CTL_REG_A + i*4);
+ #include "clock.h"
+ #include "fuse.h"
+diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
+index 7b8ad1f..36b53a7 100644
+--- a/arch/arm/mach-tegra/timer.c
++++ b/arch/arm/mach-tegra/timer.c
+@@ -33,6 +33,7 @@
  
- 	for (i = 0; i < PULLUPDOWN_REG_NUM; i++)
- 		*ctx++ = pg_readl(PULLUPDOWN_REG_A + i*4);
-+
-+	for (i = 0; i < TRISTATE_REG_NUM; i++)
-+		*ctx++ = pg_readl(TRISTATE_REG_A + i*4);
-+
-+	for (i = 0; i < ARRAY_SIZE(tegra_soc_drive_pingroups); i++)
-+		*ctx++ = pg_readl(tegra_soc_drive_pingroups[i].reg);
- }
+ #include <mach/iomap.h>
+ #include <mach/irqs.h>
++#include <mach/suspend.h>
  
- void tegra_pinmux_resume(void)
-@@ -257,5 +271,8 @@ void tegra_pinmux_resume(void)
- 
- 	for (i = 0; i < TRISTATE_REG_NUM; i++)
- 		pg_writel(*ctx++, TRISTATE_REG_A + i*4);
-+
-+	for (i = 0; i < ARRAY_SIZE(tegra_soc_drive_pingroups); i++)
-+		pg_writel(*ctx++, tegra_soc_drive_pingroups[i].reg);
- }
- #endif
+ #include "board.h"
+ #include "clock.h"
 -- 
 1.7.3.1
