@@ -1,45 +1,67 @@
-From: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] [ARM] tegra: Add support for Tegra USB PHYs
-Date: Fri, 11 Feb 2011 19:01:34 -0800
-Message-ID: <AANLkTimQbmhZu1a+Aojh=2XBv0V9DOZ4-qimiHxXrEW3@mail.gmail.com>
-References: <1297228927-23497-1-git-send-email-benoit@android.com>
-	<1297228927-23497-2-git-send-email-benoit@android.com>
-	<20110209070540.GA17627@morell.nvidia.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 00/22] Updates for Tegra support in 2.6.39
+Date: Sat, 12 Feb 2011 00:52:14 -0800
+Message-ID: <AANLkTin1UOAwBuGC0vaDutCrWY2x1+qK9=b50k43a2K0@mail.gmail.com>
+References: <1297320204-31882-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110209070540.GA17627-f3YH7lVHJt/FT5IIyIEb6QC/G2K4zDHf@public.gmane.org>
+In-Reply-To: <1297320204-31882-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 8, 2011 at 11:05 PM,  <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Tue, Feb 08, 2011 at 09:22:04PM -0800, Benoit Goby wrote:
+On Wed, Feb 9, 2011 at 10:43 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
+:
+> This is a repost of the same series with the suspend and
+> idle support dropped for now while the necessary changes
+> to the gic, l2x0, and init notifiers are discussed. =A0If
+> there are no further comments, I will push these to
+> tegra/for-next.
 >
->> +static void ulpi_phy_power_on(struct tegra_usb_phy *phy)
->> +{
->> + =A0 =A0 =A0 unsigned long val;
->> + =A0 =A0 =A0 void __iomem *base =3D phy->regs;
->> + =A0 =A0 =A0 struct tegra_ulpi_config *config =3D phy->config;
->> +
->> + =A0 =A0 =A0 gpio_direction_output(config->reset_gpio, 0);
->> + =A0 =A0 =A0 msleep(5);
->> + =A0 =A0 =A0 gpio_direction_output(config->reset_gpio, 1);
->> +
->> + =A0 =A0 =A0 clk_enable(phy->clk);
->> + =A0 =A0 =A0 msleep(1);
->
-> This msleep seems excessive. =A0Does it take that long for the clock =
-to
-> settle?
+> =A0arch/arm/configs/tegra_defconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+123 +++++++++++
+> =A0arch/arm/mach-tegra/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
+ =A0 =A01 +
+> =A0arch/arm/mach-tegra/board.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 +
+> =A0arch/arm/mach-tegra/common.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
+ =A0 17 ++-
+> =A0arch/arm/mach-tegra/cpu-tegra.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+ 75 ++++++--
+> =A0arch/arm/mach-tegra/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0| =A0198 ++++++++++--------
+> =A0arch/arm/mach-tegra/gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A01 +
+> =A0arch/arm/mach-tegra/include/mach/debug-macro.S | =A0 25 +--
+> =A0arch/arm/mach-tegra/include/mach/iomap.h =A0 =A0 =A0 | =A0 69 ++++=
++-
+> =A0arch/arm/mach-tegra/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 14 +-
+> =A0arch/arm/mach-tegra/include/mach/legacy_irq.h =A0| =A0 =A04 +
+> =A0arch/arm/mach-tegra/include/mach/pinmux-t2.h =A0 | =A0 10 +
+> =A0arch/arm/mach-tegra/include/mach/powergate.h =A0 | =A0 40 ++++
+> =A0arch/arm/mach-tegra/include/mach/suspend.h =A0 =A0 | =A0 38 ++++
+> =A0arch/arm/mach-tegra/include/mach/system.h =A0 =A0 =A0| =A0 10 +-
+> =A0arch/arm/mach-tegra/include/mach/uncompress.h =A0| =A0 18 +--
+> =A0arch/arm/mach-tegra/irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0| =A0186 ++++++++---------
+> =A0arch/arm/mach-tegra/legacy_irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+109 ++++++++++-
+> =A0arch/arm/mach-tegra/pinmux-t2-tables.c =A0 =A0 =A0 =A0 | =A0 26 ++=
+-
+> =A0arch/arm/mach-tegra/powergate.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+212 +++++++++++++++++++
+> =A0arch/arm/mach-tegra/tegra2_clocks.c =A0 =A0 =A0 =A0 =A0 =A0| =A026=
+4 ++++++++++++++++++++++--
+> =A0arch/arm/mach-tegra/timer.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 61 ++++++-
+> =A022 files changed, 1212 insertions(+), 291 deletions(-)
 >
 
-I tried to use smaller delays but got enumeration issues with delays
-<1ms, so I'm keeping the msleep.
-
-Benoit
+I pushed this patch set to tegra/for-next, with minor fixups from
+Stephen Warren.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
