@@ -1,67 +1,82 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 00/22] Updates for Tegra support in 2.6.39
-Date: Sat, 12 Feb 2011 00:52:14 -0800
-Message-ID: <AANLkTin1UOAwBuGC0vaDutCrWY2x1+qK9=b50k43a2K0@mail.gmail.com>
-References: <1297320204-31882-1-git-send-email-ccross@android.com>
+Subject: Re: mmc: subtract boot sectors from disk size for eMMC 4.3+ devices
+Date: Sat, 12 Feb 2011 13:27:17 -0800
+Message-ID: <AANLkTimfgcPgVhGXawJtPLeRUKDqUNJab9i=+bOas4YV@mail.gmail.com>
+References: <58833f40-65eb-455e-9d51-02d577bef09a@e16g2000pri.googlegroups.com>
+	<AANLkTinAY=j2kAvVqUiJQCxGQ84=V98Yo+8PMLK780ro@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1297320204-31882-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <AANLkTinAY=j2kAvVqUiJQCxGQ84=V98Yo+8PMLK780ro-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: drambo <mrdarwinrambo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Android Linux Kernel Development <android-kernel-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, sbranden-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 9, 2011 at 10:43 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
+On Wed, Jan 19, 2011 at 4:06 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
 :
-> This is a repost of the same series with the suspend and
-> idle support dropped for now while the necessary changes
-> to the gic, l2x0, and init notifiers are discussed. =A0If
-> there are no further comments, I will push these to
-> tegra/for-next.
+> On Wed, Jan 19, 2011 at 2:04 PM, drambo <mrdarwinrambo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wro=
+te:
+>> Hello,
+>>
+>> http://android.git.kernel.org/?p=3Dkernel/common.git;a=3Dcommit;h=3D=
+f0b0e4bec1e89014f3dcef4da8bcf95428cc771c
+>>
+>> This patch doesn't appear to apply for our 8 GByte Micron 4.4 device
+>> MTFC8GKQDI part and probably other Micron parts as well.
+>>
+>> I have contacted Micron about the 0xe90000 sector count we read, and
+>> they state that:
+>>
+>> "Actually, the boot partition size is in multiples of 128KB, so each
+>> boot partition is 2MB.
+>> There are two of them, so the total is 4MB.
+>> This is not counted as user area, the 0xe90000 is in addition to the
+>> boot and RPMB partitions. =A0The only time the user area would be
+>> reduced from the SEC_COUNT value would be if you create general
+>> purpose partitions, or enhanced memory areas."
+>>
+>> Furthermore, when we access the device, the full 0xe90000 sectors ar=
+e
+>> accessible and valid in our testing, which confirms the Micron
+>> statement.
+>>
+>> This patch is not in the 2.6.36+ kernel.org mmc.c code either, which
+>> also make it suspect.
+>>
+>> Could someone please clarify the reasons for this patch? Thanks.
+>>
+>> Regards,
+>> Darwin
+>>
 >
-> =A0arch/arm/configs/tegra_defconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
-123 +++++++++++
-> =A0arch/arm/mach-tegra/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
- =A0 =A01 +
-> =A0arch/arm/mach-tegra/board.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A02 +
-> =A0arch/arm/mach-tegra/common.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
- =A0 17 ++-
-> =A0arch/arm/mach-tegra/cpu-tegra.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- 75 ++++++--
-> =A0arch/arm/mach-tegra/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0| =A0198 ++++++++++--------
-> =A0arch/arm/mach-tegra/gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A01 +
-> =A0arch/arm/mach-tegra/include/mach/debug-macro.S | =A0 25 +--
-> =A0arch/arm/mach-tegra/include/mach/iomap.h =A0 =A0 =A0 | =A0 69 ++++=
-+-
-> =A0arch/arm/mach-tegra/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 14 +-
-> =A0arch/arm/mach-tegra/include/mach/legacy_irq.h =A0| =A0 =A04 +
-> =A0arch/arm/mach-tegra/include/mach/pinmux-t2.h =A0 | =A0 10 +
-> =A0arch/arm/mach-tegra/include/mach/powergate.h =A0 | =A0 40 ++++
-> =A0arch/arm/mach-tegra/include/mach/suspend.h =A0 =A0 | =A0 38 ++++
-> =A0arch/arm/mach-tegra/include/mach/system.h =A0 =A0 =A0| =A0 10 +-
-> =A0arch/arm/mach-tegra/include/mach/uncompress.h =A0| =A0 18 +--
-> =A0arch/arm/mach-tegra/irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0| =A0186 ++++++++---------
-> =A0arch/arm/mach-tegra/legacy_irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
-109 ++++++++++-
-> =A0arch/arm/mach-tegra/pinmux-t2-tables.c =A0 =A0 =A0 =A0 | =A0 26 ++=
--
-> =A0arch/arm/mach-tegra/powergate.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
-212 +++++++++++++++++++
-> =A0arch/arm/mach-tegra/tegra2_clocks.c =A0 =A0 =A0 =A0 =A0 =A0| =A026=
-4 ++++++++++++++++++++++--
-> =A0arch/arm/mach-tegra/timer.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 61 ++++++-
-> =A022 files changed, 1212 insertions(+), 291 deletions(-)
+> This patch was originally necessary because the kernel could not find
+> a gpt partition table located at the end of the eMMC device. =A0Looki=
+ng
+> at the eMMC spec, I believe you are correct, the sector count read
+> from the eMMC ext_csd should not include the boot partition size. =A0=
+I
+> don't know if the eMMC part we were using incorrectly gave the size,
+> or the code in the bootloader that determined where to put the gpt
+> incorrectly calculated the end, and the kernel was changed to be
+> bug-compatible.
+>
+> I am hesitant to revert the change, because the Tegra bootloader
+> likely does the same calculation, and reverting the patch would break
+> any board that expects the old behavior.
 >
 
-I pushed this patch set to tegra/for-next, with minor fixups from
-Stephen Warren.
+I reverted this change in the linux-tegra-2.6.36 and android-2.6.36
+repositories.  For anyone who has a bug-compatible bootloader, and
+relies on the bootloader and kernel agreeing on the size of the eMMC
+(for example, to find a GPT at the end of the device), this revert
+will break your kernel.  You can either put it back locally in your
+tree, or, if you are using GPT, use
+https://android.git.kernel.org/?p=3Dkernel/tegra.git;a=3Dcommit;h=3Dfd4=
+194e5c3ab51f0eacdc115eeead02dbf8f4d88
+to allow the bootloader to pass the actual location of the GPT to the
+kernel.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
