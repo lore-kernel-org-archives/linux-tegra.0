@@ -1,474 +1,369 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 07/21] ARM: tegra: clock: Drop CPU dvfs
-Date: Sun, 13 Feb 2011 01:40:19 -0800
-Message-ID: <1297590033-15035-8-git-send-email-ccross@android.com>
-References: <1297590033-15035-1-git-send-email-ccross@android.com>
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: add TrimSlice board
+Date: Sun, 13 Feb 2011 13:08:55 +0200
+Message-ID: <4D57BBC7.4070306@compulab.co.il>
+References: <cover.1297063443.git.mike@compulab.co.il>	<c61e1816027e51acfb5bda1e498225a4da37d92d.1297063443.git.mike@compulab.co.il> <AANLkTim5-dmpF8r9uZp8iDsT6p61D0iaJZuHvRLfUL6Y@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1297590033-15035-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <AANLkTim5-dmpF8r9uZp8iDsT6p61D0iaJZuHvRLfUL6Y-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The existing version did not extend well to core dvfs, drop it
-for now until the new clk api with clk_prepare and clk_unprepare
-is ready and non-atomic clocks are possible.
+On 02/11/11 04:43, Colin Cross wrote:
+> On Mon, Feb 7, 2011 at 12:10 AM, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org> wrote:
+>> Add basic support for CompuLab TrimSlice platform
+>>
+>> Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+>> ---
+>>  arch/arm/mach-tegra/Kconfig                  |    6 +
+>>  arch/arm/mach-tegra/Makefile                 |    3 +
+>>  arch/arm/mach-tegra/board-trimslice-pinmux.c |  145 ++++++++++++++++++++++++++
+>>  arch/arm/mach-tegra/board-trimslice.c        |  104 ++++++++++++++++++
+>>  arch/arm/mach-tegra/board-trimslice.h        |   22 ++++
+>>  5 files changed, 280 insertions(+), 0 deletions(-)
+>>  create mode 100644 arch/arm/mach-tegra/board-trimslice-pinmux.c
+>>  create mode 100644 arch/arm/mach-tegra/board-trimslice.c
+>>  create mode 100644 arch/arm/mach-tegra/board-trimslice.h
+>>
+>> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+>> index acd9552..f0fda77 100644
+>> --- a/arch/arm/mach-tegra/Kconfig
+>> +++ b/arch/arm/mach-tegra/Kconfig
+>> @@ -27,6 +27,12 @@ config MACH_HARMONY
+>>        help
+>>          Support for nVidia Harmony development platform
+>>
+>> +config MACH_TRIMSLICE
+>> +       bool "TrimSlice board"
+>> +       select TEGRA_PCI
+>> +       help
+>> +         Support for CompuLab TrimSlice platform
+>> +
+>>  choice
+>>         prompt "Low-level debug console UART"
+>>         default TEGRA_DEBUG_UART_NONE
+>> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+>> index cdbc68e..0e1844b 100644
+>> --- a/arch/arm/mach-tegra/Makefile
+>> +++ b/arch/arm/mach-tegra/Makefile
+>> @@ -19,3 +19,6 @@ obj-$(CONFIG_TEGRA_PCI)                       += pcie.o
+>>  obj-${CONFIG_MACH_HARMONY}              += board-harmony.o
+>>  obj-${CONFIG_MACH_HARMONY}              += board-harmony-pinmux.o
+>>  obj-${CONFIG_MACH_HARMONY}              += board-harmony-pcie.o
+>> +
+>> +obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
+>> +obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
+>> diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+>> new file mode 100644
+>> index 0000000..6d4fc9f
+>> --- /dev/null
+>> +++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+>> @@ -0,0 +1,145 @@
+>> +/*
+>> + * arch/arm/mach-tegra/board-trimslice-pinmux.c
+>> + *
+>> + * Copyright (C) 2011 CompuLab, Ltd.
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/init.h>
+>> +#include <mach/pinmux.h>
+>> +
+>> +#include "board-trimslice.h"
+>> +
+>> +static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+>> +       {TEGRA_PINGROUP_ATA,   TEGRA_MUX_IDE,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_ATB,   TEGRA_MUX_SDIO4,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_ATC,   TEGRA_MUX_NAND,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_ATD,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_ATE,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_CDEV1, TEGRA_MUX_OSC,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_CDEV2, TEGRA_MUX_PLLP_OUT4,     TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_CRTP,  TEGRA_MUX_CRT,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_CSUS,  TEGRA_MUX_VI_SENSOR_CLK, TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DAP1,  TEGRA_MUX_DAP1,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_DAP2,  TEGRA_MUX_DAP2,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DAP3,  TEGRA_MUX_DAP3,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_DAP4,  TEGRA_MUX_DAP4,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DDC,   TEGRA_MUX_I2C2,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_DTA,   TEGRA_MUX_VI,            TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DTB,   TEGRA_MUX_VI,            TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DTC,   TEGRA_MUX_VI,            TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DTD,   TEGRA_MUX_VI,            TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DTE,   TEGRA_MUX_VI,            TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_DTF,   TEGRA_MUX_I2C3,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GMA,   TEGRA_MUX_SDIO4,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GMB,   TEGRA_MUX_NAND,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_GMC,   TEGRA_MUX_SFLASH,        TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GMD,   TEGRA_MUX_SFLASH,        TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GME,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_GPU,   TEGRA_MUX_UARTA,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GPU7,  TEGRA_MUX_RTCK,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_GPV,   TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_HDINT, TEGRA_MUX_HDMI,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_I2CP,  TEGRA_MUX_I2C,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_IRRX,  TEGRA_MUX_UARTB,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_IRTX,  TEGRA_MUX_UARTB,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCA,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCB,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCC,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCD,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCE,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_KBCF,  TEGRA_MUX_KBC,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LCSN,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LD0,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD1,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD2,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD3,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD4,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD5,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD6,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD7,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD8,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD9,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD10,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD11,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD12,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD13,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD14,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD15,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD16,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LD17,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LDC,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LDI,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LHP0,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LHP1,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LHP2,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LHS,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LM0,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LM1,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LPP,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LPW0,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LPW1,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LPW2,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LSC0,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LSC1,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LSCK,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LSDA,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LSDI,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LSPI,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LVP0,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_LVP1,  TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_LVS,   TEGRA_MUX_DISPLAYA,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_OWC,   TEGRA_MUX_RSVD2,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_PMC,   TEGRA_MUX_PWR_ON,        TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_PTA,   TEGRA_MUX_RSVD3,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_RM,    TEGRA_MUX_I2C,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SDB,   TEGRA_MUX_PWM,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SDC,   TEGRA_MUX_PWM,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SDD,   TEGRA_MUX_PWM,           TEGRA_PUPD_PULL_UP,     TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SDIO1, TEGRA_MUX_SDIO1,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SLXA,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SLXC,  TEGRA_MUX_SDIO3,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SLXD,  TEGRA_MUX_SDIO3,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SLXK,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_SPDI,  TEGRA_MUX_SPDIF,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPDO,  TEGRA_MUX_SPDIF,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIA,  TEGRA_MUX_SPI2,          TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIB,  TEGRA_MUX_SPI2,          TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIC,  TEGRA_MUX_SPI2,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPID,  TEGRA_MUX_SPI1,          TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIE,  TEGRA_MUX_SPI1,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIF,  TEGRA_MUX_SPI1,          TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIG,  TEGRA_MUX_SPI2_ALT,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_SPIH,  TEGRA_MUX_SPI2_ALT,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UAA,   TEGRA_MUX_ULPI,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UAB,   TEGRA_MUX_ULPI,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UAC,   TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UAD,   TEGRA_MUX_IRDA,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UCA,   TEGRA_MUX_UARTC,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UCB,   TEGRA_MUX_UARTC,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_UDA,   TEGRA_MUX_ULPI,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+>> +       {TEGRA_PINGROUP_CK32,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_DDRC,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_PMCA,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_PMCB,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_PMCC,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_PMCD,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_PMCE,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_XM2C,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +       {TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>> +};
+>> +
+>> +void __init trimslice_pinmux_init(void)
+>> +{
+>> +       tegra_pinmux_config_table(trimslice_pinmux, ARRAY_SIZE(trimslice_pinmux));
+>> +}
+>> diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+>> new file mode 100644
+>> index 0000000..ef233b2
+>> --- /dev/null
+>> +++ b/arch/arm/mach-tegra/board-trimslice.c
+>> @@ -0,0 +1,104 @@
+>> +/*
+>> + * arch/arm/mach-tegra/board-trimslice.c
+>> + *
+>> + * Copyright (C) 2011 CompuLab, Ltd.
+>> + * Author: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+>> + *
+>> + * Based on board-harmony.c
+>> + * Copyright (C) 2010 Google, Inc.
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/init.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/serial_8250.h>
+>> +#include <linux/io.h>
+>> +
+>> +#include <asm/mach-types.h>
+>> +#include <asm/mach/arch.h>
+>> +#include <asm/setup.h>
+>> +
+>> +#include <mach/iomap.h>
+>> +
+>> +#include "board.h"
+>> +#include "clock.h"
+>> +
+>> +#include "board-trimslice.h"
+>> +
+>> +static struct plat_serial8250_port debug_uart_platform_data[] = {
+>> +       {
+>> +               .membase        = IO_ADDRESS(TEGRA_UARTA_BASE),
+>> +               .mapbase        = TEGRA_UARTA_BASE,
+>> +               .irq            = INT_UARTA,
+>> +               .flags          = UPF_BOOT_AUTOCONF,
+>> +               .iotype         = UPIO_MEM,
+>> +               .regshift       = 2,
+>> +               .uartclk        = 216000000,
+>> +       }, {
+>> +               .flags          = 0
+>> +       }
+>> +};
+>> +
+>> +static struct platform_device debug_uart = {
+>> +       .name   = "serial8250",
+>> +       .id     = PLAT8250_DEV_PLATFORM,
+>> +       .dev    = {
+>> +               .platform_data  = debug_uart_platform_data,
+>> +       },
+>> +};
+>> +
+>> +static struct platform_device *trimslice_devices[] __initdata = {
+>> +       &debug_uart,
+>> +};
+>> +
+>> +static void __init tegra_trimslice_fixup(struct machine_desc *desc,
+>> +       struct tag *tags, char **cmdline, struct meminfo *mi)
+>> +{
+>> +       mi->nr_banks = 2;
+>> +       mi->bank[0].start = PHYS_OFFSET;
+>> +       mi->bank[0].size = 448 * SZ_1M;
+>> +       mi->bank[1].start = SZ_512M;
+>> +       mi->bank[1].size = SZ_512M;
+>> +}
+>> +
+>> +static __initdata struct tegra_clk_init_table trimslice_clk_init_table[] = {
+>> +       /* name         parent          rate            enabled */
+>> +       { "uarta",      "pll_p",        216000000,      true },
+>> +       { NULL,         NULL,           0,              0},
+>> +};
+>> +
+>> +static int __init tegra_trimslice_pci_init(void)
+>> +{
+>> +       return tegra_pcie_init(true, true);
+>> +}
+>> +subsys_initcall(tegra_trimslice_pci_init);
+>> +
+>> +static void __init tegra_trimslice_init(void)
+>> +{
+>> +       tegra_common_init();
+>> +
+>> +       tegra_clk_init_from_table(trimslice_clk_init_table);
+>> +
+>> +       trimslice_pinmux_init();
+>> +
+>> +       platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
+>> +}
+>> +
+>> +MACHINE_START(TRIMSLICE, "trimslice")
+>> +       .boot_params    = 0x00000100,
+>> +       .fixup          = tegra_trimslice_fixup,
+>> +       .init_irq       = tegra_init_irq,
+>> +       .init_machine   = tegra_trimslice_init,
+>> +       .map_io         = tegra_map_common_io,
+>> +       .timer          = &tegra_timer,
+>> +MACHINE_END
+>> diff --git a/arch/arm/mach-tegra/board-trimslice.h b/arch/arm/mach-tegra/board-trimslice.h
+>> new file mode 100644
+>> index 0000000..16ec0f0
+>> --- /dev/null
+>> +++ b/arch/arm/mach-tegra/board-trimslice.h
+>> @@ -0,0 +1,22 @@
+>> +/*
+>> + * arch/arm/mach-tegra/board-trimslice.h
+>> + *
+>> + * Copyright (C) 2011 CompuLab, Ltd.
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + */
+>> +
+>> +#ifndef _MACH_TEGRA_BOARD_TRIMSLICE_H
+>> +#define _MACH_TEGRA_BOARD_TRIMSLICE_H
+>> +
+>> +void trimslice_pinmux_init(void);
+>> +
+>> +#endif
+>> --
+>> 1.7.3.1
+> 
+> Ack, the machine type is merged so I'll put this in for-next.  Do you
+> want it enabled in tegra_defconfig?
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile           |    1 -
- arch/arm/mach-tegra/clock.c            |  159 +-------------------------------
- arch/arm/mach-tegra/clock.h            |   24 -----
- arch/arm/mach-tegra/cpu-tegra.c        |    2 +-
- arch/arm/mach-tegra/include/mach/clk.h |    5 -
- arch/arm/mach-tegra/tegra2_clocks.c    |    2 -
- arch/arm/mach-tegra/tegra2_dvfs.c      |   86 -----------------
- arch/arm/mach-tegra/tegra2_dvfs.h      |   20 ----
- 8 files changed, 2 insertions(+), 297 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.c
- delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.h
+If 'select TEGRA_PCI' does not trouble you, I'd be glad to have the TrimSlice in
+tegra_defconfig :)
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 6b537de..23de060 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -9,7 +9,6 @@ obj-y                                   += powergate.o
- obj-y					+= fuse.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_dvfs.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
- obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 79c0bd8..a1193f9 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -24,81 +24,14 @@
- #include <linux/debugfs.h>
- #include <linux/slab.h>
- #include <linux/seq_file.h>
--#include <linux/regulator/consumer.h>
- #include <linux/clkdev.h>
- 
--#include "clock.h"
- #include "board.h"
--#include "fuse.h"
-+#include "clock.h"
- 
- static LIST_HEAD(clocks);
- 
- static DEFINE_SPINLOCK(clock_lock);
--static DEFINE_MUTEX(dvfs_lock);
--
--static int clk_is_dvfs(struct clk *c)
--{
--	return (c->dvfs != NULL);
--};
--
--static int dvfs_set_rate(struct dvfs *d, unsigned long rate)
--{
--	struct dvfs_table *t;
--
--	if (d->table == NULL)
--		return -ENODEV;
--
--	for (t = d->table; t->rate != 0; t++) {
--		if (rate <= t->rate) {
--			if (!d->reg)
--				return 0;
--
--			return regulator_set_voltage(d->reg,
--				t->millivolts * 1000,
--				d->max_millivolts * 1000);
--		}
--	}
--
--	return -EINVAL;
--}
--
--static void dvfs_init(struct clk *c)
--{
--	int process_id;
--	int i;
--	struct dvfs_table *table;
--
--	process_id = c->dvfs->cpu ? tegra_core_process_id() :
--		tegra_cpu_process_id();
--
--	for (i = 0; i < c->dvfs->process_id_table_length; i++)
--		if (process_id == c->dvfs->process_id_table[i].process_id)
--			c->dvfs->table = c->dvfs->process_id_table[i].table;
--
--	if (c->dvfs->table == NULL) {
--		pr_err("Failed to find dvfs table for clock %s process %d\n",
--			c->name, process_id);
--		return;
--	}
--
--	c->dvfs->max_millivolts = 0;
--	for (table = c->dvfs->table; table->rate != 0; table++)
--		if (c->dvfs->max_millivolts < table->millivolts)
--			c->dvfs->max_millivolts = table->millivolts;
--
--	c->dvfs->reg = regulator_get(NULL, c->dvfs->reg_id);
--
--	if (IS_ERR(c->dvfs->reg)) {
--		pr_err("Failed to get regulator %s for clock %s\n",
--			c->dvfs->reg_id, c->name);
--		c->dvfs->reg = NULL;
--		return;
--	}
--
--	if (c->refcnt > 0)
--		dvfs_set_rate(c->dvfs, c->rate);
--}
--
- struct clk *tegra_get_clock_by_name(const char *name)
- {
- 	struct clk *c;
-@@ -214,34 +147,11 @@ int clk_enable_locked(struct clk *c)
- 	return 0;
- }
- 
--int clk_enable_cansleep(struct clk *c)
--{
--	int ret;
--	unsigned long flags;
--
--	mutex_lock(&dvfs_lock);
--
--	if (clk_is_dvfs(c) && c->refcnt > 0)
--		dvfs_set_rate(c->dvfs, c->rate);
--
--	spin_lock_irqsave(&clock_lock, flags);
--	ret = clk_enable_locked(c);
--	spin_unlock_irqrestore(&clock_lock, flags);
--
--	mutex_unlock(&dvfs_lock);
--
--	return ret;
--}
--EXPORT_SYMBOL(clk_enable_cansleep);
--
- int clk_enable(struct clk *c)
- {
- 	int ret;
- 	unsigned long flags;
- 
--	if (clk_is_dvfs(c))
--		BUG();
--
- 	spin_lock_irqsave(&clock_lock, flags);
- 	ret = clk_enable_locked(c);
- 	spin_unlock_irqrestore(&clock_lock, flags);
-@@ -268,30 +178,10 @@ void clk_disable_locked(struct clk *c)
- 	c->refcnt--;
- }
- 
--void clk_disable_cansleep(struct clk *c)
--{
--	unsigned long flags;
--
--	mutex_lock(&dvfs_lock);
--
--	spin_lock_irqsave(&clock_lock, flags);
--	clk_disable_locked(c);
--	spin_unlock_irqrestore(&clock_lock, flags);
--
--	if (clk_is_dvfs(c) && c->refcnt == 0)
--		dvfs_set_rate(c->dvfs, c->rate);
--
--	mutex_unlock(&dvfs_lock);
--}
--EXPORT_SYMBOL(clk_disable_cansleep);
--
- void clk_disable(struct clk *c)
- {
- 	unsigned long flags;
- 
--	if (clk_is_dvfs(c))
--		BUG();
--
- 	spin_lock_irqsave(&clock_lock, flags);
- 	clk_disable_locked(c);
- 	spin_unlock_irqrestore(&clock_lock, flags);
-@@ -356,41 +246,11 @@ int clk_set_rate_locked(struct clk *c, unsigned long rate)
- 	return 0;
- }
- 
--int clk_set_rate_cansleep(struct clk *c, unsigned long rate)
--{
--	int ret = 0;
--	unsigned long flags;
--
--	mutex_lock(&dvfs_lock);
--
--	if (rate > c->rate)
--		ret = dvfs_set_rate(c->dvfs, rate);
--	if (ret)
--		goto out;
--
--	spin_lock_irqsave(&clock_lock, flags);
--	ret = clk_set_rate_locked(c, rate);
--	spin_unlock_irqrestore(&clock_lock, flags);
--
--	if (ret)
--		goto out;
--
--	ret = dvfs_set_rate(c->dvfs, rate);
--
--out:
--	mutex_unlock(&dvfs_lock);
--	return ret;
--}
--EXPORT_SYMBOL(clk_set_rate_cansleep);
--
- int clk_set_rate(struct clk *c, unsigned long rate)
- {
- 	int ret = 0;
- 	unsigned long flags;
- 
--	if (clk_is_dvfs(c))
--		BUG();
--
- 	spin_lock_irqsave(&clock_lock, flags);
- 	ret = clk_set_rate_locked(c, rate);
- 	spin_unlock_irqrestore(&clock_lock, flags);
-@@ -503,23 +363,6 @@ void __init tegra_init_clock(void)
- 	tegra2_init_clocks();
- }
- 
--int __init tegra_init_dvfs(void)
--{
--	struct clk *c, *safe;
--
--	mutex_lock(&dvfs_lock);
--
--	list_for_each_entry_safe(c, safe, &clocks, node)
--		if (c->dvfs)
--			dvfs_init(c);
--
--	mutex_unlock(&dvfs_lock);
--
--	return 0;
--}
--
--late_initcall(tegra_init_dvfs);
--
- /*
-  * Iterate through all clocks, disabling any for which the refcount is 0
-  * but the clock init detected the bootloader left the clock on.
-diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
-index b76d33d..198f234 100644
---- a/arch/arm/mach-tegra/clock.h
-+++ b/arch/arm/mach-tegra/clock.h
-@@ -41,28 +41,6 @@
- #define ENABLE_ON_INIT		(1 << 28)
- 
- struct clk;
--struct regulator;
--
--struct dvfs_table {
--	unsigned long rate;
--	int millivolts;
--};
--
--struct dvfs_process_id_table {
--	int process_id;
--	struct dvfs_table *table;
--};
--
--struct dvfs {
--	struct regulator *reg;
--	struct dvfs_table *table;
--	int max_millivolts;
--
--	int process_id_table_length;
--	const char *reg_id;
--	bool cpu;
--	struct dvfs_process_id_table process_id_table[];
--};
- 
- struct clk_mux_sel {
- 	struct clk	*input;
-@@ -141,8 +119,6 @@ struct clk {
- 	/* Virtual cpu clock */
- 	struct clk			*main;
- 	struct clk			*backup;
--
--	struct dvfs			*dvfs;
- };
- 
- 
-diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
-index ad26a9f..cda03f1 100644
---- a/arch/arm/mach-tegra/cpu-tegra.c
-+++ b/arch/arm/mach-tegra/cpu-tegra.c
-@@ -91,7 +91,7 @@ static int tegra_update_cpu_speed(unsigned long rate)
- 	       freqs.old, freqs.new);
- #endif
- 
--	ret = clk_set_rate_cansleep(cpu_clk, freqs.new * 1000);
-+	ret = clk_set_rate(cpu_clk, freqs.new * 1000);
- 	if (ret) {
- 		pr_err("cpu-tegra: Failed to set cpu frequency to %d kHz\n",
- 			freqs.new);
-diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
-index a217f68..6338652 100644
---- a/arch/arm/mach-tegra/include/mach/clk.h
-+++ b/arch/arm/mach-tegra/include/mach/clk.h
-@@ -25,9 +25,4 @@ struct clk;
- void tegra_periph_reset_deassert(struct clk *c);
- void tegra_periph_reset_assert(struct clk *c);
- 
--int clk_enable_cansleep(struct clk *clk);
--void clk_disable_cansleep(struct clk *clk);
--int clk_set_rate_cansleep(struct clk *clk, unsigned long rate);
--int clk_set_parent_cansleep(struct clk *clk, struct clk *parent);
--
- #endif
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 36da2e8..e1e0d81f 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -31,7 +31,6 @@
- 
- #include "clock.h"
- #include "fuse.h"
--#include "tegra2_dvfs.h"
- 
- #define RST_DEVICES			0x004
- #define RST_DEVICES_SET			0x300
-@@ -1650,7 +1649,6 @@ static struct clk tegra_clk_virtual_cpu = {
- 	.backup    = &tegra_pll_p,
- 	.ops       = &tegra_cpu_ops,
- 	.max_rate  = 1000000000,
--	.dvfs      = &tegra_dvfs_virtual_cpu_dvfs,
- };
- 
- static struct clk tegra_clk_hclk = {
-diff --git a/arch/arm/mach-tegra/tegra2_dvfs.c b/arch/arm/mach-tegra/tegra2_dvfs.c
-deleted file mode 100644
-index 5529c23..0000000
---- a/arch/arm/mach-tegra/tegra2_dvfs.c
-+++ /dev/null
-@@ -1,86 +0,0 @@
--/*
-- * arch/arm/mach-tegra/tegra2_dvfs.c
-- *
-- * Copyright (C) 2010 Google, Inc.
-- *
-- * Author:
-- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
--
--#include <linux/kernel.h>
--
--#include "clock.h"
--#include "tegra2_dvfs.h"
--
--static struct dvfs_table virtual_cpu_process_0[] = {
--	{314000000,  750},
--	{456000000,  825},
--	{608000000,  900},
--	{760000000,  975},
--	{817000000,  1000},
--	{912000000,  1050},
--	{1000000000, 1100},
--	{0, 0},
--};
--
--static struct dvfs_table virtual_cpu_process_1[] = {
--	{314000000,  750},
--	{456000000,  825},
--	{618000000,  900},
--	{770000000,  975},
--	{827000000,  1000},
--	{922000000,  1050},
--	{1000000000, 1100},
--	{0, 0},
--};
--
--static struct dvfs_table virtual_cpu_process_2[] = {
--	{494000000,  750},
--	{675000000,  825},
--	{817000000,  875},
--	{922000000,  925},
--	{1000000000, 975},
--	{0, 0},
--};
--
--static struct dvfs_table virtual_cpu_process_3[] = {
--	{730000000,  750},
--	{760000000,  775},
--	{845000000,  800},
--	{1000000000, 875},
--	{0, 0},
--};
--
--struct dvfs tegra_dvfs_virtual_cpu_dvfs = {
--	.reg_id = "vdd_cpu",
--	.process_id_table = {
--		{
--			.process_id = 0,
--			.table = virtual_cpu_process_0,
--		},
--		{
--			.process_id = 1,
--			.table = virtual_cpu_process_1,
--		},
--		{
--			.process_id = 2,
--			.table = virtual_cpu_process_2,
--		},
--		{
--			.process_id = 3,
--			.table = virtual_cpu_process_3,
--		},
--	},
--	.process_id_table_length = 4,
--	.cpu = 1,
--};
-diff --git a/arch/arm/mach-tegra/tegra2_dvfs.h b/arch/arm/mach-tegra/tegra2_dvfs.h
-deleted file mode 100644
-index f8c1adb..0000000
---- a/arch/arm/mach-tegra/tegra2_dvfs.h
-+++ /dev/null
-@@ -1,20 +0,0 @@
--/*
-- * arch/arm/mach-tegra/tegra2_dvfs.h
-- *
-- * Copyright (C) 2010 Google, Inc.
-- *
-- * Author:
-- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
--
--extern struct dvfs tegra_dvfs_virtual_cpu_dvfs;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 -- 
-1.7.3.1
-
+Sincerely yours,
+Mike.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
