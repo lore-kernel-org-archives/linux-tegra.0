@@ -1,108 +1,162 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH 15/21] ARM: tegra: clock: Round rate before setting rate
-Date: Sun, 13 Feb 2011 01:40:27 -0800
-Message-ID: <1297590033-15035-16-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 08/21] ARM: tegra: clock: Rearrange static clock tables
+Date: Sun, 13 Feb 2011 01:40:20 -0800
+Message-ID: <1297590033-15035-9-git-send-email-ccross@android.com>
 References: <1297590033-15035-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1297590033-15035-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1297590033-15035-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Call the clock's round_rate op, if it exists, before calling
-the set_rate op.  This will help later when dvfs is added,
-dvfs needs to know what the final rate will be before the
-frequency changes.
+Make the static clocks look more like the array of clocks
+so they can all be initalized with the same helper function.
 
-Also requires fixes to the round rate functions to ensure
-calling round rate and then set rate will not cause the
-frequency to be rounded down twice.  When picking clock
-divider values, the clock framework picks the closest
-frequency that is lower than the requested frequency.  If
-the new frequency calculated from the divider value is
-rounded down, and then passed to set_rate, it will get
-rounded down again, possibly resulting in a frequency two
-steps lower than the original requested frequency.
-
-Fix the problem by rounding up when calculating the frequency
-coming out of a clock divider, so if that frequency is
-requested again, the same divider value will be picked.
-
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/clock.c         |   13 +++++++++++++
- arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |  106 +++++++++++++++++------------------
+ 1 files changed, 51 insertions(+), 55 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 2d9ddfd..4865bb4 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -85,6 +85,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
- 
- 	if (c->mul != 0 && c->div != 0) {
- 		rate *= c->mul;
-+		rate += c->div / 2; /* round up */
- 		do_div(rate, c->div);
- 	}
- 
-@@ -242,6 +243,7 @@ int clk_set_rate(struct clk *c, unsigned long rate)
- 	int ret = 0;
- 	unsigned long flags;
- 	unsigned long old_rate;
-+	long new_rate;
- 
- 	spin_lock_irqsave(&c->spinlock, flags);
- 
-@@ -255,6 +257,17 @@ int clk_set_rate(struct clk *c, unsigned long rate)
- 	if (rate > c->max_rate)
- 		rate = c->max_rate;
- 
-+	if (c->ops && c->ops->round_rate) {
-+		new_rate = c->ops->round_rate(c, rate);
-+
-+		if (new_rate < 0) {
-+			ret = new_rate;
-+			goto out;
-+		}
-+
-+		rate = new_rate;
-+	}
-+
- 	ret = c->ops->set_rate(c, rate);
- 	if (ret)
- 		goto out;
 diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 2f79128..96b2490 100644
+index e1e0d81f..62ec3fb 100644
 --- a/arch/arm/mach-tegra/tegra2_clocks.c
 +++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -866,9 +866,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
- 		divider = clk_div71_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_2) {
--		return parent_rate / 2;
-+		return DIV_ROUND_UP(parent_rate, 2);
+@@ -1770,7 +1770,7 @@ static struct clk_mux_sel mux_clk_32k[] = {
+ 		.max_rate  = _max,			\
  	}
- 	return -EINVAL;
- }
-@@ -1058,12 +1058,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
- 		if (divider < 0)
- 			return divider;
  
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_U16) {
- 		divider = clk_div16_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate / (divider + 1);
-+		return DIV_ROUND_UP(parent_rate, divider + 1);
+-struct clk tegra_periph_clks[] = {
++struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
+ 	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
+ 	PERIPH_CLK("i2s1",	"i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+@@ -1879,71 +1879,67 @@ struct clk_duplicate tegra_clk_duplicates[] = {
+ 		.clk = ck,	\
  	}
- 	return -EINVAL;
- }
+ 
+-struct clk_lookup tegra_clk_lookups[] = {
+-	/* external root sources */
+-	CLK(NULL,	"32k_clk",	&tegra_clk_32k),
+-	CLK(NULL,	"pll_s",	&tegra_pll_s),
+-	CLK(NULL,	"clk_m",	&tegra_clk_m),
+-	CLK(NULL,	"pll_m",	&tegra_pll_m),
+-	CLK(NULL,	"pll_m_out1",	&tegra_pll_m_out1),
+-	CLK(NULL,	"pll_c",	&tegra_pll_c),
+-	CLK(NULL,	"pll_c_out1",	&tegra_pll_c_out1),
+-	CLK(NULL,	"pll_p",	&tegra_pll_p),
+-	CLK(NULL,	"pll_p_out1",	&tegra_pll_p_out1),
+-	CLK(NULL,	"pll_p_out2",	&tegra_pll_p_out2),
+-	CLK(NULL,	"pll_p_out3",	&tegra_pll_p_out3),
+-	CLK(NULL,	"pll_p_out4",	&tegra_pll_p_out4),
+-	CLK(NULL,	"pll_a",	&tegra_pll_a),
+-	CLK(NULL,	"pll_a_out0",	&tegra_pll_a_out0),
+-	CLK(NULL,	"pll_d",	&tegra_pll_d),
+-	CLK(NULL,	"pll_d_out0",	&tegra_pll_d_out0),
+-	CLK(NULL,	"pll_u",	&tegra_pll_u),
+-	CLK(NULL,	"pll_x",	&tegra_pll_x),
+-	CLK(NULL,	"pll_e",	&tegra_pll_e),
+-	CLK(NULL,	"cclk",		&tegra_clk_cclk),
+-	CLK(NULL,	"sclk",		&tegra_clk_sclk),
+-	CLK(NULL,	"hclk",		&tegra_clk_hclk),
+-	CLK(NULL,	"pclk",		&tegra_clk_pclk),
+-	CLK(NULL,	"clk_d",	&tegra_clk_d),
+-	CLK(NULL,	"clk_dev1",	&tegra_dev1_clk),
+-	CLK(NULL,	"clk_dev2",	&tegra_dev2_clk),
+-	CLK(NULL,	"cpu",		&tegra_clk_virtual_cpu),
+-	CLK(NULL,	"blink",	&tegra_clk_blink),
+-};
++struct clk *tegra_ptr_clks[] = {
++	&tegra_clk_32k,
++	&tegra_pll_s,
++	&tegra_clk_m,
++	&tegra_pll_m,
++	&tegra_pll_m_out1,
++	&tegra_pll_c,
++	&tegra_pll_c_out1,
++	&tegra_pll_p,
++	&tegra_pll_p_out1,
++	&tegra_pll_p_out2,
++	&tegra_pll_p_out3,
++	&tegra_pll_p_out4,
++	&tegra_pll_a,
++	&tegra_pll_a_out0,
++	&tegra_pll_d,
++	&tegra_pll_d_out0,
++	&tegra_pll_u,
++	&tegra_pll_x,
++	&tegra_pll_e,
++	&tegra_clk_cclk,
++	&tegra_clk_sclk,
++	&tegra_clk_hclk,
++	&tegra_clk_pclk,
++	&tegra_clk_d,
++	&tegra_dev1_clk,
++	&tegra_dev2_clk,
++	&tegra_clk_virtual_cpu,
++	&tegra_clk_blink,
++};
++
++static void tegra2_init_one_clock(struct clk *c)
++{
++	clk_init(c);
++	if (!c->lookup.dev_id && !c->lookup.con_id)
++		c->lookup.con_id = c->name;
++	c->lookup.clk = c;
++	clkdev_add(&c->lookup);
++}
+ 
+ void __init tegra2_init_clocks(void)
+ {
+ 	int i;
+-	struct clk_lookup *cl;
+ 	struct clk *c;
+-	struct clk_duplicate *cd;
+-
+-	for (i = 0; i < ARRAY_SIZE(tegra_clk_lookups); i++) {
+-		cl = &tegra_clk_lookups[i];
+-		clk_init(cl->clk);
+-		clkdev_add(cl);
+-	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(tegra_periph_clks); i++) {
+-		c = &tegra_periph_clks[i];
+-		cl = &c->lookup;
+-		cl->clk = c;
++	for (i = 0; i < ARRAY_SIZE(tegra_ptr_clks); i++)
++		tegra2_init_one_clock(tegra_ptr_clks[i]);
+ 
+-		clk_init(cl->clk);
+-		clkdev_add(cl);
+-	}
++	for (i = 0; i < ARRAY_SIZE(tegra_list_clks); i++)
++		tegra2_init_one_clock(&tegra_list_clks[i]);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tegra_clk_duplicates); i++) {
+-		cd = &tegra_clk_duplicates[i];
+-		c = tegra_get_clock_by_name(cd->name);
+-		if (c) {
+-			cl = &cd->lookup;
+-			cl->clk = c;
+-			clkdev_add(cl);
+-		} else {
++		c = tegra_get_clock_by_name(tegra_clk_duplicates[i].name);
++		if (!c) {
+ 			pr_err("%s: Unknown duplicate clock %s\n", __func__,
+-				cd->name);
++				tegra_clk_duplicates[i].name);
++			continue;
+ 		}
++
++		tegra_clk_duplicates[i].lookup.clk = c;
++		clkdev_add(&tegra_clk_duplicates[i].lookup);
+ 	}
+ 
+ 	init_audio_sync_clock_mux();
 -- 
 1.7.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
