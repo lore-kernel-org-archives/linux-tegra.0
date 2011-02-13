@@ -1,7 +1,7 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 20/21] ARM: tegra: clock: Fix clock issues in suspend
-Date: Sun, 13 Feb 2011 01:40:32 -0800
-Message-ID: <1297590033-15035-21-git-send-email-ccross@android.com>
+Subject: [PATCH 18/21] ARM: tegra: cpufreq: Adjust memory frequency with cpu frequency
+Date: Sun, 13 Feb 2011 01:40:30 -0800
+Message-ID: <1297590033-15035-19-git-send-email-ccross@android.com>
 References: <1297590033-15035-1-git-send-email-ccross@android.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1297590033-15035-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
@@ -10,112 +10,64 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The PLLP registers are now being restored by the low-level resume code,
-and the CPU may be running off PLLP, so don't touch them during clock
-resume.
-
-Save plld, plls, pllu, and audio clock during suspend (originally
-fixed by Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>)
-
-The lock time for plld is 1000 us, so increase the delay after
-setting the PLLs.
-
-Add a BUG_ON to ensure the size of the suspend context area is
-correct.
-
 Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/tegra2_clocks.c |   30 ++++++++++++++++++++----------
- 1 files changed, 20 insertions(+), 10 deletions(-)
+ arch/arm/mach-tegra/cpu-tegra.c |   21 +++++++++++++++++++++
+ 1 files changed, 21 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index bfc9792..00e348a 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -2215,7 +2215,7 @@ void __init tegra2_init_clocks(void)
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index f02ba60..0e1016a 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -51,6 +51,7 @@ static struct cpufreq_frequency_table freq_table[] = {
+ #define NUM_CPUS	2
  
- #ifdef CONFIG_PM
- static u32 clk_rst_suspend[RST_DEVICES_NUM + CLK_OUT_ENB_NUM +
--			   PERIPH_CLK_SOURCE_NUM + 19];
-+			   PERIPH_CLK_SOURCE_NUM + 22];
+ static struct clk *cpu_clk;
++static struct clk *emc_clk;
  
- void tegra_clk_suspend(void)
+ static unsigned long target_cpu_speed[NUM_CPUS];
+ static DEFINE_MUTEX(tegra_cpu_lock);
+@@ -83,6 +84,17 @@ static int tegra_update_cpu_speed(unsigned long rate)
+ 	if (freqs.old == freqs.new)
+ 		return ret;
+ 
++	/*
++	 * Vote on memory bus frequency based on cpu frequency
++	 * This sets the minimum frequency, display or avp may request higher
++	 */
++	if (rate >= 816000)
++		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
++	else if (rate >= 456000)
++		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
++	else
++		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
++
+ 	for_each_online_cpu(freqs.cpu)
+ 		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
+ 
+@@ -173,6 +185,13 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ 	if (IS_ERR(cpu_clk))
+ 		return PTR_ERR(cpu_clk);
+ 
++	emc_clk = clk_get_sys("cpu", "emc");
++	if (IS_ERR(emc_clk)) {
++		clk_put(cpu_clk);
++		return PTR_ERR(emc_clk);
++	}
++
++	clk_enable(emc_clk);
+ 	clk_enable(cpu_clk);
+ 
+ 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
+@@ -195,6 +214,8 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ static int tegra_cpu_exit(struct cpufreq_policy *policy)
  {
-@@ -2223,16 +2223,18 @@ void tegra_clk_suspend(void)
- 	u32 *ctx = clk_rst_suspend;
- 
- 	*ctx++ = clk_readl(OSC_CTRL) & OSC_CTRL_MASK;
--	*ctx++ = clk_readl(tegra_pll_p.reg + PLL_BASE);
--	*ctx++ = clk_readl(tegra_pll_p.reg + PLL_MISC(&tegra_pll_p));
- 	*ctx++ = clk_readl(tegra_pll_c.reg + PLL_BASE);
- 	*ctx++ = clk_readl(tegra_pll_c.reg + PLL_MISC(&tegra_pll_c));
- 	*ctx++ = clk_readl(tegra_pll_a.reg + PLL_BASE);
- 	*ctx++ = clk_readl(tegra_pll_a.reg + PLL_MISC(&tegra_pll_a));
-+	*ctx++ = clk_readl(tegra_pll_s.reg + PLL_BASE);
-+	*ctx++ = clk_readl(tegra_pll_s.reg + PLL_MISC(&tegra_pll_s));
-+	*ctx++ = clk_readl(tegra_pll_d.reg + PLL_BASE);
-+	*ctx++ = clk_readl(tegra_pll_d.reg + PLL_MISC(&tegra_pll_d));
-+	*ctx++ = clk_readl(tegra_pll_u.reg + PLL_BASE);
-+	*ctx++ = clk_readl(tegra_pll_u.reg + PLL_MISC(&tegra_pll_u));
- 
- 	*ctx++ = clk_readl(tegra_pll_m_out1.reg);
--	*ctx++ = clk_readl(tegra_pll_p_out1.reg);
--	*ctx++ = clk_readl(tegra_pll_p_out3.reg);
- 	*ctx++ = clk_readl(tegra_pll_a_out0.reg);
- 	*ctx++ = clk_readl(tegra_pll_c_out1.reg);
- 
-@@ -2243,6 +2245,8 @@ void tegra_clk_suspend(void)
- 	*ctx++ = clk_readl(tegra_clk_sclk.reg + SUPER_CLK_DIVIDER);
- 	*ctx++ = clk_readl(tegra_clk_pclk.reg);
- 
-+	*ctx++ = clk_readl(tegra_clk_audio.reg);
-+
- 	for (off = PERIPH_CLK_SOURCE_I2S1; off <= PERIPH_CLK_SOURCE_OSC;
- 			off += 4) {
- 		if (off == PERIPH_CLK_SOURCE_EMC)
-@@ -2260,6 +2264,8 @@ void tegra_clk_suspend(void)
- 
- 	*ctx++ = clk_readl(MISC_CLK_ENB);
- 	*ctx++ = clk_readl(CLK_MASK_ARM);
-+
-+	BUG_ON(ctx - clk_rst_suspend != ARRAY_SIZE(clk_rst_suspend));
+ 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
++	clk_disable(emc_clk);
++	clk_put(emc_clk);
+ 	clk_put(cpu_clk);
+ 	return 0;
  }
- 
- void tegra_clk_resume(void)
-@@ -2272,17 +2278,19 @@ void tegra_clk_resume(void)
- 	val |= *ctx++;
- 	clk_writel(val, OSC_CTRL);
- 
--	clk_writel(*ctx++, tegra_pll_p.reg + PLL_BASE);
--	clk_writel(*ctx++, tegra_pll_p.reg + PLL_MISC(&tegra_pll_p));
- 	clk_writel(*ctx++, tegra_pll_c.reg + PLL_BASE);
- 	clk_writel(*ctx++, tegra_pll_c.reg + PLL_MISC(&tegra_pll_c));
- 	clk_writel(*ctx++, tegra_pll_a.reg + PLL_BASE);
- 	clk_writel(*ctx++, tegra_pll_a.reg + PLL_MISC(&tegra_pll_a));
--	udelay(300);
-+	clk_writel(*ctx++, tegra_pll_s.reg + PLL_BASE);
-+	clk_writel(*ctx++, tegra_pll_s.reg + PLL_MISC(&tegra_pll_s));
-+	clk_writel(*ctx++, tegra_pll_d.reg + PLL_BASE);
-+	clk_writel(*ctx++, tegra_pll_d.reg + PLL_MISC(&tegra_pll_d));
-+	clk_writel(*ctx++, tegra_pll_u.reg + PLL_BASE);
-+	clk_writel(*ctx++, tegra_pll_u.reg + PLL_MISC(&tegra_pll_u));
-+	udelay(1000);
- 
- 	clk_writel(*ctx++, tegra_pll_m_out1.reg);
--	clk_writel(*ctx++, tegra_pll_p_out1.reg);
--	clk_writel(*ctx++, tegra_pll_p_out3.reg);
- 	clk_writel(*ctx++, tegra_pll_a_out0.reg);
- 	clk_writel(*ctx++, tegra_pll_c_out1.reg);
- 
-@@ -2293,6 +2301,8 @@ void tegra_clk_resume(void)
- 	clk_writel(*ctx++, tegra_clk_sclk.reg + SUPER_CLK_DIVIDER);
- 	clk_writel(*ctx++, tegra_clk_pclk.reg);
- 
-+	clk_writel(*ctx++, tegra_clk_audio.reg);
-+
- 	/* enable all clocks before configuring clock sources */
- 	clk_writel(0xbffffff9ul, CLK_OUT_ENB);
- 	clk_writel(0xfefffff7ul, CLK_OUT_ENB + 4);
 -- 
 1.7.3.1
 
