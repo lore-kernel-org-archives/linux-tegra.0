@@ -1,77 +1,108 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 18/21] ARM: tegra: cpufreq: Adjust memory frequency with cpu frequency
-Date: Sun, 13 Feb 2011 01:40:30 -0800
-Message-ID: <1297590033-15035-19-git-send-email-ccross@android.com>
+From: Colin Cross <ccross@android.com>
+Subject: [PATCH 15/21] ARM: tegra: clock: Round rate before setting rate
+Date: Sun, 13 Feb 2011 01:40:27 -0800
+Message-ID: <1297590033-15035-16-git-send-email-ccross@android.com>
 References: <1297590033-15035-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1297590033-15035-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1297590033-15035-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-tegra/cpu-tegra.c |   21 +++++++++++++++++++++
- 1 files changed, 21 insertions(+), 0 deletions(-)
+Call the clock's round_rate op, if it exists, before calling
+the set_rate op.  This will help later when dvfs is added,
+dvfs needs to know what the final rate will be before the
+frequency changes.
 
-diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
-index f02ba60..0e1016a 100644
---- a/arch/arm/mach-tegra/cpu-tegra.c
-+++ b/arch/arm/mach-tegra/cpu-tegra.c
-@@ -51,6 +51,7 @@ static struct cpufreq_frequency_table freq_table[] = {
- #define NUM_CPUS	2
+Also requires fixes to the round rate functions to ensure
+calling round rate and then set rate will not cause the
+frequency to be rounded down twice.  When picking clock
+divider values, the clock framework picks the closest
+frequency that is lower than the requested frequency.  If
+the new frequency calculated from the divider value is
+rounded down, and then passed to set_rate, it will get
+rounded down again, possibly resulting in a frequency two
+steps lower than the original requested frequency.
+
+Fix the problem by rounding up when calculating the frequency
+coming out of a clock divider, so if that frequency is
+requested again, the same divider value will be picked.
+
+Signed-off-by: Colin Cross <ccross@android.com>
+---
+ arch/arm/mach-tegra/clock.c         |   13 +++++++++++++
+ arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index 2d9ddfd..4865bb4 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -85,6 +85,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
  
- static struct clk *cpu_clk;
-+static struct clk *emc_clk;
+ 	if (c->mul != 0 && c->div != 0) {
+ 		rate *= c->mul;
++		rate += c->div / 2; /* round up */
+ 		do_div(rate, c->div);
+ 	}
  
- static unsigned long target_cpu_speed[NUM_CPUS];
- static DEFINE_MUTEX(tegra_cpu_lock);
-@@ -83,6 +84,17 @@ static int tegra_update_cpu_speed(unsigned long rate)
- 	if (freqs.old == freqs.new)
- 		return ret;
+@@ -242,6 +243,7 @@ int clk_set_rate(struct clk *c, unsigned long rate)
+ 	int ret = 0;
+ 	unsigned long flags;
+ 	unsigned long old_rate;
++	long new_rate;
  
-+	/*
-+	 * Vote on memory bus frequency based on cpu frequency
-+	 * This sets the minimum frequency, display or avp may request higher
-+	 */
-+	if (rate >= 816000)
-+		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
-+	else if (rate >= 456000)
-+		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
-+	else
-+		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
+ 	spin_lock_irqsave(&c->spinlock, flags);
+ 
+@@ -255,6 +257,17 @@ int clk_set_rate(struct clk *c, unsigned long rate)
+ 	if (rate > c->max_rate)
+ 		rate = c->max_rate;
+ 
++	if (c->ops && c->ops->round_rate) {
++		new_rate = c->ops->round_rate(c, rate);
 +
- 	for_each_online_cpu(freqs.cpu)
- 		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
-@@ -173,6 +185,13 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	if (IS_ERR(cpu_clk))
- 		return PTR_ERR(cpu_clk);
- 
-+	emc_clk = clk_get_sys("cpu", "emc");
-+	if (IS_ERR(emc_clk)) {
-+		clk_put(cpu_clk);
-+		return PTR_ERR(emc_clk);
++		if (new_rate < 0) {
++			ret = new_rate;
++			goto out;
++		}
++
++		rate = new_rate;
 +	}
 +
-+	clk_enable(emc_clk);
- 	clk_enable(cpu_clk);
+ 	ret = c->ops->set_rate(c, rate);
+ 	if (ret)
+ 		goto out;
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 2f79128..96b2490 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -866,9 +866,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
+ 		divider = clk_div71_get_divider(parent_rate, rate);
+ 		if (divider < 0)
+ 			return divider;
+-		return parent_rate * 2 / (divider + 2);
++		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
+ 	} else if (c->flags & DIV_2) {
+-		return parent_rate / 2;
++		return DIV_ROUND_UP(parent_rate, 2);
+ 	}
+ 	return -EINVAL;
+ }
+@@ -1058,12 +1058,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
+ 		if (divider < 0)
+ 			return divider;
  
- 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
-@@ -195,6 +214,8 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- static int tegra_cpu_exit(struct cpufreq_policy *policy)
- {
- 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
-+	clk_disable(emc_clk);
-+	clk_put(emc_clk);
- 	clk_put(cpu_clk);
- 	return 0;
+-		return parent_rate * 2 / (divider + 2);
++		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
+ 	} else if (c->flags & DIV_U16) {
+ 		divider = clk_div16_get_divider(parent_rate, rate);
+ 		if (divider < 0)
+ 			return divider;
+-		return parent_rate / (divider + 1);
++		return DIV_ROUND_UP(parent_rate, divider + 1);
+ 	}
+ 	return -EINVAL;
  }
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
