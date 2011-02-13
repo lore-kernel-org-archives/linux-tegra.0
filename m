@@ -1,7 +1,7 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 09/21] ARM: tegra: clock: Move unshared clk struct members into union
-Date: Sun, 13 Feb 2011 01:40:21 -0800
-Message-ID: <1297590033-15035-10-git-send-email-ccross@android.com>
+Subject: [PATCH 07/21] ARM: tegra: clock: Drop CPU dvfs
+Date: Sun, 13 Feb 2011 01:40:19 -0800
+Message-ID: <1297590033-15035-8-git-send-email-ccross@android.com>
 References: <1297590033-15035-1-git-send-email-ccross@android.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1297590033-15035-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
@@ -10,598 +10,462 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+The existing version did not extend well to core dvfs, drop it
+for now until the new clk api with clk_prepare and clk_unprepare
+is ready and non-atomic clocks are possible.
+
 Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/clock.h         |   85 +++++++------
- arch/arm/mach-tegra/tegra2_clocks.c |  234 ++++++++++++++++++++---------------
- 2 files changed, 176 insertions(+), 143 deletions(-)
+ arch/arm/mach-tegra/Makefile           |    1 -
+ arch/arm/mach-tegra/clock.c            |  159 +-------------------------------
+ arch/arm/mach-tegra/clock.h            |   24 -----
+ arch/arm/mach-tegra/cpu-tegra.c        |    2 +-
+ arch/arm/mach-tegra/include/mach/clk.h |    5 -
+ arch/arm/mach-tegra/tegra2_clocks.c    |    2 -
+ arch/arm/mach-tegra/tegra2_dvfs.c      |   86 -----------------
+ arch/arm/mach-tegra/tegra2_dvfs.h      |   20 ----
+ 8 files changed, 2 insertions(+), 297 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.c
+ delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.h
 
-diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
-index 198f234..20f0ce6 100644
---- a/arch/arm/mach-tegra/clock.h
-+++ b/arch/arm/mach-tegra/clock.h
-@@ -47,7 +47,7 @@ struct clk_mux_sel {
- 	u32		value;
- };
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 6b537de..23de060 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -9,7 +9,6 @@ obj-y                                   += powergate.o
+ obj-y					+= fuse.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+-obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_dvfs.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
+ obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index 79c0bd8..a1193f9 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -24,81 +24,14 @@
+ #include <linux/debugfs.h>
+ #include <linux/slab.h>
+ #include <linux/seq_file.h>
+-#include <linux/regulator/consumer.h>
+ #include <linux/clkdev.h>
  
--struct clk_pll_table {
-+struct clk_pll_freq_table {
- 	unsigned long	input_rate;
- 	unsigned long	output_rate;
- 	u16		n;
-@@ -74,51 +74,54 @@ enum clk_state {
+-#include "clock.h"
+ #include "board.h"
+-#include "fuse.h"
++#include "clock.h"
  
- struct clk {
- 	/* node for master clocks list */
--	struct list_head		node;
--	struct list_head		children;	/* list of children */
--	struct list_head		sibling;	/* node for children */
--#ifdef CONFIG_DEBUG_FS
--	struct dentry			*dent;
--	struct dentry			*parent_dent;
--#endif
--	struct clk_ops			*ops;
--	struct clk			*parent;
--	struct clk_lookup		lookup;
--	unsigned long			rate;
--	unsigned long			max_rate;
--	u32				flags;
--	u32				refcnt;
--	const char			*name;
--	u32				reg;
--	u32				reg_shift;
--	unsigned int			clk_num;
--	enum clk_state			state;
-+	struct list_head	node;		/* node for list of all clocks */
-+	struct list_head	children;	/* list of children */
-+	struct list_head	sibling;	/* node for children */
-+	struct clk_lookup	lookup;
-+
- #ifdef CONFIG_DEBUG_FS
--	bool				set;
-+	struct dentry		*dent;
-+	bool			set;
- #endif
-+	struct clk_ops		*ops;
-+	unsigned long		rate;
-+	unsigned long		max_rate;
-+	u32			flags;
-+	const char		*name;
-+
-+	u32			refcnt;
-+	enum clk_state		state;
-+	struct clk		*parent;
-+	u32			div;
-+	u32			mul;
+ static LIST_HEAD(clocks);
  
--	/* PLL */
--	unsigned long			input_min;
--	unsigned long			input_max;
--	unsigned long			cf_min;
--	unsigned long			cf_max;
--	unsigned long			vco_min;
--	unsigned long			vco_max;
--	const struct clk_pll_table	*pll_table;
--	int				pll_lock_delay;
+ static DEFINE_SPINLOCK(clock_lock);
+-static DEFINE_MUTEX(dvfs_lock);
 -
--	/* DIV */
--	u32				div;
--	u32				mul;
+-static int clk_is_dvfs(struct clk *c)
+-{
+-	return (c->dvfs != NULL);
+-};
 -
--	/* MUX */
- 	const struct clk_mux_sel	*inputs;
--	u32				sel;
--	u32				reg_mask;
-+	u32				reg;
-+	u32				reg_shift;
- 
--	/* Virtual cpu clock */
--	struct clk			*main;
--	struct clk			*backup;
-+	union {
-+		struct {
-+			unsigned int			clk_num;
-+		} periph;
-+		struct {
-+			unsigned long			input_min;
-+			unsigned long			input_max;
-+			unsigned long			cf_min;
-+			unsigned long			cf_max;
-+			unsigned long			vco_min;
-+			unsigned long			vco_max;
-+			const struct clk_pll_freq_table	*freq_table;
-+			int				lock_delay;
-+		} pll;
-+		struct {
-+			u32				sel;
-+			u32				reg_mask;
-+		} mux;
-+		struct {
-+			struct clk			*main;
-+			struct clk			*backup;
-+		} cpu;
-+	} u;
- };
- 
- 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 62ec3fb..f03c712 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -109,9 +109,9 @@
- 
- #define PLLE_MISC_READY			(1 << 15)
- 
--#define PERIPH_CLK_TO_ENB_REG(c)	((c->clk_num / 32) * 4)
--#define PERIPH_CLK_TO_ENB_SET_REG(c)	((c->clk_num / 32) * 8)
--#define PERIPH_CLK_TO_ENB_BIT(c)	(1 << (c->clk_num % 32))
-+#define PERIPH_CLK_TO_ENB_REG(c)	((c->u.periph.clk_num / 32) * 4)
-+#define PERIPH_CLK_TO_ENB_SET_REG(c)	((c->u.periph.clk_num / 32) * 8)
-+#define PERIPH_CLK_TO_ENB_BIT(c)	(1 << (c->u.periph.clk_num % 32))
- 
- #define SUPER_CLK_MUX			0x00
- #define SUPER_STATE_SHIFT		28
-@@ -378,24 +378,24 @@ static void tegra2_cpu_clk_disable(struct clk *c)
- static int tegra2_cpu_clk_set_rate(struct clk *c, unsigned long rate)
+-static int dvfs_set_rate(struct dvfs *d, unsigned long rate)
+-{
+-	struct dvfs_table *t;
+-
+-	if (d->table == NULL)
+-		return -ENODEV;
+-
+-	for (t = d->table; t->rate != 0; t++) {
+-		if (rate <= t->rate) {
+-			if (!d->reg)
+-				return 0;
+-
+-			return regulator_set_voltage(d->reg,
+-				t->millivolts * 1000,
+-				d->max_millivolts * 1000);
+-		}
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-static void dvfs_init(struct clk *c)
+-{
+-	int process_id;
+-	int i;
+-	struct dvfs_table *table;
+-
+-	process_id = c->dvfs->cpu ? tegra_core_process_id() :
+-		tegra_cpu_process_id();
+-
+-	for (i = 0; i < c->dvfs->process_id_table_length; i++)
+-		if (process_id == c->dvfs->process_id_table[i].process_id)
+-			c->dvfs->table = c->dvfs->process_id_table[i].table;
+-
+-	if (c->dvfs->table == NULL) {
+-		pr_err("Failed to find dvfs table for clock %s process %d\n",
+-			c->name, process_id);
+-		return;
+-	}
+-
+-	c->dvfs->max_millivolts = 0;
+-	for (table = c->dvfs->table; table->rate != 0; table++)
+-		if (c->dvfs->max_millivolts < table->millivolts)
+-			c->dvfs->max_millivolts = table->millivolts;
+-
+-	c->dvfs->reg = regulator_get(NULL, c->dvfs->reg_id);
+-
+-	if (IS_ERR(c->dvfs->reg)) {
+-		pr_err("Failed to get regulator %s for clock %s\n",
+-			c->dvfs->reg_id, c->name);
+-		c->dvfs->reg = NULL;
+-		return;
+-	}
+-
+-	if (c->refcnt > 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-}
+-
+ struct clk *tegra_get_clock_by_name(const char *name)
  {
- 	int ret;
--	ret = clk_set_parent_locked(c->parent, c->backup);
-+	ret = clk_set_parent_locked(c->parent, c->u.cpu.backup);
- 	if (ret) {
--		pr_err("Failed to switch cpu to clock %s\n", c->backup->name);
-+		pr_err("Failed to switch cpu to clock %s\n", c->u.cpu.backup->name);
- 		return ret;
- 	}
- 
--	if (rate == c->backup->rate)
-+	if (rate == c->u.cpu.backup->rate)
- 		goto out;
- 
--	ret = clk_set_rate_locked(c->main, rate);
-+	ret = clk_set_rate_locked(c->u.cpu.main, rate);
- 	if (ret) {
- 		pr_err("Failed to change cpu pll to %lu\n", rate);
- 		return ret;
- 	}
- 
--	ret = clk_set_parent_locked(c->parent, c->main);
-+	ret = clk_set_parent_locked(c->parent, c->u.cpu.main);
- 	if (ret) {
--		pr_err("Failed to switch cpu to clock %s\n", c->main->name);
-+		pr_err("Failed to switch cpu to clock %s\n", c->u.cpu.main->name);
- 		return ret;
- 	}
- 
-@@ -543,7 +543,7 @@ static struct clk_ops tegra_blink_clk_ops = {
- /* PLL Functions */
- static int tegra2_pll_clk_wait_for_lock(struct clk *c)
- {
--	udelay(c->pll_lock_delay);
-+	udelay(c->u.pll.lock_delay);
- 
+ 	struct clk *c;
+@@ -214,34 +147,11 @@ int clk_enable_locked(struct clk *c)
  	return 0;
  }
-@@ -600,12 +600,12 @@ static int tegra2_pll_clk_set_rate(struct clk *c, unsigned long rate)
+ 
+-int clk_enable_cansleep(struct clk *c)
+-{
+-	int ret;
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	if (clk_is_dvfs(c) && c->refcnt > 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	ret = clk_enable_locked(c);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	mutex_unlock(&dvfs_lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_enable_cansleep);
+-
+ int clk_enable(struct clk *c)
  {
- 	u32 val;
- 	unsigned long input_rate;
--	const struct clk_pll_table *sel;
-+	const struct clk_pll_freq_table *sel;
+ 	int ret;
+ 	unsigned long flags;
  
- 	pr_debug("%s: %s %lu\n", __func__, c->name, rate);
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	ret = clk_enable_locked(c);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -268,30 +178,10 @@ void clk_disable_locked(struct clk *c)
+ 	c->refcnt--;
+ }
  
- 	input_rate = c->parent->rate;
--	for (sel = c->pll_table; sel->input_rate != 0; sel++) {
-+	for (sel = c->u.pll.freq_table; sel->input_rate != 0; sel++) {
- 		if (sel->input_rate == input_rate && sel->output_rate == rate) {
- 			c->mul = sel->n;
- 			c->div = sel->m * sel->p;
-@@ -1138,7 +1138,7 @@ static struct clk tegra_clk_32k = {
- 	.max_rate = 32768,
- };
+-void clk_disable_cansleep(struct clk *c)
+-{
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	clk_disable_locked(c);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	if (clk_is_dvfs(c) && c->refcnt == 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-
+-	mutex_unlock(&dvfs_lock);
+-}
+-EXPORT_SYMBOL(clk_disable_cansleep);
+-
+ void clk_disable(struct clk *c)
+ {
+ 	unsigned long flags;
  
--static struct clk_pll_table tegra_pll_s_table[] = {
-+static struct clk_pll_freq_table tegra_pll_s_freq_table[] = {
- 	{32768, 12000000, 366, 1, 1, 0},
- 	{32768, 13000000, 397, 1, 1, 0},
- 	{32768, 19200000, 586, 1, 1, 0},
-@@ -1150,17 +1150,19 @@ static struct clk tegra_pll_s = {
- 	.name      = "pll_s",
- 	.flags     = PLL_ALT_MISC_REG,
- 	.ops       = &tegra_pll_ops,
--	.reg       = 0xf0,
--	.input_min = 32768,
--	.input_max = 32768,
- 	.parent    = &tegra_clk_32k,
--	.cf_min    = 0, /* FIXME */
--	.cf_max    = 0, /* FIXME */
--	.vco_min   = 12000000,
--	.vco_max   = 26000000,
--	.pll_table = tegra_pll_s_table,
- 	.max_rate  = 26000000,
--	.pll_lock_delay = 300,
-+	.reg       = 0xf0,
-+	.u.pll = {
-+		.input_min = 32768,
-+		.input_max = 32768,
-+		.cf_min    = 0, /* FIXME */
-+		.cf_max    = 0, /* FIXME */
-+		.vco_min   = 12000000,
-+		.vco_max   = 26000000,
-+		.freq_table = tegra_pll_s_freq_table,
-+		.lock_delay = 300,
-+	},
- };
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	clk_disable_locked(c);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -356,41 +246,11 @@ int clk_set_rate_locked(struct clk *c, unsigned long rate)
+ 	return 0;
+ }
  
- static struct clk_mux_sel tegra_clk_m_sel[] = {
-@@ -1168,18 +1170,18 @@ static struct clk_mux_sel tegra_clk_m_sel[] = {
- 	{ .input = &tegra_pll_s,  .value = 1},
- 	{ 0, 0},
- };
-+
- static struct clk tegra_clk_m = {
- 	.name      = "clk_m",
- 	.flags     = ENABLE_ON_INIT,
- 	.ops       = &tegra_clk_m_ops,
- 	.inputs    = tegra_clk_m_sel,
- 	.reg       = 0x1fc,
--	.reg_mask  = (1<<28),
- 	.reg_shift = 28,
- 	.max_rate  = 26000000,
- };
+-int clk_set_rate_cansleep(struct clk *c, unsigned long rate)
+-{
+-	int ret = 0;
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	if (rate > c->rate)
+-		ret = dvfs_set_rate(c->dvfs, rate);
+-	if (ret)
+-		goto out;
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	ret = clk_set_rate_locked(c, rate);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	if (ret)
+-		goto out;
+-
+-	ret = dvfs_set_rate(c->dvfs, rate);
+-
+-out:
+-	mutex_unlock(&dvfs_lock);
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_set_rate_cansleep);
+-
+ int clk_set_rate(struct clk *c, unsigned long rate)
+ {
+ 	int ret = 0;
+ 	unsigned long flags;
  
--static struct clk_pll_table tegra_pll_c_table[] = {
-+static struct clk_pll_freq_table tegra_pll_c_freq_table[] = {
- 	{ 0, 0, 0, 0, 0, 0 },
- };
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	ret = clk_set_rate_locked(c, rate);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -503,23 +363,6 @@ void __init tegra_init_clock(void)
+ 	tegra2_init_clocks();
+ }
  
-@@ -1188,16 +1190,18 @@ static struct clk tegra_pll_c = {
- 	.flags	   = PLL_HAS_CPCON,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0x80,
--	.input_min = 2000000,
--	.input_max = 31000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 20000000,
--	.vco_max   = 1400000000,
--	.pll_table = tegra_pll_c_table,
- 	.max_rate  = 600000000,
--	.pll_lock_delay = 300,
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 31000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 20000000,
-+		.vco_max   = 1400000000,
-+		.freq_table = tegra_pll_c_freq_table,
-+		.lock_delay = 300,
-+	},
- };
+-int __init tegra_init_dvfs(void)
+-{
+-	struct clk *c, *safe;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	list_for_each_entry_safe(c, safe, &clocks, node)
+-		if (c->dvfs)
+-			dvfs_init(c);
+-
+-	mutex_unlock(&dvfs_lock);
+-
+-	return 0;
+-}
+-
+-late_initcall(tegra_init_dvfs);
+-
+ /*
+  * Iterate through all clocks, disabling any for which the refcount is 0
+  * but the clock init detected the bootloader left the clock on.
+diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
+index b76d33d..198f234 100644
+--- a/arch/arm/mach-tegra/clock.h
++++ b/arch/arm/mach-tegra/clock.h
+@@ -41,28 +41,6 @@
+ #define ENABLE_ON_INIT		(1 << 28)
  
- static struct clk tegra_pll_c_out1 = {
-@@ -1210,7 +1214,7 @@ static struct clk tegra_pll_c_out1 = {
- 	.max_rate  = 600000000,
- };
- 
--static struct clk_pll_table tegra_pll_m_table[] = {
-+static struct clk_pll_freq_table tegra_pll_m_freq_table[] = {
- 	{ 12000000, 666000000, 666, 12, 1, 8},
- 	{ 13000000, 666000000, 666, 13, 1, 8},
- 	{ 19200000, 666000000, 555, 16, 1, 8},
-@@ -1227,16 +1231,18 @@ static struct clk tegra_pll_m = {
- 	.flags     = PLL_HAS_CPCON,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0x90,
--	.input_min = 2000000,
--	.input_max = 31000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 20000000,
--	.vco_max   = 1200000000,
--	.pll_table = tegra_pll_m_table,
- 	.max_rate  = 800000000,
--	.pll_lock_delay = 300,
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 31000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 20000000,
-+		.vco_max   = 1200000000,
-+		.freq_table = tegra_pll_m_freq_table,
-+		.lock_delay = 300,
-+	},
- };
- 
- static struct clk tegra_pll_m_out1 = {
-@@ -1249,7 +1255,7 @@ static struct clk tegra_pll_m_out1 = {
- 	.max_rate  = 600000000,
- };
- 
--static struct clk_pll_table tegra_pll_p_table[] = {
-+static struct clk_pll_freq_table tegra_pll_p_freq_table[] = {
- 	{ 12000000, 216000000, 432, 12, 2, 8},
- 	{ 13000000, 216000000, 432, 13, 2, 8},
- 	{ 19200000, 216000000, 90,   4, 2, 1},
-@@ -1266,16 +1272,18 @@ static struct clk tegra_pll_p = {
- 	.flags     = ENABLE_ON_INIT | PLL_FIXED | PLL_HAS_CPCON,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0xa0,
--	.input_min = 2000000,
--	.input_max = 31000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 20000000,
--	.vco_max   = 1400000000,
--	.pll_table = tegra_pll_p_table,
- 	.max_rate  = 432000000,
--	.pll_lock_delay = 300,
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 31000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 20000000,
-+		.vco_max   = 1400000000,
-+		.freq_table = tegra_pll_p_freq_table,
-+		.lock_delay = 300,
-+	},
- };
- 
- static struct clk tegra_pll_p_out1 = {
-@@ -1318,7 +1326,7 @@ static struct clk tegra_pll_p_out4 = {
- 	.max_rate  = 432000000,
- };
- 
--static struct clk_pll_table tegra_pll_a_table[] = {
-+static struct clk_pll_freq_table tegra_pll_a_freq_table[] = {
- 	{ 28800000, 56448000, 49, 25, 1, 1},
- 	{ 28800000, 73728000, 64, 25, 1, 1},
- 	{ 28800000, 11289600, 49, 25, 1, 1},
-@@ -1332,16 +1340,18 @@ static struct clk tegra_pll_a = {
- 	.flags     = PLL_HAS_CPCON,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0xb0,
--	.input_min = 2000000,
--	.input_max = 31000000,
- 	.parent    = &tegra_pll_p_out1,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 20000000,
--	.vco_max   = 1400000000,
--	.pll_table = tegra_pll_a_table,
- 	.max_rate  = 56448000,
--	.pll_lock_delay = 300,
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 31000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 20000000,
-+		.vco_max   = 1400000000,
-+		.freq_table = tegra_pll_a_freq_table,
-+		.lock_delay = 300,
-+	},
- };
- 
- static struct clk tegra_pll_a_out0 = {
-@@ -1354,7 +1364,7 @@ static struct clk tegra_pll_a_out0 = {
- 	.max_rate  = 56448000,
- };
- 
--static struct clk_pll_table tegra_pll_d_table[] = {
-+static struct clk_pll_freq_table tegra_pll_d_freq_table[] = {
- 	{ 12000000, 216000000, 216, 12, 1, 4},
- 	{ 13000000, 216000000, 216, 13, 1, 4},
- 	{ 19200000, 216000000, 135, 12, 1, 3},
-@@ -1378,16 +1388,18 @@ static struct clk tegra_pll_d = {
- 	.flags     = PLL_HAS_CPCON | PLLD,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0xd0,
--	.input_min = 2000000,
--	.input_max = 40000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 40000000,
--	.vco_max   = 1000000000,
--	.pll_table = tegra_pll_d_table,
- 	.max_rate  = 1000000000,
--	.pll_lock_delay = 1000,
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 40000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 40000000,
-+		.vco_max   = 1000000000,
-+		.freq_table = tegra_pll_d_freq_table,
-+		.lock_delay = 1000,
-+	},
- };
- 
- static struct clk tegra_pll_d_out0 = {
-@@ -1398,7 +1410,7 @@ static struct clk tegra_pll_d_out0 = {
- 	.max_rate  = 500000000,
- };
- 
--static struct clk_pll_table tegra_pll_u_table[] = {
-+static struct clk_pll_freq_table tegra_pll_u_freq_table[] = {
- 	{ 12000000, 480000000, 960, 12, 2, 0},
- 	{ 13000000, 480000000, 960, 13, 2, 0},
- 	{ 19200000, 480000000, 200, 4,  2, 0},
-@@ -1411,19 +1423,21 @@ static struct clk tegra_pll_u = {
- 	.flags     = PLLU,
- 	.ops       = &tegra_pll_ops,
- 	.reg       = 0xc0,
--	.input_min = 2000000,
--	.input_max = 40000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 480000000,
--	.vco_max   = 960000000,
--	.pll_table = tegra_pll_u_table,
- 	.max_rate  = 480000000,
--	.pll_lock_delay = 1000,
+ struct clk;
+-struct regulator;
+-
+-struct dvfs_table {
+-	unsigned long rate;
+-	int millivolts;
 -};
 -
--static struct clk_pll_table tegra_pll_x_table[] = {
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 40000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 480000000,
-+		.vco_max   = 960000000,
-+		.freq_table = tegra_pll_u_freq_table,
-+		.lock_delay = 1000,
-+	},
-+};
-+
-+static struct clk_pll_freq_table tegra_pll_x_freq_table[] = {
- 	/* 1 GHz */
- 	{ 12000000, 1000000000, 1000, 12, 1, 12},
- 	{ 13000000, 1000000000, 1000, 13, 1, 12},
-@@ -1474,19 +1488,21 @@ static struct clk tegra_pll_x = {
- 	.flags     = PLL_HAS_CPCON | PLL_ALT_MISC_REG,
- 	.ops       = &tegra_pllx_ops,
- 	.reg       = 0xe0,
--	.input_min = 2000000,
--	.input_max = 31000000,
- 	.parent    = &tegra_clk_m,
--	.cf_min    = 1000000,
--	.cf_max    = 6000000,
--	.vco_min   = 20000000,
--	.vco_max   = 1200000000,
--	.pll_table = tegra_pll_x_table,
- 	.max_rate  = 1000000000,
--	.pll_lock_delay = 300,
+-struct dvfs_process_id_table {
+-	int process_id;
+-	struct dvfs_table *table;
 -};
 -
--static struct clk_pll_table tegra_pll_e_table[] = {
-+	.u.pll = {
-+		.input_min = 2000000,
-+		.input_max = 31000000,
-+		.cf_min    = 1000000,
-+		.cf_max    = 6000000,
-+		.vco_min   = 20000000,
-+		.vco_max   = 1200000000,
-+		.freq_table = tegra_pll_x_freq_table,
-+		.lock_delay = 300,
-+	},
-+};
-+
-+static struct clk_pll_freq_table tegra_pll_e_freq_table[] = {
- 	{ 12000000, 100000000,  200,  24, 1, 0 },
- 	{ 0, 0, 0, 0, 0, 0 },
- };
-@@ -1495,41 +1511,49 @@ static struct clk tegra_pll_e = {
- 	.name      = "pll_e",
- 	.flags	   = PLL_ALT_MISC_REG,
- 	.ops       = &tegra_plle_ops,
--	.input_min = 12000000,
--	.input_max = 12000000,
--	.max_rate  = 100000000,
- 	.parent    = &tegra_clk_m,
- 	.reg       = 0xe8,
--	.pll_table = tegra_pll_e_table,
-+	.max_rate  = 100000000,
-+	.u.pll = {
-+		.input_min = 12000000,
-+		.input_max = 12000000,
-+		.freq_table = tegra_pll_e_freq_table,
-+	},
+-struct dvfs {
+-	struct regulator *reg;
+-	struct dvfs_table *table;
+-	int max_millivolts;
+-
+-	int process_id_table_length;
+-	const char *reg_id;
+-	bool cpu;
+-	struct dvfs_process_id_table process_id_table[];
+-};
+ 
+ struct clk_mux_sel {
+ 	struct clk	*input;
+@@ -141,8 +119,6 @@ struct clk {
+ 	/* Virtual cpu clock */
+ 	struct clk			*main;
+ 	struct clk			*backup;
+-
+-	struct dvfs			*dvfs;
  };
  
- static struct clk tegra_clk_d = {
- 	.name      = "clk_d",
- 	.flags     = PERIPH_NO_RESET,
- 	.ops       = &tegra_clk_double_ops,
--	.clk_num   = 90,
- 	.reg       = 0x34,
- 	.reg_shift = 12,
- 	.parent    = &tegra_clk_m,
- 	.max_rate  = 52000000,
-+	.u.periph  = {
-+		.clk_num = 90,
-+	},
- };
  
- /* dap_mclk1, belongs to the cdev1 pingroup. */
- static struct clk tegra_dev1_clk = {
- 	.name      = "clk_dev1",
- 	.ops       = &tegra_cdev_clk_ops,
--	.clk_num   = 94,
- 	.rate      = 26000000,
- 	.max_rate  = 26000000,
-+	.u.periph  = {
-+		.clk_num = 94,
-+	},
- };
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index ad26a9f..cda03f1 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -91,7 +91,7 @@ static int tegra_update_cpu_speed(unsigned long rate)
+ 	       freqs.old, freqs.new);
+ #endif
  
- /* dap_mclk2, belongs to the cdev2 pingroup. */
- static struct clk tegra_dev2_clk = {
- 	.name      = "clk_dev2",
- 	.ops       = &tegra_cdev_clk_ops,
--	.clk_num   = 93,
- 	.rate      = 26000000,
- 	.max_rate  = 26000000,
-+	.u.periph  = {
-+		.clk_num   = 93,
-+	},
- };
+-	ret = clk_set_rate_cansleep(cpu_clk, freqs.new * 1000);
++	ret = clk_set_rate(cpu_clk, freqs.new * 1000);
+ 	if (ret) {
+ 		pr_err("cpu-tegra: Failed to set cpu frequency to %d kHz\n",
+ 			freqs.new);
+diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
+index a217f68..6338652 100644
+--- a/arch/arm/mach-tegra/include/mach/clk.h
++++ b/arch/arm/mach-tegra/include/mach/clk.h
+@@ -25,9 +25,4 @@ struct clk;
+ void tegra_periph_reset_deassert(struct clk *c);
+ void tegra_periph_reset_assert(struct clk *c);
  
- /* initialized before peripheral clocks */
-@@ -1564,10 +1588,12 @@ static struct clk tegra_clk_audio_2x = {
- 	.flags     = PERIPH_NO_RESET,
- 	.max_rate  = 48000000,
- 	.ops       = &tegra_clk_double_ops,
--	.clk_num   = 89,
- 	.reg       = 0x34,
- 	.reg_shift = 8,
- 	.parent    = &tegra_clk_audio,
-+	.u.periph = {
-+		.clk_num = 89,
-+	},
- };
+-int clk_enable_cansleep(struct clk *clk);
+-void clk_disable_cansleep(struct clk *clk);
+-int clk_set_rate_cansleep(struct clk *clk, unsigned long rate);
+-int clk_set_parent_cansleep(struct clk *clk, struct clk *parent);
+-
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 36da2e8..e1e0d81f 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -31,7 +31,6 @@
  
- struct clk_lookup tegra_audio_clk_lookups[] = {
-@@ -1645,10 +1671,12 @@ static struct clk tegra_clk_sclk = {
- static struct clk tegra_clk_virtual_cpu = {
- 	.name      = "cpu",
- 	.parent    = &tegra_clk_cclk,
--	.main      = &tegra_pll_x,
--	.backup    = &tegra_pll_p,
+ #include "clock.h"
+ #include "fuse.h"
+-#include "tegra2_dvfs.h"
+ 
+ #define RST_DEVICES			0x004
+ #define RST_DEVICES_SET			0x300
+@@ -1650,7 +1649,6 @@ static struct clk tegra_clk_virtual_cpu = {
+ 	.backup    = &tegra_pll_p,
  	.ops       = &tegra_cpu_ops,
  	.max_rate  = 1000000000,
-+	.u.cpu = {
-+		.main      = &tegra_pll_x,
-+		.backup    = &tegra_pll_p,
-+	},
+-	.dvfs      = &tegra_dvfs_virtual_cpu_dvfs,
  };
  
  static struct clk tegra_clk_hclk = {
-@@ -1763,11 +1791,13 @@ static struct clk_mux_sel mux_clk_32k[] = {
- 			.con_id	   = _con,		\
- 		},					\
- 		.ops       = &tegra_periph_clk_ops,	\
--		.clk_num   = _clk_num,			\
- 		.reg       = _reg,			\
- 		.inputs    = _inputs,			\
- 		.flags     = _flags,			\
- 		.max_rate  = _max,			\
-+		.u.periph = {				\
-+			.clk_num   = _clk_num,		\
-+		},					\
- 	}
- 
- struct clk tegra_list_clks[] = {
+diff --git a/arch/arm/mach-tegra/tegra2_dvfs.c b/arch/arm/mach-tegra/tegra2_dvfs.c
+deleted file mode 100644
+index 5529c23..0000000
+--- a/arch/arm/mach-tegra/tegra2_dvfs.c
++++ /dev/null
+@@ -1,86 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/tegra2_dvfs.c
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#include <linux/kernel.h>
+-
+-#include "clock.h"
+-#include "tegra2_dvfs.h"
+-
+-static struct dvfs_table virtual_cpu_process_0[] = {
+-	{314000000,  750},
+-	{456000000,  825},
+-	{608000000,  900},
+-	{760000000,  975},
+-	{817000000,  1000},
+-	{912000000,  1050},
+-	{1000000000, 1100},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_1[] = {
+-	{314000000,  750},
+-	{456000000,  825},
+-	{618000000,  900},
+-	{770000000,  975},
+-	{827000000,  1000},
+-	{922000000,  1050},
+-	{1000000000, 1100},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_2[] = {
+-	{494000000,  750},
+-	{675000000,  825},
+-	{817000000,  875},
+-	{922000000,  925},
+-	{1000000000, 975},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_3[] = {
+-	{730000000,  750},
+-	{760000000,  775},
+-	{845000000,  800},
+-	{1000000000, 875},
+-	{0, 0},
+-};
+-
+-struct dvfs tegra_dvfs_virtual_cpu_dvfs = {
+-	.reg_id = "vdd_cpu",
+-	.process_id_table = {
+-		{
+-			.process_id = 0,
+-			.table = virtual_cpu_process_0,
+-		},
+-		{
+-			.process_id = 1,
+-			.table = virtual_cpu_process_1,
+-		},
+-		{
+-			.process_id = 2,
+-			.table = virtual_cpu_process_2,
+-		},
+-		{
+-			.process_id = 3,
+-			.table = virtual_cpu_process_3,
+-		},
+-	},
+-	.process_id_table_length = 4,
+-	.cpu = 1,
+-};
+diff --git a/arch/arm/mach-tegra/tegra2_dvfs.h b/arch/arm/mach-tegra/tegra2_dvfs.h
+deleted file mode 100644
+index f8c1adb..0000000
+--- a/arch/arm/mach-tegra/tegra2_dvfs.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/tegra2_dvfs.h
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-extern struct dvfs tegra_dvfs_virtual_cpu_dvfs;
 -- 
 1.7.3.1
 
