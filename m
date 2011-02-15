@@ -1,45 +1,38 @@
-From: vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Subject: [PATCH] mfd: tps6586x: avoid burst writes
-Date: Tue, 15 Feb 2011 15:33:42 +0530
-Message-ID: <1297764222-29803-1-git-send-email-vwadekar@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: ASoC HDMI codec location
+Date: Tue, 15 Feb 2011 12:29:59 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A51BE@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARitger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-tps6586 does not support burst writes. i2c writes have to be
-1 byte at a time.
+Mark,
 
-Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/mfd/tps6586x.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+I'm looking at enabling audio-over-HDMI on Tegra in the ChromeOS kernel.
+This will use the SPDIF controller as the CPU DAI. Right now, I have things
+working with the stub SPDIF codec (codecs/spdif_transciever.c), but to
+support a non-hard-coded sample rate, need a real codec driver that writes
+registers in the HDMI controller.
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index c937742..0aa9186 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -150,12 +150,12 @@ static inline int __tps6586x_write(struct i2c_client *client,
- static inline int __tps6586x_writes(struct i2c_client *client, int reg,
- 				  int len, uint8_t *val)
- {
--	int ret;
-+	int ret, i;
- 
--	ret = i2c_smbus_write_i2c_block_data(client, reg, len, val);
--	if (ret < 0) {
--		dev_err(&client->dev, "failed writings to 0x%02x\n", reg);
--		return ret;
-+	for (i = 0; i < len; i++) {
-+		ret = __tps6586x_write(client, reg + i, *(val + i));
-+		if (ret < 0)
-+			return ret;
- 	}
- 
- 	return 0;
+I see that a Samsung chip has such a codec in drivers/video/sh_mobile_hdmi.c.
+The equivalent for Tegra would be drivers/video/tegra/dc/hdmi.c. Note that
+this location doesn't yet exist upstream. I just wanted to confirm that this
+location makes sense to you, vs. implementing a codec in sound/soc/tegra/hdmi.c,
+and having that call functions exposed by the Tegra dc/hdmi.c driver?
+
+Note that the SPDIF controller isn't involved in the Tegra Digital Audio
+Switch muxing/switching module at all.
+
+Thanks.
+
 -- 
-1.7.1
+nvpublic
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
