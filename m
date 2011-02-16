@@ -1,157 +1,162 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 12/21] ARM: tegra: clock: Add shared bus clock type
-Date: Wed, 16 Feb 2011 14:03:07 -0800
-Message-ID: <AANLkTikFiZ+wVJ5CWG=Lfnexs-YQs29dtyv_1QDuXBYz@mail.gmail.com>
-References: <1297590033-15035-1-git-send-email-ccross@android.com>
-	<1297590033-15035-13-git-send-email-ccross@android.com>
-	<4D5C34E0.5000209@codeaurora.org>
-	<AANLkTi=knKY65xaOT85jFidy6Be8K8RT0L1XtGqq_v2V@mail.gmail.com>
-	<4D5C46D7.1040903@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4D5C46D7.1040903-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 1/4] usb: otg: Add ulpi viewport access ops
+Date: Wed, 16 Feb 2011 14:39:19 -0800
+Message-ID: <1297895962-28590-2-git-send-email-benoit@android.com>
+References: <1297895962-28590-1-git-send-email-benoit@android.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1297895962-28590-1-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 16, 2011 at 1:51 PM, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wr=
-ote:
-> On 02/16/2011 01:01 PM, Colin Cross wrote:
->> On Wed, Feb 16, 2011 at 12:34 PM, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org=
-> wrote:
->>>
->>> What do you do if clk_set_rate() fails? Should you unwind all the s=
-tate
->>> such as the rate and if it's enabled/disabled? Or is it safe to say
->>> clk_set_rate() can't fail unless the kernel is buggy in which case =
-why
->>> aren't all those return -E* in the set rate functions just BUG_ONs?
->>
->> In general, clk_set_rate can fail and return an error, but in this
->> case the failure may not be directly related to the driver that call=
-ed
->> into tegra_clk_shared_bus_update. =A0For example, if clk_disable is
->> called on a shared clock handle, the rate may drop to the rate
->> requested by another shared clock handle. =A0clk_disable cannot fail=
-, so
->> there's nothing that could be done with the return code, and the
->> problem was not caused by the driver that called clk_disable, so an
->> error would be meaningless.
->>
->>
->> I will modify tegra_clk_shared_bus_update to BUG on a failed
->> clk_set_rate,
->
-> Yes, currently if there are any errors we can't determine which clock=
-'s
-> vote is causing the error since the rate only takes effect when the
-> clock is enabled and another clock could have updated their rate whil=
-e
-> the list is being iterated over.
->
-> The code could be written so that we only call clk_set_rate() on the
-> parent when the calling clock affects the aggregate rate. That would
-> allow us to catch errors for the clk_enable() path and the
-> clk_set_rate() path when the clock is already on. In the clk_disable(=
-)
-> path we could just ignore the errors since we can't do anything anywa=
-ys
-> like you say. The only path that doesn't seem possible is clk_set_rat=
-e()
-> when the clock is off which presumably doesn't actually matter since
-> when you turn the clock on it will fail the same way (delayed
-> clk_set_rate?).
->
-> BTW, is there a race there in the rate updating code? Say clock 1 is
-> enabled with rate 2 on cpu1 and clock 2 is enabled at the same time w=
-ith
-> rate 3 (currently the greatest rate) on cpu2. clock 1 is iterating ov=
-er
-> the list and sees that clock 2 is enabled so it calculates 3 as the m=
-ax.
-> clock 2 then returns from the enable call and then a call to disable
-> clock 2 comes in. clock 1 is still iterating over the list and clock =
-2's
-> call to disable runs to completion. clock 1 finally stops iterating o=
-ver
-> the list and has an aggregated rate of 3 (since it saw that clock 2 w=
-as
-> on which is no longer true). It then calls set_rate() with 3 even tho=
-ugh
-> the only clock that is on is clock 1 with a rate of 2.
->
-> c1 and c2 are off initially
->
-> CPU1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0CPU2
-> ---- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0-----
-> clk_set_rate(c1, 2) =A0 =A0 clk_set_rate(c2, 3)
-> clk_enable(c1) =A0 =A0 =A0 =A0 =A0clk_enable(c2)
-> max =3D=3D 3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0max =3D=3D 3; clk_set_rat=
-e(parent, 3)
-> ... =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable(c2)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0max =3D=3D 2; clk_set_=
-rate(parent, 2)
-> clk_set_rate(parent, 3)
->
-> I think you need some kind of lock while iterating to stop the shared
-> clocks from changing underneath you.
-Yes, it needs a lock.  I missed adding it when I converted from a
-global lock to a per-clock lock.  The children should lock the parent
-before changing any of their state or calling
-tegra_clk_shared_bus_update.
+Add generic access ops for controllers with a ulpi viewport register
+(e.g. Chipidea/ARC based controllers).
 
->> and modify tegra_clk_shared_bus_set_rate to
->> call clk_round_rate on the parent to ensure that the requested rate =
-is valid.
->>
->
-> I would hope clk_round_rate() isn't necessary to get a valid rate.
-> clk_set_rate() shouldn't require exact/valid rates. clk_round_rate() =
-is
-> there to help drivers determine if calling clk_set_rate() with a cert=
-ain
-> rate is going to give them something they want. It's like saying "If =
-I
-> call clk_set_rate() with 500Hz what would the clock's rate actually b=
-e
-> after the call returns?" If the set_rate implementation needs to roun=
-d
-> internally to find a divider or something, it should be done in the
-> set_rate code and not in each driver.
+Change-Id: I53d50857d4716f8df708af199ad1def1ff9d4beb
+Signed-off-by: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/otg/Kconfig         |    7 +++
+ drivers/usb/otg/Makefile        |    1 +
+ drivers/usb/otg/ulpi_viewport.c |   81 +++++++++++++++++++++++++++++++++++++++
+ include/linux/usb/ulpi.h        |    5 ++
+ 4 files changed, 94 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/usb/otg/ulpi_viewport.c
 
-The point is not to get the valid rate, it is to weed out rates that
-will be rejected (not rounded) by clk_set_rate, without affecting the
-clock.  If clk_set_rate will return an error, clk_round_rate should
-also return an error.
+diff --git a/drivers/usb/otg/Kconfig b/drivers/usb/otg/Kconfig
+index 9fb875d..b1d62d9 100644
+--- a/drivers/usb/otg/Kconfig
++++ b/drivers/usb/otg/Kconfig
+@@ -49,6 +49,13 @@ config USB_ULPI
+ 	  Enable this to support ULPI connected USB OTG transceivers which
+ 	  are likely found on embedded boards.
+ 
++config USB_ULPI_VIEWPORT
++	bool "ULPI Viewport Access Operations"
++	depends on USB_ULPI
++	help
++	  Provides read/write operations to the ULPI phy register set for
++	  controllers with a viewport register (e.g. Chipidea/ARC controllers).
++
+ config TWL4030_USB
+ 	tristate "TWL4030 USB Transceiver Driver"
+ 	depends on TWL4030_CORE && REGULATOR_TWL4030
+diff --git a/drivers/usb/otg/Makefile b/drivers/usb/otg/Makefile
+index a520e71..44581a9 100644
+--- a/drivers/usb/otg/Makefile
++++ b/drivers/usb/otg/Makefile
+@@ -16,5 +16,6 @@ obj-$(CONFIG_TWL6030_USB)	+= twl6030-usb.o
+ obj-$(CONFIG_USB_LANGWELL_OTG)	+= langwell_otg.o
+ obj-$(CONFIG_NOP_USB_XCEIV)	+= nop-usb-xceiv.o
+ obj-$(CONFIG_USB_ULPI)		+= ulpi.o
++obj-$(CONFIG_USB_ULPI_VIEWPORT)	+= ulpi_viewport.o
+ obj-$(CONFIG_USB_MSM_OTG_72K)	+= msm72k_otg.o
+ obj-$(CONFIG_AB8500_USB)	+= ab8500-usb.o
+diff --git a/drivers/usb/otg/ulpi_viewport.c b/drivers/usb/otg/ulpi_viewport.c
+new file mode 100644
+index 0000000..f0cb8fb
+--- /dev/null
++++ b/drivers/usb/otg/ulpi_viewport.c
+@@ -0,0 +1,81 @@
++/*
++ * Copyright (C) 2011 Google, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++ */
++
++#include <linux/kernel.h>
++#include <linux/usb.h>
++#include <linux/io.h>
++#include <linux/usb/otg.h>
++#include <linux/usb/ulpi.h>
++
++#define ULPI_VIEW_WAKEUP	(1 << 31)
++#define ULPI_VIEW_RUN		(1 << 30)
++#define ULPI_VIEW_WRITE		(1 << 29)
++#define ULPI_VIEW_READ		(0 << 29)
++#define ULPI_VIEW_ADDR(x)	(((x) & 0xff) << 16)
++#define ULPI_VIEW_DATA_READ(x)	(((x) >> 8) & 0xff)
++#define ULPI_VIEW_DATA_WRITE(x)	(((x) & 0xff) << 0)
++
++static int ulpi_viewport_wait(void __iomem *view, u32 mask, u32 res)
++{
++	unsigned long timeout = 2000;
++
++	while (timeout--) {
++		if ((readl(view) & mask) == res)
++			return 0;
++		cpu_relax();
++	};
++	return -ETIMEDOUT;
++}
++
++static int ulpi_viewport_read(struct otg_transceiver *otg, u32 reg)
++{
++	int ret;
++	void __iomem *view = otg->io_priv;
++
++	writel(ULPI_VIEW_WAKEUP | ULPI_VIEW_WRITE, view);
++	ret = ulpi_viewport_wait(view, ULPI_VIEW_WAKEUP, 0);
++	if (ret)
++		return ret;
++
++	writel(ULPI_VIEW_RUN | ULPI_VIEW_READ | ULPI_VIEW_ADDR(reg), view);
++	ret = ulpi_viewport_wait(view, ULPI_VIEW_RUN, 0);
++	if (ret)
++		return ret;
++
++	return ULPI_VIEW_DATA_READ(readl(view));
++}
++
++static int ulpi_viewport_write(struct otg_transceiver *otg, u32 val, u32 reg)
++{
++	int ret;
++	void __iomem *view = otg->io_priv;
++
++	writel(ULPI_VIEW_WAKEUP | ULPI_VIEW_WRITE, view);
++	ret = ulpi_viewport_wait(view, ULPI_VIEW_WAKEUP, 0);
++	if (ret)
++		return ret;
++
++	writel(ULPI_VIEW_RUN | ULPI_VIEW_WRITE | ULPI_VIEW_DATA_WRITE(val) |
++						 ULPI_VIEW_ADDR(reg), view);
++	return ulpi_viewport_wait(view, ULPI_VIEW_RUN, 0);
++}
++
++struct otg_io_access_ops ulpi_viewport_access_ops = {
++	.read	= ulpi_viewport_read,
++	.write	= ulpi_viewport_write,
++};
+diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
+index 82b1507..9595796 100644
+--- a/include/linux/usb/ulpi.h
++++ b/include/linux/usb/ulpi.h
+@@ -184,4 +184,9 @@
+ struct otg_transceiver *otg_ulpi_create(struct otg_io_access_ops *ops,
+ 					unsigned int flags);
+ 
++#ifdef CONFIG_USB_ULPI_VIEWPORT
++/* access ops for controllers with a viewport register */
++extern struct otg_io_access_ops ulpi_viewport_access_ops;
++#endif
++
+ #endif /* __LINUX_USB_ULPI_H */
+-- 
+1.7.3.1
 
->>>
->>> Shouldn't you call clk_enable(c->parent)? And do you need to check =
-for
->>> errors from clk_enable()?
->>
->> clk_enable on the parent is handled by the clock op implementation i=
-n
->> mach-tegra/clock.c
->>
->
-> Oops, thanks. Time to visit the optometrist.
->
-> --
-> Sent by an employee of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora F=
-orum.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
