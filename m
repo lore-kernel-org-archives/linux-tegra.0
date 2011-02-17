@@ -1,40 +1,37 @@
-From: "JD (Jiandong) Zheng" <jdzheng@broadcom.com>
-Subject: RE: [RFC 1/5] ARM: P2V: separate PHYS_OFFSET from platform definitions
-Date: Thu, 17 Feb 2011 10:07:45 -0800
-Message-ID: <8628FE4E7912BF47A96AE7DD7BAC0AADDDF03CE1D9@SJEXCHCCR02.corp.ad.broadcom.com>
-References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
-	<E1PaDOb-00023Z-CR@rmk-PC.arm.linux.org.uk>
-	<AANLkTinwQwPK7Lg4dxkLGBxvp1hz489iAB6YrSG45e75@mail.gmail.com>
+From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] usb: otg: Add ulpi viewport access ops
+Date: Thu, 17 Feb 2011 10:59:46 -0800
+Message-ID: <20110217185946.GA3851@kroah.com>
+References: <1297895962-28590-1-git-send-email-benoit@android.com>
+ <1297895962-28590-2-git-send-email-benoit@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AANLkTinwQwPK7Lg4dxkLGBxvp1hz489iAB6YrSG45e75@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Kevin Hilman <khilman@deeprootsystems.com>, Anton Vorontsov <avorontsov@mvista.com>, Lennert Buytenhek <kernel@wantstofly.org>, Kukjin Kim <kgene.kim@samsung.com>, Erik Gilling <konkers@android.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Vincent Sanders <support@simtec.co.uk>, "Hans J. Koch" <hjk@linutronix.de>, Magnus Damm <magnus.damm@gmail.com>, Marc Singer <elf@buici.com>, Tony Lindgren <tony@atomide.com>, David Brown <davidb@codeaurora.org>, Alessandro Rubini <rubini@unipv.it>, Wan ZongShun <mcuos.com@gmail.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Ryan Mallon <ryan@bluewatersys.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1297895962-28590-2-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 5, 2011 at 4:22 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> This uncouple PHYS_OFFSET from the platform definitions, thereby
-> facilitating run-time computation of the physical memory offset.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> arch/arm/include/asm/memory.h                  |    2 ++
-> arch/arm/kernel/tcm.c                          |    2 +-
+On Wed, Feb 16, 2011 at 02:39:19PM -0800, Benoit Goby wrote:
+> Add generic access ops for controllers with a ulpi viewport register
+> (e.g. Chipidea/ARC based controllers).
+> 
+> Change-Id: I53d50857d4716f8df708af199ad1def1ff9d4beb
 
-> arch/arm/mach-bcmring/include/mach/hardware.h  |    2 +-
-> arch/arm/mach-bcmring/include/mach/memory.h    |    2 +-
+WTF is this?
 
-Acked-by: Jiandong Zheng <jdzheng@broadcom.com>
+I've complained about this in the past, please don't send this ever
+again, as it makes NO sense for a patch that is being sent for
+acceptance to the kernel source tree.
+
+I'll wait for your resubmission before taking this series.
+
+thanks,
+
+greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
