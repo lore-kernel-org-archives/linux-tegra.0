@@ -1,27 +1,35 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] mfd: tps6586x: avoid burst writes
-Date: Fri, 18 Feb 2011 18:43:54 +0000
-Message-ID: <20110218184354.GA21195@opensource.wolfsonmicro.com>
-References: <1297764222-29803-1-git-send-email-vwadekar@nvidia.com> <20110217015216.GE5824@sirena.org.uk> <4D5DF973.8080908@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] Tegra 640x480 HDMI audio patches
+Date: Fri, 18 Feb 2011 16:18:10 -0700
+Message-ID: <1298071093-23865-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4D5DF973.8080908-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Ritger <ARitger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 18, 2011 at 10:15:39AM +0530, Varun Wadekar wrote:
+This patch set fixes 640x480 HDMI video clocking, audio over HDMI at 640x80,
+and especially 44.1KHz audio at that resolution.
 
-> Mark, confirmed with TI and they say that the entire tps6586x family has
-> this behavior so this patch seems ok. The entire family has this
-> limitation and so we have to write one byte at a time.
+It was generated against linux-tegra-2.6.37, but probably is worth applying
+to, or merging into, all of:
 
-OK, that's good to have confirmed - in that case this should go into
-2.6.38 as a bugfix since clearly any device which tries to do a bulk
-operation is broken at the minute.
+for-next
+android-tegra-2.6.37
+linux-tegra-2.6.37
+android-tegra-2.6.36
+linux-tegra-2.6.36
+
+Stephen Warren (3):
+  ARM: Tegra: Add pll_d table entries for 252MHz
+  video: tegra: Fix CTS/N table for 25.2MHz pclk, 44.1Hz audio
+  video: tegra: Run pll_d at 252mhz for HDMI 640x480
+
+ arch/arm/mach-tegra/tegra2_clocks.c |    5 +++++
+ drivers/video/tegra/dc/dc.c         |    4 +++-
+ drivers/video/tegra/dc/hdmi.c       |    2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
