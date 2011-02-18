@@ -1,34 +1,46 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/3] Tegra 640x480 HDMI audio patches
-Date: Fri, 18 Feb 2011 16:18:10 -0700
-Message-ID: <1298071093-23865-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 1/3] ARM: Tegra: Add pll_d table entries for 252MHz
+Date: Fri, 18 Feb 2011 16:18:11 -0700
+Message-ID: <1298071093-23865-2-git-send-email-swarren@nvidia.com>
+References: <1298071093-23865-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298071093-23865-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set fixes 640x480 HDMI video clocking, audio over HDMI at 640x80,
-and especially 44.1KHz audio at that resolution.
+This rate is required for correct generation of 640x480 HDMI video;
+see subsequent patches.
 
-It was generated against linux-tegra-2.6.37, but probably is worth applying
-to, or merging into, all of:
+Note: I tested the entry with 12MHz input. The other entries are untested,
+but appear logically correct. However, I'm not familiar enough with PLLs
+to know if they perhaps exceed the PLL VCO frequency, nor whether the
+cpcon values are strictly correct.
 
-for-next
-android-tegra-2.6.37
-linux-tegra-2.6.37
-android-tegra-2.6.36
-linux-tegra-2.6.36
-
-Stephen Warren (3):
-  ARM: Tegra: Add pll_d table entries for 252MHz
-  video: tegra: Fix CTS/N table for 25.2MHz pclk, 44.1Hz audio
-  video: tegra: Run pll_d at 252mhz for HDMI 640x480
-
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
  arch/arm/mach-tegra/tegra2_clocks.c |    5 +++++
- drivers/video/tegra/dc/dc.c         |    4 +++-
- drivers/video/tegra/dc/hdmi.c       |    2 +-
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 41f5953..f3ead19 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -1531,6 +1531,11 @@ static struct clk_pll_freq_table tegra_pll_d_freq_table[] = {
+ 	{ 19200000, 216000000, 135, 12, 1, 3},
+ 	{ 26000000, 216000000, 216, 26, 1, 4},
+ 
++	{ 12000000, 252000000, 252, 12, 1, 4},
++	{ 13000000, 252000000, 252, 13, 1, 4},
++	{ 19200000, 252000000, 210, 16, 1, 3},
++	{ 26000000, 252000000, 252, 26, 1, 4},
++
+ 	{ 12000000, 594000000, 594, 12, 1, 8},
+ 	{ 13000000, 594000000, 594, 13, 1, 8},
+ 	{ 19200000, 594000000, 495, 16, 1, 8},
+-- 
+1.7.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
