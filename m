@@ -1,196 +1,27 @@
-From: Igor Grinberg <grinberg-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: Re: [PATCH v4 1/4] usb: otg: Add ulpi viewport access ops
-Date: Fri, 18 Feb 2011 17:41:43 +0200
-Message-ID: <4D5E9337.3010603@compulab.co.il>
-References: <1298000565-20627-1-git-send-email-benoit@android.com> <1298000565-20627-2-git-send-email-benoit@android.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH] mfd: tps6586x: avoid burst writes
+Date: Fri, 18 Feb 2011 18:43:54 +0000
+Message-ID: <20110218184354.GA21195@opensource.wolfsonmicro.com>
+References: <1297764222-29803-1-git-send-email-vwadekar@nvidia.com> <20110217015216.GE5824@sirena.org.uk> <4D5DF973.8080908@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298000565-20627-2-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4D5DF973.8080908-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Ritger <ARitger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Fri, Feb 18, 2011 at 10:15:39AM +0530, Varun Wadekar wrote:
 
-On 02/18/11 05:42, Benoit Goby wrote:
-> Add generic access ops for controllers with a ulpi viewport register
-> (e.g. Chipidea/ARC based controllers).
+> Mark, confirmed with TI and they say that the entire tps6586x family has
+> this behavior so this patch seems ok. The entire family has this
+> limitation and so we have to write one byte at a time.
 
-I can see mxc, msm and langwell are using the same bits
-(or at least some of them).
-Is there some kind of specification for this ulpi viewport register?
-Where can we find it?
-Or else, why do you call it generic?
-
-Some minor neats below.
-
-> Signed-off-by: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/otg/Kconfig         |    7 ++++
->  drivers/usb/otg/Makefile        |    1 +
->  drivers/usb/otg/ulpi_viewport.c |   77 +++++++++++++++++++++++++++++++++++++++
->  include/linux/usb/ulpi.h        |    5 +++
->  4 files changed, 90 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/usb/otg/ulpi_viewport.c
->
-> diff --git a/drivers/usb/otg/Kconfig b/drivers/usb/otg/Kconfig
-> index 9ffc823..7702ee6 100644
-> --- a/drivers/usb/otg/Kconfig
-> +++ b/drivers/usb/otg/Kconfig
-> @@ -49,6 +49,13 @@ config USB_ULPI
->  	  Enable this to support ULPI connected USB OTG transceivers which
->  	  are likely found on embedded boards.
->  
-> +config USB_ULPI_VIEWPORT
-> +	bool
-> +	depends on USB_ULPI
-> +	help
-> +	  Provides read/write operations to the ULPI phy register set for
-> +	  controllers with a viewport register (e.g. Chipidea/ARC controllers).
-> +
->  config TWL4030_USB
->  	tristate "TWL4030 USB Transceiver Driver"
->  	depends on TWL4030_CORE && REGULATOR_TWL4030
-> diff --git a/drivers/usb/otg/Makefile b/drivers/usb/otg/Makefile
-> index a520e71..44581a9 100644
-> --- a/drivers/usb/otg/Makefile
-> +++ b/drivers/usb/otg/Makefile
-> @@ -16,5 +16,6 @@ obj-$(CONFIG_TWL6030_USB)	+= twl6030-usb.o
->  obj-$(CONFIG_USB_LANGWELL_OTG)	+= langwell_otg.o
->  obj-$(CONFIG_NOP_USB_XCEIV)	+= nop-usb-xceiv.o
->  obj-$(CONFIG_USB_ULPI)		+= ulpi.o
-> +obj-$(CONFIG_USB_ULPI_VIEWPORT)	+= ulpi_viewport.o
->  obj-$(CONFIG_USB_MSM_OTG_72K)	+= msm72k_otg.o
->  obj-$(CONFIG_AB8500_USB)	+= ab8500-usb.o
-> diff --git a/drivers/usb/otg/ulpi_viewport.c b/drivers/usb/otg/ulpi_viewport.c
-> new file mode 100644
-> index 0000000..dd5dfae2
-> --- /dev/null
-> +++ b/drivers/usb/otg/ulpi_viewport.c
-> @@ -0,0 +1,77 @@
-> +/*
-> + * Copyright (C) 2011 Google, Inc.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/usb.h>
-> +#include <linux/io.h>
-> +#include <linux/usb/otg.h>
-> +#include <linux/usb/ulpi.h>
-> +
-> +#define ULPI_VIEW_WAKEUP	(1 << 31)
-> +#define ULPI_VIEW_RUN		(1 << 30)
-> +#define ULPI_VIEW_WRITE		(1 << 29)
-> +#define ULPI_VIEW_READ		(0 << 29)
-> +#define ULPI_VIEW_ADDR(x)	(((x) & 0xff) << 16)
-> +#define ULPI_VIEW_DATA_READ(x)	(((x) >> 8) & 0xff)
-> +#define ULPI_VIEW_DATA_WRITE(x)	(((x) & 0xff) << 0)
-
-Please, remove this "zero shift", I don't think it serves any good cause.
-
-> +
-> +static int ulpi_viewport_wait(void __iomem *view, u32 mask, u32 result)
-> +{
-> +	unsigned long usec = 2000;
-> +
-> +	while (usec--) {
-> +		if ((readl(view) & mask) == result)
-
-You always send 0 in the result variable.
-Can't the result variable be dropped by:
-
-if (!(readl(view) & mask))
-        return 0;
-
-or:
-
-if (readl(view) & mask != mask)
-        return 0;
-
-> +			return 0;
-
-Empty line here would be nice.
-
-> +		udelay(1);
-> +	};
-
-same here
-
-> +	return -ETIMEDOUT;
-> +}
-> +
-> +static int ulpi_viewport_read(struct otg_transceiver *otg, u32 reg)
-> +{
-> +	int ret;
-> +	void __iomem *view = otg->io_priv;
-> +
-> +	writel(ULPI_VIEW_WAKEUP | ULPI_VIEW_WRITE, view);
-> +	ret = ulpi_viewport_wait(view, ULPI_VIEW_WAKEUP, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(ULPI_VIEW_RUN | ULPI_VIEW_READ | ULPI_VIEW_ADDR(reg), view);
-> +	ret = ulpi_viewport_wait(view, ULPI_VIEW_RUN, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ULPI_VIEW_DATA_READ(readl(view));
-> +}
-> +
-> +static int ulpi_viewport_write(struct otg_transceiver *otg, u32 val, u32 reg)
-> +{
-> +	int ret;
-> +	void __iomem *view = otg->io_priv;
-> +
-> +	writel(ULPI_VIEW_WAKEUP | ULPI_VIEW_WRITE, view);
-> +	ret = ulpi_viewport_wait(view, ULPI_VIEW_WAKEUP, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(ULPI_VIEW_RUN | ULPI_VIEW_WRITE | ULPI_VIEW_DATA_WRITE(val) |
-> +						 ULPI_VIEW_ADDR(reg), view);
-
-and here
-
-> +	return ulpi_viewport_wait(view, ULPI_VIEW_RUN, 0);
-> +}
-> +
-> +struct otg_io_access_ops ulpi_viewport_access_ops = {
-> +	.read	= ulpi_viewport_read,
-> +	.write	= ulpi_viewport_write,
-> +};
-> diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
-> index 82b1507..9595796 100644
-> --- a/include/linux/usb/ulpi.h
-> +++ b/include/linux/usb/ulpi.h
-> @@ -184,4 +184,9 @@
->  struct otg_transceiver *otg_ulpi_create(struct otg_io_access_ops *ops,
->  					unsigned int flags);
->  
-> +#ifdef CONFIG_USB_ULPI_VIEWPORT
-> +/* access ops for controllers with a viewport register */
-> +extern struct otg_io_access_ops ulpi_viewport_access_ops;
-> +#endif
-> +
->  #endif /* __LINUX_USB_ULPI_H */
-
--- 
-Regards,
-Igor.
-
+OK, that's good to have confirmed - in that case this should go into
+2.6.38 as a bugfix since clearly any device which tries to do a bulk
+operation is broken at the minute.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
