@@ -1,72 +1,124 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 18/21] ARM: tegra: cpufreq: Adjust memory frequency with cpu frequency
-Date: Sat, 19 Feb 2011 14:26:07 -0800
-Message-ID: <1298154371-5641-20-git-send-email-ccross__28924.969820264$1298154652$gmane$org@android.com>
+Subject: [PATCH v2 14/21] ARM: tegra: clock: Refcount periph clock enables
+Date: Sat, 19 Feb 2011 14:26:03 -0800
+Message-ID: <1298154371-5641-16-git-send-email-ccross__13619.5258623504$1298154652$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
+
+Some peripheral clocks share enable bits.  Refcount the enables so
+that calling clk_disable on one clock will not turn off another
+clock.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/cpu-tegra.c |   21 +++++++++++++++++++++
- 1 files changed, 21 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |   35 +++++++++++++++++++++++++++++------
+ 1 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
-index f02ba60..0e1016a 100644
---- a/arch/arm/mach-tegra/cpu-tegra.c
-+++ b/arch/arm/mach-tegra/cpu-tegra.c
-@@ -51,6 +51,7 @@ static struct cpufreq_frequency_table freq_table[] = {
- #define NUM_CPUS	2
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 196c249..2734889 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -154,6 +154,12 @@ static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
+  */
+ static DEFINE_SPINLOCK(clock_register_lock);
  
- static struct clk *cpu_clk;
-+static struct clk *emc_clk;
- 
- static unsigned long target_cpu_speed[NUM_CPUS];
- static DEFINE_MUTEX(tegra_cpu_lock);
-@@ -83,6 +84,17 @@ static int tegra_update_cpu_speed(unsigned long rate)
- 	if (freqs.old == freqs.new)
- 		return ret;
- 
-+	/*
-+	 * Vote on memory bus frequency based on cpu frequency
-+	 * This sets the minimum frequency, display or avp may request higher
-+	 */
-+	if (rate >= 816000)
-+		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
-+	else if (rate >= 456000)
-+		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
-+	else
-+		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
++/*
++ * Some peripheral clocks share an enable bit, so refcount the enable bits
++ * in registers CLK_ENABLE_L, CLK_ENABLE_H, and CLK_ENABLE_U
++ */
++static int tegra_periph_clk_enable_refcount[3 * 32];
 +
- 	for_each_online_cpu(freqs.cpu)
- 		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
-@@ -173,6 +185,13 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	if (IS_ERR(cpu_clk))
- 		return PTR_ERR(cpu_clk);
- 
-+	emc_clk = clk_get_sys("cpu", "emc");
-+	if (IS_ERR(emc_clk)) {
-+		clk_put(cpu_clk);
-+		return PTR_ERR(emc_clk);
-+	}
-+
-+	clk_enable(emc_clk);
- 	clk_enable(cpu_clk);
- 
- 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
-@@ -195,6 +214,8 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- static int tegra_cpu_exit(struct cpufreq_policy *policy)
+ #define clk_writel(value, reg) \
+ 	__raw_writel(value, (u32)reg_clk_base + (reg))
+ #define clk_readl(reg) \
+@@ -920,8 +926,19 @@ static void tegra2_periph_clk_init(struct clk *c)
+ static int tegra2_periph_clk_enable(struct clk *c)
  {
- 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
-+	clk_disable(emc_clk);
-+	clk_put(emc_clk);
- 	clk_put(cpu_clk);
- 	return 0;
+ 	u32 val;
++	unsigned long flags;
++	int refcount;
+ 	pr_debug("%s on clock %s\n", __func__, c->name);
+ 
++	spin_lock_irqsave(&clock_register_lock, flags);
++
++	refcount = tegra_periph_clk_enable_refcount[c->u.periph.clk_num]++;
++
++	spin_unlock_irqrestore(&clock_register_lock, flags);
++
++	if (refcount > 1)
++		return 0;
++
+ 	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
+ 		CLK_OUT_ENB_SET + PERIPH_CLK_TO_ENB_SET_REG(c));
+ 	if (!(c->flags & PERIPH_NO_RESET) && !(c->flags & PERIPH_MANUAL_RESET))
+@@ -939,10 +956,20 @@ static int tegra2_periph_clk_enable(struct clk *c)
+ 
+ static void tegra2_periph_clk_disable(struct clk *c)
+ {
++	unsigned long flags;
++
+ 	pr_debug("%s on clock %s\n", __func__, c->name);
+ 
+-	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
+-		CLK_OUT_ENB_CLR + PERIPH_CLK_TO_ENB_SET_REG(c));
++	spin_lock_irqsave(&clock_register_lock, flags);
++
++	if (c->refcnt)
++		tegra_periph_clk_enable_refcount[c->u.periph.clk_num]--;
++
++	if (tegra_periph_clk_enable_refcount[c->u.periph.clk_num] == 0)
++		clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
++			CLK_OUT_ENB_CLR + PERIPH_CLK_TO_ENB_SET_REG(c));
++
++	spin_unlock_irqrestore(&clock_register_lock, flags);
  }
+ 
+ static void tegra2_periph_clk_reset(struct clk *c, bool assert)
+@@ -1976,7 +2003,6 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
+ 	PERIPH_CLK("i2s1",	"i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("i2s2",	"i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+-	/* FIXME: spdif has 2 clocks but 1 enable */
+ 	PERIPH_CLK("spdif_out",	"spdif_out",		NULL,	10,	0x108,	100000000, mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("spdif_in",	"spdif_in",		NULL,	10,	0x10c,	100000000, mux_pllp_pllc_pllm,		MUX | DIV_U71),
+ 	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71),
+@@ -1989,7 +2015,6 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("sbc4",	"spi_tegra.3",		NULL,	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("ide",	"ide",			NULL,	25,	0x144,	100000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* requires min voltage */
+ 	PERIPH_CLK("ndflash",	"tegra_nand",		NULL,	13,	0x160,	164000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
+-	/* FIXME: vfir shares an enable with uartb */
+ 	PERIPH_CLK("vfir",	"vfir",			NULL,	7,	0x168,	72000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("sdmmc1",	"sdhci-tegra.0",	NULL,	14,	0x150,	52000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
+ 	PERIPH_CLK("sdmmc2",	"sdhci-tegra.1",	NULL,	9,	0x154,	52000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
+@@ -2017,13 +2042,11 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("uarte",	"uart.4",		NULL,	66,	0x1c4,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
+ 	PERIPH_CLK("3d",	"3d",			NULL,	24,	0x158,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | PERIPH_MANUAL_RESET), /* scales with voltage and process_id */
+ 	PERIPH_CLK("2d",	"2d",			NULL,	21,	0x15c,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
+-	/* FIXME: vi and vi_sensor share an enable */
+ 	PERIPH_CLK("vi",	"tegra_camera",		"vi",	20,	0x148,	150000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
+ 	PERIPH_CLK("vi_sensor",	"tegra_camera",		"vi_sensor",	20,	0x1a8,	150000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | PERIPH_NO_RESET), /* scales with voltage and process_id */
+ 	PERIPH_CLK("epp",	"epp",			NULL,	19,	0x16c,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
+ 	PERIPH_CLK("mpe",	"mpe",			NULL,	60,	0x170,	250000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
+ 	PERIPH_CLK("host1x",	"host1x",		NULL,	28,	0x180,	166000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
+-	/* FIXME: cve and tvo share an enable	*/
+ 	PERIPH_CLK("cve",	"cve",			NULL,	49,	0x140,	250000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
+ 	PERIPH_CLK("tvo",	"tvo",			NULL,	49,	0x188,	250000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
+ 	PERIPH_CLK("hdmi",	"hdmi",			NULL,	51,	0x18c,	600000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
 -- 
 1.7.3.1
