@@ -1,22 +1,22 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Colin Cross <ccross@android.com>
 Subject: [PATCH v2 01/21] ARM: tegra: clock: enable clk reset for non-peripheral clocks
 Date: Sat, 19 Feb 2011 14:25:50 -0800
-Message-ID: <1298154371-5641-3-git-send-email-ccross@android.com>
+Message-ID: <1298154371-5641-3-git-send-email-ccross__7500.23668301782$1298154491$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Dima Zavin <dima-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Dima Zavin <dima@android.com>, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dima Zavin <dima-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Dima Zavin <dima@android.com>
 
 Add a new 'reset' clk op. This can be provided for any clock,
 not just peripherals.
 
-Signed-off-by: Dima Zavin <dima-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Dima Zavin <dima@android.com>
+Signed-off-by: Colin Cross <ccross@android.com>
 ---
  arch/arm/mach-tegra/clock.h         |    1 +
  arch/arm/mach-tegra/tegra2_clocks.c |   29 ++++++++++++++++++-----------
@@ -96,8 +96,3 @@ index 7a2926a..240f921 100644
  /* Clock doubler ops */
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
