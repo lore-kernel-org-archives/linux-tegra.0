@@ -1,106 +1,95 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 15/21] ARM: tegra: clock: Round rate before setting rate
-Date: Sat, 19 Feb 2011 14:26:04 -0800
-Message-ID: <1298154371-5641-17-git-send-email-ccross@android.com>
+Subject: [PATCH v2 05/21] ARM: tegra: clock: Disable clocks left on by
+	bootloader
+Date: Sat, 19 Feb 2011 14:25:54 -0800
+Message-ID: <1298154371-5641-7-git-send-email-ccross__9584.2445189648$1298154435$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Call the clock's round_rate op, if it exists, before calling
-the set_rate op.  This will help later when dvfs is added,
-dvfs needs to know what the final rate will be before the
-frequency changes.
-
-Also requires fixes to the round rate functions to ensure
-calling round rate and then set rate will not cause the
-frequency to be rounded down twice.  When picking clock
-divider values, the clock framework picks the closest
-frequency that is lower than the requested frequency.  If
-the new frequency calculated from the divider value is
-rounded down, and then passed to set_rate, it will get
-rounded down again, possibly resulting in a frequency two
-steps lower than the original requested frequency.
-
-Fix the problem by rounding up when calculating the frequency
-coming out of a clock divider, so if that frequency is
-requested again, the same divider value will be picked.
+Adds CONFIG_TEGRA_DISABLE_BOOTLOADER_CLOCKS that iterates
+through all clocks, disabling any for which the refcount
+is 0 but the clock init detected the bootloader left the
+clock on.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/clock.c         |   12 ++++++++++++
- arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/Kconfig |    6 ++++++
+ arch/arm/mach-tegra/clock.c |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index f0fda77..9f4fc6b 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -57,6 +57,12 @@ config TEGRA_DEBUG_UARTE
+ 
+ endchoice
+ 
++config TEGRA_DISABLE_BOOTLOADER_CLOCKS
++	bool "Disable clocks left on by bootloader"
++	help
++	  Disables clocks that are detected to be on but haven't
++	  been requested by a kernel driver.
++
+ config TEGRA_SYSTEM_DMA
+ 	bool "Enable system DMA driver for NVIDIA Tegra SoCs"
+ 	default y
 diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 8d01a49..9798585 100644
+index f55bb83..0ea5d92 100644
 --- a/arch/arm/mach-tegra/clock.c
 +++ b/arch/arm/mach-tegra/clock.c
-@@ -86,6 +86,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
+@@ -511,6 +511,36 @@ int __init tegra_init_dvfs(void)
  
- 	if (c->mul != 0 && c->div != 0) {
- 		rate *= c->mul;
-+		rate += c->div / 2; /* round up */
- 		do_div(rate, c->div);
- 	}
+ late_initcall(tegra_init_dvfs);
  
-@@ -240,12 +241,23 @@ EXPORT_SYMBOL(clk_get_parent);
- 
- int clk_set_rate_locked(struct clk *c, unsigned long rate)
- {
-+	long new_rate;
++/*
++ * Iterate through all clocks, disabling any for which the refcount is 0
++ * but the clock init detected the bootloader left the clock on.
++ */
++#ifdef CONFIG_TEGRA_DISABLE_BOOTLOADER_CLOCKS
++int __init tegra_disable_boot_clocks(void)
++{
++	unsigned long flags;
 +
- 	if (!c->ops || !c->ops->set_rate)
- 		return -ENOSYS;
- 
- 	if (rate > c->max_rate)
- 		rate = c->max_rate;
- 
-+	if (c->ops && c->ops->round_rate) {
-+		new_rate = c->ops->round_rate(c, rate);
++	struct clk *c;
 +
-+		if (new_rate < 0)
-+			return new_rate;
++	spin_lock_irqsave(&clock_lock, flags);
 +
-+		rate = new_rate;
++	list_for_each_entry(c, &clocks, node) {
++		if (c->refcnt == 0 && c->state == ON &&
++				c->ops && c->ops->disable) {
++			pr_warning("Disabling clock %s left on by bootloader\n",
++				c->name);
++			c->ops->disable(c);
++			c->state = OFF;
++		}
 +	}
 +
- 	return c->ops->set_rate(c, rate);
- }
++	spin_unlock_irqrestore(&clock_lock, flags);
++
++	return 0;
++}
++late_initcall(tegra_disable_boot_clocks);
++#endif
++
+ #ifdef CONFIG_DEBUG_FS
+ static struct dentry *clk_debugfs_root;
  
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 2734889..480c0f6 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -866,9 +866,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
- 		divider = clk_div71_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_2) {
--		return parent_rate / 2;
-+		return DIV_ROUND_UP(parent_rate, 2);
- 	}
- 	return -EINVAL;
- }
-@@ -1058,12 +1058,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
- 		if (divider < 0)
- 			return divider;
- 
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_U16) {
- 		divider = clk_div16_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate / (divider + 1);
-+		return DIV_ROUND_UP(parent_rate, divider + 1);
- 	}
- 	return -EINVAL;
- }
 -- 
 1.7.3.1
