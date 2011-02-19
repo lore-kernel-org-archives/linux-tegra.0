@@ -1,270 +1,125 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 16/21] ARM: tegra: Add external memory controller driver
-Date: Sat, 19 Feb 2011 14:26:05 -0800
-Message-ID: <1298154371-5641-18-git-send-email-ccross__739.662993191992$1298154662$gmane$org@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 17/21] ARM: tegra: clocks: Add emc scaling
+Date: Sat, 19 Feb 2011 14:26:06 -0800
+Message-ID: <1298154371-5641-19-git-send-email-ccross__42531.7220543095$1298154663$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig      |    4 +
- arch/arm/mach-tegra/Makefile     |    1 +
- arch/arm/mach-tegra/tegra2_emc.c |  172 ++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/tegra2_emc.h |   27 ++++++
- 4 files changed, 204 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/tegra2_emc.c
- create mode 100644 arch/arm/mach-tegra/tegra2_emc.h
+ arch/arm/mach-tegra/tegra2_clocks.c |   62 ++++++++++++++++++++++++++++++++++-
+ 1 files changed, 61 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 9f4fc6b..42d44c7 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -71,3 +71,7 @@ config TEGRA_SYSTEM_DMA
- 	  several Tegra device drivers
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 480c0f6..395d006 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -31,6 +31,7 @@
  
- endif
-+
-+config TEGRA_EMC_SCALING_ENABLE
-+	bool "Enable scaling the memory frequency"
-+	default n
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 23de060..3fe357b 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -9,6 +9,7 @@ obj-y                                   += powergate.o
- obj-y					+= fuse.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
-+obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
- obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
-diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
-new file mode 100644
-index 0000000..bd4fa27
---- /dev/null
-+++ b/arch/arm/mach-tegra/tegra2_emc.c
-@@ -0,0 +1,172 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author:
-+ *	Colin Cross <ccross@google.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+
-+#include <mach/iomap.h>
-+
+ #include "clock.h"
+ #include "fuse.h"
 +#include "tegra2_emc.h"
-+
-+#ifdef CONFIG_TEGRA_EMC_SCALING_ENABLE
-+static bool emc_enable = true;
-+#else
-+static bool emc_enable;
-+#endif
-+module_param(emc_enable, bool, 0644);
-+
-+static void __iomem *emc = IO_ADDRESS(TEGRA_EMC_BASE);
-+static const struct tegra_emc_table *tegra_emc_table;
-+static int tegra_emc_table_size;
-+
-+static inline void emc_writel(u32 val, unsigned long addr)
+ 
+ #define RST_DEVICES			0x004
+ #define RST_DEVICES_SET			0x300
+@@ -1078,6 +1079,53 @@ static struct clk_ops tegra_periph_clk_ops = {
+ 	.reset			= &tegra2_periph_clk_reset,
+ };
+ 
++/* External memory controller clock ops */
++static void tegra2_emc_clk_init(struct clk *c)
 +{
-+	writel(val, emc + addr);
++	tegra2_periph_clk_init(c);
++	c->max_rate = clk_get_rate_locked(c);
 +}
 +
-+static inline u32 emc_readl(unsigned long addr)
++static long tegra2_emc_clk_round_rate(struct clk *c, unsigned long rate)
 +{
-+	return readl(emc + addr);
++	long new_rate = rate;
++
++	new_rate = tegra_emc_round_rate(new_rate);
++	if (new_rate < 0)
++		return c->max_rate;
++
++	BUG_ON(new_rate != tegra2_periph_clk_round_rate(c, new_rate));
++
++	return new_rate;
 +}
 +
-+static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
-+	0x2c,	/* RC */
-+	0x30,	/* RFC */
-+	0x34,	/* RAS */
-+	0x38,	/* RP */
-+	0x3c,	/* R2W */
-+	0x40,	/* W2R */
-+	0x44,	/* R2P */
-+	0x48,	/* W2P */
-+	0x4c,	/* RD_RCD */
-+	0x50,	/* WR_RCD */
-+	0x54,	/* RRD */
-+	0x58,	/* REXT */
-+	0x5c,	/* WDV */
-+	0x60,	/* QUSE */
-+	0x64,	/* QRST */
-+	0x68,	/* QSAFE */
-+	0x6c,	/* RDV */
-+	0x70,	/* REFRESH */
-+	0x74,	/* BURST_REFRESH_NUM */
-+	0x78,	/* PDEX2WR */
-+	0x7c,	/* PDEX2RD */
-+	0x80,	/* PCHG2PDEN */
-+	0x84,	/* ACT2PDEN */
-+	0x88,	/* AR2PDEN */
-+	0x8c,	/* RW2PDEN */
-+	0x90,	/* TXSR */
-+	0x94,	/* TCKE */
-+	0x98,	/* TFAW */
-+	0x9c,	/* TRPAB */
-+	0xa0,	/* TCLKSTABLE */
-+	0xa4,	/* TCLKSTOP */
-+	0xa8,	/* TREFBW */
-+	0xac,	/* QUSE_EXTRA */
-+	0x114,	/* FBIO_CFG6 */
-+	0xb0,	/* ODT_WRITE */
-+	0xb4,	/* ODT_READ */
-+	0x104,	/* FBIO_CFG5 */
-+	0x2bc,	/* CFG_DIG_DLL */
-+	0x2c0,	/* DLL_XFORM_DQS */
-+	0x2c4,	/* DLL_XFORM_QUSE */
-+	0x2e0,	/* ZCAL_REF_CNT */
-+	0x2e4,	/* ZCAL_WAIT_CNT */
-+	0x2a8,	/* AUTO_CAL_INTERVAL */
-+	0x2d0,	/* CFG_CLKTRIM_0 */
-+	0x2d4,	/* CFG_CLKTRIM_1 */
-+	0x2d8,	/* CFG_CLKTRIM_2 */
++static int tegra2_emc_clk_set_rate(struct clk *c, unsigned long rate)
++{
++	int ret;
++	/* The Tegra2 memory controller has an interlock with the clock
++	 * block that allows memory shadowed registers to be updated,
++	 * and then transfer them to the main registers at the same
++	 * time as the clock update without glitches. */
++	ret = tegra_emc_set_rate(rate);
++	if (ret < 0)
++		return ret;
++
++	ret = tegra2_periph_clk_set_rate(c, rate);
++	udelay(1);
++
++	return ret;
++}
++
++static struct clk_ops tegra_emc_clk_ops = {
++	.init			= &tegra2_emc_clk_init,
++	.enable			= &tegra2_periph_clk_enable,
++	.disable		= &tegra2_periph_clk_disable,
++	.set_parent		= &tegra2_periph_clk_set_parent,
++	.set_rate		= &tegra2_emc_clk_set_rate,
++	.round_rate		= &tegra2_emc_clk_round_rate,
++	.reset			= &tegra2_periph_clk_reset,
 +};
 +
-+/* Select the closest EMC rate that is higher than the requested rate */
-+long tegra_emc_round_rate(unsigned long rate)
-+{
-+	int i;
-+	int best = -1;
-+	unsigned long distance = ULONG_MAX;
-+
-+	if (!tegra_emc_table)
-+		return -EINVAL;
-+
-+	if (!emc_enable)
-+		return -EINVAL;
-+
-+	pr_debug("%s: %lu\n", __func__, rate);
-+
-+	/* The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz */
-+	rate = rate / 2 / 1000;
-+
-+	for (i = 0; i < tegra_emc_table_size; i++) {
-+		if (tegra_emc_table[i].rate >= rate &&
-+		    (tegra_emc_table[i].rate - rate) < distance) {
-+			distance = tegra_emc_table[i].rate - rate;
-+			best = i;
-+		}
-+	}
-+
-+	if (best < 0)
-+		return -EINVAL;
-+
-+	pr_debug("%s: using %lu\n", __func__, tegra_emc_table[best].rate);
-+
-+	return tegra_emc_table[best].rate * 2 * 1000;
-+}
-+
-+/* The EMC registers have shadow registers.  When the EMC clock is updated
-+ * in the clock controller, the shadow registers are copied to the active
-+ * registers, allowing glitchless memory bus frequency changes.
-+ * This function updates the shadow registers for a new clock frequency,
-+ * and relies on the clock lock on the emc clock to avoid races between
-+ * multiple frequency changes */
-+int tegra_emc_set_rate(unsigned long rate)
-+{
-+	int i;
-+	int j;
-+
-+	if (!tegra_emc_table)
-+		return -EINVAL;
-+
-+	/* The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz */
-+	rate = rate / 2 / 1000;
-+
-+	for (i = 0; i < tegra_emc_table_size; i++)
-+		if (tegra_emc_table[i].rate == rate)
-+			break;
-+
-+	if (i >= tegra_emc_table_size)
-+		return -EINVAL;
-+
-+	pr_debug("%s: setting to %lu\n", __func__, rate);
-+
-+	for (j = 0; j < TEGRA_EMC_NUM_REGS; j++)
-+		emc_writel(tegra_emc_table[i].regs[j], emc_reg_addr[j]);
-+
-+	emc_readl(tegra_emc_table[i].regs[TEGRA_EMC_NUM_REGS - 1]);
-+
-+	return 0;
-+}
-+
-+void tegra_init_emc(const struct tegra_emc_table *table, int table_size)
-+{
-+	tegra_emc_table = table;
-+	tegra_emc_table_size = table_size;
-+}
-diff --git a/arch/arm/mach-tegra/tegra2_emc.h b/arch/arm/mach-tegra/tegra2_emc.h
-new file mode 100644
-index 0000000..3515e57
---- /dev/null
-+++ b/arch/arm/mach-tegra/tegra2_emc.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author:
-+ *	Colin Cross <ccross@google.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#define TEGRA_EMC_NUM_REGS 46
-+
-+struct tegra_emc_table {
-+	unsigned long rate;
-+	u32 regs[TEGRA_EMC_NUM_REGS];
+ /* Clock doubler ops */
+ static void tegra2_clk_double_init(struct clk *c)
+ {
+@@ -1970,6 +2018,18 @@ static struct clk_mux_sel mux_clk_32k[] = {
+ 	{ 0, 0},
+ };
+ 
++static struct clk tegra_clk_emc = {
++	.name = "emc",
++	.ops = &tegra_emc_clk_ops,
++	.reg = 0x19c,
++	.max_rate = 800000000,
++	.inputs = mux_pllm_pllc_pllp_clkm,
++	.flags = MUX | DIV_U71 | PERIPH_EMC_ENB,
++	.u.periph = {
++		.clk_num = 57,
++	},
 +};
 +
-+int tegra_emc_set_rate(unsigned long rate);
-+long tegra_emc_round_rate(unsigned long rate);
-+void tegra_init_emc(const struct tegra_emc_table *table, int table_size);
+ #define PERIPH_CLK(_name, _dev, _con, _clk_num, _reg, _max, _inputs, _flags) \
+ 	{						\
+ 		.name      = _name,			\
+@@ -2056,7 +2116,6 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("usbd",	"fsl-tegra-udc",	NULL,	22,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+ 	PERIPH_CLK("usb2",	"tegra-ehci.1",		NULL,	58,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+ 	PERIPH_CLK("usb3",	"tegra-ehci.2",		NULL,	59,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+-	PERIPH_CLK("emc",	"emc",			NULL,	57,	0x19c,	800000000, mux_pllm_pllc_pllp_clkm,	MUX | DIV_U71 | PERIPH_EMC_ENB),
+ 	PERIPH_CLK("dsi",	"dsi",			NULL,	48,	0,	500000000, mux_plld,			0), /* scales with voltage */
+ 	PERIPH_CLK("csi",	"tegra_camera",		"csi",	52,	0,	72000000,  mux_pllp_out3,		0),
+ 	PERIPH_CLK("isp",	"tegra_camera",		"isp",	23,	0,	150000000, mux_clk_m,			0), /* same frequency as VI */
+@@ -2132,6 +2191,7 @@ struct clk *tegra_ptr_clks[] = {
+ 	&tegra_dev2_clk,
+ 	&tegra_clk_virtual_cpu,
+ 	&tegra_clk_blink,
++	&tegra_clk_emc,
+ };
+ 
+ static void tegra2_init_one_clock(struct clk *c)
 -- 
 1.7.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
