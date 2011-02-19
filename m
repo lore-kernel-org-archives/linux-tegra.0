@@ -1,264 +1,122 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 16/21] ARM: tegra: Add external memory controller driver
-Date: Sat, 19 Feb 2011 14:26:05 -0800
-Message-ID: <1298154371-5641-18-git-send-email-ccross__20031.8118128509$1298154542$gmane$org@android.com>
+From: Colin Cross <ccross@android.com>
+Subject: [PATCH v2 19/21] ARM: tegra: clock: Add function to set SDMMC tap
+	delay
+Date: Sat, 19 Feb 2011 14:26:08 -0800
+Message-ID: <1298154371-5641-21-git-send-email-ccross@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig      |    4 +
- arch/arm/mach-tegra/Makefile     |    1 +
- arch/arm/mach-tegra/tegra2_emc.c |  172 ++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/tegra2_emc.h |   27 ++++++
- 4 files changed, 204 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/tegra2_emc.c
- create mode 100644 arch/arm/mach-tegra/tegra2_emc.h
+The SDMMC controllers have extra bits in the clock source
+register that adjust the delay between the clock and data
+to compenstate for delays on the PCB.  The values need to
+be set from the clock code so the clock can be locked
+during the read-modify-write on the clock source register.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 9f4fc6b..42d44c7 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -71,3 +71,7 @@ config TEGRA_SYSTEM_DMA
- 	  several Tegra device drivers
+Signed-off-by: Colin Cross <ccross@android.com>
+---
+ arch/arm/mach-tegra/clock.c            |   12 ++++++++++++
+ arch/arm/mach-tegra/clock.h            |    1 +
+ arch/arm/mach-tegra/include/mach/clk.h |    2 ++
+ arch/arm/mach-tegra/tegra2_clocks.c    |   19 +++++++++++++++++++
+ 4 files changed, 34 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index 9798585..0df6206 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -433,6 +433,18 @@ int __init tegra_disable_boot_clocks(void)
+ late_initcall(tegra_disable_boot_clocks);
+ #endif
  
- endif
-+
-+config TEGRA_EMC_SCALING_ENABLE
-+	bool "Enable scaling the memory frequency"
-+	default n
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 23de060..3fe357b 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -9,6 +9,7 @@ obj-y                                   += powergate.o
- obj-y					+= fuse.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
-+obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
- obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
-diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
-new file mode 100644
-index 0000000..bd4fa27
---- /dev/null
-+++ b/arch/arm/mach-tegra/tegra2_emc.c
-@@ -0,0 +1,172 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author:
-+ *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+
-+#include <mach/iomap.h>
-+
-+#include "tegra2_emc.h"
-+
-+#ifdef CONFIG_TEGRA_EMC_SCALING_ENABLE
-+static bool emc_enable = true;
-+#else
-+static bool emc_enable;
-+#endif
-+module_param(emc_enable, bool, 0644);
-+
-+static void __iomem *emc = IO_ADDRESS(TEGRA_EMC_BASE);
-+static const struct tegra_emc_table *tegra_emc_table;
-+static int tegra_emc_table_size;
-+
-+static inline void emc_writel(u32 val, unsigned long addr)
++/* The SDMMC controllers have extra bits in the clock source register that
++ * adjust the delay between the clock and data to compenstate for delays
++ * on the PCB. */
++void tegra_sdmmc_tap_delay(struct clk *c, int delay)
 +{
-+	writel(val, emc + addr);
++	unsigned long flags;
++
++	spin_lock_irqsave(&c->spinlock, flags);
++	tegra2_sdmmc_tap_delay(c, delay);
++	spin_unlock_irqrestore(&c->spinlock, flags);
 +}
 +
-+static inline u32 emc_readl(unsigned long addr)
+ #ifdef CONFIG_DEBUG_FS
+ 
+ static int __clk_lock_all_spinlocks(void)
+diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
+index ebe6ea8..688316a 100644
+--- a/arch/arm/mach-tegra/clock.h
++++ b/arch/arm/mach-tegra/clock.h
+@@ -155,5 +155,6 @@ int clk_reparent(struct clk *c, struct clk *parent);
+ void tegra_clk_init_from_table(struct tegra_clk_init_table *table);
+ unsigned long clk_get_rate_locked(struct clk *c);
+ int clk_set_rate_locked(struct clk *c, unsigned long rate);
++void tegra2_sdmmc_tap_delay(struct clk *c, int delay);
+ 
+ #endif
+diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
+index fa7f9ca..c8baf8f 100644
+--- a/arch/arm/mach-tegra/include/mach/clk.h
++++ b/arch/arm/mach-tegra/include/mach/clk.h
+@@ -26,4 +26,6 @@ void tegra_periph_reset_deassert(struct clk *c);
+ void tegra_periph_reset_assert(struct clk *c);
+ 
+ unsigned long clk_get_rate_all_locked(struct clk *c);
++void tegra_sdmmc_tap_delay(struct clk *c, int delay);
++
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 395d006..cc2616c 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -74,6 +74,10 @@
+ #define PERIPH_CLK_SOURCE_DIVU16_MASK	0xFFFF
+ #define PERIPH_CLK_SOURCE_DIV_SHIFT	0
+ 
++#define SDMMC_CLK_INT_FB_SEL		(1 << 23)
++#define SDMMC_CLK_INT_FB_DLY_SHIFT	16
++#define SDMMC_CLK_INT_FB_DLY_MASK	(0xF << SDMMC_CLK_INT_FB_DLY_SHIFT)
++
+ #define PLL_BASE			0x0
+ #define PLL_BASE_BYPASS			(1<<31)
+ #define PLL_BASE_ENABLE			(1<<30)
+@@ -1079,6 +1083,21 @@ static struct clk_ops tegra_periph_clk_ops = {
+ 	.reset			= &tegra2_periph_clk_reset,
+ };
+ 
++/* The SDMMC controllers have extra bits in the clock source register that
++ * adjust the delay between the clock and data to compenstate for delays
++ * on the PCB. */
++void tegra2_sdmmc_tap_delay(struct clk *c, int delay)
 +{
-+	return readl(emc + addr);
++	u32 reg;
++
++	delay = clamp(delay, 0, 15);
++	reg = clk_readl(c->reg);
++	reg &= ~SDMMC_CLK_INT_FB_DLY_MASK;
++	reg |= SDMMC_CLK_INT_FB_SEL;
++	reg |= delay << SDMMC_CLK_INT_FB_DLY_SHIFT;
++	clk_writel(reg, c->reg);
 +}
 +
-+static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
-+	0x2c,	/* RC */
-+	0x30,	/* RFC */
-+	0x34,	/* RAS */
-+	0x38,	/* RP */
-+	0x3c,	/* R2W */
-+	0x40,	/* W2R */
-+	0x44,	/* R2P */
-+	0x48,	/* W2P */
-+	0x4c,	/* RD_RCD */
-+	0x50,	/* WR_RCD */
-+	0x54,	/* RRD */
-+	0x58,	/* REXT */
-+	0x5c,	/* WDV */
-+	0x60,	/* QUSE */
-+	0x64,	/* QRST */
-+	0x68,	/* QSAFE */
-+	0x6c,	/* RDV */
-+	0x70,	/* REFRESH */
-+	0x74,	/* BURST_REFRESH_NUM */
-+	0x78,	/* PDEX2WR */
-+	0x7c,	/* PDEX2RD */
-+	0x80,	/* PCHG2PDEN */
-+	0x84,	/* ACT2PDEN */
-+	0x88,	/* AR2PDEN */
-+	0x8c,	/* RW2PDEN */
-+	0x90,	/* TXSR */
-+	0x94,	/* TCKE */
-+	0x98,	/* TFAW */
-+	0x9c,	/* TRPAB */
-+	0xa0,	/* TCLKSTABLE */
-+	0xa4,	/* TCLKSTOP */
-+	0xa8,	/* TREFBW */
-+	0xac,	/* QUSE_EXTRA */
-+	0x114,	/* FBIO_CFG6 */
-+	0xb0,	/* ODT_WRITE */
-+	0xb4,	/* ODT_READ */
-+	0x104,	/* FBIO_CFG5 */
-+	0x2bc,	/* CFG_DIG_DLL */
-+	0x2c0,	/* DLL_XFORM_DQS */
-+	0x2c4,	/* DLL_XFORM_QUSE */
-+	0x2e0,	/* ZCAL_REF_CNT */
-+	0x2e4,	/* ZCAL_WAIT_CNT */
-+	0x2a8,	/* AUTO_CAL_INTERVAL */
-+	0x2d0,	/* CFG_CLKTRIM_0 */
-+	0x2d4,	/* CFG_CLKTRIM_1 */
-+	0x2d8,	/* CFG_CLKTRIM_2 */
-+};
-+
-+/* Select the closest EMC rate that is higher than the requested rate */
-+long tegra_emc_round_rate(unsigned long rate)
-+{
-+	int i;
-+	int best = -1;
-+	unsigned long distance = ULONG_MAX;
-+
-+	if (!tegra_emc_table)
-+		return -EINVAL;
-+
-+	if (!emc_enable)
-+		return -EINVAL;
-+
-+	pr_debug("%s: %lu\n", __func__, rate);
-+
-+	/* The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz */
-+	rate = rate / 2 / 1000;
-+
-+	for (i = 0; i < tegra_emc_table_size; i++) {
-+		if (tegra_emc_table[i].rate >= rate &&
-+		    (tegra_emc_table[i].rate - rate) < distance) {
-+			distance = tegra_emc_table[i].rate - rate;
-+			best = i;
-+		}
-+	}
-+
-+	if (best < 0)
-+		return -EINVAL;
-+
-+	pr_debug("%s: using %lu\n", __func__, tegra_emc_table[best].rate);
-+
-+	return tegra_emc_table[best].rate * 2 * 1000;
-+}
-+
-+/* The EMC registers have shadow registers.  When the EMC clock is updated
-+ * in the clock controller, the shadow registers are copied to the active
-+ * registers, allowing glitchless memory bus frequency changes.
-+ * This function updates the shadow registers for a new clock frequency,
-+ * and relies on the clock lock on the emc clock to avoid races between
-+ * multiple frequency changes */
-+int tegra_emc_set_rate(unsigned long rate)
-+{
-+	int i;
-+	int j;
-+
-+	if (!tegra_emc_table)
-+		return -EINVAL;
-+
-+	/* The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz */
-+	rate = rate / 2 / 1000;
-+
-+	for (i = 0; i < tegra_emc_table_size; i++)
-+		if (tegra_emc_table[i].rate == rate)
-+			break;
-+
-+	if (i >= tegra_emc_table_size)
-+		return -EINVAL;
-+
-+	pr_debug("%s: setting to %lu\n", __func__, rate);
-+
-+	for (j = 0; j < TEGRA_EMC_NUM_REGS; j++)
-+		emc_writel(tegra_emc_table[i].regs[j], emc_reg_addr[j]);
-+
-+	emc_readl(tegra_emc_table[i].regs[TEGRA_EMC_NUM_REGS - 1]);
-+
-+	return 0;
-+}
-+
-+void tegra_init_emc(const struct tegra_emc_table *table, int table_size)
-+{
-+	tegra_emc_table = table;
-+	tegra_emc_table_size = table_size;
-+}
-diff --git a/arch/arm/mach-tegra/tegra2_emc.h b/arch/arm/mach-tegra/tegra2_emc.h
-new file mode 100644
-index 0000000..3515e57
---- /dev/null
-+++ b/arch/arm/mach-tegra/tegra2_emc.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author:
-+ *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#define TEGRA_EMC_NUM_REGS 46
-+
-+struct tegra_emc_table {
-+	unsigned long rate;
-+	u32 regs[TEGRA_EMC_NUM_REGS];
-+};
-+
-+int tegra_emc_set_rate(unsigned long rate);
-+long tegra_emc_round_rate(unsigned long rate);
-+void tegra_init_emc(const struct tegra_emc_table *table, int table_size);
+ /* External memory controller clock ops */
+ static void tegra2_emc_clk_init(struct clk *c)
+ {
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
