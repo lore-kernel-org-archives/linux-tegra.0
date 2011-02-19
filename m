@@ -1,13 +1,13 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Colin Cross <ccross@android.com>
 Subject: [PATCH v2 10/21] ARM: tegra: clock: Convert global lock to a lock per clock
 Date: Sat, 19 Feb 2011 14:25:59 -0800
-Message-ID: <1298154371-5641-12-git-send-email-ccross@android.com>
+Message-ID: <1298154371-5641-12-git-send-email-ccross__36647.3677372143$1298154450$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Give each clock its own lock, and remove all lock traversals from
@@ -16,7 +16,7 @@ parent to child clocks to prevent AB-BA deadlocks.
 This brings the locking in line with the common struct clk
 patches and should make conversion simple.
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Colin Cross <ccross@android.com>
 ---
  arch/arm/mach-tegra/clock.c            |  358 ++++++++++++++++++++------------
  arch/arm/mach-tegra/clock.h            |   14 +-
@@ -999,8 +999,3 @@ index f03c712..ab013b1 100644
  			return 0;
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
