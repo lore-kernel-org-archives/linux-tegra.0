@@ -1,206 +1,481 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 12/21] ARM: tegra: clock: Add shared bus clock type
-Date: Sat, 19 Feb 2011 14:26:01 -0800
-Message-ID: <1298154371-5641-14-git-send-email-ccross__807.565524201159$1298154462$gmane$org@android.com>
+From: Colin Cross <ccross@android.com>
+Subject: [PATCH v2 07/21] ARM: tegra: clock: Drop CPU dvfs
+Date: Sat, 19 Feb 2011 14:25:56 -0800
+Message-ID: <1298154371-5641-9-git-send-email-ccross@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some clocks may have multiple downstream users that need to request a
-higher clock rate.  Shared bus clocks provide a unique shared_bus_user
-clock to each user.  The frequency of the bus is set to the highest
-enabled shared_bus_user clock, with a minimum value set by the
-shared bus.  Drivers can use clk_enable and clk_disable to enable
-or disable their requirement, and clk_set_rate to set the minimum rate.
+The existing version did not extend well to core dvfs, drop it
+for now until the new clk api with clk_prepare and clk_unprepare
+is ready and non-atomic clocks are possible.
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/clock.h         |    8 +++
- arch/arm/mach-tegra/tegra2_clocks.c |  116 +++++++++++++++++++++++++++++++++++
- 2 files changed, 124 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/Makefile           |    1 -
+ arch/arm/mach-tegra/clock.c            |  159 +-------------------------------
+ arch/arm/mach-tegra/clock.h            |   24 -----
+ arch/arm/mach-tegra/cpu-tegra.c        |    2 +-
+ arch/arm/mach-tegra/include/mach/clk.h |    5 -
+ arch/arm/mach-tegra/tegra2_clocks.c    |    2 -
+ arch/arm/mach-tegra/tegra2_dvfs.c      |   86 -----------------
+ arch/arm/mach-tegra/tegra2_dvfs.h      |   20 ----
+ 8 files changed, 2 insertions(+), 297 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.c
+ delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.h
 
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 6b537de..23de060 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -9,7 +9,6 @@ obj-y                                   += powergate.o
+ obj-y					+= fuse.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+-obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_dvfs.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
+ obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index 79c0bd8..a1193f9 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -24,81 +24,14 @@
+ #include <linux/debugfs.h>
+ #include <linux/slab.h>
+ #include <linux/seq_file.h>
+-#include <linux/regulator/consumer.h>
+ #include <linux/clkdev.h>
+ 
+-#include "clock.h"
+ #include "board.h"
+-#include "fuse.h"
++#include "clock.h"
+ 
+ static LIST_HEAD(clocks);
+ 
+ static DEFINE_SPINLOCK(clock_lock);
+-static DEFINE_MUTEX(dvfs_lock);
+-
+-static int clk_is_dvfs(struct clk *c)
+-{
+-	return (c->dvfs != NULL);
+-};
+-
+-static int dvfs_set_rate(struct dvfs *d, unsigned long rate)
+-{
+-	struct dvfs_table *t;
+-
+-	if (d->table == NULL)
+-		return -ENODEV;
+-
+-	for (t = d->table; t->rate != 0; t++) {
+-		if (rate <= t->rate) {
+-			if (!d->reg)
+-				return 0;
+-
+-			return regulator_set_voltage(d->reg,
+-				t->millivolts * 1000,
+-				d->max_millivolts * 1000);
+-		}
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-static void dvfs_init(struct clk *c)
+-{
+-	int process_id;
+-	int i;
+-	struct dvfs_table *table;
+-
+-	process_id = c->dvfs->cpu ? tegra_core_process_id() :
+-		tegra_cpu_process_id();
+-
+-	for (i = 0; i < c->dvfs->process_id_table_length; i++)
+-		if (process_id == c->dvfs->process_id_table[i].process_id)
+-			c->dvfs->table = c->dvfs->process_id_table[i].table;
+-
+-	if (c->dvfs->table == NULL) {
+-		pr_err("Failed to find dvfs table for clock %s process %d\n",
+-			c->name, process_id);
+-		return;
+-	}
+-
+-	c->dvfs->max_millivolts = 0;
+-	for (table = c->dvfs->table; table->rate != 0; table++)
+-		if (c->dvfs->max_millivolts < table->millivolts)
+-			c->dvfs->max_millivolts = table->millivolts;
+-
+-	c->dvfs->reg = regulator_get(NULL, c->dvfs->reg_id);
+-
+-	if (IS_ERR(c->dvfs->reg)) {
+-		pr_err("Failed to get regulator %s for clock %s\n",
+-			c->dvfs->reg_id, c->name);
+-		c->dvfs->reg = NULL;
+-		return;
+-	}
+-
+-	if (c->refcnt > 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-}
+-
+ struct clk *tegra_get_clock_by_name(const char *name)
+ {
+ 	struct clk *c;
+@@ -214,34 +147,11 @@ int clk_enable_locked(struct clk *c)
+ 	return 0;
+ }
+ 
+-int clk_enable_cansleep(struct clk *c)
+-{
+-	int ret;
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	if (clk_is_dvfs(c) && c->refcnt > 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	ret = clk_enable_locked(c);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	mutex_unlock(&dvfs_lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_enable_cansleep);
+-
+ int clk_enable(struct clk *c)
+ {
+ 	int ret;
+ 	unsigned long flags;
+ 
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	ret = clk_enable_locked(c);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -268,30 +178,10 @@ void clk_disable_locked(struct clk *c)
+ 	c->refcnt--;
+ }
+ 
+-void clk_disable_cansleep(struct clk *c)
+-{
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	clk_disable_locked(c);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	if (clk_is_dvfs(c) && c->refcnt == 0)
+-		dvfs_set_rate(c->dvfs, c->rate);
+-
+-	mutex_unlock(&dvfs_lock);
+-}
+-EXPORT_SYMBOL(clk_disable_cansleep);
+-
+ void clk_disable(struct clk *c)
+ {
+ 	unsigned long flags;
+ 
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	clk_disable_locked(c);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -356,41 +246,11 @@ int clk_set_rate_locked(struct clk *c, unsigned long rate)
+ 	return 0;
+ }
+ 
+-int clk_set_rate_cansleep(struct clk *c, unsigned long rate)
+-{
+-	int ret = 0;
+-	unsigned long flags;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	if (rate > c->rate)
+-		ret = dvfs_set_rate(c->dvfs, rate);
+-	if (ret)
+-		goto out;
+-
+-	spin_lock_irqsave(&clock_lock, flags);
+-	ret = clk_set_rate_locked(c, rate);
+-	spin_unlock_irqrestore(&clock_lock, flags);
+-
+-	if (ret)
+-		goto out;
+-
+-	ret = dvfs_set_rate(c->dvfs, rate);
+-
+-out:
+-	mutex_unlock(&dvfs_lock);
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_set_rate_cansleep);
+-
+ int clk_set_rate(struct clk *c, unsigned long rate)
+ {
+ 	int ret = 0;
+ 	unsigned long flags;
+ 
+-	if (clk_is_dvfs(c))
+-		BUG();
+-
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 	ret = clk_set_rate_locked(c, rate);
+ 	spin_unlock_irqrestore(&clock_lock, flags);
+@@ -503,23 +363,6 @@ void __init tegra_init_clock(void)
+ 	tegra2_init_clocks();
+ }
+ 
+-int __init tegra_init_dvfs(void)
+-{
+-	struct clk *c, *safe;
+-
+-	mutex_lock(&dvfs_lock);
+-
+-	list_for_each_entry_safe(c, safe, &clocks, node)
+-		if (c->dvfs)
+-			dvfs_init(c);
+-
+-	mutex_unlock(&dvfs_lock);
+-
+-	return 0;
+-}
+-
+-late_initcall(tegra_init_dvfs);
+-
+ /*
+  * Iterate through all clocks, disabling any for which the refcount is 0
+  * but the clock init detected the bootloader left the clock on.
 diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
-index a63dbf9..bb755c2 100644
+index b76d33d..198f234 100644
 --- a/arch/arm/mach-tegra/clock.h
 +++ b/arch/arm/mach-tegra/clock.h
-@@ -85,6 +85,7 @@ struct clk {
- 	struct clk_ops		*ops;
- 	unsigned long		rate;
- 	unsigned long		max_rate;
-+	unsigned long		min_rate;
- 	u32			flags;
- 	const char		*name;
+@@ -41,28 +41,6 @@
+ #define ENABLE_ON_INIT		(1 << 28)
  
-@@ -98,6 +99,8 @@ struct clk {
- 	u32				reg;
- 	u32				reg_shift;
+ struct clk;
+-struct regulator;
+-
+-struct dvfs_table {
+-	unsigned long rate;
+-	int millivolts;
+-};
+-
+-struct dvfs_process_id_table {
+-	int process_id;
+-	struct dvfs_table *table;
+-};
+-
+-struct dvfs {
+-	struct regulator *reg;
+-	struct dvfs_table *table;
+-	int max_millivolts;
+-
+-	int process_id_table_length;
+-	const char *reg_id;
+-	bool cpu;
+-	struct dvfs_process_id_table process_id_table[];
+-};
  
-+	struct list_head		shared_bus_list;
-+
- 	union {
- 		struct {
- 			unsigned int			clk_num;
-@@ -120,6 +123,11 @@ struct clk {
- 			struct clk			*main;
- 			struct clk			*backup;
- 		} cpu;
-+		struct {
-+			struct list_head		node;
-+			bool				enabled;
-+			unsigned long			rate;
-+		} shared_bus_user;
- 	} u;
- 
- 	spinlock_t spinlock;
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index a1c86d8..dd53af3 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -1188,6 +1188,110 @@ static struct clk_ops tegra_cdev_clk_ops = {
- 	.disable		= &tegra2_cdev_clk_disable,
+ struct clk_mux_sel {
+ 	struct clk	*input;
+@@ -141,8 +119,6 @@ struct clk {
+ 	/* Virtual cpu clock */
+ 	struct clk			*main;
+ 	struct clk			*backup;
+-
+-	struct dvfs			*dvfs;
  };
  
-+/* shared bus ops */
-+/*
-+ * Some clocks may have multiple downstream users that need to request a
-+ * higher clock rate.  Shared bus clocks provide a unique shared_bus_user
-+ * clock to each user.  The frequency of the bus is set to the highest
-+ * enabled shared_bus_user clock, with a minimum value set by the
-+ * shared bus.
-+ */
-+static int tegra_clk_shared_bus_update(struct clk *bus)
-+{
-+	struct clk *c;
-+	unsigned long rate = bus->min_rate;
-+
-+	list_for_each_entry(c, &bus->shared_bus_list, u.shared_bus_user.node)
-+		if (c->u.shared_bus_user.enabled)
-+			rate = max(c->u.shared_bus_user.rate, rate);
-+
-+	if (rate == clk_get_rate_locked(bus))
-+		return 0;
-+
-+	return clk_set_rate_locked(bus, rate);
-+};
-+
-+static void tegra_clk_shared_bus_init(struct clk *c)
-+{
-+	unsigned long flags;
-+
-+	c->max_rate = c->parent->max_rate;
-+	c->u.shared_bus_user.rate = c->parent->max_rate;
-+	c->state = OFF;
-+#ifdef CONFIG_DEBUG_FS
-+	c->set = 1;
-+#endif
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	list_add_tail(&c->u.shared_bus_user.node,
-+		&c->parent->shared_bus_list);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+}
-+
-+static int tegra_clk_shared_bus_set_rate(struct clk *c, unsigned long rate)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	rate = clk_round_rate(c->parent, rate);
-+	if (rate < 0)
-+		return rate;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.rate = rate;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+
-+	return ret;
-+}
-+
-+static long tegra_clk_shared_bus_round_rate(struct clk *c, unsigned long rate)
-+{
-+	return clk_round_rate(c->parent, rate);
-+}
-+
-+static int tegra_clk_shared_bus_enable(struct clk *c)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.enabled = true;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+
-+	return ret;
-+}
-+
-+static void tegra_clk_shared_bus_disable(struct clk *c)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.enabled = false;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+	WARN_ON_ONCE(ret);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+}
-+
-+static struct clk_ops tegra_clk_shared_bus_ops = {
-+	.init = tegra_clk_shared_bus_init,
-+	.enable = tegra_clk_shared_bus_enable,
-+	.disable = tegra_clk_shared_bus_disable,
-+	.set_rate = tegra_clk_shared_bus_set_rate,
-+	.round_rate = tegra_clk_shared_bus_round_rate,
-+};
-+
-+
- /* Clock definitions */
- static struct clk tegra_clk_32k = {
- 	.name = "clk_32k",
-@@ -1858,6 +1962,17 @@ static struct clk_mux_sel mux_clk_32k[] = {
- 		},					\
- 	}
  
-+#define SHARED_CLK(_name, _dev, _con, _parent)		\
-+	{						\
-+		.name      = _name,			\
-+		.lookup    = {				\
-+			.dev_id    = _dev,		\
-+			.con_id    = _con,		\
-+		},					\
-+		.ops       = &tegra_clk_shared_bus_ops,	\
-+		.parent = _parent,			\
-+	}
-+
- struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
- 	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
-@@ -2001,6 +2116,7 @@ struct clk *tegra_ptr_clks[] = {
- static void tegra2_init_one_clock(struct clk *c)
- {
- 	clk_init(c);
-+	INIT_LIST_HEAD(&c->shared_bus_list);
- 	if (!c->lookup.dev_id && !c->lookup.con_id)
- 		c->lookup.con_id = c->name;
- 	c->lookup.clk = c;
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index ad26a9f..cda03f1 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -91,7 +91,7 @@ static int tegra_update_cpu_speed(unsigned long rate)
+ 	       freqs.old, freqs.new);
+ #endif
+ 
+-	ret = clk_set_rate_cansleep(cpu_clk, freqs.new * 1000);
++	ret = clk_set_rate(cpu_clk, freqs.new * 1000);
+ 	if (ret) {
+ 		pr_err("cpu-tegra: Failed to set cpu frequency to %d kHz\n",
+ 			freqs.new);
+diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
+index a217f68..6338652 100644
+--- a/arch/arm/mach-tegra/include/mach/clk.h
++++ b/arch/arm/mach-tegra/include/mach/clk.h
+@@ -25,9 +25,4 @@ struct clk;
+ void tegra_periph_reset_deassert(struct clk *c);
+ void tegra_periph_reset_assert(struct clk *c);
+ 
+-int clk_enable_cansleep(struct clk *clk);
+-void clk_disable_cansleep(struct clk *clk);
+-int clk_set_rate_cansleep(struct clk *clk, unsigned long rate);
+-int clk_set_parent_cansleep(struct clk *clk, struct clk *parent);
+-
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 36da2e8..e1e0d81f 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -31,7 +31,6 @@
+ 
+ #include "clock.h"
+ #include "fuse.h"
+-#include "tegra2_dvfs.h"
+ 
+ #define RST_DEVICES			0x004
+ #define RST_DEVICES_SET			0x300
+@@ -1650,7 +1649,6 @@ static struct clk tegra_clk_virtual_cpu = {
+ 	.backup    = &tegra_pll_p,
+ 	.ops       = &tegra_cpu_ops,
+ 	.max_rate  = 1000000000,
+-	.dvfs      = &tegra_dvfs_virtual_cpu_dvfs,
+ };
+ 
+ static struct clk tegra_clk_hclk = {
+diff --git a/arch/arm/mach-tegra/tegra2_dvfs.c b/arch/arm/mach-tegra/tegra2_dvfs.c
+deleted file mode 100644
+index 5529c23..0000000
+--- a/arch/arm/mach-tegra/tegra2_dvfs.c
++++ /dev/null
+@@ -1,86 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/tegra2_dvfs.c
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross@google.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#include <linux/kernel.h>
+-
+-#include "clock.h"
+-#include "tegra2_dvfs.h"
+-
+-static struct dvfs_table virtual_cpu_process_0[] = {
+-	{314000000,  750},
+-	{456000000,  825},
+-	{608000000,  900},
+-	{760000000,  975},
+-	{817000000,  1000},
+-	{912000000,  1050},
+-	{1000000000, 1100},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_1[] = {
+-	{314000000,  750},
+-	{456000000,  825},
+-	{618000000,  900},
+-	{770000000,  975},
+-	{827000000,  1000},
+-	{922000000,  1050},
+-	{1000000000, 1100},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_2[] = {
+-	{494000000,  750},
+-	{675000000,  825},
+-	{817000000,  875},
+-	{922000000,  925},
+-	{1000000000, 975},
+-	{0, 0},
+-};
+-
+-static struct dvfs_table virtual_cpu_process_3[] = {
+-	{730000000,  750},
+-	{760000000,  775},
+-	{845000000,  800},
+-	{1000000000, 875},
+-	{0, 0},
+-};
+-
+-struct dvfs tegra_dvfs_virtual_cpu_dvfs = {
+-	.reg_id = "vdd_cpu",
+-	.process_id_table = {
+-		{
+-			.process_id = 0,
+-			.table = virtual_cpu_process_0,
+-		},
+-		{
+-			.process_id = 1,
+-			.table = virtual_cpu_process_1,
+-		},
+-		{
+-			.process_id = 2,
+-			.table = virtual_cpu_process_2,
+-		},
+-		{
+-			.process_id = 3,
+-			.table = virtual_cpu_process_3,
+-		},
+-	},
+-	.process_id_table_length = 4,
+-	.cpu = 1,
+-};
+diff --git a/arch/arm/mach-tegra/tegra2_dvfs.h b/arch/arm/mach-tegra/tegra2_dvfs.h
+deleted file mode 100644
+index f8c1adb..0000000
+--- a/arch/arm/mach-tegra/tegra2_dvfs.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/tegra2_dvfs.h
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross@google.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-extern struct dvfs tegra_dvfs_virtual_cpu_dvfs;
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
