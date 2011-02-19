@@ -1,111 +1,120 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 15/21] ARM: tegra: clock: Round rate before setting rate
-Date: Sat, 19 Feb 2011 14:26:04 -0800
-Message-ID: <1298154371-5641-17-git-send-email-ccross__23786.9515702643$1298154605$gmane$org@android.com>
+From: Colin Cross <ccross@android.com>
+Subject: [PATCH v2 17/21] ARM: tegra: clocks: Add emc scaling
+Date: Sat, 19 Feb 2011 14:26:06 -0800
+Message-ID: <1298154371-5641-19-git-send-email-ccross__20301.2355756529$1298154638$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Call the clock's round_rate op, if it exists, before calling
-the set_rate op.  This will help later when dvfs is added,
-dvfs needs to know what the final rate will be before the
-frequency changes.
-
-Also requires fixes to the round rate functions to ensure
-calling round rate and then set rate will not cause the
-frequency to be rounded down twice.  When picking clock
-divider values, the clock framework picks the closest
-frequency that is lower than the requested frequency.  If
-the new frequency calculated from the divider value is
-rounded down, and then passed to set_rate, it will get
-rounded down again, possibly resulting in a frequency two
-steps lower than the original requested frequency.
-
-Fix the problem by rounding up when calculating the frequency
-coming out of a clock divider, so if that frequency is
-requested again, the same divider value will be picked.
-
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/clock.c         |   12 ++++++++++++
- arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |   62 ++++++++++++++++++++++++++++++++++-
+ 1 files changed, 61 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 8d01a49..9798585 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -86,6 +86,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
- 
- 	if (c->mul != 0 && c->div != 0) {
- 		rate *= c->mul;
-+		rate += c->div / 2; /* round up */
- 		do_div(rate, c->div);
- 	}
- 
-@@ -240,12 +241,23 @@ EXPORT_SYMBOL(clk_get_parent);
- 
- int clk_set_rate_locked(struct clk *c, unsigned long rate)
- {
-+	long new_rate;
-+
- 	if (!c->ops || !c->ops->set_rate)
- 		return -ENOSYS;
- 
- 	if (rate > c->max_rate)
- 		rate = c->max_rate;
- 
-+	if (c->ops && c->ops->round_rate) {
-+		new_rate = c->ops->round_rate(c, rate);
-+
-+		if (new_rate < 0)
-+			return new_rate;
-+
-+		rate = new_rate;
-+	}
-+
- 	return c->ops->set_rate(c, rate);
- }
- 
 diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 2734889..480c0f6 100644
+index 480c0f6..395d006 100644
 --- a/arch/arm/mach-tegra/tegra2_clocks.c
 +++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -866,9 +866,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
- 		divider = clk_div71_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_2) {
--		return parent_rate / 2;
-+		return DIV_ROUND_UP(parent_rate, 2);
- 	}
- 	return -EINVAL;
- }
-@@ -1058,12 +1058,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
- 		if (divider < 0)
- 			return divider;
+@@ -31,6 +31,7 @@
  
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_U16) {
- 		divider = clk_div16_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate / (divider + 1);
-+		return DIV_ROUND_UP(parent_rate, divider + 1);
- 	}
- 	return -EINVAL;
- }
+ #include "clock.h"
+ #include "fuse.h"
++#include "tegra2_emc.h"
+ 
+ #define RST_DEVICES			0x004
+ #define RST_DEVICES_SET			0x300
+@@ -1078,6 +1079,53 @@ static struct clk_ops tegra_periph_clk_ops = {
+ 	.reset			= &tegra2_periph_clk_reset,
+ };
+ 
++/* External memory controller clock ops */
++static void tegra2_emc_clk_init(struct clk *c)
++{
++	tegra2_periph_clk_init(c);
++	c->max_rate = clk_get_rate_locked(c);
++}
++
++static long tegra2_emc_clk_round_rate(struct clk *c, unsigned long rate)
++{
++	long new_rate = rate;
++
++	new_rate = tegra_emc_round_rate(new_rate);
++	if (new_rate < 0)
++		return c->max_rate;
++
++	BUG_ON(new_rate != tegra2_periph_clk_round_rate(c, new_rate));
++
++	return new_rate;
++}
++
++static int tegra2_emc_clk_set_rate(struct clk *c, unsigned long rate)
++{
++	int ret;
++	/* The Tegra2 memory controller has an interlock with the clock
++	 * block that allows memory shadowed registers to be updated,
++	 * and then transfer them to the main registers at the same
++	 * time as the clock update without glitches. */
++	ret = tegra_emc_set_rate(rate);
++	if (ret < 0)
++		return ret;
++
++	ret = tegra2_periph_clk_set_rate(c, rate);
++	udelay(1);
++
++	return ret;
++}
++
++static struct clk_ops tegra_emc_clk_ops = {
++	.init			= &tegra2_emc_clk_init,
++	.enable			= &tegra2_periph_clk_enable,
++	.disable		= &tegra2_periph_clk_disable,
++	.set_parent		= &tegra2_periph_clk_set_parent,
++	.set_rate		= &tegra2_emc_clk_set_rate,
++	.round_rate		= &tegra2_emc_clk_round_rate,
++	.reset			= &tegra2_periph_clk_reset,
++};
++
+ /* Clock doubler ops */
+ static void tegra2_clk_double_init(struct clk *c)
+ {
+@@ -1970,6 +2018,18 @@ static struct clk_mux_sel mux_clk_32k[] = {
+ 	{ 0, 0},
+ };
+ 
++static struct clk tegra_clk_emc = {
++	.name = "emc",
++	.ops = &tegra_emc_clk_ops,
++	.reg = 0x19c,
++	.max_rate = 800000000,
++	.inputs = mux_pllm_pllc_pllp_clkm,
++	.flags = MUX | DIV_U71 | PERIPH_EMC_ENB,
++	.u.periph = {
++		.clk_num = 57,
++	},
++};
++
+ #define PERIPH_CLK(_name, _dev, _con, _clk_num, _reg, _max, _inputs, _flags) \
+ 	{						\
+ 		.name      = _name,			\
+@@ -2056,7 +2116,6 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("usbd",	"fsl-tegra-udc",	NULL,	22,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+ 	PERIPH_CLK("usb2",	"tegra-ehci.1",		NULL,	58,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+ 	PERIPH_CLK("usb3",	"tegra-ehci.2",		NULL,	59,	0,	480000000, mux_clk_m,			0), /* requires min voltage */
+-	PERIPH_CLK("emc",	"emc",			NULL,	57,	0x19c,	800000000, mux_pllm_pllc_pllp_clkm,	MUX | DIV_U71 | PERIPH_EMC_ENB),
+ 	PERIPH_CLK("dsi",	"dsi",			NULL,	48,	0,	500000000, mux_plld,			0), /* scales with voltage */
+ 	PERIPH_CLK("csi",	"tegra_camera",		"csi",	52,	0,	72000000,  mux_pllp_out3,		0),
+ 	PERIPH_CLK("isp",	"tegra_camera",		"isp",	23,	0,	150000000, mux_clk_m,			0), /* same frequency as VI */
+@@ -2132,6 +2191,7 @@ struct clk *tegra_ptr_clks[] = {
+ 	&tegra_dev2_clk,
+ 	&tegra_clk_virtual_cpu,
+ 	&tegra_clk_blink,
++	&tegra_clk_emc,
+ };
+ 
+ static void tegra2_init_one_clock(struct clk *c)
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
