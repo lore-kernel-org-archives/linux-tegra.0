@@ -1,201 +1,162 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 12/21] ARM: tegra: clock: Add shared bus clock type
-Date: Sat, 19 Feb 2011 14:26:01 -0800
-Message-ID: <1298154371-5641-14-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 08/21] ARM: tegra: clock: Rearrange static clock tables
+Date: Sat, 19 Feb 2011 14:25:57 -0800
+Message-ID: <1298154371-5641-10-git-send-email-ccross@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, sboyd@codeaurora.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some clocks may have multiple downstream users that need to request a
-higher clock rate.  Shared bus clocks provide a unique shared_bus_user
-clock to each user.  The frequency of the bus is set to the highest
-enabled shared_bus_user clock, with a minimum value set by the
-shared bus.  Drivers can use clk_enable and clk_disable to enable
-or disable their requirement, and clk_set_rate to set the minimum rate.
+Make the static clocks look more like the array of clocks
+so they can all be initalized with the same helper function.
 
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/clock.h         |    8 +++
- arch/arm/mach-tegra/tegra2_clocks.c |  116 +++++++++++++++++++++++++++++++++++
- 2 files changed, 124 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |  106 +++++++++++++++++------------------
+ 1 files changed, 51 insertions(+), 55 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
-index a63dbf9..bb755c2 100644
---- a/arch/arm/mach-tegra/clock.h
-+++ b/arch/arm/mach-tegra/clock.h
-@@ -85,6 +85,7 @@ struct clk {
- 	struct clk_ops		*ops;
- 	unsigned long		rate;
- 	unsigned long		max_rate;
-+	unsigned long		min_rate;
- 	u32			flags;
- 	const char		*name;
- 
-@@ -98,6 +99,8 @@ struct clk {
- 	u32				reg;
- 	u32				reg_shift;
- 
-+	struct list_head		shared_bus_list;
-+
- 	union {
- 		struct {
- 			unsigned int			clk_num;
-@@ -120,6 +123,11 @@ struct clk {
- 			struct clk			*main;
- 			struct clk			*backup;
- 		} cpu;
-+		struct {
-+			struct list_head		node;
-+			bool				enabled;
-+			unsigned long			rate;
-+		} shared_bus_user;
- 	} u;
- 
- 	spinlock_t spinlock;
 diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index a1c86d8..dd53af3 100644
+index e1e0d81f..62ec3fb 100644
 --- a/arch/arm/mach-tegra/tegra2_clocks.c
 +++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -1188,6 +1188,110 @@ static struct clk_ops tegra_cdev_clk_ops = {
- 	.disable		= &tegra2_cdev_clk_disable,
- };
- 
-+/* shared bus ops */
-+/*
-+ * Some clocks may have multiple downstream users that need to request a
-+ * higher clock rate.  Shared bus clocks provide a unique shared_bus_user
-+ * clock to each user.  The frequency of the bus is set to the highest
-+ * enabled shared_bus_user clock, with a minimum value set by the
-+ * shared bus.
-+ */
-+static int tegra_clk_shared_bus_update(struct clk *bus)
-+{
-+	struct clk *c;
-+	unsigned long rate = bus->min_rate;
-+
-+	list_for_each_entry(c, &bus->shared_bus_list, u.shared_bus_user.node)
-+		if (c->u.shared_bus_user.enabled)
-+			rate = max(c->u.shared_bus_user.rate, rate);
-+
-+	if (rate == clk_get_rate_locked(bus))
-+		return 0;
-+
-+	return clk_set_rate_locked(bus, rate);
-+};
-+
-+static void tegra_clk_shared_bus_init(struct clk *c)
-+{
-+	unsigned long flags;
-+
-+	c->max_rate = c->parent->max_rate;
-+	c->u.shared_bus_user.rate = c->parent->max_rate;
-+	c->state = OFF;
-+#ifdef CONFIG_DEBUG_FS
-+	c->set = 1;
-+#endif
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	list_add_tail(&c->u.shared_bus_user.node,
-+		&c->parent->shared_bus_list);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+}
-+
-+static int tegra_clk_shared_bus_set_rate(struct clk *c, unsigned long rate)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	rate = clk_round_rate(c->parent, rate);
-+	if (rate < 0)
-+		return rate;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.rate = rate;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+
-+	return ret;
-+}
-+
-+static long tegra_clk_shared_bus_round_rate(struct clk *c, unsigned long rate)
-+{
-+	return clk_round_rate(c->parent, rate);
-+}
-+
-+static int tegra_clk_shared_bus_enable(struct clk *c)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.enabled = true;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+
-+	return ret;
-+}
-+
-+static void tegra_clk_shared_bus_disable(struct clk *c)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&c->parent->spinlock, flags);
-+
-+	c->u.shared_bus_user.enabled = false;
-+	ret = tegra_clk_shared_bus_update(c->parent);
-+	WARN_ON_ONCE(ret);
-+
-+	spin_unlock_irqrestore(&c->parent->spinlock, flags);
-+}
-+
-+static struct clk_ops tegra_clk_shared_bus_ops = {
-+	.init = tegra_clk_shared_bus_init,
-+	.enable = tegra_clk_shared_bus_enable,
-+	.disable = tegra_clk_shared_bus_disable,
-+	.set_rate = tegra_clk_shared_bus_set_rate,
-+	.round_rate = tegra_clk_shared_bus_round_rate,
-+};
-+
-+
- /* Clock definitions */
- static struct clk tegra_clk_32k = {
- 	.name = "clk_32k",
-@@ -1858,6 +1962,17 @@ static struct clk_mux_sel mux_clk_32k[] = {
- 		},					\
+@@ -1770,7 +1770,7 @@ static struct clk_mux_sel mux_clk_32k[] = {
+ 		.max_rate  = _max,			\
  	}
  
-+#define SHARED_CLK(_name, _dev, _con, _parent)		\
-+	{						\
-+		.name      = _name,			\
-+		.lookup    = {				\
-+			.dev_id    = _dev,		\
-+			.con_id    = _con,		\
-+		},					\
-+		.ops       = &tegra_clk_shared_bus_ops,	\
-+		.parent = _parent,			\
-+	}
-+
- struct clk tegra_list_clks[] = {
+-struct clk tegra_periph_clks[] = {
++struct clk tegra_list_clks[] = {
  	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
  	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
-@@ -2001,6 +2116,7 @@ struct clk *tegra_ptr_clks[] = {
- static void tegra2_init_one_clock(struct clk *c)
+ 	PERIPH_CLK("i2s1",	"i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+@@ -1879,71 +1879,67 @@ struct clk_duplicate tegra_clk_duplicates[] = {
+ 		.clk = ck,	\
+ 	}
+ 
+-struct clk_lookup tegra_clk_lookups[] = {
+-	/* external root sources */
+-	CLK(NULL,	"32k_clk",	&tegra_clk_32k),
+-	CLK(NULL,	"pll_s",	&tegra_pll_s),
+-	CLK(NULL,	"clk_m",	&tegra_clk_m),
+-	CLK(NULL,	"pll_m",	&tegra_pll_m),
+-	CLK(NULL,	"pll_m_out1",	&tegra_pll_m_out1),
+-	CLK(NULL,	"pll_c",	&tegra_pll_c),
+-	CLK(NULL,	"pll_c_out1",	&tegra_pll_c_out1),
+-	CLK(NULL,	"pll_p",	&tegra_pll_p),
+-	CLK(NULL,	"pll_p_out1",	&tegra_pll_p_out1),
+-	CLK(NULL,	"pll_p_out2",	&tegra_pll_p_out2),
+-	CLK(NULL,	"pll_p_out3",	&tegra_pll_p_out3),
+-	CLK(NULL,	"pll_p_out4",	&tegra_pll_p_out4),
+-	CLK(NULL,	"pll_a",	&tegra_pll_a),
+-	CLK(NULL,	"pll_a_out0",	&tegra_pll_a_out0),
+-	CLK(NULL,	"pll_d",	&tegra_pll_d),
+-	CLK(NULL,	"pll_d_out0",	&tegra_pll_d_out0),
+-	CLK(NULL,	"pll_u",	&tegra_pll_u),
+-	CLK(NULL,	"pll_x",	&tegra_pll_x),
+-	CLK(NULL,	"pll_e",	&tegra_pll_e),
+-	CLK(NULL,	"cclk",		&tegra_clk_cclk),
+-	CLK(NULL,	"sclk",		&tegra_clk_sclk),
+-	CLK(NULL,	"hclk",		&tegra_clk_hclk),
+-	CLK(NULL,	"pclk",		&tegra_clk_pclk),
+-	CLK(NULL,	"clk_d",	&tegra_clk_d),
+-	CLK(NULL,	"clk_dev1",	&tegra_dev1_clk),
+-	CLK(NULL,	"clk_dev2",	&tegra_dev2_clk),
+-	CLK(NULL,	"cpu",		&tegra_clk_virtual_cpu),
+-	CLK(NULL,	"blink",	&tegra_clk_blink),
+-};
++struct clk *tegra_ptr_clks[] = {
++	&tegra_clk_32k,
++	&tegra_pll_s,
++	&tegra_clk_m,
++	&tegra_pll_m,
++	&tegra_pll_m_out1,
++	&tegra_pll_c,
++	&tegra_pll_c_out1,
++	&tegra_pll_p,
++	&tegra_pll_p_out1,
++	&tegra_pll_p_out2,
++	&tegra_pll_p_out3,
++	&tegra_pll_p_out4,
++	&tegra_pll_a,
++	&tegra_pll_a_out0,
++	&tegra_pll_d,
++	&tegra_pll_d_out0,
++	&tegra_pll_u,
++	&tegra_pll_x,
++	&tegra_pll_e,
++	&tegra_clk_cclk,
++	&tegra_clk_sclk,
++	&tegra_clk_hclk,
++	&tegra_clk_pclk,
++	&tegra_clk_d,
++	&tegra_dev1_clk,
++	&tegra_dev2_clk,
++	&tegra_clk_virtual_cpu,
++	&tegra_clk_blink,
++};
++
++static void tegra2_init_one_clock(struct clk *c)
++{
++	clk_init(c);
++	if (!c->lookup.dev_id && !c->lookup.con_id)
++		c->lookup.con_id = c->name;
++	c->lookup.clk = c;
++	clkdev_add(&c->lookup);
++}
+ 
+ void __init tegra2_init_clocks(void)
  {
- 	clk_init(c);
-+	INIT_LIST_HEAD(&c->shared_bus_list);
- 	if (!c->lookup.dev_id && !c->lookup.con_id)
- 		c->lookup.con_id = c->name;
- 	c->lookup.clk = c;
+ 	int i;
+-	struct clk_lookup *cl;
+ 	struct clk *c;
+-	struct clk_duplicate *cd;
+-
+-	for (i = 0; i < ARRAY_SIZE(tegra_clk_lookups); i++) {
+-		cl = &tegra_clk_lookups[i];
+-		clk_init(cl->clk);
+-		clkdev_add(cl);
+-	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(tegra_periph_clks); i++) {
+-		c = &tegra_periph_clks[i];
+-		cl = &c->lookup;
+-		cl->clk = c;
++	for (i = 0; i < ARRAY_SIZE(tegra_ptr_clks); i++)
++		tegra2_init_one_clock(tegra_ptr_clks[i]);
+ 
+-		clk_init(cl->clk);
+-		clkdev_add(cl);
+-	}
++	for (i = 0; i < ARRAY_SIZE(tegra_list_clks); i++)
++		tegra2_init_one_clock(&tegra_list_clks[i]);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tegra_clk_duplicates); i++) {
+-		cd = &tegra_clk_duplicates[i];
+-		c = tegra_get_clock_by_name(cd->name);
+-		if (c) {
+-			cl = &cd->lookup;
+-			cl->clk = c;
+-			clkdev_add(cl);
+-		} else {
++		c = tegra_get_clock_by_name(tegra_clk_duplicates[i].name);
++		if (!c) {
+ 			pr_err("%s: Unknown duplicate clock %s\n", __func__,
+-				cd->name);
++				tegra_clk_duplicates[i].name);
++			continue;
+ 		}
++
++		tegra_clk_duplicates[i].lookup.clk = c;
++		clkdev_add(&tegra_clk_duplicates[i].lookup);
+ 	}
+ 
+ 	init_audio_sync_clock_mux();
 -- 
 1.7.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
