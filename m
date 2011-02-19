@@ -1,33 +1,84 @@
-From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [PATCH 1/2] ARM: update trimslice entry in the machine registry
-Date: Mon,  7 Feb 2011 10:10:52 +0200
-Message-ID: <354f589cbbf0b58d0383b07f5e221fa3a6f5d23c.1297063443.git.mike@compulab.co.il>
-References: <cover.1297063443.git.mike@compulab.co.il>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 05/21] ARM: tegra: clock: Disable clocks left on by bootloader
+Date: Sat, 19 Feb 2011 14:25:54 -0800
+Message-ID: <1298154371-5641-7-git-send-email-ccross@android.com>
+References: <1298154371-5641-1-git-send-email-ccross@android.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1297063443.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
----
- arch/arm/tools/mach-types |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Adds CONFIG_TEGRA_DISABLE_BOOTLOADER_CLOCKS that iterates
+through all clocks, disabling any for which the refcount
+is 0 but the clock init detected the bootloader left the
+clock on.
 
-diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
-index 2fea897..bda8b81 100644
---- a/arch/arm/tools/mach-types
-+++ b/arch/arm/tools/mach-types
-@@ -3190,7 +3190,7 @@ synergy			MACH_SYNERGY		SYNERGY			3205
- ics_if_voip		MACH_ICS_IF_VOIP	ICS_IF_VOIP		3206
- wlf_cragg_6410		MACH_WLF_CRAGG_6410	WLF_CRAGG_6410		3207
- punica			MACH_PUNICA		PUNICA			3208
--sbc_nt250		MACH_SBC_NT250		SBC_NT250		3209
-+trimslice		MACH_TRIMSLICE		TRIMSLICE		3209
- mx27_wmultra		MACH_MX27_WMULTRA	MX27_WMULTRA		3210
- mackerel		MACH_MACKEREL		MACKEREL		3211
- fa9x27			MACH_FA9X27		FA9X27			3213
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/mach-tegra/Kconfig |    6 ++++++
+ arch/arm/mach-tegra/clock.c |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index f0fda77..9f4fc6b 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -57,6 +57,12 @@ config TEGRA_DEBUG_UARTE
+ 
+ endchoice
+ 
++config TEGRA_DISABLE_BOOTLOADER_CLOCKS
++	bool "Disable clocks left on by bootloader"
++	help
++	  Disables clocks that are detected to be on but haven't
++	  been requested by a kernel driver.
++
+ config TEGRA_SYSTEM_DMA
+ 	bool "Enable system DMA driver for NVIDIA Tegra SoCs"
+ 	default y
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index f55bb83..0ea5d92 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -511,6 +511,36 @@ int __init tegra_init_dvfs(void)
+ 
+ late_initcall(tegra_init_dvfs);
+ 
++/*
++ * Iterate through all clocks, disabling any for which the refcount is 0
++ * but the clock init detected the bootloader left the clock on.
++ */
++#ifdef CONFIG_TEGRA_DISABLE_BOOTLOADER_CLOCKS
++int __init tegra_disable_boot_clocks(void)
++{
++	unsigned long flags;
++
++	struct clk *c;
++
++	spin_lock_irqsave(&clock_lock, flags);
++
++	list_for_each_entry(c, &clocks, node) {
++		if (c->refcnt == 0 && c->state == ON &&
++				c->ops && c->ops->disable) {
++			pr_warning("Disabling clock %s left on by bootloader\n",
++				c->name);
++			c->ops->disable(c);
++			c->state = OFF;
++		}
++	}
++
++	spin_unlock_irqrestore(&clock_lock, flags);
++
++	return 0;
++}
++late_initcall(tegra_disable_boot_clocks);
++#endif
++
+ #ifdef CONFIG_DEBUG_FS
+ static struct dentry *clk_debugfs_root;
+ 
 -- 
 1.7.3.1
 
