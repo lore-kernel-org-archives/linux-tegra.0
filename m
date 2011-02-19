@@ -1,20 +1,20 @@
-From: Colin Cross <ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Subject: [PATCH v2 07/21] ARM: tegra: clock: Drop CPU dvfs
 Date: Sat, 19 Feb 2011 14:25:56 -0800
-Message-ID: <1298154371-5641-9-git-send-email-ccross__3221.51049408621$1298154709$gmane$org@android.com>
+Message-ID: <1298154371-5641-9-git-send-email-ccross__12820.24062607$1298154722$gmane$org@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298154371-5641-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 The existing version did not extend well to core dvfs, drop it
 for now until the new clk api with clk_prepare and clk_unprepare
 is ready and non-atomic clocks are possible.
 
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
  arch/arm/mach-tegra/Makefile           |    1 -
  arch/arm/mach-tegra/clock.c            |  159 +-------------------------------
@@ -360,7 +360,7 @@ index 5529c23..0000000
 - * Copyright (C) 2010 Google, Inc.
 - *
 - * Author:
-- *	Colin Cross <ccross@google.com>
+- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 - *
 - * This software is licensed under the terms of the GNU General Public
 - * License version 2, as published by the Free Software Foundation, and
@@ -452,7 +452,7 @@ index f8c1adb..0000000
 - * Copyright (C) 2010 Google, Inc.
 - *
 - * Author:
-- *	Colin Cross <ccross@google.com>
+- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 - *
 - * This software is licensed under the terms of the GNU General Public
 - * License version 2, as published by the Free Software Foundation, and
@@ -468,3 +468,8 @@ index f8c1adb..0000000
 -extern struct dvfs tegra_dvfs_virtual_cpu_dvfs;
 -- 
 1.7.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
