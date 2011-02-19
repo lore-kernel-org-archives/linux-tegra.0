@@ -1,11 +1,11 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Colin Cross <ccross@android.com>
 Subject: [PATCH v2 12/21] ARM: tegra: clock: Add shared bus clock type
 Date: Sat, 19 Feb 2011 14:25:48 -0800
-Message-ID: <1298154371-5641-1-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Message-ID: <1298154371-5641-1-git-send-email-ccross__32091.1644412719$1298154495$gmane$org@android.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, sboyd@codeaurora.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Some clocks may have multiple downstream users that need to request a
@@ -15,7 +15,7 @@ enabled shared_bus_user clock, with a minimum value set by the
 shared bus.  Drivers can use clk_enable and clk_disable to enable
 or disable their requirement, and clk_set_rate to set the minimum rate.
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Colin Cross <ccross@android.com>
 ---
  arch/arm/mach-tegra/clock.h         |    8 +++
  arch/arm/mach-tegra/tegra2_clocks.c |  116 +++++++++++++++++++++++++++++++++++
@@ -197,8 +197,3 @@ index a1c86d8..dd53af3 100644
  	c->lookup.clk = c;
 -- 
 1.7.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
