@@ -1,113 +1,201 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 14/21] ARM: tegra: clock: Refcount periph clock enables
-Date: Sat, 19 Feb 2011 14:26:03 -0800
-Message-ID: <1298154371-5641-16-git-send-email-ccross@android.com>
+Subject: [PATCH v2 12/21] ARM: tegra: clock: Add shared bus clock type
+Date: Sat, 19 Feb 2011 14:26:01 -0800
+Message-ID: <1298154371-5641-14-git-send-email-ccross@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, sboyd@codeaurora.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some peripheral clocks share enable bits.  Refcount the enables so
-that calling clk_disable on one clock will not turn off another
-clock.
+Some clocks may have multiple downstream users that need to request a
+higher clock rate.  Shared bus clocks provide a unique shared_bus_user
+clock to each user.  The frequency of the bus is set to the highest
+enabled shared_bus_user clock, with a minimum value set by the
+shared bus.  Drivers can use clk_enable and clk_disable to enable
+or disable their requirement, and clk_set_rate to set the minimum rate.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/tegra2_clocks.c |   35 +++++++++++++++++++++++++++++------
- 1 files changed, 29 insertions(+), 6 deletions(-)
+ arch/arm/mach-tegra/clock.h         |    8 +++
+ arch/arm/mach-tegra/tegra2_clocks.c |  116 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 124 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
+index a63dbf9..bb755c2 100644
+--- a/arch/arm/mach-tegra/clock.h
++++ b/arch/arm/mach-tegra/clock.h
+@@ -85,6 +85,7 @@ struct clk {
+ 	struct clk_ops		*ops;
+ 	unsigned long		rate;
+ 	unsigned long		max_rate;
++	unsigned long		min_rate;
+ 	u32			flags;
+ 	const char		*name;
+ 
+@@ -98,6 +99,8 @@ struct clk {
+ 	u32				reg;
+ 	u32				reg_shift;
+ 
++	struct list_head		shared_bus_list;
++
+ 	union {
+ 		struct {
+ 			unsigned int			clk_num;
+@@ -120,6 +123,11 @@ struct clk {
+ 			struct clk			*main;
+ 			struct clk			*backup;
+ 		} cpu;
++		struct {
++			struct list_head		node;
++			bool				enabled;
++			unsigned long			rate;
++		} shared_bus_user;
+ 	} u;
+ 
+ 	spinlock_t spinlock;
 diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 196c249..2734889 100644
+index a1c86d8..dd53af3 100644
 --- a/arch/arm/mach-tegra/tegra2_clocks.c
 +++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -154,6 +154,12 @@ static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
-  */
- static DEFINE_SPINLOCK(clock_register_lock);
+@@ -1188,6 +1188,110 @@ static struct clk_ops tegra_cdev_clk_ops = {
+ 	.disable		= &tegra2_cdev_clk_disable,
+ };
  
++/* shared bus ops */
 +/*
-+ * Some peripheral clocks share an enable bit, so refcount the enable bits
-+ * in registers CLK_ENABLE_L, CLK_ENABLE_H, and CLK_ENABLE_U
++ * Some clocks may have multiple downstream users that need to request a
++ * higher clock rate.  Shared bus clocks provide a unique shared_bus_user
++ * clock to each user.  The frequency of the bus is set to the highest
++ * enabled shared_bus_user clock, with a minimum value set by the
++ * shared bus.
 + */
-+static int tegra_periph_clk_enable_refcount[3 * 32];
++static int tegra_clk_shared_bus_update(struct clk *bus)
++{
++	struct clk *c;
++	unsigned long rate = bus->min_rate;
 +
- #define clk_writel(value, reg) \
- 	__raw_writel(value, (u32)reg_clk_base + (reg))
- #define clk_readl(reg) \
-@@ -920,8 +926,19 @@ static void tegra2_periph_clk_init(struct clk *c)
- static int tegra2_periph_clk_enable(struct clk *c)
- {
- 	u32 val;
-+	unsigned long flags;
-+	int refcount;
- 	pr_debug("%s on clock %s\n", __func__, c->name);
- 
-+	spin_lock_irqsave(&clock_register_lock, flags);
++	list_for_each_entry(c, &bus->shared_bus_list, u.shared_bus_user.node)
++		if (c->u.shared_bus_user.enabled)
++			rate = max(c->u.shared_bus_user.rate, rate);
 +
-+	refcount = tegra_periph_clk_enable_refcount[c->u.periph.clk_num]++;
-+
-+	spin_unlock_irqrestore(&clock_register_lock, flags);
-+
-+	if (refcount > 1)
++	if (rate == clk_get_rate_locked(bus))
 +		return 0;
 +
- 	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
- 		CLK_OUT_ENB_SET + PERIPH_CLK_TO_ENB_SET_REG(c));
- 	if (!(c->flags & PERIPH_NO_RESET) && !(c->flags & PERIPH_MANUAL_RESET))
-@@ -939,10 +956,20 @@ static int tegra2_periph_clk_enable(struct clk *c)
- 
- static void tegra2_periph_clk_disable(struct clk *c)
- {
++	return clk_set_rate_locked(bus, rate);
++};
++
++static void tegra_clk_shared_bus_init(struct clk *c)
++{
 +	unsigned long flags;
 +
- 	pr_debug("%s on clock %s\n", __func__, c->name);
++	c->max_rate = c->parent->max_rate;
++	c->u.shared_bus_user.rate = c->parent->max_rate;
++	c->state = OFF;
++#ifdef CONFIG_DEBUG_FS
++	c->set = 1;
++#endif
++
++	spin_lock_irqsave(&c->parent->spinlock, flags);
++
++	list_add_tail(&c->u.shared_bus_user.node,
++		&c->parent->shared_bus_list);
++
++	spin_unlock_irqrestore(&c->parent->spinlock, flags);
++}
++
++static int tegra_clk_shared_bus_set_rate(struct clk *c, unsigned long rate)
++{
++	unsigned long flags;
++	int ret;
++
++	rate = clk_round_rate(c->parent, rate);
++	if (rate < 0)
++		return rate;
++
++	spin_lock_irqsave(&c->parent->spinlock, flags);
++
++	c->u.shared_bus_user.rate = rate;
++	ret = tegra_clk_shared_bus_update(c->parent);
++
++	spin_unlock_irqrestore(&c->parent->spinlock, flags);
++
++	return ret;
++}
++
++static long tegra_clk_shared_bus_round_rate(struct clk *c, unsigned long rate)
++{
++	return clk_round_rate(c->parent, rate);
++}
++
++static int tegra_clk_shared_bus_enable(struct clk *c)
++{
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&c->parent->spinlock, flags);
++
++	c->u.shared_bus_user.enabled = true;
++	ret = tegra_clk_shared_bus_update(c->parent);
++
++	spin_unlock_irqrestore(&c->parent->spinlock, flags);
++
++	return ret;
++}
++
++static void tegra_clk_shared_bus_disable(struct clk *c)
++{
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&c->parent->spinlock, flags);
++
++	c->u.shared_bus_user.enabled = false;
++	ret = tegra_clk_shared_bus_update(c->parent);
++	WARN_ON_ONCE(ret);
++
++	spin_unlock_irqrestore(&c->parent->spinlock, flags);
++}
++
++static struct clk_ops tegra_clk_shared_bus_ops = {
++	.init = tegra_clk_shared_bus_init,
++	.enable = tegra_clk_shared_bus_enable,
++	.disable = tegra_clk_shared_bus_disable,
++	.set_rate = tegra_clk_shared_bus_set_rate,
++	.round_rate = tegra_clk_shared_bus_round_rate,
++};
++
++
+ /* Clock definitions */
+ static struct clk tegra_clk_32k = {
+ 	.name = "clk_32k",
+@@ -1858,6 +1962,17 @@ static struct clk_mux_sel mux_clk_32k[] = {
+ 		},					\
+ 	}
  
--	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
--		CLK_OUT_ENB_CLR + PERIPH_CLK_TO_ENB_SET_REG(c));
-+	spin_lock_irqsave(&clock_register_lock, flags);
++#define SHARED_CLK(_name, _dev, _con, _parent)		\
++	{						\
++		.name      = _name,			\
++		.lookup    = {				\
++			.dev_id    = _dev,		\
++			.con_id    = _con,		\
++		},					\
++		.ops       = &tegra_clk_shared_bus_ops,	\
++		.parent = _parent,			\
++	}
 +
-+	if (c->refcnt)
-+		tegra_periph_clk_enable_refcount[c->u.periph.clk_num]--;
-+
-+	if (tegra_periph_clk_enable_refcount[c->u.periph.clk_num] == 0)
-+		clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
-+			CLK_OUT_ENB_CLR + PERIPH_CLK_TO_ENB_SET_REG(c));
-+
-+	spin_unlock_irqrestore(&clock_register_lock, flags);
- }
- 
- static void tegra2_periph_clk_reset(struct clk *c, bool assert)
-@@ -1976,7 +2003,6 @@ struct clk tegra_list_clks[] = {
+ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
  	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
- 	PERIPH_CLK("i2s1",	"i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("i2s2",	"i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
--	/* FIXME: spdif has 2 clocks but 1 enable */
- 	PERIPH_CLK("spdif_out",	"spdif_out",		NULL,	10,	0x108,	100000000, mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("spdif_in",	"spdif_in",		NULL,	10,	0x10c,	100000000, mux_pllp_pllc_pllm,		MUX | DIV_U71),
- 	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71),
-@@ -1989,7 +2015,6 @@ struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("sbc4",	"spi_tegra.3",		NULL,	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("ide",	"ide",			NULL,	25,	0x144,	100000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* requires min voltage */
- 	PERIPH_CLK("ndflash",	"tegra_nand",		NULL,	13,	0x160,	164000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
--	/* FIXME: vfir shares an enable with uartb */
- 	PERIPH_CLK("vfir",	"vfir",			NULL,	7,	0x168,	72000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("sdmmc1",	"sdhci-tegra.0",	NULL,	14,	0x150,	52000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
- 	PERIPH_CLK("sdmmc2",	"sdhci-tegra.1",	NULL,	9,	0x154,	52000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* scales with voltage */
-@@ -2017,13 +2042,11 @@ struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("uarte",	"uart.4",		NULL,	66,	0x1c4,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
- 	PERIPH_CLK("3d",	"3d",			NULL,	24,	0x158,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | PERIPH_MANUAL_RESET), /* scales with voltage and process_id */
- 	PERIPH_CLK("2d",	"2d",			NULL,	21,	0x15c,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
--	/* FIXME: vi and vi_sensor share an enable */
- 	PERIPH_CLK("vi",	"tegra_camera",		"vi",	20,	0x148,	150000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
- 	PERIPH_CLK("vi_sensor",	"tegra_camera",		"vi_sensor",	20,	0x1a8,	150000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | PERIPH_NO_RESET), /* scales with voltage and process_id */
- 	PERIPH_CLK("epp",	"epp",			NULL,	19,	0x16c,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
- 	PERIPH_CLK("mpe",	"mpe",			NULL,	60,	0x170,	250000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
- 	PERIPH_CLK("host1x",	"host1x",		NULL,	28,	0x180,	166000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
--	/* FIXME: cve and tvo share an enable	*/
- 	PERIPH_CLK("cve",	"cve",			NULL,	49,	0x140,	250000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
- 	PERIPH_CLK("tvo",	"tvo",			NULL,	49,	0x188,	250000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
- 	PERIPH_CLK("hdmi",	"hdmi",			NULL,	51,	0x18c,	600000000, mux_pllp_plld_pllc_clkm,	MUX | DIV_U71), /* requires min voltage */
+@@ -2001,6 +2116,7 @@ struct clk *tegra_ptr_clks[] = {
+ static void tegra2_init_one_clock(struct clk *c)
+ {
+ 	clk_init(c);
++	INIT_LIST_HEAD(&c->shared_bus_list);
+ 	if (!c->lookup.dev_id && !c->lookup.con_id)
+ 		c->lookup.con_id = c->name;
+ 	c->lookup.clk = c;
 -- 
 1.7.3.1
