@@ -1,71 +1,82 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 00/21] Tegra clock updates for 2.6.39
-Date: Sat, 19 Feb 2011 14:25:49 -0800
-Message-ID: <1298154371-5641-2-git-send-email-ccross@android.com>
+Subject: [PATCH v2 11/21] ARM: tegra: cpufreq: Take an extra reference to pllx
+Date: Sat, 19 Feb 2011 14:26:00 -0800
+Message-ID: <1298154371-5641-13-git-send-email-ccross@android.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: olof@lixom.net, sboyd@codeaurora.org, konkers@android.com, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
+Cc: linux-arm-kernel@lists.infradead.org, konkers@android.com, olof@lixom.net, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series brings the Tegra clock subsystem closer to the
-proposed common struct clk design, which should make converting
-easier.  It also fixes a few bugs and adds new features including
-memory bus scaling, disabling clocks left on by the bootloader,
-and shared clocks.
+During cpu frequency changes, take an extra reference to pllx so
+that it doesn't turn off and on while the cpu is temporarily on
+pllp.  If the cpu is moved to pllp permanently, pllx will be
+turned off.
 
-V2 fixes locking issues in shared bus clocks pointed out by
-Stephen Boyd.
+Signed-off-by: Colin Cross <ccross@android.com>
+---
+ arch/arm/mach-tegra/cpu-tegra.c     |    2 ++
+ arch/arm/mach-tegra/tegra2_clocks.c |   15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-Colin Cross (20):
-      ARM: tegra: clock: Don't BUG on changing an enabled PLL
-      ARM: tegra: clock: Drop debugging
-      ARM: tegra: clock: Don't use PLL lock bits
-      ARM: tegra: clock: Disable clocks left on by bootloader
-      ARM: tegra: clock: Initialize clocks that have no enable
-      ARM: tegra: clock: Drop CPU dvfs
-      ARM: tegra: clock: Rearrange static clock tables
-      ARM: tegra: clock: Move unshared clk struct members into union
-      ARM: tegra: clock: Convert global lock to a lock per clock
-      ARM: tegra: cpufreq: Take an extra reference to pllx
-      ARM: tegra: clock: Add shared bus clock type
-      ARM: tegra: clock: Remove unnecessary uses of #ifdef CONFIG_DEBUG_FS
-      ARM: tegra: clock: Refcount periph clock enables
-      ARM: tegra: clock: Round rate before setting rate
-      ARM: tegra: Add external memory controller driver
-      ARM: tegra: clocks: Add emc scaling
-      ARM: tegra: cpufreq: Adjust memory frequency with cpu frequency
-      ARM: tegra: clock: Add function to set SDMMC tap delay
-      ARM: tegra: clock: Fix clock issues in suspend
-      ARM: tegra: clock: Miscellaneous clock updates
-
-Dima Zavin (1):
-      ARM: tegra: clock: enable clk reset for non-peripheral clocks
-
- arch/arm/mach-tegra/Kconfig                        |   10 +
- arch/arm/mach-tegra/Makefile                       |    2 +-
- arch/arm/mach-tegra/clock.c                        |  559 +++++++-------
- arch/arm/mach-tegra/clock.h                        |  129 ++--
- arch/arm/mach-tegra/cpu-tegra.c                    |   25 +-
- arch/arm/mach-tegra/include/mach/clk.h             |    6 +-
- arch/arm/mach-tegra/tegra2_clocks.c                |  865 ++++++++++++++------
- arch/arm/mach-tegra/tegra2_dvfs.c                  |   86 --
- arch/arm/mach-tegra/tegra2_emc.c                   |  172 ++++
- .../arm/mach-tegra/{tegra2_dvfs.h => tegra2_emc.h} |   13 +-
- 10 files changed, 1153 insertions(+), 714 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.c
- create mode 100644 arch/arm/mach-tegra/tegra2_emc.c
- rename arch/arm/mach-tegra/{tegra2_dvfs.h => tegra2_emc.h} (66%)
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index cda03f1..f02ba60 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -173,6 +173,8 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ 	if (IS_ERR(cpu_clk))
+ 		return PTR_ERR(cpu_clk);
+ 
++	clk_enable(cpu_clk);
++
+ 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
+ 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
+ 	policy->cur = tegra_getspeed(policy->cpu);
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index ab013b1..a1c86d8 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -385,10 +385,16 @@ static void tegra2_cpu_clk_disable(struct clk *c)
+ static int tegra2_cpu_clk_set_rate(struct clk *c, unsigned long rate)
+ {
+ 	int ret;
++	/*
++	 * Take an extra reference to the main pll so it doesn't turn
++	 * off when we move the cpu off of it
++	 */
++	clk_enable(c->u.cpu.main);
++
+ 	ret = clk_set_parent(c->parent, c->u.cpu.backup);
+ 	if (ret) {
+ 		pr_err("Failed to switch cpu to clock %s\n", c->u.cpu.backup->name);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	if (rate == clk_get_rate(c->u.cpu.backup))
+@@ -397,17 +403,18 @@ static int tegra2_cpu_clk_set_rate(struct clk *c, unsigned long rate)
+ 	ret = clk_set_rate(c->u.cpu.main, rate);
+ 	if (ret) {
+ 		pr_err("Failed to change cpu pll to %lu\n", rate);
+-		return ret;
++		goto out;
+ 	}
+ 
+ 	ret = clk_set_parent(c->parent, c->u.cpu.main);
+ 	if (ret) {
+ 		pr_err("Failed to switch cpu to clock %s\n", c->u.cpu.main->name);
+-		return ret;
++		goto out;
+ 	}
+ 
+ out:
+-	return 0;
++	clk_disable(c->u.cpu.main);
++	return ret;
+ }
+ 
+ static struct clk_ops tegra_cpu_ops = {
+-- 
+1.7.3.1
