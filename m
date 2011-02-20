@@ -1,117 +1,37 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH v2 15/21] ARM: tegra: clock: Round rate before setting rate
-Date: Sat, 19 Feb 2011 14:26:04 -0800
-Message-ID: <1298154371-5641-17-git-send-email-ccross__12164.0158039101$1298156409$gmane$org@android.com>
-References: <1298154371-5641-1-git-send-email-ccross@android.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1298154371-5641-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.orglinux-tegra@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/4] ARM: tegra: Fix typo in TEGRA_IRQ_TO_GPIO
+Date: Sat, 19 Feb 2011 20:38:54 -0700
+Message-ID: <1298173137-9242-2-git-send-email-swarren@nvidia.com>
+References: <1298173137-9242-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298173137-9242-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Call the clock's round_rate op, if it exists, before calling
-the set_rate op.  This will help later when dvfs is added,
-dvfs needs to know what the final rate will be before the
-frequency changes.
-
-Also requires fixes to the round rate functions to ensure
-calling round rate and then set rate will not cause the
-frequency to be rounded down twice.  When picking clock
-divider values, the clock framework picks the closest
-frequency that is lower than the requested frequency.  If
-the new frequency calculated from the divider value is
-rounded down, and then passed to set_rate, it will get
-rounded down again, possibly resulting in a frequency two
-steps lower than the original requested frequency.
-
-Fix the problem by rounding up when calculating the frequency
-coming out of a clock divider, so if that frequency is
-requested again, the same divider value will be picked.
-
-Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/clock.c         |   12 ++++++++++++
- arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/include/mach/gpio.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 8d01a49..9798585 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -86,6 +86,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
+diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
+index e31f486..12a7cf6 100644
+--- a/arch/arm/mach-tegra/include/mach/gpio.h
++++ b/arch/arm/mach-tegra/include/mach/gpio.h
+@@ -31,7 +31,7 @@
+ #define gpio_cansleep		__gpio_cansleep
  
- 	if (c->mul != 0 && c->div != 0) {
- 		rate *= c->mul;
-+		rate += c->div / 2; /* round up */
- 		do_div(rate, c->div);
- 	}
+ #define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
+-#define TEGRA_IRQ_TO_GPIO(irq) ((gpio) - INT_GPIO_BASE)
++#define TEGRA_IRQ_TO_GPIO(irq) ((irq) - INT_GPIO_BASE)
  
-@@ -240,12 +241,23 @@ EXPORT_SYMBOL(clk_get_parent);
- 
- int clk_set_rate_locked(struct clk *c, unsigned long rate)
+ static inline int gpio_to_irq(unsigned int gpio)
  {
-+	long new_rate;
-+
- 	if (!c->ops || !c->ops->set_rate)
- 		return -ENOSYS;
- 
- 	if (rate > c->max_rate)
- 		rate = c->max_rate;
- 
-+	if (c->ops && c->ops->round_rate) {
-+		new_rate = c->ops->round_rate(c, rate);
-+
-+		if (new_rate < 0)
-+			return new_rate;
-+
-+		rate = new_rate;
-+	}
-+
- 	return c->ops->set_rate(c, rate);
- }
- 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 2734889..480c0f6 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -866,9 +866,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
- 		divider = clk_div71_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_2) {
--		return parent_rate / 2;
-+		return DIV_ROUND_UP(parent_rate, 2);
- 	}
- 	return -EINVAL;
- }
-@@ -1058,12 +1058,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
- 		if (divider < 0)
- 			return divider;
- 
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_U16) {
- 		divider = clk_div16_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate / (divider + 1);
-+		return DIV_ROUND_UP(parent_rate, divider + 1);
- 	}
- 	return -EINVAL;
- }
 -- 
-1.7.3.1
+1.7.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
