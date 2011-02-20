@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/4] ARM: tegra: Fix typo in TEGRA_IRQ_TO_GPIO
-Date: Sat, 19 Feb 2011 20:38:54 -0700
-Message-ID: <1298173137-9242-2-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 4/4] ARM: tegra: Move pinmux init call
+Date: Sat, 19 Feb 2011 20:38:57 -0700
+Message-ID: <1298173137-9242-5-git-send-email-swarren@nvidia.com>
 References: <1298173137-9242-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1298173137-9242-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,24 +10,55 @@ To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+Al
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+In order for the clock initialization to pick up the results of the
+pinmux initialization (which will initialize various parameters of
+clocks cdev1, cdev2), the pinmux initialization must happen first.
+Move the pinmux init to achieve this.
+
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/include/mach/gpio.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/board-harmony.c   |    4 ++--
+ arch/arm/mach-tegra/board-trimslice.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
-index e31f486..12a7cf6 100644
---- a/arch/arm/mach-tegra/include/mach/gpio.h
-+++ b/arch/arm/mach-tegra/include/mach/gpio.h
-@@ -31,7 +31,7 @@
- #define gpio_cansleep		__gpio_cansleep
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index b9dbdb1..eea5ad6 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -104,12 +104,12 @@ static __initdata struct tegra_clk_init_table harmony_clk_init_table[] = {
  
- #define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
--#define TEGRA_IRQ_TO_GPIO(irq) ((gpio) - INT_GPIO_BASE)
-+#define TEGRA_IRQ_TO_GPIO(irq) ((irq) - INT_GPIO_BASE)
- 
- static inline int gpio_to_irq(unsigned int gpio)
+ static void __init tegra_harmony_init(void)
  {
++	harmony_pinmux_init();
++
+ 	tegra_common_init();
+ 
+ 	tegra_clk_init_from_table(harmony_clk_init_table);
+ 
+-	harmony_pinmux_init();
+-
+ 	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
+ }
+ 
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index ef233b2..aef6abb 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -85,12 +85,12 @@ subsys_initcall(tegra_trimslice_pci_init);
+ 
+ static void __init tegra_trimslice_init(void)
+ {
++	trimslice_pinmux_init();
++
+ 	tegra_common_init();
+ 
+ 	tegra_clk_init_from_table(trimslice_clk_init_table);
+ 
+-	trimslice_pinmux_init();
+-
+ 	platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
+ }
+ 
 -- 
 1.7.1
 
