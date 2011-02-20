@@ -1,237 +1,45 @@
 From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: Re: [PATCH 2/7] ARM: tegra: refactor pcie init
-Date: Sun, 20 Feb 2011 14:38:59 +0200
-Message-ID: <4D610B63.1080407@compulab.co.il>
-References: <1298180684-6261-1-git-send-email-olof@lixom.net> <1298180684-6261-3-git-send-email-olof@lixom.net>
+Subject: Re: [PATCH 2/2] ARM: tegra: add TrimSlice board
+Date: Sun, 20 Feb 2011 14:43:52 +0200
+Message-ID: <4D610C88.7070305@compulab.co.il>
+References: <cover.1297063443.git.mike@compulab.co.il>	<c61e1816027e51acfb5bda1e498225a4da37d92d.1297063443.git.mike@compulab.co.il>	<AANLkTim5-dmpF8r9uZp8iDsT6p61D0iaJZuHvRLfUL6Y@mail.gmail.com>	<4D57BBC7.4070306@compulab.co.il>	<AANLkTimU9tpeY3-5yisqOAKBeAtz684gtM2ieYb62zO-@mail.gmail.com> <4D58C91F.9030303@compulab.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298180684-6261-3-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <4D58C91F.9030303-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/11 07:44, Olof Johansson wrote:
-> PCIe init is really quite simple. The per-board specifications can be
-> moved into the base board file instead, and pass in the pinmux groups
-> to enable/disable when setting up PCIe.
+On 02/14/11 08:18, Mike Rapoport wrote:
+> On 02/13/11 21:06, Colin Cross wrote:
+>>>>
+>>>> Ack, the machine type is merged so I'll put this in for-next.  Do you
+>>>> want it enabled in tegra_defconfig?
+>>>
+>>> If 'select TEGRA_PCI' does not trouble you, I'd be glad to have the TrimSlice in
+>>> tegra_defconfig :)
+>>
+>> My board without PCI doesn't boot if CONFIG_TEGRA_PCI is selected, so
+>> I guess it should stay off for now.  Any idea why it wouldn't boot?
+> 
+> The PCI subsystem should be re-gated, otherwise any access to PCI hangs the
+> system. Besides, on Harmony you need to enable two additional voltage supplies
+> to provide PEX_CLK voltage.
+> I'll send the patches that handle it, hopefully in the next few days.
 
-This is correct only when you have a bootloader that enables all the supplies
-required for PCI to operate. On Harmony you need to enable LDO0 on the TPS
-before starting the PCI, otherwise the board will hang...
+I was little bit too enthusiastic about it :( To enable PCI on Harmony and
+probably on Ventana one need to have I2C and TPS up and running before setting
+up the PCI clocks...
+I have working implementation on top of your  linux-tegra-2.6.37 branch (1), but
+it's not quite ready to go upstream.
 
-I have some implementation of it at [1], but it's not yet upstream ready.
+So, let's keep the TrimSlice out of common defconfig for now
 
 [1]
 http://git.kernel.org/?p=linux/kernel/git/rppt/linux-tegra.git;a=shortlog;h=refs/heads/tegra/devel
-
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Cc: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/Makefile             |    1 -
->  arch/arm/mach-tegra/board-harmony-pcie.c |   57 ------------------------------
->  arch/arm/mach-tegra/board-harmony.c      |   14 +++++++
->  arch/arm/mach-tegra/board.h              |   14 +++++++-
->  arch/arm/mach-tegra/pcie.c               |   20 +++++++---
->  5 files changed, 41 insertions(+), 65 deletions(-)
->  delete mode 100644 arch/arm/mach-tegra/board-harmony-pcie.c
-> 
-> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-> index 6b537de..9e314cc 100644
-> --- a/arch/arm/mach-tegra/Makefile
-> +++ b/arch/arm/mach-tegra/Makefile
-> @@ -19,7 +19,6 @@ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
->  
->  obj-${CONFIG_MACH_HARMONY}              += board-harmony.o
->  obj-${CONFIG_MACH_HARMONY}              += board-harmony-pinmux.o
-> -obj-${CONFIG_MACH_HARMONY}              += board-harmony-pcie.o
->  
->  obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
->  obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
-> diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
-> deleted file mode 100644
-> index f7e7d45..0000000
-> --- a/arch/arm/mach-tegra/board-harmony-pcie.c
-> +++ /dev/null
-> @@ -1,57 +0,0 @@
-> -/*
-> - * arch/arm/mach-tegra/board-harmony-pcie.c
-> - *
-> - * Copyright (C) 2010 CompuLab, Ltd.
-> - * Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - */
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/gpio.h>
-> -#include <linux/err.h>
-> -#include <linux/regulator/consumer.h>
-> -
-> -#include <asm/mach-types.h>
-> -
-> -#include <mach/pinmux.h>
-> -#include "board.h"
-> -
-> -#ifdef CONFIG_TEGRA_PCI
-> -
-> -static int __init harmony_pcie_init(void)
-> -{
-> -	int err;
-> -
-> -	if (!machine_is_harmony())
-> -		return 0;
-> -
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_NORMAL);
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_NORMAL);
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_NORMAL);
-> -
-> -	err = tegra_pcie_init(true, true);
-> -	if (err)
-> -		goto err_pcie;
-> -
-> -	return 0;
-> -
-> -err_pcie:
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_TRISTATE);
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_TRISTATE);
-> -	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_TRISTATE);
-> -
-> -	return err;
-> -}
-> -
-> -subsys_initcall(harmony_pcie_init);
-> -
-> -#endif
-> diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-> index b9dbdb1..652dd68 100644
-> --- a/arch/arm/mach-tegra/board-harmony.c
-> +++ b/arch/arm/mach-tegra/board-harmony.c
-> @@ -30,6 +30,7 @@
->  
->  #include <mach/iomap.h>
->  #include <mach/irqs.h>
-> +#include <mach/pinmux-t2.h>
->  
->  #include "board.h"
->  #include "board-harmony.h"
-> @@ -102,6 +103,17 @@ static __initdata struct tegra_clk_init_table harmony_clk_init_table[] = {
->  	{ NULL,		NULL,		0,		0},
->  };
->  
-> +struct tegra_pcie_info harmony_pcie_info = {
-> +	.init_port0	= true,
-> +	.init_port1	= true,
-> +	.nr_pingroups	= 3,
-> +	.pingroups	= {
-> +		TEGRA_PINGROUP_GPV,
-> +		TEGRA_PINGROUP_SLXA,
-> +		TEGRA_PINGROUP_SLXK,
-> +	},
-> +};
-> +
->  static void __init tegra_harmony_init(void)
->  {
->  	tegra_common_init();
-> @@ -111,6 +123,8 @@ static void __init tegra_harmony_init(void)
->  	harmony_pinmux_init();
->  
->  	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
-> +
-> +	tegra_pcie_init(&harmony_pcie_info);
->  }
->  
->  MACHINE_START(HARMONY, "harmony")
-> diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-> index b3f9c94..a84ec3a 100644
-> --- a/arch/arm/mach-tegra/board.h
-> +++ b/arch/arm/mach-tegra/board.h
-> @@ -23,13 +23,25 @@
->  
->  #include <linux/types.h>
->  
-> +struct tegra_pcie_info {
-> +	bool	init_port0;
-> +	bool	init_port1;
-> +	int	nr_pingroups;
-> +	int	pingroups[];
-> +};
-> +
->  void tegra_assert_system_reset(char mode, const char *cmd);
->  
->  void __init tegra_common_init(void);
->  void __init tegra_map_common_io(void);
->  void __init tegra_init_irq(void);
->  void __init tegra_init_clock(void);
-> -int __init tegra_pcie_init(bool init_port0, bool init_port1);
-> +
-> +#ifdef CONFIG_TEGRA_PCI
-> +void __init tegra_pcie_init(struct tegra_pcie_info *);
-> +#else
-> +static inline void tegra_pcie_init(struct tegra_pcie_info *i) { }
-> +#endif
->  
->  extern struct sys_timer tegra_timer;
->  #endif
-> diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-> index 53f5fa3..c8e69ed 100644
-> --- a/arch/arm/mach-tegra/pcie.c
-> +++ b/arch/arm/mach-tegra/pcie.c
-> @@ -887,29 +887,37 @@ static void __init tegra_pcie_add_port(int index, u32 offset, u32 reset_reg)
->  	memset(pp->res, 0, sizeof(pp->res));
->  }
->  
-> -int __init tegra_pcie_init(bool init_port0, bool init_port1)
-> +int __init tegra_pcie_init(struct tegra_pcie_info *tegra_pcie_info)
->  {
->  	int err;
-> +	int i;
->  
-> -	if (!(init_port0 || init_port1))
-> -		return -ENODEV;
-> +	for (i = 0; i < tegra_pcie_info->nr_pingroups; i++)
-> +		tegra_pinmux_set_tristate(tegra_pcie_info[i]->pingroup,
-> +					  TEGRA_TRI_NORMAL);
->  
->  	err = tegra_pcie_get_resources();
->  	if (err)
-> -		return err;
-> +		goto err;
->  
->  	tegra_pcie_enable_controller();
->  
->  	/* setup the AFI address translations */
->  	tegra_pcie_setup_translations();
->  
-> -	if (init_port0)
-> +	if (tegra_pcie_info->init_port0)
->  		tegra_pcie_add_port(0, RP0_OFFSET, AFI_PEX0_CTRL);
->  
-> -	if (init_port1)
-> +	if (tegra_pcie_info->init_port1)
->  		tegra_pcie_add_port(1, RP1_OFFSET, AFI_PEX1_CTRL);
->  
->  	pci_common_init(&tegra_pcie_hw);
->  
->  	return 0;
-> +
-> +err:
-> +	for (i = 0; i < tegra_pcie_info->nr_pingroups; i++)
-> +		tegra_pinmux_set_tristate(tegra_pcie_info[i]->pingroup,
-> +					  TEGRA_TRI_TRISTATE);
-> +	return err;
->  }
-
 
 -- 
 Sincerely yours,
