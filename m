@@ -1,53 +1,58 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] Misc Tegra patches
-Date: Sat, 19 Feb 2011 20:38:53 -0700
-Message-ID: <1298173137-9242-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 2/4] ARM: tegra: Prevent requeuing in-progress DMA requests
+Date: Sat, 19 Feb 2011 20:38:55 -0700
+Message-ID: <1298173137-9242-3-git-send-email-swarren@nvidia.com>
+References: <1298173137-9242-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298173137-9242-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I have various patches for arch/arm/mach-tegra queued up in order to support
-the new ASoC driver. This series is all those patches except those that touch
-clock-related code, since I need to wait for Colin's series to land first,
-then drop some of my patches, and fix up any merge conflicts.
+If a request already in the queue is passed to tegra_dma_enqueue_req,
+tegra_dma_req.node->{next,prev} will end up pointing to itself instead
+of at tegra_dma_channel.list, which is the way a the end-of-list
+should be set up. When the DMA request completes and is list_del'd,
+the list head will still point at it, yet the node's next/prev will
+contain the list poison values. When the next DMA request completes,
+a kernel panic will occur when those poison values are dereferenced.
 
-* ARM: tegra: Fix typo in TEGRA_IRQ_TO_GPIO
+This makes the DMA driver more robust in the face of buggy clients.
 
-Simple fix. I think not previously posted.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/dma.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-* ARM: tegra: Prevent requeuing in-progress DMA requests
-
-Already in {android,linux}-tegra-2.6.3[67], but not yet in mainline or
-for-next.
-
-* ARM: tegra: pinmux: Expose set_func, add get_*
-* ARM: tegra: Move pinmux init call
-
-Those two are needed to support updating tegra2_clocks.c's handling of
-cdev[12] (see patch series I posted a while back to linux-tegra@).
-
-I believe the first of these was previously posted, but not yet applied
-since it was part of a series that included a number of clock changes
-that needed to wait for Colin's clock changes.
-
-The second probably hasn't been posted before, but if it has, this
-version also covers the trimslice board.
-
-Stephen Warren (4):
-  ARM: tegra: Fix typo in TEGRA_IRQ_TO_GPIO
-  ARM: tegra: Prevent requeuing in-progress DMA requests
-  ARM: tegra: pinmux: Expose set_func, add get_*
-  ARM: tegra: Move pinmux init call
-
- arch/arm/mach-tegra/board-harmony.c       |    4 +-
- arch/arm/mach-tegra/board-trimslice.c     |    4 +-
- arch/arm/mach-tegra/dma.c                 |    8 ++++
- arch/arm/mach-tegra/include/mach/gpio.h   |    2 +-
- arch/arm/mach-tegra/include/mach/pinmux.h |    9 ++++
- arch/arm/mach-tegra/pinmux.c              |   64 ++++++++++++++++++++++++++---
- 6 files changed, 80 insertions(+), 11 deletions(-)
+diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
+index 250bc7b..f3b869b 100644
+--- a/arch/arm/mach-tegra/dma.c
++++ b/arch/arm/mach-tegra/dma.c
+@@ -311,6 +311,7 @@ int tegra_dma_enqueue_req(struct tegra_dma_channel *ch,
+ 	struct tegra_dma_req *req)
+ {
+ 	unsigned long irq_flags;
++	struct tegra_dma_req *_req;
+ 	int start_dma = 0;
+ 
+ 	if (req->size > NV_DMA_MAX_TRASFER_SIZE ||
+@@ -321,6 +322,13 @@ int tegra_dma_enqueue_req(struct tegra_dma_channel *ch,
+ 
+ 	spin_lock_irqsave(&ch->lock, irq_flags);
+ 
++	list_for_each_entry(_req, &ch->list, node) {
++		if (req == _req) {
++			spin_unlock_irqrestore(&ch->lock, irq_flags);
++			return -EEXIST;
++		}
++	}
++
+ 	req->bytes_transferred = 0;
+ 	req->status = 0;
+ 	req->buffer_status = 0;
+-- 
+1.7.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
