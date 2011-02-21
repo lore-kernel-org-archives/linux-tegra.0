@@ -1,13 +1,13 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2 16/21] ARM: tegra: Add external memory controller driver
-Date: Sun, 20 Feb 2011 20:20:57 -0800
-Message-ID: <AANLkTikKW5JvNSPsRmAiFOyuNienFdBKvjnQOJ1g59W4@mail.gmail.com>
+Subject: Re: [PATCH v2 17/21] ARM: tegra: clocks: Add emc scaling
+Date: Sun, 20 Feb 2011 20:21:59 -0800
+Message-ID: <AANLkTinN3NvDGyPQ2rN62BtzS7Ohybnh024rx+MMUphg@mail.gmail.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-	<1298154371-5641-18-git-send-email-ccross@android.com>
+	<1298154371-5641-19-git-send-email-ccross@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-18-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1298154371-5641-19-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -16,7 +16,7 @@ List-Id: linux-tegra@vger.kernel.org
 On Sat, Feb 19, 2011 at 2:26 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
 > Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 
-Patch description requested. Besides that:
+Patch description please. Besides that:
 
 Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 --
