@@ -1,21 +1,22 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2 06/21] ARM: tegra: clock: Initialize clocks that have
- no enable
-Date: Sun, 20 Feb 2011 20:08:25 -0800
-Message-ID: <AANLkTik7rwOTKPvL3H_j7Mxa-4h5G9423360grTgLCR+@mail.gmail.com>
+Subject: Re: [PATCH v2 07/21] ARM: tegra: clock: Drop CPU dvfs
+Date: Sun, 20 Feb 2011 20:09:07 -0800
+Message-ID: <AANLkTikTm1EKh87e274mehu+KcURCdMRN5abvHSX3qMY@mail.gmail.com>
 References: <1298154371-5641-1-git-send-email-ccross@android.com>
-	<1298154371-5641-8-git-send-email-ccross@android.com>
+	<1298154371-5641-9-git-send-email-ccross@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298154371-5641-8-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1298154371-5641-9-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On Sat, Feb 19, 2011 at 2:25 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
-> Assume that any clock that has no enable op is always on.
+> The existing version did not extend well to core dvfs, drop it
+> for now until the new clk api with clk_prepare and clk_unprepare
+> is ready and non-atomic clocks are possible.
 >
 > Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 
