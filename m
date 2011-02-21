@@ -1,44 +1,36 @@
 From: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/6] ARM: tegra: add tegra_gpio_table and tegra_gpio_config
-Date: Mon, 21 Feb 2011 14:58:17 -0800
-Message-ID: <AANLkTinDn5XefEpxQJycdiz_Ph_mKTx13TqK6gryib=3@mail.gmail.com>
-References: <AANLkTikauaANKBpfNHXF5PgCRS4vdbq+eNDF6itU6yHS@mail.gmail.com>
-	<AANLkTi=Mg7-hM69EMVSOkS8goU+H53KnDC5q2KASHOtz@mail.gmail.com>
+Subject: Re: [PATCH 3/6] ARM: tegra: remove stale nvidia atag handler
+Date: Mon, 21 Feb 2011 15:01:23 -0800
+Message-ID: <AANLkTi=SherCg=hfN3Tm2_W4Et=8xk3pF5nQuBPg9h3P@mail.gmail.com>
+References: <1298315206-8887-1-git-send-email-olof@lixom.net>
+	<1298315206-8887-4-git-send-email-olof@lixom.net>
+	<AANLkTinMsDjHwkBFbM7Wb3+QA7Bp83D8-u+vSRDkVwhU@mail.gmail.com>
+	<AANLkTinbq4FiZh8sZmzPOVRoN8UzD7C=Gz+thkeZnNAF@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTi=Mg7-hM69EMVSOkS8goU+H53KnDC5q2KASHOtz-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <AANLkTinbq4FiZh8sZmzPOVRoN8UzD7C=Gz+thkeZnNAF-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 12:44 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> Hi,
+On Mon, Feb 21, 2011 at 12:40 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Mon, Feb 21, 2011 at 11:31 AM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
+>> Does the kernel still print an unknown atag message without this handler?
+>> Is worth keeping an empty handler around to keep that from printing?
 >
-> On Mon, Feb 21, 2011 at 11:40 AM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
+> With what firmware? u-boot doesn't pass many handlers at all.
+> Shouldn't fastboot be changed to not pass it, if it's not used?
 >
->>> This should remove the need for calling these from specific drivers and
->>> thus reduce tegra-specific code from them.
->>
->> It was never my intention that drives call gpio_enable/disable, just board
->> files.
->
-> True, but it seems even then that it ends up in various parts of the
-> per-board files. Having it in one central location (for the base
-> config) seems like a good idea.
+> (In other words, maybe it makes sense to keep it in android-tegra, but
+> not upstream)?
 
-sounds good to me.
+My experience was with nvidia's bootloader that came on the harmony
+boards.  Have they switched to u-boot?
 
->> Gpio subsystem init and configurations should be left separate.
->
-> I.e. not part of the pinmux file? Sure, can do.
-
-I meant that tegra_gpio_init should still be a postcore_initcall.
-That way GPIOs work even if you don't use the tegra_gpio_config
-helper.  Also, I'd take the __init off tegra_gpio_config.  The
-function could be useful in some suspend/resume chains where the board
-designer hates you.
+FWIW fastboot is just a USB bootloader protocol.  The linux boot code
+is (or at least should be) independent in a bootloader.
 
 -Erik
 --
