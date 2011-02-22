@@ -1,74 +1,72 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 5/7] ARM: tegra: timer: Enable timer and rtc clocks
-Date: Tue, 22 Feb 2011 00:00:25 -0800
-Message-ID: <AANLkTi=pJw7oTUY2jmaSB=chds0fXFaA3+jrT=y8Jpzv@mail.gmail.com>
+Subject: Re: [PATCH 7/7] ARM: tegra: clock: Disable clocks left on by bootloader
+Date: Tue, 22 Feb 2011 00:05:03 -0800
+Message-ID: <AANLkTi==wykFCCjamRNh2ngEaubgeLqmZ7Mv9OsH=0cL@mail.gmail.com>
 References: <1298342392-21236-1-git-send-email-ccross@android.com>
-	<1298342392-21236-6-git-send-email-ccross@android.com>
-	<AANLkTim=TZaqZFSJwOAN2gntvu=fiHVPQVn12=WyF9Wi@mail.gmail.com>
+	<1298342392-21236-8-git-send-email-ccross@android.com>
+	<AANLkTikNSEyjdL0Lchmm-bFxD00omkGLq6Q6Yyjy51Ov@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTim=TZaqZFSJwOAN2gntvu=fiHVPQVn12=WyF9Wi-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <AANLkTikNSEyjdL0Lchmm-bFxD00omkGLq6Q6Yyjy51Ov-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 9:32 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+On Mon, Feb 21, 2011 at 9:43 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
 > Hi,
->
 >
 > On Mon, Feb 21, 2011 at 6:39 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wro=
 te:
->> Enable the timer and rtc clocks to prevent them being
->> turned off by the bootloader clock disabling code.
+>> Iterates through all clocks, disabling any for which the
+>> refcount is 0 but the clock init detected the bootloader
+>> left the clock on. =A0Can be disabled with command line
+>> tegra_clock.disable_boot_clocks=3DN
 >>
 >> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 >> ---
->> =A0arch/arm/mach-tegra/timer.c | =A0 14 ++++++++++++--
->> =A01 files changed, 12 insertions(+), 2 deletions(-)
+>> =A0arch/arm/mach-tegra/clock.c | =A0 44 ++++++++++++++++++++++++++++=
++++++++++++++++
+>> =A01 files changed, 44 insertions(+), 0 deletions(-)
 >>
->> diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer=
+>> diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock=
 =2Ec
->> index ffa6a68..31b4f56 100644
->> --- a/arch/arm/mach-tegra/timer.c
->> +++ b/arch/arm/mach-tegra/timer.c
->> @@ -18,6 +18,7 @@
->> =A0*/
+>> index e028320..6d686ff 100644
+>> --- a/arch/arm/mach-tegra/clock.c
+>> +++ b/arch/arm/mach-tegra/clock.c
+>> @@ -33,6 +33,9 @@
+>> =A0#include "board.h"
+>> =A0#include "clock.h"
 >>
->> =A0#include <linux/init.h>
->> +#include <linux/err.h>
->> =A0#include <linux/sched.h>
->> =A0#include <linux/time.h>
->> =A0#include <linux/interrupt.h>
->> @@ -193,9 +194,20 @@ static struct irqaction tegra_timer_irq =3D {
->>
->> =A0static void __init tegra_init_timer(void)
->> =A0{
->> + =A0 =A0 =A0 struct clk *clk;
->> =A0 =A0 =A0 =A0unsigned long rate =3D clk_measure_input_freq();
->> =A0 =A0 =A0 =A0int ret;
->>
->> + =A0 =A0 =A0 clk =3D clk_get_sys("timer", NULL);
->> + =A0 =A0 =A0 BUG_ON(IS_ERR(clk));
->> + =A0 =A0 =A0 clk_enable(clk);
->> + =A0 =A0 =A0 clk_put(clk);
+>> +#undef MODULE_PARAM_PREFIX
+>> +#define MODULE_PARAM_PREFIX "tegra_clock."
 >> +
->> + =A0 =A0 =A0 clk =3D clk_get_sys("rtc-tegra", NULL);
->> + =A0 =A0 =A0 BUG_ON(IS_ERR(clk));
->> + =A0 =A0 =A0 clk_enable(clk);
->> + =A0 =A0 =A0 clk_put(clk);
+>> =A0/*
+>> =A0* Locking:
+>> =A0*
+>> @@ -416,6 +419,47 @@ void tegra_sdmmc_tap_delay(struct clk *c, int d=
+elay)
+>> =A0 =A0 =A0 =A0spin_unlock_irqrestore(&c->spinlock, flags);
+>> =A0}
+>>
+>> +static bool tegra_disable_boot_clocks =3D true;
+>> +module_param_named(disable_boot_clocks, tegra_disable_boot_clocks, =
+bool,
+>> + =A0 =A0 =A0 S_IRUGO | S_IWUSR | S_IWGRP);
 >
-> Why initialize the rtc clock here? Not all boards use it and instead
-> use the rtc on the pmic. Seems wasteful to clock it unless the driver
-> for it is probed and configured.
+> I suggest doing this as an early_param instead. I know it's not truly
+> an early param, but it's the easier way to do non-module bootargs,
+> i.e. by not requiring a (fake) module prefix. It'd be a little
+> cleaner, in my opinion. The variable name itself is unique enough to
+> not need a module prefix for namespace reasons.
+It doesn't need to be an early_param, I can make it a __setup.
 
-timekeeping_suspend uses read_persistent_clock and not the RTC driver
-to track time in suspend.  The Tegra implementation of
-read_persistent_clock reads from the internal RTC registers.  Its a 32
-kHz clock, so it's power usage is negligible, and it is required on
-all Tegra boards.
+> Also, Documentation/kernel-parameters.txt should be updated with it.
+Is it really worth adding every debug flag on every platform to
+kernel-parametes.txt?  I could add the flag to the warning message
+instead.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
