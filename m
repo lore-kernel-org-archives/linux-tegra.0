@@ -1,35 +1,31 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 5/7] ARM: tegra: timer: Enable timer and rtc clocks
-Date: Tue, 22 Feb 2011 20:56:34 +0000
-Message-ID: <20110222205634.GF29559@n2100.arm.linux.org.uk>
-References: <1298342392-21236-1-git-send-email-ccross@android.com> <1298342392-21236-6-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Hide EMC scaling config behind ARCH_TEGRA
+Date: Tue, 22 Feb 2011 12:57:28 -0800
+Message-ID: <AANLkTimiTPd-Sq530MAw80w3GSUyGzCLGgnZ3K0S45dH@mail.gmail.com>
+References: <1298406924-2074-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<AANLkTim7ZOeEC1muV8trT1bSc6DHMerxUjRmthnpt0Ui@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1298342392-21236-6-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <AANLkTim7ZOeEC1muV8trT1bSc6DHMerxUjRmthnpt0Ui-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 06:39:50PM -0800, Colin Cross wrote:
-> +	struct clk *clk;
->  	unsigned long rate = clk_measure_input_freq();
->  	int ret;
->  
-> +	clk = clk_get_sys("timer", NULL);
-> +	BUG_ON(IS_ERR(clk));
-> +	clk_enable(clk);
-> +	clk_put(clk);
-> +
-> +	clk = clk_get_sys("rtc-tegra", NULL);
-> +	BUG_ON(IS_ERR(clk));
-> +	clk_enable(clk);
-> +	clk_put(clk);
+On Tue, Feb 22, 2011 at 12:40 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Tue, Feb 22, 2011 at 12:35 PM, Mark Brown
+> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+>> The option isn't terribly useful on other ARM platforms.
+>>
+>> Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+>
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+>
+>
+> -Olof
 
-It's probably better to leave them get'd if you're continuing to use
-them and just forget the reference.
+Oops, thanks.  Pushed to for-next.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
