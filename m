@@ -1,7 +1,7 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH 5/7] ARM: tegra: timer: Enable timer and rtc clocks
-Date: Mon, 21 Feb 2011 18:39:50 -0800
-Message-ID: <1298342392-21236-6-git-send-email-ccross@android.com>
+Subject: [PATCH 3/7] ARM: tegra: clock: Check for clk_num == 0
+Date: Mon, 21 Feb 2011 18:39:48 -0800
+Message-ID: <1298342392-21236-4-git-send-email-ccross@android.com>
 References: <1298342392-21236-1-git-send-email-ccross@android.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1298342392-21236-1-git-send-email-ccross@android.com>
@@ -10,55 +10,104 @@ To: linux-tegra@vger.kernel.org
 Cc: konkers@android.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mike@compulab.co.il, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable the timer and rtc clocks to prevent them being
-turned off by the bootloader clock disabling code.
+Peripheral clocks that have no clock enable bit in the
+enable registers have their clk_num set to 0.  Bit 0
+in the clock enable registers is the CPU clock.
+Prevent disables on these peripheral clocks from
+accidentally disabling the CPU clock.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/timer.c |   14 ++++++++++++--
- 1 files changed, 12 insertions(+), 2 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |   25 +++++++++++++++++++++++++
+ 1 files changed, 25 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
-index ffa6a68..31b4f56 100644
---- a/arch/arm/mach-tegra/timer.c
-+++ b/arch/arm/mach-tegra/timer.c
-@@ -18,6 +18,7 @@
-  */
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 73e112f..3015a2c 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -946,9 +946,14 @@ static void tegra2_periph_clk_init(struct clk *c)
+ 	}
  
- #include <linux/init.h>
-+#include <linux/err.h>
- #include <linux/sched.h>
- #include <linux/time.h>
- #include <linux/interrupt.h>
-@@ -193,9 +194,20 @@ static struct irqaction tegra_timer_irq = {
+ 	c->state = ON;
++
++	if (!c->u.periph.clk_num)
++		return;
++
+ 	if (!(clk_readl(CLK_OUT_ENB + PERIPH_CLK_TO_ENB_REG(c)) &
+ 			PERIPH_CLK_TO_ENB_BIT(c)))
+ 		c->state = OFF;
++
+ 	if (!(c->flags & PERIPH_NO_RESET))
+ 		if (clk_readl(RST_DEVICES + PERIPH_CLK_TO_ENB_REG(c)) &
+ 				PERIPH_CLK_TO_ENB_BIT(c))
+@@ -962,6 +967,9 @@ static int tegra2_periph_clk_enable(struct clk *c)
+ 	int refcount;
+ 	pr_debug("%s on clock %s\n", __func__, c->name);
  
- static void __init tegra_init_timer(void)
++	if (!c->u.periph.clk_num)
++		return 0;
++
+ 	spin_lock_irqsave(&clock_register_lock, flags);
+ 
+ 	refcount = tegra_periph_clk_enable_refcount[c->u.periph.clk_num]++;
+@@ -994,6 +1002,9 @@ static void tegra2_periph_clk_disable(struct clk *c)
+ 
+ 	pr_debug("%s on clock %s\n", __func__, c->name);
+ 
++	if (!c->u.periph.clk_num)
++		return;
++
+ 	spin_lock_irqsave(&clock_register_lock, flags);
+ 
+ 	if (c->refcnt)
+@@ -1012,6 +1023,9 @@ static void tegra2_periph_clk_reset(struct clk *c, bool assert)
+ 
+ 	pr_debug("%s %s on clock %s\n", __func__,
+ 		 assert ? "assert" : "deassert", c->name);
++
++	BUG_ON(!c->u.periph.clk_num);
++
+ 	if (!(c->flags & PERIPH_NO_RESET))
+ 		clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
+ 			   base + PERIPH_CLK_TO_ENB_SET_REG(c));
+@@ -1182,6 +1196,10 @@ static void tegra2_clk_double_init(struct clk *c)
+ 	c->mul = 2;
+ 	c->div = 1;
+ 	c->state = ON;
++
++	if (!c->u.periph.clk_num)
++		return;
++
+ 	if (!(clk_readl(CLK_OUT_ENB + PERIPH_CLK_TO_ENB_REG(c)) &
+ 			PERIPH_CLK_TO_ENB_BIT(c)))
+ 		c->state = OFF;
+@@ -1269,6 +1287,9 @@ static void tegra2_cdev_clk_init(struct clk *c)
+ 	/* We could un-tristate the cdev1 or cdev2 pingroup here; this is
+ 	 * currently done in the pinmux code. */
+ 	c->state = ON;
++
++	BUG_ON(!c->u.periph.clk_num);
++
+ 	if (!(clk_readl(CLK_OUT_ENB + PERIPH_CLK_TO_ENB_REG(c)) &
+ 			PERIPH_CLK_TO_ENB_BIT(c)))
+ 		c->state = OFF;
+@@ -1276,6 +1297,8 @@ static void tegra2_cdev_clk_init(struct clk *c)
+ 
+ static int tegra2_cdev_clk_enable(struct clk *c)
  {
-+	struct clk *clk;
- 	unsigned long rate = clk_measure_input_freq();
- 	int ret;
++	BUG_ON(!c->u.periph.clk_num);
++
+ 	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
+ 		CLK_OUT_ENB_SET + PERIPH_CLK_TO_ENB_SET_REG(c));
+ 	return 0;
+@@ -1283,6 +1306,8 @@ static int tegra2_cdev_clk_enable(struct clk *c)
  
-+	clk = clk_get_sys("timer", NULL);
-+	BUG_ON(IS_ERR(clk));
-+	clk_enable(clk);
-+	clk_put(clk);
+ static void tegra2_cdev_clk_disable(struct clk *c)
+ {
++	BUG_ON(!c->u.periph.clk_num);
 +
-+	clk = clk_get_sys("rtc-tegra", NULL);
-+	BUG_ON(IS_ERR(clk));
-+	clk_enable(clk);
-+	clk_put(clk);
-+
- #ifdef CONFIG_HAVE_ARM_TWD
- 	twd_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x600);
- #endif
-@@ -239,8 +251,6 @@ static void __init tegra_init_timer(void)
- 	tegra_clockevent.cpumask = cpu_all_mask;
- 	tegra_clockevent.irq = tegra_timer_irq.irq;
- 	clockevents_register_device(&tegra_clockevent);
--
--	return;
+ 	clk_writel(PERIPH_CLK_TO_ENB_BIT(c),
+ 		CLK_OUT_ENB_CLR + PERIPH_CLK_TO_ENB_SET_REG(c));
  }
- 
- struct sys_timer tegra_timer = {
 -- 
 1.7.3.1
