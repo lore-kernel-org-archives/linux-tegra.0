@@ -1,106 +1,118 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH 2/7] ARM: tegra: clock: Round rate before setting rate
-Date: Mon, 21 Feb 2011 18:39:47 -0800
-Message-ID: <1298342392-21236-3-git-send-email-ccross@android.com>
+Subject: [PATCH 4/7] ARM: tegra: Move tegra_common_init to tegra_init_early
+Date: Mon, 21 Feb 2011 18:39:49 -0800
+Message-ID: <1298342392-21236-5-git-send-email-ccross@android.com>
 References: <1298342392-21236-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1298342392-21236-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: konkers@android.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mike@compulab.co.il, Colin Cross <ccross@android.com>, Russell King <linux@arm.linux.org.uk>
+Cc: Russell King <linux@arm.linux.org.uk>, konkers@android.com, mike@compulab.co.il, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Call the clock's round_rate op, if it exists, before calling
-the set_rate op.  This will help later when dvfs is added,
-dvfs needs to know what the final rate will be before the
-frequency changes.
+Move tegra_common_init to tegra_init_early, and set it
+as the init_early entry in the machine struct.
+Initializes the clocks earlier so that timers can enable
+their clocks.
 
-Also requires fixes to the round rate functions to ensure
-calling round rate and then set rate will not cause the
-frequency to be rounded down twice.  When picking clock
-divider values, the clock framework picks the closest
-frequency that is lower than the requested frequency.  If
-the new frequency calculated from the divider value is
-rounded down, and then passed to set_rate, it will get
-rounded down again, possibly resulting in a frequency two
-steps lower than the original requested frequency.
-
-Fix the problem by rounding up when calculating the frequency
-coming out of a clock divider, so if that frequency is
-requested again, the same divider value will be picked.
+Also reorders the members in the Harmony and Trimslice
+boards' machine structs to match the order they are
+called in.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/clock.c         |   12 ++++++++++++
- arch/arm/mach-tegra/tegra2_clocks.c |    8 ++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/board-harmony.c   |    7 +++----
+ arch/arm/mach-tegra/board-trimslice.c |    7 +++----
+ arch/arm/mach-tegra/board.h           |    2 +-
+ arch/arm/mach-tegra/common.c          |    2 +-
+ 4 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 165aa9c..e028320 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -86,6 +86,7 @@ static unsigned long clk_predict_rate_from_parent(struct clk *c, struct clk *p)
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index b9dbdb1..368ddff 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -104,8 +104,6 @@ static __initdata struct tegra_clk_init_table harmony_clk_init_table[] = {
  
- 	if (c->mul != 0 && c->div != 0) {
- 		rate *= c->mul;
-+		rate += c->div - 1; /* round up */
- 		do_div(rate, c->div);
- 	}
- 
-@@ -240,12 +241,23 @@ EXPORT_SYMBOL(clk_get_parent);
- 
- int clk_set_rate_locked(struct clk *c, unsigned long rate)
+ static void __init tegra_harmony_init(void)
  {
-+	long new_rate;
-+
- 	if (!c->ops || !c->ops->set_rate)
- 		return -ENOSYS;
+-	tegra_common_init();
+-
+ 	tegra_clk_init_from_table(harmony_clk_init_table);
  
- 	if (rate > c->max_rate)
- 		rate = c->max_rate;
+ 	harmony_pinmux_init();
+@@ -116,8 +114,9 @@ static void __init tegra_harmony_init(void)
+ MACHINE_START(HARMONY, "harmony")
+ 	.boot_params  = 0x00000100,
+ 	.fixup		= tegra_harmony_fixup,
+-	.init_irq       = tegra_init_irq,
+-	.init_machine   = tegra_harmony_init,
+ 	.map_io         = tegra_map_common_io,
++	.init_early	= tegra_init_early,
++	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
++	.init_machine   = tegra_harmony_init,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index ef233b2..0f3081a 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -85,8 +85,6 @@ subsys_initcall(tegra_trimslice_pci_init);
  
-+	if (c->ops && c->ops->round_rate) {
-+		new_rate = c->ops->round_rate(c, rate);
-+
-+		if (new_rate < 0)
-+			return new_rate;
-+
-+		rate = new_rate;
-+	}
-+
- 	return c->ops->set_rate(c, rate);
+ static void __init tegra_trimslice_init(void)
+ {
+-	tegra_common_init();
+-
+ 	tegra_clk_init_from_table(trimslice_clk_init_table);
+ 
+ 	trimslice_pinmux_init();
+@@ -97,8 +95,9 @@ static void __init tegra_trimslice_init(void)
+ MACHINE_START(TRIMSLICE, "trimslice")
+ 	.boot_params	= 0x00000100,
+ 	.fixup		= tegra_trimslice_fixup,
+-	.init_irq       = tegra_init_irq,
+-	.init_machine   = tegra_trimslice_init,
+ 	.map_io         = tegra_map_common_io,
++	.init_early	= tegra_init_early,
++	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
++	.init_machine   = tegra_trimslice_init,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index b3f9c94..1d14df7 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -25,7 +25,7 @@
+ 
+ void tegra_assert_system_reset(char mode, const char *cmd);
+ 
+-void __init tegra_common_init(void);
++void __init tegra_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+ void __init tegra_init_clock(void);
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 54826b8..14fa533 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -72,7 +72,7 @@ void __init tegra_init_cache(void)
+ 
  }
  
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 2ca8b74..73e112f 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -898,9 +898,9 @@ static long tegra2_pll_div_clk_round_rate(struct clk *c, unsigned long rate)
- 		divider = clk_div71_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_2) {
--		return parent_rate / 2;
-+		return DIV_ROUND_UP(parent_rate, 2);
- 	}
- 	return -EINVAL;
- }
-@@ -1092,12 +1092,12 @@ static long tegra2_periph_clk_round_rate(struct clk *c,
- 		if (divider < 0)
- 			return divider;
- 
--		return parent_rate * 2 / (divider + 2);
-+		return DIV_ROUND_UP(parent_rate * 2, divider + 2);
- 	} else if (c->flags & DIV_U16) {
- 		divider = clk_div16_get_divider(parent_rate, rate);
- 		if (divider < 0)
- 			return divider;
--		return parent_rate / (divider + 1);
-+		return DIV_ROUND_UP(parent_rate, divider + 1);
- 	}
- 	return -EINVAL;
- }
+-void __init tegra_common_init(void)
++void __init tegra_init_early(void)
+ {
+ 	tegra_init_fuse();
+ 	tegra_init_clock();
 -- 
 1.7.3.1
