@@ -1,71 +1,35 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: Problem with "ARM: tegra: Move tegra_common_init to tegra_init_early"
-Date: Tue, 22 Feb 2011 23:43:10 -0800
-Message-ID: <AANLkTimgw6kruGMp=wJUVka+Gj2cn9X=qRucbnuq-b9V@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22@HQMAIL01.nvidia.com>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Patches for 2.6.39 merge window
+Date: Tue, 22 Feb 2011 13:01:23 -0800
+Message-ID: <AANLkTi=Er0pL-KcSqw1WwKy+CZeM9SWjmOkp08YkhKmQ@mail.gmail.com>
+References: <AANLkTinK4oCbvDNPDFUjpB8qTBZiWfx3CkUuyuTLyVsx@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF03112A5AE2@HQMAIL01.nvidia.com>
+	<20110222205210.GF31611@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20110222205210.GF31611-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Russell King - ARM Linux (linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org)" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 22, 2011 at 7:12 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
-> The following commit makes the Tegra APB DMA engine fail to initializ=
-e correctly:
+On Tue, Feb 22, 2011 at 12:52 PM, Mark Brown
+<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On Tue, Feb 22, 2011 at 12:48:46PM -0800, Stephen Warren wrote:
 >
-> commit 0cf6230af909a86f81907455eca2a5c9b8f68fe6
+>> Should we handle it like this: Check in all the platform data to Tegra
+>> for-next, but with that one new field removed or commented out. Wait until
+>> the merge window is open for 2.6.39 (or 2.6.39-rc1 is released), and hence
+>> Tegra for-next/for-linus can merge from Linus' tree to pick up the new
+>> wm8903.h, then add or uncomment that one field in the platform data?
 >
-> =A0 =A0ARM: tegra: Move tegra_common_init to tegra_init_early
+> That's the standard way of handling this sort of thing - just send the
+> patch in a second pull request once the dependencies have all landed.
 >
-> =A0 =A0Move tegra_common_init to tegra_init_early, and set it
-> =A0 =A0as the init_early entry in the machine struct.
-> =A0 =A0Initializes the clocks earlier so that timers can enable
-> =A0 =A0their clocks.
->
-> =A0 =A0Also reorders the members in the Harmony and Trimslice
-> =A0 =A0boards' machine structs to match the order they are
-> =A0 =A0called in.
->
-> The reason is that tegra_init_early_ calls tegra_dma_init which calls
-> request_threaded_irq, which fails since the IRQ hasn't yet been marke=
-d valid;
-> that only happens in tegra_init_irq, which gets called after tegra_in=
-it_early.
->
-> This used to work OK, since tegra_init_early was tegra_common_init, w=
-hich got
-> called after tegra_init_irq, basically from the beginning of tegra_ha=
-rmony_init.
->
-> I tried moving the call to tegra_dma_init back to each of the very en=
-d of
-> tegra_init_irq and the very beginning of tegra_harmony_init. Both of =
-these
-> resulted in a kernel that wouldn't boot.
->
-> Simply removing the call to tegra_dma_init completely does allow the =
-kernel
-> to boot, but obviously, DMA isn't available.
->
-> I'm a little stumped why moving tegra_dma_init causes a boot failure.=
- Does
-> anyone have any helpful ideas, or any alternative ways to fix the und=
-erlying
-> problem?
 
-I don't know why it still fails if you put it back at the beginning of
-the machine init, and it boots without errors on my board if I move
-tegra_dma_init to a postcore_initcall, but I don't have any drivers on
-my board that use DMA.
-
-Can you provide kernel logs?
+You could also put it in the tegra-arch branch and we could both re-merge it.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
