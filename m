@@ -1,56 +1,25 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 3/6] ARM: tegra: remove stale nvidia atag handler
-Date: Mon, 21 Feb 2011 15:34:00 -0800
-Message-ID: <AANLkTikuOumi8Y0bvB3iQg+gh1SLfuHVtymvpnDEEgLs@mail.gmail.com>
-References: <1298315206-8887-1-git-send-email-olof@lixom.net>
-	<1298315206-8887-4-git-send-email-olof@lixom.net>
-	<AANLkTinMsDjHwkBFbM7Wb3+QA7Bp83D8-u+vSRDkVwhU@mail.gmail.com>
-	<AANLkTinbq4FiZh8sZmzPOVRoN8UzD7C=Gz+thkeZnNAF@mail.gmail.com>
-	<AANLkTi=SherCg=hfN3Tm2_W4Et=8xk3pF5nQuBPg9h3P@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/7] Second batch of Tegra clock updates for 2.6.39
+Date: Mon, 21 Feb 2011 18:39:45 -0800
+Message-ID: <1298342392-21236-1-git-send-email-ccross@android.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTi=SherCg=hfN3Tm2_W4Et=8xk3pF5nQuBPg9h3P-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 3:01 PM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wro=
-te:
-> On Mon, Feb 21, 2011 at 12:40 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wro=
-te:
->> On Mon, Feb 21, 2011 at 11:31 AM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>=
- wrote:
->>> Does the kernel still print an unknown atag message without this ha=
-ndler?
->>> Is worth keeping an empty handler around to keep that from printing=
-?
->>
->> With what firmware? u-boot doesn't pass many handlers at all.
->> Shouldn't fastboot be changed to not pass it, if it's not used?
->>
->> (In other words, maybe it makes sense to keep it in android-tegra, b=
-ut
->> not upstream)?
->
-> My experience was with nvidia's bootloader that came on the harmony
-> boards. =A0Have they switched to u-boot?
+This patch series contains two small patches out of the previous
+series that needed fixes, as well as some new ones to disable
+unused clocks during boot and related bug fixes.
 
-Their current public LDK contains their bootloader and a 2.6.32 kernel
-(and they're still using machine ID 3333 in that one). They have
-started upstreaming their u-boot port, but I don't what the plans are
-on what the LDK will use in the future.
+Patch 4 converts the Harmony and Trimslice boards to use the new
+init_early machine handler.  Any boards that go in after this
+patch will need to be updated to match, and this patch will need
+to be updated if any boards go in before this patch.
 
-Will the nvidia atags ever be used in the kernel? If not, it'd make
-more sense to have the warning there so that the bootloader is fixed
-than having the no-op stub.
+Tested-bys on Harmony and Trimslice would be appreciated.
 
-
--Olof
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
