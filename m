@@ -1,66 +1,61 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 4/6] ARM: tegra: harmony: register sdhci devices
-Date: Mon, 21 Feb 2011 20:32:10 -0800
-Message-ID: <AANLkTinACsF2tF4H4EVCpr6DscNBuRV5JMxB9j4VjFyv@mail.gmail.com>
-References: <1298315206-8887-1-git-send-email-olof@lixom.net>
-	<1298315206-8887-5-git-send-email-olof@lixom.net>
-	<AANLkTinimyZe0Z49=X1Jpuejjmr9=Ns8AJG2SscH0=kP@mail.gmail.com>
+Subject: Re: [PATCH 1/6] ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+Date: Mon, 21 Feb 2011 21:24:33 -0800
+Message-ID: <AANLkTimOzxPUZV_JZH1wMQLxBvvJfY=nNKB=4GiKsg2J@mail.gmail.com>
+References: <AANLkTikauaANKBpfNHXF5PgCRS4vdbq+eNDF6itU6yHS@mail.gmail.com>
+	<AANLkTi=Mg7-hM69EMVSOkS8goU+H53KnDC5q2KASHOtz@mail.gmail.com>
+	<AANLkTinDn5XefEpxQJycdiz_Ph_mKTx13TqK6gryib=3@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTinimyZe0Z49=X1Jpuejjmr9=Ns8AJG2SscH0=kP-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <AANLkTinDn5XefEpxQJycdiz_Ph_mKTx13TqK6gryib=3@mail.gmail.com>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Mon, Feb 21, 2011 at 6:52 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
-:
-> On Mon, Feb 21, 2011 at 11:06 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wro=
+On Mon, Feb 21, 2011 at 2:58 PM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wro=
 te:
->> Add the 3 sdhci devices that are available on Harmony as
->> platform devices. Two go to slots (one 4-lane, one 8-lane),
->> and one goes to onboard wifi.
+> On Mon, Feb 21, 2011 at 12:44 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wro=
+te:
+>> Hi,
 >>
->> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
->> ---
->> =A0arch/arm/mach-tegra/board-harmony.c | =A0 11 +++++++++++
->> =A01 files changed, 11 insertions(+), 0 deletions(-)
+>> On Mon, Feb 21, 2011 at 11:40 AM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>=
+ wrote:
 >>
->> diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-teg=
-ra/board-harmony.c
->> index f6ad58b..8059c50 100644
->> --- a/arch/arm/mach-tegra/board-harmony.c
->> +++ b/arch/arm/mach-tegra/board-harmony.c
->> @@ -30,10 +30,14 @@
+>>>> This should remove the need for calling these from specific driver=
+s and
+>>>> thus reduce tegra-specific code from them.
+>>>
+>>> It was never my intention that drives call gpio_enable/disable, jus=
+t board
+>>> files.
 >>
->> =A0#include <mach/iomap.h>
->> =A0#include <mach/irqs.h>
->> +#include <mach/pinmux-t2.h>
-> Why does this require including mach/pinmux-t2.h?
+>> True, but it seems even then that it ends up in various parts of the
+>> per-board files. Having it in one central location (for the base
+>> config) seems like a good idea.
+>
+> sounds good to me.
+>
+>>> Gpio subsystem init and configurations should be left separate.
+>>
+>> I.e. not part of the pinmux file? Sure, can do.
+>
+> I meant that tegra_gpio_init should still be a postcore_initcall.
+> That way GPIOs work even if you don't use the tegra_gpio_config
+> helper.
 
-It was needed when the pcie data structures were brought over, and I
-messed up when I dropped that patch, resulting in picking it up here.
-My bad.
+Ok, brought that back.
 
->> + =A0 =A0 =A0 tegra_sdhci_device1.dev.platform_data =3D &sdhci_pdata=
-1;
->> + =A0 =A0 =A0 tegra_sdhci_device2.dev.platform_data =3D &sdhci_pdata=
-2;
->> + =A0 =A0 =A0 tegra_sdhci_device4.dev.platform_data =3D &sdhci_pdata=
-4;
->> +
-> What happened to the definitions of sdhci_pdata1-4? =A0They were in t=
-he
-> previous version of this patch, but not this one.
+>=A0Also, I'd take the __init off tegra_gpio_config. =A0The
+> function could be useful in some suspend/resume chains where the boar=
+d
+> designer hates you.
 
-Same as above -- I messed up when dropping the pci-e patch combined
-with a conflict with one of the patches you pushed to for-next last
-night. I must have compiled the wrong version before I posted the
-series.
+While I agree that it'd be useful, I'd prefer dropping it when the
+first in-tree user comes along for it. Otherwise, chances is some
+janitor coming across it and adding it back for extra churn. :)
 
 
 -Olof
