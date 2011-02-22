@@ -1,91 +1,88 @@
-From: Igor Grinberg <grinberg-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: Re: [PATCH v4 1/4] usb: otg: Add ulpi viewport access ops
-Date: Tue, 22 Feb 2011 16:42:59 +0200
-Message-ID: <4D63CB73.8040506@compulab.co.il>
-References: <1298000565-20627-1-git-send-email-benoit@android.com> <1298000565-20627-2-git-send-email-benoit@android.com> <4D5E9337.3010603@compulab.co.il> <4D622A97.2040101@parrot.com> <4D62593C.4070000@compulab.co.il> <4D628501.50105@parrot.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 5/7] ARM: tegra: timer: Enable timer and rtc clocks
+Date: Tue, 22 Feb 2011 07:28:29 -0800
+Message-ID: <AANLkTi=Z=WRUaYY4H3JXxNtmQYHDu=p+SAU-QNFMbMuf@mail.gmail.com>
+References: <1298342392-21236-1-git-send-email-ccross@android.com>
+	<1298342392-21236-6-git-send-email-ccross@android.com>
+	<AANLkTim=TZaqZFSJwOAN2gntvu=fiHVPQVn12=WyF9Wi@mail.gmail.com>
+	<AANLkTi=pJw7oTUY2jmaSB=chds0fXFaA3+jrT=y8Jpzv@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4D628501.50105-ITF29qwbsa/QT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <AANLkTi=pJw7oTUY2jmaSB=chds0fXFaA3+jrT=y8Jpzv-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Matthieu CASTET <matthieu.castet-ITF29qwbsa/QT0dZR+AlfA@public.gmane.org>
-Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 02/21/11 17:30, Matthieu CASTET wrote:
-
-> Igor Grinberg a =E9crit :
+On Tue, Feb 22, 2011 at 12:00 AM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrot=
+e:
+> On Mon, Feb 21, 2011 at 9:32 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrot=
+e:
 >> Hi,
 >>
->> On 02/21/11 11:04, Matthieu CASTET wrote:
 >>
->>> Hi,
+>> On Mon, Feb 21, 2011 at 6:39 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wr=
+ote:
+>>> Enable the timer and rtc clocks to prevent them being
+>>> turned off by the bootloader clock disabling code.
 >>>
->>> Igor Grinberg a =E9crit :
->>>> Hi,
->>>>
->>>> On 02/18/11 05:42, Benoit Goby wrote:
->>>>> Add generic access ops for controllers with a ulpi viewport regis=
-ter
->>>>> (e.g. Chipidea/ARC based controllers).
->>>> I can see mxc, msm and langwell are using the same bits
->>>> (or at least some of them).
->>> They all use the Chipidea/ARC usb controllers.
+>>> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>> =A0arch/arm/mach-tegra/timer.c | =A0 14 ++++++++++++--
+>>> =A01 files changed, 12 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/time=
+r.c
+>>> index ffa6a68..31b4f56 100644
+>>> --- a/arch/arm/mach-tegra/timer.c
+>>> +++ b/arch/arm/mach-tegra/timer.c
+>>> @@ -18,6 +18,7 @@
+>>> =A0*/
+>>>
+>>> =A0#include <linux/init.h>
+>>> +#include <linux/err.h>
+>>> =A0#include <linux/sched.h>
+>>> =A0#include <linux/time.h>
+>>> =A0#include <linux/interrupt.h>
+>>> @@ -193,9 +194,20 @@ static struct irqaction tegra_timer_irq =3D {
+>>>
+>>> =A0static void __init tegra_init_timer(void)
+>>> =A0{
+>>> + =A0 =A0 =A0 struct clk *clk;
+>>> =A0 =A0 =A0 =A0unsigned long rate =3D clk_measure_input_freq();
+>>> =A0 =A0 =A0 =A0int ret;
+>>>
+>>> + =A0 =A0 =A0 clk =3D clk_get_sys("timer", NULL);
+>>> + =A0 =A0 =A0 BUG_ON(IS_ERR(clk));
+>>> + =A0 =A0 =A0 clk_enable(clk);
+>>> + =A0 =A0 =A0 clk_put(clk);
+>>> +
+>>> + =A0 =A0 =A0 clk =3D clk_get_sys("rtc-tegra", NULL);
+>>> + =A0 =A0 =A0 BUG_ON(IS_ERR(clk));
+>>> + =A0 =A0 =A0 clk_enable(clk);
+>>> + =A0 =A0 =A0 clk_put(clk);
 >>
->> This means, that it is not generic, but Chipidea/ARC usb controller =
-specific.
->> And it is common to some/many platforms.
-> Yes
->>
->> Can it be utilized on platforms that have another kind of ulpi acces=
-s register?
-> I don't think so
-
-I've looked into the IMX Reference Manual regarding the ulpi viewport r=
-egister
-and it looks like these access ops can be utilized on another kind of u=
-lpi access registers,
-as the same features are available in most (if not all) of ulpi access =
-registers,
-whether they are called viewport or otherwise.
-This will require much more thinking and may be the right solution woul=
-d be
-multiple access ops files (e.g. drivers/usb/otg/ulpi_...port.c).
-So for now, this patch is a good stuff to start from.
-
-Benoit,
-
-can you, please, address comments in my first reply?
-
-Thanks.
-
+>> Why initialize the rtc clock here? Not all boards use it and instead
+>> use the rtc on the pmic. Seems wasteful to clock it unless the drive=
+r
+>> for it is probed and configured.
 >
->>
->>>> Is there some kind of specification for this ulpi viewport registe=
-r?
->>> You can find the Chipidea/ARC datasheet in IMX35 datasheet ( got  0=
-x0170  ULPI VIEWPORT) or a newer version (extra fields in some register=
-s but miss 0x168-0x170) in
->>> http://www.nxp.com/documents/user_manual/UM10314.pdf
->>
->> I don't have the IMX35 datasheet which describes the USB OTG registe=
-rs.
->> The one that can be downloaded from Freescale website, only describe=
-s
->> hardware and no ULPI viewport is mentioned there.
-> From freescale.com I manage to download IMX35RM.pdf witch describe it=
- (p2075).
+> timekeeping_suspend uses read_persistent_clock and not the RTC driver
+> to track time in suspend. =A0The Tegra implementation of
+> read_persistent_clock reads from the internal RTC registers. =A0Its a=
+ 32
+> kHz clock, so it's power usage is negligible, and it is required on
+> all Tegra boards.
 
-=46ound it. Thanks.
+Ah, right. A short comment to that effect near the clock enablement
+would be useful, but other than that:
+
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
 
---=20
-Regards,
-Igor.
-
+-Olof
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
