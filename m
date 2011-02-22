@@ -1,33 +1,78 @@
-From: Colin Cross <ccross@android.com>
-Subject: Re: [PATCH 0/7] Second batch of Tegra clock updates for 2.6.39
-Date: Tue, 22 Feb 2011 11:38:09 -0800
-Message-ID: <AANLkTimHJX4oqyiQ4rNF2YBgb3NyiixjU_wHP5Yd3Kpo@mail.gmail.com>
-References: <1298342392-21236-1-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/6] ARM: tegra: remove stale nvidia atag handler
+Date: Tue, 22 Feb 2011 11:39:46 -0800
+Message-ID: <AANLkTim4aQkxab5rZwbrWWr-NiK9rf0YjhQGB2_zfGBP@mail.gmail.com>
+References: <1298354117-19097-1-git-send-email-olof@lixom.net>
+	<1298354117-19097-4-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1298342392-21236-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: konkers@android.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mike@compulab.co.il
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298354117-19097-4-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I pushed everything except the last patch that disables bootloader
-clocks to for-next.  I'll repost the last change with Olof's comments
-addressed.
+On Mon, Feb 21, 2011 at 9:55 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> Remove dead atag handling code for nvidia-specific tags.
+>
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> ---
+> =A0arch/arm/mach-tegra/board-harmony.c | =A0 25 ---------------------=
+----
+> =A01 files changed, 0 insertions(+), 25 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegr=
+a/board-harmony.c
+> index b9dbdb1..f6ad58b 100644
+> --- a/arch/arm/mach-tegra/board-harmony.c
+> +++ b/arch/arm/mach-tegra/board-harmony.c
+> @@ -35,31 +35,6 @@
+> =A0#include "board-harmony.h"
+> =A0#include "clock.h"
+>
+> -/* NVidia bootloader tags */
+> -#define ATAG_NVIDIA =A0 =A0 =A0 =A0 =A0 =A00x41000801
+> -
+> -#define ATAG_NVIDIA_RM =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x1
+> -#define ATAG_NVIDIA_DISPLAY =A0 =A0 =A0 =A0 =A0 =A00x2
+> -#define ATAG_NVIDIA_FRAMEBUFFER =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00x3
+> -#define ATAG_NVIDIA_CHIPSHMOO =A0 =A0 =A0 =A0 =A00x4
+> -#define ATAG_NVIDIA_CHIPSHMOOPHYS =A0 =A0 =A00x5
+> -#define ATAG_NVIDIA_PRESERVED_MEM_0 =A0 =A00x10000
+> -#define ATAG_NVIDIA_PRESERVED_MEM_N =A0 =A02
+> -#define ATAG_NVIDIA_FORCE_32 =A0 =A0 =A0 =A0 =A0 0x7fffffff
+> -
+> -struct tag_tegra {
+> - =A0 =A0 =A0 __u32 bootarg_key;
+> - =A0 =A0 =A0 __u32 bootarg_len;
+> - =A0 =A0 =A0 char bootarg[1];
+> -};
+> -
+> -static int __init parse_tag_nvidia(const struct tag *tag)
+> -{
+> -
+> - =A0 =A0 =A0 return 0;
+> -}
+> -__tagtable(ATAG_NVIDIA, parse_tag_nvidia);
+> -
+> =A0static struct plat_serial8250_port debug_uart_platform_data[] =3D =
+{
+> =A0 =A0 =A0 =A0{
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.membase =A0 =A0 =A0 =A0=3D IO_ADDRESS=
+(TEGRA_UARTD_BASE),
+> --
+> 1.7.0.4
+>
+>
 
-On Mon, Feb 21, 2011 at 6:39 PM, Colin Cross <ccross@android.com> wrote=
-:
-> This patch series contains two small patches out of the previous
-> series that needed fixes, as well as some new ones to disable
-> unused clocks during boot and related bug fixes.
->
-> Patch 4 converts the Harmony and Trimslice boards to use the new
-> init_early machine handler. =A0Any boards that go in after this
-> patch will need to be updated to match, and this patch will need
-> to be updated if any boards go in before this patch.
->
-> Tested-bys on Harmony and Trimslice would be appreciated.
->
->
+Acked-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+
+Our version of the kernel will never use these atags, so it's better
+to warn that they are being ignored and get the bootloaders updated.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
