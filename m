@@ -1,39 +1,52 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Hide EMC scaling config behind ARCH_TEGRA
-Date: Tue, 22 Feb 2011 20:35:24 +0000
-Message-ID: <1298406924-2074-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [GIT PULL] Please pull tegra board updates for .39
+Date: Tue, 22 Feb 2011 12:40:00 -0800
+Message-ID: <AANLkTimA1=CCXM8wmkoatL59mzitC=5-GK3HUs-_daE9@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <>
-References: <>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The option isn't terribly useful on other ARM platforms.
+Colin,
 
-Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+The following changes since commit 92591f0c0e55f647ea0718711178bbeb2a261374:
+  Colin Cross (1):
+        ARM: tegra: common: Enable core clocks
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index cac8a79..bdf52f0 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -64,7 +64,7 @@ config TEGRA_SYSTEM_DMA
- 	  Adds system DMA functionality for NVIDIA Tegra SoCs, used by
- 	  several Tegra device drivers
- 
--endif
--
- config TEGRA_EMC_SCALING_ENABLE
- 	bool "Enable scaling the memory frequency"
-+
-+endif
--- 
-1.7.2.3
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
+boards-for-next
+
+Olof Johansson (7):
+      ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+      ARM: tegra: harmony: move over to tegra_gpio_config
+      ARM: tegra: common device resources
+      ARM: tegra: remove stale nvidia atag handler
+      ARM: tegra: harmony: register sdhci devices
+      ARM: tegra: harmony: fix pinmux for MMC slot
+      ARM: tegra: add seaboard, wario and kaen boards
+
+ arch/arm/mach-tegra/Kconfig                 |   19 +
+ arch/arm/mach-tegra/Makefile                |    4 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c  |   19 +-
+ arch/arm/mach-tegra/board-harmony.c         |   55 ++--
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |  179 ++++++++++
+ arch/arm/mach-tegra/board-seaboard.c        |  196 +++++++++++
+ arch/arm/mach-tegra/board-seaboard.h        |   38 ++
+ arch/arm/mach-tegra/devices.c               |  505 +++++++++++++++++++++++++++
+ arch/arm/mach-tegra/devices.h               |   46 +++
+ arch/arm/mach-tegra/gpio.c                  |   14 +
+ arch/arm/mach-tegra/include/mach/gpio.h     |    7 +
+ 11 files changed, 1054 insertions(+), 28 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.h
+ create mode 100644 arch/arm/mach-tegra/devices.c
+ create mode 100644 arch/arm/mach-tegra/devices.h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
