@@ -1,67 +1,89 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 4/4] ARM: tegra: Move pinmux init call
-Date: Tue, 22 Feb 2011 09:27:57 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A5A37@HQMAIL01.nvidia.com>
-References: <1298173137-9242-1-git-send-email-swarren@nvidia.com>
-	<1298173137-9242-5-git-send-email-swarren@nvidia.com>
- <AANLkTimcadeAHWuFApw_H+AEs+hgURxCRO2X92M9cehG@mail.gmail.com>
+From: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/6] ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+Date: Tue, 22 Feb 2011 11:18:08 -0800
+Message-ID: <AANLkTik9_t0mq07mysO2CcK4ppKAmuPAujownfeWEGL5@mail.gmail.com>
+References: <1298354117-19097-1-git-send-email-olof@lixom.net>
+	<1298354117-19097-2-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimcadeAHWuFApw_H+AEs+hgURxCRO2X92M9cehG-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1298354117-19097-2-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: "konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Colin Cross wrote at Monday, February 21, 2011 8:22 PM:
->=20
-> On Sat, Feb 19, 2011 at 7:38 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> wrote:
-> > In order for the clock initialization to pick up the results of the
-> > pinmux initialization (which will initialize various parameters of
-> > clocks cdev1, cdev2), the pinmux initialization must happen first.
-> > Move the pinmux init to achieve this.
->...
-> > =A0{
-> > + =A0 =A0 =A0 harmony_pinmux_init();
-> > +
-> > =A0 =A0 =A0 =A0tegra_common_init();
-> >
-> > =A0 =A0 =A0 =A0tegra_clk_init_from_table(harmony_clk_init_table);
-> >
-> > - =A0 =A0 =A0 harmony_pinmux_init();
-> > -
->=20
-> This isn't going to work any more.  In order for the timer to get a
-> reference to its clock, clocks have to be up before the system timer
-> is initialized, so Russell added an init_early hook for clock
-> initialization.  init_machine happens much later, so the per-board
-> pinmux init will always happen after clock init.
+Can you split the boardfile changes into their own patch?  Also see
+the below whitespace only change.  Other than that, looks good.
 
-OK. Drop this patch then.
+On Mon, Feb 21, 2011 at 9:55 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+snip
+> diff --git a/arch/arm/mach-tegra/gpio.c b/arch/arm/mach-tegra/gpio.c
+> index 132dcd6..ffc146d 100644
+> --- a/arch/arm/mach-tegra/gpio.c
+> +++ b/arch/arm/mach-tegra/gpio.c
+> @@ -378,9 +378,22 @@ static int __init tegra_gpio_init(void)
+>
+> =A0 =A0 =A0 =A0return 0;
+> =A0}
+> -
+> =A0postcore_initcall(tegra_gpio_init);
 
-IIRC, this patch was mostly about making the state (e.g. debugfs files)=
- match
-between the pinmux and clock drivers. At least initially I'll ignore th=
-is now
-that I know what's going on with the audio clocks, and just make audio =
-work
-with the appropriate pinmux settings as you suggest.
+whitespace only change
 
-Maybe that approach will obviate the need for my patch that adds set_pa=
-rent
-for cdev[12], if it's done by pinmux settings instead. I'll check and s=
-ee.
-We can think about the underlying synchronization issue between clock/p=
-inmux
-later I think.
-
---=20
-nvpublic
-
+>
+> +void __init tegra_gpio_config(struct tegra_gpio_table *table, int nu=
+m)
+> +{
+> + =A0 =A0 =A0 int i;
+> +
+> + =A0 =A0 =A0 for (i =3D 0; i < num; i++) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 int gpio =3D table[i].gpio;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (table[i].enable)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tegra_gpio_enable(gpio)=
+;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tegra_gpio_disable(gpio=
+);
+> + =A0 =A0 =A0 }
+> +}
+> +
+> =A0#ifdef CONFIG_DEBUG_FS
+>
+> =A0#include <linux/debugfs.h>
+> diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-=
+tegra/include/mach/gpio.h
+> index e31f486..2369fba 100644
+> --- a/arch/arm/mach-tegra/include/mach/gpio.h
+> +++ b/arch/arm/mach-tegra/include/mach/gpio.h
+> @@ -20,6 +20,7 @@
+> =A0#ifndef __MACH_TEGRA_GPIO_H
+> =A0#define __MACH_TEGRA_GPIO_H
+>
+> +#include <linux/init.h>
+> =A0#include <mach/irqs.h>
+>
+> =A0#define TEGRA_NR_GPIOS =A0 =A0 =A0 =A0 INT_GPIO_NR
+> @@ -47,6 +48,12 @@ static inline int irq_to_gpio(unsigned int irq)
+> =A0 =A0 =A0 =A0return -EINVAL;
+> =A0}
+>
+> +struct tegra_gpio_table {
+> + =A0 =A0 =A0 int =A0 =A0 gpio; =A0 /* GPIO number */
+> + =A0 =A0 =A0 bool =A0 =A0enable; /* Enable for GPIO at init? */
+> +};
+> +
+> +void __init tegra_gpio_config(struct tegra_gpio_table *table, int nu=
+m);
+> =A0void tegra_gpio_enable(int gpio);
+> =A0void tegra_gpio_disable(int gpio);
+>
+> --
+> 1.7.0.4
+>
+>
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
