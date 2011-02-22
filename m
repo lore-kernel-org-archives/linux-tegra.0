@@ -1,71 +1,44 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra: clock: Disable clocks left on by bootloader
-Date: Mon, 21 Feb 2011 21:43:19 -0800
-Message-ID: <AANLkTikNSEyjdL0Lchmm-bFxD00omkGLq6Q6Yyjy51Ov@mail.gmail.com>
-References: <1298342392-21236-1-git-send-email-ccross@android.com>
-	<1298342392-21236-8-git-send-email-ccross@android.com>
+Subject: Re: [PATCH 5/6] ARM: tegra: add seaboard, wario and kaen boards
+Date: Mon, 21 Feb 2011 21:52:03 -0800
+Message-ID: <AANLkTikBPGbjzRGMv5a_6SFsDZP6hOMTT8vOCP=ghMUg@mail.gmail.com>
+References: <1298315206-8887-1-git-send-email-olof@lixom.net>
+	<1298315206-8887-6-git-send-email-olof@lixom.net>
+	<AANLkTik6OjZZ=MTU0iq3yk9X57F6ZneBnQGsYFno1zKR@mail.gmail.com>
+	<AANLkTimJrcXQoymKdny1+GZtmM192xNVcUPHj8pC6J4v@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298342392-21236-8-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <AANLkTimJrcXQoymKdny1+GZtmM192xNVcUPHj8pC6J4v-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Mon, Feb 21, 2011 at 8:30 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Mon, Feb 21, 2011 at 7:07 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> +++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+>>> @@ -0,0 +1,179 @@
+>>> +/*
+>>> + * Copyright (C) 2010 NVIDIA Corporation
+>> This seems unique enough not be copyright nVidia.
+>
+> Having copyrights on every single file is silly to start with, but I
+> carried this over since they had it on the patch that introduced
+> seaboard in the chromium os repository.
+>
+> I'll be rewriting the file for next post due to the import from
+> /sys/kernel/debug as Erik suggested though, so the copyright will
+> switch for that reason.
 
-On Mon, Feb 21, 2011 at 6:39 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
-:
-> Iterates through all clocks, disabling any for which the
-> refcount is 0 but the clock init detected the bootloader
-> left the clock on. =A0Can be disabled with command line
-> tegra_clock.disable_boot_clocks=3DN
->
-> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> ---
-> =A0arch/arm/mach-tegra/clock.c | =A0 44 +++++++++++++++++++++++++++++=
-++++++++++++++
-> =A01 files changed, 44 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.=
-c
-> index e028320..6d686ff 100644
-> --- a/arch/arm/mach-tegra/clock.c
-> +++ b/arch/arm/mach-tegra/clock.c
-> @@ -33,6 +33,9 @@
-> =A0#include "board.h"
-> =A0#include "clock.h"
->
-> +#undef MODULE_PARAM_PREFIX
-> +#define MODULE_PARAM_PREFIX "tegra_clock."
-> +
-> =A0/*
-> =A0* Locking:
-> =A0*
-> @@ -416,6 +419,47 @@ void tegra_sdmmc_tap_delay(struct clk *c, int de=
-lay)
-> =A0 =A0 =A0 =A0spin_unlock_irqrestore(&c->spinlock, flags);
-> =A0}
->
-> +static bool tegra_disable_boot_clocks =3D true;
-> +module_param_named(disable_boot_clocks, tegra_disable_boot_clocks, b=
-ool,
-> + =A0 =A0 =A0 S_IRUGO | S_IWUSR | S_IWGRP);
-
-I suggest doing this as an early_param instead. I know it's not truly
-an early param, but it's the easier way to do non-module bootargs,
-i.e. by not requiring a (fake) module prefix. It'd be a little
-cleaner, in my opinion. The variable name itself is unique enough to
-not need a module prefix for namespace reasons.
-
-Also, Documentation/kernel-parameters.txt should be updated with it.
+Actually, deltas were pretty small and there's also the drive strength
+settings that came from Nvidia. So I'm keeping their copyright on the
+file, seems appropriate. Not a big deal either way, and I'd rather err
+on the side of keeping copyrights than stripping them.
 
 
 -Olof
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
