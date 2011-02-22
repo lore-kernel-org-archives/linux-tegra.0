@@ -1,37 +1,31 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra: clock: Disable clocks left on by bootloader
-Date: Tue, 22 Feb 2011 07:30:35 -0800
-Message-ID: <AANLkTinm70LbG8-H7RHndOzkP9vcnu5GhnhKh_LHSzaP@mail.gmail.com>
-References: <1298342392-21236-1-git-send-email-ccross@android.com>
-	<1298342392-21236-8-git-send-email-ccross@android.com>
-	<AANLkTikNSEyjdL0Lchmm-bFxD00omkGLq6Q6Yyjy51Ov@mail.gmail.com>
-	<AANLkTi==wykFCCjamRNh2ngEaubgeLqmZ7Mv9OsH=0cL@mail.gmail.com>
+Subject: Re: [PATCH 1/6] ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+Date: Tue, 22 Feb 2011 07:31:20 -0800
+Message-ID: <AANLkTi=y88Ju+0=2WJJO_5fpq-RP+kPRHeWiYBrjCDQ0@mail.gmail.com>
+References: <1298354117-19097-1-git-send-email-olof@lixom.net>
+	<1298354117-19097-2-git-send-email-olof@lixom.net>
+	<4D63B661.6000407@ru.mvista.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTi==wykFCCjamRNh2ngEaubgeLqmZ7Mv9OsH=0cL-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <4D63B661.6000407-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+To: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-On Tue, Feb 22, 2011 at 12:05 AM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrot=
-e:
+On Tue, Feb 22, 2011 at 5:13 AM, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>=
+ wrote:
 
-> It doesn't need to be an early_param, I can make it a __setup.
+>> +void __init tegra_gpio_config(struct tegra_gpio_table *table, int n=
+um);
+>
+> =A0 You don't need to annotate the declaration as __init.
 
-Sounds good.
-
->> Also, Documentation/kernel-parameters.txt should be updated with it.
-> Is it really worth adding every debug flag on every platform to
-> kernel-parametes.txt? =A0I could add the flag to the warning message
-> instead.
-
-It looks like most arm sub-archs haven't added theirs, so it's OK to
-leave out. I'm not too bothered either way myself.
+D'oh. Fixed. Thanks.
 
 
 -Olof
