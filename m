@@ -1,54 +1,120 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 4/5] ARM: Tegra: Create defines for GPIO names
-Date: Wed, 23 Feb 2011 12:49:46 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A5D63@HQMAIL01.nvidia.com>
-References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
-	<1298487532-5000-5-git-send-email-swarren@nvidia.com>
-	<AANLkTinPssv8Wpy0Qe5GAHqN=9dicSLZ8sUmq+JeW2_q@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF03112A5D59@HQMAIL01.nvidia.com>
- <AANLkTimgB3CZmiVXR9MYTEOXk9uSok12vcVaTTx1tn2M@mail.gmail.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: tegra: harmony: register sdhci devices
+Date: Wed, 23 Feb 2011 13:53:27 -0700
+Message-ID: <20110223205327.GV14597@angua.secretlab.ca>
+References: <1298354117-19097-1-git-send-email-olof@lixom.net>
+ <1298354117-19097-5-git-send-email-olof@lixom.net>
+ <4D635EC4.2030102@compulab.co.il>
+ <AANLkTi=mjR6dnxcTxYzTvJK4DgEW7mO+p4TUeu6kq6fn@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimgB3CZmiVXR9MYTEOXk9uSok12vcVaTTx1tn2M-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <AANLkTi=mjR6dnxcTxYzTvJK4DgEW7mO+p4TUeu6kq6fn-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Colin Cross wrote at Wednesday, February 23, 2011 1:39 PM:
-> 
-> On Wed, Feb 23, 2011 at 12:35 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Colin Cross wrote at Wednesday, February 23, 2011 12:09 PM:
-> >> On Wed, Feb 23, 2011 at 10:58 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> >> > This ensures they're kept in sync between platform_data definitions and
-> >> > the GPIO table initialization.
+On Tue, Feb 22, 2011 at 07:44:58AM -0800, Olof Johansson wrote:
+> On Mon, Feb 21, 2011 at 10:59 PM, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>=
+ wrote:
+> > Hi Olof,
+> > Sorry for jumping late, haven't thought about the proposal below ye=
+sterday.
+> > I'm not objecting to applying the patch as is, we can refactor the =
+code
+> > afterwards as well.
+>=20
+> Thanks for the input. And yeah, I'd say we can refactor later when we
+> see how things will fit well with flat devicetrees. More below.
+>=20
+>=20
+> >> =A0static void __init tegra_harmony_init(void)
+> >> =A0{
+> >> =A0 =A0 =A0 tegra_common_init();
+> >> @@ -85,6 +111,10 @@ static void __init tegra_harmony_init(void)
 > >>
-> >> Can you name these for what they are used for (if they have a single use)?
-> >> i.e. TEGRA_GPIO_EMMC_CD instead of TEGRA_GPIO_SD2_CD
+> >> =A0 =A0 =A0 harmony_pinmux_init();
+> >>
+> >> + =A0 =A0 tegra_sdhci_device1.dev.platform_data =3D &sdhci_pdata1;
+> >> + =A0 =A0 tegra_sdhci_device2.dev.platform_data =3D &sdhci_pdata2;
+> >> + =A0 =A0 tegra_sdhci_device4.dev.platform_data =3D &sdhci_pdata4;
+> >> +
 > >
-> > Are you looking for correlation with the schematics, or something else;
->...
-> 
-> I meant use the name of the device they are connected to (if there is
-> one).  By EMMC I meant the embedded MMC storage device.  The gpio is
-> not notable because it is used by the SDIO driver for port 2, it is
-> notable because it is connected to the EMMC chip or the wifi chip or a
-> card slot.
+> > I think that instead of copying explicit initialization of the plat=
+form_data
+> > member from board to board we can do something similar to what PXA =
+does. The
+> > board file would have to call something like
+> > tegra_set_device_X_info(struct tegra_device_X_platform_data *data);
+> > and then static registration of platform devices in the board files=
+ can be dropped.
+> >
+> > For instance, the devices.c would have
+> >
+> > void __init tegra_register_device(struct platform_device *dev, void=
+ *data)
+> > {
+> > =A0 =A0 =A0 =A0int ret;
+> >
+> > =A0 =A0 =A0 =A0dev->dev.platform_data =3D data;
+> >
+> > =A0 =A0 =A0 =A0ret =3D platform_device_register(dev);
+> > =A0 =A0 =A0 =A0if (ret)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(&dev->dev, "unable to regist=
+er device: %d\n", ret);
+> > }
+> >
+> > void __init tegra_set_sdhci1_info(struct tegra_sdhci_platform_data =
+*info)
+> > {
+> > =A0 =A0 =A0 =A0tegra_register_device(&tegra_sdhci_device1, info);
+> > }
+> >
+> > and the board files would just call tegra_set_sdhci1_info to pass t=
+he platform
+> > data for the tegra_sdhci_device1 and register the device.
+> >
+> > This way we could reduce amount of copy/paste between the board fil=
+es. Besides,
+> > if/when tegra will be using device trees, handling of the device re=
+gistration in
+> > common place would make the transition easier.
+>=20
+> I don't see how that reduces the amount of copy and paste
+> (significantly), since you still need the platform_data defined per
+> board so you'll need to add the calls there. Maybe a generic
+> "set_platform_data" hook instead of doing the pointer assignment
+> open-coded would be an improvement though.
 
-The GPIOs currently in the code are for SD slots/connectors; we don't have
-any GPIO definitions for any internal MMC memory, or WiFi chips.
+Option 3 is to use a bus notifier to attach additional platform data
+when the device gets registered.  That is turning out to be the
+cleanest solution when it comes to getting additional pdata to a
+device that is pulled out of the dt, and this sounds like a similar
+situation.
 
-I guess the numbering could be changed; 2 vs. 4 don't very obviously map to
-the slots on the board for the user, yet the only thing better I can think
-of would be the connector numbers on the silkscreen?
+>=20
+> I'm personally not a fan of the style where data is described as code=
+,
+> i.e. where there would be a tegra_set_<dev>_info function for every
+> possible device out there. If anything that adds to the amount of
+> copy-and-paste (per device), when it could just be handled with one
+> common function being passed the appropriate data (i.e. like
+> tegra_register_device).
 
--- 
-nvpublic
++1
 
+>=20
+> Anyway, I'm not looking to argue over it. :) I think we'll see when
+> the FDT pieces start to take shape what kind of model will work well,
+> and there's no reason to do premature refactoring.
+>=20
+>=20
+> -Olof
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
