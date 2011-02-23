@@ -1,66 +1,64 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 5/5] ARM: Tegra: Enable Harmony audio support
-Date: Wed, 23 Feb 2011 13:16:50 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A5D7D@HQMAIL01.nvidia.com>
-References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
-	<1298487532-5000-6-git-send-email-swarren@nvidia.com>
- <AANLkTi=Nxh8YKBSDhVVAW4Sqzd6yKj=D6X=R+9KT+UBK@mail.gmail.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL] Please pull tegra board updates for .39
+Date: Wed, 23 Feb 2011 13:17:32 -0800
+Message-ID: <AANLkTim99BSkaX-hm8kb43tm6YJY5VUk6OYL6SwyPmD5@mail.gmail.com>
+References: <AANLkTimA1=CCXM8wmkoatL59mzitC=5-GK3HUs-_daE9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTi=Nxh8YKBSDhVVAW4Sqzd6yKj=D6X=R+9KT+UBK-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <AANLkTimA1=CCXM8wmkoatL59mzitC=5-GK3HUs-_daE9-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin Cross wrote at Wednesday, February 23, 2011 2:08 PM:
->=20
-> On Wed, Feb 23, 2011 at 10:58 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
- wrote:
-> > * Set up platform data required by I2C, and ASoC machine & codec dr=
-ivers.
-> > * Enable required GPIO pins as GPIOs.
-> > * Initialize audio-related clocks.
-> > * Correctly configure pinmux for audio-related GPIOs.
-> >
-> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-te=
-gra/board-harmony.h
-> > ...
-> > +#define GPIO_WM8903(_x_) =A0 =A0 =A0 =A0 =A0 =A0 =A0 (TEGRA_NR_GPI=
-OS + (_x_))
-> Can you name this HARMONY_GPIO_WM8903?
+Colin,
 
-Sure. But then, wouldn't it make sense to also rename all the TEGRA_GPI=
-O_*
-below too?
+Since things got held up due to rebases and a few patch respins,
+here's a fresh pull request and diff stats. Please pull
+boards-for-next.
 
-> > +
-> > =A0#define TEGRA_GPIO_SD2_CD =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_=
-PI5
-> > =A0#define TEGRA_GPIO_SD2_WP =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_=
-PH1
-> > =A0#define TEGRA_GPIO_SD2_POWER =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PT3
-> > =A0#define TEGRA_GPIO_SD4_CD =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_=
-PH2
-> > =A0#define TEGRA_GPIO_SD4_WP =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_=
-PH3
-> > =A0#define TEGRA_GPIO_SD4_POWER =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PI6
-> > +#define TEGRA_GPIO_CDC_IRQ =A0 =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PX3
-> > +#define TEGRA_GPIO_SPKR_EN =A0 =A0 =A0 =A0 =A0 =A0 GPIO_WM8903(2)
-> > +#define TEGRA_GPIO_HP_DET =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_PW=
-2
-> > +#define TEGRA_GPIO_INT_MIC_EN =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_PX0
-> > +#define TEGRA_GPIO_EXT_MIC_EN =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_PX1
+Given current activity, I expect to stage one more pull before the
+merge window once the i2c driver is in the main tegra for-next branch.
 
---=20
-nvpublic
 
+
+The following changes since commit 38376866a1fe5b1e6d9510ec4913c2b461f456f3:
+  Mark Brown (1):
+        ARM: tegra: Hide EMC scaling config behind ARCH_TEGRA
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
+boards-for-next
+
+Olof Johansson (7):
+      ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+      ARM: tegra: harmony: move over to tegra_gpio_config
+      ARM: tegra: common device resources
+      ARM: tegra: remove stale nvidia atag handler
+      ARM: tegra: harmony: register sdhci devices
+      ARM: tegra: harmony: fix pinmux for MMC slot
+      ARM: tegra: add seaboard, wario and kaen boards
+
+ arch/arm/mach-tegra/Kconfig                 |   19 +
+ arch/arm/mach-tegra/Makefile                |    4 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c  |   19 +-
+ arch/arm/mach-tegra/board-harmony.c         |   55 ++--
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |  179 ++++++++++
+ arch/arm/mach-tegra/board-seaboard.c        |  196 +++++++++++
+ arch/arm/mach-tegra/board-seaboard.h        |   38 ++
+ arch/arm/mach-tegra/devices.c               |  505 +++++++++++++++++++++++++++
+ arch/arm/mach-tegra/devices.h               |   46 +++
+ arch/arm/mach-tegra/gpio.c                  |   14 +
+ arch/arm/mach-tegra/include/mach/gpio.h     |    7 +
+ 11 files changed, 1054 insertions(+), 28 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.h
+ create mode 100644 arch/arm/mach-tegra/devices.c
+ create mode 100644 arch/arm/mach-tegra/devices.h
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
