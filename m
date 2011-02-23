@@ -1,86 +1,75 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: Problem with "ARM: tegra: Move tegra_common_init to tegra_init_early"
-Date: Tue, 22 Feb 2011 20:20:01 -0800
-Message-ID: <AANLkTin3VFp=JhiCb5Sft3pvGw2o4k4qqtbx-PNUGfUD@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22@HQMAIL01.nvidia.com>
+Subject: Re: [PATCH v5 3/4] usb: host: Add EHCI driver for NVIDIA Tegra SoCs
+Date: Tue, 22 Feb 2011 20:56:47 -0800
+Message-ID: <AANLkTi=D-GcJJPvW2MaDf9L-KNr2628q3v1MZTbOCtmx@mail.gmail.com>
+References: <1298434054-23274-1-git-send-email-benoit@android.com>
+	<1298434054-23274-4-git-send-email-benoit@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1298434054-23274-4-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Russell King - ARM Linux (linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org)" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Grmbl. I missed the:
+Hi,
 
-[    0.000000] Failed to register IRQ 136 for DMA 0
 
-When I booted the series on harmony and seaboard last night, since the
-board came up to prompt and seemed otherwise healthy. Sorry about
-that.
+On Tue, Feb 22, 2011 at 8:07 PM, Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
+:
+
+
+> diff --git a/include/linux/tegra_usb.h b/include/linux/tegra_usb.h
+> new file mode 100644
+> index 0000000..6bca5b5
+> --- /dev/null
+> +++ b/include/linux/tegra_usb.h
+> @@ -0,0 +1,31 @@
+> +/*
+> + * Copyright (C) 2010 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Publ=
+ic
+> + * License version 2, as published by the Free Software Foundation, =
+and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. =A0See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#ifndef _TEGRA_USB_H_
+> +#define _TEGRA_USB_H_
+> +
+> +enum tegra_usb_operating_modes {
+> + =A0 =A0 =A0 TEGRA_USB_DEVICE,
+> + =A0 =A0 =A0 TEGRA_USB_HOST,
+> + =A0 =A0 =A0 TEGRA_USB_OTG,
+> +};
+> +
+> +struct tegra_ehci_platform_data {
+> + =A0 =A0 =A0 enum tegra_usb_operating_modes operating_mode;
+> + =A0 =A0 =A0 /* power down the phy on bus suspend */
+> + =A0 =A0 =A0 int power_down_on_bus_suspend;
+> + =A0 =A0 =A0 void *phy_config;
+> +};
+> +
+> +#endif /* _TEGRA_USB_H_ */
+
+Most other platform drivers like this put the platform data include
+files either under include/linux/usb or under
+arch/arm/mach-<foo>/include/mach instead, since they don't really
+apply globally.  I'd say go with the latter since there's no sharing
+of this outside of tegra today (and it can be moved if that ever
+happens).
 
 
 -Olof
-
-
-On Tue, Feb 22, 2011 at 7:12 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
-> The following commit makes the Tegra APB DMA engine fail to initializ=
-e correctly:
->
-> commit 0cf6230af909a86f81907455eca2a5c9b8f68fe6
->
-> =A0 =A0ARM: tegra: Move tegra_common_init to tegra_init_early
->
-> =A0 =A0Move tegra_common_init to tegra_init_early, and set it
-> =A0 =A0as the init_early entry in the machine struct.
-> =A0 =A0Initializes the clocks earlier so that timers can enable
-> =A0 =A0their clocks.
->
-> =A0 =A0Also reorders the members in the Harmony and Trimslice
-> =A0 =A0boards' machine structs to match the order they are
-> =A0 =A0called in.
->
-> The reason is that tegra_init_early_ calls tegra_dma_init which calls
-> request_threaded_irq, which fails since the IRQ hasn't yet been marke=
-d valid;
-> that only happens in tegra_init_irq, which gets called after tegra_in=
-it_early.
->
-> This used to work OK, since tegra_init_early was tegra_common_init, w=
-hich got
-> called after tegra_init_irq, basically from the beginning of tegra_ha=
-rmony_init.
->
-> I tried moving the call to tegra_dma_init back to each of the very en=
-d of
-> tegra_init_irq and the very beginning of tegra_harmony_init. Both of =
-these
-> resulted in a kernel that wouldn't boot.
->
-> Simply removing the call to tegra_dma_init completely does allow the =
-kernel
-> to boot, but obviously, DMA isn't available.
->
-> I'm a little stumped why moving tegra_dma_init causes a boot failure.=
- Does
-> anyone have any helpful ideas, or any alternative ways to fix the und=
-erlying
-> problem?
->
-> Thanks.
->
-> --
-> nvpublic
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
 in
