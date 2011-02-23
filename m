@@ -1,62 +1,45 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: Tegra: Make tegra_dma_init a postcore_initcall
-Date: Wed, 23 Feb 2011 10:11:20 -0700
-Message-ID: <1298481080-27120-1-git-send-email-swarren@nvidia.com>
+Subject: RE: Problem with "ARM: tegra: Move tegra_common_init to
+ tegra_init_early"
+Date: Wed, 23 Feb 2011 09:13:59 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A5CD6@HQMAIL01.nvidia.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22@HQMAIL01.nvidia.com>
+ <AANLkTimgw6kruGMp=wJUVka+Gj2cn9X=qRucbnuq-b9V@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AANLkTimgw6kruGMp=wJUVka+Gj2cn9X=qRucbnuq-b9V-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Russell King - ARM Linux (linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org)" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The following commit makes the Tegra APB DMA engine fail to initialize
-correctly: 0cf6230af909a86f81907455eca2a5c9b8f68fe6
-ARM: tegra: Move tegra_common_init to tegra_init_early
+Colin Cross wrote at Wednesday, February 23, 2011 12:43 AM:
+> 
+> On Tue, Feb 22, 2011 at 7:12 PM, Stephen Warren wrote:
+> > The following commit makes the Tegra APB DMA engine fail to initialize
+> > correctly:
+> >
+> > ARM: tegra: Move tegra_common_init to tegra_init_early
+> > ...
+> > I tried moving the call to tegra_dma_init back to each of the very end
+> > of tegra_init_irq and the very beginning of tegra_harmony_init. Both
+> > of these resulted in a kernel that wouldn't boot.
+>
+> I don't know why it still fails if you put it back at the beginning of
+> the machine init, and it boots without errors on my board if I move
+> tegra_dma_init to a postcore_initcall, but I don't have any drivers on
+> my board that use DMA.
 
-The reason is that tegra_init_early_ calls tegra_dma_init which calls
-request_threaded_irq, which fails since the IRQ hasn't yet been marked
-valid; that only happens in tegra_init_irq, which gets called after
-tegra_init_early.
+It looks like the fail-to-boot symptom was an operator error or
+incremental build problem. I retested everything with a from-scratch
+build and moving tegra_dma_int to be a postcore_initcall solves the issue
+for me; I've posted a patch to do that.
 
-This used to work OK, since tegra_init_early was tegra_common_init, which
-got called after tegra_init_irq, basically from the beginning of
-tegra_harmony_init.
-
-Solve this by converting tegra_dma_init to a postcore_initcall. This makes
-it execute late enough that IRQs are marked valid, and avoids having to
-add it back to every machine's init function.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/common.c |    3 ---
- arch/arm/mach-tegra/dma.c    |    1 +
- 2 files changed, 1 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 516e100..b6ab3f8 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -81,7 +81,4 @@ void __init tegra_init_early(void)
- 	tegra_init_clock();
- 	tegra_clk_init_from_table(common_clk_init_table);
- 	tegra_init_cache();
--#ifdef CONFIG_TEGRA_SYSTEM_DMA
--	tegra_dma_init();
--#endif
- }
-diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-index 2d720f2..bd4f62a 100644
---- a/arch/arm/mach-tegra/dma.c
-+++ b/arch/arm/mach-tegra/dma.c
-@@ -743,6 +743,7 @@ fail:
- 	}
- 	return ret;
- }
-+postcore_initcall(tegra_dma_init);
- 
- #ifdef CONFIG_PM
- static u32 apb_dma[5*TEGRA_SYSTEM_DMA_CH_NR + 3];
 -- 
-1.7.1
+nvpublic
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
