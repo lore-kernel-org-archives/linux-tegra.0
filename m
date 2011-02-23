@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/5] ARM: Tegra: Add devices.c entries for audio
-Date: Wed, 23 Feb 2011 11:58:48 -0700
-Message-ID: <1298487532-5000-2-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 3/5] ARM: Tegra: Rename clk_dev1/2 to cdev1/2
+Date: Wed, 23 Feb 2011 11:58:50 -0700
+Message-ID: <1298487532-5000-4-git-send-email-swarren@nvidia.com>
 References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1298487532-5000-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,124 +10,57 @@ To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For I2S, DAS, PCM devices
+The ASoC machine driver was written assuming my previous patch to add
+complete support for these clocks, which named them cdev1/2. Rename
+the clocks to match that, to avoid churn in the ASoC driver.
+
+This rename also makes the clocks more consistent with other Tegra
+clocks irrespective of any of that.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-NOTE: This patch will not apply until Olof's recently posted
-boards-for-next branch is merged.
+NOTE: This patch should apply right now.
 
- arch/arm/mach-tegra/devices.c            |   70 ++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/devices.h            |    4 ++
- arch/arm/mach-tegra/include/mach/iomap.h |    3 +
- 3 files changed, 77 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
-index 682e6d3..1528f9d 100644
---- a/arch/arm/mach-tegra/devices.c
-+++ b/arch/arm/mach-tegra/devices.c
-@@ -503,3 +503,73 @@ struct platform_device tegra_uarte_device = {
- 		.coherent_dma_mask	= DMA_BIT_MASK(32),
- 	},
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index ee3f9d7..6d7c4ee 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -1823,8 +1823,8 @@ static struct clk tegra_clk_d = {
  };
-+
-+static struct resource i2s_resource1[] = {
-+	[0] = {
-+		.start	= INT_I2S1,
-+		.end	= INT_I2S1,
-+		.flags	= IORESOURCE_IRQ
-+	},
-+	[1] = {
-+		.start	= TEGRA_DMA_REQ_SEL_I2S_1,
-+		.end	= TEGRA_DMA_REQ_SEL_I2S_1,
-+		.flags	= IORESOURCE_DMA
-+	},
-+	[2] = {
-+		.start	= TEGRA_I2S1_BASE,
-+		.end	= TEGRA_I2S1_BASE + TEGRA_I2S1_SIZE - 1,
-+		.flags	= IORESOURCE_MEM
-+	}
-+};
-+
-+static struct resource i2s_resource2[] = {
-+	[0] = {
-+		.start	= INT_I2S2,
-+		.end	= INT_I2S2,
-+		.flags	= IORESOURCE_IRQ
-+	},
-+	[1] = {
-+		.start	= TEGRA_DMA_REQ_SEL_I2S2_1,
-+		.end	= TEGRA_DMA_REQ_SEL_I2S2_1,
-+		.flags	= IORESOURCE_DMA
-+	},
-+	[2] = {
-+		.start	= TEGRA_I2S2_BASE,
-+		.end	= TEGRA_I2S2_BASE + TEGRA_I2S2_SIZE - 1,
-+		.flags	= IORESOURCE_MEM
-+	}
-+};
-+
-+struct platform_device tegra_i2s_device1 = {
-+	.name		= "tegra-i2s",
-+	.id		= 0,
-+	.resource	= i2s_resource1,
-+	.num_resources	= ARRAY_SIZE(i2s_resource1),
-+};
-+
-+struct platform_device tegra_i2s_device2 = {
-+	.name		= "tegra-i2s",
-+	.id		= 1,
-+	.resource	= i2s_resource2,
-+	.num_resources	= ARRAY_SIZE(i2s_resource2),
-+};
-+
-+static struct resource tegra_das_resources[] = {
-+	[0] = {
-+		.start = TEGRA_APB_MISC_DAS_BASE,
-+		.end = TEGRA_APB_MISC_DAS_BASE + TEGRA_APB_MISC_DAS_SIZE - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+};
-+
-+struct platform_device tegra_das_device = {
-+	.name		= "tegra-das",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(tegra_das_resources),
-+	.resource	= tegra_das_resources,
-+};
-+
-+struct platform_device tegra_pcm_device = {
-+	.name = "tegra-pcm-audio",
-+	.id = -1,
-+};
-diff --git a/arch/arm/mach-tegra/devices.h b/arch/arm/mach-tegra/devices.h
-index 888810c..4a7dc0a 100644
---- a/arch/arm/mach-tegra/devices.h
-+++ b/arch/arm/mach-tegra/devices.h
-@@ -42,5 +42,9 @@ extern struct platform_device tegra_uartc_device;
- extern struct platform_device tegra_uartd_device;
- extern struct platform_device tegra_uarte_device;
- extern struct platform_device tegra_pmu_device;
-+extern struct platform_device tegra_i2s_device1;
-+extern struct platform_device tegra_i2s_device2;
-+extern struct platform_device tegra_das_device;
-+extern struct platform_device tegra_pcm_device;
  
- #endif
-diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
-index 691cdab..19dec3a 100644
---- a/arch/arm/mach-tegra/include/mach/iomap.h
-+++ b/arch/arm/mach-tegra/include/mach/iomap.h
-@@ -122,6 +122,9 @@
- #define TEGRA_APB_MISC_BASE		0x70000000
- #define TEGRA_APB_MISC_SIZE		SZ_4K
+ /* dap_mclk1, belongs to the cdev1 pingroup. */
+-static struct clk tegra_dev1_clk = {
+-	.name      = "clk_dev1",
++static struct clk tegra_clk_cdev1 = {
++	.name      = "cdev1",
+ 	.ops       = &tegra_cdev_clk_ops,
+ 	.rate      = 26000000,
+ 	.max_rate  = 26000000,
+@@ -1834,8 +1834,8 @@ static struct clk tegra_dev1_clk = {
+ };
  
-+#define TEGRA_APB_MISC_DAS_BASE		0x70000c00
-+#define TEGRA_APB_MISC_DAS_SIZE		SZ_128
-+
- #define TEGRA_AC97_BASE			0x70002000
- #define TEGRA_AC97_SIZE			SZ_512
- 
+ /* dap_mclk2, belongs to the cdev2 pingroup. */
+-static struct clk tegra_dev2_clk = {
+-	.name      = "clk_dev2",
++static struct clk tegra_clk_cdev2 = {
++	.name      = "cdev2",
+ 	.ops       = &tegra_cdev_clk_ops,
+ 	.rate      = 26000000,
+ 	.max_rate  = 26000000,
+@@ -2276,8 +2276,8 @@ struct clk *tegra_ptr_clks[] = {
+ 	&tegra_clk_hclk,
+ 	&tegra_clk_pclk,
+ 	&tegra_clk_d,
+-	&tegra_dev1_clk,
+-	&tegra_dev2_clk,
++	&tegra_clk_cdev1,
++	&tegra_clk_cdev2,
+ 	&tegra_clk_virtual_cpu,
+ 	&tegra_clk_blink,
+ 	&tegra_clk_cop,
 -- 
 1.7.1
 
