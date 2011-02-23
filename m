@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/5] ARM: Tegra: Create defines for GPIO names
-Date: Wed, 23 Feb 2011 11:58:51 -0700
-Message-ID: <1298487532-5000-5-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 2/5] ARM: Tegra: Rename I2S clocks to match driver name
+Date: Wed, 23 Feb 2011 11:58:49 -0700
+Message-ID: <1298487532-5000-3-git-send-email-swarren@nvidia.com>
 References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1298487532-5000-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,141 +10,31 @@ To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This ensures they're kept in sync between platform_data definitions and
-the GPIO table initialization.
+The driver is tegra-i2s not just i2s. Rename the clocks to match, so that
+clk_get_sys can look up by driver name.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-NOTE: This patch will not apply until Olof's recently posted
-boards-for-next branch is merged.
+NOTE: This patch should apply right now.
 
- arch/arm/mach-tegra/board-harmony-pinmux.c  |   12 ++++++------
- arch/arm/mach-tegra/board-harmony.c         |   12 ++++++------
- arch/arm/mach-tegra/board-harmony.h         |    7 +++++++
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   10 +++++-----
- arch/arm/mach-tegra/board-seaboard.c        |    6 +++---
- arch/arm/mach-tegra/board-seaboard.h        |    3 +++
- 6 files changed, 30 insertions(+), 20 deletions(-)
+ arch/arm/mach-tegra/tegra2_clocks.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
-index 98368d9..3ada474 100644
---- a/arch/arm/mach-tegra/board-harmony-pinmux.c
-+++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
-@@ -141,12 +141,12 @@ static struct tegra_pingroup_config harmony_pinmux[] = {
- };
- 
- static struct tegra_gpio_table gpio_table[] = {
--	{ .gpio = TEGRA_GPIO_PI5,	.enable = true	}, /* mmc2 cd	*/
--	{ .gpio = TEGRA_GPIO_PH1,	.enable = true	}, /* mmc2 wp	*/
--	{ .gpio = TEGRA_GPIO_PT3,	.enable = true	}, /* mmc2 pwr	*/
--	{ .gpio = TEGRA_GPIO_PH2,	.enable = true	}, /* mmc4 cd	*/
--	{ .gpio = TEGRA_GPIO_PH3,	.enable = true	}, /* mmc4 wp	*/
--	{ .gpio = TEGRA_GPIO_PI6,	.enable = true	}, /* mmc4 pwr	*/
-+	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD4_CD,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD4_WP,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD4_POWER,		.enable = true	},
- };
- 
- void harmony_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index 49224e9..2c4a234 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -91,15 +91,15 @@ static struct tegra_sdhci_platform_data sdhci_pdata1 = {
- };
- 
- static struct tegra_sdhci_platform_data sdhci_pdata2 = {
--	.cd_gpio	= TEGRA_GPIO_PI5,
--	.wp_gpio	= TEGRA_GPIO_PH1,
--	.power_gpio	= TEGRA_GPIO_PT3,
-+	.cd_gpio	= TEGRA_GPIO_SD2_CD,
-+	.wp_gpio	= TEGRA_GPIO_SD2_WP,
-+	.power_gpio	= TEGRA_GPIO_SD2_POWER,
- };
- 
- static struct tegra_sdhci_platform_data sdhci_pdata4 = {
--	.cd_gpio	= TEGRA_GPIO_PH2,
--	.wp_gpio	= TEGRA_GPIO_PH3,
--	.power_gpio	= TEGRA_GPIO_PI6,
-+	.cd_gpio	= TEGRA_GPIO_SD4_CD,
-+	.wp_gpio	= TEGRA_GPIO_SD4_WP,
-+	.power_gpio	= TEGRA_GPIO_SD4_POWER,
- 	.is_8bit	= 1,
- };
- 
-diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
-index 09ca775..4fe33b8 100644
---- a/arch/arm/mach-tegra/board-harmony.h
-+++ b/arch/arm/mach-tegra/board-harmony.h
-@@ -17,6 +17,13 @@
- #ifndef _MACH_TEGRA_BOARD_HARMONY_H
- #define _MACH_TEGRA_BOARD_HARMONY_H
- 
-+#define TEGRA_GPIO_SD2_CD		TEGRA_GPIO_PI5
-+#define TEGRA_GPIO_SD2_WP		TEGRA_GPIO_PH1
-+#define TEGRA_GPIO_SD2_POWER		TEGRA_GPIO_PT3
-+#define TEGRA_GPIO_SD4_CD		TEGRA_GPIO_PH2
-+#define TEGRA_GPIO_SD4_WP		TEGRA_GPIO_PH3
-+#define TEGRA_GPIO_SD4_POWER		TEGRA_GPIO_PI6
-+
- void harmony_pinmux_init(void);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index 2d6ad83..7b6f38c 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -161,11 +161,11 @@ static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
- 
- 
- static struct tegra_gpio_table gpio_table[] = {
--	{ .gpio = TEGRA_GPIO_PI5,	.enable = true	}, /* mmc2 cd	 */
--	{ .gpio = TEGRA_GPIO_PH1,	.enable = true	}, /* mmc2 wp	 */
--	{ .gpio = TEGRA_GPIO_PI6,	.enable = true	}, /* mmc2 pwr	 */
--	{ .gpio = TEGRA_GPIO_LIDSWITCH,	.enable = true	}, /* lid switch */
--	{ .gpio = TEGRA_GPIO_POWERKEY,	.enable = true	}, /* power key	 */
-+	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true	},
-+	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true	},
- };
- 
- void __init seaboard_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index 6ca9e61..eb28dbd 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -103,9 +103,9 @@ static struct tegra_sdhci_platform_data sdhci_pdata1 = {
- };
- 
- static struct tegra_sdhci_platform_data sdhci_pdata3 = {
--	.cd_gpio	= TEGRA_GPIO_PI5,
--	.wp_gpio	= TEGRA_GPIO_PH1,
--	.power_gpio	= TEGRA_GPIO_PI6,
-+	.cd_gpio	= TEGRA_GPIO_SD2_CD,
-+	.wp_gpio	= TEGRA_GPIO_SD2_WP,
-+	.power_gpio	= TEGRA_GPIO_SD2_POWER,
- };
- 
- static struct tegra_sdhci_platform_data sdhci_pdata4 = {
-diff --git a/arch/arm/mach-tegra/board-seaboard.h b/arch/arm/mach-tegra/board-seaboard.h
-index a098e35..d8415e1 100644
---- a/arch/arm/mach-tegra/board-seaboard.h
-+++ b/arch/arm/mach-tegra/board-seaboard.h
-@@ -17,6 +17,9 @@
- #ifndef _MACH_TEGRA_BOARD_SEABOARD_H
- #define _MACH_TEGRA_BOARD_SEABOARD_H
- 
-+#define TEGRA_GPIO_SD2_CD		TEGRA_GPIO_PI5
-+#define TEGRA_GPIO_SD2_WP		TEGRA_GPIO_PH1
-+#define TEGRA_GPIO_SD2_POWER		TEGRA_GPIO_PI6
- #define TEGRA_GPIO_LIDSWITCH		TEGRA_GPIO_PC7
- #define TEGRA_GPIO_USB1			TEGRA_GPIO_PD0
- #define TEGRA_GPIO_POWERKEY		TEGRA_GPIO_PV2
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 3015a2c..ee3f9d7 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -2128,8 +2128,8 @@ struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("apbdma",	"tegra-dma",		NULL,	34,	0,	108000000, mux_pclk,			0),
+ 	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
+ 	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
+-	PERIPH_CLK("i2s1",	"i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+-	PERIPH_CLK("i2s2",	"i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
++	PERIPH_CLK("i2s1",	"tegra-i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
++	PERIPH_CLK("i2s2",	"tegra-i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("spdif_out",	"spdif_out",		NULL,	10,	0x108,	100000000, mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("spdif_in",	"spdif_in",		NULL,	10,	0x10c,	100000000, mux_pllp_pllc_pllm,		MUX | DIV_U71),
+ 	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71),
 -- 
 1.7.1
 
