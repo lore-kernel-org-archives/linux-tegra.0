@@ -1,46 +1,84 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 5/5] ARM: Tegra: Enable Harmony audio support
-Date: Wed, 23 Feb 2011 13:24:41 -0800
-Message-ID: <AANLkTinzVinbW_rDt5Rqe7i68P2u_XvDvRWA8R2mq0_9@mail.gmail.com>
-References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
-	<1298487532-5000-6-git-send-email-swarren@nvidia.com>
-	<AANLkTimffVNK2EmTqypQcrWHLisf3c8_dMsHwSbv-nWi@mail.gmail.com>
-	<AANLkTi=tDJvfEFFvXGEkZswRWekRLuz4rBoT-0hgobgn@mail.gmail.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [GIT PULL] Please pull tegra board updates for .39
+Date: Wed, 23 Feb 2011 13:31:30 -0800
+Message-ID: <AANLkTi=5MN6mjQKZz-HEb91c+7yEv5QSviSg-cpPUNQA@mail.gmail.com>
+References: <AANLkTimA1=CCXM8wmkoatL59mzitC=5-GK3HUs-_daE9@mail.gmail.com>
+	<AANLkTim99BSkaX-hm8kb43tm6YJY5VUk6OYL6SwyPmD5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AANLkTi=tDJvfEFFvXGEkZswRWekRLuz4rBoT-0hgobgn@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, konkers@android.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AANLkTim99BSkaX-hm8kb43tm6YJY5VUk6OYL6SwyPmD5-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 23, 2011 at 1:21 PM, Colin Cross <ccross@android.com> wrote:
-> On Wed, Feb 23, 2011 at 1:08 PM, Olof Johansson <olof@lixom.net> wrote:
->> Stephen,
->>
->> Since this depends on i2c, and registers one of the adapters to do it,
->> we should just get the adapters registered separately (all of them)
->> before this. I was holding off that part of board code since the i2c
->> driver went up that maintainer path instead, but if Colin pulls it
->> into tegra for-next, then I'll go ahead with those peices as well.
+On Wed, Feb 23, 2011 at 1:17 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> Colin,
 >
-> I'll merge the i2c-tegra branch into for-next (assuming Ben doesn't
-> object to it), and you can put all the i2c devices in your pull
-> request. =A0That way we can get everything except this patch into the
-> first pull request to Linus, and just put this patch into a second
-> pull request once the ASoC branch is merged.
+> Since things got held up due to rebases and a few patch respins,
+> here's a fresh pull request and diff stats. Please pull
+> boards-for-next.
+>
+> Given current activity, I expect to stage one more pull before the
+> merge window once the i2c driver is in the main tegra for-next branch=
+=2E
+>
+>
+>
+> The following changes since commit 38376866a1fe5b1e6d9510ec4913c2b461=
+f456f3:
+> =A0Mark Brown (1):
+> =A0 =A0 =A0 =A0ARM: tegra: Hide EMC scaling config behind ARCH_TEGRA
+>
+> are available in the git repository at:
+>
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
+> boards-for-next
+>
+> Olof Johansson (7):
+> =A0 =A0 =A0ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+> =A0 =A0 =A0ARM: tegra: harmony: move over to tegra_gpio_config
+> =A0 =A0 =A0ARM: tegra: common device resources
+> =A0 =A0 =A0ARM: tegra: remove stale nvidia atag handler
+> =A0 =A0 =A0ARM: tegra: harmony: register sdhci devices
+> =A0 =A0 =A0ARM: tegra: harmony: fix pinmux for MMC slot
+> =A0 =A0 =A0ARM: tegra: add seaboard, wario and kaen boards
+>
+> =A0arch/arm/mach-tegra/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =
+19 +
+> =A0arch/arm/mach-tegra/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
+=A04 +
+> =A0arch/arm/mach-tegra/board-harmony-pinmux.c =A0| =A0 19 +-
+> =A0arch/arm/mach-tegra/board-harmony.c =A0 =A0 =A0 =A0 | =A0 55 ++--
+> =A0arch/arm/mach-tegra/board-seaboard-pinmux.c | =A0179 ++++++++++
+> =A0arch/arm/mach-tegra/board-seaboard.c =A0 =A0 =A0 =A0| =A0196 +++++=
+++++++
+> =A0arch/arm/mach-tegra/board-seaboard.h =A0 =A0 =A0 =A0| =A0 38 ++
+> =A0arch/arm/mach-tegra/devices.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0505=
+ +++++++++++++++++++++++++++
+> =A0arch/arm/mach-tegra/devices.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 46=
+ +++
+> =A0arch/arm/mach-tegra/gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+ 14 +
+> =A0arch/arm/mach-tegra/include/mach/gpio.h =A0 =A0 | =A0 =A07 +
+> =A011 files changed, 1054 insertions(+), 28 deletions(-)
+> =A0create mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
+> =A0create mode 100644 arch/arm/mach-tegra/board-seaboard.c
+> =A0create mode 100644 arch/arm/mach-tegra/board-seaboard.h
+> =A0create mode 100644 arch/arm/mach-tegra/devices.c
+> =A0create mode 100644 arch/arm/mach-tegra/devices.h
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
+" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
 
-Sure, that works. I'll stage the i2c changes tonight.
-
-
--Olof
+Thanks, merged to tegra/for-next
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
