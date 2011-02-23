@@ -1,93 +1,60 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: Tegra: DMA: Fail safe if initialization fails
-Date: Wed, 23 Feb 2011 10:29:30 -0700
-Message-ID: <1298482170-3678-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Colin Cross <ccross@android.com>
+Subject: Re: [PATCH] ARM: Tegra: Make tegra_dma_init a postcore_initcall
+Date: Wed, 23 Feb 2011 09:35:50 -0800
+Message-ID: <AANLkTikcO=VH3R5KaxCSJoEyKdueO+Tcr13a9KSJ6MM1@mail.gmail.com>
+References: <1298481080-27120-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1298481080-27120-1-git-send-email-swarren@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, olof@lixom.net, konkers@android.com
 List-Id: linux-tegra@vger.kernel.org
 
-tegra_dma_init currently simply bails out early if any initialization fails.
-This skips various data-structure initialization. In turn, this means that
-tegra_dma_allocate_channel can still hand out channels. In this case, when
-tegra_dma_free_channel is called, which calls tegra_dma_cancel, the walking
-on ch->list will OOPS since the list's next/prev pointers may still be
-NULL.
+On Wed, Feb 23, 2011 at 9:11 AM, Stephen Warren <swarren@nvidia.com> wr=
+ote:
+> The following commit makes the Tegra APB DMA engine fail to initializ=
+e
+> correctly: 0cf6230af909a86f81907455eca2a5c9b8f68fe6
+> ARM: tegra: Move tegra_common_init to tegra_init_early
+>
+> The reason is that tegra_init_early_ calls tegra_dma_init which calls
+> request_threaded_irq, which fails since the IRQ hasn't yet been marke=
+d
+> valid; that only happens in tegra_init_irq, which gets called after
+> tegra_init_early.
+>
+> This used to work OK, since tegra_init_early was tegra_common_init, w=
+hich
+> got called after tegra_init_irq, basically from the beginning of
+> tegra_harmony_init.
+>
+> Solve this by converting tegra_dma_init to a postcore_initcall. This =
+makes
+> it execute late enough that IRQs are marked valid, and avoids having =
+to
+> add it back to every machine's init function.
+>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> =A0arch/arm/mach-tegra/common.c | =A0 =A03 ---
+> =A0arch/arm/mach-tegra/dma.c =A0 =A0| =A0 =A01 +
+> =A02 files changed, 1 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/commo=
+n.c
+> index 516e100..b6ab3f8 100644
+> --- a/arch/arm/mach-tegra/common.c
+> +++ b/arch/arm/mach-tegra/common.c
+> @@ -81,7 +81,4 @@ void __init tegra_init_early(void)
+> =A0 =A0 =A0 =A0tegra_init_clock();
+> =A0 =A0 =A0 =A0tegra_clk_init_from_table(common_clk_init_table);
+> =A0 =A0 =A0 =A0tegra_init_cache();
+> -#ifdef CONFIG_TEGRA_SYSTEM_DMA
+> - =A0 =A0 =A0 tegra_dma_init();
+> -#endif
+> =A0}
 
-To solve this:
-* Mark all possible channels as in-use before doing anything else in init.
-* Only mark a channel as free once all channel-related initialization has
-  completed.
-
-This prevents allocate_channel from handing out uninitialized channels.
-
-There is still one small hole; allocate_channel can't check the usage array
-for the shared channel, since this channel is permanently marked in-use.
-This could be solved using an explicit "init OK" flag that allocate_channel
-could check.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/dma.c |   20 ++++++++------------
- 1 files changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-index 2d720f2..79765ca 100644
---- a/arch/arm/mach-tegra/dma.c
-+++ b/arch/arm/mach-tegra/dma.c
-@@ -678,6 +678,12 @@ int __init tegra_dma_init(void)
- 	void __iomem *addr;
- 	struct clk *c;
- 
-+	memset(channel_usage, 0, sizeof(channel_usage));
-+	memset(dma_channels, 0, sizeof(dma_channels));
-+
-+	for (i = 0; i < NV_DMA_MAX_CHANNELS; i++)
-+		__set_bit(i, channel_usage);
-+
- 	c = clk_get_sys("tegra-dma", NULL);
- 	if (IS_ERR(c)) {
- 		pr_err("Unable to get clock for APB DMA\n");
-@@ -696,18 +702,9 @@ int __init tegra_dma_init(void)
- 	writel(0xFFFFFFFFul >> (31 - TEGRA_SYSTEM_DMA_CH_MAX),
- 	       addr + APB_DMA_IRQ_MASK_SET);
- 
--	memset(channel_usage, 0, sizeof(channel_usage));
--	memset(dma_channels, 0, sizeof(dma_channels));
--
--	/* Reserve all the channels we are not supposed to touch */
--	for (i = 0; i < TEGRA_SYSTEM_DMA_CH_MIN; i++)
--		__set_bit(i, channel_usage);
--
- 	for (i = TEGRA_SYSTEM_DMA_CH_MIN; i <= TEGRA_SYSTEM_DMA_CH_MAX; i++) {
- 		struct tegra_dma_channel *ch = &dma_channels[i];
- 
--		__clear_bit(i, channel_usage);
--
- 		ch->id = i;
- 		snprintf(ch->name, TEGRA_DMA_NAME_SIZE, "dma_channel_%d", i);
- 
-@@ -726,13 +723,12 @@ int __init tegra_dma_init(void)
- 			goto fail;
- 		}
- 		ch->irq = irq;
-+
-+		__clear_bit(i, channel_usage);
- 	}
- 	/* mark the shared channel allocated */
- 	__set_bit(TEGRA_SYSTEM_DMA_CH_MIN, channel_usage);
- 
--	for (i = TEGRA_SYSTEM_DMA_CH_MAX+1; i < NV_DMA_MAX_CHANNELS; i++)
--		__set_bit(i, channel_usage);
--
- 	return ret;
- fail:
- 	writel(0, addr + APB_DMA_GEN);
--- 
-1.7.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Can you also drop the #include <mach/dma.h> from common.c?
