@@ -1,74 +1,72 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] ARM: Tegra: Make tegra_dma_init a postcore_initcall
-Date: Wed, 23 Feb 2011 10:41:29 -0700
-Message-ID: <1298482889-21841-1-git-send-email-swarren@nvidia.com>
+Subject: RE: [PATCH] ARM: Tegra: DMA: Fail safe if initialization fails
+Date: Wed, 23 Feb 2011 09:54:35 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF03112A5CF5@HQMAIL01.nvidia.com>
+References: <1298482170-3678-1-git-send-email-swarren@nvidia.com>
+ <AANLkTi=iWsX_UN6pE7nE=7NBXRPv7=6Ja68B=u8U4Ww=@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AANLkTi=iWsX_UN6pE7nE=7NBXRPv7=6Ja68B=u8U4Ww=@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The following commit makes the Tegra APB DMA engine fail to initialize
-correctly: 0cf6230af909a86f81907455eca2a5c9b8f68fe6
-ARM: tegra: Move tegra_common_init to tegra_init_early
+Colin Cross wrote at Wednesday, February 23, 2011 10:38 AM:
+>=20
+> On Wed, Feb 23, 2011 at 9:29 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =
+wrote:
+> > tegra_dma_init currently simply bails out early if any initializati=
+on fails.
+> > This skips various data-structure initialization. In turn, this mea=
+ns that
+> > tegra_dma_allocate_channel can still hand out channels. In this cas=
+e, when
+> > tegra_dma_free_channel is called, which calls tegra_dma_cancel, the=
+ walking
+> > on ch->list will OOPS since the list's next/prev pointers may still=
+ be
+> > NULL.
+> >
+> > To solve this:
+> > * Mark all possible channels as in-use before doing anything else i=
+n init.
+> > * Only mark a channel as free once all channel-related initializati=
+on has
+> > =A0completed.
+> >
+> > This prevents allocate_channel from handing out uninitialized chann=
+els.
+> >
+> > There is still one small hole; allocate_channel can't check the usa=
+ge array
+> > for the shared channel, since this channel is permanently marked in=
+-use.
+> > This could be solved using an explicit "init OK" flag that allocate=
+_channel
+> > could check.
+>
+> If we still need an init complete flag, why not skip this patch and
+> just add that?
 
-The reason is that tegra_init_early_ calls tegra_dma_init which calls
-request_threaded_irq, which fails since the IRQ hasn't yet been marked
-valid; that only happens in tegra_init_irq, which gets called after
-tegra_init_early.
+I tend to like the cleanup in this patch; it simplifies the channel_usa=
+ge
+initialization. I'll let you make the call on whether to take this or n=
+ot.
 
-This used to work OK, since tegra_init_early was tegra_common_init, which
-got called after tegra_init_irq, basically from the beginning of
-tegra_harmony_init.
+I can certainly throw together a second patch, or modify this patch, to=
+ also
+use an init_ok flag to completely solve the shared channel case too tho=
+ugh.
 
-Solve this by converting tegra_dma_init to a postcore_initcall. This makes
-it execute late enough that IRQs are marked valid, and avoids having to
-add it back to every machine's init function.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: Dropped include of mach/dma.h from common.c
-
- arch/arm/mach-tegra/common.c |    4 ----
- arch/arm/mach-tegra/dma.c    |    1 +
- 2 files changed, 1 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 516e100..d5e3f89 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -25,7 +25,6 @@
- #include <asm/hardware/cache-l2x0.h>
- 
- #include <mach/iomap.h>
--#include <mach/dma.h>
- #include <mach/system.h>
- 
- #include "board.h"
-@@ -81,7 +80,4 @@ void __init tegra_init_early(void)
- 	tegra_init_clock();
- 	tegra_clk_init_from_table(common_clk_init_table);
- 	tegra_init_cache();
--#ifdef CONFIG_TEGRA_SYSTEM_DMA
--	tegra_dma_init();
--#endif
- }
-diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-index 2d720f2..bd4f62a 100644
---- a/arch/arm/mach-tegra/dma.c
-+++ b/arch/arm/mach-tegra/dma.c
-@@ -743,6 +743,7 @@ fail:
- 	}
- 	return ret;
- }
-+postcore_initcall(tegra_dma_init);
- 
- #ifdef CONFIG_PM
- static u32 apb_dma[5*TEGRA_SYSTEM_DMA_CH_NR + 3];
--- 
-1.7.1
+--=20
+nvpublic
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
