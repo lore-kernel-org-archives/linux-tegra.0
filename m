@@ -1,54 +1,51 @@
-From: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/6] ARM: tegra: add tegra_gpio_table and tegra_gpio_config
-Date: Tue, 22 Feb 2011 15:14:08 -0800
-Message-ID: <AANLkTikLhbvD5gRogt+-8cXydGJW8w+DvGRii3W86omf@mail.gmail.com>
-References: <1298354117-19097-1-git-send-email-olof@lixom.net>
-	<1298354117-19097-2-git-send-email-olof@lixom.net>
-	<AANLkTik9_t0mq07mysO2CcK4ppKAmuPAujownfeWEGL5@mail.gmail.com>
-	<AANLkTimBh2qDx71+P3QCeWJ0sKS1AzYOUohAdSW=AoeS@mail.gmail.com>
+From: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: tegra: Add i2c support
+Date: Wed, 23 Feb 2011 00:20:59 +0000
+Message-ID: <20110223002059.GV15795@trinity.fluff.org>
+References: <AANLkTim0X=gUwYJmR+EAYjGamiJb7tgiVEjwqCEF0-L0@mail.gmail.com> <1298250861-27094-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimBh2qDx71+P3QCeWJ0sKS1AzYOUohAdSW=AoeS-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1298250861-27094-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Cool
+On Sun, Feb 20, 2011 at 05:14:21PM -0800, Colin Cross wrote:
+> Adds I2C bus driver for nVidia Tegra SoCs.  Tegra includes 4 I2C
+> controllers, one of which is inside the Dynamic Voltage Controller
+> and has a slightly different register map.
+> 
+> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 
-Acked-by: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Would have been helpful to start a new thread, missed this the first time
+around.
 
-On Tue, Feb 22, 2011 at 11:35 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote=
-:
-> Hi
->
-> On Tue, Feb 22, 2011 at 11:18 AM, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> =
-wrote:
->> Can you split the boardfile changes into their own patch? =A0Also se=
-e
->> the below whitespace only change. =A0Other than that, looks good.
->
-> Ok, done (will push separately, no need to repost just with the split=
- though).
->
-> Thanks.
->
->
->>> =A0}
->>> -
->>> =A0postcore_initcall(tegra_gpio_init);
->>
->> whitespace only change
->
-> D'oh, sloppy of me. Fixed.
->
->
-> -Olof
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	i2c_dev = kzalloc(sizeof(struct tegra_i2c_dev), GFP_KERNEL);
+> +	if (!i2c_dev) {
+
+no error print here.
+
+> +		ret = -ENOMEM;
+> +		goto err_i2c_clk_put;
+> +	}
+
+> +	if (pdev->id == 3)
+> +		i2c_dev->is_dvc = 1;
+> +	init_completion(&i2c_dev->msg_complete);
+
+you might want to think about having a seperate platform bus name for
+this case, and switching the is_dvc field on that. It'll make life much
+easier if someone decides that what the next tegra i2c needs is 5 i2c
+controllers.
+
+I'll consider putting this (as is) into the -next tree, but would like
+to see the issues with readsl/writesl sorted out and any other review
+comments sorted.
+
+-- 
+Ben Dooks, ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, http://www.fluff.org/ben/
+
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
