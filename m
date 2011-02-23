@@ -1,73 +1,34 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH 5/5] ARM: Tegra: Enable Harmony audio support
-Date: Wed, 23 Feb 2011 13:19:06 -0800
-Message-ID: <AANLkTinUWy5+-EFVhEJd0pH2VVg=pwVgZnuS-qtOMxhy@mail.gmail.com>
+Date: Wed, 23 Feb 2011 13:21:04 -0800
+Message-ID: <AANLkTi=tDJvfEFFvXGEkZswRWekRLuz4rBoT-0hgobgn@mail.gmail.com>
 References: <1298487532-5000-1-git-send-email-swarren@nvidia.com>
 	<1298487532-5000-6-git-send-email-swarren@nvidia.com>
-	<AANLkTi=Nxh8YKBSDhVVAW4Sqzd6yKj=D6X=R+9KT+UBK@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF03112A5D7D@HQMAIL01.nvidia.com>
+	<AANLkTimffVNK2EmTqypQcrWHLisf3c8_dMsHwSbv-nWi@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF03112A5D7D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <AANLkTimffVNK2EmTqypQcrWHLisf3c8_dMsHwSbv-nWi-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 23, 2011 at 1:16 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
-> Colin Cross wrote at Wednesday, February 23, 2011 2:08 PM:
->>
->> On Wed, Feb 23, 2011 at 10:58 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org=
-> wrote:
->> > * Set up platform data required by I2C, and ASoC machine & codec d=
-rivers.
->> > * Enable required GPIO pins as GPIOs.
->> > * Initialize audio-related clocks.
->> > * Correctly configure pinmux for audio-related GPIOs.
->> >
->> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> > diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-t=
-egra/board-harmony.h
->> > ...
->> > +#define GPIO_WM8903(_x_) =A0 =A0 =A0 =A0 =A0 =A0 =A0 (TEGRA_NR_GP=
-IOS + (_x_))
->> Can you name this HARMONY_GPIO_WM8903?
+On Wed, Feb 23, 2011 at 1:08 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> Stephen,
 >
-> Sure. But then, wouldn't it make sense to also rename all the TEGRA_G=
-PIO_*
-> below too?
-True, but no point in adding churn.  Those can be cleaned up later.  I
-just want it to be clear that the numbering of gpios above
-TEGRA_NR_GPIOS is specific to the board, so the next board author
-doesn't get it wrong.
+> Since this depends on i2c, and registers one of the adapters to do it,
+> we should just get the adapters registered separately (all of them)
+> before this. I was holding off that part of board code since the i2c
+> driver went up that maintainer path instead, but if Colin pulls it
+> into tegra for-next, then I'll go ahead with those peices as well.
 
->> > +
->> > =A0#define TEGRA_GPIO_SD2_CD =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO=
-_PI5
->> > =A0#define TEGRA_GPIO_SD2_WP =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO=
-_PH1
->> > =A0#define TEGRA_GPIO_SD2_POWER =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PT3
->> > =A0#define TEGRA_GPIO_SD4_CD =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO=
-_PH2
->> > =A0#define TEGRA_GPIO_SD4_WP =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO=
-_PH3
->> > =A0#define TEGRA_GPIO_SD4_POWER =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PI6
->> > +#define TEGRA_GPIO_CDC_IRQ =A0 =A0 =A0 =A0 =A0 =A0 TEGRA_GPIO_PX3
->> > +#define TEGRA_GPIO_SPKR_EN =A0 =A0 =A0 =A0 =A0 =A0 GPIO_WM8903(2)
->> > +#define TEGRA_GPIO_HP_DET =A0 =A0 =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_P=
-W2
->> > +#define TEGRA_GPIO_INT_MIC_EN =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_PX0
->> > +#define TEGRA_GPIO_EXT_MIC_EN =A0 =A0 =A0 =A0 =A0TEGRA_GPIO_PX1
->
-> --
-> nvpublic
->
->
+I'll merge the i2c-tegra branch into for-next (assuming Ben doesn't
+object to it), and you can put all the i2c devices in your pull
+request.  That way we can get everything except this patch into the
+first pull request to Linus, and just put this patch into a second
+pull request once the ASoC branch is merged.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
