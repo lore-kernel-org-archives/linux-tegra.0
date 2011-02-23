@@ -1,54 +1,71 @@
-From: vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Subject: [PATCH v1] mfd: tps6586x: avoid burst writes
-Date: Wed, 23 Feb 2011 11:31:40 +0530
-Message-ID: <1298440900-3102-1-git-send-email-vwadekar@nvidia.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: Problem with "ARM: tegra: Move tegra_common_init to tegra_init_early"
+Date: Tue, 22 Feb 2011 23:43:10 -0800
+Message-ID: <AANLkTimgw6kruGMp=wJUVka+Gj2cn9X=qRucbnuq-b9V@mail.gmail.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF03112A5C22-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARitger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Russell King - ARM Linux (linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org)" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Feb 22, 2011 at 7:12 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> The following commit makes the Tegra APB DMA engine fail to initializ=
+e correctly:
+>
+> commit 0cf6230af909a86f81907455eca2a5c9b8f68fe6
+>
+> =A0 =A0ARM: tegra: Move tegra_common_init to tegra_init_early
+>
+> =A0 =A0Move tegra_common_init to tegra_init_early, and set it
+> =A0 =A0as the init_early entry in the machine struct.
+> =A0 =A0Initializes the clocks earlier so that timers can enable
+> =A0 =A0their clocks.
+>
+> =A0 =A0Also reorders the members in the Harmony and Trimslice
+> =A0 =A0boards' machine structs to match the order they are
+> =A0 =A0called in.
+>
+> The reason is that tegra_init_early_ calls tegra_dma_init which calls
+> request_threaded_irq, which fails since the IRQ hasn't yet been marke=
+d valid;
+> that only happens in tegra_init_irq, which gets called after tegra_in=
+it_early.
+>
+> This used to work OK, since tegra_init_early was tegra_common_init, w=
+hich got
+> called after tegra_init_irq, basically from the beginning of tegra_ha=
+rmony_init.
+>
+> I tried moving the call to tegra_dma_init back to each of the very en=
+d of
+> tegra_init_irq and the very beginning of tegra_harmony_init. Both of =
+these
+> resulted in a kernel that wouldn't boot.
+>
+> Simply removing the call to tegra_dma_init completely does allow the =
+kernel
+> to boot, but obviously, DMA isn't available.
+>
+> I'm a little stumped why moving tegra_dma_init causes a boot failure.=
+ Does
+> anyone have any helpful ideas, or any alternative ways to fix the und=
+erlying
+> problem?
 
-tps6586 does not support burst writes. i2c writes have to be
-1 byte at a time.
+I don't know why it still fails if you put it back at the beginning of
+the machine init, and it boots without errors on my board if I move
+tegra_dma_init to a postcore_initcall, but I don't have any drivers on
+my board that use DMA.
 
-CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v1: included "CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" in the
-commit message
-
- drivers/mfd/tps6586x.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index c937742..0aa9186 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -150,12 +150,12 @@ static inline int __tps6586x_write(struct i2c_client *client,
- static inline int __tps6586x_writes(struct i2c_client *client, int reg,
- 				  int len, uint8_t *val)
- {
--	int ret;
-+	int ret, i;
- 
--	ret = i2c_smbus_write_i2c_block_data(client, reg, len, val);
--	if (ret < 0) {
--		dev_err(&client->dev, "failed writings to 0x%02x\n", reg);
--		return ret;
-+	for (i = 0; i < len; i++) {
-+		ret = __tps6586x_write(client, reg + i, *(val + i));
-+		if (ret < 0)
-+			return ret;
- 	}
- 
- 	return 0;
--- 
-1.7.1
-
+Can you provide kernel logs?
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
