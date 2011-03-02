@@ -1,40 +1,43 @@
-From: Colin Cross <ccross@google.com>
-Subject: Common suspend and resume with L2 cache on
-Date: Tue, 1 Mar 2011 18:23:13 -0800
-Message-ID: <AANLkTimxDjSun5+gaU5fMNf2KMVTNbfdq-D=0iU6tYZg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-omap-owner@vger.kernel.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Linux Tegra Mailing List <linux-tegra@vger.kernel.org>, linux-omap@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Subject: [PATCH 3/3] ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
+Date: Wed,  2 Mar 2011 14:34:06 +0200
+Message-ID: <d1b23ad517ea85ba85262c05d15a41508f78a8a3.1299068166.git.mike@compulab.co.il>
+References: <cover.1299068166.git.mike@compulab.co.il>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1299068166.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Now that common suspend helpers are in linux-next, I'm going back to
-trying to use them with the L2 cache on, which is required when
-implementing cpuidle states that put a cpu in reset in an SMP system.
+Currently tegra_pcie_init is effectively called as subsys_initcall. With
+multiplatform kernel this may cause hangs on boards that don't intend to
+support Tegra2 PCI-e. Ensure that TrimSlice board code initializes PCI-e
+only when actually running on the TrimSlice.
 
-There are a few obvious requirements - the stack pointer, stack
-contents, and page tables must be flushed in the L2 during suspend.
+Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-trimslice.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-There is one trickier problem. The current resume sequence starts from
-reset, with cache and MMU off:
-   Restore cpu registers, including TTBR0, but not SCTLR
-   Rewrite the page table to map the MMU trampoline VA=PA
-   Restore SCTLR with dcache bit off (enables MMU)
-   Jump to virtual address
-   Restore SCTLR with original dcache bit
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index 0f3081a..7be7d4a 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -79,6 +79,9 @@ static __initdata struct tegra_clk_init_table trimslice_clk_init_table[] = {
+ 
+ static int __init tegra_trimslice_pci_init(void)
+ {
++	if (!machine_is_trimslice())
++		return 0;
++
+ 	return tegra_pcie_init(true, true);
+ }
+ subsys_initcall(tegra_trimslice_pci_init);
+-- 
+1.7.3.1
 
-The page table is rewritten with the temporary mapping with the cache
-off, so the write goes directly to memory.  When the MMU is enabled,
-the TTBR0 RGN and IRGN bits determine the cachability attributes of
-the page table walk memory accesses.  These bits are normally set to
-cachable, so when the MMU is turned on, the page table walks can hit
-the L2 instead of memory.  If a stale entry for the temporary mapping
-is in the L2, which can happen if it is prefetched by the other cpu
-during suspend, the page table walk will not see the new mapping.
-
-This could be fixed by restoring the TTBR0 register with caching
-disabled, and re-enabling caching after the page table entry is
-restored, or by switching to a custom page table prepared during init
-to avoid any writes while the cache is off.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
