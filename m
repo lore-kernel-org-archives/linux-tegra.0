@@ -1,26 +1,40 @@
-From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] mfd: tps6586x: avoid burst writes
-Date: Mon, 28 Feb 2011 10:33:59 +0530
-Message-ID: <4D6B2CBF.1080201@nvidia.com>
-References: <1298522893-2465-1-git-send-email-vwadekar@nvidia.com> <20110228012348.GG2749@sortiz-mobl>
+From: Colin Cross <ccross@google.com>
+Subject: Common suspend and resume with L2 cache on
+Date: Tue, 1 Mar 2011 18:23:13 -0800
+Message-ID: <AANLkTimxDjSun5+gaU5fMNf2KMVTNbfdq-D=0iU6tYZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110228012348.GG2749@sortiz-mobl>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Ritger <ARitger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "stable-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <stable-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Linux Tegra Mailing List <linux-tegra@vger.kernel.org>, linux-omap@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Now that common suspend helpers are in linux-next, I'm going back to
+trying to use them with the L2 cache on, which is required when
+implementing cpuidle states that put a cpu in reset in an SMP system.
 
-> Patch applied to my for-next and for-linus branches, thanks.
->
-> Cheers,
-> Samuel.
->
-Thanks Samuel.
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+There are a few obvious requirements - the stack pointer, stack
+contents, and page tables must be flushed in the L2 during suspend.
+
+There is one trickier problem. The current resume sequence starts from
+reset, with cache and MMU off:
+   Restore cpu registers, including TTBR0, but not SCTLR
+   Rewrite the page table to map the MMU trampoline VA=PA
+   Restore SCTLR with dcache bit off (enables MMU)
+   Jump to virtual address
+   Restore SCTLR with original dcache bit
+
+The page table is rewritten with the temporary mapping with the cache
+off, so the write goes directly to memory.  When the MMU is enabled,
+the TTBR0 RGN and IRGN bits determine the cachability attributes of
+the page table walk memory accesses.  These bits are normally set to
+cachable, so when the MMU is turned on, the page table walks can hit
+the L2 instead of memory.  If a stale entry for the temporary mapping
+is in the L2, which can happen if it is prefetched by the other cpu
+during suspend, the page table walk will not see the new mapping.
+
+This could be fixed by restoring the TTBR0 register with caching
+disabled, and re-enabling caching after the page table entry is
+restored, or by switching to a custom page table prepared during init
+to avoid any writes while the cache is off.
