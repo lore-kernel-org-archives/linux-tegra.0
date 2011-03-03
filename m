@@ -1,77 +1,54 @@
-From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [PATCH 2/3] ARM: tegra: add PCI Express power gating
-Date: Wed,  2 Mar 2011 14:34:05 +0200
-Message-ID: <44cb94cf53fb0785991972c4f24cca6d8111d465.1299068166.git.mike@compulab.co.il>
-References: <cover.1299068166.git.mike@compulab.co.il>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Patches for 2.6.39 merge window
+Date: Thu, 3 Mar 2011 11:12:07 -0800
+Message-ID: <AANLkTi=HBjhdSY_7nfeqFZ6Cd_pJA6VBRTaOjmpA3jaw@mail.gmail.com>
+References: <AANLkTinK4oCbvDNPDFUjpB8qTBZiWfx3CkUuyuTLyVsx@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF03112A5AE2@HQMAIL01.nvidia.com>
+	<20110222205210.GF31611@opensource.wolfsonmicro.com>
+	<AANLkTi=Er0pL-KcSqw1WwKy+CZeM9SWjmOkp08YkhKmQ@mail.gmail.com>
+	<20110222210925.GH31611@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1299068166.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+In-Reply-To: <20110222210925.GH31611-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
----
- arch/arm/mach-tegra/pcie.c |   22 ++++++++++++++++++++--
- 1 files changed, 20 insertions(+), 2 deletions(-)
+On Tue, Feb 22, 2011 at 1:09 PM, Mark Brown
+<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On Tue, Feb 22, 2011 at 01:01:23PM -0800, Colin Cross wrote:
+>> On Tue, Feb 22, 2011 at 12:52 PM, Mark Brown
+>
+>> > That's the standard way of handling this sort of thing - just send=
+ the
+>> > patch in a second pull request once the dependencies have all land=
+ed.
+>
+>> You could also put it in the tegra-arch branch and we could both re-=
+merge it.
+>
+> I basically can't rebase my tree - it's merged into Takashi's tree an=
+d
+> there's lots of cross dependencies with my 2.6.38 fixes branch which
+> would cause bisect breakage. =A0If you want to cherry pick the releva=
+nt
+> WM8903 commit over into your tree that'd also be OK by me.
+>
 
-diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-index 6de5ef4..2941212 100644
---- a/arch/arm/mach-tegra/pcie.c
-+++ b/arch/arm/mach-tegra/pcie.c
-@@ -39,6 +39,7 @@
- #include <mach/pinmux.h>
- #include <mach/iomap.h>
- #include <mach/clk.h>
-+#include <mach/powergate.h>
- 
- /* register definitions */
- #define AFI_OFFSET	0x3800
-@@ -688,13 +689,30 @@ static void tegra_pcie_power_off(void)
- 	tegra_periph_reset_assert(tegra_pcie.afi_clk);
- 	tegra_periph_reset_assert(tegra_pcie.pex_clk);
- 
-+	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
- 	tegra_pcie_xclk_clamp(true);
- }
- 
--static int tegra_pcie_power_on(void)
-+static int tegra_pcie_power_regate(void)
- {
-+	int err;
-+
-+	tegra_pcie_power_off();
-+
- 	tegra_pcie_xclk_clamp(true);
-+
- 	tegra_periph_reset_assert(tegra_pcie.pcie_xclk);
-+	tegra_periph_reset_assert(tegra_pcie.afi_clk);
-+
-+	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
-+						tegra_pcie.pex_clk);
-+	if (err) {
-+		pr_err("PCIE: powerup sequence failed: %d\n", err);
-+		return err;
-+	}
-+
-+	tegra_periph_reset_deassert(tegra_pcie.afi_clk);
-+
- 	tegra_pcie_xclk_clamp(false);
- 
- 	clk_enable(tegra_pcie.afi_clk);
-@@ -759,7 +777,7 @@ static int __init tegra_pcie_get_resources(void)
- 		return err;
- 	}
- 
--	err = tegra_pcie_power_on();
-+	err = tegra_pcie_power_regate();
- 	if (err) {
- 		pr_err("PCIE: failed to power up: %d\n", err);
- 		goto err_pwr_on;
--- 
-1.7.3.1
+We should be fine with two pull requests.  I would still like to get
+all the changes into the for-next branch, without the wm8903 header
+change, but with the harmony file that depends on it.  I will point
+the for-linus branch at the last change that compiles without the
+wm8903 header change. linux-next should get the ASoC tree and the
+Tegra for-next tree, so everything should compile there.
 
+I'm going to be out of the office next week, so this is probably the
+last chance to get features in 2.6.39.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
