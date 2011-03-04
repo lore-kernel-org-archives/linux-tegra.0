@@ -1,80 +1,213 @@
-From: Dudley Du <dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
-Subject: RE: CHROMIUM: arm: tegra: Add platfrom devices for Cypress	trackpad
- (issue6623011)
-Date: Fri, 4 Mar 2011 07:01:15 -0500
-Message-ID: <B27AC323FA92C946BA36D2913DDC8E3701FD6F0B1A5C__14089.0726157979$1299240394$gmane$org@VMBX126.ihostexchange.net>
-References: <20cf3005123492db71049da6a54a@google.com>
- <20110304114936.GA9995@trinity.fluff.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: Patches for 2.6.39 merge window
+Date: Fri, 4 Mar 2011 13:32:53 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF045687B727@HQMAIL01.nvidia.com>
+References: <AANLkTinK4oCbvDNPDFUjpB8qTBZiWfx3CkUuyuTLyVsx@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF03112A5AE2@HQMAIL01.nvidia.com>
+	<20110222205210.GF31611@opensource.wolfsonmicro.com>
+	<AANLkTi=Er0pL-KcSqw1WwKy+CZeM9SWjmOkp08YkhKmQ@mail.gmail.com>
+	<20110222210925.GH31611@opensource.wolfsonmicro.com>
+	<AANLkTi=HBjhdSY_7nfeqFZ6Cd_pJA6VBRTaOjmpA3jaw@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF045687B480@HQMAIL01.nvidia.com>
+	<AANLkTikMmoBT3ZG2UPNretXDK+UqMyk6X2GEpwMt5SC8@mail.gmail.com>
+	<AANLkTinSQuFk9-NeA+F-35QitHO8KU4H_tffTneG8gxH@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF045687B50A@HQMAIL01.nvidia.com>
+	<AANLkTi=ASu7++j+qu_JDtjha5_b3=2jZE8rAf=HLKBuS@mail.gmail.com>
+ <AANLkTinr=ye2CtcG9FmFZZ1sK3ZYp8woUeZ_GzYNnQn2@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110304114936.GA9995-SMNkleLxa3Z6Wcw2j4pizdi2O/JbrIOy@public.gmane.org>
-Content-Language: zh-CN
+In-Reply-To: <AANLkTinr=ye2CtcG9FmFZZ1sK3ZYp8woUeZ_GzYNnQn2-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQmVuLA0KDQpUaGFua3MgZm9yIHlvdXIgcXVlc3Rpb24uDQoNClllcywgSWYgc3VyZSB0aGF0
-IHRoZXNlIGFyZW4ndCBuZWVkZWQsIHRoZXkgY2FuIHJlbW92ZSB0aGVtLg0KQW5kIHRoZSBkcml2
-ZXIgYWxyZWFkeSBoYXMgY29kZSB0byBjaGVjayBmb3IgTlVMTCBhbmQgbm90IGNhbGwgdGhlbS4N
-Cg0KVGhhbmtzLg0KDQpCZXN0IFdpc2hlcywNCkR1ZGxleSBEdQ0KODYtMjEtNjE2NDg5NTANCg0K
-DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQmVuIERvb2tzIFttYWlsdG86YmVu
-LWxpbnV4QGZsdWZmLm9yZ10gDQpTZW50OiBGcmlkYXksIE1hcmNoIDA0LCAyMDExIDc6NTAgUE0N
-ClRvOiBEdWRsZXkgRHU7IGNjcm9zc0BhbmRyb2lkLmNvbTsga29ua2Vyc0BhbmRyb2lkLmNvbTsg
-b2xvZkBsaXhvbS5uZXQ7IGxpbnV4QGFybS5saW51eC5vcmcudWs7IGxpbnV4LXRlZ3JhQHZnZXIu
-a2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBtaWNhaGNAZ29vZ2xlLmNvbTsgY2hyb21pdW0tb3MtcmV2
-aWV3c0BjaHJvbWl1bS5vcmc7IG1zYkBjaHJvbWl1bS5vcmc7IG9sb2ZqQGNocm9taXVtLm9yZzsg
-dmJlbmRlYitrZXJuZWxAY2hyb21pdW0ub3JnDQpTdWJqZWN0OiBSZTogQ0hST01JVU06IGFybTog
-dGVncmE6IEFkZCBwbGF0ZnJvbSBkZXZpY2VzIGZvciBDeXByZXNzIHRyYWNrcGFkIChpc3N1ZTY2
-MjMwMTEpDQoNCk9uIEZyaSwgTWFyIDA0LCAyMDExIGF0IDExOjQyOjU0QU0gKzAwMDAsIGR1ZGxA
-Y3lwcmVzcy5jb20gd3JvdGU6DQo+IFJldmlld2VyczogY2Nyb3NzX2FuZHJvaWQuY29tLCBrb25r
-ZXJzX2FuZHJvaWQuY29tLCBvbG9mX2xpeG9tLm5ldCwgIA0KPiBsaW51eF9hcm0ubGludXgub3Jn
-LnVrLCBsaW51eC10ZWdyYV92Z2VyLmtlcm5lbC5vcmcsICANCj4gbGludXgtYXJtLWtlcm5lbF9s
-aXN0cy5pbmZyYWRlYWQub3JnLCBsaW51eC1rZXJuZWxfdmdlci5rZXJuZWwub3JnLCBNaWNhaCAN
-Cj4gQywgZHVkbCwNCj4NCj4gRGVzY3JpcHRpb246DQo+IENIUk9NSVVNOiBhcm06IHRlZ3JhOiBB
-ZGQgcGxhdGZyb20gZGV2aWNlcyBmb3IgQ3lwcmVzcyB0cmFja3BhZA0KPg0KPiAxLiBBZGQgcGxh
-dGZyb20gZGF0YSBzdHJjdXR1cmUgY3lhcGFfcGxhdGZyb21fZGF0YS4NCj4gMi4gQWRkIHRyYWNr
-cGFkIGRldmljZSBpbnRvIHBsYXRmcm9tIEkyQyBidXMgMC4NCj4gMy4gSW5pdGlhbGl6ZSBwbGF0
-ZnJvbSBkYXRhIGZvciBjeWFwYV9wbGF0ZnJvbV9kYXRhLg0KPiA0LiBUaGlzIGNvZGUgaXMgbWVy
-Z2VkIGJhc2VkIGtlcm5lbCB2ZXJzaW9uIDIuNy4zNy1yYzUuDQo+DQo+DQo+IENoYW5nZS1JZDog
-STM1OTEzMTdhYzljM2I3ZDUzMjhhOWM2MTdkNjYyYWQ2YmU2MDY1YTINCj4gU2lnbmVkLW9mZi1i
-eTogRHUsIER1ZGxleSA8ZHVkbEBjeXByZXNzLmNvbT4NCj4NCj4gQlVHPU5vbmUNCj4gVEVTVD1U
-ZXN0IG9uIGFybSB0ZWdyYTIgc2VhYm9yYWQgYW5kIGthZW4gcGxhdGZvcm0NCj4NCj4gUGxlYXNl
-IHJldmlldyB0aGlzIGF0IGh0dHA6Ly9jb2RlcmV2aWV3LmNocm9taXVtLm9yZy82NjIzMDExLw0K
-Pg0KPiBTVk4gQmFzZTogaHR0cDovL2dpdC5jaHJvbWl1bS5vcmcvZ2l0L2tlcm5lbC1uZXh0Lmdp
-dEBjaHJvbWVvcy0yLjYuMzctcmM1DQo+DQo+IEFmZmVjdGVkIGZpbGVzOg0KPiAgIE0gYXJjaC9h
-cm0vbWFjaC10ZWdyYS9ib2FyZC1zZWFib2FyZC5oDQo+ICAgTSBhcmNoL2FybS9tYWNoLXRlZ3Jh
-L2JvYXJkLXNlYWJvYXJkLmMNCj4NCj4NCj4gSW5kZXg6IGFyY2gvYXJtL21hY2gtdGVncmEvYm9h
-cmQtc2VhYm9hcmQuYw0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9ib2FyZC1z
-ZWFib2FyZC5jICANCj4gYi9hcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLXNlYWJvYXJkLmMNCj4g
-aW5kZXggIA0KPiA3NWZiYWI2OGVmNjFjMGMxMTdiYjhkYWZhMmFhY2E5MDk0N2E4NjBiLi5kZTI3
-MmNjNzM3OTRjNjYwMDk5NGFmM2MwZTgzNGRkODg0ZjZiNTZiIA0KPiAxMDA2NDQNCj4gLS0tIGEv
-YXJjaC9hcm0vbWFjaC10ZWdyYS9ib2FyZC1zZWFib2FyZC5jDQo+ICsrKyBiL2FyY2gvYXJtL21h
-Y2gtdGVncmEvYm9hcmQtc2VhYm9hcmQuYw0KPiBAQCAtMzAzLDYgKzMwMywzNiBAQCBzdGF0aWMg
-c3RydWN0IHRlZ3JhX2kyY19wbGF0Zm9ybV9kYXRhICANCj4gc2VhYm9hcmRfZHZjX3BsYXRmb3Jt
-X2RhdGEgPSB7DQo+ICAJLmlzX2R2YwkJPSB0cnVlLA0KPiAgfTsNCj4NCj4gKy8qIGZvciBDeXBy
-ZXNzIFRyYWNrcGFkLiAqLw0KPiArI2luY2x1ZGUgPGxpbnV4L2N5YXBhLmg+DQo+ICsNCj4gK3N0
-YXRpYyBpbnQgY3lhcGFfaTJjX3BsYXRmb3JtX2luaXQodm9pZCkNCj4gK3sNCj4gKwlyZXR1cm4g
-MDsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBjeWFwYV9pMmNfcGxhdGZvcm1fd2FrZXVwKHZv
-aWQpDQo+ICt7DQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgY3lh
-cGFfcGxhdGZvcm1fZGF0YSBjeWFwYV9pMmNfcGxhdGZvcm1fZGF0YSA9IHsNCj4gKwkuZmxhZyA9
-IDAsDQo+ICsJLmdlbiA9IENZQVBBX0dFTjIsDQo+ICsJLnBvd2VyX3N0YXRlID0gQ1lBUEFfUFdS
-X0FDVElWRSwNCj4gKwkudXNlX2Fic29sdXRlX21vZGUgPSBmYWxzZSwNCj4gKwkudXNlX3BvbGxp
-bmdfbW9kZSA9IGZhbHNlLA0KPiArCS5wb2xsaW5nX2ludGVydmFsX3RpbWVfYWN0aXZlID0gQ1lB
-UEFfQUNUSVZFX1BPTExJTkdfSU5UVkFMX1RJTUUsDQo+ICsJLnBvbGxpbmdfaW50ZXJ2YWxfdGlt
-ZV9sb3dwb3dlciA9IENZQVBBX0xPV1BPV0VSX1BPTExJTkdfSU5UVkFMX1RJTUUsDQo+ICsJLmFj
-dGl2ZV90b3VjaF90aW1lb3V0ID0gQ1lBUEFfQUNUSVZFX1RPVUNIX1RJTUVPVVQsDQo+ICsJLm5h
-bWUgPSBDWUFQQV9JMkNfTkFNRSwNCj4gKwkuaXJxX2dwaW8gPSBURUdSQV9HUElPX0NZVFBfSU5U
-LA0KPiArCS5yZXBvcnRfcmF0ZSA9IENZQVBBX1JFUE9SVF9SQVRFLA0KPiArDQo+ICsJLndha2V1
-cCA9IGN5YXBhX2kyY19wbGF0Zm9ybV93YWtldXAsDQo+ICsJLmluaXQgPSBjeWFwYV9pMmNfcGxh
-dGZvcm1faW5pdCwNCg0KaWYgdGhlc2UgYXJlbid0IG5lZWRlZCwgdGhlbiB3aHkgbm90IGdldCB0
-aGUgZHJpdmVyIHRvIGNoZWNrIGZvciBOVUxMDQphbmQgbm90IGNhbGwgdGhlbT8NCg0KLS0gDQpC
-ZW4gRG9va3MsIGJlbkBmbHVmZi5vcmcsIGh0dHA6Ly93d3cuZmx1ZmYub3JnL2Jlbi8NCg0KTGFy
-Z2UgSGFkcm9uIENvbGFkYTogQSBsYXJnZSBQaW5hIENvbGFkYSB0aGF0IG1ha2VzIHRoZSB1bml2
-ZXJzZSBkaXNhcHBlYXIuDQoNCg==
+Olof Johansson wrote at Thursday, March 03, 2011 6:01 PM:
+> I can do them (sorry, been out today and was also waiting on the i2c
+> merge to land).
+>=20
+> I'll take them through my tree with the i2c changes. I'll post the
+> base i2c board changes either tonight or tomorrow morning, after that
+> Stephens can easily go on top.
+
+Olof,
+
+I didn't see any updates in git.
+
+Do my changes still need to be in today? I'm assuming you wanted me to
+rebase my changes on top of your I2C changes one they were published, a=
+nd
+mail the patches again...
+
+=20
+> On Thu, Mar 3, 2011 at 3:47 PM, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote=
+:
+> > On Thu, Mar 3, 2011 at 2:40 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> wrote:
+> >> Colin Cross wrote at Thursday, March 03, 2011 3:25 PM:
+> >>> I pushed the merge of Ben's i2c-tegra as for-next-i2c. =A0I will =
+put any
+> >>> patches that depend on i2c support in that branch, and keep it re=
+based
+> >>> on top of for-next.
+> >>
+> >> Previously, Olof said he'd take my board patches through his tree.=
+ I
+> assume
+> >> that's no longer the plan, and I should just create a patch-set ba=
+sed
+> on
+> >> Tegra for-next or for-next-i2c?
+> >>
+> >> FYI, I now have 3 patches left not applied, in git log order:
+> >>
+> >> ARM: Tegra: Enable Harmony audio support
+> >>
+> >> =A0 =A0* Set up platform data required by I2C, and ASoC machine & =
+codec
+> drivers.
+> >> =A0 =A0* Enable required GPIO pins as GPIOs.
+> >> =A0 =A0* Initialize audio-related clocks.
+> >> =A0 =A0* Correctly configure pinmux for audio-related GPIOs.
+> >>
+> >> =A0 =A0(this can be split to parts before/after picking up latest =
+ASoC, and
+> >> =A0 =A0perhaps also part for for-next, part for for-next-i2c?)
+> >>
+> >> ARM: Tegra: Create defines for GPIO names
+> >>
+> >> =A0 =A0This ensures they're kept in sync between platform_data def=
+initions
+> and
+> >> =A0 =A0the GPIO table initialization.
+> >>
+> >> =A0 =A0(Should apply right away, to for-next)
+> >>
+> >> ARM: Tegra: Add devices.c entries for audio
+> >>
+> >> =A0 =A0For I2S, DAS, PCM devices
+> >>
+> >> =A0 =A0(Should apply right away, to for-next)
+> >>
+> >>> On Thu, Mar 3, 2011 at 1:37 PM, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> w=
+rote:
+> >>> > (resending as plain text)
+> >>> >
+> >>> > To prevent the merge window from becoming a mess, patches are
+> supposed
+> >>> > to be in linux-next by rc6 of the previous release.
+> >>> >
+> >>> > Ben never responded to my question about merging i2c-tegra, so =
+I'll
+> >>> > merge it for now.
+> >>> >
+> >>> > On Thu, Mar 3, 2011 at 11:29 AM, Stephen Warren <swarren@nvidia=
+=2Ecom>
+> >>> wrote:
+> >>> >> Colin Cross wrote at Thursday, March 03, 2011 12:12 PM:
+> >>> >>>
+> >>> >>> On Tue, Feb 22, 2011 at 1:09 PM, Mark Brown
+> >>> >>> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> >>> >>> > On Tue, Feb 22, 2011 at 01:01:23PM -0800, Colin Cross wrote=
+:
+> >>> >>> >> On Tue, Feb 22, 2011 at 12:52 PM, Mark Brown
+> >>> >>> >
+> >>> >>> >> > That's the standard way of handling this sort of thing -=
+ just
+> >>> send
+> >>> >>> the
+> >>> >>> >> > patch in a second pull request once the dependencies hav=
+e all
+> >>> landed.
+> >>> >>> >
+> >>> >>> >> You could also put it in the tegra-arch branch and we coul=
+d
+> both
+> >>> re-
+> >>> >>> merge it.
+> >>> >>> >
+> >>> >>> > I basically can't rebase my tree - it's merged into Takashi=
+'s
+> tree
+> >>> and
+> >>> >>> > there's lots of cross dependencies with my 2.6.38 fixes bra=
+nch
+> which
+> >>> >>> > would cause bisect breakage. =A0If you want to cherry pick =
+the
+> >>> relevant
+> >>> >>> > WM8903 commit over into your tree that'd also be OK by me.
+> >>> >>> >
+> >>> >>>
+> >>> >>> We should be fine with two pull requests. =A0I would still li=
+ke to
+> get
+> >>> >>> all the changes into the for-next branch, without the wm8903
+> header
+> >>> >>> change, but with the harmony file that depends on it. =A0I wi=
+ll
+> point
+> >>> >>> the for-linus branch at the last change that compiles without=
+ the
+> >>> >>> wm8903 header change. linux-next should get the ASoC tree and=
+ the
+> >>> >>> Tegra for-next tree, so everything should compile there.
+> >>> >>
+> >>> >> OK. I can easily split my patch into two:
+> >>> >> a) Add basically everything, except for the gpio_base WM8903
+> platform
+> >>> >> =A0 data field. (for-linus)
+> >>> >> b) Add the WM8903 platform data field. (for 2nd pull request)
+> >>> >>
+> >>> >> However, my board patches also rely on I2C platform data. Ther=
+e was
+> >>> >> some discussion that Tegra's for-next would merge in Ben's I2C
+> Tegra
+> >>> >> branch and hence pick up the new platform header from that.
+> >>> >>
+> >>> >> Olof also mentioned he'd submit a patch through his branch to =
+add
+> all
+> >>> >> the I2C bus registrations for all boards once the I2C branch w=
+as
+> >>> >> merged.
+> >>> >>
+> >>> >> However, I haven't seen any traction on this. Is this still
+> happening?
+> >>> >> If not, I'll have to split my patch slightly differently, to a=
+lso
+> pull
+> >>> >> out the I2C registrations into the second patch.
+> >>> >>
+> >>> >>> I'm going to be out of the office next week, so this is proba=
+bly
+> the
+> >>> >>> last chance to get features in 2.6.39.
+> >>> >>
+> >>> >> I'm a little out-of-touch here, but this confuses me; 2.6.38 h=
+asn't
+> >>> >> been released yet, and hence the 2-week merge window isn't ope=
+n
+> yet.
+> >>> >> And even then, I think we can submit small pull requests for s=
+tuff
+> >>> >> like this throughout 2.6.39's rc releases. I'm not why right n=
+ow is
+> >>> >> the last chance to get stuff in.
+> >>> >>
+> >>> >> --
+> >>> >> nvpublic
+> >>
+> >>
+> >>
+> >
+> > Olof, are you going to take these or should I?
+> >
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
