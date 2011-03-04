@@ -1,98 +1,79 @@
-From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: Re: CHROMIUM: arm: tegra: Add platfrom devices for Cypress
-	trackpad (issue6623011)
-Date: Fri, 4 Mar 2011 11:49:37 +0000
-Message-ID: <20110304114936.GA9995@trinity.fluff.org>
+From: Dudley Du <dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+Subject: RE: CHROMIUM: arm: tegra: Add platfrom devices for Cypress	trackpad
+ (issue6623011)
+Date: Fri, 4 Mar 2011 07:01:15 -0500
+Message-ID: <B27AC323FA92C946BA36D2913DDC8E3701FD6F0B1A5C__14089.0726157979$1299240394$gmane$org@VMBX126.ihostexchange.net>
 References: <20cf3005123492db71049da6a54a@google.com>
+ <20110304114936.GA9995@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20cf3005123492db71049da6a54a-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20110304114936.GA9995-SMNkleLxa3Z6Wcw2j4pizdi2O/JbrIOy@public.gmane.org>
+Content-Language: zh-CN
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel@vger
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 04, 2011 at 11:42:54AM +0000, dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org wrote:
-> Reviewers: ccross_android.com, konkers_android.com, olof_lixom.net,  
-> linux_arm.linux.org.uk, linux-tegra_vger.kernel.org,  
-> linux-arm-kernel_lists.infradead.org, linux-kernel_vger.kernel.org, Micah 
-> C, dudl,
->
-> Description:
-> CHROMIUM: arm: tegra: Add platfrom devices for Cypress trackpad
->
-> 1. Add platfrom data strcuture cyapa_platfrom_data.
-> 2. Add trackpad device into platfrom I2C bus 0.
-> 3. Initialize platfrom data for cyapa_platfrom_data.
-> 4. This code is merged based kernel version 2.7.37-rc5.
->
->
-> Change-Id: I3591317ac9c3b7d5328a9c617d662ad6be6065a2
-> Signed-off-by: Du, Dudley <dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
->
-> BUG=None
-> TEST=Test on arm tegra2 seaborad and kaen platform
->
-> Please review this at http://codereview.chromium.org/6623011/
->
-> SVN Base: http://git.chromium.org/git/kernel-next.git-LXZp9+5mMc2lvm3HrB1tsNBU3+rWoM1G@public.gmane.org
->
-> Affected files:
->   M arch/arm/mach-tegra/board-seaboard.h
->   M arch/arm/mach-tegra/board-seaboard.c
->
->
-> Index: arch/arm/mach-tegra/board-seaboard.c
-> diff --git a/arch/arm/mach-tegra/board-seaboard.c  
-> b/arch/arm/mach-tegra/board-seaboard.c
-> index  
-> 75fbab68ef61c0c117bb8dafa2aaca90947a860b..de272cc73794c6600994af3c0e834dd884f6b56b 
-> 100644
-> --- a/arch/arm/mach-tegra/board-seaboard.c
-> +++ b/arch/arm/mach-tegra/board-seaboard.c
-> @@ -303,6 +303,36 @@ static struct tegra_i2c_platform_data  
-> seaboard_dvc_platform_data = {
->  	.is_dvc		= true,
->  };
->
-> +/* for Cypress Trackpad. */
-> +#include <linux/cyapa.h>
-> +
-> +static int cyapa_i2c_platform_init(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int cyapa_i2c_platform_wakeup(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static struct cyapa_platform_data cyapa_i2c_platform_data = {
-> +	.flag = 0,
-> +	.gen = CYAPA_GEN2,
-> +	.power_state = CYAPA_PWR_ACTIVE,
-> +	.use_absolute_mode = false,
-> +	.use_polling_mode = false,
-> +	.polling_interval_time_active = CYAPA_ACTIVE_POLLING_INTVAL_TIME,
-> +	.polling_interval_time_lowpower = CYAPA_LOWPOWER_POLLING_INTVAL_TIME,
-> +	.active_touch_timeout = CYAPA_ACTIVE_TOUCH_TIMEOUT,
-> +	.name = CYAPA_I2C_NAME,
-> +	.irq_gpio = TEGRA_GPIO_CYTP_INT,
-> +	.report_rate = CYAPA_REPORT_RATE,
-> +
-> +	.wakeup = cyapa_i2c_platform_wakeup,
-> +	.init = cyapa_i2c_platform_init,
-
-if these aren't needed, then why not get the driver to check for NULL
-and not call them?
-
--- 
-Ben Dooks, ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, http://www.fluff.org/ben/
-
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
-
+SGkgQmVuLA0KDQpUaGFua3MgZm9yIHlvdXIgcXVlc3Rpb24uDQoNClllcywgSWYgc3VyZSB0aGF0
+IHRoZXNlIGFyZW4ndCBuZWVkZWQsIHRoZXkgY2FuIHJlbW92ZSB0aGVtLg0KQW5kIHRoZSBkcml2
+ZXIgYWxyZWFkeSBoYXMgY29kZSB0byBjaGVjayBmb3IgTlVMTCBhbmQgbm90IGNhbGwgdGhlbS4N
+Cg0KVGhhbmtzLg0KDQpCZXN0IFdpc2hlcywNCkR1ZGxleSBEdQ0KODYtMjEtNjE2NDg5NTANCg0K
+DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQmVuIERvb2tzIFttYWlsdG86YmVu
+LWxpbnV4QGZsdWZmLm9yZ10gDQpTZW50OiBGcmlkYXksIE1hcmNoIDA0LCAyMDExIDc6NTAgUE0N
+ClRvOiBEdWRsZXkgRHU7IGNjcm9zc0BhbmRyb2lkLmNvbTsga29ua2Vyc0BhbmRyb2lkLmNvbTsg
+b2xvZkBsaXhvbS5uZXQ7IGxpbnV4QGFybS5saW51eC5vcmcudWs7IGxpbnV4LXRlZ3JhQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBtaWNhaGNAZ29vZ2xlLmNvbTsgY2hyb21pdW0tb3MtcmV2
+aWV3c0BjaHJvbWl1bS5vcmc7IG1zYkBjaHJvbWl1bS5vcmc7IG9sb2ZqQGNocm9taXVtLm9yZzsg
+dmJlbmRlYitrZXJuZWxAY2hyb21pdW0ub3JnDQpTdWJqZWN0OiBSZTogQ0hST01JVU06IGFybTog
+dGVncmE6IEFkZCBwbGF0ZnJvbSBkZXZpY2VzIGZvciBDeXByZXNzIHRyYWNrcGFkIChpc3N1ZTY2
+MjMwMTEpDQoNCk9uIEZyaSwgTWFyIDA0LCAyMDExIGF0IDExOjQyOjU0QU0gKzAwMDAsIGR1ZGxA
+Y3lwcmVzcy5jb20gd3JvdGU6DQo+IFJldmlld2VyczogY2Nyb3NzX2FuZHJvaWQuY29tLCBrb25r
+ZXJzX2FuZHJvaWQuY29tLCBvbG9mX2xpeG9tLm5ldCwgIA0KPiBsaW51eF9hcm0ubGludXgub3Jn
+LnVrLCBsaW51eC10ZWdyYV92Z2VyLmtlcm5lbC5vcmcsICANCj4gbGludXgtYXJtLWtlcm5lbF9s
+aXN0cy5pbmZyYWRlYWQub3JnLCBsaW51eC1rZXJuZWxfdmdlci5rZXJuZWwub3JnLCBNaWNhaCAN
+Cj4gQywgZHVkbCwNCj4NCj4gRGVzY3JpcHRpb246DQo+IENIUk9NSVVNOiBhcm06IHRlZ3JhOiBB
+ZGQgcGxhdGZyb20gZGV2aWNlcyBmb3IgQ3lwcmVzcyB0cmFja3BhZA0KPg0KPiAxLiBBZGQgcGxh
+dGZyb20gZGF0YSBzdHJjdXR1cmUgY3lhcGFfcGxhdGZyb21fZGF0YS4NCj4gMi4gQWRkIHRyYWNr
+cGFkIGRldmljZSBpbnRvIHBsYXRmcm9tIEkyQyBidXMgMC4NCj4gMy4gSW5pdGlhbGl6ZSBwbGF0
+ZnJvbSBkYXRhIGZvciBjeWFwYV9wbGF0ZnJvbV9kYXRhLg0KPiA0LiBUaGlzIGNvZGUgaXMgbWVy
+Z2VkIGJhc2VkIGtlcm5lbCB2ZXJzaW9uIDIuNy4zNy1yYzUuDQo+DQo+DQo+IENoYW5nZS1JZDog
+STM1OTEzMTdhYzljM2I3ZDUzMjhhOWM2MTdkNjYyYWQ2YmU2MDY1YTINCj4gU2lnbmVkLW9mZi1i
+eTogRHUsIER1ZGxleSA8ZHVkbEBjeXByZXNzLmNvbT4NCj4NCj4gQlVHPU5vbmUNCj4gVEVTVD1U
+ZXN0IG9uIGFybSB0ZWdyYTIgc2VhYm9yYWQgYW5kIGthZW4gcGxhdGZvcm0NCj4NCj4gUGxlYXNl
+IHJldmlldyB0aGlzIGF0IGh0dHA6Ly9jb2RlcmV2aWV3LmNocm9taXVtLm9yZy82NjIzMDExLw0K
+Pg0KPiBTVk4gQmFzZTogaHR0cDovL2dpdC5jaHJvbWl1bS5vcmcvZ2l0L2tlcm5lbC1uZXh0Lmdp
+dEBjaHJvbWVvcy0yLjYuMzctcmM1DQo+DQo+IEFmZmVjdGVkIGZpbGVzOg0KPiAgIE0gYXJjaC9h
+cm0vbWFjaC10ZWdyYS9ib2FyZC1zZWFib2FyZC5oDQo+ICAgTSBhcmNoL2FybS9tYWNoLXRlZ3Jh
+L2JvYXJkLXNlYWJvYXJkLmMNCj4NCj4NCj4gSW5kZXg6IGFyY2gvYXJtL21hY2gtdGVncmEvYm9h
+cmQtc2VhYm9hcmQuYw0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10ZWdyYS9ib2FyZC1z
+ZWFib2FyZC5jICANCj4gYi9hcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLXNlYWJvYXJkLmMNCj4g
+aW5kZXggIA0KPiA3NWZiYWI2OGVmNjFjMGMxMTdiYjhkYWZhMmFhY2E5MDk0N2E4NjBiLi5kZTI3
+MmNjNzM3OTRjNjYwMDk5NGFmM2MwZTgzNGRkODg0ZjZiNTZiIA0KPiAxMDA2NDQNCj4gLS0tIGEv
+YXJjaC9hcm0vbWFjaC10ZWdyYS9ib2FyZC1zZWFib2FyZC5jDQo+ICsrKyBiL2FyY2gvYXJtL21h
+Y2gtdGVncmEvYm9hcmQtc2VhYm9hcmQuYw0KPiBAQCAtMzAzLDYgKzMwMywzNiBAQCBzdGF0aWMg
+c3RydWN0IHRlZ3JhX2kyY19wbGF0Zm9ybV9kYXRhICANCj4gc2VhYm9hcmRfZHZjX3BsYXRmb3Jt
+X2RhdGEgPSB7DQo+ICAJLmlzX2R2YwkJPSB0cnVlLA0KPiAgfTsNCj4NCj4gKy8qIGZvciBDeXBy
+ZXNzIFRyYWNrcGFkLiAqLw0KPiArI2luY2x1ZGUgPGxpbnV4L2N5YXBhLmg+DQo+ICsNCj4gK3N0
+YXRpYyBpbnQgY3lhcGFfaTJjX3BsYXRmb3JtX2luaXQodm9pZCkNCj4gK3sNCj4gKwlyZXR1cm4g
+MDsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBjeWFwYV9pMmNfcGxhdGZvcm1fd2FrZXVwKHZv
+aWQpDQo+ICt7DQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgY3lh
+cGFfcGxhdGZvcm1fZGF0YSBjeWFwYV9pMmNfcGxhdGZvcm1fZGF0YSA9IHsNCj4gKwkuZmxhZyA9
+IDAsDQo+ICsJLmdlbiA9IENZQVBBX0dFTjIsDQo+ICsJLnBvd2VyX3N0YXRlID0gQ1lBUEFfUFdS
+X0FDVElWRSwNCj4gKwkudXNlX2Fic29sdXRlX21vZGUgPSBmYWxzZSwNCj4gKwkudXNlX3BvbGxp
+bmdfbW9kZSA9IGZhbHNlLA0KPiArCS5wb2xsaW5nX2ludGVydmFsX3RpbWVfYWN0aXZlID0gQ1lB
+UEFfQUNUSVZFX1BPTExJTkdfSU5UVkFMX1RJTUUsDQo+ICsJLnBvbGxpbmdfaW50ZXJ2YWxfdGlt
+ZV9sb3dwb3dlciA9IENZQVBBX0xPV1BPV0VSX1BPTExJTkdfSU5UVkFMX1RJTUUsDQo+ICsJLmFj
+dGl2ZV90b3VjaF90aW1lb3V0ID0gQ1lBUEFfQUNUSVZFX1RPVUNIX1RJTUVPVVQsDQo+ICsJLm5h
+bWUgPSBDWUFQQV9JMkNfTkFNRSwNCj4gKwkuaXJxX2dwaW8gPSBURUdSQV9HUElPX0NZVFBfSU5U
+LA0KPiArCS5yZXBvcnRfcmF0ZSA9IENZQVBBX1JFUE9SVF9SQVRFLA0KPiArDQo+ICsJLndha2V1
+cCA9IGN5YXBhX2kyY19wbGF0Zm9ybV93YWtldXAsDQo+ICsJLmluaXQgPSBjeWFwYV9pMmNfcGxh
+dGZvcm1faW5pdCwNCg0KaWYgdGhlc2UgYXJlbid0IG5lZWRlZCwgdGhlbiB3aHkgbm90IGdldCB0
+aGUgZHJpdmVyIHRvIGNoZWNrIGZvciBOVUxMDQphbmQgbm90IGNhbGwgdGhlbT8NCg0KLS0gDQpC
+ZW4gRG9va3MsIGJlbkBmbHVmZi5vcmcsIGh0dHA6Ly93d3cuZmx1ZmYub3JnL2Jlbi8NCg0KTGFy
+Z2UgSGFkcm9uIENvbGFkYTogQSBsYXJnZSBQaW5hIENvbGFkYSB0aGF0IG1ha2VzIHRoZSB1bml2
+ZXJzZSBkaXNhcHBlYXIuDQoNCg==
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
