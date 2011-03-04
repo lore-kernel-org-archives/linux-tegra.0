@@ -1,146 +1,99 @@
-From: dudl@cypress.com
-Subject: CHROMIUM: arm: tegra: Add platfrom devices for Cypress trackpad
-	(issue6623011)
-Date: Fri, 04 Mar 2011 11:42:54 +0000
-Message-ID: <20cf3005123492db71049da6a54a@google.com>
-Reply-To: dudl@cypress.com, ccross@android.com, konkers@android.com,
-	olof@lixom.net, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, micahc@google.com,
-	chromium-os-reviews@chromium.org, msb@chromium.org,
-	olofj@chromium.org, vbendeb+kernel@chromium.org
+From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: CHROMIUM: arm: tegra: Add platfrom devices for Cypress
+	trackpad (issue6623011)
+Date: Fri, 4 Mar 2011 11:49:37 +0000
+Message-ID: <20110304114936.GA9995@trinity.fluff.org>
+References: <20cf3005123492db71049da6a54a@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"; DelSp="yes"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: ccross@android.com, konkers@android.com, olof@lixom.net, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: msb@chromium.org, olofj@chromium.org, chromium-os-reviews@chromium.org, vbendeb+kernel@chromium.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20cf3005123492db71049da6a54a-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel@vger
 List-Id: linux-tegra@vger.kernel.org
 
-Reviewers: ccross_android.com, konkers_android.com, olof_lixom.net,  
-linux_arm.linux.org.uk, linux-tegra_vger.kernel.org,  
-linux-arm-kernel_lists.infradead.org, linux-kernel_vger.kernel.org, Micah  
-C, dudl,
+On Fri, Mar 04, 2011 at 11:42:54AM +0000, dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org wrote:
+> Reviewers: ccross_android.com, konkers_android.com, olof_lixom.net,  
+> linux_arm.linux.org.uk, linux-tegra_vger.kernel.org,  
+> linux-arm-kernel_lists.infradead.org, linux-kernel_vger.kernel.org, Micah 
+> C, dudl,
+>
+> Description:
+> CHROMIUM: arm: tegra: Add platfrom devices for Cypress trackpad
+>
+> 1. Add platfrom data strcuture cyapa_platfrom_data.
+> 2. Add trackpad device into platfrom I2C bus 0.
+> 3. Initialize platfrom data for cyapa_platfrom_data.
+> 4. This code is merged based kernel version 2.7.37-rc5.
+>
+>
+> Change-Id: I3591317ac9c3b7d5328a9c617d662ad6be6065a2
+> Signed-off-by: Du, Dudley <dudl-+wT8y+m8/X5BDgjK7y7TUQ@public.gmane.org>
+>
+> BUG=None
+> TEST=Test on arm tegra2 seaborad and kaen platform
+>
+> Please review this at http://codereview.chromium.org/6623011/
+>
+> SVN Base: http://git.chromium.org/git/kernel-next.git-LXZp9+5mMc2lvm3HrB1tsNBU3+rWoM1G@public.gmane.org
+>
+> Affected files:
+>   M arch/arm/mach-tegra/board-seaboard.h
+>   M arch/arm/mach-tegra/board-seaboard.c
+>
+>
+> Index: arch/arm/mach-tegra/board-seaboard.c
+> diff --git a/arch/arm/mach-tegra/board-seaboard.c  
+> b/arch/arm/mach-tegra/board-seaboard.c
+> index  
+> 75fbab68ef61c0c117bb8dafa2aaca90947a860b..de272cc73794c6600994af3c0e834dd884f6b56b 
+> 100644
+> --- a/arch/arm/mach-tegra/board-seaboard.c
+> +++ b/arch/arm/mach-tegra/board-seaboard.c
+> @@ -303,6 +303,36 @@ static struct tegra_i2c_platform_data  
+> seaboard_dvc_platform_data = {
+>  	.is_dvc		= true,
+>  };
+>
+> +/* for Cypress Trackpad. */
+> +#include <linux/cyapa.h>
+> +
+> +static int cyapa_i2c_platform_init(void)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int cyapa_i2c_platform_wakeup(void)
+> +{
+> +	return 0;
+> +}
+> +
+> +static struct cyapa_platform_data cyapa_i2c_platform_data = {
+> +	.flag = 0,
+> +	.gen = CYAPA_GEN2,
+> +	.power_state = CYAPA_PWR_ACTIVE,
+> +	.use_absolute_mode = false,
+> +	.use_polling_mode = false,
+> +	.polling_interval_time_active = CYAPA_ACTIVE_POLLING_INTVAL_TIME,
+> +	.polling_interval_time_lowpower = CYAPA_LOWPOWER_POLLING_INTVAL_TIME,
+> +	.active_touch_timeout = CYAPA_ACTIVE_TOUCH_TIMEOUT,
+> +	.name = CYAPA_I2C_NAME,
+> +	.irq_gpio = TEGRA_GPIO_CYTP_INT,
+> +	.report_rate = CYAPA_REPORT_RATE,
+> +
+> +	.wakeup = cyapa_i2c_platform_wakeup,
+> +	.init = cyapa_i2c_platform_init,
 
-Description:
-CHROMIUM: arm: tegra: Add platfrom devices for Cypress trackpad
+if these aren't needed, then why not get the driver to check for NULL
+and not call them?
 
-1. Add platfrom data strcuture cyapa_platfrom_data.
-2. Add trackpad device into platfrom I2C bus 0.
-3. Initialize platfrom data for cyapa_platfrom_data.
-4. This code is merged based kernel version 2.7.37-rc5.
+-- 
+Ben Dooks, ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, http://www.fluff.org/ben/
 
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
 
-Change-Id: I3591317ac9c3b7d5328a9c617d662ad6be6065a2
-Signed-off-by: Du, Dudley <dudl@cypress.com>
-
-BUG=None
-TEST=Test on arm tegra2 seaborad and kaen platform
-
-Please review this at http://codereview.chromium.org/6623011/
-
-SVN Base: http://git.chromium.org/git/kernel-next.git@chromeos-2.6.37-rc5
-
-Affected files:
-   M arch/arm/mach-tegra/board-seaboard.h
-   M arch/arm/mach-tegra/board-seaboard.c
-
-
-Index: arch/arm/mach-tegra/board-seaboard.c
-diff --git a/arch/arm/mach-tegra/board-seaboard.c  
-b/arch/arm/mach-tegra/board-seaboard.c
-index  
-75fbab68ef61c0c117bb8dafa2aaca90947a860b..de272cc73794c6600994af3c0e834dd884f6b56b  
-100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -303,6 +303,36 @@ static struct tegra_i2c_platform_data  
-seaboard_dvc_platform_data = {
-  	.is_dvc		= true,
-  };
-
-+/* for Cypress Trackpad. */
-+#include <linux/cyapa.h>
-+
-+static int cyapa_i2c_platform_init(void)
-+{
-+	return 0;
-+}
-+
-+static int cyapa_i2c_platform_wakeup(void)
-+{
-+	return 0;
-+}
-+
-+static struct cyapa_platform_data cyapa_i2c_platform_data = {
-+	.flag = 0,
-+	.gen = CYAPA_GEN2,
-+	.power_state = CYAPA_PWR_ACTIVE,
-+	.use_absolute_mode = false,
-+	.use_polling_mode = false,
-+	.polling_interval_time_active = CYAPA_ACTIVE_POLLING_INTVAL_TIME,
-+	.polling_interval_time_lowpower = CYAPA_LOWPOWER_POLLING_INTVAL_TIME,
-+	.active_touch_timeout = CYAPA_ACTIVE_TOUCH_TIMEOUT,
-+	.name = CYAPA_I2C_NAME,
-+	.irq_gpio = TEGRA_GPIO_CYTP_INT,
-+	.report_rate = CYAPA_REPORT_RATE,
-+
-+	.wakeup = cyapa_i2c_platform_wakeup,
-+	.init = cyapa_i2c_platform_init,
-+};
-+
-  static struct i2c_board_info __initdata seaboard_i2c0_devices[] = {
-  	{
-  		I2C_BOARD_INFO("wm8903", 0x1a),
-@@ -311,6 +341,11 @@ static struct i2c_board_info __initdata  
-seaboard_i2c0_devices[] = {
-  		I2C_BOARD_INFO("isl29018", 0x44),
-  		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
-  	},
-+	{
-+		I2C_BOARD_INFO(CYAPA_I2C_NAME, 0x67),
-+		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CYTP_INT),
-+		.platform_data = &cyapa_i2c_platform_data,
-+	},
-  };
-
-  static struct i2c_board_info __initdata seaboard_i2c4_devices[] = {
-@@ -549,6 +584,11 @@ static void __init tegra_seaboard_init(void)
-
-  	tegra_gpio_enable(TEGRA_GPIO_LIDSWITCH);
-  	tegra_gpio_enable(TEGRA_GPIO_POWERKEY);
-+
-+	/* for Cypress trackpad. */
-+	tegra_gpio_enable(TEGRA_GPIO_CYTP_INT);
-+	gpio_request(TEGRA_GPIO_CYTP_INT, "gpio_cytp_int");
-+	gpio_direction_input(TEGRA_GPIO_CYTP_INT);
-  }
-
-  MACHINE_START(SEABOARD, "seaboard")
-Index: arch/arm/mach-tegra/board-seaboard.h
-diff --git a/arch/arm/mach-tegra/board-seaboard.h  
-b/arch/arm/mach-tegra/board-seaboard.h
-index  
-5e1fc48bfa940056f2fd8e4c3bee5124d1398da4..4a38c4163ac338e90433a95afb90ec57a456ed1b  
-100644
---- a/arch/arm/mach-tegra/board-seaboard.h
-+++ b/arch/arm/mach-tegra/board-seaboard.h
-@@ -28,6 +28,9 @@
-  #define TEGRA_GPIO_ISL29018_IRQ		TEGRA_GPIO_PZ2
-  #define TEGRA_GPIO_AC_ONLINE		TEGRA_GPIO_PV3
-
-+/* for Cypress Trackpad gpio interrupt. */
-+#define TEGRA_GPIO_CYTP_INT		TEGRA_GPIO_PW2
-+
-  void seaboard_pinmux_init(void);
-  int seaboard_panel_init(void);
-  int seaboard_sdhci_init(void);
+--
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
