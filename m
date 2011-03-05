@@ -1,33 +1,76 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/5] ARM: Tegra: Enable audio (boards-for-next-i2c)
-Date: Fri,  4 Mar 2011 22:42:27 -0700
-Message-ID: <1299303752-7779-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 4/5] ARM: tegra: Harmony: I2C-related portions of audio support
+Date: Fri,  4 Mar 2011 22:42:31 -0700
+Message-ID: <1299303752-7779-5-git-send-email-swarren@nvidia.com>
+References: <1299303752-7779-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1299303752-7779-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is the complete patch series to enable audio on Tegra Harmony, based
-on Olof's boards-for-next-i2c branch.
+This patch is the portion of the audio-related setup that relies additionally
+on the latest Tegra I2C driver being merged.
 
-Stephen Warren (5):
-  ARM: Tegra: Add devices.c entries for audio
-  ARM: Tegra: Create defines for SD-related GPIO names
-  ARM: tegra: Harmony: Beginnings of audio support
-  ARM: tegra: Harmony: I2C-related portions of audio support
-  ARM: tegra: Harmony: Set WM8903 gpio_base
+* Define platform data for WM8903 audio codec
+* Register WM8903 as an I2C device
 
- arch/arm/mach-tegra/board-harmony-pinmux.c  |   28 ++++++-----
- arch/arm/mach-tegra/board-harmony.c         |   61 +++++++++++++++++++++--
- arch/arm/mach-tegra/board-harmony.h         |   14 +++++
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   12 ++--
- arch/arm/mach-tegra/board-seaboard.c        |    6 +-
- arch/arm/mach-tegra/board-seaboard.h        |    3 +
- arch/arm/mach-tegra/devices.c               |   70 +++++++++++++++++++++++++++
- arch/arm/mach-tegra/devices.h               |    4 ++
- arch/arm/mach-tegra/include/mach/iomap.h    |    3 +
- 9 files changed, 174 insertions(+), 27 deletions(-)
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony.c |   23 +++++++++++++++++++++++
+ 1 files changed, 23 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index 17262b4..d002d16 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -27,6 +27,8 @@
+ #include <linux/i2c-tegra.h>
+ #include <linux/gpio.h>
+ 
++#include <sound/wm8903.h>
++
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+@@ -81,6 +83,25 @@ static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
+ 	.bus_clk_rate   = 400000,
+ };
+ 
++static struct wm8903_platform_data harmony_wm8903_pdata = {
++	.irq_active_low = 0,
++	.micdet_cfg = 0,
++	.micdet_delay = 100,
++	.gpio_cfg = {
++		WM8903_GPIO_NO_CONFIG,
++		WM8903_GPIO_NO_CONFIG,
++		0,
++		WM8903_GPIO_NO_CONFIG,
++		WM8903_GPIO_NO_CONFIG,
++	},
++};
++
++static struct i2c_board_info __initdata wm8903_board_info = {
++	I2C_BOARD_INFO("wm8903", 0x1a),
++	.platform_data = &harmony_wm8903_pdata,
++	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
++};
++
+ static void harmony_i2c_init(void)
+ {
+ 	tegra_i2c_device1.dev.platform_data = &harmony_i2c1_platform_data;
+@@ -92,6 +113,8 @@ static void harmony_i2c_init(void)
+ 	platform_device_register(&tegra_i2c_device2);
+ 	platform_device_register(&tegra_i2c_device3);
+ 	platform_device_register(&tegra_i2c_device4);
++
++	i2c_register_board_info(0, &wm8903_board_info, 1);
+ }
+ 
+ static struct harmony_audio_platform_data harmony_audio_pdata = {
+-- 
+1.7.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
