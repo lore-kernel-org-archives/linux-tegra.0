@@ -1,38 +1,82 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 0/3] Tegra i2c board changes + defconfig update
-Date: Mon,  7 Mar 2011 02:26:36 -0600
-Message-ID: <1299486399-21761-1-git-send-email-olof@lixom.net>
+Subject: [PATCH 2/3] ARM: tegra: harmony: register i2c devices
+Date: Mon,  7 Mar 2011 02:26:38 -0600
+Message-ID: <1299486399-21761-3-git-send-email-olof@lixom.net>
+References: <1299486399-21761-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1299486399-21761-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Register the base i2c busses on harmony. Devices coming at a later date,
+but this allows for hand-probing of some of them at least.
 
-Here is a short series of i2c patches to configure the i2c-tegra driver
-for the boards in the tree, and to register some of the devices.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony.c |   32 ++++++++++++++++++++++++++++++++
+ 1 files changed, 32 insertions(+), 0 deletions(-)
 
-It also includes a defconfig update that enables the new drivers, enables
-TRIMSLICE by default since the pcie fix makes it possible and also turns
-on a few more config options that are useful (i.e. EFI partition tables
-and some common board devices).
-
-Since these patches rely on drivers that will be merged during the
-upcoming window, this is my plan:
-
-* Check them into boards-for-next together with Stephen W's
-  other late-merge board patches in a day or two
-* Ask sfr to add said branch to linux-next (towards the end of list of trees)
-* Sit on them until merge window is open and base tegra, i2c and asoc have
-  all been merged
-* Rebase to current upstream when said trees are in, let it sit for 1
-  day for a linux-next cycle for sanity-check
-* Send pull request
-
-
--Olof
-
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index 38c2ab8..d46268d 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -24,6 +24,8 @@
+ #include <linux/pda_power.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
++#include <linux/i2c.h>
++#include <linux/i2c-tegra.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -78,6 +80,35 @@ static struct platform_device harmony_audio_device = {
+ 	},
+ };
+ 
++static struct tegra_i2c_platform_data harmony_i2c1_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct tegra_i2c_platform_data harmony_i2c2_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct tegra_i2c_platform_data harmony_i2c3_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static void harmony_i2c_init(void)
++{
++	tegra_i2c_device1.dev.platform_data = &harmony_i2c1_platform_data;
++	tegra_i2c_device2.dev.platform_data = &harmony_i2c2_platform_data;
++	tegra_i2c_device3.dev.platform_data = &harmony_i2c3_platform_data;
++	tegra_i2c_device4.dev.platform_data = &harmony_dvc_platform_data;
++
++	platform_device_register(&tegra_i2c_device1);
++	platform_device_register(&tegra_i2c_device2);
++	platform_device_register(&tegra_i2c_device3);
++	platform_device_register(&tegra_i2c_device4);
++}
++
+ static struct platform_device *harmony_devices[] __initdata = {
+ 	&debug_uart,
+ 	&tegra_sdhci_device1,
+@@ -140,6 +171,7 @@ static void __init tegra_harmony_init(void)
+ 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
+ 
+ 	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
++	harmony_i2c_init();
+ }
+ 
+ MACHINE_START(HARMONY, "harmony")
+-- 
+1.7.0.4
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
