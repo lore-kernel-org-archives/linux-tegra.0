@@ -1,37 +1,29 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: seaboard: register i2c devices
-Date: Mon, 7 Mar 2011 15:26:17 -0800
-Message-ID: <AANLkTin9+LDSPPzECaEwUAac_OwcuARQGUFnakxXUkOG@mail.gmail.com>
-References: <1299486399-21761-1-git-send-email-olof@lixom.net>
-	<1299486399-21761-2-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF045687B855@HQMAIL01.nvidia.com>
-	<AANLkTin6kCEnOFuua70ze4D3igtZuUEVTNRf4zq-qD4D@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF045687B8E2@HQMAIL01.nvidia.com>
+Subject: Re: [PATCH v2 1/2] Add initial support for the Toshiba AC100/Dynabook
+ AZ netbook
+Date: Mon, 7 Mar 2011 15:30:21 -0800
+Message-ID: <AANLkTikjV2XtXo7sZ0J2VtLQG4LAiNcb8wBFuc8qu=jw@mail.gmail.com>
+References: <cover.1299526691.git.marvin24@gmx.de>
+	<2717b8b15dfde5e2db0eed4c9b89dd8d4fee5e68.1299526691.git.marvin24@gmx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF045687B8E2-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <2717b8b15dfde5e2db0eed4c9b89dd8d4fee5e68.1299526691.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Mon, Mar 7, 2011 at 11:39 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-
->> They are now -- they weren't when all i2c devices were registered. I
->> can re-join them and split them when devices are re-introduced later.
+On Mon, Mar 7, 2011 at 12:01 PM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
+> This patch adds the config infrastructure, the pinmux and basic
+> board setup code for PAZ00 (name of board inside the AC100/AZ).
 >
-> Perhaps move the common code into common_i2c_init, then put only the
-> differences in ${boardname}_i2c_init(), which would currently be empty
-> except to call the common function?
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-I'll split up again when the need arises, i.e. when the
-differentiating drivers are introduced for now, I just made a common
-seaboard_i2c_init that's called from the common init function, i.e.
-undid the per-board split.
+Thanks, looks good. Picked up in boards-for-next for .39, I don't see
+a reason to not merge it earlier than .40.
+
+I sqashed the config change in with my defconfig update.
 
 
 -Olof
