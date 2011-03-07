@@ -1,110 +1,58 @@
-From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: trimslice: enable MMC/SD slots
-Date: Mon,  7 Mar 2011 16:57:22 +0200
-Message-ID: <1299509842-21191-1-git-send-email-mike@compulab.co.il>
+From: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: tegra: harmony: register i2c devices
+Date: Mon, 07 Mar 2011 18:43:44 +0300
+Message-ID: <4D74FD30.5010806@ru.mvista.com>
+References: <1299486399-21761-1-git-send-email-olof@lixom.net> <1299486399-21761-3-git-send-email-olof@lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1299486399-21761-3-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-TrimSlice has MicroSD and standard MMC/SD slots.
-Register sdhci devices and enable GPIOs for MMC/SD slot.
+Hello.
 
-Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
----
-Hi Colin,
+On 07-03-2011 11:26, Olof Johansson wrote:
 
-I know that it's little bit late, but I'd appreciate if you can merge
-this one before sending pull request for 2.6.39.
+> Register the base i2c busses on harmony. Devices coming at a later date,
+> but this allows for hand-probing of some of them at least.
 
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    9 +++++++++
- arch/arm/mach-tegra/board-trimslice.c        |   19 +++++++++++++++++++
- 2 files changed, 28 insertions(+), 0 deletions(-)
+> Signed-off-by: Olof Johansson<olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> ---
+>   arch/arm/mach-tegra/board-harmony.c |   32 ++++++++++++++++++++++++++++++++
+>   1 files changed, 32 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-index 6d4fc9f..532a788 100644
---- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
-+++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-@@ -16,8 +16,11 @@
- 
- #include <linux/kernel.h>
- #include <linux/init.h>
-+
- #include <mach/pinmux.h>
-+#include <mach/gpio.h>
- 
-+#include "gpio-names.h"
- #include "board-trimslice.h"
- 
- static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
-@@ -139,7 +142,13 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
- 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
- };
- 
-+static struct tegra_gpio_table gpio_table[] = {
-+	{ .gpio = TEGRA_GPIO_PP1,	.enable = true	}, /* mmc4 cd */
-+	{ .gpio = TEGRA_GPIO_PP2,	.enable = true	}, /* mmc4 wp */
-+};
-+
- void __init trimslice_pinmux_init(void)
- {
- 	tegra_pinmux_config_table(trimslice_pinmux, ARRAY_SIZE(trimslice_pinmux));
-+	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
- }
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index 7be7d4a..1af6710 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -29,9 +29,12 @@
- #include <asm/setup.h>
- 
- #include <mach/iomap.h>
-+#include <mach/sdhci.h>
- 
- #include "board.h"
- #include "clock.h"
-+#include "devices.h"
-+#include "gpio-names.h"
- 
- #include "board-trimslice.h"
- 
-@@ -56,9 +59,22 @@ static struct platform_device debug_uart = {
- 		.platform_data	= debug_uart_platform_data,
- 	},
- };
-+static struct tegra_sdhci_platform_data sdhci_pdata1 = {
-+	.cd_gpio	= -1,
-+	.wp_gpio	= -1,
-+	.power_gpio	= -1,
-+};
-+
-+static struct tegra_sdhci_platform_data sdhci_pdata4 = {
-+	.cd_gpio	= TEGRA_GPIO_PP1,
-+	.wp_gpio	= TEGRA_GPIO_PP2,
-+	.power_gpio	= -1,
-+};
- 
- static struct platform_device *trimslice_devices[] __initdata = {
- 	&debug_uart,
-+	&tegra_sdhci_device1,
-+	&tegra_sdhci_device4,
- };
- 
- static void __init tegra_trimslice_fixup(struct machine_desc *desc,
-@@ -92,6 +108,9 @@ static void __init tegra_trimslice_init(void)
- 
- 	trimslice_pinmux_init();
- 
-+	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
-+	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
-+
- 	platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
- }
- 
--- 
-1.7.3.1
+> diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+> index 38c2ab8..d46268d 100644
+> --- a/arch/arm/mach-tegra/board-harmony.c
+> +++ b/arch/arm/mach-tegra/board-harmony.c
+[...]
+> @@ -78,6 +80,35 @@ static struct platform_device harmony_audio_device = {
+>   	},
+>   };
+>
+> +static struct tegra_i2c_platform_data harmony_i2c1_platform_data = {
+> +	.bus_clk_rate   = 400000,
+> +};
+> +
+> +static struct tegra_i2c_platform_data harmony_i2c2_platform_data = {
+> +	.bus_clk_rate   = 400000,
+> +};
+> +
+> +static struct tegra_i2c_platform_data harmony_i2c3_platform_data = {
+> +	.bus_clk_rate   = 400000,
+> +};
+> +
+> +static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
+> +	.bus_clk_rate   = 400000,
+> +};
 
+    Why not share the paltform data between devices if it's the same anyway?
+
+WBR, Sergei
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
