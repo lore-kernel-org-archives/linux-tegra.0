@@ -1,84 +1,47 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/2] Add initial support for the Toshiba AC100/Dynabook AZ netbook
-Date: Mon, 7 Mar 2011 00:37:26 -0800
-Message-ID: <AANLkTinncQdKy-POUN2QQJYhc20Kg6z-grUBqehu7k8x@mail.gmail.com>
-References: <1299421906-7366-1-git-send-email-marvin24@gmx.de>
-	<1299421906-7366-2-git-send-email-marvin24@gmx.de>
+Subject: [GIT PULL] please pull tegra-2.6 boards-for-next
+Date: Mon, 7 Mar 2011 01:09:00 -0800
+Message-ID: <AANLkTinY8MTkq3Ry5k9k1GaWAwT=AZuFYPMWsGCZ_pNo@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1299421906-7366-2-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Hi Colin,
 
-On Sun, Mar 6, 2011 at 6:31 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-
-As Colin said, a short patch description would be appreciated.
-
-> diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach=
--tegra/board-paz00-pinmux.c
-> new file mode 100644
-> index 0000000..347a919
-> --- /dev/null
-> +++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-[...]
-> +static struct tegra_gpio_table gpio_table[] =3D {
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PV5, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc2 cd =A0 */
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PH1, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc2 wp =A0 */
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PT3, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc2 pwr =A0*/
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PH2, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc4 cd =A0 */
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PH3, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc4 wp =A0 */
-> + =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_PI6, =A0 =A0 =A0 .enable =3D tru=
-e =A0}, /* mmc4 pwr =A0*/
-> +};
-
-Stephen Warren cleaned up Harmony and Seaboard and moved the GPIO
-definitions to board-<board>.h and gave them symbolic names. Would you
-mind doing that for these as well, please?
-
-> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/=
-board-paz00.c
-> new file mode 100644
-> index 0000000..a33ce98
-> --- /dev/null
-> +++ b/arch/arm/mach-tegra/board-paz00.c
-[...]
-> +static struct tegra_sdhci_platform_data sdhci_pdata1 =3D {
-> + =A0 =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D -1,
-> + =A0 =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D -1,
-> + =A0 =A0 =A0 .power_gpio =A0 =A0 =3D -1,
-> +};
-> +
-> +static struct tegra_sdhci_platform_data sdhci_pdata2 =3D {
-> + =A0 =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_PV5,
-> + =A0 =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_PH1,
-> + =A0 =A0 =A0 .power_gpio =A0 =A0 =3D TEGRA_GPIO_PT3,
-> +};
-> +
-> +static struct tegra_sdhci_platform_data sdhci_pdata4 =3D {
-> + =A0 =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_PH2,
-> + =A0 =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_PH3,
-> + =A0 =A0 =A0 .power_gpio =A0 =A0 =3D TEGRA_GPIO_PI6,
-> + =A0 =A0 =A0 .is_8bit =A0 =A0 =A0 =A0=3D 1,
-> +};
-
-Weird, the internal eMMC has CD and WP gpios?!
+These three patches do not depend on any of the driver code being
+merged through other trees, so it could go in with the main tegra
+merge for .39. Please pull.
 
 
--Olof
+The following changes since commit d5fdafd38ca0c28c4648909ce0afd0a5420309ca:
+  Mike Rapoport (1):
+        ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
+boards-for-next
+
+Stephen Warren (3):
+      ARM: tegra: add devices.c entries for audio
+      ARM: tegra: create defines for SD-related GPIO names
+      ARM: tegra: harmony: Beginnings of audio support
+
+ arch/arm/mach-tegra/board-harmony-pinmux.c  |   28 ++++++-----
+ arch/arm/mach-tegra/board-harmony.c         |   38 ++++++++++++--
+ arch/arm/mach-tegra/board-harmony.h         |   14 +++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   10 ++--
+ arch/arm/mach-tegra/board-seaboard.c        |    6 +-
+ arch/arm/mach-tegra/board-seaboard.h        |    3 +
+ arch/arm/mach-tegra/devices.c               |   70 +++++++++++++++++++++++++++
+ arch/arm/mach-tegra/devices.h               |    4 ++
+ arch/arm/mach-tegra/include/mach/iomap.h    |    3 +
+ 9 files changed, 150 insertions(+), 26 deletions(-)
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
