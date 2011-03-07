@@ -1,172 +1,56 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 1/3] ARM: tegra: seaboard: register i2c devices
-Date: Mon,  7 Mar 2011 02:26:37 -0600
-Message-ID: <1299486399-21761-2-git-send-email-olof@lixom.net>
-References: <1299486399-21761-1-git-send-email-olof@lixom.net>
+Subject: Re: [PATCH 0/3] ARM: Tegra: Enable audio (boards-for-next)
+Date: Mon, 7 Mar 2011 00:31:08 -0800
+Message-ID: <AANLkTimPGLamT-UL5u5WtLTk9R_1sj5yMf3D6LK3yqwV@mail.gmail.com>
+References: <1299303869-7827-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1299486399-21761-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1299303869-7827-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Register the base i2c devices on seaboard. A few more are pending,
-but it's a start.
+Thanks, Stephen, I have applied these (pull request for Colin going
+out shortly).
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
- arch/arm/mach-tegra/board-seaboard.c        |   83 +++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+), 0 deletions(-)
+See my 3-patch series for my plan on how to handle the two additional
+patches in the other series, i.e. stage them now for a merge during
+the later part of the merge window.
 
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index 7e96d49..d84d1dd 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
-+	{ .gpio = TEGRA_GPIO_ISL29018_IRQ, 	.enable = true },
- };
- 
- void __init seaboard_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index eb28dbd..afc972f 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -18,9 +18,12 @@
- #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/serial_8250.h>
-+#include <linux/i2c.h>
-+#include <linux/i2c-tegra.h>
- #include <linux/delay.h>
- #include <linux/input.h>
- #include <linux/io.h>
-+#include <linux/gpio.h>
- #include <linux/gpio_keys.h>
- 
- #include <mach/iomap.h>
-@@ -63,6 +66,22 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
- 	{ NULL,		NULL,		0,		0},
- };
- 
-+static struct tegra_i2c_platform_data seaboard_i2c1_platform_data = {
-+	.bus_clk_rate	= 400000.
-+};
-+
-+static struct tegra_i2c_platform_data seaboard_i2c2_platform_data = {
-+	.bus_clk_rate	= 400000,
-+};
-+
-+static struct tegra_i2c_platform_data seaboard_i2c3_platform_data = {
-+	.bus_clk_rate	= 400000,
-+};
-+
-+static struct tegra_i2c_platform_data seaboard_dvc_platform_data = {
-+	.bus_clk_rate	= 400000,
-+};
-+
- static struct gpio_keys_button seaboard_gpio_keys_buttons[] = {
- 	{
- 		.code		= SW_LID,
-@@ -124,6 +143,64 @@ static struct platform_device *seaboard_devices[] __initdata = {
- 	&seaboard_gpio_keys_device,
- };
- 
-+static struct i2c_board_info __initdata isl29018_device = {
-+	I2C_BOARD_INFO("isl29018", 0x44),
-+	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
-+};
-+
-+static struct i2c_board_info __initdata adt7461_device = {
-+	I2C_BOARD_INFO("adt7461", 0x4c),
-+};
-+
-+static void __init common_i2c_init(void)
-+{
-+	tegra_i2c_device1.dev.platform_data = &seaboard_i2c1_platform_data;
-+	tegra_i2c_device2.dev.platform_data = &seaboard_i2c2_platform_data;
-+	tegra_i2c_device3.dev.platform_data = &seaboard_i2c3_platform_data;
-+	tegra_i2c_device4.dev.platform_data = &seaboard_dvc_platform_data;
-+
-+	platform_device_register(&tegra_i2c_device1);
-+	platform_device_register(&tegra_i2c_device2);
-+	platform_device_register(&tegra_i2c_device3);
-+	platform_device_register(&tegra_i2c_device4);
-+}
-+
-+static void __init seaboard_i2c_init(void)
-+{
-+	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
-+	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
-+
-+	i2c_register_board_info(0, &isl29018_device, 1);
-+
-+	i2c_register_board_info(4, &adt7461_device, 1);
-+
-+	common_i2c_init();
-+}
-+
-+static void __init kaen_i2c_init(void)
-+{
-+	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
-+	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
-+
-+	i2c_register_board_info(0, &isl29018_device, 1);
-+
-+	i2c_register_board_info(4, &adt7461_device, 1);
-+
-+	common_i2c_init();
-+}
-+
-+static void __init wario_i2c_init(void)
-+{
-+	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
-+	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
-+
-+	i2c_register_board_info(0, &isl29018_device, 1);
-+
-+	i2c_register_board_info(4, &adt7461_device, 1);
-+
-+	common_i2c_init();
-+}
-+
- static void __init __tegra_seaboard_init(void)
- {
- 	seaboard_pinmux_init();
-@@ -145,6 +222,8 @@ static void __init tegra_seaboard_init(void)
- 	debug_uart_platform_data[0].irq = INT_UARTD;
- 
- 	__tegra_seaboard_init();
-+
-+	seaboard_i2c_init();
- }
- 
- static void __init tegra_kaen_init(void)
-@@ -155,6 +234,8 @@ static void __init tegra_kaen_init(void)
- 	debug_uart_platform_data[0].irq = INT_UARTB;
- 
- 	__tegra_seaboard_init();
-+
-+	kaen_i2c_init();
- }
- 
- static void __init tegra_wario_init(void)
-@@ -165,6 +246,8 @@ static void __init tegra_wario_init(void)
- 	debug_uart_platform_data[0].irq = INT_UARTB;
- 
- 	__tegra_seaboard_init();
-+
-+	wario_i2c_init();
- }
- 
- 
--- 
-1.7.0.4
 
+-Olof
+
+On Fri, Mar 4, 2011 at 9:44 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> This is the subset of patches to enable audio on Tegra Harmony that c=
+an be
+> immediately applied to Olof's boards-for-next branch.
+>
+> Stephen Warren (3):
+> =A0ARM: Tegra: Add devices.c entries for audio
+> =A0ARM: Tegra: Create defines for SD-related GPIO names
+> =A0ARM: tegra: Harmony: Beginnings of audio support
+>
+> =A0arch/arm/mach-tegra/board-harmony-pinmux.c =A0| =A0 28 ++++++-----
+> =A0arch/arm/mach-tegra/board-harmony.c =A0 =A0 =A0 =A0 | =A0 38 +++++=
++++++++--
+> =A0arch/arm/mach-tegra/board-harmony.h =A0 =A0 =A0 =A0 | =A0 14 +++++
+> =A0arch/arm/mach-tegra/board-seaboard-pinmux.c | =A0 10 ++--
+> =A0arch/arm/mach-tegra/board-seaboard.c =A0 =A0 =A0 =A0| =A0 =A06 +-
+> =A0arch/arm/mach-tegra/board-seaboard.h =A0 =A0 =A0 =A0| =A0 =A03 +
+> =A0arch/arm/mach-tegra/devices.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 70=
+ +++++++++++++++++++++++++++
+> =A0arch/arm/mach-tegra/devices.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
+4 ++
+> =A0arch/arm/mach-tegra/include/mach/iomap.h =A0 =A0| =A0 =A03 +
+> =A09 files changed, 150 insertions(+), 26 deletions(-)
+>
+>
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
