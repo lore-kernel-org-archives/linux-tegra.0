@@ -1,46 +1,110 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL] please pull tegra-2.6 boards-for-next
-Date: Mon, 7 Mar 2011 01:09:00 -0800
-Message-ID: <AANLkTinY8MTkq3Ry5k9k1GaWAwT=AZuFYPMWsGCZ_pNo@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: trimslice: enable MMC/SD slots
+Date: Mon,  7 Mar 2011 16:57:22 +0200
+Message-ID: <1299509842-21191-1-git-send-email-mike@compulab.co.il>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+TrimSlice has MicroSD and standard MMC/SD slots.
+Register sdhci devices and enable GPIOs for MMC/SD slot.
+
+Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+---
 Hi Colin,
 
-These three patches do not depend on any of the driver code being
-merged through other trees, so it could go in with the main tegra
-merge for .39. Please pull.
+I know that it's little bit late, but I'd appreciate if you can merge
+this one before sending pull request for 2.6.39.
 
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    9 +++++++++
+ arch/arm/mach-tegra/board-trimslice.c        |   19 +++++++++++++++++++
+ 2 files changed, 28 insertions(+), 0 deletions(-)
 
-The following changes since commit d5fdafd38ca0c28c4648909ce0afd0a5420309ca:
-  Mike Rapoport (1):
-        ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
+diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+index 6d4fc9f..532a788 100644
+--- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
++++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+@@ -16,8 +16,11 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++
+ #include <mach/pinmux.h>
++#include <mach/gpio.h>
+ 
++#include "gpio-names.h"
+ #include "board-trimslice.h"
+ 
+ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+@@ -139,7 +142,13 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+ 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+ };
+ 
++static struct tegra_gpio_table gpio_table[] = {
++	{ .gpio = TEGRA_GPIO_PP1,	.enable = true	}, /* mmc4 cd */
++	{ .gpio = TEGRA_GPIO_PP2,	.enable = true	}, /* mmc4 wp */
++};
++
+ void __init trimslice_pinmux_init(void)
+ {
+ 	tegra_pinmux_config_table(trimslice_pinmux, ARRAY_SIZE(trimslice_pinmux));
++	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
+ }
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index 7be7d4a..1af6710 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -29,9 +29,12 @@
+ #include <asm/setup.h>
+ 
+ #include <mach/iomap.h>
++#include <mach/sdhci.h>
+ 
+ #include "board.h"
+ #include "clock.h"
++#include "devices.h"
++#include "gpio-names.h"
+ 
+ #include "board-trimslice.h"
+ 
+@@ -56,9 +59,22 @@ static struct platform_device debug_uart = {
+ 		.platform_data	= debug_uart_platform_data,
+ 	},
+ };
++static struct tegra_sdhci_platform_data sdhci_pdata1 = {
++	.cd_gpio	= -1,
++	.wp_gpio	= -1,
++	.power_gpio	= -1,
++};
++
++static struct tegra_sdhci_platform_data sdhci_pdata4 = {
++	.cd_gpio	= TEGRA_GPIO_PP1,
++	.wp_gpio	= TEGRA_GPIO_PP2,
++	.power_gpio	= -1,
++};
+ 
+ static struct platform_device *trimslice_devices[] __initdata = {
+ 	&debug_uart,
++	&tegra_sdhci_device1,
++	&tegra_sdhci_device4,
+ };
+ 
+ static void __init tegra_trimslice_fixup(struct machine_desc *desc,
+@@ -92,6 +108,9 @@ static void __init tegra_trimslice_init(void)
+ 
+ 	trimslice_pinmux_init();
+ 
++	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
++	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
++
+ 	platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
+ }
+ 
+-- 
+1.7.3.1
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
-boards-for-next
-
-Stephen Warren (3):
-      ARM: tegra: add devices.c entries for audio
-      ARM: tegra: create defines for SD-related GPIO names
-      ARM: tegra: harmony: Beginnings of audio support
-
- arch/arm/mach-tegra/board-harmony-pinmux.c  |   28 ++++++-----
- arch/arm/mach-tegra/board-harmony.c         |   38 ++++++++++++--
- arch/arm/mach-tegra/board-harmony.h         |   14 +++++
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   10 ++--
- arch/arm/mach-tegra/board-seaboard.c        |    6 +-
- arch/arm/mach-tegra/board-seaboard.h        |    3 +
- arch/arm/mach-tegra/devices.c               |   70 +++++++++++++++++++++++++++
- arch/arm/mach-tegra/devices.h               |    4 ++
- arch/arm/mach-tegra/include/mach/iomap.h    |    3 +
- 9 files changed, 150 insertions(+), 26 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
