@@ -1,53 +1,46 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2] ARM: tegra: seaboard: register i2c devices
-Date: Mon, 7 Mar 2011 15:42:53 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF045687B99F@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: tegra: seaboard: register i2c devices
+Date: Mon, 7 Mar 2011 15:48:45 -0800
+Message-ID: <AANLkTinTg+E6grA_ns22gNHeYLCZ4G1BuGRwOJ002FBR@mail.gmail.com>
 References: <1299540862-3848-1-git-send-email-olof@lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF045687B99F@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1299540862-3848-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF045687B99F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Monday, March 07, 2011 4:34 PM:
-> Register the base i2c devices on seaboard. A few more are pending,
-> but it's a start.
-> 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
->  arch/arm/mach-tegra/board-seaboard.c        |   62
-> +++++++++++++++++++++++++--
->  2 files changed, 59 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-
-> tegra/board-seaboard-pinmux.c
-> index 7e96d49..d84d1dd 100644
-> --- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-> +++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-> @@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] = {
->  	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
->  	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
->  	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
-> +	{ .gpio = TEGRA_GPIO_ISL29018_IRQ, 	.enable = true },
+On Mon, Mar 7, 2011 at 3:42 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
 
-There's a space after "_IRQ," here. I think that's what's throwing off
-the display in my crappy email reader.
+>> @@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] =3D =
+{
+>> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_SD2_POWER, =A0 =A0 =A0 =A0 .enabl=
+e =3D true },
+>> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_LIDSWITCH, =A0 =A0 =A0 =A0 .enabl=
+e =3D true },
+>> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_POWERKEY, =A0 =A0 =A0 =A0 =A0.ena=
+ble =3D true },
+>> + =A0 =A0 { .gpio =3D TEGRA_GPIO_ISL29018_IRQ, =A0 =A0 =A0.enable =3D=
+ true },
+>
+> There's a space after "_IRQ," here. I think that's what's throwing of=
+f
+> the display in my crappy email reader.
+>
+> Aside from that,
 
-Aside from that,
+Ah, d'oh. thanks. Fixed up as I added your acked-by, I won't repost
+just for that though.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
--- 
-nvpublic
-
+-Olof
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
