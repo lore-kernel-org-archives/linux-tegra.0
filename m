@@ -1,7 +1,7 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 3/3] ARM: tegra: enable new drivers in defconfig
-Date: Mon,  7 Mar 2011 02:26:39 -0600
-Message-ID: <1299486399-21761-4-git-send-email-olof@lixom.net>
+Subject: [PATCH 1/3] ARM: tegra: seaboard: register i2c devices
+Date: Mon,  7 Mar 2011 02:26:37 -0600
+Message-ID: <1299486399-21761-2-git-send-email-olof@lixom.net>
 References: <1299486399-21761-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1299486399-21761-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
@@ -10,62 +10,159 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable new platforms and tegra drivers in tegra_defconfig. Also enable
-some of the common devices several platforms, and GUID partition tables
-to make it possible to boot a tegra_defconfig kernel with a ChromiumOS
-filesystem.
+Register the base i2c devices on seaboard. A few more are pending,
+but it's a start.
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/configs/tegra_defconfig |   16 +++++++++++++++-
- 1 files changed, 15 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
+ arch/arm/mach-tegra/board-seaboard.c        |   83 +++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 7a9267e..766e7e8 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -21,6 +21,9 @@ CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_IOSCHED_CFQ is not set
- CONFIG_ARCH_TEGRA=y
- CONFIG_MACH_HARMONY=y
-+CONFIG_MACH_KAEN=y
-+CONFIG_MACH_TRIMSLICE=y
-+CONFIG_MACH_WARIO=y
- CONFIG_TEGRA_DEBUG_UARTD=y
- CONFIG_ARM_ERRATA_742230=y
- CONFIG_NO_HZ=y
-@@ -78,12 +81,21 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_LEGACY_PTYS is not set
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C=y
--# CONFIG_HWMON is not set
-+# CONFIG_I2C_COMPAT is not set
-+# CONFIG_I2C_HELPER_AUTO is not set
-+CONFIG_I2C_TEGRA=y
-+CONFIG_SENSORS_LM90=y
- # CONFIG_MFD_SUPPORT is not set
- # CONFIG_USB_SUPPORT is not set
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
-+CONFIG_MMC_SDHCI_TEGRA=y
-+CONFIG_STAGING=y
-+# CONFIG_STAGING_EXCLUDE_BUILD is not set
-+CONFIG_IIO=y
-+CONFIG_SENSORS_ISL29018=y
-+CONFIG_SENSORS_AK8975=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT2_FS_XATTR=y
- CONFIG_EXT2_FS_POSIX_ACL=y
-@@ -95,6 +107,8 @@ CONFIG_EXT3_FS_SECURITY=y
- # CONFIG_DNOTIFY is not set
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_EFI_PARTITION=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index 7e96d49..d84d1dd 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
++	{ .gpio = TEGRA_GPIO_ISL29018_IRQ, 	.enable = true },
+ };
+ 
+ void __init seaboard_pinmux_init(void)
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index eb28dbd..afc972f 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -18,9 +18,12 @@
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/serial_8250.h>
++#include <linux/i2c.h>
++#include <linux/i2c-tegra.h>
+ #include <linux/delay.h>
+ #include <linux/input.h>
+ #include <linux/io.h>
++#include <linux/gpio.h>
+ #include <linux/gpio_keys.h>
+ 
+ #include <mach/iomap.h>
+@@ -63,6 +66,22 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
+ 	{ NULL,		NULL,		0,		0},
+ };
+ 
++static struct tegra_i2c_platform_data seaboard_i2c1_platform_data = {
++	.bus_clk_rate	= 400000.
++};
++
++static struct tegra_i2c_platform_data seaboard_i2c2_platform_data = {
++	.bus_clk_rate	= 400000,
++};
++
++static struct tegra_i2c_platform_data seaboard_i2c3_platform_data = {
++	.bus_clk_rate	= 400000,
++};
++
++static struct tegra_i2c_platform_data seaboard_dvc_platform_data = {
++	.bus_clk_rate	= 400000,
++};
++
+ static struct gpio_keys_button seaboard_gpio_keys_buttons[] = {
+ 	{
+ 		.code		= SW_LID,
+@@ -124,6 +143,64 @@ static struct platform_device *seaboard_devices[] __initdata = {
+ 	&seaboard_gpio_keys_device,
+ };
+ 
++static struct i2c_board_info __initdata isl29018_device = {
++	I2C_BOARD_INFO("isl29018", 0x44),
++	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
++};
++
++static struct i2c_board_info __initdata adt7461_device = {
++	I2C_BOARD_INFO("adt7461", 0x4c),
++};
++
++static void __init common_i2c_init(void)
++{
++	tegra_i2c_device1.dev.platform_data = &seaboard_i2c1_platform_data;
++	tegra_i2c_device2.dev.platform_data = &seaboard_i2c2_platform_data;
++	tegra_i2c_device3.dev.platform_data = &seaboard_i2c3_platform_data;
++	tegra_i2c_device4.dev.platform_data = &seaboard_dvc_platform_data;
++
++	platform_device_register(&tegra_i2c_device1);
++	platform_device_register(&tegra_i2c_device2);
++	platform_device_register(&tegra_i2c_device3);
++	platform_device_register(&tegra_i2c_device4);
++}
++
++static void __init seaboard_i2c_init(void)
++{
++	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
++	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
++
++	i2c_register_board_info(0, &isl29018_device, 1);
++
++	i2c_register_board_info(4, &adt7461_device, 1);
++
++	common_i2c_init();
++}
++
++static void __init kaen_i2c_init(void)
++{
++	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
++	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
++
++	i2c_register_board_info(0, &isl29018_device, 1);
++
++	i2c_register_board_info(4, &adt7461_device, 1);
++
++	common_i2c_init();
++}
++
++static void __init wario_i2c_init(void)
++{
++	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
++	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
++
++	i2c_register_board_info(0, &isl29018_device, 1);
++
++	i2c_register_board_info(4, &adt7461_device, 1);
++
++	common_i2c_init();
++}
++
+ static void __init __tegra_seaboard_init(void)
+ {
+ 	seaboard_pinmux_init();
+@@ -145,6 +222,8 @@ static void __init tegra_seaboard_init(void)
+ 	debug_uart_platform_data[0].irq = INT_UARTD;
+ 
+ 	__tegra_seaboard_init();
++
++	seaboard_i2c_init();
+ }
+ 
+ static void __init tegra_kaen_init(void)
+@@ -155,6 +234,8 @@ static void __init tegra_kaen_init(void)
+ 	debug_uart_platform_data[0].irq = INT_UARTB;
+ 
+ 	__tegra_seaboard_init();
++
++	kaen_i2c_init();
+ }
+ 
+ static void __init tegra_wario_init(void)
+@@ -165,6 +246,8 @@ static void __init tegra_wario_init(void)
+ 	debug_uart_platform_data[0].irq = INT_UARTB;
+ 
+ 	__tegra_seaboard_init();
++
++	wario_i2c_init();
+ }
+ 
+ 
 -- 
 1.7.0.4
 
