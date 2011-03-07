@@ -1,91 +1,56 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/2] Add initial support for the Toshiba AC100/Dynabook AZ netbook
-Date: Mon, 7 Mar 2011 20:59:10 +0100
-Message-ID: <201103072059.11231.marvin24@gmx.de>
-References: <1299421906-7366-1-git-send-email-marvin24@gmx.de> <1299421906-7366-2-git-send-email-marvin24@gmx.de> <AANLkTinncQdKy-POUN2QQJYhc20Kg6z-grUBqehu7k8x@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 0/2] ARM: tegra: Add Toshiba AC100 support
+Date: Mon,  7 Mar 2011 21:01:30 +0100
+Message-ID: <cover.1299526691.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTinncQdKy-POUN2QQJYhc20Kg6z-grUBqehu7k8x-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+These patches add initial support for the Toshiba AC100 / Dynabook AZ netbook.
+The code will not be able to boot the machine as the proprietary bootloader
+uses a different machine type (V1 bl: tegra_generic, V2 bl: harmony). Support
+for u-boot is being worked on.
 
-On Monday 07 March 2011 09:37:26 Olof Johansson wrote:
-> On Sun, Mar 6, 2011 at 6:31 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
-> > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> 
-> As Colin said, a short patch description would be appreciated.
+The patches are intended for 2.6.40. Depending on the review (and community
+progress), I hope to be able to submit more hardware support patches.
 
-ok.
- 
-> > diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
-> > new file mode 100644
-> > index 0000000..347a919
-> > --- /dev/null
-> > +++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-> [...]
-> > +static struct tegra_gpio_table gpio_table[] = {
-> > +       { .gpio = TEGRA_GPIO_PV5,       .enable = true  }, /* mmc2 cd   */
-> > +       { .gpio = TEGRA_GPIO_PH1,       .enable = true  }, /* mmc2 wp   */
-> > +       { .gpio = TEGRA_GPIO_PT3,       .enable = true  }, /* mmc2 pwr  */
-> > +       { .gpio = TEGRA_GPIO_PH2,       .enable = true  }, /* mmc4 cd   */
-> > +       { .gpio = TEGRA_GPIO_PH3,       .enable = true  }, /* mmc4 wp   */
-> > +       { .gpio = TEGRA_GPIO_PI6,       .enable = true  }, /* mmc4 pwr  */
-> > +};
-> 
-> Stephen Warren cleaned up Harmony and Seaboard and moved the GPIO
-> definitions to board-<board>.h and gave them symbolic names. Would you
-> mind doing that for these as well, please?
+Marc Dietrich (2):
+  Add initial support for the Toshiba AC100/Dynabook AZ netbook
+  Add PAZ00 to tegra_defconfig
 
-will do.
+ arch/arm/configs/tegra_defconfig         |    1 +
+ arch/arm/mach-tegra/Kconfig              |    5 +
+ arch/arm/mach-tegra/Makefile             |    3 +
+ arch/arm/mach-tegra/board-paz00-pinmux.c |  157 ++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.c        |  128 ++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h        |   29 ++++++
+ 6 files changed, 323 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.h
 
-> > diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-> > new file mode 100644
-> > index 0000000..a33ce98
-> > --- /dev/null
-> > +++ b/arch/arm/mach-tegra/board-paz00.c
-> [...]
-> > +static struct tegra_sdhci_platform_data sdhci_pdata1 = {
-> > +       .cd_gpio        = -1,
-> > +       .wp_gpio        = -1,
-> > +       .power_gpio     = -1,
-> > +};
-> > +
-> > +static struct tegra_sdhci_platform_data sdhci_pdata2 = {
-> > +       .cd_gpio        = TEGRA_GPIO_PV5,
-> > +       .wp_gpio        = TEGRA_GPIO_PH1,
-> > +       .power_gpio     = TEGRA_GPIO_PT3,
-> > +};
-> > +
-> > +static struct tegra_sdhci_platform_data sdhci_pdata4 = {
-> > +       .cd_gpio        = TEGRA_GPIO_PH2,
-> > +       .wp_gpio        = TEGRA_GPIO_PH3,
-> > +       .power_gpio     = TEGRA_GPIO_PI6,
-> > +       .is_8bit        = 1,
-> > +};
-> 
-> Weird, the internal eMMC has CD and WP gpios?!
+From 61b663e8bb53158f928f3ae97c1f891a9885445b Mon Sep 17 00:00:00 2001
+Message-Id: <cover.1299433839.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Date: Sun, 6 Mar 2011 18:50:39 +0100
+Subject: [PATCH v2 0/2] ARM: tegra: Add Toshiba AC100 support
 
-Yes that's strange. On the other hand, harmony has these gpios, the Toshiba 
-source defines them, and they don't hurt. So I vote for keeping them for 
-consistency reasons.
+Marc Dietrich (2):
+  Add initial support for the Toshiba AC100/Dynabook AZ netbook
+  Add PAZ00 to tegra_defconfig
 
-It was good that you mentioned these gpios as I found an error in my original
-post. On AC100, the external mmc is connected to the first sdhci, not the 
-second. Even Toshiba/Compal seem to were confused as they also added a wrong 
-comment to the source (which I blindly followed).
-
-I'll send an updated version soon, which also adds PAZ00 to tegra_defconfig.
-
-Thanks!
-
-Marc
+ arch/arm/configs/tegra_defconfig         |    1 +
+ arch/arm/mach-tegra/Kconfig              |    5 +
+ arch/arm/mach-tegra/Makefile             |    3 +
+ arch/arm/mach-tegra/board-paz00-pinmux.c |  157 ++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.c        |  128 ++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h        |   22 ++++
+ 6 files changed, 316 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.h
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
