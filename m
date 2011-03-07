@@ -1,58 +1,207 @@
-From: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: harmony: register i2c devices
-Date: Mon, 07 Mar 2011 18:43:44 +0300
-Message-ID: <4D74FD30.5010806@ru.mvista.com>
-References: <1299486399-21761-1-git-send-email-olof@lixom.net> <1299486399-21761-3-git-send-email-olof@lixom.net>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/3] ARM: tegra: seaboard: register i2c devices
+Date: Mon, 7 Mar 2011 09:24:00 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF045687B855@HQMAIL01.nvidia.com>
+References: <1299486399-21761-1-git-send-email-olof@lixom.net>
+ <1299486399-21761-2-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1299486399-21761-3-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1299486399-21761-2-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
-
-On 07-03-2011 11:26, Olof Johansson wrote:
-
-> Register the base i2c busses on harmony. Devices coming at a later date,
-> but this allows for hand-probing of some of them at least.
-
-> Signed-off-by: Olof Johansson<olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Olof Johansson wrote at Monday, March 07, 2011 1:27 AM:
+> Register the base i2c devices on seaboard. A few more are pending,
+> but it's a start.
+> 
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 > ---
->   arch/arm/mach-tegra/board-harmony.c |   32 ++++++++++++++++++++++++++++++++
->   1 files changed, 32 insertions(+), 0 deletions(-)
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
+>  arch/arm/mach-tegra/board-seaboard.c        |   83
+> +++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-
+> tegra/board-seaboard-pinmux.c
+> index 7e96d49..d84d1dd 100644
+> --- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
+> +++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+> @@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] = {
+>  	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
+>  	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
+>  	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
+> +	{ .gpio = TEGRA_GPIO_ISL29018_IRQ, 	.enable = true },
 
-> diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-> index 38c2ab8..d46268d 100644
-> --- a/arch/arm/mach-tegra/board-harmony.c
-> +++ b/arch/arm/mach-tegra/board-harmony.c
-[...]
-> @@ -78,6 +80,35 @@ static struct platform_device harmony_audio_device = {
->   	},
->   };
->
-> +static struct tegra_i2c_platform_data harmony_i2c1_platform_data = {
-> +	.bus_clk_rate   = 400000,
+The indentation between fields looks different there.
+
+>  };
+> 
+>  void __init seaboard_pinmux_init(void)
+> diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-
+> tegra/board-seaboard.c
+> index eb28dbd..afc972f 100644
+> --- a/arch/arm/mach-tegra/board-seaboard.c
+> +++ b/arch/arm/mach-tegra/board-seaboard.c
+> @@ -18,9 +18,12 @@
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/serial_8250.h>
+> +#include <linux/i2c.h>
+> +#include <linux/i2c-tegra.h>
+>  #include <linux/delay.h>
+>  #include <linux/input.h>
+>  #include <linux/io.h>
+> +#include <linux/gpio.h>
+>  #include <linux/gpio_keys.h>
+> 
+>  #include <mach/iomap.h>
+> @@ -63,6 +66,22 @@ static __initdata struct tegra_clk_init_table
+> seaboard_clk_init_table[] = {
+>  	{ NULL,		NULL,		0,		0},
+>  };
+> 
+> +static struct tegra_i2c_platform_data seaboard_i2c1_platform_data = {
+> +	.bus_clk_rate	= 400000.
 > +};
 > +
-> +static struct tegra_i2c_platform_data harmony_i2c2_platform_data = {
-> +	.bus_clk_rate   = 400000,
+> +static struct tegra_i2c_platform_data seaboard_i2c2_platform_data = {
+> +	.bus_clk_rate	= 400000,
 > +};
 > +
-> +static struct tegra_i2c_platform_data harmony_i2c3_platform_data = {
-> +	.bus_clk_rate   = 400000,
+> +static struct tegra_i2c_platform_data seaboard_i2c3_platform_data = {
+> +	.bus_clk_rate	= 400000,
 > +};
 > +
-> +static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
-> +	.bus_clk_rate   = 400000,
+> +static struct tegra_i2c_platform_data seaboard_dvc_platform_data = {
+> +	.bus_clk_rate	= 400000,
 > +};
+> +
+>  static struct gpio_keys_button seaboard_gpio_keys_buttons[] = {
+>  	{
+>  		.code		= SW_LID,
+> @@ -124,6 +143,64 @@ static struct platform_device *seaboard_devices[]
+> __initdata = {
+>  	&seaboard_gpio_keys_device,
+>  };
+> 
+> +static struct i2c_board_info __initdata isl29018_device = {
+> +	I2C_BOARD_INFO("isl29018", 0x44),
+> +	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
+> +};
+> +
+> +static struct i2c_board_info __initdata adt7461_device = {
+> +	I2C_BOARD_INFO("adt7461", 0x4c),
+> +};
+> +
+> +static void __init common_i2c_init(void)
+> +{
+> +	tegra_i2c_device1.dev.platform_data = &seaboard_i2c1_platform_data;
+> +	tegra_i2c_device2.dev.platform_data = &seaboard_i2c2_platform_data;
+> +	tegra_i2c_device3.dev.platform_data = &seaboard_i2c3_platform_data;
+> +	tegra_i2c_device4.dev.platform_data = &seaboard_dvc_platform_data;
+> +
+> +	platform_device_register(&tegra_i2c_device1);
+> +	platform_device_register(&tegra_i2c_device2);
+> +	platform_device_register(&tegra_i2c_device3);
+> +	platform_device_register(&tegra_i2c_device4);
+> +}
+> +
+> +static void __init seaboard_i2c_init(void)
+> +{
+> +	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
+> +	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
 
-    Why not share the paltform data between devices if it's the same anyway?
+Hmm. For some reason I thought drivers did this themselves, or IRQ
+registration did this for them. However, I looked and that's not true. I
+think I was remembering snd_soc_jack_add_gpios instead.
 
-WBR, Sergei
+So, this code looks fine, but I guess equivalent calls are missing for the
+WM8903 IRQ in my patches?
+
+> +	i2c_register_board_info(0, &isl29018_device, 1);
+> +
+> +	i2c_register_board_info(4, &adt7461_device, 1);
+> +
+> +	common_i2c_init();
+> +}
+> +
+> +static void __init kaen_i2c_init(void)
+> +{
+
+{seaboard,kaen,wario}_i2c_init seem identical. Should this be a single shared
+function, and only the board-specific bits in the non-common functions? Also,
+see below.
+
+> +	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
+> +	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
+> +
+> +	i2c_register_board_info(0, &isl29018_device, 1);
+> +
+> +	i2c_register_board_info(4, &adt7461_device, 1);
+> +
+> +	common_i2c_init();
+> +}
+> +
+> +static void __init wario_i2c_init(void)
+> +{
+> +	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
+> +	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
+> +
+> +	i2c_register_board_info(0, &isl29018_device, 1);
+> +
+> +	i2c_register_board_info(4, &adt7461_device, 1);
+> +
+> +	common_i2c_init();
+> +}
+> +
+>  static void __init __tegra_seaboard_init(void)
+>  {
+>  	seaboard_pinmux_init();
+> @@ -145,6 +222,8 @@ static void __init tegra_seaboard_init(void)
+>  	debug_uart_platform_data[0].irq = INT_UARTD;
+> 
+>  	__tegra_seaboard_init();
+> +
+> +	seaboard_i2c_init();
+>  }
+> 
+>  static void __init tegra_kaen_init(void)
+> @@ -155,6 +234,8 @@ static void __init tegra_kaen_init(void)
+>  	debug_uart_platform_data[0].irq = INT_UARTB;
+> 
+>  	__tegra_seaboard_init();
+
+__tegra_seaboard_init calls seaboard_i2c_init.
+
+> +
+> +	kaen_i2c_init();
+
+kaen_i2c_init is the same as seaboard_i2c_init.
+
+So, all the registration happens twice?
+
+>  }
+> 
+>  static void __init tegra_wario_init(void)
+> @@ -165,6 +246,8 @@ static void __init tegra_wario_init(void)
+>  	debug_uart_platform_data[0].irq = INT_UARTB;
+> 
+>  	__tegra_seaboard_init();
+> +
+> +	wario_i2c_init();
+>  }
+> 
+> --
+> 1.7.0.4
+
+-- 
+nvpublic
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
