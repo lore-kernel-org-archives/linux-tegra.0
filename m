@@ -1,46 +1,79 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: seaboard: register i2c devices
-Date: Mon, 7 Mar 2011 15:48:45 -0800
-Message-ID: <AANLkTinTg+E6grA_ns22gNHeYLCZ4G1BuGRwOJ002FBR@mail.gmail.com>
-References: <1299540862-3848-1-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF045687B99F@HQMAIL01.nvidia.com>
+Subject: Re: [GIT PULL] please pull tegra-2.6 boards-for-next
+Date: Mon, 7 Mar 2011 16:57:47 -0800
+Message-ID: <AANLkTi=8MKieocha2G1U75412hg9Uucx5t0ZV+QyGNKv@mail.gmail.com>
+References: <AANLkTinY8MTkq3Ry5k9k1GaWAwT=AZuFYPMWsGCZ_pNo@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF045687B99F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <AANLkTinY8MTkq3Ry5k9k1GaWAwT=AZuFYPMWsGCZ_pNo-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 7, 2011 at 3:42 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
-te:
+Updated to what was discussed in a separate thread: Picked up patches
+that will no longer build in the branch alone, but will build once
+pulled into linux-next with other driver changes.
 
->> @@ -166,6 +166,7 @@ static struct tegra_gpio_table gpio_table[] =3D =
-{
->> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_SD2_POWER, =A0 =A0 =A0 =A0 .enabl=
-e =3D true },
->> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_LIDSWITCH, =A0 =A0 =A0 =A0 .enabl=
-e =3D true },
->> =A0 =A0 =A0 { .gpio =3D TEGRA_GPIO_POWERKEY, =A0 =A0 =A0 =A0 =A0.ena=
-ble =3D true },
->> + =A0 =A0 { .gpio =3D TEGRA_GPIO_ISL29018_IRQ, =A0 =A0 =A0.enable =3D=
- true },
->
-> There's a space after "_IRQ," here. I think that's what's throwing of=
-f
-> the display in my crappy email reader.
->
-> Aside from that,
+I also picked up the paz00 support patch. It's independent of other
+platforms and risk of regressions is low, even though it's late in the
+release cycle.
 
-Ah, d'oh. thanks. Fixed up as I added your acked-by, I won't repost
-just for that though.
+Finally: did one last touchup to the harmony i2c code to add an __init
+annotation to quiet a compile warning. I didn't repost that patch
+since the diff was trivial.
 
+
+Thanks!
 
 -Olof
+
+
+The following changes since commit d5fdafd38ca0c28c4648909ce0afd0a5420309ca:
+  Mike Rapoport (1):
+        ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
+boards-for-next
+
+Marc Dietrich (1):
+      ARM: tegra: Add Toshiba AC100 support
+
+Olof Johansson (3):
+      ARM: tegra: seaboard: register i2c devices
+      ARM: tegra: harmony: register i2c devices
+      ARM: tegra: enable new drivers in defconfig
+
+Stephen Warren (5):
+      ARM: tegra: add devices.c entries for audio
+      ARM: tegra: create defines for SD-related GPIO names
+      ARM: tegra: harmony: Beginnings of audio support
+      ARM: tegra: harmony: I2C-related portions of audio support
+      ARM: tegra: harmony: Set WM8903 gpio_base
+
+ arch/arm/configs/tegra_defconfig            |   17 +++-
+ arch/arm/mach-tegra/Kconfig                 |    5 +
+ arch/arm/mach-tegra/Makefile                |    3 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c  |   28 +++--
+ arch/arm/mach-tegra/board-harmony.c         |   94 +++++++++++++++-
+ arch/arm/mach-tegra/board-harmony.h         |   14 +++
+ arch/arm/mach-tegra/board-paz00-pinmux.c    |  157 +++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.c           |  128 ++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h           |   29 +++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   11 +-
+ arch/arm/mach-tegra/board-seaboard.c        |   68 +++++++++++--
+ arch/arm/mach-tegra/board-seaboard.h        |    3 +
+ arch/arm/mach-tegra/devices.c               |   70 ++++++++++++
+ arch/arm/mach-tegra/devices.h               |    4 +
+ arch/arm/mach-tegra/include/mach/iomap.h    |    3 +
+ 15 files changed, 603 insertions(+), 31 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.h
 --
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
+To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
