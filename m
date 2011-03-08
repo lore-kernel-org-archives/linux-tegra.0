@@ -1,44 +1,41 @@
 From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [GIT PULL]: TrimSlice update
-Date: Tue, 08 Mar 2011 11:01:37 +0200
-Message-ID: <4D75F071.7050401@compulab.co.il>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 0/3] Harmony PCI-e and regulators
+Date: Tue,  8 Mar 2011 14:58:56 +0200
+Message-ID: <cover.1299588456.git.mike@compulab.co.il>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAKML <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Colin,
+These patches provide update for Harmony PCI-e intialization and add
+registration of the TPS65862 PMIC.
+Additionally, there are several tegra_defconfig updates. These updates
+allow booting the Harmony with PCI-e enabled and add ability to boot
+TrimSlice with root on NFS.
 
-Please pull last minute update for the TrimSlice that enables the SD
-slots on the platform.
+The patches were generated vs. Olof's board-for-next-i2c that seems to
+disappear. If there are now objection to these patches I can push them
+into separate branch in my tree, so that it can be pulled after Tegra
+I2C is merged.
 
-The patches are based on your current for-next branch.
+Mike Rapoport (3):
+  ARM: tegra: harmony: update PCI-e initialization sequence
+  ARM: tegra: harmony: initialize the TPS65862 PMIC
+  ARM: tegra: update defconfig
 
-The following changes since commit d5fdafd38ca0c28c4648909ce0afd0a5420309ca:
-
-  ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
-(2011-03-03 13:57:31 -0800)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux-tegra.git
-trimslice/upstream
-
-Mike Rapoport (1):
-      ARM: tegra: trimslice: enable MMC/SD slots
-
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    9 +++++++++
- arch/arm/mach-tegra/board-trimslice.c        |   19 +++++++++++++++++++
- arch/arm/mach-tegra/board-trimslice.h        |    3 +++
- 3 files changed, 31 insertions(+), 0 deletions(-)
-
+ arch/arm/configs/tegra_defconfig          |   12 ++-
+ arch/arm/mach-tegra/Makefile              |    1 +
+ arch/arm/mach-tegra/board-harmony-pcie.c  |   24 ++++-
+ arch/arm/mach-tegra/board-harmony-power.c |  161 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-harmony.c       |    1 +
+ arch/arm/mach-tegra/board-harmony.h       |    1 +
+ 6 files changed, 197 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-harmony-power.c
 
 -- 
-Sincerely yours,
-Mike.
+1.7.3.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
