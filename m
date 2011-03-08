@@ -1,34 +1,37 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: harmony: initialize the TPS65862 PMIC
-Date: Tue, 8 Mar 2011 13:15:41 +0000
-Message-ID: <20110308131541.GB5892@sirena.org.uk>
-References: <cover.1299588456.git.mike@compulab.co.il> <4ade6d195fff78271085eafb0a99de3be8beb426.1299588456.git.mike@compulab.co.il>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 0/3] Harmony PCI-e and regulators
+Date: Tue, 8 Mar 2011 10:06:28 -0800
+Message-ID: <AANLkTikZhz93EEjGov7MDa7tedMNvf05YavQD1ny2H8F@mail.gmail.com>
+References: <cover.1299588456.git.mike@compulab.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4ade6d195fff78271085eafb0a99de3be8beb426.1299588456.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+In-Reply-To: <cover.1299588456.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 08, 2011 at 02:58:58PM +0200, Mike Rapoport wrote:
+Hi,
 
-> +static struct regulator_consumer_supply tps658621_ldo2_supply[] = {
-> +	REGULATOR_SUPPLY("vdd_rtc", NULL),
-> +};
+On Tue, Mar 8, 2011 at 4:58 AM, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org> wrote:
+> These patches provide update for Harmony PCI-e intialization and add
+> registration of the TPS65862 PMIC.
+> Additionally, there are several tegra_defconfig updates. These updates
+> allow booting the Harmony with PCI-e enabled and add ability to boot
+> TrimSlice with root on NFS.
+>
+> The patches were generated vs. Olof's board-for-next-i2c that seems to
+> disappear. If there are now objection to these patches I can push them
+> into separate branch in my tree, so that it can be pulled after Tegra
+> I2C is merged.
 
-I feel sure that some of these could be using a struct device, though
-since they're probably all going to be required to be always on I'd
-expect it's not useful to have them mapped as supplies at all and the
-drivers could just assume they were there.
+Given the discussion yesterday, I merged what was essentially in the
+-i2c branch into the regular boards-for-next branch. I can take these
+through the same branch, since Colin hasn't pulled yet.
 
-> +#define REGULATOR_INIT(_id, _minmv, _maxmv)				\
-> +	{								\
 
-This should be namespaced, someone might add a generic macro with that
-name.
+-Olof
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
