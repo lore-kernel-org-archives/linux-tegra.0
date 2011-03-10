@@ -1,187 +1,947 @@
-From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [PATCH v2 2/3] ARM: tegra: harmony: initialize the TPS65862 PMIC
-Date: Wed,  9 Mar 2011 16:31:18 +0200
-Message-ID: <f7a5f9247f32e85f5b008412a973f9ad7ef4010f.1299681036.git.mike@compulab.co.il>
-References: <cover.1299681036.git.mike@compulab.co.il>
+From: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6 2/4] ARM: tegra: Add support for Tegra USB PHYs
+Date: Wed,  9 Mar 2011 16:28:55 -0800
+Message-ID: <1299716937-17704-3-git-send-email-benoit@android.com>
+References: <1299716937-17704-1-git-send-email-benoit@android.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1299681036.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+In-Reply-To: <1299716937-17704-1-git-send-email-benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Initialize the PMIC voltage regulators and provide the supply map for
-PCI-e clock supply. The rest of the supplies should be added together
-with the drivers that use them.
+Interface used by Tegra's gadget driver and ehci driver
+to power on and configure the USB PHYs.
 
-Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-CC: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Signed-off-by: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/Makefile              |    1 +
- arch/arm/mach-tegra/board-harmony-power.c |  117 +++++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-harmony.c       |    1 +
- arch/arm/mach-tegra/board-harmony.h       |    1 +
- 4 files changed, 120 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/board-harmony-power.c
+ arch/arm/mach-tegra/Kconfig                |    3 +
+ arch/arm/mach-tegra/Makefile               |    1 +
+ arch/arm/mach-tegra/include/mach/usb_phy.h |   86 +++
+ arch/arm/mach-tegra/usb_phy.c              |  795 ++++++++++++++++++++++++++++
+ 4 files changed, 885 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/include/mach/usb_phy.h
+ create mode 100644 arch/arm/mach-tegra/usb_phy.c
 
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index acd9552..394b3c7 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -10,6 +10,9 @@ config ARCH_TEGRA_2x_SOC
+ 	select CPU_V7
+ 	select ARM_GIC
+ 	select ARCH_REQUIRE_GPIOLIB
++	select USB_ARCH_HAS_EHCI if USB_SUPPORT
++	select USB_ULPI if USB_SUPPORT
++	select USB_ULPI_VIEWPORT if USB_SUPPORT
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
 diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 673651f..bbe1dbe 100644
+index cdbc68e..38b66a8 100644
 --- a/arch/arm/mach-tegra/Makefile
 +++ b/arch/arm/mach-tegra/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+@@ -15,6 +15,7 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
++obj-$(CONFIG_USB_SUPPORT)		+= usb_phy.o
+ 
  obj-${CONFIG_MACH_HARMONY}              += board-harmony.o
  obj-${CONFIG_MACH_HARMONY}              += board-harmony-pinmux.o
- obj-${CONFIG_MACH_HARMONY}              += board-harmony-pcie.o
-+obj-${CONFIG_MACH_HARMONY}              += board-harmony-power.o
- 
- obj-${CONFIG_MACH_PAZ00}		+= board-paz00.o
- obj-${CONFIG_MACH_PAZ00}		+= board-paz00-pinmux.o
-diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+diff --git a/arch/arm/mach-tegra/include/mach/usb_phy.h b/arch/arm/mach-tegra/include/mach/usb_phy.h
 new file mode 100644
-index 0000000..c84442c
+index 0000000..d4b8f9e
 --- /dev/null
-+++ b/arch/arm/mach-tegra/board-harmony-power.c
-@@ -0,0 +1,117 @@
++++ b/arch/arm/mach-tegra/include/mach/usb_phy.h
+@@ -0,0 +1,86 @@
 +/*
-+ * Copyright (C) 2010 NVIDIA, Inc.
++ * arch/arm/mach-tegra/include/mach/usb_phy.h
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * Copyright (C) 2010 Google, Inc.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
 + *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software
-+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-+ * 02111-1307, USA
 + */
-+#include <linux/i2c.h>
++
++#ifndef __MACH_USB_PHY_H
++#define __MACH_USB_PHY_H
++
++#include <linux/clk.h>
++#include <linux/usb/otg.h>
++
++struct tegra_utmip_config {
++	u8 hssync_start_delay;
++	u8 elastic_limit;
++	u8 idle_wait_delay;
++	u8 term_range_adj;
++	u8 xcvr_setup;
++	u8 xcvr_lsfslew;
++	u8 xcvr_lsrslew;
++};
++
++struct tegra_ulpi_config {
++	int reset_gpio;
++	const char *clk;
++};
++
++enum tegra_usb_phy_port_speed {
++	TEGRA_USB_PHY_PORT_SPEED_FULL = 0,
++	TEGRA_USB_PHY_PORT_SPEED_LOW,
++	TEGRA_USB_PHY_PORT_SPEED_HIGH,
++};
++
++enum tegra_usb_phy_mode {
++	TEGRA_USB_PHY_MODE_DEVICE,
++	TEGRA_USB_PHY_MODE_HOST,
++};
++
++struct tegra_xtal_freq;
++
++struct tegra_usb_phy {
++	int instance;
++	const struct tegra_xtal_freq *freq;
++	void __iomem *regs;
++	void __iomem *pad_regs;
++	struct clk *clk;
++	struct clk *pll_u;
++	struct clk *pad_clk;
++	enum tegra_usb_phy_mode mode;
++	void *config;
++	struct otg_transceiver *ulpi;
++};
++
++struct tegra_usb_phy *tegra_usb_phy_open(int instance, void __iomem *regs,
++			void *config, enum tegra_usb_phy_mode phy_mode);
++
++int tegra_usb_phy_power_on(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_power_off(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_preresume(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_postresume(struct tegra_usb_phy *phy);
++
++void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
++				 enum tegra_usb_phy_port_speed port_speed);
++
++void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy);
++
++void tegra_usb_phy_close(struct tegra_usb_phy *phy);
++
++#endif /* __MACH_USB_PHY_H */
+diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
+new file mode 100644
+index 0000000..88081bb
+--- /dev/null
++++ b/arch/arm/mach-tegra/usb_phy.c
+@@ -0,0 +1,795 @@
++/*
++ * arch/arm/mach-tegra/usb_phy.c
++ *
++ * Copyright (C) 2010 Google, Inc.
++ *
++ * Author:
++ *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
++ *	Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/resource.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/err.h>
 +#include <linux/platform_device.h>
++#include <linux/io.h>
 +#include <linux/gpio.h>
++#include <linux/usb/otg.h>
++#include <linux/usb/ulpi.h>
++#include <asm/mach-types.h>
++#include <mach/usb_phy.h>
++#include <mach/iomap.h>
 +
-+#include <linux/regulator/machine.h>
-+#include <linux/mfd/tps6586x.h>
++#define ULPI_VIEWPORT		0x170
 +
-+#include <mach/irqs.h>
++#define USB_PORTSC1		0x184
++#define   USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
++#define   USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
++#define   USB_PORTSC1_PHCD	(1 << 23)
++#define   USB_PORTSC1_WKOC	(1 << 22)
++#define   USB_PORTSC1_WKDS	(1 << 21)
++#define   USB_PORTSC1_WKCN	(1 << 20)
++#define   USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
++#define   USB_PORTSC1_PP	(1 << 12)
++#define   USB_PORTSC1_SUSP	(1 << 7)
++#define   USB_PORTSC1_PE	(1 << 2)
++#define   USB_PORTSC1_CCS	(1 << 0)
 +
-+#define PMC_CTRL		0x0
-+#define PMC_CTRL_INTR_LOW	(1 << 17)
++#define USB_SUSP_CTRL		0x400
++#define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
++#define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
++#define   USB_SUSP_CLR		(1 << 5)
++#define   USB_PHY_CLK_VALID	(1 << 7)
++#define   UTMIP_RESET			(1 << 11)
++#define   UHSIC_RESET			(1 << 11)
++#define   UTMIP_PHY_ENABLE		(1 << 12)
++#define   ULPI_PHY_ENABLE	(1 << 13)
++#define   USB_SUSP_SET		(1 << 14)
++#define   USB_WAKEUP_DEBOUNCE_COUNT(x)	(((x) & 0x7) << 16)
 +
-+static struct regulator_consumer_supply tps658621_ldo0_supply[] = {
-+	REGULATOR_SUPPLY("pex_clk", NULL),
++#define USB1_LEGACY_CTRL	0x410
++#define   USB1_NO_LEGACY_MODE			(1 << 0)
++#define   USB1_VBUS_SENSE_CTL_MASK		(3 << 1)
++#define   USB1_VBUS_SENSE_CTL_VBUS_WAKEUP	(0 << 1)
++#define   USB1_VBUS_SENSE_CTL_AB_SESS_VLD_OR_VBUS_WAKEUP \
++						(1 << 1)
++#define   USB1_VBUS_SENSE_CTL_AB_SESS_VLD	(2 << 1)
++#define   USB1_VBUS_SENSE_CTL_A_SESS_VLD	(3 << 1)
++
++#define ULPI_TIMING_CTRL_0	0x424
++#define   ULPI_OUTPUT_PINMUX_BYP	(1 << 10)
++#define   ULPI_CLKOUT_PINMUX_BYP	(1 << 11)
++
++#define ULPI_TIMING_CTRL_1	0x428
++#define   ULPI_DATA_TRIMMER_LOAD	(1 << 0)
++#define   ULPI_DATA_TRIMMER_SEL(x)	(((x) & 0x7) << 1)
++#define   ULPI_STPDIRNXT_TRIMMER_LOAD	(1 << 16)
++#define   ULPI_STPDIRNXT_TRIMMER_SEL(x)	(((x) & 0x7) << 17)
++#define   ULPI_DIR_TRIMMER_LOAD		(1 << 24)
++#define   ULPI_DIR_TRIMMER_SEL(x)	(((x) & 0x7) << 25)
++
++#define UTMIP_PLL_CFG1		0x804
++#define   UTMIP_XTAL_FREQ_COUNT(x)		(((x) & 0xfff) << 0)
++#define   UTMIP_PLLU_ENABLE_DLY_COUNT(x)	(((x) & 0x1f) << 27)
++
++#define UTMIP_XCVR_CFG0		0x808
++#define   UTMIP_XCVR_SETUP(x)			(((x) & 0xf) << 0)
++#define   UTMIP_XCVR_LSRSLEW(x)			(((x) & 0x3) << 8)
++#define   UTMIP_XCVR_LSFSLEW(x)			(((x) & 0x3) << 10)
++#define   UTMIP_FORCE_PD_POWERDOWN		(1 << 14)
++#define   UTMIP_FORCE_PD2_POWERDOWN		(1 << 16)
++#define   UTMIP_FORCE_PDZI_POWERDOWN		(1 << 18)
++#define   UTMIP_XCVR_HSSLEW_MSB(x)		(((x) & 0x7f) << 25)
++
++#define UTMIP_BIAS_CFG0		0x80c
++#define   UTMIP_OTGPD			(1 << 11)
++#define   UTMIP_BIASPD			(1 << 10)
++
++#define UTMIP_HSRX_CFG0		0x810
++#define   UTMIP_ELASTIC_LIMIT(x)	(((x) & 0x1f) << 10)
++#define   UTMIP_IDLE_WAIT(x)		(((x) & 0x1f) << 15)
++
++#define UTMIP_HSRX_CFG1		0x814
++#define   UTMIP_HS_SYNC_START_DLY(x)	(((x) & 0x1f) << 1)
++
++#define UTMIP_TX_CFG0		0x820
++#define   UTMIP_FS_PREABMLE_J		(1 << 19)
++#define   UTMIP_HS_DISCON_DISABLE	(1 << 8)
++
++#define UTMIP_MISC_CFG0		0x824
++#define   UTMIP_DPDM_OBSERVE		(1 << 26)
++#define   UTMIP_DPDM_OBSERVE_SEL(x)	(((x) & 0xf) << 27)
++#define   UTMIP_DPDM_OBSERVE_SEL_FS_J	UTMIP_DPDM_OBSERVE_SEL(0xf)
++#define   UTMIP_DPDM_OBSERVE_SEL_FS_K	UTMIP_DPDM_OBSERVE_SEL(0xe)
++#define   UTMIP_DPDM_OBSERVE_SEL_FS_SE1 UTMIP_DPDM_OBSERVE_SEL(0xd)
++#define   UTMIP_DPDM_OBSERVE_SEL_FS_SE0 UTMIP_DPDM_OBSERVE_SEL(0xc)
++#define   UTMIP_SUSPEND_EXIT_ON_EDGE	(1 << 22)
++
++#define UTMIP_MISC_CFG1		0x828
++#define   UTMIP_PLL_ACTIVE_DLY_COUNT(x)	(((x) & 0x1f) << 18)
++#define   UTMIP_PLLU_STABLE_COUNT(x)	(((x) & 0xfff) << 6)
++
++#define UTMIP_DEBOUNCE_CFG0	0x82c
++#define   UTMIP_BIAS_DEBOUNCE_A(x)	(((x) & 0xffff) << 0)
++
++#define UTMIP_BAT_CHRG_CFG0	0x830
++#define   UTMIP_PD_CHRG			(1 << 0)
++
++#define UTMIP_SPARE_CFG0	0x834
++#define   FUSE_SETUP_SEL		(1 << 3)
++
++#define UTMIP_XCVR_CFG1		0x838
++#define   UTMIP_FORCE_PDDISC_POWERDOWN	(1 << 0)
++#define   UTMIP_FORCE_PDCHRP_POWERDOWN	(1 << 2)
++#define   UTMIP_FORCE_PDDR_POWERDOWN	(1 << 4)
++#define   UTMIP_XCVR_TERM_RANGE_ADJ(x)	(((x) & 0xf) << 18)
++
++#define UTMIP_BIAS_CFG1		0x83c
++#define   UTMIP_BIAS_PDTRK_COUNT(x)	(((x) & 0x1f) << 3)
++
++static DEFINE_SPINLOCK(utmip_pad_lock);
++static int utmip_pad_count;
++
++struct tegra_xtal_freq {
++	int freq;
++	u8 enable_delay;
++	u8 stable_count;
++	u8 active_delay;
++	u8 xtal_freq_count;
++	u16 debounce;
 +};
 +
-+static struct regulator_init_data ldo0_data = {
-+	.constraints = {
-+		.min_uV = 1250 * 1000,
-+		.max_uV = 3300 * 1000,
-+		.valid_modes_mask = (REGULATOR_MODE_NORMAL |
-+				     REGULATOR_MODE_STANDBY),
-+		.valid_ops_mask = (REGULATOR_CHANGE_MODE |
-+				   REGULATOR_CHANGE_STATUS |
-+				   REGULATOR_CHANGE_VOLTAGE),
-+	},
-+	.num_consumer_supplies = ARRAY_SIZE(tps658621_ldo0_supply),
-+	.consumer_supplies = tps658621_ldo0_supply,
-+};
-+
-+#define HARMONY_REGULATOR_INIT(_id, _minmv, _maxmv)			\
-+	static struct regulator_init_data _id##_data = {		\
-+		.constraints = {					\
-+			.min_uV = (_minmv)*1000,			\
-+			.max_uV = (_maxmv)*1000,			\
-+			.valid_modes_mask = (REGULATOR_MODE_NORMAL |	\
-+					     REGULATOR_MODE_STANDBY),	\
-+			.valid_ops_mask = (REGULATOR_CHANGE_MODE |	\
-+					   REGULATOR_CHANGE_STATUS |	\
-+					   REGULATOR_CHANGE_VOLTAGE),	\
-+		},							\
-+	}
-+
-+HARMONY_REGULATOR_INIT(sm0, 725, 1500);
-+HARMONY_REGULATOR_INIT(sm1, 725, 1500);
-+HARMONY_REGULATOR_INIT(sm2, 3000, 4550);
-+HARMONY_REGULATOR_INIT(ldo1, 725, 1500);
-+HARMONY_REGULATOR_INIT(ldo2, 725, 1500);
-+HARMONY_REGULATOR_INIT(ldo3, 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo4, 1700, 2475);
-+HARMONY_REGULATOR_INIT(ldo5, 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo6, 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo7, 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo8, 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo9, 1250, 3300);
-+
-+#define TPS_REG(_id, _data)			\
-+	{					\
-+		.id = TPS6586X_ID_##_id,	\
-+		.name = "tps6586x-regulator",	\
-+		.platform_data = _data,		\
-+	}
-+
-+static struct tps6586x_subdev_info tps_devs[] = {
-+	TPS_REG(SM_0, &sm0_data),
-+	TPS_REG(SM_1, &sm1_data),
-+	TPS_REG(SM_2, &sm2_data),
-+	TPS_REG(LDO_0, &ldo0_data),
-+	TPS_REG(LDO_1, &ldo1_data),
-+	TPS_REG(LDO_2, &ldo2_data),
-+	TPS_REG(LDO_3, &ldo3_data),
-+	TPS_REG(LDO_4, &ldo4_data),
-+	TPS_REG(LDO_5, &ldo5_data),
-+	TPS_REG(LDO_6, &ldo6_data),
-+	TPS_REG(LDO_7, &ldo7_data),
-+	TPS_REG(LDO_8, &ldo8_data),
-+	TPS_REG(LDO_9, &ldo9_data),
-+};
-+
-+static struct tps6586x_platform_data tps_platform = {
-+	.irq_base	= TEGRA_NR_IRQS,
-+	.num_subdevs	= ARRAY_SIZE(tps_devs),
-+	.subdevs	= tps_devs,
-+	.gpio_base	= TEGRA_NR_GPIOS,
-+};
-+
-+static struct i2c_board_info __initdata harmony_regulators[] = {
++static const struct tegra_xtal_freq tegra_freq_table[] = {
 +	{
-+		I2C_BOARD_INFO("tps6586x", 0x34),
-+		.irq		= INT_EXTERNAL_PMU,
-+		.platform_data	= &tps_platform,
++		.freq = 12000000,
++		.enable_delay = 0x02,
++		.stable_count = 0x2F,
++		.active_delay = 0x04,
++		.xtal_freq_count = 0x76,
++		.debounce = 0x7530,
++	},
++	{
++		.freq = 13000000,
++		.enable_delay = 0x02,
++		.stable_count = 0x33,
++		.active_delay = 0x05,
++		.xtal_freq_count = 0x7F,
++		.debounce = 0x7EF4,
++	},
++	{
++		.freq = 19200000,
++		.enable_delay = 0x03,
++		.stable_count = 0x4B,
++		.active_delay = 0x06,
++		.xtal_freq_count = 0xBB,
++		.debounce = 0xBB80,
++	},
++	{
++		.freq = 26000000,
++		.enable_delay = 0x04,
++		.stable_count = 0x66,
++		.active_delay = 0x09,
++		.xtal_freq_count = 0xFE,
++		.debounce = 0xFDE8,
 +	},
 +};
 +
-+int __init harmony_regulator_init(void)
++static struct tegra_utmip_config utmip_default[] = {
++	[0] = {
++		.hssync_start_delay = 9,
++		.idle_wait_delay = 17,
++		.elastic_limit = 16,
++		.term_range_adj = 6,
++		.xcvr_setup = 9,
++		.xcvr_lsfslew = 1,
++		.xcvr_lsrslew = 1,
++	},
++	[2] = {
++		.hssync_start_delay = 9,
++		.idle_wait_delay = 17,
++		.elastic_limit = 16,
++		.term_range_adj = 6,
++		.xcvr_setup = 9,
++		.xcvr_lsfslew = 2,
++		.xcvr_lsrslew = 2,
++	},
++};
++
++static inline bool phy_is_ulpi(struct tegra_usb_phy *phy)
 +{
-+	i2c_register_board_info(3, harmony_regulators, 1);
++	return (phy->instance == 1);
++}
++
++static int utmip_pad_open(struct tegra_usb_phy *phy)
++{
++	phy->pad_clk = clk_get_sys("utmip-pad", NULL);
++	if (IS_ERR(phy->pad_clk)) {
++		pr_err("%s: can't get utmip pad clock\n", __func__);
++		return PTR_ERR(phy->pad_clk);
++	}
++
++	if (phy->instance == 0) {
++		phy->pad_regs = phy->regs;
++	} else {
++		phy->pad_regs = ioremap(TEGRA_USB_BASE, TEGRA_USB_SIZE);
++		if (!phy->pad_regs) {
++			pr_err("%s: can't remap usb registers\n", __func__);
++			clk_put(phy->pad_clk);
++			return -ENOMEM;
++		}
++	}
++	return 0;
++}
++
++static void utmip_pad_close(struct tegra_usb_phy *phy)
++{
++	if (phy->instance != 0)
++		iounmap(phy->pad_regs);
++	clk_put(phy->pad_clk);
++}
++
++static void utmip_pad_power_on(struct tegra_usb_phy *phy)
++{
++	unsigned long val, flags;
++	void __iomem *base = phy->pad_regs;
++
++	clk_enable(phy->pad_clk);
++
++	spin_lock_irqsave(&utmip_pad_lock, flags);
++
++	if (utmip_pad_count++ == 0) {
++		val = readl(base + UTMIP_BIAS_CFG0);
++		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD);
++		writel(val, base + UTMIP_BIAS_CFG0);
++	}
++
++	spin_unlock_irqrestore(&utmip_pad_lock, flags);
++
++	clk_disable(phy->pad_clk);
++}
++
++static int utmip_pad_power_off(struct tegra_usb_phy *phy)
++{
++	unsigned long val, flags;
++	void __iomem *base = phy->pad_regs;
++
++	if (!utmip_pad_count) {
++		pr_err("%s: utmip pad already powered off\n", __func__);
++		return -EINVAL;
++	}
++
++	clk_enable(phy->pad_clk);
++
++	spin_lock_irqsave(&utmip_pad_lock, flags);
++
++	if (--utmip_pad_count == 0) {
++		val = readl(base + UTMIP_BIAS_CFG0);
++		val |= UTMIP_OTGPD | UTMIP_BIASPD;
++		writel(val, base + UTMIP_BIAS_CFG0);
++	}
++
++	spin_unlock_irqrestore(&utmip_pad_lock, flags);
++
++	clk_disable(phy->pad_clk);
 +
 +	return 0;
 +}
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index e7c2fea..75c918a 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -196,6 +196,7 @@ static void __init tegra_harmony_init(void)
- 
- 	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
- 	harmony_i2c_init();
-+	harmony_regulator_init();
- }
- 
- MACHINE_START(HARMONY, "harmony")
-diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
-index 9243521..1e57b07 100644
---- a/arch/arm/mach-tegra/board-harmony.h
-+++ b/arch/arm/mach-tegra/board-harmony.h
-@@ -32,5 +32,6 @@
- #define TEGRA_GPIO_EXT_MIC_EN		TEGRA_GPIO_PX1
- 
- void harmony_pinmux_init(void);
-+int harmony_regulator_init(void);
- 
- #endif
++
++static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
++{
++	unsigned long timeout = 2000;
++	do {
++		if ((readl(reg) & mask) == result)
++			return 0;
++		udelay(1);
++		timeout--;
++	} while (timeout);
++	return -1;
++}
++
++static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	if (phy->instance == 0) {
++		val = readl(base + USB_SUSP_CTRL);
++		val |= USB_SUSP_SET;
++		writel(val, base + USB_SUSP_CTRL);
++
++		udelay(10);
++
++		val = readl(base + USB_SUSP_CTRL);
++		val &= ~USB_SUSP_SET;
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	if (phy->instance == 2) {
++		val = readl(base + USB_PORTSC1);
++		val |= USB_PORTSC1_PHCD;
++		writel(val, base + USB_PORTSC1);
++	}
++
++	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
++		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
++}
++
++static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	if (phy->instance == 0) {
++		val = readl(base + USB_SUSP_CTRL);
++		val |= USB_SUSP_CLR;
++		writel(val, base + USB_SUSP_CTRL);
++
++		udelay(10);
++
++		val = readl(base + USB_SUSP_CTRL);
++		val &= ~USB_SUSP_CLR;
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	if (phy->instance == 2) {
++		val = readl(base + USB_PORTSC1);
++		val &= ~USB_PORTSC1_PHCD;
++		writel(val, base + USB_PORTSC1);
++	}
++
++	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
++						     USB_PHY_CLK_VALID))
++		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
++}
++
++static int utmi_phy_power_on(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++	struct tegra_utmip_config *config = phy->config;
++
++	val = readl(base + USB_SUSP_CTRL);
++	val |= UTMIP_RESET;
++	writel(val, base + USB_SUSP_CTRL);
++
++	if (phy->instance == 0) {
++		val = readl(base + USB1_LEGACY_CTRL);
++		val |= USB1_NO_LEGACY_MODE;
++		writel(val, base + USB1_LEGACY_CTRL);
++	}
++
++	val = readl(base + UTMIP_TX_CFG0);
++	val &= ~UTMIP_FS_PREABMLE_J;
++	writel(val, base + UTMIP_TX_CFG0);
++
++	val = readl(base + UTMIP_HSRX_CFG0);
++	val &= ~(UTMIP_IDLE_WAIT(~0) | UTMIP_ELASTIC_LIMIT(~0));
++	val |= UTMIP_IDLE_WAIT(config->idle_wait_delay);
++	val |= UTMIP_ELASTIC_LIMIT(config->elastic_limit);
++	writel(val, base + UTMIP_HSRX_CFG0);
++
++	val = readl(base + UTMIP_HSRX_CFG1);
++	val &= ~UTMIP_HS_SYNC_START_DLY(~0);
++	val |= UTMIP_HS_SYNC_START_DLY(config->hssync_start_delay);
++	writel(val, base + UTMIP_HSRX_CFG1);
++
++	val = readl(base + UTMIP_DEBOUNCE_CFG0);
++	val &= ~UTMIP_BIAS_DEBOUNCE_A(~0);
++	val |= UTMIP_BIAS_DEBOUNCE_A(phy->freq->debounce);
++	writel(val, base + UTMIP_DEBOUNCE_CFG0);
++
++	val = readl(base + UTMIP_MISC_CFG0);
++	val &= ~UTMIP_SUSPEND_EXIT_ON_EDGE;
++	writel(val, base + UTMIP_MISC_CFG0);
++
++	val = readl(base + UTMIP_MISC_CFG1);
++	val &= ~(UTMIP_PLL_ACTIVE_DLY_COUNT(~0) | UTMIP_PLLU_STABLE_COUNT(~0));
++	val |= UTMIP_PLL_ACTIVE_DLY_COUNT(phy->freq->active_delay) |
++		UTMIP_PLLU_STABLE_COUNT(phy->freq->stable_count);
++	writel(val, base + UTMIP_MISC_CFG1);
++
++	val = readl(base + UTMIP_PLL_CFG1);
++	val &= ~(UTMIP_XTAL_FREQ_COUNT(~0) | UTMIP_PLLU_ENABLE_DLY_COUNT(~0));
++	val |= UTMIP_XTAL_FREQ_COUNT(phy->freq->xtal_freq_count) |
++		UTMIP_PLLU_ENABLE_DLY_COUNT(phy->freq->enable_delay);
++	writel(val, base + UTMIP_PLL_CFG1);
++
++	if (phy->mode == TEGRA_USB_PHY_MODE_DEVICE) {
++		val = readl(base + USB_SUSP_CTRL);
++		val &= ~(USB_WAKE_ON_CNNT_EN_DEV | USB_WAKE_ON_DISCON_EN_DEV);
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	utmip_pad_power_on(phy);
++
++	val = readl(base + UTMIP_XCVR_CFG0);
++	val &= ~(UTMIP_FORCE_PD_POWERDOWN | UTMIP_FORCE_PD2_POWERDOWN |
++		 UTMIP_FORCE_PDZI_POWERDOWN | UTMIP_XCVR_SETUP(~0) |
++		 UTMIP_XCVR_LSFSLEW(~0) | UTMIP_XCVR_LSRSLEW(~0) |
++		 UTMIP_XCVR_HSSLEW_MSB(~0));
++	val |= UTMIP_XCVR_SETUP(config->xcvr_setup);
++	val |= UTMIP_XCVR_LSFSLEW(config->xcvr_lsfslew);
++	val |= UTMIP_XCVR_LSRSLEW(config->xcvr_lsrslew);
++	writel(val, base + UTMIP_XCVR_CFG0);
++
++	val = readl(base + UTMIP_XCVR_CFG1);
++	val &= ~(UTMIP_FORCE_PDDISC_POWERDOWN | UTMIP_FORCE_PDCHRP_POWERDOWN |
++		 UTMIP_FORCE_PDDR_POWERDOWN | UTMIP_XCVR_TERM_RANGE_ADJ(~0));
++	val |= UTMIP_XCVR_TERM_RANGE_ADJ(config->term_range_adj);
++	writel(val, base + UTMIP_XCVR_CFG1);
++
++	val = readl(base + UTMIP_BAT_CHRG_CFG0);
++	val &= ~UTMIP_PD_CHRG;
++	writel(val, base + UTMIP_BAT_CHRG_CFG0);
++
++	val = readl(base + UTMIP_BIAS_CFG1);
++	val &= ~UTMIP_BIAS_PDTRK_COUNT(~0);
++	val |= UTMIP_BIAS_PDTRK_COUNT(0x5);
++	writel(val, base + UTMIP_BIAS_CFG1);
++
++	if (phy->instance == 0) {
++		val = readl(base + UTMIP_SPARE_CFG0);
++		if (phy->mode == TEGRA_USB_PHY_MODE_DEVICE)
++			val &= ~FUSE_SETUP_SEL;
++		else
++			val |= FUSE_SETUP_SEL;
++		writel(val, base + UTMIP_SPARE_CFG0);
++	}
++
++	if (phy->instance == 2) {
++		val = readl(base + USB_SUSP_CTRL);
++		val |= UTMIP_PHY_ENABLE;
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	val = readl(base + USB_SUSP_CTRL);
++	val &= ~UTMIP_RESET;
++	writel(val, base + USB_SUSP_CTRL);
++
++	if (phy->instance == 0) {
++		val = readl(base + USB1_LEGACY_CTRL);
++		val &= ~USB1_VBUS_SENSE_CTL_MASK;
++		val |= USB1_VBUS_SENSE_CTL_A_SESS_VLD;
++		writel(val, base + USB1_LEGACY_CTRL);
++
++		val = readl(base + USB_SUSP_CTRL);
++		val &= ~USB_SUSP_SET;
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	utmi_phy_clk_enable(phy);
++
++	if (phy->instance == 2) {
++		val = readl(base + USB_PORTSC1);
++		val &= ~USB_PORTSC1_PTS(~0);
++		writel(val, base + USB_PORTSC1);
++	}
++
++	return 0;
++}
++
++static void utmi_phy_power_off(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	utmi_phy_clk_disable(phy);
++
++	if (phy->mode == TEGRA_USB_PHY_MODE_DEVICE) {
++		val = readl(base + USB_SUSP_CTRL);
++		val &= ~USB_WAKEUP_DEBOUNCE_COUNT(~0);
++		val |= USB_WAKE_ON_CNNT_EN_DEV | USB_WAKEUP_DEBOUNCE_COUNT(5);
++		writel(val, base + USB_SUSP_CTRL);
++	}
++
++	val = readl(base + USB_SUSP_CTRL);
++	val |= UTMIP_RESET;
++	writel(val, base + USB_SUSP_CTRL);
++
++	val = readl(base + UTMIP_BAT_CHRG_CFG0);
++	val |= UTMIP_PD_CHRG;
++	writel(val, base + UTMIP_BAT_CHRG_CFG0);
++
++	val = readl(base + UTMIP_XCVR_CFG0);
++	val |= UTMIP_FORCE_PD_POWERDOWN | UTMIP_FORCE_PD2_POWERDOWN |
++	       UTMIP_FORCE_PDZI_POWERDOWN;
++	writel(val, base + UTMIP_XCVR_CFG0);
++
++	val = readl(base + UTMIP_XCVR_CFG1);
++	val |= UTMIP_FORCE_PDDISC_POWERDOWN | UTMIP_FORCE_PDCHRP_POWERDOWN |
++	       UTMIP_FORCE_PDDR_POWERDOWN;
++	writel(val, base + UTMIP_XCVR_CFG1);
++
++	utmip_pad_power_off(phy);
++}
++
++static void utmi_phy_preresume(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	val = readl(base + UTMIP_TX_CFG0);
++	val |= UTMIP_HS_DISCON_DISABLE;
++	writel(val, base + UTMIP_TX_CFG0);
++}
++
++static void utmi_phy_postresume(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	val = readl(base + UTMIP_TX_CFG0);
++	val &= ~UTMIP_HS_DISCON_DISABLE;
++	writel(val, base + UTMIP_TX_CFG0);
++}
++
++static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
++				   enum tegra_usb_phy_port_speed port_speed)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	val = readl(base + UTMIP_MISC_CFG0);
++	val &= ~UTMIP_DPDM_OBSERVE_SEL(~0);
++	if (port_speed == TEGRA_USB_PHY_PORT_SPEED_LOW)
++		val |= UTMIP_DPDM_OBSERVE_SEL_FS_K;
++	else
++		val |= UTMIP_DPDM_OBSERVE_SEL_FS_J;
++	writel(val, base + UTMIP_MISC_CFG0);
++	udelay(1);
++
++	val = readl(base + UTMIP_MISC_CFG0);
++	val |= UTMIP_DPDM_OBSERVE;
++	writel(val, base + UTMIP_MISC_CFG0);
++	udelay(10);
++}
++
++static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++
++	val = readl(base + UTMIP_MISC_CFG0);
++	val &= ~UTMIP_DPDM_OBSERVE;
++	writel(val, base + UTMIP_MISC_CFG0);
++	udelay(10);
++}
++
++static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
++{
++	int ret;
++	unsigned long val;
++	void __iomem *base = phy->regs;
++	struct tegra_ulpi_config *config = phy->config;
++
++	gpio_direction_output(config->reset_gpio, 0);
++	msleep(5);
++	gpio_direction_output(config->reset_gpio, 1);
++
++	clk_enable(phy->clk);
++	msleep(1);
++
++	val = readl(base + USB_SUSP_CTRL);
++	val |= UHSIC_RESET;
++	writel(val, base + USB_SUSP_CTRL);
++
++	val = readl(base + ULPI_TIMING_CTRL_0);
++	val |= ULPI_OUTPUT_PINMUX_BYP | ULPI_CLKOUT_PINMUX_BYP;
++	writel(val, base + ULPI_TIMING_CTRL_0);
++
++	val = readl(base + USB_SUSP_CTRL);
++	val |= ULPI_PHY_ENABLE;
++	writel(val, base + USB_SUSP_CTRL);
++
++	val = 0;
++	writel(val, base + ULPI_TIMING_CTRL_1);
++
++	val |= ULPI_DATA_TRIMMER_SEL(4);
++	val |= ULPI_STPDIRNXT_TRIMMER_SEL(4);
++	val |= ULPI_DIR_TRIMMER_SEL(4);
++	writel(val, base + ULPI_TIMING_CTRL_1);
++	udelay(10);
++
++	val |= ULPI_DATA_TRIMMER_LOAD;
++	val |= ULPI_STPDIRNXT_TRIMMER_LOAD;
++	val |= ULPI_DIR_TRIMMER_LOAD;
++	writel(val, base + ULPI_TIMING_CTRL_1);
++
++	/* Fix VbusInvalid due to floating VBUS */
++	ret = otg_io_write(phy->ulpi, 0x40, 0x08);
++	if (ret) {
++		pr_err("%s: ulpi write failed\n", __func__);
++		return ret;
++	}
++
++	ret = otg_io_write(phy->ulpi, 0x80, 0x0B);
++	if (ret) {
++		pr_err("%s: ulpi write failed\n", __func__);
++		return ret;
++	}
++
++	val = readl(base + USB_PORTSC1);
++	val |= USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
++	writel(val, base + USB_PORTSC1);
++
++	val = readl(base + USB_SUSP_CTRL);
++	val |= USB_SUSP_CLR;
++	writel(val, base + USB_SUSP_CTRL);
++	udelay(100);
++
++	val = readl(base + USB_SUSP_CTRL);
++	val &= ~USB_SUSP_CLR;
++	writel(val, base + USB_SUSP_CTRL);
++
++	return 0;
++}
++
++static void ulpi_phy_power_off(struct tegra_usb_phy *phy)
++{
++	unsigned long val;
++	void __iomem *base = phy->regs;
++	struct tegra_ulpi_config *config = phy->config;
++
++	/* Clear WKCN/WKDS/WKOC wake-on events that can cause the USB
++	 * Controller to immediately bring the ULPI PHY out of low power
++	 */
++	val = readl(base + USB_PORTSC1);
++	val &= ~(USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN);
++	writel(val, base + USB_PORTSC1);
++
++	gpio_direction_output(config->reset_gpio, 0);
++	clk_disable(phy->clk);
++}
++
++struct tegra_usb_phy *tegra_usb_phy_open(int instance, void __iomem *regs,
++			void *config, enum tegra_usb_phy_mode phy_mode)
++{
++	struct tegra_usb_phy *phy;
++	struct tegra_ulpi_config *ulpi_config;
++	unsigned long parent_rate;
++	int i;
++	int err;
++
++	phy = kmalloc(sizeof(struct tegra_usb_phy), GFP_KERNEL);
++	if (!phy)
++		return ERR_PTR(-ENOMEM);
++
++	phy->instance = instance;
++	phy->regs = regs;
++	phy->config = config;
++	phy->mode = phy_mode;
++
++	if (!phy->config) {
++		if (phy_is_ulpi(phy)) {
++			pr_err("%s: ulpi phy configuration missing", __func__);
++			err = -EINVAL;
++			goto err0;
++		} else {
++			phy->config = &utmip_default[instance];
++		}
++	}
++
++	phy->pll_u = clk_get_sys(NULL, "pll_u");
++	if (IS_ERR(phy->pll_u)) {
++		pr_err("Can't get pll_u clock\n");
++		err = PTR_ERR(phy->pll_u);
++		goto err0;
++	}
++	clk_enable(phy->pll_u);
++
++	parent_rate = clk_get_rate(clk_get_parent(phy->pll_u));
++	for (i = 0; i < ARRAY_SIZE(tegra_freq_table); i++) {
++		if (tegra_freq_table[i].freq == parent_rate) {
++			phy->freq = &tegra_freq_table[i];
++			break;
++		}
++	}
++	if (!phy->freq) {
++		pr_err("invalid pll_u parent rate %ld\n", parent_rate);
++		err = -EINVAL;
++		goto err1;
++	}
++
++	if (phy_is_ulpi(phy)) {
++		ulpi_config = config;
++		phy->clk = clk_get_sys(NULL, ulpi_config->clk);
++		if (IS_ERR(phy->clk)) {
++			pr_err("%s: can't get ulpi clock\n", __func__);
++			err = -ENXIO;
++			goto err1;
++		}
++		tegra_gpio_enable(ulpi_config->reset_gpio);
++		gpio_request(ulpi_config->reset_gpio, "ulpi_phy_reset_b");
++		gpio_direction_output(ulpi_config->reset_gpio, 0);
++		phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
++		phy->ulpi->io_priv = regs + ULPI_VIEWPORT;
++	} else {
++		err = utmip_pad_open(phy);
++		if (err < 0)
++			goto err1;
++	}
++
++	return phy;
++
++err1:
++	clk_disable(phy->pll_u);
++	clk_put(phy->pll_u);
++err0:
++	kfree(phy);
++	return ERR_PTR(err);
++}
++
++int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
++{
++	if (phy_is_ulpi(phy))
++		return ulpi_phy_power_on(phy);
++	else
++		return utmi_phy_power_on(phy);
++}
++
++void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
++{
++	if (phy_is_ulpi(phy))
++		ulpi_phy_power_off(phy);
++	else
++		utmi_phy_power_off(phy);
++}
++
++void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_preresume(phy);
++}
++
++void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_postresume(phy);
++}
++
++void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
++				 enum tegra_usb_phy_port_speed port_speed)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_restore_start(phy, port_speed);
++}
++
++void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_restore_end(phy);
++}
++
++void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_clk_disable(phy);
++}
++
++void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy)
++{
++	if (!phy_is_ulpi(phy))
++		utmi_phy_clk_enable(phy);
++}
++
++void tegra_usb_phy_close(struct tegra_usb_phy *phy)
++{
++	if (phy_is_ulpi(phy))
++		clk_put(phy->clk);
++	else
++		utmip_pad_close(phy);
++	clk_disable(phy->pll_u);
++	clk_put(phy->pll_u);
++	kfree(phy);
++}
 -- 
 1.7.3.1
 
