@@ -1,92 +1,170 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL] please pull tegra-2.6 boards-for-next
-Date: Tue, 15 Mar 2011 17:08:47 -0700
-Message-ID: <AANLkTinquoCiq-Kt9Nvi_mow7PaSo3ZQRwdtB3zZ7ki4@mail.gmail.com>
-References: <AANLkTinY8MTkq3Ry5k9k1GaWAwT=AZuFYPMWsGCZ_pNo@mail.gmail.com>
-	<AANLkTi=8MKieocha2G1U75412hg9Uucx5t0ZV+QyGNKv@mail.gmail.com>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: ARM Tegra updates for 2.6.39
+Date: Tue, 15 Mar 2011 18:28:01 -0700
+Message-ID: <AANLkTikkb4RYxN2=HjpLgz-SWDKZ=ysE6HQuEEaDfiz8@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTi=8MKieocha2G1U75412hg9Uucx5t0ZV+QyGNKv-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: linux-main <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin,
+Hi Linus,
+Please pull updates for Tegra from:
 
-On Mon, Mar 7, 2011 at 4:57 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> Updated to what was discussed in a separate thread: Picked up patches
-> that will no longer build in the branch alone, but will build once
-> pulled into linux-next with other driver changes.
->
-> I also picked up the paz00 support patch. It's independent of other
-> platforms and risk of regressions is low, even though it's late in the
-> release cycle.
->
-> Finally: did one last touchup to the harmony i2c code to add an __init
-> annotation to quiet a compile warning. I didn't repost that patch
-> since the diff was trivial.
+ git://android.git.kernel.org/kernel/tegra.git for-linus
 
-Updated pull request including the 3-patch series from Mike for
-regulator support on Harmony.
+Thanks,
+Colin
 
-From here on out, I will start queuing new board patches for .40
-instead (unless they're bug fixes).
+The following changes since commit 100b33c8bd8a3235fd0b7948338d6cbb3db3c63d:
 
-
-
-The following changes since commit d5fdafd38ca0c28c4648909ce0afd0a5420309ca:
-  Mike Rapoport (1):
-        ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
+  Linux 2.6.38-rc4 (2011-02-07 16:03:55 -0800)
 
 are available in the git repository at:
+  git://android.git.kernel.org/kernel/tegra.git for-linus
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra-2.6.git
-boards-for-next
+Colin Cross (37):
+      ARM: tegra: Centralize macros to define debug uart base
+      ARM: tegra: Add api to control internal powergating
+      ARM: tegra: irqs: Update irq list
+      ARM: tegra: Add prototypes for subsystem suspend functions
+      ARM: tegra: clock: Suspend fixes, and add new clocks
+      ARM: tegra: timer: Add idle and suspend support to timers
+      ARM: tegra: irq: Add support for suspend wake sources
+      ARM: tegra: irq: Implement retrigger
+      ARM: tegra: cpufreq: Disable cpufreq during suspend
+      ARM: tegra: Allow overriding arch_reset
+      ARM: tegra: dma: Fix critical data corruption bugs
+      ARM: tegra: Use writel_relaxed in tegra_init_cache
+      Merge branch 'tegra-arch' of
+git://git.kernel.org/.../broonie/sound-2.6 into outside-for-next
+      ARM: tegra: clock: Don't BUG on changing an enabled PLL
+      ARM: tegra: clock: Drop debugging
+      ARM: tegra: clock: Don't use PLL lock bits
+      ARM: tegra: clock: Initialize clocks that have no enable
+      ARM: tegra: clock: Drop CPU dvfs
+      ARM: tegra: clock: Rearrange static clock tables
+      ARM: tegra: clock: Move unshared clk struct members into union
+      ARM: tegra: clock: Convert global lock to a lock per clock
+      ARM: tegra: cpufreq: Take an extra reference to pllx
+      ARM: tegra: clock: Add shared bus clock type
+      ARM: tegra: clock: Minor cleanups
+      ARM: tegra: Add external memory controller driver
+      ARM: tegra: clocks: Add emc scaling
+      ARM: tegra: cpufreq: Adjust memory frequency with cpu frequency
+      ARM: tegra: clock: Add function to set SDMMC tap delay
+      ARM: tegra: clock: Fix clock issues in suspend
+      ARM: tegra: clock: Miscellaneous clock updates
+      ARM: tegra: clock: Refcount periph clock enables
+      ARM: tegra: clock: Round rate before setting rate
+      ARM: tegra: clock: prevent accidental disables of cpu clock
+      ARM: tegra: Move tegra_common_init to tegra_init_early
+      ARM: tegra: timer: Enable timer and rtc clocks
+      ARM: tegra: common: Enable core clocks
+      Merge branch 'boards-for-next' of
+git://git.kernel.org/.../olof/tegra-2.6 into for-next
 
-Marc Dietrich (1):
-      ARM: tegra: Add Toshiba AC100 support
+Dima Zavin (1):
+      ARM: tegra: clock: enable clk reset for non-peripheral clocks
 
-Mike Rapoport (3):
-      ARM: tegra: harmony: update PCI-e initialization sequence
-      ARM: tegra: update defconfig
-      ARM: tegra: harmony: initialize the TPS65862 PMIC
+Gary King (2):
+      ARM: tegra: pinmux: Add missing drive pingroups and fix suspend
+      ARM: tegra: iomap: Add missing devices
 
-Olof Johansson (3):
-      ARM: tegra: seaboard: register i2c devices
-      ARM: tegra: harmony: register i2c devices
-      ARM: tegra: enable new drivers in defconfig
+Mark Brown (1):
+      ARM: tegra: Hide EMC scaling config behind ARCH_TEGRA
 
-Stephen Warren (5):
-      ARM: tegra: add devices.c entries for audio
-      ARM: tegra: create defines for SD-related GPIO names
-      ARM: tegra: harmony: Beginnings of audio support
-      ARM: tegra: harmony: I2C-related portions of audio support
-      ARM: tegra: harmony: Set WM8903 gpio_base
+Mike Rapoport (4):
+      ARM: tegra: add TrimSlice board
+      ARM: tegra: PCIE minor code refactoring
+      ARM: tegra: add PCI Express power gating
+      ARM: tegra: trimslice: initialize PCI-e only when running on TrimSlice
 
- arch/arm/configs/tegra_defconfig            |   29 +++++-
- arch/arm/mach-tegra/Kconfig                 |    5 +
- arch/arm/mach-tegra/Makefile                |    4 +
- arch/arm/mach-tegra/board-harmony-pcie.c    |   24 ++++-
- arch/arm/mach-tegra/board-harmony-pinmux.c  |   28 +++--
- arch/arm/mach-tegra/board-harmony-power.c   |  117 ++++++++++++++++++++
- arch/arm/mach-tegra/board-harmony.c         |   95 +++++++++++++++-
- arch/arm/mach-tegra/board-harmony.h         |   15 +++
- arch/arm/mach-tegra/board-paz00-pinmux.c    |  157 +++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-paz00.c           |  128 ++++++++++++++++++++++
- arch/arm/mach-tegra/board-paz00.h           |   29 +++++
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   11 +-
- arch/arm/mach-tegra/board-seaboard.c        |   68 +++++++++++--
- arch/arm/mach-tegra/board-seaboard.h        |    3 +
- arch/arm/mach-tegra/devices.c               |   70 ++++++++++++
- arch/arm/mach-tegra/devices.h               |    4 +
- arch/arm/mach-tegra/include/mach/iomap.h    |    3 +
- 17 files changed, 756 insertions(+), 34 deletions(-)
- create mode 100644 arch/arm/mach-tegra/board-harmony-power.c
- create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
- create mode 100644 arch/arm/mach-tegra/board-paz00.c
- create mode 100644 arch/arm/mach-tegra/board-paz00.h
+Olof Johansson (8):
+      ARM: tegra: add tegra_defconfig
+      ARM: tegra: add tegra_gpio_table and tegra_gpio_config
+      ARM: tegra: harmony: move over to tegra_gpio_config
+      ARM: tegra: common device resources
+      ARM: tegra: remove stale nvidia atag handler
+      ARM: tegra: harmony: register sdhci devices
+      ARM: tegra: harmony: fix pinmux for MMC slot
+      ARM: tegra: add seaboard, wario and kaen boards
+
+Simon Glass (1):
+      ARM: tegra: Fix hang on reboot
+
+Stephen Warren (9):
+      ARM: tegra: Add Harmony sound platform data type
+      ARM: tegra: Add to struct harmony_audio_platform_data
+      ARM: tegra: Prevent requeuing in-progress DMA requests
+      ARM: tegra: APB DMA: Enable clock and remove reset.
+      ARM: tegra: Fix typo in TEGRA_IRQ_TO_GPIO
+      ARM: Tegra: Make tegra_dma_init a postcore_initcall
+      ARM: Tegra: Rename I2S clocks to match driver name
+      ARM: Tegra: Rename clk_dev1/2 to cdev1/2
+      ARM: Tegra: DMA: Fail safe if initialization fails
+
+ arch/arm/configs/tegra_defconfig                   |  123 +++
+ arch/arm/mach-tegra/Kconfig                        |   28 +
+ arch/arm/mach-tegra/Makefile                       |   10 +-
+ arch/arm/mach-tegra/board-harmony-pinmux.c         |   19 +-
+ arch/arm/mach-tegra/board-harmony.c                |   62 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c        |  179 ++++
+ arch/arm/mach-tegra/board-seaboard.c               |  196 ++++
+ arch/arm/mach-tegra/board-seaboard.h               |   38 +
+ arch/arm/mach-tegra/board-trimslice-pinmux.c       |  145 +++
+ arch/arm/mach-tegra/board-trimslice.c              |  106 ++
+ .../{tegra2_dvfs.h => board-trimslice.h}           |   14 +-
+ arch/arm/mach-tegra/board.h                        |    4 +-
+ arch/arm/mach-tegra/clock.c                        |  532 +++++-----
+ arch/arm/mach-tegra/clock.h                        |  129 +--
+ arch/arm/mach-tegra/common.c                       |   27 +-
+ arch/arm/mach-tegra/cpu-tegra.c                    |  100 ++-
+ arch/arm/mach-tegra/devices.c                      |  505 +++++++++
+ arch/arm/mach-tegra/devices.h                      |   46 +
+ arch/arm/mach-tegra/dma.c                          |  243 +++--
+ arch/arm/mach-tegra/gpio.c                         |   15 +
+ arch/arm/mach-tegra/include/mach/clk.h             |    6 +-
+ arch/arm/mach-tegra/include/mach/debug-macro.S     |   25 +-
+ arch/arm/mach-tegra/include/mach/gpio.h            |    9 +-
+ .../mach/harmony_audio.h}                          |   14 +-
+ arch/arm/mach-tegra/include/mach/iomap.h           |   47 +
+ arch/arm/mach-tegra/include/mach/irqs.h            |   14 +-
+ arch/arm/mach-tegra/include/mach/legacy_irq.h      |    4 +
+ arch/arm/mach-tegra/include/mach/pinmux-t2.h       |   10 +
+ arch/arm/mach-tegra/include/mach/powergate.h       |   40 +
+ arch/arm/mach-tegra/include/mach/suspend.h         |   38 +
+ arch/arm/mach-tegra/include/mach/system.h          |   10 +-
+ arch/arm/mach-tegra/include/mach/uncompress.h      |   18 +-
+ arch/arm/mach-tegra/irq.c                          |  186 ++--
+ arch/arm/mach-tegra/legacy_irq.c                   |  109 ++-
+ arch/arm/mach-tegra/pcie.c                         |   38 +-
+ arch/arm/mach-tegra/pinmux-t2-tables.c             |   26 +-
+ arch/arm/mach-tegra/powergate.c                    |  212 ++++
+ arch/arm/mach-tegra/tegra2_clocks.c                | 1120 +++++++++++++++-----
+ arch/arm/mach-tegra/tegra2_dvfs.c                  |   86 --
+ arch/arm/mach-tegra/tegra2_emc.c                   |  178 ++++
+ .../arm/mach-tegra/{tegra2_dvfs.h => tegra2_emc.h} |   17 +-
+ arch/arm/mach-tegra/timer.c                        |   77 ++-
+ 42 files changed, 3755 insertions(+), 1050 deletions(-)
+ create mode 100644 arch/arm/configs/tegra_defconfig
+ create mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.c
+ create mode 100644 arch/arm/mach-tegra/board-seaboard.h
+ create mode 100644 arch/arm/mach-tegra/board-trimslice-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-trimslice.c
+ copy arch/arm/mach-tegra/{tegra2_dvfs.h => board-trimslice.h} (70%)
+ create mode 100644 arch/arm/mach-tegra/devices.c
+ create mode 100644 arch/arm/mach-tegra/devices.h
+ copy arch/arm/mach-tegra/{tegra2_dvfs.h => include/mach/harmony_audio.h} (69%)
+ create mode 100644 arch/arm/mach-tegra/include/mach/powergate.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/suspend.h
+ create mode 100644 arch/arm/mach-tegra/powergate.c
+ delete mode 100644 arch/arm/mach-tegra/tegra2_dvfs.c
+ create mode 100644 arch/arm/mach-tegra/tegra2_emc.c
+ rename arch/arm/mach-tegra/{tegra2_dvfs.h => tegra2_emc.h} (58%)
 --
 To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
