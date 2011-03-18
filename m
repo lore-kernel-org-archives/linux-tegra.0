@@ -1,10 +1,10 @@
 From: wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Subject: [PATCH] mfd: tps6586x: add RTC driver for TI TPS6586x
-Date: Fri, 18 Mar 2011 19:17:20 +0800
-Message-ID: <1300447040-24874-1-git-send-email-wni@nvidia.com>
+Date: Fri, 18 Mar 2011 19:20:45 +0800
+Message-ID: <1300447245-24906-1-git-send-email-wni@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: a.zummo#towertech.it-0RhP2a76fIrFT5IIyIEb6QC/G2K4zDHf@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+To: a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
