@@ -1,21 +1,85 @@
-From: bill_tn <bilel.dr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Flashing L4T issue
-Date: Wed, 23 Mar 2011 12:57:40 +0000 (UTC)
-Message-ID: <loom.20110323T135559-159@post.gmane.org>
-References: <loom.20110322T160006-388@post.gmane.org> <AANLkTi=V4UqeCzYSKd23FJ+9+4W6b7nD2NyYfUK=8kRT@mail.gmail.com>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: ARM Tegra updates for 2.6.39
+Date: Wed, 23 Mar 2011 15:25:07 -0700
+Message-ID: <AANLkTiko8EkxhsdmJPNWfrecxRY4ibmbp_3UeHirTOs4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: linux-main <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson <olof@...> writes:
-> Hi,
-> You might have better luck finding an answer to that question at the L4T forums
-> http://tegradeveloper.nvidia.com/tegra/forums/tegra-forums/linux-
-development/linux-tegra-l4t
-> -Olof
-I already posted there and i had no answer. thank you any way.
-Regards.
+Hi Linus,
+Please pull updates for Tegra from:
+
+ git://android.git.kernel.org/kernel/tegra.git for-linus
+
+These are changes that depended on the i2c and asoc trees that have
+already been merged.
+
+Thanks,
+Colin
+
+The following changes since commit c871fe663a6368fd0e98f5a3bfd81b0b9c591266:
+
+  Merge branch 'for-2639/i2c/i2c-tegra' of
+git://git.fluff.org/bjdooks/linux into for-next-i2c (2011-03-03
+14:17:49 -0800)
+
+are available in the git repository at:
+
+  git://android.git.kernel.org/kernel/tegra.git for-linus
+
+Colin Cross (1):
+      Merge branch 'boards-for-next' of
+git://git.kernel.org/.../olof/tegra-2.6 into for-next
+
+Marc Dietrich (1):
+      ARM: tegra: Add Toshiba AC100 support
+
+Mike Rapoport (4):
+      ARM: tegra: trimslice: enable MMC/SD slots
+      ARM: tegra: harmony: update PCI-e initialization sequence
+      ARM: tegra: update defconfig
+      ARM: tegra: harmony: initialize the TPS65862 PMIC
+
+Olof Johansson (4):
+      ARM: tegra: seaboard: register i2c devices
+      ARM: tegra: harmony: register i2c devices
+      ARM: tegra: enable new drivers in defconfig
+      Merge branch 'trimslice/upstream' of
+git://git.kernel.org/.../rppt/linux-tegra into boards-for-next
+
+Stephen Warren (5):
+      ARM: tegra: add devices.c entries for audio
+      ARM: tegra: create defines for SD-related GPIO names
+      ARM: tegra: harmony: Beginnings of audio support
+      ARM: tegra: harmony: I2C-related portions of audio support
+      ARM: tegra: harmony: Set WM8903 gpio_base
+
+ arch/arm/configs/tegra_defconfig             |   29 +++++-
+ arch/arm/mach-tegra/Kconfig                  |    5 +
+ arch/arm/mach-tegra/Makefile                 |    4 +
+ arch/arm/mach-tegra/board-harmony-pcie.c     |   24 ++++-
+ arch/arm/mach-tegra/board-harmony-pinmux.c   |   28 +++--
+ arch/arm/mach-tegra/board-harmony-power.c    |  117 +++++++++++++++++++
+ arch/arm/mach-tegra/board-harmony.c          |   95 +++++++++++++++-
+ arch/arm/mach-tegra/board-harmony.h          |   15 +++
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |  157 ++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.c            |  128 +++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h            |   29 +++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c  |   11 +-
+ arch/arm/mach-tegra/board-seaboard.c         |   68 ++++++++++-
+ arch/arm/mach-tegra/board-seaboard.h         |    3 +
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    9 ++
+ arch/arm/mach-tegra/board-trimslice.c        |   19 +++
+ arch/arm/mach-tegra/board-trimslice.h        |    3 +
+ arch/arm/mach-tegra/devices.c                |   70 ++++++++++++
+ arch/arm/mach-tegra/devices.h                |    4 +
+ arch/arm/mach-tegra/include/mach/iomap.h     |    3 +
+ 20 files changed, 787 insertions(+), 34 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-harmony-power.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.c
+ create mode 100644 arch/arm/mach-tegra/board-paz00.h
