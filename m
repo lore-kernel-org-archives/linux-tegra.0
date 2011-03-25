@@ -1,85 +1,132 @@
-From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: ARM Tegra updates for 2.6.39
-Date: Wed, 23 Mar 2011 15:25:07 -0700
-Message-ID: <AANLkTiko8EkxhsdmJPNWfrecxRY4ibmbp_3UeHirTOs4@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v8] mfd: tps6586x: add RTC driver for TI TPS6586x
+Date: Fri, 25 Mar 2011 17:46:06 +0800
+Message-ID: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD48E@HKMAIL01.nvidia.com>
+References: <1300686161-24712-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1300686161-24712-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: linux-main <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Tegra Mailing List <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: "a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org" <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, "rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Linus,
-Please pull updates for Tegra from:
+Hi, all
+Could anyone review this patch?
 
- git://android.git.kernel.org/kernel/tegra.git for-linus
+Thanks
+Wei.
 
-These are changes that depended on the i2c and asoc trees that have
-already been merged.
+-----Original Message-----
+From: Wei Ni 
+Sent: Monday, March 21, 2011 1:43 PM
+To: a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org; rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Wei Ni
+Subject: [PATCH v8] mfd: tps6586x: add RTC driver for TI TPS6586x
 
-Thanks,
-Colin
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The following changes since commit c871fe663a6368fd0e98f5a3bfd81b0b9c591266:
+this driver supports setting of alarms, and
+reading/setting of time
 
-  Merge branch 'for-2639/i2c/i2c-tegra' of
-git://git.fluff.org/bjdooks/linux into for-next-i2c (2011-03-03
-14:17:49 -0800)
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v8: use OSC_SRC_SEL to select external crystal clock.
+set alrm->enabled and init the rtc->irq_en. 
+Add suspend/resume callback.
 
-are available in the git repository at:
+ drivers/rtc/rtc-tps6586x.c |   34 ++++++++++++++++++++++++++++++----
+ 1 files changed, 30 insertions(+), 4 deletions(-)
 
-  git://android.git.kernel.org/kernel/tegra.git for-linus
-
-Colin Cross (1):
-      Merge branch 'boards-for-next' of
-git://git.kernel.org/.../olof/tegra-2.6 into for-next
-
-Marc Dietrich (1):
-      ARM: tegra: Add Toshiba AC100 support
-
-Mike Rapoport (4):
-      ARM: tegra: trimslice: enable MMC/SD slots
-      ARM: tegra: harmony: update PCI-e initialization sequence
-      ARM: tegra: update defconfig
-      ARM: tegra: harmony: initialize the TPS65862 PMIC
-
-Olof Johansson (4):
-      ARM: tegra: seaboard: register i2c devices
-      ARM: tegra: harmony: register i2c devices
-      ARM: tegra: enable new drivers in defconfig
-      Merge branch 'trimslice/upstream' of
-git://git.kernel.org/.../rppt/linux-tegra into boards-for-next
-
-Stephen Warren (5):
-      ARM: tegra: add devices.c entries for audio
-      ARM: tegra: create defines for SD-related GPIO names
-      ARM: tegra: harmony: Beginnings of audio support
-      ARM: tegra: harmony: I2C-related portions of audio support
-      ARM: tegra: harmony: Set WM8903 gpio_base
-
- arch/arm/configs/tegra_defconfig             |   29 +++++-
- arch/arm/mach-tegra/Kconfig                  |    5 +
- arch/arm/mach-tegra/Makefile                 |    4 +
- arch/arm/mach-tegra/board-harmony-pcie.c     |   24 ++++-
- arch/arm/mach-tegra/board-harmony-pinmux.c   |   28 +++--
- arch/arm/mach-tegra/board-harmony-power.c    |  117 +++++++++++++++++++
- arch/arm/mach-tegra/board-harmony.c          |   95 +++++++++++++++-
- arch/arm/mach-tegra/board-harmony.h          |   15 +++
- arch/arm/mach-tegra/board-paz00-pinmux.c     |  157 ++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-paz00.c            |  128 +++++++++++++++++++++
- arch/arm/mach-tegra/board-paz00.h            |   29 +++++
- arch/arm/mach-tegra/board-seaboard-pinmux.c  |   11 +-
- arch/arm/mach-tegra/board-seaboard.c         |   68 ++++++++++-
- arch/arm/mach-tegra/board-seaboard.h         |    3 +
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    9 ++
- arch/arm/mach-tegra/board-trimslice.c        |   19 +++
- arch/arm/mach-tegra/board-trimslice.h        |    3 +
- arch/arm/mach-tegra/devices.c                |   70 ++++++++++++
- arch/arm/mach-tegra/devices.h                |    4 +
- arch/arm/mach-tegra/include/mach/iomap.h     |    3 +
- 20 files changed, 787 insertions(+), 34 deletions(-)
- create mode 100644 arch/arm/mach-tegra/board-harmony-power.c
- create mode 100644 arch/arm/mach-tegra/board-paz00-pinmux.c
- create mode 100644 arch/arm/mach-tegra/board-paz00.c
- create mode 100644 arch/arm/mach-tegra/board-paz00.h
+diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
+index a42b4bb..b891899 100644
+--- a/drivers/rtc/rtc-tps6586x.c
++++ b/drivers/rtc/rtc-tps6586x.c
+@@ -30,6 +30,7 @@
+ #include <linux/slab.h>
+ 
+ #define RTC_CTRL	0xc0
++#define OSC_SRC_SEL	BIT(6)	/* select internal or external clock */
+ #define RTC_ENABLE	BIT(5)	/* enables alarm */
+ #define RTC_HIRES	BIT(4)	/* 1Khz or 32Khz updates */
+ #define RTC_ALARM1_HI	0xc1
+@@ -180,6 +181,7 @@ static int tps6586x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	seconds += rtc->epoch_start;
+ 
+ 	rtc_time_to_tm(seconds, &alrm->time);
++	alrm->enabled = rtc->irq_en;
+ 
+ 	return 0;
+ }
+@@ -286,7 +288,9 @@ static int __devinit tps6586x_rtc_probe(struct platform_device *pdev)
+ 
+ 	/* disable high-res mode, enable tick counting */
+ 	err = tps6586x_update(tps_dev, RTC_CTRL,
+-			      (RTC_ENABLE | RTC_HIRES), RTC_ENABLE);
++			      (RTC_ENABLE | OSC_SRC_SEL),
++			      (RTC_ENABLE | OSC_SRC_SEL));
++
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "unable to start counter\n");
+ 		goto fail;
+@@ -299,11 +303,12 @@ static int __devinit tps6586x_rtc_probe(struct platform_device *pdev)
+ 					   IRQF_ONESHOT, "tps6586x-rtc",
+ 					   &pdev->dev);
+ 		if (err) {
+-			dev_warn(&pdev->dev, "unable to request IRQ(%d)\n", rtc->irq);
++			dev_warn(&pdev->dev, "unable to request IRQ(%d)\n",
++				 rtc->irq);
+ 			rtc->irq = -1;
+ 		} else {
+ 			disable_irq(rtc->irq);
+-			enable_irq_wake(rtc->irq);
++			rtc->irq_en = false;
+ 		}
+ 	}
+ 
+@@ -327,6 +332,25 @@ static int __devexit tps6586x_rtc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int tps6586x_rtc_suspend(struct platform_device *pdev,
++				pm_message_t state)
++{
++	struct tps6586x_rtc *rtc = dev_get_drvdata(&pdev->dev);
++
++	if (device_may_wakeup(pdev))
++		enable_irq_wake(rtc->irq);
++	return 0;
++}
++
++static int tps6586x_rtc_resume(struct platform_device *pdev)
++{
++	struct tps6586x_rtc *rtc = dev_get_drvdata(&pdev->dev);
++
++	if (device_may_wakeup(pdev))
++		disable_irq_wake(rtc->irq);
++	return 0;
++}
++
+ static struct platform_driver tps6586x_rtc_driver = {
+ 	.driver	= {
+ 		.name	= "tps6586x-rtc",
+@@ -334,6 +358,8 @@ static struct platform_driver tps6586x_rtc_driver = {
+ 	},
+ 	.probe	= tps6586x_rtc_probe,
+ 	.remove	= __devexit_p(tps6586x_rtc_remove),
++	.suspend = tps6586x_rtc_suspend,
++	.resume = tps6586x_rtc_resume,
+ };
+ 
+ static int __init tps6586x_rtc_init(void)
+@@ -351,4 +377,4 @@ module_exit(tps6586x_rtc_exit);
+ MODULE_DESCRIPTION("TI TPS6586x RTC driver");
+ MODULE_AUTHOR("NVIDIA Corporation");
+ MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:rtc-tps6586x")
++MODULE_ALIAS("platform:rtc-tps6586x");
+-- 
+1.7.0
