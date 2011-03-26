@@ -1,55 +1,36 @@
-From: grundler@google.com (Grant Grundler)
-Subject: [PATCH] tegra/mmc: add pm_flags
-Date: Fri, 25 Mar 2011 17:07:12 -0700 (PDT)
-Message-ID: <20110326000712.DD5D3208182@grundler.mtv.corp.google.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] tegra/mmc: add pm_flags
+Date: Fri, 25 Mar 2011 17:28:10 -0700
+Message-ID: <BANLkTinh2Z61+evk+Uu4xo2R43gTKHvxHg@mail.gmail.com>
+References: <20110326000712.DD5D3208182@grundler.mtv.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20110326000712.DD5D3208182@grundler.mtv.corp.google.com>
 Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, grundler@chromium.org, olofj@chromium.org, vrao@broadcom.com
+To: Grant Grundler <grundler@google.com>
+Cc: Chris Ball <cjb@laptop.org>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, grundler@chromium.org, vrao@broadcom.com
 List-Id: linux-tegra@vger.kernel.org
 
-Enable fast bcm4329 WIFI suspend/resume on Tegra2 board.
+[Gah, now without HTML formatting.]
 
-This part allows the mach-tegra support tell the tegra MMC host controller
-to NOT turn off power for the MMC controller the WIFI part lives behind.
-Thus bcm4329 firmware doesn't need to be reloaded.
+On Fri, Mar 25, 2011 at 5:07 PM, Grant Grundler <grundler@google.com> wrote:
+>
+> Enable fast bcm4329 WIFI suspend/resume on Tegra2 board.
+>
+> This part allows the mach-tegra support tell the tegra MMC host controller
+> to NOT turn off power for the MMC controller the WIFI part lives behind.
+> Thus bcm4329 firmware doesn't need to be reloaded.
+>
+> Signed-off-by: Venkat Rao <vrao@broadcom>
+> Tested-by: Grant Grundler <grundler@chromium.org>
+> Reviewed-by: Olof Johansson <olofj@chromium.org>
+> ----
+> I'm not certain if this should go through tegra or mmc tree.
+> Can you advise please?
 
-Signed-off-by: Venkat Rao <vrao@broadcom>
-Tested-by: Grant Grundler <grundler@chromium.org>
-Reviewed-by: Olof Johansson <olofj@chromium.org>
-----
-I'm not certain if this should go through tegra or mmc tree.
-Can you advise please?
+Chris, please take it through the MMC tree.
 
-This is part of http://codereview.chromium.org/6474032 .
-The other three change sets required for Seaboard (Tegra2):
-    http://codereview.chromium.org/6484021
-    http://codereview.chromium.org/6488018
-    http://codereview.chromium.org/6489022
+Feel free to s/olofj@chromium.org/olof@lixom.net/ above, either way works.
 
-
-diff --git a/arch/arm/mach-tegra/include/mach/sdhci.h b/arch/arm/mach-tegra/include/mach/sdhci.h
-index 3ad086e..4231bc7 100644
---- a/arch/arm/mach-tegra/include/mach/sdhci.h
-+++ b/arch/arm/mach-tegra/include/mach/sdhci.h
-@@ -24,6 +24,7 @@ struct tegra_sdhci_platform_data {
- 	int wp_gpio;
- 	int power_gpio;
- 	int is_8bit;
-+	int pm_flags;
- };
- 
- #endif
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index f7e1f96..343c97e 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -184,6 +184,8 @@ static int tegra_sdhci_pltfm_init(struct sdhci_host *host,
- 	clk_enable(clk);
- 	pltfm_host->clk = clk;
- 
-+	host->mmc->pm_caps = plat->pm_flags;
-+
- 	if (plat->is_8bit)
- 		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
- 
+-Olof
