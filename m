@@ -1,29 +1,133 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] tegra/mmc: add pm_flags
-Date: Fri, 25 Mar 2011 21:04:50 -0400
-Message-ID: <m3ipv6k7yl.fsf@pullcord.laptop.org>
-References: <20110326000712.DD5D3208182@grundler.mtv.corp.google.com>
-	<m3mxkik8yi.fsf@pullcord.laptop.org>
-	<AANLkTimSe6ec7p32+eJFk25TTHeK5vTsJzo6wMrcrEEz@mail.gmail.com>
+From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [patch 02/23] arm: tegra: Remove unused function which fiddles
+ with	irq_desc
+Date: Sun, 27 Mar 2011 01:42:07 +0530
+Message-ID: <4D8E4897.5030705@nvidia.com>
+References: <20110325131617.258789658@linutronix.de> <20110325132047.552074703@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimSe6ec7p32+eJFk25TTHeK5vTsJzo6wMrcrEEz-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-	(Grant Grundler's message of "Fri, 25 Mar 2011 17:57:34 -0700")
+In-Reply-To: <20110325132047.552074703-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Grundler <grundler-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, vrao-dY08KVG/lbpWk0Htik3J/w@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Lennert Buytenhek <buytenh-OLH4Qvv75CYX/NnBR394Jw@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
-On Fri, Mar 25 2011, Grant Grundler wrote:
-> Sorry about that. Can you please add the "From" line you've shown
-> above since it's clearly Venkat's.
+Thomas, then how do you think we should handle restoring of gpio states
+across suspend-resume cycles?
 
-Done, thanks.
-
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+On Friday 25 March 2011 06:51 PM, Thomas Gleixner wrote:
+> These functions are unused and in the way of cleanups in the core
+> code. If you have special requirements vs. irqs and PM then please
+> talk to me. Access to the generic core internals is going away.
+>
+> Signed-off-by: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> ---
+>  arch/arm/mach-tegra/gpio.c                 |   63 -----------------------------
+>  arch/arm/mach-tegra/include/mach/suspend.h |    2 
+>  2 files changed, 65 deletions(-)
+>
+> Index: linux-2.6/arch/arm/mach-tegra/gpio.c
+> ===================================================================
+> --- linux-2.6.orig/arch/arm/mach-tegra/gpio.c
+> +++ linux-2.6/arch/arm/mach-tegra/gpio.c
+> @@ -254,69 +254,6 @@ static void tegra_gpio_irq_handler(unsig
+>  }
+>  
+>  #ifdef CONFIG_PM
+> -void tegra_gpio_resume(void)
+> -{
+> -	unsigned long flags;
+> -	int b, p, i;
+> -
+> -	local_irq_save(flags);
+> -
+> -	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
+> -		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+> -
+> -		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+> -			unsigned int gpio = (b<<5) | (p<<3);
+> -			__raw_writel(bank->cnf[p], GPIO_CNF(gpio));
+> -			__raw_writel(bank->out[p], GPIO_OUT(gpio));
+> -			__raw_writel(bank->oe[p], GPIO_OE(gpio));
+> -			__raw_writel(bank->int_lvl[p], GPIO_INT_LVL(gpio));
+> -			__raw_writel(bank->int_enb[p], GPIO_INT_ENB(gpio));
+> -		}
+> -	}
+> -
+> -	local_irq_restore(flags);
+> -
+> -	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
+> -		struct irq_desc *desc = irq_to_desc(i);
+> -		if (!desc || (desc->status & IRQ_WAKEUP))
+> -			continue;
+> -		enable_irq(i);
+> -	}
+> -}
+> -
+> -void tegra_gpio_suspend(void)
+> -{
+> -	unsigned long flags;
+> -	int b, p, i;
+> -
+> -	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
+> -		struct irq_desc *desc = irq_to_desc(i);
+> -		if (!desc)
+> -			continue;
+> -		if (desc->status & IRQ_WAKEUP) {
+> -			int gpio = i - INT_GPIO_BASE;
+> -			pr_debug("gpio %d.%d is wakeup\n", gpio/8, gpio&7);
+> -			continue;
+> -		}
+> -		disable_irq(i);
+> -	}
+> -
+> -	local_irq_save(flags);
+> -	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
+> -		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+> -
+> -		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+> -			unsigned int gpio = (b<<5) | (p<<3);
+> -			bank->cnf[p] = __raw_readl(GPIO_CNF(gpio));
+> -			bank->out[p] = __raw_readl(GPIO_OUT(gpio));
+> -			bank->oe[p] = __raw_readl(GPIO_OE(gpio));
+> -			bank->int_enb[p] = __raw_readl(GPIO_INT_ENB(gpio));
+> -			bank->int_lvl[p] = __raw_readl(GPIO_INT_LVL(gpio));
+> -		}
+> -	}
+> -	local_irq_restore(flags);
+> -}
+> -
+>  static int tegra_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+>  {
+>  	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+> Index: linux-2.6/arch/arm/mach-tegra/include/mach/suspend.h
+> ===================================================================
+> --- linux-2.6.orig/arch/arm/mach-tegra/include/mach/suspend.h
+> +++ linux-2.6/arch/arm/mach-tegra/include/mach/suspend.h
+> @@ -23,14 +23,12 @@
+>  
+>  void tegra_pinmux_suspend(void);
+>  void tegra_irq_suspend(void);
+> -void tegra_gpio_suspend(void);
+>  void tegra_clk_suspend(void);
+>  void tegra_dma_suspend(void);
+>  void tegra_timer_suspend(void);
+>  
+>  void tegra_pinmux_resume(void);
+>  void tegra_irq_resume(void);
+> -void tegra_gpio_resume(void);
+>  void tegra_clk_resume(void);
+>  void tegra_dma_resume(void);
+>  void tegra_timer_resume(void);
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
