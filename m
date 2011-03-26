@@ -1,130 +1,55 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 02/23] arm: tegra: Remove unused function which fiddles with
-	irq_desc
-Date: Fri, 25 Mar 2011 13:21:52 -0000
-Message-ID: <20110325132047.552074703@linutronix.de>
-References: <20110325131617.258789658@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline; filename=arm-tegra.patch
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Lennert Buytenhek <buytenh@wantstofly.org>, LAK <linux-arm-kernel@lists.infradead.org>, Colin Cross <ccross@android.com>
+From: grundler@google.com (Grant Grundler)
+Subject: [PATCH] tegra/mmc: add pm_flags
+Date: Fri, 25 Mar 2011 17:07:12 -0700 (PDT)
+Message-ID: <20110326000712.DD5D3208182@grundler.mtv.corp.google.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, grundler@chromium.org, olofj@chromium.org, vrao@broadcom.com
 List-Id: linux-tegra@vger.kernel.org
 
-These functions are unused and in the way of cleanups in the core
-code. If you have special requirements vs. irqs and PM then please
-talk to me. Access to the generic core internals is going away.
+Enable fast bcm4329 WIFI suspend/resume on Tegra2 board.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
----
- arch/arm/mach-tegra/gpio.c                 |   63 -----------------------------
- arch/arm/mach-tegra/include/mach/suspend.h |    2 
- 2 files changed, 65 deletions(-)
+This part allows the mach-tegra support tell the tegra MMC host controller
+to NOT turn off power for the MMC controller the WIFI part lives behind.
+Thus bcm4329 firmware doesn't need to be reloaded.
 
-Index: linux-2.6/arch/arm/mach-tegra/gpio.c
-===================================================================
---- linux-2.6.orig/arch/arm/mach-tegra/gpio.c
-+++ linux-2.6/arch/arm/mach-tegra/gpio.c
-@@ -254,69 +254,6 @@ static void tegra_gpio_irq_handler(unsig
- }
+Signed-off-by: Venkat Rao <vrao@broadcom>
+Tested-by: Grant Grundler <grundler@chromium.org>
+Reviewed-by: Olof Johansson <olofj@chromium.org>
+----
+I'm not certain if this should go through tegra or mmc tree.
+Can you advise please?
+
+This is part of http://codereview.chromium.org/6474032 .
+The other three change sets required for Seaboard (Tegra2):
+    http://codereview.chromium.org/6484021
+    http://codereview.chromium.org/6488018
+    http://codereview.chromium.org/6489022
+
+
+diff --git a/arch/arm/mach-tegra/include/mach/sdhci.h b/arch/arm/mach-tegra/include/mach/sdhci.h
+index 3ad086e..4231bc7 100644
+--- a/arch/arm/mach-tegra/include/mach/sdhci.h
++++ b/arch/arm/mach-tegra/include/mach/sdhci.h
+@@ -24,6 +24,7 @@ struct tegra_sdhci_platform_data {
+ 	int wp_gpio;
+ 	int power_gpio;
+ 	int is_8bit;
++	int pm_flags;
+ };
  
- #ifdef CONFIG_PM
--void tegra_gpio_resume(void)
--{
--	unsigned long flags;
--	int b, p, i;
--
--	local_irq_save(flags);
--
--	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
--		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
--
--		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
--			unsigned int gpio = (b<<5) | (p<<3);
--			__raw_writel(bank->cnf[p], GPIO_CNF(gpio));
--			__raw_writel(bank->out[p], GPIO_OUT(gpio));
--			__raw_writel(bank->oe[p], GPIO_OE(gpio));
--			__raw_writel(bank->int_lvl[p], GPIO_INT_LVL(gpio));
--			__raw_writel(bank->int_enb[p], GPIO_INT_ENB(gpio));
--		}
--	}
--
--	local_irq_restore(flags);
--
--	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
--		struct irq_desc *desc = irq_to_desc(i);
--		if (!desc || (desc->status & IRQ_WAKEUP))
--			continue;
--		enable_irq(i);
--	}
--}
--
--void tegra_gpio_suspend(void)
--{
--	unsigned long flags;
--	int b, p, i;
--
--	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
--		struct irq_desc *desc = irq_to_desc(i);
--		if (!desc)
--			continue;
--		if (desc->status & IRQ_WAKEUP) {
--			int gpio = i - INT_GPIO_BASE;
--			pr_debug("gpio %d.%d is wakeup\n", gpio/8, gpio&7);
--			continue;
--		}
--		disable_irq(i);
--	}
--
--	local_irq_save(flags);
--	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
--		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
--
--		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
--			unsigned int gpio = (b<<5) | (p<<3);
--			bank->cnf[p] = __raw_readl(GPIO_CNF(gpio));
--			bank->out[p] = __raw_readl(GPIO_OUT(gpio));
--			bank->oe[p] = __raw_readl(GPIO_OE(gpio));
--			bank->int_enb[p] = __raw_readl(GPIO_INT_ENB(gpio));
--			bank->int_lvl[p] = __raw_readl(GPIO_INT_LVL(gpio));
--		}
--	}
--	local_irq_restore(flags);
--}
--
- static int tegra_gpio_wake_enable(struct irq_data *d, unsigned int enable)
- {
- 	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
-Index: linux-2.6/arch/arm/mach-tegra/include/mach/suspend.h
-===================================================================
---- linux-2.6.orig/arch/arm/mach-tegra/include/mach/suspend.h
-+++ linux-2.6/arch/arm/mach-tegra/include/mach/suspend.h
-@@ -23,14 +23,12 @@
+ #endif
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index f7e1f96..343c97e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -184,6 +184,8 @@ static int tegra_sdhci_pltfm_init(struct sdhci_host *host,
+ 	clk_enable(clk);
+ 	pltfm_host->clk = clk;
  
- void tegra_pinmux_suspend(void);
- void tegra_irq_suspend(void);
--void tegra_gpio_suspend(void);
- void tegra_clk_suspend(void);
- void tegra_dma_suspend(void);
- void tegra_timer_suspend(void);
++	host->mmc->pm_caps = plat->pm_flags;
++
+ 	if (plat->is_8bit)
+ 		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
  
- void tegra_pinmux_resume(void);
- void tegra_irq_resume(void);
--void tegra_gpio_resume(void);
- void tegra_clk_resume(void);
- void tegra_dma_resume(void);
- void tegra_timer_resume(void);
