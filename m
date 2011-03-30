@@ -1,51 +1,48 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: tegra: gpio: Fix unused variable warnings
-Date: Wed, 30 Mar 2011 00:30:37 -0700
-Message-ID: <1301470237-5231-1-git-send-email-ccross@android.com>
+From: Nicolas Kaiser <nikai-bVCNqDZ4lKNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] arm: tegra: fix error check in tegra2_clocks.c
+Date: Wed, 30 Mar 2011 15:59:11 +0200
+Message-ID: <20110330155911.6dc0ef63@absol.kitzblitz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Change b0f18edaf6ee4e6fac89cae63a90bd38ad2a3418
-(arm: tegra: Remove unused bogus irq enable/disable magic)
-introduces warnings:
-arch/arm/mach-tegra/gpio.c: In function 'tegra_gpio_resume':
-arch/arm/mach-tegra/gpio.c:260: warning: unused variable 'i'
-arch/arm/mach-tegra/gpio.c: In function 'tegra_gpio_suspend':
-arch/arm/mach-tegra/gpio.c:283: warning: unused variable 'i'
+Checking 'rate < 0' doesn't work because 'rate' is unsigned.
 
-Fix them, and fix a coding style issue on the same lines.
-
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Nicolas Kaiser <nikai-bVCNqDZ4lKNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/gpio.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+Untested.
 
-diff --git a/arch/arm/mach-tegra/gpio.c b/arch/arm/mach-tegra/gpio.c
-index 76a3f65..65a1aba 100644
---- a/arch/arm/mach-tegra/gpio.c
-+++ b/arch/arm/mach-tegra/gpio.c
-@@ -257,7 +257,8 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- void tegra_gpio_resume(void)
+ arch/arm/mach-tegra/tegra2_clocks.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 6d7c4ee..4459470 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -1362,14 +1362,15 @@ static int tegra_clk_shared_bus_set_rate(struct clk *c, unsigned long rate)
  {
  	unsigned long flags;
--	int b, p, i;
-+	int b;
-+	int p;
+ 	int ret;
++	long new_rate = rate;
  
- 	local_irq_save(flags);
+-	rate = clk_round_rate(c->parent, rate);
+-	if (rate < 0)
+-		return rate;
++	new_rate = clk_round_rate(c->parent, new_rate);
++	if (new_rate < 0)
++		return new_rate;
  
-@@ -280,7 +281,8 @@ void tegra_gpio_resume(void)
- void tegra_gpio_suspend(void)
- {
- 	unsigned long flags;
--	int b, p, i;
-+	int b;
-+	int p;
+ 	spin_lock_irqsave(&c->parent->spinlock, flags);
  
- 	local_irq_save(flags);
- 	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
+-	c->u.shared_bus_user.rate = rate;
++	c->u.shared_bus_user.rate = new_rate;
+ 	ret = tegra_clk_shared_bus_update(c->parent);
+ 
+ 	spin_unlock_irqrestore(&c->parent->spinlock, flags);
 -- 
-1.7.4.1
+1.7.3.4
