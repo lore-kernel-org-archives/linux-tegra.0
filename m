@@ -1,157 +1,123 @@
-From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] [ARM] tegra: syncpt: Move syncpt handling to syncpt.c
-Date: Thu,  7 Apr 2011 14:10:01 -0700
-Message-ID: <1302210601-18193-1-git-send-email-rmorell@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra ASoC, multiple boards, platform data, and conditionals in
+ machine driver
+Date: Fri, 8 Apr 2011 12:43:37 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Mark,
 
-Signed-off-by: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+I'm thinking of upstreaming ASoC support for some of the other Tegra boards
+that got added later in 2.6.39; Seaboard, Kaen, and Aebl.
 
-Colin, this patch is missing from the linux-tegra-2.6.36, linux-tegra-2.6.37
-branches (as well as their android- variants).  I cherry-picked it from the
-android-tegra-2.6.36-honeycomb tree (the only changes were to remove the
-ChangeId and add my S-o-b).  It was applied to the chromeos-2.6.36 and
-chromeos-2.6.37 trees a while back as well.
+[Ventana could also be supported, but it's identical to Harmony. I imagine
+people will want Toshiba AC100 and Trimslice support in the not-too-
+distant future, but I don't have schematics for those boards at present]
 
-I've tripped over this when bringing up both Seaboard and Trimslice devices on
-branches based on linux-tegra-2.6.36; the symptom of not having this patch is
-that we never get syncpoint threshold interrupt notification and end up hanging
-the first time we wait for one.
+This raises a couple questions:
 
-Can this be pulled into the linux-tegra branches so that nobody else trips on
-this?
+1)
 
-Thanks.
+Currently, the Harmony machine driver gets all its GPIO information from
+platform data defined in arch/arch/mach-tegra/include/mach/harmony_audio.h.
+Supporting new machines would entail one of:
 
- arch/arm/mach-tegra/Makefile |    1 +
- arch/arm/mach-tegra/syncpt.c |  100 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/syncpt.c
+a) Creating a new header for each new machine (or set of similar machines).
+This could mean many headers pretty quickly.
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 6d50f34..356ee56 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -1,6 +1,7 @@
- obj-y                                   += common.o
- obj-y                                   += io.o
- obj-y                                   += irq.o legacy_irq.o
-+obj-y					+= syncpt.o
- obj-y                                   += clock.o
- obj-y                                   += dvfs.o
- obj-y                                   += timer.o
-diff --git a/arch/arm/mach-tegra/syncpt.c b/arch/arm/mach-tegra/syncpt.c
-new file mode 100644
-index 0000000..bb649a9
---- /dev/null
-+++ b/arch/arm/mach-tegra/syncpt.c
-@@ -0,0 +1,100 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author:
-+ *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * Copyright (C) 2010, NVIDIA Corporation
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/io.h>
-+
-+#include <mach/iomap.h>
-+#include <mach/irqs.h>
-+
-+#define HOST1X_SYNC_OFFSET 0x3000
-+#define HOST1X_SYNC_SIZE 0x800
-+enum {
-+	HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS = 0x40,
-+	HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE = 0x60
-+};
-+
-+static void syncpt_thresh_mask(unsigned int irq)
-+{
-+	(void)irq;
-+}
-+
-+static void syncpt_thresh_unmask(unsigned int irq)
-+{
-+	(void)irq;
-+}
-+
-+static void syncpt_thresh_cascade(unsigned int irq, struct irq_desc *desc)
-+{
-+	void __iomem *sync_regs = get_irq_desc_data(desc);
-+	u32 reg;
-+	int id;
-+
-+	desc->chip->ack(irq);
-+
-+	reg = readl(sync_regs + HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS);
-+
-+	while ((id = __fls(reg)) >= 0) {
-+		reg ^= BIT(id);
-+		generic_handle_irq(id + INT_SYNCPT_THRESH_BASE);
-+	}
-+
-+	desc->chip->unmask(irq);
-+}
-+
-+static struct irq_chip syncpt_thresh_irq = {
-+	.name		= "syncpt",
-+	.mask		= syncpt_thresh_mask,
-+	.unmask		= syncpt_thresh_unmask
-+};
-+
-+static int __init syncpt_init_irq(void)
-+{
-+	void __iomem *sync_regs;
-+	unsigned int i;
-+	int irq;
-+
-+	sync_regs = ioremap(TEGRA_HOST1X_BASE + HOST1X_SYNC_OFFSET,
-+			HOST1X_SYNC_SIZE);
-+	BUG_ON(!sync_regs);
-+
-+	writel(0xffffffffUL,
-+		sync_regs + HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE);
-+	writel(0xffffffffUL,
-+		sync_regs + HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS);
-+
-+	for (i = 0; i < INT_SYNCPT_THRESH_NR; i++) {
-+		irq = INT_SYNCPT_THRESH_BASE + i;
-+		set_irq_chip(irq, &syncpt_thresh_irq);
-+		set_irq_chip_data(irq, sync_regs);
-+		set_irq_handler(irq, handle_simple_irq);
-+		set_irq_flags(irq, IRQF_VALID);
-+	}
-+	if (set_irq_data(INT_HOST1X_MPCORE_SYNCPT, sync_regs))
-+		BUG();
-+	set_irq_chained_handler(INT_HOST1X_MPCORE_SYNCPT,
-+				syncpt_thresh_cascade);
-+
-+	return 0;
-+}
-+
-+core_initcall(syncpt_init_irq);
+b) Expanding that structure to include extra fields, thus making it generic
+enough to support any Tegra machine, which would probably also entail renaming
+the file to not be Harmony-specific. Some GPIO fields would be optional (i.e.
+initialized to -1) if a feature wasn't available on a given board.
+
+c) Perhaps switch to using platform_get_resource() to retrieve the data rather
+than custom per-machine/SoC structures, although that'd require adding new
+resource types for GPIOs etc.
+
+That said, I noticed that all(?) the other machine drivers simply use
+hard-coded GPIO numbers (sometimes defined locally, probably sometimes from
+machine header files), rather than having the values passed in through
+platform_data. This eliminates the need for platform_data structures etc.
+Is this simply a legacy because ASoC machine drivers weren't able to be
+first-class platform_devices, or is this still an acceptable style?
+
+I'm tempted to convert the Tegra Harmony driver to this style (but including
+headers to define the GPIO names instead of duplicating definitions in the
+machine file), and also use it for new machines.
+
+2)
+
+Seaboard has a couple of derivatives which are very similar, but do have
+some differences in the audio path and elsewhere. In the ChromeOS kernel,
+we have a single ASoC machine driver covering Seaboard and two derivatives,
+with conditional code. I've placed an example at the end of this mail. Do
+you have a preference for having separate files for each machine without the
+conditional code v.s. a single machine driver with a lot of conditional code?
+If we go the conditional route, it might even be possible to merge the
+Harmony and Seaboard machine drivers into one.
+
+Thanks for any feedback.
+
+Example from static int seaboard_asoc_init():
+
+	ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
+	if (ret) {
+		dev_err(card->dev, "cannot get spkr_en gpio\n");
+		return ret;
+	}
+	seaboard->gpio_requested |= GPIO_SPKR_EN;
+
+	gpio_direction_output(pdata->gpio_spkr_en, 0);
+
+	if (pdata->gpio_hp_mute != -1) {
+		ret = gpio_request(pdata->gpio_hp_mute, "hp_mute");
+		if (ret) {
+			dev_err(card->dev, "cannot get hp_mute gpio\n");
+			return ret;
+		}
+		seaboard->gpio_requested |= GPIO_HP_MUTE;
+
+		gpio_direction_output(pdata->gpio_hp_mute, 0);
+	}
+...
+	if (machine_is_seaboard()) {
+		snd_soc_dapm_add_routes(dapm, seaboard_audio_map,
+					ARRAY_SIZE(seaboard_audio_map));
+	} else if (machine_is_kaen()) {
+		snd_soc_dapm_add_routes(dapm, kaen_audio_map,
+					ARRAY_SIZE(kaen_audio_map));
+	} else {
+		snd_soc_dapm_add_routes(dapm, aebl_audio_map,
+					ARRAY_SIZE(aebl_audio_map));
+	}
+...
+	snd_soc_dapm_nc_pin(dapm, "IN1L");
+	if (machine_is_kaen())
+		snd_soc_dapm_nc_pin(dapm, "IN1R");
+	snd_soc_dapm_nc_pin(dapm, "IN2L");
+	if (!machine_is_kaen())
+		snd_soc_dapm_nc_pin(dapm, "IN2R");
+	snd_soc_dapm_nc_pin(dapm, "IN2L");
+	snd_soc_dapm_nc_pin(dapm, "IN3R");
+	snd_soc_dapm_nc_pin(dapm, "IN3L");
+
+	if (machine_is_aebl()) {
+		snd_soc_dapm_nc_pin(dapm, "LON");
+		snd_soc_dapm_nc_pin(dapm, "RON");
+		snd_soc_dapm_nc_pin(dapm, "ROP");
+		snd_soc_dapm_nc_pin(dapm, "LOP");
+	} else {
+		snd_soc_dapm_nc_pin(dapm, "LINEOUTR");
+		snd_soc_dapm_nc_pin(dapm, "LINEOUTL");
+	}
+
 -- 
-1.7.3.4
+nvpublic
