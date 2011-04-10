@@ -1,64 +1,45 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Tegra ASoC, multiple boards, platform data, and conditionals in
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: Tegra ASoC, multiple boards, platform data, and conditionals in
  machine driver
-Date: Sat, 9 Apr 2011 19:52:25 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
+Date: Sun, 10 Apr 2011 11:18:17 -0700
+Message-ID: <BANLkTikQhe1+ufvZWFKU1DT+XCS9=xE0Xw@mail.gmail.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
- <20110409023057.GA3792@opensource.wolfsonmicro.com>
+	<20110409023057.GA3792@opensource.wolfsonmicro.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110409023057.GA3792-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin, Erik, Olof,
+Hi,
 
-Do you have any objections to moving arch/arm/mach-tegra/board-*.h and
-gpio-names.h into arch/arch/mach-tegra/include/mach so that the audio
-driver source can include those headers simply?
+On Sat, Apr 9, 2011 at 7:52 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Colin, Erik, Olof,
+>
+> Do you have any objections to moving arch/arm/mach-tegra/board-*.h and
+> gpio-names.h into arch/arch/mach-tegra/include/mach so that the audio
+> driver source can include those headers simply?
+>
+> See the thread below for background.
 
-See the thread below for background.
+I would prefer to use platform_data and export the information through there.
 
-If this is OK, I'll submit the rename as part of my patch-set, and have
-Mark process it through a separate branch that both the ASoC and Tegra
-trees can both merge.
+I know ASoC is in some sense an exception to the rule, but in general
+there should be no need for any code outside of arch/arm/mach-tegra to
+have to know anything about the board it is running on, drivers should
+be generic enough. Some other platforms use a lot of shared header
+files between platform code and drivers, and I have always found that
+to be very awkward to follow when reading code, especially if the same
+constants are defined in multiple places depending on what board is
+built. It also makes it harder to maintain a multiplatform kernel if
+configuration data is pulled in at build time instead of runtime (i.e.
+headers vs platform_data or similar).
 
-Thanks.
+ In other words, I would prefer option (b) above.
 
-Mark Brown wrote at Friday, April 08, 2011 8:31 PM:
-> 
-> On Fri, Apr 08, 2011 at 12:43:37PM -0700, Stephen Warren wrote:
-> 
-> > That said, I noticed that all(?) the other machine drivers simply use
-> > hard-coded GPIO numbers (sometimes defined locally, probably sometimes from
-> > machine header files), rather than having the values passed in through
-> > platform_data. This eliminates the need for platform_data structures etc.
-> > Is this simply a legacy because ASoC machine drivers weren't able to be
-> > first-class platform_devices, or is this still an acceptable style?
-> 
-> Partly due to the historical reasons, partly due to the fact that unless
-> you actually have multiple boards based off the same design with
-> different data there's no point in bouncing the data through platform
-> data as there's only one possible answer - the hard coding also includes
-> the connections between the devices, the clocking arrangements and so
-> on.
-> 
-> > Seaboard has a couple of derivatives which are very similar, but do have
-> > some differences in the audio path and elsewhere. In the ChromeOS kernel,
-> > we have a single ASoC machine driver covering Seaboard and two derivatives,
-> > with conditional code. I've placed an example at the end of this mail. Do
-> > you have a preference for having separate files for each machine without the
-> > conditional code v.s. a single machine driver with a lot of conditional code?
-> > If we go the conditional route, it might even be possible to merge the
-> > Harmony and Seaboard machine drivers into one.
-> 
-> If the machines are very similar merging the driver is good.  Your code
-> looked like a good example of where merging is helpful.
 
--- 
-nvpublic
+-Olof
