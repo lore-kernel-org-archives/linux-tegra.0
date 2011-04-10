@@ -1,57 +1,64 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: Tegra: Seaboard: Re-order sdhci device registration
-Date: Fri,  8 Apr 2011 22:16:37 -0600
-Message-ID: <1302322597-18469-1-git-send-email-swarren@nvidia.com>
+Subject: RE: Tegra ASoC, multiple boards, platform data, and conditionals in
+ machine driver
+Date: Sat, 9 Apr 2011 19:52:25 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
+ <20110409023057.GA3792@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110409023057.GA3792-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ensure the built-in eMMC is always named mmcblk0.
+Colin, Erik, Olof,
 
-This is important because:
+Do you have any objections to moving arch/arm/mach-tegra/board-*.h and
+gpio-names.h into arch/arch/mach-tegra/include/mach so that the audio
+driver source can include those headers simply?
 
-* U-Boot statically assigns MMC device IDs based on controller ID.
-* U-Boot assumes that kernel MMC device ID numbering matches U-Boot numbering.
-* U-Boot provides a kernel cmdline option e.g. root=/dev/mmcblk0p3 based on
-  that numbering.
-* The kernel dynamically assigns MMC device IDs based on enumeration order of
-  the memory behind the host controller, rather than statically based on host
-  controller ID like U-Boot.
-* By registering the SDHCI controller for the built-in eMMC first, the
-  enumeration of the built-in eMMC is performed first, and hence eMMC gets
-  assigned ID 0 just like U-Boot. If the SD slot is filled, it then gets
-  assigned ID 1 just like U-Boot.
-* If the MMC IDs mismatch, and the system boots from SD card not eMMC, the
-  kernel will access the eMMC instead of SD card when attempting to mount
-  /dev/mmcblk1p3 as the root fs. If eMMC is not partitioned/formatted, the
-  kernel will panic since the root fs can't be mounted. If eMMC is partitioned
-  and formatted, the kernel will mount an unexpected filesystem as the root fs.
+See the thread below for background.
 
-This change relies on the SDHCI driver performing initial card detection
-synchronously during device registration. This is currently the case.
+If this is OK, I'll submit the rename as part of my patch-set, and have
+Mark process it through a separate branch that both the ASoC and Tegra
+trees can both merge.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index a8d7ace..783de17 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -137,9 +137,9 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 = {
- static struct platform_device *seaboard_devices[] __initdata = {
- 	&debug_uart,
- 	&tegra_pmu_device,
--	&tegra_sdhci_device1,
--	&tegra_sdhci_device3,
- 	&tegra_sdhci_device4,
-+	&tegra_sdhci_device3,
-+	&tegra_sdhci_device1,
- 	&seaboard_gpio_keys_device,
- };
- 
+Mark Brown wrote at Friday, April 08, 2011 8:31 PM:
+> 
+> On Fri, Apr 08, 2011 at 12:43:37PM -0700, Stephen Warren wrote:
+> 
+> > That said, I noticed that all(?) the other machine drivers simply use
+> > hard-coded GPIO numbers (sometimes defined locally, probably sometimes from
+> > machine header files), rather than having the values passed in through
+> > platform_data. This eliminates the need for platform_data structures etc.
+> > Is this simply a legacy because ASoC machine drivers weren't able to be
+> > first-class platform_devices, or is this still an acceptable style?
+> 
+> Partly due to the historical reasons, partly due to the fact that unless
+> you actually have multiple boards based off the same design with
+> different data there's no point in bouncing the data through platform
+> data as there's only one possible answer - the hard coding also includes
+> the connections between the devices, the clocking arrangements and so
+> on.
+> 
+> > Seaboard has a couple of derivatives which are very similar, but do have
+> > some differences in the audio path and elsewhere. In the ChromeOS kernel,
+> > we have a single ASoC machine driver covering Seaboard and two derivatives,
+> > with conditional code. I've placed an example at the end of this mail. Do
+> > you have a preference for having separate files for each machine without the
+> > conditional code v.s. a single machine driver with a lot of conditional code?
+> > If we go the conditional route, it might even be possible to merge the
+> > Harmony and Seaboard machine drivers into one.
+> 
+> If the machines are very similar merging the driver is good.  Your code
+> looked like a good example of where merging is helpful.
+
 -- 
-1.7.1
+nvpublic
