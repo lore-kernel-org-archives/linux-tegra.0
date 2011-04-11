@@ -1,8 +1,8 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [alsa-devel] Tegra ASoC, multiple boards, platform data, and
- conditionals in machine driver
-Date: Mon, 11 Apr 2011 10:57:06 -0700
-Message-ID: <BANLkTike2LTyOb354-QVq9FieMmHs66TvQ@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: Tegra ASoC, multiple boards, platform data,
+ and conditionals in machine driver
+Date: Mon, 11 Apr 2011 13:30:44 -0700
+Message-ID: <20110411203044.GF29405@opensource.wolfsonmicro.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
 	<20110409023057.GA3792@opensource.wolfsonmicro.com>
 	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
@@ -10,50 +10,38 @@ References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
 	<20110411015809.GA23214@sirena.org.uk>
 	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B8D@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B8D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B8D@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Olof Johansson <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "Erik Gilling (konkers@google.com)" <konkers@google.com>, "Colin Cross (ccross@android.com)" <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Mon, Apr 11, 2011 at 08:27:51AM -0700, Stephen Warren wrote:
+> Mark Brown wrote at Sunday, April 10, 2011 7:58 PM:
 
-On Mon, Apr 11, 2011 at 8:27 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
+> > you pass the full thing through platform datra or do you just pass the
+> > machine type.
 
-> Perhaps the best approach is to:
->
-> * Keep a single machine driver (at least for Tegra+WM8903; as Mark no=
-ted,
-> =A0attempting to share any wider doesn't make sense)
->
-> * Rename the driver e.g. tegra_wm8903.c rather than harmony.c since i=
-t'll
-> =A0be more generic. Rename the platform data structure and header lik=
-ewise.
->
-> * Expand the platform data structure used by that driver to add anyth=
-ing
-> =A0necessary for Seaboard and derivatives.
->
-> * Expand the driver to handle optional/missing GPIO definitions in th=
-e
-> =A0platform data (i.e. Harmony/Ventana will fill in int/ext_mic_en, a=
-nd
-> =A0other boards will set it to -1. Only Kaen will fill in hp_mute GPI=
-O,
-> =A0etc.)
->
-> That way, we can still avoid a proliferation in the number of platfor=
-m
-> headers, platform data types, and ASoC machine drivers.
->
-> Does that sound like a plan?
+> Well, I was thinking of eliminating platform data completely; the
+> selection of the correct ASoC machine driver would be based on the
 
-Sounds good to me.
+Right, the machine type is essentially platform data.
 
+> name of the platform device, and the machine driver would use
+> machine_is_*() to determine any machine-specific actions/data. So yes,
+> at run-time, but not using runtime-determined data *tables* at all.
 
--Olof
+There'd be data of some kind in the machine driver, even if they
+happened to be coded as if statements.
