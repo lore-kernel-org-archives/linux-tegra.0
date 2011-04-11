@@ -1,47 +1,65 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: Tegra ASoC, multiple boards, platform data,
- and conditionals in machine driver
-Date: Mon, 11 Apr 2011 13:30:44 -0700
-Message-ID: <20110411203044.GF29405@opensource.wolfsonmicro.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
-	<20110409023057.GA3792@opensource.wolfsonmicro.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
-	<BANLkTikQhe1+ufvZWFKU1DT+XCS9=xE0Xw@mail.gmail.com>
-	<20110411015809.GA23214@sirena.org.uk>
-	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B8D@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B8D@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Olof Johansson <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "Erik Gilling (konkers@google.com)" <konkers@google.com>, "Colin Cross (ccross@android.com)" <ccross@android.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: Tegra: Harmony: Fix conflicting GPIO numbering
+Date: Mon, 11 Apr 2011 15:49:01 -0600
+Message-ID: <1302558541-19841-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 11, 2011 at 08:27:51AM -0700, Stephen Warren wrote:
-> Mark Brown wrote at Sunday, April 10, 2011 7:58 PM:
+Currently, both the WM8903 and TPS6586x chips attempt to register with
+gpiolib using the same GPIO numbers. This causes the audio driver to
+fail to initialize.
 
-> > you pass the full thing through platform datra or do you just pass the
-> > machine type.
+To solve this, add a define to board-harmony.h for the TPS6586x, and make
+oard-harmony-power.c use this define, instead of directly referencing
+TEGRA_NR_GPIOS.
 
-> Well, I was thinking of eliminating platform data completely; the
-> selection of the correct ASoC machine driver would be based on the
+This fixes a regression introduced by commit
+6f168f2fa60f87e85e0df25e87e2372f22f5eb7c.
 
-Right, the machine type is essentially platform data.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony-power.c |    4 +++-
+ arch/arm/mach-tegra/board-harmony.h       |    3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-> name of the platform device, and the machine driver would use
-> machine_is_*() to determine any machine-specific actions/data. So yes,
-> at run-time, but not using runtime-determined data *tables* at all.
-
-There'd be data of some kind in the machine driver, even if they
-happened to be coded as if statements.
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+index c84442c..5ad8b2f 100644
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ b/arch/arm/mach-tegra/board-harmony-power.c
+@@ -24,6 +24,8 @@
+ 
+ #include <mach/irqs.h>
+ 
++#include "board-harmony.h"
++
+ #define PMC_CTRL		0x0
+ #define PMC_CTRL_INTR_LOW	(1 << 17)
+ 
+@@ -98,7 +100,7 @@ static struct tps6586x_platform_data tps_platform = {
+ 	.irq_base	= TEGRA_NR_IRQS,
+ 	.num_subdevs	= ARRAY_SIZE(tps_devs),
+ 	.subdevs	= tps_devs,
+-	.gpio_base	= TEGRA_NR_GPIOS,
++	.gpio_base	= HARMONY_GPIO_TPS6586X(0),
+ };
+ 
+ static struct i2c_board_info __initdata harmony_regulators[] = {
+diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
+index 1e57b07..d85142e 100644
+--- a/arch/arm/mach-tegra/board-harmony.h
++++ b/arch/arm/mach-tegra/board-harmony.h
+@@ -17,7 +17,8 @@
+ #ifndef _MACH_TEGRA_BOARD_HARMONY_H
+ #define _MACH_TEGRA_BOARD_HARMONY_H
+ 
+-#define HARMONY_GPIO_WM8903(_x_)	(TEGRA_NR_GPIOS + (_x_))
++#define HARMONY_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
++#define HARMONY_GPIO_WM8903(_x_)	(HARMONY_GPIO_TPS6586X(4) + (_x_))
+ 
+ #define TEGRA_GPIO_SD2_CD		TEGRA_GPIO_PI5
+ #define TEGRA_GPIO_SD2_WP		TEGRA_GPIO_PH1
+-- 
+1.7.1
