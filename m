@@ -1,45 +1,32 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: Tegra ASoC, multiple boards, platform data, and conditionals in
- machine driver
-Date: Sun, 10 Apr 2011 11:18:17 -0700
-Message-ID: <BANLkTikQhe1+ufvZWFKU1DT+XCS9=xE0Xw@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com>
-	<20110409023057.GA3792@opensource.wolfsonmicro.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [alsa-devel] Tegra ASoC, multiple boards, platform data, and
+	conditionals in machine driver
+Date: Mon, 11 Apr 2011 02:58:09 +0100
+Message-ID: <20110411015809.GA23214@sirena.org.uk>
+References: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3A50@HQMAIL01.nvidia.com> <20110409023057.GA3792@opensource.wolfsonmicro.com> <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B@HQMAIL01.nvidia.com> <BANLkTikQhe1+ufvZWFKU1DT+XCS9=xE0Xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0493EB3B5B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <BANLkTikQhe1+ufvZWFKU1DT+XCS9=xE0Xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "Erik Gilling (konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org)" <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Sun, Apr 10, 2011 at 11:18:17AM -0700, Olof Johansson wrote:
 
-On Sat, Apr 9, 2011 at 7:52 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Colin, Erik, Olof,
->
-> Do you have any objections to moving arch/arm/mach-tegra/board-*.h and
-> gpio-names.h into arch/arch/mach-tegra/include/mach so that the audio
-> driver source can include those headers simply?
->
-> See the thread below for background.
+> built. It also makes it harder to maintain a multiplatform kernel if
+> configuration data is pulled in at build time instead of runtime (i.e.
+> headers vs platform_data or similar).
 
-I would prefer to use platform_data and export the information through there.
+Note that whatever option is chosen the configuration should be pulled
+in at runtime, it's purely a question of where the data table goes - do
+you pass the full thing through platform datra or do you just pass the
+machine type.
 
-I know ASoC is in some sense an exception to the rule, but in general
-there should be no need for any code outside of arch/arm/mach-tegra to
-have to know anything about the board it is running on, drivers should
-be generic enough. Some other platforms use a lot of shared header
-files between platform code and drivers, and I have always found that
-to be very awkward to follow when reading code, especially if the same
-constants are defined in multiple places depending on what board is
-built. It also makes it harder to maintain a multiplatform kernel if
-configuration data is pulled in at build time instead of runtime (i.e.
-headers vs platform_data or similar).
+>  In other words, I would prefer option (b) above.
 
- In other words, I would prefer option (b) above.
-
-
--Olof
+Another thing to bear in mind is that it's only feasable to try to
+combine the Tegra/WM8903 combinations - trying to combine machine
+drivers for multiple unrelated CODECs isn't going to work well.
