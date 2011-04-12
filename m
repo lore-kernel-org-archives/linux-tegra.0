@@ -1,68 +1,60 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] ARM: Tegra: Harmony: Fix conflicting GPIO numbering
-Date: Tue, 12 Apr 2011 10:43:01 -0600
-Message-ID: <1302626581-14125-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 0/3] Rename Tegra ASoC driver
+Date: Tue, 12 Apr 2011 11:28:58 -0600
+Message-ID: <1302629341-2302-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: broonie-yzvPICuk2ABKfpSzmGQP03H4hr9OvL1i0E9HWUfgJXw@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently, both the WM8903 and TPS6586x chips attempt to register with
-gpiolib using the same GPIO numbers. This causes the audio driver to
-fail to initialize.
+Colin, Erik, Olof,
 
-To solve this, add a define to board-harmony.h for the TPS6586x, and make
-oard-harmony-power.c use this define, instead of directly referencing
-TEGRA_NR_GPIOS.
+Could you please ack these patches once they're ready, so that Mark can place
+them into his tegra-arch branch.
 
-This fixes a regression introduced by commit:
-6f168f2fa60f87e85e0df25e87e2372f22f5eb7c
-ARM: tegra: harmony: initialize the TPS65862 PMIC
+Colin, Erik, Olof, Mark,
 
-v2: Added commit description for human readers.
+Once these changes are in Mark's tegra-arch branch, could you please merge
+them into your subsystem's for-2.6.40 or equivalent branches.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-harmony-power.c |    4 +++-
- arch/arm/mach-tegra/board-harmony.h       |    3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
-index c84442c..5ad8b2f 100644
---- a/arch/arm/mach-tegra/board-harmony-power.c
-+++ b/arch/arm/mach-tegra/board-harmony-power.c
-@@ -24,6 +24,8 @@
- 
- #include <mach/irqs.h>
- 
-+#include "board-harmony.h"
-+
- #define PMC_CTRL		0x0
- #define PMC_CTRL_INTR_LOW	(1 << 17)
- 
-@@ -98,7 +100,7 @@ static struct tps6586x_platform_data tps_platform = {
- 	.irq_base	= TEGRA_NR_IRQS,
- 	.num_subdevs	= ARRAY_SIZE(tps_devs),
- 	.subdevs	= tps_devs,
--	.gpio_base	= TEGRA_NR_GPIOS,
-+	.gpio_base	= HARMONY_GPIO_TPS6586X(0),
- };
- 
- static struct i2c_board_info __initdata harmony_regulators[] = {
-diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
-index 1e57b07..d85142e 100644
---- a/arch/arm/mach-tegra/board-harmony.h
-+++ b/arch/arm/mach-tegra/board-harmony.h
-@@ -17,7 +17,8 @@
- #ifndef _MACH_TEGRA_BOARD_HARMONY_H
- #define _MACH_TEGRA_BOARD_HARMONY_H
- 
--#define HARMONY_GPIO_WM8903(_x_)	(TEGRA_NR_GPIOS + (_x_))
-+#define HARMONY_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
-+#define HARMONY_GPIO_WM8903(_x_)	(HARMONY_GPIO_TPS6586X(4) + (_x_))
- 
- #define TEGRA_GPIO_SD2_CD		TEGRA_GPIO_PI5
- #define TEGRA_GPIO_SD2_WP		TEGRA_GPIO_PH1
--- 
-1.7.1
+
+This patchset is for 2.6.40.
+
+The Tegra ASoC driver currently supports just the Harmony board. Hence, the
+driver name includes the word "harmony". I'll soon be submitting a patchset
+to add support for more boards. Hence, the current name doesn't apply well
+any more. Hence, I'd like to rename the driver.
+
+To do this, the three changes below need to be applied to both the ASoC tree
+and the ARM/Tegra tree:
+
+ARM: Tegra: Rename harmony_audio.h -> tegra_wm8903_pdata.h
+ARM: Tegra: Add to tegra_wm8903_platform_data
+
+  These both change a header file that is shared between the two subsystems.
+  Future changes in both subsystems depend on these changes, so the changes
+  must be merged into both subsystems first.
+
+ASoC: Tegra: Rename pdev tegra-snd-harmony to tegra-snd-wm8903
+
+  Compile-wise, the subsets of this change that apply to each subsystem could
+  be applied separately to each subsystem. However, that would break current
+  Tegra audio support, since the driver name used in the board files would no
+  longer match the driver name actually implemented, in either subsystem.
+  Hence, this entire change should be merged into both subsystems.
+
+Stephen Warren (3):
+  ARM: Tegra: Rename harmony_audio.h -> tegra_wm8903_pdata.h
+  ASoC: Tegra: Rename pdev tegra-snd-harmony to tegra-snd-wm8903
+  ARM: Tegra: Add to tegra_wm8903_platform_data
+
+ arch/arm/mach-tegra/board-harmony.c                |    7 +++--
+ arch/arm/mach-tegra/include/mach/harmony_audio.h   |   22 -------------------
+ .../mach-tegra/include/mach/tegra_wm8903_pdata.h   |   23 ++++++++++++++++++++
+ sound/soc/tegra/harmony.c                          |   14 ++++++------
+ 4 files changed, 34 insertions(+), 32 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/harmony_audio.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h
