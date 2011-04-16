@@ -1,43 +1,44 @@
-From: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ARM: regulator: tps6586x: add PFM/PWM options on SMs
-Date: Fri, 15 Apr 2011 18:13:33 -0700
-Message-ID: <1FC56210173BB445BD77F608D6FB8D032A144AA0E4@HQMAIL03.nvidia.com>
-References: <1302818393-19067-1-git-send-email-yelin@nvidia.com>
- <20110415093052.GC23466@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/2] arm: tegra: ventana: fix display depth, dithering
+Date: Fri, 15 Apr 2011 20:18:59 -0700
+Message-ID: <1302923939-374-2-git-send-email-rmorell@nvidia.com>
+References: <1302923939-374-1-git-send-email-rmorell@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110415093052.GC23466-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1302923939-374-1-git-send-email-rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org" <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Xin Xie <xxie-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark,
+From: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks for the feedback. I will look into to use the REGULATOR_MODE_FAST mode.
+Ventana has a 6-bit-per-component panel, so set the bit depth to 18, and
+enable ordered dithering for smoother gradients.
 
------Original Message-----
-From: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Mark Brown
-Sent: Friday, April 15, 2011 2:31 AM
-To: Yen.Lin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org; mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org; lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Xin Xie; Yen Lin
-Subject: Re: [PATCH] ARM: regulator: tps6586x: add PFM/PWM options on SMs
+Signed-off-by: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Varun Colbert <vcolbert-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Robert Morell<rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I was going to add this to harmony as well, but harmonay doesn't even have
+tegra_dc_out platform data in linux-tegra, so it needs some more love before
+this can be added.
 
-On Thu, Apr 14, 2011 at 02:59:53PM -0700, Yen.Lin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote:
+ arch/arm/mach-tegra/board-ventana-panel.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> TPS6586x SM0, SM1 and SM2 port have 2 power switching modes:
->     - PWM only, or
->     - PMW-PFM auto mode
-
-> Some of TPS6586x have voltage spike in PFM-to-FWM transition which can 
-> lockup the CPU if choose PWM-PFM auto mode.
-
-> This patch enables such mode selection on SMs ports from the board 
-> level power configuration file.
-
-This is just the regular regulator mode API - forced PWM mode would map onto _FAST.
---
-To unsubscribe from this list: send the line "unsubscribe linux-tegra" in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-tegra/board-ventana-panel.c b/arch/arm/mach-tegra/board-ventana-panel.c
+index f3e75e2..07919a4 100644
+--- a/arch/arm/mach-tegra/board-ventana-panel.c
++++ b/arch/arm/mach-tegra/board-ventana-panel.c
+@@ -204,6 +204,8 @@ static struct tegra_dc_out ventana_disp1_out = {
+ 
+ 	.align		= TEGRA_DC_ALIGN_MSB,
+ 	.order		= TEGRA_DC_ORDER_RED_BLUE,
++	.depth		= 18,
++	.dither		= TEGRA_DC_ORDERED_DITHER,
+ 
+ 	.modes	 	= ventana_panel_modes,
+ 	.n_modes 	= ARRAY_SIZE(ventana_panel_modes),
+-- 
+1.7.3.4
