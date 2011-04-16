@@ -1,44 +1,86 @@
 From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] arm: tegra: ventana: fix display depth, dithering
-Date: Fri, 15 Apr 2011 20:18:59 -0700
-Message-ID: <1302923939-374-2-git-send-email-rmorell@nvidia.com>
-References: <1302923939-374-1-git-send-email-rmorell@nvidia.com>
+Subject: [PATCH 1/2] video: tegra: Add dc color dithering support
+Date: Fri, 15 Apr 2011 20:18:58 -0700
+Message-ID: <1302923939-374-1-git-send-email-rmorell@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1302923939-374-1-git-send-email-rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This change adds support for display color dithering configuration in
+the display control structure.  Two dithering modes are possible:
+ordered and error-diffusion mode.  Error-diffusion dithering is usually
+considered higher quality, but can only be used when the active region
+is less than 640 pixels wide.
 
-Ventana has a 6-bit-per-component panel, so set the bit depth to 18, and
-enable ordered dithering for smoother gradients.
+This is based on patches from Chao Jiang <chaoj-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Varun Colbert <vcolbert-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Robert Morell<rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-I was going to add this to harmony as well, but harmonay doesn't even have
-tegra_dc_out platform data in linux-tegra, so it needs some more love before
-this can be added.
+ arch/arm/mach-tegra/include/mach/dc.h |    7 +++++++
+ drivers/video/tegra/dc/dc.c           |   24 ++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 0 deletions(-)
 
- arch/arm/mach-tegra/board-ventana-panel.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-ventana-panel.c b/arch/arm/mach-tegra/board-ventana-panel.c
-index f3e75e2..07919a4 100644
---- a/arch/arm/mach-tegra/board-ventana-panel.c
-+++ b/arch/arm/mach-tegra/board-ventana-panel.c
-@@ -204,6 +204,8 @@ static struct tegra_dc_out ventana_disp1_out = {
+diff --git a/arch/arm/mach-tegra/include/mach/dc.h b/arch/arm/mach-tegra/include/mach/dc.h
+index 254b732..696e6ed 100644
+--- a/arch/arm/mach-tegra/include/mach/dc.h
++++ b/arch/arm/mach-tegra/include/mach/dc.h
+@@ -44,6 +44,12 @@ enum {
+ 	TEGRA_DC_OUT_HDMI,
+ };
  
- 	.align		= TEGRA_DC_ALIGN_MSB,
- 	.order		= TEGRA_DC_ORDER_RED_BLUE,
-+	.depth		= 18,
-+	.dither		= TEGRA_DC_ORDERED_DITHER,
++enum {
++	TEGRA_DC_DISABLE_DITHER = 1,
++	TEGRA_DC_ORDERED_DITHER,
++	TEGRA_DC_ERRDIFF_DITHER,
++};
++
+ struct tegra_dc_out {
+ 	int			type;
+ 	unsigned		flags;
+@@ -58,6 +64,7 @@ struct tegra_dc_out {
+ 	unsigned		order;
+ 	unsigned		align;
+ 	unsigned		depth;
++	unsigned		dither;
  
- 	.modes	 	= ventana_panel_modes,
- 	.n_modes 	= ARRAY_SIZE(ventana_panel_modes),
+ 	struct tegra_dc_mode	*modes;
+ 	int			n_modes;
+diff --git a/drivers/video/tegra/dc/dc.c b/drivers/video/tegra/dc/dc.c
+index 16789c2..4241a24 100644
+--- a/drivers/video/tegra/dc/dc.c
++++ b/drivers/video/tegra/dc/dc.c
+@@ -890,6 +890,30 @@ static void tegra_dc_set_color_control(struct tegra_dc *dc)
+ 		break;
+ 	}
+ 
++	/*
++	 * The line buffer for error-diffusion dither is limited to 640 pixels
++	 * per line, so we can't use it if the active region is larger than 640
++	 * pixels.  Be nice and fall back to ordered dithering, but warn so the
++	 * platform data can be corrected.
++	 */
++	if (WARN_ON(dc->out->dither == TEGRA_DC_ERRDIFF_DITHER &&
++		    dc->mode.h_active > 640)) {
++		dc->out->dither = TEGRA_DC_ORDERED_DITHER;
++	}
++
++	switch (dc->out->dither) {
++	case TEGRA_DC_DISABLE_DITHER:
++		color_control |= DITHER_CONTROL_DISABLE;
++		break;
++	case TEGRA_DC_ORDERED_DITHER:
++		color_control |= DITHER_CONTROL_ORDERED;
++		break;
++	case TEGRA_DC_ERRDIFF_DITHER:
++		BUG_ON(dc->mode.h_active > 640);
++		color_control |= DITHER_CONTROL_ERRDIFF;
++		break;
++	}
++
+ 	tegra_dc_writel(dc, color_control, DC_DISP_DISP_COLOR_CONTROL);
+ }
+ 
 -- 
 1.7.3.4
