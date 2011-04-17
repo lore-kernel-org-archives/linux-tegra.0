@@ -1,117 +1,322 @@
-From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [PATCH] USB: ehci: tegra: fix USB1 port reset issue
-Date: Sun, 17 Apr 2011 11:58:25 +0300
-Message-ID: <1303030705-20810-1-git-send-email-mike@compulab.co.il>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+From: Mike Rapoport <mike@compulab.co.il>
+Subject: [PATCH] ASoC: tegra: TrimSlice machine support
+Date: Sun, 17 Apr 2011 15:39:48 +0300
+Message-ID: <1303043988-21933-1-git-send-email-mike@compulab.co.il>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Mike Rapoport <mike@compulab.co.il>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Tegra USB1 port needs to issue Port Reset twice internally, otherwise it
-fails to enumerate devices attached to it
-
-Signed-off-by: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-
-[ squash two patches into one and minor style cleanups ]
-
-Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Signed-off-by: Mike Rapoport <mike@compulab.co.il>
 ---
- drivers/usb/host/ehci-tegra.c |   72 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 72 insertions(+), 0 deletions(-)
+The patch is currently agains Linus' tree. Once everybody os Ok with it I'll rebase it on top of asoc or linux-next tree.
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index a516af2..7359bcb 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -58,6 +58,71 @@ static void tegra_ehci_power_down(struct usb_hcd *hcd)
- 	clk_disable(tegra->emc_clk);
- }
+
+ sound/soc/tegra/Kconfig     |    9 ++
+ sound/soc/tegra/Makefile    |    2 +
+ sound/soc/tegra/trimslice.c |  253 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 264 insertions(+), 0 deletions(-)
+ create mode 100644 sound/soc/tegra/trimslice.c
+
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 66b504f..5935814 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -24,3 +24,12 @@ config SND_TEGRA_SOC_HARMONY
+ 	  Say Y or M here if you want to add support for SoC audio on the
+ 	  Tegra Harmony reference board.
  
-+static int tegra_ehci_internal_port_reset(
-+	struct ehci_hcd	*ehci,
-+	u32 __iomem	*portsc_reg
-+)
++config SND_TEGRA_SOC_TRIMSLICE
++	tristate "SoC Audio support for TrimSlice board"
++	depends on SND_TEGRA_SOC && MACH_TRIMSLICE && I2C
++	default m
++	select SND_TEGRA_SOC_I2S
++	select SND_SOC_TLV320AIC23
++	help
++	  Say Y or M here if you want to add support for SoC audio on the
++	  TrimSlice platform.
+diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+index fd183d3..784b5e8 100644
+--- a/sound/soc/tegra/Makefile
++++ b/sound/soc/tegra/Makefile
+@@ -11,5 +11,7 @@ obj-$(CONFIG_SND_TEGRA_SOC_I2S) += snd-soc-tegra-i2s.o
+ 
+ # Tegra machine Support
+ snd-soc-tegra-harmony-objs := harmony.o
++snd-soc-tegra-trimslice-objs := trimslice.o
+ 
+ obj-$(CONFIG_SND_TEGRA_SOC_HARMONY) += snd-soc-tegra-harmony.o
++obj-$(CONFIG_SND_TEGRA_SOC_TRIMSLICE) += snd-soc-tegra-trimslice.o
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+new file mode 100644
+index 0000000..f1af4a4
+--- /dev/null
++++ b/sound/soc/tegra/trimslice.c
+@@ -0,0 +1,253 @@
++/*
++ * trimslice.c - TrimSlice machine ASoC driver
++ *
++ * Copyright (C) 2011 - CompuLab, Ltd.
++ * Author: Mike Rapoport <mike@compulab.co.il>
++ *
++ * Based on code copyright/by:
++ * Author: Stephen Warren <swarren@nvidia.com>
++ * Copyright (C) 2010-2011 - NVIDIA, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
++ * 02110-1301 USA
++ *
++ */
++
++#include <asm/mach-types.h>
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/gpio.h>
++
++#include <sound/core.h>
++#include <sound/jack.h>
++#include <sound/pcm.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++
++#include "../codecs/tlv320aic23.h"
++
++#include "tegra_das.h"
++#include "tegra_i2s.h"
++#include "tegra_pcm.h"
++#include "tegra_asoc_utils.h"
++
++#define DRV_NAME "tegra-snd-trimslice"
++
++struct tegra_trimslice {
++	struct tegra_asoc_utils_data util_data;
++};
++
++static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
++					struct snd_pcm_hw_params *params)
 +{
-+	u32		temp;
-+	unsigned long	flags;
-+	int		retval = 0;
-+	int		i, tries;
-+	u32		saved_usbintr;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_codec *codec = rtd->codec;
++	struct snd_soc_card *card = codec->card;
++	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
++	int srate, mclk, mclk_change;
++	int err;
 +
-+	spin_lock_irqsave(&ehci->lock, flags);
-+	saved_usbintr = ehci_readl(ehci, &ehci->regs->intr_enable);
-+	/* disable USB interrupt */
-+	ehci_writel(ehci, 0, &ehci->regs->intr_enable);
-+	spin_unlock_irqrestore(&ehci->lock, flags);
-+
-+	/*
-+	 * Here we have to do Port Reset at most twice for
-+	 * Port Enable bit to be set.
-+	 */
-+	for (i = 0; i < 2; i++) {
-+		temp = ehci_readl(ehci, portsc_reg);
-+		temp |= PORT_RESET;
-+		ehci_writel(ehci, temp, portsc_reg);
-+		mdelay(10);
-+		temp &= ~PORT_RESET;
-+		ehci_writel(ehci, temp, portsc_reg);
-+		mdelay(1);
-+		tries = 100;
-+		do {
-+			mdelay(1);
-+			/*
-+			 * Up to this point, Port Enable bit is
-+			 * expected to be set after 2 ms waiting.
-+			 * USB1 usually takes extra 45 ms, for safety,
-+			 * we take 100 ms as timeout.
-+			 */
-+			temp = ehci_readl(ehci, portsc_reg);
-+		} while (!(temp & PORT_PE) && tries--);
-+		if (temp & PORT_PE)
-+			break;
++	srate = params_rate(params);
++	switch (srate) {
++	case 64000:
++	case 88200:
++	case 96000:
++		mclk = 128 * srate;
++		break;
++	default:
++		mclk = 256 * srate;
++		break;
 +	}
-+	if (i == 2)
-+		retval = -ETIMEDOUT;
++	/* FIXME: Codec only requires >= 3MHz if OSR==0 */
++	while (mclk < 6000000)
++		mclk *= 2;
 +
-+	/*
-+	 * Clear Connect Status Change bit if it's set.
-+	 * We can't clear PORT_PEC. It will also cause PORT_PE to be cleared.
-+	 */
-+	if (temp & PORT_CSC)
-+		ehci_writel(ehci, PORT_CSC, portsc_reg);
++	err = tegra_asoc_utils_set_rate(&trimslice->util_data, srate, mclk,
++					&mclk_change);
++	if (err < 0) {
++		dev_err(card->dev, "Can't configure clocks\n");
++		return err;
++	}
 +
-+	/*
-+	 * Write to clear any interrupt status bits that might be set
-+	 * during port reset.
-+	 */
-+	temp = ehci_readl(ehci, &ehci->regs->status);
-+	ehci_writel(ehci, temp, &ehci->regs->status);
++	err = snd_soc_dai_set_fmt(codec_dai,
++					SND_SOC_DAIFMT_I2S |
++					SND_SOC_DAIFMT_NB_NF |
++					SND_SOC_DAIFMT_CBS_CFS);
++	if (err < 0) {
++		dev_err(card->dev, "codec_dai fmt not set\n");
++		return err;
++	}
 +
-+	/* restore original interrupt enable bits */
-+	ehci_writel(ehci, saved_usbintr, &ehci->regs->intr_enable);
-+	return retval;
++	err = snd_soc_dai_set_fmt(cpu_dai,
++					SND_SOC_DAIFMT_I2S |
++					SND_SOC_DAIFMT_NB_NF |
++					SND_SOC_DAIFMT_CBS_CFS);
++	if (err < 0) {
++		dev_err(card->dev, "cpu_dai fmt not set\n");
++		return err;
++	}
++
++	if (mclk_change) {
++		err = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
++					     SND_SOC_CLOCK_IN);
++		if (err < 0) {
++			dev_err(card->dev, "codec_dai clock not set\n");
++			return err;
++		}
++	}
++
++	return 0;
 +}
 +
- static int tegra_ehci_hub_control(
- 	struct usb_hcd	*hcd,
- 	u16		typeReq,
-@@ -121,6 +186,13 @@ static int tegra_ehci_hub_control(
- 		goto done;
- 	}
- 
-+	/* For USB1 port we need to issue Port Reset twice internally */
-+	if (tegra->phy->instance == 0 &&
-+	   (typeReq == SetPortFeature && wValue == USB_PORT_FEAT_RESET)) {
-+		spin_unlock_irqrestore(&ehci->lock, flags);
-+		return tegra_ehci_internal_port_reset(ehci, status_reg);
++static struct snd_soc_ops trimslice_asoc_ops = {
++	.hw_params = trimslice_asoc_hw_params,
++};
++
++static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
++	SND_SOC_DAPM_HP("Headphone Jack", NULL),
++	SND_SOC_DAPM_LINE("Line In", NULL),
++};
++
++static const struct snd_soc_dapm_route trimslice_audio_map[] = {
++	{"Headphone Jack", NULL, "LOUT"},
++	{"Headphone Jack", NULL, "ROUT"},
++
++	{"LLINEIN", NULL, "Line In"},
++	{"RLINEIN", NULL, "Line In"},
++};
++
++static int trimslice_asoc_init(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_codec *codec = rtd->codec;
++	struct snd_soc_dapm_context *dapm = &codec->dapm;
++
++	snd_soc_dapm_new_controls(dapm, trimslice_dapm_widgets,
++					ARRAY_SIZE(trimslice_dapm_widgets));
++
++	snd_soc_dapm_add_routes(dapm, trimslice_audio_map,
++				ARRAY_SIZE(trimslice_audio_map));
++
++	snd_soc_dapm_sync(dapm);
++
++	return 0;
++}
++
++static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
++	.name = "TLV320AIC23",
++	.stream_name = "AIC23",
++	.codec_name = "tlv320aic23-codec.2-001a",
++	.platform_name = "tegra-pcm-audio",
++	.cpu_dai_name = "tegra-i2s.0",
++	.codec_dai_name = "tlv320aic23-hifi",
++	.init = trimslice_asoc_init,
++	.ops = &trimslice_asoc_ops,
++};
++
++static struct snd_soc_card snd_soc_trimslice = {
++	.name = "tegra-trimslice",
++	.dai_link = &trimslice_tlv320aic23_dai,
++	.num_links = 1,
++};
++
++static __devinit int tegra_snd_trimslice_probe(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = &snd_soc_trimslice;
++	struct tegra_trimslice *trimslice;
++	int ret;
++
++	if (!machine_is_trimslice()) {
++		dev_err(&pdev->dev, "Not running on Trimslice!\n");
++		return -ENODEV;
 +	}
 +
- 	/*
- 	 * Tegra host controller will time the resume operation to clear the bit
- 	 * when the port control state switches to HS or FS Idle. This behavior
++	trimslice = kzalloc(sizeof(struct tegra_trimslice), GFP_KERNEL);
++	if (!trimslice) {
++		dev_err(&pdev->dev, "Can't allocate tegra_trimslice\n");
++		return -ENOMEM;
++	}
++
++	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
++	if (ret)
++		goto err_free_trimslice;
++
++	card->dev = &pdev->dev;
++	platform_set_drvdata(pdev, card);
++	snd_soc_card_set_drvdata(card, trimslice);
++
++	ret = snd_soc_register_card(card);
++	if (ret) {
++		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
++			ret);
++		goto err_clear_drvdata;
++	}
++
++	return 0;
++
++err_clear_drvdata:
++	snd_soc_card_set_drvdata(card, NULL);
++	platform_set_drvdata(pdev, NULL);
++	card->dev = NULL;
++	tegra_asoc_utils_fini(&trimslice->util_data);
++err_free_trimslice:
++	kfree(trimslice);
++	return ret;
++}
++
++static int __devexit tegra_snd_trimslice_remove(struct platform_device *pdev)
++{
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
++
++	snd_soc_unregister_card(card);
++
++	snd_soc_card_set_drvdata(card, NULL);
++	platform_set_drvdata(pdev, NULL);
++	card->dev = NULL;
++
++	tegra_asoc_utils_fini(&trimslice->util_data);
++
++	kfree(trimslice);
++
++	return 0;
++}
++
++static struct platform_driver tegra_snd_trimslice_driver = {
++	.driver = {
++		.name = DRV_NAME,
++		.owner = THIS_MODULE,
++	},
++	.probe = tegra_snd_trimslice_probe,
++	.remove = __devexit_p(tegra_snd_trimslice_remove),
++};
++
++static int __init snd_tegra_trimslice_init(void)
++{
++	return platform_driver_register(&tegra_snd_trimslice_driver);
++}
++module_init(snd_tegra_trimslice_init);
++
++static void __exit snd_tegra_trimslice_exit(void)
++{
++	platform_driver_unregister(&tegra_snd_trimslice_driver);
++}
++module_exit(snd_tegra_trimslice_exit);
++
++MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
++MODULE_DESCRIPTION("Trimslice machine ASoC driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:" DRV_NAME);
 -- 
 1.7.3.1
