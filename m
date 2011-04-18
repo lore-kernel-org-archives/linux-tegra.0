@@ -1,46 +1,24 @@
-From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 2/2] arm: tegra: ventana: fix display depth, dithering
-Date: Mon, 18 Apr 2011 10:28:36 -0700
-Message-ID: <1303147716-21153-2-git-send-email-rmorell@nvidia.com>
-References: <1302923939-374-1-git-send-email-rmorell@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 1/4] ASoC: Tegra: Rename harmony.c to
+ tegra_wm8903.c
+Date: Mon, 18 Apr 2011 21:32:28 +0100
+Message-ID: <20110418203228.GB13808@opensource.wolfsonmicro.com>
+References: <1302630039-19514-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1302923939-374-1-git-send-email-rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1302630039-19514-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, mayureshjanorkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Apr 12, 2011 at 11:40:36AM -0600, Stephen Warren wrote:
+> Soon, this machine driver will be updated to handle a number of Tegra boards
+> using the WM8903 codec. Rename the file in advance to reflect this.
+> 
+> Fix the content of tegra_wm8903.c to match the rename; replace references
+> to Harmony board with something more generic.
 
-Ventana has a 6-bit-per-component panel, so set the bit depth to 18, and
-enable ordered dithering for smoother gradients.
-
-Signed-off-by: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Varun Colbert <vcolbert-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Robert Morell<rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I was going to add this to harmony as well, but harmonay doesn't even have
-tegra_dc_out platform data in linux-tegra, so it needs some more love before
-this can be added.
-
-Version 2 is unchanged.
-
- arch/arm/mach-tegra/board-ventana-panel.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-ventana-panel.c b/arch/arm/mach-tegra/board-ventana-panel.c
-index f3e75e2..07919a4 100644
---- a/arch/arm/mach-tegra/board-ventana-panel.c
-+++ b/arch/arm/mach-tegra/board-ventana-panel.c
-@@ -204,6 +204,8 @@ static struct tegra_dc_out ventana_disp1_out = {
- 
- 	.align		= TEGRA_DC_ALIGN_MSB,
- 	.order		= TEGRA_DC_ORDER_RED_BLUE,
-+	.depth		= 18,
-+	.dither		= TEGRA_DC_ORDERED_DITHER,
- 
- 	.modes	 	= ventana_panel_modes,
- 	.n_modes 	= ARRAY_SIZE(ventana_panel_modes),
--- 
-1.7.3.4
+This doesn't apply against for-2.6.40.
