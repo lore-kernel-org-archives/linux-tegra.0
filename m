@@ -1,64 +1,49 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ASoC: tegra: TrimSlice machine support
-Date: Mon, 18 Apr 2011 09:16:27 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04973BB1DB@HQMAIL01.nvidia.com>
-References: <1303043988-21933-1-git-send-email-mike@compulab.co.il>
- <74CDBE0F657A3D45AFBB94109FB122FF04973BB176@HQMAIL01.nvidia.com>
- <20110418144050.GC1765@opensource.wolfsonmicro.com>
+From: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] video: tegra: Add dc color dithering support
+Date: Mon, 18 Apr 2011 09:19:57 -0700
+Message-ID: <BANLkTim_cQA0ngn=4O=u080FpHVG+Zj+cg@mail.gmail.com>
+References: <1302923939-374-1-git-send-email-rmorell@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110418144050.GC1765-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1302923939-374-1-git-send-email-rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Monday, April 18, 2011 8:41 AM:
-> 
-> On Sun, Apr 17, 2011 at 08:45:22AM -0700, Stephen Warren wrote:
-> 
-> > Also, I renamed harmony.c to be tegra_wm8903.c since there are a number of
-> > boards using Tegra with that codec. I wonder if we'll have the same
-> > situation with this codec, such that this new combination should be e.g.
-> > SND_SOC_TEGRA_TLV320AIC2x and tegra_tlv320aic2x.c?
-> 
-> I'm not a massive fan of this if people aren't cloning a single
-> reference design - it seems better to factor out the code when we see
-> it's being shared and that there's not lots of side warts that cause
-> hassle.
+On Fri, Apr 15, 2011 at 8:18 PM, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
 
-Refactoring later is fine by me.
+ snip
 
-> > // First line cribbed from tlv320aic3x.c.
-> > // Yes, that's not the codec here, but the logic applies I think.
-> > fsref = (srate % 11025 == 0) ? 44100 : 48000;
-> > mclk = 256 * fsref;
-> 
-> That's pretty much illegible due to the ternery operator and...
->
-> > ... although the rate calculations in tlv320aic23.c are more complex, so
-> > I could be persuaded otherwise.
-> 
-> ...it's for a completely different CODEC with different requirements and
-> features.
+> + =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0* The line buffer for error-diffusion dither is limi=
+ted to 640 pixels
+> + =A0 =A0 =A0 =A0* per line, so we can't use it if the active region =
+is larger than 640
+> + =A0 =A0 =A0 =A0* pixels. =A0Be nice and fall back to ordered dither=
+ing, but warn so the
+> + =A0 =A0 =A0 =A0* platform data can be corrected.
+> + =A0 =A0 =A0 =A0*/
+> + =A0 =A0 =A0 if (WARN_ON(dc->out->dither =3D=3D TEGRA_DC_ERRDIFF_DIT=
+HER &&
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dc->mode.h_active > 640)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dc->out->dither =3D TEGRA_DC_ORDERED_DI=
+THER;
+> + =A0 =A0 =A0 }
 
-Yes, given that, the name "fsref" probably isn't a good idea, since that
-name is specific to an unrelated codec.
+snip
 
-"The logic applies" meant that the calculations yield the results that
-are desired, rather than implying the internals of the codecs are related.
+> + =A0 =A0 =A0 case TEGRA_DC_ERRDIFF_DITHER:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 BUG_ON(dc->mode.h_active > 640);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 color_control |=3D DITHER_CONTROL_ERRDI=
+=46F;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
 
-The tables in that part's datasheet imply MCLK should be either 256*44100
-or 256*48000, hence the logic above (well, there are also tables for
-384*fs too).
+Since you explicitly make this condition impossible above, the BUG_ON
+is not needed.
 
-Perhaps those are more examples v.s a set of requirements though. I note
-that code in the codec driver can handle a much wider variety of MCLK
-values, with different ratios, than the small set of tables in the
-datasheet.
-
--- 
-nvpublic
+-Erik
