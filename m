@@ -1,82 +1,55 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] ARM: Tegra: select MACH_HAS_SND_SOC_TEGRA_WM8903
-Date: Tue, 19 Apr 2011 10:18:01 -0600
-Message-ID: <1303229881-9054-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 4/5] ASoC: Process card->widgets after all probe routines
+Date: Tue, 19 Apr 2011 12:46:16 -0600
+Message-ID: <1303238777-14277-4-git-send-email-swarren@nvidia.com>
+References: <1303238777-14277-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1303238777-14277-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
+Cc: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-CONFIG_SND_SOC_TEGRA_WM8903 is useful for many Tegra boards. To avoid the
-ASoC tegra/Kconfig enumerating them all, instead have the Tegra machine
-Kconfig select MACH_HAS_SND_SOC_TEGRA_WM8903 where appropriate, and have
-SND_SOC_TEGRA_WM8903 depend on this.
+Without this, if tegra_wm8903 is modified to provide controls,
+widgets, and routes through data rather than calling registration
+functions, tegra_wm8903_event_* will crash, because w->codec==NULL.
+
+Within snd_soc_instantiate_card, something inside soc_probe_dai_link is
+required for snd_soc_dapm_new_controls to set up the new widgets
+correctly, although I haven't tracked down what exactly. (For
+tegra_wm8903, there is no card->probe, and no aux_devs, so those calls
+aren't relevant).
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Mark, this will need to be applied to your tegra branch so it can get
-merged into both trees. Thanks.
+ sound/soc/soc-core.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-v2: s/HAS/WANT/ in Kconfig variable name.
-  I figured a machine "HAVING" a Kconfig variable didn't make much sense.
-  I also wondered about ALLOW/ENABLE.
-  Still, being consistent with existing variable naming is more important
-  that the finer details of English:-)
-
- arch/arm/mach-tegra/Kconfig |    3 +++
- sound/soc/tegra/Kconfig     |   10 ++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 3cdeffc..5ec1846 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -27,12 +27,14 @@ comment "Tegra board type"
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 3b3a377..8ce40a1 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1878,10 +1878,6 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
+ 	INIT_WORK(&card->deferred_resume_work, soc_resume_deferred);
+ #endif
  
- config MACH_HARMONY
-        bool "Harmony board"
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903
-        help
-          Support for nVidia Harmony development platform
+-	if (card->dapm_widgets)
+-		snd_soc_dapm_new_controls(&card->dapm, card->dapm_widgets,
+-					  card->num_dapm_widgets);
+-
+ 	/* initialise the sound card only once */
+ 	if (card->probe) {
+ 		ret = card->probe(card);
+@@ -1907,6 +1903,10 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
+ 		}
+ 	}
  
- config MACH_KAEN
-        bool "Kaen board"
-        select MACH_SEABOARD
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903
-        help
-          Support for the Kaen version of Seaboard
- 
-@@ -43,6 +45,7 @@ config MACH_PAZ00
- 
- config MACH_SEABOARD
-        bool "Seaboard board"
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903
-        help
-          Support for nVidia Seaboard development platform. It will
- 	 also be included for some of the derivative boards that
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index 14f7119..de32dfb 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -14,10 +14,16 @@ config SND_SOC_TEGRA_I2S
- 	  Tegra I2S interface. You will also need to select the individual
- 	  machine drivers to support below.
- 
-+config MACH_HAS_SND_SOC_TEGRA_WM8903
-+	bool
-+	help
-+	  Machines that use the SND_SOC_TEGRA_WM8903 driver should select
-+	  this config option, in order to allow the user to enable
-+	  SND_SOC_TEGRA_WM8903.
++	if (card->dapm_widgets)
++		snd_soc_dapm_new_controls(&card->dapm, card->dapm_widgets,
++					  card->num_dapm_widgets);
 +
- config SND_SOC_TEGRA_WM8903
- 	tristate "SoC Audio support for Tegra boards using a WM8903 codec"
--	depends on SND_SOC_TEGRA && I2C
--	depends on MACH_HARMONY || MACH_VENTANA || MACH_SEABOARD || MACH_KAEN || MACH_AEBL
-+	depends on SND_SOC_TEGRA && I2C && MACH_HAS_SND_SOC_TEGRA_WM8903
- 	default m
- 	select SND_SOC_TEGRA_I2S
- 	select SND_SOC_WM8903
+ 	/* We should have a non-codec control add function but we don't */
+ 	if (card->controls)
+ 		snd_soc_add_controls(list_first_entry(&card->codec_dev_list,
 -- 
 1.7.1
