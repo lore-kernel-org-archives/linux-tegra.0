@@ -1,33 +1,185 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 4/5] ASoC: Process card->widgets after all probe routines
-Date: Tue, 19 Apr 2011 23:11:27 +0100
-Message-ID: <20110419221127.GA4772@opensource.wolfsonmicro.com>
-References: <1303238777-14277-1-git-send-email-swarren@nvidia.com>
- <1303238777-14277-4-git-send-email-swarren@nvidia.com>
- <20110419185238.GL1765@opensource.wolfsonmicro.com>
- <74CDBE0F657A3D45AFBB94109FB122FF04973BB49A@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04973BB49A-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org" <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Vincent Palatin <vpalatin@chromium.org>
+Subject: [PATCH] i2c: i2c-tegra: fix possible race condition after tx
+Date: Tue, 19 Apr 2011 18:14:36 -0400
+Message-ID: <1303251276-18768-1-git-send-email-vpalatin@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>, Ben Dooks <ben-linux@fluff.org>, linux-i2c@vger.kernel.org
+Cc: Olof Johansson <olofj@chromium.org>, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 19, 2011 at 12:19:37PM -0700, Stephen Warren wrote:
+In tegra_i2c_fill_tx_fifo, once we have finished pushing all the bytes
+to the I2C hardware controller, the interrupt might happen before we
+have updated i2c_dev->msg_buf_remaining at the end of the function.
+Then, in tegra_i2c_isr, we will call again tegra_i2c_fill_tx_fifo
+triggering weird behaviour.
+Of course, this is unlikely since the I2C bus is slow and thus the ISR
+is called several hundreds of microseconds after the last register
+write.
 
-> Before that change, the "Int Spk" control both works fine, and when I
-> modify the value in alsamixer, exit, and restart alsamixer, the value I
-> set is maintained.
+Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+---
+ drivers/i2c/busses/i2c-tegra.c |   54 ++++++++++++++++++++++-----------------
+ 1 files changed, 30 insertions(+), 24 deletions(-)
 
-> However, after that change, the control works fine (i.e. mutes/umutes
-> speakers while speaker-test is running in the background), but when I
-> quit and restart alsamixer, the most recent set value is not shown.
-
-> Do you have any clue what I should look at for that?
-
-Cross-context DAPM will be broken - I already found several issues there
-since I started using it myself, it's probable that there's some more in
-there.
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b4ab39b..c1b119b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -125,7 +125,7 @@ struct tegra_i2c_dev {
+ 	struct completion msg_complete;
+ 	int msg_err;
+ 	u8 *msg_buf;
+-	size_t msg_buf_remaining;
++	atomic_t msg_buf_remaining;
+ 	int msg_read;
+ 	unsigned long bus_clk_rate;
+ 	bool is_suspended;
+@@ -213,38 +213,41 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
+ 	int rx_fifo_avail;
+ 	u8 *buf = i2c_dev->msg_buf;
+-	size_t buf_remaining = i2c_dev->msg_buf_remaining;
+ 	int words_to_transfer;
++	int bytes_to_transfer;
+ 
+ 	val = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
+ 	rx_fifo_avail = (val & I2C_FIFO_STATUS_RX_MASK) >>
+ 		I2C_FIFO_STATUS_RX_SHIFT;
+ 
+ 	/* Rounds down to not include partial word at the end of buf */
+-	words_to_transfer = buf_remaining / BYTES_PER_FIFO_WORD;
++	words_to_transfer = atomic_read(&i2c_dev->msg_buf_remaining) /
++		BYTES_PER_FIFO_WORD;
+ 	if (words_to_transfer > rx_fifo_avail)
+ 		words_to_transfer = rx_fifo_avail;
+ 
++	atomic_sub(words_to_transfer * BYTES_PER_FIFO_WORD,
++		&i2c_dev->msg_buf_remaining);
+ 	i2c_readsl(i2c_dev, buf, I2C_RX_FIFO, words_to_transfer);
+ 
+ 	buf += words_to_transfer * BYTES_PER_FIFO_WORD;
+-	buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
+ 	rx_fifo_avail -= words_to_transfer;
+ 
+ 	/*
+ 	 * If there is a partial word at the end of buf, handle it manually to
+ 	 * prevent overwriting past the end of buf
+ 	 */
+-	if (rx_fifo_avail > 0 && buf_remaining > 0) {
+-		BUG_ON(buf_remaining > 3);
++	bytes_to_transfer = atomic_read(&i2c_dev->msg_buf_remaining);
++	if (rx_fifo_avail > 0 && bytes_to_transfer > 0) {
++		BUG_ON(bytes_to_transfer > 3);
++		atomic_set(&i2c_dev->msg_buf_remaining, 0);
+ 		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+-		memcpy(buf, &val, buf_remaining);
+-		buf_remaining = 0;
++		memcpy(buf, &val, bytes_to_transfer);
+ 		rx_fifo_avail--;
+ 	}
+ 
+-	BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+-	i2c_dev->msg_buf_remaining = buf_remaining;
++	BUG_ON(rx_fifo_avail > 0 &&
++		atomic_read(&i2c_dev->msg_buf_remaining) > 0);
+ 	i2c_dev->msg_buf = buf;
+ 	return 0;
+ }
+@@ -254,22 +257,24 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
+ 	int tx_fifo_avail;
+ 	u8 *buf = i2c_dev->msg_buf;
+-	size_t buf_remaining = i2c_dev->msg_buf_remaining;
+ 	int words_to_transfer;
++	int bytes_to_transfer;
+ 
+ 	val = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
+ 	tx_fifo_avail = (val & I2C_FIFO_STATUS_TX_MASK) >>
+ 		I2C_FIFO_STATUS_TX_SHIFT;
+ 
+ 	/* Rounds down to not include partial word at the end of buf */
+-	words_to_transfer = buf_remaining / BYTES_PER_FIFO_WORD;
++	words_to_transfer = atomic_read(&i2c_dev->msg_buf_remaining) /
++		BYTES_PER_FIFO_WORD;
+ 	if (words_to_transfer > tx_fifo_avail)
+ 		words_to_transfer = tx_fifo_avail;
+ 
++	atomic_sub(words_to_transfer * BYTES_PER_FIFO_WORD,
++		&i2c_dev->msg_buf_remaining);
+ 	i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
+ 
+ 	buf += words_to_transfer * BYTES_PER_FIFO_WORD;
+-	buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
+ 	tx_fifo_avail -= words_to_transfer;
+ 
+ 	/*
+@@ -277,16 +282,17 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+ 	 * prevent reading past the end of buf, which could cross a page
+ 	 * boundary and fault.
+ 	 */
+-	if (tx_fifo_avail > 0 && buf_remaining > 0) {
+-		BUG_ON(buf_remaining > 3);
+-		memcpy(&val, buf, buf_remaining);
++	bytes_to_transfer = atomic_read(&i2c_dev->msg_buf_remaining);
++	if (tx_fifo_avail > 0 && bytes_to_transfer > 0) {
++		BUG_ON(bytes_to_transfer > 3);
++		memcpy(&val, buf, bytes_to_transfer);
++		atomic_set(&i2c_dev->msg_buf_remaining, 0);
+ 		i2c_writel(i2c_dev, val, I2C_TX_FIFO);
+-		buf_remaining = 0;
+ 		tx_fifo_avail--;
+ 	}
+ 
+-	BUG_ON(tx_fifo_avail > 0 && buf_remaining > 0);
+-	i2c_dev->msg_buf_remaining = buf_remaining;
++	BUG_ON(tx_fifo_avail > 0 &&
++		atomic_read(&i2c_dev->msg_buf_remaining) > 0);
+ 	i2c_dev->msg_buf = buf;
+ 	return 0;
+ }
+@@ -364,21 +370,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	}
+ 
+ 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+-		if (i2c_dev->msg_buf_remaining)
++		if (atomic_read(&i2c_dev->msg_buf_remaining))
+ 			tegra_i2c_empty_rx_fifo(i2c_dev);
+ 		else
+ 			BUG();
+ 	}
+ 
+ 	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+-		if (i2c_dev->msg_buf_remaining)
++		if (atomic_read(&i2c_dev->msg_buf_remaining))
+ 			tegra_i2c_fill_tx_fifo(i2c_dev);
+ 		else
+ 			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
+ 	}
+ 
+ 	if ((status & I2C_INT_PACKET_XFER_COMPLETE) &&
+-			!i2c_dev->msg_buf_remaining)
++			!atomic_read(&i2c_dev->msg_buf_remaining))
+ 		complete(&i2c_dev->msg_complete);
+ 
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+@@ -408,7 +414,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return -EINVAL;
+ 
+ 	i2c_dev->msg_buf = msg->buf;
+-	i2c_dev->msg_buf_remaining = msg->len;
++	atomic_set(&i2c_dev->msg_buf_remaining, msg->len);
+ 	i2c_dev->msg_err = I2C_ERR_NONE;
+ 	i2c_dev->msg_read = (msg->flags & I2C_M_RD);
+ 	INIT_COMPLETION(i2c_dev->msg_complete);
+@@ -440,7 +446,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+ 	if (msg->flags & I2C_M_RD)
+ 		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
+-	else if (i2c_dev->msg_buf_remaining)
++	else if (atomic_read(&i2c_dev->msg_buf_remaining))
+ 		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
+ 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
+ 	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
+-- 
+1.7.3.1
