@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [Patch v2 2/6] ASoC: Tegra: wm8903: Remove redundant drvdata clears
-Date: Tue, 19 Apr 2011 15:25:08 -0600
-Message-ID: <1303248312-22664-2-git-send-email-swarren@nvidia.com>
+Subject: [Patch v2 5/6] ASoC: snd_soc_dapm_get_pin_status: Match other contexts too
+Date: Tue, 19 Apr 2011 15:25:11 -0600
+Message-ID: <1303248312-22664-5-git-send-email-swarren@nvidia.com>
 References: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1303248312-22664-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,48 +10,38 @@ To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kD
 Cc: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When the driver is not initialized/registered, nothing should be touching
-these fields anyway, so there's no point clearing them out.
+Not all widgets on a card are within the codec's DAPM context. Fix
+snd_soc_dapm_get_pin_status to search all contexts when looking for a
+widget.
 
-(Applying Mark's TrimSlice review comments to the existing driver)
+This change is required when modifying tegra_wm8903 to use
+snd_soc_card.widgets rather than calling snd_soc_dapm_new_controls; the
+former adds the widgets to the card's DAPM context, whereas tegra_wm8903
+uses the codec's DAPM context when calling snd_soc_dapm_new_controls.
+
+By code inspection, I suspect this also applies to Samsung Speyside.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra_wm8903.c |   11 ++---------
- 1 files changed, 2 insertions(+), 9 deletions(-)
+ sound/soc/soc-dapm.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 1eb0632..b12b1fd 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -417,15 +417,12 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_clear_drvdata;
-+		goto err_fini_utils;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 2ee738c..4c868f9 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2403,6 +2403,12 @@ int snd_soc_dapm_get_pin_status(struct snd_soc_dapm_context *dapm,
+ 			return w->connected;
  	}
  
++	/* Try again in other contexts */
++	list_for_each_entry(w, &dapm->card->widgets, list) {
++		if (!strcmp(w->name, pin))
++			return w->connected;
++	}
++
  	return 0;
- 
--err_clear_drvdata:
--	snd_soc_card_set_drvdata(card, NULL);
--	platform_set_drvdata(pdev, NULL);
--	card->dev = NULL;
-+err_fini_utils:
- 	tegra_asoc_utils_fini(&machine->util_data);
- err_free_machine:
- 	kfree(machine);
-@@ -440,10 +437,6 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
- 
- 	snd_soc_unregister_card(card);
- 
--	snd_soc_card_set_drvdata(card, NULL);
--	platform_set_drvdata(pdev, NULL);
--	card->dev = NULL;
--
- 	tegra_asoc_utils_fini(&machine->util_data);
- 
- 	if (machine->gpio_requested & GPIO_EXT_MIC_EN)
+ }
+ EXPORT_SYMBOL_GPL(snd_soc_dapm_get_pin_status);
 -- 
 1.7.1
