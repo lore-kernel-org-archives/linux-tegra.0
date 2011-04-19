@@ -1,66 +1,57 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: Re: [PATCH 4/5] ASoC: Process card->widgets after all
-	probe routines
-Date: Tue, 19 Apr 2011 12:19:37 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04973BB49A@HQMAIL01.nvidia.com>
-References: <1303238777-14277-1-git-send-email-swarren@nvidia.com>
-	<1303238777-14277-4-git-send-email-swarren@nvidia.com>
-	<20110419185238.GL1765@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20110419185238.GL1765@opensource.wolfsonmicro.com>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "mike@compulab.co.il" <mike@compulab.co.il>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch v2 2/6] ASoC: Tegra: wm8903: Remove redundant drvdata clears
+Date: Tue, 19 Apr 2011 15:25:08 -0600
+Message-ID: <1303248312-22664-2-git-send-email-swarren@nvidia.com>
+References: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1303248312-22664-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
+Cc: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Tuesday, April 19, 2011 12:53 PM:
-> On Tue, Apr 19, 2011 at 12:46:16PM -0600, Stephen Warren wrote:
-> 
-> > Without this, if tegra_wm8903 is modified to provide controls,
-> > widgets, and routes through data rather than calling registration
-> > functions, tegra_wm8903_event_* will crash, because w->codec==NULL.
-> 
-> This will break other things as it means that we can't route to the DAPM
-> widgets that are added from machine init functions (eg, those that set
-> up jacks) which is a more common case - see the changelog for the code
-> you're modifying.
-> 
-> There's also the fact that these widgets should be being created in the
-> card DAPM context so I'm a bit concerned that they're getting a CODEC at
-> all.  The dereferencing you're trying to do isn't good, you're looking
-> for a CODEC to find the card for widgets in the card DAPM context which
-> shouldn't be associated with any particular CODEC in the first place.
-> You should just find the card based on the DAPM context you're in.
+When the driver is not initialized/registered, nothing should be touching
+these fields anyway, so there's no point clearing them out.
 
-OK. I dropped that patch and fixed up the event functions so they work
-correctly.
+(Applying Mark's TrimSlice review comments to the existing driver)
 
-However, I do notice one other regression moving the tegra_wm8903 driver
-to data instead of code for widgets/controls/routes:
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/tegra/tegra_wm8903.c |   11 ++---------
+ 1 files changed, 2 insertions(+), 9 deletions(-)
 
-Before that change, the "Int Spk" control both works fine, and when I
-modify the value in alsamixer, exit, and restart alsamixer, the value I
-set is maintained.
-
-However, after that change, the control works fine (i.e. mutes/umutes
-speakers while speaker-test is running in the background), but when I
-quit and restart alsamixer, the most recent set value is not shown.
-
-Do you have any clue what I should look at for that?
-
-Thanks!
-
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 1eb0632..b12b1fd 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -417,15 +417,12 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+ 			ret);
+-		goto err_clear_drvdata;
++		goto err_fini_utils;
+ 	}
+ 
+ 	return 0;
+ 
+-err_clear_drvdata:
+-	snd_soc_card_set_drvdata(card, NULL);
+-	platform_set_drvdata(pdev, NULL);
+-	card->dev = NULL;
++err_fini_utils:
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ err_free_machine:
+ 	kfree(machine);
+@@ -440,10 +437,6 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+ 
+ 	snd_soc_unregister_card(card);
+ 
+-	snd_soc_card_set_drvdata(card, NULL);
+-	platform_set_drvdata(pdev, NULL);
+-	card->dev = NULL;
+-
+ 	tegra_asoc_utils_fini(&machine->util_data);
+ 
+ 	if (machine->gpio_requested & GPIO_EXT_MIC_EN)
 -- 
-nvpublic
+1.7.1
