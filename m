@@ -1,33 +1,41 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [Patch v2 1/6] ASoC: Tegra: wm8903 probe: Don't
- call machine_is_*()
-Date: Wed, 20 Apr 2011 13:59:02 +0100
-Message-ID: <20110420125902.GE4097@opensource.wolfsonmicro.com>
-References: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v2] ARM: Tegra: select MACH_HAS_SND_SOC_TEGRA_WM8903
+Date: Wed, 20 Apr 2011 09:34:27 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04973BB629@HQMAIL01.nvidia.com>
+References: <1303229881-9054-1-git-send-email-swarren@nvidia.com>
+ <1303297939.3436.3.camel@odin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, mike@compulab.co.il, lrg@slimlogic.co.uk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1303297939.3436.3.camel@odin>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 19, 2011 at 03:25:07PM -0600, Stephen Warren wrote:
-> This machine driver is a platform driver, and hence will only be
-> instantiated on the correct machines. Hence, there is no need to
-> check the current machine during probe.
-> 
-> (Applying Mark's TrimSlice review comments to the existing driver)
-
-Applied all, thanks.
+TGlhbSBHaXJkd29vZCB3cm90ZSBhdCBXZWRuZXNkYXksIEFwcmlsIDIwLCAyMDExIDU6MTIgQU06
+DQo+IE9uIFR1ZSwgMjAxMS0wNC0xOSBhdCAxMDoxOCAtMDYwMCwgU3RlcGhlbiBXYXJyZW4gd3Jv
+dGU6DQo+ID4gQ09ORklHX1NORF9TT0NfVEVHUkFfV004OTAzIGlzIHVzZWZ1bCBmb3IgbWFueSBU
+ZWdyYSBib2FyZHMuIFRvIGF2b2lkIHRoZQ0KPiA+IEFTb0MgdGVncmEvS2NvbmZpZyBlbnVtZXJh
+dGluZyB0aGVtIGFsbCwgaW5zdGVhZCBoYXZlIHRoZSBUZWdyYSBtYWNoaW5lDQo+ID4gS2NvbmZp
+ZyBzZWxlY3QgTUFDSF9IQVNfU05EX1NPQ19URUdSQV9XTTg5MDMgd2hlcmUgYXBwcm9wcmlhdGUs
+IGFuZCBoYXZlDQo+ID4gU05EX1NPQ19URUdSQV9XTTg5MDMgZGVwZW5kIG9uIHRoaXMuDQoNCkNv
+bGluLCBFcmlrLCBPbG9mLA0KDQpEb2VzIHRoaXMgY2hhbmdlIGxvb2sgT0s/IElmIHNvLCBjb3Vs
+ZCB5b3UgcGxlYXNlIEFjayBpdDsgSSBpbWFnaW5lIE1hcmsNCmlzIGhvbGRpbmcgb2ZmIGFwcGx5
+aW5nIGl0IHVudGlsIHlvdSBkby4NCg0KQWZ0ZXIgTWFyayBhcHBsaWVzIHRoaXMsIFRlZ3JhIGZv
+ci1uZXh0IG5lZWRzIHRvIG1lcmdlIE1hcmsncyB0ZWdyYQ0KYnJhbmNoLCBhbmQgYSBmZXcgcGF0
+Y2hlcyBJIGhhdmUgbmVlZCB0byBiZSBhcHBsaWVkIHRvIGVuYWJsZSBTZWFib2FyZA0KYXVkaW8s
+IHdoaWNoIGFsbCBuZWVkcyB0byBoYXBwZW4gaW4gdGhlIG5leHQgY291cGxlIG9mIHdlZWtzIHNv
+IGl0J3MNCmluIGZvci1uZXh0IGJlZm9yZSByYzYuIEknbGwgc2VuZCBhbGwgdGhlIGRldGFpbHMg
+b25jZSB0aGlzIGNoYW5nZQ0KaXMgYXBwbGllZC4NCg0KVGhhbmtzIQ0KDQo+ID4gU2lnbmVkLW9m
+Zi1ieTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4NCj4gPiAtLS0NCj4gPiBN
+YXJrLCB0aGlzIHdpbGwgbmVlZCB0byBiZSBhcHBsaWVkIHRvIHlvdXIgdGVncmEgYnJhbmNoIHNv
+IGl0IGNhbiBnZXQNCj4gPiBtZXJnZWQgaW50byBib3RoIHRyZWVzLiBUaGFua3MuDQo+ID4NCj4g
+PiB2Mjogcy9IQVMvV0FOVC8gaW4gS2NvbmZpZyB2YXJpYWJsZSBuYW1lLg0KPiA+ICAgSSBmaWd1
+cmVkIGEgbWFjaGluZSAiSEFWSU5HIiBhIEtjb25maWcgdmFyaWFibGUgZGlkbid0IG1ha2UgbXVj
+aCBzZW5zZS4NCj4gPiAgIEkgYWxzbyB3b25kZXJlZCBhYm91dCBBTExPVy9FTkFCTEUuDQo+ID4g
+ICBTdGlsbCwgYmVpbmcgY29uc2lzdGVudCB3aXRoIGV4aXN0aW5nIHZhcmlhYmxlIG5hbWluZyBp
+cyBtb3JlIGltcG9ydGFudA0KPiA+ICAgdGhhdCB0aGUgZmluZXIgZGV0YWlscyBvZiBFbmdsaXNo
+Oi0pDQo+ID4NCj4gDQo+IEFja2VkLWJ5OiBMaWFtIEdpcmR3b29kIDxscmdAdGkuY29tPg0KDQo=
