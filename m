@@ -1,34 +1,58 @@
-From: Liam Girdwood <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: Tegra: select MACH_HAS_SND_SOC_TEGRA_WM8903
-Date: Wed, 20 Apr 2011 12:12:19 +0100
-Message-ID: <1303297939.3436.3.camel@odin>
-References: <1303229881-9054-1-git-send-email-swarren@nvidia.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [Patch v2 1/6] ASoC: Tegra: wm8903 probe: Don't
+ call machine_is_*()
+Date: Wed, 20 Apr 2011 12:35:03 +0100
+Message-ID: <1303299303.3436.4.camel@odin>
+References: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1303229881-9054-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1303248312-22664-1-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, broonie@opensource.wolfsonmicro.com, mike@compulab.co.il
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2011-04-19 at 10:18 -0600, Stephen Warren wrote:
-> CONFIG_SND_SOC_TEGRA_WM8903 is useful for many Tegra boards. To avoid the
-> ASoC tegra/Kconfig enumerating them all, instead have the Tegra machine
-> Kconfig select MACH_HAS_SND_SOC_TEGRA_WM8903 where appropriate, and have
-> SND_SOC_TEGRA_WM8903 depend on this.
+On Tue, 2011-04-19 at 15:25 -0600, Stephen Warren wrote:
+> This machine driver is a platform driver, and hence will only be
+> instantiated on the correct machines. Hence, there is no need to
+> check the current machine during probe.
 > 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> (Applying Mark's TrimSlice review comments to the existing driver)
+> 
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
-> Mark, this will need to be applied to your tegra branch so it can get
-> merged into both trees. Thanks.
+>  sound/soc/tegra/tegra_wm8903.c |    7 -------
+>  1 files changed, 0 insertions(+), 7 deletions(-)
 > 
-> v2: s/HAS/WANT/ in Kconfig variable name.
->   I figured a machine "HAVING" a Kconfig variable didn't make much sense.
->   I also wondered about ALLOW/ENABLE.
->   Still, being consistent with existing variable naming is more important
->   that the finer details of English:-)
-> 
+> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+> index 37f6010..1eb0632 100644
+> --- a/sound/soc/tegra/tegra_wm8903.c
+> +++ b/sound/soc/tegra/tegra_wm8903.c
+> @@ -391,13 +391,6 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+>  	struct tegra_wm8903_platform_data *pdata;
+>  	int ret;
+>  
+> -	if (!machine_is_harmony() && !machine_is_ventana() &&
+> -	    !machine_is_seaboard() && !machine_is_kaen() &&
+> -	    !machine_is_aebl()) {
+> -		dev_err(&pdev->dev, "Not running on a supported board!\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	pdata = pdev->dev.platform_data;
+>  	if (!pdata) {
+>  		dev_err(&pdev->dev, "No platform data supplied\n");
 
-Acked-by: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+All
+
+Acked-by: Liam Girdwood <lrg@ti.com>
