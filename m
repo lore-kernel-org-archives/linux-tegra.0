@@ -1,30 +1,40 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: Tegra: select MACH_HAS_SND_SOC_TEGRA_WM8903
-Date: Wed, 20 Apr 2011 22:19:51 -0700
-Message-ID: <BANLkTi=gAvhoPmBHJR_kOQ-Paz=+dEArhg@mail.gmail.com>
-References: <1303229881-9054-1-git-send-email-swarren@nvidia.com>
-	<1303297939.3436.3.camel@odin>
-	<74CDBE0F657A3D45AFBB94109FB122FF04973BB629@HQMAIL01.nvidia.com>
-	<20110420164022.GE9869@opensource.wolfsonmicro.com>
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra: TrimSlice machine support
+Date: Thu, 21 Apr 2011 09:53:11 +0300
+Message-ID: <4DAFD457.30805@compulab.co.il>
+References: <1303043988-21933-1-git-send-email-mike@compulab.co.il> <74CDBE0F657A3D45AFBB94109FB122FF04973BB176@HQMAIL01.nvidia.com> <20110418144050.GC1765@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110420164022.GE9869-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <20110418144050.GC1765-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 20, 2011 at 9:40 AM, Mark Brown
-<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
-> On Wed, Apr 20, 2011 at 09:34:27AM -0700, Stephen Warren wrote:
->
->> Does this change look OK? If so, could you please Ack it; I imagine Mark
->> is holding off applying it until you do.
->
-> I am.
+On 04/18/11 17:40, Mark Brown wrote:
+> On Sun, Apr 17, 2011 at 08:45:22AM -0700, Stephen Warren wrote:
+> 
+>> // First line cribbed from tlv320aic3x.c.
+>> // Yes, that's not the codec here, but the logic applies I think.
+>> fsref = (srate % 11025 == 0) ? 44100 : 48000;
+>> mclk = 256 * fsref;
+> 
+> That's pretty much illegible due to the ternery operator and...
+> 
+>> ... although the rate calculations in tlv320aic23.c are more complex, so
+>> I could be persuaded otherwise.
+> 
+> ...it's for a completely different CODEC with different requirements and
+> features.
+> 
 
-Done.
+I've run several tests and the codec seems to be pretty happy when
+mclk = 128 * srate
+so I'd prefer to keep things simple and green :)
 
 
--Olof
+-- 
+Sincerely yours,
+Mike.
