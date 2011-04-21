@@ -1,59 +1,44 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/4] ARM: Tegra: Seaboard: Re-order sdhci device registration
-Date: Thu, 21 Apr 2011 12:01:30 -0600
-Message-ID: <1303408892-7472-3-git-send-email-swarren@nvidia.com>
-References: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 0/4] Tegra patches for 2.6.40
+Date: Thu, 21 Apr 2011 12:01:28 -0600
+Message-ID: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1303408892-7472-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ensure the built-in eMMC is always named mmcblk0.
+Below are the patches I have queued up for Tegra in 2.6.40.
 
-This is important because:
+The first 2 and last 1 are bug fixes and can be applied immediately. I
+believe these are all reposts too.
 
-* U-Boot statically assigns MMC device IDs based on controller ID.
-* U-Boot assumes that kernel MMC device ID numbering matches U-Boot numbering.
-* U-Boot provides a kernel cmdline option e.g. root=/dev/mmcblk0p3 based on
-  that numbering.
-* The kernel dynamically assigns MMC device IDs based on enumeration order of
-  the memory behind the host controller, rather than statically based on host
-  controller ID like U-Boot.
-* By registering the SDHCI controller for the built-in eMMC first, the
-  enumeration of the built-in eMMC is performed first, and hence eMMC gets
-  assigned ID 0 just like U-Boot. If the SD slot is filled, it then gets
-  assigned ID 1 just like U-Boot.
-* If the MMC IDs mismatch, and the system boots from SD card not eMMC, the
-  kernel will access the eMMC instead of SD card when attempting to mount
-  /dev/mmcblk1p3 as the root fs. If eMMC is not partitioned/formatted, the
-  kernel will panic since the root fs can't be mounted. If eMMC is partitioned
-  and formatted, the kernel will mount an unexpected filesystem as the root fs.
+The 3rd updates the Seaboard board to define to required platform data
+for the audio driver. This one patch relies on the git pull request that
+I sent out earlier today.
 
-This change relies on the SDHCI driver performing initial card detection
-synchronously during device registration. This is currently the case.
+I tested:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index a8d7ace..783de17 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -137,9 +137,9 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 = {
- static struct platform_device *seaboard_devices[] __initdata = {
- 	&debug_uart,
- 	&tegra_pmu_device,
--	&tegra_sdhci_device1,
--	&tegra_sdhci_device3,
- 	&tegra_sdhci_device4,
-+	&tegra_sdhci_device3,
-+	&tegra_sdhci_device1,
- 	&seaboard_gpio_keys_device,
- };
+* After applying these changes, everything builds OK and runs fine on
+  Harmony, including audio.
+* After additionally merging Mark's ASoC for-2.6.40/for-next branch,
+  there are no merge conflicts, everything builds OK, and everything
+  runs OK on Seaboard clamshell, including a full audio checkout.
+  Note that non-clamshell Seaboard has difficulty initializing I2C.
+  I'm investigating this, but don't expect to need to modify any of
+  these changes because of this issue; most likely some unrelated bug
+  needs fixing.
  
--- 
-1.7.1
+Stephen Warren (4):
+  ARM: Tegra: Harmony: Fix conflicting GPIO numbering
+  ARM: Tegra: Seaboard: Re-order sdhci device registration
+  ARM: Tegra: Seaboard board updates for audio
+  ARM: tegra: Harmony: Register and configure WM8903 IRQ GPIO
+
+ arch/arm/mach-tegra/board-harmony-power.c   |    4 +-
+ arch/arm/mach-tegra/board-harmony.c         |    3 +
+ arch/arm/mach-tegra/board-harmony.h         |    3 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   21 +++++++++-
+ arch/arm/mach-tegra/board-seaboard.c        |   56 ++++++++++++++++++++++++++-
+ arch/arm/mach-tegra/board-seaboard.h        |   12 ++++--
+ 6 files changed, 89 insertions(+), 10 deletions(-)
