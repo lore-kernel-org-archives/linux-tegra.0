@@ -1,44 +1,45 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] Tegra patches for 2.6.40
-Date: Thu, 21 Apr 2011 12:01:28 -0600
-Message-ID: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 4/4] ARM: tegra: Harmony: Register and configure WM8903 IRQ GPIO
+Date: Thu, 21 Apr 2011 12:01:32 -0600
+Message-ID: <1303408892-7472-5-git-send-email-swarren@nvidia.com>
+References: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1303408892-7472-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Below are the patches I have queued up for Tegra in 2.6.40.
+Technically, we need to request and configure the GPIO used as the WM8903
+interrupt. This prevents conflicting registrations, and assures that the
+GPIO is correctly configured in all cases, e.g. if the bootloader left the
+GPIO in some unexpected state.
 
-The first 2 and last 1 are bug fixes and can be applied immediately. I
-believe these are all reposts too.
+In practice, the previous code works as-is, at least when using ChromeOS's
+U-Boot as the boot-loader.
 
-The 3rd updates the Seaboard board to define to required platform data
-for the audio driver. This one patch relies on the git pull request that
-I sent out earlier today.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Note: For Harmony, we don't have to do this inside harmony_pinmux_init
+(see Seaboard's seaboard_pinmux_init in patch 3 in this series) because
+pingroup SPIC pins are all input on Harmony.
 
-I tested:
+ arch/arm/mach-tegra/board-harmony.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-* After applying these changes, everything builds OK and runs fine on
-  Harmony, including audio.
-* After additionally merging Mark's ASoC for-2.6.40/for-next branch,
-  there are no merge conflicts, everything builds OK, and everything
-  runs OK on Seaboard clamshell, including a full audio checkout.
-  Note that non-clamshell Seaboard has difficulty initializing I2C.
-  I'm investigating this, but don't expect to need to modify any of
-  these changes because of this issue; most likely some unrelated bug
-  needs fixing.
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index 30e18bc..87cbc4b 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -131,6 +131,9 @@ static void __init harmony_i2c_init(void)
+ 	platform_device_register(&tegra_i2c_device3);
+ 	platform_device_register(&tegra_i2c_device4);
  
-Stephen Warren (4):
-  ARM: Tegra: Harmony: Fix conflicting GPIO numbering
-  ARM: Tegra: Seaboard: Re-order sdhci device registration
-  ARM: Tegra: Seaboard board updates for audio
-  ARM: tegra: Harmony: Register and configure WM8903 IRQ GPIO
-
- arch/arm/mach-tegra/board-harmony-power.c   |    4 +-
- arch/arm/mach-tegra/board-harmony.c         |    3 +
- arch/arm/mach-tegra/board-harmony.h         |    3 +-
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   21 +++++++++-
- arch/arm/mach-tegra/board-seaboard.c        |   56 ++++++++++++++++++++++++++-
- arch/arm/mach-tegra/board-seaboard.h        |   12 ++++--
- 6 files changed, 89 insertions(+), 10 deletions(-)
++	gpio_request(TEGRA_GPIO_CDC_IRQ, "wm8903");
++	gpio_direction_input(TEGRA_GPIO_CDC_IRQ);
++
+ 	i2c_register_board_info(0, &wm8903_board_info, 1);
+ }
+ 
+-- 
+1.7.1
