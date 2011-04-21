@@ -1,47 +1,68 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [GIT PULL] Please pull ASoC's tegra branch into Tegra for-next
-Date: Thu, 21 Apr 2011 10:21:06 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04973BB857@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH 1/4] ARM: Tegra: Harmony: Fix conflicting GPIO numbering
+Date: Thu, 21 Apr 2011 12:01:29 -0600
+Message-ID: <1303408892-7472-2-git-send-email-swarren@nvidia.com>
+References: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1303408892-7472-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin, Erik, Olof,
+Currently, both the WM8903 and TPS6586x chips attempt to register with
+gpiolib using the same GPIO numbers. This causes the audio driver to
+fail to initialize.
 
-Please pull
+To solve this, add a define to board-harmony.h for the TPS6586x, and make
+board-harmony-power.c use this define, instead of directly referencing
+TEGRA_NR_GPIOS.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git tegra
+This fixes a regression introduced by commit
+6f168f2fa60f87e85e0df25e87e2372f22f5eb7c.
+ARM: tegra: harmony: initialize the TPS65862 PMIC
 
-into Tegra's for-next, or whichever branch is appropriate for 2.6.40 work.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony-power.c |    4 +++-
+ arch/arm/mach-tegra/board-harmony.h       |    3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-This will bring in:
-
-47912a6 ARM: Tegra: select MACH_HAS_SND_SOC_TEGRA_WM8903
-61a6d07 ARM: Tegra: Add to tegra_wm8903_platform_data
-7b33af2 ASoC: Tegra: Rename pdev tegra-snd-harmony to tegra-snd-wm8903
-4651d55 ARM: Tegra: Rename harmony_audio.h -> tegra_wm8903_pdata.h
-a6360dd Linux 2.6.39-rc3
-
-The changes are required to add Seaboard audio support into the Tegra
-branch. I'll post patches for that later today.
-
-I have tested that:
-
-* The merge has no conflicts.
-* The merge result compiles.
-* The resultant kernel runs OK on Harmony.
-* With the addition of the patch below, which is required to fix an
-  already-extant bug in Tegra's for-next branch, and which I'll repost
-  later today, audio on Harmony works fully.
-  ARM: Tegra: Harmony: Fix conflicting GPIO numbering
-
-Thank you.
-
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+index c84442c..5ad8b2f 100644
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ b/arch/arm/mach-tegra/board-harmony-power.c
+@@ -24,6 +24,8 @@
+ 
+ #include <mach/irqs.h>
+ 
++#include "board-harmony.h"
++
+ #define PMC_CTRL		0x0
+ #define PMC_CTRL_INTR_LOW	(1 << 17)
+ 
+@@ -98,7 +100,7 @@ static struct tps6586x_platform_data tps_platform = {
+ 	.irq_base	= TEGRA_NR_IRQS,
+ 	.num_subdevs	= ARRAY_SIZE(tps_devs),
+ 	.subdevs	= tps_devs,
+-	.gpio_base	= TEGRA_NR_GPIOS,
++	.gpio_base	= HARMONY_GPIO_TPS6586X(0),
+ };
+ 
+ static struct i2c_board_info __initdata harmony_regulators[] = {
+diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
+index 1e57b07..d85142e 100644
+--- a/arch/arm/mach-tegra/board-harmony.h
++++ b/arch/arm/mach-tegra/board-harmony.h
+@@ -17,7 +17,8 @@
+ #ifndef _MACH_TEGRA_BOARD_HARMONY_H
+ #define _MACH_TEGRA_BOARD_HARMONY_H
+ 
+-#define HARMONY_GPIO_WM8903(_x_)	(TEGRA_NR_GPIOS + (_x_))
++#define HARMONY_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
++#define HARMONY_GPIO_WM8903(_x_)	(HARMONY_GPIO_TPS6586X(4) + (_x_))
+ 
+ #define TEGRA_GPIO_SD2_CD		TEGRA_GPIO_PI5
+ #define TEGRA_GPIO_SD2_WP		TEGRA_GPIO_PH1
 -- 
-nvpublic
+1.7.1
