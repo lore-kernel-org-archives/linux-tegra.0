@@ -1,270 +1,50 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] ARM: Tegra: Move Harmony .dts file to correct place
-Date: Sat, 23 Apr 2011 22:30:04 -0600
-Message-ID: <1303619404-27604-4-git-send-email-swarren@nvidia.com>
-References: <1303619404-27604-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 0/3] Fix Tegra devicetree support
+Date: Sat, 23 Apr 2011 22:30:01 -0600
+Message-ID: <1303619404-27604-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1303619404-27604-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
 Cc: linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The following workflow:
+I tried out:
 
-make dtbs
-make dtbuImage # See my earlier patch which adds this based on
-                 Jeremy Kerr's patch to add a dtbImage target.
+git://git.secretlab.ca/git/linux-2.6.git devicetree/test
 
-... seems to require the *.dts file to be in arch/arm/boot/dts. I'm not
-sure if any other devicetree testing flows will be negatively affected by
-this change.
+plus the following commits from jk's dtbimage branch:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+  4c2eddb89542f73fe626813e3cdafc789f931aec
+  arm: dtbImage support
+
+  4cb80ac96489220554d28f6fde527aeef83e628b
+  arm/dtbimage: copy dtb blob to offset from image base
+
+  A local patch to modify the Tegra devicetree support to support
+  Seaboard instead of Harmony.
+
+... on an NVIDIA Tegra Seaboard board.
+
+This patch series includes fixes to that branch to get Tegra booting to
+user-space.
+
+Note that soon after user-space starts, the system still crashes with:
+
+  Unhandled prefetch abort: debug event (0x002) at 0x40e97714
+
+However, this happens with or without actually providing a devicetree
+image to the kernel (I modified jk's dtbimage wrapper just to jump
+straight to the regular kernel startup, thus not providing a devicetree
+at all). So, I suspect it's some unrelated issue. I'll try to follow up
+and solve that too.
+
+Stephen Warren (3):
+  ARM: Tegra: dt: Compile fix; tegra_common_init removed
+  ARM: Tegra: dt: Fix machine desc to match other boards.
+  ARM: Tegra: Move Harmony .dts file to correct place
+
  arch/arm/boot/dts/tegra-harmony.dts   |  110 +++++++++++++++++++++++++++++++-
+ arch/arm/mach-tegra/board-dt.c        |   13 ++--
  arch/arm/mach-tegra/board-harmony.dts |  113 ---------------------------------
- 2 files changed, 108 insertions(+), 115 deletions(-)
+ 3 files changed, 114 insertions(+), 122 deletions(-)
  delete mode 100644 arch/arm/mach-tegra/board-harmony.dts
-
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-index 81032e7..82fa0c2 100644
---- a/arch/arm/boot/dts/tegra-harmony.dts
-+++ b/arch/arm/boot/dts/tegra-harmony.dts
-@@ -1,7 +1,113 @@
-+
- /dts-v1/;
--/include/ "skeleton.dtsi"
- 
- / {
--	model = "NVIDIA Tegra2 Harmony evaluation board";
-+	model = "nVidia Harmony";
- 	compatible = "nvidia,harmony", "nvidia,tegra250";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&intc>;
-+
-+	chosen {
-+		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw rootdelay=2";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = < 0x00000000 0x1C000000
-+		        0x20000000 0x20000000 >;
-+	};
-+
-+	amba {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		intc: intc {
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
-+	};
-+
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra250-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+	};
-+
-+	serial@70006000 {
-+		compatible = "nvidia,tegra250-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 68 >;
-+		status = "disabled";
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra250-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 69 >;
-+		status = "disabled";
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra250-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 78 >;
-+		status = "disabled";
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra250-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 122 >;
-+
-+		clock-frequency = < 216000000 >;
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra250-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 123 >;
-+		status = "disabled";
-+	};
-+
-+	sdhci@c8000000 {
-+		compatible = "nvidia,tegra250-sdhci";
-+		reg = <0xc8000000 0x200>;
-+		interrupts = < 46 >;
-+		status = "disabled";
-+	};
-+
-+	sdhci@c8000200 {
-+		compatible = "nvidia,tegra250-sdhci";
-+		reg = <0xc8000200 0x200>;
-+		interrupts = < 47 >;
-+		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
-+			<&gpio 57 0>, /* wp, gpio PH1 */
-+			<&gpio 155 0>; /* power, gpio PT3 */
-+	};
-+
-+	sdhci@c8000400 {
-+		compatible = "nvidia,tegra250-sdhci";
-+		reg = <0xc8000400 0x200>;
-+		interrupts = < 51 >;
-+		status = "disabled";
-+	};
-+
-+	sdhci@c8000600 {
-+		compatible = "nvidia,tegra250-sdhci";
-+		reg = <0xc8000600 0x200>;
-+		interrupts = < 63 >;
-+		gpios = <&gpio 58 0>, /* cd, gpio PH2 */
-+			<&gpio 59 0>, /* wp, gpio PH3 */
-+			<&gpio 70 0>; /* power, gpio PI6 */
-+	};
- };
-diff --git a/arch/arm/mach-tegra/board-harmony.dts b/arch/arm/mach-tegra/board-harmony.dts
-deleted file mode 100644
-index 82fa0c2..0000000
---- a/arch/arm/mach-tegra/board-harmony.dts
-+++ /dev/null
-@@ -1,113 +0,0 @@
--
--/dts-v1/;
--
--/ {
--	model = "nVidia Harmony";
--	compatible = "nvidia,harmony", "nvidia,tegra250";
--	#address-cells = <1>;
--	#size-cells = <1>;
--	interrupt-parent = <&intc>;
--
--	chosen {
--		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw rootdelay=2";
--	};
--
--	memory {
--		device_type = "memory";
--		reg = < 0x00000000 0x1C000000
--		        0x20000000 0x20000000 >;
--	};
--
--	amba {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		intc: intc {
--			interrupt-controller;
--			#interrupt-cells = <1>;
--		};
--	};
--
--	gpio: gpio@6000d000 {
--		compatible = "nvidia,tegra250-gpio";
--		reg = < 0x6000d000 0x1000 >;
--		interrupts = < 64 65 66 67 87 119 121 >;
--		#gpio-cells = <2>;
--		gpio-controller;
--	};
--
--	serial@70006000 {
--		compatible = "nvidia,tegra250-uart";
--		reg = <0x70006000 0x40>;
--		reg-shift = <2>;
--		interrupts = < 68 >;
--		status = "disabled";
--	};
--
--	serial@70006040 {
--		compatible = "nvidia,tegra250-uart";
--		reg = <0x70006040 0x40>;
--		reg-shift = <2>;
--		interrupts = < 69 >;
--		status = "disabled";
--	};
--
--	serial@70006200 {
--		compatible = "nvidia,tegra250-uart";
--		reg = <0x70006200 0x100>;
--		reg-shift = <2>;
--		interrupts = < 78 >;
--		status = "disabled";
--	};
--
--	serial@70006300 {
--		compatible = "nvidia,tegra250-uart";
--		reg = <0x70006300 0x100>;
--		reg-shift = <2>;
--		interrupts = < 122 >;
--
--		clock-frequency = < 216000000 >;
--	};
--
--	serial@70006400 {
--		compatible = "nvidia,tegra250-uart";
--		reg = <0x70006400 0x100>;
--		reg-shift = <2>;
--		interrupts = < 123 >;
--		status = "disabled";
--	};
--
--	sdhci@c8000000 {
--		compatible = "nvidia,tegra250-sdhci";
--		reg = <0xc8000000 0x200>;
--		interrupts = < 46 >;
--		status = "disabled";
--	};
--
--	sdhci@c8000200 {
--		compatible = "nvidia,tegra250-sdhci";
--		reg = <0xc8000200 0x200>;
--		interrupts = < 47 >;
--		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
--			<&gpio 57 0>, /* wp, gpio PH1 */
--			<&gpio 155 0>; /* power, gpio PT3 */
--	};
--
--	sdhci@c8000400 {
--		compatible = "nvidia,tegra250-sdhci";
--		reg = <0xc8000400 0x200>;
--		interrupts = < 51 >;
--		status = "disabled";
--	};
--
--	sdhci@c8000600 {
--		compatible = "nvidia,tegra250-sdhci";
--		reg = <0xc8000600 0x200>;
--		interrupts = < 63 >;
--		gpios = <&gpio 58 0>, /* cd, gpio PH2 */
--			<&gpio 59 0>, /* wp, gpio PH3 */
--			<&gpio 70 0>; /* power, gpio PI6 */
--	};
--};
--- 
-1.7.1
