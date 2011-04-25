@@ -1,44 +1,51 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3] i2c: tegra: fix repeated start handling
-Date: Mon, 25 Apr 2011 15:32:26 -0600
-Message-ID: <1303767147-17493-3-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 3/3] i2c: tegra: Add de-bounce cycles.
+Date: Mon, 25 Apr 2011 15:32:27 -0600
+Message-ID: <1303767147-17493-4-git-send-email-swarren@nvidia.com>
 References: <1303767147-17493-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1303767147-17493-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jay Cheng <jacheng-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Radtke <kradtke-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Jay Cheng <jacheng-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-A repeated start should be used for all but the last msg in an xfer.  The
-NOSTART flag is for skipping the START frame (addr/rw)
+This enables debouncing of the I2C lines. The debounce period is
+2 * the debounce register field value, in terms of the I2C block's main
+clock. The Tegra TRM indicates that a setting yielding >50nS is
+desirable. Hence, a setting of 2 => 4 clocks @ 72MHz => ~55nS.
 
-Signed-off-by: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Ken Radtke <kradtke-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[swarren: Added commit description body,
+ Fixed 80-column limit, Reverted file permission change]
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-tegra.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c0b9aa7..6b69b70 100644
+index 6b69b70..4d93196 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -451,12 +451,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+@@ -35,6 +35,7 @@
+ #define BYTES_PER_FIFO_WORD 4
  
- 	packet_header = msg->addr << I2C_HEADER_SLAVE_ADDR_SHIFT;
- 	packet_header |= I2C_HEADER_IE_ENABLE;
-+	if (!stop)
-+		packet_header |= I2C_HEADER_REPEAT_START;
- 	if (msg->flags & I2C_M_TEN)
- 		packet_header |= I2C_HEADER_10BIT_ADDR;
- 	if (msg->flags & I2C_M_IGNORE_NAK)
- 		packet_header |= I2C_HEADER_CONT_ON_NAK;
--	if (msg->flags & I2C_M_NOSTART)
--		packet_header |= I2C_HEADER_REPEAT_START;
- 	if (msg->flags & I2C_M_RD)
- 		packet_header |= I2C_HEADER_READ;
- 	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ #define I2C_CNFG				0x000
++#define I2C_CNFG_DEBOUNCE_CNT_SHIFT		12
+ #define I2C_CNFG_PACKET_MODE_EN			(1<<10)
+ #define I2C_CNFG_NEW_MASTER_FSM			(1<<11)
+ #define I2C_STATUS				0x01C
+@@ -328,7 +329,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	if (i2c_dev->is_dvc)
+ 		tegra_dvc_init(i2c_dev);
+ 
+-	val = I2C_CNFG_NEW_MASTER_FSM | I2C_CNFG_PACKET_MODE_EN;
++	val = I2C_CNFG_NEW_MASTER_FSM | I2C_CNFG_PACKET_MODE_EN |
++		(0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+ 	i2c_writel(i2c_dev, val, I2C_CNFG);
+ 	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
+ 	clk_set_rate(i2c_dev->clk, i2c_dev->bus_clk_rate * 8);
 -- 
 1.7.0.4
