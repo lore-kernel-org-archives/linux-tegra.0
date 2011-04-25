@@ -1,55 +1,39 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] i2c: tegra: Enable new slave mode.
-Date: Mon, 25 Apr 2011 12:29:54 -0600
-Message-ID: <1303756194-6253-1-git-send-email-swarren@nvidia.com>
+Subject: RE: [PATCH 0/4] Tegra patches for 2.6.40
+Date: Mon, 25 Apr 2011 11:32:24 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04973BBB14@HQMAIL01.nvidia.com>
+References: <1303408892-7472-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1303408892-7472-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kenneth Waters <kwaters-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable <stable-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Kenneth Waters <kwaters-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Stephen Warren wrote at Thursday, April 21, 2011 12:01 PM:
+> Below are the patches I have queued up for Tegra in 2.6.40.
+> ...
+> I tested:
+> 
+> * After applying these changes, everything builds OK and runs fine on
+>   Harmony, including audio.
+> * After additionally merging Mark's ASoC for-2.6.40/for-next branch,
+>   there are no merge conflicts, everything builds OK, and everything
+>   runs OK on Seaboard clamshell, including a full audio checkout.
 
-For Tegra i2c controller to function properly new slave mode must be
-enabled.
+>   Note that non-clamshell Seaboard has difficulty initializing I2C.
+>   I'm investigating this, but don't expect to need to modify any of
+>   these changes because of this issue; most likely some unrelated bug
+>   needs fixing.
 
-swarren notes:
+Note that I found the cause of this; please see my recent email titled
+"[PATCH] i2c: tegra: Enable new slave mode." for this fix for this.
 
-In particular, I found this was needed when working on enabling the
-Tegra audio driver on the Seaboard board. There are two different PCB
-layouts for this board; a "clamshell" version, which works just fine
-without this change, and the original non-clamshell version, which needs
-this change in order for I2C to operate correctly. Without it, I2C
-probing fails for some devices, e.g. with:
+Thanks.
 
-wm8903 0-001a: Device with ID register 0 is not a WM8903
-wm8903 0-001a: asoc: failed to probe CODEC wm8903.0-001a: -19
-asoc: failed to instantiate card tegra-wm8903: -19
-ALSA device list:
-  No soundcards found.
-
-Signed-off-by: Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: stable <stable-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b4ab39b..5f1b92c 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -330,6 +330,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
- 	clk_set_rate(i2c_dev->clk, i2c_dev->bus_clk_rate * 8);
- 
-+	if (!i2c_dev->is_dvc) {
-+		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
-+		i2c_writel(i2c_dev, sl_cfg | I2C_SL_CNFG_NEWSL, I2C_SL_CNFG);
-+	}
-+
- 	val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
- 		0 << I2C_FIFO_CONTROL_RX_TRIG_SHIFT;
- 	i2c_writel(i2c_dev, val, I2C_FIFO_CONTROL);
 -- 
-1.7.0.4
+nvpublic
