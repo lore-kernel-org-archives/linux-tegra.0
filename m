@@ -1,7 +1,7 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Subject: Re: [PATCH 3/3] ARM: Tegra: Move Harmony .dts file to correct place
-Date: Fri, 29 Apr 2011 17:36:33 -0600
-Message-ID: <20110429233633.GN7497@ponder.secretlab.ca>
+Date: Fri, 29 Apr 2011 17:55:21 -0600
+Message-ID: <20110429235521.GO7497@ponder.secretlab.ca>
 References: <1303619404-27604-1-git-send-email-swarren@nvidia.com>
  <1303619404-27604-4-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
@@ -24,16 +24,14 @@ On Sat, Apr 23, 2011 at 10:30:04PM -0600, Stephen Warren wrote:
 > ... seems to require the *.dts file to be in arch/arm/boot/dts. I'm not
 > sure if any other devicetree testing flows will be negatively affected by
 > this change.
-
-Yeah, I started on the tegra work quite a while ago before dts files
-started getting put into arch/arm/boot/dts.  I'll also squash this
-into the board support patch in devicetree/test.
-
-Thanks,
-g.
-
 > 
 > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Hmmm, I seem to have broken stuff.  No time to sort it out now though.
+Oh well.  I'll try it again (hopefully) tomorrow.
+
+g.
+
 > ---
 >  arch/arm/boot/dts/tegra-harmony.dts   |  110 +++++++++++++++++++++++++++++++-
 >  arch/arm/mach-tegra/board-harmony.dts |  113 ---------------------------------
