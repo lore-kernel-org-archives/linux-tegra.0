@@ -1,73 +1,81 @@
-From: dudl@cypress.com
-Subject: update cyapa_i2c_platfrom_data,
-	remove relative mode supporting. (issue6902105)
-Date: Thu, 28 Apr 2011 07:00:50 +0000
-Message-ID: <90e6ba3fd225155e1504a1f51e79@google.com>
-Reply-To: dudl@cypress.com, ccross@android.com, konkers@android.com,
-	olof@lixom.net, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, micahc@google.com, dso@cypress.com,
-	chromium-os-reviews@chromium.org, vb+kernel@google.com,
-	msb@chromium.org, olofj@chromium.org
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
+Date: Fri, 29 Apr 2011 14:08:02 +0800
+Message-ID: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4E2@HKMAIL01.nvidia.com>
+References: <1303301312-15302-1-git-send-email-wni@nvidia.com>
+ <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4DB@HKMAIL01.nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF0497F1AAC4@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"; DelSp="yes"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: ccross@android.com, konkers@android.com, olof@lixom.net, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: vb+kernel@google.com, msb@chromium.org, olofj@chromium.org, chromium-os-reviews@chromium.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0497F1AAC4-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Language: en-US
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org" <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Reviewers: ccross_android.com, konkers_android.com, olof_lixom.net,  
-linux_arm.linux.org.uk, linux-tegra_vger.kernel.org,  
-linux-arm-kernel_lists.infradead.org, linux-kernel_vger.kernel.org, Micah  
-C, dudl, dso_cypress.com,
+Hi, Stephen
+I think your patches address the different issues with my patches.
+My patches are used for retry transfer and new slave controller.
 
-Description:
-update cyapa_i2c_platfrom_data, remove relative mode supporting.
-
-Change-Id: Ic9fb8f11c8a4343ff7746f6f885e26d22e773830
-Signed-off-by: Du, Dudley <dudl@cypress.com>
-
-R=ccross@android.com,konkers@android.com,olof@lixom.net,linux@arm.linux.org.uk,linux-tegra@vger.kernel.org,linux-arm-kernel@lists.infradead.org,linux-kernel@vger.kernel.org,micahc@google.com,dudl@cypress.com,dso@cypress.com
-BUG=
-TEST=test on kaen board
-
-1. becasuse relative mode is removed from cyapa driver, so setting for using
-relative or absolute mode are also removed in platform data.
+Thanks
+Wei.
 
 
-Please review this at http://codereview.chromium.org/6902105/
+-----Original Message-----
+From: Stephen Warren 
+Sent: Thursday, April 28, 2011 12:29 AM
+To: Wei Ni
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org; ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)
+Subject: RE: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
 
-SVN Base: http://git.chromium.org/git/kernel-next.git@chromeos-2.6.38
+Wei Ni wrote at Wednesday, April 27, 2011 4:26 AM:
+> Hi, all
+> Could anyone review these changes?
 
-Affected files:
-   M arch/arm/mach-tegra/board-seaboard.c
+Wei,
 
+It looks like some of the patches I recently posted address the same
+issues as the patches you had already posted. Sorry for the potential
+conflicts.
 
-Index: arch/arm/mach-tegra/board-seaboard.c
-diff --git a/arch/arm/mach-tegra/board-seaboard.c  
-b/arch/arm/mach-tegra/board-seaboard.c
-index  
-090ae201153aa6fdb87f7095e9b43ec65aa183d9..b52eec18d314ec75bb4a551baf3b19fce0ad274a  
-100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -206,8 +206,6 @@ static struct cyapa_platform_data  
-cyapa_i2c_platform_data = {
-  	.flag				= 0,
-  	.gen				= CYAPA_GEN2,
-  	.power_state			= CYAPA_PWR_ACTIVE,
--	.use_absolute_mode		= false,
--	.use_polling_mode		= false,
-  	.polling_interval_time_active	= CYAPA_ACTIVE_POLLING_INTVAL_TIME,
-  	.polling_interval_time_lowpower	= CYAPA_LOWPOWER_POLLING_INTVAL_TIME,
-  	.active_touch_timeout		= CYAPA_ACTIVE_TOUCH_TIMEOUT,
+Can you please take a look at the patches I posted and comment on which
+of those are still relevant given your patches. Even for the cases where
+we both posted patches to address the same issue (e.g. use new slave
+mode), there are differences in the patches. I simply took the changes
+from the chromeos-2.6.37 kernel and cherry-picked them into the mainline
+kernel. Are the changes you posted re-written to address issues that
+weren't solved in the ChromeOS kernel?
+
+Thanks for any feedback on this.
+
+> 
+> Thanks
+> Wei.
+> 
+> -----Original Message-----
+> From: Wei Ni
+> Sent: Wednesday, April 20, 2011 8:09 PM
+> To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org;
+> lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org; ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; linux-
+> i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: Wei Ni
+> Subject: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
+> 
+> From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> *** BLURB HERE ***
+> 
+> Wei Ni (2):
+>   i2c: tegra: Retry transfer when unexpected/no_ack status is detected
+>   i2c: tegra: use new i2c slave controller
+> 
+>  drivers/i2c/busses/i2c-tegra.c |   57
+> +++++++++++++++++++++++++++++++++++++--
+>  include/linux/i2c-tegra.h      |    3 ++
+>  2 files changed, 57 insertions(+), 3 deletions(-)
+
+-- 
+nvpublic
