@@ -1,7 +1,7 @@
 From: Colin Cross <ccross@android.com>
-Subject: [PATCH 1/4] ARM: tegra: irq: convert to gic arch extensions
-Date: Sun,  1 May 2011 14:10:10 -0700
-Message-ID: <1304284213-11950-2-git-send-email-ccross@android.com>
+Subject: [PATCH 4/4] ARM: tegra: irq: Replace tegra_ack with tegra_eoi
+Date: Sun,  1 May 2011 14:10:13 -0700
+Message-ID: <1304284213-11950-5-git-send-email-ccross@android.com>
 References: <1304284213-11950-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,113 +21,36 @@ To: lakml <linux-arm-kernel@lists.infradead.org>, linux-tegra <linux-tegra@vger.
 Cc: Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Erik Gilling <konkers@android.com>, Colin Cross <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Replace the ugly hack that inserts legacy irq controller calls
-into the irq call paths by reading and replacing the gic irq
-chip with the new gic arch extensions.
+When the GIC flow control function is replaced with
+handle_fasteoi_irq, the eoi arch extension will be called
+instead of ack.
 
 Signed-off-by: Colin Cross <ccross@android.com>
 ---
- arch/arm/mach-tegra/irq.c |   54 +++++++++++++-------------------------------
- 1 files changed, 16 insertions(+), 38 deletions(-)
+ arch/arm/mach-tegra/irq.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 4330d89..567b75c 100644
+index 1883203..35fb2f10 100644
 --- a/arch/arm/mach-tegra/irq.c
 +++ b/arch/arm/mach-tegra/irq.c
-@@ -1,8 +1,8 @@
- /*
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2011 Google, Inc.
-  *
-  * Author:
-- *	Colin Cross <ccross@google.com>
-+ *	Colin Cross <ccross@android.com>
-  *
-  * Copyright (C) 2010, NVIDIA Corporation
-  *
-@@ -46,10 +46,6 @@ static u32 tegra_lp0_wake_enb;
- static u32 tegra_lp0_wake_level;
- static u32 tegra_lp0_wake_level_any;
- 
--static void (*tegra_gic_mask_irq)(struct irq_data *d);
--static void (*tegra_gic_unmask_irq)(struct irq_data *d);
--static void (*tegra_gic_ack_irq)(struct irq_data *d);
--
- /* ensures that sufficient time is passed for a register write to
-  * serialize into the 32KHz domain */
- static void pmc_32kwritel(u32 val, unsigned long offs)
-@@ -103,58 +99,40 @@ void tegra_set_lp0_wake_pads(u32 wake_enb, u32 wake_level, u32 wake_any)
- 
- static void tegra_mask(struct irq_data *d)
- {
--	tegra_gic_mask_irq(d);
--	tegra_legacy_mask_irq(d->irq);
-+	if (d->irq >= 32)
-+		tegra_legacy_mask_irq(d->irq);
+@@ -83,7 +83,7 @@ static void tegra_unmask(struct irq_data *d)
+ 	writel(1 << (leg_irq & 31), base + ICTLR_CPU_IER_SET);
  }
  
- static void tegra_unmask(struct irq_data *d)
+-static void tegra_ack(struct irq_data *d)
++static void tegra_eoi(struct irq_data *d)
  {
--	tegra_gic_unmask_irq(d);
--	tegra_legacy_unmask_irq(d->irq);
-+	if (d->irq >= 32)
-+		tegra_legacy_unmask_irq(d->irq);
- }
+ 	void __iomem *base;
+ 	int leg_irq;
+@@ -121,7 +121,7 @@ void __init tegra_init_irq(void)
+ 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
+ 	}
  
- static void tegra_ack(struct irq_data *d)
- {
--	tegra_legacy_force_irq_clr(d->irq);
--	tegra_gic_ack_irq(d);
-+	if (d->irq >= 32)
-+		tegra_legacy_force_irq_clr(d->irq);
- }
- 
- static int tegra_retrigger(struct irq_data *d)
- {
-+	if (d->irq < 32)
-+		return 0;
-+
- 	tegra_legacy_force_irq_set(d->irq);
- 	return 1;
- }
- 
--static struct irq_chip tegra_irq = {
--	.name			= "PPI",
--	.irq_ack		= tegra_ack,
--	.irq_mask		= tegra_mask,
--	.irq_unmask		= tegra_unmask,
--	.irq_retrigger		= tegra_retrigger,
--};
--
- void __init tegra_init_irq(void)
- {
--	struct irq_chip *gic;
--	unsigned int i;
--	int irq;
--
- 	tegra_init_legacy_irq();
- 
-+	gic_arch_extn.irq_ack = tegra_ack;
-+	gic_arch_extn.irq_mask = tegra_mask;
-+	gic_arch_extn.irq_unmask = tegra_unmask;
-+	gic_arch_extn.irq_retrigger = tegra_retrigger;
-+
- 	gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
- 		 IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
--
--	gic = irq_get_chip(29);
--	tegra_gic_unmask_irq = gic->irq_unmask;
--	tegra_gic_mask_irq = gic->irq_mask;
--	tegra_gic_ack_irq = gic->irq_ack;
--#ifdef CONFIG_SMP
--	tegra_irq.irq_set_affinity = gic->irq_set_affinity;
--#endif
--
--	for (i = 0; i < INT_MAIN_NR; i++) {
--		irq = INT_PRI_BASE + i;
--		irq_set_chip_and_handler(irq, &tegra_irq, handle_level_irq);
--		set_irq_flags(irq, IRQF_VALID);
--	}
- }
+-	gic_arch_extn.irq_ack = tegra_ack;
++	gic_arch_extn.irq_eoi = tegra_eoi;
+ 	gic_arch_extn.irq_mask = tegra_mask;
+ 	gic_arch_extn.irq_unmask = tegra_unmask;
+ 	gic_arch_extn.irq_retrigger = tegra_retrigger;
 -- 
 1.7.4.1
