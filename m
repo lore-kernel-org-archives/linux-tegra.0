@@ -1,56 +1,52 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH 4/4] ARM: tegra: irq: Replace tegra_ack with tegra_eoi
-Date: Sun,  1 May 2011 14:10:13 -0700
-Message-ID: <1304284213-11950-5-git-send-email-ccross@android.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 0/4] Tegra irq cleanups
+Date: Sun, 1 May 2011 14:34:33 -0700
+Message-ID: <BANLkTimjVFuww9Gx=J34+KTb7ortdm616g@mail.gmail.com>
 References: <1304284213-11950-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1304284213-11950-1-git-send-email-ccross@android.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lakml <linux-arm-kernel@lists.infradead.org>, linux-tegra <linux-tegra@vger.kernel.org>, Will Deacon <will.deacon@arm.com>
-Cc: Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Erik Gilling <konkers@android.com>, Colin Cross <ccross@android.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1304284213-11950-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lakml <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When the GIC flow control function is replaced with
-handle_fasteoi_irq, the eoi arch extension will be called
-instead of ack.
+On Sun, May 1, 2011 at 2:10 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch series cleans up the Tegra irq subsystem, and allows
+> the GIC to be switched to the fasteoi handler. =A0The first three
+> patches have no dependencies on any other trees. =A0Patch 4 should
+> only go in at the same time as Will Deacon's fasteoi patches,
+> and could be squashed into his patch.
+>
+> As part of this series, power management support is removed from
+> the Tegra irq subsystem. =A0PM support will be added back in a
+> future patch set along with PM support for the rest of the
+> platform.
+>
+> Colin Cross (4):
+> =A0 =A0 =A0ARM: tegra: irq: convert to gic arch extensions
+> =A0 =A0 =A0ARM: tegra: irq: Remove PM support
+> =A0 =A0 =A0ARM: tegra: irq: Move legacy_irq.c into irq.c
+> =A0 =A0 =A0ARM: tegra: irq: Replace tegra_ack with tegra_eoi
+>
+> =A0arch/arm/mach-tegra/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0 =A02 +-
+> =A0arch/arm/mach-tegra/include/mach/legacy_irq.h | =A0 35 ----
+> =A0arch/arm/mach-tegra/irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+| =A0181 +++++++++------------
+> =A0arch/arm/mach-tegra/legacy_irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A02=
+15 -------------------------
+> =A04 files changed, 77 insertions(+), 356 deletions(-)
+> =A0delete mode 100644 arch/arm/mach-tegra/include/mach/legacy_irq.h
+> =A0delete mode 100644 arch/arm/mach-tegra/legacy_irq.c
+>
 
-Signed-off-by: Colin Cross <ccross@android.com>
----
- arch/arm/mach-tegra/irq.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Sorry Marc, forgot to CC you on this patch set.
 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 1883203..35fb2f10 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -83,7 +83,7 @@ static void tegra_unmask(struct irq_data *d)
- 	writel(1 << (leg_irq & 31), base + ICTLR_CPU_IER_SET);
- }
- 
--static void tegra_ack(struct irq_data *d)
-+static void tegra_eoi(struct irq_data *d)
- {
- 	void __iomem *base;
- 	int leg_irq;
-@@ -121,7 +121,7 @@ void __init tegra_init_irq(void)
- 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
- 	}
- 
--	gic_arch_extn.irq_ack = tegra_ack;
-+	gic_arch_extn.irq_eoi = tegra_eoi;
- 	gic_arch_extn.irq_mask = tegra_mask;
- 	gic_arch_extn.irq_unmask = tegra_unmask;
- 	gic_arch_extn.irq_retrigger = tegra_retrigger;
--- 
-1.7.4.1
+I just noticed that you kept both tegra_ack as well as tegra_eoi in
+your patch set.  That seems like a reasonable way to avoid merge order
+problems between Will's fasteoi patches and these patches, at least in
+one direction, so I'll add that in v2 (only affects the last patch in
+the series).
