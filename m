@@ -1,278 +1,93 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ARM: Tegra: dt: Split out separate Tegra SoC DT
-Date: Mon, 2 May 2011 15:06:13 -0600
-Message-ID: <20110502210613.GB10097@ponder.secretlab.ca>
-References: <1304362231-21909-1-git-send-email-swarren@nvidia.com>
-	<1304362231-21909-2-git-send-email-swarren@nvidia.com>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] drivers: create a pinmux subsystem
+Date: Mon, 2 May 2011 14:30:10 -0700
+Message-ID: <BANLkTimKU-=GXzrn8=MQn-GAmKHOvKmuNQ@mail.gmail.com>
+References: <1304363786-30376-1-git-send-email-linus.walleij@stericsson.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF0497F1B201@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1304362231-21909-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0497F1B201-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Martin Persson <martin.persson-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 02, 2011 at 12:50:30PM -0600, Stephen Warren wrote:
-> tegra250.dts describes everything within the Tegra SoC, but leaves all
-> optional devices disabled.
-> 
-> tegra-harmony.dts is now the configuration of the SoC for the board,
-> i.e. it enables the optional devices that are required for the board,
-> and provides any required platform data for those devics.
-> 
-> The prevents every Tegra board having to repeat all the basic internal
-> SoC wiring.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, May 2, 2011 at 1:52 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> Linus Walleij wrote at Monday, May 02, 2011 1:16 PM:
+>> From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>
+>> This creates a subsystem for handling of pinmux devices. These are
+>> devices that enable and disable groups of pins on primarily PGA and
+>> BGA type of chip packages and common in embedded systems.
+>
+> I would avoid any references to particular package types; I've seen
+> pinmuxing applied to PLCC and DIP/DIL too, and in general, it's possi=
+ble
+> irrespective of package type.
+>
+>> This is being done to depopulate the arch/arm/* directory of such
+>> custom drivers and try to abstract the infrastructure they all
+>> need. See the Documentation/pinmux.txt file that is part of this
+>> patch for more details.
+>
+>> diff --git a/Documentation/pinmux.txt b/Documentation/pinmux.txt
+>>...
+>> +The mux settings are:
+>> +
+>> +- Oriented around enumerated physical pins or pads denoted by unsig=
+ned
+>> + =A0integers in the range 0..MAX_INT. Every pin on your system (or =
+atleast
+>> + =A0every pin that can be muxed) should have a unique number. The n=
+umberspace
+>
+> Does this imply a model where each pin's "special function" can be
+> controlled independently? I think reading through the document that
+> isn't the case, but I just wanted to be sure.
+>
+> In particular, NVIDIA Tegra has a setup where:
+>
+> * Pinmux configuration for "special functions" is at a "pad-group"
+> =A0level, where there may be 1..N pins in a pad-group, and there is a
+> =A0single register field that defines the current special function ro=
+uted
+> =A0to/from all pins in that pad-group at once.
+>
+> * Each pad group can be assigned 1 of N special functions (none might=
+ be
+> =A0an option in some/all cases too)
+>
+> * Some special functions may be assignable to multiple pad groups,
+> =A0although obviously only 1 pad group per function at a time.
+>
+> * GPIO selection is at per-pin granularity; individual pins may be us=
+ed
+> =A0as a GPIO irrespective of what SFR is selected for the pad group
+> =A0containing the pin.
+>
+> * There are also other configurations associated with pinmuxing, such
+> =A0as drive strength, pull up/down enables, etc.
+>
+> Also, some of our drivers use "dynamic pinmuxing". For example, our
+> downstream I2C driver exposes N I2C busses and reprograms the pinmux
+> at runtime to attach the actual I2C controller to different sets of
+> pins, essentially multi-plexing the control across N physical busses.
 
-Squashed into arm/dt: full tegra devicetree support, thanks
+Tegra has more fun pinmux quirks than just those :)
 
-g.
+* Drive strength is also controlled through groups of pins, but
+different groups than pinmux.  Most of the drive strength groups are
+collections of pad mux groups, but there are a few pins that are in
+the same pad mux group but a different drive strength group.
+* Setting a pin as a GPIO overrides its group's mux setting, except
+for the group's tristate.  You must untristate the entire group to use
+a single pin as a GPIO.
+* Each group has a "safe mode", but which mux id to select to enter
+the safe mode is completely random.
 
-> ---
-> v2: Rebased on latest devicetree/test; incorporated changes from there
->     into the new tegra250.dts.
-> 
->  arch/arm/boot/dts/tegra-harmony.dts |   86 ++-----------------------------
->  arch/arm/boot/dts/tegra250.dts      |   99 +++++++++++++++++++++++++++++++++++
->  2 files changed, 103 insertions(+), 82 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra250.dts
-> 
-> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-> index 7fe007b..154649e 100644
-> --- a/arch/arm/boot/dts/tegra-harmony.dts
-> +++ b/arch/arm/boot/dts/tegra-harmony.dts
-> @@ -1,12 +1,11 @@
->  /dts-v1/;
->  
->  /memreserve/ 0x1c000000 0x04000000;
-> -/include/ "skeleton.dtsi"
-> +/include/ "tegra250.dts"
->  
->  / {
->  	model = "NVIDIA Tegra2 Harmony evaluation board";
->  	compatible = "nvidia,harmony", "nvidia,tegra250";
-> -	interrupt-parent = <&intc>;
->  
->  	chosen {
->  		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw rootwait";
-> @@ -17,97 +16,20 @@
->  		reg = < 0x00000000 0x40000000 >;
->  	};
->  
-> -	amba {
-> -		compatible = "simple-bus";
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -		ranges;
-> -
-> -		intc: interrupt-controller@50041000 {
-> -			compatible = "nvidia,tegra250-gic", "arm,gic";
-> -			interrupt-controller;
-> -			#interrupt-cells = <1>;
-> -			reg = < 0x50041000 0x1000 >,
-> -			      < 0x50040100 0x0100 >;
-> -		};
-> -	};
-> -
-> -	gpio: gpio@6000d000 {
-> -		compatible = "nvidia,tegra250-gpio";
-> -		reg = < 0x6000d000 0x1000 >;
-> -		interrupts = < 64 65 66 67 87 119 121 >;
-> -		#gpio-cells = <2>;
-> -		gpio-controller;
-> -	};
-> -
-> -	serial@70006000 {
-> -		compatible = "nvidia,tegra250-uart";
-> -		reg = <0x70006000 0x40>;
-> -		reg-shift = <2>;
-> -		interrupts = < 68 >;
-> -		status = "disabled";
-> -	};
-> -
-> -	serial@70006040 {
-> -		compatible = "nvidia,tegra250-uart";
-> -		reg = <0x70006040 0x40>;
-> -		reg-shift = <2>;
-> -		interrupts = < 69 >;
-> -		status = "disabled";
-> -	};
-> -
-> -	serial@70006200 {
-> -		compatible = "nvidia,tegra250-uart";
-> -		reg = <0x70006200 0x100>;
-> -		reg-shift = <2>;
-> -		interrupts = < 78 >;
-> -		status = "disabled";
-> -	};
-> -
->  	serial@70006300 {
-> -		compatible = "nvidia,tegra250-uart";
-> -		reg = <0x70006300 0x100>;
-> -		reg-shift = <2>;
-> -		interrupts = < 122 >;
-> -
-> +		status = "ok";
->  		clock-frequency = < 216000000 >;
->  	};
->  
-> -	serial@70006400 {
-> -		compatible = "nvidia,tegra250-uart";
-> -		reg = <0x70006400 0x100>;
-> -		reg-shift = <2>;
-> -		interrupts = < 123 >;
-> -		status = "disabled";
-> -	};
-> -
-> -	sdhci@c8000000 {
-> -		compatible = "nvidia,tegra250-sdhci";
-> -		reg = <0xc8000000 0x200>;
-> -		interrupts = < 46 >;
-> -		status = "disabled";
-> -	};
-> -
->  	sdhci@c8000200 {
-> -		compatible = "nvidia,tegra250-sdhci";
-> -		reg = <0xc8000200 0x200>;
-> -		interrupts = < 47 >;
-> +		status = "ok";
->  		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
->  			<&gpio 57 0>, /* wp, gpio PH1 */
->  			<&gpio 155 0>; /* power, gpio PT3 */
->  	};
->  
-> -	sdhci@c8000400 {
-> -		compatible = "nvidia,tegra250-sdhci";
-> -		reg = <0xc8000400 0x200>;
-> -		interrupts = < 51 >;
-> -		status = "disabled";
-> -	};
-> -
->  	sdhci@c8000600 {
-> -		compatible = "nvidia,tegra250-sdhci";
-> -		reg = <0xc8000600 0x200>;
-> -		interrupts = < 63 >;
-> +		status = "ok";
->  		gpios = <&gpio 58 0>, /* cd, gpio PH2 */
->  			<&gpio 59 0>, /* wp, gpio PH3 */
->  			<&gpio 70 0>; /* power, gpio PI6 */
-> diff --git a/arch/arm/boot/dts/tegra250.dts b/arch/arm/boot/dts/tegra250.dts
-> new file mode 100644
-> index 0000000..f1801b8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/tegra250.dts
-> @@ -0,0 +1,99 @@
-> +/include/ "skeleton.dtsi"
-> +
-> +/ {
-> +	model = "NVIDIA Tegra 250";
-> +	compatible = "nvidia,tegra250";
-> +	interrupt-parent = <&intc>;
-> +
-> +	amba {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		intc: interrupt-controller@50041000 {
-> +			compatible = "nvidia,tegra250-gic", "arm,gic";
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +			reg = < 0x50041000 0x1000 >,
-> +			      < 0x50040100 0x0100 >;
-> +		};
-> +	};
-> +
-> +	gpio: gpio@6000d000 {
-> +		compatible = "nvidia,tegra250-gpio";
-> +		reg = < 0x6000d000 0x1000 >;
-> +		interrupts = < 64 65 66 67 87 119 121 >;
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +	};
-> +
-> +	serial@70006000 {
-> +		compatible = "nvidia,tegra250-uart";
-> +		reg = <0x70006000 0x40>;
-> +		reg-shift = <2>;
-> +		interrupts = < 68 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	serial@70006040 {
-> +		compatible = "nvidia,tegra250-uart";
-> +		reg = <0x70006040 0x40>;
-> +		reg-shift = <2>;
-> +		interrupts = < 69 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	serial@70006200 {
-> +		compatible = "nvidia,tegra250-uart";
-> +		reg = <0x70006200 0x100>;
-> +		reg-shift = <2>;
-> +		interrupts = < 78 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	serial@70006300 {
-> +		compatible = "nvidia,tegra250-uart";
-> +		reg = <0x70006300 0x100>;
-> +		reg-shift = <2>;
-> +		interrupts = < 122 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	serial@70006400 {
-> +		compatible = "nvidia,tegra250-uart";
-> +		reg = <0x70006400 0x100>;
-> +		reg-shift = <2>;
-> +		interrupts = < 123 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	sdhci@c8000000 {
-> +		compatible = "nvidia,tegra250-sdhci";
-> +		reg = <0xc8000000 0x200>;
-> +		interrupts = < 46 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	sdhci@c8000200 {
-> +		compatible = "nvidia,tegra250-sdhci";
-> +		reg = <0xc8000200 0x200>;
-> +		interrupts = < 47 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	sdhci@c8000400 {
-> +		compatible = "nvidia,tegra250-sdhci";
-> +		reg = <0xc8000400 0x200>;
-> +		interrupts = < 51 >;
-> +		status = "disabled";
-> +	};
-> +
-> +	sdhci@c8000600 {
-> +		compatible = "nvidia,tegra250-sdhci";
-> +		reg = <0xc8000600 0x200>;
-> +		interrupts = < 63 >;
-> +		status = "disabled";
-> +	};
-> +};
-> +
-> -- 
-> 1.7.0.4
-> 
+In the end, we determined that there was no way to sanely handle
+setting up Tegra's pinmux programatically, and instead required each
+board to pass in a table of pinmux settings.
