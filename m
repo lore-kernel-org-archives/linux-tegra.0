@@ -1,52 +1,312 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCHv2 4/4] ARM: tegra: irq: Add tegra_eoi
-Date: Sun,  1 May 2011 15:27:34 -0700
-Message-ID: <1304288854-11011-1-git-send-email-ccross@android.com>
-References: <1304284213-11950-5-git-send-email-ccross@android.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1304284213-11950-5-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lakml <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mike Rapoport <mike@compulab.co.il>
+Subject: Re: [PATCH v3] ASoC: tegra: TrimSlice machine support
+Date: Mon, 02 May 2011 08:34:20 +0300
+Message-ID: <4DBE425C.2030807@compulab.co.il>
+References: <1303807962-14833-1-git-send-email-mike@compulab.co.il>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1303807962-14833-1-git-send-email-mike@compulab.co.il>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement irq_eoi to allow the GIC irq chip flow controller to
-be changed to fasteoi.
+Mark,
+Any updates on this?
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
----
-v2: Add tegra_eoi without removing tegra_ack, patch can now be
-    merged safely before Will Deacon's gic fasteoi patch
+On 04/26/11 11:52, Mike Rapoport wrote:
+> Signed-off-by: Mike Rapoport <mike@compulab.co.il>
+> ---
+> v3 changes:
+> * s/SND_TEGRA_SOC/SND_SOC_TEGRA
+> * drop 'default' setting in Kconfig
+> 
+> v2 changes:
+> * address Stephen and Mark comments
+> * rebase against Mark's for-next branch
+> * switch to data based specification of widgets and routes
+> * explicitly disable unused codec pins
+> 
+>  sound/soc/tegra/Kconfig     |    8 ++
+>  sound/soc/tegra/Makefile    |    2 +
+>  sound/soc/tegra/trimslice.c |  228 +++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 238 insertions(+), 0 deletions(-)
+>  create mode 100644 sound/soc/tegra/trimslice.c
+> 
+> diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+> index 14f7119..1e75da3 100644
+> --- a/sound/soc/tegra/Kconfig
+> +++ b/sound/soc/tegra/Kconfig
+> @@ -26,3 +26,11 @@ config SND_SOC_TEGRA_WM8903
+>  	  boards using the WM8093 codec. Currently, the supported boards are
+>  	  Harmony, Ventana, Seaboard, Kaen, and Aebl.
+>  
+> +config SND_SOC_TEGRA_TRIMSLICE
+> +	tristate "SoC Audio support for TrimSlice board"
+> +	depends on SND_SOC_TEGRA && MACH_TRIMSLICE && I2C
+> +	select SND_SOC_TEGRA_I2S
+> +	select SND_SOC_TLV320AIC23
+> +	help
+> +	  Say Y or M here if you want to add support for SoC audio on the
+> +	  TrimSlice platform.
+> diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+> index 13bef8d..fa6574d 100644
+> --- a/sound/soc/tegra/Makefile
+> +++ b/sound/soc/tegra/Makefile
+> @@ -11,5 +11,7 @@ obj-$(CONFIG_SND_SOC_TEGRA_I2S) += snd-soc-tegra-i2s.o
+>  
+>  # Tegra machine Support
+>  snd-soc-tegra-wm8903-objs := tegra_wm8903.o
+> +snd-soc-tegra-trimslice-objs := trimslice.o
+>  
+>  obj-$(CONFIG_SND_SOC_TEGRA_WM8903) += snd-soc-tegra-wm8903.o
+> +obj-$(CONFIG_SND_SOC_TEGRA_TRIMSLICE) += snd-soc-tegra-trimslice.o
+> diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+> new file mode 100644
+> index 0000000..8fc07e9
+> --- /dev/null
+> +++ b/sound/soc/tegra/trimslice.c
+> @@ -0,0 +1,228 @@
+> +/*
+> + * trimslice.c - TrimSlice machine ASoC driver
+> + *
+> + * Copyright (C) 2011 - CompuLab, Ltd.
+> + * Author: Mike Rapoport <mike@compulab.co.il>
+> + *
+> + * Based on code copyright/by:
+> + * Author: Stephen Warren <swarren@nvidia.com>
+> + * Copyright (C) 2010-2011 - NVIDIA, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, write to the Free Software
+> + * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+> + * 02110-1301 USA
+> + *
+> + */
+> +
+> +#include <asm/mach-types.h>
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <sound/core.h>
+> +#include <sound/jack.h>
+> +#include <sound/pcm.h>
+> +#include <sound/pcm_params.h>
+> +#include <sound/soc.h>
+> +
+> +#include "../codecs/tlv320aic23.h"
+> +
+> +#include "tegra_das.h"
+> +#include "tegra_i2s.h"
+> +#include "tegra_pcm.h"
+> +#include "tegra_asoc_utils.h"
+> +
+> +#define DRV_NAME "tegra-snd-trimslice"
+> +
+> +struct tegra_trimslice {
+> +	struct tegra_asoc_utils_data util_data;
+> +};
+> +
+> +static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
+> +					struct snd_pcm_hw_params *params)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+> +	struct snd_soc_codec *codec = rtd->codec;
+> +	struct snd_soc_card *card = codec->card;
+> +	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
+> +	int srate, mclk;
+> +	int err;
+> +
+> +	srate = params_rate(params);
+> +	mclk = 128 * srate;
+> +
+> +	err = tegra_asoc_utils_set_rate(&trimslice->util_data, srate, mclk);
+> +	if (err < 0) {
+> +		dev_err(card->dev, "Can't configure clocks\n");
+> +		return err;
+> +	}
+> +
+> +	err = snd_soc_dai_set_fmt(codec_dai,
+> +					SND_SOC_DAIFMT_I2S |
+> +					SND_SOC_DAIFMT_NB_NF |
+> +					SND_SOC_DAIFMT_CBS_CFS);
+> +	if (err < 0) {
+> +		dev_err(card->dev, "codec_dai fmt not set\n");
+> +		return err;
+> +	}
+> +
+> +	err = snd_soc_dai_set_fmt(cpu_dai,
+> +					SND_SOC_DAIFMT_I2S |
+> +					SND_SOC_DAIFMT_NB_NF |
+> +					SND_SOC_DAIFMT_CBS_CFS);
+> +	if (err < 0) {
+> +		dev_err(card->dev, "cpu_dai fmt not set\n");
+> +		return err;
+> +	}
+> +
+> +	err = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
+> +					SND_SOC_CLOCK_IN);
+> +	if (err < 0) {
+> +		dev_err(card->dev, "codec_dai clock not set\n");
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct snd_soc_ops trimslice_asoc_ops = {
+> +	.hw_params = trimslice_asoc_hw_params,
+> +};
+> +
+> +static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
+> +	SND_SOC_DAPM_HP("Line Out", NULL),
+> +	SND_SOC_DAPM_LINE("Line In", NULL),
+> +};
+> +
+> +static const struct snd_soc_dapm_route trimslice_audio_map[] = {
+> +	{"Line Out", NULL, "LOUT"},
+> +	{"Line Out", NULL, "ROUT"},
+> +
+> +	{"LLINEIN", NULL, "Line In"},
+> +	{"RLINEIN", NULL, "Line In"},
+> +};
+> +
+> +static int trimslice_asoc_init(struct snd_soc_pcm_runtime *rtd)
+> +{
+> +	struct snd_soc_codec *codec = rtd->codec;
+> +	struct snd_soc_dapm_context *dapm = &codec->dapm;
+> +
+> +	snd_soc_dapm_nc_pin(dapm, "LHPOUT");
+> +	snd_soc_dapm_nc_pin(dapm, "RHPOUT");
+> +	snd_soc_dapm_nc_pin(dapm, "MICIN");
+> +
+> +	snd_soc_dapm_sync(dapm);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
+> +	.name = "TLV320AIC23",
+> +	.stream_name = "AIC23",
+> +	.codec_name = "tlv320aic23-codec.2-001a",
+> +	.platform_name = "tegra-pcm-audio",
+> +	.cpu_dai_name = "tegra-i2s.0",
+> +	.codec_dai_name = "tlv320aic23-hifi",
+> +	.init = trimslice_asoc_init,
+> +	.ops = &trimslice_asoc_ops,
+> +};
+> +
+> +static struct snd_soc_card snd_soc_trimslice = {
+> +	.name = "tegra-trimslice",
+> +	.dai_link = &trimslice_tlv320aic23_dai,
+> +	.num_links = 1,
+> +
+> +	.dapm_widgets = trimslice_dapm_widgets,
+> +	.num_dapm_widgets = ARRAY_SIZE(trimslice_dapm_widgets),
+> +	.dapm_routes = trimslice_audio_map,
+> +	.num_dapm_routes = ARRAY_SIZE(trimslice_audio_map),
+> +};
+> +
+> +static __devinit int tegra_snd_trimslice_probe(struct platform_device *pdev)
+> +{
+> +	struct snd_soc_card *card = &snd_soc_trimslice;
+> +	struct tegra_trimslice *trimslice;
+> +	int ret;
+> +
+> +	trimslice = kzalloc(sizeof(struct tegra_trimslice), GFP_KERNEL);
+> +	if (!trimslice) {
+> +		dev_err(&pdev->dev, "Can't allocate tegra_trimslice\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
+> +	if (ret)
+> +		goto err_free_trimslice;
+> +
+> +	card->dev = &pdev->dev;
+> +	platform_set_drvdata(pdev, card);
+> +	snd_soc_card_set_drvdata(card, trimslice);
+> +
+> +	ret = snd_soc_register_card(card);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+> +			ret);
+> +		goto err_fini_utils;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_fini_utils:
+> +	tegra_asoc_utils_fini(&trimslice->util_data);
+> +err_free_trimslice:
+> +	kfree(trimslice);
+> +	return ret;
+> +}
+> +
+> +static int __devexit tegra_snd_trimslice_remove(struct platform_device *pdev)
+> +{
+> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
+> +	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
+> +
+> +	snd_soc_unregister_card(card);
+> +
+> +	tegra_asoc_utils_fini(&trimslice->util_data);
+> +
+> +	kfree(trimslice);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver tegra_snd_trimslice_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
+> +		.owner = THIS_MODULE,
+> +	},
+> +	.probe = tegra_snd_trimslice_probe,
+> +	.remove = __devexit_p(tegra_snd_trimslice_remove),
+> +};
+> +
+> +static int __init snd_tegra_trimslice_init(void)
+> +{
+> +	return platform_driver_register(&tegra_snd_trimslice_driver);
+> +}
+> +module_init(snd_tegra_trimslice_init);
+> +
+> +static void __exit snd_tegra_trimslice_exit(void)
+> +{
+> +	platform_driver_unregister(&tegra_snd_trimslice_driver);
+> +}
+> +module_exit(snd_tegra_trimslice_exit);
+> +
+> +MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
+> +MODULE_DESCRIPTION("Trimslice machine ASoC driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:" DRV_NAME);
 
- arch/arm/mach-tegra/irq.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index da17491..4956c3c 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -95,6 +95,14 @@ static void tegra_ack(struct irq_data *d)
- 	tegra_irq_write_mask(d->irq, ICTLR_CPU_IEP_FIR_CLR);
- }
- 
-+static void tegra_eoi(struct irq_data *d)
-+{
-+	if (d->irq < FIRST_LEGACY_IRQ)
-+		return;
-+
-+	tegra_irq_write_mask(d->irq, ICTLR_CPU_IEP_FIR_CLR);
-+}
-+
- static int tegra_retrigger(struct irq_data *d)
- {
- 	if (d->irq < FIRST_LEGACY_IRQ)
-@@ -116,6 +124,7 @@ void __init tegra_init_irq(void)
- 	}
- 
- 	gic_arch_extn.irq_ack = tegra_ack;
-+	gic_arch_extn.irq_eoi = tegra_eoi;
- 	gic_arch_extn.irq_mask = tegra_mask;
- 	gic_arch_extn.irq_unmask = tegra_unmask;
- 	gic_arch_extn.irq_retrigger = tegra_retrigger;
 -- 
-1.7.4.1
+Sincerely yours,
+Mike.
