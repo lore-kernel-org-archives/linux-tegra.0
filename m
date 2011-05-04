@@ -1,33 +1,46 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCHv2 4/4] ARM: tegra: irq: Add tegra_eoi
-Date: Wed, 04 May 2011 18:01:42 +0100
-Message-ID: <1304528502.1935.2.camel@craptop>
-References: <1304284213-11950-5-git-send-email-ccross@android.com>
-	 <1304288854-11011-1-git-send-email-ccross@android.com>
-	 <1304414973.27863.2.camel@e102144-lin.cambridge.arm.com>
-	 <BANLkTi=a26_A7yAAfkQd5NSxbR+reQCZ1g@mail.gmail.com>
+From: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter
+	functionality
+Date: Wed, 4 May 2011 22:51:33 +0100
+Message-ID: <20110504215133.GY15795@trinity.fluff.org>
+References: <1302691521-19096-1-git-send-email-mike@compulab.co.il> <4DBFBEAD.2080103@compulab.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BANLkTi=a26_A7yAAfkQd5NSxbR+reQCZ1g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: lakml <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4DBFBEAD.2080103-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2011-05-03 at 19:41 +0100, Colin Cross wrote:
-> What is your plan for merging the fasteoi patches?  If you are
-> planning to put them in 2.6.40, can you pull these patches into your
-> tree?  I don't have any other Tegra changes planned for 2.6.40, so
-> they shouldn't cause conflicts later.
+On Tue, May 03, 2011 at 11:37:01AM +0300, Mike Rapoport wrote:
+> Hi Ben,
+> Any comments on this?
+> 
+> On 04/13/11 13:45, Mike Rapoport wrote:
+> > as there are a lot of i2c device drivers that require it.
+> > 
+> > Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+> > ---
+> >  drivers/i2c/busses/i2c-tegra.c |    2 +-
+> >  1 files changed, 1 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> > index b4ab39b..7e68f2c 100644
+> > --- a/drivers/i2c/busses/i2c-tegra.c
+> > +++ b/drivers/i2c/busses/i2c-tegra.c
+> > @@ -495,7 +495,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+> >  
+> >  static u32 tegra_i2c_func(struct i2c_adapter *adap)
+> >  {
+> > -	return I2C_FUNC_I2C;
+> > +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+> >  }
 
-Ok, since Santosh would like me to take his relaxed I/O stuff for the
-GIC too then I guess I can put all of this into an irq branch along with
-the fasteoi changes.
+I think this is ok, but will check tomorrow
 
-Russell - would you be happy pulling this from me if I put it together?
+-- 
+Ben Dooks, ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, http://www.fluff.org/ben/
 
-Cheers,
-
-Will
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
