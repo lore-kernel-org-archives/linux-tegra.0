@@ -1,45 +1,33 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/4] drivers: create a pinmux subsystem
-Date: Wed, 4 May 2011 02:22:19 -0700
-Message-ID: <20110504092219.GW2092@atomide.com>
-References: <1304363786-30376-1-git-send-email-linus.walleij@stericsson.com>
- <74CDBE0F657A3D45AFBB94109FB122FF0497F1B201@HQMAIL01.nvidia.com>
- <BANLkTimKU-=GXzrn8=MQn-GAmKHOvKmuNQ@mail.gmail.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCHv2 4/4] ARM: tegra: irq: Add tegra_eoi
+Date: Wed, 04 May 2011 18:01:42 +0100
+Message-ID: <1304528502.1935.2.camel@craptop>
+References: <1304284213-11950-5-git-send-email-ccross@android.com>
+	 <1304288854-11011-1-git-send-email-ccross@android.com>
+	 <1304414973.27863.2.camel@e102144-lin.cambridge.arm.com>
+	 <BANLkTi=a26_A7yAAfkQd5NSxbR+reQCZ1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BANLkTimKU-=GXzrn8=MQn-GAmKHOvKmuNQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@google.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Linus Walleij <linus.walleij@stericsson.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Lee Jones <lee.jones@linaro.org>, Martin Persson <martin.persson@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Erik Gilling <konkers@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <BANLkTi=a26_A7yAAfkQd5NSxbR+reQCZ1g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: lakml <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Colin Cross <ccross@google.com> [110502 14:26]:
-> On Mon, May 2, 2011 at 1:52 PM, Stephen Warren <swarren@nvidia.com> wrote:
-> 
-> * Drive strength is also controlled through groups of pins, but
-> different groups than pinmux.  Most of the drive strength groups are
-> collections of pad mux groups, but there are a few pins that are in
-> the same pad mux group but a different drive strength group.
-> * Setting a pin as a GPIO overrides its group's mux setting, except
-> for the group's tristate.  You must untristate the entire group to use
-> a single pin as a GPIO.
-> * Each group has a "safe mode", but which mux id to select to enter
-> the safe mode is completely random.
+On Tue, 2011-05-03 at 19:41 +0100, Colin Cross wrote:
+> What is your plan for merging the fasteoi patches?  If you are
+> planning to put them in 2.6.40, can you pull these patches into your
+> tree?  I don't have any other Tegra changes planned for 2.6.40, so
+> they shouldn't cause conflicts later.
 
-Just posted something in this thread regarding using standard data and
-standard read and write functions, then allow setting platform specific
-custom flags as needed. Care to see if that works for you too?
- 
-> In the end, we determined that there was no way to sanely handle
-> setting up Tegra's pinmux programatically, and instead required each
-> board to pass in a table of pinmux settings.
+Ok, since Santosh would like me to take his relaxed I/O stuff for the
+GIC too then I guess I can put all of this into an irq branch along with
+the fasteoi changes.
 
-Eventually we should get the package specific table of available pins
-and the board specific settings in devicetree data. And then it's
-easy to set the pins as desired while being able to debug it.
+Russell - would you be happy pulling this from me if I put it together?
 
-Regards,
+Cheers,
 
-Tony
+Will
