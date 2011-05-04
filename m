@@ -1,15 +1,39 @@
-From: Marvin <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
-Date: Wed, 4 May 2011 10:31:46 +0200
-Message-ID: <201105041031.46755.marvin24@gmx.de>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
+Date: Wed, 4 May 2011 17:19:41 +0800
+Message-ID: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4EA@HKMAIL01.nvidia.com>
+References: <1303301312-15302-1-git-send-email-wni@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF0497F1AEEF@HQMAIL01.nvidia.com>
+ <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4E6@HKMAIL01.nvidia.com>
+ <201105041028.09316.marc.dietrich@ap.physik.uni-giessen.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201105041028.09316.marc.dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
+Content-Language: en-US
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: 'Marc Dietrich' <Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org" <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
+
+Hi, Marc
+I think no other implementation.
+
+Thanks
+Wei.
+
+-----Original Message-----
+=46rom: Marc Dietrich [mailto:Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org]=20
+Sent: Wednesday, May 04, 2011 4:28 PM
+To: Wei Ni
+Cc: Stephen Warren; khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; lucas.dema=
+rchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org; ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; lin=
+ux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Olof Johansson =
+(olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)
+Subject: Re: [PATCH 0/2] i2c: tegra: add some new features for tegra i2=
+c
+
 
 Wei, Stephen,
 
@@ -29,8 +53,6 @@ kernels)?
 Regards,
 
 Marc
-
-(sorry, accidentally send by the wrong identity to the ml's)
 
 
 > Thanks
