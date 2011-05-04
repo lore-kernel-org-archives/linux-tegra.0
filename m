@@ -1,18 +1,15 @@
-From: Marc Dietrich <Marc.Dietrich@ap.physik.uni-giessen.de>
+From: Marvin <marvin24-Mmb7MZpHnFY@public.gmane.org>
 Subject: Re: [PATCH 0/2] i2c: tegra: add some new features for tegra i2c
-Date: Wed, 4 May 2011 10:28:07 +0200
-Message-ID: <201105041028.09316.marc.dietrich@ap.physik.uni-giessen.de>
-References: <1303301312-15302-1-git-send-email-wni@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF0497F1AEEF@HQMAIL01.nvidia.com> <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4E6@HKMAIL01.nvidia.com>
+Date: Wed, 4 May 2011 10:31:46 +0200
+Message-ID: <201105041031.46755.marvin24@gmx.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD4E6@HKMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "lucas.demarchi@profusion.mobi" <lucas.demarchi@profusion.mobi>, "ccross@android.com" <ccross@android.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Olof Johansson (olof@lixom.net)" <olof@lixom.net>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
-
 
 Wei, Stephen,
 
@@ -33,6 +30,8 @@ Regards,
 
 Marc
 
+(sorry, accidentally send by the wrong identity to the ml's)
+
 
 > Thanks
 > Wei.
@@ -41,12 +40,12 @@ Marc
 > From: Stephen Warren
 > Sent: Friday, April 29, 2011 11:20 PM
 > To: Wei Ni
-> Cc: khali@linux-fr.org; ben-linux@fluff.org; lucas.demarchi@profusion=
+> Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; lucas.demarchi@profusion=
 =2Emobi;
-> ccross@android.com; linux-i2c@vger.kernel.org;
-> linux-kernel@vger.kernel.org; linux-tegra@vger.kernel.org; Olof Johan=
+> ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Olof Johan=
 sson
-> (olof@lixom.net) Subject: RE: [PATCH 0/2] i2c: tegra: add some new
+> (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org) Subject: RE: [PATCH 0/2] i2c: tegra: add some new
 > features for tegra i2c
 >=20
 > Wei Ni wrote at Friday, April 29, 2011 12:08 AM:
@@ -94,7 +93,7 @@ ress
 > > > Thanks for any feedback on this.
 >=20
 > Wei Ni wrote at Wednesday, April 20, 2011 8:09 PM:
-> > From: Wei Ni <wni@nvidia.com>
+> > From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >=20
 > > *** BLURB HERE ***
 > >=20
@@ -119,5 +118,5 @@ Germany
 
 Tel. +49 641 99 33462
 =46ax. +49 641 99 33409
-email: marc.dietrich@ap.physik.uni-giessen.de
+email: marc.dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org
 www: http://www.uni-giessen.de/cms/iap/
