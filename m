@@ -1,17 +1,30 @@
-From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra gpio driver: Need to configure pins in gpio
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: Tegra gpio driver: Need to configure pins in gpio
  mode/nontristate with gpio-request
-Date: Thu, 5 May 2011 09:49:24 -0700
-Message-ID: <BANLkTikFgc2Oe5BrOpzYkjs7wnMdfNY4_w@mail.gmail.com>
+Date: Thu, 5 May 2011 23:48:28 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD906B1331B0BD@BGMAIL01.nvidia.com>
 References: <96C9D994977DD0439FB6D3FE3B13DD906B1331B068@BGMAIL01.nvidia.com>
+ <BANLkTikFgc2Oe5BrOpzYkjs7wnMdfNY4_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD906B1331B068-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <BANLkTikFgc2Oe5BrOpzYkjs7wnMdfNY4_w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
+
+Then from user space using /sys/class/gpio sysfs interface, I can not make the pin to be gpio until I change the kernel code?
+
+
+-----Original Message-----
+From: Colin Cross [mailto:ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org] 
+Sent: Thursday, May 05, 2011 10:19 PM
+To: Laxman Dewangan
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Subject: Re: Tegra gpio driver: Need to configure pins in gpio mode/nontristate with gpio-request
 
 On Thu, May 5, 2011 at 3:16 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > Hi All,
