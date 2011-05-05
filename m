@@ -1,46 +1,31 @@
-From: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: Re: [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter
-	functionality
-Date: Wed, 4 May 2011 22:51:33 +0100
-Message-ID: <20110504215133.GY15795@trinity.fluff.org>
-References: <1302691521-19096-1-git-send-email-mike@compulab.co.il> <4DBFBEAD.2080103@compulab.co.il>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra gpio driver: Need to configure pins in gpio mode/nontristate
+ with  gpio-request
+Date: Thu, 5 May 2011 15:46:45 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD906B1331B068@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4DBFBEAD.2080103-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 03, 2011 at 11:37:01AM +0300, Mike Rapoport wrote:
-> Hi Ben,
-> Any comments on this?
-> 
-> On 04/13/11 13:45, Mike Rapoport wrote:
-> > as there are a lot of i2c device drivers that require it.
-> > 
-> > Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-> > ---
-> >  drivers/i2c/busses/i2c-tegra.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> > index b4ab39b..7e68f2c 100644
-> > --- a/drivers/i2c/busses/i2c-tegra.c
-> > +++ b/drivers/i2c/busses/i2c-tegra.c
-> > @@ -495,7 +495,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
-> >  
-> >  static u32 tegra_i2c_func(struct i2c_adapter *adap)
-> >  {
-> > -	return I2C_FUNC_I2C;
-> > +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-> >  }
+Hi All,
+When working on gpio driver for tegra, I found that gpio_request() does not
+make the corresponding soc pins to gpio mode. It still keeps the pins in SFIO mode.
+So we need to call two extra function along with gpio_request():
+Tegra_gpio_enable() and function for setting the pins in no non-tristate.
 
-I think this is ok, but will check tomorrow
+Sue to this, the gpio sysfs interface does not work properly from user space /sys/class/gpio/.
+To make the pin in gpio mode fom user space, need to have changes in kernel.
 
--- 
-Ben Dooks, ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, http://www.fluff.org/ben/
+I think the gpio_request() should make the pins to gpio mode and make ready for use.
+Similarly gpio_free() should again put the pin into sfio mode with tristate disable.
 
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+Please comment if there is any better way..
+
+
+Thanks,
+Laxman
