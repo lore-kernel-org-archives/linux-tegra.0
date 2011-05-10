@@ -1,85 +1,46 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC 1/2] ARM: Tegra: Device Tree Support: Update how sdhci
- devices	are initialized
-Date: Tue, 10 May 2011 15:03:18 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA06A@HQMAIL01.nvidia.com>
+Subject: RE: [RFC 2/2] ARM: Tegra: Device Tree Support: Add i2c devices
+Date: Tue, 10 May 2011 15:10:12 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA070@HQMAIL01.nvidia.com>
 References: <20110510201108.22693.50319.stgit@riker>
- <20110510201414.22693.7427.stgit@riker>
+ <20110510201430.22693.66151.stgit@riker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110510201414.22693.7427.stgit@riker>
+In-Reply-To: <20110510201430.22693.66151.stgit@riker>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-a
-Cc: "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-John Bonesio wrote at Tuesday, May 10, 2011 2:14 PM:
-> This patch changes how sdhci devices are initialized so that a later patch can
-> easily add support for i2c devies.
-> 
-> Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-
-> @@ -134,6 +57,25 @@ static __initdata struct tegra_clk_init_table
-> tegra_dt_clk_init_table[] = {
->  	{ NULL,		NULL,		0,		0},
->  };
-> 
-> +static struct tegra_sdhci_platform_data sdhci_pdata1 = {
-> +	.cd_gpio        = -1,
-> +	.wp_gpio        = -1,
-> +	.power_gpio     = -1,
-> +};
-> +
-> +static struct tegra_sdhci_platform_data sdhci_pdata2 = {
-> +	.cd_gpio        = TEGRA_GPIO_SD2_CD,
-> +	.wp_gpio        = TEGRA_GPIO_SD2_WP,
-> +	.power_gpio     = TEGRA_GPIO_SD2_POWER,
-> +};
-> +
-> +static struct tegra_sdhci_platform_data sdhci_pdata4 = {
-> +	.cd_gpio        = TEGRA_GPIO_SD4_CD,
-> +	.wp_gpio        = TEGRA_GPIO_SD4_WP,
-> +	.power_gpio     = TEGRA_GPIO_SD4_POWER,
-> +	.is_8bit        = 1,
-> +};
-> +
-
-So I understand why board-dt is itself registering the SDHCI platform
-devices itself; so that the pdev initialization path is identical
-between fully hard-coded boards and board-dt.c.
-
-However, I'm surprised that we would include the platform data for
-those devices within that argument; if we do that, we'll end up needing
-different platform data for every board, and devicetree won't have
-bought us anything.
-
-In other words, I understood that board-dt would register all the
-platform devices within Tegra, but not set up any of the plataform
-data, and the device drivers for those devices would be updated to
-get their platform data from devicetree if available, then fall back
-to old-style platform data. In other words, the way the SDHCI drivers
-work today in the devicetree/test branch.
-
-If my understanding is correct, shouldn't the chunk above and the
-one below be removed?
-
->  static struct of_device_id tegra_dt_match_table[] __initdata = {
->  	{ .compatible = "simple-bus", },
->  	{}
-> @@ -164,6 +106,10 @@ static void __init tegra_dt_init(void)
-> 
->  	harmony_pinmux_init();
-> 
-> +	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
-> +	tegra_sdhci_device2.dev.platform_data = &sdhci_pdata2;
-> +	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
-> +
->  	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
-> 
->  	/*
-
--- 
-nvpublic
+Sm9obiBCb25lc2lvIHdyb3RlIGF0IFR1ZXNkYXksIE1heSAxMCwgMjAxMSAyOjE1IFBNOg0KPiBU
+aGlzIHBhdGNoIGluaXRpYWxpemVzIGkyYyBjb250cm9sbGVyIGRldmljZXMgaW4gYm9hcmQtZHQu
+Yy4gVGhlIGkyYw0KPiBjb250cm9sbGVyDQo+IGlzIGFkZGVkIHRvIHRlZ3JhMjUwLmR0c2kgc28g
+bGF0ZXIgb24tYm9hcmQgaTJjIGRldmljZXMgY2FuIGJlIGZvdW5kIGFuZA0KPiBpbml0aWFsaXpl
+ZCBiYXNlZCBvbiB0aGUgZGV2aWNlIHRyZWUgaW5mb3JtYXRpb24uDQoNCj4gZGlmZiAtLWdpdCBh
+L2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjUwLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy90ZWdy
+YTI1MC5kdHNpDQoNCj4gKw0KPiArCWkyY0A3MDAwQzAwMCB7DQo+ICsJCSNhZGRyZXNzLWNlbGxz
+ID0gPDE+Ow0KPiArCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4gKwkJY29tcGF0aWJsZSA9ICJudmlk
+aWEsdGVncmEyNTAtaTJjIjsNCj4gKwkJcmVnID0gPDB4NzAwMEMwMDAgMHgxMDA+Ow0KPiArCQlp
+bnRlcnJ1cHRzID0gPCA3MCA+Ow0KPiArCX07DQoNCkNvdWxkIHdlIGFkZCAnc3RhdHVzID0gImRp
+c2FibGVkIicgZm9yIGFsbCBvZiB0aGVzZSBpbiB0aGUgY29yZSBUZWdyYSBTb0MNCmZpbGUuIFRo
+ZW4sIHRoZSBib2FyZC1zcGVjaWZpYyBmaWxlcyAoZS5nLiB0ZWdyYS1oYXJtb255LmR0cykgd2ls
+bCBzZXQNCidzdGF0dXMgPSAib2siJyBmb3IganVzdCB0aGUgcGFydGljdWxhciBjb250cm9sbGVy
+cyB0aGF0IGFyZSBhY3R1YWxseSB1c2VkDQpieSB0aGUgYm9hcmQuIFRoZSBTREhDSSBjb250cm9s
+bGVycyBhcmUgc2V0dXAgdGhpcyB3YXkgbm93IHBlciBteSByZWNlbnQNCnBhdGNoZXMuDQoNCj4g
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtdGVncmEvYm9hcmQtZHQuYyBiL2FyY2gvYXJtL21h
+Y2gtdGVncmEvYm9hcmQtZHQuYw0KDQo+ICtzdGF0aWMgc3RydWN0IHRlZ3JhX2kyY19wbGF0Zm9y
+bV9kYXRhIGhhcm1vbnlfaTJjMV9wbGF0Zm9ybV9kYXRhID0gew0KPiArCS5idXNfY2xrX3JhdGUg
+ICA9IDQwMDAwMCwNCj4gK307DQoNClNpbWlsYXIgdG8gbXkgY29tbWVudHMgb24gdGhlIFNESENJ
+IHBhdGNoLCBzaG91bGRuJ3QgdGhlIHBsYXRmb3JtIGRhdGENCmNvbWUgb25seSBmcm9tIGRldmlj
+ZXRyZWU/DQoNCj4gK3N0YXRpYyB2b2lkIF9faW5pdCBoYXJtb255X2kyY19pbml0KHZvaWQpDQoN
+Ckl0J2QgYmUgbmljZSBub3QgdG8gbmFtZSBzdHVmZiBpbiBib2FyZC1kdC5jIGFmdGVyICJoYXJt
+b255Iiwgc2luY2UgdGhlDQppZGVhIGlzIGZvciBpdCB0byB3b3JrIG9uIGFyYml0cmFyeSBib2Fy
+ZHMgZ2l2ZW4gdGhlIGFwcHJvcHJpYXRlDQpkZXZpY2V0cmVlLg0KDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRl
+Z3JhLmMNCg0KU2luY2UgdGhlIGRyaXZlciBhbmQgYm9hcmQgZmlsZXMgZ28gdG8gc2VwYXJhdGUg
+c3Vic3lzdGVtcywgc2hvdWxkbid0DQp0aGUgY2hhbmdlcyB0byB0aGlzIGZpbGUgYmUgYSBzZXBh
+cmF0ZSBwYXRjaCwgdG8gYWlkIGV2ZW50dWFsDQp1cHN0cmVhbWluZz8NCg0KQlRXLCB0aGFua3Mg
+Zm9yIHdvcmtpbmcgb24gVGVncmEhDQoNCi0tIA0KbnZwdWJsaWMNCg0K
