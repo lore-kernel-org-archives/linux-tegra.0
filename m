@@ -1,157 +1,85 @@
-From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: [RFC 2/2] ARM: Tegra: Device Tree Support: Add i2c devices
-Date: Tue, 10 May 2011 13:14:38 -0700
-Message-ID: <20110510201430.22693.66151.stgit@riker>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [RFC 1/2] ARM: Tegra: Device Tree Support: Update how sdhci
+ devices	are initialized
+Date: Tue, 10 May 2011 15:03:18 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA06A@HQMAIL01.nvidia.com>
 References: <20110510201108.22693.50319.stgit@riker>
+ <20110510201414.22693.7427.stgit@riker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110510201108.22693.50319.stgit@riker>
+In-Reply-To: <20110510201414.22693.7427.stgit@riker>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-xIg/pKzrS19vn6HldHNs0ANdhmdF6hFW@public.gmane.org
-Cc: glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-a
+Cc: "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch initializes i2c controller devices in board-dt.c. The i2c controller
-is added to tegra250.dtsi so later on-board i2c devices can be found and
-initialized based on the device tree information.
+John Bonesio wrote at Tuesday, May 10, 2011 2:14 PM:
+> This patch changes how sdhci devices are initialized so that a later patch can
+> easily add support for i2c devies.
+> 
+> Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
----
+> @@ -134,6 +57,25 @@ static __initdata struct tegra_clk_init_table
+> tegra_dt_clk_init_table[] = {
+>  	{ NULL,		NULL,		0,		0},
+>  };
+> 
+> +static struct tegra_sdhci_platform_data sdhci_pdata1 = {
+> +	.cd_gpio        = -1,
+> +	.wp_gpio        = -1,
+> +	.power_gpio     = -1,
+> +};
+> +
+> +static struct tegra_sdhci_platform_data sdhci_pdata2 = {
+> +	.cd_gpio        = TEGRA_GPIO_SD2_CD,
+> +	.wp_gpio        = TEGRA_GPIO_SD2_WP,
+> +	.power_gpio     = TEGRA_GPIO_SD2_POWER,
+> +};
+> +
+> +static struct tegra_sdhci_platform_data sdhci_pdata4 = {
+> +	.cd_gpio        = TEGRA_GPIO_SD4_CD,
+> +	.wp_gpio        = TEGRA_GPIO_SD4_WP,
+> +	.power_gpio     = TEGRA_GPIO_SD4_POWER,
+> +	.is_8bit        = 1,
+> +};
+> +
 
- arch/arm/boot/dts/tegra250.dtsi |   33 +++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-dt.c  |   32 ++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-tegra.c  |    4 ++++
- 3 files changed, 69 insertions(+), 0 deletions(-)
+So I understand why board-dt is itself registering the SDHCI platform
+devices itself; so that the pdev initialization path is identical
+between fully hard-coded boards and board-dt.c.
 
-diff --git a/arch/arm/boot/dts/tegra250.dtsi b/arch/arm/boot/dts/tegra250.dtsi
-index f1801b8..7d8fc51 100644
---- a/arch/arm/boot/dts/tegra250.dtsi
-+++ b/arch/arm/boot/dts/tegra250.dtsi
-@@ -20,6 +20,39 @@
- 		};
- 	};
- 
-+
-+	i2c@7000C000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra250-i2c";
-+		reg = <0x7000C000 0x100>;
-+		interrupts = < 70 >;
-+	};
-+
-+	i2c@7000C400 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra250-i2c";
-+		reg = <0x7000C400 0x100>;
-+		interrupts = < 116 >;
-+	};
-+
-+	i2c@7000C500 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra250-i2c";
-+		reg = <0x7000C500 0x100>;
-+		interrupts = < 124 >;
-+	};
-+
-+	i2c@7000D000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra250-i2c";
-+		reg = <0x7000D000 0x200>;
-+		interrupts = < 85 >;
-+	};
-+
- 	gpio: gpio@6000d000 {
- 		compatible = "nvidia,tegra250-gpio";
- 		reg = < 0x6000d000 0x1000 >;
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index e61d563..cc7903b 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -28,6 +28,8 @@
- #include <linux/of_platform.h>
- #include <linux/pda_power.h>
- #include <linux/io.h>
-+#include <linux/i2c.h>
-+#include <linux/i2c-tegra.h>
- 
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -44,6 +46,35 @@
- #include "devices.h"
- #include "gpio-names.h"
- 
-+static struct tegra_i2c_platform_data harmony_i2c1_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data harmony_i2c2_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data harmony_i2c3_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static void __init harmony_i2c_init(void)
-+{
-+	tegra_i2c_device1.dev.platform_data = &harmony_i2c1_platform_data;
-+	tegra_i2c_device2.dev.platform_data = &harmony_i2c2_platform_data;
-+	tegra_i2c_device3.dev.platform_data = &harmony_i2c3_platform_data;
-+	tegra_i2c_device4.dev.platform_data = &harmony_dvc_platform_data;
-+
-+	platform_device_register(&tegra_i2c_device1);
-+	platform_device_register(&tegra_i2c_device2);
-+	platform_device_register(&tegra_i2c_device3);
-+	platform_device_register(&tegra_i2c_device4);
-+}
-+
- static struct platform_device *harmony_devices[] __initdata = {
- 	&tegra_sdhci_device1,
- 	&tegra_sdhci_device2,
-@@ -111,6 +142,7 @@ static void __init tegra_dt_init(void)
- 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
- 
- 	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
-+	harmony_i2c_init();
- 
- 	/*
- 	 * Finished with the static registrations now; fill in the missing
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b4ab39b..a2f3ec6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -26,6 +26,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/i2c-tegra.h>
-+#include <linux/of_i2c.h>
- 
- #include <asm/unaligned.h>
- 
-@@ -598,6 +599,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->adapter.dev.parent = &pdev->dev;
- 	i2c_dev->adapter.nr = pdev->id;
-+	i2c_dev->adapter.dev.of_node = of_node_get(pdev->dev.of_node);
- 
- 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
- 	if (ret) {
-@@ -605,6 +607,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto err_free_irq;
- 	}
- 
-+	of_i2c_register_devices(&i2c_dev->adapter);
-+
- 	return 0;
- err_free_irq:
- 	free_irq(i2c_dev->irq, i2c_dev);
+However, I'm surprised that we would include the platform data for
+those devices within that argument; if we do that, we'll end up needing
+different platform data for every board, and devicetree won't have
+bought us anything.
+
+In other words, I understood that board-dt would register all the
+platform devices within Tegra, but not set up any of the plataform
+data, and the device drivers for those devices would be updated to
+get their platform data from devicetree if available, then fall back
+to old-style platform data. In other words, the way the SDHCI drivers
+work today in the devicetree/test branch.
+
+If my understanding is correct, shouldn't the chunk above and the
+one below be removed?
+
+>  static struct of_device_id tegra_dt_match_table[] __initdata = {
+>  	{ .compatible = "simple-bus", },
+>  	{}
+> @@ -164,6 +106,10 @@ static void __init tegra_dt_init(void)
+> 
+>  	harmony_pinmux_init();
+> 
+> +	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
+> +	tegra_sdhci_device2.dev.platform_data = &sdhci_pdata2;
+> +	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
+> +
+>  	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
+> 
+>  	/*
+
+-- 
+nvpublic
