@@ -1,93 +1,44 @@
-From: Ks Lee <kslee.adrian@gmail.com>
-Subject: [PATCH] ARM: tegra: Ensure all sched_clock() implementations are
-	notrace marked
-Date: Thu, 21 Apr 2011 18:16:51 +0900
-Message-ID: <BANLkTi=mgQhb8x41zpi93SjbDdELUdSjZA@mail.gmail.com>
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: [RFC 0/3] ARM: Tegra: Device Tree: i2c & wm8903
+Date: Wed, 11 May 2011 16:26:29 -0700
+Message-ID: <20110511231905.10362.12844.stgit@riker>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0572783756=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Erik Gilling <konkers@android.com>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---===============0572783756==
-Content-Type: multipart/alternative; boundary=000e0cd2e2429fbb5a04a16a336e
+This is revision 2 of my previous patch series:
+     Tegra: Harmony: Device Tree first steps
 
---000e0cd2e2429fbb5a04a16a336e
-Content-Type: text/plain; charset=ISO-8859-1
+The following patch series is a step in the direction of getting board specific
+devices initialized from a device tree.
 
-ftrace requires sched_clock() to be notrace.
-Ensure that all implementations are so marked.
+This patch set adds intiailization of i2c and the wm8903. The i2c controller is
+in the SoC and is initialized statically, but the board specific information is
+pulled in from the device tree. The wm8903 is initialized using only the device
+tree when using the board-dt.c general Tegra board initialization file.
 
-Signed-off-by: Adrian Lee <kyungsik.lee@lge.com>
 ---
- arch/arm/mach-tegra/timer.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
-index 0fcb1eb..2f827ff 100644
---- a/arch/arm/mach-tegra/timer.c
-+++ b/arch/arm/mach-tegra/timer.c
-@@ -98,7 +98,7 @@ static void tegra_timer_set_mode(enum clock_event_mode
-mode,
-  }
- }
+John Bonesio (3):
+      ARM: Tegra: Device Tree Support: Update how sdhci devices are initialized
+      ARM: Tegra: Device Tree Support: Add i2c devices
+      ARM:Tegra: Device Tree Support: Initialize from wm8903 the device tree
 
--static cycle_t tegra_clocksource_read(struct clocksource *cs)
-+static cycle_t notrace tegra_clocksource_read(struct clocksource *cs)
- {
-  return timer_readl(TIMERUS_CNTR_1US);
- }
+
+ arch/arm/boot/dts/tegra-harmony.dts |   37 ++++++++++++++
+ arch/arm/boot/dts/tegra250.dtsi     |   37 ++++++++++++++
+ arch/arm/mach-tegra/Makefile        |    1 
+ arch/arm/mach-tegra/board-dt.c      |   94 ++++-------------------------------
+ drivers/i2c/busses/i2c-tegra.c      |   16 ++++++
+ sound/soc/codecs/wm8903.c           |   93 +++++++++++++++++++++++++++++++++--
+ sound/soc/tegra/Kconfig             |    2 -
+ sound/soc/tegra/harmony.c           |    8 +++
+ 8 files changed, 200 insertions(+), 88 deletions(-)
+
 -- 
-1.7.0.4
-
---000e0cd2e2429fbb5a04a16a336e
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<div><div><br></div><div>ftrace requires sched_clock() to be notrace.</div>=
-<div>Ensure that all implementations are so marked.</div><div><br></div><di=
-v>Signed-off-by: Adrian Lee &lt;<a href=3D"mailto:kyungsik.lee@lge.com" tar=
-get=3D"_blank">kyungsik.lee@lge.com</a>&gt;</div>
-
-<div>---</div><div>=A0arch/arm/mach-tegra/timer.c | =A0 =A02 +-</div><div>=
-=A01 files changed, 1 insertions(+), 1 deletions(-)</div><div><br></div><di=
-v>diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c</d=
-iv><div>
-
-index 0fcb1eb..2f827ff 100644</div><div>--- a/arch/arm/mach-tegra/timer.c</=
-div><div>+++ b/arch/arm/mach-tegra/timer.c</div><div>@@ -98,7 +98,7 @@ stat=
-ic void tegra_timer_set_mode(enum clock_event_mode mode,</div><div>=A0<span=
- style=3D"white-space:pre-wrap">	</span>}</div>
-
-<div>=A0}</div><div>=A0</div><div>-static cycle_t tegra_clocksource_read(st=
-ruct clocksource *cs)</div><div>+static cycle_t notrace tegra_clocksource_r=
-ead(struct clocksource *cs)</div><div>=A0{</div><div>=A0<span style=3D"whit=
-e-space:pre-wrap">	</span>return timer_readl(TIMERUS_CNTR_1US);</div>
-
-<div>=A0}</div><div>--=A0</div><div>1.7.0.4</div><div><br></div></div>
-
---000e0cd2e2429fbb5a04a16a336e--
-
-
---===============0572783756==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0572783756==--
+- John
