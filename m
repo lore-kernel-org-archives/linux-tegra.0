@@ -1,8 +1,7 @@
 From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: [RFC 1/3] ARM: Tegra: Device Tree Support: Update how sdhci devices
-	are initialized
-Date: Wed, 11 May 2011 16:26:51 -0700
-Message-ID: <20110511232637.10362.84551.stgit@riker>
+Subject: [RFC 2/3] ARM: Tegra: Device Tree Support: Add i2c devices
+Date: Wed, 11 May 2011 16:27:03 -0700
+Message-ID: <20110511232659.10362.45811.stgit@riker>
 References: <20110511231905.10362.12844.stgit@riker>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -14,135 +13,183 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR0
 Cc: glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch changes how sdhci devices are initialized so that a later patch can
-easily add support for i2c devies.
+This patch initializes i2c controller devices in board-dt.c. The i2c controller
+is added to tegra250.dtsi so later on-board i2c devices can be found and
+initialized based on the device tree information.
+
+Board specific i2c parameters are placed in tegra-harmony.dts.
 
 Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 ---
 
- arch/arm/mach-tegra/Makefile   |    1 
- arch/arm/mach-tegra/board-dt.c |   88 ++--------------------------------------
- 2 files changed, 6 insertions(+), 83 deletions(-)
+ arch/arm/boot/dts/tegra-harmony.dts |   20 +++++++++++++++++++
+ arch/arm/boot/dts/tegra250.dtsi     |   37 +++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-dt.c      |    8 ++++++++
+ drivers/i2c/busses/i2c-tegra.c      |   16 ++++++++++++++-
+ 4 files changed, 80 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 842ec1a..54d2215 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -31,6 +31,7 @@ obj-${CONFIG_MACH_SEABOARD}             += board-seaboard.o
- obj-${CONFIG_MACH_SEABOARD}             += board-seaboard-pinmux.o
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 23592b2..af169aa 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -16,6 +16,26 @@
+ 		reg = < 0x00000000 0x40000000 >;
+ 	};
  
- obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
-+obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
++	i2c@7000c000 {
++		status = "ok";
++		clock-frequency = <400000>;
++	};
++
++	i2c@7000c400 {
++		status = "ok";
++		clock-frequency = <400000>;
++	};
++
++	i2c@7000c500 {
++		status = "ok";
++		clock-frequency = <400000>;
++	};
++
++	i2c@7000d000 {
++		status = "ok";
++		clock-frequency = <400000>;
++	};
++
+ 	serial@70006300 {
+ 		status = "ok";
+ 		clock-frequency = < 216000000 >;
+diff --git a/arch/arm/boot/dts/tegra250.dtsi b/arch/arm/boot/dts/tegra250.dtsi
+index f1801b8..0a056a2 100644
+--- a/arch/arm/boot/dts/tegra250.dtsi
++++ b/arch/arm/boot/dts/tegra250.dtsi
+@@ -20,6 +20,43 @@
+ 		};
+ 	};
  
- obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
- obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
++
++	i2c@7000c000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra250-i2c";
++		reg = <0x7000C000 0x100>;
++		interrupts = < 70 >;
++		status = "disabled";
++	};
++
++	i2c@7000c400 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra250-i2c";
++		reg = <0x7000C400 0x100>;
++		interrupts = < 116 >;
++		status = "disabled";
++	};
++
++	i2c@7000c500 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra250-i2c";
++		reg = <0x7000C500 0x100>;
++		interrupts = < 124 >;
++		status = "disabled";
++	};
++
++	i2c@7000d000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra250-i2c";
++		reg = <0x7000D000 0x200>;
++		interrupts = < 85 >;
++		status = "disabled";
++	};
++
+ 	gpio: gpio@6000d000 {
+ 		compatible = "nvidia,tegra250-gpio";
+ 		reg = < 0x6000d000 0x1000 >;
 diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index 9a35741..50ab328 100644
+index 50ab328..c498e84 100644
 --- a/arch/arm/mach-tegra/board-dt.c
 +++ b/arch/arm/mach-tegra/board-dt.c
-@@ -36,92 +36,14 @@
+@@ -28,6 +28,8 @@
+ #include <linux/of_platform.h>
+ #include <linux/pda_power.h>
+ #include <linux/io.h>
++#include <linux/i2c.h>
++#include <linux/i2c-tegra.h>
  
- #include <mach/iomap.h>
- #include <mach/irqs.h>
-+#include <mach/sdhci.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -43,11 +45,17 @@
+ #include "devices.h"
+ #include "gpio-names.h"
  
- #include "board.h"
--#include "board-harmony.h"
- #include "clock.h"
-+#include "devices.h"
-+#include "gpio-names.h"
- 
--static struct resource sdhci_resource1[] = {
--	[0] = {
--		.start  = INT_SDMMC1,
--		.end    = INT_SDMMC1,
--		.flags  = IORESOURCE_IRQ,
--	},
--	[1] = {
--		.start	= TEGRA_SDMMC1_BASE,
--		.end	= TEGRA_SDMMC1_BASE + TEGRA_SDMMC1_SIZE-1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--static struct platform_device tegra_sdhci_device1 = {
--	.name		= "sdhci-tegra",
--	.id		= 0,
--	.resource	= sdhci_resource1,
--	.num_resources	= ARRAY_SIZE(sdhci_resource1),
--};
--
--static struct resource sdhci_resource2[] = {
--	[0] = {
--		.start  = INT_SDMMC2,
--		.end    = INT_SDMMC2,
--		.flags  = IORESOURCE_IRQ,
--	},
--	[1] = {
--		.start	= TEGRA_SDMMC2_BASE,
--		.end	= TEGRA_SDMMC2_BASE + TEGRA_SDMMC2_SIZE-1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--static struct platform_device tegra_sdhci_device2 = {
--	.name		= "sdhci-tegra",
--	.id		= 1,
--	.resource	= sdhci_resource2,
--	.num_resources	= ARRAY_SIZE(sdhci_resource2),
--};
--
--static struct resource sdhci_resource3[] = {
--	[0] = {
--		.start  = INT_SDMMC3,
--		.end    = INT_SDMMC3,
--		.flags  = IORESOURCE_IRQ,
--	},
--	[1] = {
--		.start	= TEGRA_SDMMC3_BASE,
--		.end	= TEGRA_SDMMC3_BASE + TEGRA_SDMMC3_SIZE-1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--static struct platform_device tegra_sdhci_device3 = {
--	.name		= "sdhci-tegra",
--	.id		= 2,
--	.resource	= sdhci_resource3,
--	.num_resources	= ARRAY_SIZE(sdhci_resource3),
--};
--
--static struct resource sdhci_resource4[] = {
--	[0] = {
--		.start  = INT_SDMMC4,
--		.end    = INT_SDMMC4,
--		.flags  = IORESOURCE_IRQ,
--	},
--	[1] = {
--		.start	= TEGRA_SDMMC4_BASE,
--		.end	= TEGRA_SDMMC4_BASE + TEGRA_SDMMC4_SIZE-1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--static struct platform_device tegra_sdhci_device4 = {
--	.name		= "sdhci-tegra",
--	.id		= 3,
--	.resource	= sdhci_resource4,
--	.num_resources	= ARRAY_SIZE(sdhci_resource4),
--};
--
--static struct platform_device *harmony_devices[] __initdata = {
-+static struct platform_device *tegra250_devices[] __initdata = {
++void harmony_pinmux_init(void);
++
+ static struct platform_device *tegra250_devices[] __initdata = {
  	&tegra_sdhci_device1,
  	&tegra_sdhci_device2,
  	&tegra_sdhci_device3,
-@@ -164,7 +86,7 @@ static void __init tegra_dt_init(void)
+ 	&tegra_sdhci_device4,
++	&tegra_i2c_device1,
++	&tegra_i2c_device2,
++	&tegra_i2c_device3,
++	&tegra_i2c_device4,
+ };
  
- 	harmony_pinmux_init();
+ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b4ab39b..1693c6a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/i2c-tegra.h>
++#include <linux/of_i2c.h>
  
--	platform_add_devices(harmony_devices, ARRAY_SIZE(harmony_devices));
-+	platform_add_devices(tegra250_devices, ARRAY_SIZE(tegra250_devices));
+ #include <asm/unaligned.h>
  
- 	/*
- 	 * Finished with the static registrations now; fill in the missing
+@@ -511,6 +512,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	struct resource *iomem;
+ 	struct clk *clk;
+ 	struct clk *i2c_clk;
++	const unsigned int *prop;
+ 	void *base;
+ 	int irq;
+ 	int ret = 0;
+@@ -568,7 +570,16 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
+-	i2c_dev->bus_clk_rate = pdata ? pdata->bus_clk_rate : 100000;
++
++	i2c_dev->bus_clk_rate = 100000; /* default clock rate */
++	if (i2c_dev->dev->of_node) {    /* if there is a device tree node ... */
++		prop = of_get_property(i2c_dev->dev->of_node,
++				"clock-frequency", NULL);
++		if (prop)
++			i2c_dev->bus_clk_rate = be32_to_cpup(prop);
++
++	} else if (pdata)
++		i2c_dev->bus_clk_rate = pdata->bus_clk_rate;
+ 
+ 	if (pdev->id == 3)
+ 		i2c_dev->is_dvc = 1;
+@@ -598,6 +609,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->adapter.dev.parent = &pdev->dev;
+ 	i2c_dev->adapter.nr = pdev->id;
++	i2c_dev->adapter.dev.of_node = of_node_get(pdev->dev.of_node);
+ 
+ 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
+ 	if (ret) {
+@@ -605,6 +617,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		goto err_free_irq;
+ 	}
+ 
++	of_i2c_register_devices(&i2c_dev->adapter);
++
+ 	return 0;
+ err_free_irq:
+ 	free_irq(i2c_dev->irq, i2c_dev);
