@@ -1,13 +1,12 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] arm/dt: tegra: Update serial port compatible values
-Date: Thu, 12 May 2011 10:41:14 -0600
-Message-ID: <1305218474-4087-2-git-send-email-swarren@nvidia.com>
-References: <1305218474-4087-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 1/2] tty/serial: Update of_serial's XSCALE port type to be
+	generic
+Date: Thu, 12 May 2011 10:41:13 -0600
+Message-ID: <1305218474-4087-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1305218474-4087-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
 	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
@@ -21,66 +20,32 @@ To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
 Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Update the Tegra SoC serial port definitions to additionally be compatible
-with the new generic "xscale" type.
+Instead of adding a specific nvidia,tegra250-uart entry, add a generic
+xscale entry that can be used by any XSCALE-compatible device. This avoids
+us having to add a new entry per vendor to of_serial.c, just like all the
+other already extant entries.
 
-I assume this will be squashed into:
-commit a487b855dc1e243c52d531896705d0e33941e3a2
-arm/dt: full tegra devicetree support
+I assume this patch will be squashed into or replace
+b9e7db240617f12dd371b0a363042fb007e97ed7
+tty/serial: Add devicetree support for nVidia Tegra serial ports
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra250.dtsi |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/tty/serial/of_serial.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra250.dtsi b/arch/arm/boot/dts/tegra250.dtsi
-index f1801b8..0a251e9 100644
---- a/arch/arm/boot/dts/tegra250.dtsi
-+++ b/arch/arm/boot/dts/tegra250.dtsi
-@@ -29,7 +29,7 @@
- 	};
- 
- 	serial@70006000 {
--		compatible = "nvidia,tegra250-uart";
-+		compatible = "nvidia,tegra250-uart", "xscale";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = < 68 >;
-@@ -37,7 +37,7 @@
- 	};
- 
- 	serial@70006040 {
--		compatible = "nvidia,tegra250-uart";
-+		compatible = "nvidia,tegra250-uart", "xscale";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = < 69 >;
-@@ -45,7 +45,7 @@
- 	};
- 
- 	serial@70006200 {
--		compatible = "nvidia,tegra250-uart";
-+		compatible = "nvidia,tegra250-uart", "xscale";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = < 78 >;
-@@ -53,7 +53,7 @@
- 	};
- 
- 	serial@70006300 {
--		compatible = "nvidia,tegra250-uart";
-+		compatible = "nvidia,tegra250-uart", "xscale";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = < 122 >;
-@@ -61,7 +61,7 @@
- 	};
- 
- 	serial@70006400 {
--		compatible = "nvidia,tegra250-uart";
-+		compatible = "nvidia,tegra250-uart", "xscale";
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
- 		interrupts = < 123 >;
+diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
+index 0d3f138..bfc1c2e 100644
+--- a/drivers/tty/serial/of_serial.c
++++ b/drivers/tty/serial/of_serial.c
+@@ -168,7 +168,7 @@ static struct of_device_id __devinitdata of_platform_serial_table[] = {
+ 	{ .compatible = "ns16550",  .data = (void *)PORT_16550, },
+ 	{ .compatible = "ns16750",  .data = (void *)PORT_16750, },
+ 	{ .compatible = "ns16850",  .data = (void *)PORT_16850, },
+-	{ .compatible = "nvidia,tegra250-uart",  .data = (void *)PORT_XSCALE, },
++	{ .compatible = "xscale",   .data = (void *)PORT_XSCALE, },
+ #ifdef CONFIG_SERIAL_OF_PLATFORM_NWPSERIAL
+ 	{ .compatible = "ibm,qpace-nwp-serial",
+ 		.data = (void *)PORT_NWPSERIAL, },
 -- 
 1.7.0.4
