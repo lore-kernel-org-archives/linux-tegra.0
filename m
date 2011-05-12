@@ -1,74 +1,34 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Tegra I2C slave address patches
-Date: Thu, 12 May 2011 12:17:09 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA3D3@HQMAIL01.nvidia.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF04986AA399@HQMAIL01.nvidia.com>
- <201105122109.21735.marvin24@gmx.de>
+Subject: RE: [GIT PULL 1/3] ARM: tegra: trimslice: register i2c busses and
+ devices
+Date: Thu, 12 May 2011 13:26:32 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA405@HQMAIL01.nvidia.com>
+References: <cover.1305105580.git.mike@compulab.co.il>
+ <afc96d35d332d0293dfb5baf3e1b53045627f6a1.1305105580.git.mike@compulab.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201105122109.21735.marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <afc96d35d332d0293dfb5baf3e1b53045627f6a1.1305105580.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietrich wrote at Thursday, May 12, 2011 1:09 PM:
-> Hi Stephen,
-> 
-> Am Donnerstag 12 Mai 2011, 20:15:08 schrieb Stephen Warren:
-> > Wei,
-> >
-> > I'm trying to consolidate the two Tegra I2C slave mode patches we posted
-> > to the mailing lists:
-> >
-> > Yours: http://www.spinics.net/lists/linux-i2c/msg05437.html
-> > Mine: http://www.spinics.net/lists/linux-i2c/msg05464.html
-> >
-> > I had some questions:
-> >
-> > 1) Why does your patch enable I2C_SL_CNFG_NACK. According to the Tegra
-> > documentation, this prevents the slave I2C controller from ACKing any
-> > transfers. Doesn't this prevent the slave functionality from working at
-> > all?
-> >
-> > 2) Your patch sets up the slave_addr registers based on platform data.
-> > However, I don't see any code in i2c-tegra.c to actually act as a slave
-> > device. Hence, it seems pointless to configure the slave address.
-> >
-> > Are those two things bug workarounds or something?
-> >
-> > I know that Marc said he'd like to see the slave address configuration
-> > code merged, since the AC100 uses it. However, I'm having a hard time
-> > seeing how it'll make any difference to the driver right now; it seems
-> > if/when slave mode is actually implemented, the slave_addr setup should
-> > be part of that patch.
-> 
-> you are right, slave implementation requires at least an additional ISR. As we
-> don't have any tegra documentation, it will probably take a little longer to
-> implement it correctly. Maybe I hoped that there are some other devices using
-> it. Because there seem to be none, it's ok from my side to drop that part. If we
-> ever get something hacked together, I'm going resubmit it.
-> 
-> Btw, I was a little bit "shocked" that seaboard addedd the slave_addr (0xfc) to
-> the board file, which looks like all ports (except dvc) became slaves now. Is
-> this a special kind of address, because it is the last possible one?
+Mike Rapoport wrote at Wednesday, May 11, 2011 5:08 AM:
+> Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/board-trimslice.c |   39 +++++++++++++++++++++++++++++++++
+>  1 files changed, 39 insertions(+), 0 deletions(-)
 
-Interesting. For reference, you're talking about the following in
-http://git.chromium.org/chromiumos/third_party/kernel.git chromeos-2.6.38
+I think you also need the following change to board-trimslice-pinmux.c:
 
-  1eb243925afed4ef70a04f632f5288e320607ac0
-  CHROMIUM: tegra: seaboard: i2c address for new i2c slaves
-  New i2c slave should be configured with a non-zero i2c address.
-  Configure i2c slave with an i2c address assigned by platform
-  data for an i2c dev.
-  Assign 0xFC as i2c slave address for all new i2c slaves.
+-	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_OSC,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
++	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_PLLA_OUT,      TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
 
-I'll have to let Wei comment on that; he wrote the change. It certainly
-sounds like it's setting an unused slave address as some kind of bug
-workaround.
+Assuming that the CDEV1 clock output from Tegra is used as the codec's
+master clock.
 
 -- 
 nvpublic
