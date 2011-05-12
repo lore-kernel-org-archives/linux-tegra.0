@@ -1,176 +1,91 @@
-From: Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC 1/2] ARM: Tegra: Device Tree Support: Update how sdhci
-	devices are initialized
-Date: Tue, 10 May 2011 15:06:31 -0700
-Message-ID: <BANLkTingm7PCJPC-xCremYg_Ab7qFvPSag@mail.gmail.com>
-References: <20110510201108.22693.50319.stgit@riker>
-	<20110510201414.22693.7427.stgit@riker>
-	<74CDBE0F657A3D45AFBB94109FB122FF04986AA06A@HQMAIL01.nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: Tegra: dt: Split out separate Tegra SoC DT
+Date: Fri, 13 May 2011 01:01:49 +0200
+Message-ID: <BANLkTimHcXOZa61yC5F=TDoiaUk4cA3=4g@mail.gmail.com>
+References: <1304136751-11629-1-git-send-email-swarren@nvidia.com>
+ <20110501145546.GC19918@quad.lixom.net> <74CDBE0F657A3D45AFBB94109FB122FF0497F1B198@HQMAIL01.nvidia.com>
+ <BANLkTikC9bAWiGsLP48djMB-jTR767JeNg@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF04986AA33D@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0647890836883849818=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04986AA06A-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04986AA33D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-xIg/pKzrS19vn6HldHNs0ANdhmdF6hFW@public.gmane.org" <linux-arm-kernel-xIg/pKzrS19vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============0647890836883849818==
-Content-Type: multipart/alternative; boundary=0015174c3cf822805004a2f32b2e
-
---0015174c3cf822805004a2f32b2e
-Content-Type: text/plain; charset=ISO-8859-1
-
-On Tue, May 10, 2011 at 3:03 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-> John Bonesio wrote at Tuesday, May 10, 2011 2:14 PM:
-> > This patch changes how sdhci devices are initialized so that a later
-> patch can
-> > easily add support for i2c devies.
-> >
-> > Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+On Thu, May 12, 2011 at 6:40 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> Grant Likely wrote at Monday, May 02, 2011 2:16 PM:
+>> On Mon, May 2, 2011 at 12:00 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
+ wrote:
+>> > Olof Johansson wrote at Sunday, May 01, 2011 8:56 AM:
+>> >> On Fri, Apr 29, 2011 at 10:12:30PM -0600, Stephen Warren wrote:
+>> >> A mostly unrelated question below.
+>> >>
+>> >> [...]
+>> >>
+>> >> > + =A0 serial@70006000 {
+>> >> > + =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra250-uart";
+>> >>
+>> >> I know this is how Grant specified it, but shouldn't these also h=
+ave
+>> >> a compat for ns16550?
+>> >
+>> > At present, I'm not sure it is technically compatible. If you look=
+ at
+>> > drivers/tty/serial/of_serial.c, you'll see:
+>> >
+>> > static struct of_device_id __devinitdata of_platform_serial_table[=
+] =3D {
+>> > ...
+>> > =A0 =A0 =A0 =A0{ .compatible =3D "ns16550", =A0.data =3D (void *)P=
+ORT_16550, },
+>> > ...
+>> > =A0 =A0 =A0 =A0{ .compatible =3D "nvidia,tegra250-uart", =A0.data =
+=3D (void *)PORT_XSCALE, },
+>> >
+>> > That PORT_XSCALE is different to the ns16550 entry. Arguably, that
+>> > field should be something that comes from the device tree, just
+>> > like e.g. reg-shift, but it certainly doesn't right now.
+>> >
+>> > Grant, what are your thoughts on this?
+>>
+>> Heh, when I added that line I just mirrored the 'type' of 16550 as
+>> detected by the 8250.c driver when it probes and made a mental note
+>> that it should be revisited. =A0I don't know the hardware very well,=
+ so
+>> I cannot easily say what the right thing to do is, but making it
+>> ns16550 compatible does seem to make sense.
 >
-> > @@ -134,6 +57,25 @@ static __initdata struct tegra_clk_init_table
-> > tegra_dt_clk_init_table[] = {
-> >       { NULL,         NULL,           0,              0},
-> >  };
-> >
-> > +static struct tegra_sdhci_platform_data sdhci_pdata1 = {
-> > +     .cd_gpio        = -1,
-> > +     .wp_gpio        = -1,
-> > +     .power_gpio     = -1,
-> > +};
-> > +
-> > +static struct tegra_sdhci_platform_data sdhci_pdata2 = {
-> > +     .cd_gpio        = TEGRA_GPIO_SD2_CD,
-> > +     .wp_gpio        = TEGRA_GPIO_SD2_WP,
-> > +     .power_gpio     = TEGRA_GPIO_SD2_POWER,
-> > +};
-> > +
-> > +static struct tegra_sdhci_platform_data sdhci_pdata4 = {
-> > +     .cd_gpio        = TEGRA_GPIO_SD4_CD,
-> > +     .wp_gpio        = TEGRA_GPIO_SD4_WP,
-> > +     .power_gpio     = TEGRA_GPIO_SD4_POWER,
-> > +     .is_8bit        = 1,
-> > +};
-> > +
+> I looked into this a bit more and found the following:
 >
-> So I understand why board-dt is itself registering the SDHCI platform
-> devices itself; so that the pdev initialization path is identical
-> between fully hard-coded boards and board-dt.c.
+> In all the existing board files for Tegra, none of the
+> plat_serial8250_port initializations specify any type value, and equa=
+lly
+> the flags do not include UPF_FIXED_TYPE. This causes the UART driver =
+to
+> probe (run tests on) the hardware to determine exactly what type of U=
+ART
+> is present.
 >
-> However, I'm surprised that we would include the platform data for
-> those devices within that argument; if we do that, we'll end up needing
-> different platform data for every board, and devicetree won't have
-> bought us anything.
+> However, of_serial.c does set UPF_FIXED_TYPE, and hence port->type mu=
+st
+> have a valid value. I suspect it'd be a bad idea to change this since
+> it'd affect a ton of extant PPC platforms.
 >
-> In other words, I understood that board-dt would register all the
-> platform devices within Tegra, but not set up any of the plataform
-> data, and the device drivers for those devices would be updated to
-> get their platform data from devicetree if available, then fall back
-> to old-style platform data. In other words, the way the SDHCI drivers
-> work today in the devicetree/test branch.
->
-> If my understanding is correct, shouldn't the chunk above and the
-> one below be removed?
->
+> Equally, PORT_XSCALE does imply different HW behavior to any of the
+> other types, so tegra250.dtsi shouldn't just specify that it's compat=
+ible
+> with "ns16550".
 
-That's if we cut everything over, I think. until then, this code should fill
-in the platform_device and register it. But the values should come from the
-device tree, and it should only register the controllers that are in the
-tree (and not marked as disabled).
+I investigated and found the same thing, and that is why I set up the
+current code the way I did; to preserve the current behaviour.
 
+However, is the current behaviour even right?  My impression from the
+code is that probing for the type of ns16550 is little more than an
+accident.  Is xscale really the best behaviour to select fro this
+device?
 
--Olof
-
---0015174c3cf822805004a2f32b2e
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<div class=3D"gmail_quote">On Tue, May 10, 2011 at 3:03 PM, Stephen Warren =
-<span dir=3D"ltr">&lt;<a href=3D"mailto:swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org">swarren@nvidia.=
-com</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"mar=
-gin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex;">
-John Bonesio wrote at Tuesday, May 10, 2011 2:14 PM:<br>
-<div class=3D"im">&gt; This patch changes how sdhci devices are initialized=
- so that a later patch can<br>
-&gt; easily add support for i2c devies.<br>
-&gt;<br>
-&gt; Signed-off-by: John Bonesio &lt;<a href=3D"mailto:bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org">=
-bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org</a>&gt;<br>
-<br>
-</div><div class=3D"im">&gt; @@ -134,6 +57,25 @@ static __initdata struct t=
-egra_clk_init_table<br>
-&gt; tegra_dt_clk_init_table[] =3D {<br>
-&gt; =A0 =A0 =A0 { NULL, =A0 =A0 =A0 =A0 NULL, =A0 =A0 =A0 =A0 =A0 0, =A0 =
-=A0 =A0 =A0 =A0 =A0 =A00},<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; +static struct tegra_sdhci_platform_data sdhci_pdata1 =3D {<br>
-&gt; + =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D -1,<br>
-&gt; + =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D -1,<br>
-&gt; + =A0 =A0 .power_gpio =A0 =A0 =3D -1,<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; +static struct tegra_sdhci_platform_data sdhci_pdata2 =3D {<br>
-&gt; + =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_SD2_CD,<br>
-&gt; + =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_SD2_WP,<br>
-&gt; + =A0 =A0 .power_gpio =A0 =A0 =3D TEGRA_GPIO_SD2_POWER,<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; +static struct tegra_sdhci_platform_data sdhci_pdata4 =3D {<br>
-&gt; + =A0 =A0 .cd_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_SD4_CD,<br>
-&gt; + =A0 =A0 .wp_gpio =A0 =A0 =A0 =A0=3D TEGRA_GPIO_SD4_WP,<br>
-&gt; + =A0 =A0 .power_gpio =A0 =A0 =3D TEGRA_GPIO_SD4_POWER,<br>
-&gt; + =A0 =A0 .is_8bit =A0 =A0 =A0 =A0=3D 1,<br>
-&gt; +};<br>
-&gt; +<br>
-<br>
-</div>So I understand why board-dt is itself registering the SDHCI platform=
-<br>
-devices itself; so that the pdev initialization path is identical<br>
-between fully hard-coded boards and board-dt.c.<br>
-<br>
-However, I&#39;m surprised that we would include the platform data for<br>
-those devices within that argument; if we do that, we&#39;ll end up needing=
-<br>
-different platform data for every board, and devicetree won&#39;t have<br>
-bought us anything.<br>
-<br>
-In other words, I understood that board-dt would register all the<br>
-platform devices within Tegra, but not set up any of the plataform<br>
-data, and the device drivers for those devices would be updated to<br>
-get their platform data from devicetree if available, then fall back<br>
-to old-style platform data. In other words, the way the SDHCI drivers<br>
-work today in the devicetree/test branch.<br>
-<br>
-If my understanding is correct, shouldn&#39;t the chunk above and the<br>
-one below be removed?<br></blockquote><div><br></div><div>That&#39;s if we =
-cut everything over, I think. until then, this code should fill in the plat=
-form_device and register it. But the values should come from the device tre=
-e, and it should only register the controllers that are in the tree (and no=
-t marked as disabled).</div>
-<div><br></div><div><br></div><div>-Olof</div><div><br></div></div>
-
---0015174c3cf822805004a2f32b2e--
-
---===============0647890836883849818==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============0647890836883849818==--
+g.
