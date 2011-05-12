@@ -1,78 +1,116 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC 2/3] ARM: Tegra: Device Tree Support: Add i2c devices
-Date: Thu, 12 May 2011 06:47:24 +0200
-Message-ID: <BANLkTinvDRDfdGawFBb=OE8DqG_DW7L6qQ@mail.gmail.com>
-References: <20110511231905.10362.12844.stgit@riker> <20110511232659.10362.45811.stgit@riker>
- <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C5@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [RFC 3/3] ARM:Tegra: Device Tree Support: Initialize from
+ wm8903 the	device tree
+Date: Wed, 11 May 2011 22:01:17 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C8@HQMAIL01.nvidia.com>
+References: <20110511231905.10362.12844.stgit@riker>
+ <20110511232711.10362.53256.stgit@riker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C5-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20110511232711.10362.53256.stgit@riker>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-a
+Cc: "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 12, 2011 at 6:34 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
-> John Bonesio wrote at Wednesday, May 11, 2011 5:27 PM:
->> This patch initializes i2c controller devices in board-dt.c. The i2c=
- controller
->> is added to tegra250.dtsi so later on-board i2c devices can be found=
- and
->> initialized based on the device tree information.
->>...
->> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/bo=
-ard-dt.c
->>...
->> +#include <linux/i2c.h>
->> +#include <linux/i2c-tegra.h>
->
-> I don't think those headers are needed now the platform data isn't se=
-t up here.
->
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c=
--tegra.c
->>...
->> @@ -598,6 +609,7 @@ static int tegra_i2c_probe(struct platform_devic=
-e *pdev)
->> =A0 =A0 =A0 i2c_dev->adapter.algo =3D &tegra_i2c_algo;
->> =A0 =A0 =A0 i2c_dev->adapter.dev.parent =3D &pdev->dev;
->> =A0 =A0 =A0 i2c_dev->adapter.nr =3D pdev->id;
->> + =A0 =A0 i2c_dev->adapter.dev.of_node =3D of_node_get(pdev->dev.of_=
-node);
->
-> It seems like users of this of_node (i.e. the probe function) could j=
-ust
-> access pdev->dev.of_node directly (since pdev is already passed in)
-> rather than storing a copy here. At least, sdhci-tegra.c works that w=
-ay.
-> Still, this isn't a big deal, I think.
-
-Actually, using of_node_get() here is the right thing since it
-increases the reference count on the of_node.  However, the patch
-should also do an of_node_put() in the remove hook, or in the .probe
-error path.
-
->
->> @@ -605,6 +617,8 @@ static int tegra_i2c_probe(struct platform_devic=
-e *pdev)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_free_irq;
->> =A0 =A0 =A0 }
->>
->> + =A0 =A0 of_i2c_register_devices(&i2c_dev->adapter);
->> +
->
-> I would have expected that to be performed inside the core I2C code,
-> probably inside i2c_add_numbered_adapter? Still, it looks like the
-> other I2C controllers don't already work that way, so this is probabl=
-y
-> more a suggestion for future cleanup than something to be addressed i=
-n
-> this patch.
-
-This may move into core code in the future, but for the moment the
-drivers need to call it explicitly.
-
-g.
+Sm9obiBCb25lc2lvIHdyb3RlIGF0IFdlZG5lc2RheSwgTWF5IDExLCAyMDExIDU6MjcgUE06DQo+
+IFRoaXMgcGF0Y2ggbWFrZXMgaXQgc28gdGhlIHdtODkwMyBpcyBpbml0aWFsaXplZCBmcm9tIGl0
+J3MgZGV2aWNlIHRyZWUNCj4gbm9kZS4NCg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9k
+dHMvdGVncmEtaGFybW9ueS5kdHMNCj4gYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYS1oYXJtb255
+LmR0cw0KPiBpbmRleCBhZjE2OWFhLi4wNTUyMWE1IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9i
+b290L2R0cy90ZWdyYS1oYXJtb255LmR0cw0KPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdy
+YS1oYXJtb255LmR0cw0KPiBAQCAtMTksNiArMTksMjMgQEANCj4gIAlpMmNANzAwMGMwMDAgew0K
+PiAgCQlzdGF0dXMgPSAib2siOw0KPiAgCQljbG9jay1mcmVxdWVuY3kgPSA8NDAwMDAwPjsNCj4g
+Kw0KPiArCQljb2RlYzogd204OTAzQDFhIHsNCj4gKwkJCWNvbXBhdGlibGUgPSAid2xmLHdtODkw
+MyI7DQo+ICsJCQlyZWcgPSA8MHgxYT47DQo+ICsJCQlpbnRlcnJ1cHRzID0gPCAzNDcgPjsNCj4g
+KwkJCWlycS1hY3RpdmUtbG93ID0gPDA+Ow0KPiArCQkJbWljZGV0LWNmZyA9IDwwPjsNCj4gKwkJ
+CW1pY2RldC1kZWxheSA9IDwxMDA+Ow0KDQpOaXQ6IE1heWJlIGdyb3VwIGFsbCB0aGUgV004OTAz
+LXNwZWNpZmljIGZpZWxkcyB0b2dldGhlciwgcmF0aGVyIHRoYW4NCnNwYWNpbmcgdGhlbSBvdXQg
+YW5kIGludGVybGVhdmluZyB0aGUgZ3Bpby1jb250cm9sbGVyL2dwaW8tY2VsbHMgaW4gdGhlDQpt
+aWRkbGUgb2YgdGhlbT8NCg0KPiArDQo+ICsJCQlncGlvLWNvbnRyb2xsZXI7DQo+ICsJCQkjZ3Bp
+by1jZWxscyA9IDwyPjsNCj4gKw0KPiArCQkJZ3Bpby1iYXNlID0gPCAyMjQgPjsNCj4gKwkJCWdw
+aW8tbnVtLWNmZyA9IDwgNSA+Ow0KDQpJIGRvbid0IHRoaW5rIGdwaW8tbnVtLWNmZyBpcyByZXF1
+aXJlZDsgdGhlIGNvZGVjIGFsd2F5cyBleHBvcnRzIDUgR1BJT3MuDQoNCj4gKwkJCS8qICNkZWZp
+bmUgV004OTAzX0dQSU9fTk9fQ09ORklHIDB4ODAwMCAqLw0KPiArCQkJZ3Bpby1jZmcgPSA8IDB4
+ODAwMCAweDgwMDAgMCAweDgwMDAgMHg4MDAwID47DQo+ICsJCX07DQo+ICAJfTsNCj4gDQo+ICAJ
+aTJjQDcwMDBjNDAwIHsNCj4gZGlmZiAtLWdpdCBhL3NvdW5kL3NvYy9jb2RlY3Mvd204OTAzLmMg
+Yi9zb3VuZC9zb2MvY29kZWNzL3dtODkwMy5jDQo+IGluZGV4IGY1MmI2MjMuLjIzNDcyMDEgMTAw
+NjQ0DQo+IC0tLSBhL3NvdW5kL3NvYy9jb2RlY3Mvd204OTAzLmMNCj4gKysrIGIvc291bmQvc29j
+L2NvZGVjcy93bTg5MDMuYw0KPiBAQCAtMTg2NSwxMCArMTg2NSwxNCBAQCBzdGF0aWMgdm9pZCB3
+bTg5MDNfaW5pdF9ncGlvKHN0cnVjdCBzbmRfc29jX2NvZGVjICpjb2RlYykNCj4gIAl3bTg5MDMt
+PmdwaW9fY2hpcC5uZ3BpbyA9IFdNODkwM19OVU1fR1BJTzsNCj4gIAl3bTg5MDMtPmdwaW9fY2hp
+cC5kZXYgPSBjb2RlYy0+ZGV2Ow0KPiANCj4gLQlpZiAocGRhdGEgJiYgcGRhdGEtPmdwaW9fYmFz
+ZSkNCj4gKwl3bTg5MDMtPmdwaW9fY2hpcC5iYXNlID0gLTE7DQo+ICsJaWYgKHBkYXRhICYmIHBk
+YXRhLT5ncGlvX2Jhc2UpIHsNCj4gIAkJd204OTAzLT5ncGlvX2NoaXAuYmFzZSA9IHBkYXRhLT5n
+cGlvX2Jhc2U7DQo+IC0JZWxzZQ0KPiAtCQl3bTg5MDMtPmdwaW9fY2hpcC5iYXNlID0gLTE7DQo+
+ICsJfSBlbHNlIGlmIChjb2RlYy0+ZGV2LT5vZl9ub2RlKSB7DQo+ICsJCXByb3AgPSBvZl9nZXRf
+cHJvcGVydHkoY29kZWMtPmRldi0+b2Zfbm9kZSwgImdwaW8tYmFzZSIsIE5VTEwpOw0KPiArCQlp
+ZiAocHJvcCkNCj4gKwkJCXdtODkwMy0+Z3Bpb19jaGlwLmJhc2UgPSBiZTMyX3RvX2NwdXAocHJv
+cCk7DQo+ICsJfQ0KDQpUaGUgYWJvdmUgY2hlY2tzIGZvciBwZGF0YSBmaXJzdCwgdGhlbiBmYWxs
+cyBiYWNrIHRvIG9mX25vZGUuIEhvd2V2ZXIsDQpUaGUgcHJldmlvdXMgaTJjLXRlZ3JhLmMgcGF0
+Y2ggY2hlY2tzIG9mX25vZGUgZmlyc3QgdGhlbiBmYWxscyBiYWNrIHRvDQpwZGF0YS4gSXQgc2Vl
+bXMgbGlrZSB0aGUgb3JkZXJpbmcgc2hvdWxkIGJlIGNvbnNpc3RlbnQgKGFsdGhvdWdoDQpjaGFu
+Z2luZyB0aGUgSTJDIHBhdGNoIG1pZ2h0IGJlIGJlc3QsIHNpbmNlIEkgaW1hZ2luZSBjaGVja2lu
+ZyBwZGF0YQ0KZmlyc3Qgd291bGQgbGVhZCB0byBsZWFzdCBjb21wYXRpYmlsaXR5IGlzc3VlcykN
+Cg0KPiBAQCAtMTk2NCwxMCArMTk3Myw3NiBAQCBzdGF0aWMgaW50IHdtODkwM19wcm9iZShzdHJ1
+Y3Qgc25kX3NvY19jb2RlYw0KPiAqY29kZWMpDQo+ICAJCVdBUk5fT04oIW1pY19ncGlvICYmIChw
+ZGF0YS0+bWljZGV0X2NmZyAmIFdNODkwM19NSUNERVRfRU5BKSk7DQo+IA0KPiAgCQl3bTg5MDMt
+Pm1pY19kZWxheSA9IHBkYXRhLT5taWNkZXRfZGVsYXk7DQo+ICsJfSBlbHNlIGlmIChjb2RlYy0+
+ZGV2LT5vZl9ub2RlKSB7DQo+ICsJCWJvb2wgbWljX2dwaW8gPSBmYWxzZTsNCj4gKw0KPiArCQlw
+cm9wID0gb2ZfZ2V0X3Byb3BlcnR5KGNvZGVjLT5kZXYtPm9mX25vZGUsICJncGlvLW51bS1jZmci
+LCBOVUxMKTsNCj4gKwkJaWYgKHByb3ApDQo+ICsJCQludW1fZ3Bpb3MgPSBiZTMyX3RvX2NwdXAo
+cHJvcCk7DQoNCkFnYWluLCBJJ2QganVzdCBoYXJkLWNvZGUgbnVtX2dwaW9zPT1XTTg5MDNfTlVN
+X0dQSU8gaW4gdGhlDQpsb29wIGJlbG93LCBpbnN0ZWFkIG9mIG1ha2luZyBpdCBjb25maWd1cmFi
+bGUsIHNpbmNlIHRoZSBIVyBpcyBmaXhlZC4NCg0KPiArCQlwcm9wID0gb2ZfZ2V0X3Byb3BlcnR5
+KGNvZGVjLT5kZXYtPm9mX25vZGUsICJncGlvLWNmZyIsIE5VTEwpOw0KPiArCQlpZiAobnVtX2dw
+aW9zICYmIHByb3ApIHsNCj4gKwkJCWZvciAoaSA9IDA7IGkgPCBudW1fZ3Bpb3M7IGkrKykgew0K
+PiArCQkJCWdwaW9fY2ZnID0gYmUzMl90b19jcHUocHJvcFtpXSk7DQo+ICsNCj4gKwkJCQlpZiAo
+Z3Bpb19jZmcgPT0gV004OTAzX0dQSU9fTk9fQ09ORklHKQ0KPiArCQkJCQljb250aW51ZTsNCj4g
+Kw0KPiArCQkJCXNuZF9zb2Nfd3JpdGUoY29kZWMsIFdNODkwM19HUElPX0NPTlRST0xfMSArIGks
+DQo+ICsJCQkJCSAgICAgIGdwaW9fY2ZnICYgMHhmZmZmKTsNCj4gKw0KPiArCQkJCXZhbCA9IChn
+cGlvX2NmZyAmIFdNODkwM19HUDFfRk5fTUFTSykNCj4gKwkJCQkJPj4gV004OTAzX0dQMV9GTl9T
+SElGVDsNCj4gKw0KPiArCQkJCXN3aXRjaCAodmFsKSB7DQo+ICsJCQkJY2FzZSBXTTg5MDNfR1Bu
+X0ZOX01JQ0JJQVNfQ1VSUkVOVF9ERVRFQ1Q6DQo+ICsJCQkJY2FzZSBXTTg5MDNfR1BuX0ZOX01J
+Q0JJQVNfU0hPUlRfREVURUNUOg0KPiArCQkJCQltaWNfZ3BpbyA9IHRydWU7DQo+ICsJCQkJCWJy
+ZWFrOw0KPiArCQkJCWRlZmF1bHQ6DQo+ICsJCQkJCWJyZWFrOw0KPiArCQkJCX0NCj4gKwkJCX0N
+Cj4gKwkJfQ0KPiArDQo+ICsJCXByb3AgPSBvZl9nZXRfcHJvcGVydHkoY29kZWMtPmRldi0+b2Zf
+bm9kZSwgImludGVycnVwdHMiLCBOVUxMKTsNCj4gKwkJaWYgKHByb3ApDQo+ICsJCQl3bTg5MDMt
+PmlycSA9IGJlMzJfdG9fY3B1cChwcm9wKTsNCj4gKw0KPiArCQlwcm9wID0gb2ZfZ2V0X3Byb3Bl
+cnR5KGNvZGVjLT5kZXYtPm9mX25vZGUsICJtaWNkZXQtY2ZnIiwgTlVMTCk7DQo+ICsJCWlmIChw
+cm9wKQ0KPiArCQkJbWljZGV0X2NmZyA9IGJlMzJfdG9fY3B1cChwcm9wKTsNCj4gKw0KPiArCQlz
+bmRfc29jX3dyaXRlKGNvZGVjLCBXTTg5MDNfTUlDX0JJQVNfQ09OVFJPTF8wLCBtaWNkZXRfY2Zn
+KTsNCj4gKw0KPiArCQlpZiAobWljZGV0X2NmZykNCj4gKwkJCXNuZF9zb2NfdXBkYXRlX2JpdHMo
+Y29kZWMsIFdNODkwM19XUklURV9TRVFVRU5DRVJfMCwNCj4gKwkJCQkJICAgIFdNODkwM19XU0VR
+X0VOQSwgV004OTAzX1dTRVFfRU5BKTsNCj4gKw0KPiArCQkvKiBJZiBtaWNyb3Bob25lIGRldGVj
+dGlvbiBpcyBlbmFibGVkIGluIGRldmljZSB0cmVlIGJ1dA0KPiArCQkgKiBkZXRlY3RlZCB2aWEg
+SVJRIHRoZW4gaW50ZXJydXB0cyBjYW4gYmUgbG9zdCBiZWZvcmUNCj4gKwkJICogdGhlIG1hY2hp
+bmUgZHJpdmVyIGhhcyBzZXQgdXAgbWljcm9waG9uZSBkZXRlY3Rpb24NCj4gKwkJICogSVJRcyBh
+cyB0aGUgSVJRcyBhcmUgY2xlYXIgb24gcmVhZC4gIFRoZSBkZXRlY3Rpb24NCj4gKwkJICogd2ls
+bCBiZSBlbmFibGVkIHdoZW4gdGhlIG1hY2hpbmUgZHJpdmVyIGNvbmZpZ3VyZXMuDQo+ICsJCSAq
+Lw0KPiArCQlXQVJOX09OKCFtaWNfZ3BpbyAmJiAobWljZGV0X2NmZyAmIFdNODkwM19NSUNERVRf
+RU5BKSk7DQo+ICsNCj4gKwkJcHJvcCA9IG9mX2dldF9wcm9wZXJ0eShjb2RlYy0+ZGV2LT5vZl9u
+b2RlLCAibWljZGV0LWRlbGF5IiwgTlVMTCk7DQo+ICsJCWlmIChwcm9wKQ0KPiArCQkJd204OTAz
+LT5taWNfZGVsYXkgPSBiZTMyX3RvX2NwdXAocHJvcCk7DQo+ICsNCg0KVGhlIGFib3ZlIGNodW5r
+IGR1cGxpY2F0ZXMgYSBsb3Qgb2YgY29kZSBpbiB0aGUgcGRhdGEgYW5kIG9mX25vZGUgcGF0aHMu
+DQoNCkluc3RlYWQsIHBlcmhhcHMgaXQnZCBiZSBiZXR0ZXIgdG8gZG8gc29tZXRoaW5nIG1vcmUg
+bGlrZToNCg0KaWYgKCFwZGF0YSAmJiBvZl9ub2RlKSB7DQogICAgcGRhdGEgPSBrYWxsb2MoKQ0K
+ICAgIHJlYWQgb2Zfbm9kZSwgY29udmVydCAmIHdyaXRlIHRvIHBkYXRhDQp9DQppZiAocGRhdGEp
+IHsNCiAgICAvLyBleGlzdGluZyBjb2RlIHRvIGhhbmRsZSBwZGF0YQ0KfQ0KDQpUaGF0IHdheSwg
+dGhlIGNvZGUgdG8gaGFuZGxlIHRoZSBwZGF0YSBpcyByZS11c2VkIGFuZCBub3QgZHVwbGljYXRl
+ZC4NCg0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3RlZ3JhL2hhcm1vbnkuYyBiL3NvdW5kL3Nv
+Yy90ZWdyYS9oYXJtb255LmMNCj4uLi4NCj4gKyNpZmRlZiBDT05GSUdfT0YNCj4gKwlpZiAoKCFv
+Zl9tYWNoaW5lX2lzX2NvbXBhdGlibGUoIm52aWRpYSxoYXJtb255IikpICYmDQo+ICghbWFjaGlu
+ZV9pc19oYXJtb255KCkpKSB7DQo+ICsJCWRldl9lcnIoJnBkZXYtPmRldiwgIk5vdCBydW5uaW5n
+IG9uIFRlZ3JhIEhhcm1vbnkhXG4iKTsNCj4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+ICsJfQ0KPiAr
+I2Vsc2UNCj4gIAlpZiAoIW1hY2hpbmVfaXNfaGFybW9ueSgpKSB7DQo+ICAJCWRldl9lcnIoJnBk
+ZXYtPmRldiwgIk5vdCBydW5uaW5nIG9uIFRlZ3JhIEhhcm1vbnkhXG4iKTsNCj4gIAkJcmV0dXJu
+IC1FTk9ERVY7DQo+ICAJfQ0KPiArI2VuZGlmDQoNCklzIHRoYXQgYmFja3dhcmRzLWNvbXBhdGli
+bGUgaWYgQ09ORklHX09GIGlzIGVuYWJsZWQsIGJ1dCBhIGRldmljZXRyZWUNCndhc24ndCBwcm92
+aWRlZCwgYnV0IGluc3RlYWQgdGhlIG9sZC1zdHlsZSBIYXJtb255IG1hY2hpbmUgSUQgd2FzIHVz
+ZWQ/DQpJIG5vdGUgdGhhdCB0aGUgYm9hcmQtaGFybW9ueS5jIG1hY2hpbmUgZGVzY3JpcHRpb24g
+ZG9lc24ndCBpbmNsdWRlIGENCkRUX01BQ0hJTkVfU1RBUlQgbGlzdGluZyB0aGF0IGNvbXBhdGli
+bGUgdmFsdWU7IG9ubHkgYm9hcmQtZHQuYyBkb2VzDQp0aGlzLCBhbmQgdGhhdCBoYXMgYSBkaWZm
+ZXJlbnQgQVJNIG1hY2hpbmUgSUQuDQoNCi0tIA0KbnZwdWJsaWMNCg0K
