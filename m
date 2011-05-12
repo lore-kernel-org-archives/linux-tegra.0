@@ -1,51 +1,45 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] tty/serial: Update of_serial's XSCALE port type to be
-	generic
-Date: Thu, 12 May 2011 10:41:13 -0600
-Message-ID: <1305218474-4087-1-git-send-email-swarren@nvidia.com>
+Subject: Tegra I2C slave address patches
+Date: Thu, 12 May 2011 11:15:08 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA399@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "marc.dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org" <marc.dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>
+Cc: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of adding a specific nvidia,tegra250-uart entry, add a generic
-xscale entry that can be used by any XSCALE-compatible device. This avoids
-us having to add a new entry per vendor to of_serial.c, just like all the
-other already extant entries.
+Wei,
 
-I assume this patch will be squashed into or replace
-b9e7db240617f12dd371b0a363042fb007e97ed7
-tty/serial: Add devicetree support for nVidia Tegra serial ports
+I'm trying to consolidate the two Tegra I2C slave mode patches we posted
+to the mailing lists:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/tty/serial/of_serial.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Yours: http://www.spinics.net/lists/linux-i2c/msg05437.html
+Mine: http://www.spinics.net/lists/linux-i2c/msg05464.html
 
-diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
-index 0d3f138..bfc1c2e 100644
---- a/drivers/tty/serial/of_serial.c
-+++ b/drivers/tty/serial/of_serial.c
-@@ -168,7 +168,7 @@ static struct of_device_id __devinitdata of_platform_serial_table[] = {
- 	{ .compatible = "ns16550",  .data = (void *)PORT_16550, },
- 	{ .compatible = "ns16750",  .data = (void *)PORT_16750, },
- 	{ .compatible = "ns16850",  .data = (void *)PORT_16850, },
--	{ .compatible = "nvidia,tegra250-uart",  .data = (void *)PORT_XSCALE, },
-+	{ .compatible = "xscale",   .data = (void *)PORT_XSCALE, },
- #ifdef CONFIG_SERIAL_OF_PLATFORM_NWPSERIAL
- 	{ .compatible = "ibm,qpace-nwp-serial",
- 		.data = (void *)PORT_NWPSERIAL, },
+I had some questions:
+
+1) Why does your patch enable I2C_SL_CNFG_NACK. According to the Tegra
+documentation, this prevents the slave I2C controller from ACKing any
+transfers. Doesn't this prevent the slave functionality from working at
+all?
+
+2) Your patch sets up the slave_addr registers based on platform data.
+However, I don't see any code in i2c-tegra.c to actually act as a slave
+device. Hence, it seems pointless to configure the slave address.
+
+Are those two things bug workarounds or something?
+
+I know that Marc said he'd like to see the slave address configuration
+code merged, since the AC100 uses it. However, I'm having a hard time
+seeing how it'll make any difference to the driver right now; it seems
+if/when slave mode is actually implemented, the slave_addr setup should
+be part of that patch.
+
+Thanks for any feedback.
+
 -- 
-1.7.0.4
+nvpublic
