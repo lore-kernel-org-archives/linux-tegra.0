@@ -1,46 +1,78 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC 2/3] ARM: Tegra: Device Tree Support: Add i2c devices
-Date: Wed, 11 May 2011 21:34:26 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C5@HQMAIL01.nvidia.com>
-References: <20110511231905.10362.12844.stgit@riker>
- <20110511232659.10362.45811.stgit@riker>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [RFC 2/3] ARM: Tegra: Device Tree Support: Add i2c devices
+Date: Thu, 12 May 2011 06:47:24 +0200
+Message-ID: <BANLkTinvDRDfdGawFBb=OE8DqG_DW7L6qQ@mail.gmail.com>
+References: <20110511231905.10362.12844.stgit@riker> <20110511232659.10362.45811.stgit@riker>
+ <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C5@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110511232659.10362.45811.stgit@riker>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04986AA2C5-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-a
-Cc: "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Sm9obiBCb25lc2lvIHdyb3RlIGF0IFdlZG5lc2RheSwgTWF5IDExLCAyMDExIDU6MjcgUE06DQo+
-IFRoaXMgcGF0Y2ggaW5pdGlhbGl6ZXMgaTJjIGNvbnRyb2xsZXIgZGV2aWNlcyBpbiBib2FyZC1k
-dC5jLiBUaGUgaTJjIGNvbnRyb2xsZXINCj4gaXMgYWRkZWQgdG8gdGVncmEyNTAuZHRzaSBzbyBs
-YXRlciBvbi1ib2FyZCBpMmMgZGV2aWNlcyBjYW4gYmUgZm91bmQgYW5kDQo+IGluaXRpYWxpemVk
-IGJhc2VkIG9uIHRoZSBkZXZpY2UgdHJlZSBpbmZvcm1hdGlvbi4NCj4uLi4NCj4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL21hY2gtdGVncmEvYm9hcmQtZHQuYyBiL2FyY2gvYXJtL21hY2gtdGVncmEv
-Ym9hcmQtZHQuYw0KPi4uLg0KPiArI2luY2x1ZGUgPGxpbnV4L2kyYy5oPg0KPiArI2luY2x1ZGUg
-PGxpbnV4L2kyYy10ZWdyYS5oPg0KDQpJIGRvbid0IHRoaW5rIHRob3NlIGhlYWRlcnMgYXJlIG5l
-ZWRlZCBub3cgdGhlIHBsYXRmb3JtIGRhdGEgaXNuJ3Qgc2V0IHVwIGhlcmUuDQoNCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nl
-cy9pMmMtdGVncmEuYw0KPi4uLg0KPiBAQCAtNTk4LDYgKzYwOSw3IEBAIHN0YXRpYyBpbnQgdGVn
-cmFfaTJjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJaTJjX2Rldi0+
-YWRhcHRlci5hbGdvID0gJnRlZ3JhX2kyY19hbGdvOw0KPiAgCWkyY19kZXYtPmFkYXB0ZXIuZGV2
-LnBhcmVudCA9ICZwZGV2LT5kZXY7DQo+ICAJaTJjX2Rldi0+YWRhcHRlci5uciA9IHBkZXYtPmlk
-Ow0KPiArCWkyY19kZXYtPmFkYXB0ZXIuZGV2Lm9mX25vZGUgPSBvZl9ub2RlX2dldChwZGV2LT5k
-ZXYub2Zfbm9kZSk7DQoNCkl0IHNlZW1zIGxpa2UgdXNlcnMgb2YgdGhpcyBvZl9ub2RlIChpLmUu
-IHRoZSBwcm9iZSBmdW5jdGlvbikgY291bGQganVzdA0KYWNjZXNzIHBkZXYtPmRldi5vZl9ub2Rl
-IGRpcmVjdGx5IChzaW5jZSBwZGV2IGlzIGFscmVhZHkgcGFzc2VkIGluKQ0KcmF0aGVyIHRoYW4g
-c3RvcmluZyBhIGNvcHkgaGVyZS4gQXQgbGVhc3QsIHNkaGNpLXRlZ3JhLmMgd29ya3MgdGhhdCB3
-YXkuDQpTdGlsbCwgdGhpcyBpc24ndCBhIGJpZyBkZWFsLCBJIHRoaW5rLg0KDQo+IEBAIC02MDUs
-NiArNjE3LDggQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gIAkJZ290byBlcnJfZnJlZV9pcnE7DQo+ICAJfQ0KPiANCj4gKwlvZl9p
-MmNfcmVnaXN0ZXJfZGV2aWNlcygmaTJjX2Rldi0+YWRhcHRlcik7DQo+ICsNCg0KSSB3b3VsZCBo
-YXZlIGV4cGVjdGVkIHRoYXQgdG8gYmUgcGVyZm9ybWVkIGluc2lkZSB0aGUgY29yZSBJMkMgY29k
-ZSwNCnByb2JhYmx5IGluc2lkZSBpMmNfYWRkX251bWJlcmVkX2FkYXB0ZXI/IFN0aWxsLCBpdCBs
-b29rcyBsaWtlIHRoZQ0Kb3RoZXIgSTJDIGNvbnRyb2xsZXJzIGRvbid0IGFscmVhZHkgd29yayB0
-aGF0IHdheSwgc28gdGhpcyBpcyBwcm9iYWJseQ0KbW9yZSBhIHN1Z2dlc3Rpb24gZm9yIGZ1dHVy
-ZSBjbGVhbnVwIHRoYW4gc29tZXRoaW5nIHRvIGJlIGFkZHJlc3NlZCBpbg0KdGhpcyBwYXRjaC4N
-Cg0KLS0gDQpudnB1YmxpYw0KDQo=
+On Thu, May 12, 2011 at 6:34 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> John Bonesio wrote at Wednesday, May 11, 2011 5:27 PM:
+>> This patch initializes i2c controller devices in board-dt.c. The i2c=
+ controller
+>> is added to tegra250.dtsi so later on-board i2c devices can be found=
+ and
+>> initialized based on the device tree information.
+>>...
+>> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/bo=
+ard-dt.c
+>>...
+>> +#include <linux/i2c.h>
+>> +#include <linux/i2c-tegra.h>
+>
+> I don't think those headers are needed now the platform data isn't se=
+t up here.
+>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c=
+-tegra.c
+>>...
+>> @@ -598,6 +609,7 @@ static int tegra_i2c_probe(struct platform_devic=
+e *pdev)
+>> =A0 =A0 =A0 i2c_dev->adapter.algo =3D &tegra_i2c_algo;
+>> =A0 =A0 =A0 i2c_dev->adapter.dev.parent =3D &pdev->dev;
+>> =A0 =A0 =A0 i2c_dev->adapter.nr =3D pdev->id;
+>> + =A0 =A0 i2c_dev->adapter.dev.of_node =3D of_node_get(pdev->dev.of_=
+node);
+>
+> It seems like users of this of_node (i.e. the probe function) could j=
+ust
+> access pdev->dev.of_node directly (since pdev is already passed in)
+> rather than storing a copy here. At least, sdhci-tegra.c works that w=
+ay.
+> Still, this isn't a big deal, I think.
+
+Actually, using of_node_get() here is the right thing since it
+increases the reference count on the of_node.  However, the patch
+should also do an of_node_put() in the remove hook, or in the .probe
+error path.
+
+>
+>> @@ -605,6 +617,8 @@ static int tegra_i2c_probe(struct platform_devic=
+e *pdev)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_free_irq;
+>> =A0 =A0 =A0 }
+>>
+>> + =A0 =A0 of_i2c_register_devices(&i2c_dev->adapter);
+>> +
+>
+> I would have expected that to be performed inside the core I2C code,
+> probably inside i2c_add_numbered_adapter? Still, it looks like the
+> other I2C controllers don't already work that way, so this is probabl=
+y
+> more a suggestion for future cleanup than something to be addressed i=
+n
+> this patch.
+
+This may move into core code in the future, but for the moment the
+drivers need to call it explicitly.
+
+g.
