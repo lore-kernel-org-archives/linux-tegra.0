@@ -1,110 +1,94 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [RFC 3/3] ARM:Tegra: Device Tree Support: Initialize from wm8903
- the device tree
-Date: Thu, 12 May 2011 09:49:19 +0200
-Message-ID: <20110512074917.GA16250@opensource.wolfsonmicro.com>
-References: <20110511231905.10362.12844.stgit@riker>
- <20110511232711.10362.53256.stgit@riker>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: Tegra: dt: Split out separate Tegra SoC DT
+Date: Thu, 12 May 2011 09:40:54 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AA33D@HQMAIL01.nvidia.com>
+References: <1304136751-11629-1-git-send-email-swarren@nvidia.com>
+ <20110501145546.GC19918@quad.lixom.net>
+ <74CDBE0F657A3D45AFBB94109FB122FF0497F1B198@HQMAIL01.nvidia.com>
+ <BANLkTikC9bAWiGsLP48djMB-jTR767JeNg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20110511232711.10362.53256.stgit@riker>
+In-Reply-To: <BANLkTikC9bAWiGsLP48djMB-jTR767JeNg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 11, 2011 at 04:27:18PM -0700, John Bonesio wrote:
-> This patch makes it so the wm8903 is initialized from it's device tree node.
-> 
-> Signed-off-by: John Bonesio<bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> ---
-> 
->  arch/arm/boot/dts/tegra-harmony.dts |   17 ++++++
->  sound/soc/codecs/wm8903.c           |   93 +++++++++++++++++++++++++++++++++--
+Grant Likely wrote at Monday, May 02, 2011 2:16 PM:
+> On Mon, May 2, 2011 at 12:00 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =
+wrote:
+> > Olof Johansson wrote at Sunday, May 01, 2011 8:56 AM:
+> >> On Fri, Apr 29, 2011 at 10:12:30PM -0600, Stephen Warren wrote:
+> >> A mostly unrelated question below.
+> >>
+> >> [...]
+> >>
+> >> > + =A0 serial@70006000 {
+> >> > + =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra250-uart";
+> >>
+> >> I know this is how Grant specified it, but shouldn't these also ha=
+ve
+> >> a compat for ns16550?
+> >
+> > At present, I'm not sure it is technically compatible. If you look =
+at
+> > drivers/tty/serial/of_serial.c, you'll see:
+> >
+> > static struct of_device_id __devinitdata of_platform_serial_table[]=
+ =3D {
+> > ...
+> > =A0 =A0 =A0 =A0{ .compatible =3D "ns16550", =A0.data =3D (void *)PO=
+RT_16550, },
+> > ...
+> > =A0 =A0 =A0 =A0{ .compatible =3D "nvidia,tegra250-uart", =A0.data =3D=
+ (void *)PORT_XSCALE, },
+> >
+> > That PORT_XSCALE is different to the ns16550 entry. Arguably, that
+> > field should be something that comes from the device tree, just
+> > like e.g. reg-shift, but it certainly doesn't right now.
+> >
+> > Grant, what are your thoughts on this?
+>=20
+> Heh, when I added that line I just mirrored the 'type' of 16550 as
+> detected by the 8250.c driver when it probes and made a mental note
+> that it should be revisited.  I don't know the hardware very well, so
+> I cannot easily say what the right thing to do is, but making it
+> ns16550 compatible does seem to make sense.
 
-This needs to be sent separately to the relevant mailing lists and
-maintainers.  You can't go making substantial changes to drivers without
-even telling the maintainers about it - this will apply to any device
-tree work you're doing.  In this case one of the maintainers happens to
-be me, but even so.
+I looked into this a bit more and found the following:
 
-> +			interrupts = < 347 >;
-> +			irq-active-low = <0>;
-> +			micdet-cfg = <0>;
-> +			micdet-delay = <100>;
+In all the existing board files for Tegra, none of the
+plat_serial8250_port initializations specify any type value, and equall=
+y
+the flags do not include UPF_FIXED_TYPE. This causes the UART driver to
+probe (run tests on) the hardware to determine exactly what type of UAR=
+T
+is present.
 
-Some of this looks like chip default, why is it being configured?
+However, of_serial.c does set UPF_FIXED_TYPE, and hence port->type must
+have a valid value. I suspect it'd be a bad idea to change this since
+it'd affect a ton of extant PPC platforms.
 
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
+Equally, PORT_XSCALE does imply different HW behavior to any of the
+other types, so tegra250.dtsi shouldn't just specify that it's compatib=
+le
+with "ns16550".
 
-The fact that this device is a GPIO controller is a physical property of
-the device, we shouldn't need to be putting it into the device tree.
+However, I believe we should make the following change: Instead of addi=
+ng
+a specific Tegra "nvidia,tegra250-uart" to of_serial.c's device table, =
+we
+should instead add a generic "xscale" entry along the same lines as all
+the existing generic entries. This is so if we end up with 10 different
+vendors with "XSCALE" serial ports, we don't have to add an entry into
+of_serial.c for each one.
 
-> +			gpio-num-cfg = < 5 >;
+Does that seem reasonable?
 
-Similarly here, the device has a fixed number of GPIOs.
+I'll send a patch series to implement that change in just a second.
 
-> +			/* #define WM8903_GPIO_NO_CONFIG 0x8000 */
-> +			gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
-
-This doesn't seem great for usability.  I'd suggest key/value pairs
-rather than an array.
-
-> -	if (pdata && pdata->gpio_base)
-> +	wm8903->gpio_chip.base = -1;
-> +	if (pdata && pdata->gpio_base) {
->  		wm8903->gpio_chip.base = pdata->gpio_base;
-> -	else
-> -		wm8903->gpio_chip.base = -1;
-> +	} else if (codec->dev->of_node) {
-> +		prop = of_get_property(codec->dev->of_node, "gpio-base", NULL);
-> +		if (prop)
-> +			wm8903->gpio_chip.base = be32_to_cpup(prop);
-> +	}
-
-We have to do manual endianness conversions to read from the device
-tree?  Oh, well.
-
-> +
-> +		prop = of_get_property(codec->dev->of_node, "interrupts", NULL);
-> +		if (prop)
-> +			wm8903->irq = be32_to_cpup(prop);
-> +
-
-We have a standard way of passing the IRQ number to I2C devices, surely
-we should make sure that works at the bus level rather than having to
-replicate this code everywhere?
-
-> +		prop = of_get_property(codec->dev->of_node, "micdet-cfg", NULL);
-> +		if (prop)
-> +			micdet_cfg = be32_to_cpup(prop);
-> +
-> +		snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0, micdet_cfg);
-> +
-> +		if (micdet_cfg)
-> +			snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
-> +					    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
-> +		
-> +		/* If microphone detection is enabled in device tree but
-> +		 * detected via IRQ then interrupts can be lost before
-> +		 * the machine driver has set up microphone detection
-> +		 * IRQs as the IRQs are clear on read.  The detection
-> +		 * will be enabled when the machine driver configures.
-> +		 */
-> +		WARN_ON(!mic_gpio && (micdet_cfg & WM8903_MICDET_ENA));
-> +
-
-There's an awful lot of cut'n'paste code for the parsing code from the
-platform data code.
-
->  config SND_TEGRA_SOC_HARMONY
->  	tristate "SoC Audio support for Tegra Harmony reference board"
-> -	depends on SND_TEGRA_SOC && MACH_HARMONY && I2C
-> +	depends on SND_TEGRA_SOC && (MACH_HARMONY || MACH_TEGRA_DT) && I2C
-
-You've not added anything to the device tree to register the platform
-device for the machine and I rather fear this won't apply to current
-code.  You should develop against -next.
+--=20
+nvpublic
