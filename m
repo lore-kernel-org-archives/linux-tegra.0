@@ -1,20 +1,38 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: Tegra I2C slave address patches
-Date: Fri, 13 May 2011 07:39:15 +0200
-Message-ID: <20110513073915.5eb1fe18@ac100.localdomain>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: Tegra I2C slave address patches
+Date: Fri, 13 May 2011 15:30:03 +0800
+Message-ID: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD511@HKMAIL01.nvidia.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF04986AA399@HQMAIL01.nvidia.com>
 	<201105122109.21735.marvin24@gmx.de>
 	<74CDBE0F657A3D45AFBB94109FB122FF04986AA3D3@HQMAIL01.nvidia.com>
 	<6B4D417B830BC44B8026029FD256F7F1C2CB3DD50D@HKMAIL01.nvidia.com>
+ <20110513073915.5eb1fe18@ac100.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6B4D417B830BC44B8026029FD256F7F1C2CB3DD50D-Q4EWCATADntDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110513073915.5eb1fe18-XzodD4Jd363P0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Marc Dietrich' <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nitin Kumbhar <nkumbhar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
+
+Hi, Marc
+
+Configuring tegra i2c slave address does not put it into slave mode (as opposed to master mode).
+Tegra can act as an i2c master as well as i2c slave.
+And 0xFC is not a special address. It's just an i2c address which is not being used by any other i2c slave devices.
+
+Thanks
+Wei.
+
+-----Original Message-----
+From: Marc Dietrich [mailto:marvin24-Mmb7MZpHnFY@public.gmane.org] 
+Sent: Friday, May 13, 2011 1:39 PM
+To: Wei Ni
+Cc: Stephen Warren; Bharat Nihalani; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: Re: Tegra I2C slave address patches
 
 
 Hi Wei,
