@@ -1,7 +1,7 @@
 From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Subject: [GIT PULL v2 3/3] ARM: tegra: trimslice: enable USB ports
-Date: Mon, 16 May 2011 23:22:36 +0300
-Message-ID: <49054d9eca0b0320b84282d6f2b7f9909f049517.1305576864.git.mike@compulab.co.il>
+Subject: [GIT PULL v2 2/3] ARM: tegra: trimslice: add audio devices and clocks
+Date: Mon, 16 May 2011 23:22:35 +0300
+Message-ID: <27623d27d5d3c11a745e93a238fb38aef54ea364.1305576864.git.mike@compulab.co.il>
 References: <cover.1305576864.git.mike@compulab.co.il>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1305576864.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
@@ -12,118 +12,57 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    5 ++-
- arch/arm/mach-tegra/board-trimslice.c        |   39 ++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-trimslice.h        |    3 ++
- 3 files changed, 46 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    2 +-
+ arch/arm/mach-tegra/board-trimslice.c        |   13 +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-index 321c610..82646a4 100644
+index 13534fa..321c610 100644
 --- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
 +++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-@@ -126,7 +126,7 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
- 	{TEGRA_PINGROUP_SPIH,  TEGRA_MUX_SPI2_ALT,      TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_UAA,   TEGRA_MUX_ULPI,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_UAB,   TEGRA_MUX_ULPI,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
--	{TEGRA_PINGROUP_UAC,   TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_UAC,   TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_UAD,   TEGRA_MUX_IRDA,          TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_UCA,   TEGRA_MUX_UARTC,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_UCB,   TEGRA_MUX_UARTC,         TEGRA_PUPD_PULL_UP,     TEGRA_TRI_TRISTATE},
-@@ -145,6 +145,9 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
- static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TRIMSLICE_GPIO_SD4_CD, .enable = true	}, /* mmc4 cd */
- 	{ .gpio = TRIMSLICE_GPIO_SD4_WP, .enable = true	}, /* mmc4 wp */
-+
-+	{ .gpio = TRIMSLICE_GPIO_USB1_MODE, .enable = true }, /* USB1 mode */
-+	{ .gpio = TRIMSLICE_GPIO_USB2_RST,  .enable = true }, /* USB2 PHY rst */
- };
- 
- void __init trimslice_pinmux_init(void)
+@@ -29,7 +29,7 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+ 	{TEGRA_PINGROUP_ATC,   TEGRA_MUX_NAND,          TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_ATD,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_ATE,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
+-	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_OSC,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
++	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_PLLA_OUT,      TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_CDEV2, TEGRA_MUX_PLLP_OUT4,     TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_CRTP,  TEGRA_MUX_CRT,           TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_CSUS,  TEGRA_MUX_VI_SENSOR_CLK, TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
 diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index a19e90b..28190e2 100644
+index dcf5fc5..a19e90b 100644
 --- a/arch/arm/mach-tegra/board-trimslice.c
 +++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -25,6 +25,7 @@
- #include <linux/io.h>
- #include <linux/i2c.h>
- #include <linux/i2c-tegra.h>
-+#include <linux/platform_data/tegra_usb.h>
+@@ -73,10 +73,19 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 = {
+ 	.power_gpio	= -1,
+ };
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -32,6 +33,8 @@
- 
- #include <mach/iomap.h>
- #include <mach/sdhci.h>
-+#include <mach/usb_phy.h>
-+#include <mach/gpio.h>
- 
- #include "board.h"
- #include "clock.h"
-@@ -123,6 +126,41 @@ static void trimslice_i2c_init(void)
- 				ARRAY_SIZE(trimslice_i2c3_board_info));
- }
- 
-+struct tegra_ulpi_config ehci2_phy_config = {
-+	.reset_gpio = TRIMSLICE_GPIO_USB2_RST,
-+	.clk = "cdev2",
++static struct platform_device trimslice_audio_device = {
++	.name	= "tegra-snd-trimslice",
++	.id	= 0,
 +};
 +
-+static struct tegra_ehci_platform_data ehci_ulpi_data = {
-+	.operating_mode = TEGRA_USB_HOST,
-+	.phy_config = &ehci2_phy_config,
-+};
-+
-+static struct tegra_ehci_platform_data ehci_utmi_data = {
-+	.operating_mode = TEGRA_USB_HOST,
-+};
-+
-+static void trimslice_usb_init(void)
-+{
-+	int err;
-+
-+	tegra_ehci3_device.dev.platform_data = &ehci_utmi_data;
-+	platform_device_register(&tegra_ehci3_device);
-+
-+	tegra_ehci2_device.dev.platform_data = &ehci_ulpi_data;
-+	platform_device_register(&tegra_ehci2_device);
-+
-+	err = gpio_request_one(TRIMSLICE_GPIO_USB1_MODE, GPIOF_OUT_INIT_HIGH,
-+			       "usb1mode");
-+	if (err) {
-+		pr_err("TrimSlice: failed to obtain USB1 mode gpio: %d\n", err);
-+		return;
-+	}
-+
-+	tegra_ehci1_device.dev.platform_data = &ehci_utmi_data;
-+	platform_device_register(&tegra_ehci1_device);
-+}
-+
- static void __init tegra_trimslice_fixup(struct machine_desc *desc,
- 	struct tag *tags, char **cmdline, struct meminfo *mi)
- {
-@@ -164,6 +202,7 @@ static void __init tegra_trimslice_init(void)
- 	platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
+ static struct platform_device *trimslice_devices[] __initdata = {
+ 	&debug_uart,
+ 	&tegra_sdhci_device1,
+ 	&tegra_sdhci_device4,
++	&tegra_i2s_device1,
++	&tegra_das_device,
++	&tegra_pcm_device,
++	&trimslice_audio_device,
+ };
  
- 	trimslice_i2c_init();
-+	trimslice_usb_init();
- }
+ static struct tegra_i2c_platform_data trimslice_i2c1_platform_data = {
+@@ -127,6 +136,10 @@ static void __init tegra_trimslice_fixup(struct machine_desc *desc,
+ static __initdata struct tegra_clk_init_table trimslice_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
+ 	{ "uarta",	"pll_p",	216000000,	true },
++	{ "pll_a",	"pll_p_out1",	56448000,	true },
++	{ "pll_a_out0",	"pll_a",	11289600,	true },
++	{ "cdev1",	NULL,		0,		true },
++	{ "i2s1",	"pll_a_out0",	11289600,	false},
+ 	{ NULL,		NULL,		0,		0},
+ };
  
- MACHINE_START(TRIMSLICE, "trimslice")
-diff --git a/arch/arm/mach-tegra/board-trimslice.h b/arch/arm/mach-tegra/board-trimslice.h
-index e8ef629..7a7dee8 100644
---- a/arch/arm/mach-tegra/board-trimslice.h
-+++ b/arch/arm/mach-tegra/board-trimslice.h
-@@ -20,6 +20,9 @@
- #define TRIMSLICE_GPIO_SD4_CD	TEGRA_GPIO_PP1	/* mmc4 cd */
- #define TRIMSLICE_GPIO_SD4_WP	TEGRA_GPIO_PP2	/* mmc4 wp */
- 
-+#define TRIMSLICE_GPIO_USB1_MODE	TEGRA_GPIO_PV2 /* USB1 mode */
-+#define TRIMSLICE_GPIO_USB2_RST		TEGRA_GPIO_PV0 /* USB2 PHY reset */
-+
- void trimslice_pinmux_init(void);
- 
- #endif
 -- 
 1.7.3.1
