@@ -1,120 +1,40 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH 3/4] ARM: tegra: paz00: enable usb ports
-Date: Mon, 16 May 2011 20:10:57 +0200
-Message-ID: <1305569458-4821-4-git-send-email-marvin24@gmx.de>
-References: <1305569458-4821-1-git-send-email-marvin24@gmx.de>
+Subject: [PATCH 0/4] ARM: tegra: paz00 patches for 2.6.40
+Date: Mon, 16 May 2011 20:10:54 +0200
+Message-ID: <1305569458-4821-1-git-send-email-marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1305569458-4821-1-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Collin,
 
-Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
----
- arch/arm/mach-tegra/board-paz00-pinmux.c |    1 +
- arch/arm/mach-tegra/board-paz00.c        |   35 +++++++++++++++++++++++++++++-
- arch/arm/mach-tegra/board-paz00.h        |    1 +
- 3 files changed, 36 insertions(+), 1 deletions(-)
+the following patches are intended for 2.6.40 merge. They are mostly similar
+to the TrimSlice patches sent by Mike a few days ago.
 
-diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
-index d2faa50..acee62e 100644
---- a/arch/arm/mach-tegra/board-paz00-pinmux.c
-+++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-@@ -147,6 +147,7 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_SD4_CD,	.enable = true },
- 	{ .gpio = TEGRA_GPIO_SD4_WP,	.enable = true },
- 	{ .gpio = TEGRA_GPIO_SD4_POWER,	.enable = true },
-+	{ .gpio = TEGRA_ULPI_RST,	.enable = true },
- };
- 
- void paz00_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 5f1c110..e1e1959 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -27,6 +27,7 @@
- #include <linux/io.h>
- #include <linux/i2c.h>
- #include <linux/i2c-tegra.h>
-+#include <linux/platform_data/tegra_usb.h>
- 
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -36,6 +37,8 @@
- #include <mach/iomap.h>
- #include <mach/irqs.h>
- #include <mach/sdhci.h>
-+#include <mach/usb_phy.h>
-+#include <mach/gpio.h>
- 
- #include "board.h"
- #include "board-paz00.h"
-@@ -95,6 +98,36 @@ static void paz00_i2c_init(void)
- 	platform_device_register(&tegra_i2c_device4);
- }
- 
-+static struct tegra_ulpi_config ulpi_phy_config = {
-+		.reset_gpio = TEGRA_ULPI_RST,
-+		.clk = "cdev2",
-+};
-+
-+static struct tegra_ehci_platform_data tegra_ehci_pdata[] = {
-+		[0] = {
-+			.operating_mode = TEGRA_USB_OTG,
-+			.power_down_on_bus_suspend = 1,
-+		},
-+		[1] = {
-+			.phy_config = &ulpi_phy_config,
-+			.operating_mode = TEGRA_USB_HOST,
-+			.power_down_on_bus_suspend = 1,
-+		},
-+		[2] = {
-+			.operating_mode = TEGRA_USB_HOST,
-+			.power_down_on_bus_suspend = 1,
-+		},
-+};
-+
-+static void paz00_usb_init(void)
-+{
-+	tegra_ehci2_device.dev.platform_data = &tegra_ehci_pdata[1];
-+	tegra_ehci3_device.dev.platform_data = &tegra_ehci_pdata[2];
-+
-+	platform_device_register(&tegra_ehci2_device);
-+	platform_device_register(&tegra_ehci3_device);
-+}
-+
- static void __init tegra_paz00_fixup(struct machine_desc *desc,
- 	struct tag *tags, char **cmdline, struct meminfo *mi)
- {
-@@ -109,7 +142,6 @@ static __initdata struct tegra_clk_init_table paz00_clk_init_table[] = {
- 	{ NULL,		NULL,		0,		0},
- };
- 
--
- static struct tegra_sdhci_platform_data sdhci_pdata1 = {
- 	.cd_gpio	= TEGRA_GPIO_SD1_CD,
- 	.wp_gpio	= TEGRA_GPIO_SD1_WP,
-@@ -142,6 +174,7 @@ static void __init tegra_paz00_init(void)
- 	platform_add_devices(paz00_devices, ARRAY_SIZE(paz00_devices));
- 
- 	paz00_i2c_init();
-+	paz00_usb_init();
- }
- 
- MACHINE_START(PAZ00, "paz00")
-diff --git a/arch/arm/mach-tegra/board-paz00.h b/arch/arm/mach-tegra/board-paz00.h
-index 221ce9c..6b0b733 100644
---- a/arch/arm/mach-tegra/board-paz00.h
-+++ b/arch/arm/mach-tegra/board-paz00.h
-@@ -23,6 +23,7 @@
- #define TEGRA_GPIO_SD4_CD		TEGRA_GPIO_PH2
- #define TEGRA_GPIO_SD4_WP		TEGRA_GPIO_PH3
- #define TEGRA_GPIO_SD4_POWER		TEGRA_GPIO_PI6
-+#define TEGRA_ULPI_RST			TEGRA_GPIO_PV0
- 
- void paz00_pinmux_init(void);
- 
+We are still stuggling with the sound codec (alc5632) and the nvec, so there
+is nothing to connect to the i2c yet. On the other hand, I'm wondering what's
+up with the atd7461 included in most (all?) boards. It's compatible with lm90,
+but the driver will never register because of the wrong name.
+
+May I ask if there is some timeline for framebuffer integration? A netbook
+without display is of not much use (ok, same holds for keyboard/mouse).
+
+Thanks!
+
+Marc
+
+Marc Dietrich (4):
+  ARM: tegra: paz00: whitespace cleanup
+  ARM: tegra: paz00: register i2c busses
+  ARM: tegra: paz00: enable usb ports
+  ARM: tegra: paz00: cleanup sdhci ports
+
+ arch/arm/mach-tegra/board-paz00-pinmux.c |   10 ++---
+ arch/arm/mach-tegra/board-paz00.c        |   72 +++++++++++++++++++++++++----
+ arch/arm/mach-tegra/board-paz00.h        |   10 ++---
+ 3 files changed, 70 insertions(+), 22 deletions(-)
+
 -- 
 1.7.4.2
