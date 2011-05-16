@@ -1,50 +1,34 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] video: fbmon: fix hdmi VSDB detection
-Date: Mon, 16 May 2011 14:09:36 -0600
-Message-ID: <1305576576-32673-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH] ASoC: Tegra: Fix compile when debugfs not enabled
+Date: Mon, 16 May 2011 14:19:27 -0600
+Message-ID: <1305577167-16152-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The IEEE OUI begins at the byte after the type/length byte, not at
-that byte.
+The prototype of the inline dummy version of tegra_i2s_debug_add
+was not consistent with the real version.
 
-This code first appeared at:
-http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commitdiff;h=cef13d98eb134defcfc125debf38cc6749e153c8
-
-At that time, block[] (now edid[]) pointed at the first byte after the
-type/length byte. Now that it points at the type/length byte, the offsets
-need adjustment.
-
+Reported-by: Rhyland-Klein < rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
 ---
-This patch to non-Tegra code fixes an issue in code that's only present
-in non-upstream patches in various of the Android/Tegra branches.
+ sound/soc/tegra/tegra_i2s.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-This particular patch is against the ChromeOS kernel, so you may need
-slight fuzz when applying it to the various Android/Tegra branches.
-
- drivers/video/fbmon.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/video/fbmon.c b/drivers/video/fbmon.c
-index 499ce8d..7f6fbf2 100644
---- a/drivers/video/fbmon.c
-+++ b/drivers/video/fbmon.c
-@@ -1010,8 +1010,9 @@ void fb_edid_add_monspecs(unsigned char *edid, struct fb_monspecs *specs)
- 			}
- 		else if (type == 0x3) {
- 			if (len >= 3) {
--				u32 ieee_reg = edid[pos] | (edid[pos+1] << 8) |
--					(edid[pos+2] << 16);
-+				u32 ieee_reg = edid[pos+1] |
-+					(edid[pos+2] << 8) |
-+					(edid[pos+3] << 16);
- 				if (ieee_reg == 0x000c03)
- 					specs->misc |= FB_MISC_HDMI;
- 			}
+diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
+index 4f5e2c9..6b817e2 100644
+--- a/sound/soc/tegra/tegra_i2s.c
++++ b/sound/soc/tegra/tegra_i2s.c
+@@ -114,7 +114,7 @@ static void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
+ 		debugfs_remove(i2s->debug);
+ }
+ #else
+-static inline void tegra_i2s_debug_add(struct tegra_i2s *i2s)
++static inline void tegra_i2s_debug_add(struct tegra_i2s *i2s, int id)
+ {
+ }
+ 
 -- 
 1.7.0.4
