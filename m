@@ -1,47 +1,56 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/2] tty/serial: Add PORT_TEGRA, fix break handling for
- it
-Date: Tue, 17 May 2011 12:44:00 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AAAE1@HQMAIL01.nvidia.com>
-References: <1305660466-4704-1-git-send-email-swarren@nvidia.com>
- <20110517193836.GA6912@suse.de>
+Subject: RE: [GIT PULL v2 0/3] TrimSlice updates for 2.6.40
+Date: Tue, 17 May 2011 13:41:56 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AAB1E@HQMAIL01.nvidia.com>
+References: <cover.1305576864.git.mike@compulab.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110517193836.GA6912-l3A5Bk7waGM@public.gmane.org>
+In-Reply-To: <cover.1305576864.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Greg KH wrote at Tuesday, May 17, 2011 1:39 PM:
-> On Tue, May 17, 2011 at 01:27:44PM -0600, Stephen Warren wrote:
-> > 8250.c needs a specific PORT_TEGRA type for two reasons:
-> > * RTOIE bit needs to be set, but UUE is reserved, so split RTOIE handling
-> >   out of PORT_XSCALE.
-> > * A WAR is needed for break reception.
-> >
-> > I'd like to get the first of these two patches merged into the tegra
-> > arch for-next branch, so that I can modify the board files to explicitly
-> > request the new port type rather than relying on auto-detection. As such,
-> > could you please create a branch for that/these changes, then merge it
-> > into tty-2.6.git, so that the same branch can be merged into Tegra's
-> > for-next branch. Thanks.
-> 
-> No, I really don't want to create a separate branch for just 2 patches,
-> a whole 43 lines modified, that's pretty useless.
-> 
-> If Alan acks these, I'll be glad to take them through the serial tree as
-> normal, or you can take them through the tegra tree.
+Mike Rapoport wrote at Monday, May 16, 2011 2:23 PM:
+> Hi Colin,
+> Please consider pulling TrimSlice updates for 2.6.40 merge window.
+> These patches add registration of i2c, audio and USB devices.
 
-Hmm. OK; I thought this was standard practice, based on my experiences with
-other subsystems.
+Mike, a comment and a question:
 
-I guess I'll opt for you just taking these through your tree then.
+First off, your git branch isn't based on tegra's for-next branch, but
+rather something much in the future of it. Hence, the merge brings in a
+bunch of unrelated changes. It is a fast-forward though so it's
+probably fine?
 
-Thanks.
+Second, I tried to test this, but failed. I hit two issues:
+
+1) USB didn't seem to work for me; the following prints continuously:
+
+[   93.952248] usb 3-1: new high speed USB device number 126 using tegra-ehci
+[   94.022291] hub 3-0:1.0: unable to enumerate USB device on port 1
+
+This means I can't use the built-in SSD as the root filesystem.
+
+I see this problem irrespective of whether I tell U-Boot to initialize
+USB before booting or not.
+
+Which branches did you have merged to test this? I did:
+
+* Create a new branch from Tegra's for-next.
+* Merge the branch from your pull request.
+* Merge ASoC for-2.6.40 branch to pick up the audio driver.
+* Cherry-pick a few I2C fixes I've been working on. I don't recall if
+they are necessary for Trimslice or not, but shouldn't hurt.
+
+2) I can boot into a recent ChromeOS filesystem on the SD card, and
+see e.g. the audio driver initialize OK. However, both speaker-test
+and aplay segfault immediately. They work fine on other HW, such as
+Seaboard, with this disk image. I know this used to work on Trimslice
+a few weeks back, so perhaps I'll go and try an older disk image.
 
 -- 
 nvpublic
