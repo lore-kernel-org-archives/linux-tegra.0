@@ -1,56 +1,40 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [GIT PULL v2 0/3] TrimSlice updates for 2.6.40
-Date: Tue, 17 May 2011 13:41:56 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04986AAB1E@HQMAIL01.nvidia.com>
-References: <cover.1305576864.git.mike@compulab.co.il>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH 0/2] tty/serial: Add PORT_TEGRA, fix break handling for
+ it
+Date: Tue, 17 May 2011 22:58:25 +0100
+Message-ID: <20110517225825.032e9461@lxorguk.ukuu.org.uk>
+References: <1305660466-4704-1-git-send-email-swarren@nvidia.com>
+	<20110517193836.GA6912@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1305576864.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <20110517193836.GA6912@suse.de>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg KH <gregkh@suse.de>
+Cc: Stephen Warren <swarren@nvidia.com>, ldewangan@nvidia.com, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Mike Rapoport wrote at Monday, May 16, 2011 2:23 PM:
-> Hi Colin,
-> Please consider pulling TrimSlice updates for 2.6.40 merge window.
-> These patches add registration of i2c, audio and USB devices.
+> If Alan acks these, I'll be glad to take them through the serial tree as
+> normal, or you can take them through the tegra tree.
+> 
+> Either way, they need Alan's review first.
 
-Mike, a comment and a question:
+First one I am fine with. Second is more chip specific goop where we
+don't want it. However right at the moment there isn't a magic cure to
+that and the port->ops hackery I've been doing isn't done and it's not
+reasonable to hold this up waiting for a project with indeterminate
+completion date.
 
-First off, your git branch isn't based on tegra's for-next branch, but
-rather something much in the future of it. Hence, the merge brings in a
-bunch of unrelated changes. It is a fast-forward though so it's
-probably fine?
+Ack #1
 
-Second, I tried to test this, but failed. I hit two issues:
+Can you add a 
 
-1) USB didn't seem to work for me; the following prints continuously:
+/*
+ * FIXME: This needs to become a port specific callback once we have a
+ * framework for this
+ */
 
-[   93.952248] usb 3-1: new high speed USB device number 126 using tegra-ehci
-[   94.022291] hub 3-0:1.0: unable to enumerate USB device on port 1
+to #2 so it doesn't get forgotten in a future cleanup.
 
-This means I can't use the built-in SSD as the root filesystem.
-
-I see this problem irrespective of whether I tell U-Boot to initialize
-USB before booting or not.
-
-Which branches did you have merged to test this? I did:
-
-* Create a new branch from Tegra's for-next.
-* Merge the branch from your pull request.
-* Merge ASoC for-2.6.40 branch to pick up the audio driver.
-* Cherry-pick a few I2C fixes I've been working on. I don't recall if
-they are necessary for Trimslice or not, but shouldn't hurt.
-
-2) I can boot into a recent ChromeOS filesystem on the SD card, and
-see e.g. the audio driver initialize OK. However, both speaker-test
-and aplay segfault immediately. They work fine on other HW, such as
-Seaboard, with this disk image. I know this used to work on Trimslice
-a few weeks back, so perhaps I'll go and try an older disk image.
-
--- 
-nvpublic
+Alan
