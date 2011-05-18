@@ -1,28 +1,75 @@
-From: Alan Cox <alan-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] tty/serial: Fix break handling for PORT_TEGRA
-Date: Wed, 18 May 2011 09:10:58 +0100
-Message-ID: <20110518091058.51807554@lxorguk.ukuu.org.uk>
-References: <1305670357-4291-1-git-send-email-swarren@nvidia.com>
-	<1305670357-4291-2-git-send-email-swarren@nvidia.com>
+From: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
+Subject: Re: [GIT PULL v2 0/3] TrimSlice updates for 2.6.40
+Date: Wed, 18 May 2011 19:12:31 +0300
+Message-ID: <20110518161230.GA3029@gentoodev.compulab.local>
+References: <cover.1305576864.git.mike@compulab.co.il>
+ <74CDBE0F657A3D45AFBB94109FB122FF04986AAB1E@HQMAIL01.nvidia.com>
+Reply-To: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1305670357-4291-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04986AAB1E-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-l3A5Bk7waGM@public.gmane.org, alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 17 May 2011 16:12:37 -0600
-Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+Hi Stephen,
 
-> When a break is received, Tegra's UART apparently fills the FIFO with
-> 0 bytes. These must be drained so that they aren't interpreted as actual
-> data received. This allows e.g. MAGIC_SYSRQ to work on Tegra's UARTs.
+On Tue, May 17, 2011 at 01:41:56PM -0700, Stephen Warren wrote:
+> Mike Rapoport wrote at Monday, May 16, 2011 2:23 PM:
+> > Hi Colin,
+> > Please consider pulling TrimSlice updates for 2.6.40 merge window.
+> > These patches add registration of i2c, audio and USB devices.
 > 
-> v2: Added FIXME comment to clear_rx_fifo
+> Mike, a comment and a question:
+> 
+> First off, your git branch isn't based on tegra's for-next branch, but
+> rather something much in the future of it. Hence, the merge brings in a
+> bunch of unrelated changes. It is a fast-forward though so it's
+> probably fine?
+ 
+My branch is based on recent Linus' tree. I presume Colin will reabse
+his -next on it before sending pull request...
 
-Acked-by: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> Second, I tried to test this, but failed. I hit two issues:
+> 
+> 1) USB didn't seem to work for me; the following prints continuously:
+> 
+> [   93.952248] usb 3-1: new high speed USB device number 126 using tegra-ehci
+> [   94.022291] hub 3-0:1.0: unable to enumerate USB device on port 1
+> 
+> This means I can't use the built-in SSD as the root filesystem.
+>
+> I see this problem irrespective of whether I tell U-Boot to initialize
+> USB before booting or not.
+
+Yeah, this is caused by issue with USB1 port reset. Greg already took
+the patch that fixes it (1).
+
+> Which branches did you have merged to test this? I did:
+> 
+> * Create a new branch from Tegra's for-next.
+> * Merge the branch from your pull request.
+> * Merge ASoC for-2.6.40 branch to pick up the audio driver.
+> * Cherry-pick a few I2C fixes I've been working on. I don't recall if
+> they are necessary for Trimslice or not, but shouldn't hurt.
+
+I'd rather take the ASoC for-2.6.40 and apply the first two patches +
+I2C fixes.
+
+> 2) I can boot into a recent ChromeOS filesystem on the SD card, and
+> see e.g. the audio driver initialize OK. However, both speaker-test
+> and aplay segfault immediately. They work fine on other HW, such as
+> Seaboard, with this disk image. I know this used to work on Trimslice
+> a few weeks back, so perhaps I'll go and try an older disk image.
+
+I've never tried audio with ChromiumOS. I've tested with Maverick and
+aplay didn't complain.
+>
+[1] http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg00581.html
+
 --
-"I'm sure there were advantages to getting older but I've forgotten them"
+Sincerely yours,
+Mike.
