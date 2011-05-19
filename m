@@ -1,33 +1,48 @@
-From: Marvin <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: paz00: whitespace cleanup
-Date: Thu, 19 May 2011 12:48:43 +0200
-Message-ID: <201105191248.43659.marvin24@gmx.de>
-References: <1305569458-4821-1-git-send-email-marvin24@gmx.de> <1305569458-4821-2-git-send-email-marvin24@gmx.de> <20110519050544.GA5495@quad.lixom.net>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH 0/6 V2] ARM: tegra: paz00 patches for 2.6.40
+Date: Thu, 19 May 2011 14:08:24 +0200
+Message-ID: <1305806910-3903-1-git-send-email-marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110519050544.GA5495-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olof,
+Hi Collin, Olof,
 
-> On Mon, May 16, 2011 at 08:10:55PM +0200, Marc Dietrich wrote:
-> > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> 
-> Please provide a simple changelog, not just a topic. I know, there isn't
-> much to write home about on this one but it's good habit.
-> 
-> Same applies to patch 2 and 3 in this series.
+the following patches are intended for 2.6.40 merge. They are mostly similar
+to the TrimSlice patches sent by Mike a few days ago.
 
-arrr - again.
+We are still stuggling with the sound codec (alc5632) and the nvec, so there
+is nothing to connect to the i2c yet. On the other hand, I'm wondering what's
+up with the atd7461 included in most (all?) boards. It's compatible with lm90,
+but the driver will never register because of the wrong name.
 
-Sorry, will resubmit (with two more changes).
+May I ask if there is some timeline for framebuffer integration? A netbook
+without display is of not much use (ok, same holds for keyboard/mouse).
 
-Thanks
+Thanks!
 
 Marc
+
+Changes in V2:
+    - add some more blurb to the commit messages
+    - change the machine to some neater name (patch 5)
+    - enable the wifi board during boot (patch 6)
+
+
+Marc Dietrich (6):
+  ARM: tegra: paz00: whitespace cleanup
+  ARM: tegra: paz00: register i2c busses
+  ARM: tegra: paz00: enable usb ports
+  ARM: tegra: paz00: cleanup sdhci ports
+  ARM: tegra: paz00: change the machine name
+  ARM: tegra: paz00: enable wifi card
+
+ arch/arm/mach-tegra/board-paz00-pinmux.c |   12 ++--
+ arch/arm/mach-tegra/board-paz00.c        |   96 ++++++++++++++++++++++++++----
+ arch/arm/mach-tegra/board-paz00.h        |   17 ++++--
+ 3 files changed, 102 insertions(+), 23 deletions(-)
+
+-- 
+1.7.4.2
