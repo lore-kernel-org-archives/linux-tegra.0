@@ -1,101 +1,49 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH 6/6] ARM: tegra: paz00: enable wifi card
-Date: Thu, 19 May 2011 14:08:30 +0200
-Message-ID: <1305806910-3903-7-git-send-email-marvin24@gmx.de>
-References: <1305806910-3903-1-git-send-email-marvin24@gmx.de>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] tty/serial: Update of_serial's XSCALE port type to
+ be generic
+Date: Thu, 19 May 2011 13:11:11 -0600
+Message-ID: <20110519191111.GK5109@ponder.secretlab.ca>
+References: <1305218474-4087-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1305806910-3903-1-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1305218474-4087-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Wifi card attached to one usb port needs to be unkilled. The
-corresponding gpio and also the gpio for the LED are exported to be
-controlled by userspace later on.
+On Thu, May 12, 2011 at 10:41:13AM -0600, Stephen Warren wrote:
+> Instead of adding a specific nvidia,tegra250-uart entry, add a generic
+> xscale entry that can be used by any XSCALE-compatible device. This avoids
+> us having to add a new entry per vendor to of_serial.c, just like all the
+> other already extant entries.
+> 
+> I assume this patch will be squashed into or replace
+> b9e7db240617f12dd371b0a363042fb007e97ed7
+> tty/serial: Add devicetree support for nVidia Tegra serial ports
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/tty/serial/of_serial.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
+> index 0d3f138..bfc1c2e 100644
+> --- a/drivers/tty/serial/of_serial.c
+> +++ b/drivers/tty/serial/of_serial.c
+> @@ -168,7 +168,7 @@ static struct of_device_id __devinitdata of_platform_serial_table[] = {
+>  	{ .compatible = "ns16550",  .data = (void *)PORT_16550, },
+>  	{ .compatible = "ns16750",  .data = (void *)PORT_16750, },
+>  	{ .compatible = "ns16850",  .data = (void *)PORT_16850, },
+> -	{ .compatible = "nvidia,tegra250-uart",  .data = (void *)PORT_XSCALE, },
+> +	{ .compatible = "xscale",   .data = (void *)PORT_XSCALE, },
 
-Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
----
- arch/arm/mach-tegra/board-paz00-pinmux.c |    2 ++
- arch/arm/mach-tegra/board-paz00.c        |   22 ++++++++++++++++++++++
- arch/arm/mach-tegra/board-paz00.h        |    7 +++++++
- 3 files changed, 31 insertions(+), 0 deletions(-)
+As previously discussed (and repeating here just for the historical
+record), this isn't really the right thing since the port isn't
+actually an Xscale port and has a subtly different behaviour.  The
+solution discussed in our other thread about the tegra serial port
+should be pursued.
 
-diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
-index bdd2627..41a6304 100644
---- a/arch/arm/mach-tegra/board-paz00-pinmux.c
-+++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-@@ -145,6 +145,8 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_SD1_WP,	.enable = true },
- 	{ .gpio = TEGRA_GPIO_SD1_POWER,	.enable = true },
- 	{ .gpio = TEGRA_ULPI_RST,	.enable = true },
-+	{ .gpio = TEGRA_WIFI_PWRN,	.enable = true },
-+	{ .gpio = TEGRA_WIFI_LED,	.enable = true },
- };
- 
- void paz00_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 1b076f6..c78ef4c 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -135,6 +135,27 @@ static void __init tegra_paz00_fixup(struct machine_desc *desc,
- 	mi->bank[0].size = 448 * SZ_1M;
- }
- 
-+static void __init paz00_wifi_init(void)
-+{
-+	int ret;
-+
-+	/* unlock hw rfkill */
-+	ret = gpio_request_one(TEGRA_WIFI_PWRN, GPIOF_OUT_INIT_HIGH,
-+			"wifi_pwrn");
-+	if(ret) {
-+		pr_warning("WIFI: could not request PWRN gpio!\n");
-+		return;
-+	}
-+	gpio_export(TEGRA_WIFI_PWRN, 0);
-+
-+	/* export wifi led */
-+	ret = gpio_request_one(TEGRA_WIFI_LED, GPIOF_OUT_INIT_HIGH,
-+			"wifi_led");
-+	if(ret)
-+		pr_warning("WIFI: could not request LED gpio!\n");
-+	gpio_export(TEGRA_WIFI_LED, 0);
-+}
-+
- static __initdata struct tegra_clk_init_table paz00_clk_init_table[] = {
- 	/* name		parent		rate		enabled */
- 	{ "uartd",	"pll_p",	216000000,	true },
-@@ -167,6 +188,7 @@ static void __init tegra_paz00_init(void)
- 
- 	paz00_i2c_init();
- 	paz00_usb_init();
-+	paz00_wifi_init();
- }
- 
- MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
-diff --git a/arch/arm/mach-tegra/board-paz00.h b/arch/arm/mach-tegra/board-paz00.h
-index d4ff39d..a49543a 100644
---- a/arch/arm/mach-tegra/board-paz00.h
-+++ b/arch/arm/mach-tegra/board-paz00.h
-@@ -17,11 +17,18 @@
- #ifndef _MACH_TEGRA_BOARD_PAZ00_H
- #define _MACH_TEGRA_BOARD_PAZ00_H
- 
-+/* SDMMC */
- #define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PV5
- #define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PH1
- #define TEGRA_GPIO_SD1_POWER		TEGRA_GPIO_PT3
-+
-+/* ULPI */
- #define TEGRA_ULPI_RST			TEGRA_GPIO_PV0
- 
-+/* Wifi */
-+#define TEGRA_WIFI_LED			TEGRA_GPIO_PD0
-+#define TEGRA_WIFI_PWRN			TEGRA_GPIO_PK5
-+
- void paz00_pinmux_init(void);
- 
- #endif
--- 
-1.7.4.2
+g.
