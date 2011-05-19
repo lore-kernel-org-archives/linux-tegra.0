@@ -1,93 +1,27 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [GIT PULL v2 0/3] TrimSlice updates for 2.6.40
-Date: Wed, 18 May 2011 11:50:46 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0498A47A69@HQMAIL01.nvidia.com>
-References: <cover.1305576864.git.mike@compulab.co.il>
- <74CDBE0F657A3D45AFBB94109FB122FF04986AAB1E@HQMAIL01.nvidia.com>
- <20110518161230.GA3029@gentoodev.compulab.local>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: paz00: whitespace cleanup
+Date: Wed, 18 May 2011 22:05:44 -0700
+Message-ID: <20110519050544.GA5495@quad.lixom.net>
+References: <1305569458-4821-1-git-send-email-marvin24@gmx.de>
+ <1305569458-4821-2-git-send-email-marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110518161230.GA3029-3uweYmSlH9aEUzZwfQ66DQU8U8pOX017@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1305569458-4821-2-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org" <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org wrote at Wednesday, May 18, 2011 10:13 AM:
-> Hi Stephen,
+On Mon, May 16, 2011 at 08:10:55PM +0200, Marc Dietrich wrote:
 > 
-> On Tue, May 17, 2011 at 01:41:56PM -0700, Stephen Warren wrote:
-> > Mike Rapoport wrote at Monday, May 16, 2011 2:23 PM:
-> > > Hi Colin,
-> > > Please consider pulling TrimSlice updates for 2.6.40 merge window.
-> > > These patches add registration of i2c, audio and USB devices.
-> >
-> > Second, I tried to test this, but failed. I hit two issues:
-> >
-> > 1) USB didn't seem to work for me; the following prints continuously:
-> >
-> > [   93.952248] usb 3-1: new high speed USB device number 126 using tegra-ehci
-> > [   94.022291] hub 3-0:1.0: unable to enumerate USB device on port 1
-> >
-> > This means I can't use the built-in SSD as the root filesystem.
-> >
-> > I see this problem irrespective of whether I tell U-Boot to initialize
-> > USB before booting or not.
-> 
-> Yeah, this is caused by issue with USB1 port reset. Greg already took
-> the patch that fixes it (1).
-> [1] http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg00581.html
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-OK, I applied that, and USB appears to work; I could mount the SSD OK.
+Please provide a simple changelog, not just a topic. I know, there isn't
+much to write home about on this one but it's good habit.
 
-I found a way to get around aplay/speaker-test crashing (which happens
-both with the ChromeOS filesystem or the Ubuntu filesystem shipped with
-the Trimslice). If you specify which ALSA PCM device to use ("-D hw:0,0")
-then they both work OK.
+Same applies to patch 2 and 3 in this series.
 
-That said, I do still see some issues. Specifically, when I play audio,
-USB and/or MMC IO appear to go south, and then recovers when audio
-playback terminates:
 
-chronos@localhost ~ $ aplay -D hw:0,0 /home/abba-dq-48000-stereo.wav 
-Playing WAVE '/home/abba-dq-48000-stereo.wav' : Signed 16 bit Little Endian, Rate 48000 Hz, Stereo
-[   90.434741] usb 3-1: USB disconnect, device number 2
-[   90.722342] hub 3-0:1.0: unable to enumerate USB device on port 1
-<repeats about every 300mS>
-^C Aborted by signal Interrupt...
-chronos@localhost ~ $ [   97.262302] usb 3-1: new high speed USB device number 27 using tegra-ehci
-[   97.684058] usb 3-1: New USB device found, idVendor=05e3, idProduct=0718
-[   97.690758] usb 3-1: New USB device strings: Mfr=0, Product=1, SerialNumber=2
-[   97.698354] usb 3-1: Product: USB Storage
-[   97.702511] usb 3-1: SerialNumber: 000000000033
-[   97.710500] scsi1 : usb-storage 3-1:1.0
-[   99.492400] scsi 1:0:0:0: Direct-Access     SanDisk  SSD P4 8GB       0015 PQ: 0 ANSI: 0
-[   99.502508] sd 1:0:0:0: [sda] 15649196 512-byte logical blocks: (8.01 GB/7.46 GiB)
-[   99.522376] sd 1:0:0:0: [sda] Write Protect is off
-[   99.527169] sd 1:0:0:0: [sda] Assuming drive cache: write through
-[   99.572658] sd 1:0:0:0: [sda] Assuming drive cache: write through
-[   99.592671]  sda: sda1
-[   99.597539] sd 1:0:0:0: [sda] Assuming drive cache: write through
-[   99.604184] sd 1:0:0:0: [sda] Attached SCSI disk
-
-Sometimes this affects mmcblk0 too.
-
-This happens irrespective of whether my root filesystem is on USB (with
-no SD card plugged in) or on SD card.
-
-That said, I think these issues are some pre-existing condition that was
-simply exposed because this patchset now enables USB and audio. Hence,
-not a problem with the changes in the patch set itself.
-
-Do you have a kernel branch that's been tested with the Ubuntu build
-that shipped on the TrimSlice's SSD that I could test with? Alternatively,
-how did you create the filesystem you're testing with, so I could test
-with that instead?
-
-Thanks.
-
--- 
-nvpublic
+-Olof
