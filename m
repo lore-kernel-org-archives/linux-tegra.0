@@ -1,32 +1,35 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra board updates for 2.6.40
-Date: Thu, 26 May 2011 11:00:39 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF0498A4870C@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH] ASoC: Tegra: Enable Kaen HP_MUTE at boot
+Date: Thu, 26 May 2011 12:46:50 -0600
+Message-ID: <1306435610-27810-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Colin,
+We want the default state of the HP_MUTE signal to be asserted, so that
+the headphones are muted before the first audio playback. Without this,
+the headphones are left unmuted until shortly after the first audio
+playback completes.
 
-You had mentioned not taking any board updates for Tegra for 2.6.40.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/tegra/tegra_wm8903.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Could you please consider taking at least the following one patch:
-
-http://www.spinics.net/lists/linux-tegra/msg01396.html
-
-This is a simple bug-fix rather than new feature etc. Without this,
-audio on Harmony, which previously worked fine, fails to initialize
-due to the conflicting attempted GPIO registrations. (I *think*
-Harmony still boots OK without the fix, but I vaguely remember
-the fix being needed just to boot, but I'm probably wrong about that)
-
-Thanks!
-
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 0d6738a..a42e9ac 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -267,7 +267,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 		}
+ 		machine->gpio_requested |= GPIO_HP_MUTE;
+ 
+-		gpio_direction_output(pdata->gpio_hp_mute, 0);
++		gpio_direction_output(pdata->gpio_hp_mute, 1);
+ 	}
+ 
+ 	if (gpio_is_valid(pdata->gpio_int_mic_en)) {
 -- 
-nvpublic
+1.7.0.4
