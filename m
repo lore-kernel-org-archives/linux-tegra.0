@@ -1,137 +1,162 @@
-From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: [RFC 2/2] ARM:Tegra: Device Tree Support: Initialize audio card
-	gpio's from the device tree.
-Date: Fri, 27 May 2011 13:57:26 -0700
-Message-ID: <20110527205721.21000.78599.stgit@riker>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
+ card from the device tree.
+Date: Fri, 27 May 2011 15:05:08 -0600
+Message-ID: <20110527210508.GK6645@ponder.secretlab.ca>
 References: <20110527205444.21000.90209.stgit@riker>
+ <20110527205706.21000.34832.stgit@riker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110527205444.21000.90209.stgit@riker>
+Content-Disposition: inline
+In-Reply-To: <20110527205706.21000.34832.stgit@riker>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch makes it so the gpio's used by the Tegra audio driver are
-initialized from device tree nodes.
+On Fri, May 27, 2011 at 01:57:13PM -0700, John Bonesio wrote:
+> This patch makes it so the top level audio card is initialized from the device
+> tree. This is just the first step getting the audio complex of devices
+> iniialized from device tree nodes.
+> 
+> Signed-off-by: John Bonesio<bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> ---
+> 
+>  arch/arm/boot/dts/tegra-harmony.dts |    4 +++
+>  arch/arm/mach-tegra/board-dt.c      |    3 ++
+>  sound/soc/tegra/harmony.c           |   45 ++++++++++++++++++++++++++++++++---
+>  3 files changed, 48 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+> index 05521a5..217a7f0 100644
+> --- a/arch/arm/boot/dts/tegra-harmony.dts
+> +++ b/arch/arm/boot/dts/tegra-harmony.dts
+> @@ -53,6 +53,10 @@
+>  		clock-frequency = <400000>;
+>  	};
+>  
+> +	harmony_audio: audio_card {
+> +		compatible = "nvidia,harmony-audio";
+> +	};
+> +
 
-Signed-off-by: John Bonesio<bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
----
+By convention, '_' is discouraged in the device tree names.  Following
+the generic names recommended practice, this node should be named
+simply 'sound'.
 
- arch/arm/boot/dts/tegra-harmony.dts |    6 ++++++
- sound/soc/codecs/wm8903.c           |    5 +++++
- sound/soc/tegra/harmony.c           |   37 ++++++++++++++++++-----------------
- 3 files changed, 30 insertions(+), 18 deletions(-)
+You can also squash these two patches together I think; it will make
+for a simpler patch overall.  Doing so would get rid of the temporary
+code that you need to resort to here.
 
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-index 217a7f0..fc61e02 100644
---- a/arch/arm/boot/dts/tegra-harmony.dts
-+++ b/arch/arm/boot/dts/tegra-harmony.dts
-@@ -55,6 +55,12 @@
- 
- 	harmony_audio: audio_card {
- 		compatible = "nvidia,harmony-audio";
-+
-+		gpios = <&codec 226 0>, /* spkr_en, gpio wm8903 #2 */
-+			<&gpio 178 0>, /* hp_det, gpio PW2 */
-+			<&gpio 184 0>, /* int_mic_en, gpio PX0 */
-+			<&gpio 185 0>; /* ext_mic_en, gpio PX1 */
-+
- 	};
- 
- 	serial@70006300 {
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index a10e3b9..9ad3532 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -1875,6 +1875,11 @@ static void wm8903_init_gpio(struct snd_soc_codec *codec)
- 			wm8903->gpio_chip.base = be32_to_cpup(prop);
- 	}
- 
-+#if defined(CONFIG_OF_GPIO)
-+	wm8903->gpio_chip.of_node = of_find_compatible_node(NULL, NULL,
-+						"wlf,wm8903");
-+#endif /* CONFIG_OF_GPIO */
-+
- 	ret = gpiochip_add(&wm8903->gpio_chip);
- 	if (ret != 0)
- 		dev_err(codec->dev, "Failed to add GPIOs: %d\n", ret);
-diff --git a/sound/soc/tegra/harmony.c b/sound/soc/tegra/harmony.c
-index faeec14..40c19f0 100644
---- a/sound/soc/tegra/harmony.c
-+++ b/sound/soc/tegra/harmony.c
-@@ -34,6 +34,7 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/gpio.h>
-+#include <linux/of_gpio.h>
- 
- #include <mach/harmony_audio.h>
- 
-@@ -52,18 +53,6 @@
- 
- #define DRV_NAME "tegra-snd-harmony"
- 
--/* temporary - info will go into device tree */
--#define TEGRA_GPIO_PW2          178
--#define TEGRA_GPIO_PX0          184
--#define TEGRA_GPIO_PX1          185
--
--#define HARMONY_GPIO_WM8903(_x_)	(TEGRA_NR_GPIOS + (_x_))
--#define TEGRA_GPIO_SPKR_EN		HARMONY_GPIO_WM8903(2)
--#define TEGRA_GPIO_HP_DET		TEGRA_GPIO_PW2
--#define TEGRA_GPIO_INT_MIC_EN		TEGRA_GPIO_PX0
--#define TEGRA_GPIO_EXT_MIC_EN		TEGRA_GPIO_PX1
--/* end temporary */
--
- #define GPIO_SPKR_EN    BIT(0)
- #define GPIO_INT_MIC_EN BIT(1)
- #define GPIO_EXT_MIC_EN BIT(2)
-@@ -213,6 +202,18 @@ static int harmony_asoc_init(struct snd_soc_pcm_runtime *rtd)
- 	struct harmony_audio_platform_data *pdata = harmony->pdata;
- 	int ret;
- 
-+	if (pdata->gpio_spkr_en == -1)
-+		pdata->gpio_spkr_en = of_get_gpio(card->dev->of_node, 0);
-+
-+	if (pdata->gpio_hp_det == -1)
-+		pdata->gpio_hp_det = of_get_gpio(card->dev->of_node, 1);
-+
-+	if (pdata->gpio_int_mic_en == -1)
-+		pdata->gpio_int_mic_en = of_get_gpio(card->dev->of_node, 2);
-+
-+	if (pdata->gpio_ext_mic_en == -1)
-+		pdata->gpio_ext_mic_en = of_get_gpio(card->dev->of_node, 3);
-+
- 	ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
- 	if (ret) {
- 		dev_err(card->dev, "cannot get spkr_en gpio\n");
-@@ -299,12 +300,12 @@ static struct snd_soc_card snd_soc_harmony = {
- 	.num_links = 1,
- };
- 
--/* temporary - put this into the device tree */
-+/* empty pdata struct - filled in with device tree properties */
- static struct harmony_audio_platform_data harmony_audio_pdata = {
--	.gpio_spkr_en		= TEGRA_GPIO_SPKR_EN,
--	.gpio_hp_det		= TEGRA_GPIO_HP_DET,
--	.gpio_int_mic_en	= TEGRA_GPIO_INT_MIC_EN,
--	.gpio_ext_mic_en	= TEGRA_GPIO_EXT_MIC_EN,
-+	.gpio_spkr_en		= -1,
-+	.gpio_hp_det		= -1,
-+	.gpio_int_mic_en	= -1,
-+	.gpio_ext_mic_en	= -1,
- };
- 
- static __devinit int tegra_snd_harmony_probe(struct platform_device *pdev)
-@@ -328,7 +329,7 @@ static __devinit int tegra_snd_harmony_probe(struct platform_device *pdev)
- #endif
- 
- 	if (pdev->dev.of_node) {
--		pdev->dev.platform_data = &harmony_audio_pdata; /* temporary */
-+		pdev->dev.platform_data = &harmony_audio_pdata;
- 		pdata = pdev->dev.platform_data;
- 	} else {
- 		pdata = pdev->dev.platform_data;
+>  	serial@70006300 {
+>  		status = "ok";
+>  		clock-frequency = < 216000000 >;
+> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+> index c498e84..a569ad9 100644
+> --- a/arch/arm/mach-tegra/board-dt.c
+> +++ b/arch/arm/mach-tegra/board-dt.c
+> @@ -56,6 +56,9 @@ static struct platform_device *tegra250_devices[] __initdata = {
+>  	&tegra_i2c_device2,
+>  	&tegra_i2c_device3,
+>  	&tegra_i2c_device4,
+> +	&tegra_i2s_device1,
+> +	&tegra_das_device,
+> +	&tegra_pcm_device,
+>  };
+>  
+>  static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+> diff --git a/sound/soc/tegra/harmony.c b/sound/soc/tegra/harmony.c
+> index f225087..faeec14 100644
+> --- a/sound/soc/tegra/harmony.c
+> +++ b/sound/soc/tegra/harmony.c
+> @@ -52,6 +52,18 @@
+>  
+>  #define DRV_NAME "tegra-snd-harmony"
+>  
+> +/* temporary - info will go into device tree */
+> +#define TEGRA_GPIO_PW2          178
+> +#define TEGRA_GPIO_PX0          184
+> +#define TEGRA_GPIO_PX1          185
+> +
+> +#define HARMONY_GPIO_WM8903(_x_)	(TEGRA_NR_GPIOS + (_x_))
+> +#define TEGRA_GPIO_SPKR_EN		HARMONY_GPIO_WM8903(2)
+> +#define TEGRA_GPIO_HP_DET		TEGRA_GPIO_PW2
+> +#define TEGRA_GPIO_INT_MIC_EN		TEGRA_GPIO_PX0
+> +#define TEGRA_GPIO_EXT_MIC_EN		TEGRA_GPIO_PX1
+> +/* end temporary */
+> +
+>  #define GPIO_SPKR_EN    BIT(0)
+>  #define GPIO_INT_MIC_EN BIT(1)
+>  #define GPIO_EXT_MIC_EN BIT(2)
+> @@ -287,6 +299,14 @@ static struct snd_soc_card snd_soc_harmony = {
+>  	.num_links = 1,
+>  };
+>  
+> +/* temporary - put this into the device tree */
+> +static struct harmony_audio_platform_data harmony_audio_pdata = {
+> +	.gpio_spkr_en		= TEGRA_GPIO_SPKR_EN,
+> +	.gpio_hp_det		= TEGRA_GPIO_HP_DET,
+> +	.gpio_int_mic_en	= TEGRA_GPIO_INT_MIC_EN,
+> +	.gpio_ext_mic_en	= TEGRA_GPIO_EXT_MIC_EN,
+> +};
+> +
+
+Yes, you should not need a static structure here.  All the data is
+dynamic.
+
+>  static __devinit int tegra_snd_harmony_probe(struct platform_device *pdev)
+>  {
+>  	struct snd_soc_card *card = &snd_soc_harmony;
+> @@ -307,10 +327,15 @@ static __devinit int tegra_snd_harmony_probe(struct platform_device *pdev)
+>  	}
+>  #endif
+>  
+> -	pdata = pdev->dev.platform_data;
+> -	if (!pdata) {
+> -		dev_err(&pdev->dev, "no platform data supplied\n");
+> -		return -EINVAL;
+> +	if (pdev->dev.of_node) {
+> +		pdev->dev.platform_data = &harmony_audio_pdata; /* temporary */
+> +		pdata = pdev->dev.platform_data;
+
+This is actually a bit dangerous, or at least a bad example.  In the
+dt case, the platform_data structure should be allocated per-instance.
+
+> +	} else {
+> +		pdata = pdev->dev.platform_data;
+> +		if (!pdata) {
+> +			dev_err(&pdev->dev, "no platform data supplied\n");
+> +			return -EINVAL;
+> +		}
+>  	}
+>  
+>  	harmony = kzalloc(sizeof(struct tegra_harmony), GFP_KERNEL);
+> @@ -374,11 +399,23 @@ static int __devexit tegra_snd_harmony_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +#if defined(CONFIG_OF)
+> +/* Match table for of_platform binding */
+> +static const struct of_device_id harmony_of_match[] __devinitconst = {
+> +	{ .compatible = "nvidia,harmony-audio", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, harmony_of_match);
+> +#endif
+> +
+>  static struct platform_driver tegra_snd_harmony_driver = {
+>  	.driver = {
+>  		.name = DRV_NAME,
+>  		.owner = THIS_MODULE,
+>  		.pm = &snd_soc_pm_ops,
+> +#if defined(CONFIG_OF)
+> +		.of_match_table = harmony_of_match,
+> +#endif
+
+The #ifdef() is no longer necessary here if you add an #else clause
+defining harmony_of_match to NULL above.
+
+In general, it is a good start.
+
+g.
