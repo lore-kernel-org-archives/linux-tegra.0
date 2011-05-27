@@ -1,32 +1,42 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: Tegra board updates for 2.6.40
-Date: Fri, 27 May 2011 09:24:12 -0700
-Message-ID: <BANLkTikFjz6QfsaHsMbzXeLLB8azOcdGBQ@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF0498A4870C@HQMAIL01.nvidia.com>
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: [RFC 0/2] ARM: Tegra: Device Tree: Audio
+Date: Fri, 27 May 2011 13:56:58 -0700
+Message-ID: <20110527205444.21000.90209.stgit@riker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0498A4870C-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 26, 2011 at 11:00 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Colin,
->
-> You had mentioned not taking any board updates for Tegra for 2.6.40.
->
-> Could you please consider taking at least the following one patch:
->
-> http://www.spinics.net/lists/linux-tegra/msg01396.html
->
-> This is a simple bug-fix rather than new feature etc. Without this,
-> audio on Harmony, which previously worked fine, fails to initialize
-> due to the conflicting attempted GPIO registrations. (I *think*
-> Harmony still boots OK without the fix, but I vaguely remember
-> the fix being needed just to boot, but I'm probably wrong about that)
->
-> Thanks!
+This patch series is continuing work to get board specific devices initialized
+from device tree nodes rather than using the current static platform_device
+registration.
 
-Sure, I can take bug fixes.
+This patch series is for comments only. It is not intended to be submitted as a
+patch at this time. I am looking for comments on the overall approach.
+
+This series is based upon an earlier RFC series I submitted around May 11th
+beginning with, "[RFC 0/3] ARM: Tegra: Device Tree: i2c & wm8903".
+I haven't yet addressed the replies to that earlier series, but I intend to.
+
+I am also aware that some of these files have changed since I've started on
+this work. I haven't yet rebased to the latest.
+
+---
+
+John Bonesio (2):
+      ARM:Tegra: Device Tree Support: Initialize the audio card from the device tree.
+      ARM:Tegra: Device Tree Support: Initialize audio card gpio's from the device tree.
+
+
+ arch/arm/boot/dts/tegra-harmony.dts |   10 ++++++++
+ arch/arm/mach-tegra/board-dt.c      |    3 ++
+ sound/soc/codecs/wm8903.c           |    5 ++++
+ sound/soc/tegra/harmony.c           |   46 ++++++++++++++++++++++++++++++++---
+ 4 files changed, 60 insertions(+), 4 deletions(-)
+
+-- 
+- John
