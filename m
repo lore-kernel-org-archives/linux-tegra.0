@@ -1,78 +1,48 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Subject: Re: [RFC 2/2] ARM:Tegra: Device Tree Support: Initialize audio card
  gpio's from the device tree.
-Date: Tue, 31 May 2011 11:03:24 +0100
-Message-ID: <20110531100324.GA7067@opensource.wolfsonmicro.com>
+Date: Tue, 31 May 2011 11:24:08 +0100
+Message-ID: <20110531102407.GD7067@opensource.wolfsonmicro.com>
 References: <20110527205444.21000.90209.stgit@riker>
  <20110527205721.21000.78599.stgit@riker>
  <20110528012427.GB5971@opensource.wolfsonmicro.com>
  <BANLkTinKLcYmStvBEGDcN84BapJXe5Y5bg@mail.gmail.com>
  <20110530033826.GE4130@opensource.wolfsonmicro.com>
  <20110530061155.GC23517@ponder.secretlab.ca>
- <1306797960.7481.640.camel@pasglop>
+ <4DE336A1.5040509@firmworks.com>
+ <20110530070138.GA5036@opensource.wolfsonmicro.com>
+ <1306798032.7481.641.camel@pasglop>
+ <20110530234909.GA3411@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1306797960.7481.640.camel@pasglop>
+In-Reply-To: <20110530234909.GA3411-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 31, 2011 at 09:26:00AM +1000, Benjamin Herrenschmidt wrote:
+On Mon, May 30, 2011 at 04:49:09PM -0700, Olof Johansson wrote:
 
-> The approach apple uses is interesting, where they essentially use
-> device-specific properties that contain a GPIO binding. For example, a
-> reset-gpio property, that points to the GPIO doing the reset, etc...
+> What I was not sure about was the use of having an array of unnamed
+> gpios as part of the consumer-side binding, where there's no logical
+> ordering between these entries.
 
-This is exactly what I'm suggesting; it seems like the immediately
-obvious approach to take and it's certainly exactly what happens with
-the existing platform data code.
+> In the sdhci case, there are three gpios; one to supply power to the slot;
+> one for card detect and one for write protect sense.
 
-> Or we could keep a gpio "map" and have a parallel property to name the
-> entries like I was originally thinking for the clocks.
+> In that case, it would make a whole lot more sense to have three separate
+> properties, say "power-gpio", "cd-gpio" and "wp-gpio", than an opaque array of
+> entries without description besides what comments are used in the dts file.
 
-Honestly this would never even have occurred to me; how would that look
-and what would the indirection buy us (perhaps seeing how it looks would
-make that obvious)?
+> That these in turn point just to gpio number <x> at controller <y> is OK with
+> me. Also, I can see cases where it makes sense to have more than one gpio
+> references in a property (i.e. busses), but only where there's either internal
+> ordering to them, or where ordering doesn't matter at all.
 
-> In any case, it's something that can reasonably easily be added on top
-> of the existing binding, and it would be much more productive Mark if
-> you actually proposed solutions rather than just opposing things :-) 
-
-I'm really sorry you feel this way.  All I'm doing here is looking at
-the existing platform data, looking at the device tree that's being
-proposed and saying "why can't we have something that's as usable as
-the platform data?" - I'd have thought that the suggestion was fairly
-obvious there.  Just looking at the code it's completely unclear why
-we'd even be doing the approach in the original patch in the first
-place, Olaf's post was the first I knew about there being some existing
-convention here.
-
-One of the problems with the device tree style stuff to people who
-haven't used it and can't actually work on it (in my case I have no
-systems which can actually boot with a device tree) is that there's this
-whole bunch of rules that are already in place that we don't know about
-which people just refer us to - witness Olaf's response further up the
-thread, he said he queried a similar issue with a SD driver and was
-apparently just told that this is the way the device tree does things.
-
-I would anticipate that especially in the early stages of rollout where
-device tree is only available on a very limited selection of platforms
-you're going to get a bunch of such feedback from maintainers can and
-should review the code but are doing so purely based on looking at the
-code they're seeing.  I've actually seen a bit of device tree stuff
-before but a lot of people won't have done so - if there's stuff people
-are querying you're going to have to explain things, even if they're
-well established device tree conventions.
-
-This is going to be one of the biggest challenges with rolling out
-device tree, both from the point of view of maintainers learning about
-how the device tree stuff should look and from the point of view of
-maintainers learning who to trust on device tree.  There's a few people
-like you and Grant that I know are really familiar with this stuff but
-there's also going to be a whole raft of new people submitting device
-tree support and if something looks off maintainers are going to have to
-work out if it's due to some peculiar device tree idiom or if it's just
-an issue in the patch.
+I agree strongly with this - there's a very good reason why this is the
+existing pattern for platform data.  There's other cases that are even
+worse than SDHCI where you can get a large number of potential outputs
+from a device that could be wired up, a vanishingly small number
+(possibly even none) of which will actually be used in a given system.
