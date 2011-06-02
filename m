@@ -1,48 +1,96 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC 2/2] ARM:Tegra: Device Tree Support: Initialize audio card
- gpio's from the device tree.
-Date: Thu, 2 Jun 2011 09:40:50 -0600
-Message-ID: <BANLkTinvdwDHtFQ=Pt5bh=OmMjkzffk8dw@mail.gmail.com>
-References: <20110530033826.GE4130@opensource.wolfsonmicro.com>
- <20110530061155.GC23517@ponder.secretlab.ca> <4DE336A1.5040509@firmworks.com>
- <20110530070138.GA5036@opensource.wolfsonmicro.com> <8d2515b13c817cc956b185d043bcef00@kernel.crashing.org>
- <BANLkTi=hkScxYpt449CQCky+bLU3UvkC_A@mail.gmail.com> <4DE403C5.7060003@firmworks.com>
- <74CDBE0F657A3D45AFBB94109FB122FF0498E1C22D@HQMAIL01.nvidia.com>
- <4DE536AD.5080200@firmworks.com> <74CDBE0F657A3D45AFBB94109FB122FF0498E1C3F5@HQMAIL01.nvidia.com>
- <20110601161856.GB15583@opensource.wolfsonmicro.com>
+Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
+ card from the device tree.
+Date: Thu, 2 Jun 2011 10:04:45 -0600
+Message-ID: <20110602160445.GA8373@ponder.secretlab.ca>
+References: <20110527205444.21000.90209.stgit@riker>
+ <20110527205706.21000.34832.stgit@riker>
+ <BANLkTi=NMjBjWVv_o3PocejhgGr8TdG+1Q@mail.gmail.com>
+ <BANLkTi=PtEhxxmZo2DqvmySCmnEd3LbezQ@mail.gmail.com>
+ <BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110601161856.GB15583-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 1, 2011 at 10:18 AM, Mark Brown
-<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
-> On Wed, Jun 01, 2011 at 08:59:55AM -0700, Stephen Warren wrote:
->
->> My perspective is that cut/pasting the entire SoC definition into a board
->> definition is the devicetree equivalent of having more than one driver
->> per chip, not sharing gpio/pinmux/... code, etc. in the kernel; the very
->> stuff that caused Linus to complain about the state of ARM Linux.
->
-> Very strongly agreed, we've had to do that in the past because of
-> limitations in the device tree infrastructure but if we end up having to
-> cut'n'paste that's not going to be great for maintainability.
+On Thu, Jun 02, 2011 at 05:07:02PM +0800, Barry Song wrote:
+> 2011/6/2 Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>:
+> > On Wed, Jun 1, 2011 at 1:07 AM, Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrot=
+e:
+> >> 2011/5/28 John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>:
+> >>> This patch makes it so the top level audio card is initialized fr=
+om the device
+> >>> tree. This is just the first step getting the audio complex of de=
+vices
+> >>> iniialized from device tree nodes.
+> >>>
+> >>> Signed-off-by: John Bonesio<bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> >>> ---
+> >>>
+> >>> =A0arch/arm/boot/dts/tegra-harmony.dts | =A0 =A04 +++
+> >>> =A0arch/arm/mach-tegra/board-dt.c =A0 =A0 =A0| =A0 =A03 ++
+> >>> =A0sound/soc/tegra/harmony.c =A0 =A0 =A0 =A0 =A0 | =A0 45 +++++++=
++++++++++++++++++++++++++---
+> >>> =A03 files changed, 48 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/=
+dts/tegra-harmony.dts
+> >>> index 05521a5..217a7f0 100644
+> >>> --- a/arch/arm/boot/dts/tegra-harmony.dts
+> >>> +++ b/arch/arm/boot/dts/tegra-harmony.dts
+> >>> @@ -53,6 +53,10 @@
+> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clock-frequency =3D <400000>;
+> >>> =A0 =A0 =A0 =A0};
+> >>>
+> >>> + =A0 =A0 =A0 harmony_audio: audio_card {
+> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,harmony-audi=
+o";
+> >>> + =A0 =A0 =A0 };
+> >>> +
+> >>> =A0 =A0 =A0 =A0serial@70006300 {
+> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0status =3D "ok";
+> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clock-frequency =3D < 216000000 >;
+> >>> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra=
+/board-dt.c
+> >>> index c498e84..a569ad9 100644
+> >>> --- a/arch/arm/mach-tegra/board-dt.c
+> >>> +++ b/arch/arm/mach-tegra/board-dt.c
+> >>> @@ -56,6 +56,9 @@ static struct platform_device *tegra250_devices=
+[] __initdata =3D {
+> >>> =A0 =A0 =A0 =A0&tegra_i2c_device2,
+> >>> =A0 =A0 =A0 =A0&tegra_i2c_device3,
+> >>> =A0 =A0 =A0 =A0&tegra_i2c_device4,
+> >>> + =A0 =A0 =A0 &tegra_i2s_device1,
+> >>> + =A0 =A0 =A0 &tegra_das_device,
+> >>> + =A0 =A0 =A0 &tegra_pcm_device,
+> >>
+> >> i am thinking whether platform_device should be created by
+> >> of_platform_device_create after scanning device tree, but not by
+> >> hard-code? looks like the two patches are only trying to let devic=
+e
+> >> tree deliver gpio to drivers?
+> >
+> > Can you please restate your question? =A0I don't think I understand=
+ what
+> > you are trying to ask.
+>=20
+> i mean we don't need to have this platform device registerred by the
+> old way here. we may get it by matching information in dts and delete
+> all platform_device and related codes in arch/arm. For example:
 
-+2
+Ah, I see what you mean.  Yes, it is ultimately the goal to register
+all the device from data in the device tree, but we're taking things
+one step at a time.  For this series, it is expedient to register the
+on-chip devices, and to move to dynamic registration later.
 
-cut'n'paste is not an option.  period.  :-)
+Right now we can't do dynamic registration for on-chip devices in a
+lot of cases because we don't have the infrastructure to hook up the
+associated struct clks.
 
 g.
-
-
->
-
-
-
--- 
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
