@@ -1,114 +1,70 @@
-From: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
- card from the device tree.
-Date: Fri, 3 Jun 2011 00:21:50 +0800
-Message-ID: <BANLkTikGp_O-Wd3nMhbV+-RLeXZoWeB6eQ@mail.gmail.com>
-References: <20110527205444.21000.90209.stgit@riker> <20110527205706.21000.34832.stgit@riker>
- <BANLkTi=NMjBjWVv_o3PocejhgGr8TdG+1Q@mail.gmail.com> <BANLkTi=PtEhxxmZo2DqvmySCmnEd3LbezQ@mail.gmail.com>
- <BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ@mail.gmail.com> <20110602160445.GA8373@ponder.secretlab.ca>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [RFC 3/3] ARM:Tegra: Device Tree Support: Initialize from wm8903
+ the device tree
+Date: Thu, 2 Jun 2011 10:46:18 -0600
+Message-ID: <BANLkTimqf+BC=R3qRn3z3eKOjNXohGUsHA@mail.gmail.com>
+References: <20110511231905.10362.12844.stgit@riker> <20110511232711.10362.53256.stgit@riker>
+ <20110512074917.GA16250@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110602160445.GA8373-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+In-Reply-To: <20110512074917.GA16250-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2011/6/3 Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+On Thu, May 12, 2011 at 1:49 AM, Mark Brown
+<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On Wed, May 11, 2011 at 04:27:18PM -0700, John Bonesio wrote:
+>> - =A0 =A0 if (pdata && pdata->gpio_base)
+>> + =A0 =A0 wm8903->gpio_chip.base =3D -1;
+>> + =A0 =A0 if (pdata && pdata->gpio_base) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 wm8903->gpio_chip.base =3D pdata->gpio_b=
+ase;
+>> - =A0 =A0 else
+>> - =A0 =A0 =A0 =A0 =A0 =A0 wm8903->gpio_chip.base =3D -1;
+>> + =A0 =A0 } else if (codec->dev->of_node) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 prop =3D of_get_property(codec->dev->of_no=
+de, "gpio-base", NULL);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (prop)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 wm8903->gpio_chip.base =3D=
+ be32_to_cpup(prop);
+>> + =A0 =A0 }
 >
-> On Thu, Jun 02, 2011 at 05:07:02PM +0800, Barry Song wrote:
-> > 2011/6/2 Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>:
-> > > On Wed, Jun 1, 2011 at 1:07 AM, Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wr=
-ote:
-> > >> 2011/5/28 John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>:
-> > >>> This patch makes it so the top level audio card is initialized =
-from the device
-> > >>> tree. This is just the first step getting the audio complex of =
-devices
-> > >>> iniialized from device tree nodes.
-> > >>>
-> > >>> Signed-off-by: John Bonesio<bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> > >>> ---
-> > >>>
-> > >>> =C2=A0arch/arm/boot/dts/tegra-harmony.dts | =C2=A0 =C2=A04 +++
-> > >>> =C2=A0arch/arm/mach-tegra/board-dt.c =C2=A0 =C2=A0 =C2=A0| =C2=A0=
- =C2=A03 ++
-> > >>> =C2=A0sound/soc/tegra/harmony.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 | =C2=A0 45 ++++++++++++++++++++++++++++++++---
-> > >>> =C2=A03 files changed, 48 insertions(+), 4 deletions(-)
-> > >>>
-> > >>> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boo=
-t/dts/tegra-harmony.dts
-> > >>> index 05521a5..217a7f0 100644
-> > >>> --- a/arch/arm/boot/dts/tegra-harmony.dts
-> > >>> +++ b/arch/arm/boot/dts/tegra-harmony.dts
-> > >>> @@ -53,6 +53,10 @@
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0clock-fr=
-equency =3D <400000>;
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0};
-> > >>>
-> > >>> + =C2=A0 =C2=A0 =C2=A0 harmony_audio: audio_card {
-> > >>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 compatible =3D=
- "nvidia,harmony-audio";
-> > >>> + =C2=A0 =C2=A0 =C2=A0 };
-> > >>> +
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0serial@70006300 {
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0status =3D=
- "ok";
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0clock-fr=
-equency =3D < 216000000 >;
-> > >>> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-teg=
-ra/board-dt.c
-> > >>> index c498e84..a569ad9 100644
-> > >>> --- a/arch/arm/mach-tegra/board-dt.c
-> > >>> +++ b/arch/arm/mach-tegra/board-dt.c
-> > >>> @@ -56,6 +56,9 @@ static struct platform_device *tegra250_devic=
-es[] __initdata =3D {
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0&tegra_i2c_device2,
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0&tegra_i2c_device3,
-> > >>> =C2=A0 =C2=A0 =C2=A0 =C2=A0&tegra_i2c_device4,
-> > >>> + =C2=A0 =C2=A0 =C2=A0 &tegra_i2s_device1,
-> > >>> + =C2=A0 =C2=A0 =C2=A0 &tegra_das_device,
-> > >>> + =C2=A0 =C2=A0 =C2=A0 &tegra_pcm_device,
-> > >>
-> > >> i am thinking whether platform_device should be created by
-> > >> of_platform_device_create after scanning device tree, but not by
-> > >> hard-code? looks like the two patches are only trying to let dev=
-ice
-> > >> tree deliver gpio to drivers?
-> > >
-> > > Can you please restate your question? =C2=A0I don't think I under=
-stand what
-> > > you are trying to ask.
-> >
-> > i mean we don't need to have this platform device registerred by th=
-e
-> > old way here. we may get it by matching information in dts and dele=
-te
-> > all platform_device and related codes in arch/arm. For example:
->
-> Ah, I see what you mean. =C2=A0Yes, it is ultimately the goal to regi=
-ster
-> all the device from data in the device tree, but we're taking things
-> one step at a time. =C2=A0For this series, it is expedient to registe=
-r the
-> on-chip devices, and to move to dynamic registration later.
->
-> Right now we can't do dynamic registration for on-chip devices in a
-> lot of cases because we don't have the infrastructure to hook up the
-> associated struct clks.
-Arnd has required me to use device tree in our new SoC for the coming
-upstream. so i am trying to define a property like clock =3D "uart" in
-dts. then in drivers,
-i get this  string by:
-clk =3D of_get_property(np, "clock", NULL);
-then request this clock by clk_get().
+> We have to do manual endianness conversions to read from the device
+> tree? =A0Oh, well.
 
-it does work for the moment, but maybe is not what you like :-)
+Yeah, it's not great.  I'd really like to have a set of helper
+functions that locate and decode the data for the most common types of
+properties, but I've not sat down to focus on it and I've not seen a
+pattern I'm happy with yet.  It does need to be solved though.  The
+issue is I want something that handles fetching the property, error
+checking and decoding, all in a consistent way so that it actually
+reduces the amount of parsing code required.
 
->
-> g.
->
->
+Perhaps something like:
+
+/* Not sure about this; in this case the return value is an error code
+so that bad properties can be detected */
+int dt_decode_cell(struct *property, int index, u32 *out_val);
+int dt_decode_string(struct *property, int index, char **out_val);
+int dt_decode_number(struct *property, int start, int len, unsigned
+long long *out_val);
+
+and perhaps a set of companion functions:
+int dt_get_prop_cell(struct *device_node, char *propname, int index,
+u32 *out_val);
+int dt_get_prop_string(struct *device_node, char *propname, int index,
+char **out_val);
+int dt_get_prop_number(struct *device_node, char *propname, int start,
+int len, unsigned long long *out_val);
+
+The first set would be used when the property pointer has already be
+obtained, and multiple datum need to be extracted.  The second would
+be most useful when only one value will be extracted from a property.
+I'm not totally happy with returning the value via a passed in pointer
+though.  Thoughts?
+
+g.
