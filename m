@@ -1,98 +1,59 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
-	card from the device tree.
-Date: Fri, 3 Jun 2011 07:20:09 +0100
-Message-ID: <20110603062009.GD10532@n2100.arm.linux.org.uk>
-References: <20110527205444.21000.90209.stgit@riker>
-	<20110527205706.21000.34832.stgit@riker>
-	<BANLkTi=NMjBjWVv_o3PocejhgGr8TdG+1Q@mail.gmail.com>
-	<BANLkTi=PtEhxxmZo2DqvmySCmnEd3LbezQ@mail.gmail.com>
-	<BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ@mail.gmail.com>
-	<20110602160445.GA8373@ponder.secretlab.ca>
-	<BANLkTikGp_O-Wd3nMhbV+-RLeXZoWeB6eQ@mail.gmail.com>
-	<20110602214322.GC10532@n2100.arm.linux.org.uk>
-	<BANLkTikiaA3CCRAXkB=x56wtt8nNF9dqxA@mail.gmail.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [RFC 3/3] ARM:Tegra: Device Tree Support: Initialize from wm8903
+ the device tree
+Date: Fri, 3 Jun 2011 10:06:00 +0100
+Message-ID: <20110603090600.GC21286@opensource.wolfsonmicro.com>
+References: <20110511231905.10362.12844.stgit@riker>
+ <20110511232711.10362.53256.stgit@riker>
+ <20110512074917.GA16250@opensource.wolfsonmicro.com>
+ <BANLkTimqf+BC=R3qRn3z3eKOjNXohGUsHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <BANLkTikiaA3CCRAXkB=x56wtt8nNF9dqxA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <BANLkTimqf+BC=R3qRn3z3eKOjNXohGUsHA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 03, 2011 at 10:32:52AM +0800, Barry Song wrote:
-> but there is really no an unified rule by now, for exmaple, samsung
-> just required platform device names matched with the string parameter
-> to get a clock.
-> it looks like clk_get in plat-samsung depends on the string more than
-> device and the clock name is in SoC level.
+On Thu, Jun 02, 2011 at 10:46:18AM -0600, Grant Likely wrote:
 
-Samsung has been broken in respect of this for quite some time, and I've
-been nagging Ben about it ever since I provided clkdev.  The problem is
-that Ben doesn't have the time to fix Samsung...
+> Yeah, it's not great.  I'd really like to have a set of helper
+> functions that locate and decode the data for the most common types of
+> properties, but I've not sat down to focus on it and I've not seen a
+> pattern I'm happy with yet.  It does need to be solved though.  The
 
-> same situation for mach-at91/clock.c:
-> 
-> /* clocks cannot be de-registered no refcounting necessary */
-> struct clk *clk_get(struct device *dev, const char *id)
-> {
->         struct clk *clk;
-> 
->         list_for_each_entry(clk, &clocks, node) {
->                 if (strcmp(id, clk->name) == 0)
->                         return clk;
->                 if (clk->function && (dev == clk->dev) && strcmp(id,
-> clk->function) == 0)
->                         return clk;
->         }
-> 
->         return ERR_PTR(-ENOENT);
-> }
-> EXPORT_SYMBOL(clk_get);
+Yes, looking at the examples you've got below it looks like you've got a
+similar set of issues to the ones that I've been running into trying to
+factor the register map access code out of ASoC.
 
-That's broken, and it's incompatible with DT in any case because the
-only way to set 'clk->dev' is to have devices statically declared.
+> Perhaps something like:
 
-OMAP used to be broken until I converted it to clkdev, and when I did
-their drivers became more simple because they didn't need to ifdef
-clocknames and such like.
+> /* Not sure about this; in this case the return value is an error code
+> so that bad properties can be detected */
+> int dt_decode_cell(struct *property, int index, u32 *out_val);
+> int dt_decode_string(struct *property, int index, char **out_val);
+> int dt_decode_number(struct *property, int start, int len, unsigned
+> long long *out_val);
 
-> msm required device struct matched:
-> struct clk *clk_get(struct device *dev, const char *id)
-> {
->         struct clk *clk;
-> 
->         mutex_lock(&clocks_mutex);
-> 
->         list_for_each_entry(clk, &clocks, list)
->                 if (!strcmp(id, clk->name) && clk->dev == dev)
->                         goto found_it;
-> 
->         list_for_each_entry(clk, &clocks, list)
->                 if (!strcmp(id, clk->name) && clk->dev == NULL)
->                         goto found_it;
-> 
->         clk = ERR_PTR(-ENOENT);
-> found_it:
->         mutex_unlock(&clocks_mutex);
->         return clk;
-> }
-> EXPORT_SYMBOL(clk_get);
+> and perhaps a set of companion functions:
+> int dt_get_prop_cell(struct *device_node, char *propname, int index,
+> u32 *out_val);
+> int dt_get_prop_string(struct *device_node, char *propname, int index,
+> char **out_val);
+> int dt_get_prop_number(struct *device_node, char *propname, int start,
+> int len, unsigned long long *out_val);
 
-Again, that's incompatible with DT in any case, as we don't know what
-'clk->dev' would be if the devices aren't statically declared.  So this
-is broken too.
+> The first set would be used when the property pointer has already be
+> obtained, and multiple datum need to be extracted.  The second would
+> be most useful when only one value will be extracted from a property.
+> I'm not totally happy with returning the value via a passed in pointer
+> though.  Thoughts?
 
-Each need to be converted to clkdev _before_ they even start thinking
-about device trees.
+Yes, I think this sort of format with the error out of band from the
+number is best if a little ugly, and especially the second set is
+definitely going to cut down the amount of boiler plate code.  It's a
+little painful having to pass a pointer to the result but otherwise the
+error handling gets a bit rubbish, especially for the numbers where
+there really isn't a sensible invalid value.
