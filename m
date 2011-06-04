@@ -1,33 +1,29 @@
-From: Colin Cross <ccross@google.com>
-Subject: ARM Tegra fixes for 3.0-rc2
-Date: Sat, 4 Jun 2011 15:59:56 -0700
-Message-ID: <BANLkTikqRkiRKVBsAfEmrO+O9m19KEMzBg@mail.gmail.com>
+From: =?UTF-8?Q? "=C2=A92011.Coca-Cola_Great_Britain" ?=
+	<info-4AlSaMP/b0NPYcu2f3hruQ@public.gmane.org>
+Subject: (no subject)
+Date: Sat, 04 Jun 2011 11:30:48 +0200
+Message-ID: <d8b9d2f9883188bc047f5385adf89c83__28299.9228373685$1307244298$gmane$org@localhost>
+Reply-To: jim-gardner.c-EMRzualFZlQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>, lkml <linux-kernel@vger.kernel.org>, lakml <linux-arm-kernel@lists-infradead.org>, linux-tegra <linux-tegra@vger.kernel.org>, Erik
-Cc: Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Linus,
-Please pull one fix for Tegra from:
 
- git://android.git.kernel.org/kernel/tegra.git for-linus
 
-Thanks,
-Colin
 
-The following changes since commit 55922c9d1b84b89cb946c777fddccb3247e7df2c:
-
-  Linux 3.0-rc1 (2011-05-29 17:43:36 -0700)
-
-are available in the git repository at:
-  git://android.git.kernel.org/kernel/tegra.git for-linus
-
-Stephen Warren (1):
-      ARM: Tegra: Harmony: Fix conflicting GPIO numbering
-
- arch/arm/mach-tegra/board-harmony-power.c |    4 +++-
- arch/arm/mach-tegra/board-harmony.h       |    3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+-- 
+04-06-20011
+Your Mail-ID has been awarded 750,000.00 GBP From The Coca-Cola Online
+Bonanza 2011. For claims send
+Name:
+Address:
+Phone No:
+Age: Sex:
+Occupation:
+Country:
+Contact: Mr. Jim Gardner
+Claims department : jim-gardner.c-EMRzualFZlQ@public.gmane.org
+TEL: +44 755 284 8328
