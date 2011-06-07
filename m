@@ -1,80 +1,84 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] i2c: tegra: Assign unused slave address
-Date: Mon,  6 Jun 2011 11:25:19 -0600
-Message-ID: <1307381119-26079-1-git-send-email-swarren@nvidia.com>
+From: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
+ card from the device tree.
+Date: Tue, 7 Jun 2011 11:44:01 +0800
+Message-ID: <BANLkTik=Drbr4dQMYE3VLcjuxe+fZ--6RQ@mail.gmail.com>
+References: <20110527205444.21000.90209.stgit@riker> <20110527205706.21000.34832.stgit@riker>
+ <BANLkTi=NMjBjWVv_o3PocejhgGr8TdG+1Q@mail.gmail.com> <BANLkTi=PtEhxxmZo2DqvmySCmnEd3LbezQ@mail.gmail.com>
+ <BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ@mail.gmail.com> <20110602160445.GA8373@ponder.secretlab.ca>
+ <20110602213656.GB10532@n2100.arm.linux.org.uk> <BANLkTimavC-6oMhAHHsBJ2_Em7aXi7eyNQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <BANLkTimavC-6oMhAHHsBJ2_Em7aXi7eyNQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra, we should always use the "new" I2C slave controller, to avoid
-issues with the old controller. This was implemented in commit 65a1a0a
-"i2c: tegra: Enable new slave mode."
+2011/6/3 Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> 2011/6/3 Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>:
+>> On Thu, Jun 02, 2011 at 10:04:45AM -0600, Grant Likely wrote:
+>>> Right now we can't do dynamic registration for on-chip devices in a
+>>> lot of cases because we don't have the infrastructure to hook up th=
+e
+>>> associated struct clks.
+>>
+>> I've been wondering about this, and I don't see it as a blocking pro=
+blem
+>> as you seem to be.
+>>
+>> I assume platform devices have stable names when they're created fro=
+m
+>> the device tree? =C2=A0If yes, there's no problem having the DT star=
+t to
+>> describe the SoC specific devices _today_ - all that the clk API usi=
+ng
+>> clkdev requires is a stable device name.
+>
+> when i write the following nodes in dts,
+>
+> uart0: uart@0xb0060000 {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0compatible =3D "sirf,uart";
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0...
+> }
+>
+> uart1: uart@0xb0050000 {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0compatible =3D "sirf,uart";
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0...
+> }
+>
+> uart2: uart@0xb0070000 {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0compatible =3D "sirf,uart";
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0...
+> }
+>
+> then create these platform devices by of_platform_xxx things, i get
+> some platform devices like the below.
+>
+> b0060000.uart
+> b0050000.uart
+> b0070000.uart
+>
+> so these are the "stable names" you are talking about? or something e=
+lse?
 
-There is currently no driver for the Tegra I2C slave controller upstream.
-Additionally, the controller cannot be completely disabled. Instead, we
-need to:
+if so, we will need some clk_lookup table like:
 
-a) Set I2C_SL_CNFG_NACK to make the controller automatically NACK any
-incoming transactions.
+#define CLK(_clk, _devname, _conname)                   \
+        {                                               \
+                .clk    =3D &clk_##_clk,                  \
+                .dev_id =3D _devname,                     \
+                .con_id =3D _conname,                     \
+        }
 
-b) The controller's definition of NACK isn't identical to the I2C
-protocol's definition. Specifically, it will perform a standard NACK, but
-*also* continue to hold the clock line low in expectation of receiving
-more data. This can hang the bus, or at least cause transaction timeouts,
-if something starts a transaction that matches the controller's slave
-address. Since the default address is 0x00, the general call address,
-this does occur in practice.
+CLK(uart0,      "b0060000.uart",        NULL),
+CLK(uart1,      "b0050000.uart",        NULL),
+CLK(uart2,      "b0070000.uart",        NULL),
 
-To avoid this, we explicitly program a slave address that is reserved for
-future expansion. For current boards, this guarantees the address will
-never be used. If a future board ever needs to use this address, we can
-add platform data to determine a board-specific safe address. 0xfc is
-picked by this patch.
+it looks not like what we want too.
 
-This patch is based on a change previously posted by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-http://www.spinics.net/lists/linux-i2c/msg05437.html
-In turned based on internal changes by: Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-A semantically equivalent change has been contained in the various
-ChromeOS kernels for a while.
-
-I tested this change on top of 3.0-rc2 on Harmony, and interacted with
-the WM8903 I2C-based audio codec.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c |    8 +++++++-
- 1 files changed, 7 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 4d93196..fb3b4f8 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -40,8 +40,10 @@
- #define I2C_CNFG_NEW_MASTER_FSM			(1<<11)
- #define I2C_STATUS				0x01C
- #define I2C_SL_CNFG				0x020
-+#define I2C_SL_CNFG_NACK			(1<<1)
- #define I2C_SL_CNFG_NEWSL			(1<<2)
- #define I2C_SL_ADDR1				0x02c
-+#define I2C_SL_ADDR2				0x030
- #define I2C_TX_FIFO				0x050
- #define I2C_RX_FIFO				0x054
- #define I2C_PACKET_TRANSFER_STATUS		0x058
-@@ -337,7 +339,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 
- 	if (!i2c_dev->is_dvc) {
- 		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
--		i2c_writel(i2c_dev, sl_cfg | I2C_SL_CNFG_NEWSL, I2C_SL_CNFG);
-+		sl_cfg |= I2C_SL_CNFG_NACK | I2C_SL_CNFG_NEWSL;
-+		i2c_writel(i2c_dev, sl_cfg, I2C_SL_CNFG);
-+		i2c_writel(i2c_dev, 0xfc, I2C_SL_ADDR1);
-+		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
-+
- 	}
- 
- 	val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
--- 
-1.7.0.4
+>
+>>
+>
