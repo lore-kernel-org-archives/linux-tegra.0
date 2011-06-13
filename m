@@ -1,23 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] PCI: Make the struct pci_dev * argument of
- pci_fixup_irqs const.
-Date: Sat, 11 Jun 2011 16:01:19 -0700 (PDT)
-Message-ID: <20110611.160119.176399204911265689.davem@davemloft.net>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH] PCI: Make the struct pci_dev * argument of pci_fixup_irqs
+	const.
+Date: Mon, 13 Jun 2011 13:24:10 +0900
+Message-ID: <20110613042410.GB29731@linux-sh.org>
 References: <20110610143021.GA26043@linux-mips.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
 In-Reply-To: <20110610143021.GA26043@linux-mips.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-To: ralf@linux-mips.org
-Cc: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, avorontsov@mvista.com, cmetcalf@tilera.com, ccross@android.com, eric.y.miao@gmail.com, konkers@android.com, gxt@mprc.pku.edu.cn, hpa@zytor.com, kaloz@openwrt.org, mingo@redhat.com, ink@jurassic.park.msu.ru, khc@pm.waw.pl, kernel@wantstofly.org, mattst88@gmail.com, nico@fluxnic.net, olof@lixom.net, lethal@linux-sh.org, rth@twiddle.net, linux@arm.linux.org.uk, tglx@linutronix.de, akpm@linux-foundation.org, linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Anton Vorontsov <avorontsov@mvista.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Lennert Buytenhek <kernel@wantstofly.org>, Russell King <linux@arm.linux.org.uk>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, Chris Metcalf <cmetcalf@tilera.com>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Richard Henderson <rth@twiddle.net>, Eric Miao <eric.y.miao@gmail.com>, Erik Gilling <konkers@android.com>, Nicolas Pitre <nico@fluxnic.net>, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Andr
 List-Id: linux-tegra@vger.kernel.org
 
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Fri, 10 Jun 2011 15:30:21 +0100
-
+On Fri, Jun 10, 2011 at 03:30:21PM +0100, Ralf Baechle wrote:
 > Aside of the usual motivation for constification,  this function has a
 > history of being abused a hook for interrupt and other fixups so I turned
 > this function const ages ago in the MIPS code but it should be done
@@ -28,4 +34,4 @@ Date: Fri, 10 Jun 2011 15:30:21 +0100
 > 
 > Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Acked-by: Paul Mundt <lethal@linux-sh.org>
