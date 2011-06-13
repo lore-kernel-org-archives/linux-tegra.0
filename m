@@ -1,29 +1,22 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: [PATCH] PCI: Make the struct pci_dev * argument of pci_fixup_irqs
-	const.
-Date: Mon, 13 Jun 2011 13:24:10 +0900
-Message-ID: <20110613042410.GB29731@linux-sh.org>
+From: Guan Xuetao <gxt@mprc.pku.edu.cn>
+Subject: Re: [PATCH] PCI: Make the struct pci_dev * argument of
+ pci_fixup_irqs const.
+Date: Mon, 13 Jun 2011 17:00:44 +0800
+Message-ID: <1307955644.1878.5.camel@epip-laptop>
 References: <20110610143021.GA26043@linux-mips.org>
+Reply-To: gxt@mprc.pku.edu.cn
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
+Return-path: <linux-mips-bounce@linux-mips.org>
 In-Reply-To: <20110610143021.GA26043@linux-mips.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
 To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Anton Vorontsov <avorontsov@mvista.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Lennert Buytenhek <kernel@wantstofly.org>, Russell King <linux@arm.linux.org.uk>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, Chris Metcalf <cmetcalf@tilera.com>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Richard Henderson <rth@twiddle.net>, Eric Miao <eric.y.miao@gmail.com>, Erik Gilling <konkers@android.com>, Nicolas Pitre <nico@fluxnic.net>, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Andr
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Anton Vorontsov <avorontsov@mvista.com>, Chris Metcalf <cmetcalf@tilera.com>, Colin Cross <ccross@android.com>, "David S. Miller" <davem@davemloft.net>, Eric Miao <eric.y.miao@gmail.com>, Erik Gilling <konkers@android.com>, "H. Peter Anvin" <hpa@zytor.com>, Imre Kaloz <kaloz@openwrt.org>, Ingo Molnar <mingo@redhat.com>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Krzysztof Halasa <khc@pm.waw.pl>, Lennert Buytenhek <kernel@wantstofly.org>, Matt Turner <mattst88@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, Olof Johansson <olof@lixom.net>, Paul Mundt <lethal@linux-sh.org>, Richard Henderson <rth@twiddle.net>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutron>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 10, 2011 at 03:30:21PM +0100, Ralf Baechle wrote:
+On Fri, 2011-06-10 at 15:30 +0100, Ralf Baechle wrote:
 > Aside of the usual motivation for constification,  this function has a
 > history of being abused a hook for interrupt and other fixups so I turned
 > this function const ages ago in the MIPS code but it should be done
@@ -33,5 +26,37 @@ On Fri, Jun 10, 2011 at 03:30:21PM +0100, Ralf Baechle wrote:
 > had to be constified as well.
 > 
 > Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-
-Acked-by: Paul Mundt <lethal@linux-sh.org>
+> To: Anton Vorontsov <avorontsov@mvista.com>
+> To: Chris Metcalf <cmetcalf@tilera.com>
+> To: Colin Cross <ccross@android.com>
+> To: "David S. Miller" <davem@davemloft.net>
+> To: Eric Miao <eric.y.miao@gmail.com>
+> To: Erik Gilling <konkers@android.com>
+> To: Guan Xuetao <gxt@mprc.pku.edu.cn>
+> To: "H. Peter Anvin" <hpa@zytor.com>
+> To: Imre Kaloz <kaloz@openwrt.org>
+> To: Ingo Molnar <mingo@redhat.com>
+> To: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> To: Jesse Barnes <jbarnes@virtuousgeek.org>
+> To: Krzysztof Halasa <khc@pm.waw.pl>
+> To: Lennert Buytenhek <kernel@wantstofly.org>
+> To: Matt Turner <mattst88@gmail.com>
+> To: Nicolas Pitre <nico@fluxnic.net>
+> To: Olof Johansson <olof@lixom.net>
+> To: Paul Mundt <lethal@linux-sh.org>
+> To: Richard Henderson <rth@twiddle.net>
+> To: Russell King <linux@arm.linux.org.uk>
+> To: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: x86@kernel.org
+> ---
+For UniCore32 related codes:
+Acked-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
