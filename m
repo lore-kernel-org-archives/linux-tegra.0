@@ -1,100 +1,75 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] i2c: tegra: Assign unused slave address
-Date: Mon, 13 Jun 2011 09:03:52 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04992C01A0@HQMAIL01.nvidia.com>
-References: <1307381119-26079-1-git-send-email-swarren@nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [RFC 1/2] ARM:Tegra: Device Tree Support: Initialize the audio
+ card from the device tree.
+Date: Tue, 14 Jun 2011 09:42:11 -0600
+Message-ID: <20110614154211.GA1839@ponder.secretlab.ca>
+References: <20110527205444.21000.90209.stgit@riker>
+ <20110527205706.21000.34832.stgit@riker>
+ <BANLkTi=NMjBjWVv_o3PocejhgGr8TdG+1Q@mail.gmail.com>
+ <BANLkTi=PtEhxxmZo2DqvmySCmnEd3LbezQ@mail.gmail.com>
+ <BANLkTikWpiY_o27OF-Jxvq7iPeWzrAYOsQ@mail.gmail.com>
+ <20110602160445.GA8373@ponder.secretlab.ca>
+ <20110602213656.GB10532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1307381119-26079-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20110602213656.GB10532-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Monday, June 06, 2011 11:25 AM:
-> On Tegra, we should always use the "new" I2C slave controller, to avoid
-> issues with the old controller. This was implemented in commit 65a1a0a
-> "i2c: tegra: Enable new slave mode."
+On Thu, Jun 02, 2011 at 10:36:56PM +0100, Russell King - ARM Linux wrote:
+> On Thu, Jun 02, 2011 at 10:04:45AM -0600, Grant Likely wrote:
+> > Right now we can't do dynamic registration for on-chip devices in a
+> > lot of cases because we don't have the infrastructure to hook up the
+> > associated struct clks.
 > 
-> There is currently no driver for the Tegra I2C slave controller upstream.
-> Additionally, the controller cannot be completely disabled. Instead, we
-> need to:
+> I've been wondering about this, and I don't see it as a blocking problem
+> as you seem to be.
 > 
-> a) Set I2C_SL_CNFG_NACK to make the controller automatically NACK any
-> incoming transactions.
-> 
-> b) The controller's definition of NACK isn't identical to the I2C
-> protocol's definition. Specifically, it will perform a standard NACK, but
-> *also* continue to hold the clock line low in expectation of receiving
-> more data. This can hang the bus, or at least cause transaction timeouts,
-> if something starts a transaction that matches the controller's slave
-> address. Since the default address is 0x00, the general call address,
-> this does occur in practice.
-> 
-> To avoid this, we explicitly program a slave address that is reserved for
-> future expansion. For current boards, this guarantees the address will
-> never be used. If a future board ever needs to use this address, we can
-> add platform data to determine a board-specific safe address. 0xfc is
-> picked by this patch.
+> I assume platform devices have stable names when they're created from
+> the device tree?  If yes, there's no problem having the DT start to
+> describe the SoC specific devices _today_ - all that the clk API using
+> clkdev requires is a stable device name.
 
-Ben,
+Yes, the name is stable, but the name isn't the same as what board
+support code currently uses for statically registered
+platform_devices, and when I started on this work my goal has been to
+have as little impact on existing platform support code.  I certainly
+didn't want two sets of clock registrations, one with the names that
+statically allocated platform devices use and one with the DT
+generated names.
 
-Does this patch look OK? I'd categorize it as a bug-fix. Could it go into
-3.0?
+One solution would have been to add a "linux,devname" property or
+something similar to each device node, but one of the things I'm very
+careful about is to strongly avoid encoding Linux specific
+implementation details into the DT.  History has shown that internal
+details are subject to change over time, so there is less chance of
+breaking a DT platform if the description is focused on the HW.  The
+name Linux needs to hook up {clocks,regulators,etc} to a device very
+much falls into this category.
 
-Thanks.
+That said, I stepped back and took another look at the problem after
+receiving your email, and I've been looking at it all wrong.  I did
+actually had a solution that matched up static device registrations
+to DT nodes (of_platform_prepare()), but it was complex and ugly so I
+wasn't very excited about it.
 
-> This patch is based on a change previously posted by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> http://www.spinics.net/lists/linux-i2c/msg05437.html
-> In turned based on internal changes by: Bharat Nihalani
-> <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> A semantically equivalent change has been contained in the various
-> ChromeOS kernels for a while.
-> 
-> I tested this change on top of 3.0-rc2 on Harmony, and interacted with
-> the WM8903 I2C-based audio codec.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-tegra.c |    8 +++++++-
->  1 files changed, 7 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-
-> tegra.c
-> index 4d93196..fb3b4f8 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -40,8 +40,10 @@
->  #define I2C_CNFG_NEW_MASTER_FSM			(1<<11)
->  #define I2C_STATUS				0x01C
->  #define I2C_SL_CNFG				0x020
-> +#define I2C_SL_CNFG_NACK			(1<<1)
->  #define I2C_SL_CNFG_NEWSL			(1<<2)
->  #define I2C_SL_ADDR1				0x02c
-> +#define I2C_SL_ADDR2				0x030
->  #define I2C_TX_FIFO				0x050
->  #define I2C_RX_FIFO				0x054
->  #define I2C_PACKET_TRANSFER_STATUS		0x058
-> @@ -337,7 +339,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev
-> *i2c_dev)
-> 
->  	if (!i2c_dev->is_dvc) {
->  		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
-> -		i2c_writel(i2c_dev, sl_cfg | I2C_SL_CNFG_NEWSL, I2C_SL_CNFG);
-> +		sl_cfg |= I2C_SL_CNFG_NACK | I2C_SL_CNFG_NEWSL;
-> +		i2c_writel(i2c_dev, sl_cfg, I2C_SL_CNFG);
-> +		i2c_writel(i2c_dev, 0xfc, I2C_SL_ADDR1);
-> +		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
-> +
->  	}
-> 
->  	val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
-> --
-> 1.7.0.4
+However, I've got a patch now that solves the problem in a much nicer
+way.  If Linux needs specific devices to have specific names, then it
+can pass in a lookup table that matches DT nodes to device names,
+which is considerably simpler and it leaves the platform setup code in
+control over how devices get instantiated.  I'll post the patches today
+or tomorrow.
 
--- 
-nvpublic
+So, basically, all my problems on obtaining clocks are now completely
+gone.  :-)
+
+Ultimately, this is a short-term solution that allows devices to get
+described in the DT without having to implement clock mappings at the
+same time.  When clock mappings also get moved to the device tree, the
+need for the lookup table simply goes away.
+
+g.
