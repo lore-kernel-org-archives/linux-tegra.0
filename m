@@ -1,46 +1,44 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/1] fix compilation with binutils 2.21
-Date: Tue, 21 Jun 2011 11:35:03 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049D2EB8E8@HQMAIL01.nvidia.com>
-References: <ada666126c7d574b5ca808dca32850b1a2ae3422.1308679260.git.marvin24@gmx.de>
+From: KOSAKI Motohiro <kosaki.motohiro-+CUm20s59erQFUHtdCDX3A@public.gmane.org>
+Subject: [PATCH 1/3] arm,tegra: replace cpu_set() with modern api
+Date: Thu, 23 Jun 2011 17:28:28 +0900
+Message-ID: <4E02F92C.7070203@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ada666126c7d574b5ca808dca32850b1a2ae3422.1308679260.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kosaki.motohiro-+CUm20s59erQFUHtdCDX3A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietrich wrote at Tuesday, June 21, 2011 12:31 PM:
-> binutils since version 2.21 is more pedantic regarding naming and will wail if
-> e.g. the name of a function is not exactly the same as in the ENDPROC directive.
+cpu_set() is marked as obsolete cpumask function and we plan to
+remove it in future.
 
-Colin, FYI, this issue was also recently discovered internally at NVIDIA, and the
-same fix was derived and validated.
+This patch replace it with modern cpumask function.
 
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/headsmp-t2.S |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/headsmp-t2.S b/arch/arm/mach-tegra/headsmp-t2.S
-> index 9da0ed6..a550cb7 100644
-> --- a/arch/arm/mach-tegra/headsmp-t2.S
-> +++ b/arch/arm/mach-tegra/headsmp-t2.S
-> @@ -108,7 +108,7 @@ __restart_plls:
->  	/* FIXME: need to record actual power transition here */
->  	mov	r0, #0
->  	b	__cortex_a9_l2x0_restart
-> -ENDPROC(__restart_pllx)
-> +ENDPROC(__restart_plls)
->  /*
->   *	__enable_coresite_access
->   *
-> --
-> 1.7.4.1
+Signed-off-by: KOSAKI Motohiro <kosaki.motohiro-+CUm20s59erQFUHtdCDX3A@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+---
+ arch/arm/mach-tegra/platsmp.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index b8ae3c9..468523c 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -122,7 +122,7 @@ void __init smp_init_cpus(void)
+ 	}
+
+ 	for (i = 0; i < ncores; i++)
+-		cpu_set(i, cpu_possible_map);
++		set_cpu_possible(i, true);
+
+ 	set_smp_cross_call(gic_raise_softirq);
+ }
 -- 
-nvpublic
+1.7.3.1
