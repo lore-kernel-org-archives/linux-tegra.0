@@ -1,148 +1,213 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC 2/2] ARM:Tegra: Device Tree Support: Initialize audio card
- gpio's from the device tree.
-Date: Tue, 28 Jun 2011 15:39:20 -0600
-Message-ID: <BANLkTi=1wHXzFqLJrF77t3Z9grye8pA-Mw@mail.gmail.com>
-References: <20110527205444.21000.90209.stgit@riker> <20110527205721.21000.78599.stgit@riker>
- <20110528012427.GB5971@opensource.wolfsonmicro.com> <BANLkTinKLcYmStvBEGDcN84BapJXe5Y5bg@mail.gmail.com>
- <20110530033826.GE4130@opensource.wolfsonmicro.com> <20110530061155.GC23517@ponder.secretlab.ca>
- <4DE336A1.5040509@firmworks.com> <20110530070138.GA5036@opensource.wolfsonmicro.com>
- <8d2515b13c817cc956b185d043bcef00@kernel.crashing.org> <BANLkTi=hkScxYpt449CQCky+bLU3UvkC_A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BANLkTi=hkScxYpt449CQCky+bLU3UvkC_A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Olof Johansson <olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] arm: platsmp: Allow secondary cpu hotplug with maxcpus=1
+Date: Wed, 29 Jun 2011 11:31:39 -0700
+Message-ID: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 30, 2011 at 1:20 PM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
-> On Mon, May 30, 2011 at 12:54 PM, Segher Boessenkool
-> <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org> wrote:
->>>> I'm currently dealing with an SoC that has over a hundred GPIOs.
->>>> Whatever we choose, I think it should be able to handle an insane
->>>> number of GPIOs without getting any more cumbersome that is
->>>> necessary.
->>>
->>> This is *consumer* side GPIOs, not bindings for the device providin=
-g the
->>> GPIOs. =A0If a single device needs to use hundreds of GPIOs I'd exp=
-ect
->>> many of them will be block functions so you'd have a binding with a=
-n
->>> array for things like "databus" and "addrbus".
->>
->> But please name them like "databus-gpio", so that it is obvious what=
- it
->> is. =A0Also have to think about how this will work with multiple GPI=
-O
->> controllers: do you require the GPIO controller node to be part of e=
-very
->> GPIO description, or do you do some "gpio-parent" scheme as well, ho=
-w
->> does that interact with not having a single array of GPIOs?
->>
->> Better write this down as a binding, before committing to it :-)
->
-> Here's my thinking: Exactly the same binding for "gpios" as is now,
-> except can use different property names, like "chipsel-gpios" or
-> "wp-gpio". =A0Here is a draft patch to the binding:
+If an ARM system has multiple cpus in the same socket and the
+kernel is booted with maxcpus=1, secondary cpus are possible but
+not present due to how platform_smp_prepare_cpus() is called.
+Fix this by always calling platform_smp_prepare_cpus() as long as
+max_cpus is non-zero (0 means no SMP) to allow platform code to
+decide if any non-boot cpus are present in the system. Since
+all current platform code doesn't support physical hotplug we
+have a situation where possible == present and thus we can
+simply copy the possible map to the present map.
 
-I know there is still some debate on this, but I'm going to go ahead
-and commit this extension since it draws naturally from what we're
-already using, and it does not preclude doing a node binding at some
-point in the future.
+With this patch it's possible to boot an ARM system with
+maxcpus=1 on the command line and then hotplug in secondary cpus
+via sysfs. This is more in line with how x86 works with maxcpus=1
+on the command line.
 
-g.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
 
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt
-> b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index edaa84d..21dd4f9 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -4,17 +4,45 @@ Specifying GPIO information for devices
-> =A01) gpios property
-> =A0-----------------
->
-> -Nodes that makes use of GPIOs should define them using `gpios' prope=
-rty,
-> -format of which is: <&gpio-controller1-phandle gpio1-specifier
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0&gpio-controller2-phandle gp=
-io2-specifier
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00 /* holes are permitted, me=
-ans no GPIO 3 */
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0&gpio-controller4-phandle gp=
-io4-specifier
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0...>;
-> +Nodes that makes use of GPIOs should specify them using one or more
-> +properties, each containing a 'gpio-list':
->
-> -Note that gpio-specifier length is controller dependent.
-> + =A0 =A0 =A0 gpio-list ::=3D <single-gpio> [gpio-list]
-> + =A0 =A0 =A0 single-gpio ::=3D <gpio-phandle> <gpio-specifier>
-> + =A0 =A0 =A0 gpio-phandle : phandle to gpio controller node
-> + =A0 =A0 =A0 gpio-specifier : Array of #gpio-cells specifying specif=
-ic gpio
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(controller specific=
-)
-> +
-> +GPIO properties should be named either "gpios" or "*-gpio". =A0Exact
-> +meaning of each gpio property must be documented in the device tree
-> +binding for each device.
-> +
-> +For example, the following could be used to describe gpios pins to u=
-se
-> +as chip select lines; with chip selects 0, 1 and 3 populated, and ch=
-ip
-> +select 2 left empty:
-> +
-> + =A0 =A0 =A0 gpio1: gpio1 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio-controller
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0#gpio-cells =3D <2>;
-> + =A0 =A0 =A0 };
-> + =A0 =A0 =A0 gpio2: gpio2 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio-controller
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0#gpio-cells =3D <1>;
-> + =A0 =A0 =A0 };
-> + =A0 =A0 =A0 [...]
-> + =A0 =A0 =A0 =A0chipsel-gpio =3D <&gpio1 12 0>,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <&gpio1 13 0>,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <0>, /* holes are permi=
-tted, means no GPIO 2 */
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <&gpio2 2>;
-> +
-> +Note that gpio-specifier length is controller dependent. =A0In the
-> +above example, &gpio1 uses 2 cells to specify a gpio, while &gpio2
-> +only uses one.
->
-> =A0gpio-specifier may encode: bank, pin position inside the bank,
-> =A0whether pin is open-drain and whether pin is logically inverted.
-> +Exact meaning of each specifier cell is controller specific, and mus=
-t
-> +be documented in the device tree binding for the device.
->
-> =A0Example of the node using GPIOs:
->
-> @@ -28,8 +56,8 @@ and empty GPIO flags as accepted by the "qe_pio_e"
-> gpio-controller.
-> =A02) gpio-controller nodes
-> =A0------------------------
->
-> -Every GPIO controller node must have #gpio-cells property defined,
-> -this information will be used to translate gpio-specifiers.
-> +Every GPIO controller node must both an empty "gpio-controller"
-> +property, and have #gpio-cells contain the size of the gpio-specifie=
-r.
->
-> =A0Example of two SOC GPIO banks defined as gpio-controller nodes:
->
+This patch was tested along with an MSM patch:
 
+  https://lkml.org/lkml/2011/4/7/354
 
+I don't have any non-MSM hardware to test on so Acks and
+tested-bys are welcome.
 
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+ arch/arm/kernel/smp.c             |    3 +--
+ arch/arm/mach-exynos4/platsmp.c   |    5 +----
+ arch/arm/mach-msm/platsmp.c       |    5 +----
+ arch/arm/mach-omap2/omap-smp.c    |    5 +----
+ arch/arm/mach-realview/platsmp.c  |    5 +----
+ arch/arm/mach-shmobile/platsmp.c  |    5 +----
+ arch/arm/mach-tegra/platsmp.c     |    5 +----
+ arch/arm/mach-ux500/platsmp.c     |    5 +----
+ arch/arm/mach-vexpress/ct-ca9x4.c |    5 +----
+ 9 files changed, 9 insertions(+), 34 deletions(-)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index e7f92a4..fbaa24a 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -365,8 +365,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	 */
+ 	if (max_cpus > ncores)
+ 		max_cpus = ncores;
+-
+-	if (max_cpus > 1) {
++	if (ncores > 1 && max_cpus) {
+ 		/*
+ 		 * Enable the local timer or broadcast device for the
+ 		 * boot CPU, but only if we have more than one CPU.
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+index c5e65a0..3f870d2 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -154,14 +154,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-msm/platsmp.c b/arch/arm/mach-msm/platsmp.c
+index 2034098..84e293f 100644
+--- a/arch/arm/mach-msm/platsmp.c
++++ b/arch/arm/mach-msm/platsmp.c
+@@ -157,12 +157,9 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ }
+diff --git a/arch/arm/mach-omap2/omap-smp.c b/arch/arm/mach-omap2/omap-smp.c
+index ecfe93c..5895d19 100644
+--- a/arch/arm/mach-omap2/omap-smp.c
++++ b/arch/arm/mach-omap2/omap-smp.c
+@@ -125,14 +125,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	/*
+ 	 * Initialise the SCU and wake up the secondary core using
+diff --git a/arch/arm/mach-realview/platsmp.c b/arch/arm/mach-realview/platsmp.c
+index 963bf0d..00666be 100644
+--- a/arch/arm/mach-realview/platsmp.c
++++ b/arch/arm/mach-realview/platsmp.c
+@@ -68,14 +68,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
+index f3888fe..ca5b523 100644
+--- a/arch/arm/mach-shmobile/platsmp.c
++++ b/arch/arm/mach-shmobile/platsmp.c
+@@ -64,10 +64,7 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	shmobile_smp_prepare_cpus();
+ }
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index b8ae3c9..f11426a 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -129,14 +129,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base);
+ }
+diff --git a/arch/arm/mach-ux500/platsmp.c b/arch/arm/mach-ux500/platsmp.c
+index 0c527fe..4509b7d 100644
+--- a/arch/arm/mach-ux500/platsmp.c
++++ b/arch/arm/mach-ux500/platsmp.c
+@@ -172,14 +172,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base_addr());
+ 	wakeup_secondary();
+diff --git a/arch/arm/mach-vexpress/ct-ca9x4.c b/arch/arm/mach-vexpress/ct-ca9x4.c
+index 765a71f..c7cd438 100644
+--- a/arch/arm/mach-vexpress/ct-ca9x4.c
++++ b/arch/arm/mach-vexpress/ct-ca9x4.c
+@@ -229,10 +229,7 @@ static void ct_ca9x4_init_cpu_map(void)
+ 
+ static void ct_ca9x4_smp_enable(unsigned int max_cpus)
+ {
+-	int i;
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
+-
++	init_cpu_present(&cpu_possible_map);
+ 	scu_enable(MMIO_P2V(A9_MPCORE_SCU));
+ }
+ #endif
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
