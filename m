@@ -1,37 +1,28 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] arm: platsmp: Allow secondary cpu hotplug with	maxcpus=1
-Date: Thu, 30 Jun 2011 09:36:20 -0700
-Message-ID: <4E0CA604.5080802@codeaurora.org>
-References: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org> <20110630131154.GJ23312@n2100.arm.linux.org.uk>
+From: "PROF.MAURICE IWU" <iwumaurice900-OuV/mKzhOIQ@public.gmane.org>
+Subject: Equity Business Investment
+Date: Thu, 30 Jun 2011 19:08:00 +0200
+Message-ID: <EXCHANGE03QLVpSlSt7000005f7__20403.6116520458$1309453707$gmane$org@exchange03.2besource.com>
+Reply-To: <profmauriceiwu2221-/E1597aS9LR3+QwDJ9on6Q@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+	charset="Windows-1251"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20110630131154.GJ23312@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/30/2011 6:11 AM, Russell King - ARM Linux wrote:
-> On Wed, Jun 29, 2011 at 11:31:39AM -0700, Stephen Boyd wrote:
->>  void __init platform_smp_prepare_cpus(unsigned int max_cpus)
->>  {
->> -	int i;
->> -
->>  	/*
->>  	 * Initialise the present map, which describes the set of CPUs
->>  	 * actually populated at the present time.
->>  	 */
->> -	for (i = 0; i < max_cpus; i++)
->> -		set_cpu_present(i, true);
->> +	init_cpu_present(&cpu_possible_map);
-> Ok, if we're now doing this in every platform, it might as well go into
-> arch/arm/kernel/smp.c - platforms can re-initialize the present map
-> in this callback if they need to do something different.
+Equity Business Investment
+From Prof. Maurice Iwu 
 
-That sounds better. V2 coming soon.
+Dear Friend,
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+I am Prof. Maurice M. Iwu, Former Chairman Independent Electoral Commission 
+(INEC).Currently, I am on compulsory terminal leave presently in UK , 
+leading up to my final retirement from public service.
+
+I am seeking your partnership in a mutual benefit project involving 
+investing into your company and secondly on properties and to be precise Estate Development or any other profitable venture of your great idea for our mutual benefit of Equity Market Investment.,
+
+Sincerely,
+Prof. Maurice M.Iwu.
+{INEC.}
