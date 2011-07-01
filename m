@@ -1,28 +1,37 @@
-From: "PROF.MAURICE IWU" <iwumaurice900-OuV/mKzhOIQ@public.gmane.org>
-Subject: Equity Business Investment
-Date: Thu, 30 Jun 2011 19:08:00 +0200
-Message-ID: <EXCHANGE03QLVpSlSt7000005f7__20403.6116520458$1309453707$gmane$org@exchange03.2besource.com>
-Reply-To: <profmauriceiwu2221-/E1597aS9LR3+QwDJ9on6Q@public.gmane.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] ASoC: Tegra: Fixes and SPDIF support
+Date: Fri,  1 Jul 2011 13:56:12 -0600
+Message-ID: <1309550175-30551-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Equity Business Investment
-From Prof. Maurice Iwu 
+A couple of small bug-fixes for the existing Tegra SPDIF support, and
+a new SPDIF driver.
 
-Dear Friend,
+I've tested the SPDIF driver on Harmony. However, I'm not submitting the
+ASoC machine support patch for inclusion in mainline, since it relies on
+the board files registering some new platform devices, and we can't
+upstream any board file changes right now. Still, this may be useful for
+other board vendors to start working with internally.
 
-I am Prof. Maurice M. Iwu, Former Chairman Independent Electoral Commission 
-(INEC).Currently, I am on compulsory terminal leave presently in UK , 
-leading up to my final retirement from public service.
+For people interested in testing/using this, I can push the branch I used
+for testing this on Harmony publicly sometime next week, hopefully. That
+branch contains the board changes to support this, and the machine driver
+change.
 
-I am seeking your partnership in a mutual benefit project involving 
-investing into your company and secondly on properties and to be precise Estate Development or any other profitable venture of your great idea for our mutual benefit of Equity Market Investment.,
+Stephen Warren (3):
+  ASoC: Tegra: I2S: Ensure clock is enabled when writing regs
+  ASoC: Tegra: I2S: s/clk_get_sys/clk_get/
+  ASoC: Tegra: Implement SPDIF CPU DAI
 
-Sincerely,
-Prof. Maurice M.Iwu.
-{INEC.}
+ sound/soc/tegra/Kconfig       |    9 +
+ sound/soc/tegra/Makefile      |    2 +
+ sound/soc/tegra/tegra_i2s.c   |   10 +-
+ sound/soc/tegra/tegra_spdif.c |  371 ++++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_spdif.h |  473 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 862 insertions(+), 3 deletions(-)
+ create mode 100644 sound/soc/tegra/tegra_spdif.c
+ create mode 100644 sound/soc/tegra/tegra_spdif.h
