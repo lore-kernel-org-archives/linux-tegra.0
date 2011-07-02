@@ -1,44 +1,31 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3] ASoC: Tegra: I2S: s/clk_get_sys/clk_get/
-Date: Fri,  1 Jul 2011 13:56:14 -0600
-Message-ID: <1309550175-30551-3-git-send-email-swarren@nvidia.com>
-References: <1309550175-30551-1-git-send-email-swarren@nvidia.com>
+From: Mike Rapoport <mike.rapoport-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter functionality
+Date: Sat, 2 Jul 2011 22:00:53 +0300
+Message-ID: <BANLkTimPRk+zffVCix=X+YBhzqatTo0CCg@mail.gmail.com>
+References: <1302691521-19096-1-git-send-email-mike@compulab.co.il>
+	<4DBFBEAD.2080103@compulab.co.il>
+	<20110504215133.GY15795@trinity.fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1309550175-30551-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20110504215133.GY15795-SMNkleLxa3Z6Wcw2j4pizdi2O/JbrIOy@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The clock needed by the I2S driver is associated with the I2S device name
-in the standard fashion. Hence, use clk_get(dev) instead of clk_get_sys(clk_name).
+Hi Ben,
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- sound/soc/tegra/tegra_i2s.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+On Thu, May 5, 2011 at 12:51 AM, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org> wrote:
+> On Tue, May 03, 2011 at 11:37:01AM +0300, Mike Rapoport wrote:
+>> Hi Ben,
+>> Any comments on this?
+>>
+>
+> I think this is ok, but will check tomorrow
 
-diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
-index 95f03c1..f36b996 100644
---- a/sound/soc/tegra/tegra_i2s.c
-+++ b/sound/soc/tegra/tegra_i2s.c
-@@ -354,7 +354,6 @@ struct snd_soc_dai_driver tegra_i2s_dai[] = {
- static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
- {
- 	struct tegra_i2s * i2s;
--	char clk_name[12]; /* tegra-i2s.0 */
- 	struct resource *mem, *memregion, *dmareq;
- 	int ret;
- 
-@@ -389,8 +388,7 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
- 	}
- 	dev_set_drvdata(&pdev->dev, i2s);
- 
--	snprintf(clk_name, sizeof(clk_name), DRV_NAME ".%d", pdev->id);
--	i2s->clk_i2s = clk_get_sys(clk_name, NULL);
-+	i2s->clk_i2s = clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(i2s->clk_i2s)) {
- 		dev_err(&pdev->dev, "Can't retrieve i2s clock\n");
- 		ret = PTR_ERR(i2s->clk_i2s);
+Any chance you can at last merge this patch?
+
 -- 
-1.7.0.4
+Sincerely Yours,
+Mike.
