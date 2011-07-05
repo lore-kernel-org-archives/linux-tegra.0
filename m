@@ -1,23 +1,57 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2] ASoC: Tegra: Implement SPDIF CPU DAI
-Date: Tue, 5 Jul 2011 12:25:06 -0700
-Message-ID: <20110705192505.GA8642@opensource.wolfsonmicro.com>
-References: <1309884927-8437-1-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] tty/serial: tegra: Use engineering names in DT compatible property
+Date: Tue,  5 Jul 2011 14:07:41 -0600
+Message-ID: <1309896461-21976-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1309884927-8437-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
+Cc: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 05, 2011 at 10:55:27AM -0600, Stephen Warren wrote:
-> This is a minimal driver for the Tegra SPDIF controller.
-> 
-> In hardware, the SPDIF output signal is always routed to any active HDMI
-> display controllers, and may also be routed to external pins on Tegra
-> using the pinmux.
+Engineering names are more stable than marketing names. Hence, use them
+for Device Tree compatible properties instead.
 
-Applied, thanks.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Greg, This builds on patches Grant has (or has said he will have) in his
+devicetree/next branch, so I assume this change would be merged through
+the same route.
+
+Grant, this patch is physically against devicetree/arm. The of-serial.txt
+change should also apply to devicetree/next as is, and you'd previously
+indicated that you'd queue the addition of the Tegra entry to of_serial.c
+in your devicetree/next branch, so this should apply on top of that once
+you have done so. Finally, this should go into devicetree/test too.
+
+ .../devicetree/bindings/tty/serial/of-serial.txt   |    2 +-
+ drivers/tty/serial/of_serial.c                     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/tty/serial/of-serial.txt b/Documentation/devicetree/bindings/tty/serial/of-serial.txt
+index 337a7e5..b8b27b0 100644
+--- a/Documentation/devicetree/bindings/tty/serial/of-serial.txt
++++ b/Documentation/devicetree/bindings/tty/serial/of-serial.txt
+@@ -8,7 +8,7 @@ Required properties:
+ 	- "ns16550"
+ 	- "ns16750"
+ 	- "ns16850"
+-	- "nvidia,tegra250-uart"
++	- "nvidia,tegra20-uart"
+ 	- "ibm,qpace-nwp-serial"
+ 	- "serial" if the port type is unknown.
+ - reg : offset and length of the register set for the device.
+diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
+index e65f1e8..e58cece 100644
+--- a/drivers/tty/serial/of_serial.c
++++ b/drivers/tty/serial/of_serial.c
+@@ -181,7 +181,7 @@ static struct of_device_id __devinitdata of_platform_serial_table[] = {
+ 	{ .compatible = "ns16550",  .data = (void *)PORT_16550, },
+ 	{ .compatible = "ns16750",  .data = (void *)PORT_16750, },
+ 	{ .compatible = "ns16850",  .data = (void *)PORT_16850, },
+-	{ .compatible = "nvidia,tegra250-uart", .data = (void *)PORT_TEGRA, },
++	{ .compatible = "nvidia,tegra20-uart", .data = (void *)PORT_TEGRA, },
+ #ifdef CONFIG_SERIAL_OF_PLATFORM_NWPSERIAL
+ 	{ .compatible = "ibm,qpace-nwp-serial",
+ 		.data = (void *)PORT_NWPSERIAL, },
+-- 
+1.7.0.4
