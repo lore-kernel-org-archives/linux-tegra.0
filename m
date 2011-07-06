@@ -1,41 +1,33 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 0/3] tegra: Use engineering names in DT compatible
- properties
-Date: Tue, 5 Jul 2011 23:55:39 -0600
-Message-ID: <20110706055539.GG9978@ponder.secretlab.ca>
-References: <1309897762-23564-1-git-send-email-swarren@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCHv2] arm: platsmp: Allow secondary cpu hotplug with
+	maxcpus=1
+Date: Wed, 6 Jul 2011 23:55:50 +0100
+Message-ID: <20110706225550.GA28957@n2100.arm.linux.org.uk>
+References: <1309886957-7548-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1309897762-23564-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+In-Reply-To: <1309886957-7548-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 05, 2011 at 02:29:19PM -0600, Stephen Warren wrote:
-> Grant, these 3 patches are for the devicetree/test branch. I kept them
-> separated in the hope they'll squash into existing patches already there.
-
-Thanks, I'll pick them up and squash them in.
-
-g.
-
+On Tue, Jul 05, 2011 at 10:29:17AM -0700, Stephen Boyd wrote:
+> If an ARM system has multiple cpus in the same socket and the
+> kernel is booted with maxcpus=1, secondary cpus are possible but
+> not present due to how platform_smp_prepare_cpus() is called.
+> Since most typical ARM processors don't actually support physical
+> hotplug, initialize the present map to be equal to the possible
+> map in generic ARM SMP code. Also, always call
+> platform_smp_prepare_cpus() as long as max_cpus is non-zero (0
+> means no SMP) to allow platform code to do any SMP setup.
 > 
-> Stephen Warren (3):
->   mmc/tegra: Use engineering names in DT compatible property
->   ARM: tegra: Use engineering names in DT compatible property
->   dt: docs: tegra: Use engineering names in DT compatible property
-> 
->  Documentation/devicetree/usage-model |   12 ++--
->  arch/arm/boot/dts/tegra-harmony.dts  |    4 +-
->  arch/arm/boot/dts/tegra-seaboard.dts |    4 +-
->  arch/arm/boot/dts/tegra20.dtsi       |  162 ++++++++++++++++++++++++++++++++++
->  arch/arm/boot/dts/tegra250.dtsi      |  162 ----------------------------------
->  arch/arm/mach-tegra/board-dt.c       |   32 ++++----
->  drivers/mmc/host/sdhci-pltfm.c       |    2 +-
->  7 files changed, 189 insertions(+), 189 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra20.dtsi
->  delete mode 100644 arch/arm/boot/dts/tegra250.dtsi
-> 
+> After applying this patch it's possible to boot an ARM system
+> with maxcpus=1 on the command line and then hotplug in secondary
+> cpus via sysfs. This is more in line with how x86 does things.
+
+Ok - how about putting this in the patch system?
+
+Thanks.
