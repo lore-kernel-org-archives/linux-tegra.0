@@ -1,55 +1,83 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC PATCH 1/5] OMAP3:I2C: Add device tree nodes for beagle board
-Date: Wed, 6 Jul 2011 18:12:49 -0600
-Message-ID: <CACxGe6u8qq7FA7kFXbU5uCk6m_GA8GWLqsdjFCXN+NMJfFKxmA@mail.gmail.com>
-References: <1309426647-31587-1-git-send-email-manjugk@ti.com>
- <1309426647-31587-2-git-send-email-manjugk@ti.com> <20110706185546.GJ4871@ponder.secretlab.ca>
- <74CDBE0F657A3D45AFBB94109FB122FF049E21C203@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Subject: [GIT PULL v3 1/3] ARM: tegra: trimslice: register i2c busses and devices
+Date: Thu,  7 Jul 2011 09:04:33 +0300
+Message-ID: <454e59fb2dee9c068d6ee11590738bc4013becb2.1309955711.git.mike@compulab.co.il>
+References: <cover.1309955711.git.mike@compulab.co.il>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E21C203-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <cover.1309955711.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "G, Manjunath Kondaiah" <manjugk-l0cyMroinI0@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 6, 2011 at 5:26 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
-te:
-> Grant Likely wrote at Wednesday, July 06, 2011 12:56 PM:
->> On Thu, Jun 30, 2011 at 03:07:23PM +0500, G, Manjunath Kondaiah wrot=
-e:
->> > Add I2C and it's child device nodes for beagle board.
->> > The I2C1 controller child devices are not populated and it
->> > should be handled along with OMAP clock changes.
-> ...
->> > diff --git a/arch/arm/boot/dts/omap3-beagle.dts b/arch/arm/boot/dt=
-s/omap3-beagle.dts
-> ...
->> > + =A0 i2c@48070000 {
-> ...
->> > + =A0 =A0 =A0 =A0 =A0 clock-frequency =3D <2600>;
->> > + =A0 =A0 =A0 =A0 =A0 status =3D "disabled";
->>
->> Drop 'status' when you move this node definition to
->> arch/arm/boot/dts/omap3.dtsi. =A0Board overlay files that include th=
-e
->> omap3.dtsi should explicitly disable any devices that it does not us=
-e
->> (which is opposite to what tegra currently does, but I'm going to
->> change that).
->
-> Purely out of idle curiosity: What's the benefit of one way over the =
-other?
+Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-trimslice.c |   39 +++++++++++++++++++++++++++++++++
+ 1 files changed, 39 insertions(+), 0 deletions(-)
 
-Mostly consistency.  Most of the experience we have with the flattened
-device tree up to this point hasn't bothered with the 'status'
-property.  It is only when AMP and hypervisors cam online that it
-became important to use a status property, and that only when the
-kernel needs to be told that the device does indeed exist, but it must
-not be touched.  I'd like to continue that pattern for new DT users
-with the default assumption that a device is enabled unless the board
-=2Edts explicitly disables it.
-
-g.
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index cda4cfd..dcf5fc5 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -23,6 +23,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/serial_8250.h>
+ #include <linux/io.h>
++#include <linux/i2c.h>
++#include <linux/i2c-tegra.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -77,6 +79,41 @@ static struct platform_device *trimslice_devices[] __initdata = {
+ 	&tegra_sdhci_device4,
+ };
+ 
++static struct tegra_i2c_platform_data trimslice_i2c1_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct tegra_i2c_platform_data trimslice_i2c2_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct tegra_i2c_platform_data trimslice_i2c3_platform_data = {
++	.bus_clk_rate   = 400000,
++};
++
++static struct i2c_board_info trimslice_i2c3_board_info[] = {
++	{
++		I2C_BOARD_INFO("tlv320aic23", 0x1a),
++	},
++	{
++		I2C_BOARD_INFO("em3027", 0x56),
++	},
++};
++
++static void trimslice_i2c_init(void)
++{
++	tegra_i2c_device1.dev.platform_data = &trimslice_i2c1_platform_data;
++	tegra_i2c_device2.dev.platform_data = &trimslice_i2c2_platform_data;
++	tegra_i2c_device3.dev.platform_data = &trimslice_i2c3_platform_data;
++
++	platform_device_register(&tegra_i2c_device1);
++	platform_device_register(&tegra_i2c_device2);
++	platform_device_register(&tegra_i2c_device3);
++
++	i2c_register_board_info(2, trimslice_i2c3_board_info,
++				ARRAY_SIZE(trimslice_i2c3_board_info));
++}
++
+ static void __init tegra_trimslice_fixup(struct machine_desc *desc,
+ 	struct tag *tags, char **cmdline, struct meminfo *mi)
+ {
+@@ -112,6 +149,8 @@ static void __init tegra_trimslice_init(void)
+ 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
+ 
+ 	platform_add_devices(trimslice_devices, ARRAY_SIZE(trimslice_devices));
++
++	trimslice_i2c_init();
+ }
+ 
+ MACHINE_START(TRIMSLICE, "trimslice")
+-- 
+1.7.3.1
