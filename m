@@ -1,87 +1,56 @@
 From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm: tegra: remove generic disp clock divisor flag
-Date: Sun, 10 Jul 2011 14:17:28 -0700
-Message-ID: <CAMbhsRR2iF_0z7eP_vBPk90u=Xj9WPgthLzaKhtsmwJZjU7+gA@mail.gmail.com>
-References: <1307498003-8550-1-git-send-email-rmorell@nvidia.com>
+Subject: Re: [GIT PULL v3 0/3] TrimSlice updates for 3.1
+Date: Sun, 10 Jul 2011 15:11:56 -0700
+Message-ID: <CAMbhsRQQf3VpxQ+oD_HJJ+2s+ciBQ+AgjHNYw1voPUMAYNaTJQ@mail.gmail.com>
+References: <cover.1309955711.git.mike@compulab.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1307498003-8550-1-git-send-email-rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <cover.1309955711.git.mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 7, 2011 at 6:53 PM, Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrot=
-e:
-> Although disp1 and disp2 have 7.1 divisors, their corresponding
-> registers in the clk_rst block are not the interface to program the
-> divisors. =A0Setting the generic DIV_U71 flag may cause the code to
-> attempt to program the clock at a different divisor, which will confu=
-se
-> any code attempting to use that clock since it isn't actually being
-> divided.
+On Wed, Jul 6, 2011 at 11:04 PM, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org> wr=
+ote:
+> Hi Colin,
+> Please consider pulling TrimSlice updates for 3.1 merge window.
+> These patches add registration of i2c, audio and USB devices.
 >
-> Signed-off-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> v3 changes:
+> - rebased on top of current Linus tree
 >
-> This bugfix applies to Linus's 2.6.39. =A0However, since no drivers a=
-re using
-> these clocks in that kernel, this should probably just be queued up f=
-or 3.0.
+> v2 changes:
+> - update CDEV1 pinmux as per Stephen suggestion
+> - use GPIO table for USB-related GPIOs
 >
-> It also applies to linux-tegra-2.6.3[69].
+> The following changes since commit a2fa83faf47b514ab947cea916d3691b66=
+525073:
 >
-> Thanks.
+> =A0Merge branch 'usb-linus' of git://git.kernel.org/pub/scm/linux/ker=
+nel/git/gregkh/usb-2.6 (2011-07-05 20:57:45 -0700)
 >
-> =A0arch/arm/mach-tegra/tegra2_clocks.c | =A0 =A04 ++--
-> =A01 files changed, 2 insertions(+), 2 deletions(-)
+> are available in the git repository at:
 >
-> diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegr=
-a/tegra2_clocks.c
-> index bb61807..0fe9b3e 100644
-> --- a/arch/arm/mach-tegra/tegra2_clocks.c
-> +++ b/arch/arm/mach-tegra/tegra2_clocks.c
-> @@ -2182,8 +2182,8 @@ struct clk tegra_list_clks[] =3D {
-> =A0 =A0 =A0 =A0PERIPH_CLK("tvo", =A0 =A0 =A0 "tvo", =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0NULL, =A0 49, =A0 =A0 0x188, =A0250000000, mux_pllp_pll=
-d_pllc_clkm, =A0 =A0 MUX | DIV_U71), /* requires min voltage */
-> =A0 =A0 =A0 =A0PERIPH_CLK("hdmi", =A0 =A0 =A0"hdmi", =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 NULL, =A0 51, =A0 =A0 0x18c, =A0600000000, mux_pllp_pll=
-d_pllc_clkm, =A0 =A0 MUX | DIV_U71), /* requires min voltage */
-> =A0 =A0 =A0 =A0PERIPH_CLK("tvdac", =A0 =A0 "tvdac", =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0NULL, =A0 53, =A0 =A0 0x194, =A0250000000, mux_pllp_plld_pl=
-lc_clkm, =A0 =A0 MUX | DIV_U71), /* requires min voltage */
-> - =A0 =A0 =A0 PERIPH_CLK("disp1", =A0 =A0 "tegradc.0", =A0 =A0 =A0 =A0=
- =A0 =A0NULL, =A0 27, =A0 =A0 0x138, =A0600000000, mux_pllp_plld_pllc_c=
-lkm, =A0 =A0 MUX | DIV_U71), /* scales with voltage and process_id */
-> - =A0 =A0 =A0 PERIPH_CLK("disp2", =A0 =A0 "tegradc.1", =A0 =A0 =A0 =A0=
- =A0 =A0NULL, =A0 26, =A0 =A0 0x13c, =A0600000000, mux_pllp_plld_pllc_c=
-lkm, =A0 =A0 MUX | DIV_U71), /* scales with voltage and process_id */
-> + =A0 =A0 =A0 PERIPH_CLK("disp1", =A0 =A0 "tegradc.0", =A0 =A0 =A0 =A0=
- =A0 =A0NULL, =A0 27, =A0 =A0 0x138, =A0600000000, mux_pllp_plld_pllc_c=
-lkm, =A0 =A0 MUX), /* scales with voltage and process_id */
-> + =A0 =A0 =A0 PERIPH_CLK("disp2", =A0 =A0 "tegradc.1", =A0 =A0 =A0 =A0=
- =A0 =A0NULL, =A0 26, =A0 =A0 0x13c, =A0600000000, mux_pllp_plld_pllc_c=
-lkm, =A0 =A0 MUX), /* scales with voltage and process_id */
-> =A0 =A0 =A0 =A0PERIPH_CLK("usbd", =A0 =A0 =A0"fsl-tegra-udc", =A0 =A0=
- =A0 =A0NULL, =A0 22, =A0 =A0 0, =A0 =A0 =A0480000000, mux_clk_m, =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 0), /* requires min voltage */
-> =A0 =A0 =A0 =A0PERIPH_CLK("usb2", =A0 =A0 =A0"tegra-ehci.1", =A0 =A0 =
-=A0 =A0 NULL, =A0 58, =A0 =A0 0, =A0 =A0 =A0480000000, mux_clk_m, =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 0), /* requires min voltage */
-> =A0 =A0 =A0 =A0PERIPH_CLK("usb3", =A0 =A0 =A0"tegra-ehci.2", =A0 =A0 =
-=A0 =A0 NULL, =A0 59, =A0 =A0 0, =A0 =A0 =A0480000000, mux_clk_m, =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 0), /* requires min voltage */
-> --
-> 1.7.3.4
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux-tegra.git=
+ trimslice/upstream
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> Mike Rapoport (3):
+> =A0 =A0 =A0ARM: tegra: trimslice: register i2c busses and devices
+> =A0 =A0 =A0ARM: tegra: trimslice: add audio devices and clocks
+> =A0 =A0 =A0ARM: tegra: trimslice: enable USB ports
+>
+> =A0arch/arm/mach-tegra/board-trimslice-pinmux.c | =A0 =A07 ++-
+> =A0arch/arm/mach-tegra/board-trimslice.c =A0 =A0 =A0 =A0| =A0 92 ++++=
+++++++++++++++++++++++
+> =A0arch/arm/mach-tegra/board-trimslice.h =A0 =A0 =A0 =A0| =A0 =A03 +
+> =A03 files changed, 100 insertions(+), 2 deletions(-)
 >
 
-Ack, putting in for-next for 3.1
+I pushed this series to for-next.
+
+I have some cleanup patches that go on top to reduce some of the
+duplicate platform data added by trimslice and paz00, I'd appreciate a
+tested-by once I post those.
