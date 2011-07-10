@@ -1,73 +1,72 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] tty/serial: tegra: Use engineering names in DT
- compatible property
-Date: Sun, 10 Jul 2011 06:49:27 +0900
-Message-ID: <20110709214927.GF2805@ponder.secretlab.ca>
-References: <1309896461-21976-1-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1309896461-21976-1-git-send-email-swarren@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Greg KH <gregkh@suse.de>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] ARM: tegra: remove mach/barriers.h
+Date: Sun, 10 Jul 2011 14:02:52 -0700
+Message-ID: <1310331772-13310-1-git-send-email-ccross@android.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 05, 2011 at 02:07:41PM -0600, Stephen Warren wrote:
-> Engineering names are more stable than marketing names. Hence, use them
-> for Device Tree compatible properties instead.
-> 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Greg, This builds on patches Grant has (or has said he will have) in his
-> devicetree/next branch, so I assume this change would be merged through
-> the same route.
-> 
-> Grant, this patch is physically against devicetree/arm. The of-serial.txt
-> change should also apply to devicetree/next as is, and you'd previously
-> indicated that you'd queue the addition of the Tegra entry to of_serial.c
-> in your devicetree/next branch, so this should apply on top of that once
-> you have done so. Finally, this should go into devicetree/test too.
+The barriers implemented in arch/arm/mach-tegra/mach/barriers.h
+are exactly the same as the default barriers implemented in
+arch/arm/include/asm/system.h.  Remove barriers.h from Tegra,
+and don't select ARCH_HAS_BARRIERS.
 
-Hi Stephen.  I've just modified the original patch and put it into
-devicetree/next.  Once I get back on the ground and have some internet
-access, I'll push my tree out (this email will probably get out before
-I get a chance to push out my tree).
+Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/Kconfig                            |    1 -
+ arch/arm/mach-tegra/include/mach/barriers.h |   30 ---------------------------
+ 2 files changed, 0 insertions(+), 31 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/barriers.h
 
-g.
-
-> 
->  .../devicetree/bindings/tty/serial/of-serial.txt   |    2 +-
->  drivers/tty/serial/of_serial.c                     |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/tty/serial/of-serial.txt b/Documentation/devicetree/bindings/tty/serial/of-serial.txt
-> index 337a7e5..b8b27b0 100644
-> --- a/Documentation/devicetree/bindings/tty/serial/of-serial.txt
-> +++ b/Documentation/devicetree/bindings/tty/serial/of-serial.txt
-> @@ -8,7 +8,7 @@ Required properties:
->  	- "ns16550"
->  	- "ns16750"
->  	- "ns16850"
-> -	- "nvidia,tegra250-uart"
-> +	- "nvidia,tegra20-uart"
->  	- "ibm,qpace-nwp-serial"
->  	- "serial" if the port type is unknown.
->  - reg : offset and length of the register set for the device.
-> diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
-> index e65f1e8..e58cece 100644
-> --- a/drivers/tty/serial/of_serial.c
-> +++ b/drivers/tty/serial/of_serial.c
-> @@ -181,7 +181,7 @@ static struct of_device_id __devinitdata of_platform_serial_table[] = {
->  	{ .compatible = "ns16550",  .data = (void *)PORT_16550, },
->  	{ .compatible = "ns16750",  .data = (void *)PORT_16750, },
->  	{ .compatible = "ns16850",  .data = (void *)PORT_16850, },
-> -	{ .compatible = "nvidia,tegra250-uart", .data = (void *)PORT_TEGRA, },
-> +	{ .compatible = "nvidia,tegra20-uart", .data = (void *)PORT_TEGRA, },
->  #ifdef CONFIG_SERIAL_OF_PLATFORM_NWPSERIAL
->  	{ .compatible = "ibm,qpace-nwp-serial",
->  		.data = (void *)PORT_NWPSERIAL, },
-> -- 
-> 1.7.0.4
-> 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 9adc278..7e179f0 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -591,7 +591,6 @@ config ARCH_TEGRA
+ 	select GENERIC_GPIO
+ 	select HAVE_CLK
+ 	select HAVE_SCHED_CLOCK
+-	select ARCH_HAS_BARRIERS if CACHE_L2X0
+ 	select ARCH_HAS_CPUFREQ
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems (Tegra APX,
+diff --git a/arch/arm/mach-tegra/include/mach/barriers.h b/arch/arm/mach-tegra/include/mach/barriers.h
+deleted file mode 100644
+index 425b42e..0000000
+--- a/arch/arm/mach-tegra/include/mach/barriers.h
++++ /dev/null
+@@ -1,30 +0,0 @@
+-/*
+- * arch/arm/mach-realview/include/mach/barriers.h
+- *
+- * Copyright (C) 2010 ARM Ltd.
+- * Written by Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+- */
+-
+-#ifndef __MACH_BARRIERS_H
+-#define __MACH_BARRIERS_H
+-
+-#include <asm/outercache.h>
+-
+-#define rmb()		dsb()
+-#define wmb()		do { dsb(); outer_sync(); } while (0)
+-#define mb()		wmb()
+-
+-#endif	/* __MACH_BARRIERS_H */
+-- 
+1.7.4.1
