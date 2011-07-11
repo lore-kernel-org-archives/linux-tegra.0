@@ -1,268 +1,52 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/2] ARM: tegra: remove copy-and-pasted i2c platform data in boards
-Date: Sun, 10 Jul 2011 15:19:33 -0700
-Message-ID: <1310336374-31727-1-git-send-email-ccross@android.com>
+From: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
+Subject: [PATCH RESEND] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter
+ functionality
+Date: Mon, 11 Jul 2011 10:37:55 +0300
+Message-ID: <20110711073755.GA8665@gentoodev.compulab.local>
+Reply-To: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: "Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>"@mike-pc.compulab.local
+Cc: "Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>"@mike-pc.compulab.local, "Stephen Warren swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org"@mike-pc.compulab.local, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Every board file includes the same platform data definition
-for the i2c-tegra driver's bus speed.  Move the platform data
-into devices.c, and remove it from all the board files.
+Hi Ben,
+This patch has been waiting for quite a long time and I've got no response
+from you concerning it.
+Can you _please_ at last merge it so it'll make to 3.1?
 
-Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+--
+Sincerely yours,
+Mike,
+
+
+From 5ac2b2824d2d49954aa9897344481e32f2368749 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+Date: Mon, 11 Jul 2011 10:28:57 +0300
+Subject: [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter functionality
+
+as there are a lot of i2c device drivers that require it
+
+Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-harmony.c   |   22 ----------------------
- arch/arm/mach-tegra/board-paz00.c     |   17 -----------------
- arch/arm/mach-tegra/board-seaboard.c  |   22 ----------------------
- arch/arm/mach-tegra/board-trimslice.c |   17 -----------------
- arch/arm/mach-tegra/devices.c         |   25 +++++++++++++++++++++----
- 5 files changed, 21 insertions(+), 82 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index 30e18bc..846cd7d 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -25,7 +25,6 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- #include <linux/i2c.h>
--#include <linux/i2c-tegra.h>
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 4d93196..2fe4951 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -524,7 +524,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
  
- #include <sound/wm8903.h>
- 
-@@ -83,22 +82,6 @@ static struct platform_device harmony_audio_device = {
- 	},
- };
- 
--static struct tegra_i2c_platform_data harmony_i2c1_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data harmony_i2c2_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data harmony_i2c3_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data harmony_dvc_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
- static struct wm8903_platform_data harmony_wm8903_pdata = {
- 	.irq_active_low = 0,
- 	.micdet_cfg = 0,
-@@ -121,11 +104,6 @@ static struct i2c_board_info __initdata wm8903_board_info = {
- 
- static void __init harmony_i2c_init(void)
+ static u32 tegra_i2c_func(struct i2c_adapter *adap)
  {
--	tegra_i2c_device1.dev.platform_data = &harmony_i2c1_platform_data;
--	tegra_i2c_device2.dev.platform_data = &harmony_i2c2_platform_data;
--	tegra_i2c_device3.dev.platform_data = &harmony_i2c3_platform_data;
--	tegra_i2c_device4.dev.platform_data = &harmony_dvc_platform_data;
--
- 	platform_device_register(&tegra_i2c_device1);
- 	platform_device_register(&tegra_i2c_device2);
- 	platform_device_register(&tegra_i2c_device3);
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 1b076f6..465768e 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -26,7 +26,6 @@
- #include <linux/pda_power.h>
- #include <linux/io.h>
- #include <linux/i2c.h>
--#include <linux/i2c-tegra.h>
- #include <linux/platform_data/tegra_usb.h>
+-	return I2C_FUNC_I2C;
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+ }
  
- #include <asm/mach-types.h>
-@@ -74,24 +73,8 @@ static struct platform_device *paz00_devices[] __initdata = {
- 	&tegra_sdhci_device4,
- };
- 
--static struct tegra_i2c_platform_data paz00_i2c1_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data paz00_i2c2_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data paz00_dvc_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
- static void paz00_i2c_init(void)
- {
--	tegra_i2c_device1.dev.platform_data = &paz00_i2c1_platform_data;
--	tegra_i2c_device2.dev.platform_data = &paz00_i2c2_platform_data;
--	tegra_i2c_device4.dev.platform_data = &paz00_dvc_platform_data;
--
- 	platform_device_register(&tegra_i2c_device1);
- 	platform_device_register(&tegra_i2c_device2);
- 	platform_device_register(&tegra_i2c_device4);
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index 783de17..46d5df9 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -19,7 +19,6 @@
- #include <linux/platform_device.h>
- #include <linux/serial_8250.h>
- #include <linux/i2c.h>
--#include <linux/i2c-tegra.h>
- #include <linux/delay.h>
- #include <linux/input.h>
- #include <linux/io.h>
-@@ -66,22 +65,6 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
- 	{ NULL,		NULL,		0,		0},
- };
- 
--static struct tegra_i2c_platform_data seaboard_i2c1_platform_data = {
--	.bus_clk_rate	= 400000.
--};
--
--static struct tegra_i2c_platform_data seaboard_i2c2_platform_data = {
--	.bus_clk_rate	= 400000,
--};
--
--static struct tegra_i2c_platform_data seaboard_i2c3_platform_data = {
--	.bus_clk_rate	= 400000,
--};
--
--static struct tegra_i2c_platform_data seaboard_dvc_platform_data = {
--	.bus_clk_rate	= 400000,
--};
--
- static struct gpio_keys_button seaboard_gpio_keys_buttons[] = {
- 	{
- 		.code		= SW_LID,
-@@ -161,11 +144,6 @@ static void __init seaboard_i2c_init(void)
- 
- 	i2c_register_board_info(4, &adt7461_device, 1);
- 
--	tegra_i2c_device1.dev.platform_data = &seaboard_i2c1_platform_data;
--	tegra_i2c_device2.dev.platform_data = &seaboard_i2c2_platform_data;
--	tegra_i2c_device3.dev.platform_data = &seaboard_i2c3_platform_data;
--	tegra_i2c_device4.dev.platform_data = &seaboard_dvc_platform_data;
--
- 	platform_device_register(&tegra_i2c_device1);
- 	platform_device_register(&tegra_i2c_device2);
- 	platform_device_register(&tegra_i2c_device3);
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index a8fff42..e1d7e67 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -24,7 +24,6 @@
- #include <linux/serial_8250.h>
- #include <linux/io.h>
- #include <linux/i2c.h>
--#include <linux/i2c-tegra.h>
- #include <linux/platform_data/tegra_usb.h>
- #include <linux/gpio.h>
- 
-@@ -92,18 +91,6 @@ static struct platform_device *trimslice_devices[] __initdata = {
- 	&trimslice_audio_device,
- };
- 
--static struct tegra_i2c_platform_data trimslice_i2c1_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data trimslice_i2c2_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
--static struct tegra_i2c_platform_data trimslice_i2c3_platform_data = {
--	.bus_clk_rate   = 400000,
--};
--
- static struct i2c_board_info trimslice_i2c3_board_info[] = {
- 	{
- 		I2C_BOARD_INFO("tlv320aic23", 0x1a),
-@@ -115,10 +102,6 @@ static struct i2c_board_info trimslice_i2c3_board_info[] = {
- 
- static void trimslice_i2c_init(void)
- {
--	tegra_i2c_device1.dev.platform_data = &trimslice_i2c1_platform_data;
--	tegra_i2c_device2.dev.platform_data = &trimslice_i2c2_platform_data;
--	tegra_i2c_device3.dev.platform_data = &trimslice_i2c3_platform_data;
--
- 	platform_device_register(&tegra_i2c_device1);
- 	platform_device_register(&tegra_i2c_device2);
- 	platform_device_register(&tegra_i2c_device3);
-diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
-index 1528f9d..066eaf9 100644
---- a/arch/arm/mach-tegra/devices.c
-+++ b/arch/arm/mach-tegra/devices.c
-@@ -22,6 +22,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/fsl_devices.h>
- #include <linux/serial_8250.h>
-+#include <linux/i2c-tegra.h>
- #include <asm/pmu.h>
- #include <mach/irqs.h>
- #include <mach/iomap.h>
-@@ -79,13 +80,29 @@ static struct resource i2c_resource4[] = {
- 	},
- };
- 
-+static struct tegra_i2c_platform_data tegra_i2c1_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data tegra_i2c2_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data tegra_i2c3_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
-+static struct tegra_i2c_platform_data tegra_dvc_platform_data = {
-+	.bus_clk_rate   = 400000,
-+};
-+
- struct platform_device tegra_i2c_device1 = {
- 	.name		= "tegra-i2c",
- 	.id		= 0,
- 	.resource	= i2c_resource1,
- 	.num_resources	= ARRAY_SIZE(i2c_resource1),
- 	.dev = {
--		.platform_data = 0,
-+		.platform_data = &tegra_i2c1_platform_data,
- 	},
- };
- 
-@@ -95,7 +112,7 @@ struct platform_device tegra_i2c_device2 = {
- 	.resource	= i2c_resource2,
- 	.num_resources	= ARRAY_SIZE(i2c_resource2),
- 	.dev = {
--		.platform_data = 0,
-+		.platform_data = &tegra_i2c2_platform_data,
- 	},
- };
- 
-@@ -105,7 +122,7 @@ struct platform_device tegra_i2c_device3 = {
- 	.resource	= i2c_resource3,
- 	.num_resources	= ARRAY_SIZE(i2c_resource3),
- 	.dev = {
--		.platform_data = 0,
-+		.platform_data = &tegra_i2c3_platform_data,
- 	},
- };
- 
-@@ -115,7 +132,7 @@ struct platform_device tegra_i2c_device4 = {
- 	.resource	= i2c_resource4,
- 	.num_resources	= ARRAY_SIZE(i2c_resource4),
- 	.dev = {
--		.platform_data = 0,
-+		.platform_data = &tegra_dvc_platform_data,
- 	},
- };
- 
+ static const struct i2c_algorithm tegra_i2c_algo = {
 -- 
-1.7.4.1
+1.7.3.1
