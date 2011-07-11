@@ -1,78 +1,36 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH RESEND] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter functionality
-Date: Mon, 11 Jul 2011 00:50:47 -0700
-Message-ID: <CAMbhsRSofeeNY9aTeZoMZM2qMMbgcARgeEa5O39Z16ui4x7qgQ@mail.gmail.com>
-References: <20110711073755.GA8665@gentoodev.compulab.local>
-	<CAMbhsRS-REFiAiEnukVtarTx7PRrzLT0BHAHdmuPGqDRRppGtw@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: tegra: remove copy-and-pasted i2c platform
+ data in boards
+Date: Mon, 11 Jul 2011 08:02:39 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834150@HQMAIL01.nvidia.com>
+References: <1310336374-31727-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRS-REFiAiEnukVtarTx7PRrzLT0BHAHdmuPGqDRRppGtw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1310336374-31727-1-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org
-Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 11, 2011 at 12:49 AM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrot=
-e:
-> On Mon, Jul 11, 2011 at 12:37 AM, =A0<mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org> wrote:
->> Hi Ben,
->> This patch has been waiting for quite a long time and I've got no re=
-sponse
->> from you concerning it.
->> Can you _please_ at last merge it so it'll make to 3.1?
->>
->> --
->> Sincerely yours,
->> Mike,
->>
->>
->> From 5ac2b2824d2d49954aa9897344481e32f2368749 Mon Sep 17 00:00:00 20=
-01
->> From: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
->> Date: Mon, 11 Jul 2011 10:28:57 +0300
->> Subject: [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter func=
-tionality
->>
->> as there are a lot of i2c device drivers that require it
->>
->> Signed-off-by: Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
->> ---
->> =A0drivers/i2c/busses/i2c-tegra.c | =A0 =A02 +-
->> =A01 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c=
--tegra.c
->> index 4d93196..2fe4951 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -524,7 +524,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *ad=
-ap, struct i2c_msg msgs[],
->>
->> =A0static u32 tegra_i2c_func(struct i2c_adapter *adap)
->> =A0{
->> - =A0 =A0 =A0 return I2C_FUNC_I2C;
->> + =A0 =A0 =A0 return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
->> =A0}
->>
->> =A0static const struct i2c_algorithm tegra_i2c_algo =3D {
->> --
->> 1.7.3.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegr=
-a" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->>
->
-> Your mailer added @mike-pc.compulab.local to all of the addresses.
->
-> Acked-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
->
-> It should go in through Ben's tree.
->
+Colin Cross wrote at Sunday, July 10, 2011 4:20 PM:
+> Every board file includes the same platform data definition
+> for the i2c-tegra driver's bus speed.  Move the platform data
+> into devices.c, and remove it from all the board files.
 
-The quotes in the wrong place made my mailer do the same thing.  Resent=
-=2E
+For both these patches, it seems like pure luck that all current board
+happen to share the same platform data.
+
+Given that they do, the change seems conceptually fine, but I wouldn't
+necessarily expect any future boards to be able to share the data, and
+so this change would make any differing future boards work differently
+to all the existing boards...
+
+I guess the idea is that by the time any new boards come along, Device
+Tree will be fleshed out enough that we wouldn't need to add code for
+the new boards, but just a Device Tree file, so my point isn't an issue?
+
+-- 
+nvpublic
