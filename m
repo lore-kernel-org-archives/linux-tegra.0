@@ -1,51 +1,47 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: remove copy-and-pasted i2c platform data
- in boards
-Date: Mon, 11 Jul 2011 21:02:41 -0700
-Message-ID: <CAMbhsRQqv23cWBOCxhtA+U=tYxnGka_zNHHGLJbg3766ZYnD+A@mail.gmail.com>
-References: <1310336374-31727-1-git-send-email-ccross@android.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF049E834150@HQMAIL01.nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 0/6 V2] ARM: tegra: paz00 patches for 2.6.40
+Date: Tue, 12 Jul 2011 12:47:22 +0200
+Message-ID: <20110712124722.2b0454f9@ac100.localdomain>
+References: <1305806910-3903-1-git-send-email-marvin24@gmx.de>
+ <CAMbhsRSH2iyv0_1seVtwSQ7AbHmPbz+VqSVkhfLgsNA8+dOwJA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834150-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CAMbhsRSH2iyv0_1seVtwSQ7AbHmPbz+VqSVkhfLgsNA8+dOwJA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 11, 2011 at 8:02 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
-> Colin Cross wrote at Sunday, July 10, 2011 4:20 PM:
->> Every board file includes the same platform data definition
->> for the i2c-tegra driver's bus speed. =A0Move the platform data
->> into devices.c, and remove it from all the board files.
->
-> For both these patches, it seems like pure luck that all current boar=
-d
-> happen to share the same platform data.
+Collin,
 
-Partially luck, partially that every board here is based on nVidia's
-reference designs.
+Am Sun, 10 Jul 2011 15:14:33 -0700
+schrieb Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>:
 
-> Given that they do, the change seems conceptually fine, but I wouldn'=
-t
-> necessarily expect any future boards to be able to share the data, an=
-d
-> so this change would make any differing future boards work differentl=
-y
-> to all the existing boards...
->
-> I guess the idea is that by the time any new boards come along, Devic=
-e
-> Tree will be fleshed out enough that we wouldn't need to add code for
-> the new boards, but just a Device Tree file, so my point isn't an iss=
-ue?
+> On Thu, May 19, 2011 at 5:08 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> wrote:
+> > Hi Collin, Olof,
+> >
+> > the following patches are intended for 2.6.40 merge. They are
+> > mostly similar to the TrimSlice patches sent by Mike a few days ago.
+> >
+> > ...
+> 
+> I pushed this series to for-next, except for patch 6 "ARM: tegra:
+> paz00: enable wifi card".
+> 
+> I have some cleanup patches that go on top to reduce some of the
+> duplicate platform data added by trimslice and paz00, I'd appreciate a
+> tested-by once I post those.
 
-Either device tree will solve all the world's problems, or I'll add a
-function to initialize the device that takes whatever data needs to be
-customized.  That can be solved if it ever becomes necessary.
+thanks for taking care of this. I'm currently in busy holidays and can't
+read my mail frequently. Anyway, I'll try my best to test the cleanup
+patches or ask another person from the AC100 team to check.
 
-Any other comments or testers?  Otherwise, I'll try to get this in the
-arm-soc tree.
+I also have a replacement for the wifi patch in work which I'll send out
+as soon as possible.
+
+Thanks
+
+Marc
