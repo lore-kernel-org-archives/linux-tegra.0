@@ -1,59 +1,54 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] i2c: tegra: Use engineering names in DT compatible
- property
-Date: Wed, 13 Jul 2011 10:59:53 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834757@HQMAIL01.nvidia.com>
-References: <1309897306-22953-1-git-send-email-swarren@nvidia.com>
- <20110706053941.GE9978@ponder.secretlab.ca>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] ARM: Tegra: Trimslice: Tri-state DAP2 pinmux
+Date: Wed, 13 Jul 2011 20:00:58 +0200
+Message-ID: <20110713180058.GB27828@avionic-0098.mockup.avionic-design.de>
+References: <1310579091-7424-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110706053941.GE9978-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1310579091-7424-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Rapoport <mike.rapoport-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Grant Likely wrote at Tuesday, July 05, 2011 11:40 PM:
-> On Tue, Jul 05, 2011 at 02:21:46PM -0600, Stephen Warren wrote:
-> > Engineering names are more stable than marketing names. Hence, use them
-> > for Device Tree compatible properties instead.
-> >
-> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Grant, this is against devicetree/arm and also makes sense for
-> > devicetree/test.
-> 
-> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> 
-> Ben is the one to pick up this patch.
 
-I don't believe anyone ever sent a patch to Ben to add tegra_i2c_of_match
-to the driver; the OF support patch didn't include that part of the code.
-As such, Ben can't yet apply this to his tree. (Although I note this patch
-is in Grant's /arm and /test trees, which is probably good enough for now).
+--wzJLGUyc3ArbnUjN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >  drivers/i2c/busses/i2c-tegra.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> > index 8914bd1..99b1b6d 100644
-> > --- a/drivers/i2c/busses/i2c-tegra.c
-> > +++ b/drivers/i2c/busses/i2c-tegra.c
-> > @@ -716,7 +716,7 @@ static int tegra_i2c_resume(struct platform_device *pdev)
-> >  #if defined(CONFIG_OF)
-> >  /* Match table for of_platform binding */
-> >  static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
-> > -	{ .compatible = "nvidia,tegra250-i2c", },
-> > +	{ .compatible = "nvidia,tegra20-i2c", },
-> >  	{},
-> >  };
-> >  MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
-> > --
-> > 1.7.0.4
-> >
+* Stephen Warren wrote:
+> DAP2 is used for a bunch of GPIOs. Not tri-stating the pins means audio
+> signals get sent out there, and this ends up resetting USB and breaking
+> SDHCI too.
+[...]
+> diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+> index 82646a4..47c596c 100644
+> --- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
+> +++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+> @@ -35,7 +35,7 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+>  	{TEGRA_PINGROUP_CSUS,  TEGRA_MUX_VI_SENSOR_CLK, TEGRA_PUPD_PULL_DOWN,   TEGRA_TRI_TRISTATE},
+>  	{TEGRA_PINGROUP_DAP1,  TEGRA_MUX_DAP1,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+>  	{TEGRA_PINGROUP_DAP2,  TEGRA_MUX_DAP2,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+> -	{TEGRA_PINGROUP_DAP3,  TEGRA_MUX_DAP3,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+> +	{TEGRA_PINGROUP_DAP3,  TEGRA_MUX_DAP3,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_TRISTATE},
+                        ^^^^
 
--- 
-nvpublic
+The patch subject and description say that DAP2 is tristated, not DAP3.
+
+Thierry
+
+--wzJLGUyc3ArbnUjN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEUEARECAAYFAk4d3VoACgkQZ+BJyKLjJp9m3wCXWpawBhDtr+Xaja9536JIym4B
+XwCeL00XEzdxlFp8VPgV1qsYL2Kg+R0=
+=5eK3
+-----END PGP SIGNATURE-----
+
+--wzJLGUyc3ArbnUjN--
