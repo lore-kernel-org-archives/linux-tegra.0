@@ -1,47 +1,55 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] i2c: tegra: Use engineering names in DT compatible
- property
-Date: Thu, 14 Jul 2011 11:09:47 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834A2E@HQMAIL01.nvidia.com>
-References: <1309897306-22953-1-git-send-email-swarren@nvidia.com>
- <20110706053941.GE9978@ponder.secretlab.ca>
- <74CDBE0F657A3D45AFBB94109FB122FF049E834757@HQMAIL01.nvidia.com>
- <CACxGe6tojgLSmHTxzGn3hZZVqiR_z6xbWrazYekm0TwQoWK5eA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH] i2c: Tegra: Add of_match_table
+Date: Thu, 14 Jul 2011 12:34:25 -0600
+Message-ID: <1310668465-2535-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACxGe6tojgLSmHTxzGn3hZZVqiR_z6xbWrazYekm0TwQoWK5eA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Grant Likely wrote at Wednesday, July 13, 2011 5:34 PM:
-> On Thu, Jul 14, 2011 at 2:59 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-...
-> > I don't believe anyone ever sent a patch to Ben to add tegra_i2c_of_match
-> > to the driver; the OF support patch didn't include that part of the code.
-> > As such, Ben can't yet apply this to his tree. (Although I note this patch
-> > is in Grant's /arm and /test trees, which is probably good enough for now).
-> 
-> Hmmm, I thought it had been done.  It certainly is ready to go in.  Do
-> you want to put together a roll-up patch that includes all the
-> required changes and post it again? (although double check linux-next
-> first).
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-When John Bonesio posted the patch to add DT support to i2c-tegra.c, the first
-version of the patch was missing the match table chunk. A few days later, an
-updated version was posted that added the missing chunk; see:
+This patch was intended to be part of 7ca2d1a105a239e300b937e9c41a10a4bd08f569
+"i2c: Tegra: Add DeviceTree support". However, an early version of that patch,
+which was missing a chunk, was applied to next-i2c. This change is that
+missing chunk.
 
-http://groups.google.com/group/linux.kernel/browse_thread/thread/d2596e8dee819b0f/c8aa04183ea2331e?show_docid=c8aa04183ea2331e
+Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-It looks like the first version of the patch has actually been applied to Ben's
-next-i2c branch rather than the updated version.
-
-I guess it's simplest if I just post a patch that adds the missing chunk based
-on the latest next-i2c tree. I'll go do that.
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 5a18d6d..f2156de 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -722,6 +722,17 @@ static int tegra_i2c_resume(struct platform_device *pdev)
+ }
+ #endif
+ 
++#if defined(CONFIG_OF)
++/* Match table for of_platform binding */
++static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
++	{ .compatible = "nvidia,tegra20-i2c", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
++#else
++#define tegra_i2c_of_match NULL
++#endif
++
+ static struct platform_driver tegra_i2c_driver = {
+ 	.probe   = tegra_i2c_probe,
+ 	.remove  = tegra_i2c_remove,
+@@ -732,6 +743,7 @@ static struct platform_driver tegra_i2c_driver = {
+ 	.driver  = {
+ 		.name  = "tegra-i2c",
+ 		.owner = THIS_MODULE,
++		.of_match_table = tegra_i2c_of_match,
+ 	},
+ };
+ 
 -- 
-nvpublic
+1.7.0.4
