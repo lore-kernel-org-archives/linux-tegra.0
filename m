@@ -1,77 +1,57 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] i2c: Tegra: Add of_match_table
-Date: Fri, 15 Jul 2011 03:52:57 +0900
-Message-ID: <CACxGe6vU3gKVpDBwBr7UcLSk1VNsBaGTuJTWKPR8pRurdqiQqw@mail.gmail.com>
-References: <1310668465-2535-1-git-send-email-swarren@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: Tegra: Harmony: Register and configure WM8903
+ IRQ GPIO
+Date: Fri, 15 Jul 2011 09:05:12 +0900
+Message-ID: <20110715000510.GD32716@opensource.wolfsonmicro.com>
+References: <1310589618-16080-1-git-send-email-swarren@nvidia.com>
+ <20110714122520.GB14249@sirena.org.uk>
+ <74CDBE0F657A3D45AFBB94109FB122FF049E834971@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1310668465-2535-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834971-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, July 14, 2011, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
->
-> This patch was intended to be part of 7ca2d1a105a239e300b937e9c41a10a=
-4bd08f569
-> "i2c: Tegra: Add DeviceTree support". However, an early version of th=
-at patch,
-> which was missing a chunk, was applied to next-i2c. This change is th=
-at
-> missing chunk.
->
-> Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jul 14, 2011 at 08:49:28AM -0700, Stephen Warren wrote:
+> Mark Brown wrote at Thursday, July 14, 2011 6:25 AM:
 
-Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> > This seems silly - we should fix this in the core code rather than have
+> > every single board that ahppens to use an interrupt which is also
+> > available as a GPIO manually faff around with gpiolib.
 
-> ---
-> =A0drivers/i2c/busses/i2c-tegra.c | =A0 12 ++++++++++++
-> =A01 files changed, 12 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-=
-tegra.c
-> index 5a18d6d..f2156de 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -722,6 +722,17 @@ static int tegra_i2c_resume(struct platform_devi=
-ce *pdev)
-> =A0}
-> =A0#endif
->
-> +#if defined(CONFIG_OF)
-> +/* Match table for of_platform binding */
-> +static const struct of_device_id tegra_i2c_of_match[] __devinitconst=
- =3D {
-> + =A0 =A0 =A0 { .compatible =3D "nvidia,tegra20-i2c", },
-> + =A0 =A0 =A0 {},
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
-> +#else
-> +#define tegra_i2c_of_match NULL
-> +#endif
-> +
-> =A0static struct platform_driver tegra_i2c_driver =3D {
->  =A0 =A0 =A0 =A0.probe =A0 =3D tegra_i2c_probe,
->  =A0 =A0 =A0 =A0.remove =A0=3D tegra_i2c_remove,
-> @@ -732,6 +743,7 @@ static struct platform_driver tegra_i2c_driver =3D=
- {
->  =A0 =A0 =A0 =A0.driver =A0=3D {
->  =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0=3D "tegra-i2c",
->  =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =3D THIS_MODULE,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .of_match_table =3D tegra_i2c_of_match,
->  =A0 =A0 =A0 =A0},
-> =A0};
->
-> --
-> 1.7.0.4
->
->
+> That seems a good goal.
 
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+> However, how does the WM8903 driver know whether the interrupt number
+> it's passed is a straight-up dedicated interrupt (hence the calls aren't
+> required), or a GPIO (hence they are)?
+
+It shouldn't - I said "core code" for a reason :)
+
+> I guess the answer is that there should be an interrupt API to map from
+> interrupt to GPIO number, returning <0 when there is no GPIO backing the
+> IRQ, and an op in struct irq_chip to implement that? However, that's not
+> there right now as far as I can tell.
+
+Yes, exactly - but it should not be complicated to add one and since
+you're doing this anyway it'd make sense to do the core change rather
+than faffing around the edges of the system.
+
+> Finally, there are some pinmux interactions that need to be dealt with;
+> on Tegra, the pinmux allows the tristate/drive status of pins to be set
+> on a group basis (a group being a set of 1-n pins). However, gpio enable
+> (which overrides the pinmux's setting of tristate/drive) can be set on
+> a per-pin basis. At least on Seaboard, the WM8903 IRQ is an input pin
+> in a group that otherwise needs to contain output pins, so we really
+> want to enable the WM8903 IRQ GPIO pin as a GPIO, and set it to input,
+> before setting up that pinmux group to drive the pins. Without this,
+> there may be a brief period where both Tegra and the WM8903 are driving
+> this IRQ signal, which can't be good for hardware.
+
+If the pinmux stuff can't work this out then it needs to be worked on
+until it can, this is pretty basic stuff.  I had thought that the plan
+was to support a big block configuration done by the board which set
+everything up en masse and would presumably cope with stuff like this?
