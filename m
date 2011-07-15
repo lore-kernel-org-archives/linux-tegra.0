@@ -1,57 +1,72 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Tegra: Harmony: Register and configure WM8903
- IRQ GPIO
-Date: Fri, 15 Jul 2011 09:05:12 +0900
-Message-ID: <20110715000510.GD32716@opensource.wolfsonmicro.com>
-References: <1310589618-16080-1-git-send-email-swarren@nvidia.com>
- <20110714122520.GB14249@sirena.org.uk>
- <74CDBE0F657A3D45AFBB94109FB122FF049E834971@HQMAIL01.nvidia.com>
+From: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: [GIT PULL] Tegra updates for v3.1
+Date: Thu, 14 Jul 2011 19:40:50 -0700
+Message-ID: <CAMbhsRQoZ7vJGchkXLUOrOH4rpKJzJe-iGvLjTfBmz4R=8HtVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834971-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 14, 2011 at 08:49:28AM -0700, Stephen Warren wrote:
-> Mark Brown wrote at Thursday, July 14, 2011 6:25 AM:
+Hi Arnd,
 
-> > This seems silly - we should fix this in the core code rather than have
-> > every single board that ahppens to use an interrupt which is also
-> > available as a GPIO manually faff around with gpiolib.
+Please pull Tegra updates from:
 
-> That seems a good goal.
+git://android.git.kernel.org/kernel/tegra.git for-next
 
-> However, how does the WM8903 driver know whether the interrupt number
-> it's passed is a straight-up dedicated interrupt (hence the calls aren't
-> required), or a GPIO (hence they are)?
+Mostly peripheral support in existing boards, but also a few fixes and
+code reduction.
 
-It shouldn't - I said "core code" for a reason :)
+Thanks,
+Colin
 
-> I guess the answer is that there should be an interrupt API to map from
-> interrupt to GPIO number, returning <0 when there is no GPIO backing the
-> IRQ, and an op in struct irq_chip to implement that? However, that's not
-> there right now as far as I can tell.
+The following changes since commit 620917de59eeb934b9f8cf35cc2d95c1ac8ed0fc:
 
-Yes, exactly - but it should not be complicated to add one and since
-you're doing this anyway it'd make sense to do the core change rather
-than faffing around the edges of the system.
+  Linux 3.0-rc7 (2011-07-11 16:51:52 -0700)
 
-> Finally, there are some pinmux interactions that need to be dealt with;
-> on Tegra, the pinmux allows the tristate/drive status of pins to be set
-> on a group basis (a group being a set of 1-n pins). However, gpio enable
-> (which overrides the pinmux's setting of tristate/drive) can be set on
-> a per-pin basis. At least on Seaboard, the WM8903 IRQ is an input pin
-> in a group that otherwise needs to contain output pins, so we really
-> want to enable the WM8903 IRQ GPIO pin as a GPIO, and set it to input,
-> before setting up that pinmux group to drive the pins. Without this,
-> there may be a brief period where both Tegra and the WM8903 are driving
-> this IRQ signal, which can't be good for hardware.
+are available in the git repository at:
+  git://android.git.kernel.org/kernel/tegra.git for-next
 
-If the pinmux stuff can't work this out then it needs to be worked on
-until it can, this is pretty basic stuff.  I had thought that the plan
-was to support a big block configuration done by the board which set
-everything up en masse and would presumably cope with stuff like this?
+Colin Cross (3):
+      ARM: tegra: remove mach/barriers.h
+      ARM: tegra: remove copy-and-pasted i2c platform data in boards
+      ARM: tegra: remove copy-and-pasted usb platform data from boards
+
+KOSAKI Motohiro (1):
+      arm,tegra: replace cpu_set() with modern api
+
+Marc Dietrich (5):
+      ARM: tegra: paz00: whitespace cleanup
+      ARM: tegra: paz00: register i2c busses
+      ARM: tegra: paz00: enable usb ports
+      ARM: tegra: paz00: cleanup sdhci ports
+      ARM: tegra: paz00: change the machine name
+
+Mike Rapoport (3):
+      ARM: tegra: trimslice: register i2c busses and devices
+      ARM: tegra: trimslice: add audio devices and clocks
+      ARM: tegra: trimslice: enable USB ports
+
+Robert Morell (1):
+      arm: tegra: remove generic disp clock divisor flag
+
+Stephen Warren (1):
+      ARM: Tegra: Seaboard: Re-order sdhci device registration
+
+ arch/arm/Kconfig                             |    1 -
+ arch/arm/mach-tegra/board-harmony.c          |   22 ----------
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |   10 ++---
+ arch/arm/mach-tegra/board-paz00.c            |   31 +++++++++-----
+ arch/arm/mach-tegra/board-paz00.h            |   10 ++---
+ arch/arm/mach-tegra/board-seaboard.c         |   26 +-----------
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    7 ++-
+ arch/arm/mach-tegra/board-trimslice.c        |   56 ++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-trimslice.h        |    3 +
+ arch/arm/mach-tegra/devices.c                |   53 ++++++++++++++++++++++--
+ arch/arm/mach-tegra/include/mach/barriers.h  |   30 --------------
+ arch/arm/mach-tegra/platsmp.c                |    2 +-
+ arch/arm/mach-tegra/tegra2_clocks.c          |    4 +-
+ 13 files changed, 146 insertions(+), 109 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/barriers.h
