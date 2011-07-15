@@ -1,127 +1,115 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 2/2] ARM: tegra: remove copy-and-pasted usb platform data
-	from boards
-Date: Fri, 15 Jul 2011 21:40:41 +0200
-Message-ID: <201107152140.42122.heiko@sntech.de>
-References: <1310336374-31727-1-git-send-email-ccross@android.com>
-	<201107151155.56495.heiko@sntech.de>
-	<CAMbhsRTxAwKJ7qiK=_BAMc3Y1x_WHF7WHrm_54o-sYLBb1zzng@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: Tegra: Harmony: Register and configure WM8903
+ IRQ GPIO
+Date: Fri, 15 Jul 2011 13:02:52 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834CCC@HQMAIL01.nvidia.com>
+References: <1310589618-16080-1-git-send-email-swarren@nvidia.com>
+ <20110714122520.GB14249@sirena.org.uk>
+ <74CDBE0F657A3D45AFBB94109FB122FF049E834971@HQMAIL01.nvidia.com>
+ <20110715000510.GD32716@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAMbhsRTxAwKJ7qiK=_BAMc3Y1x_WHF7WHrm_54o-sYLBb1zzng@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Mike Rapoport <mike@compulab.co.il>, linux-arm-kernel@lists.infradead.org, Marc Dietrich <marvin24@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110715000510.GD32716-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag 15 Juli 2011, 18:45:53 schrieb Colin Cross:
-> On Fri, Jul 15, 2011 at 2:55 AM, Heiko St=FCbner <heiko@sntech.de> wrote:
-> > Am Freitag, 15. Juli 2011, 11:13:48 schrieb Marc Dietrich:
-> >> see comment for PATCH 1/2
-> >> =
+Mark Brown wrote at Thursday, July 14, 2011 6:05 PM:
+> On Thu, Jul 14, 2011 at 08:49:28AM -0700, Stephen Warren wrote:
+> > Mark Brown wrote at Thursday, July 14, 2011 6:25 AM:
+> 
+> > > This seems silly - we should fix this in the core code rather than have
+> > > every single board that ahppens to use an interrupt which is also
+> > > available as a GPIO manually faff around with gpiolib.
+> 
+> > That seems a good goal.
+> 
+> > However, how does the WM8903 driver know whether the interrupt number
+> > it's passed is a straight-up dedicated interrupt (hence the calls aren't
+> > required), or a GPIO (hence they are)?
+> 
+> It shouldn't - I said "core code" for a reason :)
 
-> >> Am Sun, 10 Jul 2011 15:19:34 -0700
-> >> =
+Ah, yes.
 
-> >> schrieb Colin Cross <ccross@android.com>:
-> >> > trimslice and paz00 both have functionally identical platform
-> >> > data for the tegra-ehci driver.  Move the platform data into
-> >> > devices.c, and remove it from all the board files.
-> >> > =
+[Grant, Thomas, as GPIO/IRQ maintainers, do you agree that (a) below is
+something the core IRQ code should be doing?]
 
-> >> > Signed-off-by: Colin Cross <ccross@android.com>
-> >> =
+There are two aspects to this:
 
-> >> Acked-By: Marc Dietrich <marvin24@gmx.de>
-> >> =
+a) The generic gpio_request/gpio_direction_input. This could be handled
+by the core irq code if struct irq_chip grew a to_irq function, and a
+__irq_to_gpio/irq_to_gpio global function were created to mirror
+gpio_to_irq.
 
-> >> > ---
-> >> > =
+b) On Tegra at least, we need to call tegra_gpio_enable to configure the
+pin to be a GPIO. This isn't performed by the Tegra GPIO driver during
+gpio_request, since such configuration is supposed to be outside the
+domain of the GPIO driver, but deferred to perhaps a pinmux driver. Should
+the same be true of request_irq; should it require the user to somehow
+call tegra_gpio_enable elsewhere? It'd be asymmetric to how gpio_request
+worked, but Tegra's irq_chip could easily call tegra_gpio_enable from
+within irq_chip.startup, thus simplifying any code that wants to use
+interrupt-that-are-GPIOs.
 
-> >> >  arch/arm/mach-tegra/board-paz00.c     |   26
-> >> > =
+The alternative is for the board files to have a list of GPIOs for which
+to call tegra_gpio_enable, and indeed, that's what we do have in Tegra
+e.g. in board-seaboard-pinmux.c.
 
-> >> > =
+I suppose with the new pinmux API, there will simply be a pinmux table in
+either the board file or Device Tree, and that will allow "GPIO" as a legal
+"special function" for each pin, and for pins which are really "GPIO
+interrupts", we'll just need to list "GPIO" in that pinmux table, so perhaps
+everything will just fall out cleanly that way. I suppose that a pinmux
+driver could even expose an "interrupt" special function for relevant pins
+just to clearly document the usage, even if this maps to the same thing as
+configuring a pin as a GPIO.
 
-> >> > =
+> > I guess the answer is that there should be an interrupt API to map from
+> > interrupt to GPIO number, returning <0 when there is no GPIO backing the
+> > IRQ, and an op in struct irq_chip to implement that? However, that's not
+> > there right now as far as I can tell.
+> 
+> Yes, exactly - but it should not be complicated to add one and since
+> you're doing this anyway it'd make sense to do the core change rather
+> than faffing around the edges of the system.
 
-> >> > -static struct tegra_ulpi_config ulpi_phy_config =3D {
-> >> > -           .reset_gpio =3D TEGRA_ULPI_RST,
-> >> > -           .clk =3D "cdev2",
-> >> > -};
-> >> > -
-> >> > -static struct tegra_ehci_platform_data tegra_ehci_pdata[] =3D {
-> >> > -           [0] =3D {
-> >> > -                   .operating_mode =3D TEGRA_USB_OTG,
-> >> > -                   .power_down_on_bus_suspend =3D 1,
-> >> > -           },
-> >> > -           [1] =3D {
-> >> > -                   .phy_config =3D &ulpi_phy_config,
-> >> > -                   .operating_mode =3D TEGRA_USB_HOST,
-> >> > -                   .power_down_on_bus_suspend =3D 1,
-> >> > -           },
-> >> > -           [2] =3D {
-> >> > -                   .operating_mode =3D TEGRA_USB_HOST,
-> >> > -                   .power_down_on_bus_suspend =3D 1,
-> >> > -           },
-> >> > -};
-> > =
+Sure, it doesn't look too hard.
 
-> > I'm not sure about this.
-> > =
+A complication is that ARM doesn't define gpio_to_irq in a single central
+header, but rather one per subarchitecture, I suppose since not all 
+subarchitectures implement/require gpiolib. Still, I think this mostly
+just means cut/pasting "#define irq_to_gpio __irq_to_gpio" into each
+mach-foo's gpio.h for now, so /probably/ not a big deal...
 
-> > For paz00 tegra_ehci3_device also leads to an external usb port. With
-> > power_down_on_bus_suspend =3D 1 hotplugging usb devices doesn't work (as
-> > the bus might be suspended at the time).
-> > =
+> > Finally, there are some pinmux interactions that need to be dealt with;
+> > on Tegra, the pinmux allows the tristate/drive status of pins to be set
+> > on a group basis (a group being a set of 1-n pins). However, gpio enable
+> > (which overrides the pinmux's setting of tristate/drive) can be set on
+> > a per-pin basis. At least on Seaboard, the WM8903 IRQ is an input pin
+> > in a group that otherwise needs to contain output pins, so we really
+> > want to enable the WM8903 IRQ GPIO pin as a GPIO, and set it to input,
+> > before setting up that pinmux group to drive the pins. Without this,
+> > there may be a brief period where both Tegra and the WM8903 are driving
+> > this IRQ signal, which can't be good for hardware.
+> 
+> If the pinmux stuff can't work this out then it needs to be worked on
+> until it can, this is pretty basic stuff.  I had thought that the plan
+> was to support a big block configuration done by the board which set
+> everything up en masse and would presumably cope with stuff like this?
 
-> > From the initial commit message of ehci-tegra on android.git.kernel.org:
-> > "For additional power saving, the driver supports powering down the
-> > phy on bus suspend when it is used, for example, to connect an internal
-> > device that use an out-of-band remote wakeup mechanism (e.g. a gpio)."
-> > =
+Maybe the solution for Tegra, once we have the new pinmux API in place,
+is for the pinmux driver initialization to program all pins in HW as
+input GPIOs, and hence tri-stated. That way, there can never be any
+conflict with external HW. If/once a pin/group is requested as a
+particular special function, the tri-state can be removed, since then
+we'll know the board-specific direction. Some though may have to be
+given to not tri-stating any pins required for basic SDRAM or UART
+access during the boot process, but this is probably workable.
 
-> > So my guess was, that the correct handling of this was setting
-> > power_down_on_bus_suspend to 0 - which did fix the problem.
-> > =
-
-> > With this data moving to devices.c, setting this would also change the
-> > trimslice behaviour which would be a problem.
-> > =
-
-> > In the end I'm not sure if setting power_down_on_bus_suspend to 0 is the
-> > correct solution to the hotplug problem or if a better solution exists.
-> > =
-
-> > Thanks
-> > Heiko
-> =
-
-> Can you or someone else test if power_down_on_bus_suspend is causing a
-> problem?  If it is, I'll change the default in devices.c to
-> power_down_on_bus_suspend=3D0, and devices that want
-> power_down_on_bus_suspend=3D1 will have to set it.
-
-With power_down_on_bus_suspend =3D 1, paz00 fails to recognize newly attach=
-ed =
-
-devices, i.e. only devices connected during boot are accessible.
-But it doesn't cause problems with the devices themselfs.
-
-Am Freitag 15 Juli 2011, 20:30:18 schrieb Olof Johansson:
-> (Note: I'll post a patch in a bit that keeps the IP clocked even if phy is
-> powered down on bus suspend, since otherwise we don't get hotplug events
-> for hub-less systems).
-This might also fix the hotplug problem on paz00 *fingers crossed*.
-
-Heiko
+-- 
+nvpublic
