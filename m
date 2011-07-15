@@ -1,107 +1,53 @@
-From: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: paz00: export the WIFI rfkill gpio
-Date: Fri, 15 Jul 2011 15:17:02 +0300
-Message-ID: <201107151517.03176.anarsoul@gmail.com>
-References: <1310725464-2524-1-git-send-email-marvin24@gmx.de> <1310725464-2524-3-git-send-email-marvin24@gmx.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL] Tegra updates for v3.1
+Date: Fri, 15 Jul 2011 15:06:29 +0200
+Message-ID: <201107151506.29281.arnd@arndb.de>
+References: <CAMbhsRQoZ7vJGchkXLUOrOH4rpKJzJe-iGvLjTfBmz4R=8HtVw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1310725464-2524-3-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <CAMbhsRQoZ7vJGchkXLUOrOH4rpKJzJe-iGvLjTfBmz4R=8HtVw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 15 July 2011 13:24:22 Marc Dietrich wrote:
-> This makes the WIFI rfkill gpio available to userspace. On boot,
-> WIFI will be unblocked by default.
+On Friday 15 July 2011, Colin Cross wrote:
+> Please pull Tegra updates from:
+> 
+> git://android.git.kernel.org/kernel/tegra.git for-next
+> 
+> Mostly peripheral support in existing boards, but also a few fixes and
+> code reduction.
+> 
 
-Take a look on rfkill-gpio driver.
+Hi Colin,
 
-Regards
-Vasily
+I've browsed over the patches, and I had the impression that there are
+still a number of issues that should be resolved before I pull this.
 
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/board-paz00-pinmux.c |    1 +
->  arch/arm/mach-tegra/board-paz00.c        |   16 ++++++++++++++++
->  arch/arm/mach-tegra/board-paz00.h        |    6 ++++++
->  3 files changed, 23 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c
-> b/arch/arm/mach-tegra/board-paz00-pinmux.c index bdd2627..c02a48f 100644
-> --- a/arch/arm/mach-tegra/board-paz00-pinmux.c
-> +++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-> @@ -145,6 +145,7 @@ static struct tegra_gpio_table gpio_table[] = {
->  	{ .gpio = TEGRA_GPIO_SD1_WP,	.enable = true },
->  	{ .gpio = TEGRA_GPIO_SD1_POWER,	.enable = true },
->  	{ .gpio = TEGRA_ULPI_RST,	.enable = true },
-> +	{ .gpio = TEGRA_WIFI_PWRN,	.enable = true },
->  };
-> 
->  void paz00_pinmux_init(void)
-> diff --git a/arch/arm/mach-tegra/board-paz00.c
-> b/arch/arm/mach-tegra/board-paz00.c index 931b06e..0bc652b 100644
-> --- a/arch/arm/mach-tegra/board-paz00.c
-> +++ b/arch/arm/mach-tegra/board-paz00.c
-> @@ -25,6 +25,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/pda_power.h>
->  #include <linux/io.h>
-> +#include <linux/gpio.h>
->  #include <linux/i2c.h>
->  #include <linux/i2c-tegra.h>
->  #include <linux/platform_data/tegra_usb.h>
-> @@ -165,6 +166,20 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 =
-> { .is_8bit	= 1,
->  };
-> 
-> +static void __init paz00_wifi_init(void)
-> +{
-> +	int ret;
-> +
-> +	/* unlock hw rfkill */
-> +	ret = gpio_request_one(TEGRA_WIFI_PWRN, GPIOF_OUT_INIT_HIGH,
-> +		"wifi pwrn");
-> +	if (ret) {
-> +		pr_warning("WIFI: could not requestrfkill gpio\n");
-> +		return;
-> +	}
-> +	gpio_export(TEGRA_WIFI_PWRN, 0);
-> +};
-> +
->  static void __init tegra_paz00_init(void)
->  {
->  	tegra_clk_init_from_table(paz00_clk_init_table);
-> @@ -178,6 +193,7 @@ static void __init tegra_paz00_init(void)
-> 
->  	paz00_i2c_init();
->  	paz00_usb_init();
-> +	paz00_wifi_init();
->  }
-> 
->  MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
-> diff --git a/arch/arm/mach-tegra/board-paz00.h
-> b/arch/arm/mach-tegra/board-paz00.h index d4ff39d..5d2849e 100644
-> --- a/arch/arm/mach-tegra/board-paz00.h
-> +++ b/arch/arm/mach-tegra/board-paz00.h
-> @@ -17,11 +17,17 @@
->  #ifndef _MACH_TEGRA_BOARD_PAZ00_H
->  #define _MACH_TEGRA_BOARD_PAZ00_H
-> 
-> +/* SDCARD */
->  #define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PV5
->  #define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PH1
->  #define TEGRA_GPIO_SD1_POWER		TEGRA_GPIO_PT3
-> +
-> +/* ULPI */
->  #define TEGRA_ULPI_RST			TEGRA_GPIO_PV0
-> 
-> +/* WIFI */
-> +#define TEGRA_WIFI_PWRN			TEGRA_GPIO_PK5
-> +
->  void paz00_pinmux_init(void);
-> 
->  #endif
+Specifically, what I noticed is:
+
+* The cpufreq driver should now live in drivers/cpufreq/
+* The DMA driver uses its own interface instead of the regular
+  dma-engine API. I don't want to merge any more drivers like this.
+* The legacy-irq code is essentially dead code, it's not being used
+  anywhere. My impression is that it would need to look differently
+  if you actually want to use it.
+* The pinmux code is getting largely replaced with new code, but
+  the new version does not use the new pinmux API from Linus Walleij.
+* The commit named "[ARM] tegra: clock: Add dvfs support, bug fixes,
+  and cleanups" puts a lot of stuff into a single patch that doesn't
+  even belong into the same pull request.
+
+I would very much like to at least pull the cleanups and bug fixes,
+but it doesn't work like this, sorry.
+
+Please remove the controversial patches and submit separate pull
+requests for the bug fixes and cleanups. It's probably a good idea
+to also  have the patches that add features reviewed on the mailing
+lists again and then decide how to proceed with each one..
+
+	Arnd
