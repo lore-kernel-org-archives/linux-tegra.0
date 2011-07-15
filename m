@@ -1,44 +1,66 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] gpio/tegra: dt: add binding for gpio polarity
-Date: Fri, 15 Jul 2011 09:29:08 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834C19@HQMAIL01.nvidia.com>
-References: <20110715051713.GA28865@quad.lixom.net>
+Subject: RE: [PATCH 1/3] ARM: tegra: paz00: add support serial port on JP1
+Date: Fri, 15 Jul 2011 09:39:36 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834C23@HQMAIL01.nvidia.com>
+References: <1310725464-2524-1-git-send-email-marvin24@gmx.de>
+ <1310725464-2524-2-git-send-email-marvin24@gmx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110715051713.GA28865-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+In-Reply-To: <1310725464-2524-2-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Thursday, July 14, 2011 11:17 PM:
-> Allocate one bit in the available extra cell to indicate if the gpio
-> should be considered logically inverted.
+Marc Dietrich wrote at Friday, July 15, 2011 4:24 AM:
+> UART-A is connected to JP1 and used by the bootloader for debugging
+> output while UART-D is connected to the mini-pcie expansion slot.
 > 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 > ---
->  .../devicetree/bindings/gpio/gpio_nvidia.txt       |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
+>  arch/arm/mach-tegra/board-paz00.c |   11 +++++++++++
+>  1 files changed, 11 insertions(+), 0 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> index 64aac39..adcf55c 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> @@ -3,5 +3,6 @@ NVIDIA Tegra 2 GPIO controller
->  Required properties:
->  - compatible : "nvidia,tegra20-gpio"
->  - #gpio-cells : Should be two. The first cell is the pin number and the
-> -  second cell is used to specify optional parameters (currently unused).
-> +  second cell is used to specify optional parameters:
-> +  - bit 0 specifies polarity (0 for normal, 1 for inverted)
->  - gpio-controller : Marks the device node as a GPIO controller.
+> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+> index 1b076f6..931b06e 100644
+> --- a/arch/arm/mach-tegra/board-paz00.c
+> +++ b/arch/arm/mach-tegra/board-paz00.c
+> @@ -47,7 +47,17 @@
+>  #include "gpio-names.h"
+> 
+>  static struct plat_serial8250_port debug_uart_platform_data[] = {
+> +/* serial port on JP1 */
+>  	{
+
+Shouldn't the indentation of the comment be aligned to the brace?
+
+I'm not sure if the order of entries in the array matters. It'd presumably
+be safer to add the new UART entry to the end of the array so that any
+existing index-based number isn't changed.
+
+> +		.membase	= IO_ADDRESS(TEGRA_UARTA_BASE),
+> +		.mapbase	= TEGRA_UARTA_BASE,
+> +		.irq		= INT_UARTA,
+> +		.flags		= UPF_BOOT_AUTOCONF,
+> +		.iotype		= UPIO_MEM,
+> +		.regshift	= 2,
+> +		.uartclk	= 216000000,
+> +	}, {
+> +/* serial port on mini-pcie */
+>  		.membase	= IO_ADDRESS(TEGRA_UARTD_BASE),
+>  		.mapbase	= TEGRA_UARTD_BASE,
+>  		.irq		= INT_UARTD,
+> @@ -137,6 +147,7 @@ static void __init tegra_paz00_fixup(struct machine_desc *desc,
+> 
+>  static __initdata struct tegra_clk_init_table paz00_clk_init_table[] = {
+>  	/* name		parent		rate		enabled */
+> +	{ "uarta",	"pll_p",	216000000,	true },
+>  	{ "uartd",	"pll_p",	216000000,	true },
+>  	{ NULL,		NULL,		0,		0},
+>  };
 > --
 > 1.7.4.1
 
