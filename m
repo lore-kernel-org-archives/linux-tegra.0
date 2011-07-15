@@ -1,53 +1,38 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] gpio/tegra: dt: add binding for gpio polarity
-Date: Fri, 15 Jul 2011 12:00:05 -0600
-Message-ID: <20110715180005.GA2833@ponder.secretlab.ca>
-References: <20110715051713.GA28865@quad.lixom.net>
- <74CDBE0F657A3D45AFBB94109FB122FF049E834C19@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: remove copy-and-pasted usb platform data
+ from boards
+Date: Fri, 15 Jul 2011 11:30:18 -0700
+Message-ID: <20110715183018.GA3083@quad.lixom.net>
+References: <1310336374-31727-1-git-send-email-ccross@android.com>
+ <1310336374-31727-2-git-send-email-ccross@android.com>
+ <20110715111348.3ed0522a@ac100.localdomain>
+ <201107151155.56495.heiko@sntech.de>
+ <CAMbhsRTxAwKJ7qiK=_BAMc3Y1x_WHF7WHrm_54o-sYLBb1zzng@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834C19-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CAMbhsRTxAwKJ7qiK=_BAMc3Y1x_WHF7WHrm_54o-sYLBb1zzng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 15, 2011 at 09:29:08AM -0700, Stephen Warren wrote:
-> Olof Johansson wrote at Thursday, July 14, 2011 11:17 PM:
-> > Allocate one bit in the available extra cell to indicate if the gpio
-> > should be considered logically inverted.
-> > 
-> > Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+On Fri, Jul 15, 2011 at 09:45:53AM -0700, Colin Cross wrote:
+> Can you or someone else test if power_down_on_bus_suspend is causing a
+> problem?  If it is, I'll change the default in devices.c to
+> power_down_on_bus_suspend=0, and devices that want
+> power_down_on_bus_suspend=1 will have to set it.
 
-Applied, thanks.
+Seaboard and derivatives have power_down_on_bus_suspend set, and does OK with
+that. I suggest that paz00 overrides the value before device registration if
+it has to. If the number of boards down the road that need it off exceeds
+number of boards that need it on, it can always be flipped. This should come
+from the device tree later anyway.
 
-g.
+(Note: I'll post a patch in a bit that keeps the IP clocked even if phy is
+powered down on bus suspend, since otherwise we don't get hotplug events for
+hub-less systems).
 
-> > ---
-> >  .../devicetree/bindings/gpio/gpio_nvidia.txt       |    3 ++-
-> >  1 files changed, 2 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> > b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> > index 64aac39..adcf55c 100644
-> > --- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> > +++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-> > @@ -3,5 +3,6 @@ NVIDIA Tegra 2 GPIO controller
-> >  Required properties:
-> >  - compatible : "nvidia,tegra20-gpio"
-> >  - #gpio-cells : Should be two. The first cell is the pin number and the
-> > -  second cell is used to specify optional parameters (currently unused).
-> > +  second cell is used to specify optional parameters:
-> > +  - bit 0 specifies polarity (0 for normal, 1 for inverted)
-> >  - gpio-controller : Marks the device node as a GPIO controller.
-> > --
-> > 1.7.4.1
-> 
-> -- 
-> nvpublic
-> 
+
+-Olof
