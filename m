@@ -1,37 +1,42 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 3/3] ARM: tegra: paz00: enable wifi led
-Date: Fri, 15 Jul 2011 10:10:28 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834C43@HQMAIL01.nvidia.com>
-References: <1310725464-2524-1-git-send-email-marvin24@gmx.de>
- <1310725464-2524-4-git-send-email-marvin24@gmx.de>
+From: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: tegra: paz00: export the WIFI rfkill gpio
+Date: Fri, 15 Jul 2011 21:25:00 +0400
+Message-ID: <4E2077EC.1070902@ru.mvista.com>
+References: <1310725464-2524-1-git-send-email-marvin24@gmx.de>	<1310725464-2524-3-git-send-email-marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF049E834C2F@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1310725464-2524-4-git-send-email-marvin24-Mmb7MZpHnFY@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834C2F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietrich wrote at Friday, July 15, 2011 4:24 AM:
-> This adds support for the wifi led. It is automaticly triggered by
-> the rfkill0 event.
-...
-> +static struct gpio_led gpio_leds[] = {
-> +	{
-> +		.name                   = "wifi-led",
-> +		.default_trigger        = "rfkill0",
-> +		.gpio                   = TEGRA_WIFI_LED,
-> +	},
-> +};
+Hello.
 
-How does this work given that the previous patch simply exports the actual
-GPIO to user-space, rather than registering it through an rfkill driver;
-Does the WiFi driver itself register directly with the rfkill system? 
+Stephen Warren wrote:
 
-(what model of device is the AC100's WiFi? I assume it's on USB.)
+>> This makes the WIFI rfkill gpio available to userspace. On boot,
+>> WIFI will be unblocked by default.
+> ...
+>> +static void __init paz00_wifi_init(void)
+>> +{
+>> +	int ret;
+>> +
+>> +	/* unlock hw rfkill */
+>> +	ret = gpio_request_one(TEGRA_WIFI_PWRN, GPIOF_OUT_INIT_HIGH,
+>> +		"wifi pwrn");
+>> +	if (ret) {
+>> +		pr_warning("WIFI: could not requestrfkill gpio\n");
+>> +		return;
+>> +	}
+>> +	gpio_export(TEGRA_WIFI_PWRN, 0);
+>> +};
+> 
+> Wouldn't you want to skip the gpio_export() call if the gpio_request()
+> call failed?
 
--- 
-nvpublic
+    I think that's what he does -- there's a *return* statement.
+
+WBR, Sergei
