@@ -1,34 +1,46 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL] Tegra updates for v3.1
-Date: Fri, 15 Jul 2011 18:09:04 +0200
-Message-ID: <201107151809.04667.arnd@arndb.de>
-References: <CAMbhsRQoZ7vJGchkXLUOrOH4rpKJzJe-iGvLjTfBmz4R=8HtVw@mail.gmail.com> <201107151600.40794.arnd@arndb.de> <CAMbhsRQLaZss2uhLCaY-WjaH85WKLbYYnR2cfw4b+Qnz_rKXyw@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] gpio/tegra: dt: add binding for gpio polarity
+Date: Fri, 15 Jul 2011 09:29:08 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834C19@HQMAIL01.nvidia.com>
+References: <20110715051713.GA28865@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRQLaZss2uhLCaY-WjaH85WKLbYYnR2cfw4b+Qnz_rKXyw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20110715051713.GA28865-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 15 July 2011, Colin Cross wrote:
-> If I put it in separate branches in the future, do you want a single
-> pull request for a merge of the branches, or a pull request for each
-> branch?
+Olof Johansson wrote at Thursday, July 14, 2011 11:17 PM:
+> Allocate one bit in the available extra cell to indicate if the gpio
+> should be considered logically inverted.
+> 
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Separate requests. The idea is that I can group them together with
-similar branches from other platforms and then send a single
-pull request to Linus for e.g. all fixes, or a specific feature
-getting added to multiple platforms.
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The branches that I commonly have for other platforms are 'fixes',
-'cleanup', 'devel' and 'board'. If you have a lot of patches, like
-omap typically has, you can also do more specific feature branches.
+> ---
+>  .../devicetree/bindings/gpio/gpio_nvidia.txt       |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+> b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+> index 64aac39..adcf55c 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+> @@ -3,5 +3,6 @@ NVIDIA Tegra 2 GPIO controller
+>  Required properties:
+>  - compatible : "nvidia,tegra20-gpio"
+>  - #gpio-cells : Should be two. The first cell is the pin number and the
+> -  second cell is used to specify optional parameters (currently unused).
+> +  second cell is used to specify optional parameters:
+> +  - bit 0 specifies polarity (0 for normal, 1 for inverted)
+>  - gpio-controller : Marks the device node as a GPIO controller.
+> --
+> 1.7.4.1
 
-In the future, I hope to see a lot more device tree work, which should
-also have its own branch.
-
-	Arnd
+-- 
+nvpublic
