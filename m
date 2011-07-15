@@ -1,89 +1,35 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 2/2] ARM: tegra: remove copy-and-pasted usb platform data
-	from boards
-Date: Fri, 15 Jul 2011 11:55:56 +0200
-Message-ID: <201107151155.56495.heiko@sntech.de>
-References: <1310336374-31727-1-git-send-email-ccross@android.com>
-	<1310336374-31727-2-git-send-email-ccross@android.com>
-	<20110715111348.3ed0522a@ac100.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20110715111348.3ed0522a@ac100.localdomain>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Mike Rapoport <mike@compulab.co.il>, Marc Dietrich <marvin24@gmx.de>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH 0/3] ARM: tegra: paz00: Add Wifi and second serial port support
+Date: Fri, 15 Jul 2011 12:24:20 +0200
+Message-ID: <1310725464-2524-1-git-send-email-marvin24@gmx.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, 15. Juli 2011, 11:13:48 schrieb Marc Dietrich:
-> see comment for PATCH 1/2
-> 
-> Am Sun, 10 Jul 2011 15:19:34 -0700
-> 
-> schrieb Colin Cross <ccross@android.com>:
-> > trimslice and paz00 both have functionally identical platform
-> > data for the tegra-ehci driver.  Move the platform data into
-> > devices.c, and remove it from all the board files.
-> > 
-> > Signed-off-by: Colin Cross <ccross@android.com>
-> 
-> Acked-By: Marc Dietrich <marvin24@gmx.de>
-> 
-> > ---
-> > 
-> >  arch/arm/mach-tegra/board-paz00.c     |   26
-> > 
+Colin,
 
-> > 
-> > -static struct tegra_ulpi_config ulpi_phy_config = {
-> > -		.reset_gpio = TEGRA_ULPI_RST,
-> > -		.clk = "cdev2",
-> > -};
-> > -
-> > -static struct tegra_ehci_platform_data tegra_ehci_pdata[] = {
-> > -		[0] = {
-> > -			.operating_mode = TEGRA_USB_OTG,
-> > -			.power_down_on_bus_suspend = 1,
-> > -		},
-> > -		[1] = {
-> > -			.phy_config = &ulpi_phy_config,
-> > -			.operating_mode = TEGRA_USB_HOST,
-> > -			.power_down_on_bus_suspend = 1,
-> > -		},
-> > -		[2] = {
-> > -			.operating_mode = TEGRA_USB_HOST,
-> > -			.power_down_on_bus_suspend = 1,
-> > -		},
-> > -};
+the following three patches add the second serial port (some solder points
+on the mainboard) and Wifi support (rfkill and LED) to PAZ00.
+The second serial port is useful to be able to communicate with the booloader
+and also to see early kernel messages.
 
-I'm not sure about this.
-
-For paz00 tegra_ehci3_device also leads to an external usb port. With 
-power_down_on_bus_suspend = 1 hotplugging usb devices doesn't work (as the bus 
-might be suspended at the time).
-
-From the initial commit message of ehci-tegra on android.git.kernel.org:
-"For additional power saving, the driver supports powering down the
-phy on bus suspend when it is used, for example, to connect an internal
-device that use an out-of-band remote wakeup mechanism (e.g. a gpio)."
-
-So my guess was, that the correct handling of this was setting 
-power_down_on_bus_suspend to 0 - which did fix the problem.
-
-With this data moving to devices.c, setting this would also change the 
-trimslice behaviour which would be a problem.
-
-In the end I'm not sure if setting power_down_on_bus_suspend to 0 is the 
-correct solution to the hotplug problem or if a better solution exists.
+They were intended for 3.1 but if it's too late, 3.2 is also ok.
 
 Thanks
-Heiko
+
+Marc
+
+Marc Dietrich (3):
+  ARM: tegra: paz00: add support serial port on JP1
+  ARM: tegra: paz00: export the WIFI rfkill gpio
+  ARM: tegra: paz00: enable wifi led
+
+ arch/arm/mach-tegra/board-paz00-pinmux.c |    2 +
+ arch/arm/mach-tegra/board-paz00.c        |   50 ++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h        |    7 ++++
+ 3 files changed, 59 insertions(+), 0 deletions(-)
+
+-- 
+1.7.4.1
