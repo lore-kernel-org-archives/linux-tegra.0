@@ -1,115 +1,77 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/2] ARM: Tegra: Harmony: Register and configure WM8903
- IRQ GPIO
-Date: Fri, 15 Jul 2011 13:02:52 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049E834CCC@HQMAIL01.nvidia.com>
-References: <1310589618-16080-1-git-send-email-swarren@nvidia.com>
- <20110714122520.GB14249@sirena.org.uk>
- <74CDBE0F657A3D45AFBB94109FB122FF049E834971@HQMAIL01.nvidia.com>
- <20110715000510.GD32716@opensource.wolfsonmicro.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: paz00: add support serial port on JP1
+Date: Sat, 16 Jul 2011 17:59:25 +0200
+Message-ID: <20110716175925.64a56617@ac100.localdomain>
+References: <1310725464-2524-1-git-send-email-marvin24@gmx.de>
+	<1310725464-2524-2-git-send-email-marvin24@gmx.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF049E834C23@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110715000510.GD32716-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834C23-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Thursday, July 14, 2011 6:05 PM:
-> On Thu, Jul 14, 2011 at 08:49:28AM -0700, Stephen Warren wrote:
-> > Mark Brown wrote at Thursday, July 14, 2011 6:25 AM:
+Am Fri, 15 Jul 2011 09:39:36 -0700
+schrieb Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+
+> Marc Dietrich wrote at Friday, July 15, 2011 4:24 AM:
+> > UART-A is connected to JP1 and used by the bootloader for debugging
+> > output while UART-D is connected to the mini-pcie expansion slot.
+> > 
+> > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> > ---
+> >  arch/arm/mach-tegra/board-paz00.c |   11 +++++++++++
+> >  1 files changed, 11 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-paz00.c
+> > b/arch/arm/mach-tegra/board-paz00.c index 1b076f6..931b06e 100644
+> > --- a/arch/arm/mach-tegra/board-paz00.c
+> > +++ b/arch/arm/mach-tegra/board-paz00.c
+> > @@ -47,7 +47,17 @@
+> >  #include "gpio-names.h"
+> > 
+> >  static struct plat_serial8250_port debug_uart_platform_data[] = {
+> > +/* serial port on JP1 */
+> >  	{
 > 
-> > > This seems silly - we should fix this in the core code rather than have
-> > > every single board that ahppens to use an interrupt which is also
-> > > available as a GPIO manually faff around with gpiolib.
+> Shouldn't the indentation of the comment be aligned to the brace?
+
+ok, seems to be the common kernel style. Will be fixed in V2.
+
+> I'm not sure if the order of entries in the array matters. It'd
+> presumably be safer to add the new UART entry to the end of the array
+> so that any existing index-based number isn't changed.
+
+yeah, it will change the numbering, but none I know of used the serial
+interface of the mini-pcie and it makes some sense to have the
+bootloader output on number 0.
+
+> > +		.membase	= IO_ADDRESS(TEGRA_UARTA_BASE),
+> > +		.mapbase	= TEGRA_UARTA_BASE,
+> > +		.irq		= INT_UARTA,
+> > +		.flags		= UPF_BOOT_AUTOCONF,
+> > +		.iotype		= UPIO_MEM,
+> > +		.regshift	= 2,
+> > +		.uartclk	= 216000000,
+> > +	}, {
+> > +/* serial port on mini-pcie */
+> >  		.membase	= IO_ADDRESS(TEGRA_UARTD_BASE),
+> >  		.mapbase	= TEGRA_UARTD_BASE,
+> >  		.irq		= INT_UARTD,
+> > @@ -137,6 +147,7 @@ static void __init tegra_paz00_fixup(struct
+> > machine_desc *desc,
+> > 
+> >  static __initdata struct tegra_clk_init_table
+> > paz00_clk_init_table[] = { /* name
+> > parent		rate		enabled */
+> > +	{ "uarta",	"pll_p",	216000000,	true },
+> >  	{ "uartd",	"pll_p",	216000000,	true },
+> >  	{ NULL,		NULL,
+> > 0,		0}, };
+> > --
+> > 1.7.4.1
 > 
-> > That seems a good goal.
-> 
-> > However, how does the WM8903 driver know whether the interrupt number
-> > it's passed is a straight-up dedicated interrupt (hence the calls aren't
-> > required), or a GPIO (hence they are)?
-> 
-> It shouldn't - I said "core code" for a reason :)
-
-Ah, yes.
-
-[Grant, Thomas, as GPIO/IRQ maintainers, do you agree that (a) below is
-something the core IRQ code should be doing?]
-
-There are two aspects to this:
-
-a) The generic gpio_request/gpio_direction_input. This could be handled
-by the core irq code if struct irq_chip grew a to_irq function, and a
-__irq_to_gpio/irq_to_gpio global function were created to mirror
-gpio_to_irq.
-
-b) On Tegra at least, we need to call tegra_gpio_enable to configure the
-pin to be a GPIO. This isn't performed by the Tegra GPIO driver during
-gpio_request, since such configuration is supposed to be outside the
-domain of the GPIO driver, but deferred to perhaps a pinmux driver. Should
-the same be true of request_irq; should it require the user to somehow
-call tegra_gpio_enable elsewhere? It'd be asymmetric to how gpio_request
-worked, but Tegra's irq_chip could easily call tegra_gpio_enable from
-within irq_chip.startup, thus simplifying any code that wants to use
-interrupt-that-are-GPIOs.
-
-The alternative is for the board files to have a list of GPIOs for which
-to call tegra_gpio_enable, and indeed, that's what we do have in Tegra
-e.g. in board-seaboard-pinmux.c.
-
-I suppose with the new pinmux API, there will simply be a pinmux table in
-either the board file or Device Tree, and that will allow "GPIO" as a legal
-"special function" for each pin, and for pins which are really "GPIO
-interrupts", we'll just need to list "GPIO" in that pinmux table, so perhaps
-everything will just fall out cleanly that way. I suppose that a pinmux
-driver could even expose an "interrupt" special function for relevant pins
-just to clearly document the usage, even if this maps to the same thing as
-configuring a pin as a GPIO.
-
-> > I guess the answer is that there should be an interrupt API to map from
-> > interrupt to GPIO number, returning <0 when there is no GPIO backing the
-> > IRQ, and an op in struct irq_chip to implement that? However, that's not
-> > there right now as far as I can tell.
-> 
-> Yes, exactly - but it should not be complicated to add one and since
-> you're doing this anyway it'd make sense to do the core change rather
-> than faffing around the edges of the system.
-
-Sure, it doesn't look too hard.
-
-A complication is that ARM doesn't define gpio_to_irq in a single central
-header, but rather one per subarchitecture, I suppose since not all 
-subarchitectures implement/require gpiolib. Still, I think this mostly
-just means cut/pasting "#define irq_to_gpio __irq_to_gpio" into each
-mach-foo's gpio.h for now, so /probably/ not a big deal...
-
-> > Finally, there are some pinmux interactions that need to be dealt with;
-> > on Tegra, the pinmux allows the tristate/drive status of pins to be set
-> > on a group basis (a group being a set of 1-n pins). However, gpio enable
-> > (which overrides the pinmux's setting of tristate/drive) can be set on
-> > a per-pin basis. At least on Seaboard, the WM8903 IRQ is an input pin
-> > in a group that otherwise needs to contain output pins, so we really
-> > want to enable the WM8903 IRQ GPIO pin as a GPIO, and set it to input,
-> > before setting up that pinmux group to drive the pins. Without this,
-> > there may be a brief period where both Tegra and the WM8903 are driving
-> > this IRQ signal, which can't be good for hardware.
-> 
-> If the pinmux stuff can't work this out then it needs to be worked on
-> until it can, this is pretty basic stuff.  I had thought that the plan
-> was to support a big block configuration done by the board which set
-> everything up en masse and would presumably cope with stuff like this?
-
-Maybe the solution for Tegra, once we have the new pinmux API in place,
-is for the pinmux driver initialization to program all pins in HW as
-input GPIOs, and hence tri-stated. That way, there can never be any
-conflict with external HW. If/once a pin/group is requested as a
-particular special function, the tri-state can be removed, since then
-we'll know the board-specific direction. Some though may have to be
-given to not tri-stating any pins required for basic SDRAM or UART
-access during the boot process, but this is probably workable.
-
--- 
-nvpublic
