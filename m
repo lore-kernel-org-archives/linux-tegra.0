@@ -1,50 +1,65 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: tegra: paz00: enable wifi led
-Date: Sat, 16 Jul 2011 18:19:29 +0200
-Message-ID: <20110716181929.0dd45ce7@ac100.localdomain>
-References: <1310725464-2524-1-git-send-email-marvin24@gmx.de>
-	<1310725464-2524-4-git-send-email-marvin24@gmx.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF049E834C43@HQMAIL01.nvidia.com>
+From: Mike Rapoport <mike.rapoport-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RESEND] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter functionality
+Date: Sun, 17 Jul 2011 23:20:20 +0300
+Message-ID: <CABpLfoga7yYDP3xU0tx974F7xGfqQ1UzNTgOG5aXc8vuNeVKYA@mail.gmail.com>
+References: <20110711073755.GA8665@gentoodev.compulab.local>
+	<CAMbhsRS-REFiAiEnukVtarTx7PRrzLT0BHAHdmuPGqDRRppGtw@mail.gmail.com>
+	<20110713215820.GG3369@freya.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049E834C43-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110713215820.GG3369-RazCHl0VsYgkUSuvROHNpA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org, "Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>"@google.com, "Stephen Warren swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org"@google.com, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Fri, 15 Jul 2011 10:10:28 -0700
-schrieb Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+Hi Ben,
 
-> Marc Dietrich wrote at Friday, July 15, 2011 4:24 AM:
-> > This adds support for the wifi led. It is automaticly triggered by
-> > the rfkill0 event.
-> ...
-> > +static struct gpio_led gpio_leds[] = {
-> > +	{
-> > +		.name                   = "wifi-led",
-> > +		.default_trigger        = "rfkill0",
-> > +		.gpio                   = TEGRA_WIFI_LED,
-> > +	},
-> > +};
-> 
-> How does this work given that the previous patch simply exports the
-> actual GPIO to user-space, rather than registering it through an
-> rfkill driver; Does the WiFi driver itself register directly with the
-> rfkill system? 
+On Thu, Jul 14, 2011 at 12:58 AM, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org> wrote:
+> On Mon, Jul 11, 2011 at 12:49:33AM -0700, Colin Cross wrote:
+>> On Mon, Jul 11, 2011 at 12:37 AM, =A0<mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org> wrote:
+>> > Hi Ben,
+>> > This patch has been waiting for quite a long time and I've got no =
+response
+>> > from you concerning it.
+>> > Can you _please_ at last merge it so it'll make to 3.1?
+>
+> I'll add it to the -next tree tomorrow
 
-I don't know the details but the driver seems to register some rfkill
-poll routine which reports the hw status back to the mac layer. I guess
-from there the rfkill events are distributed. At least the led works
-fine here (and acts upon rfkill block). Problem is that the even binds
-to the first device registered to if you plug in some other network
-device which is registered first, then the led will act upon this one.
-Don't know how to bind it to a specific device.
+Any updates on this?
 
-> (what model of device is the AC100's WiFi? I assume it's on USB.)
+>> > =A0static const struct i2c_algorithm tegra_i2c_algo =3D {
+>> > --
+>> > 1.7.3.1
+>> >
+>> > --
+>> > To unsubscribe from this list: send the line "unsubscribe linux-te=
+gra" in
+>> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.ht=
+ml
+>> >
+>>
+>> Your mailer added @mike-pc.compulab.local to all of the addresses.
+>>
+>> Acked-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+>>
+>> It should go in through Ben's tree.
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-i2c"=
+ in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
+" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
 
-yes, it's a rt3070 (check the rt2x00 driver).
 
-Marc
+
+--=20
+Sincerely Yours,
+Mike.
