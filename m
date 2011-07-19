@@ -1,44 +1,63 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] arm/dt: tegra devicetree support
-Date: Tue, 19 Jul 2011 16:56:46 -0700
-Message-ID: <CAOesGMiy1t-98KZ_imFkGO-ify3S_00d_0XKc2vcLNRekxOvpw@mail.gmail.com>
-References: <20110719234158.2779.15394.stgit@ponder>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] dt: tegra20: Add ehci host controller nodes.
+Date: Tue, 19 Jul 2011 16:58:40 -0700
+Message-ID: <CAOesGMjKpzG6epJN70TDyvynon81Hr7e8Swh+VG1F7Pd-U818A@mail.gmail.com>
+References: <1311115617-9697-1-git-send-email-achew@nvidia.com>
+	<1311115617-9697-2-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110719234158.2779.15394.stgit@ponder>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1311115617-9697-2-git-send-email-achew@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: achew@nvidia.com
+Cc: grant.likely@secretlab.ca, swarren@nvidia.com, dwillemsen@nvidia.com, rklein@nvidia.com, mogantyv@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Nice!
+Hi,
 
-
-On Tue, Jul 19, 2011 at 4:43 PM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
-> Everything required to populate NVIDIA Tegra devices from the device
-> tree. =A0This patch adds a new DT_MACHINE_DESC() which matches agains=
-t
-> a tegra20 device tree. =A0So far it only registers the on-chip device=
-s,
-> but it will be refined in follow on patches to configure clocks and
-> pin IO from the device tree also.
+On Tue, Jul 19, 2011 at 3:46 PM,  <achew@nvidia.com> wrote:
+> From: Andrew Chew <achew@nvidia.com>
 >
-> Signed-off-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-
-
-Minor nit:
-
+> These values were derived from various headers in arch/arm/mach-tegra=
+=2E
+>
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> ---
+> =A0arch/arm/boot/dts/tegra20.dtsi | =A0 52 ++++++++++++++++++++++++++=
+++++++++++++++
+> =A01 files changed, 52 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra=
+20.dtsi
+> index 83fedf3..a0353bb 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
 > +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -0,0 +1,148 @@
-> +/include/ "skeleton.dtsi"
+> @@ -160,5 +160,57 @@
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupts =3D < 63 >;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0status =3D "disabled";
+> =A0 =A0 =A0 =A0};
 > +
-> +/ {
-> + =A0 =A0 =A0 model =3D "NVIDIA Tegra 250";
+> + =A0 =A0 =A0 ehci@c5000000 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra20-ehci";
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0xc5000000 0x4000>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D < 52 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mode =3D < 1 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 power_down_on_bus_suspend;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 type =3D "utmi";
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 hssync_start_delay =3D < 0 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 idle_wait_delay =3D < 17 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 elastic_limit =3D < 16 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 term_range_adj =3D < 6 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_setup =3D < 15 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_lsfslew =3D < 2 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_lsrslew =3D < 2 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 status =3D "disabled";
 
-NVIDIA Tegra2 or Tegra20 to be more in line with the recent 250->20
-conversion (and Harmony)
+These are mostly phy related settings, maybe do a phy subnode with
+them? That way the usb_phy code can probe on that.
+
+
+-Olof
