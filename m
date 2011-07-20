@@ -1,63 +1,54 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/3] dt: tegra20: Add ehci host controller nodes.
-Date: Tue, 19 Jul 2011 16:58:40 -0700
-Message-ID: <CAOesGMjKpzG6epJN70TDyvynon81Hr7e8Swh+VG1F7Pd-U818A@mail.gmail.com>
+From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 3/3] dt: tegra20: Add ehci nodes to Seaboard.
+Date: Tue, 19 Jul 2011 17:07:25 -0700
+Message-ID: <643E69AA4436674C8F39DCC2C05F76383CF0DD2272@HQMAIL03.nvidia.com>
 References: <1311115617-9697-1-git-send-email-achew@nvidia.com>
-	<1311115617-9697-2-git-send-email-achew@nvidia.com>
+	<1311115617-9697-3-git-send-email-achew@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF049EBDED2A@HQMAIL01.nvidia.com>
+	<643E69AA4436674C8F39DCC2C05F76383CF0DD2271@HQMAIL03.nvidia.com>
+	<CAOesGMj247ekXj1FPmb-ZXqxTV4PsmAiCme005TGKm7cnBdOPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1311115617-9697-2-git-send-email-achew@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: achew@nvidia.com
-Cc: grant.likely@secretlab.ca, swarren@nvidia.com, dwillemsen@nvidia.com, rklein@nvidia.com, mogantyv@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAOesGMj247ekXj1FPmb-ZXqxTV4PsmAiCme005TGKm7cnBdOPQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: 'Olof Johansson' <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Dan Willemsen <dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Venkat Moganty <vmoganty-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+> > And since there are defaults specified in tegra20.dtsi, =
 
-On Tue, Jul 19, 2011 at 3:46 PM,  <achew@nvidia.com> wrote:
-> From: Andrew Chew <achew@nvidia.com>
->
-> These values were derived from various headers in arch/arm/mach-tegra=
-=2E
->
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> ---
-> =A0arch/arm/boot/dts/tegra20.dtsi | =A0 52 ++++++++++++++++++++++++++=
-++++++++++++++
-> =A01 files changed, 52 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra=
-20.dtsi
-> index 83fedf3..a0353bb 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -160,5 +160,57 @@
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupts =3D < 63 >;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0status =3D "disabled";
-> =A0 =A0 =A0 =A0};
-> +
-> + =A0 =A0 =A0 ehci@c5000000 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra20-ehci";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0xc5000000 0x4000>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D < 52 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mode =3D < 1 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 power_down_on_bus_suspend;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 type =3D "utmi";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 hssync_start_delay =3D < 0 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 idle_wait_delay =3D < 17 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 elastic_limit =3D < 16 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 term_range_adj =3D < 6 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_setup =3D < 15 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_lsfslew =3D < 2 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 xcvr_lsrslew =3D < 2 >;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 status =3D "disabled";
+> does it really make sense to also have default values =
 
-These are mostly phy related settings, maybe do a phy subnode with
-them? That way the usb_phy code can probe on that.
+> assigned in ehci-tegra.c (for when a property is not =
 
+> present)? =A0I worry that the information is now duplicated. =A0
+> If those properties aren't present, then someone's mucked =
 
--Olof
+> with the tegra20.dtsi ehci properties.
+> =
+
+> Once all platforms are cut over to devicetree-only, that can be the
+> case. Until that happens, there will be need for settings in the C
+> code too. Is Nvidia switching to device trees for android/fastboot?
+
+I'm not talking about the defaults in arch/arm/mach-tegra/usb_phy.c.  I und=
+erstand that once we cut over to devicetree-only, the defaults there can go=
+ away.
+
+The question is, if a property is not present, what should we do?  The defa=
+ult value for that property SHOULD be present somewhere in the dts chain.  =
+But if it's not, should we error out, spit out a warning, or spit out a war=
+ning and assign a default?  If it's the latter case, then we now have a set=
+ of defaults in dts, as well as C code, regardless of whether we've switche=
+d over to devicetree-only or not.
