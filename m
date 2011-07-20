@@ -1,76 +1,37 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH] arm/dt: tegra devicetree support
-Date: Thu, 21 Jul 2011 06:49:11 +0800
-Message-ID: <20110720224910.GI6999@S2100-06.ap.freescale.net>
-References: <20110719234158.2779.15394.stgit@ponder>
-	<74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27@HQMAIL01.nvidia.com>
+From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/3 v2] usb: tegra20-ehci: Add devicetree support.
+Date: Wed, 20 Jul 2011 15:52:55 -0700
+Message-ID: <643E69AA4436674C8F39DCC2C05F76383CF0DD227C@HQMAIL03.nvidia.com>
+References: <1311190690-18334-1-git-send-email-achew@nvidia.com>
+	<CACxGe6uDVdemjbjY_i-_M_-VT8HuLdtXP-R9V8kB+pSSin4dEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CACxGe6uDVdemjbjY_i-_M_-VT8HuLdtXP-R9V8kB+pSSin4dEw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: 'Grant Likely' <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Dan Willemsen <dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Venkat Moganty <vmoganty-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 20, 2011 at 08:37:19AM -0700, Stephen Warren wrote:
-> Grant Likely wrote at Tuesday, July 19, 2011 5:43 PM:
-> > Everything required to populate NVIDIA Tegra devices from the device
-> > tree.  This patch adds a new DT_MACHINE_DESC() which matches against
-> > a tegra20 device tree.  So far it only registers the on-chip devices,
-> > but it will be refined in follow on patches to configure clocks and
-> > pin IO from the device tree also.
-> > 
-> > Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
-> > ---
-> > 
-> > Hi all,
-> > 
-> > Similar to the versatile patch I just posted, this is certainly not
-> > complete board support, but it is enough to be useful.  I'd like to
-> > merge this for v3.1.  It should not break any existing board support.
-> 
-> > diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-> 
-> tegra-*.dts don't include status="disable" for all the unused controllers.
-> Should that be added?
-> 
-> > +	sound {
-> > +		compatible = "nvidia,harmony-sound", "nvidia,tegra-wm8903";
-> 
-> I thought the sound bindings were still somewhat experimental and not
-> completely agreed upon. One issue I see is that Device Tree is
-> supposed to represent pure HW, rather than driver-required abstractions,
-> and at least the compatible name here is pretty Linux-driver-specific.
-> 
-> I think there are some devices missing from the DT file for audio too,
-> e.g. the ALSA "PCM" (DMA) driver.
-> 
-> Also, the bindings for this aren't documented IIRC.
-> 
-> I'd suggest dropping the audio part of the DT file until the audio side
-> is more mature.
-> 
-> > +		spkr-en-gpios = <&codec 2 0>;
-> 
-> Should that be "gpio" not "gpios", since there is only one?
-> 
-My reason for using "gpios" over "gpio" is that
-Documentation/devicetree/bindings/gpio/gpio.txt says so.  Unless you
-want to change the document to elaborate the difference between "gpio"
-and "gpios", which I do not see the necessity ...
+> > + =A0 =A0 =A0 retval =3D of_property_read_u32(dn, "hssync_start_delay",
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 (u32 =
 
-GPIO properties should be named "[<name>-]gpios".
+> *)&phy_config->hssync_start_delay);
+> =
 
-Regards,
-Shawn
+> Gah!  Don't cast pointers that way.  It will break badly if the sizes
+> don't match.  The variable *must* be a u32.
+
+Can we have u16 and u8 versions of of_property_read, then?  It'll simplify =
+code.  I'll be happy to submit a patch for that if that's what we want.
