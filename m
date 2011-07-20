@@ -1,131 +1,77 @@
-From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: Re: [RFC PATCH 1/5] OMAP3:I2C: Add device tree nodes for beagle board
-Date: Wed, 20 Jul 2011 19:04:20 +0800
-Message-ID: <20110720110419.GA6999@S2100-06.ap.freescale.net>
-References: <1309426647-31587-1-git-send-email-manjugk@ti.com>
- <1309426647-31587-2-git-send-email-manjugk@ti.com>
- <20110706185546.GJ4871@ponder.secretlab.ca>
- <74CDBE0F657A3D45AFBB94109FB122FF049E21C203@HQMAIL01.nvidia.com>
- <CACxGe6u8qq7FA7kFXbU5uCk6m_GA8GWLqsdjFCXN+NMJfFKxmA@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/dt: tegra devicetree support
+Date: Wed, 20 Jul 2011 08:37:19 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27@HQMAIL01.nvidia.com>
+References: <20110719234158.2779.15394.stgit@ponder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACxGe6u8qq7FA7kFXbU5uCk6m_GA8GWLqsdjFCXN+NMJfFKxmA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20110719234158.2779.15394.stgit@ponder>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "G, Manjunath Kondaiah" <manjugk-l0cyMroinI0@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 06, 2011 at 06:12:49PM -0600, Grant Likely wrote:
-> On Wed, Jul 6, 2011 at 5:26 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
-rote:
-> > Grant Likely wrote at Wednesday, July 06, 2011 12:56 PM:
-> >> On Thu, Jun 30, 2011 at 03:07:23PM +0500, G, Manjunath Kondaiah wr=
-ote:
-> >> > Add I2C and it's child device nodes for beagle board.
-> >> > The I2C1 controller child devices are not populated and it
-> >> > should be handled along with OMAP clock changes.
-> > ...
-> >> > diff --git a/arch/arm/boot/dts/omap3-beagle.dts b/arch/arm/boot/=
-dts/omap3-beagle.dts
-> > ...
-> >> > + =A0 i2c@48070000 {
-> > ...
-> >> > + =A0 =A0 =A0 =A0 =A0 clock-frequency =3D <2600>;
-> >> > + =A0 =A0 =A0 =A0 =A0 status =3D "disabled";
-> >>
-> >> Drop 'status' when you move this node definition to
-> >> arch/arm/boot/dts/omap3.dtsi. =A0Board overlay files that include =
-the
-> >> omap3.dtsi should explicitly disable any devices that it does not =
-use
-> >> (which is opposite to what tegra currently does, but I'm going to
-> >> change that).
-> >
-> > Purely out of idle curiosity: What's the benefit of one way over th=
-e other?
->=20
-> Mostly consistency.  Most of the experience we have with the flattene=
-d
-> device tree up to this point hasn't bothered with the 'status'
-> property.  It is only when AMP and hypervisors cam online that it
-> became important to use a status property, and that only when the
-> kernel needs to be told that the device does indeed exist, but it mus=
-t
-> not be touched.  I'd like to continue that pattern for new DT users
-> with the default assumption that a device is enabled unless the board
-> .dts explicitly disables it.
->=20
-When going this way with my i.mx53 related dts files, I feel I like the
-opposite way.
-
-i.mx53 has many number of peripherals inside, while individual board
-might only use small portion there.  For example, i.mx53 has 5 uart
-controller instances inside, while quick start (aka loco) board only
-uses one.  With the way you suggest here, we will have the following
-in imx53.dtsi.
-
-uart0: uart@... {
-	...
-};
-
-uart1: uart@... {
-	...
-};
-
-uart2: uart@... {
-	...
-};
-
-uart3: uart@... {
-	...
-};
-
-uart4: uart@... {
-	...
-};
-
-And we will have to tell the 4 we do not use on quick start board in
-imx53-qs.dtsi
-
-
-uart1: uart@... {
-	...
-	status =3D "disabled";
-};
-
-uart2: uart@... {
-	...
-	status =3D "disabled";
-};
-
-uart3: uart@... {
-	...
-	status =3D "disabled";
-};
-
-uart4: uart@... {
-	...
-	status =3D "disabled";
-};
-
-Besides the bothering that we have to list so many unused controllers
-in individual board dts file, it's also hard to tell which controllers
-are actually available on the board.  People have to look at imx53.dts
-to get a full list and then exclude the ones in imx53-<board>.dts as
-"disabled".
-
-And if we go the way opposite, adding "disabled" status for everyone
-in imx53.dts, we will only need to specify the peripherals that are
-actually available on board with "okay" status in imx53-<board>.dts.
-And it's much more clear for people to see what peripherals are
-available on individual board.
-
-So I'm going the way than you suggested.  Please let me know if you
-strongly dislikes it.
-
---=20
-Regards,
-Shawn
+R3JhbnQgTGlrZWx5IHdyb3RlIGF0IFR1ZXNkYXksIEp1bHkgMTksIDIwMTEgNTo0MyBQTToNCj4g
+RXZlcnl0aGluZyByZXF1aXJlZCB0byBwb3B1bGF0ZSBOVklESUEgVGVncmEgZGV2aWNlcyBmcm9t
+IHRoZSBkZXZpY2UNCj4gdHJlZS4gIFRoaXMgcGF0Y2ggYWRkcyBhIG5ldyBEVF9NQUNISU5FX0RF
+U0MoKSB3aGljaCBtYXRjaGVzIGFnYWluc3QNCj4gYSB0ZWdyYTIwIGRldmljZSB0cmVlLiAgU28g
+ZmFyIGl0IG9ubHkgcmVnaXN0ZXJzIHRoZSBvbi1jaGlwIGRldmljZXMsDQo+IGJ1dCBpdCB3aWxs
+IGJlIHJlZmluZWQgaW4gZm9sbG93IG9uIHBhdGNoZXMgdG8gY29uZmlndXJlIGNsb2NrcyBhbmQN
+Cj4gcGluIElPIGZyb20gdGhlIGRldmljZSB0cmVlIGFsc28uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
+OiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBzZWNyZXRsYWIuY2E+DQo+IC0tLQ0KPiANCj4g
+SGkgYWxsLA0KPiANCj4gU2ltaWxhciB0byB0aGUgdmVyc2F0aWxlIHBhdGNoIEkganVzdCBwb3N0
+ZWQsIHRoaXMgaXMgY2VydGFpbmx5IG5vdA0KPiBjb21wbGV0ZSBib2FyZCBzdXBwb3J0LCBidXQg
+aXQgaXMgZW5vdWdoIHRvIGJlIHVzZWZ1bC4gIEknZCBsaWtlIHRvDQo+IG1lcmdlIHRoaXMgZm9y
+IHYzLjEuICBJdCBzaG91bGQgbm90IGJyZWFrIGFueSBleGlzdGluZyBib2FyZCBzdXBwb3J0Lg0K
+DQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYS1oYXJtb255LmR0cyBiL2Fy
+Y2gvYXJtL2Jvb3QvZHRzL3RlZ3JhLWhhcm1vbnkuZHRzDQoNCnRlZ3JhLSouZHRzIGRvbid0IGlu
+Y2x1ZGUgc3RhdHVzPSJkaXNhYmxlIiBmb3IgYWxsIHRoZSB1bnVzZWQgY29udHJvbGxlcnMuDQpT
+aG91bGQgdGhhdCBiZSBhZGRlZD8NCg0KPiArCXNvdW5kIHsNCj4gKwkJY29tcGF0aWJsZSA9ICJu
+dmlkaWEsaGFybW9ueS1zb3VuZCIsICJudmlkaWEsdGVncmEtd204OTAzIjsNCg0KSSB0aG91Z2h0
+IHRoZSBzb3VuZCBiaW5kaW5ncyB3ZXJlIHN0aWxsIHNvbWV3aGF0IGV4cGVyaW1lbnRhbCBhbmQg
+bm90DQpjb21wbGV0ZWx5IGFncmVlZCB1cG9uLiBPbmUgaXNzdWUgSSBzZWUgaXMgdGhhdCBEZXZp
+Y2UgVHJlZSBpcw0Kc3VwcG9zZWQgdG8gcmVwcmVzZW50IHB1cmUgSFcsIHJhdGhlciB0aGFuIGRy
+aXZlci1yZXF1aXJlZCBhYnN0cmFjdGlvbnMsDQphbmQgYXQgbGVhc3QgdGhlIGNvbXBhdGlibGUg
+bmFtZSBoZXJlIGlzIHByZXR0eSBMaW51eC1kcml2ZXItc3BlY2lmaWMuDQoNCkkgdGhpbmsgdGhl
+cmUgYXJlIHNvbWUgZGV2aWNlcyBtaXNzaW5nIGZyb20gdGhlIERUIGZpbGUgZm9yIGF1ZGlvIHRv
+bywNCmUuZy4gdGhlIEFMU0EgIlBDTSIgKERNQSkgZHJpdmVyLg0KDQpBbHNvLCB0aGUgYmluZGlu
+Z3MgZm9yIHRoaXMgYXJlbid0IGRvY3VtZW50ZWQgSUlSQy4NCg0KSSdkIHN1Z2dlc3QgZHJvcHBp
+bmcgdGhlIGF1ZGlvIHBhcnQgb2YgdGhlIERUIGZpbGUgdW50aWwgdGhlIGF1ZGlvIHNpZGUNCmlz
+IG1vcmUgbWF0dXJlLg0KDQo+ICsJCXNwa3ItZW4tZ3Bpb3MgPSA8JmNvZGVjIDIgMD47DQoNClNo
+b3VsZCB0aGF0IGJlICJncGlvIiBub3QgImdwaW9zIiwgc2luY2UgdGhlcmUgaXMgb25seSBvbmU/
+DQoNCj4gKwkJaHAtZGV0LWdwaW9zID0gPCZncGlvIDE3OCAwPjsNCj4gKwkJaW50LW1pYy1lbi1n
+cGlvcyA9IDwmZ3BpbyAxODQgMD47DQo+ICsJCWV4dC1taWMtZW4tZ3Bpb3MgPSA8JmdwaW8gMTg1
+IDA+Ow0KPiArCX07DQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAu
+ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAuZHRzaQ0KLi4uDQo+ICsvIHsNCi4uLg0K
+PiArCWFtYmEgew0KPiArCQljb21wYXRpYmxlID0gInNpbXBsZS1idXMiOw0KLi4uDQo+ICsJCWlu
+dGM6IGludGVycnVwdC1jb250cm9sbGVyQDUwMDQxMDAwIHsNCi4uLg0KPiArCQl9Ow0KPiArCX07
+DQouLi4NCj4gKwlpMmNANzAwMGMwMDAgew0KDQpJJ3ZlIGFsd2F5cyB3b25kZXJlZCB3aHkgYWxs
+IHRoZSBkZXZpY2VzIGFyZW4ndCBpbmNsdWRlZCBpbnNpZGUgdGhlIGFtYmENCm5vZGUuIE9yIHB1
+dCBhbm90aGVyIHdheSwgaWYgdGhlIGRldmljZXMgYXJlIG91dHNpZGUgdGhlIGFtYmEgbm9kZSwg
+d2h5DQpub3QgbW92ZSBldmVyeXRoaW5nIG91dHNpZGUgdGhlIGFtYmEgbm9kZSBhbmQgcmVtb3Zl
+IHRoZSBhbWJhIG5vZGU/DQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtdGVncmEvTWFr
+ZWZpbGUgYi9hcmNoL2FybS9tYWNoLXRlZ3JhL01ha2VmaWxlDQo+IGluZGV4IDgyM2M3MDMuLjZk
+M2Q2OTUgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtdGVncmEvTWFrZWZpbGUNCj4gKysr
+IGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9NYWtlZmlsZQ0KPiBAQCAtMzAsNSArMzAsOCBAQCBvYmot
+JHtDT05GSUdfTUFDSF9QQVowMH0JCSs9IGJvYXJkLXBhejAwLXBpbm11eC5vDQo+ICBvYmotJHtD
+T05GSUdfTUFDSF9TRUFCT0FSRH0gICAgICAgICAgICAgKz0gYm9hcmQtc2VhYm9hcmQubw0KPiAg
+b2JqLSR7Q09ORklHX01BQ0hfU0VBQk9BUkR9ICAgICAgICAgICAgICs9IGJvYXJkLXNlYWJvYXJk
+LXBpbm11eC5vDQo+IA0KPiArb2JqLSR7Q09ORklHX01BQ0hfVEVHUkFfRFR9ICAgICAgICAgICAg
+ICs9IGJvYXJkLWR0Lm8NCj4gK29iai0ke0NPTkZJR19NQUNIX1RFR1JBX0RUfSAgICAgICAgICAg
+ICArPSBib2FyZC1oYXJtb255LXBpbm11eC5vDQoNCllvdSBuZWVkIGJvYXJkLXNlYWJvYXJkLXBp
+bm11eC5vIGhlcmUgdG9vLg0KDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXRlZ3JhL2Jv
+YXJkLWR0LmMgYi9hcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLWR0LmMNCi4uLg0KPiArc3RhdGlj
+IF9faW5pdGRhdGEgc3RydWN0IHRlZ3JhX2Nsa19pbml0X3RhYmxlIHRlZ3JhX2R0X2Nsa19pbml0
+X3RhYmxlW10gPSB7DQo+ICsJLyogbmFtZQkJcGFyZW50CQlyYXRlCQllbmFibGVkICovDQo+ICsJ
+eyAidWFydGQiLAkicGxsX3AiLAkyMTYwMDAwMDAsCXRydWUgfSwNCj4gKwl7IE5VTEwsCQlOVUxM
+LAkJMCwJCTB9LA0KPiArfTsNCg0KRm9yIGF1ZGlvIHRvIHdvcmssIHlvdSdsbCBuZWVkIG1vcmUg
+Y2xvY2sgZW50cmllcyBoZXJlIGN1cnJlbnRseTsgYW5vdGhlcg0KcmVhc29uIEkgc3VnZ2VzdGVk
+IHRvIHNpbXBseSBkcm9wIHRoZSBhdWRpbyBzdHVmZiBmb3Igbm93IHRvIGtlZXAgdGhpbmdzDQpz
+aW1wbGUuDQoNCj4gK3N0YXRpYyB2b2lkIF9faW5pdCB0ZWdyYV9kdF9pbml0KHZvaWQpDQouLi4N
+Cj4gKwlpZiAob2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJudmlkaWEsaGFybW9ueSIpKQ0KPiAr
+CQloYXJtb255X3Bpbm11eF9pbml0KCk7DQo+ICsJZWxzZSBpZiAob2ZfbWFjaGluZV9pc19jb21w
+YXRpYmxlKCJudmlkaWEsc2VhYm9hcmQiKSkNCj4gKwkJc2VhYm9hcmRfcGlubXV4X2luaXQoKTsN
+Cg0KZWxzZSBlcnJvciwgb3IgYXQgbGVhc3Qgd2Fybj8NCg0KLS0gDQpudnB1YmxpYw0KDQo=
