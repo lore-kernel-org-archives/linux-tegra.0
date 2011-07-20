@@ -1,77 +1,38 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] arm/dt: tegra devicetree support
-Date: Wed, 20 Jul 2011 08:37:19 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27@HQMAIL01.nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH] arm/dt: tegra devicetree support
+Date: Wed, 20 Jul 2011 17:03:55 +0100
+Message-ID: <20110720160355.GB2406@sirena.org.uk>
 References: <20110719234158.2779.15394.stgit@ponder>
+ <74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110719234158.2779.15394.stgit@ponder>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049EBDEE27-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-R3JhbnQgTGlrZWx5IHdyb3RlIGF0IFR1ZXNkYXksIEp1bHkgMTksIDIwMTEgNTo0MyBQTToNCj4g
-RXZlcnl0aGluZyByZXF1aXJlZCB0byBwb3B1bGF0ZSBOVklESUEgVGVncmEgZGV2aWNlcyBmcm9t
-IHRoZSBkZXZpY2UNCj4gdHJlZS4gIFRoaXMgcGF0Y2ggYWRkcyBhIG5ldyBEVF9NQUNISU5FX0RF
-U0MoKSB3aGljaCBtYXRjaGVzIGFnYWluc3QNCj4gYSB0ZWdyYTIwIGRldmljZSB0cmVlLiAgU28g
-ZmFyIGl0IG9ubHkgcmVnaXN0ZXJzIHRoZSBvbi1jaGlwIGRldmljZXMsDQo+IGJ1dCBpdCB3aWxs
-IGJlIHJlZmluZWQgaW4gZm9sbG93IG9uIHBhdGNoZXMgdG8gY29uZmlndXJlIGNsb2NrcyBhbmQN
-Cj4gcGluIElPIGZyb20gdGhlIGRldmljZSB0cmVlIGFsc28uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBzZWNyZXRsYWIuY2E+DQo+IC0tLQ0KPiANCj4g
-SGkgYWxsLA0KPiANCj4gU2ltaWxhciB0byB0aGUgdmVyc2F0aWxlIHBhdGNoIEkganVzdCBwb3N0
-ZWQsIHRoaXMgaXMgY2VydGFpbmx5IG5vdA0KPiBjb21wbGV0ZSBib2FyZCBzdXBwb3J0LCBidXQg
-aXQgaXMgZW5vdWdoIHRvIGJlIHVzZWZ1bC4gIEknZCBsaWtlIHRvDQo+IG1lcmdlIHRoaXMgZm9y
-IHYzLjEuICBJdCBzaG91bGQgbm90IGJyZWFrIGFueSBleGlzdGluZyBib2FyZCBzdXBwb3J0Lg0K
-DQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy90ZWdyYS1oYXJtb255LmR0cyBiL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL3RlZ3JhLWhhcm1vbnkuZHRzDQoNCnRlZ3JhLSouZHRzIGRvbid0IGlu
-Y2x1ZGUgc3RhdHVzPSJkaXNhYmxlIiBmb3IgYWxsIHRoZSB1bnVzZWQgY29udHJvbGxlcnMuDQpT
-aG91bGQgdGhhdCBiZSBhZGRlZD8NCg0KPiArCXNvdW5kIHsNCj4gKwkJY29tcGF0aWJsZSA9ICJu
-dmlkaWEsaGFybW9ueS1zb3VuZCIsICJudmlkaWEsdGVncmEtd204OTAzIjsNCg0KSSB0aG91Z2h0
-IHRoZSBzb3VuZCBiaW5kaW5ncyB3ZXJlIHN0aWxsIHNvbWV3aGF0IGV4cGVyaW1lbnRhbCBhbmQg
-bm90DQpjb21wbGV0ZWx5IGFncmVlZCB1cG9uLiBPbmUgaXNzdWUgSSBzZWUgaXMgdGhhdCBEZXZp
-Y2UgVHJlZSBpcw0Kc3VwcG9zZWQgdG8gcmVwcmVzZW50IHB1cmUgSFcsIHJhdGhlciB0aGFuIGRy
-aXZlci1yZXF1aXJlZCBhYnN0cmFjdGlvbnMsDQphbmQgYXQgbGVhc3QgdGhlIGNvbXBhdGlibGUg
-bmFtZSBoZXJlIGlzIHByZXR0eSBMaW51eC1kcml2ZXItc3BlY2lmaWMuDQoNCkkgdGhpbmsgdGhl
-cmUgYXJlIHNvbWUgZGV2aWNlcyBtaXNzaW5nIGZyb20gdGhlIERUIGZpbGUgZm9yIGF1ZGlvIHRv
-bywNCmUuZy4gdGhlIEFMU0EgIlBDTSIgKERNQSkgZHJpdmVyLg0KDQpBbHNvLCB0aGUgYmluZGlu
-Z3MgZm9yIHRoaXMgYXJlbid0IGRvY3VtZW50ZWQgSUlSQy4NCg0KSSdkIHN1Z2dlc3QgZHJvcHBp
-bmcgdGhlIGF1ZGlvIHBhcnQgb2YgdGhlIERUIGZpbGUgdW50aWwgdGhlIGF1ZGlvIHNpZGUNCmlz
-IG1vcmUgbWF0dXJlLg0KDQo+ICsJCXNwa3ItZW4tZ3Bpb3MgPSA8JmNvZGVjIDIgMD47DQoNClNo
-b3VsZCB0aGF0IGJlICJncGlvIiBub3QgImdwaW9zIiwgc2luY2UgdGhlcmUgaXMgb25seSBvbmU/
-DQoNCj4gKwkJaHAtZGV0LWdwaW9zID0gPCZncGlvIDE3OCAwPjsNCj4gKwkJaW50LW1pYy1lbi1n
-cGlvcyA9IDwmZ3BpbyAxODQgMD47DQo+ICsJCWV4dC1taWMtZW4tZ3Bpb3MgPSA8JmdwaW8gMTg1
-IDA+Ow0KPiArCX07DQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAu
-ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAuZHRzaQ0KLi4uDQo+ICsvIHsNCi4uLg0K
-PiArCWFtYmEgew0KPiArCQljb21wYXRpYmxlID0gInNpbXBsZS1idXMiOw0KLi4uDQo+ICsJCWlu
-dGM6IGludGVycnVwdC1jb250cm9sbGVyQDUwMDQxMDAwIHsNCi4uLg0KPiArCQl9Ow0KPiArCX07
-DQouLi4NCj4gKwlpMmNANzAwMGMwMDAgew0KDQpJJ3ZlIGFsd2F5cyB3b25kZXJlZCB3aHkgYWxs
-IHRoZSBkZXZpY2VzIGFyZW4ndCBpbmNsdWRlZCBpbnNpZGUgdGhlIGFtYmENCm5vZGUuIE9yIHB1
-dCBhbm90aGVyIHdheSwgaWYgdGhlIGRldmljZXMgYXJlIG91dHNpZGUgdGhlIGFtYmEgbm9kZSwg
-d2h5DQpub3QgbW92ZSBldmVyeXRoaW5nIG91dHNpZGUgdGhlIGFtYmEgbm9kZSBhbmQgcmVtb3Zl
-IHRoZSBhbWJhIG5vZGU/DQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtdGVncmEvTWFr
-ZWZpbGUgYi9hcmNoL2FybS9tYWNoLXRlZ3JhL01ha2VmaWxlDQo+IGluZGV4IDgyM2M3MDMuLjZk
-M2Q2OTUgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtdGVncmEvTWFrZWZpbGUNCj4gKysr
-IGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9NYWtlZmlsZQ0KPiBAQCAtMzAsNSArMzAsOCBAQCBvYmot
-JHtDT05GSUdfTUFDSF9QQVowMH0JCSs9IGJvYXJkLXBhejAwLXBpbm11eC5vDQo+ICBvYmotJHtD
-T05GSUdfTUFDSF9TRUFCT0FSRH0gICAgICAgICAgICAgKz0gYm9hcmQtc2VhYm9hcmQubw0KPiAg
-b2JqLSR7Q09ORklHX01BQ0hfU0VBQk9BUkR9ICAgICAgICAgICAgICs9IGJvYXJkLXNlYWJvYXJk
-LXBpbm11eC5vDQo+IA0KPiArb2JqLSR7Q09ORklHX01BQ0hfVEVHUkFfRFR9ICAgICAgICAgICAg
-ICs9IGJvYXJkLWR0Lm8NCj4gK29iai0ke0NPTkZJR19NQUNIX1RFR1JBX0RUfSAgICAgICAgICAg
-ICArPSBib2FyZC1oYXJtb255LXBpbm11eC5vDQoNCllvdSBuZWVkIGJvYXJkLXNlYWJvYXJkLXBp
-bm11eC5vIGhlcmUgdG9vLg0KDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXRlZ3JhL2Jv
-YXJkLWR0LmMgYi9hcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLWR0LmMNCi4uLg0KPiArc3RhdGlj
-IF9faW5pdGRhdGEgc3RydWN0IHRlZ3JhX2Nsa19pbml0X3RhYmxlIHRlZ3JhX2R0X2Nsa19pbml0
-X3RhYmxlW10gPSB7DQo+ICsJLyogbmFtZQkJcGFyZW50CQlyYXRlCQllbmFibGVkICovDQo+ICsJ
-eyAidWFydGQiLAkicGxsX3AiLAkyMTYwMDAwMDAsCXRydWUgfSwNCj4gKwl7IE5VTEwsCQlOVUxM
-LAkJMCwJCTB9LA0KPiArfTsNCg0KRm9yIGF1ZGlvIHRvIHdvcmssIHlvdSdsbCBuZWVkIG1vcmUg
-Y2xvY2sgZW50cmllcyBoZXJlIGN1cnJlbnRseTsgYW5vdGhlcg0KcmVhc29uIEkgc3VnZ2VzdGVk
-IHRvIHNpbXBseSBkcm9wIHRoZSBhdWRpbyBzdHVmZiBmb3Igbm93IHRvIGtlZXAgdGhpbmdzDQpz
-aW1wbGUuDQoNCj4gK3N0YXRpYyB2b2lkIF9faW5pdCB0ZWdyYV9kdF9pbml0KHZvaWQpDQouLi4N
-Cj4gKwlpZiAob2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJudmlkaWEsaGFybW9ueSIpKQ0KPiAr
-CQloYXJtb255X3Bpbm11eF9pbml0KCk7DQo+ICsJZWxzZSBpZiAob2ZfbWFjaGluZV9pc19jb21w
-YXRpYmxlKCJudmlkaWEsc2VhYm9hcmQiKSkNCj4gKwkJc2VhYm9hcmRfcGlubXV4X2luaXQoKTsN
-Cg0KZWxzZSBlcnJvciwgb3IgYXQgbGVhc3Qgd2Fybj8NCg0KLS0gDQpudnB1YmxpYw0KDQo=
+On Wed, Jul 20, 2011 at 08:37:19AM -0700, Stephen Warren wrote:
+> Grant Likely wrote at Tuesday, July 19, 2011 5:43 PM:
+
+> > +	sound {
+> > +		compatible = "nvidia,harmony-sound", "nvidia,tegra-wm8903";
+
+> I thought the sound bindings were still somewhat experimental and not
+> completely agreed upon. One issue I see is that Device Tree is
+> supposed to represent pure HW, rather than driver-required abstractions,
+> and at least the compatible name here is pretty Linux-driver-specific.
+
+The current decision is that the schematic for embedded audio hardware
+is sufficiently interesting to be considered hardware in its own right
+separately to the chips contained within it.  
+
+> > +		spkr-en-gpios = <&codec 2 0>;
+
+> Should that be "gpio" not "gpios", since there is only one?
+
+There's only one in this board but one does see designs with separate
+left and right channel enables sometimes, or separate front and back
+speaker enables for phones.
