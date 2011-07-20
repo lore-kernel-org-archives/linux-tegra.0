@@ -1,7 +1,7 @@
 From: <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3 v2] dt: tegra20: Add ehci host controller nodes.
-Date: Wed, 20 Jul 2011 12:38:09 -0700
-Message-ID: <1311190690-18334-2-git-send-email-achew@nvidia.com>
+Subject: [PATCH 3/3 v2] dt: tegra20: Add ehci overrides to Seaboard.
+Date: Wed, 20 Jul 2011 12:38:10 -0700
+Message-ID: <1311190690-18334-3-git-send-email-achew@nvidia.com>
 References: <1311190690-18334-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,65 +23,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-These values were derived from various headers in arch/arm/mach-tegra.
+Seaboard has different values for some of the utmi properties.
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi |   43 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 43 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra-seaboard.dts |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 83fedf3..d4ab1ab 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -160,5 +160,48 @@
- 		interrupts = < 63 >;
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index 5a99b4c..f8737ed 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -31,4 +31,16 @@
+ 	sdhci@c8000600 {
+ 		status = "ok";
  	};
 +
 +	ehci@c5000000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5000000 0x4000>;
-+		interrupts = < 52 >;
-+		mode = "host";
-+		power_down_on_bus_suspend = < 1 >;
-+		type = "utmi";
-+		hssync_start_delay = < 9 >;
-+		idle_wait_delay = < 17 >;
-+		elastic_limit = < 16 >;
-+		term_range_adj = < 6 >;
-+		xcvr_setup = < 9 >;
-+		xcvr_lsfslew = < 1 >;
-+		xcvr_lsrslew = < 1 >;
-+	};
-+
-+	ehci@c5004000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5004000 0x4000>;
-+		interrupts = < 53 >;
-+		mode = "host";
-+		power_down_on_bus_suspend = < 1 >;
-+		type = "ulpi";
-+		reset_gpio = < 169 >;
-+		clk = "cdev2";
-+	};
-+
-+	ehci@c5008000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5008000 0x4000>;
-+		interrupts = < 129 >;
-+		mode = "host";
-+		power_down_on_bus_suspend = < 1 >;
-+		type = "utmi";
-+		hssync_start_delay = < 9 >;
-+		idle_wait_delay = < 17 >;
-+		elastic_limit = < 16 >;
-+		term_range_adj = < 6 >;
-+		xcvr_setup = < 9 >;
++		hssync_start_delay = < 0 >;
++		xcvr_setup = < 15 >;
 +		xcvr_lsfslew = < 2 >;
 +		xcvr_lsrslew = < 2 >;
 +	};
++
++	ehci@c5008000 {
++		hssync_start_delay = < 0 >;
++		xcvr_setup = < 8 >;
++	};
  };
- 
 -- 
 1.7.6
