@@ -1,66 +1,76 @@
-From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/3 v2] usb: tegra20-ehci: Add devicetree support.
-Date: Wed, 20 Jul 2011 15:57:03 -0700
-Message-ID: <643E69AA4436674C8F39DCC2C05F76383CF0DD227D@HQMAIL03.nvidia.com>
-References: <1311190690-18334-1-git-send-email-achew@nvidia.com>
-	<CACxGe6uDVdemjbjY_i-_M_-VT8HuLdtXP-R9V8kB+pSSin4dEw@mail.gmail.com>
-	<643E69AA4436674C8F39DCC2C05F76383CF0DD2279@HQMAIL03.nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [RFC PATCH 1/5] OMAP3:I2C: Add device tree nodes for beagle board
+Date: Wed, 20 Jul 2011 17:14:05 -0600
+Message-ID: <CACxGe6utwx_LpMx0sqfuTRLst1-0eoi8ZrwA2ZVRyjiVzxKT1g@mail.gmail.com>
+References: <1309426647-31587-1-git-send-email-manjugk@ti.com>
+ <1309426647-31587-2-git-send-email-manjugk@ti.com> <20110706185546.GJ4871@ponder.secretlab.ca>
+ <74CDBE0F657A3D45AFBB94109FB122FF049E21C203@HQMAIL01.nvidia.com>
+ <CACxGe6u8qq7FA7kFXbU5uCk6m_GA8GWLqsdjFCXN+NMJfFKxmA@mail.gmail.com>
+ <20110720110419.GA6999@S2100-06.ap.freescale.net> <20110720185513.GI4642@ponder.secretlab.ca>
+ <20110720223348.GH6999@S2100-06.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <643E69AA4436674C8F39DCC2C05F76383CF0DD2279-lR+7xdUAJVNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, 'Grant Likely' <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Dan Willemsen <dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "'linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Venkat Moganty <vmoganty-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org'" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110720223348.GH6999-+NayF8gZjK2ctlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "G, Manjunath Kondaiah" <manjugk-l0cyMroinI0@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> > > +Required properties for type =3D "utmi". =A0These values are =
+On Wed, Jul 20, 2011 at 4:33 PM, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org> wr=
+ote:
+> On Wed, Jul 20, 2011 at 12:55:13PM -0600, Grant Likely wrote:
+>> On Wed, Jul 20, 2011 at 07:04:20PM +0800, Shawn Guo wrote:
+>> > > Mostly consistency. =A0Most of the experience we have with the f=
+lattened
+>> > > device tree up to this point hasn't bothered with the 'status'
+>> > > property. =A0It is only when AMP and hypervisors cam online that=
+ it
+>> > > became important to use a status property, and that only when th=
+e
+>> > > kernel needs to be told that the device does indeed exist, but i=
+t must
+>> > > not be touched. =A0I'd like to continue that pattern for new DT =
+users
+>> > > with the default assumption that a device is enabled unless the =
+board
+>> > > .dts explicitly disables it.
+>> [...]
+>> > Besides the bothering that we have to list so many unused controll=
+ers
+>> > in individual board dts file, it's also hard to tell which control=
+lers
+>> > are actually available on the board. =A0People have to look at imx=
+53.dts
+>> > to get a full list and then exclude the ones in imx53-<board>.dts =
+as
+>> > "disabled".
+>> >
+>> > And if we go the way opposite, adding "disabled" status for everyo=
+ne
+>> > in imx53.dts, we will only need to specify the peripherals that ar=
+e
+>> > actually available on board with "okay" status in imx53-<board>.dt=
+s.
+>> > And it's much more clear for people to see what peripherals are
+>> > available on individual board.
+>> >
+>> > So I'm going the way than you suggested. =A0Please let me know if =
+you
+>> > strongly dislikes it.
+>>
+>> Yes, I strongly dislike it. =A0I understand the concern, but at this
+>> early stage with converting to device tree I think consistency betwe=
+en
+>> platforms is more important. =A0We can talk about the issue at Linar=
+o
+>> Connect in 2 weeks, but in the mean time please use the
+>> enabled-by-default/explicitly-disabled pattern.
+>>
+> Okay, hope you will not ask me to use the opposite pattern when you
+> actually see the patch :)
 
-> > derived from
-> > > +characterization by system engineering.
-> > > + - hssync_start_delay
-> > > + - idle_wait_delay
-> > > + - elastic_limit
-> > > + - term_range_adj
-> > > + - xcvr_setup
-> > > + - xcvr_lsfslew
-> > > + - xcvr_lsrslew
-> > =
+:-)
 
-> > All of these custom properties should be prefixed with "nvidia," to
-> > avoid namespace collisions.
-> =
-
-> Are you saying we should prefix with "nvidia," on ALL of the =
-
-> properties I've defined for the tegra20-ehci node?  Or =
-
-> specifically those seven that you pointed out?  Because I =
-
-> don't see a difference in terms of "custom"-ality between =
-
-> say, hssync-start-delay, and the other stuff like phy-type, =
-
-> mode, power-down-on-bus-suspend, and the reset-gpio and clk =
-
-> from phy-type=3Dulpi...unless we're considering stuff like =
-
-> phy-type to be a standard USB host controller node property.
-
-Looking around for precedence, I see that fsl-usb.txt documents a phy-type =
-as well as a dr-mode (though there's still underscores in that document...I=
- assume they will be replaced by hyphens at some point).  So I think the te=
-gra2 ehci host driver will mirror that, and use those property names, in wh=
-ich case I assume we don't have a vendor prefix on those.  Are "standard" u=
-sb host controller properties (those that shouldn't have a vendor prefix) d=
-ocumented anywhere?
+g.
