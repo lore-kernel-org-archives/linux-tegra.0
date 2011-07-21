@@ -1,63 +1,42 @@
-From: <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3 v3] dt: tegra20: Add ehci host controller nodes.
-Date: Wed, 20 Jul 2011 20:23:38 -0700
-Message-ID: <1311218619-11174-2-git-send-email-achew@nvidia.com>
-References: <1311218619-11174-1-git-send-email-achew@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: Tegra: Seaboard board updates for audio
+Date: Thu, 21 Jul 2011 08:37:45 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049EBDF13E@HQMAIL01.nvidia.com>
+References: <1310594272-8229-1-git-send-email-swarren@nvidia.com>
+ <CAOesGMjiakgvs8wcu8zRkuA9mxD5Z=S-hV3HNgqFC49pEGVADw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1311218619-11174-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mogantyv-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMjiakgvs8wcu8zRkuA9mxD5Z=S-hV3HNgqFC49pEGVADw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Olof Johansson wrote at Wednesday, July 13, 2011 5:17 PM:
+> On Wed, Jul 13, 2011 at 2:57 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > * Initialize clock tree for audio
+> > * Add GPIO base definitions
+> > * Add audio GPIO definitions
+> > * Define platform data for WM8903 and ASoC machine driver
+> > * Add special case for Kaen to handle HP_MUTE GPIO
+> > * Register platform devices for audio
+> > * Update pinmux to cater for new GPIOs used for audio
+> >
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Colin, sounds like you're collecting board patches this merge window, so:
+> 
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-These values were derived from various headers in arch/arm/mach-tegra.
+Colin,
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20.dtsi |   18 ++++++++++++++++++
- 1 files changed, 18 insertions(+), 0 deletions(-)
+Do you want me to ask Arnd to pick these patches up directly, or do you
+want to apply them to the Tegra for-next tree, and have Arnd pull them?
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 83fedf3..d51f887 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -160,5 +160,23 @@
- 		interrupts = < 63 >;
- 		status = "disabled";
- 	};
-+
-+	ehci@c5000000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5000000 0x4000>;
-+		interrupts = < 52 >;
-+	};
-+
-+	ehci@c5004000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5004000 0x4000>;
-+		interrupts = < 53 >;
-+	};
-+
-+	ehci@c5008000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5008000 0x4000>;
-+		interrupts = < 129 >;
-+	};
- };
- 
+Thanks.
+
 -- 
-1.7.6
+nvpublic
