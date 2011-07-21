@@ -1,52 +1,83 @@
-From: <achew@nvidia.com>
-Subject: [PATCH 3/3 v3] dt: tegra20: Add ehci overrides to Seaboard.
-Date: Wed, 20 Jul 2011 20:23:39 -0700
-Message-ID: <1311218619-11174-3-git-send-email-achew@nvidia.com>
-References: <1311218619-11174-1-git-send-email-achew@nvidia.com>
+From: Mike Rapoport <mike.rapoport@gmail.com>
+Subject: Re: [PATCH v2] ARM: Tegra: Trimslice: Tri-state DAP3 pinmux
+Date: Thu, 21 Jul 2011 10:10:37 +0300
+Message-ID: <CABpLfohE+PmssbicDjS3p13i=T4X5dZ=P-KhXmytvPX2An62=w@mail.gmail.com>
+References: <1310596967-19996-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1311218619-11174-1-git-send-email-achew@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, olof@lixom.net, swarren@nvidia.com, dwillemsen@nvidia.com, rklein@nvidia.com, mogantyv@nvidia.com
-Cc: devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Chew <achew@nvidia.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1310596967-19996-1-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Erik Gilling <konkers@android.com>, linux-tegra@vger.kernel.org, Konstantin Sinyuk <kostyas@compulab.co.il>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Chew <achew@nvidia.com>
+Hi Stephen,
+Sorry for the delay, I was mostly offline these days.
 
-Seaboard has different values for some of the utmi properties.
+On Thu, Jul 14, 2011 at 1:42 AM, Stephen Warren <swarren@nvidia.com> wrote:
+> DAP3 is used for a bunch of GPIOs. Not tri-stating the pins means audio
+> signals get sent out there, and this ends up resetting USB and breaking
+> SDHCI too.
+>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> v2: s/DAP2/DAP3/ in patch subject/description.
+>
+> I've not verified that this patch is both necessary and sufficient on
+> TrimSlice hardware.
 
-Signed-off-by: Andrew Chew <achew@nvidia.com>
-Acked-by: Stephen Warren <swarren@nvidia.com>
----
- arch/arm/boot/dts/tegra-seaboard.dts |   17 +++++++++++++++++
- 1 files changed, 17 insertions(+), 0 deletions(-)
+Setting DAP3 pins to tristate is necessary but not sufficient :) I
+don't know why, but if we don't tristate DAP2 and DAP4 as well USB and
+SDIO are broken.
+If you can amend your patch with tristating also DAP2 and DAP4 feel
+free to add my
 
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index 5a99b4c..adc000a 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -31,4 +31,21 @@
- 	sdhci@c8000600 {
- 		status = "ok";
- 	};
-+
-+	ehci@c5000000 {
-+		power-down-on-bus-suspend;
-+		nvidia,hssync-start-delay = < 0 >;
-+		nvidia,xcvr-setup = < 15 >;
-+	};
-+
-+	ehci@c5004000 {
-+		power-down-on-bus-suspend;
-+		phy-type = "ulpi";
-+	};
-+
-+	ehci@c5008000 {
-+		power-down-on-bus-suspend;
-+		nvidia,hssync-start-delay = < 0 >;
-+		nvidia,xcvr-setup = < 8 >;
-+	};
- };
--- 
-1.7.6
+Acked-by: Mike Rapoport <mike@compulab.co.il>
+
+> =A0arch/arm/mach-tegra/board-trimslice-pinmux.c | =A0 =A02 +-
+> =A01 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach=
+-tegra/board-trimslice-pinmux.c
+> index 82646a4..47c596c 100644
+> --- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
+> +++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+> @@ -35,7 +35,7 @@ static __initdata struct tegra_pingroup_config trimslic=
+e_pinmux[] =3D {
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_CSUS, =A0TEGRA_MUX_VI_SENSOR_CLK, TEGRA_PU=
+PD_PULL_DOWN, =A0 TEGRA_TRI_TRISTATE},
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP1, =A0TEGRA_MUX_DAP1, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_NORMAL},
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP2, =A0TEGRA_MUX_DAP2, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+> - =A0 =A0 =A0 {TEGRA_PINGROUP_DAP3, =A0TEGRA_MUX_DAP3, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_NORMAL},
+> + =A0 =A0 =A0 {TEGRA_PINGROUP_DAP3, =A0TEGRA_MUX_DAP3, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP4, =A0TEGRA_MUX_DAP4, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DDC, =A0 TEGRA_MUX_I2C2, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_PULL_UP, =A0 =A0 TEGRA_TRI_NORMAL},
+> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DTA, =A0 TEGRA_MUX_VI, =A0 =A0 =A0 =A0 =A0=
+ =A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+> --
+> 1.7.0.4
+>
+>
+
+
+
+-- =
+
+Sincerely Yours,
+Mike.
