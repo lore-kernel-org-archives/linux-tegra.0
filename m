@@ -1,64 +1,47 @@
-From: <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3 v4] dt: tegra20: Add ehci host controller nodes.
-Date: Thu, 21 Jul 2011 14:17:46 -0700
-Message-ID: <1311283067-18952-2-git-send-email-achew@nvidia.com>
+From: Dan Willemsen <dwillemsen@nvidia.com>
+Subject: Re: [PATCH 1/3 v4] usb: tegra20-ehci: Add devicetree support.
+Date: Thu, 21 Jul 2011 14:27:13 -0700
+Message-ID: <CA4DE74D.50C07%dwillemsen@nvidia.com>
 References: <1311283067-18952-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1311283067-18952-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mogantyv-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1311283067-18952-1-git-send-email-achew@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Chew <AChew@nvidia.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "olof@lixom.net" <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Rhyland Klein <rklein>
+Cc: "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 7/21/11 2:17 PM, "Andrew Chew" <achew@nvidia.com> wrote:
+>From: Andrew Chew <achew@nvidia.com>
+>
+>Add code to try to get platform data information (register base, irq,
+>modes, various tuning parameters) from device tree, if not present in
+>board
+>files.
 
-These values were derived from various headers in arch/arm/mach-tegra.
+This patch no longer gets the register base or irq, just the modes and
+tuning parameters.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- arch/arm/boot/dts/tegra20.dtsi |   18 ++++++++++++++++++
- 1 files changed, 18 insertions(+), 0 deletions(-)
+- Dan Willemsen
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 83fedf3..d51f887 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -160,5 +160,23 @@
- 		interrupts = < 63 >;
- 		status = "disabled";
- 	};
-+
-+	ehci@c5000000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5000000 0x4000>;
-+		interrupts = < 52 >;
-+	};
-+
-+	ehci@c5004000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5004000 0x4000>;
-+		interrupts = < 53 >;
-+	};
-+
-+	ehci@c5008000 {
-+		compatible = "nvidia,tegra20-ehci";
-+		reg = <0xc5008000 0x4000>;
-+		interrupts = < 129 >;
-+	};
- };
- 
--- 
-1.7.6
+>Signed-off-by: Andrew Chew <achew@nvidia.com>
+>Acked-by: Stephen Warren <swarren@nvidia.com>
+>---
+>Applied Olof Johansson's comments:
+>- Use direct assignment when copying default config structs.
+>- Use __devinitdata for static default config structs.
+>- Don't compile the default config structs if CONFIG_OF is disabled, to
+>avoid
+>  a warning.
+>
+> .../devicetree/bindings/usb/tegra20-ehci.txt       |   27 +++
+> drivers/usb/host/ehci-tegra.c                      |  189
+>++++++++++++++++++++
+> 2 files changed, 216 insertions(+), 0 deletions(-)
+> create mode 100644 Documentation/devicetree/bindings/usb/tegra20-ehci.txt
+
+--
+nvpublic
