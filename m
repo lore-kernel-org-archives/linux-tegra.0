@@ -1,36 +1,90 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 3/3 v3] dt: tegra20: Add ehci overrides to Seaboard.
-Date: Wed, 20 Jul 2011 20:43:06 -0700
-Message-ID: <CAOesGMgT9rQrRzM=Y2LhgF8EzMmSDAr8SU2WKqBrQOFSi8t4hA@mail.gmail.com>
-References: <1311218619-11174-1-git-send-email-achew@nvidia.com>
-	<1311218619-11174-3-git-send-email-achew@nvidia.com>
+From: Mike Rapoport <mike.rapoport@gmail.com>
+Subject: Re: [PATCH v2] ARM: Tegra: Trimslice: Tri-state DAP3 pinmux
+Date: Thu, 21 Jul 2011 12:17:18 +0300
+Message-ID: <CABpLfohhtux1S6eJg+U7kgckw4j2vhMuWo8mBRaMpoZr5PuBiA@mail.gmail.com>
+References: <1310596967-19996-1-git-send-email-swarren@nvidia.com>
+	<CABpLfohE+PmssbicDjS3p13i=T4X5dZ=P-KhXmytvPX2An62=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1311218619-11174-3-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mogantyv-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CABpLfohE+PmssbicDjS3p13i=T4X5dZ=P-KhXmytvPX2An62=w@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Erik Gilling <konkers@android.com>, linux-tegra@vger.kernel.org, Konstantin Sinyuk <kostyas@compulab.co.il>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 20, 2011 at 8:23 PM,  <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jul 21, 2011 at 10:10 AM, Mike Rapoport <mike.rapoport@gmail.com> w=
+rote:
+>> DAP3 is used for a bunch of GPIOs. Not tri-stating the pins means audio
+>> signals get sent out there, and this ends up resetting USB and breaking
+>> SDHCI too.
+>>
+>> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+>> ---
+>> v2: s/DAP2/DAP3/ in patch subject/description.
 >
-> Seaboard has different values for some of the utmi properties.
+> Setting DAP3 pins to tristate is necessary but not sufficient :) I
+> don't know why, but if we don't tristate DAP2 and DAP4 as well USB and
+> SDIO are broken.
+> If you can amend your patch with tristating also DAP2 and DAP4 feel
+> free to add my
+
+Oops, I should have read the diff context as well... DAP{2,4} are
+anyway tristate, so you can discard my previous comment. So the
+Acked-by applies to the original patch. Sorry for the noise.
+
+> Acked-by: Mike Rapoport <mike@compulab.co.il>
 >
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> =A0arch/arm/mach-tegra/board-trimslice-pinmux.c | =A0 =A02 +-
+>> =A01 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mac=
+h-tegra/board-trimslice-pinmux.c
+>> index 82646a4..47c596c 100644
+>> --- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
+>> +++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+>> @@ -35,7 +35,7 @@ static __initdata struct tegra_pingroup_config trimsli=
+ce_pinmux[] =3D {
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_CSUS, =A0TEGRA_MUX_VI_SENSOR_CLK, TEGRA_P=
+UPD_PULL_DOWN, =A0 TEGRA_TRI_TRISTATE},
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP1, =A0TEGRA_MUX_DAP1, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_NORMAL},
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP2, =A0TEGRA_MUX_DAP2, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+>> - =A0 =A0 =A0 {TEGRA_PINGROUP_DAP3, =A0TEGRA_MUX_DAP3, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_NORMAL},
+>> + =A0 =A0 =A0 {TEGRA_PINGROUP_DAP3, =A0TEGRA_MUX_DAP3, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DAP4, =A0TEGRA_MUX_DAP4, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DDC, =A0 TEGRA_MUX_I2C2, =A0 =A0 =A0 =A0 =
+=A0TEGRA_PUPD_PULL_UP, =A0 =A0 TEGRA_TRI_NORMAL},
+>> =A0 =A0 =A0 =A0{TEGRA_PINGROUP_DTA, =A0 TEGRA_MUX_VI, =A0 =A0 =A0 =A0 =
+=A0 =A0TEGRA_PUPD_NORMAL, =A0 =A0 =A0TEGRA_TRI_TRISTATE},
+>> --
+>> 1.7.0.4
+>>
+>>
+>
+>
+>
+> --
+> Sincerely Yours,
+> Mike.
+>
 
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
 
--Olof
+-- =
+
+Sincerely Yours,
+Mike.
