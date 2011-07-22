@@ -1,137 +1,212 @@
-From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] i2c: i2c-tegra: fix possible race condition after tx
-Date: Thu, 21 Jul 2011 17:06:08 -0700
-Message-ID: <CANVmJFmsHc20=OfENikX-XJw8bRtDfAD6prXQTgphLzC1XA=hQ@mail.gmail.com>
-References: <1303251276-18768-1-git-send-email-vpalatin@chromium.org>
- <BANLkTikeTQi6zz+yb4USWwaROFZJW2cfog@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF0498E1C887@HQMAIL01.nvidia.com>
- <BANLkTin_ypRamBbdmE1unWyovVc-h_nSa5jDkNkfc2S+n4fwdg@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF0498E1C896@HQMAIL01.nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: tegra: paz00: export the WIFI rfkill gpio
+Date: Fri, 22 Jul 2011 22:38:27 +0200
+Message-ID: <201107222238.28131.marvin24@gmx.de>
+References: <1310725464-2524-1-git-send-email-marvin24@gmx.de> <1310725464-2524-3-git-send-email-marvin24@gmx.de> <201107151517.03176.anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF0498E1C896-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <201107151517.03176.anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Vasily Khoruzhick <anarsoul-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Collin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ben,
+Hi Vasily,
 
-can this fix for tegra I2C go in 3.1 ?
-It has approved and tested by Stephen.
+On Friday 15 July 2011 14:17:02 Vasily Khoruzhick wrote:
+> On Friday 15 July 2011 13:24:22 Marc Dietrich wrote:
+> > This makes the WIFI rfkill gpio available to userspace. On boot,
+> > WIFI will be unblocked by default.
+> 
+> Take a look on rfkill-gpio driver.
 
-Thanks,
---=20
-Vincent
+mmh, seems I don't understand that driver. I made a simple patch which roughly 
+goes like this: 
 
-On Fri, Jun 3, 2011 at 15:33, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote=
-:
-> Vincent Palatin wrote at Friday, June 03, 2011 4:19 PM:
->> On Fri, Jun 3, 2011 at 18:01, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
->> >Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >
->> > (using code based on 3.0-rc1, on Harmony, ran "speaker-test -c 2",=
- and
->> > then adjusted the volume a lot using alsamixer, thus causing quite=
- a few
->> > I2C transactions)
->>
->> Thanks for the testing and the review !
->>
->> >> > @@ -213,38 +213,41 @@ static int tegra_i2c_empty_rx_fifo(struct
->> tegra_i2c_dev *i2c_dev)
->> >> > =E1 =E1 =E1 =E1u32 val;
->> >> > =E1 =E1 =E1 =E1int rx_fifo_avail;
->> >> > =E1 =E1 =E1 =E1u8 *buf =3D i2c_dev->msg_buf;
->> >> > - =E1 =E1 =E1 size_t buf_remaining =3D i2c_dev->msg_buf_remaini=
-ng;
->> >
->> > The old code read msg_buf_remaining once up front and did everythi=
-ng
->> > based on that.
->> >
->> >> > =E1 =E1 =E1 =E1int words_to_transfer;
->> >> > + =E1 =E1 =E1 int bytes_to_transfer;
->> >> >
->> >> > =E1 =E1 =E1 =E1val =3D i2c_readl(i2c_dev, I2C_FIFO_STATUS);
->> >> > =E1 =E1 =E1 =E1rx_fifo_avail =3D (val & I2C_FIFO_STATUS_RX_MASK=
-) >>
->> >> > =E1 =E1 =E1 =E1 =E1 =E1 =E1 =E1I2C_FIFO_STATUS_RX_SHIFT;
->> >> >
->> >> > =E1 =E1 =E1 =E1/* Rounds down to not include partial word at th=
-e end of buf
->> */
->> >> > - =E1 =E1 =E1 words_to_transfer =3D buf_remaining / BYTES_PER_F=
-IFO_WORD;
->> >> > + =E1 =E1 =E1 words_to_transfer =3D atomic_read(&i2c_dev->msg_b=
-uf_remaining)
->> /
->> >> > + =E1 =E1 =E1 =E1 =E1 =E1 =E1 BYTES_PER_FIFO_WORD;
->> >
->> > Whereas the new code reads msg_buf_remaining once here...
->> >
->> >> > =E1 =E1 =E1 =E1if (words_to_transfer > rx_fifo_avail)
->> >> > =E1 =E1 =E1 =E1 =E1 =E1 =E1 =E1words_to_transfer =3D rx_fifo_av=
-ail;
->> >> >
->> >> > + =E1 =E1 =E1 atomic_sub(words_to_transfer * BYTES_PER_FIFO_WOR=
-D,
->> >> > + =E1 =E1 =E1 =E1 =E1 =E1 =E1 &i2c_dev->msg_buf_remaining);
->> >> > =E1 =E1 =E1 =E1i2c_readsl(i2c_dev, buf, I2C_RX_FIFO, words_to_t=
-ransfer);
->> >> >
->> >> > =E1 =E1 =E1 =E1buf +=3D words_to_transfer * BYTES_PER_FIFO_WORD=
-;
->> >> > - =E1 =E1 =E1 buf_remaining -=3D words_to_transfer * BYTES_PER_=
-=46IFO_WORD;
->> >> > =E1 =E1 =E1 =E1rx_fifo_avail -=3D words_to_transfer;
->> >> >
->> >> > =E1 =E1 =E1 =E1/*
->> >> > =E1 =E1 =E1 =E1 * If there is a partial word at the end of buf,=
- handle it manually to
->> >> > =E1 =E1 =E1 =E1 * prevent overwriting past the end of buf
->> >> > =E1 =E1 =E1 =E1 */
->> >> > - =E1 =E1 =E1 if (rx_fifo_avail > 0 && buf_remaining > 0) {
->> >> > - =E1 =E1 =E1 =E1 =E1 =E1 =E1 BUG_ON(buf_remaining > 3);
->> >> > + =E1 =E1 =E1 bytes_to_transfer =3D atomic_read(&i2c_dev->msg_b=
-uf_remaining);
->> >
->> > And again here...
->> >
->> >> > + =E1 =E1 =E1 if (rx_fifo_avail > 0 && bytes_to_transfer > 0) {
->> >> > + =E1 =E1 =E1 =E1 =E1 =E1 =E1 BUG_ON(bytes_to_transfer > 3);
->> >
->> > That means that if msg_buf_remaining increases between those two r=
-eads,
->> > this BUG_ON could trigger.
->> >
->> > I assume this isn't possible, because the I2C core only sends one
->> > transaction to the I2C driver and doesn't send any more requests d=
-own
->> > until the previous is complete. If so, then the new code seems fin=
-e, but
->> > I did want to double-check this.
->>
->> The transfers are serialized in the i2c_transfer function of the cor=
-e
->> (which calls the tegra_i2c_xfer callback) and msg_buf_remaining can
->> only increase when it is set at the beginning of tegra_i2c_xfer_msg.
->> So yes we have at most one transaction and I don't think we can
->> trigger this BUG_ON.
->
-> Great, that's what I figured. So, the change looks good to me, so
->
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> too!
->
-> --
-> nvpublic
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-
+paz00.c
+index e85711f..06b3089 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -27,6 +27,7 @@
+ #include <linux/io.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-tegra.h>
++#include <linux/rfkill-gpio.h>
+ #include <linux/platform_data/tegra_usb.h>
+ 
+ #include <asm/mach-types.h>
+
+...
+
++static struct rfkill_gpio_platform_data rfkill_gpio_data = {
++       .name           = "rfkill-gpio",
++       .reset_gpio     = TEGRA_WIFI_RST,
++       .shutdown_gpio  = TEGRA_WIFI_PWRN,
++       .type           = RFKILL_TYPE_WLAN,
++};
++
++static struct platform_device rfkill_gpio = {
++       .name   = "rfkill_gpio",
++       .id     = -1,
++       .dev    = {
++               .platform_data  = &rfkill_gpio_data,
++       },
++};
++
+
+@@ -327,6 +343,7 @@ static struct platform_device *paz00_devices[] __initdata = 
+{
+        &tegra_spi_device3,
+        &tegra_spi_device4,
+        &leds_gpio,
++       &rfkill_gpio,
+        &tegra_gart_device,
+        &tegra_i2s_device1,
+        &tegra_das_device,
+
+now I get two rfkill devices:
+
+root@ac100:/sys/devices/platform/rfkill_gpio/rfkill/rfkill0# rfkill list; echo 0 
+> state; sleep 5; rfkill list; echo 1 > state; sleep 5; rfkill list
+0: rfkill-gpio: Wireless LAN
+        Soft blocked: no
+        Hard blocked: no
+1: phy0: Wireless LAN
+        Soft blocked: no
+        Hard blocked: no
+0: rfkill-gpio: Wireless LAN
+        Soft blocked: yes
+        Hard blocked: no
+1: phy0: Wireless LAN
+        Soft blocked: no
+        Hard blocked: yes
+0: rfkill-gpio: Wireless LAN
+        Soft blocked: no
+        Hard blocked: no
+1: phy0: Wireless LAN
+        Soft blocked: no
+        Hard blocked: no
+
+writing echo 1 > state is equal to rfkill block 0, while rfkill block 1 seems to 
+be the softblock of phy0.
+
+Is it possible that the gpios (rst and pwrn) are exchanged?
+Why do I get two devices: rfkill-gpio from rfkill-gpio driver and phy0 from the 
+wifi driver? I guess the latter shows the current state of the chip and the 
+first? The state of the "switch"?
+
+Thanks 
+
+Marc
+
+
+> Regards
+> Vasily
+> 
+> > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> > ---
+> > 
+> >  arch/arm/mach-tegra/board-paz00-pinmux.c |    1 +
+> >  arch/arm/mach-tegra/board-paz00.c        |   16 ++++++++++++++++
+> >  arch/arm/mach-tegra/board-paz00.h        |    6 ++++++
+> >  3 files changed, 23 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c
+> > b/arch/arm/mach-tegra/board-paz00-pinmux.c index bdd2627..c02a48f 100644
+> > --- a/arch/arm/mach-tegra/board-paz00-pinmux.c
+> > +++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
+> > @@ -145,6 +145,7 @@ static struct tegra_gpio_table gpio_table[] = {
+> > 
+> >  	{ .gpio = TEGRA_GPIO_SD1_WP,	.enable = true },
+> >  	{ .gpio = TEGRA_GPIO_SD1_POWER,	.enable = true },
+> >  	{ .gpio = TEGRA_ULPI_RST,	.enable = true },
+> > 
+> > +	{ .gpio = TEGRA_WIFI_PWRN,	.enable = true },
+> > 
+> >  };
+> >  
+> >  void paz00_pinmux_init(void)
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-paz00.c
+> > b/arch/arm/mach-tegra/board-paz00.c index 931b06e..0bc652b 100644
+> > --- a/arch/arm/mach-tegra/board-paz00.c
+> > +++ b/arch/arm/mach-tegra/board-paz00.c
+> > @@ -25,6 +25,7 @@
+> > 
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/pda_power.h>
+> >  #include <linux/io.h>
+> > 
+> > +#include <linux/gpio.h>
+> > 
+> >  #include <linux/i2c.h>
+> >  #include <linux/i2c-tegra.h>
+> >  #include <linux/platform_data/tegra_usb.h>
+> > 
+> > @@ -165,6 +166,20 @@ static struct tegra_sdhci_platform_data sdhci_pdata4
+> > = { .is_8bit	= 1,
+> > 
+> >  };
+> > 
+> > +static void __init paz00_wifi_init(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	/* unlock hw rfkill */
+> > +	ret = gpio_request_one(TEGRA_WIFI_PWRN, GPIOF_OUT_INIT_HIGH,
+> > +		"wifi pwrn");
+> > +	if (ret) {
+> > +		pr_warning("WIFI: could not requestrfkill gpio\n");
+> > +		return;
+> > +	}
+> > +	gpio_export(TEGRA_WIFI_PWRN, 0);
+> > +};
+> > +
+> > 
+> >  static void __init tegra_paz00_init(void)
+> >  {
+> >  
+> >  	tegra_clk_init_from_table(paz00_clk_init_table);
+> > 
+> > @@ -178,6 +193,7 @@ static void __init tegra_paz00_init(void)
+> > 
+> >  	paz00_i2c_init();
+> >  	paz00_usb_init();
+> > 
+> > +	paz00_wifi_init();
+> > 
+> >  }
+> >  
+> >  MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-paz00.h
+> > b/arch/arm/mach-tegra/board-paz00.h index d4ff39d..5d2849e 100644
+> > --- a/arch/arm/mach-tegra/board-paz00.h
+> > +++ b/arch/arm/mach-tegra/board-paz00.h
+> > @@ -17,11 +17,17 @@
+> > 
+> >  #ifndef _MACH_TEGRA_BOARD_PAZ00_H
+> >  #define _MACH_TEGRA_BOARD_PAZ00_H
+> > 
+> > +/* SDCARD */
+> > 
+> >  #define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PV5
+> >  #define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PH1
+> >  #define TEGRA_GPIO_SD1_POWER		TEGRA_GPIO_PT3
+> > 
+> > +
+> > +/* ULPI */
+> > 
+> >  #define TEGRA_ULPI_RST			TEGRA_GPIO_PV0
+> > 
+> > +/* WIFI */
+> > +#define TEGRA_WIFI_PWRN			TEGRA_GPIO_PK5
+> > +
+> > 
+> >  void paz00_pinmux_init(void);
+> >  
+> >  #endif
