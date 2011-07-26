@@ -1,67 +1,53 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v2] ARM: tegra: only select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-Date: Tue, 26 Jul 2011 10:15:59 +0200
-Message-ID: <1311668159-11337-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v2] ARM: tegra: only select
+ MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+Date: Tue, 26 Jul 2011 08:48:08 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049EBDF7DE@HQMAIL01.nvidia.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF049EBDF52B@HQMAIL01.nvidia.com>
+ <1311668159-11337-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049EBDF52B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1311668159-11337-1-git-send-email-u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Arnd Bergmann (arnd-r2nGTMty4D4@public.gmane.org)" <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: "kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes:
-	warning: (MACH_HARMONY && MACH_KAEN && MACH_SEABOARD) selects MACH_HAS=
-_SND_SOC_TEGRA_WM8903 which has unmet direct dependencies (SOUND && !M6=
-8K && SND && SND_SOC)
-
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
----
-Changes since (implicit) v1:
- - correctly depend on SND_SOC instead of the non-existent SOUND_SOC
- - fix commit log accordingly
-
-Thanks to Stephen Warren for noticing.
-
-Best regards
-Uwe
-
- arch/arm/mach-tegra/Kconfig |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 5ec1846..fec64f3 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -27,14 +27,14 @@ comment "Tegra board type"
-=20
- config MACH_HARMONY
-        bool "Harmony board"
--       select MACH_HAS_SND_SOC_TEGRA_WM8903
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-          Support for nVidia Harmony development platform
-=20
- config MACH_KAEN
-        bool "Kaen board"
-        select MACH_SEABOARD
--       select MACH_HAS_SND_SOC_TEGRA_WM8903
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-          Support for the Kaen version of Seaboard
-=20
-@@ -45,7 +45,7 @@ config MACH_PAZ00
-=20
- config MACH_SEABOARD
-        bool "Seaboard board"
--       select MACH_HAS_SND_SOC_TEGRA_WM8903
-+       select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-          Support for nVidia Seaboard development platform. It will
- 	 also be included for some of the derivative boards that
---=20
-1.7.5.4
+VXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGUgYXQgVHVlc2RheSwgSnVseSAyNiwgMjAxMSAyOjE2IEFN
+Og0KPiBUaGlzIGZpeGVzOg0KPiAJd2FybmluZzogKE1BQ0hfSEFSTU9OWSAmJiBNQUNIX0tBRU4g
+JiYgTUFDSF9TRUFCT0FSRCkgc2VsZWN0cyBNQUNIX0hBU19TTkRfU09DX1RFR1JBX1dNODkwMw0K
+PiB3aGljaCBoYXMgdW5tZXQgZGlyZWN0IGRlcGVuZGVuY2llcyAoU09VTkQgJiYgIU02OEsgJiYg
+U05EICYmIFNORF9TT0MpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBVd2UgS2xlaW5lLUvDtm5pZyA8
+dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPg0KDQpBY2tlZC1ieTogU3RlcGhlbiBXYXJy
+ZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4NCg0KKEknbSBhbHNvIENDJ2luZyB0aGUgdmFyaW91cyBt
+YWludGFpbmVycyBleHBsaWNpdGx5LCBzbyB0aGV5IHNlZSB0aGUgcGF0Y2gsDQphbmQgY2FuIGRl
+Y2lkZSB3aGljaCBnaXQgdHJlZSB0byB0YWtlIHRoaXMgdGhyb3VnaCkNCg0KPiAtLS0NCj4gQ2hh
+bmdlcyBzaW5jZSAoaW1wbGljaXQpIHYxOg0KPiAgLSBjb3JyZWN0bHkgZGVwZW5kIG9uIFNORF9T
+T0MgaW5zdGVhZCBvZiB0aGUgbm9uLWV4aXN0ZW50IFNPVU5EX1NPQw0KPiAgLSBmaXggY29tbWl0
+IGxvZyBhY2NvcmRpbmdseQ0KPiANCj4gVGhhbmtzIHRvIFN0ZXBoZW4gV2FycmVuIGZvciBub3Rp
+Y2luZy4NCj4gDQo+IEJlc3QgcmVnYXJkcw0KPiBVd2UNCj4gDQo+ICBhcmNoL2FybS9tYWNoLXRl
+Z3JhL0tjb25maWcgfCAgICA2ICsrKy0tLQ0KPiAgMSBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlv
+bnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC10
+ZWdyYS9LY29uZmlnIGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9LY29uZmlnDQo+IGluZGV4IDVlYzE4
+NDYuLmZlYzY0ZjMgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtdGVncmEvS2NvbmZpZw0K
+PiArKysgYi9hcmNoL2FybS9tYWNoLXRlZ3JhL0tjb25maWcNCj4gQEAgLTI3LDE0ICsyNywxNCBA
+QCBjb21tZW50ICJUZWdyYSBib2FyZCB0eXBlIg0KPiANCj4gIGNvbmZpZyBNQUNIX0hBUk1PTlkN
+Cj4gICAgICAgICBib29sICJIYXJtb255IGJvYXJkIg0KPiAtICAgICAgIHNlbGVjdCBNQUNIX0hB
+U19TTkRfU09DX1RFR1JBX1dNODkwMw0KPiArICAgICAgIHNlbGVjdCBNQUNIX0hBU19TTkRfU09D
+X1RFR1JBX1dNODkwMyBpZiBTTkRfU09DDQo+ICAgICAgICAgaGVscA0KPiAgICAgICAgICAgU3Vw
+cG9ydCBmb3IgblZpZGlhIEhhcm1vbnkgZGV2ZWxvcG1lbnQgcGxhdGZvcm0NCj4gDQo+ICBjb25m
+aWcgTUFDSF9LQUVODQo+ICAgICAgICAgYm9vbCAiS2FlbiBib2FyZCINCj4gICAgICAgICBzZWxl
+Y3QgTUFDSF9TRUFCT0FSRA0KPiAtICAgICAgIHNlbGVjdCBNQUNIX0hBU19TTkRfU09DX1RFR1JB
+X1dNODkwMw0KPiArICAgICAgIHNlbGVjdCBNQUNIX0hBU19TTkRfU09DX1RFR1JBX1dNODkwMyBp
+ZiBTTkRfU09DDQo+ICAgICAgICAgaGVscA0KPiAgICAgICAgICAgU3VwcG9ydCBmb3IgdGhlIEth
+ZW4gdmVyc2lvbiBvZiBTZWFib2FyZA0KPiANCj4gQEAgLTQ1LDcgKzQ1LDcgQEAgY29uZmlnIE1B
+Q0hfUEFaMDANCj4gDQo+ICBjb25maWcgTUFDSF9TRUFCT0FSRA0KPiAgICAgICAgIGJvb2wgIlNl
+YWJvYXJkIGJvYXJkIg0KPiAtICAgICAgIHNlbGVjdCBNQUNIX0hBU19TTkRfU09DX1RFR1JBX1dN
+ODkwMw0KPiArICAgICAgIHNlbGVjdCBNQUNIX0hBU19TTkRfU09DX1RFR1JBX1dNODkwMyBpZiBT
+TkRfU09DDQo+ICAgICAgICAgaGVscA0KPiAgICAgICAgICAgU3VwcG9ydCBmb3IgblZpZGlhIFNl
+YWJvYXJkIGRldmVsb3BtZW50IHBsYXRmb3JtLiBJdCB3aWxsDQo+ICAJIGFsc28gYmUgaW5jbHVk
+ZWQgZm9yIHNvbWUgb2YgdGhlIGRlcml2YXRpdmUgYm9hcmRzIHRoYXQNCj4gLS0NCj4gMS43LjUu
+NA0KDQotLSANCm52cHVibGljDQoNCg==
