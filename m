@@ -1,37 +1,83 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: nvec TODO
-Date: Mon, 1 Aug 2011 10:21:18 -0700
-Message-ID: <20110801172118.GA7111@kroah.com>
-References: <20110801104549.GG15578@n2100.arm.linux.org.uk>
- <20110801165316.GA2366@kroah.com>
- <20110801170616.GD19079@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/3] ASoC: Tegra: WM8903: Allow re-insertion of module
+Date: Thu,  4 Aug 2011 16:44:43 -0600
+Message-ID: <1312497884-1599-2-git-send-email-swarren@nvidia.com>
+References: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20110801170616.GD19079-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <1312497884-1599-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 01, 2011 at 06:06:16PM +0100, Russell King - ARM Linux wrote:
-> On Mon, Aug 01, 2011 at 09:53:16AM -0700, Greg KH wrote:
-> > On Mon, Aug 01, 2011 at 11:45:49AM +0100, Russell King - ARM Linux wrote:
-> > > Greg,
-> > > 
-> > > A small patch to add something to this staging drivers todo list which
-> > > I just noticed.  BTW, why isn't there any easy way to find a list of
-> > > addresses to copy against stuff in staging?  I hope I have everyone...
-> > 
-> > We have MAINTAINERS entries for almost all staging drivers and of
-> > course, scripts/get_maintainer.pl should show you everyone involved.
-> 
-> Not in this case.
+Two issues were preventing module snd-soc-tegra-wm8903.ko from being
+removed and re-inserted:
 
-Ick, you are right.  Marc, please update the TODO file with the correct
-information, as well as providing a MAINTAINERS entry.
+a) The speaker-enable GPIO is hosted by the WM8903 chip. This GPIO must
+   be freed before snd_soc_unregister_card() is called, because that
+   triggers wm8903.c:wm8903_remove(), which calls gpiochip_remove(), which
+   then fails if any of the GPIOs are in use. To solve this, free all GPIOs
+   first, so the code doesn't care where they come from.
 
-thanks,
+b) We need to call snd_soc_jack_free_gpios() to match the call to
+   snd_soc_jack_add_gpios() during initialization. Without this, the
+   call to snd_soc_jack_add_gpios() fails during any subsequent modprobe
+   and initialization, since the GPIO and IRQ are already registered. In
+   turn, this causes the headphone state not to be monitored, so the
+   headphone is assumed not to be plugged in, and the audio path to it is
+   never enabled.
 
-greg k-h
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/tegra/tegra_wm8903.c |   15 +++++++++++----
+ 1 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index a42e9ac..661373c 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -56,6 +56,7 @@
+ #define GPIO_HP_MUTE    BIT(1)
+ #define GPIO_INT_MIC_EN BIT(2)
+ #define GPIO_EXT_MIC_EN BIT(3)
++#define GPIO_HP_DET     BIT(4)
+ 
+ struct tegra_wm8903 {
+ 	struct tegra_asoc_utils_data util_data;
+@@ -304,6 +305,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 		snd_soc_jack_add_gpios(&tegra_wm8903_hp_jack,
+ 					1,
+ 					&tegra_wm8903_hp_jack_gpio);
++		machine->gpio_requested |= GPIO_HP_DET;
+ 	}
+ 
+ 	snd_soc_jack_new(codec, "Mic Jack", SND_JACK_MICROPHONE,
+@@ -429,10 +431,10 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+ 	struct tegra_wm8903_platform_data *pdata = machine->pdata;
+ 
+-	snd_soc_unregister_card(card);
+-
+-	tegra_asoc_utils_fini(&machine->util_data);
+-
++	if (machine->gpio_requested & GPIO_HP_DET)
++		snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack,
++					1,
++					&tegra_wm8903_hp_jack_gpio);
+ 	if (machine->gpio_requested & GPIO_EXT_MIC_EN)
+ 		gpio_free(pdata->gpio_ext_mic_en);
+ 	if (machine->gpio_requested & GPIO_INT_MIC_EN)
+@@ -441,6 +443,11 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+ 		gpio_free(pdata->gpio_hp_mute);
+ 	if (machine->gpio_requested & GPIO_SPKR_EN)
+ 		gpio_free(pdata->gpio_spkr_en);
++	machine->gpio_requested = 0;
++
++	snd_soc_unregister_card(card);
++
++	tegra_asoc_utils_fini(&machine->util_data);
+ 
+ 	kfree(machine);
+ 
+-- 
+1.7.0.4
