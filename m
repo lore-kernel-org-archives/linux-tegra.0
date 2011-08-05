@@ -1,40 +1,55 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] dt: add empty of_get_property for non-dt
-Date: Fri,  5 Aug 2011 16:50:30 -0600
-Message-ID: <1312584630-23371-1-git-send-email-swarren@nvidia.com>
+Subject: [RESEND PATCH] i2c: Tegra: Add of_match_table
+Date: Fri,  5 Aug 2011 16:53:48 -0600
+Message-ID: <1312584828-23474-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The patch adds empty function of_get_property for non-dt build, so that
-drivers migrating to dt can save some '#ifdef CONFIG_OF'.
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-This also fixes the current Tegra compile problem in linux-next.
+This patch was intended to be part of 7ca2d1a105a239e300b937e9c41a10a4bd08f569
+"i2c: Tegra: Add DeviceTree support". However, an early version of that patch,
+which was missing a chunk, was applied to next-i2c. This change is that
+missing chunk.
 
+Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/linux/of.h |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 0085bb0..9180dc5 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -256,6 +256,13 @@ static inline int of_property_read_string(struct device_node *np,
- 	return -ENOSYS;
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 0c6e840..dd1f21b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -720,6 +720,17 @@ static int tegra_i2c_resume(struct platform_device *pdev)
  }
+ #endif
  
-+static inline const void *of_get_property(const struct device_node *node,
-+				const char *name,
-+				int *lenp)
-+{
-+	return NULL;
-+}
++#if defined(CONFIG_OF)
++/* Match table for of_platform binding */
++static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
++	{ .compatible = "nvidia,tegra20-i2c", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
++#else
++#define tegra_i2c_of_match NULL
++#endif
 +
- #endif /* CONFIG_OF */
+ static struct platform_driver tegra_i2c_driver = {
+ 	.probe   = tegra_i2c_probe,
+ 	.remove  = tegra_i2c_remove,
+@@ -730,6 +741,7 @@ static struct platform_driver tegra_i2c_driver = {
+ 	.driver  = {
+ 		.name  = "tegra-i2c",
+ 		.owner = THIS_MODULE,
++		.of_match_table = tegra_i2c_of_match,
+ 	},
+ };
  
- static inline int of_property_read_u32(const struct device_node *np,
 -- 
 1.7.0.4
