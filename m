@@ -1,64 +1,59 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC PATCH 0/3] If an IRQ is a GPIO, request and configure it
-Date: Fri, 5 Aug 2011 22:40:27 +0100
-Message-ID: <20110805214027.GA4699@n2100.arm.linux.org.uk>
-References: <1312498820-2275-1-git-send-email-swarren@nvidia.com> <20110805094017.GC20575@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF049F171EFC@HQMAIL01.nvidia.com> <20110805191504.GB28958@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF049F171FD3@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF049F171FD3@HQMAIL01.nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Chris Ball <cjb@laptop.org>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] gpio/tegra: Remove use of irq_to_gpio
+Date: Fri,  5 Aug 2011 16:15:33 -0600
+Message-ID: <1312582534-10871-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 05, 2011 at 12:33:31PM -0700, Stephen Warren wrote:
-> Russell King - ARM Linux wrote at Friday, August 05, 2011 1:15 PM:
-> > On Fri, Aug 05, 2011 at 08:43:20AM -0700, Stephen Warren wrote:
-> > > Russell King - ARM Linux wrote at Friday, August 05, 2011 3:40 AM:
-> > > > On Thu, Aug 04, 2011 at 05:00:17PM -0600, Stephen Warren wrote:
-> > > > > In http://www.spinics.net/lists/linux-tegra/msg01731.html, Mark Brown
-> > > > > pointed out that it was a little silly forcing every board or driver
-> > > > > to gpio_request() a GPIO that is later converted to an IRQ, and passed
-> > > > > to request_irq. The first patch in this series instead makes the core
-> > > > > IRQ code perform these calls when appropriate, to avoid duplicating it
-> > > > > everywhere.
-> > > >
-> > > > Trying to go from IRQ to GPIO is not a good idea - most of the
-> > > > IRQ <-> GPIO macros we have today are just plain broken.  Many of them
-> > > > just add or subtract a constant, which means non-GPIO IRQs have an
-> > > > apparant GPIO number too.  Couple this with the fact that all positive
-> > > > GPIO numbers are valid, and this is a recipe for wrong GPIOs getting
-> > > > used and GPIOs being requested for non-GPIO IRQs.
-> > > >
-> > > > I think this was also discussed in the past, and the conclusion was that
-> > > > IRQs should be kept separate from GPIOs.  Maybe views have changed since
-> > > > then...
-> > > >
-> > > > However, if we do want to do this, then it would be much better to provide
-> > > > a new API for requesting GPIO IRQs, eg:
-> > > >
-> > > > gpio_request_irq()
-> > > >
-> > > > which would wrap around request_threaded_irq(), takes a GPIO number,
-> > > > does the GPIO->IRQ conversion internally, and whatever GPIO setup is
-> > > > required.  Something like this:
-> > >
-> > > With that approach, drivers need to explicitly know whether they're
-> > > passed a GPIO or an IRQ, and do something different, or they need to
-> > > choose to only accept a GPIO or IRQ.
-> > 
-> > You completely missed the biggest reason why your approach is broken.
-> 
-> No, I didn't.
+irq_to_gpio is being removed. Replace the only use of that API by
+the ARM Tegra sub-architecture.
 
-Yes you did.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch depends on changes in Grant's gpio/next tree: at least the
+move from arch/arm/mach-tegra/gpio.c to drivers/gpio/gpio-tegra.c.
 
-> I was discussing whether an alternative API for IRQ registration
-> would work, and I was pointing out some problems with it.
-> 
-> That has nothing to do with whether my original proposal is workable.
+ drivers/gpio/gpio-tegra.c |   16 ++++++++++------
+ 1 files changed, 10 insertions(+), 6 deletions(-)
 
-And that proves that you missed the point.  I am suggesting an alternative
-solution precisely because your original proposal is unworkable.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 747eb40..7b9663b 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -331,6 +331,7 @@ static struct lock_class_key gpio_lock_class;
+ static int __init tegra_gpio_init(void)
+ {
+ 	struct tegra_gpio_bank *bank;
++	int gpio;
+ 	int i;
+ 	int j;
+ 
+@@ -352,14 +353,17 @@ static int __init tegra_gpio_init(void)
+ 
+ 	gpiochip_add(&tegra_gpio_chip);
+ 
+-	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
+-		bank = &tegra_gpio_banks[GPIO_BANK(irq_to_gpio(i))];
++	for (gpio = 0; gpio < TEGRA_NR_GPIOS; gpio++) {
++		int irq = gpio_to_irq(gpio);
++		/* No validity check; all Tegra GPIOs are valid IRQs */
+ 
+-		irq_set_lockdep_class(i, &gpio_lock_class);
+-		irq_set_chip_data(i, bank);
+-		irq_set_chip_and_handler(i, &tegra_gpio_irq_chip,
++		bank = &tegra_gpio_banks[GPIO_BANK(gpio)];
++
++		irq_set_lockdep_class(irq, &gpio_lock_class);
++		irq_set_chip_data(irq, bank);
++		irq_set_chip_and_handler(irq, &tegra_gpio_irq_chip,
+ 					 handle_simple_irq);
+-		set_irq_flags(i, IRQF_VALID);
++		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tegra_gpio_banks); i++) {
+-- 
+1.7.0.4
