@@ -1,111 +1,53 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 1/3] irq: If an IRQ is a GPIO, request and configure it
-Date: Thu, 04 Aug 2011 20:54:59 -0500
-Message-ID: <4E3B4D73.9030505@gmail.com>
-References: <1312498820-2275-1-git-send-email-swarren@nvidia.com> <1312498820-2275-2-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/3] irq: If an IRQ is a GPIO, request and configure it
+Date: Thu, 4 Aug 2011 20:53:34 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049F171EC1@HQMAIL01.nvidia.com>
+References: <1312498820-2275-1-git-send-email-swarren@nvidia.com>
+ <1312498820-2275-2-git-send-email-swarren@nvidia.com>
+ <20110805000148.GB13321@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1312498820-2275-2-git-send-email-swarren@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Chris Ball <cjb@laptop.org>, ccross@android.com, olof@lixom.net, alsa-devel@alsa-project.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110805000148.GB13321-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/04/2011 06:00 PM, Stephen Warren wrote:
-> Many IRQs are associated with GPIO pins. When the pin is used as an IRQ,
-> it can't be used as anything else; it should be requested. Enhance the
-> core interrupt code to call gpio_request() and gpio_direction_input() for
-> any IRQ that is also a GPIO. This prevents duplication of these calls in
-> each driver that uses an IRQ.
+Mark Brown wrote at Thursday, August 04, 2011 6:02 PM:
+> On Thu, Aug 04, 2011 at 05:00:18PM -0600, Stephen Warren wrote:
 > 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
->  kernel/irq/manage.c |   23 +++++++++++++++++++++--
->  1 files changed, 21 insertions(+), 2 deletions(-)
+> > +	} else {
+> > +		gpio = irq_to_gpio(irq);
+> > +		if (gpio_is_valid(gpio)) {
+> > +			ret = gpio_request(gpio, new->name);
+> > +			if (ret < 0)
+> > +				goto out_mask;
+> > +			ret = gpio_direction_input(gpio);
+> > +			if (ret < 0)
+> > +				goto out_mask;
+> > +		}
 > 
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index 0a7840a..6e2db72 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -7,6 +7,7 @@
->   * This file contains driver APIs to the irq subsystem.
->   */
->  
-> +#include <linux/gpio.h>
->  #include <linux/irq.h>
->  #include <linux/kthread.h>
->  #include <linux/module.h>
-> @@ -875,7 +876,7 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
->  	struct irqaction *old, **old_ptr;
->  	const char *old_name = NULL;
->  	unsigned long flags, thread_mask = 0;
-> -	int ret, nested, shared = 0;
-> +	int ret, nested, shared = 0, gpio = -1;
->  	cpumask_var_t mask;
->  
->  	if (!desc)
-> @@ -978,6 +979,16 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
->  			old = *old_ptr;
->  		} while (old);
->  		shared = 1;
-> +	} else {
-> +		gpio = irq_to_gpio(irq);
+> If you treat failures as an error what happens when a driver is using a
+> GPIO as both an interrupt and a GPIO?  For example a driver which
+> monitors the level on a GPIO and uses edge triggered IRQs to be notified
+> of state changes.
 
-If you read the documentation for gpio, it is not recommended to use
-irq_to_gpio. There's only a handful of users. Part of the problem is it
-is platform specific and the gpio core cannot convert irq to gpio
-number. Here is the relevant section:
+Well, things break. This is essentially the problem I was describing in
+the PATCH 0 email, just with a slightly different motivation.
 
-Non-error values returned from irq_to_gpio() would most commonly be used
-with gpio_get_value(), for example to initialize or update driver state
-when the IRQ is edge-triggered.  Note that some platforms don't support
-this reverse mapping, so you should avoid using it.
+I suppose that an alternative here would be to simply ignore any errors
+from gpio_request. This might have the benefit of removing the need for
+the other two patches I posted in the series. However, it seems a little
+dirty; one benefit of the IRQ code calling gpio_request and honoring
+errors would be to detect when some completely unrelated code had a bug
+and had called gpio_request on the GPIO before. Such detection would be
+non-existent if we don't error out on gpio_request. Perhaps some mechanism
+is needed to indicate that the driver has explicitly already called
+gpio_request for a legitimate shared purpose, and only then ignore
+errors?
 
-Rob
-
-> +		if (gpio_is_valid(gpio)) {
-> +			ret = gpio_request(gpio, new->name);
-> +			if (ret < 0)
-> +				goto out_mask;
-> +			ret = gpio_direction_input(gpio);
-> +			if (ret < 0)
-> +				goto out_mask;
-> +		}
->  	}
->  
->  	/*
-> @@ -1083,6 +1094,8 @@ mismatch:
->  	ret = -EBUSY;
->  
->  out_mask:
-> +	if (gpio_is_valid(gpio))
-> +		gpio_free(gpio);
->  	raw_spin_unlock_irqrestore(&desc->lock, flags);
->  	free_cpumask_var(mask);
->  
-> @@ -1127,6 +1140,7 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
->  	struct irq_desc *desc = irq_to_desc(irq);
->  	struct irqaction *action, **action_ptr;
->  	unsigned long flags;
-> +	int gpio;
->  
->  	WARN(in_interrupt(), "Trying to free IRQ %d from IRQ context!\n", irq);
->  
-> @@ -1165,8 +1179,13 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
->  #endif
->  
->  	/* If this was the last handler, shut down the IRQ line: */
-> -	if (!desc->action)
-> +	if (!desc->action) {
->  		irq_shutdown(desc);
-> +		/* If the IRQ line is a GPIO, it's no longer in use */
-> +		gpio = irq_to_gpio(irq);
-> +		if (gpio_is_valid(gpio))
-> +			gpio_free(gpio);
-> +	}
->  
->  #ifdef CONFIG_SMP
->  	/* make sure affinity_hint is cleaned up */
-
+--
+nvpublic
