@@ -1,48 +1,68 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] i2c/tegra: I2C driver uses the
- suspend_noirq/resume_noirq
-Date: Sat, 6 Aug 2011 09:48:05 +0100
-Message-ID: <20110806084805.GA18098@sirena.org.uk>
-References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
- <CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 2/2] arm/tegra: Delete irq_to_gpio
+Date: Sat, 6 Aug 2011 18:45:19 +0100
+Message-ID: <20110806174519.GB31966@ponder.secretlab.ca>
+References: <1312582534-10871-1-git-send-email-swarren@nvidia.com>
+ <1312582534-10871-2-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1312582534-10871-2-git-send-email-swarren@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 05, 2011 at 09:33:31PM -0700, Colin Cross wrote:
+On Fri, Aug 05, 2011 at 04:15:34PM -0600, Stephen Warren wrote:
+> irq_to_gpio is deprecated and in the process of being removed. Make that
+> happen now for ARM Tegra.
+> 
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 
-Please delete unneeded context from e-mails, it makes it much easier to
-find the content.
+Applied both.  Thanks.
 
-> NAK - moving the suspend order around is not the correct way to solve
-> this.  If wm8903 needs to talk to the i2c bus in its suspend handler,
-> it needs to be child device on the i2c bus.  suspend_noirq is for
+g.
 
-WM8903 is an I2C device.  The problem is that it's suspended as part of
-the ASoC suspend since the audio subsystem is composed of multiple
-devices that all need to work together coherently.  I did start doing
-some stuff to bodge around this like we do on probe but there are enough
-system wide problems with this that it didn't seem worth the complexity
-when the existing workarounds are so straightforward.
-
-> devices that must suspend with system irqs turned off, not for
-> ordering suspend handlers.
-
-Unfortunately it's the only tool Linux has for dealing with this sort of
-issue right now.  We were supposed to be getting support for telling the
-PM core about dependencies but Linus didn't like that, and it's possible
-Grant's stuff with allowing device binding to be retried to handle cross 
-bus dependencies will help.  Right now the Linux model just doesn't have
-any understanding of cross device dependencies other than control buses.
-
-One other example of this is that you're also going to have the same
-problem with PMICs - random devices on the system might want to control
-their regulators as part of the suspend process and typically the PMIC
-is going to be connected over I2C so it needs to be available for as
-long as possible.
+> ---
+> I assume this will go into one of arm-soc.git's branches, but it depends
+> on the previous patch in this series to compile. Arnd, I see you already
+> have Grant's gpio/next tree in your repo as depends/gpio, so I assume
+> you'll just pick up and merge the latest version of Grant's tree before
+> applying this patch?
+> 
+> Both patches compiled with a number of Tegra boards enable and tested on
+> Harmony. All without Device Tree support.
+> 
+>  arch/arm/mach-tegra/include/mach/gpio.h |    8 --------
+>  1 files changed, 0 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
+> index 196f114..b357808 100644
+> --- a/arch/arm/mach-tegra/include/mach/gpio.h
+> +++ b/arch/arm/mach-tegra/include/mach/gpio.h
+> @@ -32,7 +32,6 @@
+>  #define gpio_cansleep		__gpio_cansleep
+>  
+>  #define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
+> -#define TEGRA_IRQ_TO_GPIO(irq) ((irq) - INT_GPIO_BASE)
+>  
+>  static inline int gpio_to_irq(unsigned int gpio)
+>  {
+> @@ -41,13 +40,6 @@ static inline int gpio_to_irq(unsigned int gpio)
+>  	return -EINVAL;
+>  }
+>  
+> -static inline int irq_to_gpio(unsigned int irq)
+> -{
+> -	if ((irq >= INT_GPIO_BASE) && (irq < INT_GPIO_BASE + INT_GPIO_NR))
+> -		return irq - INT_GPIO_BASE;
+> -	return -EINVAL;
+> -}
+> -
+>  struct tegra_gpio_table {
+>  	int	gpio;	/* GPIO number */
+>  	bool	enable;	/* Enable for GPIO at init? */
+> -- 
+> 1.7.0.4
+> 
