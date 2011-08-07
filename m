@@ -1,7 +1,7 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH 1/5] ARM: tegra: paz00: add support serial port on JP1
-Date: Sun,  7 Aug 2011 21:00:51 +0200
-Message-ID: <11bf7be6e49eb0e085530323cc0c5c65fb2cbed5.1312742856.git.marvin24@gmx.de>
+Subject: [PATCH 3/5] ARM: tegra: paz00: enable wifi led
+Date: Sun,  7 Aug 2011 21:00:53 +0200
+Message-ID: <fdc3b097e452167e5241c369ef053594945fef47.1312742856.git.marvin24@gmx.de>
 References: <cover.1312735430.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <cover.1312735430.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
@@ -12,42 +12,77 @@ To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-UART-A is connected to JP1 and used by the bootloader for debugging
-output while UART-D is connected to the mini-pcie expansion slot.
+This adds support for the wifi led. It is automaticly triggered by
+the rfkill0 event.
 
 Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-paz00.c |   11 +++++++++++
- 1 files changed, 11 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/board-paz00-pinmux.c |    1 +
+ arch/arm/mach-tegra/board-paz00.c        |   22 ++++++++++++++++++++++
+ arch/arm/mach-tegra/board-paz00.h        |    1 +
+ 3 files changed, 24 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
+index 70c5710..2225769 100644
+--- a/arch/arm/mach-tegra/board-paz00-pinmux.c
++++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
+@@ -147,6 +147,7 @@ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_ULPI_RST,	.enable = true },
+ 	{ .gpio = TEGRA_WIFI_PWRN,	.enable = true },
+ 	{ .gpio = TEGRA_WIFI_RST,	.enable = true },
++	{ .gpio = TEGRA_WIFI_LED,	.enable = true },
+ };
+ 
+ void paz00_pinmux_init(void)
 diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index ea2f79c..f3b7376 100644
+index 6b798e7..45111f6 100644
 --- a/arch/arm/mach-tegra/board-paz00.c
 +++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -45,6 +45,16 @@
- 
- static struct plat_serial8250_port debug_uart_platform_data[] = {
- 	{
-+		/* serial port on JP1 */
-+		.membase	= IO_ADDRESS(TEGRA_UARTA_BASE),
-+		.mapbase	= TEGRA_UARTA_BASE,
-+		.irq		= INT_UARTA,
-+		.flags		= UPF_BOOT_AUTOCONF,
-+		.iotype		= UPIO_MEM,
-+		.regshift	= 2,
-+		.uartclk	= 216000000,
-+	}, {
-+		/* serial port on mini-pcie */
- 		.membase	= IO_ADDRESS(TEGRA_UARTD_BASE),
- 		.mapbase	= TEGRA_UARTD_BASE,
- 		.irq		= INT_UARTD,
-@@ -94,6 +104,7 @@ static void __init tegra_paz00_fixup(struct machine_desc *desc,
- 
- static __initdata struct tegra_clk_init_table paz00_clk_init_table[] = {
- 	/* name		parent		rate		enabled */
-+	{ "uarta",	"pll_p",	216000000,	true },
- 	{ "uartd",	"pll_p",	216000000,	true },
- 	{ NULL,		NULL,		0,		0},
+@@ -91,11 +91,33 @@ static struct platform_device wifi_rfkill_device = {
+ 	},
  };
+ 
++static struct gpio_led gpio_leds[] = {
++	{
++		.name			= "wifi-led",
++		.default_trigger	= "rfkill0",
++		.gpio			= TEGRA_WIFI_LED,
++	},
++};
++
++static struct gpio_led_platform_data gpio_led_info = {
++	.leds		= gpio_leds,
++	.num_leds	= ARRAY_SIZE(gpio_leds),
++};
++
++static struct platform_device leds_gpio = {
++	.name	= "leds-gpio",
++	.id	= -1,
++	.dev	= {
++		.platform_data = &gpio_led_info,
++        },
++};
++
+ static struct platform_device *paz00_devices[] __initdata = {
+ 	&debug_uart,
+ 	&tegra_sdhci_device1,
+ 	&tegra_sdhci_device4,
+ 	&wifi_rfkill_device,
++	&leds_gpio,
+ };
+ 
+ static void paz00_i2c_init(void)
+diff --git a/arch/arm/mach-tegra/board-paz00.h b/arch/arm/mach-tegra/board-paz00.h
+index e780f30..86057c3 100644
+--- a/arch/arm/mach-tegra/board-paz00.h
++++ b/arch/arm/mach-tegra/board-paz00.h
+@@ -28,6 +28,7 @@
+ /* WIFI */
+ #define TEGRA_WIFI_PWRN		TEGRA_GPIO_PK5
+ #define TEGRA_WIFI_RST		TEGRA_GPIO_PD1
++#define TEGRA_WIFI_LED		TEGRA_GPIO_PD0
+ 
+ void paz00_pinmux_init(void);
+ 
 -- 
 1.7.4.1
