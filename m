@@ -1,68 +1,57 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 2/2] arm/tegra: Delete irq_to_gpio
-Date: Sat, 6 Aug 2011 18:45:19 +0100
-Message-ID: <20110806174519.GB31966@ponder.secretlab.ca>
-References: <1312582534-10871-1-git-send-email-swarren@nvidia.com>
- <1312582534-10871-2-git-send-email-swarren@nvidia.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] dt: add empty of_get_property for non-dt
+Date: Sun, 07 Aug 2011 09:37:52 -0500
+Message-ID: <4E3EA340.2010100@gmail.com>
+References: <1312584630-23371-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1312582534-10871-2-git-send-email-swarren@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1312584630-23371-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 05, 2011 at 04:15:34PM -0600, Stephen Warren wrote:
-> irq_to_gpio is deprecated and in the process of being removed. Make that
-> happen now for ARM Tegra.
+On 08/05/2011 05:50 PM, Stephen Warren wrote:
+> The patch adds empty function of_get_property for non-dt build, so that
+> drivers migrating to dt can save some '#ifdef CONFIG_OF'.
 > 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> This also fixes the current Tegra compile problem in linux-next.
+> 
+You could just use of_property_read_u32 in the driver. It already has
+empty version and will simplify the driver code some.
 
-Applied both.  Thanks.
+Rob
 
-g.
-
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> I assume this will go into one of arm-soc.git's branches, but it depends
-> on the previous patch in this series to compile. Arnd, I see you already
-> have Grant's gpio/next tree in your repo as depends/gpio, so I assume
-> you'll just pick up and merge the latest version of Grant's tree before
-> applying this patch?
+>  include/linux/of.h |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
 > 
-> Both patches compiled with a number of Tegra boards enable and tested on
-> Harmony. All without Device Tree support.
-> 
->  arch/arm/mach-tegra/include/mach/gpio.h |    8 --------
->  1 files changed, 0 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
-> index 196f114..b357808 100644
-> --- a/arch/arm/mach-tegra/include/mach/gpio.h
-> +++ b/arch/arm/mach-tegra/include/mach/gpio.h
-> @@ -32,7 +32,6 @@
->  #define gpio_cansleep		__gpio_cansleep
->  
->  #define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
-> -#define TEGRA_IRQ_TO_GPIO(irq) ((irq) - INT_GPIO_BASE)
->  
->  static inline int gpio_to_irq(unsigned int gpio)
->  {
-> @@ -41,13 +40,6 @@ static inline int gpio_to_irq(unsigned int gpio)
->  	return -EINVAL;
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 0085bb0..9180dc5 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -256,6 +256,13 @@ static inline int of_property_read_string(struct device_node *np,
+>  	return -ENOSYS;
 >  }
 >  
-> -static inline int irq_to_gpio(unsigned int irq)
-> -{
-> -	if ((irq >= INT_GPIO_BASE) && (irq < INT_GPIO_BASE + INT_GPIO_NR))
-> -		return irq - INT_GPIO_BASE;
-> -	return -EINVAL;
-> -}
-> -
->  struct tegra_gpio_table {
->  	int	gpio;	/* GPIO number */
->  	bool	enable;	/* Enable for GPIO at init? */
-> -- 
-> 1.7.0.4
-> 
+> +static inline const void *of_get_property(const struct device_node *node,
+> +				const char *name,
+> +				int *lenp)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif /* CONFIG_OF */
+>  
+>  static inline int of_property_read_u32(const struct device_node *np,
