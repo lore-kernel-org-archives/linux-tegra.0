@@ -1,79 +1,46 @@
-From: dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Subject: [PATCH] video: Added a callback 'notify_after' for backlight control
-Date: Mon,  8 Aug 2011 18:37:55 +0800
-Message-ID: <1312799875-18629-1-git-send-email-dilee@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 2/2] arm/tegra: Delete irq_to_gpio
+Date: Mon, 8 Aug 2011 07:26:00 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049F172168@HQMAIL01.nvidia.com>
+References: <1312582534-10871-1-git-send-email-swarren@nvidia.com>
+ <1312582534-10871-2-git-send-email-swarren@nvidia.com>
+ <20110806174519.GB31966@ponder.secretlab.ca>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110806174519.GB31966-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org
-Cc: jnien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Grant Likely wrote at Saturday, August 06, 2011 11:45 AM:
+> On Fri, Aug 05, 2011 at 04:15:34PM -0600, Stephen Warren wrote:
+> > irq_to_gpio is deprecated and in the process of being removed. Make that
+> > happen now for ARM Tegra.
+> >
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Applied both.  Thanks.
 
-We need a callback to do some things after pwm_enable,pwm_disable
-and pwm_config.
+Didn't you want an Ack by a Tegra maintainer first?
 
-For example, GPIO backlight_en has to be rised after pwm has been enabled
-to meet panel power on sequence defined in panel specification.
+I assume they were both applied to gpio-next (although a fresh fetch  of that
+doesn't show the commits)
 
-Signed-off-by: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/video/backlight/pwm_bl.c |    9 +++++++++
- include/linux/pwm_backlight.h    |    1 +
- 2 files changed, 10 insertions(+), 0 deletions(-)
+> > I assume this will go into one of arm-soc.git's branches, but it depends
+> > on the previous patch in this series to compile. Arnd, I see you already
+> > have Grant's gpio/next tree in your repo as depends/gpio, so I assume
+> > you'll just pick up and merge the latest version of Grant's tree before
+> > applying this patch?
+> >
+> > Both patches compiled with a number of Tegra boards enable and tested on
+> > Harmony. All without Device Tree support.
+> >
+> >  arch/arm/mach-tegra/include/mach/gpio.h |    8 --------
+> >  1 files changed, 0 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index b8f38ec..d9a16e5 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -28,6 +28,8 @@ struct pwm_bl_data {
- 	unsigned int		lth_brightness;
- 	int			(*notify)(struct device *,
- 					  int brightness);
-+	void		(*notify_after)(struct device *,
-+					  int brightness);
- 	int			(*check_fb)(struct device *, struct fb_info *);
- };
- 
-@@ -55,6 +57,10 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
- 		pwm_config(pb->pwm, brightness, pb->period);
- 		pwm_enable(pb->pwm);
- 	}
-+
-+	if (pb->notify_after)
-+		pb->notify_after(pb->dev, brightness);
-+
- 	return 0;
- }
- 
-@@ -105,6 +111,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 
- 	pb->period = data->pwm_period_ns;
- 	pb->notify = data->notify;
-+	pb->notify_after = data->notify_after;
- 	pb->check_fb = data->check_fb;
- 	pb->lth_brightness = data->lth_brightness *
- 		(data->pwm_period_ns / data->max_brightness);
-@@ -172,6 +179,8 @@ static int pwm_backlight_suspend(struct platform_device *pdev,
- 		pb->notify(pb->dev, 0);
- 	pwm_config(pb->pwm, 0, pb->period);
- 	pwm_disable(pb->pwm);
-+	if (pb->notify_after)
-+		pb->notify_after(pb->dev, 0);
- 	return 0;
- }
- 
-diff --git a/include/linux/pwm_backlight.h b/include/linux/pwm_backlight.h
-index 5e3e25a..63d2df4 100644
---- a/include/linux/pwm_backlight.h
-+++ b/include/linux/pwm_backlight.h
-@@ -14,6 +14,7 @@ struct platform_pwm_backlight_data {
- 	unsigned int pwm_period_ns;
- 	int (*init)(struct device *dev);
- 	int (*notify)(struct device *dev, int brightness);
-+	void (*notify_after)(struct device *dev, int brightness);
- 	void (*exit)(struct device *dev);
- 	int (*check_fb)(struct device *dev, struct fb_info *info);
- };
 -- 
-1.7.5.4
+nvpublic
