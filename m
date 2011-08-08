@@ -1,36 +1,53 @@
-From: Liam Girdwood <lrg@ti.com>
-Subject: Re: [PATCH 1/3] ASoC: Tegra:
- tegra_pcm_deallocate_dma_buffer: Don't OOPS
-Date: Mon, 8 Aug 2011 16:43:46 +0100
-Message-ID: <1312818226.3314.0.camel@CNA0741383>
-References: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
+From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] video: Added a callback 'notify_after' for backlight
+ control
+Date: Mon, 8 Aug 2011 09:13:44 -0700
+Message-ID: <20110808161344.GC27106@morell.nvidia.com>
+References: <1312799875-18629-1-git-send-email-dilee@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1312799875-18629-1-git-send-email-dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org" <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, "akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Jordan Nien <JNien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2011-08-05 at 00:44 +0200, Stephen Warren wrote:
-> Not all PCM devices have all sub-streams. Specifically, the SPDIF driver
-> only supports playback and hence has no capture substream. Check whether
-> a substream exists before dereferencing it, when de-allocating DMA
-> buffers in tegra_pcm_deallocate_dma_buffer.
+Looks fine to me in principle, but a few nitpicks.
+First, the short commit message should be in imperative form, i.e., "Add
+a callback..."
+
+On Mon, Aug 08, 2011 at 03:37:55AM -0700, Dilan Lee wrote:
+> From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
+> We need a callback to do some things after pwm_enable,pwm_disable
+> and pwm_config.
 
-All 
+Add a space between "pwm_enable,pwm_disable"
 
-Acked-by: Liam Girdwood <lrg@ti.com>
+> For example, GPIO backlight_en has to be rised after pwm has been enabled
+> to meet panel power on sequence defined in panel specification.
+
+There's a typo in "raised" above, but really, this paragraph should be
+omitted entirely.  Without context, it doesn't make any sense.  If
+more motivation that the previous paragraph is necessary, maybe add
+something like "This may be necessary to properly sequence timing on
+certain devices."
+
+>  	unsigned int		lth_brightness;
+>  	int			(*notify)(struct device *,
+>  					  int brightness);
+> +	void		(*notify_after)(struct device *,
+> +					  int brightness);
+
+The indentation here looks a bit off; notify_after should be lined up
+with notify and check_fb, and int brightness doesn't need the extra
+spaces since the notify_after argument list starts on a tab boundary.
+
+Otherwise,
+
+Reviewed-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks,
+Robert
