@@ -1,93 +1,47 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 3/3] ARM: Tegra: Seaboard: Add USB devices
-Date: Mon,  8 Aug 2011 14:35:15 -0600
-Message-ID: <1312835715-893-4-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH v2 1/3] ARM: Tegra: Harmony: Add USB device
+Date: Mon,  8 Aug 2011 14:35:13 -0600
+Message-ID: <1312835715-893-2-git-send-email-swarren@nvidia.com>
 References: <1312835715-893-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1312835715-893-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1312835715-893-1-git-send-email-swarren@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olofj@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Seaboard has a couple of external USB ports. Add the platform devices and
-GPIO infra-structure to enable these.
+The Tegra USB port is attached an an SMSC9514; a combination USB hub
+and Ethernet controller.
 
-I tested both ports with a mouse on Seaboard non-clamshell.
+This change is extracted from a change in the ChromeOS 2.6.38 kernel.
 
-This change is extracted from code in the ChromeOS 2.6.38 kernel.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Olof Johansson <olofj@chromium.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
 v2: No change
 
- arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
- arch/arm/mach-tegra/board-seaboard.c        |   27 +++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/board-harmony.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index 7879750..74f78b7 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -168,6 +168,7 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_ISL29018_IRQ,	.enable = true },
- 	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
-+	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
- };
- 
- void __init seaboard_pinmux_init(void)
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index 07cd8e4..237a94a 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -69,6 +69,8 @@ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index 846cd7d..f528a5a 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -117,6 +117,7 @@ static struct platform_device *harmony_devices[] __initdata = {
+ 	&tegra_sdhci_device1,
+ 	&tegra_sdhci_device2,
+ 	&tegra_sdhci_device4,
++	&tegra_ehci3_device,
+ 	&tegra_i2s_device1,
+ 	&tegra_das_device,
+ 	&tegra_pcm_device,
+@@ -140,6 +141,7 @@ static __initdata struct tegra_clk_init_table harmony_clk_init_table[] = {
  	{ "pll_a_out0",	"pll_a",	11289600,	true },
  	{ "cdev1",	NULL,		0,		true },
  	{ "i2s1",	"pll_a_out0",	11289600,	false},
-+	{ "usbd",	"clk_m",	12000000,	true},
-+	{ "usb3",	"clk_m",	12000000,	true},
++	{ "usb3",	"clk_m",	12000000,	true },
  	{ NULL,		NULL,		0,		0},
  };
  
-@@ -182,6 +184,29 @@ static struct i2c_board_info __initdata wm8903_device = {
- 	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
- };
- 
-+static int seaboard_ehci_init(void)
-+{
-+	int gpio_status;
-+
-+	gpio_status = gpio_request(TEGRA_GPIO_USB1, "VBUS_USB1");
-+	if (gpio_status < 0) {
-+		pr_err("VBUS_USB1 request GPIO FAILED\n");
-+		WARN_ON(1);
-+	}
-+
-+	gpio_status = gpio_direction_output(TEGRA_GPIO_USB1, 1);
-+	if (gpio_status < 0) {
-+		pr_err("VBUS_USB1 request GPIO DIRECTION FAILED\n");
-+		WARN_ON(1);
-+	}
-+	gpio_set_value(TEGRA_GPIO_USB1, 1);
-+
-+	platform_device_register(&tegra_ehci1_device);
-+	platform_device_register(&tegra_ehci3_device);
-+
-+	return 0;
-+}
-+
- static void __init seaboard_i2c_init(void)
- {
- 	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
-@@ -209,6 +234,8 @@ static void __init seaboard_common_init(void)
- 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
- 
- 	platform_add_devices(seaboard_devices, ARRAY_SIZE(seaboard_devices));
-+
-+	seaboard_ehci_init();
- }
- 
- static void __init tegra_seaboard_init(void)
 -- 
 1.7.0.4
