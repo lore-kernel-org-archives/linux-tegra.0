@@ -1,53 +1,39 @@
-From: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] video: Added a callback 'notify_after' for backlight
- control
-Date: Mon, 8 Aug 2011 09:13:44 -0700
-Message-ID: <20110808161344.GC27106@morell.nvidia.com>
-References: <1312799875-18629-1-git-send-email-dilee@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 4/5] ARM: tegra: paz00: add clocks required for usb
+ operation
+Date: Mon, 8 Aug 2011 09:57:52 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF049F1721C1@HQMAIL01.nvidia.com>
+References: <cover.1312742856.git.marvin24@gmx.de>
+ <76f31183766f1edce1230a925ced1c986dbdf028.1312742856.git.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1312799875-18629-1-git-send-email-dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <76f31183766f1edce1230a925ced1c986dbdf028.1312742856.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org" <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, "akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Jordan Nien <JNien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Looks fine to me in principle, but a few nitpicks.
-First, the short commit message should be in imperative form, i.e., "Add
-a callback..."
+Marc Dietrich wrote at Sunday, August 07, 2011 1:01 PM:
+> These clocks are required for usb operation.
+...
+> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+...
+> @@ -145,6 +145,11 @@ static __initdata struct tegra_clk_init_table paz00_clk_init_table[] = {
+>  	/* name		parent		rate		enabled */
+>  	{ "uarta",	"pll_p",	216000000,	true },
+>  	{ "uartd",	"pll_p",	216000000,	true },
+> +
+> +	{ "pll_a",      "pll_p_out1",   56448000,       true },
+> +	{ "pll_a_out0", "pll_a",        11289600,       true },
 
-On Mon, Aug 08, 2011 at 03:37:55AM -0700, Dilan Lee wrote:
-> From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> We need a callback to do some things after pwm_enable,pwm_disable
-> and pwm_config.
+Are you sure those two are required for USB operation; they're typically
+used for audio. Of course, this might just be a bug in the commit
+description:-) Although, if you are attempting to enable audio, there's
+a bunch more stuff that'd need to be done, including some more clock
+setup.
 
-Add a space between "pwm_enable,pwm_disable"
-
-> For example, GPIO backlight_en has to be rised after pwm has been enabled
-> to meet panel power on sequence defined in panel specification.
-
-There's a typo in "raised" above, but really, this paragraph should be
-omitted entirely.  Without context, it doesn't make any sense.  If
-more motivation that the previous paragraph is necessary, maybe add
-something like "This may be necessary to properly sequence timing on
-certain devices."
-
->  	unsigned int		lth_brightness;
->  	int			(*notify)(struct device *,
->  					  int brightness);
-> +	void		(*notify_after)(struct device *,
-> +					  int brightness);
-
-The indentation here looks a bit off; notify_after should be lined up
-with notify and check_fb, and int brightness doesn't need the extra
-spaces since the notify_after argument list starts on a tab boundary.
-
-Otherwise,
-
-Reviewed-by: Robert Morell <rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks,
-Robert
+-- 
+nvpublic
