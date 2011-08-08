@@ -1,47 +1,93 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: [PATCH v2 1/3] ARM: Tegra: Harmony: Add USB device
-Date: Mon,  8 Aug 2011 14:35:13 -0600
-Message-ID: <1312835715-893-2-git-send-email-swarren@nvidia.com>
-References: <1312835715-893-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1312835715-893-1-git-send-email-swarren@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olofj@chromium.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: Tegra: Force PORT_TEGRA as the UART type
+Date: Mon,  8 Aug 2011 15:01:05 -0600
+Message-ID: <1312837265-11984-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Marc Dietrich <Marc.Dietrich-wkdnK3oF/XPYtB+G+YtuwQgYPMzSbZxj@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra USB port is attached an an SMSC9514; a combination USB hub
-and Ethernet controller.
+8250.c recently gained an explicit PORT_TEGRA port type. Specifically
+request this in all Tegra boards' UART platform data.
 
-This change is extracted from a change in the ChromeOS 2.6.38 kernel.
-
-Signed-off-by: Olof Johansson <olofj@chromium.org>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: No change
+NOTE: This depends on "[PATCH 1/5] ARM: tegra: paz00: add support serial
+port on JP1", which was recently posted by Marc Dietrich, since that added
+one of the platform data array entries being modified by this patch.
 
- arch/arm/mach-tegra/board-harmony.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/board-harmony.c   |    3 ++-
+ arch/arm/mach-tegra/board-paz00.c     |    6 ++++--
+ arch/arm/mach-tegra/board-seaboard.c  |    3 ++-
+ arch/arm/mach-tegra/board-trimslice.c |    3 ++-
+ 4 files changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index 846cd7d..f528a5a 100644
+index f528a5a..987dab5 100644
 --- a/arch/arm/mach-tegra/board-harmony.c
 +++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -117,6 +117,7 @@ static struct platform_device *harmony_devices[] __initdata = {
- 	&tegra_sdhci_device1,
- 	&tegra_sdhci_device2,
- 	&tegra_sdhci_device4,
-+	&tegra_ehci3_device,
- 	&tegra_i2s_device1,
- 	&tegra_das_device,
- 	&tegra_pcm_device,
-@@ -140,6 +141,7 @@ static __initdata struct tegra_clk_init_table harmony_clk_init_table[] = {
- 	{ "pll_a_out0",	"pll_a",	11289600,	true },
- 	{ "cdev1",	NULL,		0,		true },
- 	{ "i2s1",	"pll_a_out0",	11289600,	false},
-+	{ "usb3",	"clk_m",	12000000,	true },
- 	{ NULL,		NULL,		0,		0},
- };
- 
+@@ -49,7 +49,8 @@ static struct plat_serial8250_port debug_uart_platform_data[] = {
+ 		.membase	= IO_ADDRESS(TEGRA_UARTD_BASE),
+ 		.mapbase	= TEGRA_UARTD_BASE,
+ 		.irq		= INT_UARTD,
+-		.flags		= UPF_BOOT_AUTOCONF,
++		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
++		.type		= PORT_TEGRA,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 		.uartclk	= 216000000,
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index b7494c2..c6a6d82 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -49,7 +49,8 @@ static struct plat_serial8250_port debug_uart_platform_data[] = {
+ 		.membase	= IO_ADDRESS(TEGRA_UARTA_BASE),
+ 		.mapbase	= TEGRA_UARTA_BASE,
+ 		.irq		= INT_UARTA,
+-		.flags		= UPF_BOOT_AUTOCONF,
++		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
++		.type		= PORT_TEGRA,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 		.uartclk	= 216000000,
+@@ -58,7 +59,8 @@ static struct plat_serial8250_port debug_uart_platform_data[] = {
+ 		.membase	= IO_ADDRESS(TEGRA_UARTD_BASE),
+ 		.mapbase	= TEGRA_UARTD_BASE,
+ 		.irq		= INT_UARTD,
+-		.flags		= UPF_BOOT_AUTOCONF,
++		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
++		.type		= PORT_TEGRA,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 		.uartclk	= 216000000,
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index 237a94a..25446df 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -44,7 +44,8 @@
+ static struct plat_serial8250_port debug_uart_platform_data[] = {
+ 	{
+ 		/* Memory and IRQ filled in before registration */
+-		.flags		= UPF_BOOT_AUTOCONF,
++		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
++		.type		= PORT_TEGRA,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 		.uartclk	= 216000000,
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index 89a6d2a..91875b9 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -46,7 +46,8 @@ static struct plat_serial8250_port debug_uart_platform_data[] = {
+ 		.membase	= IO_ADDRESS(TEGRA_UARTA_BASE),
+ 		.mapbase	= TEGRA_UARTA_BASE,
+ 		.irq		= INT_UARTA,
+-		.flags		= UPF_BOOT_AUTOCONF,
++		.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_TYPE,
++		.type		= PORT_TEGRA,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 		.uartclk	= 216000000,
 -- 
 1.7.0.4
