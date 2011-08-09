@@ -1,62 +1,78 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
-Date: Tue, 9 Aug 2011 22:32:30 +0100
-Message-ID: <20110809213230.GC14281@n2100.arm.linux.org.uk>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
-	<20110809210055.GF11568@ponder.secretlab.ca>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 4/5 V2] ARM: tegra: paz00: add clocks required for
+ usboperation
+Date: Tue, 9 Aug 2011 14:40:05 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04A06873BB@HQMAIL01.nvidia.com>
+References: <201108092126.28521.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20110809210055.GF11568@ponder.secretlab.ca>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-msm@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201108092126.28521.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 03:00:55PM -0600, Grant Likely wrote:
-> On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
-> > This is a preliminary posting of my gpio patch set.
-> > 
-> > This patch series moves the trivial gpiolib implementations out of
-> > mach/gpio.h and into asm/gpio.h.
-> > 
-> > As a side effect of that, most of this patch series is about fixing up
-> > direct includes of mach/gpio.h - this is something I've been on at
-> > people over the last year or more about ensuring that they use
-> > linux/gpio.h in preference.  While I've blindly converted all arch/arm
-> > to use linux/gpio.h (with the exception of mach/ includes which are
-> > converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
-> > These should be reviewed and changed to linux/gpio.h.
-> > 
-> > As a result of this patch series, several mach/gpio.h end up being
-> > empty.
-> > 
-> > Many others just contain platform private GPIO APIs and definitions.
-> > 
-> > The last thing which mach/gpio.h is used for is to provide a definition
-> > for ARCH_GPIO_NR to asm-generic/gpio.h.  I've not attempted to solve
-> > that issue yet.
-> > 
-> > A small number of platforms optimize the gpio accessors for on-SoC
-> > GPIOs.  In the interests of consolidation, these will have to be killed
-> > but this patch set does not do that yet.
-> > 
-> > Lastly, several {mach,plat}/gpio.h needs to be looked at with a view to
-> > deleting the direct include of asm-generic/gpio.h.
-> 
-> Looks good to me, though I haven't looked closely.  I imagine this
-> should get merged via a branch in the arm-soc tree?
-
-And this is where the existence of the arm-soc tree makes things more
-difficult for me.  I'd normally just keep it as a separate branch in
-my own tree.  What I do now, I've no idea.
+TWFyYyBEaWV0cmljaCB3cm90ZSBhdCBUdWVzZGF5LCBBdWd1c3QgMDksIDIwMTEgMToyNiBQTToN
+Cj4gT24gVHVlc2RheSAwOSBBdWd1c3QgMjAxMSAyMDozNTo0NSB5b3Ugd3JvdGU6DQo+ID4gTWFy
+YyBEaWV0cmljaCB3cm90ZSBhdCBUdWVzZGF5LCBBdWd1c3QgMDksIDIwMTEgMTI6MjkgUE06DQo+
+ID4gPiBUaGVzZSBjbG9ja3MgYXJlIHJlcXVpcmVkIGZvciB1c2Igb3BlcmF0aW9uLg0KPiA+ID4g
+LS0tDQo+ID4gPg0KPiA+ID4gIGFyY2gvYXJtL21hY2gtdGVncmEvYm9hcmQtcGF6MDAuYyB8ICAg
+IDYgKysrKysrDQo+ID4gPiAgMSBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDAgZGVs
+ZXRpb25zKC0pDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtdGVncmEv
+Ym9hcmQtcGF6MDAuYw0KPiA+ID4gYi9hcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLXBhejAwLmMg
+aW5kZXggNDUxMTFmNi4uODlhM2RkYSAxMDA2NDQNCj4gPiA+IC0tLSBhL2FyY2gvYXJtL21hY2gt
+dGVncmEvYm9hcmQtcGF6MDAuYw0KPiA+ID4gKysrIGIvYXJjaC9hcm0vbWFjaC10ZWdyYS9ib2Fy
+ZC1wYXowMC5jDQo+ID4gPiBAQCAtMTQ1LDYgKzE0NSwxMiBAQCBzdGF0aWMgX19pbml0ZGF0YSBz
+dHJ1Y3QgdGVncmFfY2xrX2luaXRfdGFibGUNCj4gPiA+IHBhejAwX2Nsa19pbml0X3RhYmxlW10g
+PSB7DQo+ID4gPg0KPiA+ID4gIAkvKiBuYW1lCQlwYXJlbnQJCXJhdGUJCWVuYWJsZWQgKi8NCj4g
+PiA+ICAJeyAidWFydGEiLAkicGxsX3AiLAkyMTYwMDAwMDAsCXRydWUgfSwNCj4gPiA+ICAJeyAi
+dWFydGQiLAkicGxsX3AiLAkyMTYwMDAwMDAsCXRydWUgfSwNCj4gPiA+DQo+ID4gPiArDQo+ID4g
+PiArCXsgInBsbF9wX291dDQiLAkicGxsX3AiLAkyNDAwMDAwMCwJdHJ1ZSB9LA0KPiA+DQo+ID4g
+RG8geW91IG5lZWQgdGhlIHBsbF9wX291dDQgZW50cnk/IFdoYXQncyB0aGF0IGRyaXZpbmc/IENo
+ZWNrIGluDQo+ID4gL3N5cy9rZXJuZWwvZGVidWcvY2xvY2svY2xvY2tfdHJlZSAoL3N5cy9rZXJu
+ZWwvZGVidWcgaXMgZGVidWdmcykuDQo+IA0KPiBJIHRoaW5rIGl0IGlzIG9ubHkgcmVxdWlyZWQg
+dG8gc2V0dXAgdGhlIGNvcnJlY3QgKG5vbi1zdGFuZGFyZD8pIGZyZXF1ZW5jeS4NCj4gU2VlbXMg
+YWxsIG90aGVyIGJvYXJkcyB1c2UgMTA4IE1IeiB3aGljaCBjYXVzZSBvbmUgb2YgdGhlIHBvcnRz
+IHRvIGZhaWwuIERvbid0DQo+IGFzayBtZSBmb3IgZGV0YWlscyAuLi4NCi4uLg0KPiByb290QGFj
+MTAwOn4jIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9jbG9jay9jbG9ja190cmVlDQo+ICAgIGNsb2Nr
+ICAgICAgICAgICAgICAgICAgICAgICAgICBzdGF0ZSAgcmVmIGRpdiAgICAgIHJhdGUNCj4gLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0NCj4gICAgY2xrX20gICAgICAgICAgICAgICAgICAgICAgICAgIG9uICAgICA5ICAgICAgICAg
+ICAgMTIwMDAwMDANCi4uLg0KPiAgICAgICBwbGxfcCAgICAgICAgICAgICAgICAgICAgICAgb24g
+ICAgIDEwICB4MTggICAgICAyMTYwMDAwMDANCi4uLg0KPiAgICAgICAgICBwbGxfcF9vdXQ0ICAg
+ICAgICAgICAgICAgb24gICAgIDMgICA5ICAgICAgICAyNDAwMDAwMA0KPiAgICAgICAgICAgICBz
+Y2xrICAgICAgICAgICAgICAgICAgb24gICAgIDIgICAgICAgICAgICAyNDAwMDAwMA0KPiAgICAg
+ICAgICAgICAgICBhdnAuc2NsayAgICAgICAgICAgb2ZmICAgIDAgICAgICAgICAgICAyNDAwMDAw
+MA0KPiAgICAgICAgICAgICAgICBjb3AgICAgICAgICAgICAgICAgb24gICAgIDEgICAgICAgICAg
+ICAyNDAwMDAwMA0KPiAgICAgICAgICAgICAgICBoY2xrICAgICAgICAgICAgICAgb24gICAgIDIg
+ICAxICAgICAgICAyNDAwMDAwMA0KPiAgICAgICAgICAgICAgICAgICBwY2xrICAgICAgICAgICAg
+b24gICAgIDIgICAyICAgICAgICAxMjAwMDAwMA0KPiAgICAgICAgICAgICAgICAgICAgICBhcGJk
+bWEgICAgICAgb24gICAgIDEgICAxICAgICAgICAxMjAwMDAwMA0KDQpIbW0uIFRoYXQncyBwcmV0
+dHkgb2RkLg0KDQpXaXRoIHRoZSBzdGFuZGFyZCBrZXJuZWwgdGhlIGRldmljZSBzaGlwcyB3aXRo
+LCB3aGF0IGRvZXMgdGhlIGNsb2NrIHRyZWUNCnVuZGVyIHBsbF9wX291dDQgbG9vayBsaWtlPyBJ
+dCdkIGJlIHZlcnkgaW50ZXJlc3RpbmcgdG8gY29tcGFyZSB0aGF0LiBJZg0KdGhhdCBzZXR1cCBp
+cyB0aGUgc2FtZSBhcyB3aGF0IHRoaXMgcGF0Y2ggc2V0cyB1cCwgdGhlIHBhdGNoIHNlZW1zIGZp
+bmUuDQoNCkFzIGZhciBhcyBJIGtub3cgYWxsIHRoZSBjbG9ja3MgdGhlcmUgYXJlIGJvdGggdW5y
+ZWxhdGVkIHRvIFVTQiwgYW5kDQppbnRlcm5hbCB0byB0aGUgZGV2aWNlLCBzbyB0aGUgYm9hcmQg
+c2hvdWxkbid0IGhhdmUgYW55IGVmZmVjdC4gSW4NCnBhcnRpY3VsYXIsIGF2cC5zY2xrL2NvcCBh
+cmUgZm9yIHRoZSBpbnRlcm5hbCBtZWRpYSBDUFUvRFNQLCBoY2xrL3BjbGsNCmFyZSB0aGUgaW50
+ZXJuYWwgQUhCL0FQQiBidXMgY2xvY2tzLCBhbmQgYXBiZG1hIGlzIGZvciBhbiBpbnRlcm5hbCBE
+TUENCmVuZ2luZSwgY3VycmVudGx5IG9ubHkgdXNlZCBmb3IgYXVkaW8gaW4gdGhlIG1haW5saW5l
+IGtlcm5lbCBhdCBsZWFzdC4NCg0KSSBndWVzcyBJJ2xsIGFzayBhIGZldyBwZW9wbGUgaW50ZXJu
+YWxseSB0byBzZWUgaWYgdGhleSBoYXZlIGEgY2x1ZSB3aHkNCnlvdXIgY2hhbmdlIG1pZ2h0IGJl
+IG5lY2Vzc2FyeS4NCg0KRm9yIHJlZmVyZW5jZSwgaGVyZSdzIEhhcm1vbnkgb24gc29tZXRoaW5n
+IHJvdWdobHkgbGlrZSBsaW51eC1uZXh0Og0KDQogICBjbGtfbSAgICAgICAgICAgICAgICAgICAg
+ICAgICAgb24gICAgIDcgICAgICAgICAgICAxMjAwMDAwMCAgDQouLi4NCiAgICAgIHBsbF9wICAg
+ICAgICAgICAgICAgICAgICAgICBvbiAgICAgOSAgIHgxOCAgICAgIDIxNjAwMDAwMCANCi4uLg0K
+ICAgICAgICAgcGxsX3Bfb3V0NCAgICAgICAgICAgICAgIG9uICAgICAyICAgMiAgICAgICAgMTA4
+MDAwMDAwIA0KICAgICAgICAgICAgc2NsayAgICAgICAgICAgICAgICAgIG9uICAgICAyICAgICAg
+ICAgICAgMTA4MDAwMDAwIA0KICAgICAgICAgICAgICAgYXZwLnNjbGsgICAgICAgICAgIG9mZiAg
+ICAwICAgICAgICAgICAgMTA4MDAwMDAwIA0KICAgICAgICAgICAgICAgY29wICAgICAgICAgICAg
+ICAgIG9uICAgICAxICAgICAgICAgICAgMTA4MDAwMDAwIA0KICAgICAgICAgICAgICAgaGNsayAg
+ICAgICAgICAgICAgIG9uICAgICAyICAgMSAgICAgICAgMTA4MDAwMDAwIA0KICAgICAgICAgICAg
+ICAgICAgcGNsayAgICAgICAgICAgIG9uICAgICAyICAgMiAgICAgICAgNTQwMDAwMDAgIA0KICAg
+ICAgICAgICAgICAgICAgICAgYXBiZG1hICAgICAgIG9uICAgICAxICAgMSAgICAgICAgNTQwMDAw
+MDANCg0KLS0gDQpudnB1YmxpYw0KDQo=
