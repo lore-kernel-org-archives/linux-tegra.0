@@ -1,66 +1,52 @@
-From: H Hartley Sweeten <hartleys-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
-Subject: RE: [PATCH 13/13] ARM: gpio: make trivial GPIOLIB implementation
- the	default
-Date: Tue, 9 Aug 2011 12:04:30 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F001F388389379__46644.0457771116$1312909487$gmane$org@AUSP01VMBX24.collaborationhost.net>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <E1QqhMg-0003an-GW@rmk-PC.arm.linux.org.uk>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH] dt: add empty of_get_property for non-dt
+Date: Tue, 9 Aug 2011 11:27:48 -0600
+Message-ID: <20110809172748.GA32195@ponder.secretlab.ca>
+References: <1312584630-23371-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1QqhMg-0003an-GW-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TZUIDd8j+nm9g@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1312584630-23371-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, August 09, 2011 1:09 AM, Russell King wrote:
->
-> Rather than marking the mach/gpio.h header files which want to use the
-> trivial GPIOLIB implementation, mark those which do not want to use it
-> instead.  This means that by default, you get the trivial implementation
-> and only have to do something extra if you need to.  This should
-> encourage the use of the trivial default implementation.
+On Fri, Aug 05, 2011 at 04:50:30PM -0600, Stephen Warren wrote:
+> The patch adds empty function of_get_property for non-dt build, so that
+> drivers migrating to dt can save some '#ifdef CONFIG_OF'.
 > 
-> As an additional bonus, several gpio.h header files become empty.
+> This also fixes the current Tegra compile problem in linux-next.
 > 
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/include/asm/gpio.h                 |    2 +-
->  arch/arm/include/asm/hardware/iop3xx-gpio.h |    2 ++
+>  include/linux/of.h |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
+
+Merged, thanks.
+
+g.
+
 > 
-> diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-> index 5032224..11ad0bf 100644
-> --- a/arch/arm/include/asm/gpio.h
-> +++ b/arch/arm/include/asm/gpio.h
-> @@ -4,7 +4,7 @@
->  /* not all ARM platforms necessarily support this API ... */
->  #include <mach/gpio.h>
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 0085bb0..9180dc5 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -256,6 +256,13 @@ static inline int of_property_read_string(struct device_node *np,
+>  	return -ENOSYS;
+>  }
 >  
-> -#ifdef __ARM_GPIOLIB_TRIVIAL
-> +#ifndef __ARM_GPIOLIB_COMPLEX
->  /* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
->  #include <asm-generic/gpio.h>
+> +static inline const void *of_get_property(const struct device_node *node,
+> +				const char *name,
+> +				int *lenp)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif /* CONFIG_OF */
 >  
-> diff --git a/arch/arm/mach-ep93xx/include/mach/gpio.h b/arch/arm/mach-ep93xx/include/mach/gpio.h
-> index fbc770e..071f676 100644
-> --- a/arch/arm/mach-ep93xx/include/mach/gpio.h
-> +++ b/arch/arm/mach-ep93xx/include/mach/gpio.h
-> @@ -99,9 +99,6 @@
->  /* maximum value for irq capable line identifiers */
->  #define EP93XX_GPIO_LINE_MAX_IRQ	EP93XX_GPIO_LINE_F(7)
->  
-> -/* new generic GPIO API - see Documentation/gpio.txt */
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /*
->   * Map GPIO A0..A7  (0..7)  to irq 64..71,
->   *          B0..B7  (7..15) to irq 72..79, and
-
-For ep93xx:
-
-Acked-by: H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
-
-Thanks!
+>  static inline int of_property_read_u32(const struct device_node *np,
+> -- 
+> 1.7.0.4
+> 
