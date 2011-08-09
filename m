@@ -1,50 +1,35 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: Tegra pinmux Device Tree support
-Date: Tue, 9 Aug 2011 10:44:29 -0700
-Message-ID: <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF049F17229E@HQMAIL01.nvidia.com>
-	<20110809173428.GB32195@ponder.secretlab.ca>
+From: David Brown <davidb@codeaurora.org>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Tue, 9 Aug 2011 10:59:53 -0700
+Message-ID: <20110809175953.GA22918@huya.qualcomm.com>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110809173428.GB32195-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Linus Walleij (linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org)" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 9, 2011 at 10:34 AM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
+On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
+> as described in Documentation/gpio.txt
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/arm/mach-msm/include/mach/gpio.h       |    5 +----
 
-> We talked about this a bit at Linaro connect. =A0Outside of the more
-> complex runtime-reconfiguration of pin mux, there is a general need
-> for arbitrary initialization sequences to registers. =A0Also, pretty
-> much exactly what you need for tegra is needed for imx, omap and many
-> others. =A0The though was, rather than trying to come up with some ki=
-nd
-> of pinmux-specific binding for pin states, which could end up being
-> very verbose if everything was split out into properties, we could
-> instead have a binding for register initialization sequences.
-> Something like this:
->
-> =A0 =A0 =A0 =A0pinmux-initseq =3D <reg1 value1> <reg1 value2> ...;
->
-> And then add some macros for DTC to make it easier to define things
-> like pinmux setup tables. =A0Although the binding above is probably t=
-oo
-> simple and naive.
+For msm (msm8660):
 
-This seems to break the philosophy of what the device tree should do
--- it should describe the hardware so that the driver will know how to
-program it, not include the code itself?
+Tested-by: David Brown <davidb@codeaurora.org>
+Acked-by: David Brown <davidb@codeaurora.org>
 
-I know it's a hairy problem to deal with one compact pinmux
-representation that fits all needs. Maybe making it overly generic is
-the wrong way to go about it, and let each implementation define what
-it needs? That way the simpler implementations can do something
-reasonably simple without having to deal with the overly complex
-options of the (over?) generalized platforms out there.
-
-
--Olof
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
