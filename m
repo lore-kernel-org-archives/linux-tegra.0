@@ -1,45 +1,34 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 06/13] ARM: gpio: davinci: convert drivers to use asm/gpio.h
- rather than mach/gpio.h
-Date: Tue, 09 Aug 2011 16:06:14 +0400
-Message-ID: <4E4122B6.2070706@ru.mvista.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 2/3] ASoC: Tegra: WM8903: Allow re-insertion of module
+Date: Tue, 9 Aug 2011 08:36:36 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04A068726C@HQMAIL01.nvidia.com>
+References: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
+ <1312497884-1599-2-git-send-email-swarren@nvidia.com>
+ <20110809004346.GA22795@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110809004346.GA22795-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+Mark Brown wrote at Monday, August 08, 2011 6:44 PM:
+> On Thu, Aug 04, 2011 at 04:44:43PM -0600, Stephen Warren wrote:
+> > Two issues were preventing module snd-soc-tegra-wm8903.ko from being
+> > removed and re-inserted:
+> 
+> I've applied all three but please be a bit clearer with your patch
+> descriptions - this isn't a patch for WM8903 at all, it's a patch for
+> the tegra-wm8903 machine driver.
 
-On 09-08-2011 12:06, Russell King - ARM Linux wrote:
+OK, but what's the correct tag then? I explicitly wrote Tegra in the
+commit subject and not just WM8903...
 
-    CCing linux-usb and Felipe...
+Thanks.
 
-> Signed-off-by: Russell King<rmk+kernel@arm.linux.org.uk>
-> ---
->   drivers/usb/musb/davinci.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
-
-> diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
-> index 8bdf25a..f9a3f62 100644
-> --- a/drivers/usb/musb/davinci.c
-> +++ b/drivers/usb/musb/davinci.c
-> @@ -35,7 +35,7 @@
->
->   #include<mach/hardware.h>
->   #include<mach/memory.h>
-> -#include<mach/gpio.h>
-> +#include<asm/gpio.h>
-
-    Shouldn't this now be moved to the below #include group?
-
->   #include<mach/cputype.h>
->
->   #include<asm/mach-types.h>
-
-WBR, Sergei
+-- 
+nvpublic
