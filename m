@@ -1,46 +1,73 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra I2C driver compilation failure (was: RE: [PATCH] dt: add
- empty of_get_property for non-dt)
-Date: Tue, 9 Aug 2011 09:21:31 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04A0687289@HQMAIL01.nvidia.com>
+From: H Hartley Sweeten <hartleys-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
+Subject: RE: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Tue, 9 Aug 2011 12:02:40 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F001F388389375@AUSP01VMBX24.collaborationhost.net>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <E1QqhM1-0003af-U5-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TZUIDd8j+nm9g@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Monday, August 08, 2011 1:26 PM:
-> Rob Herring wrote at Sunday, August 07, 2011 8:38 AM:
-> > On 08/05/2011 05:50 PM, Stephen Warren wrote:
-> > > The patch adds empty function of_get_property for non-dt build, so that
-> > > drivers migrating to dt can save some '#ifdef CONFIG_OF'.
-> > >
-> > > This also fixes the current Tegra compile problem in linux-next.
-> >
-> > You could just use of_property_read_u32 in the driver. It already has
-> > empty version and will simplify the driver code some.
-> 
-> Yes, that would also work.
-> 
-> Grant, Ben, do you have a preference for which option to choose?
+On Tuesday, August 09, 2011 1:08 AM, Russell King wrote:
+>
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
+> as described in Documentation/gpio.txt
+>
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> ---
+>  arch/arm/include/asm/gpio.h                 |   10 ++++++++++
+>  arch/arm/mach-ep93xx/include/mach/gpio.h    |    7 +------
+>
+> diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
+> index 166a7a3..15e8970 100644
+> --- a/arch/arm/include/asm/gpio.h
+> +++ b/arch/arm/include/asm/gpio.h
+> @@ -4,4 +4,14 @@
+>  /* not all ARM platforms necessarily support this API ... */
+>  #include <mach/gpio.h>
+>  
+> +#ifdef __ARM_GPIOLIB_TRIVIAL
+> +/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
+> +#include <asm-generic/gpio.h>
+> +
+> +/* The trivial gpiolib dispatchers */
+> +#define gpio_get_value  __gpio_get_value
+> +#define gpio_set_value  __gpio_set_value
+> +#define gpio_cansleep   __gpio_cansleep
+> +#endif
+> +
+>  #endif /* _ARCH_ARM_GPIO_H */
+> diff --git a/arch/arm/mach-ep93xx/include/mach/gpio.h b/arch/arm/mach-ep93xx/include/mach/gpio.h
+> index c57152c..fbc770e 100644
+> --- a/arch/arm/mach-ep93xx/include/mach/gpio.h
+> +++ b/arch/arm/mach-ep93xx/include/mach/gpio.h
+> @@ -100,12 +100,7 @@
+>  #define EP93XX_GPIO_LINE_MAX_IRQ	EP93XX_GPIO_LINE_F(7)
+>  
+>  /* new generic GPIO API - see Documentation/gpio.txt */
+> -
+> -#include <asm-generic/gpio.h>
+> -
+> -#define gpio_get_value	__gpio_get_value
+> -#define gpio_set_value	__gpio_set_value
+> -#define gpio_cansleep	__gpio_cansleep
+> +#define __ARM_GPIOLIB_TRIVIAL
+>  
+>  /*
+>   * Map GPIO A0..A7  (0..7)  to irq 64..71,
 
-Well, all three possible fixes have been posted now:
+For ep93xx:
 
-Add ifdef to i2c driver:
-http://www.spinics.net/lists/linux-tegra/msg01720.html
+Acked-by: H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
 
-Implement empty of_get_property:
-http://www.spinics.net/lists/linux-tegra/msg01881.html
-
-Switch i2c driver to use of_property_read_u32:
-http://permalink.gmane.org/gmane.linux.ports.arm.kernel/127807
-
-Ben, please could you please pick one of the changes and apply it, so
-that linux-next compiles for Tegra? Thanks!
-
--- 
-nvpublic
+Thanks!
