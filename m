@@ -1,35 +1,41 @@
-From: David Brown <davidb@codeaurora.org>
-Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
- implementations
-Date: Tue, 9 Aug 2011 10:59:53 -0700
-Message-ID: <20110809175953.GA22918@huya.qualcomm.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] mmc: sdhci-tegra: get_ro(): Retrieve pdata correctly
+Date: Tue,  9 Aug 2011 12:16:38 -0600
+Message-ID: <1312913798-32564-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
-> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
-> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
-> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
-> as described in Documentation/gpio.txt
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  arch/arm/mach-msm/include/mach/gpio.h       |    5 +----
+The active platform data pointer is stored as pltfm_host->priv, and not
+always in the platform device itself. In particular, the platform data in
+the platform device is NULL when the platform data comes from Device Tree.
 
-For msm (msm8660):
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Grant, this patch is for branch devicetree/next; the Tegra DT support
+doesn't appear to be in other branches yet.
 
-Tested-by: David Brown <davidb@codeaurora.org>
-Acked-by: David Brown <davidb@codeaurora.org>
+ drivers/mmc/host/sdhci-tegra.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 9329465..406d360 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -74,10 +74,8 @@ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ 
+ static unsigned int tegra_sdhci_get_ro(struct sdhci_host *sdhci)
+ {
+-	struct platform_device *pdev = to_platform_device(mmc_dev(sdhci->mmc));
+-	struct tegra_sdhci_platform_data *plat;
+-
+-	plat = pdev->dev.platform_data;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(sdhci);
++	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
+ 
+ 	if (!gpio_is_valid(plat->wp_gpio))
+ 		return -1;
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.0.4
