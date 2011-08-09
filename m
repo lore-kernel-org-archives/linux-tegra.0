@@ -1,29 +1,46 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] ASoC: Tegra: WM8903: Allow re-insertion of module
-Date: Wed, 10 Aug 2011 00:38:03 +0900
-Message-ID: <20110809153802.GI15861@opensource.wolfsonmicro.com>
-References: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
- <1312497884-1599-2-git-send-email-swarren@nvidia.com>
- <20110809004346.GA22795@opensource.wolfsonmicro.com>
- <74CDBE0F657A3D45AFBB94109FB122FF04A068726C@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra I2C driver compilation failure (was: RE: [PATCH] dt: add
+ empty of_get_property for non-dt)
+Date: Tue, 9 Aug 2011 09:21:31 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04A0687289@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04A068726C-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 08:36:36AM -0700, Stephen Warren wrote:
-> Mark Brown wrote at Monday, August 08, 2011 6:44 PM:
+Stephen Warren wrote at Monday, August 08, 2011 1:26 PM:
+> Rob Herring wrote at Sunday, August 07, 2011 8:38 AM:
+> > On 08/05/2011 05:50 PM, Stephen Warren wrote:
+> > > The patch adds empty function of_get_property for non-dt build, so that
+> > > drivers migrating to dt can save some '#ifdef CONFIG_OF'.
+> > >
+> > > This also fixes the current Tegra compile problem in linux-next.
+> >
+> > You could just use of_property_read_u32 in the driver. It already has
+> > empty version and will simplify the driver code some.
+> 
+> Yes, that would also work.
+> 
+> Grant, Ben, do you have a preference for which option to choose?
 
-> > I've applied all three but please be a bit clearer with your patch
-> > descriptions - this isn't a patch for WM8903 at all, it's a patch for
-> > the tegra-wm8903 machine driver.
+Well, all three possible fixes have been posted now:
 
-> OK, but what's the correct tag then? I explicitly wrote Tegra in the
-> commit subject and not just WM8903...
+Add ifdef to i2c driver:
+http://www.spinics.net/lists/linux-tegra/msg01720.html
 
-Something like "Fix reload of Tegra WM8903 machine driver".
+Implement empty of_get_property:
+http://www.spinics.net/lists/linux-tegra/msg01881.html
+
+Switch i2c driver to use of_property_read_u32:
+http://permalink.gmane.org/gmane.linux.ports.arm.kernel/127807
+
+Ben, please could you please pick one of the changes and apply it, so
+that linux-next compiles for Tegra? Thanks!
+
+-- 
+nvpublic
