@@ -1,35 +1,41 @@
-From: Arun MURTHY <arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
-Subject: RE: [PATCH] video: Add a callback 'notify_after' for backlight
- control
-Date: Tue, 9 Aug 2011 05:43:25 +0200
-Message-ID: <F45880696056844FA6A73F415B568C6953FF062B94@EXDCVYMBSTM006.EQ1STM.local>
-References: <1312856996-22452-1-git-send-email-dilee@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [PATCH 00/13] Clean up mach/gpio.h headers
+Date: Tue, 9 Aug 2011 09:04:12 +0100
+Message-ID: <20110809080411.GA1831@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1312856996-22452-1-git-send-email-dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org" <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, "lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org" <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, "akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: "jnien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jnien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org [mailto:dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org]
-> Sent: Tuesday, August 09, 2011 8:00 AM
-> To: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org; lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org; akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org;
-> Arun MURTHY; rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org; Linus WALLEIJ
-> Cc: jnien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org; swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org; linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Dilan Lee
-> Subject: [PATCH] video: Add a callback 'notify_after' for backlight
-> control
-> 
-> From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> We need a callback to do some things after pwm_enable, pwm_disable
-> and pwm_config.
-> 
-> Signed-off-by: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This is a preliminary posting of my gpio patch set.
 
-Reviewed-by: Arun Murthy <arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
+This patch series moves the trivial gpiolib implementations out of
+mach/gpio.h and into asm/gpio.h.
+
+As a side effect of that, most of this patch series is about fixing up
+direct includes of mach/gpio.h - this is something I've been on at
+people over the last year or more about ensuring that they use
+linux/gpio.h in preference.  While I've blindly converted all arch/arm
+to use linux/gpio.h (with the exception of mach/ includes which are
+converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
+These should be reviewed and changed to linux/gpio.h.
+
+As a result of this patch series, several mach/gpio.h end up being
+empty.
+
+Many others just contain platform private GPIO APIs and definitions.
+
+The last thing which mach/gpio.h is used for is to provide a definition
+for ARCH_GPIO_NR to asm-generic/gpio.h.  I've not attempted to solve
+that issue yet.
+
+A small number of platforms optimize the gpio accessors for on-SoC
+GPIOs.  In the interests of consolidation, these will have to be killed
+but this patch set does not do that yet.
+
+Lastly, several {mach,plat}/gpio.h needs to be looked at with a view to
+deleting the direct include of asm-generic/gpio.h.
