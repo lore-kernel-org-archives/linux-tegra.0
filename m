@@ -1,49 +1,42 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
-Date: Tue, 9 Aug 2011 15:00:55 -0600
-Message-ID: <20110809210055.GF11568@ponder.secretlab.ca>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH V3] ARM: tegra: paz00: add clocks required for usb operation
+Date: Tue, 9 Aug 2011 23:08:11 +0200
+Message-ID: <201108092308.11580.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20110809080411.GA1831-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
-> This is a preliminary posting of my gpio patch set.
-> 
-> This patch series moves the trivial gpiolib implementations out of
-> mach/gpio.h and into asm/gpio.h.
-> 
-> As a side effect of that, most of this patch series is about fixing up
-> direct includes of mach/gpio.h - this is something I've been on at
-> people over the last year or more about ensuring that they use
-> linux/gpio.h in preference.  While I've blindly converted all arch/arm
-> to use linux/gpio.h (with the exception of mach/ includes which are
-> converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
-> These should be reviewed and changed to linux/gpio.h.
-> 
-> As a result of this patch series, several mach/gpio.h end up being
-> empty.
-> 
-> Many others just contain platform private GPIO APIs and definitions.
-> 
-> The last thing which mach/gpio.h is used for is to provide a definition
-> for ARCH_GPIO_NR to asm-generic/gpio.h.  I've not attempted to solve
-> that issue yet.
-> 
-> A small number of platforms optimize the gpio accessors for on-SoC
-> GPIOs.  In the interests of consolidation, these will have to be killed
-> but this patch set does not do that yet.
-> 
-> Lastly, several {mach,plat}/gpio.h needs to be looked at with a view to
-> deleting the direct include of asm-generic/gpio.h.
 
-Looks good to me, though I haven't looked closely.  I imagine this
-should get merged via a branch in the arm-soc tree?
+These clocks are required for usb operation. pll_p_out4 needs to be set
+to 24 MHz. The other clocks default to "off" in order to safe some energy.
+---
+ arch/arm/mach-tegra/board-paz00.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-g.
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-
+paz00.c
+index 45111f6..cde36dc 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -145,6 +145,12 @@ static __initdata struct tegra_clk_init_table 
+paz00_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
+ 	{ "uarta",	"pll_p",	216000000,	true },
+ 	{ "uartd",	"pll_p",	216000000,	true },
++
++	{ "pll_p_out4",	"pll_p",	24000000,	true },
++	{ "usbd",	"clk_m",	12000000,	false },
++	{ "usb2",	"clk_m",	12000000,	false },
++	{ "usb3",	"clk_m",	12000000,	false },
++
+ 	{ NULL,		NULL,		0,		0},
+ };
+ 
+-- 
+1.7.4.1
