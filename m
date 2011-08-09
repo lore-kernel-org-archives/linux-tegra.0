@@ -1,23 +1,84 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] ASoC: Tegra: WM8903: Allow re-insertion of module
-Date: Tue, 9 Aug 2011 09:43:48 +0900
-Message-ID: <20110809004346.GA22795@opensource.wolfsonmicro.com>
-References: <1312497884-1599-1-git-send-email-swarren@nvidia.com>
- <1312497884-1599-2-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Subject: [PATCH] video: Add a callback 'notify_after' for backlight control
+Date: Tue,  9 Aug 2011 10:05:25 +0800
+Message-ID: <1312855525-21464-1-git-send-email-dilee@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1312497884-1599-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org, lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, arun.murthy-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, rmorell-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org
+Cc: jnien-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 04, 2011 at 04:44:43PM -0600, Stephen Warren wrote:
-> Two issues were preventing module snd-soc-tegra-wm8903.ko from being
-> removed and re-inserted:
+From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've applied all three but please be a bit clearer with your patch
-descriptions - this isn't a patch for WM8903 at all, it's a patch for
-the tegra-wm8903 machine driver.
+We need a callback to do some things after pwm_enable, pwm_disable
+and pwm_config.
+
+This may be necessary to properly sequence timing on
+certain devices.
+
+For example, GPIO backlight_en has to be risen after pwm has been enabled
+to meet panel power on sequence defined in panel specification.
+
+Signed-off-by: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/video/backlight/pwm_bl.c |   11 ++++++++++-
+ include/linux/pwm_backlight.h    |    1 +
+ 2 files changed, 11 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index b8f38ec..e92e6e0 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -27,7 +27,9 @@ struct pwm_bl_data {
+ 	unsigned int		period;
+ 	unsigned int		lth_brightness;
+ 	int			(*notify)(struct device *,
+-					  int brightness);
++					int brightness);
++	void			(*notify_after)(struct device *,
++					int brightness);
+ 	int			(*check_fb)(struct device *, struct fb_info *);
+ };
+ 
+@@ -55,6 +57,10 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 		pwm_config(pb->pwm, brightness, pb->period);
+ 		pwm_enable(pb->pwm);
+ 	}
++
++	if (pb->notify_after)
++		pb->notify_after(pb->dev, brightness);
++
+ 	return 0;
+ }
+ 
+@@ -105,6 +111,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 
+ 	pb->period = data->pwm_period_ns;
+ 	pb->notify = data->notify;
++	pb->notify_after = data->notify_after;
+ 	pb->check_fb = data->check_fb;
+ 	pb->lth_brightness = data->lth_brightness *
+ 		(data->pwm_period_ns / data->max_brightness);
+@@ -172,6 +179,8 @@ static int pwm_backlight_suspend(struct platform_device *pdev,
+ 		pb->notify(pb->dev, 0);
+ 	pwm_config(pb->pwm, 0, pb->period);
+ 	pwm_disable(pb->pwm);
++	if (pb->notify_after)
++		pb->notify_after(pb->dev, 0);
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/pwm_backlight.h b/include/linux/pwm_backlight.h
+index 5e3e25a..63d2df4 100644
+--- a/include/linux/pwm_backlight.h
++++ b/include/linux/pwm_backlight.h
+@@ -14,6 +14,7 @@ struct platform_pwm_backlight_data {
+ 	unsigned int pwm_period_ns;
+ 	int (*init)(struct device *dev);
+ 	int (*notify)(struct device *dev, int brightness);
++	void (*notify_after)(struct device *dev, int brightness);
+ 	void (*exit)(struct device *dev);
+ 	int (*check_fb)(struct device *dev, struct fb_info *info);
+ };
+-- 
+1.7.6
