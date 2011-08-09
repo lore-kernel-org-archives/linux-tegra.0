@@ -1,39 +1,45 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
-Date: Tue, 9 Aug 2011 10:58:56 +0100
-Message-ID: <20110809095856.GF3210@pulham.picochip.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 06/13] ARM: gpio: davinci: convert drivers to use asm/gpio.h
+ rather than mach/gpio.h
+Date: Tue, 09 Aug 2011 16:06:14 +0400
+Message-ID: <4E4122B6.2070706@ru.mvista.com>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110809080411.GA1831@n2100.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Russell,
+Hello.
 
-On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
-> This is a preliminary posting of my gpio patch set.
-> 
-> This patch series moves the trivial gpiolib implementations out of
-> mach/gpio.h and into asm/gpio.h.
-> 
-> As a side effect of that, most of this patch series is about fixing up
-> direct includes of mach/gpio.h - this is something I've been on at
-> people over the last year or more about ensuring that they use
-> linux/gpio.h in preference.  While I've blindly converted all arch/arm
-> to use linux/gpio.h (with the exception of mach/ includes which are
-> converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
-> These should be reviewed and changed to linux/gpio.h.
-> 
-> As a result of this patch series, several mach/gpio.h end up being
-> empty.
+On 09-08-2011 12:06, Russell King - ARM Linux wrote:
 
-Nice series!  This gives me an empty gpio.h for picoxcell.
+    CCing linux-usb and Felipe...
 
-Tested-by: Jamie Iles <jamie@jamieiles.com>
+> Signed-off-by: Russell King<rmk+kernel@arm.linux.org.uk>
+> ---
+>   drivers/usb/musb/davinci.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
 
-Jamie
+> diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
+> index 8bdf25a..f9a3f62 100644
+> --- a/drivers/usb/musb/davinci.c
+> +++ b/drivers/usb/musb/davinci.c
+> @@ -35,7 +35,7 @@
+>
+>   #include<mach/hardware.h>
+>   #include<mach/memory.h>
+> -#include<mach/gpio.h>
+> +#include<asm/gpio.h>
+
+    Shouldn't this now be moved to the below #include group?
+
+>   #include<mach/cputype.h>
+>
+>   #include<asm/mach-types.h>
+
+WBR, Sergei
