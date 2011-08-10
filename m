@@ -1,66 +1,124 @@
-From: Linus Walleij <linus.ml.walleij@gmail.com>
-Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib implementations
-Date: Wed, 10 Aug 2011 09:54:52 +0200
-Message-ID: <CAKnu2Mofp+f7Khu1d0j9Pz3Pr03EawBgkRPWEqDy7mf4DzoETA@mail.gmail.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
-	<E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+From: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 4/5 V2] ARM: tegra: paz00: add clocks required forusboperation
+Date: Wed, 10 Aug 2011 10:24:57 +0200
+Message-ID: <201108101024.57494.marvin24@gmx.de>
+References: <201108092126.28521.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF04A06873BB@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04A06873BB-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-2011/8/9 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+Hi Stephen,
 
-> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
-> into asm/gpio.h. =A0This is basically the include of asm-generic/gpio=
-=2Eh
-> and the definition of gpio_get_value, gpio_set_value, and gpio_cansle=
-ep
-> as described in Documentation/gpio.txt
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Marc Dietrich wrote at Tuesday, August 09, 2011 1:26 PM:
+> > On Tuesday 09 August 2011 20:35:45 you wrote:
+> > > [...]
+> > > Do you need the pll_p_out4 entry? What's that driving? Check in
+> > > /sys/kernel/debug/clock/clock_tree (/sys/kernel/debug is debugfs).
+> > 
+> > I think it is only required to setup the correct (non-standard?)
+> > frequency. Seems all other boards use 108 MHz which cause one of the
+> > ports to fail. Don't ask me for details ...
+> 
+> ...
+> 
+> > root@ac100:~# cat /sys/kernel/debug/clock/clock_tree
+> > 
+> >    clock                          state  ref div      rate
+> > 
+> > --------------------------------------------------------------
+> > 
+> >    clk_m                          on     9            12000000
+> 
+> ...
+> 
+> >       pll_p                       on     10  x18      216000000
+> 
+> ...
+> 
+> >          pll_p_out4               on     3   9        24000000
+> >          
+> >             sclk                  on     2            24000000
+> >             
+> >                avp.sclk           off    0            24000000
+> >                cop                on     1            24000000
+> >                hclk               on     2   1        24000000
+> >                
+> >                   pclk            on     2   2        12000000
+> >                   
+> >                      apbdma       on     1   1        12000000
+> 
+> Hmm. That's pretty odd.
+> 
+> With the standard kernel the device ships with, what does the clock tree
+> under pll_p_out4 look like? It'd be very interesting to compare that. If
+> that setup is the same as what this patch sets up, the patch seems fine.
 
-reaks compile of plat-nomadik due to missing u32, feel free to fold in
-the below fix. With that it's
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
-for Nomadik, U300 and Ux500.
+unfortunately, there is no such think in .32 kernel (the kernel deliverd with 
+the device), and I don't think I can port it over.
 
-=46rom 2e4496fc7643d804ccf50a8efe1a0304210176d1 Mon Sep 17 00:00:00 200=
-1
-=46rom: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 10 Aug 2011 09:51:16 +0200
-Subject: [PATCH] plat-nomadik: small fixup for gpio.h
+> As far as I know all the clocks there are both unrelated to USB, and
+> internal to the device, so the board shouldn't have any effect. In
+> particular, avp.sclk/cop are for the internal media CPU/DSP, hclk/pclk
+> are the internal AHB/APB bus clocks, and apbdma is for an internal DMA
+> engine, currently only used for audio in the mainline kernel at least.
 
-Removing the generic gpio.h broke compilation of the Nomadik
-GPIO driver since it implicitly got u32 from it. Explicitly
-include <linux/kernel.h> so we get u32 defined.
+Does this mean that the internal busses you mentioned are also running at low 
+speed? Would this be a hugh performance penality?
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/plat-nomadik/include/plat/gpio.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> I guess I'll ask a few people internally to see if they have a clue why
+> your change might be necessary.
 
-diff --git a/arch/arm/plat-nomadik/include/plat/gpio.h
-b/arch/arm/plat-nomadik/include/plat/gpio.h
-index cf0b78b..b894a53 100644
---- a/arch/arm/plat-nomadik/include/plat/gpio.h
-+++ b/arch/arm/plat-nomadik/include/plat/gpio.h
-@@ -12,6 +12,8 @@
- #ifndef __ASM_PLAT_GPIO_H
- #define __ASM_PLAT_GPIO_H
+Also take a look at seaboard, it has the same clock setting and especially 
+commit dfb625f934dd40baf29ee6c43e4f130b524411a1 in the chromeos kernel:
 
-+#include <linux/kernel.h>
-+
- /*
-  * "nmk_gpio" and "NMK_GPIO" stand for "Nomadik GPIO", leaving
-  * the "gpio" namespace for generic and cross-machine functions
---=20
-1.7.3.2
+commit dfb625f934dd40baf29ee6c43e4f130b524411a1
+Author: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Date:   Wed Apr 13 07:26:08 2011 -0400
 
-Thanks,
-Linus Walleij
+    CHROMIUM: tegra: seaboard: fix ULPI transceiver clock
+    
+    On our seaboard-based platforms, pll_p_out4 is used to clock
+    (through DAP_MCLK2) the external USB ULPI transceiver between the USB2
+    port to mini-PCIe modem. And it needs to be set at 24Mhz for the
+    tranceiver to work correctly.
+    Revert the sclk parent to pll_c out1 (as it was before the last change)
+    since it needs to stay clocked at 108MHz.
+    
+    Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+    
+    BUG=chrome-os-partner:3167
+    TEST=Check that the Gobi modem is appearing in lsusb listing
+    Use the kaen DVT for browsing and suspending
+    
+    Review URL: http://codereview.chromium.org/6825076
+    
+    Change-Id: Ia9b1bbc7860da732fb8edbbcf0bce60e82d6d8ed
+
+
+Thanks!
+
+Marc
+
+
+
+> For reference, here's Harmony on something roughly like linux-next:
+> 
+>    clk_m                          on     7            12000000
+> ...
+>       pll_p                       on     9   x18      216000000
+> ...
+>          pll_p_out4               on     2   2        108000000
+>             sclk                  on     2            108000000
+>                avp.sclk           off    0            108000000
+>                cop                on     1            108000000
+>                hclk               on     2   1        108000000
+>                   pclk            on     2   2        54000000
+>                      apbdma       on     1   1        54000000
