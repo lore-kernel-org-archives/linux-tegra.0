@@ -1,65 +1,82 @@
-From: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH V3] ARM: tegra: paz00: add clocks required for usb operation
-Date: Wed, 10 Aug 2011 13:31:18 +0200
-Message-ID: <201108101331.19087.marvin24@gmx.de>
-References: <201108092308.11580.marvin24@gmx.de> <4E426A71.1000100@ru.mvista.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 4/5 V2] ARM: tegra: paz00: add clocks required
+ forusboperation
+Date: Wed, 10 Aug 2011 08:24:46 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04A0687486@HQMAIL01.nvidia.com>
+References: <201108092126.28521.marvin24@gmx.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF04A06873BB@HQMAIL01.nvidia.com>
+ <201108101024.57494.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4E426A71.1000100-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
+In-Reply-To: <201108101024.57494.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Sergei,
-
-> On 10-08-2011 1:08, Marc Dietrich wrote:
-> > These clocks are required for usb operation. pll_p_out4 needs to be set
-> > to 24 MHz. The other clocks default to "off" in order to safe some
-> > energy.
+Marc Dietich wrote at Wednesday, August 10, 2011 2:25 AM:
+> Hi Stephen,
 > 
->     s/safe/save/
-
-ah yeah, my english needs some polish,
-
->     You didn't sign off on the patch.
-
-and that's even worse. Time for V4 I guess.
-
-Sorry for all the trouble.
-
-Marc
-
+> > Marc Dietrich wrote at Tuesday, August 09, 2011 1:26 PM:
+> > > On Tuesday 09 August 2011 20:35:45 you wrote:
+> > > > [...]
+> > > > Do you need the pll_p_out4 entry? What's that driving? Check in
+> > > > /sys/kernel/debug/clock/clock_tree (/sys/kernel/debug is debugfs).
+> > >
+> > > I think it is only required to setup the correct (non-standard?)
+> > > frequency. Seems all other boards use 108 MHz which cause one of the
+> > > ports to fail. Don't ask me for details ...
+...
+> > As far as I know all the clocks there are both unrelated to USB, and
+> > internal to the device, so the board shouldn't have any effect. In
+> > particular, avp.sclk/cop are for the internal media CPU/DSP, hclk/pclk
+> > are the internal AHB/APB bus clocks, and apbdma is for an internal DMA
+> > engine, currently only used for audio in the mainline kernel at least.
 > 
-> > ---
-> > 
-> >   arch/arm/mach-tegra/board-paz00.c |    6 ++++++
-> >   1 files changed, 6 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-tegra/board-paz00.c
-> > b/arch/arm/mach-tegra/board- paz00.c
-> > index 45111f6..cde36dc 100644
-> > --- a/arch/arm/mach-tegra/board-paz00.c
-> > +++ b/arch/arm/mach-tegra/board-paz00.c
-> > @@ -145,6 +145,12 @@ static __initdata struct tegra_clk_init_table
-> > paz00_clk_init_table[] = {
-> > 
-> >   	/* name		parent		rate		enabled */
-> >   	{ "uarta",	"pll_p",	216000000,	true },
-> >   	{ "uartd",	"pll_p",	216000000,	true },
-> > 
-> > +
-> > +	{ "pll_p_out4",	"pll_p",	24000000,	true },
-> > +	{ "usbd",	"clk_m",	12000000,	false },
-> > +	{ "usb2",	"clk_m",	12000000,	false },
-> > +	{ "usb3",	"clk_m",	12000000,	false },
-> > +
-> > 
-> >   	{ NULL,		NULL,		0,		0},
-> >   
-> >   };
+> Does this mean that the internal busses you mentioned are also running at low
+> speed? Would this be a hugh performance penality?
+
+Yes, I think this will cause a lower bus speed. I don't know how much
+performance impact this will have; probably mainly just peripheral register
+accesses, so not too much of a big deal.
+
+> > I guess I'll ask a few people internally to see if they have a clue why
+> > your change might be necessary.
 > 
-> WBR, Sergei
+> Also take a look at seaboard, it has the same clock setting and especially
+> commit dfb625f934dd40baf29ee6c43e4f130b524411a1 in the chromeos kernel:
+
+Ah yes, DAP_MCLK1/2 don't show up in the clock table. That certainly
+explains everything. So, I withdraw any objections to this patch. Do
+you want to follow it up with one that reparents sclk? I can test that
+on Harmony, Seaboard, and TrimSlice if you want. If not, I'll see if I
+can work on that a little later...
+
+> commit dfb625f934dd40baf29ee6c43e4f130b524411a1
+> Author: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Date:   Wed Apr 13 07:26:08 2011 -0400
+> 
+>     CHROMIUM: tegra: seaboard: fix ULPI transceiver clock
+> 
+>     On our seaboard-based platforms, pll_p_out4 is used to clock
+>     (through DAP_MCLK2) the external USB ULPI transceiver between the USB2
+>     port to mini-PCIe modem. And it needs to be set at 24Mhz for the
+>     tranceiver to work correctly.
+>     Revert the sclk parent to pll_c out1 (as it was before the last change)
+>     since it needs to stay clocked at 108MHz.
+> 
+>     Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> 
+>     BUG=chrome-os-partner:3167
+>     TEST=Check that the Gobi modem is appearing in lsusb listing
+>     Use the kaen DVT for browsing and suspending
+> 
+>     Review URL: http://codereview.chromium.org/6825076
+> 
+>     Change-Id: Ia9b1bbc7860da732fb8edbbcf0bce60e82d6d8ed
+
+-- 
+nvpublic
