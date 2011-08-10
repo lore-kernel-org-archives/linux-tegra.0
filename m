@@ -1,57 +1,66 @@
-From: David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
-Subject: Re: Tegra pinmux Device Tree support
-Date: Wed, 10 Aug 2011 11:23:49 +1000
-Message-ID: <20110810012349.GA23511@yookeroo.fritz.box>
-References: <74CDBE0F657A3D45AFBB94109FB122FF049F17229E@HQMAIL01.nvidia.com>
- <20110809173428.GB32195@ponder.secretlab.ca>
- <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ@mail.gmail.com>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib implementations
+Date: Wed, 10 Aug 2011 09:54:52 +0200
+Message-ID: <CAKnu2Mofp+f7Khu1d0j9Pz3Pr03EawBgkRPWEqDy7mf4DzoETA@mail.gmail.com>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+	<E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "Linus Walleij (linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org)" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 10:44:29AM -0700, Olof Johansson wrote:
-> On Tue, Aug 9, 2011 at 10:34 AM, Grant Likely <grant.likely@secretlab=
-=2Eca> wrote:
->=20
-> > We talked about this a bit at Linaro connect. =A0Outside of the mor=
-e
-> > complex runtime-reconfiguration of pin mux, there is a general need
-> > for arbitrary initialization sequences to registers. =A0Also, prett=
-y
-> > much exactly what you need for tegra is needed for imx, omap and ma=
-ny
-> > others. =A0The though was, rather than trying to come up with some =
-kind
-> > of pinmux-specific binding for pin states, which could end up being
-> > very verbose if everything was split out into properties, we could
-> > instead have a binding for register initialization sequences.
-> > Something like this:
-> >
-> > =A0 =A0 =A0 =A0pinmux-initseq =3D <reg1 value1> <reg1 value2> ...;
-> >
-> > And then add some macros for DTC to make it easier to define things
-> > like pinmux setup tables. =A0Although the binding above is probably=
- too
-> > simple and naive.
->=20
-> This seems to break the philosophy of what the device tree should do
-> -- it should describe the hardware so that the driver will know how t=
-o
-> program it, not include the code itself?
+2011/8/9 Russell King - ARM Linux <linux@arm.linux.org.uk>:
 
-Arguably, yes, although it's a barrier that's been frequently broken
-by Apple already.
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h. =A0This is basically the include of asm-generic/gpio=
+=2Eh
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansle=
+ep
+> as described in Documentation/gpio.txt
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
+reaks compile of plat-nomadik due to missing u32, feel free to fold in
+the below fix. With that it's
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+for Nomadik, U300 and Ux500.
+
+=46rom 2e4496fc7643d804ccf50a8efe1a0304210176d1 Mon Sep 17 00:00:00 200=
+1
+=46rom: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 10 Aug 2011 09:51:16 +0200
+Subject: [PATCH] plat-nomadik: small fixup for gpio.h
+
+Removing the generic gpio.h broke compilation of the Nomadik
+GPIO driver since it implicitly got u32 from it. Explicitly
+include <linux/kernel.h> so we get u32 defined.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/plat-nomadik/include/plat/gpio.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-nomadik/include/plat/gpio.h
+b/arch/arm/plat-nomadik/include/plat/gpio.h
+index cf0b78b..b894a53 100644
+--- a/arch/arm/plat-nomadik/include/plat/gpio.h
++++ b/arch/arm/plat-nomadik/include/plat/gpio.h
+@@ -12,6 +12,8 @@
+ #ifndef __ASM_PLAT_GPIO_H
+ #define __ASM_PLAT_GPIO_H
+
++#include <linux/kernel.h>
++
+ /*
+  * "nmk_gpio" and "NMK_GPIO" stand for "Nomadik GPIO", leaving
+  * the "gpio" namespace for generic and cross-machine functions
 --=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _oth=
-er_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+1.7.3.2
+
+Thanks,
+Linus Walleij
