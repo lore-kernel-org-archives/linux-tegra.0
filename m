@@ -1,35 +1,56 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 4/4] arm/tegra: mach/gpio.h: include linux/types.h to fix build
-Date: Thu, 11 Aug 2011 14:43:24 -0600
-Message-ID: <1313095404-27858-4-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH v2 3/4] arm/tegra: Delete custom gpio_to_irq, and irq_to_gpio
+Date: Thu, 11 Aug 2011 14:43:23 -0600
+Message-ID: <1313095404-27858-3-git-send-email-swarren@nvidia.com>
 References: <1313095404-27858-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1313095404-27858-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1313095404-27858-1-git-send-email-swarren@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra's <mach/gpio.h> uses type bool; we need to include <linux/types.h>
-to get the definition.
+By not definining a custom gpio_to_irq, the default gpiolib version is
+used, allowing platform consolidation.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+irq_to_gpio is deprecated and in the process of being removed. Make that
+happen now for ARM Tegra.
+
+This also partially fixes the Tegra build; it was broken because gpio.h
+referred to EINVAL, which wasn't always defined when <mach/gpio.h> was
+included.
+
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- arch/arm/mach-tegra/include/mach/gpio.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/include/mach/gpio.h |   16 ----------------
+ 1 files changed, 0 insertions(+), 16 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
-index 284a19e..7910d26 100644
+index e353805..284a19e 100644
 --- a/arch/arm/mach-tegra/include/mach/gpio.h
 +++ b/arch/arm/mach-tegra/include/mach/gpio.h
-@@ -20,7 +20,7 @@
- #ifndef __MACH_TEGRA_GPIO_H
- #define __MACH_TEGRA_GPIO_H
- 
--#include <linux/init.h>
-+#include <linux/types.h>
- #include <mach/irqs.h>
- 
+@@ -26,22 +26,6 @@
  #define TEGRA_NR_GPIOS		INT_GPIO_NR
+ 
+ #define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
+-#define TEGRA_IRQ_TO_GPIO(irq) ((irq) - INT_GPIO_BASE)
+-
+-static inline int gpio_to_irq(unsigned int gpio)
+-{
+-	if (gpio < TEGRA_NR_GPIOS)
+-		return INT_GPIO_BASE + gpio;
+-	return -EINVAL;
+-}
+-#define gpio_to_irq gpio_to_irq
+-
+-static inline int irq_to_gpio(unsigned int irq)
+-{
+-	if ((irq >= INT_GPIO_BASE) && (irq < INT_GPIO_BASE + INT_GPIO_NR))
+-		return irq - INT_GPIO_BASE;
+-	return -EINVAL;
+-}
+ 
+ struct tegra_gpio_table {
+ 	int	gpio;	/* GPIO number */
 -- 
 1.7.0.4
