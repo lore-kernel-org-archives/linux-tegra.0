@@ -1,39 +1,25 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] i2c/tegra: I2C driver uses the
- suspend_noirq/resume_noirq
-Date: Thu, 11 Aug 2011 12:35:36 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA24CC8@HQMAIL01.nvidia.com>
-References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
- <CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
- <20110806084805.GA18098@sirena.org.uk>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Fix <mach/gpio.h> to have necessary
+	#includes
+Date: Thu, 11 Aug 2011 20:36:07 +0100
+Message-ID: <20110811193607.GA24166@n2100.arm.linux.org.uk>
+References: <1313085952-26365-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110806084805.GA18098-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1313085952-26365-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Saturday, August 06, 2011 2:48 AM:
-> On Fri, Aug 05, 2011 at 09:33:31PM -0700, Colin Cross wrote:
-...
-> > NAK - moving the suspend order around is not the correct way to solve
-> > this.  If wm8903 needs to talk to the i2c bus in its suspend handler,
-> > it needs to be child device on the i2c bus.  suspend_noirq is for
->
-> WM8903 is an I2C device.  The problem is that it's suspended as part of
-> the ASoC suspend since the audio subsystem is composed of multiple
-> devices that all need to work together coherently.  I did start doing
-> some stuff to bodge around this like we do on probe but there are enough
-> system wide problems with this that it didn't seem worth the complexity
-> when the existing workarounds are so straightforward.
+On Thu, Aug 11, 2011 at 12:05:52PM -0600, Stephen Warren wrote:
+> Without this, EINVAL isn't defined, and type bool isn't declared.
+> This leads to compilation failures.
 
-Colin, given Mark's explanation, are you OK with the patch now?
+An alternative approach would be to convert tegra to be able to use
+the gpiolib __gpio_to_irq() for the on-SoC stuff, and eliminate
+irq_to_gpio().
 
-Thanks.
-
--- 
-nvpublic
+Would it be possible to do that instead?
