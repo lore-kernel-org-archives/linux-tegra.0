@@ -1,63 +1,54 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/4] gpio/tegra: Remove use of irq_to_gpio
-Date: Thu, 11 Aug 2011 14:43:21 -0600
-Message-ID: <1313095404-27858-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH v2 2/4] gpio/tegra: Implement gpio_chip.to_irq
+Date: Thu, 11 Aug 2011 14:43:22 -0600
+Message-ID: <1313095404-27858-2-git-send-email-swarren@nvidia.com>
+References: <1313095404-27858-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1313095404-27858-1-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-irq_to_gpio is being removed. Replace the only use of that API by
-the ARM Tegra sub-architecture.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-This series is the irq_to_gpio patches I posted last week, rebased to ToT,
-plus removing Tegra's custom gpio_to_irq.
-
-This series was tested against next-20110811 on Harmony, by playing audio
-and plugging/unplugging headphones. Headphone detection relies on using a
-GPIO as an IRQ, and hence on gpio_to_irq.
-
- drivers/gpio/gpio-tegra.c |   16 ++++++++++------
- 1 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-tegra.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 747eb40..ecade29 100644
+index ecade29..df64536 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -331,6 +331,7 @@ static struct lock_class_key gpio_lock_class;
- static int __init tegra_gpio_init(void)
- {
- 	struct tegra_gpio_bank *bank;
-+	int gpio;
- 	int i;
- 	int j;
+@@ -134,7 +134,10 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
  
-@@ -352,14 +353,17 @@ static int __init tegra_gpio_init(void)
+-
++static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++{
++	return TEGRA_GPIO_TO_IRQ(offset);
++}
  
- 	gpiochip_add(&tegra_gpio_chip);
- 
--	for (i = INT_GPIO_BASE; i < (INT_GPIO_BASE + TEGRA_NR_GPIOS); i++) {
--		bank = &tegra_gpio_banks[GPIO_BANK(irq_to_gpio(i))];
-+	for (gpio = 0; gpio < TEGRA_NR_GPIOS; gpio++) {
-+		int irq = TEGRA_GPIO_TO_IRQ(gpio);
-+		/* No validity check; all Tegra GPIOs are valid IRQs */
- 
--		irq_set_lockdep_class(i, &gpio_lock_class);
--		irq_set_chip_data(i, bank);
--		irq_set_chip_and_handler(i, &tegra_gpio_irq_chip,
-+		bank = &tegra_gpio_banks[GPIO_BANK(gpio)];
-+
-+		irq_set_lockdep_class(irq, &gpio_lock_class);
-+		irq_set_chip_data(irq, bank);
-+		irq_set_chip_and_handler(irq, &tegra_gpio_irq_chip,
- 					 handle_simple_irq);
--		set_irq_flags(i, IRQF_VALID);
-+		set_irq_flags(irq, IRQF_VALID);
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(tegra_gpio_banks); i++) {
+ static struct gpio_chip tegra_gpio_chip = {
+ 	.label			= "tegra-gpio",
+@@ -142,6 +145,7 @@ static struct gpio_chip tegra_gpio_chip = {
+ 	.get			= tegra_gpio_get,
+ 	.direction_output	= tegra_gpio_direction_output,
+ 	.set			= tegra_gpio_set,
++	.to_irq			= tegra_gpio_to_irq,
+ 	.base			= 0,
+ 	.ngpio			= TEGRA_NR_GPIOS,
+ };
 -- 
 1.7.0.4
