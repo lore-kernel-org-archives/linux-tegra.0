@@ -1,14 +1,15 @@
 From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 12/13] ARM: gpio: consolidate gpio_to_irq
-Date: Thu, 11 Aug 2011 20:58:26 +0900
-Message-ID: <000101cc581d$fd45d5d0$f7d18170$%kim__29726.0074913085$1313063928$gmane$org@samsung.com>
+Subject: RE: [PATCH 13/13] ARM: gpio: make trivial GPIOLIB implementation the
+ default
+Date: Thu, 11 Aug 2011 21:02:45 +0900
+Message-ID: <000501cc581e$95ecf7a0$c1c6e6e0$%kim__39768.3385563598$1313064196$gmane$org@samsung.com>
 References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <E1QqhMM-0003aj-C7@rmk-PC.arm.linux.org.uk>
+ <E1QqhMg-0003an-GW@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <E1QqhMM-0003aj-C7-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+In-reply-to: <E1QqhMg-0003an-GW-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
 Content-language: ko
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -17,16 +18,21 @@ List-Id: linux-tegra@vger.kernel.org
 
 Russell King - ARM Linux wrote:
 > 
-> Many of the gpio_to_irq implementations use the gpiolib version of this
-> function.  Provide the standard gpiolib gpio_to_irq() for everyone, but
-> allow platforms to override it if they wish.  Add the neccessary
-> overrides for those platforms which do not use the standard definition.
+> Rather than marking the mach/gpio.h header files which want to use the
+> trivial GPIOLIB implementation, mark those which do not want to use it
+> instead.  This means that by default, you get the trivial implementation
+> and only have to do something extra if you need to.  This should
+> encourage the use of the trivial default implementation.
+> 
+> As an additional bonus, several gpio.h header files become empty.
 > 
 > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 
+Looks good to me :)
+
 Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-on following Samsung stuff :)
+on following Samsung stuff...
 
 Thanks.
 
@@ -37,112 +43,112 @@ Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
 > ---
->  arch/arm/include/asm/gpio.h                 |    9 +++++++++
+>  arch/arm/include/asm/gpio.h                 |    2 +-
 
 >  arch/arm/mach-exynos4/include/mach/gpio.h   |    2 --
 
->  arch/arm/mach-s3c2410/include/mach/gpio.h   |    1 -
->  arch/arm/mach-s3c64xx/include/mach/gpio.h   |    1 -
->  arch/arm/mach-s5p64x0/include/mach/gpio.h   |    1 -
->  arch/arm/mach-s5pc100/include/mach/gpio.h   |    1 -
->  arch/arm/mach-s5pv210/include/mach/gpio.h   |    1 -
+>  arch/arm/mach-s3c2410/include/mach/gpio.h   |    2 --
+>  arch/arm/mach-s3c64xx/include/mach/gpio.h   |    2 --
+>  arch/arm/mach-s5p64x0/include/mach/gpio.h   |    2 --
+>  arch/arm/mach-s5pc100/include/mach/gpio.h   |    2 --
+>  arch/arm/mach-s5pv210/include/mach/gpio.h   |    2 --
 > 
 > diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-> index 15e8970..5032224 100644
+> index 5032224..11ad0bf 100644
 > --- a/arch/arm/include/asm/gpio.h
 > +++ b/arch/arm/include/asm/gpio.h
-> @@ -14,4 +14,13 @@
->  #define gpio_cansleep   __gpio_cansleep
->  #endif
+> @@ -4,7 +4,7 @@
+>  /* not all ARM platforms necessarily support this API ... */
+>  #include <mach/gpio.h>
 > 
-> +/*
-> + * Provide a default gpio_to_irq() which should satisfy every case.
-> + * However, some platforms want to do this differently, so allow them
-> + * to override it.
-> + */
-> +#ifndef gpio_to_irq
-> +#define gpio_to_irq	__gpio_to_irq
-> +#endif
-> +
->  #endif /* _ARCH_ARM_GPIO_H */
+> -#ifdef __ARM_GPIOLIB_TRIVIAL
+> +#ifndef __ARM_GPIOLIB_COMPLEX
+>  /* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h
+*/
+>  #include <asm-generic/gpio.h>
+> 
 
 > diff --git a/arch/arm/mach-exynos4/include/mach/gpio.h b/arch/arm/mach-
 > exynos4/include/mach/gpio.h
-> index b2e3595..b91e8b2 100644
+> index b91e8b2..80523ca 100644
 > --- a/arch/arm/mach-exynos4/include/mach/gpio.h
 > +++ b/arch/arm/mach-exynos4/include/mach/gpio.h
+> @@ -146,6 +146,4 @@ enum s5p_gpio_number {
+>  #define ARCH_NR_GPIOS
+> 	(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) +	\
+>  				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
+> 
+> -#define __ARM_GPIOLIB_TRIVIAL
+> -
+>  #endif /* __ASM_ARCH_GPIO_H */
+
+> diff --git a/arch/arm/mach-s3c2410/include/mach/gpio.h b/arch/arm/mach-
+> s3c2410/include/mach/gpio.h
+> index d502d17..6fac70f 100644
+> --- a/arch/arm/mach-s3c2410/include/mach/gpio.h
+> +++ b/arch/arm/mach-s3c2410/include/mach/gpio.h
+> @@ -11,8 +11,6 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> -#define __ARM_GPIOLIB_TRIVIAL
+> -
+>  /* some boards require extra gpio capacity to support external
+>   * devices that need GPIO.
+>   */
+> diff --git a/arch/arm/mach-s3c64xx/include/mach/gpio.h b/arch/arm/mach-
+> s3c64xx/include/mach/gpio.h
+> index 3a8857c..6e34c2f 100644
+> --- a/arch/arm/mach-s3c64xx/include/mach/gpio.h
+> +++ b/arch/arm/mach-s3c64xx/include/mach/gpio.h
+> @@ -12,8 +12,6 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> -#define __ARM_GPIOLIB_TRIVIAL
+> -
+>  /* GPIO bank sizes */
+>  #define S3C64XX_GPIO_A_NR	(8)
+>  #define S3C64XX_GPIO_B_NR	(7)
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/gpio.h b/arch/arm/mach-
+> s5p64x0/include/mach/gpio.h
+> index c3a6aa0..06cd3c9 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/gpio.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/gpio.h
 > @@ -13,8 +13,6 @@
 >  #ifndef __ASM_ARCH_GPIO_H
 >  #define __ASM_ARCH_GPIO_H __FILE__
 > 
-> -#define gpio_to_irq	__gpio_to_irq
+> -#define __ARM_GPIOLIB_TRIVIAL
 > -
->  /* Practically, GPIO banks up to GPZ are the configurable gpio banks */
-> 
->  /* GPIO bank sizes */
-
-> diff --git a/arch/arm/mach-s3c2410/include/mach/gpio.h b/arch/arm/mach-
-> s3c2410/include/mach/gpio.h
-> index 998ef4c..d502d17 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/gpio.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/gpio.h
-> @@ -12,7 +12,6 @@
->  */
-> 
->  #define __ARM_GPIOLIB_TRIVIAL
-> -#define gpio_to_irq	__gpio_to_irq
-> 
->  /* some boards require extra gpio capacity to support external
->   * devices that need GPIO.
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/gpio.h b/arch/arm/mach-
-> s3c64xx/include/mach/gpio.h
-> index 6958b3f..3a8857c 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/gpio.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/gpio.h
-> @@ -13,7 +13,6 @@
->  */
-> 
->  #define __ARM_GPIOLIB_TRIVIAL
-> -#define gpio_to_irq	__gpio_to_irq
-> 
->  /* GPIO bank sizes */
->  #define S3C64XX_GPIO_A_NR	(8)
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/gpio.h b/arch/arm/mach-
-> s5p64x0/include/mach/gpio.h
-> index a25160b..c3a6aa0 100644
-> --- a/arch/arm/mach-s5p64x0/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5p64x0/include/mach/gpio.h
-> @@ -14,7 +14,6 @@
->  #define __ASM_ARCH_GPIO_H __FILE__
-> 
->  #define __ARM_GPIOLIB_TRIVIAL
-> -#define gpio_to_irq	__gpio_to_irq
-> 
 >  /* GPIO bank sizes */
 > 
+>  #define S5P6440_GPIO_A_NR	(6)
 > diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-
 > s5pc100/include/mach/gpio.h
-> index f515bfb..0e75641 100644
+> index 0e75641..5e1a924 100644
 > --- a/arch/arm/mach-s5pc100/include/mach/gpio.h
 > +++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
-> @@ -16,7 +16,6 @@
+> @@ -15,8 +15,6 @@
+>  #ifndef __ASM_ARCH_GPIO_H
 >  #define __ASM_ARCH_GPIO_H __FILE__
 > 
->  #define __ARM_GPIOLIB_TRIVIAL
-> -#define gpio_to_irq	__gpio_to_irq
-> 
+> -#define __ARM_GPIOLIB_TRIVIAL
+> -
 >  /* GPIO bank sizes */
 >  #define S5PC100_GPIO_A0_NR	(8)
+>  #define S5PC100_GPIO_A1_NR	(5)
 > diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-
 > s5pv210/include/mach/gpio.h
-> index 27f2139..d348ee2 100644
+> index d348ee2..6c8b903 100644
 > --- a/arch/arm/mach-s5pv210/include/mach/gpio.h
 > +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> @@ -14,7 +14,6 @@
+> @@ -13,8 +13,6 @@
+>  #ifndef __ASM_ARCH_GPIO_H
 >  #define __ASM_ARCH_GPIO_H __FILE__
 > 
->  #define __ARM_GPIOLIB_TRIVIAL
-> -#define gpio_to_irq	__gpio_to_irq
-> 
+> -#define __ARM_GPIOLIB_TRIVIAL
+> -
 >  /* Practically, GPIO banks up to MP03 are the configurable gpio banks */
->
+> 
+>  /* GPIO bank sizes */
