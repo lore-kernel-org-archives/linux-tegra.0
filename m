@@ -1,70 +1,179 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 12/12] arm/tegra: Remove temporary gpio/pinmux registration workaround
-Date: Fri, 12 Aug 2011 16:54:57 -0600
-Message-ID: <1313189697-21287-13-git-send-email-swarren@nvidia.com>
+Subject: [RFC PATCH 10/12] arm/tegra: Add device tree support to pinmux driver
+Date: Fri, 12 Aug 2011 16:54:55 -0600
+Message-ID: <1313189697-21287-11-git-send-email-swarren@nvidia.com>
 References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 In-Reply-To: <1313189697-21287-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
-
-This reverts commit "arm/tegra: Prevent duplicate gpio/pinmux pdev
-registration with dt"; board-dt.c no long calls harmony/
-seaboard_pinmux_init(), so the workaround is no longer needed.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-harmony-pinmux.c  |    5 +----
- arch/arm/mach-tegra/board-seaboard-pinmux.c |    5 +----
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ arch/arm/mach-tegra/pinmux.c |  115 ++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 115 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
-index 130018d..e99b456 100644
---- a/arch/arm/mach-tegra/board-harmony-pinmux.c
-+++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
-@@ -14,8 +14,6 @@
-  *
-  */
+diff --git a/arch/arm/mach-tegra/pinmux.c b/arch/arm/mach-tegra/pinmux.c
+index 05fa1a3..33246c2 100644
+--- a/arch/arm/mach-tegra/pinmux.c
++++ b/arch/arm/mach-tegra/pinmux.c
+@@ -20,6 +20,7 @@
+ #include <linux/errno.h>
+ #include <linux/spinlock.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
  
--#include <asm/mach-types.h>
--
- #include <linux/kernel.h>
- #include <linux/gpio.h>
- #include <mach/pinmux.h>
-@@ -163,8 +161,7 @@ static struct tegra_gpio_table gpio_table[] = {
+ #include <mach/iomap.h>
+@@ -147,6 +148,41 @@ static const char *func_name(enum tegra_mux_func func)
+ 	return tegra_mux_names[func];
+ }
  
- void harmony_pinmux_init(void)
++#ifdef CONFIG_OF
++static int func_enum(const char *name, enum tegra_mux_func *func_out)
++{
++	int func;
++
++	if (!strcmp(name, "RSVD1")) {
++		*func_out = TEGRA_MUX_RSVD1;
++		return 0;
++	}
++	if (!strcmp(name, "RSVD2")) {
++		*func_out = TEGRA_MUX_RSVD2;
++		return 0;
++	}
++	if (!strcmp(name, "RSVD3")) {
++		*func_out = TEGRA_MUX_RSVD3;
++		return 0;
++	}
++	if (!strcmp(name, "RSVD4")) {
++		*func_out = TEGRA_MUX_RSVD4;
++		return 0;
++	}
++	if (!strcmp(name, "NONE")) {
++		*func_out = TEGRA_MUX_NONE;
++		return 0;
++	}
++
++	for (func = 0; func < TEGRA_MAX_MUX; func++)
++		if (!strcmp(name, tegra_mux_names[func])) {
++			*func_out = func;
++			return 0;
++		}
++
++	return -EINVAL;
++}
++#endif
+ 
+ static const char *tri_name(unsigned long val)
  {
--	if (machine_is_harmony())
--		platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
+@@ -666,15 +702,94 @@ void tegra_pinmux_config_pullupdown_table(const struct tegra_pingroup_config *co
+ 	}
+ }
  
- 	tegra_pinmux_config_table(harmony_pinmux, ARRAY_SIZE(harmony_pinmux));
- 
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index bc4dc17..f092298 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -12,8 +12,6 @@
-  *
-  */
- 
--#include <asm/mach-types.h>
--
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/gpio.h>
-@@ -178,8 +176,7 @@ static struct tegra_gpio_table gpio_table[] = {
- 
- void __init seaboard_pinmux_init(void)
++#ifdef CONFIG_OF
++static void __init tegra_pinmux_probe_dt(struct platform_device *pdev)
++{
++	int pg;
++
++	for (pg = 0; pg < TEGRA_MAX_PINGROUP; pg++) {
++		const char *pg_name = pingroup_name(pg);
++		struct tegra_pingroup_config config;
++		struct device_node *pg_node;
++		int ret;
++		const char *s;
++
++		pg_node = of_find_child_node_by_name(pdev->dev.of_node,
++						     pg_name);
++		if (pg_node == NULL)
++			continue;
++
++		config.pingroup = pg;
++
++		ret = of_property_read_string(pg_node, "nvidia,function", &s);
++		if (ret < 0) {
++			dev_err(&pdev->dev,
++				"%s: Missing property nvidia,function\n",
++				pg_name);
++			continue;
++		}
++		ret = func_enum(s, &config.func);
++		if (ret < 0) {
++			dev_err(&pdev->dev,
++				"%s: Invalid nvidia,function value %s\n",
++				pg_name, s);
++			continue;
++		}
++
++		ret = of_property_read_string(pg_node, "nvidia,pull", &s);
++		if (ret >= 0) {
++			if (!strcmp(s, "up"))
++				config.pupd = TEGRA_PUPD_PULL_UP;
++			else if (!strcmp(s, "down"))
++				config.pupd = TEGRA_PUPD_PULL_DOWN;
++			else if (!strcmp(s, "normal"))
++				config.pupd = TEGRA_PUPD_NORMAL;
++			else {
++				dev_err(&pdev->dev,
++					"%s: Invalid nvidia,pull value %s\n",
++					pg_name, s);
++				continue;
++			}
++		} else
++			config.pupd = TEGRA_PUPD_NORMAL;
++
++		if (of_find_property(pg_node, "nvidia,tristate", NULL))
++			config.tristate = TEGRA_TRI_TRISTATE;
++		else
++			config.tristate = TEGRA_TRI_NORMAL;
++
++		dev_err(&pdev->dev, "%s: func %d (%s) pull %d tri %d\n",
++			pg_name, config.func, func_name(config.func),
++			config.pupd, config.tristate);
++
++		tegra_pinmux_config_pingroup(&config);
++
++		of_node_put(pg_node);
++	}
++}
++#else
++static inline void __init tegra_pinmux_probe_dt(struct platform_device *pdev)
++{
++}
++#endif
++
+ static int __init tegra_pinmux_probe(struct platform_device *pdev)
  {
--	if (machine_is_seaboard())
--		platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
++	tegra_pinmux_probe_dt(pdev);
++
+ 	return 0;
+ }
  
- 	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
- 
++static struct of_device_id tegra_pinmux_of_match[] __devinitdata = {
++	{ .compatible = "nvidia,tegra20-pinmux", },
++	{ },
++};
++
+ static struct platform_driver tegra_pinmux_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-pinmux",
+ 		.owner	= THIS_MODULE,
++		.of_match_table = tegra_pinmux_of_match,
+ 	},
+ 	.probe		= tegra_pinmux_probe,
+ };
 -- 
 1.7.0.4
