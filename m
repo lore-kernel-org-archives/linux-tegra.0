@@ -1,42 +1,96 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2 0/3] ARM: Tegra: Harmony & Seaboard USB and audio
-Date: Fri, 12 Aug 2011 14:21:47 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA24F49@HQMAIL01.nvidia.com>
-References: <1312835715-893-1-git-send-email-swarren@nvidia.com>
- <20110809193405.GA4224@quad.lixom.net>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [RFC PATCH 00/12] arm/tegra: Initialize GPIO & pinmux from DT
+Date: Fri, 12 Aug 2011 16:54:45 -0600
+Message-ID: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110809193405.GA4224-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Grant Likely <grant.likely@secretlab.ca>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
+Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Tuesday, August 09, 2011 1:34 PM:
-> On Mon, Aug 08, 2011 at 02:35:12PM -0600, Stephen Warren wrote:
-> > This is a slight rev of some patches I posted a little while ago, now
-> > in a single series. The second patch has a minor revision that simplifies
-> > board-seaboard-pinmux.c.
-> >
-> > The (previous version of the) patches were previously Ack'd by Tegra
-> > maintainers, and Colin asked Arnd to pick them up in arm-soc.git,
-> > although I'm not sure if that request still holds given the merge
-> > window is over?
-> 
-> Thanks, I've picked them up in boards-for-3.2, which will be merged in
-> through Arnd for 3.2.
+This patch modifies Tegra's device tree support to remove the dependency
+on harmony_pinmux_init(), thus making it completely board-independent.
 
-I see boards-for-3.2 isn't in linux-next itself, so these changes aren't
-getting rebased out of my local tree on top of linux-next.
+Some notes:
 
-Does it make sense to add your tree into linux-next? Or, is the expected
-process that such trees will be quickly pulled/merged into Arnd's tree,
-which I assume is in linux-next?
+* This series is built on top of linux-next with a bunch of patches
+  applied, in particular the removal of irq_to_gpio and custom gpio_to_irq
+  that I'm in the process of sending to Russell. I haven't yet thought
+  through how/where to merge this without causing all kinds of conflicts.
 
-Thanks.
+* I took care to preserve bisectability of Tegra DT support. However,
+  linux-next doesn't yet have entirely useful Tegra DT support; some stuff
+  from Grant's devicetree/next hasn't been pushed into linux-next yet. If
+  we don't care about bisectability, I can remove a couple commits and
+  possibly squash some others.
 
--- 
-nvpublic
+* The approach taken here is to have a custom semantic SoC-specific
+  binding for each the gpio and pinmux drivers. Other alternatives
+  suggested included:
+
+  1) A generic "list of register writes" to be performed at boot. This has
+     the advantage of reusability across different SoCs. However, this
+     approach isn't semantic, and requires detailed knowledge of pinmux
+     registers and potentially fiddly calculations when constructing the
+     device tree.
+
+  2) The ability to define disabled child nodes of the pinmux controller
+     that are not processed by tegra_pinmux_probe_dt(). Other devices may
+     refer to those using phandles, and later enable/disable them, thus
+     representing dynamic pinmuxing in the device tree. I wasn't convinced
+     whether we should represent dynamic pinmuxing using phandles.
+
+  I discussed in more detail why I prefer the current proposal in various
+  email threads.
+
+* tegra_pinmux_probe_dt() enumerates all legal pingroup names, and searches
+  for a pinmux controller subnode of that name, then processes each one
+  that is found. An alternative that some may prefer would be to enumerate
+  each child node of the pinmux controller, and have each node contain an
+  explicit pingroup name property instead. Does anyone have any preference
+  here? I suppose the latter option would obviate the need to add
+  of_find_child_node_by_name().
+
+Thanks for reading!
+
+Stephen Warren (12):
+  dt: Add of_find_child_node_by_name()
+  arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
+  arm/tegra: Avoid duplicate gpio/pinmux devices with dt
+  arm/tegra: board-dt: Add AUXDATA for tegra-gpio and tegra-pinmux
+  arm/dt: Tegra: Add nvidia,gpios property to GPIO controller
+  arm/dt: Tegra: Add pinmux node
+  gpio/tegra: Convert to a platform device
+  gpio/tegra: Add device tree support
+  arm/tegra: Convert pinmux driver to a platform device
+  arm/tegra: Add device tree support to pinmux driver
+  arm/tegra: board-dt: Remove dependency on non-dt pinmux functions
+  arm/tegra: Remove temporary gpio/pinmux registration workaround
+
+ arch/arm/boot/dts/tegra-harmony.dts          |  479 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra-seaboard.dts         |  409 ++++++++++++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi               |    5 +
+ arch/arm/mach-tegra/Makefile                 |    1 -
+ arch/arm/mach-tegra/board-dt.c               |   12 +-
+ arch/arm/mach-tegra/board-harmony-pinmux.c   |    8 +
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |    8 +
+ arch/arm/mach-tegra/board-seaboard-pinmux.c  |    9 +-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    7 +
+ arch/arm/mach-tegra/devices.c                |   10 +
+ arch/arm/mach-tegra/devices.h                |    2 +
+ arch/arm/mach-tegra/pinmux.c                 |  136 ++++++++
+ drivers/gpio/gpio-tegra.c                    |   56 +++-
+ drivers/of/base.c                            |   18 +
+ include/linux/of.h                           |    2 +
+ 15 files changed, 1138 insertions(+), 24 deletions(-)
