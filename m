@@ -1,43 +1,60 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] i2c/tegra: I2C driver uses the suspend_noirq/resume_noirq
-Date: Fri, 12 Aug 2011 12:14:35 +0900
-Message-ID: <20110812031433.GE10218@opensource.wolfsonmicro.com>
-References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
- <CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
- <20110806084805.GA18098@sirena.org.uk>
- <74CDBE0F657A3D45AFBB94109FB122FF04AEA24CC8@HQMAIL01.nvidia.com>
- <CAMbhsRR2+bhpjhGfUSt9M5tDk1EW2d70yC-tZy27zEgVqtkfSg@mail.gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF04AEA24D09@HQMAIL01.nvidia.com>
- <CAMbhsRTVm+dUODDgqiekpTrrNnpo9trJNNvOQ2ETCNkneh-L-g@mail.gmail.com>
- <1313109916.19990.28.camel@finisterre.wolfsonmicro.main>
- <CAMbhsRShLvyc2XKJAL8PwR0Uj4Pnp9rVt7QyK1qAVxJ-R2PSdQ@mail.gmail.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Fri, 12 Aug 2011 13:54:47 +0800
+Message-ID: <20110812055446.GB6618@S2100-06.ap.freescale.net>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMbhsRShLvyc2XKJAL8PwR0Uj4Pnp9rVt7QyK1qAVxJ-R2PSdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 11, 2011 at 07:59:27PM -0700, Colin Cross wrote:
-> On Thu, Aug 11, 2011 at 5:45 PM, Mark Brown
+On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
+> as described in Documentation/gpio.txt
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/arm/include/asm/gpio.h                 |   10 ++++++++++
+>  arch/arm/mach-at91/include/mach/gpio.h      |    5 +----
+>  arch/arm/mach-ep93xx/include/mach/gpio.h    |    7 +------
+>  arch/arm/mach-exynos4/include/mach/gpio.h   |    5 +----
+>  arch/arm/mach-gemini/include/mach/gpio.h    |    5 +----
+>  arch/arm/mach-ks8695/include/mach/gpio.h    |   11 ++---------
+>  arch/arm/mach-lpc32xx/include/mach/gpio.h   |   17 +----------------
+>  arch/arm/mach-msm/include/mach/gpio.h       |    5 +----
+>  arch/arm/mach-mxs/include/mach/gpio.h       |    6 +-----
+>  arch/arm/mach-realview/include/mach/gpio.h  |    6 +-----
+>  arch/arm/mach-s3c2410/include/mach/gpio.h   |    5 +----
+>  arch/arm/mach-s3c64xx/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5p64x0/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5pc100/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5pv210/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-shmobile/include/mach/gpio.h  |   15 +--------------
+>  arch/arm/mach-tegra/include/mach/gpio.h     |    6 +-----
+>  arch/arm/mach-versatile/include/mach/gpio.h |    6 +-----
+>  arch/arm/mach-vt8500/include/mach/gpio.h    |    6 +-----
+>  arch/arm/mach-w90x900/include/mach/gpio.h   |    5 +----
+>  arch/arm/plat-mxc/include/mach/gpio.h       |    5 +----
+>  arch/arm/plat-nomadik/include/plat/gpio.h   |   11 +----------
+>  arch/arm/plat-omap/include/plat/gpio.h      |   15 +--------------
+>  arch/arm/plat-orion/include/plat/gpio.h     |    6 ++----
+>  arch/arm/plat-spear/include/plat/gpio.h     |    6 +-----
+>  25 files changed, 36 insertions(+), 151 deletions(-)
+> 
+For mxs and mxc:
 
-> > For example with ASoC we'd sort all the components before the ASoC card
-> > without regard for their bus dependencies or any other dependencies they
-> > have (eg, their regulators). Since the ASoC card is a platform device
-> > it's likely to have registered early with no regard for where the buses
-> > the card needs are registered. I'd expect there's a reasonable chance
-> > it'll actually make things worse in the short term.
+Tested-by: Shawn Guo <shawn.guo@linaro.org>
 
-> You can't just move everything after the card, you have to move
-> everything after the last device that was probed, and it only works if
-> nothing depends on any of the devices that are moved.
+-- 
+Regards,
+Shawn
 
-Sorry, I said that the wrong way round due to trying to reply quickly -
-the card would be the thing that moves since that's the thing that
-actually does the suspend but we've *no* idea which device we need to
-move it after.  Since all the function does is a direct move after or
-before a single device all we can do is pick one and pray that it's the
-right device.
