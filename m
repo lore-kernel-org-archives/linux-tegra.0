@@ -1,123 +1,63 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [RFC PATCH 10/12] arm/tegra: Add device tree support to pinmux
-	driver
-Date: Sat, 13 Aug 2011 11:48:50 +0100
-Message-ID: <20110813104850.GD2643@pulham.picochip.com>
-References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
-	<1313189697-21287-11-git-send-email-swarren@nvidia.com>
-	<20110813104323.GC2643@pulham.picochip.com>
+From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: Re: Tegra pinmux Device Tree support
+Date: Sat, 13 Aug 2011 20:22:12 +0800
+Message-ID: <20110813122211.GB7244@S2100-06.ap.freescale.net>
+References: <74CDBE0F657A3D45AFBB94109FB122FF049F17229E@HQMAIL01.nvidia.com>
+ <20110809173428.GB32195@ponder.secretlab.ca>
+ <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20110813104323.GC2643@pulham.picochip.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jamie Iles <jamie@jamieiles.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Erik Gilling <konkers@android.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Linus Walleij (linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org)" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Aug 13, 2011 at 11:43:23AM +0100, Jamie Iles wrote:
-> Hi Stephen,
-> 
-> On Fri, Aug 12, 2011 at 04:54:55PM -0600, Stephen Warren wrote:
-> > Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> > ---
-> >  arch/arm/mach-tegra/pinmux.c |  115 ++++++++++++++++++++++++++++++++++++++++++
-> >  1 files changed, 115 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-tegra/pinmux.c b/arch/arm/mach-tegra/pinmux.c
-> > index 05fa1a3..33246c2 100644
-> > --- a/arch/arm/mach-tegra/pinmux.c
-> > +++ b/arch/arm/mach-tegra/pinmux.c
-> > @@ -20,6 +20,7 @@
-> >  #include <linux/errno.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/io.h>
-> > +#include <linux/of.h>
-> >  #include <linux/platform_device.h>
-> >  
-> >  #include <mach/iomap.h>
-> > @@ -147,6 +148,41 @@ static const char *func_name(enum tegra_mux_func func)
-> >  	return tegra_mux_names[func];
-> >  }
-> >  
-> > +#ifdef CONFIG_OF
-> > +static int func_enum(const char *name, enum tegra_mux_func *func_out)
-> > +{
-> > +	int func;
-> > +
-> > +	if (!strcmp(name, "RSVD1")) {
-> > +		*func_out = TEGRA_MUX_RSVD1;
-> > +		return 0;
-> > +	}
-> > +	if (!strcmp(name, "RSVD2")) {
-> > +		*func_out = TEGRA_MUX_RSVD2;
-> > +		return 0;
-> > +	}
-> > +	if (!strcmp(name, "RSVD3")) {
-> > +		*func_out = TEGRA_MUX_RSVD3;
-> > +		return 0;
-> > +	}
-> > +	if (!strcmp(name, "RSVD4")) {
-> > +		*func_out = TEGRA_MUX_RSVD4;
-> > +		return 0;
-> > +	}
-> > +	if (!strcmp(name, "NONE")) {
-> > +		*func_out = TEGRA_MUX_NONE;
-> > +		return 0;
-> > +	}
-> > +
-> > +	for (func = 0; func < TEGRA_MAX_MUX; func++)
-> > +		if (!strcmp(name, tegra_mux_names[func])) {
-> > +			*func_out = func;
-> > +			return 0;
-> > +		}
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +#endif
-> >  
-> >  static const char *tri_name(unsigned long val)
-> >  {
-> > @@ -666,15 +702,94 @@ void tegra_pinmux_config_pullupdown_table(const struct tegra_pingroup_config *co
-> >  	}
-> >  }
-> >  
-> > +#ifdef CONFIG_OF
-> > +static void __init tegra_pinmux_probe_dt(struct platform_device *pdev)
-> > +{
-> > +	int pg;
-> > +
-> > +	for (pg = 0; pg < TEGRA_MAX_PINGROUP; pg++) {
-> > +		const char *pg_name = pingroup_name(pg);
-> > +		struct tegra_pingroup_config config;
-> > +		struct device_node *pg_node;
-> > +		int ret;
-> > +		const char *s;
-> > +
-> > +		pg_node = of_find_child_node_by_name(pdev->dev.of_node,
-> > +						     pg_name);
-> > +		if (pg_node == NULL)
-> > +			continue;
-> 
-> Rather than iterating over all of the mux names in the pinmux driver and 
-> searching for a matching DT node, could you not do it the other way 
-> round?  So do an for_each_child_of_node() on the pinmux node then find 
-> the matching pingroup keyed by the node name?  This would eliminate 
-> of_find_child_node_by_name().  You could also catch invalid 
-> configurations for non-existent pins this way.
+On Tue, Aug 09, 2011 at 10:44:29AM -0700, Olof Johansson wrote:
+> On Tue, Aug 9, 2011 at 10:34 AM, Grant Likely <grant.likely@secretlab=
+=2Eca> wrote:
+>=20
+> > We talked about this a bit at Linaro connect. =A0Outside of the mor=
+e
+> > complex runtime-reconfiguration of pin mux, there is a general need
+> > for arbitrary initialization sequences to registers. =A0Also, prett=
+y
+> > much exactly what you need for tegra is needed for imx, omap and ma=
+ny
+> > others. =A0The though was, rather than trying to come up with some =
+kind
+> > of pinmux-specific binding for pin states, which could end up being
+> > very verbose if everything was split out into properties, we could
+> > instead have a binding for register initialization sequences.
+> > Something like this:
+> >
+> > =A0 =A0 =A0 =A0pinmux-initseq =3D <reg1 value1> <reg1 value2> ...;
+> >
+> > And then add some macros for DTC to make it easier to define things
+> > like pinmux setup tables. =A0Although the binding above is probably=
+ too
+> > simple and naive.
+>=20
+> This seems to break the philosophy of what the device tree should do
+> -- it should describe the hardware so that the driver will know how t=
+o
+> program it, not include the code itself?
+>=20
+> I know it's a hairy problem to deal with one compact pinmux
+> representation that fits all needs. Maybe making it overly generic is
+> the wrong way to go about it, and let each implementation define what
+> it needs? That way the simpler implementations can do something
+> reasonably simple without having to deal with the overly complex
+> options of the (over?) generalized platforms out there.
+>=20
+Though I was part of the talk on Linaro Connect about register-write
+binding, I still like the soc specific binding a little bit more.
+Let's see if we can eventually change Grant's mind with more people
+on the other way :)
 
-I just re-read your introduction email and saw you've already discussed 
-this!  Would this require an explicit pin name property though or could 
-you just key off of the pg_node->name?
-
-Jamie
+--=20
+Regards,
+Shawn
