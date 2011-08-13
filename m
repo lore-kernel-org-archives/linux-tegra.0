@@ -1,63 +1,105 @@
 From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: Re: Tegra pinmux Device Tree support
-Date: Sat, 13 Aug 2011 20:22:12 +0800
-Message-ID: <20110813122211.GB7244@S2100-06.ap.freescale.net>
-References: <74CDBE0F657A3D45AFBB94109FB122FF049F17229E@HQMAIL01.nvidia.com>
- <20110809173428.GB32195@ponder.secretlab.ca>
- <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] arm/tegra: Initialize GPIO & pinmux from DT
+Date: Sat, 13 Aug 2011 21:08:59 +0800
+Message-ID: <20110813130858.GC7244@S2100-06.ap.freescale.net>
+References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAOesGMjH8hZSAXvDZ6ADO-dtFNecRYC5GsfRiAeV8KMRG=JTkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1313189697-21287-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Linus Walleij (linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org)" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 10:44:29AM -0700, Olof Johansson wrote:
-> On Tue, Aug 9, 2011 at 10:34 AM, Grant Likely <grant.likely@secretlab=
-=2Eca> wrote:
->=20
-> > We talked about this a bit at Linaro connect. =A0Outside of the mor=
-e
-> > complex runtime-reconfiguration of pin mux, there is a general need
-> > for arbitrary initialization sequences to registers. =A0Also, prett=
-y
-> > much exactly what you need for tegra is needed for imx, omap and ma=
-ny
-> > others. =A0The though was, rather than trying to come up with some =
-kind
-> > of pinmux-specific binding for pin states, which could end up being
-> > very verbose if everything was split out into properties, we could
-> > instead have a binding for register initialization sequences.
-> > Something like this:
-> >
-> > =A0 =A0 =A0 =A0pinmux-initseq =3D <reg1 value1> <reg1 value2> ...;
-> >
-> > And then add some macros for DTC to make it easier to define things
-> > like pinmux setup tables. =A0Although the binding above is probably=
- too
-> > simple and naive.
->=20
-> This seems to break the philosophy of what the device tree should do
-> -- it should describe the hardware so that the driver will know how t=
-o
-> program it, not include the code itself?
->=20
-> I know it's a hairy problem to deal with one compact pinmux
-> representation that fits all needs. Maybe making it overly generic is
-> the wrong way to go about it, and let each implementation define what
-> it needs? That way the simpler implementations can do something
-> reasonably simple without having to deal with the overly complex
-> options of the (over?) generalized platforms out there.
->=20
-Though I was part of the talk on Linaro Connect about register-write
-binding, I still like the soc specific binding a little bit more.
-Let's see if we can eventually change Grant's mind with more people
-on the other way :)
+On Fri, Aug 12, 2011 at 04:54:45PM -0600, Stephen Warren wrote:
+> This patch modifies Tegra's device tree support to remove the dependency
+> on harmony_pinmux_init(), thus making it completely board-independent.
+> 
+> Some notes:
+> 
+> * This series is built on top of linux-next with a bunch of patches
+>   applied, in particular the removal of irq_to_gpio and custom gpio_to_irq
+>   that I'm in the process of sending to Russell. I haven't yet thought
+>   through how/where to merge this without causing all kinds of conflicts.
+> 
+> * I took care to preserve bisectability of Tegra DT support. However,
+>   linux-next doesn't yet have entirely useful Tegra DT support; some stuff
+>   from Grant's devicetree/next hasn't been pushed into linux-next yet. If
+>   we don't care about bisectability, I can remove a couple commits and
+>   possibly squash some others.
+> 
+> * The approach taken here is to have a custom semantic SoC-specific
+>   binding for each the gpio and pinmux drivers. Other alternatives
+>   suggested included:
+> 
+>   1) A generic "list of register writes" to be performed at boot. This has
+>      the advantage of reusability across different SoCs. However, this
+>      approach isn't semantic, and requires detailed knowledge of pinmux
+>      registers and potentially fiddly calculations when constructing the
+>      device tree.
+> 
+>   2) The ability to define disabled child nodes of the pinmux controller
+>      that are not processed by tegra_pinmux_probe_dt(). Other devices may
+>      refer to those using phandles, and later enable/disable them, thus
+>      representing dynamic pinmuxing in the device tree. I wasn't convinced
+>      whether we should represent dynamic pinmuxing using phandles.
+> 
+>   I discussed in more detail why I prefer the current proposal in various
+>   email threads.
+> 
+Glad to see the second soc specific pinmux binding besides the one
+below for i.mx.
 
---=20
+  http://permalink.gmane.org/gmane.linux.drivers.devicetree/6962
+
+> * tegra_pinmux_probe_dt() enumerates all legal pingroup names, and searches
+>   for a pinmux controller subnode of that name, then processes each one
+>   that is found. An alternative that some may prefer would be to enumerate
+>   each child node of the pinmux controller, and have each node contain an
+>   explicit pingroup name property instead. Does anyone have any preference
+>   here? I suppose the latter option would obviate the need to add
+>   of_find_child_node_by_name().
+> 
+I agree with Jamie that the latter option seems better/simper.
+
+> Thanks for reading!
+> 
+> Stephen Warren (12):
+>   dt: Add of_find_child_node_by_name()
+>   arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
+>   arm/tegra: Avoid duplicate gpio/pinmux devices with dt
+>   arm/tegra: board-dt: Add AUXDATA for tegra-gpio and tegra-pinmux
+>   arm/dt: Tegra: Add nvidia,gpios property to GPIO controller
+>   arm/dt: Tegra: Add pinmux node
+>   gpio/tegra: Convert to a platform device
+>   gpio/tegra: Add device tree support
+>   arm/tegra: Convert pinmux driver to a platform device
+>   arm/tegra: Add device tree support to pinmux driver
+>   arm/tegra: board-dt: Remove dependency on non-dt pinmux functions
+>   arm/tegra: Remove temporary gpio/pinmux registration workaround
+> 
+>  arch/arm/boot/dts/tegra-harmony.dts          |  479 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/tegra-seaboard.dts         |  409 ++++++++++++++++++++++
+>  arch/arm/boot/dts/tegra20.dtsi               |    5 +
+>  arch/arm/mach-tegra/Makefile                 |    1 -
+>  arch/arm/mach-tegra/board-dt.c               |   12 +-
+>  arch/arm/mach-tegra/board-harmony-pinmux.c   |    8 +
+>  arch/arm/mach-tegra/board-paz00-pinmux.c     |    8 +
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c  |    9 +-
+>  arch/arm/mach-tegra/board-trimslice-pinmux.c |    7 +
+>  arch/arm/mach-tegra/devices.c                |   10 +
+>  arch/arm/mach-tegra/devices.h                |    2 +
+>  arch/arm/mach-tegra/pinmux.c                 |  136 ++++++++
+>  drivers/gpio/gpio-tegra.c                    |   56 +++-
+>  drivers/of/base.c                            |   18 +
+>  include/linux/of.h                           |    2 +
+>  15 files changed, 1138 insertions(+), 24 deletions(-)
+> 
+Generally, you need to document the bindings you come with in
+Documentation/devicetree/bindings/
+
+-- 
 Regards,
 Shawn
