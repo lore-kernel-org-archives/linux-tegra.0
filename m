@@ -1,40 +1,44 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH 08/12] gpio/tegra: Add device tree support
-Date: Mon, 15 Aug 2011 08:47:27 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA25048@HQMAIL01.nvidia.com>
+Subject: RE: [RFC PATCH 12/12] arm/tegra: Remove temporary gpio/pinmux
+ registration workaround
+Date: Mon, 15 Aug 2011 09:03:03 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA25053@HQMAIL01.nvidia.com>
 References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
-	<1313189697-21287-9-git-send-email-swarren@nvidia.com>
- <CAAfyv34kOtwjerB0gMhEKNTwGd9w-LCE52MCUuvzTyYkXLY-dg@mail.gmail.com>
+ <1313189697-21287-13-git-send-email-swarren@nvidia.com>
+ <4E48FF29.1030208@ru.mvista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAfyv34kOtwjerB0gMhEKNTwGd9w-LCE52MCUuvzTyYkXLY-dg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <4E48FF29.1030208-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QmVsaXNrbyBNYXJlayB3cm90ZSBhdCBTYXR1cmRheSwgQXVndXN0IDEzLCAyMDExIDM6NDkgQU06
-DQo+IE9uIFNhdCwgQXVnIDEzLCAyMDExIGF0IDEyOjU0IEFNLCBTdGVwaGVuIFdhcnJlbiA8c3dh
-cnJlbkBudmlkaWEuY29tPiB3cm90ZToNCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFdhcnJl
-biA8c3dhcnJlbkBudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+IMKgZHJpdmVycy9ncGlvL2dwaW8t
-dGVncmEuYyB8IMKgIDMxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiDCoDEg
-ZmlsZXMgY2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby10ZWdyYS5jIGIvZHJpdmVycy9ncGlvL2dw
-aW8tdGVncmEuYw0KLi4uDQo+ID4gK3N0YXRpYyB2b2lkIF9faW5pdCB0ZWdyYV9ncGlvX3Byb2Jl
-X2R0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gK3sNCj4gPiArIMKgIMKgIMKg
-IGNvbnN0IF9fYmUzMiAqZ3Bpb3M7DQo+ID4gKyDCoCDCoCDCoCB1MzIgZ3Bpb3NsZW47DQo+ID4g
-KyDCoCDCoCDCoCBpbnQgaTsNCj4gPiArDQo+ID4gKyDCoCDCoCDCoCBncGlvcyA9IG9mX2dldF9w
-cm9wZXJ0eShwZGV2LT5kZXYub2Zfbm9kZSwgIm52aWRpYSxncGlvcyIsICZncGlvc2xlbik7DQo+
-ID4gKyDCoCDCoCDCoCBpZiAoZ3Bpb3MgPT0gTlVMTCkNCj4gPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIHJldHVybjsNCj4gPiArDQo+ID4gKyDCoCDCoCDCoCBncGlvc2xlbiAvPSBzaXplb2YoKmdw
-aW9zKTsNCj4gPiArIMKgIMKgIMKgIGZvciAoaSA9IDA7IGkgPCBncGlvc2xlbjsgaSsrLCBncGlv
-cysrKSB7DQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB1MzIgZ3BpbyA9IGJlMzJfdG9fY3B1
-cChncGlvcyk7DQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBkZXZfZXJyKCZwZGV2LT5kZXYs
-ICJFbmFibGluZyBHUElPICVkXG4iLCBncGlvKTsNCj4NCj4gSXMgcmVhbGx5IG5lY2Vzc2FyeSB0
-byBwcmludCBhbGwgZW5hYmxlZCBncGlvJ3MgdG8gY29uc29sZT8gQWxzbyBzZWVuDQo+IHNhbWUg
-aW4gcGlubXV4IHByb2JlLg0KDQpPb3BzLCB0aGF0J3MgY2VydGFpbmx5IG5vdCBuZWNlc3Nhcnku
-IFRoYXQgd2FzIGRlYnVnZ2luZyBjb2RlLCBhbmQgSSBtZWFudA0KdG8gY29udmVydCB0byBkZXZf
-ZGJnIGJlZm9yZSBwb3N0aW5nLg0KDQotLSANCm52cHVibGljDQoNCg==
+Sergei Shtylyov wrote at Monday, August 15, 2011 5:13 AM:
+> Hello.
+> 
+> On 13-08-2011 2:54, Stephen Warren wrote:
+> 
+> > This reverts commit "arm/tegra: Prevent duplicate gpio/pinmux pdev
+> 
+>     Would be good to also include the commit ID for gitweb.
+
+I can't do that yet, because the commit that's being reverted is earlier
+in the patch series being posted, and hence doesn't have a commit ID that
+will be valid in any upstream repository.
+
+I suppose this is the last commit in the series though, so I could remove
+it and submit the revert separately once the rest is upstream.
+
+> > registration with dt"; board-dt.c no long calls harmony/
+> > seaboard_pinmux_init(), so the workaround is no longer needed.
+> 
+> > Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> WBR, Sergei
+
+-- 
+nvpublic
