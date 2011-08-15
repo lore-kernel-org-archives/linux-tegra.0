@@ -1,75 +1,140 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] i2c: tegra: Check for overflow errors with BUG_ON.
-Date: Mon, 15 Aug 2011 23:03:50 +0300
-Message-ID: <20110815200349.GA2616@legolas.emea.dhcp.ti.com>
-References: <1313434172-18319-1-git-send-email-dianders@chromium.org>
- <20110815191745.GA7178@legolas.emea.dhcp.ti.com>
- <CAD=FV=Xd67iw=GXV9i4O5LKnJd20=BkYyfVuxPgxQ5GZRJEy4A@mail.gmail.com>
-Reply-To: balbi@ti.com
+From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
+Subject: Re: [RFC PATCH 10/12] arm/tegra: Add device tree support to pinmux
+ driver
+Date: Mon, 15 Aug 2011 21:07:17 +0100
+Message-ID: <20110815200716.GA22355@gallagher>
+References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
+ <1313189697-21287-11-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=Xd67iw=GXV9i4O5LKnJd20=BkYyfVuxPgxQ5GZRJEy4A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: balbi@ti.com, Ben Dooks <ben-linux@fluff.org>, Stephen Warren <swarren@nvidia.com>, Vincent Palatin <vpalatin@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Jean Delvare <khali@linux-fr.org>, Rakesh Iyer <riyer@nvidia.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1313189697-21287-11-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Stephen,
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 12, 2011 at 04:54:55PM -0600, Stephen Warren wrote:
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/pinmux.c |  115 ++++++++++++++++++++++++++++++++++++++++++
+>  1 files changed, 115 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/pinmux.c b/arch/arm/mach-tegra/pinmux.c
+> index 05fa1a3..33246c2 100644
+> --- a/arch/arm/mach-tegra/pinmux.c
+> +++ b/arch/arm/mach-tegra/pinmux.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  
+>  #include <mach/iomap.h>
+> @@ -147,6 +148,41 @@ static const char *func_name(enum tegra_mux_func func)
+>  	return tegra_mux_names[func];
+>  }
+>  
+[...]
+>  
+>  static const char *tri_name(unsigned long val)
+>  {
+> @@ -666,15 +702,94 @@ void tegra_pinmux_config_pullupdown_table(const struct tegra_pingroup_config *co
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static void __init tegra_pinmux_probe_dt(struct platform_device *pdev)
+> +{
+> +	int pg;
+> +
+> +	for (pg = 0; pg < TEGRA_MAX_PINGROUP; pg++) {
+> +		const char *pg_name = pingroup_name(pg);
+> +		struct tegra_pingroup_config config;
+> +		struct device_node *pg_node;
+> +		int ret;
+> +		const char *s;
+> +
+> +		pg_node = of_find_child_node_by_name(pdev->dev.of_node,
+> +						     pg_name);
+> +		if (pg_node == NULL)
+> +			continue;
+> +
+> +		config.pingroup = pg;
+> +
+> +		ret = of_property_read_string(pg_node, "nvidia,function", &s);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev,
+> +				"%s: Missing property nvidia,function\n",
+> +				pg_name);
+> +			continue;
+> +		}
+> +		ret = func_enum(s, &config.func);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev,
+> +				"%s: Invalid nvidia,function value %s\n",
+> +				pg_name, s);
+> +			continue;
+> +		}
+> +
+> +		ret = of_property_read_string(pg_node, "nvidia,pull", &s);
+> +		if (ret >= 0) {
+> +			if (!strcmp(s, "up"))
+> +				config.pupd = TEGRA_PUPD_PULL_UP;
+> +			else if (!strcmp(s, "down"))
+> +				config.pupd = TEGRA_PUPD_PULL_DOWN;
+> +			else if (!strcmp(s, "normal"))
+> +				config.pupd = TEGRA_PUPD_NORMAL;
+> +			else {
+> +				dev_err(&pdev->dev,
+> +					"%s: Invalid nvidia,pull value %s\n",
+> +					pg_name, s);
+> +				continue;
+> +			}
+> +		} else
+> +			config.pupd = TEGRA_PUPD_NORMAL;
+> +
+> +		if (of_find_property(pg_node, "nvidia,tristate", NULL))
+> +			config.tristate = TEGRA_TRI_TRISTATE;
+> +		else
+> +			config.tristate = TEGRA_TRI_NORMAL;
+> +
+> +		dev_err(&pdev->dev, "%s: func %d (%s) pull %d tri %d\n",
+> +			pg_name, config.func, func_name(config.func),
+> +			config.pupd, config.tristate);
+> +
+> +		tegra_pinmux_config_pingroup(&config);
+> +
+> +		of_node_put(pg_node);
+> +	}
+> +}
 
-HI,
+I need to implement DT muxing configuration for my platform, and I believe 
+that what you have here would work fine for me too, and to avoid duplicating 
+the same thing, I wonder if this could be a little more generic.
 
-On Mon, Aug 15, 2011 at 12:52:36PM -0700, Doug Anderson wrote:
-> Felipe,
->=20
-> On Mon, Aug 15, 2011 at 12:17 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > so due to a FIFO overflow you lock up the whole system ? Can't you e.g.
-> > reset the controller and reconfigure it rather than locking up the
-> > system ?
->=20
-> Certainly we could try to be more proactive and reset / retry / return
-> the error to the client.  However, since the only expected situation
-> where this BUG_ON should hit is due to a bug in this driver itself
-> (AKA: i2c clients shouldn't be able to do anything to cause the BUG_ON
-> to hit), that seems like a lot of added complexity.
+So if the platform specific pinmux driver called the pinmux parser with a 
+callback for a pingroup configuration function then this wouldn't need the 
+nvidia specific properties.  I'd envisage the setup callback to be something 
+like:
 
-so at least just pass an error to the client, but hanging the entire
-system seems a bit too much, dont you think ?
+	int pingroup_configure(const char *name, unsigned long flags);
 
-> Also: if there is an arbitrary software bug that causing an overflow
-> condition to occur, I'm not sure how stable the system will be.
-> Specifically, the i2c controller is used (among other things) to talk
-> to the PMU and adjust voltages in the system.  If we just sent it a
-> random command, I'd rather report the bug right away so we don't get
-> hard to find/reproduce failures in other parts of the system.
+where the flags would be a bitmask of properties, so:
 
-that's a good point, I still think that e.g. making a cellphone
-unresponsive until a watchdog reset triggers just because you got a FIFO
-overflow on the I2C controller is too much.
+	PINMUX_F_TRISTATE
+	PINMUX_F_PUPD
+	etc
 
---=20
-balbi
+which would map to pinmux,tristate properties etc.  The tegra (or 
+picoxcell...) specific driver would then map any regs and setup the 
+pinmux tables and call the parser loop with the correct callback.  This 
+would require looping over the child nodes as we've discussed before, 
+and the decoding of the func_enum in the nvidia driver, but I think 
+that's okay.
 
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOSXukAAoJEAv8Txj19kN11pQIAJlIJw+kHOicIT917XAJFY6E
-ozSUe9rSBTkr7/jyBub7VGHWyMw5dJE6QvOOyuyl0Z+BMjcmEwRqTdRuX1rIM0AD
-RHCh5BsPa16mnO9v3CVCt+Jn0Cu96j+iNM730rduUMc1cJRDDA0cCLjwBye4DCUp
-u+7p+QfilZHuIsnlnuSOjMLdglE3FUszlhbcr58YObtc8F+tmqNuaNJdBtB6ZrHI
-vbX5xCXOV9TPm5ZBCDa+vvWv4wVbWd7qxUJKKjs1+eGXvMG1E4MjiE6V+6D5hwsc
-DJAumuKbeYPytN04liYsvhZIDrjzb9qolxMro+JN3NjdIPMPNxkBK2g/R3Rld8w=
-=WPkP
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+Jamie
