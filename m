@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren@nvidia.com>
-Subject: [RFC PATCH v2 09/13] gpio/tegra: Add device tree support
-Date: Mon, 15 Aug 2011 14:28:16 -0600
-Message-ID: <1313440100-17131-10-git-send-email-swarren@nvidia.com>
+Subject: [RFC PATCH v2 12/13] arm/tegra: board-dt: Remove dependency on non-dt pinmux functions
+Date: Mon, 15 Aug 2011 14:28:19 -0600
+Message-ID: <1313440100-17131-13-git-send-email-swarren@nvidia.com>
 References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
@@ -12,65 +12,52 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- drivers/gpio/gpio-tegra.c |   32 ++++++++++++++++++++++++++++++++
- 1 files changed, 32 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/Makefile   |    1 -
+ arch/arm/mach-tegra/board-dt.c |   10 ----------
+ 2 files changed, 0 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 4da4839..1d0a764 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -326,6 +326,30 @@ static struct irq_chip tegra_gpio_irq_chip = {
- #endif
- };
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index f11b910..bab6544 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -30,7 +30,6 @@ obj-${CONFIG_MACH_SEABOARD}             += board-seaboard.o
+ obj-${CONFIG_MACH_SEABOARD}             += board-seaboard-pinmux.o
  
-+#ifdef CONFIG_OF
-+static void __init tegra_gpio_probe_dt(struct platform_device *pdev)
-+{
-+	const __be32 *gpios;
-+	u32 gpioslen;
-+	int i;
-+
-+	gpios = of_get_property(pdev->dev.of_node, "nvidia,enabled-gpios",
-+				&gpioslen);
-+	if (gpios == NULL)
-+		return;
-+
-+	gpioslen /= sizeof(*gpios);
-+	for (i = 0; i < gpioslen; i++, gpios++) {
-+		u32 gpio = be32_to_cpup(gpios);
-+		dev_dbg(&pdev->dev, "Enabling GPIO %d\n", gpio);
-+		tegra_gpio_enable(gpio);
-+	}
-+}
-+#else
-+static inline void __init tegra_gpio_probe_dt(struct platform_device *pdev)
-+{
-+}
-+#endif
+ obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
+-obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
  
- /* This lock class tells lockdep that GPIO irqs are in a different
-  * category than their parents, so it won't report false recursion.
-@@ -371,13 +395,21 @@ static int __init tegra_gpio_probe(struct platform_device *pdev)
- 			spin_lock_init(&bank->lvl_lock[j]);
- 	}
+ obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
+ obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index 1995b79..06e82c4 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -41,14 +41,9 @@
+ #include <mach/irqs.h>
  
-+	tegra_gpio_probe_dt(pdev);
-+
- 	return 0;
- }
+ #include "board.h"
+-#include "board-harmony.h"
+ #include "clock.h"
+ #include "devices.h"
  
-+static struct of_device_id tegra_gpio_of_match[] __devinitdata = {
-+	{ .compatible = "nvidia,tegra20-gpio", },
-+	{ },
-+};
-+
- static struct platform_driver tegra_gpio_driver = {
- 	.driver		= {
- 		.name	= "tegra-gpio",
- 		.owner	= THIS_MODULE,
-+		.of_match_table = tegra_gpio_of_match,
- 	},
- 	.probe		= tegra_gpio_probe,
- };
+-void harmony_pinmux_init(void);
+-void seaboard_pinmux_init(void);
+-
+-
+ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-gpio", TEGRA_GPIO_BASE, "tegra-gpio", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-pinmux", TEGRA_APB_MISC_BASE, "tegra-pinmux", NULL),
+@@ -93,11 +88,6 @@ static void __init tegra_dt_init(void)
+ 
+ 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
+ 
+-	if (of_machine_is_compatible("nvidia,harmony"))
+-		harmony_pinmux_init();
+-	else if (of_machine_is_compatible("nvidia,seaboard"))
+-		seaboard_pinmux_init();
+-
+ 	/*
+ 	 * Finished with the static registrations now; fill in the missing
+ 	 * devices
 -- 
 1.7.0.4
