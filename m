@@ -1,73 +1,38 @@
-From: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Add missing include of linux/erron.h and
- linux/types.h
-Date: Tue, 16 Aug 2011 13:15:44 +0800
-Message-ID: <1313471744.5824.2.camel@phoenix>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH] ARM: tegra: Add missing include of linux/erron.h and
+	linux/types.h
+Date: Tue, 16 Aug 2011 08:19:18 +0300
+Message-ID: <20110816051918.GA19435@sapphire.tkos.co.il>
+References: <1313471744.5824.2.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1313471744.5824.2.camel@phoenix>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Axel Lin <axel.lin@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Include linux/erron.h to fix below build error.
+Hi Axel,
 
-  CC      arch/arm/mach-tegra/board-harmony-pinmux.o
-In file included from /home/axel/repos/git/linux-2.6/arch/arm/include/asm/gpio.h:5,
-                 from include/linux/gpio.h:18,
-                 from arch/arm/mach-tegra/board-harmony-pinmux.c:18:
-arch/arm/mach-tegra/include/mach/gpio.h: In function 'gpio_to_irq':
-arch/arm/mach-tegra/include/mach/gpio.h:35: error: 'EINVAL' undeclared (first use in this function)
-arch/arm/mach-tegra/include/mach/gpio.h:35: error: (Each undeclared identifier is reported only once
-arch/arm/mach-tegra/include/mach/gpio.h:35: error: for each function it appears in.)
-arch/arm/mach-tegra/include/mach/gpio.h: In function 'irq_to_gpio':
-arch/arm/mach-tegra/include/mach/gpio.h:43: error: 'EINVAL' undeclared (first use in this function)
-make[1]: *** [arch/arm/mach-tegra/board-harmony-pinmux.o] Error 1
-make: *** [arch/arm/mach-tegra] Error 2
+On Tue, Aug 16, 2011 at 01:15:44PM +0800, Axel Lin wrote:
+> Include linux/erron.h to fix below build error.
 
-Include linux/types.h to fix below build error.
+s/erron/errno/ here, and in the subject.
 
-  CC      arch/arm/mach-tegra/board-trimslice-pinmux.o
-In file included from /home/axel/repos/git/linux-2.6/arch/arm/include/asm/gpio.h:5,
-                 from include/linux/gpio.h:18,
-                 from arch/arm/mach-tegra/board-trimslice-pinmux.c:16:
-arch/arm/mach-tegra/include/mach/gpio.h:49: error: expected specifier-qualifier-list before 'bool'
-arch/arm/mach-tegra/board-trimslice-pinmux.c:145: error: unknown field 'enable' specified in initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:145: warning: excess elements in struct initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:145: warning: (near initialization for 'gpio_table[0]')
-arch/arm/mach-tegra/board-trimslice-pinmux.c:146: error: unknown field 'enable' specified in initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:146: warning: excess elements in struct initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:146: warning: (near initialization for 'gpio_table[1]')
-arch/arm/mach-tegra/board-trimslice-pinmux.c:148: error: unknown field 'enable' specified in initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:148: warning: excess elements in struct initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:148: warning: (near initialization for 'gpio_table[2]')
-arch/arm/mach-tegra/board-trimslice-pinmux.c:149: error: unknown field 'enable' specified in initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:149: warning: excess elements in struct initializer
-arch/arm/mach-tegra/board-trimslice-pinmux.c:149: warning: (near initialization for 'gpio_table[3]')
-make[1]: *** [arch/arm/mach-tegra/board-trimslice-pinmux.o] Error 1
-make: *** [arch/arm/mach-tegra] Error 2
+baruch
 
-Signed-off-by: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-This patch is against linux-next (next-20110815), it fixes the build error with "make tegra_defconfig".
-Axel
- arch/arm/mach-tegra/include/mach/gpio.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
-index e353805..42f3f08 100644
---- a/arch/arm/mach-tegra/include/mach/gpio.h
-+++ b/arch/arm/mach-tegra/include/mach/gpio.h
-@@ -21,6 +21,8 @@
- #define __MACH_TEGRA_GPIO_H
- 
- #include <linux/init.h>
-+#include <linux/errno.h>
-+#include <linux/types.h>
- #include <mach/irqs.h>
- 
- #define TEGRA_NR_GPIOS		INT_GPIO_NR
 -- 
-1.7.4.1
+                                                     ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
