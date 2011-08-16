@@ -1,61 +1,92 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [RFC PATCH v2 03/13] arm/tegra: board-dt: Add AUXDATA for
-	tegra-gpio and tegra-pinmux
-Date: Tue, 16 Aug 2011 11:30:56 +0800
-Message-ID: <20110816033056.GE8044@S2100-06.ap.freescale.net>
+From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: Re: [RFC PATCH v2 09/13] gpio/tegra: Add device tree support
+Date: Tue, 16 Aug 2011 11:39:01 +0800
+Message-ID: <20110816033900.GF8044@S2100-06.ap.freescale.net>
 References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
-	<1313440100-17131-4-git-send-email-swarren@nvidia.com>
+ <1313440100-17131-10-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1313440100-17131-4-git-send-email-swarren@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>, Belisko Marek <marek.belisko@gmail.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, Sergei Shtylyov <sshtylyov@mvista.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Jamie Iles <jamie@jamieiles.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1313440100-17131-10-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 15, 2011 at 02:28:10PM -0600, Stephen Warren wrote:
-> Add AUXDATA so that Tegra GPIO and pinmux devices that are instantiated
-> from device-tree are named consistently with the static platform devices
-> in mach-tegra/devices.c. Note that the device-tree file tegra20.dtsi
-> already includes a node for the Tegra GPIO controller, whereas the node
-> for the Tegra pinmux controller will be added in a subsequent commit.
-> 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+On Mon, Aug 15, 2011 at 02:28:16PM -0600, Stephen Warren wrote:
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/board-dt.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
+>  drivers/gpio/gpio-tegra.c |   32 ++++++++++++++++++++++++++++++++
+>  1 files changed, 32 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-> index 9f47e04..1995b79 100644
-> --- a/arch/arm/mach-tegra/board-dt.c
-> +++ b/arch/arm/mach-tegra/board-dt.c
-> @@ -50,6 +50,8 @@ void seaboard_pinmux_init(void);
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 4da4839..1d0a764 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -326,6 +326,30 @@ static struct irq_chip tegra_gpio_irq_chip = {
+>  #endif
+>  };
 >  
+> +#ifdef CONFIG_OF
+> +static void __init tegra_gpio_probe_dt(struct platform_device *pdev)
+> +{
+> +	const __be32 *gpios;
+> +	u32 gpioslen;
+> +	int i;
+> +
+> +	gpios = of_get_property(pdev->dev.of_node, "nvidia,enabled-gpios",
+> +				&gpioslen);
+> +	if (gpios == NULL)
+> +		return;
+> +
+> +	gpioslen /= sizeof(*gpios);
+> +	for (i = 0; i < gpioslen; i++, gpios++) {
+> +		u32 gpio = be32_to_cpup(gpios);
+> +		dev_dbg(&pdev->dev, "Enabling GPIO %d\n", gpio);
+> +		tegra_gpio_enable(gpio);
+> +	}
+> +}
+> +#else
+> +static inline void __init tegra_gpio_probe_dt(struct platform_device *pdev)
+> +{
+> +}
+> +#endif
 >  
->  struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
-> +	OF_DEV_AUXDATA("nvidia,tegra20-gpio", TEGRA_GPIO_BASE, "tegra-gpio", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-pinmux", TEGRA_APB_MISC_BASE, "tegra-pinmux", NULL),
->  	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
->  	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC2_BASE, "sdhci-tegra.1", NULL),
->  	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC3_BASE, "sdhci-tegra.2", NULL),
-> 
-The whole auxdata table was primarily added to keep clk API working
-with the device name looking up.  Your gpio and pinmux can still work
-without this patch, right?  If that's case, I do not think we need to
-have this patch just for consistent device name between dt and non-dt.
-They are not and they do not have to be.
+With your patch below being merged, and the suggestion that
+of_property_read_u32[_array] should be used to read integer from
+device tree, the #ifdef thing can be removed?
 
--- 
+  [PATCH] dt: add empty of_get_property for non-dt
+
 Regards,
 Shawn
+
+>  /* This lock class tells lockdep that GPIO irqs are in a different
+>   * category than their parents, so it won't report false recursion.
+> @@ -371,13 +395,21 @@ static int __init tegra_gpio_probe(struct platform_device *pdev)
+>  			spin_lock_init(&bank->lvl_lock[j]);
+>  	}
+>  
+> +	tegra_gpio_probe_dt(pdev);
+> +
+>  	return 0;
+>  }
+>  
+> +static struct of_device_id tegra_gpio_of_match[] __devinitdata = {
+> +	{ .compatible = "nvidia,tegra20-gpio", },
+> +	{ },
+> +};
+> +
+>  static struct platform_driver tegra_gpio_driver = {
+>  	.driver		= {
+>  		.name	= "tegra-gpio",
+>  		.owner	= THIS_MODULE,
+> +		.of_match_table = tegra_gpio_of_match,
+>  	},
+>  	.probe		= tegra_gpio_probe,
+>  };
+> -- 
+> 1.7.0.4
+> 
+> 
