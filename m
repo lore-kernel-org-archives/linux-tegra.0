@@ -1,130 +1,86 @@
-From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
-Subject: Re: [RFC PATCH 10/12] arm/tegra: Add device tree support to pinmux
- driver
-Date: Mon, 15 Aug 2011 21:50:42 +0100
-Message-ID: <20110815205042.GC22355@gallagher>
-References: <1313189697-21287-1-git-send-email-swarren@nvidia.com>
- <1313189697-21287-11-git-send-email-swarren@nvidia.com>
- <20110815200716.GA22355@gallagher>
- <20110815203617.GB22355@gallagher>
- <74CDBE0F657A3D45AFBB94109FB122FF04AEA25174@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04AEA25174-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "Linus Walleij (linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org)" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v2] i2c: tegra: Check for overflow errors with BUG_ON.
+Date: Mon, 15 Aug 2011 18:32:16 -0700
+Message-ID: <1313458336-31456-1-git-send-email-dianders@chromium.org>
+References: <1313434172-18319-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1313434172-18319-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 15, 2011 at 01:44:53PM -0700, Stephen Warren wrote:
-> Jamie Iles wrote at Monday, August 15, 2011 2:36 PM:
-> > On Mon, Aug 15, 2011 at 09:07:16PM +0100, Jamie Iles wrote:
-> > > Hi Stephen,
-> > >
-> > > On Fri, Aug 12, 2011 at 04:54:55PM -0600, Stephen Warren wrote:
-> > > > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ...
-> > > > diff --git a/arch/arm/mach-tegra/pinmux.c b/arch/arm/mach-tegra/pinmux.c
-> ...
-> > > > +static void __init tegra_pinmux_probe_dt(struct platform_device *pdev)
-> > > > +{
-> > > > +	int pg;
-> > > > +
-> > > > +	for (pg = 0; pg < TEGRA_MAX_PINGROUP; pg++) {
-> > > > +		const char *pg_name = pingroup_name(pg);
-> > > > +		struct tegra_pingroup_config config;
-> > > > +		struct device_node *pg_node;
-> > > > +		int ret;
-> > > > +		const char *s;
-> > > > +
-> > > > +		pg_node = of_find_child_node_by_name(pdev->dev.of_node,
-> > > > +						     pg_name);
-> > > > +		if (pg_node == NULL)
-> > > > +			continue;
-> > > > +
-> > > > +		config.pingroup = pg;
-> > > > +
-> > > > +		ret = of_property_read_string(pg_node, "nvidia,function", &s);
-> ...
-> > > > +		ret = of_property_read_string(pg_node, "nvidia,pull", &s);
-> ...
-> > > > +		if (of_find_property(pg_node, "nvidia,tristate", NULL))
-> ...
-> > > > +		tegra_pinmux_config_pingroup(&config);
-> > > > +
-> > > > +		of_node_put(pg_node);
-> > > > +	}
-> > > > +}
-> > >
-> > > I need to implement DT muxing configuration for my platform, and I believe
-> > > that what you have here would work fine for me too, and to avoid duplicating
-> > > the same thing, I wonder if this could be a little more generic.
-> > >
-> > > So if the platform specific pinmux driver called the pinmux parser with a
-> > > callback for a pingroup configuration function then this wouldn't need the
-> > > nvidia specific properties.  I'd envisage the setup callback to be something
-> > > like:
-> > >
-> > > 	int pingroup_configure(const char *name, unsigned long flags);
-> > 
-> > and it if this took the device_node too then the platform specific bits could
-> > handle more esoteric properties if required.  I'll have a go at prototyping
-> > this tomorrow unless there are any obvious reasons that this is a stupid idea!
-> 
-> I expect some of the code could be shared.
-> 
-> The only worry I have is whether some SoCs don't configure things like
-> pinmux function in the same place as pad function (pullup/down, tristate),
-> and hence whether a generic binding is generally applicable. I suppose the
-> code could always ignore unused properties.
+This change doesn't fix any known problems but turns
+on the overflow detection feature of the i2c controller
+in the hopes of flushing out any current (or future)
+bugs in the i2c driver.
 
-Yes, well our hardware doesn't support any of these features other than 
-setting the function so in the picoxcell backend I'd just WARN_ON() invalid 
-flags settings.
+Inspired by a change on nvidia's git server:
+  http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commit;h=266d1b7397284505e55d06254b497cb32be07b69
 
-> I wonder how much of this is relevant to Linus W's pinctrl API?
+Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+This takes Felipe Balbi's suggestion of making the overflow
+error non-fatal.
 
-Hmm, not sure on that one, it's been a while since I've looked at Linus' 
-patches.
+ drivers/i2c/busses/i2c-tegra.c |   17 ++++++++++++++---
+ 1 files changed, 14 insertions(+), 3 deletions(-)
 
-> Note that in the updated patch series I just posted, I reworked the binding
-> a little; Tegra has two sets of pin-groups, one configuring muxing, pullup/
-> down, and tri-state, and the other configuring various driver strength/
-> rate properties. Hence, the tree is now e.g.:
-> 
-> 	pinmux: pinmux@70000000 {
-> 		compatible = "nvidia,tegra20-pinmux";
-> 		reg = < 0x70000000 0xc00 >;
-> 		nvidia,mux-groups {
-> 			cdev1 {
-> 				nvidia,function = "plla_out";
-> 			};
-> 			cdev2 {
-> 				nvidia,function = "pllp_out4";
-> 				nvidia,pull-down;
-> 				nvidia,tristate;
-> 			};
-> 		};
-> 		nvidia,drive-groups {
-> 			sdio1 {
-> 				nvidia,schmitt;
-> 				nvidia,drive-power = <1>;
-> 				nvidia,pull-down-strength = <31>;
-> 				nvidia,pull-up-strength = <31>;
-> 				nvidia,slew-rate-rising = <3>;
-> 				nvidia,slew-rate-falling = <3>;
-> 			};
-> 		};
-> 	};
-> 
-> But it's probably still reasonably easy to make the parser for the mux-groups
-> node generic. Perhaps it makes sense for all SoCs to have a "mux-settings"
-> node, even if they don't have any other custom nodes?
-
-You have a much more complex chip than I do!  I don't know if *all* SoC's have 
-to have the same muxing binding, but it feels that this one should cover a lot 
-of the most common bases.
-
-Jamie
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 2440b74..34634b7 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -83,6 +83,7 @@
+ #define I2C_ERR_NO_ACK				0x01
+ #define I2C_ERR_ARBITRATION_LOST		0x02
+ #define I2C_ERR_UNKNOWN_INTERRUPT		0x04
++#define I2C_ERR_FIFO_OVERFLOW			0x08
+ 
+ #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+ #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+@@ -367,7 +368,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ {
+ 	u32 status;
+-	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
++	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
++		I2C_INT_TX_FIFO_OVERFLOW;
+ 	struct tegra_i2c_dev *i2c_dev = dev_id;
+ 
+ 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
+@@ -389,6 +391,14 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	}
+ 
+ 	if (unlikely(status & status_err)) {
++		/*
++		 * Overflow should be impossible unless we've got a
++		 * bug in the driver, but check anyway.
++		 */
++		if (status & I2C_INT_TX_FIFO_OVERFLOW) {
++			WARN_ON(1);
++			i2c_dev->msg_err |= I2C_ERR_FIFO_OVERFLOW;
++		}
+ 		if (status & I2C_INT_NO_ACK)
+ 			i2c_dev->msg_err |= I2C_ERR_NO_ACK;
+ 		if (status & I2C_INT_ARBITRATION_LOST)
+@@ -423,7 +433,7 @@ err:
+ 	/* An error occurred, mask all interrupts */
+ 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+ 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+-		I2C_INT_RX_FIFO_DATA_REQ);
++		I2C_INT_RX_FIFO_DATA_REQ | I2C_INT_TX_FIFO_OVERFLOW);
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+ 	if (i2c_dev->is_dvc)
+ 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+@@ -473,7 +483,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (!(msg->flags & I2C_M_RD))
+ 		tegra_i2c_fill_tx_fifo(i2c_dev);
+ 
+-	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
++	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
++		I2C_INT_TX_FIFO_OVERFLOW;
+ 	if (msg->flags & I2C_M_RD)
+ 		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
+ 	else if (i2c_dev->msg_buf_remaining)
+-- 
+1.7.3.1
