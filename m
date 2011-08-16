@@ -1,134 +1,93 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 06/13] docs/dt: Document nvidia,tegra20-pinmux
- binding
-Date: Tue, 16 Aug 2011 10:32:05 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA2537D@HQMAIL01.nvidia.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
- <1313440100-17131-7-git-send-email-swarren@nvidia.com>
- <201108161551.31389.arnd@arndb.de>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: tegra: Check for overflow errors with BUG_ON.
+Date: Tue, 16 Aug 2011 11:00:09 -0700
+Message-ID: <1313517609.7279.0.camel@rklein-linux2>
+References: <1313434172-18319-1-git-send-email-dianders@chromium.org>
+	 <1313458336-31456-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201108161551.31389.arnd-r2nGTMty4D4@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1313458336-31456-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann wrote at Tuesday, August 16, 2011 7:52 AM:
-> On Monday 15 August 2011, Stephen Warren wrote:
-> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |  294 ++++++++++++++++++++
-> >  1 files changed, 294 insertions(+), 0 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt b/Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
-> > new file mode 100644
-> > index 0000000..744e1b7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
-> > @@ -0,0 +1,294 @@
-> > +NVIDIA Tegra 2 pinmux controller
-> > +
-> > +Required properties:
-> > +- compatible : "nvidia,tegra20-pinmux"
+On Mon, 2011-08-15 at 18:32 -0700, Doug Anderson wrote:
+> This change doesn't fix any known problems but turns
+> on the overflow detection feature of the i2c controller
+> in the hopes of flushing out any current (or future)
+> bugs in the i2c driver.
 > 
-> Hmm, I think it would be much better in general if we could define
-> pinmux bindings in a way that is less specific to just one soc.
-
-> The contents of this file seem to be specific to even just one
-> version of the tegra chip, and might be completely different for
-> tegra30 and later, right?
-
-The general concepts are the same between tegra20 and tegra30.
-
-Tegra30 has a different set of mux and drive pingroups.
-
-Tegra30 has more functions that can be assigned to pins.
-
-Tegra30 has three more options per mux pingroup, although I haven't
-Investigated whether any of those would need to be represented in DT;
-I suspect at least one will, possibly all.
-
-> Maybe Linus W can comment on this and say whether he thinks it can
-> be generalized enough to apply to other pinmux drivers.
+> Inspired by a change on nvidia's git server:
+>   http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commit;h=266d1b7397284505e55d06254b497cb32be07b69
 > 
-> > +Optional sub-nodes:
-> > +- nvidia,mux-groups : Mux group settings; see below.
-> > +- nvidia,drive-groups : Drive group settings; see below.
-> > +
-> > +nvidia,mux-groups sub-node:
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+> This takes Felipe Balbi's suggestion of making the overflow
+> error non-fatal.
 > 
-> These concepts seem general enough to me that they can apply to
-> other chips, and I would consequently drop the nvidia, prefix.
-
-Two things to note about Tegra that might not apply to all SoCs:
-
-* There are separate groups of pins for Muxing (plus some config) vs.
-drive-strength (and related config). Some SoCs might use the same set
-of groups for both. Perhaps some SoC might even have three or more types
-of groups! I expect this to have some impact on the binding; I created
-explicit mux-groups and drive-groups sub-nodes to represent this.
-
-* Tegra's pinmux apply settings to groups of pins instead of individual
-pins. Some SoCs might allow each setting to be configurable per-pin.
-I don't expect this to have any impact as far as the bindings go though;
-it'll simply impact the names of the available pin "groups"; some SoCs
-will name groups, others pins.
-
-> > +Each mux pin group is represented as a sub-node of the nvidia,mux-groups node.
-> > +The name of the sub-node should be the name of the mux pingroup. The following
-> > +names are valid:
-> > +
-> > +	ata
-> > +	atb
-> > +	atc
-> > +	atd
-> > +	ate
-> > +	cdev1
-> > +	cdev2
-> > ...
+>  drivers/i2c/busses/i2c-tegra.c |   17 ++++++++++++++---
+>  1 files changed, 14 insertions(+), 3 deletions(-)
 > 
-> I noticed that each board you define has a complete list of these. Would
-> it be possible to move a generic list into a tegra20-pinmux.dtsi file and
-> just override the pins in the per-board .dts file that require some special
-> setup?
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 2440b74..34634b7 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -83,6 +83,7 @@
+>  #define I2C_ERR_NO_ACK				0x01
+>  #define I2C_ERR_ARBITRATION_LOST		0x02
+>  #define I2C_ERR_UNKNOWN_INTERRUPT		0x04
+> +#define I2C_ERR_FIFO_OVERFLOW			0x08
+>  
+>  #define PACKET_HEADER0_HEADER_SIZE_SHIFT	28
+>  #define PACKET_HEADER0_PACKET_ID_SHIFT		16
+> @@ -367,7 +368,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>  static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  {
+>  	u32 status;
+> -	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+> +	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+> +		I2C_INT_TX_FIFO_OVERFLOW;
+>  	struct tegra_i2c_dev *i2c_dev = dev_id;
+>  
+>  	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
+> @@ -389,6 +391,14 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	}
+>  
+>  	if (unlikely(status & status_err)) {
+> +		/*
+> +		 * Overflow should be impossible unless we've got a
+> +		 * bug in the driver, but check anyway.
+> +		 */
+> +		if (status & I2C_INT_TX_FIFO_OVERFLOW) {
+> +			WARN_ON(1);
+> +			i2c_dev->msg_err |= I2C_ERR_FIFO_OVERFLOW;
+> +		}
+>  		if (status & I2C_INT_NO_ACK)
+>  			i2c_dev->msg_err |= I2C_ERR_NO_ACK;
+>  		if (status & I2C_INT_ARBITRATION_LOST)
+> @@ -423,7 +433,7 @@ err:
+>  	/* An error occurred, mask all interrupts */
+>  	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+>  		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+> -		I2C_INT_RX_FIFO_DATA_REQ);
+> +		I2C_INT_RX_FIFO_DATA_REQ | I2C_INT_TX_FIFO_OVERFLOW);
+>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+>  	if (i2c_dev->is_dvc)
+>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+> @@ -473,7 +483,8 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	if (!(msg->flags & I2C_M_RD))
+>  		tegra_i2c_fill_tx_fifo(i2c_dev);
+>  
+> -	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+> +	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+> +		I2C_INT_TX_FIFO_OVERFLOW;
+>  	if (msg->flags & I2C_M_RD)
+>  		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
+>  	else if (i2c_dev->msg_buf_remaining)
 
-I'm not sure how much commonality there will really be.
+Seems good to me.
 
-Certainly, many boards are based off our reference designs and so will
-have many similarities that could be shared.
-
-That said, comparing even tegra-harmony.dts and tegra-seaboard.dts shows
-a lot of differences. It seems a lot less error-prone to just completely
-describe the entire pinmux state in each board's .dts file, rather than
-trying to represent half the information as default in the SoC .dtsi file,
-and just the diff in the board .dts file. I suppose perhaps if we put the
-hardware's own default settings in tegra20.dtsi, that'd make sense, since
-people are presumably reasonably aware of the delta relative to that.
-
-We'd need to add new properties to override defaults, like:
-
-nvidia,tristate --> nvidia,drive
-nvidia,pull-*   --> nvidia,no-pull
-
-> > +
-> > +optional subnode-properties:
-> > +- nvidia,pull-up : Boolean, apply Tegra's internal pull-up to the pin.
-> > +- nvidia,pull-down : Boolean, apply Tegra's internal pull-down to the pin.
-> > +- nvidia,tristate : Boolean, tristate the pin. Otherwise, drive it.
-> > +
-> > +If both nvidia,pull-up and nvidia,pull-down are specified, nvidia,pull-up
-> > +takes precedence.
-> 
-> These again seem generic enough to go into a general pinmux binding, without
-> the nvidia, prefix.
-
-Yes, I believe Jamie Iles was going to try cooking up a generic core binding
-that could be shared across different SoCs, and extended with custom stuff.
-
--- 
-nvpublic
+Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
