@@ -1,107 +1,54 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 02/13] arm/tegra: Avoid duplicate gpio/pinmux
- devices with dt
-Date: Tue, 16 Aug 2011 13:46:12 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AEA25449@HQMAIL01.nvidia.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
- <1313440100-17131-3-git-send-email-swarren@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: Fwd: [GIT PULL] [3.2] Please pull tegra boards for 3.2
+Date: Tue, 16 Aug 2011 23:12:33 +0200
+Message-ID: <2300535.b0zjAbUTLi@wuerfel>
+References: <CAOesGMjHN-pvVfMN0o3AD238m8wEiRS-D4ArjV_2VAGTuwPfBw@mail.gmail.com> <201108161648.58250.arnd@arndb.de> <CAOesGMgZCFF=dWhAm_+Ux-c-aORqo4sJ1DOGirCu3QT-iMcQRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1313440100-17131-3-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <CAOesGMgZCFF=dWhAm_+Ux-c-aORqo4sJ1DOGirCu3QT-iMcQRQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Monday, August 15, 2011 2:28 PM:
-> A future change will set up gpio and pinmux platform device registration
-> in device-tree files, via board-dt.c. When board-dt.c calls into
-> harmony/seaboard_pinmux_init(), this will cause a duplicate registration
-> of those platform devices, which will cause kernel boot failure.
+On Tuesday 16 August 2011 12:30:50 Olof Johansson wrote:
+> On Tue, Aug 16, 2011 at 7:48 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> >
+> > The contents all look good, but I'm undecided whether we should have
+> > branches that are not based on a -rc release. In your case, it's
+> > halfway between -rc1 and -rc2.
+> >
+> > Do others have an opinion? If we decide to take development branches
+> > only when they are based on a proper -rc, I'll do the simple rebase
+> > of the patches and push them out, otherwise I'll push them as they are.
+> 
+> I guess it depends on what you and others prefer -- if you want to
+> aggregate the branches in arm-soc.git through the development weeks,
+> or if you prefer to get most of the merge requests when platform
+> maintainers are getting ready for the merge window and feeding things
+> up?
 
-It looks like this patch, and the subsequent revert, aren't actually needed.
+I definitely want to have the patches as early as possible, but not
+more than one pull request per branch per week or -rc ideally.
 
-The boot failure I saw earlier was actually due to the pinmux driver crashing
-if pdev->dev.of_node==NULL during probe.
+> Either is fine with me -- if it's easier for me to hold off the merge
+> requests a while, then I'll start a for-next branch and ask Stephen to
+> add it, and rebase it a few times up until when the merge request to
+> arm-soc is sent. Maybe it's just easier for everyone to do it that way
+> -- the drawback is that there's less visibility about what's about to
+> go in until the merge requests start to drop in late in the cycle. The
+> git history won't be quite as wide then either.
 
-With that fixed, with this patch series as is, there are then warnings due
-to tegra-gpio and tegra-pinmux each being registered twice, due to the
-following patch setting up AUXDATA and causing the device-tree-registered
-and platform-device-registered devices to have the same name.
+I would prefer to have all branches that I send to Linus go into the
+-next through the arm-soc tree as well, not get sent there individually.
 
-However, I'm dropping the AUXDATA patch, so that issue doesn't occur.
+Basically, when you consider patches stable and ready for upstream
+and expect no further changes, I'll pull the patches into arm-soc.git
+and you can add further patches on top of the branch that I have already
+pulled (not on an aggregated branch) and I can pull that again. If you
+have unrelated changes, then I'd prefer them to be on top of an -rc
+release for the next pull request.
 
-And hence, I will drop this patch, and its subsequent revert. This will
-cause the GPIO and pinmux drivers to be temporarily instantiated twice.
-However, that doesn't actually cause any problems, and will be solved af
-ew patches later anyway.
-
-(Let me know if anyone thinks this patch should stay in).
-
-> To solve this, modify harmony/seaboard_pinmux_init() so that they only
-> register the platform devices when actually running on Harmony/Seaboard;
-> when board-dt.c is in use, a different machine type is used.
-> 
-> This change is a temporary measure to ensure git bisectability. It will
-> be reverted when board-dt.c no longer calls harmony/seaboard_pinmux_init().
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/board-harmony-pinmux.c  |    5 ++++-
->  arch/arm/mach-tegra/board-seaboard-pinmux.c |    5 ++++-
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
-> index e99b456..130018d 100644
-> --- a/arch/arm/mach-tegra/board-harmony-pinmux.c
-> +++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
-> @@ -14,6 +14,8 @@
->   *
->   */
-> 
-> +#include <asm/mach-types.h>
-> +
->  #include <linux/kernel.h>
->  #include <linux/gpio.h>
->  #include <mach/pinmux.h>
-> @@ -161,7 +163,8 @@ static struct tegra_gpio_table gpio_table[] = {
-> 
->  void harmony_pinmux_init(void)
->  {
-> -	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-> +	if (machine_is_harmony())
-> +		platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-> 
->  	tegra_pinmux_config_table(harmony_pinmux, ARRAY_SIZE(harmony_pinmux));
-> 
-> diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-> index f092298..bc4dc17 100644
-> --- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-> +++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-> @@ -12,6 +12,8 @@
->   *
->   */
-> 
-> +#include <asm/mach-types.h>
-> +
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/gpio.h>
-> @@ -176,7 +178,8 @@ static struct tegra_gpio_table gpio_table[] = {
-> 
->  void __init seaboard_pinmux_init(void)
->  {
-> -	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-> +	if (machine_is_seaboard())
-> +		platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-> 
->  	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
-> 
-> --
-> 1.7.0.4
-
--- 
-nvpublic
+	Arnd
