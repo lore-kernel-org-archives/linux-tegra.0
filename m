@@ -1,63 +1,73 @@
-From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: Re: [RFC PATCH v2 06/13] docs/dt: Document nvidia,tegra20-pinmux
- binding
-Date: Tue, 16 Aug 2011 11:48:27 +0800
-Message-ID: <20110816034827.GH8044@S2100-06.ap.freescale.net>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
- <1313440100-17131-7-git-send-email-swarren@nvidia.com>
+From: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Add missing include of linux/erron.h and
+ linux/types.h
+Date: Tue, 16 Aug 2011 13:15:44 +0800
+Message-ID: <1313471744.5824.2.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1313440100-17131-7-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 15, 2011 at 02:28:13PM -0600, Stephen Warren wrote:
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |  294 ++++++++++++++++++++
->  1 files changed, 294 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
-> 
-[...]
-> +
-> +Example of a gpio-controller node:
-> +
+Include linux/erron.h to fix below build error.
 
-You meant pinmux node instead of gpio.
+  CC      arch/arm/mach-tegra/board-harmony-pinmux.o
+In file included from /home/axel/repos/git/linux-2.6/arch/arm/include/asm/gpio.h:5,
+                 from include/linux/gpio.h:18,
+                 from arch/arm/mach-tegra/board-harmony-pinmux.c:18:
+arch/arm/mach-tegra/include/mach/gpio.h: In function 'gpio_to_irq':
+arch/arm/mach-tegra/include/mach/gpio.h:35: error: 'EINVAL' undeclared (first use in this function)
+arch/arm/mach-tegra/include/mach/gpio.h:35: error: (Each undeclared identifier is reported only once
+arch/arm/mach-tegra/include/mach/gpio.h:35: error: for each function it appears in.)
+arch/arm/mach-tegra/include/mach/gpio.h: In function 'irq_to_gpio':
+arch/arm/mach-tegra/include/mach/gpio.h:43: error: 'EINVAL' undeclared (first use in this function)
+make[1]: *** [arch/arm/mach-tegra/board-harmony-pinmux.o] Error 1
+make: *** [arch/arm/mach-tegra] Error 2
 
-Regards,
-Shawn
+Include linux/types.h to fix below build error.
 
-> +	pinmux: pinmux@70000000 {
-> +		compatible = "nvidia,tegra20-pinmux";
-> +		reg = < 0x70000000 0xc00 >;
-> +		nvidia,mux-groups {
-> +			cdev1 {
-> +				nvidia,function = "plla_out";
-> +			};
-> +			cdev2 {
-> +				nvidia,function = "pllp_out4";
-> +				nvidia,pull-down;
-> +				nvidia,tristate;
-> +			};
-> +		};
-> +		nvidia,drive-groups {
-> +			sdio1 {
-> +				nvidia,schmitt;
-> +				nvidia,drive-power = <1>;
-> +				nvidia,pull-down-strength = <31>;
-> +				nvidia,pull-up-strength = <31>;
-> +				nvidia,slew-rate-rising = <3>;
-> +				nvidia,slew-rate-falling = <3>;
-> +			};
-> +		};
-> +	};
-> +
-> -- 
-> 1.7.0.4
-> 
-> 
+  CC      arch/arm/mach-tegra/board-trimslice-pinmux.o
+In file included from /home/axel/repos/git/linux-2.6/arch/arm/include/asm/gpio.h:5,
+                 from include/linux/gpio.h:18,
+                 from arch/arm/mach-tegra/board-trimslice-pinmux.c:16:
+arch/arm/mach-tegra/include/mach/gpio.h:49: error: expected specifier-qualifier-list before 'bool'
+arch/arm/mach-tegra/board-trimslice-pinmux.c:145: error: unknown field 'enable' specified in initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:145: warning: excess elements in struct initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:145: warning: (near initialization for 'gpio_table[0]')
+arch/arm/mach-tegra/board-trimslice-pinmux.c:146: error: unknown field 'enable' specified in initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:146: warning: excess elements in struct initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:146: warning: (near initialization for 'gpio_table[1]')
+arch/arm/mach-tegra/board-trimslice-pinmux.c:148: error: unknown field 'enable' specified in initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:148: warning: excess elements in struct initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:148: warning: (near initialization for 'gpio_table[2]')
+arch/arm/mach-tegra/board-trimslice-pinmux.c:149: error: unknown field 'enable' specified in initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:149: warning: excess elements in struct initializer
+arch/arm/mach-tegra/board-trimslice-pinmux.c:149: warning: (near initialization for 'gpio_table[3]')
+make[1]: *** [arch/arm/mach-tegra/board-trimslice-pinmux.o] Error 1
+make: *** [arch/arm/mach-tegra] Error 2
+
+Signed-off-by: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+This patch is against linux-next (next-20110815), it fixes the build error with "make tegra_defconfig".
+Axel
+ arch/arm/mach-tegra/include/mach/gpio.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
+index e353805..42f3f08 100644
+--- a/arch/arm/mach-tegra/include/mach/gpio.h
++++ b/arch/arm/mach-tegra/include/mach/gpio.h
+@@ -21,6 +21,8 @@
+ #define __MACH_TEGRA_GPIO_H
+ 
+ #include <linux/init.h>
++#include <linux/errno.h>
++#include <linux/types.h>
+ #include <mach/irqs.h>
+ 
+ #define TEGRA_NR_GPIOS		INT_GPIO_NR
+-- 
+1.7.4.1
