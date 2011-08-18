@@ -1,121 +1,44 @@
-From: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [RFC PATCH] add slave mode support to tegra's i2c controller
-Date: Thu, 18 Aug 2011 09:49:04 +0200
-Message-ID: <201108180949.05586.marvin24@gmx.de>
-References: <201108172101.27170.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3066@HQMAIL01.nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
+Date: Thu, 18 Aug 2011 11:15:52 +0200
+Message-ID: <201108181115.53101.arnd@arndb.de>
+References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
+	<201108171323.38441.arnd@arndb.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AF6F3062@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3066-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3062-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+On Thursday 18 August 2011, Stephen Warren wrote:
+> It looks like DT already supports the generic case for GPIO; each GPIO
+> reference is of the form:
+> 
+> <&gpio 69 0>
+> 
+> and so each GPIO has a "parent" specified, and hence can come from a
+> different controller.
+> 
+> For drivers, this is all completely hidden by of_get_gpio().
+> 
+> I imagine we'd just use the same pattern for pinmux. This would both
+> support the general case, and end up being consistent with how GPIOs
+> already work, so this seems like a win both ways.
+> 
 
-> Marc Dietrich wrote at Wednesday, August 17, 2011 1:01 PM:
-> > the patch below adds slave mode to tegra's i2c controller. I tried to
-> > make it as small as possible. It is needed to allow the nvec driver to
-> > deligate the initialization to the i2c-tegra driver as part of its
-> > cleanup. Patch is tested with our version of nvec. Patch is against
-> > arm-soc + boards-3.2. Please review and consider it for merge.
-> 
-> Forgive my lack of familiarity with the Tegra HW, but is the slave
-> controller completely autonomous? I'm curious what data slave transactions
-> access, since there's no actual code here to respond to transactions
-> directed at the slave address and provide data in response.
-> 
-> Or put another way, is this patch really adding slave mode support, or
-> is it just providing a way to program the slave controller's I2C address?
+Ah right. I had not seen the gpio binding yet, so that definitely works.
 
-well, documentation still hasn't spontanously materialized here, so I cannot 
-answer you questions regarding hw. What I understood is that slave and master 
-sit on the same bus, so either of them needs to be shut down. Sorry for my poor 
-wording.
-
-We (the AC100 team) wrote a simple driver for dealing with the communication. 
-You may find the latest version at 
-http://gitorious.org/~marvin24/ac100/marvin24s-kernel/trees/chromeos-
-ac100-2.6.38/drivers/staging/nvec which I'm trying to push to mainline kernel. 
-The changes to i2c-tegra are required to make some progress on our side. I'm 
-also planing to reuse more of i2c-tegra init stuff.
-
-> Some comments below.
-> 
-> > diff --git a/drivers/i2c/busses/i2c-tegra.c
-> > b/drivers/i2c/busses/i2c-tegra.c
-> 
-> ...
-> 
-> > -struct tegra_i2c_dev {
-> > -	struct device *dev;
-> > -	struct i2c_adapter adapter;
-> 
-> ...
-> 
-> > -};
-> 
-> Nothing got added that needed that struct definition in a header file;
-> was there meant to be a new file included in the patch that implements
-> the slave driver (and makefile and perhaps Kconfig changes?)
-
-it is added, but not to i2c-tegra, but nvec.c in drivers/staging/nvec. I think 
-it's better to split these functions because a master can be anything so there 
-is no common protocol which can be implemented in i2c-tegra.
-
-> 
-> > +	int slave_addr = i2c_dev->is_slave ? 0xfc : i2c_dev->slave_addr;
-> 
-> Isn't that backwards; don't you want to hard-code the slave address as 0xfc
-> only when the controller isn't intended to be used in slave mode?
-
-Doh, yes. I think I just didn't noticed in my testing because we still reprogram 
-the slave address in our init (which should be removed in the near future).
-
-> >  	i2c_dev->bus_clk_rate = 100000; /* default clock rate */
-> >  	if (pdata) {
-> >  	
-> >  		i2c_dev->bus_clk_rate = pdata->bus_clk_rate;
-> > 
-> > +		i2c_dev->is_slave = pdata->is_slave;
-> > +		i2c_dev->slave_addr = pdata->slave_addr;
-> 
-> Maybe store a pointer to pdata itself rather than having to copy this
-> manually; it'll be one less thing to worry about when adding fields to
-> pdata.
-
-well, pdata is normally freed after init so we cannot use it. The current code 
-in chromeos also adds a slave_addr so I just bodly added it here. It won't have 
-any effect on the board files because all field are normally initilized with 
-zeros which is a fine default.
-
-> 
-> ...
-> 
-> > -	ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
-> > -	if (ret) {
-> > -		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
-> > -		goto err_free;
-> > +	if (!i2c_dev->is_slave) {
-> > +		ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name,
-> > i2c_dev); +		if (ret) {
-> > +			dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
-> > +			goto err_free;
-> > +		}
-> > 
-> >  	}
-> 
-> This appears to make master and slave mode mutually exclusive. Doesn't
-> the HW allow use of both controllers on the same bus?
-
-I cannot think of how both modes can exist at the same time (maybe isr can 
-detect what was meant), but well, as I said already, I'm also not familar with 
-the hw. But you may be right that the i2c master mode should be disabled somehow 
-if we are in slave mode (like slave is normally disabled via I2C_SL_CNFG_NACK). 
-
-Thanks
-
-Marc
+	Arnd
