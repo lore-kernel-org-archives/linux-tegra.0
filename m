@@ -1,68 +1,96 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Wed, 17 Aug 2011 23:22:16 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3062@HQMAIL01.nvidia.com>
+Subject: RE: [RFC PATCH v2 06/13] docs/dt: Document nvidia,tegra20-pinmux
+ binding
+Date: Wed, 17 Aug 2011 23:36:38 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3063@HQMAIL01.nvidia.com>
 References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
-	<201108161637.16620.arnd@arndb.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA25368@HQMAIL01.nvidia.com>
-	<201108171323.38441.arnd@arndb.de>
+ <201108161551.31389.arnd@arndb.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF04AEA2537D@HQMAIL01.nvidia.com>
+ <201108171337.26166.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201108171323.38441.arnd-r2nGTMty4D4@public.gmane.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201108171337.26166.arnd-r2nGTMty4D4@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann wrote at Wednesday, August 17, 2011 5:24 AM:
-> On Tuesday 16 August 2011, Stephen Warren wrote:
-> > One issue here: There isn't always a single gpio/pinmux parent; as a
-> > concrete example, the ALSA/ASoC driver for Tegra+WM8903 uses GPIOs both
-> > from Tegra itself, and from the WM8903 audio codec.
+Arnd Bergmann wrote at Wednesday, August 17, 2011 5:37 AM:
+...
+> > > > +Each mux pin group is represented as a sub-node of the nvidia,mux-groups node.
+> > > > +The name of the sub-node should be the name of the mux pingroup. The following
+> > > > +names are valid:
+> > > > +
+> > > > +	ata
+> > > > +	atb
+> > > > +	atc
+> > > > +	atd
+> > > > +	ate
+> > > > +	cdev1
+> > > > +	cdev2
+> > > > ...
+> > >
+> > > I noticed that each board you define has a complete list of these. Would
+> > > it be possible to move a generic list into a tegra20-pinmux.dtsi file and
+> > > just override the pins in the per-board .dts file that require some special
+> > > setup?
 > >
-> > I could imagine the same being true in basically any case where one
-> > device uses N GPIOs (e.g. SD controller with power, change-detect,
-> > and read-only GPIOs; some could easily come from the SoC and some
-> > from a GPIO expander).
+> > I'm not sure how much commonality there will really be.
 > >
-> > I'm not quite so sure that multiple parents would be useful for pinmux,
-> > but I wouldn't say that it was impossible...
+> > Certainly, many boards are based off our reference designs and so will
+> > have many similarities that could be shared.
+> >
+> > That said, comparing even tegra-harmony.dts and tegra-seaboard.dts shows
+> > a lot of differences. It seems a lot less error-prone to just completely
+> > describe the entire pinmux state in each board's .dts file, rather than
+> > trying to represent half the information as default in the SoC .dtsi file,
+> > and just the diff in the board .dts file. I suppose perhaps if we put the
+> > hardware's own default settings in tegra20.dtsi, that'd make sense, since
+> > people are presumably reasonably aware of the delta relative to that.
+> >
+> > We'd need to add new properties to override defaults, like:
+> >
+> > nvidia,tristate --> nvidia,drive
+> > nvidia,pull-*   --> nvidia,no-pull
 > 
-> Hmm, how common do you think the example is?
+> The split I had in mind is more to the effect that the .dtsi file
+> describes the set of pins that is there with their names and addresses,
+> while the board specific file describes how they are set up. Does that
+> make sense? I think I'm still missing some essential aspect of what the
+> pinmux code actually does ;-)
 > 
-> It it's just a very rare case, we can still special-case it by
-> introducing fake subdevices for the Tegra+WM8903 driver, each of
-> which has only one gpio-parent. This is ugly but keeps the special
-> case to the rare devices.
-> 
-> If we can expect more than a handful of these, we probably need
-> a better design for the binding, which will cause a burden for
-> all drivers.
+> I now saw that you have the full description in the
+> arch/arm/mach-tegra/pinmux-t2-tables.c and arch/arm/mach-tegra/pinmux.c
+> files, with all the names again, and apparently your patch set leaves
+> these around. Do you think it's possible to actually move the static
+> tables from there into the device tree and do the entire setup based
+> on that?
 
-It looks like DT already supports the generic case for GPIO; each GPIO
-reference is of the form:
+Ah, so you're looking for tegra20.dtsi to define the set pin groups that
+can be configured, and tegra-harmony.dts to provide the configuration for
+each of those pingroups.
 
-<&gpio 69 0>
+As you see from my patches, I had assumed that the Tegra pinmux driver
+would be what ended up defining the available pin groups, the register
+addresses and fields for those groups, just like it does today. The DT
+would only provide the configuration for each group. That's the reason
+I didn't understand your questions the first time around.
 
-and so each GPIO has a "parent" specified, and hence can come from a
-different controller.
+So yes, I think we could represent the set of available pin groups in
+tegra20.dtsi; it's just some data tables. I don't think this provides as
+much benefit as moving the per-board configuration data into DT though,
+because it changes only per SoC generation, not per board.
 
-For drivers, this is all completely hidden by of_get_gpio().
+Still, putting the list of pingroups in tegra20.dtsi does move that data
+out of the kernel, although it bloats each DTB with almost static data
+that'll take a bunch of time to parse. It's worth considering though.
 
-I imagine we'd just use the same pattern for pinmux. This would both
-support the general case, and end up being consistent with how GPIOs
-already work, so this seems like a win both ways.
+I'm unclear how to resolve where the best location for the data is though;
+should we just go ahead and move it from the pinmux driver to DT right now,
+or discuss more or ...?
 
 -- 
 nvpublic
