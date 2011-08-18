@@ -1,96 +1,59 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 06/13] docs/dt: Document nvidia,tegra20-pinmux
- binding
-Date: Wed, 17 Aug 2011 23:36:38 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3063@HQMAIL01.nvidia.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
- <201108161551.31389.arnd@arndb.de>
- <74CDBE0F657A3D45AFBB94109FB122FF04AEA2537D@HQMAIL01.nvidia.com>
- <201108171337.26166.arnd@arndb.de>
+Subject: RE: [RFC PATCH] add slave mode support to tegra's i2c controller
+Date: Wed, 17 Aug 2011 23:57:14 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3066@HQMAIL01.nvidia.com>
+References: <201108172101.27170.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201108171337.26166.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <201108172101.27170.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann wrote at Wednesday, August 17, 2011 5:37 AM:
-...
-> > > > +Each mux pin group is represented as a sub-node of the nvidia,mux-groups node.
-> > > > +The name of the sub-node should be the name of the mux pingroup. The following
-> > > > +names are valid:
-> > > > +
-> > > > +	ata
-> > > > +	atb
-> > > > +	atc
-> > > > +	atd
-> > > > +	ate
-> > > > +	cdev1
-> > > > +	cdev2
-> > > > ...
-> > >
-> > > I noticed that each board you define has a complete list of these. Would
-> > > it be possible to move a generic list into a tegra20-pinmux.dtsi file and
-> > > just override the pins in the per-board .dts file that require some special
-> > > setup?
-> >
-> > I'm not sure how much commonality there will really be.
-> >
-> > Certainly, many boards are based off our reference designs and so will
-> > have many similarities that could be shared.
-> >
-> > That said, comparing even tegra-harmony.dts and tegra-seaboard.dts shows
-> > a lot of differences. It seems a lot less error-prone to just completely
-> > describe the entire pinmux state in each board's .dts file, rather than
-> > trying to represent half the information as default in the SoC .dtsi file,
-> > and just the diff in the board .dts file. I suppose perhaps if we put the
-> > hardware's own default settings in tegra20.dtsi, that'd make sense, since
-> > people are presumably reasonably aware of the delta relative to that.
-> >
-> > We'd need to add new properties to override defaults, like:
-> >
-> > nvidia,tristate --> nvidia,drive
-> > nvidia,pull-*   --> nvidia,no-pull
-> 
-> The split I had in mind is more to the effect that the .dtsi file
-> describes the set of pins that is there with their names and addresses,
-> while the board specific file describes how they are set up. Does that
-> make sense? I think I'm still missing some essential aspect of what the
-> pinmux code actually does ;-)
-> 
-> I now saw that you have the full description in the
-> arch/arm/mach-tegra/pinmux-t2-tables.c and arch/arm/mach-tegra/pinmux.c
-> files, with all the names again, and apparently your patch set leaves
-> these around. Do you think it's possible to actually move the static
-> tables from there into the device tree and do the entire setup based
-> on that?
-
-Ah, so you're looking for tegra20.dtsi to define the set pin groups that
-can be configured, and tegra-harmony.dts to provide the configuration for
-each of those pingroups.
-
-As you see from my patches, I had assumed that the Tegra pinmux driver
-would be what ended up defining the available pin groups, the register
-addresses and fields for those groups, just like it does today. The DT
-would only provide the configuration for each group. That's the reason
-I didn't understand your questions the first time around.
-
-So yes, I think we could represent the set of available pin groups in
-tegra20.dtsi; it's just some data tables. I don't think this provides as
-much benefit as moving the per-board configuration data into DT though,
-because it changes only per SoC generation, not per board.
-
-Still, putting the list of pingroups in tegra20.dtsi does move that data
-out of the kernel, although it bloats each DTB with almost static data
-that'll take a bunch of time to parse. It's worth considering though.
-
-I'm unclear how to resolve where the best location for the data is though;
-should we just go ahead and move it from the pinmux driver to DT right now,
-or discuss more or ...?
-
--- 
-nvpublic
+TWFyYyBEaWV0cmljaCB3cm90ZSBhdCBXZWRuZXNkYXksIEF1Z3VzdCAxNywgMjAxMSAxOjAxIFBN
+Og0KPiB0aGUgcGF0Y2ggYmVsb3cgYWRkcyBzbGF2ZSBtb2RlIHRvIHRlZ3JhJ3MgaTJjIGNvbnRy
+b2xsZXIuIEkgdHJpZWQgdG8gbWFrZSBpdCBhcw0KPiBzbWFsbCBhcyBwb3NzaWJsZS4gSXQgaXMg
+bmVlZGVkIHRvIGFsbG93IHRoZSBudmVjIGRyaXZlciB0byBkZWxpZ2F0ZSB0aGUNCj4gaW5pdGlh
+bGl6YXRpb24gdG8gdGhlIGkyYy10ZWdyYSBkcml2ZXIgYXMgcGFydCBvZiBpdHMgY2xlYW51cC4g
+UGF0Y2ggaXMgdGVzdGVkDQo+IHdpdGggb3VyIHZlcnNpb24gb2YgbnZlYy4gUGF0Y2ggaXMgYWdh
+aW5zdCBhcm0tc29jICsgYm9hcmRzLTMuMi4gUGxlYXNlIHJldmlldw0KPiBhbmQgY29uc2lkZXIg
+aXQgZm9yIG1lcmdlLg0KDQpGb3JnaXZlIG15IGxhY2sgb2YgZmFtaWxpYXJpdHkgd2l0aCB0aGUg
+VGVncmEgSFcsIGJ1dCBpcyB0aGUgc2xhdmUNCmNvbnRyb2xsZXIgY29tcGxldGVseSBhdXRvbm9t
+b3VzPyBJJ20gY3VyaW91cyB3aGF0IGRhdGEgc2xhdmUgdHJhbnNhY3Rpb25zDQphY2Nlc3MsIHNp
+bmNlIHRoZXJlJ3Mgbm8gYWN0dWFsIGNvZGUgaGVyZSB0byByZXNwb25kIHRvIHRyYW5zYWN0aW9u
+cw0KZGlyZWN0ZWQgYXQgdGhlIHNsYXZlIGFkZHJlc3MgYW5kIHByb3ZpZGUgZGF0YSBpbiByZXNw
+b25zZS4NCg0KT3IgcHV0IGFub3RoZXIgd2F5LCBpcyB0aGlzIHBhdGNoIHJlYWxseSBhZGRpbmcg
+c2xhdmUgbW9kZSBzdXBwb3J0LCBvcg0KaXMgaXQganVzdCBwcm92aWRpbmcgYSB3YXkgdG8gcHJv
+Z3JhbSB0aGUgc2xhdmUgY29udHJvbGxlcidzIEkyQyBhZGRyZXNzPw0KDQpTb21lIGNvbW1lbnRz
+IGJlbG93Lg0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMg
+Yi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCi4uLg0KPiAtc3RydWN0IHRlZ3JhX2ky
+Y19kZXYgew0KPiAtCXN0cnVjdCBkZXZpY2UgKmRldjsNCj4gLQlzdHJ1Y3QgaTJjX2FkYXB0ZXIg
+YWRhcHRlcjsNCi4uLg0KPiAtfTsNCg0KTm90aGluZyBnb3QgYWRkZWQgdGhhdCBuZWVkZWQgdGhh
+dCBzdHJ1Y3QgZGVmaW5pdGlvbiBpbiBhIGhlYWRlciBmaWxlOw0Kd2FzIHRoZXJlIG1lYW50IHRv
+IGJlIGEgbmV3IGZpbGUgaW5jbHVkZWQgaW4gdGhlIHBhdGNoIHRoYXQgaW1wbGVtZW50cw0KdGhl
+IHNsYXZlIGRyaXZlciAoYW5kIG1ha2VmaWxlIGFuZCBwZXJoYXBzIEtjb25maWcgY2hhbmdlcz8p
+DQoNCj4gKwlpbnQgc2xhdmVfYWRkciA9IGkyY19kZXYtPmlzX3NsYXZlID8gMHhmYyA6IGkyY19k
+ZXYtPnNsYXZlX2FkZHI7DQoNCklzbid0IHRoYXQgYmFja3dhcmRzOyBkb24ndCB5b3Ugd2FudCB0
+byBoYXJkLWNvZGUgdGhlIHNsYXZlIGFkZHJlc3MgYXMgMHhmYyBvbmx5DQp3aGVuIHRoZSBjb250
+cm9sbGVyIGlzbid0IGludGVuZGVkIHRvIGJlIHVzZWQgaW4gc2xhdmUgbW9kZT8NCg0KPiAgCWky
+Y19kZXYtPmJ1c19jbGtfcmF0ZSA9IDEwMDAwMDsgLyogZGVmYXVsdCBjbG9jayByYXRlICovDQo+
+ICAJaWYgKHBkYXRhKSB7DQo+ICAJCWkyY19kZXYtPmJ1c19jbGtfcmF0ZSA9IHBkYXRhLT5idXNf
+Y2xrX3JhdGU7DQo+ICsJCWkyY19kZXYtPmlzX3NsYXZlID0gcGRhdGEtPmlzX3NsYXZlOw0KPiAr
+CQlpMmNfZGV2LT5zbGF2ZV9hZGRyID0gcGRhdGEtPnNsYXZlX2FkZHI7DQoNCk1heWJlIHN0b3Jl
+IGEgcG9pbnRlciB0byBwZGF0YSBpdHNlbGYgcmF0aGVyIHRoYW4gaGF2aW5nIHRvIGNvcHkgdGhp
+cw0KbWFudWFsbHk7IGl0J2xsIGJlIG9uZSBsZXNzIHRoaW5nIHRvIHdvcnJ5IGFib3V0IHdoZW4g
+YWRkaW5nIGZpZWxkcyB0bw0KcGRhdGEuDQoNCi4uLg0KPiAtCXJldCA9IHJlcXVlc3RfaXJxKGky
+Y19kZXYtPmlycSwgdGVncmFfaTJjX2lzciwgMCwgcGRldi0+bmFtZSwgaTJjX2Rldik7DQo+IC0J
+aWYgKHJldCkgew0KPiAtCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJGYWlsZWQgdG8gcmVxdWVzdCBp
+cnEgJWlcbiIsIGkyY19kZXYtPmlycSk7DQo+IC0JCWdvdG8gZXJyX2ZyZWU7DQo+ICsJaWYgKCFp
+MmNfZGV2LT5pc19zbGF2ZSkgew0KPiArCQlyZXQgPSByZXF1ZXN0X2lycShpMmNfZGV2LT5pcnEs
+IHRlZ3JhX2kyY19pc3IsIDAsIHBkZXYtPm5hbWUsIGkyY19kZXYpOw0KPiArCQlpZiAocmV0KSB7
+DQo+ICsJCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJGYWlsZWQgdG8gcmVxdWVzdCBpcnEgJWlcbiIs
+IGkyY19kZXYtPmlycSk7DQo+ICsJCQlnb3RvIGVycl9mcmVlOw0KPiArCQl9DQo+ICAJfQ0KDQpU
+aGlzIGFwcGVhcnMgdG8gbWFrZSBtYXN0ZXIgYW5kIHNsYXZlIG1vZGUgbXV0dWFsbHkgZXhjbHVz
+aXZlLiBEb2Vzbid0DQp0aGUgSFcgYWxsb3cgdXNlIG9mIGJvdGggY29udHJvbGxlcnMgb24gdGhl
+IHNhbWUgYnVzPw0KDQotLSANCm52cHVibGljDQoNCg==
