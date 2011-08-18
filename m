@@ -1,195 +1,68 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [RFC PATCH] add slave mode support to tegra's i2c controller
-Date: Wed, 17 Aug 2011 21:01:26 +0200
-Message-ID: <201108172101.27170.marvin24@gmx.de>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
+Date: Wed, 17 Aug 2011 23:22:16 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04AF6F3062@HQMAIL01.nvidia.com>
+References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
+	<201108161637.16620.arnd@arndb.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AEA25368@HQMAIL01.nvidia.com>
+	<201108171323.38441.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <201108171323.38441.arnd-r2nGTMty4D4@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Arnd Bergmann wrote at Wednesday, August 17, 2011 5:24 AM:
+> On Tuesday 16 August 2011, Stephen Warren wrote:
+> > One issue here: There isn't always a single gpio/pinmux parent; as a
+> > concrete example, the ALSA/ASoC driver for Tegra+WM8903 uses GPIOs both
+> > from Tegra itself, and from the WM8903 audio codec.
+> >
+> > I could imagine the same being true in basically any case where one
+> > device uses N GPIOs (e.g. SD controller with power, change-detect,
+> > and read-only GPIOs; some could easily come from the SoC and some
+> > from a GPIO expander).
+> >
+> > I'm not quite so sure that multiple parents would be useful for pinmux,
+> > but I wouldn't say that it was impossible...
+> 
+> Hmm, how common do you think the example is?
+> 
+> It it's just a very rare case, we can still special-case it by
+> introducing fake subdevices for the Tegra+WM8903 driver, each of
+> which has only one gpio-parent. This is ugly but keeps the special
+> case to the rare devices.
+> 
+> If we can expect more than a handful of these, we probably need
+> a better design for the binding, which will cause a burden for
+> all drivers.
 
-the patch below adds slave mode to tegra's i2c controller. I tried to make it as 
-small as possible. It is needed to allow the nvec driver to deligate the 
-initialization to the i2c-tegra driver as part of its cleanup. Patch is tested 
-with our version of nvec. Patch is against arm-soc + boards-3.2. Please review 
-and consider it for merge. 
+It looks like DT already supports the generic case for GPIO; each GPIO
+reference is of the form:
 
-Thanks
+<&gpio 69 0>
 
-Marc
+and so each GPIO has a "parent" specified, and hence can come from a
+different controller.
 
-===
+For drivers, this is all completely hidden by of_get_gpio().
 
-    ARM: tegra: add slave mode support to tegra's i2c controller
-    
-    This adds support for tegra's i2c-controller slave mode operation.
-    It programs the slave address provided by the platform data and skips
-    the interrupt registration which is deligated to the master device
-    driver. Additionaly, the i2c device structure definition is moved to
-    the header file, so it can be used by the master device driver.
+I imagine we'd just use the same pattern for pinmux. This would both
+support the general case, and end up being consistent with how GPIOs
+already work, so this seems like a win both ways.
 
-	Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 2440b74..b4c23d5 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -99,45 +99,6 @@
- #define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
--/**
-- * struct tegra_i2c_dev	- per device i2c context
-- * @dev: device reference for power management
-- * @adapter: core i2c layer adapter information
-- * @clk: clock reference for i2c controller
-- * @i2c_clk: clock reference for i2c bus
-- * @iomem: memory resource for registers
-- * @base: ioremapped registers cookie
-- * @cont_id: i2c controller id, used for for packet header
-- * @irq: irq number of transfer complete interrupt
-- * @is_dvc: identifies the DVC i2c controller, has a different register layout
-- * @msg_complete: transfer completion notifier
-- * @msg_err: error code for completed message
-- * @msg_buf: pointer to current message data
-- * @msg_buf_remaining: size of unsent data in the message buffer
-- * @msg_read: identifies read transfers
-- * @bus_clk_rate: current i2c bus clock rate
-- * @is_suspended: prevents i2c controller accesses after suspend is called
-- */
--struct tegra_i2c_dev {
--	struct device *dev;
--	struct i2c_adapter adapter;
--	struct clk *clk;
--	struct clk *i2c_clk;
--	struct resource *iomem;
--	void __iomem *base;
--	int cont_id;
--	int irq;
--	bool irq_disabled;
--	int is_dvc;
--	struct completion msg_complete;
--	int msg_err;
--	u8 *msg_buf;
--	size_t msg_buf_remaining;
--	int msg_read;
--	unsigned long bus_clk_rate;
--	bool is_suspended;
--};
--
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned long 
-reg)
- {
- 	writel(val, i2c_dev->base + reg);
-@@ -322,6 +283,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val;
- 	int err = 0;
-+	int slave_addr = i2c_dev->is_slave ? 0xfc : i2c_dev->slave_addr;
- 
- 	clk_enable(i2c_dev->clk);
- 
-@@ -342,8 +304,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
- 		sl_cfg |= I2C_SL_CNFG_NACK | I2C_SL_CNFG_NEWSL;
- 		i2c_writel(i2c_dev, sl_cfg, I2C_SL_CNFG);
--		i2c_writel(i2c_dev, 0xfc, I2C_SL_ADDR1);
--		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
-+		i2c_writel(i2c_dev, slave_addr & 0xff, I2C_SL_ADDR1);
-+		i2c_writel(i2c_dev, slave_addr >> 8, I2C_SL_ADDR2);
- 
- 	}
- 
-@@ -609,6 +571,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->bus_clk_rate = 100000; /* default clock rate */
- 	if (pdata) {
- 		i2c_dev->bus_clk_rate = pdata->bus_clk_rate;
-+		i2c_dev->is_slave = pdata->is_slave;
-+		i2c_dev->slave_addr = pdata->slave_addr;
- 
- 	} else if (i2c_dev->dev->of_node) {    /* if there is a device tree node ... 
-*/
- 		prop = of_get_property(i2c_dev->dev->of_node,
-@@ -629,10 +593,12 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto err_free;
- 	}
- 
--	ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
--		goto err_free;
-+	if (!i2c_dev->is_slave) {
-+		ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
-+			goto err_free;
-+		}
- 	}
- 
- 	clk_enable(i2c_dev->i2c_clk);
-diff --git a/include/linux/i2c-tegra.h b/include/linux/i2c-tegra.h
-index 9c85da4..2729863 100644
---- a/include/linux/i2c-tegra.h
-+++ b/include/linux/i2c-tegra.h
-@@ -18,8 +18,55 @@
- #ifndef _LINUX_I2C_TEGRA_H
- #define _LINUX_I2C_TEGRA_H
- 
-+#include <linux/i2c.h>
-+
- struct tegra_i2c_platform_data {
- 	unsigned long bus_clk_rate;
-+	bool is_slave;
-+	u16 slave_addr;
-+};
-+
-+/**
-+ * struct tegra_i2c_dev	- per device i2c context
-+ * @dev: device reference for power management
-+ * @adapter: core i2c layer adapter information
-+ * @clk: clock reference for i2c controller
-+ * @i2c_clk: clock reference for i2c bus
-+ * @iomem: memory resource for registers
-+ * @base: ioremapped registers cookie
-+ * @cont_id: i2c controller id, used for for packet header
-+ * @irq: irq number of transfer complete interrupt
-+ * @is_dvc: identifies the DVC i2c controller, has a different register layout
-+ * @is_slave: identifies a controller in slave mode operation
-+ * @slave_addr: the slave address if in slave mode
-+ * @msg_complete: transfer completion notifier
-+ * @msg_err: error code for completed message
-+ * @msg_buf: pointer to current message data
-+ * @msg_buf_remaining: size of unsent data in the message buffer
-+ * @msg_read: identifies read transfers
-+ * @bus_clk_rate: current i2c bus clock rate
-+ * @is_suspended: prevents i2c controller accesses after suspend is called
-+ */
-+struct tegra_i2c_dev {
-+	struct device *dev;
-+	struct i2c_adapter adapter;
-+	struct clk *clk;
-+	struct clk *i2c_clk;
-+	struct resource *iomem;
-+	void __iomem *base;
-+	int cont_id;
-+	int irq;
-+	u16 slave_addr;
-+	bool irq_disabled;
-+	bool is_dvc;
-+	bool is_slave;
-+	struct completion msg_complete;
-+	int msg_err;
-+	u8 *msg_buf;
-+	size_t msg_buf_remaining;
-+	int msg_read;
-+	unsigned long bus_clk_rate;
-+	bool is_suspended;
- };
- 
- #endif /* _LINUX_I2C_TEGRA_H */
+-- 
+nvpublic
