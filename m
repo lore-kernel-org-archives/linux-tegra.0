@@ -1,107 +1,74 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Mon, 22 Aug 2011 12:56:28 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B24A3687@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
+Date: Mon, 22 Aug 2011 15:56:55 -0700
+Message-ID: <CAOesGMhGb1-sOaBU4oaa_8-1triS01tOmseJqYyCm849feLhXg@mail.gmail.com>
 References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B24A3687@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1313440100-17131-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B24A3687-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Monday, August 15, 2011 2:28 PM:
-> ...
-> This patch modifies Tegra's device tree support to remove the dependency
-> on harmony_pinmux_init(), thus making it completely board-independent.
+On Mon, Aug 22, 2011 at 12:56 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
+rote:
+> Stephen Warren wrote at Monday, August 15, 2011 2:28 PM:
+>> ...
+>> This patch modifies Tegra's device tree support to remove the depend=
+ency
+>> on harmony_pinmux_init(), thus making it completely board-independen=
+t.
+>
+> I had the good fortune of meeting Grant at LinuxCon last week and tal=
+ked
+> through this patchset a little (thanks!)
+>
+> The message I got from Grant was that the patches are basically OK. H=
+e
+> did have a couple of concerns:
+>
+> * Does this cause the compiled DTB to blow up in size.
+>
+> The DTB goes from ~3-4K to ~8-9K with these patches added. While that
+> is a large % increase, Grant said that as an absolute value, that siz=
+e
+> shouldn't be an issue.
 
-I had the good fortune of meeting Grant at LinuxCon last week and talked
-through this patchset a little (thanks!)
+Agreed, especially if compared with the size of the current in-kernel t=
+able.
 
-The message I got from Grant was that the patches are basically OK. He
-did have a couple of concerns:
+> * There's lots of repetition in the .dts representation; can this be =
+improved?
+>
+[...]
+> meaningless-name { // typically would just use the pin name
+> =A0 =A0pins =3D "ld0", "ld1", "ld2", ...;
+> =A0 =A0nvidia,function =3D "displaya";
+> =A0 =A0nvidia,pull-down;
+> };
 
-* Does this cause the compiled DTB to blow up in size.
+That sounds quite close to what I was thinking about earlier (with
+s/meaningless-name/displaya/ in the above example).
 
-The DTB goes from ~3-4K to ~8-9K with these patches added. While that
-is a large % increase, Grant said that as an absolute value, that size
-shouldn't be an issue.
+> * We also briefly discussed that dtc could be modified to support sym=
+bolic
+> constants, so we could use named integers for the function names (per=
+haps
+> pin names too). I'll look into how easy it is to modify dtc for this.
 
-* There's lots of repetition in the .dts representation; can this be improved?
+That'd be useful, I think -- there's still the whole issue of the same
+pin function being at different mux locations on different pin groups,
+so an integer representation might not work.
 
-We discussed enhancing the syntax a little, so that you can configure
-multiple pins/pingroups from a single node. In particular, the syntax
-in my patches was:
+> I'll look into implementing these enhancements, and others discussed =
+in
+> this email thread, and repost.
 
-ld0 {
-    nvidia,function = "displaya";
-    nvidia,pull-down;
-};
-ld1 {
-    nvidia,function = "displaya";
-    nvidia,pull-down;
-};
+Cool.
 
-Which we discussed enhancing to something like:
 
-ld0 {
-    additional-pins = "ld1", "ld2", ...;
-    nvidia,function = "displaya";
-    nvidia,pull-down;
-};
-
-or:
-
-meaningless-name { // typically would just use the pin name
-    pins = "ld0", "ld1", "ld2", ...;
-    nvidia,function = "displaya";
-    nvidia,pull-down;
-};
-
-* We also briefly discussed that dtc could be modified to support symbolic
-constants, so we could use named integers for the function names (perhaps
-pin names too). I'll look into how easy it is to modify dtc for this.
-
-I'll look into implementing these enhancements, and others discussed in
-this email thread, and repost.
-
-> ...
-> Stephen Warren (13):
->   arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
->   arm/tegra: Avoid duplicate gpio/pinmux devices with dt
->   arm/tegra: board-dt: Add AUXDATA for tegra-gpio and tegra-pinmux
->   docs/dt: Document nvidia,tegra20-gpio's nvidia,enabled-gpios property
->   arm/dt: Tegra: Add nvidia,gpios property to GPIO controller
->   docs/dt: Document nvidia,tegra20-pinmux binding
->   arm/dt: Tegra: Add pinmux node
->   gpio/tegra: Convert to a platform device
->   gpio/tegra: Add device tree support
->   arm/tegra: Convert pinmux driver to a platform device
->   arm/tegra: Add device tree support to pinmux driver
->   arm/tegra: board-dt: Remove dependency on non-dt pinmux functions
->   arm/tegra: Remove temporary gpio/pinmux registration workaround
-> 
->  .../devicetree/bindings/gpio/gpio_nvidia.txt       |   20 +
->  .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |  294 ++++++++++++
->  arch/arm/boot/dts/tegra-harmony.dts                |  483 ++++++++++++++++++++
->  arch/arm/boot/dts/tegra-seaboard.dts               |  421 +++++++++++++++++
->  arch/arm/boot/dts/tegra20.dtsi                     |    5 +
->  arch/arm/mach-tegra/Makefile                       |    1 -
->  arch/arm/mach-tegra/board-dt.c                     |   12 +-
->  arch/arm/mach-tegra/board-harmony-pinmux.c         |    8 +
->  arch/arm/mach-tegra/board-paz00-pinmux.c           |    8 +
->  arch/arm/mach-tegra/board-seaboard-pinmux.c        |    9 +-
->  arch/arm/mach-tegra/board-trimslice-pinmux.c       |    7 +
->  arch/arm/mach-tegra/devices.c                      |   10 +
->  arch/arm/mach-tegra/devices.h                      |    2 +
->  arch/arm/mach-tegra/pinmux.c                       |  269 +++++++++++
->  drivers/gpio/gpio-tegra.c                          |   57 ++-
->  15 files changed, 1582 insertions(+), 24 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
-
--- 
-nvpublic
+-Olof
