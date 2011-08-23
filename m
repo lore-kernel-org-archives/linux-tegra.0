@@ -1,59 +1,73 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Tue, 23 Aug 2011 11:49:56 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B24A38E6@HQMAIL01.nvidia.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
-	<201108161509.17157.arnd@arndb.de>
-	<CACRpkdaVx=6AJ5DFjVN1ZYQ++hu9pT6WxD9n+pqmYVaCf1xawg@mail.gmail.com>
-	<201108161637.16620.arnd@arndb.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA25368@HQMAIL01.nvidia.com>
- <CACRpkdY=nVQYnznTU7=_D0n1V1U_xOKH2y75-jKp7k7NzwH8Zw@mail.gmail.com>
+From: Liam Girdwood <lrg@ti.com>
+Subject: Re: [PATCH] ASoC: Tegra: wm8903 machine driver: Drop
+	Ventana support
+Date: Tue, 23 Aug 2011 20:26:59 +0100
+Message-ID: <4E53FF03.1030100@ti.com>
+References: <1314119788-23000-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdY=nVQYnznTU7=_D0n1V1U_xOKH2y75-jKp7k7NzwH8Zw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1314119788-23000-1-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Linus Walleij wrote at Tuesday, August 23, 2011 6:51 AM:
-> On Tue, Aug 16, 2011 at 7:12 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On 23/08/11 18:16, Stephen Warren wrote:
+> Board file support for Ventana is not yet mainlined, and probably won't
+> ever be given the move to Device-Tree. Consequently, the Ventana entry
+> is being removed from arch/arm/tools/mach-types in the next merge window,
+> since it was registered over a year ago.
 > 
-> > One issue here: There isn't always a single gpio/pinmux parent; as a
-> > concrete example, the ALSA/ASoC driver for Tegra+WM8903 uses GPIOs both
-> > from Tegra itself, and from the WM8903 audio codec.
+> This will also remove function machine_is_ventana(), which is used by
+> the ASoC Tegra WM8903 machine driver. This will cause compilation
+> failures. Drop Ventana support to resolve this.
 > 
-> The Ux500 have pinmuxing on the DB8500 and AB8500 - the latter
-> is a PMIC (&misc) connected to the DB8500 via I2C.
+> Hopefully, in the not-too-distant future, tegra_wm8903.c will be able to
+> configure itself from Device-Tree, and hence we'll be able to re-instate
+> Ventana support just by creating a .dts file for the board.
 > 
-> In the pincontrol subsystem I'm brewing, each of these will have
-> their own pin controller instance and their own struct gpio_chip as
-> well, so:
+> Also note that Aebl support is in a similar boat. However, that board
+> isn't scheduled for deprecation for at least another 5 months, and
+> perhaps we will have completely removed non-Device-Tree support from
+> tegra_wm8903.c by then and/or adjusted mach-types policy.
 > 
-> DB8500: pinctrl.0, gpio.0
-> AB8500: pinctrl.1, gpio.1
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 
-Makes sense to far.
+Acked-by: Liam Girdwood <lrg@ti.com>
 
-> Each GPIO chip may have it's respective pin controller as parent
-> I guess, or they may simply be the same struct device * whatdoIknow.
-
-I'm not clear on why the GPIO and pinmux would have any kind of parent
-relationship. Perhaps that's how your HW is designed. In Tegra, GPIO
-and pinmux are completely separate HW blocks without much of a defined
-relationship.
-
-I can certainly see both being implemented by the same code if it makes
-sense to do so. On Tegra, I think I'd still lean towards keeping them
-as separate devices, since they have separate register spaces and are
-documented separately etc. However, I can certainly see that other HW
-might have both sets of functionality in one HW block.
-
-> I know this is vaporware, but does this reasoning hold also to
-> the Tegra+WM8903 combo?
-
--- 
-nvpublic
+> ---
+>  sound/soc/tegra/tegra_wm8903.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+> index 661373c..be27f1d 100644
+> --- a/sound/soc/tegra/tegra_wm8903.c
+> +++ b/sound/soc/tegra/tegra_wm8903.c
+> @@ -319,7 +319,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+>  	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
+>  
+>  	/* FIXME: Calculate automatically based on DAPM routes? */
+> -	if (!machine_is_harmony() && !machine_is_ventana())
+> +	if (!machine_is_harmony())
+>  		snd_soc_dapm_nc_pin(dapm, "IN1L");
+>  	if (!machine_is_seaboard() && !machine_is_aebl())
+>  		snd_soc_dapm_nc_pin(dapm, "IN1R");
+> @@ -395,7 +395,7 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, card);
+>  	snd_soc_card_set_drvdata(card, machine);
+>  
+> -	if (machine_is_harmony() || machine_is_ventana()) {
+> +	if (machine_is_harmony()) {
+>  		card->dapm_routes = harmony_audio_map;
+>  		card->num_dapm_routes = ARRAY_SIZE(harmony_audio_map);
+>  	} else if (machine_is_seaboard()) {
