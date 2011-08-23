@@ -1,61 +1,57 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: error: implicit declaration of function 'machine_is_ventana'
-Date: Tue, 23 Aug 2011 15:21:49 +0100
-Message-ID: <20110823142149.GJ19622@n2100.arm.linux.org.uk>
-References: <74CDBE0F657A3D45AFBB94109FB122FF04B24A376A@HQMAIL01.nvidia.com> <20110822234008.GC3895@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF04B24A377F@HQMAIL01.nvidia.com> <20110823000135.GD3895@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF04B24A3789@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ASoC: Tegra: wm8903 machine driver: Drop Ventana support
+Date: Tue, 23 Aug 2011 11:16:28 -0600
+Message-ID: <1314119788-23000-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B24A3789-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 22, 2011 at 05:11:54PM -0700, Stephen Warren wrote:
-> Russell King wrote at Monday, August 22, 2011 6:02 PM:
-> > Any entry not marked as being present in mainline will be removed after
-> > 12 months after it was last touched - which apparantly was 18th June
-> > 2010.
-> 
-> Ah, that I can understand.
-> 
-> > So, the questions are:
-> > 1. why do we have driver code merged for a platform which shows no sign
-> >    of being merged.
-> 
-> Well, I or someone probably would have pushed Ventana support into
-> mainline within the last few months, since it's pretty similar to Harmony
-> and Seaboard which are both already supported. However, I've been holding
-> due to the no-new-board-files thing, until Device-Tree gets fully baked,
-> and we can then support the board just by adding a simple .dts file.
-> 
-> > 2. why do we have drivers depending on their platform anyway.
-> 
-> The ASoC subsystem defines a "machine driver", which defines facets of
-> the audio system such as which pins on the audio codec are connected to
-> the headphone jack. This varies between boards, so the "machine driver"
-> picks the appropriate routing table at run-time based on the board that
-> the code is running on. Arguably, one could represent all this data in
-> board files using platform data, but IIUC, the ASoC maintainers prefer
-> to keep it all centralized in the sound directory tree.
-> 
-> I understand from Grant Likely that John Bonesio will be posting a patch
-> in the very near future to retrieve all this data from Device Tree, so
-> this won't be an issue moving forward, given that Tegra will probably
-> switch to Device Tree pretty aggressively.
-> 
-> Still, I suppose we could rip out explicit support for Ventana in the
-> sound driver in the interim if you want, rather than adding back the
-> Ventana machine definition.
+Board file support for Ventana is not yet mainlined, and probably won't
+ever be given the move to Device-Tree. Consequently, the Ventana entry
+is being removed from arch/arm/tools/mach-types in the next merge window,
+since it was registered over a year ago.
 
-Given that you're the second one to report breakage, I think it's probably
-better if I drop the mach-types update from my 'fixes' branch, and punt
-it into the stuff for the next merge window.
+This will also remove function machine_is_ventana(), which is used by
+the ASoC Tegra WM8903 machine driver. This will cause compilation
+failures. Drop Ventana support to resolve this.
 
-That means that the PXA stuff which was inappropriately merged without
-its mach-type entry will stay broken until after the next merge window.
-Unfortunate, but I'm not seeing much other option other than me having
-to put lots of time into manually sorting out a mach-types update (which
-I don't have the time nor motivation to do at the moment.)
+Hopefully, in the not-too-distant future, tegra_wm8903.c will be able to
+configure itself from Device-Tree, and hence we'll be able to re-instate
+Ventana support just by creating a .dts file for the board.
+
+Also note that Aebl support is in a similar boat. However, that board
+isn't scheduled for deprecation for at least another 5 months, and
+perhaps we will have completely removed non-Device-Tree support from
+tegra_wm8903.c by then and/or adjusted mach-types policy.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ sound/soc/tegra/tegra_wm8903.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 661373c..be27f1d 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -319,7 +319,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
+ 
+ 	/* FIXME: Calculate automatically based on DAPM routes? */
+-	if (!machine_is_harmony() && !machine_is_ventana())
++	if (!machine_is_harmony())
+ 		snd_soc_dapm_nc_pin(dapm, "IN1L");
+ 	if (!machine_is_seaboard() && !machine_is_aebl())
+ 		snd_soc_dapm_nc_pin(dapm, "IN1R");
+@@ -395,7 +395,7 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, card);
+ 	snd_soc_card_set_drvdata(card, machine);
+ 
+-	if (machine_is_harmony() || machine_is_ventana()) {
++	if (machine_is_harmony()) {
+ 		card->dapm_routes = harmony_audio_map;
+ 		card->num_dapm_routes = ARRAY_SIZE(harmony_audio_map);
+ 	} else if (machine_is_seaboard()) {
+-- 
+1.7.0.4
