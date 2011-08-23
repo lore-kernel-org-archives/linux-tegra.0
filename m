@@ -1,41 +1,61 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Tue, 23 Aug 2011 14:51:17 +0200
-Message-ID: <CACRpkdY=nVQYnznTU7=_D0n1V1U_xOKH2y75-jKp7k7NzwH8Zw@mail.gmail.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
-	<201108161509.17157.arnd@arndb.de>
-	<CACRpkdaVx=6AJ5DFjVN1ZYQ++hu9pT6WxD9n+pqmYVaCf1xawg@mail.gmail.com>
-	<201108161637.16620.arnd@arndb.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA25368@HQMAIL01.nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: error: implicit declaration of function 'machine_is_ventana'
+Date: Tue, 23 Aug 2011 15:21:49 +0100
+Message-ID: <20110823142149.GJ19622@n2100.arm.linux.org.uk>
+References: <74CDBE0F657A3D45AFBB94109FB122FF04B24A376A@HQMAIL01.nvidia.com> <20110822234008.GC3895@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF04B24A377F@HQMAIL01.nvidia.com> <20110823000135.GD3895@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF04B24A3789@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04AEA25368-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B24A3789-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 16, 2011 at 7:12 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Mon, Aug 22, 2011 at 05:11:54PM -0700, Stephen Warren wrote:
+> Russell King wrote at Monday, August 22, 2011 6:02 PM:
+> > Any entry not marked as being present in mainline will be removed after
+> > 12 months after it was last touched - which apparantly was 18th June
+> > 2010.
+> 
+> Ah, that I can understand.
+> 
+> > So, the questions are:
+> > 1. why do we have driver code merged for a platform which shows no sign
+> >    of being merged.
+> 
+> Well, I or someone probably would have pushed Ventana support into
+> mainline within the last few months, since it's pretty similar to Harmony
+> and Seaboard which are both already supported. However, I've been holding
+> due to the no-new-board-files thing, until Device-Tree gets fully baked,
+> and we can then support the board just by adding a simple .dts file.
+> 
+> > 2. why do we have drivers depending on their platform anyway.
+> 
+> The ASoC subsystem defines a "machine driver", which defines facets of
+> the audio system such as which pins on the audio codec are connected to
+> the headphone jack. This varies between boards, so the "machine driver"
+> picks the appropriate routing table at run-time based on the board that
+> the code is running on. Arguably, one could represent all this data in
+> board files using platform data, but IIUC, the ASoC maintainers prefer
+> to keep it all centralized in the sound directory tree.
+> 
+> I understand from Grant Likely that John Bonesio will be posting a patch
+> in the very near future to retrieve all this data from Device Tree, so
+> this won't be an issue moving forward, given that Tegra will probably
+> switch to Device Tree pretty aggressively.
+> 
+> Still, I suppose we could rip out explicit support for Ventana in the
+> sound driver in the interim if you want, rather than adding back the
+> Ventana machine definition.
 
-> One issue here: There isn't always a single gpio/pinmux parent; as a
-> concrete example, the ALSA/ASoC driver for Tegra+WM8903 uses GPIOs both
-> from Tegra itself, and from the WM8903 audio codec.
+Given that you're the second one to report breakage, I think it's probably
+better if I drop the mach-types update from my 'fixes' branch, and punt
+it into the stuff for the next merge window.
 
-The Ux500 have pinmuxing on the DB8500 and AB8500 - the latter
-is a PMIC (&misc) connected to the DB8500 via I2C.
-
-In the pincontrol subsystem I'm brewing, each of these will have
-their own pin controller instance and their own struct gpio_chip as
-well, so:
-
-DB8500: pinctrl.0, gpio.0
-AB8500: pinctrl.1, gpio.1
-
-Each GPIO chip may have it's respective pin controller as parent
-I guess, or they may simply be the same struct device * whatdoIknow.
-
-I know this is vaporware, but does this reasoning hold also to
-the Tegra+WM8903 combo?
-
-Linus Walleij
+That means that the PXA stuff which was inappropriately merged without
+its mach-type entry will stay broken until after the next merge window.
+Unfortunate, but I'm not seeing much other option other than me having
+to put lots of time into manually sorting out a mach-types update (which
+I don't have the time nor motivation to do at the moment.)
