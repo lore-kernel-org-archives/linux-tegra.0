@@ -1,45 +1,48 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Tegra I2C driver compilation failure (was: RE: [PATCH] dt: add
-	empty of_get_property for non-dt)
-Date: Tue, 23 Aug 2011 11:27:12 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B24A38CA@HQMAIL01.nvidia.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF04A0687289@HQMAIL01.nvidia.com>
- <20110812004732.GF19115@trinity.fluff.org>
- <74CDBE0F657A3D45AFBB94109FB122FF04AEA24F41@HQMAIL01.nvidia.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH 1/2] sdhci/tegra: Add Device Tree probing support
+Date: Tue, 23 Aug 2011 14:41:05 -0400
+Message-ID: <m2ippo2cou.fsf@bob.laptop.org>
+References: <1314123334-23133-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04AEA24F41-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1314123334-23133-1-git-send-email-swarren@nvidia.com> (Stephen
+	Warren's message of "Tue, 23 Aug 2011 12:15:33 -0600")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Friday, August 12, 2011 3:09 PM:
-...
-> Related, here's the list of outstanding patches for i2c-tegra.c that I'm
-> aware of:
-> 
-> [PATCH] i2c: Tegra: Add of_match_table
-> http://www.spinics.net/lists/linux-i2c/msg05898.html
-> 
-> [PATCH] i2c: tegra: add I2C_FUNC_SMBUS_EMUL to adapter functionality
-> http://www.spinics.net/lists/linux-i2c/msg05396.html
-> 
-> [PATCH] i2c: tegra: fix possible race condition after tx
-> http://www.spinics.net/lists/linux-i2c/msg06103.html
-> 
-> Hope this helps! Thanks.
+Hi Stephen,
 
-Ben,
+On Tue, Aug 23 2011, Stephen Warren wrote:
+> From: Grant Likely <grant.likely@secretlab.ca>
+>
+> Add hooks to read gpio configuration out of the device tree node.
+>
+> [grant.likely: Rewrite of original patch from John Bonesio]
+> Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+> [swarren: Fixed tegra_sdhci_get_ro() to retrieve pdata correctly]
+> [swarren: Reworked to avoid #ifdef CONFIG_OF]
+> [swarren: Reworked binding based on fsl-imx-esdhc.txt]
+> [swarren: Documented binding]
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> Theoretically, these two patches should be merged in order in one place,
+> since the 2nd logically depends on the first. However, it's really just
+> a documentation dependency, so I think it's fine to merge them into the
+> MMC and DT trees separately and let them meet in linux-next.
+>
+>  .../devicetree/bindings/mmc/nvidia-sdhci.txt       |   25 ++++++++++
+>  drivers/mmc/host/sdhci-tegra.c                     |   51 +++++++++++++++----
+>  2 files changed, 65 insertions(+), 11 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
 
-I see the patches above aren't in linux-next yet. I'd love to get them
-queued up so they get into 3.2. Can you please apply them? At least the
-second of these was first posted over 4 months ago.
+Okay, I've pushed this patch [1/2] to mmc-next for 3.2.
 
-Thanks very much!
+Thanks,
 
+- Chris.
 -- 
-nvpublic
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
