@@ -1,50 +1,59 @@
-From: Linus Walleij <linus.ml.walleij-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH v2 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Tue, 23 Aug 2011 22:00:33 +0200
-Message-ID: <CAKnu2MoEvc7KGH-Fu1FzRE1xFFvsSRVdG5Amg6FL-6PrWRw5yA@mail.gmail.com>
-References: <1313440100-17131-1-git-send-email-swarren@nvidia.com>
-	<201108161509.17157.arnd@arndb.de>
-	<CACRpkdaVx=6AJ5DFjVN1ZYQ++hu9pT6WxD9n+pqmYVaCf1xawg@mail.gmail.com>
-	<201108161637.16620.arnd@arndb.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA25368@HQMAIL01.nvidia.com>
-	<CACRpkdY=nVQYnznTU7=_D0n1V1U_xOKH2y75-jKp7k7NzwH8Zw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF04B24A38E6@HQMAIL01.nvidia.com>
+From: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: Check for overflow errors with BUG_ON.
+Date: Tue, 23 Aug 2011 19:39:07 +0100
+Message-ID: <20110823183907.GA24318@freya.fluff.org>
+References: <1313434172-18319-1-git-send-email-dianders@chromium.org>
+ <20110815191745.GA7178@legolas.emea.dhcp.ti.com>
+ <CAD=FV=Xd67iw=GXV9i4O5LKnJd20=BkYyfVuxPgxQ5GZRJEy4A@mail.gmail.com>
+ <20110815200349.GA2616@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B24A38E6-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20110815200349.GA2616-UiBtZHVXSwEVvW8u9ZQWYwjfymiNCTlR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2011/8/23 Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
-> Linus Walleij wrote at Tuesday, August 23, 2011 6:51 AM:
->> Each GPIO chip may have it's respective pin controller as parent
-                               ^^^^^
->> I guess, or they may simply be the same struct device * whatdoIknow.
->
-> I'm not clear on why the GPIO and pinmux would have any kind of parent
-> relationship. Perhaps that's how your HW is designed. In Tegra, GPIO
-> and pinmux are completely separate HW blocks without much of a defined
-> relationship.
->
-> I can certainly see both being implemented by the same code if it makes
-> sense to do so. On Tegra, I think I'd still lean towards keeping them
-> as separate devices, since they have separate register spaces and are
-> documented separately etc. However, I can certainly see that other HW
-> might have both sets of functionality in one HW block.
+On Mon, Aug 15, 2011 at 11:03:50PM +0300, Felipe Balbi wrote:
+> HI,
+> 
+> On Mon, Aug 15, 2011 at 12:52:36PM -0700, Doug Anderson wrote:
+> > Felipe,
+> > 
+> > On Mon, Aug 15, 2011 at 12:17 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+> > > so due to a FIFO overflow you lock up the whole system ? Can't you e.g.
+> > > reset the controller and reconfigure it rather than locking up the
+> > > system ?
+> > 
+> > Certainly we could try to be more proactive and reset / retry / return
+> > the error to the client.  However, since the only expected situation
+> > where this BUG_ON should hit is due to a bug in this driver itself
+> > (AKA: i2c clients shouldn't be able to do anything to cause the BUG_ON
+> > to hit), that seems like a lot of added complexity.
+> 
+> so at least just pass an error to the client, but hanging the entire
+> system seems a bit too much, dont you think ?
+> 
+> > Also: if there is an arbitrary software bug that causing an overflow
+> > condition to occur, I'm not sure how stable the system will be.
+> > Specifically, the i2c controller is used (among other things) to talk
+> > to the PMU and adjust voltages in the system.  If we just sent it a
+> > random command, I'd rather report the bug right away so we don't get
+> > hard to find/reproduce failures in other parts of the system.
+> 
+> that's a good point, I still think that e.g. making a cellphone
+> unresponsive until a watchdog reset triggers just because you got a FIFO
+> overflow on the I2C controller is too much.
 
-Makes sense, for U300 I will probably also keep them separate
-like this:
+Yes, I would agree on that. BUG() really should be only used
+for occasions where there's little possiblity the entire system
+can continue to work.
 
-pinctrl.0 - deal with muxing
-pinctrl.1 - deal with biasing, driving etc
-gpio.0 - the GPIO driver using both of the above, no relationship
+In this case, it seems far more sensible to report this as an
+error and see what can be done to recover the bus and controller
+for the next transaction.
 
-The only thing they have in common is some relation to the
-global GPIO pin space. (When/if we get rid of that - something
-better.)
-
-Yours,
-Linus Walleij
+-- 
+Ben
