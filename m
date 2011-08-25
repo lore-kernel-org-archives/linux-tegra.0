@@ -1,8 +1,8 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 02/13] docs/dt: Document nvidia, tegra20-gpio's nvidia,
-	enabled-gpios property
-Date: Thu, 25 Aug 2011 17:43:33 -0600
-Message-ID: <1314315824-9687-3-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v3 01/13] arm/tegra: Prep boards for gpio/pinmux conversion to
+	pdevs
+Date: Thu, 25 Aug 2011 17:43:32 -0600
+Message-ID: <1314315824-9687-2-git-send-email-swarren@nvidia.com>
 References: <1314315824-9687-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,38 +22,189 @@ To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin C
 Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+The Tegra GPIO driver will be converted from static registration via
+postcore_initcall() to be a platform device later in this patch series.
+A new Tegra pinmux platform device will also be added.
+
+Prepare for this by modifying all boards to register the appropriate
+platform devices before-hand, so that when the drivers are converted,
+those devices will be probed, and git bisectability will be maintained.
+
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/gpio/gpio_nvidia.txt       |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/board-harmony-pinmux.c   |    8 ++++++++
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |    8 ++++++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c  |    9 +++++++--
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    7 +++++++
+ arch/arm/mach-tegra/devices.c                |   10 ++++++++++
+ arch/arm/mach-tegra/devices.h                |    2 ++
+ 6 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-index eb4b530..b22fff3 100644
---- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-@@ -6,3 +6,23 @@ Required properties:
-   second cell is used to specify optional parameters:
-   - bit 0 specifies polarity (0 for normal, 1 for inverted)
- - gpio-controller : Marks the device node as a GPIO controller.
+diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
+index 4d63e2e..e99b456 100644
+--- a/arch/arm/mach-tegra/board-harmony-pinmux.c
++++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
+@@ -20,6 +20,7 @@
+ 
+ #include "gpio-names.h"
+ #include "board-harmony.h"
++#include "devices.h"
+ 
+ static struct tegra_pingroup_config harmony_pinmux[] = {
+ 	{TEGRA_PINGROUP_ATA,   TEGRA_MUX_IDE,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+@@ -140,6 +141,11 @@ static struct tegra_pingroup_config harmony_pinmux[] = {
+ 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ };
+ 
++static struct platform_device *pinmux_devices[] = {
++	&tegra_gpio_device,
++	&tegra_pinmux_device,
++};
 +
-+Optional properties:
-+- nvidia,enabled-gpios : The list of GPIOs that should be controlled by the
-+  GPIO controller rather than the pinmux controller.
+ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true	},
+ 	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true	},
+@@ -155,6 +161,8 @@ static struct tegra_gpio_table gpio_table[] = {
+ 
+ void harmony_pinmux_init(void)
+ {
++	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
 +
-+Example of a gpio-controller node:
+ 	tegra_pinmux_config_table(harmony_pinmux, ARRAY_SIZE(harmony_pinmux));
+ 
+ 	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
+diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
+index bdd2627..43633f4 100644
+--- a/arch/arm/mach-tegra/board-paz00-pinmux.c
++++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
+@@ -20,6 +20,7 @@
+ 
+ #include "gpio-names.h"
+ #include "board-paz00.h"
++#include "devices.h"
+ 
+ static struct tegra_pingroup_config paz00_pinmux[] = {
+ 	{TEGRA_PINGROUP_ATA,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+@@ -140,6 +141,11 @@ static struct tegra_pingroup_config paz00_pinmux[] = {
+ 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ };
+ 
++static struct platform_device *pinmux_devices[] = {
++	&tegra_gpio_device,
++	&tegra_pinmux_device,
++};
 +
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra20-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		nvidia,enabled-gpios = <
-+			69	// TEGRA_GPIO_PI5 SD2_CD
-+			57	// TEGRA_GPIO_PH1 SD2_WP
-+			155	// TEGRA_GPIO_PT3 SD2_POWER
-+		>;
-+	};
+ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD1_CD,	.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD1_WP,	.enable = true },
+@@ -149,6 +155,8 @@ static struct tegra_gpio_table gpio_table[] = {
+ 
+ void paz00_pinmux_init(void)
+ {
++	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
 +
+ 	tegra_pinmux_config_table(paz00_pinmux, ARRAY_SIZE(paz00_pinmux));
+ 
+ 	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index 74f78b7..f092298 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -21,6 +21,7 @@
+ 
+ #include "gpio-names.h"
+ #include "board-seaboard.h"
++#include "devices.h"
+ 
+ #define DEFAULT_DRIVE(_name)					\
+ 	{							\
+@@ -157,8 +158,10 @@ static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
+ 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ };
+ 
+-
+-
++static struct platform_device *pinmux_devices[] = {
++	&tegra_gpio_device,
++	&tegra_pinmux_device,
++};
+ 
+ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
+@@ -173,6 +176,8 @@ static struct tegra_gpio_table gpio_table[] = {
+ 
+ void __init seaboard_pinmux_init(void)
+ {
++	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
++
+ 	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
+ 
+ 	tegra_drive_pinmux_config_table(seaboard_drive_pinmux,
+diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+index bcb1916..4969dd2 100644
+--- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
++++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
+@@ -21,6 +21,7 @@
+ 
+ #include "gpio-names.h"
+ #include "board-trimslice.h"
++#include "devices.h"
+ 
+ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+ 	{TEGRA_PINGROUP_ATA,   TEGRA_MUX_IDE,           TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
+@@ -141,6 +142,11 @@ static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
+ 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,      TEGRA_TRI_NORMAL},
+ };
+ 
++static struct platform_device *pinmux_devices[] = {
++	&tegra_gpio_device,
++	&tegra_pinmux_device,
++};
++
+ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TRIMSLICE_GPIO_SD4_CD, .enable = true	}, /* mmc4 cd */
+ 	{ .gpio = TRIMSLICE_GPIO_SD4_WP, .enable = true	}, /* mmc4 wp */
+@@ -151,6 +157,7 @@ static struct tegra_gpio_table gpio_table[] = {
+ 
+ void __init trimslice_pinmux_init(void)
+ {
++	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
+ 	tegra_pinmux_config_table(trimslice_pinmux, ARRAY_SIZE(trimslice_pinmux));
+ 	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
+ }
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index 57e35d2..48262bf 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -31,6 +31,16 @@
+ #include <mach/usb_phy.h>
+ #include "gpio-names.h"
+ 
++struct platform_device tegra_gpio_device = {
++	.name		= "tegra-gpio",
++	.id		= -1,
++};
++
++struct platform_device tegra_pinmux_device = {
++	.name		= "tegra-pinmux",
++	.id		= -1,
++};
++
+ static struct resource i2c_resource1[] = {
+ 	[0] = {
+ 		.start	= INT_I2C,
+diff --git a/arch/arm/mach-tegra/devices.h b/arch/arm/mach-tegra/devices.h
+index 4a7dc0a..873ecb2 100644
+--- a/arch/arm/mach-tegra/devices.h
++++ b/arch/arm/mach-tegra/devices.h
+@@ -21,6 +21,8 @@
+ 
+ #include <linux/platform_device.h>
+ 
++extern struct platform_device tegra_gpio_device;
++extern struct platform_device tegra_pinmux_device;
+ extern struct platform_device tegra_sdhci_device1;
+ extern struct platform_device tegra_sdhci_device2;
+ extern struct platform_device tegra_sdhci_device3;
 -- 
 1.7.0.4
