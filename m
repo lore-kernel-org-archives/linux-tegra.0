@@ -1,68 +1,59 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 00/13] arm/tegra: Initialize GPIO & pinmux from DT
-Date: Thu, 25 Aug 2011 17:43:31 -0600
-Message-ID: <1314315824-9687-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: [PATCH v3 02/13] docs/dt: Document nvidia, tegra20-gpio's nvidia,
+	enabled-gpios property
+Date: Thu, 25 Aug 2011 17:43:33 -0600
+Message-ID: <1314315824-9687-3-git-send-email-swarren@nvidia.com>
+References: <1314315824-9687-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1314315824-9687-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-v3:
-* Build on Jamie Iles' patches to split some of the DT parsing into
-  common code.
-* Renamed some properties to remove "nvidia," from name; they can be
-  generic.
-* Support pins property, to apply DT nodes to multiple pins/groups
-* Some minor error-message changes driven by some of the above.
-* Removed requirement to #ifdef CONFIG_OF
-* Removed AUXDATA table entries in mach-tegra/board-dt.c
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../devicetree/bindings/gpio/gpio_nvidia.txt       |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
 
-TODO:
-* Convert from using strings to using integers for the function and pin
-  names. This relies on the dtc patches I posted yesterday, but should
-  be pretty simple once they're in.
-
-Jamie Iles (1):
-  of: add a generic pinmux helper
-
-Stephen Warren (12):
-  arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
-  docs/dt: Document nvidia,tegra20-gpio's nvidia,enabled-gpios property
-  arm/dt: Tegra: Add nvidia,enabled-gpios property to GPIO controller
-  docs/dt: Document nvidia,tegra20-pinmux binding
-  arm/dt: Tegra: Add pinmux node
-  dt: add empty for_each_child_of_node, of_find_property
-  gpio/tegra: Convert to a platform device
-  gpio/tegra: Add device tree support
-  arm/tegra: Convert pinmux driver to a platform device
-  of: add property iteration helpers
-  arm/tegra: Add device tree support to pinmux driver
-  arm/tegra: board-dt: Remove dependency on non-dt pinmux functions
-
- .../devicetree/bindings/gpio/gpio_nvidia.txt       |   20 ++
- .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |  302 ++++++++++++++++++++
- arch/arm/boot/dts/tegra-harmony.dts                |  258 +++++++++++++++++
- arch/arm/boot/dts/tegra-seaboard.dts               |  247 ++++++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |    5 +
- arch/arm/mach-tegra/Makefile                       |    1 -
- arch/arm/mach-tegra/board-dt.c                     |   10 -
- arch/arm/mach-tegra/board-harmony-pinmux.c         |    8 +
- arch/arm/mach-tegra/board-paz00-pinmux.c           |    8 +
- arch/arm/mach-tegra/board-seaboard-pinmux.c        |    9 +-
- arch/arm/mach-tegra/board-trimslice-pinmux.c       |    7 +
- arch/arm/mach-tegra/devices.c                      |   10 +
- arch/arm/mach-tegra/devices.h                      |    2 +
- arch/arm/mach-tegra/pinmux.c                       |  280 ++++++++++++++++++
- drivers/gpio/gpio-tegra.c                          |   48 +++-
- drivers/of/Kconfig                                 |    5 +
- drivers/of/Makefile                                |    1 +
- drivers/of/of_pinmux.c                             |  109 +++++++
- include/linux/of.h                                 |   10 +
- include/linux/of_iter_prop.h                       |  135 +++++++++
- include/linux/of_pinmux.h                          |   74 +++++
- 21 files changed, 1524 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
- create mode 100644 drivers/of/of_pinmux.c
- create mode 100644 include/linux/of_iter_prop.h
- create mode 100644 include/linux/of_pinmux.h
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+index eb4b530..b22fff3 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+@@ -6,3 +6,23 @@ Required properties:
+   second cell is used to specify optional parameters:
+   - bit 0 specifies polarity (0 for normal, 1 for inverted)
+ - gpio-controller : Marks the device node as a GPIO controller.
++
++Optional properties:
++- nvidia,enabled-gpios : The list of GPIOs that should be controlled by the
++  GPIO controller rather than the pinmux controller.
++
++Example of a gpio-controller node:
++
++	gpio: gpio@6000d000 {
++		compatible = "nvidia,tegra20-gpio";
++		reg = < 0x6000d000 0x1000 >;
++		interrupts = < 64 65 66 67 87 119 121 >;
++		#gpio-cells = <2>;
++		gpio-controller;
++		nvidia,enabled-gpios = <
++			69	// TEGRA_GPIO_PI5 SD2_CD
++			57	// TEGRA_GPIO_PH1 SD2_WP
++			155	// TEGRA_GPIO_PT3 SD2_POWER
++		>;
++	};
++
+-- 
+1.7.0.4
