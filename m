@@ -1,180 +1,34 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 11/13] of: add property iteration helpers
-Date: Thu, 25 Aug 2011 17:43:42 -0600
-Message-ID: <1314315824-9687-12-git-send-email-swarren@nvidia.com>
-References: <1314315824-9687-1-git-send-email-swarren@nvidia.com>
+From: Moon Hwa Hong <armkernel8-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: ARMv7 MMU and cache enabling code in boot/compressed/head.S
+Date: Fri, 26 Aug 2011 09:31:25 +0900
+Message-ID: <CAFWwQu_-HirBTsyFpG8EKs6Su9r=O4Wi8=L3b-O4OdMKDC0f8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1314315824-9687-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds macros for_each_u32_property_value and
-for_each_string_property_value, which iterate over an array of values
-within a device-tree property. Usage is for example:
+Hi!
 
-struct of_iter_string_prop iter;
-for_each_string_property_value(iter, np, "pins")
-        printk("Got value %s\n", iter.value);
+I started arm linux kernel hacking.
+I can't understand 554 line.
+I think that 554 line is not necessary.
+Because ISB instruction(556 line) makes synchronization between 553 and 557.
+Please advice to me.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- include/linux/of_iter_prop.h |  135 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 135 insertions(+), 0 deletions(-)
- create mode 100644 include/linux/of_iter_prop.h
 
-diff --git a/include/linux/of_iter_prop.h b/include/linux/of_iter_prop.h
-new file mode 100644
-index 0000000..c7fb2bf
---- /dev/null
-+++ b/include/linux/of_iter_prop.h
-@@ -0,0 +1,135 @@
-+/*
-+ * Copyright (c) 2011 NVIDIA Inc.
-+ *
-+ * Iterate over properties that store arrays.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __OF_ITER_PROP_H__
-+#define __OF_ITER_PROP_H__
-+
-+#include <linux/of.h>
-+
-+#ifdef CONFIG_OF
-+struct of_iter_u32_prop {
-+	const struct property *prop;
-+	int len;
-+	const __be32 *pvalue;
-+	u32 value;
-+};
-+
-+static inline void of_iter_u32_next(struct of_iter_u32_prop *iter)
-+{
-+	if (iter->len < 0)
-+		return;
-+
-+	iter->value = be32_to_cpup(iter->pvalue++);
-+	iter->len--;
-+}
-+
-+static inline void of_iter_u32_init(struct of_iter_u32_prop *iter,
-+				    const struct device_node *np,
-+				    const char *name)
-+{
-+	iter->prop = of_find_property(np, name, &iter->len);
-+	if (!iter->prop) {
-+		iter->len = -1;
-+		return;
-+	}
-+
-+	iter->pvalue = iter->prop->value;
-+	if (!iter->pvalue) {
-+		iter->len = -1;
-+		return;
-+	}
-+
-+	iter->len /= sizeof(*iter->pvalue);
-+
-+	of_iter_u32_next(iter);
-+}
-+
-+static inline bool of_iter_u32_test(struct of_iter_u32_prop *iter)
-+{
-+	return iter->len >= 0;
-+}
-+
-+#define for_each_u32_property_value(iter, np, prop_name) \
-+	for (of_iter_u32_init(&iter, np, prop_name); \
-+	     of_iter_u32_test(&iter); \
-+	     of_iter_u32_next(&iter))
-+
-+struct of_iter_string_prop {
-+	const struct property *prop;
-+	int len;
-+	const char *value;
-+	const char *after;
-+};
-+
-+static inline void of_iter_string_init(struct of_iter_string_prop *iter,
-+				       const struct device_node *np,
-+				       const char *name)
-+{
-+	iter->prop = of_find_property(np, name, &iter->len);
-+	if (!iter->prop) {
-+		iter->value = NULL;
-+		return;
-+	}
-+
-+	iter->value = iter->prop->value;
-+	if (!iter->value)
-+		return;
-+
-+	iter->after = iter->value + iter->len;
-+}
-+
-+static inline bool of_iter_string_test(struct of_iter_string_prop *iter)
-+{
-+	if (!iter->value)
-+		return false;
-+
-+	return iter->value < iter->after;
-+}
-+
-+static inline void of_iter_string_next(struct of_iter_string_prop *iter)
-+{
-+	int len;
-+
-+	if (!iter->value)
-+		return;
-+
-+	len = strnlen(iter->value, iter->len);
-+	iter->len -= len;
-+	iter->value += len + 1;
-+}
-+
-+#define for_each_string_property_value(iter, np, prop_name) \
-+	for (of_iter_string_init(&iter, np, prop_name); \
-+	     of_iter_string_test(&iter); \
-+	     of_iter_string_next(&iter))
-+
-+#else
-+struct of_iter_u32_prop {
-+	u32 value;
-+};
-+
-+#define for_each_u32_property_value(iter, np, prop_name) \
-+	while (0)
-+
-+struct of_iter_string_prop {
-+	const char *value;
-+};
-+
-+#define for_each_string_property_value(iter, np, prop_name) \
-+	while (0)
-+
-+#endif /* CONFIG_OF */
-+
-+#endif /* __OF_ITER_PROP_H__ */
--- 
-1.7.0.4
+530 __armv7_mmu_cache_on:
+.
+.
+.
+553         mcr p15, 0, r0, c1, c0, 0   @ load control register
+554         mrc p15, 0, r0, c1, c0, 0   @ and read it back
+555         mov r0, #0
+556         mcr p15, 0, r0, c7, c5, 4   @ ISB
+557         mov pc, r12
+
+Have a nice day.
+
+MH Hong.
