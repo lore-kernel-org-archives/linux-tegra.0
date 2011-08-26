@@ -1,48 +1,35 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL] [3.2] Please pull tegra boards for 3.2
-Date: Thu, 25 Aug 2011 22:40:00 -0700
-Message-ID: <CAOesGMh+r=GV1vJ9bK8WUmePkJ-BKf7HnTo29+3fnMdwNvmCiA@mail.gmail.com>
-References: <CAOesGMjHN-pvVfMN0o3AD238m8wEiRS-D4ArjV_2VAGTuwPfBw@mail.gmail.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: Fwd: [GIT PULL] [3.2] Please pull tegra boards for 3.2
+Date: Fri, 26 Aug 2011 09:32:52 +0100
+Message-ID: <20110826083252.GE11250@n2100.arm.linux.org.uk>
+References: <CAOesGMjHN-pvVfMN0o3AD238m8wEiRS-D4ArjV_2VAGTuwPfBw@mail.gmail.com> <201108161648.58250.arnd@arndb.de> <CAOesGMgZCFF=dWhAm_+Ux-c-aORqo4sJ1DOGirCu3QT-iMcQRQ@mail.gmail.com> <2300535.b0zjAbUTLi@wuerfel> <CAOesGMj5P9yLO0My4UB7AEj+9NdmYq8HYwVMd3Uv1NQO6+WP7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMjHN-pvVfMN0o3AD238m8wEiRS-D4ArjV_2VAGTuwPfBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMj5P9yLO0My4UB7AEj+9NdmYq8HYwVMd3Uv1NQO6+WP7A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
+On Thu, Aug 25, 2011 at 10:23:21PM -0700, Olof Johansson wrote:
+> Ok. Sounds like there might be some use for a temporary "work in
+> progress" branch for linux-next for patches that are nearly ready to
+> go but not quite that needs air time, but not really for anything
+> beyond that.
 
-Please pull the first set of tegra/board patches for 3.2. Same
-contents as last time, but rebased on top of 3.1-rc3:
+Bad idea.
 
-The following changes since commit fcb8ce5cfe30ca9ca5c9a79cdfe26d1993e65e0c:
+linux-next's policy is that everything in linux-next should be ready
+for mainline - not nearly ready.
 
-  Linux 3.1-rc3 (2011-08-22 11:42:53 -0700)
+Linus is threatening at the next merge window to ignore pull requests
+from maintainers, and just pull the entire linux-next tree into his at
+the beginning.  Anything in linux-next which is "work in progress" will
+therefore find its way immediately into mainline in whatever state it's
+in.
 
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git boards-for-3.2
-
-Marc Dietrich (5):
-      ARM: tegra: paz00: add support serial port on JP1
-      ARM: tegra: paz00: enable rfkill for internal wifi card
-      ARM: tegra: paz00: enable wifi led
-      ARM: tegra: paz00: reorder the SDHCI channel init
-      ARM: tegra: paz00: add clocks required for usb operation
-
-Stephen Warren (4):
-      ARM: Tegra: Harmony: Add USB device
-      ARM: Tegra: Seaboard board updates for audio
-      ARM: Tegra: Seaboard: Add USB devices
-      ARM: Tegra: Force PORT_TEGRA as the UART type
-
- arch/arm/mach-tegra/board-harmony.c         |    5 +-
- arch/arm/mach-tegra/board-paz00-pinmux.c    |    3 +
- arch/arm/mach-tegra/board-paz00.c           |   62 ++++++++++++++++++++-
- arch/arm/mach-tegra/board-paz00.h           |   16 ++++-
- arch/arm/mach-tegra/board-seaboard-pinmux.c |    6 +-
- arch/arm/mach-tegra/board-seaboard.c        |   81 ++++++++++++++++++++++++++-
- arch/arm/mach-tegra/board-seaboard.h        |   12 +++-
- arch/arm/mach-tegra/board-trimslice.c       |    3 +-
- 8 files changed, 173 insertions(+), 15 deletions(-)
+So, everyone needs to ensure that linux-next only contains code that's
+100% ready for merging during the next merge window.  Everything else
+should not be in linux-next.
