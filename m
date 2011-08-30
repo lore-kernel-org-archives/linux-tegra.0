@@ -1,133 +1,45 @@
-From: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/2] sdhci/tegra: Add Device Tree probing support
-Date: Tue, 30 Aug 2011 09:52:01 +0200
-Message-ID: <201108300952.02418.marvin24@gmx.de>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH 1/2] sdhci/tegra: Add Device Tree probing support
+Date: Tue, 30 Aug 2011 09:01:37 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D3F@HQMAIL01.nvidia.com>
 References: <1314123334-23133-1-git-send-email-swarren@nvidia.com>
+ <20110830034035.GC19294@S2100-06.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1314123334-23133-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20110830034035.GC19294@S2100-06.ap.freescale.net>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: Shawn Guo <shawn.guo@freescale.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Chris Ball <cjb@laptop.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-just a small question,
-
-> From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
-> b/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt new file mode
-> 100644
-> index 0000000..c87f667
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
-> @@ -0,0 +1,25 @@
-> +* NVIDIA Tegra Secure Digital Host Controller
-> +
-> +This controller on Tegra family SoCs provides an interface for MMC, SD,
-> +and SDIO types of memory cards.
-> +
-> +Required properties:
-> +- compatible : Should be "nvidia,<chip>-sdhci"
-> +- reg : Should contain eSDHC registers location and length
-> +- interrupts : Should contain eSDHC interrupt
-> +
-> +Optional properties:
-> +- cd-gpios : Specify GPIOs for card detection
-> +- wp-gpios : Specify GPIOs for write protection
-> +- power-gpios : Specify GPIOs for power control
-> +
-> +Example:
-> +
-> +sdhci@c8000200 {
-> +	compatible = "nvidia,tegra20-sdhci";
-> +	reg = <0xc8000200 0x200>;
-> +	interrupts = <47>;
-> +	cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-> +	wp-gpios = <&gpio 57 0>; /* gpio PH1 */
-> +	power-gpios = <&gpio 155 0>; /* gpio PT3 */
-> +};
-> diff --git a/drivers/mmc/host/sdhci-tegra.c
-> b/drivers/mmc/host/sdhci-tegra.c index a5a9a97..9ab18d6 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -17,6 +17,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/clk.h>
->  #include <linux/io.h>
-> +#include <linux/of_gpio.h>
->  #include <linux/gpio.h>
->  #include <linux/mmc/card.h>
->  #include <linux/mmc/host.h>
-> @@ -74,10 +75,8 @@ static void tegra_sdhci_writel(struct sdhci_host *host,
-> u32 val, int reg)
+Shawn Guo wrote at Monday, August 29, 2011 9:41 PM:
+> On Tue, Aug 23, 2011 at 12:15:33PM -0600, Stephen Warren wrote:
+> > From: Grant Likely <grant.likely@secretlab.ca>
+> >
+> > Add hooks to read gpio configuration out of the device tree node.
+...
+> > diff --git a/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
+...
+> > +* NVIDIA Tegra Secure Digital Host Controller
+> > +
+> > +This controller on Tegra family SoCs provides an interface for MMC, SD,
+> > +and SDIO types of memory cards.
+> > +
+> > +Required properties:
+> > +- compatible : Should be "nvidia,<chip>-sdhci"
+> > +- reg : Should contain eSDHC registers location and length
+> > +- interrupts : Should contain eSDHC interrupt
 > 
->  static unsigned int tegra_sdhci_get_ro(struct sdhci_host *sdhci)
->  {
-> -	struct platform_device *pdev = to_platform_device(mmc_dev(sdhci->mmc));
-> -	struct tegra_sdhci_platform_data *plat;
-> -
-> -	plat = pdev->dev.platform_data;
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(sdhci);
-> +	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
-> 
->  	if (!gpio_is_valid(plat->wp_gpio))
->  		return -1;
-> @@ -95,12 +94,10 @@ static irqreturn_t carddetect_irq(int irq, void *data)
-> 
->  static int tegra_sdhci_8bit(struct sdhci_host *host, int bus_width)
->  {
-> -	struct platform_device *pdev = to_platform_device(mmc_dev(host->mmc));
-> -	struct tegra_sdhci_platform_data *plat;
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
->  	u32 ctrl;
-> 
-> -	plat = pdev->dev.platform_data;
-> -
->  	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
->  	if (plat->is_8bit && bus_width == MMC_BUS_WIDTH_8) {
->  		ctrl &= ~SDHCI_CTRL_4BITBUS;
+> You may want to replace eSDHC with something Tegra specific.
 
-what about 8 bit support? 
+True. The patch is already submitted. Do you think it's worth posting one
+just to fix that; it still seems pretty clear what's required?
 
-> @@ -132,6 +129,34 @@ static struct sdhci_pltfm_data sdhci_tegra_pdata = {
->  	.ops  = &tegra_sdhci_ops,
->  };
-> 
-> +static const struct of_device_id sdhci_tegra_dt_match[] __devinitdata = {
-> +	{ .compatible = "nvidia,tegra20-sdhci", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, sdhci_dt_ids);
-> +
-> +static struct tegra_sdhci_platform_data * __devinit
-> sdhci_tegra_dt_parse_pdata( +						struct platform_device *pdev)
-> +{
-> +	struct tegra_sdhci_platform_data *plat;
-> +	struct device_node *np = pdev->dev.of_node;
-> +
-> +	if (!np)
-> +		return NULL;
-> +
-> +	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
-> +	if (!plat) {
-> +		dev_err(&pdev->dev, "Can't allocate platform data\n");
-> +		return NULL;
-> +	}
-> +
-> +	plat->cd_gpio = of_get_named_gpio(np, "cd-gpios", 0);
-> +	plat->wp_gpio = of_get_named_gpio(np, "wp-gpios", 0);
-> +	plat->power_gpio = of_get_named_gpio(np, "power-gpios", 0);
-> +
-> +	return plat;
-> +}
+Thanks.
 
-[...]
+-- 
+nvpublic
+
