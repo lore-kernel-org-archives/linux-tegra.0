@@ -1,108 +1,191 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH REPOST 3/3] i2c: tegra: fix possible race condition after tx
-Date: Tue, 30 Aug 2011 11:46:10 -0600
-Message-ID: <1314726370-8193-4-git-send-email-swarren@nvidia.com>
-References: <1314726370-8193-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1314726370-8193-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: riyer@nvidia.com
+Subject: [PATCH v2] Input: tegra-kbc - fix wakeup from suspend.
+Date: Tue, 30 Aug 2011 11:15:36 -0700
+Message-ID: <1314728136-10754-1-git-send-email-riyer@nvidia.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: dmitry.torokhov@gmail.com
+Cc: rydberg@euromail.se, olof@lixom.net, amartin@nvidia.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Rakesh Iyer <riyer@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Rakesh Iyer <riyer@nvidia.com>
 
-In tegra_i2c_fill_tx_fifo, once we have finished pushing all the bytes
-to the I2C hardware controller, the interrupt might happen before we
-have updated i2c_dev->msg_buf_remaining at the end of the function.
-Then, in tegra_i2c_isr, we will call again tegra_i2c_fill_tx_fifo
-triggering weird behaviour. This has been shown to happen under real
-conditions.
+For wakeup to be reliable, kbc needs to be in interrupt mode before suspend.
+Created common routine to control the FIFO interrupt.
+Added synchronization to ensure orderly suspend.
 
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rakesh Iyer <riyer@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c |   46 +++++++++++++++++++++++++++------------
- 1 files changed, 32 insertions(+), 14 deletions(-)
+v2: Incorporated Dmitry Torokhov's recommended changes.
+v1: Initial patch.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 8848a4b..b402435 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -271,14 +271,30 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
+ drivers/input/keyboard/tegra-kbc.c |   81 +++++++++++++++++++++++++++++------
+ 1 files changed, 67 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index a5a7791..f0507bf 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -55,6 +55,7 @@
  
- 	/* Rounds down to not include partial word at the end of buf */
- 	words_to_transfer = buf_remaining / BYTES_PER_FIFO_WORD;
--	if (words_to_transfer > tx_fifo_avail)
--		words_to_transfer = tx_fifo_avail;
- 
--	i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
--
--	buf += words_to_transfer * BYTES_PER_FIFO_WORD;
--	buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
--	tx_fifo_avail -= words_to_transfer;
-+	/* It's very common to have < 4 bytes, so optimize that case. */
-+	if (words_to_transfer) {
-+		if (words_to_transfer > tx_fifo_avail)
-+			words_to_transfer = tx_fifo_avail;
-+
-+		/*
-+		 * Update state before writing to FIFO.  If this casues us
-+		 * to finish writing all bytes (AKA buf_remaining goes to 0) we
-+		 * have a potential for an interrupt (PACKET_XFER_COMPLETE is
-+		 * not maskable).  We need to make sure that the isr sees
-+		 * buf_remaining as 0 and doesn't call us back re-entrantly.
-+		 */
-+		buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
-+		tx_fifo_avail -= words_to_transfer;
-+		i2c_dev->msg_buf_remaining = buf_remaining;
-+		i2c_dev->msg_buf = buf +
-+			words_to_transfer * BYTES_PER_FIFO_WORD;
-+		barrier();
-+
-+		i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
-+
-+		buf += words_to_transfer * BYTES_PER_FIFO_WORD;
-+	}
- 
- 	/*
- 	 * If there is a partial word at the end of buf, handle it manually to
-@@ -288,14 +304,15 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	if (tx_fifo_avail > 0 && buf_remaining > 0) {
- 		BUG_ON(buf_remaining > 3);
- 		memcpy(&val, buf, buf_remaining);
-+
-+		/* Again update before writing to FIFO to make sure isr sees. */
-+		i2c_dev->msg_buf_remaining = 0;
-+		i2c_dev->msg_buf = NULL;
-+		barrier();
-+
- 		i2c_writel(i2c_dev, val, I2C_TX_FIFO);
--		buf_remaining = 0;
--		tx_fifo_avail--;
- 	}
- 
--	BUG_ON(tx_fifo_avail > 0 && buf_remaining > 0);
--	i2c_dev->msg_buf_remaining = buf_remaining;
--	i2c_dev->msg_buf = buf;
- 	return 0;
+ #define KBC_ROW_CFG0_0	0x8
+ #define KBC_COL_CFG0_0	0x18
++#define KBC_TO_CNT_0	0x24
+ #define KBC_INIT_DLY_0	0x28
+ #define KBC_RPT_DLY_0	0x2c
+ #define KBC_KP_ENT0_0	0x30
+@@ -70,8 +71,10 @@ struct tegra_kbc {
+ 	spinlock_t lock;
+ 	unsigned int repoll_dly;
+ 	unsigned long cp_dly_jiffies;
++	unsigned int cp_to_wkup_dly;
+ 	bool use_fn_map;
+ 	bool use_ghost_filter;
++	bool in_suspend;
+ 	const struct tegra_kbc_platform_data *pdata;
+ 	unsigned short keycode[KBC_MAX_KEY * 2];
+ 	unsigned short current_keys[KBC_MAX_KPENT];
+@@ -341,6 +344,18 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
+ 	kbc->num_pressed_keys = num_down;
  }
  
-@@ -412,9 +429,10 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
- 	}
++static void tegra_kbc_set_fifo_interrupt(struct tegra_kbc *kbc, bool enable)
++{
++	u32 val;
++
++	val = readl(kbc->mmio + KBC_CONTROL_0);
++	if (enable)
++		val |= KBC_CONTROL_FIFO_CNT_INT_EN;
++	else
++		val &= ~KBC_CONTROL_FIFO_CNT_INT_EN;
++	writel(val, kbc->mmio + KBC_CONTROL_0);
++}
++
+ static void tegra_kbc_keypress_timer(unsigned long data)
+ {
+ 	struct tegra_kbc *kbc = (struct tegra_kbc *)data;
+@@ -348,6 +363,14 @@ static void tegra_kbc_keypress_timer(unsigned long data)
+ 	u32 val;
+ 	unsigned int i;
  
--	if ((status & I2C_INT_PACKET_XFER_COMPLETE) &&
--			!i2c_dev->msg_buf_remaining)
-+	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-+		BUG_ON(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
++	/* Exit immediately if driver is trying to enter suspend. */
++	spin_lock_irqsave(&kbc->lock, flags);
++	if (kbc->in_suspend) {
++		tegra_kbc_set_fifo_interrupt(kbc, true);
++		spin_unlock_irqrestore(&kbc->lock, flags);
++		return;
 +	}
++	spin_unlock_irqrestore(&kbc->lock, flags);
+ 	val = (readl(kbc->mmio + KBC_INT_0) >> 4) & 0xf;
+ 	if (val) {
+ 		unsigned long dly;
+@@ -370,9 +393,7 @@ static void tegra_kbc_keypress_timer(unsigned long data)
  
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
+ 		/* All keys are released so enable the keypress interrupt */
+ 		spin_lock_irqsave(&kbc->lock, flags);
+-		val = readl(kbc->mmio + KBC_CONTROL_0);
+-		val |= KBC_CONTROL_FIFO_CNT_INT_EN;
+-		writel(val, kbc->mmio + KBC_CONTROL_0);
++		tegra_kbc_set_fifo_interrupt(kbc, true);
+ 		spin_unlock_irqrestore(&kbc->lock, flags);
+ 	}
+ }
+@@ -380,15 +401,14 @@ static void tegra_kbc_keypress_timer(unsigned long data)
+ static irqreturn_t tegra_kbc_isr(int irq, void *args)
+ {
+ 	struct tegra_kbc *kbc = args;
+-	u32 val, ctl;
++	unsigned long flags;
++	u32 val;
+ 
+ 	/*
+ 	 * Until all keys are released, defer further processing to
+ 	 * the polling loop in tegra_kbc_keypress_timer
+ 	 */
+-	ctl = readl(kbc->mmio + KBC_CONTROL_0);
+-	ctl &= ~KBC_CONTROL_FIFO_CNT_INT_EN;
+-	writel(ctl, kbc->mmio + KBC_CONTROL_0);
++	tegra_kbc_set_fifo_interrupt(kbc, false);
+ 
+ 	/*
+ 	 * Quickly bail out & reenable interrupts if the fifo threshold
+@@ -397,16 +417,18 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
+ 	val = readl(kbc->mmio + KBC_INT_0);
+ 	writel(val, kbc->mmio + KBC_INT_0);
+ 
+-	if (val & KBC_INT_FIFO_CNT_INT_STATUS) {
++	/* Exit immediately if driver is trying to enter suspend. */
++	spin_lock_irqsave(&kbc->lock, flags);
++	if (!kbc->in_suspend && (val & KBC_INT_FIFO_CNT_INT_STATUS))
+ 		/*
+ 		 * Schedule timer to run when hardware is in continuous
+ 		 * polling mode.
+ 		 */
+ 		mod_timer(&kbc->timer, jiffies + kbc->cp_dly_jiffies);
+-	} else {
+-		ctl |= KBC_CONTROL_FIFO_CNT_INT_EN;
+-		writel(ctl, kbc->mmio + KBC_CONTROL_0);
+-	}
++	else
++		tegra_kbc_set_fifo_interrupt(kbc, true);
++
++	spin_unlock_irqrestore(&kbc->lock, flags);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -735,10 +757,30 @@ static int tegra_kbc_suspend(struct device *dev)
+ 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
+ 
+ 	if (device_may_wakeup(&pdev->dev)) {
+-		tegra_kbc_setup_wakekeys(kbc, true);
+-		enable_irq_wake(kbc->irq);
++		unsigned long flags;
++
++		spin_lock_irqsave(&kbc->lock, flags);
++		kbc->in_suspend = 1;
++		spin_unlock_irqrestore(&kbc->lock, flags);
++
++		del_timer_sync(&kbc->timer);
++
++		spin_lock_irqsave(&kbc->lock, flags);
++		tegra_kbc_set_fifo_interrupt(kbc, false);
++		spin_unlock_irqrestore(&kbc->lock, flags);
++
+ 		/* Forcefully clear the interrupt status */
+ 		writel(0x7, kbc->mmio + KBC_INT_0);
++		/*
++		 * Store the previous resident time of continuous polling mode.
++		 * Force the keyboard into interrupt mode.
++		 */
++		kbc->cp_to_wkup_dly = readl(kbc->mmio + KBC_TO_CNT_0);
++		writel(0, kbc->mmio + KBC_TO_CNT_0);
++
++		tegra_kbc_setup_wakekeys(kbc, true);
++		disable_irq(kbc->irq);
++		enable_irq_wake(kbc->irq);
+ 		msleep(30);
+ 	} else {
+ 		mutex_lock(&kbc->idev->mutex);
+@@ -757,8 +799,19 @@ static int tegra_kbc_resume(struct device *dev)
+ 	int err = 0;
+ 
+ 	if (device_may_wakeup(&pdev->dev)) {
++		unsigned long flags;
++
+ 		disable_irq_wake(kbc->irq);
+ 		tegra_kbc_setup_wakekeys(kbc, false);
++
++		/* Restore the resident time of continuous polling mode. */
++		writel(kbc->cp_to_wkup_dly, kbc->mmio + KBC_TO_CNT_0);
++		kbc->in_suspend = 0;
++
++		enable_irq(kbc->irq);
++		spin_lock_irqsave(&kbc->lock, flags);
++		tegra_kbc_set_fifo_interrupt(kbc, true);
++		spin_unlock_irqrestore(&kbc->lock, flags);
+ 	} else {
+ 		mutex_lock(&kbc->idev->mutex);
+ 		if (kbc->idev->users)
 -- 
-1.7.0.4
+1.7.1
+
