@@ -1,50 +1,100 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/2] sdhci/tegra: Add Device Tree probing support
-Date: Tue, 30 Aug 2011 09:17:31 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D49@HQMAIL01.nvidia.com>
-References: <1314123334-23133-1-git-send-email-swarren@nvidia.com>
- <201108300952.02418.marvin24@gmx.de>
+Subject: RE: [PATCH] i2c/tegra: I2C driver uses the
+ suspend_noirq/resume_noirq
+Date: Tue, 30 Aug 2011 09:25:24 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com>
+References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
+	<CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
+	<20110806084805.GA18098@sirena.org.uk>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24CC8@HQMAIL01.nvidia.com>
+	<CAMbhsRR2+bhpjhGfUSt9M5tDk1EW2d70yC-tZy27zEgVqtkfSg@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24D09@HQMAIL01.nvidia.com>
+	<CAMbhsRTVm+dUODDgqiekpTrrNnpo9trJNNvOQ2ETCNkneh-L-g@mail.gmail.com>
+	<1313109916.19990.28.camel@finisterre.wolfsonmicro.main>
+	<CAMbhsRShLvyc2XKJAL8PwR0Uj4Pnp9rVt7QyK1qAVxJ-R2PSdQ@mail.gmail.com>
+	<20110812031433.GE10218@opensource.wolfsonmicro.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B24A3CA6@HQMAIL01.nvidia.com>
+ <CAMbhsRRRa_JV8_LHEvsM2h3e8Hbf1GAcpXz8gdU3wCc8Jgz5gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201108300952.02418.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMbhsRRRa_JV8_LHEvsM2h3e8Hbf1GAcpXz8gdU3wCc8Jgz5gw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietich wrote at Tuesday, August 30, 2011 1:52 AM:
-...
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-...
-> > @@ -95,12 +94,10 @@ static irqreturn_t carddetect_irq(int irq, void *data)
+Ben, Arnd,
+
+Could you please ack/nack the patch at the start of this thread for Col=
+in;
+see below.
+
+Thanks.
+
+Colin Cross wrote at Wednesday, August 24, 2011 3:34 PM:
+> On Wed, Aug 24, 2011 at 2:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =
+wrote:
+> > Mark Brown wrote at Thursday, August 11, 2011 9:15 PM:
+> >> On Thu, Aug 11, 2011 at 07:59:27PM -0700, Colin Cross wrote:
+> >> > On Thu, Aug 11, 2011 at 5:45 PM, Mark Brown
+> >>
+> >> > > For example with ASoC we'd sort all the components before the =
+ASoC card
+> >> > > without regard for their bus dependencies or any other depende=
+ncies they
+> >> > > have (eg, their regulators). Since the ASoC card is a platform=
+ device
+> >> > > it's likely to have registered early with no regard for where =
+the buses
+> >> > > the card needs are registered. I'd expect there's a reasonable=
+ chance
+> >> > > it'll actually make things worse in the short term.
+> >>
+> >> > You can't just move everything after the card, you have to move
+> >> > everything after the last device that was probed, and it only wo=
+rks if
+> >> > nothing depends on any of the devices that are moved.
+> >>
+> >> Sorry, I said that the wrong way round due to trying to reply quic=
+kly -
+> >> the card would be the thing that moves since that's the thing that
+> >> actually does the suspend but we've *no* idea which device we need=
+ to
+> >> move it after. =A0Since all the function does is a direct move aft=
+er or
+> >> before a single device all we can do is pick one and pray that it'=
+s the
+> >> right device.
 > >
-> >  static int tegra_sdhci_8bit(struct sdhci_host *host, int bus_width)
-> >  {
-> > -	struct platform_device *pdev = to_platform_device(mmc_dev(host->mmc));
-> > -	struct tegra_sdhci_platform_data *plat;
-> > +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> > +	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
-> >  	u32 ctrl;
+> > Colin,
 > >
-> > -	plat = pdev->dev.platform_data;
-> > -
-> >  	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
-> >  	if (plat->is_8bit && bus_width == MMC_BUS_WIDTH_8) {
-> >  		ctrl &= ~SDHCI_CTRL_4BITBUS;
-> 
-> what about 8 bit support?
+> > This thread seems to have died down; how should we make progress?
+> >
+> > It sounds like the suspend_irq solution is the current de-facto sta=
+ndard;
+> > not optimal, but all we really have right now and already in use. I=
+ could
+> > certainly see avoiding this solution if it was the first time it wa=
+s
+> > employed, but re-using it seems reasonable to me?
+> >
+> > Alternatively, are you attending either Linux Plumbers Conference o=
+r the
+> > Kernel Summit? Mark implied this topic might well come up for discu=
+ssion
+> > there. Unfortunately, I won't be able to make LPC due to a conflict=
+=2E
+> I don't think I'll be able to make it.
+>=20
+> > (and you'd mentioned having the subsystem maintainers weigh in on t=
+his;
+> > which sub-system; IRQ, power, I2C, ...?)
+>=20
+> If Ben says its OK, its fine with me.  Or maybe Arnd wants to weigh i=
+n?
 
-I didn't understand the question at first; I assume you're asking about
-8-bit support in the device-tree binding/parsing.
-
-Yes, that's a missing feature, and I should add it. Thanks for pointing
-that out.
-
-(I'll also fix the binding docs issue that Shawn pointed out while I'm
-at it).
-
--- 
+--=20
 nvpublic
