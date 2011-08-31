@@ -1,49 +1,26 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH 1/2] sdhci/tegra: Add Device Tree probing support
-Date: Wed, 31 Aug 2011 10:49:30 +0800
-Message-ID: <20110831024929.GA19795@S2100-06.ap.freescale.net>
-References: <1314123334-23133-1-git-send-email-swarren@nvidia.com>
- <20110830034035.GC19294@S2100-06.ap.freescale.net>
- <74CDBE0F657A3D45AFBB94109FB122FF04B3279D3F@HQMAIL01.nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] i2c/tegra: I2C driver uses the suspend_noirq/resume_noirq
+Date: Wed, 31 Aug 2011 18:28:40 +0200
+Message-ID: <201108311828.40783.arnd@arndb.de>
+References: <1312586102-27907-1-git-send-email-swarren@nvidia.com> <CAMbhsRRRa_JV8_LHEvsM2h3e8Hbf1GAcpXz8gdU3wCc8Jgz5gw@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D3F@HQMAIL01.nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Chris Ball <cjb@laptop.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 30, 2011 at 09:01:37AM -0700, Stephen Warren wrote:
-> Shawn Guo wrote at Monday, August 29, 2011 9:41 PM:
-> > On Tue, Aug 23, 2011 at 12:15:33PM -0600, Stephen Warren wrote:
-> > > From: Grant Likely <grant.likely@secretlab.ca>
-> > >
-> > > Add hooks to read gpio configuration out of the device tree node.
-> ...
-> > > diff --git a/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
-> ...
-> > > +* NVIDIA Tegra Secure Digital Host Controller
-> > > +
-> > > +This controller on Tegra family SoCs provides an interface for MMC, SD,
-> > > +and SDIO types of memory cards.
-> > > +
-> > > +Required properties:
-> > > +- compatible : Should be "nvidia,<chip>-sdhci"
-> > > +- reg : Should contain eSDHC registers location and length
-> > > +- interrupts : Should contain eSDHC interrupt
-> > 
-> > You may want to replace eSDHC with something Tegra specific.
+On Tuesday 30 August 2011, Stephen Warren wrote:
+> Ben, Arnd,
 > 
-> True. The patch is already submitted. Do you think it's worth posting one
-> just to fix that;
+> Could you please ack/nack the patch at the start of this thread for Colin;
+> see below.
 
-It's totally your call.
+Sorry, I normally like to give my opinion on everything, but I really don't
+have a clue what this one is about. I don't understand i2c or power management ;-)
 
-Regards,
-Shawn
-
-> it still seems pretty clear what's required?
-> 
-
+	Arnd
