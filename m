@@ -1,60 +1,38 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH] usb: ehci: make HC see up-to-date qh/qtd descriptor ASAP
-Date: Thu, 1 Sep 2011 12:08:29 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B327A383@HQMAIL01.nvidia.com>
-References: <1314720193-26577-1-git-send-email-ming.lei@canonical.com>
-	<201108311855.27711.marc.dietrich@ap.physik.uni-giessen.de>
-	<4E5F5FA9.3010305@arm.com> <201109011313.42547.marvin24@gmx.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201109011313.42547.marvin24@gmx.de>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Dietich <marvin24@gmx.de>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Greg KH <greg@kroah.com>, "ming.lei@canonical.com" <ming.lei@canonical.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, Mark Salter <msalter@redhat.com>, Chen Peter-B29397 <B29397@freescale.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 3/5] staging:iio:magnetometer:ak8975 Don't use irq_to_gpio()
+Date: Thu,  1 Sep 2011 16:04:29 -0600
+Message-ID: <1314914676-28397-3-git-send-email-swarren@nvidia.com>
+References: <1314914676-28397-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1314914676-28397-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietich wrote at Thursday, September 01, 2011 5:14 AM:
-> I'll add Stephen Warren from NVIDIA to the CC list. He has more HW to test on.
+Tegra doesn't have irq_to_gpio() any more, and ak8975 is included in
+tegra_defconfig. This causes a build failure.
 
-Here are the results I found:
+Instead, obtain the GPIO ID corresponding to the chip's IRQ from the new
+i2c_client field irq_gpio.
 
-Harmony:
-Tegra USB3 -> SMSC9514 hub: NOT affected
-(Unplugging LAN cable, or disabling SMSC9514 LAN driver doesn't change this)
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/staging/iio/magnetometer/ak8975.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Seaboard (springbank; clamshell):
-Tegra USB1 -> no hub: Affected
-
-Seaboard (seaboard non-clamshell):
-Tegra USB1 -> no hub: Affected
-Tegra USB3 -> no hub: Affected
-
-TrimSlice:
-Tegra USB3 -> unknown hub: Affected
-
-This implies there's something different about Harmony.
-
-Is the USB hub a clue? Seaboard doesn't have one, and although I don't
-know what model TrimSlice uses, I assume it's different since I know
-TrimSlice's Ethernet is not the same as Harmony's.
-
-I don't see anything in board-harmony.c vs. board-seaboard.c that'd affect
-anything USB-related.
-
-Perhaps there's some kind of bootloader or BCT difference. However, my
-Harmony and both Seaboards both use (a very old) U-Boot and BCT from
-ChromeOS, so I don't imagine there's actually much difference there.
-
+diff --git a/drivers/staging/iio/magnetometer/ak8975.c b/drivers/staging/iio/magnetometer/ak8975.c
+index a17fa9f..14076da 100644
+--- a/drivers/staging/iio/magnetometer/ak8975.c
++++ b/drivers/staging/iio/magnetometer/ak8975.c
+@@ -477,7 +477,7 @@ static int ak8975_probe(struct i2c_client *client,
+ 	int err;
+ 
+ 	/* Grab and set up the supplied GPIO. */
+-	eoc_gpio = irq_to_gpio(client->irq);
++	eoc_gpio = client->irq_gpio;
+ 
+ 	/* We may not have a GPIO based IRQ to scan, that is fine, we will
+ 	   poll if so */
 -- 
-nvpublic
+1.7.0.4
