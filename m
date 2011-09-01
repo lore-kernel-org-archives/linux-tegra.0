@@ -1,97 +1,62 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 10/13] of: add a generic pinmux helper
-Date: Thu, 1 Sep 2011 13:30:51 +0200
-Message-ID: <CACRpkdaEQaM31SkuSEOzkA8neyF21CcDOc1yQQc3NqOXVSmB=g@mail.gmail.com>
-References: <1314315824-9687-1-git-send-email-swarren@nvidia.com>
-	<1314315824-9687-11-git-send-email-swarren@nvidia.com>
-	<CACRpkdaTiWEtgjVOhUKeXhpiESvrWyz97p5j_PHe3MvEM4UaCw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF04B3279BEB@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/3] staging:iio:magnetometer:ak8975 Don't use
+ irq_to_gpio()
+Date: Thu, 1 Sep 2011 08:36:53 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B327A2A4@HQMAIL01.nvidia.com>
+References: <1314819657-828-1-git-send-email-swarren@nvidia.com>
+ <643E69AA4436674C8F39DCC2C05F76383CF3C784A3@HQMAIL03.nvidia.com>
+ <4E5F49F4.2080208@cam.ac.uk> <201109011306.50936.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B3279BEB-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Belisko Marek <marek.belisko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201109011306.50936.arnd-r2nGTMty4D4@public.gmane.org>
+Content-Language: en-US
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
+Cc: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 29, 2011 at 11:46 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+Arnd Bergmann wrote at Thursday, September 01, 2011 5:07 AM:
+> On Thursday 01 September 2011, Jonathan Cameron wrote:
+> > On 08/31/11 20:45, Andrew Chew wrote:
+> > >> Subject: [PATCH 1/3] staging:iio:magnetometer:ak8975 Don't
+> > >> use irq_to_gpio()
+> > >>
+> > >> Tegra doesn't have irq_to_gpio() any more, and ak8975 is included in
+> > >> tegra_defconfig. This causes a build failure. Solve this with
+> > >> a heavy-handed
+> > >> method for now.
+> > >>
+> > >> I suspect the long-term solution is to pass both the IRQ and GPIO IDs
+> > >> to the driver; the GPIO ID coming from either platform data,
+> > >> or perhaps
+> > >> enhancing struct i2c_client to add a gpio field alongside irq.
+> > >>
+> > >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >> ---
+> > >
+> > > The three patches in this set LGTM.
+> > >
+> > > Acked-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> >
+> > Hmm.. I'd like to see some means of passing that in. Perhaps as simple as passing
+> > a pointer to an int in as platform_data.  Patch to follow.
+> 
+> My feeling is that we should just add another field to
+> struct i2c_client. There are probably more drivers that
+> need the same thing, making it appropriate to increase
+> the size of that struct for everything device instead of
+> adding platform_data to a subset of the devices.
 
->> > +EXPORT_SYMBOL_GPL(of_pinmux_parse);
->>
->> Renamed of_pinctrl_parse I'm happier with it.
->
-> Well, it's not just that; the struct contains the function field to
-> select for each pingroup, so it's not just pinctrl either.
+That sounds reasonable to me.
 
-OK as of my thinking in the v6 pin control patch set groups
-are an abstract concept that is part of pin control and pin
-definitions (does not need to be used for muxing, could be
-anything you want to do with pins) so that sorts it out I guess?
+One question: When we add this field, how do drivers tell whether a value
+of 0 is an uninitialized field, or a legitimate GPIO value of 0? Should we
+add a flag to indicate validity, or just work hard to not enable driver-
+side code to use this value until we've fixed up all places that instantiate
+the driver to initialize the field to some invalid value like -1?
 
-So in line with that terminology I think this should be
-named pinctrl.
-
->> The current pinctrl patch set would probably want an unsigned
->> "position" attribute too. (If we should build on that.)
->
-> This does beg the question I asked previously:
->
-> The intent of this patch was to provide a way for devicetree to set the
-> complete initial state of the pinmux, in a SoC-specific fashion, without
-> interaction with the pinmux API.
->
-> However, I'm guessing you see the pinmux driver as not touching HW at
-> boot at all, and never programming anything except in response to a
-> driver calling pinmux_get()/pinmux_enable()?
-
-Since the pin control driver is (supposedly) the only driver that knows
-about the register range dealing with muxing, all kind of fiddling
-with these registers that are *necessary* on boot (e.g. to get the
-thing up in a known state) need to be in the pincontrol driver.
-
-So it may touch hardware on boot, i.e. write default values,
-even though one may argue that the boot loader should have
-taken care about such things, it's now always the case in
-practice.
-
-> In the former case, this code and related bindings wouldn't be influenced
-> by the pinmux API at all (and indeed arguably never should be, since DT
-> is supposed to be oriented purely at HW, and not influenced by driver
-> design). This approach might make the pinmux API mostly relevant only
-> for drivers that actively change between configurations at run-time, and
-> not for drivers that don't need dynamic muxing.
-
-Platforms that do not need dynamic muxing should be using it
-if they need to configure default states of the pins at boot I think.
-
-> However, in the latter case, this code should be part of the pinmux core,
-> and my patches to Tegra's pinmux driver dropped. It'd be difficult to
-> define a pinmux binding that wasn't influenced by the pinmux API's needs
-> in this case.
-
-Well that depends on what you want to do.
-
-The patch subject seems to suggest that all SoCs should use this,
-not just the Tegra driver. If it had the subject "of: add a tegra
-pinmux helper" and functions named of_tegra_pinmux_parse() and
-so on I wouldn't have any objections whatsoever.
-
-If however you want to create a DT binding that should be used by
-anyone (as indicated by the subject) it must use abstract concepts of
-some kind and then I have opinions on how to name things and
-some idea that I'd like them to correspond to what the pin control
-subsystem will call things.
-
-For example not call things dealing with biasing as part of
-something called "pinmux", since in the pin controller
-subsystem I'm envisioning I'm striving to separation of
-concerns to the point where biasing and muxing are
-completely orthogonal concepts, though they might be
-using the same abstract concept of pin groups...
-
-I don't know if I'm getting across properly, I'm trying
-my best.
-
-Thanks,
-Linus Walleij
+-- 
+nvpublic
