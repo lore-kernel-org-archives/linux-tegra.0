@@ -1,74 +1,59 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH] usb: ehci: make HC see up-to-date qh/qtd descriptor ASAP
-Date: Fri, 2 Sep 2011 10:07:11 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B327A5C1@HQMAIL01.nvidia.com>
-References: <1314720193-26577-1-git-send-email-ming.lei@canonical.com>
-	<201108311855.27711.marc.dietrich@ap.physik.uni-giessen.de>
-	<4E5F5FA9.3010305@arm.com> <201109011313.42547.marvin24@gmx.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF04B327A383@HQMAIL01.nvidia.com>
-	<4E60A702.1060504@arm.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V3 1/5] i2c: Add irq_gpio field to struct i2c_client,
+  i2c_board_info.
+Date: Fri, 2 Sep 2011 11:24:04 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B327A628@HQMAIL01.nvidia.com>
+References: <1314914676-28397-1-git-send-email-swarren@nvidia.com>
+	<20110902085620.4ad918c4@endymion.delvare>	<4E609F9C.5020403@cam.ac.uk>
+ <20110902112435.69c9e8f7@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4E60A702.1060504@arm.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110902112435.69c9e8f7-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Greg KH <greg@kroah.com>, "ming.lei@canonical.com" <ming.lei@canonical.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>, Marc Dietich <marvin24@gmx.de>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, Mark Salter <msalter@redhat.com>, Chen Peter-B29397 <B29397@freescale.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Zyngier wrote at Friday, September 02, 2011 3:51 AM:
-> On 01/09/11 20:08, Stephen Warren wrote:
-> > Marc Dietich wrote at Thursday, September 01, 2011 5:14 AM:
-> >> I'll add Stephen Warren from NVIDIA to the CC list. He has more HW to test on.
+Jean Delvare wrote at Friday, September 02, 2011 3:25 AM:
+> Hi Jonathan,
+> 
+> On Fri, 02 Sep 2011 10:19:24 +0100, Jonathan Cameron wrote:
+> > On 09/02/11 07:56, Jean Delvare wrote:
+> > > Stephen,
+> > >
+> > > Can you please fix your e-mail client / system / whatever so that your
+> > > patch series are no longer sent duplicated?
+> > >
+> > > On Thu,  1 Sep 2011 16:04:27 -0600, Stephen Warren wrote:
+> > >> Some devices use a single pin as both an IRQ and a GPIO. In that case,
+> > >> irq_gpio is the GPIO ID for that pin. Not all drivers use this feature.
+> > >> Where they do, and the use of this feature is optional, and the system
+> > >> wishes to disable this feature, this field must be explicitly set to a
+> > >> defined invalid GPIO ID, such as -1.
+> > >>
+> > >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >> ---
+> > >> v3: Also add the field to i2c_board_info, and copy the field from
+> > >>     i2c_board_info to i2c_client upon instantiation
+> > >
+> > > I don't get the idea. The i2c core doesn't make any use of the field,
+> > > and that field will only be used by a few drivers amongst the 420+
+> > > i2c drivers in the tree. This looks like a waste of memory. What's wrong
+> > > with including the new field in the private platform or arch data
+> > > structure for drivers which need it?
 > >
-> > Here are the results I found:
-> >
-> > Harmony:
-> > Tegra USB3 -> SMSC9514 hub: NOT affected
-> > (Unplugging LAN cable, or disabling SMSC9514 LAN driver doesn't change this)
-...
-> I just noticed something else. Harmony is fast *most of the time*. In
-> about one in 3 reboots, I get the slow behavior. When USB is fast, I
-> also have I2C interrupts "screaming":
+> > Why not make it platform data for now and 'if' it becomes way more common
+> > (probably won't) we can always propose adding as a general field at a later
+> > date.
 > 
->  85:     294321          0       GIC  tegra-i2c
-> 116:          0          0       GIC  tegra-i2c
-> 118:      98542          0       GIC  tps6586x
-> 
-> This is a couple of seconds after boot.
-> 
-> When USB is slow, I see the following:
-> [    0.385270] tps6586x 3-0034: Chip ID read failed: -121
-> [    0.390584] tps6586x: probe of 3-0034 failed with error -5
-> 
-> ... and I2C interrupt is quiet.
-> 
-> The I2C interrupt handler calls writel(), which does a cache sync. That
-> would explain the "fast" behavior of Harmony.
-> 
-> Do you see the same this on your board?
+> Yes, this sounds like a much more reasonable approach.
 
-Yes, I re-ran the test a few more times and see those exact same symptoms.
-
-In a case with the screaming I2C interrupts and fast USB, I then did:
-
-echo 3-0034 > /sys/bus/i2c/drivers/tps6586x/unbind
-(I got a kernel BUG and bash crashed here, but just logged back in)
-
-which caused the I2C interrupt handler to stop, then re-ran the test.
-I then saw the slow USB speed.
-
-So, now I think *all* platforms(boards) are affected, right?
+BTW, if that's the direction that's decided, just take the first version
+of the patchset I posted, plus Jonathan Cameron's subsequent patch to
+modify ak8975 to accept GPIO ID through platform data.
 
 -- 
 nvpublic
