@@ -1,38 +1,74 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH V2 1/4] i2c: Add irq_gpio field to struct i2c_client.
-Date: Fri, 2 Sep 2011 18:05:27 +0200
-Message-ID: <201109021805.27569.arnd@arndb.de>
-References: <1314895964-15964-1-git-send-email-swarren@nvidia.com> <4E60985B.6010901@cam.ac.uk> <74CDBE0F657A3D45AFBB94109FB122FF04B327A55D@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH] usb: ehci: make HC see up-to-date qh/qtd descriptor ASAP
+Date: Fri, 2 Sep 2011 10:07:11 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B327A5C1@HQMAIL01.nvidia.com>
+References: <1314720193-26577-1-git-send-email-ming.lei@canonical.com>
+	<201108311855.27711.marc.dietrich@ap.physik.uni-giessen.de>
+	<4E5F5FA9.3010305@arm.com> <201109011313.42547.marvin24@gmx.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B327A383@HQMAIL01.nvidia.com>
+	<4E60A702.1060504@arm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B327A55D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4E60A702.1060504@arm.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Greg KH <greg@kroah.com>, "ming.lei@canonical.com" <ming.lei@canonical.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>, Marc Dietich <marvin24@gmx.de>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, Mark Salter <msalter@redhat.com>, Chen Peter-B29397 <B29397@freescale.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 02 September 2011, Stephen Warren wrote:
-> The idea was specifically to replace the need to call irq_to_gpio(i2c->irq).
-> If we did just rename it plain "gpio" and allow it to be used for anything,
-> then that does indeed start looking more like device-specific platform data.
+Marc Zyngier wrote at Friday, September 02, 2011 3:51 AM:
+> On 01/09/11 20:08, Stephen Warren wrote:
+> > Marc Dietich wrote at Thursday, September 01, 2011 5:14 AM:
+> >> I'll add Stephen Warren from NVIDIA to the CC list. He has more HW to test on.
+> >
+> > Here are the results I found:
+> >
+> > Harmony:
+> > Tegra USB3 -> SMSC9514 hub: NOT affected
+> > (Unplugging LAN cable, or disabling SMSC9514 LAN driver doesn't change this)
+...
+> I just noticed something else. Harmony is fast *most of the time*. In
+> about one in 3 reboots, I get the slow behavior. When USB is fast, I
+> also have I2C interrupts "screaming":
 > 
-> I guess it sounds like consensus is to go that way. It does seem like that
-> will end up creating a bunch more device-specific platform-data files though.
-> I wonder if adding IORESOURCE_GPIO would make sense so this could be handled
-> in a generic way without custom platform data types?
+>  85:     294321          0       GIC  tegra-i2c
+> 116:          0          0       GIC  tegra-i2c
+> 118:      98542          0       GIC  tps6586x
+> 
+> This is a couple of seconds after boot.
+> 
+> When USB is slow, I see the following:
+> [    0.385270] tps6586x 3-0034: Chip ID read failed: -121
+> [    0.390584] tps6586x: probe of 3-0034 failed with error -5
+> 
+> ... and I2C interrupt is quiet.
+> 
+> The I2C interrupt handler calls writel(), which does a cache sync. That
+> would explain the "fast" behavior of Harmony.
+> 
+> Do you see the same this on your board?
 
-Interesting point. That's probably best for Grant to comment on, because
-it depends on the long-term direction he wants to take with this.
+Yes, I re-ran the test a few more times and see those exact same symptoms.
 
-I suppose that an IORESOURCE_GPIO makes a lot of sense if we expect
-to keep having a flat system-wide gpio number space in the long run,
-similar to irq numbers.
+In a case with the screaming I2C interrupts and fast USB, I then did:
 
-It would not fit well if we expect gpio numbers to be local to
-a gpio controller, with no unique global identifier for them, similar
-to how dma channels in the dma-engine subsystem are handled.
+echo 3-0034 > /sys/bus/i2c/drivers/tps6586x/unbind
+(I got a kernel BUG and bash crashed here, but just logged back in)
 
-	Arnd
+which caused the I2C interrupt handler to stop, then re-ran the test.
+I then saw the slow USB speed.
+
+So, now I think *all* platforms(boards) are affected, right?
+
+-- 
+nvpublic
