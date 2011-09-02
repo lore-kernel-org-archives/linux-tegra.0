@@ -1,53 +1,86 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] i2c: Add irq_gpio field to struct i2c_client,
- i2c_board_info.
-Date: Fri, 2 Sep 2011 11:24:35 +0200
-Message-ID: <20110902112435.69c9e8f7@endymion.delvare>
-References: <1314914676-28397-1-git-send-email-swarren@nvidia.com>
-	<20110902085620.4ad918c4@endymion.delvare>
-	<4E609F9C.5020403@cam.ac.uk>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH] usb: ehci: make HC see up-to-date qh/qtd descriptor ASAP
+Date: Fri, 02 Sep 2011 10:50:58 +0100
+Message-ID: <4E60A702.1060504@arm.com>
+References: <1314720193-26577-1-git-send-email-ming.lei@canonical.com>
+	<201108311855.27711.marc.dietrich@ap.physik.uni-giessen.de>
+	<4E5F5FA9.3010305@arm.com> <201109011313.42547.marvin24@gmx.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B327A383@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4E609F9C.5020403-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B327A383@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Greg KH <greg@kroah.com>, "ming.lei@canonical.com" <ming.lei@canonical.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>, Marc Dietich <marvin24@gmx.de>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, Mark Salter <msalter@redhat.com>, Chen Peter-B29397 <B29397@freescale.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jonathan,
+On 01/09/11 20:08, Stephen Warren wrote:
+> Marc Dietich wrote at Thursday, September 01, 2011 5:14 AM:
+>> I'll add Stephen Warren from NVIDIA to the CC list. He has more HW to test on.
+> 
+> Here are the results I found:
+> 
+> Harmony:
+> Tegra USB3 -> SMSC9514 hub: NOT affected
+> (Unplugging LAN cable, or disabling SMSC9514 LAN driver doesn't change this)
+> 
+> Seaboard (springbank; clamshell):
+> Tegra USB1 -> no hub: Affected
+> 
+> Seaboard (seaboard non-clamshell):
+> Tegra USB1 -> no hub: Affected
+> Tegra USB3 -> no hub: Affected
+> 
+> TrimSlice:
+> Tegra USB3 -> unknown hub: Affected
+> 
+> This implies there's something different about Harmony.
+> 
+> Is the USB hub a clue? Seaboard doesn't have one, and although I don't
+> know what model TrimSlice uses, I assume it's different since I know
+> TrimSlice's Ethernet is not the same as Harmony's.
 
-On Fri, 02 Sep 2011 10:19:24 +0100, Jonathan Cameron wrote:
-> On 09/02/11 07:56, Jean Delvare wrote:
-> > Stephen,
-> > 
-> > Can you please fix your e-mail client / system / whatever so that your
-> > patch series are no longer sent duplicated?
-> > 
-> > On Thu,  1 Sep 2011 16:04:27 -0600, Stephen Warren wrote:
-> >> Some devices use a single pin as both an IRQ and a GPIO. In that case,
-> >> irq_gpio is the GPIO ID for that pin. Not all drivers use this feature.
-> >> Where they do, and the use of this feature is optional, and the system
-> >> wishes to disable this feature, this field must be explicitly set to a
-> >> defined invalid GPIO ID, such as -1.
-> >>
-> >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >> v3: Also add the field to i2c_board_info, and copy the field from
-> >>     i2c_board_info to i2c_client upon instantiation
-> > 
-> > I don't get the idea. The i2c core doesn't make any use of the field,
-> > and that field will only be used by a few drivers amongst the 420+
-> > i2c drivers in the tree. This looks like a waste of memory. What's wrong
-> > with including the new field in the private platform or arch data
-> > structure for drivers which need it?
->
-> Why not make it platform data for now and 'if' it becomes way more common
-> (probably won't) we can always propose adding as a general field at a later
-> date.
+Panda has the exact same USB hub configuration, and is affected. So we
+can rule this out.
 
-Yes, this sounds like a much more reasonable approach.
+> I don't see anything in board-harmony.c vs. board-seaboard.c that'd affect
+> anything USB-related.
+> 
+> Perhaps there's some kind of bootloader or BCT difference. However, my
+> Harmony and both Seaboards both use (a very old) U-Boot and BCT from
+> ChromeOS, so I don't imagine there's actually much difference there.
 
+I just noticed something else. Harmony is fast *most of the time*. In
+about one in 3 reboots, I get the slow behavior. When USB is fast, I
+also have I2C interrupts "screaming":
+
+ 85:     294321          0       GIC  tegra-i2c
+116:          0          0       GIC  tegra-i2c
+118:      98542          0       GIC  tps6586x
+
+This is a couple of seconds after boot.
+
+When USB is slow, I see the following:
+[    0.385270] tps6586x 3-0034: Chip ID read failed: -121
+[    0.390584] tps6586x: probe of 3-0034 failed with error -5
+
+... and I2C interrupt is quiet.
+
+The I2C interrupt handler calls writel(), which does a cache sync. That
+would explain the "fast" behavior of Harmony.
+
+Do you see the same this on your board?
+
+	M.
 -- 
-Jean Delvare
+Jazz is not dead. It just smells funny...
