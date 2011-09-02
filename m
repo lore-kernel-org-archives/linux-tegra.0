@@ -1,80 +1,64 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/3] irq: If an IRQ is a GPIO, request and configure it
-Date: Fri, 2 Sep 2011 10:36:51 +0200 (CEST)
-Message-ID: <alpine.LFD.2.02.1109021027360.2723@ionos>
-References: <1312498820-2275-1-git-send-email-swarren@nvidia.com> <1312498820-2275-2-git-send-email-swarren@nvidia.com>
+From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] i2c: Add irq_gpio field to struct i2c_client.
+Date: Fri, 02 Sep 2011 09:48:27 +0100
+Message-ID: <4E60985B.6010901@cam.ac.uk>
+References: <1314895964-15964-1-git-send-email-swarren@nvidia.com> <1314895964-15964-5-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1312498820-2275-2-git-send-email-swarren@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Chris Ball <cjb@laptop.org>, ccross@android.com, olof@lixom.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1314895964-15964-5-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 4 Aug 2011, Stephen Warren wrote:
+On 09/01/11 17:52, Stephen Warren wrote:
+> Some devices use a single pin as both an IRQ and a GPIO. In that case,
+> irq_gpio is the GPIO ID for that pin. Not all drivers use this feature.
+> Where they do, and the use of this feature is optional, and the system
+> wishes to disable this feature, this field must be explicitly set to a
+> defined invalid GPIO ID, such as -1.
+Why make it specifically an irq related gpio?  Might as well just call it
+gpio then it can be used for cases where it never corresponds to an irq
+such as capture trigger pins.
 
-> Many IRQs are associated with GPIO pins. When the pin is used as an IRQ,
-> it can't be used as anything else; it should be requested. Enhance the
-> core interrupt code to call gpio_request() and gpio_direction_input() for
-> any IRQ that is also a GPIO. This prevents duplication of these calls in
-> each driver that uses an IRQ.
-
-This is very much the wrong approach. If you think it through then the
-irq setup code might end up with tons of other subsystem specific
-setup thingies, e.g. PCI .....
-
-The right thing to do is to add a irq_configure() function pointer to
-the irq chip and provide a common function for gpios in gpiolib, which
-is then used by the particular GPIO irq chip implementation.
-
-Thanks,
-
-	tglx
----
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 5951730..33ba4b8 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -265,6 +265,7 @@ static inline void irqd_clr_chained_irq_inprogress(struct irq_data *d)
-  * struct irq_chip - hardware interrupt chip descriptor
-  *
-  * @name:		name for /proc/interrupts
-+ * @irq_configure:	configure an interrupt (optional)
-  * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
-  * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
-  * @irq_enable:		enable the interrupt (defaults to chip->unmask if NULL)
-@@ -289,9 +290,14 @@ static inline void irqd_clr_chained_irq_inprogress(struct irq_data *d)
-  * @flags:		chip specific flags
-  *
-  * @release:		release function solely used by UML
-+ *
-+ * If @irq_configure is provided, it's called from setup_irq prior to
-+ * enabling the interrupt. irq_configure should return 0 on success or
-+ * an appropriate error code.
-  */
- struct irq_chip {
- 	const char	*name;
-+	int		(*irq_configure)(struct irq_data *data);
- 	unsigned int	(*irq_startup)(struct irq_data *data);
- 	void		(*irq_shutdown)(struct irq_data *data);
- 	void		(*irq_enable)(struct irq_data *data);
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 9b956fa..d5e6a58 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -999,6 +999,13 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 	if (!shared) {
- 		init_waitqueue_head(&desc->wait_for_threads);
- 
-+		/* Configure the interrupt */
-+		if (desc->chip->irq_configure) {
-+			ret = desc->chip->irq_configure(&desc->irq_data);
-+			if (ret)
-+				goto out_mask;
-+		}
-+
- 		/* Setup the type (level, edge polarity) if configured: */
- 		if (new->flags & IRQF_TRIGGER_MASK) {
- 			ret = __irq_set_trigger(desc, irq,
-
+Otherwise I'd be happy to see this go in.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: This patch is new. This updated series based on Arnd's comments that
+> this solution was a good idea.
+> 
+> Note that I leave on vacation for 2 weeks starting Friday afternoon. I
+> may have some email capabilities during this time, but will certainly be
+> slow to respond.
+> 
+>  include/linux/i2c.h |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> index 3fad485..b368097 100644
+> --- a/include/linux/i2c.h
+> +++ b/include/linux/i2c.h
+> @@ -192,6 +192,12 @@ struct i2c_driver {
+>   * @driver: device's driver, hence pointer to access routines
+>   * @dev: Driver model device node for the slave.
+>   * @irq: indicates the IRQ generated by this device (if any)
+> + * @irq_gpio: some devices use a single pin as both an IRQ and a GPIO. In
+> + *	that case, irq_gpio is the GPIO ID for that pin. Not all drivers
+> + *	use this feature. Where they do, and the use of this feature is
+> + *	optional, and the system wishes to disable this feature, this
+> + *	field must be explicitly set to a defined invalid GPIO ID, such
+> + *	as -1.
+>   * @detected: member of an i2c_driver.clients list or i2c-core's
+>   *	userspace_devices list
+>   *
+> @@ -209,6 +215,7 @@ struct i2c_client {
+>  	struct i2c_driver *driver;	/* and our access routines	*/
+>  	struct device dev;		/* the device structure		*/
+>  	int irq;			/* irq issued by device		*/
+> +	int irq_gpio;			/* gpio corresponding to irq	*/
+>  	struct list_head detected;
+>  };
+>  #define to_i2c_client(d) container_of(d, struct i2c_client, dev)
