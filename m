@@ -1,188 +1,56 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/dt: Add SoC detection macros
-Date: Fri,  9 Sep 2011 01:02:19 -0700
-Message-ID: <1315555339-12685-1-git-send-email-amartin@nvidia.com>
+From: Nick Bowler <nbowler-7BP4RkwGw0uXmMXjJBpWqg@public.gmane.org>
+Subject: [PATCH 4/5] ARM: tegra: Use wfi macro in platform_do_lowpower.
+Date: Fri,  9 Sep 2011 11:26:51 -0400
+Message-ID: <1315582012-23507-5-git-send-email-nbowler@elliptictech.com>
+References: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1315582012-23507-1-git-send-email-nbowler-7BP4RkwGw0uXmMXjJBpWqg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These macros allow runtime query of SoC family and version via
-soc_is_*()  If the corresponding SoC is not configured the macro will
-evaluate to 0.  If the corresponding SoC is the only architecure
-configured, the macro will evaluate to 1.  If multiple architecures
-are configured the macro will evaluate to a runtime call to
-soc_get_version().
+Current Tegra CPU hotplug code includes a hardcoded WFI instruction, in
+ARM encoding.  The hardcoded instruction is both hard to understand and
+doomed to failure when building the kernel in Thumb-2 mode.
 
-I've added tegra2 and tegra3 SoCs as a starting point.
-
-Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Nick Bowler <nbowler-7BP4RkwGw0uXmMXjJBpWqg@public.gmane.org>
 ---
- arch/arm/include/asm/soc.h |   76 ++++++++++++++++++++++++++++++++++++++++++++
- arch/arm/kernel/Makefile   |    1 +
- arch/arm/kernel/setup.c    |    2 +
- arch/arm/kernel/soc.c      |   37 +++++++++++++++++++++
- 4 files changed, 116 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/include/asm/soc.h
- create mode 100644 arch/arm/kernel/soc.c
+Compile tested in ARM mode only as I could not build for this platform
+in Thumb-2 mode:
 
-diff --git a/arch/arm/include/asm/soc.h b/arch/arm/include/asm/soc.h
-new file mode 100644
-index 0000000..d95f643
---- /dev/null
-+++ b/arch/arm/include/asm/soc.h
-@@ -0,0 +1,76 @@
-+/*
-+ * arch/arm/include/asm/soc.h
-+ *
-+ * Copyright (C) 2011 NVIDIA, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+/* determine if multiple SoCs are enabled */
-+#undef MULTI_SOC
-+#undef SOC_NAME
-+
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+# ifdef SOC_NAME
-+#  undef MULTI_SOC
-+#  define MULTI_SOC
-+# else
-+#   define SOC_NAME tegra2
-+# endif
-+#endif
-+#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-+# ifdef SOC_NAME
-+#  undef MULTI_SOC
-+#  define MULTI_SOC
-+# else
-+#   define SOC_NAME tegra3
-+# endif
-+#endif
-+
-+#define soc_is_tegra2()			0
-+#define soc_is_tegra3()			0
-+
-+#if defined(MULTI_SOC)
-+# if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-+#  undef soc_is_tegra2
-+#  define soc_is_tegra2()		is_tegra2()
-+# endif
-+# if defined(CONFIG_ARCH_TEGRA_3x_SOC)
-+#  undef soc_is_tegra3
-+#  define soc_is_tegra3()		is_tegra3()
-+# endif
-+#else /* non-multi, only one architecture is on */
-+# if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-+#  undef soc_is_tegra2
-+#  define soc_is_tegra2()		1
-+# elif defined(CONFIG_ARCH_TEGRA_3x_SOC)
-+#  undef soc_is_tegra3
-+#  define soc_is_tegra3()		1
-+# endif
-+#endif
-+
-+enum soc_version {
-+	SOC_UNKNOWN = 0,
-+	TEGRA_T20,
-+	TEGRA_T30,
-+};
-+
-+void soc_init_version(void);
-+enum soc_version soc_get_version(void);
-+
-+static inline int is_tegra2(void)
-+{
-+	return soc_get_version() == TEGRA_T20;
-+}
-+
-+static inline int is_tegra3(void)
-+{
-+	return soc_get_version() == TEGRA_T30;
-+}
-diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
-index c687bce..de29477 100644
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@ -50,6 +50,7 @@ obj-$(CONFIG_KGDB)		+= kgdb.o
- obj-$(CONFIG_ARM_UNWIND)	+= unwind.o
- obj-$(CONFIG_HAVE_TCM)		+= tcm.o
- obj-$(CONFIG_OF)		+= devtree.o
-+obj-$(CONFIG_OF)		+= soc.o
- obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
- obj-$(CONFIG_SWP_EMULATE)	+= swp_emulate.o
- CFLAGS_swp_emulate.o		:= -Wa,-march=armv7-a
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 0ca06f7..63ad6de 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -52,6 +52,7 @@
- #include <asm/mach/time.h>
- #include <asm/traps.h>
- #include <asm/unwind.h>
-+#include <asm/soc.h>
+/scratch_space/linux-2.6/arch/arm/mach-tegra/headsmp.S: Assembler messages:
+/scratch_space/linux-2.6/arch/arm/mach-tegra/headsmp.S:51: Error: Thumb encoding does not support an immediate here -- `msr cpsr_fsxc,#0xd3'
+---
+ arch/arm/mach-tegra/hotplug.c |    9 ++-------
+ 1 files changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
+index f329404..4fc72d6 100644
+--- a/arch/arm/mach-tegra/hotplug.c
++++ b/arch/arm/mach-tegra/hotplug.c
+@@ -13,6 +13,7 @@
+ #include <linux/smp.h>
  
- #if defined(CONFIG_DEPRECATED_PARAM_STRUCT)
- #include "compat.h"
-@@ -922,6 +923,7 @@ void __init setup_arch(char **cmdline_p)
- 	request_standard_resources(mdesc);
+ #include <asm/cacheflush.h>
++#include <asm/system.h>
  
- 	unflatten_device_tree();
-+	soc_init_version();
+ static inline void cpu_enter_lowpower(void)
+ {
+@@ -60,13 +61,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 	 * code will have already disabled interrupts
+ 	 */
+ 	for (;;) {
+-		/*
+-		 * here's the WFI
+-		 */
+-		asm(".word	0xe320f003\n"
+-		    :
+-		    :
+-		    : "memory", "cc");
++		wfi();
  
- #ifdef CONFIG_SMP
- 	if (is_smp())
-diff --git a/arch/arm/kernel/soc.c b/arch/arm/kernel/soc.c
-new file mode 100644
-index 0000000..8686468
---- /dev/null
-+++ b/arch/arm/kernel/soc.c
-@@ -0,0 +1,37 @@
-+/*
-+ * arch/arm/kernel/soc.c
-+ *
-+ * Copyright (C) 2011 NVIDIA, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+
-+#include <asm/soc.h>
-+
-+static enum soc_version soc_version;
-+
-+enum soc_version soc_get_version(void)
-+{
-+	return soc_version;
-+}
-+
-+void soc_init_version(void)
-+{
-+	if (of_machine_is_compatible("nvidia,tegra20"))
-+		soc_version = TEGRA_T20;
-+	else if (of_machine_is_compatible("nvidia,tegra30"))
-+		soc_version = TEGRA_T30;
-+	else
-+		panic("Unknown SoC");
-+}
+ 		/*if (pen_release == cpu) {*/
+ 			/*
 -- 
-1.7.4.1
+1.7.3.4
