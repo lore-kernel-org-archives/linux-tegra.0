@@ -1,19 +1,68 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/5] Convert ARM subarchitectures to generic wfi macro.
-Date: Fri, 9 Sep 2011 20:02:17 +0100
-Message-ID: <20110909190217.GB14520@n2100.arm.linux.org.uk>
-References: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com> <20110909154254.GA23810@elliptictech.com>
+From: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Remove redundant change to the CPSR in
+ headsmp.S
+Date: Mon, 12 Sep 2011 17:52:22 +0100
+Message-ID: <20110912165222.GE2020@arm.com>
+References: <1315411253-17559-1-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20110909154254.GA23810@elliptictech.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Nick Bowler <nbowler@elliptictech.com>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@ti.com>, linux-omap@vger.kernel.org
+In-Reply-To: <1315411253-17559-1-git-send-email-dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 09, 2011 at 11:42:54AM -0400, Nick Bowler wrote:
-> And after all that, I forgot to CC Russell on these patches.  Oops.
+Colin, can you comment on this?
 
-Doesn't matter, I get them anyway (provided lakml is in the cc).
+On Wed, Sep 07, 2011 at 05:00:53PM +0100, Dave Martin wrote:
+> At secondary_startup, the MSR CPSR_cxsf, #0xd3 is not compatible
+> with Thumb-2 and also unmasks asynchronous aborts (CPSR.A bit
+> forced to zero -- this is probably unintentional).
+> 
+> Any remotely sane bootloader should be putting each secondary CPU
+> in the appropriate state _before_ entering the kernel anyway.
+> Otherwise, disabling interrupts on entry to the kernel isn't going
+> to fix it.
+> 
+> Therefore this patch just removes the MSR instruction.
+> 
+> Signed-off-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+> 
+> I make assumptions about the bootloader in this patch.  If someone with
+> Tegra knowledge can please comment and/or test, that would be much
+> appreciated, thanks.
+> 
+>  arch/arm/mach-tegra/headsmp.S |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
+> index b5349b2..6ec4790 100644
+> --- a/arch/arm/mach-tegra/headsmp.S
+> +++ b/arch/arm/mach-tegra/headsmp.S
+> @@ -48,7 +48,6 @@ ENTRY(v7_invalidate_l1)
+>  ENDPROC(v7_invalidate_l1)
+>  
+>  ENTRY(tegra_secondary_startup)
+> -	msr	cpsr_fsxc, #0xd3
+>          bl      v7_invalidate_l1
+>  	mrc	p15, 0, r0, c0, c0, 5
+>          and	r0, r0, #15
+
+My rationale here is that the CPU boots straight into the
+correct mode -- if there is any boot code before we get here,
+then it should already have established the correct mode, otherwise
+we're likely to get problems which "MSR" by itself isn't going to
+fix -- such as stray interrupts for example.
+
+If that feels unsafe however, we should still to be able to write
+
+	cpsid	aif, #SVC_MODE
+
+(which is the compact v6/v7-compatible way to set all the interrupt
+mask bits and get into a specific mode)
+
+Cheers
+---Dave
