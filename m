@@ -1,122 +1,51 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH] ARM: tegra: Remove redundant change to the CPSR in
-	headsmp.S
-Date: Wed, 14 Sep 2011 10:15:32 +0100
-Message-ID: <20110914091531.GA2104@arm.com>
-References: <1315411253-17559-1-git-send-email-dave.martin@linaro.org>
-	<20110912165222.GE2020@arm.com>
-	<CAMbhsRSoSYhuqPC+SmCNk4dseok0vs02su0kihKNqXGpCvUvSg@mail.gmail.com>
+From: =?utf-8?B?5LuFMTDlhYPmr4/lpKk=?= <admin-w0xfBkQUQa6Nls3PewDF2w@public.gmane.org>
+Subject: =?utf-8?B?576k5Y+R6L2v5Lu2K+S5sOWutuaQnOe0ouacuisxMDnlsYrlub/kuqTkvJrkubDlrrY=?=
+	=?utf-8?B?44CB5rW35YWz5pWw5o2uLEIyQuivouebmOS5sOWutjUwMOS4h+OAgg==?=
+Date: Thu, 15 Sep 2011 05:53:59 +0000 (UTC)
+Message-ID: <20111215003108670133@gener-tech.net>
+Reply-To: <1339625218-9uewiaClKEY@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAMbhsRSoSYhuqPC+SmCNk4dseok0vs02su0kihKNqXGpCvUvSg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Date: Thu, 15 Dec 2011 00:30:57 +0800
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 13, 2011 at 06:46:48PM -0700, Colin Cross wrote:
-> On Mon, Sep 12, 2011 at 9:52 AM, Dave Martin <dave.martin@linaro.org> wro=
-te:
-> > Colin, can you comment on this?
-> >
-> > On Wed, Sep 07, 2011 at 05:00:53PM +0100, Dave Martin wrote:
-> >> At secondary_startup, the MSR CPSR_cxsf, #0xd3 is not compatible
-> >> with Thumb-2 and also unmasks asynchronous aborts (CPSR.A bit
-> >> forced to zero -- this is probably unintentional).
-> >>
-> >> Any remotely sane bootloader should be putting each secondary CPU
-> >> in the appropriate state _before_ entering the kernel anyway.
-> >> Otherwise, disabling interrupts on entry to the kernel isn't going
-> >> to fix it.
-> >>
-> >> Therefore this patch just removes the MSR instruction.
-> >>
-> >> Signed-off-by: Dave Martin <dave.martin@linaro.org>
-> >> ---
-> >>
-> >> I make assumptions about the bootloader in this patch. =A0If someone w=
-ith
-> >> Tegra knowledge can please comment and/or test, that would be much
-> >> appreciated, thanks.
-> >>
-> >> =A0arch/arm/mach-tegra/headsmp.S | =A0 =A01 -
-> >> =A01 files changed, 0 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/heads=
-mp.S
-> >> index b5349b2..6ec4790 100644
-> >> --- a/arch/arm/mach-tegra/headsmp.S
-> >> +++ b/arch/arm/mach-tegra/headsmp.S
-> >> @@ -48,7 +48,6 @@ ENTRY(v7_invalidate_l1)
-> >> =A0ENDPROC(v7_invalidate_l1)
-> >>
-> >> =A0ENTRY(tegra_secondary_startup)
-> >> - =A0 =A0 msr =A0 =A0 cpsr_fsxc, #0xd3
-> >> =A0 =A0 =A0 =A0 =A0bl =A0 =A0 =A0v7_invalidate_l1
-> >> =A0 =A0 =A0 mrc =A0 =A0 p15, 0, r0, c0, c0, 5
-> >> =A0 =A0 =A0 =A0 =A0and =A0r0, r0, #15
-> >
-> > My rationale here is that the CPU boots straight into the
-> > correct mode -- if there is any boot code before we get here,
-> > then it should already have established the correct mode, otherwise
-> > we're likely to get problems which "MSR" by itself isn't going to
-> > fix -- such as stray interrupts for example.
-> >
-> > If that feels unsafe however, we should still to be able to write
-> >
-> > =A0 =A0 =A0 =A0cpsid =A0 aif, #SVC_MODE
-> >
-> > (which is the compact v6/v7-compatible way to set all the interrupt
-> > mask bits and get into a specific mode)
-> =
-
-> Tegra boots with one cpu enabled, and the other in reset.  The cpu
-> needs to be initialized from scratch by the kernel.  Does cpsid aif,
-> #SVC_MODE compile to the same instruction as the msr instruction?
-
-CPUs power on in SVC mode with all interrupts masked, so it should
-be safe to assume that the CPU is already in this state (this is actually
-_required_ by Documentation/arm/Booting).  If the CPU booted with a
-random mode and random interrupt masks, no system could boot reliably...
-
-However, it's harmless to set the state explicitly if we want to be
-extra safe.
-
-My assumption is that the unmasking of asynchronous aborts done by
-msr CPSR_cxsf, #0xd3 is unintentional -- i.e., this is a copy-paste
-of code which would have been correct prior to ARMv6 (when there
-was no separate 'A' interrupt class).
-
-cps is a distinct instruction, introduced in ARMv6.
-The advantages are that it can be used to control the A bit, and
-doesn't clobber the T bit (or other CPSR bits).
-Since mach-tegra doesn't apply to any platform older than ARMv6,
-use of this instruction seems reasonable.
-
-cpsid aif disables all three kinds of interrupt.
-
-
-With regard to Thumb-2 kernels, what code is responsible for
-performing the jump to tegra_secondary_startup?
-
-If the jump is done by making an exception return from some firmware,
-you may find you hit tegra_secondary_starup in ARM state, and
-everything will go horribly wrong...
-
-It could be worth making the secondary kernel entry point ARM code
-unconditionally (just as is now done for the primary kernel entry
-point).
-
-Cheers
----Dave
+576k5Y+R6L2v5Lu2KzEwOeWxiuW5v+S6pOS8muS5sOWutuOAgea1t+WFs+aVsOaNruOAgeaQnOe0
+ouW8leaTjuS5sOWutixCMkLor6Lnm5jkubDlrrblhbE1MDDkuIcs5LuFMTDlhYPmr4/lpKnjgIIg
+DQrkv53or4Hmr4/lpKnpg73mnInkubDlrrblm57lpI3jgIINCuS/neivgeavj+WkqemDveacieS5
+sOWutuWbnuWkjeOAgg0KDQoNCjHjgIHnvqTlj5Hova/ku7bvvJog5pON5L2c566A5Y2V77yM5Yqf
+6IO95by65aSn77yM5qih5Lu/5Lq65bel5pON5L2c5qih5byP77yM5Yiw6L6+546H6auY77yM5pel
+5Y+R6YCBNeS4h+WwgeS7peS4iuOAgiANCjLjgIE1MDDkuIfkubDlrrbotYTmupDvvJog6LWg6YCB
+55qENTAw5LiH5Lmw5a626LWE5rqQ5bqT77yM5q+P5pyI5pu05pawIOOAgiANCjPjgIHotoXnuqfm
+tbflpJbkubDlrrZFbWFpbOaQnOe0ouacuu+8miDmr4/lpKnog73mkJzntKIxLTLkuIfku6XkuIrk
+ubDlrrbnnJ/lrp5FTUFJTO+8jOaIkOWNleeOh+mrmOOAgiANCiANCg0K6KaB55qE5oqT57Sn6IGU
+57O7UVE6IDEzMzk2MjUyMTggICDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDEzMzk2MjUyMThA
+cXEuY29tDQropoHnmoTmipPntKfogZTns7tRUTogMTMzOTYyNTIxOCAgIOaIluiAheeri+WNs+Wb
+nuWkjemCrueusTogMTMzOTYyNTIxOEBxcS5jb20NCuimgeeahOaKk+e0p+iBlOezu1FROiAxMzM5
+NjI1MjE4ICAg5oiW6ICF56uL5Y2z5Zue5aSN6YKu566xOiAxMzM5NjI1MjE4QHFxLmNvbQ0KDQrl
+hY3otLnotaDpgIE6DQrkuIDlhbE45Liq5YyFKOaVsOaNruaYr+WFqOihjOS4mueahO+8jOaMieeF
+p+ihjOS4muWIhuWlveexu++8jOW5tuS4lOWPr+S7peaMieeFp+WFs+mUruivjeafpeivoueahCnv
+vJogDQox77yMMjAxMeaYpeWtozEwOeWxiuW5v+S6pOS8muS5sOWutueOsOWcuuivouebmOaVsOaN
+ruW6k+aWsOmynOWHuueCie+8jOi2hee6p+aWsOmynOS5sOWutu+8jOaWsOmynOaVsOaNru+8jOWu
+ueaYk+aIkOWNle+8gSANCjLvvIzotK3kubDlkI7lj6/ku6XlhY3otLnmm7TmlrAyMDEx56eL5a2j
+5bm/5Lqk5LyaKzIwMTLmmKXlraPlub/kuqTkvJrkubDlrrbmlbDmja7jgILlpKrotoXlgLzkuobj
+gIINCjPvvIzmnIDmlrDlhajnkIPkubDlrrblupMs5YWxNDUxNjYw5p2h5pWw5o2u44CCICjmnIDm
+lrDmm7TmlrDml6XmnJ8gMjAxMS0wNS0xNuaXpSkNCjTvvIwyMDA45bm0LDIwMDnlubQsMjAxMOW5
+tCDmmKXlraMr56eL5a2j5bm/5Lqk5Lya5Lmw5a625ZCN5b2V77yMMTAzIDEwNCAxMDUgMTA2IDEw
+NyAxMDgg5YWx5YWt5bGKIOWFsTEyMC425LiH5pWw5o2u44CCDQo177yMMjAxMOW5tOWbvemZheS/
+g+mUgOWNj+S8mu+8iFBQQUnvvInmiJDlkZjlkI3ljZUgUFBBSSBNZW1iZXJzIERpcmVjdG9yee+8
+jOmdnuW4uOmHjeimgeeahOWkp+S5sOWutuOAgg0KNu+8jDIwMTDlubTliLDpppnmuK/ph4fotK3n
+moTlm73lpJblrqLkurrlkI3lvZUo6aaZ5riv6LS45Y+R5bGA5o+Q5L6bKe+8jOWFsTcuMuS4h+aV
+sOaNru+8jOi2hee6p+mHjeimgeeahOS5sOWutuOAgg0KN++8jDQ4LjY45LiH5p2h5pyA5paw5Lmw
+5a626K+i55uY77yM6LSt5Lmw5ZCO5q+P5pyI5pu05pawIDEtMuS4h+adoe+8jOWMheaLrDLpg6jl
+iIbvvIwx77yM5pyA5paw55qE6K+i55uYIDLvvIzmnIDmlrDnmoTlsZXkvJrkubDlrrbjgILlhY3o
+tLnmm7TmlrAzNuS4quaciOOAgg0KOO+8jDIwMDnlubTmtbflhbPmj5DljZXmlbDmja5waWVyc+eJ
+iOaVsOaNriAx5Y2D5LiH44CCDQoNCg0K6K+a5L+h5Li65pys77yM5pSv5oyB5pSv5LuY5a6d5ouF
+5L+d5Lqk5piTICjlhYjlj5HotKflubblronoo4Xorr7nva7nvqTlj5Hova/ku7bvvIznhLblkI7k
+u5jmrL4pIOW9u+W6leaJk+a2iOaCqOeahCDpob7omZHjgIINCg0KIA0KDQoNCiANCg0K57K+5YeG
+5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+
+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K
+57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K
