@@ -1,51 +1,125 @@
-From: =?utf-8?B?5LuFMTDlhYPmr4/lpKk=?= <test-+pYPayyXbKJWk0Htik3J/w@public.gmane.org>
-Subject: =?utf-8?B?576k5Y+R6L2v5Lu2K+S5sOWutuaQnOe0ouacuisxMDnlsYrlub/kuqTkvJrkubDlrrY=?=
-	=?utf-8?B?44CB5rW35YWz5pWw5o2uLEIyQuivouebmOS5sOWutjUwMOS4h+OAgg==?=
-Date: Thu, 15 Sep 2011 22:35:41 +0000 (UTC)
-Message-ID: <20111214073410538013__1041.78457190773$1316126141$gmane$org@amidress.com>
-Reply-To: <1339625218-9uewiaClKEY@public.gmane.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] arm/dt: Add SoC detection macros
+Date: Sat, 17 Sep 2011 11:28:11 +0100
+Message-ID: <20110917102811.GC16381@n2100.arm.linux.org.uk>
+References: <1315555339-12685-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Date: Wed, 14 Dec 2011 07:34:01 +0800
+Content-Disposition: inline
+In-Reply-To: <1315555339-12685-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-576k5Y+R6L2v5Lu2KzEwOeWxiuW5v+S6pOS8muS5sOWutuOAgea1t+WFs+aVsOaNruOAgeaQnOe0
-ouW8leaTjuS5sOWutixCMkLor6Lnm5jkubDlrrblhbE1MDDkuIcs5LuFMTDlhYPmr4/lpKnjgIIg
-DQrkv53or4Hmr4/lpKnpg73mnInkubDlrrblm57lpI3jgIINCuS/neivgeavj+WkqemDveacieS5
-sOWutuWbnuWkjeOAgg0KDQoNCjHjgIHnvqTlj5Hova/ku7bvvJog5pON5L2c566A5Y2V77yM5Yqf
-6IO95by65aSn77yM5qih5Lu/5Lq65bel5pON5L2c5qih5byP77yM5Yiw6L6+546H6auY77yM5pel
-5Y+R6YCBNeS4h+WwgeS7peS4iuOAgiANCjLjgIE1MDDkuIfkubDlrrbotYTmupDvvJog6LWg6YCB
-55qENTAw5LiH5Lmw5a626LWE5rqQ5bqT77yM5q+P5pyI5pu05pawIOOAgiANCjPjgIHotoXnuqfm
-tbflpJbkubDlrrZFbWFpbOaQnOe0ouacuu+8miDmr4/lpKnog73mkJzntKIxLTLkuIfku6XkuIrk
-ubDlrrbnnJ/lrp5FTUFJTO+8jOaIkOWNleeOh+mrmOOAgiANCiANCg0K6KaB55qE5oqT57Sn6IGU
-57O7UVE6IDEzMzk2MjUyMTggICDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDEzMzk2MjUyMThA
-cXEuY29tDQropoHnmoTmipPntKfogZTns7tRUTogMTMzOTYyNTIxOCAgIOaIluiAheeri+WNs+Wb
-nuWkjemCrueusTogMTMzOTYyNTIxOEBxcS5jb20NCuimgeeahOaKk+e0p+iBlOezu1FROiAxMzM5
-NjI1MjE4ICAg5oiW6ICF56uL5Y2z5Zue5aSN6YKu566xOiAxMzM5NjI1MjE4QHFxLmNvbQ0KDQrl
-hY3otLnotaDpgIE6DQrkuIDlhbE45Liq5YyFKOaVsOaNruaYr+WFqOihjOS4mueahO+8jOaMieeF
-p+ihjOS4muWIhuWlveexu++8jOW5tuS4lOWPr+S7peaMieeFp+WFs+mUruivjeafpeivoueahCnv
-vJogDQox77yMMjAxMeaYpeWtozEwOeWxiuW5v+S6pOS8muS5sOWutueOsOWcuuivouebmOaVsOaN
-ruW6k+aWsOmynOWHuueCie+8jOi2hee6p+aWsOmynOS5sOWutu+8jOaWsOmynOaVsOaNru+8jOWu
-ueaYk+aIkOWNle+8gSANCjLvvIzotK3kubDlkI7lj6/ku6XlhY3otLnmm7TmlrAyMDEx56eL5a2j
-5bm/5Lqk5LyaKzIwMTLmmKXlraPlub/kuqTkvJrkubDlrrbmlbDmja7jgILlpKrotoXlgLzkuobj
-gIINCjPvvIzmnIDmlrDlhajnkIPkubDlrrblupMs5YWxNDUxNjYw5p2h5pWw5o2u44CCICjmnIDm
-lrDmm7TmlrDml6XmnJ8gMjAxMS0wNS0xNuaXpSkNCjTvvIwyMDA45bm0LDIwMDnlubQsMjAxMOW5
-tCDmmKXlraMr56eL5a2j5bm/5Lqk5Lya5Lmw5a625ZCN5b2V77yMMTAzIDEwNCAxMDUgMTA2IDEw
-NyAxMDgg5YWx5YWt5bGKIOWFsTEyMC425LiH5pWw5o2u44CCDQo177yMMjAxMOW5tOWbvemZheS/
-g+mUgOWNj+S8mu+8iFBQQUnvvInmiJDlkZjlkI3ljZUgUFBBSSBNZW1iZXJzIERpcmVjdG9yee+8
-jOmdnuW4uOmHjeimgeeahOWkp+S5sOWutuOAgg0KNu+8jDIwMTDlubTliLDpppnmuK/ph4fotK3n
-moTlm73lpJblrqLkurrlkI3lvZUo6aaZ5riv6LS45Y+R5bGA5o+Q5L6bKe+8jOWFsTcuMuS4h+aV
-sOaNru+8jOi2hee6p+mHjeimgeeahOS5sOWutuOAgg0KN++8jDQ4LjY45LiH5p2h5pyA5paw5Lmw
-5a626K+i55uY77yM6LSt5Lmw5ZCO5q+P5pyI5pu05pawIDEtMuS4h+adoe+8jOWMheaLrDLpg6jl
-iIbvvIwx77yM5pyA5paw55qE6K+i55uYIDLvvIzmnIDmlrDnmoTlsZXkvJrkubDlrrbjgILlhY3o
-tLnmm7TmlrAzNuS4quaciOOAgg0KOO+8jDIwMDnlubTmtbflhbPmj5DljZXmlbDmja5waWVyc+eJ
-iOaVsOaNriAx5Y2D5LiH44CCDQoNCg0K6K+a5L+h5Li65pys77yM5pSv5oyB5pSv5LuY5a6d5ouF
-5L+d5Lqk5piTICjlhYjlj5HotKflubblronoo4Xorr7nva7nvqTlj5Hova/ku7bvvIznhLblkI7k
-u5jmrL4pIOW9u+W6leaJk+a2iOaCqOeahCDpob7omZHjgIINCg0KIA0KDQoNCiANCg0K57K+5YeG
-5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+
-5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K
-57K+5YeG5pWw5o2uLeaIkOWNleeOh+aegemrmA0K
+On Fri, Sep 09, 2011 at 01:02:19AM -0700, Allen Martin wrote:
+> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> +# ifdef SOC_NAME
+> +#  undef MULTI_SOC
+> +#  define MULTI_SOC
+> +# else
+> +#   define SOC_NAME tegra2
+> +# endif
+> +#endif
+> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> +# ifdef SOC_NAME
+> +#  undef MULTI_SOC
+> +#  define MULTI_SOC
+> +# else
+> +#   define SOC_NAME tegra3
+> +# endif
+> +#endif
+> +
+> +#define soc_is_tegra2()			0
+> +#define soc_is_tegra3()			0
+> +
+> +#if defined(MULTI_SOC)
+> +# if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+> +#  undef soc_is_tegra2
+> +#  define soc_is_tegra2()		is_tegra2()
+> +# endif
+> +# if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> +#  undef soc_is_tegra3
+> +#  define soc_is_tegra3()		is_tegra3()
+> +# endif
+> +#else /* non-multi, only one architecture is on */
+> +# if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+> +#  undef soc_is_tegra2
+> +#  define soc_is_tegra2()		1
+> +# elif defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> +#  undef soc_is_tegra3
+> +#  define soc_is_tegra3()		1
+> +# endif
+> +#endif
+
+This is not the way to do this, especially for a file in asm/*.h.  Look
+at the way machine_is_xxx() is dealt with in include/generated/mach-types.h.
+
+#define MULTI_SOC			0
+#undef SOC_SELECTED
+
+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+# ifdef SOC_SELECTED
+#  undef MULTI_SOC
+#  define MULTI_SOC			1
+# else
+#  define SOC_SELECTED
+# endif
+# define soc_is_tegra2()		(!MULTI_SOC || is_tegra2())
+#else
+# define soc_is_tegra2()		0
+#endif
+
+#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+# ifdef SOC_SELECTED
+#  undef MULTI_SOC
+#  define MULTI_SOC			1
+# else
+#  define SOC_SELECTED
+# endif
+# define soc_is_tegra3()		(!MULTI_SOC || is_tegra3())
+#else
+# define soc_is_tegra3()		0
+#endif
+
+#undef SOC_SELECTED
+
+The above is nicely extensible - if other SoCs need to extend this they
+just need to add another outer ifdef..endif section to the file.
+
+> +
+> +enum soc_version {
+> +	SOC_UNKNOWN = 0,
+> +	TEGRA_T20,
+> +	TEGRA_T30,
+
+I'd suggest prefixing these with SOC_ to avoid any namespace problems.
+
+> +};
+> +
+> +void soc_init_version(void);
+> +enum soc_version soc_get_version(void);
+> +
+> +static inline int is_tegra2(void)
+> +{
+> +	return soc_get_version() == TEGRA_T20;
+> +}
+> +
+> +static inline int is_tegra3(void)
+> +{
+> +	return soc_get_version() == TEGRA_T30;
+> +}
+
+If we require all SoCs to provide a value in soc_version, then we can use
+exactly the same method as mach-types.h uses - and while at this, please
+get rid of soc_get_version().  It's far cheaper to access the variable
+directly rather than indirect through a function, just like we do with
+__machine_arch_type.  Mark it __read_mostly too.
+
+One last point to raise here is - and it's quite a fundamental one - do we
+really want this?  If we're making decisions based on the SoC type, that
+suggests to me that the hardware description in DT is incomplete, and
+we're hiding stuff in the kernel behind the SoC type.  That doesn't sound
+particularly appealing given the point of DT is to encode the hardware
+specific information outside the kernel code.
