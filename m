@@ -1,74 +1,52 @@
 From: Stephen Warren <swarren@nvidia.com>
-Subject: [PATCH 2/3] staging:iio:magnetometer:ak8975: Don't assume 0 is an invalid GPIO
-Date: Mon, 19 Sep 2011 15:57:31 -0600
-Message-ID: <1316469452-23575-2-git-send-email-swarren@nvidia.com>
-References: <1316469452-23575-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1316469452-23575-1-git-send-email-swarren@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@suse.de>, Jonathan Cameron <jic23@cam.ac.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Chew <achew@nvidia.com>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH V3 1/5] i2c: Add irq_gpio field to struct i2c_client,
+	i2c_board_info.
+Date: Mon, 19 Sep 2011 14:59:07 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B7321434@HQMAIL01.nvidia.com>
+References: <1314914676-28397-1-git-send-email-swarren@nvidia.com>
+	<20110902085620.4ad918c4@endymion.delvare> <4E609F9C.5020403@cam.ac.uk>
+	<20110902112435.69c9e8f7@endymion.delvare>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B327A628@HQMAIL01.nvidia.com>
+	<20110906225708.GA28957@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20110906225708.GA28957@kroah.com>
+Content-Language: en-US
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: devel-bounces@linuxdriverproject.org
+To: Greg KH <greg@kroah.com>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andrew Chew <AChew@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Jonathan Cameron <jic23@cam.ac.uk>, Ben Dooks <ben-linux@fluff.org>, Jean Delvare <khali@linux-fr.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-gpio_is_valid() is the defined mechanism to determine whether a GPIO is
-valid. Use this instead of assuming that 0 is an invalid GPIO.
+Greg KH wrote at Tuesday, September 06, 2011 4:57 PM:
+> On Fri, Sep 02, 2011 at 11:24:04AM -0700, Stephen Warren wrote:
+> > Jean Delvare wrote at Friday, September 02, 2011 3:25 AM:
+...
+> > > > Why not make it platform data for now and 'if' it becomes way more common
+> > > > (probably won't) we can always propose adding as a general field at a later
+> > > > date.
+> > >
+> > > Yes, this sounds like a much more reasonable approach.
+> >
+> > BTW, if that's the direction that's decided, just take the first version
+> > of the patchset I posted, plus Jonathan Cameron's subsequent patch to
+> > modify ak8975 to accept GPIO ID through platform data.
+> 
+> I don't know which patchset that would be, can you please just resend
+> what you want applied so that I know I get the correct one?
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Acked-by: Andrew Chew <achew@nvidia.com>
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
----
- drivers/staging/iio/magnetometer/ak8975.c |   11 +++++------
- 1 files changed, 5 insertions(+), 6 deletions(-)
+Sorry for the slow response; I was on vacation for the last couple weeks.
+I've now posted an updated version of this patchset, without any of the
+changes for I2C/SPI core/types/...
 
-diff --git a/drivers/staging/iio/magnetometer/ak8975.c b/drivers/staging/iio/magnetometer/ak8975.c
-index 6d17ae5..930ddef 100644
---- a/drivers/staging/iio/magnetometer/ak8975.c
-+++ b/drivers/staging/iio/magnetometer/ak8975.c
-@@ -373,7 +373,7 @@ static int ak8975_read_axis(struct iio_dev *indio_dev, int index, int *val)
- 	}
- 
- 	/* Wait for the conversion to complete. */
--	if (data->eoc_gpio)
-+	if (gpio_is_valid(data->eoc_gpio))
- 		ret = wait_conversion_complete_gpio(data);
- 	else
- 		ret = wait_conversion_complete_polled(data);
-@@ -484,7 +484,7 @@ static int ak8975_probe(struct i2c_client *client,
- 
- 	/* We may not have a GPIO based IRQ to scan, that is fine, we will
- 	   poll if so */
--	if (eoc_gpio > 0) {
-+	if (gpio_is_valid(eoc_gpio)) {
- 		err = gpio_request(eoc_gpio, "ak_8975");
- 		if (err < 0) {
- 			dev_err(&client->dev,
-@@ -500,8 +500,7 @@ static int ak8975_probe(struct i2c_client *client,
- 						eoc_gpio, err);
- 			goto exit_gpio;
- 		}
--	} else
--		eoc_gpio = 0;	/* No GPIO available */
-+	}
- 
- 	/* Register with IIO */
- 	indio_dev = iio_allocate_device(sizeof(*data));
-@@ -537,7 +536,7 @@ static int ak8975_probe(struct i2c_client *client,
- exit_free_iio:
- 	iio_free_device(indio_dev);
- exit_gpio:
--	if (eoc_gpio)
-+	if (gpio_is_valid(eoc_gpio))
- 		gpio_free(eoc_gpio);
- exit:
- 	return err;
-@@ -552,7 +551,7 @@ static int ak8975_remove(struct i2c_client *client)
- 	iio_device_unregister(indio_dev);
- 	iio_free_device(indio_dev);
- 
--	if (eoc_gpio)
-+	if (gpio_is_valid(eoc_gpio))
- 		gpio_free(eoc_gpio);
- 
- 	return 0;
 -- 
-1.7.0.4
+nvpublic
