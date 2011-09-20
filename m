@@ -1,48 +1,112 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: [PATCH REPOST 2/2] arm/dt: Tegra: Add support-8bit to SDHCI nodes
-Date: Tue, 20 Sep 2011 10:46:26 -0600
-Message-ID: <1316537186-26753-2-git-send-email-swarren@nvidia.com>
-References: <1316537186-26753-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1316537186-26753-1-git-send-email-swarren@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Arnd Bergmann <arnd@arndb.de>, nicolas.pitre@linaro.org
-Cc: Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] i2c/tegra: I2C driver uses the
+ suspend_noirq/resume_noirq
+Date: Tue, 20 Sep 2011 09:51:08 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9@HQMAIL01.nvidia.com>
+References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
+	<CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
+	<20110806084805.GA18098@sirena.org.uk>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24CC8@HQMAIL01.nvidia.com>
+	<CAMbhsRR2+bhpjhGfUSt9M5tDk1EW2d70yC-tZy27zEgVqtkfSg@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24D09@HQMAIL01.nvidia.com>
+	<CAMbhsRTVm+dUODDgqiekpTrrNnpo9trJNNvOQ2ETCNkneh-L-g@mail.gmail.com>
+	<1313109916.19990.28.camel@finisterre.wolfsonmicro.main>
+	<CAMbhsRShLvyc2XKJAL8PwR0Uj4Pnp9rVt7QyK1qAVxJ-R2PSdQ@mail.gmail.com>
+	<20110812031433.GE10218@opensource.wolfsonmicro.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF04B24A3CA6@HQMAIL01.nvidia.com>
+ <CAMbhsRRRa_JV8_LHEvsM2h3e8Hbf1GAcpXz8gdU3wCc8Jgz5gw@mail.gmail.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For Seaboard's internal eMMC, this makes the difference between a
-5.5MB/s and 10.2MB/s transfer rate. On Harmony, there wasn't any
-measurable difference on my cheap/slow ~2MB/s card.
+Stephen Warren wrote at Tuesday, August 30, 2011 10:25 AM:
+> Ben, Arnd,
+>=20
+> Could you please ack/nack the patch at the start of this thread for C=
+olin;
+> see below.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
- arch/arm/boot/dts/tegra-harmony.dts  |    1 +
- arch/arm/boot/dts/tegra-seaboard.dts |    4 ++++
- 2 files changed, 5 insertions(+), 0 deletions(-)
+Ben, can you please comment on the acceptability of this patch?
 
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-index e581866..0e225b8 100644
---- a/arch/arm/boot/dts/tegra-harmony.dts
-+++ b/arch/arm/boot/dts/tegra-harmony.dts
-@@ -66,5 +66,6 @@
- 		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
- 		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
-+		support-8bit;
- 	};
- };
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index 64cedca..a72299b 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -25,4 +25,8 @@
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 	};
-+
-+	sdhci@c8000600 {
-+		support-8bit;
-+	};
- };
--- 
-1.7.0.4
+Or Arnd, did Mark's most recent explanation of the situation provide en=
+ough
+context for you to ack/nak it?
+
+Thanks.
+
+> Thanks.
+>=20
+> Colin Cross wrote at Wednesday, August 24, 2011 3:34 PM:
+> > On Wed, Aug 24, 2011 at 2:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org=
+> wrote:
+> > > Mark Brown wrote at Thursday, August 11, 2011 9:15 PM:
+> > >> On Thu, Aug 11, 2011 at 07:59:27PM -0700, Colin Cross wrote:
+> > >> > On Thu, Aug 11, 2011 at 5:45 PM, Mark Brown
+> > >>
+> > >> > > For example with ASoC we'd sort all the components before th=
+e ASoC card
+> > >> > > without regard for their bus dependencies or any other depen=
+dencies they
+> > >> > > have (eg, their regulators). Since the ASoC card is a platfo=
+rm device
+> > >> > > it's likely to have registered early with no regard for wher=
+e the buses
+> > >> > > the card needs are registered. I'd expect there's a reasonab=
+le chance
+> > >> > > it'll actually make things worse in the short term.
+> > >>
+> > >> > You can't just move everything after the card, you have to mov=
+e
+> > >> > everything after the last device that was probed, and it only =
+works if
+> > >> > nothing depends on any of the devices that are moved.
+> > >>
+> > >> Sorry, I said that the wrong way round due to trying to reply qu=
+ickly -
+> > >> the card would be the thing that moves since that's the thing th=
+at
+> > >> actually does the suspend but we've *no* idea which device we ne=
+ed to
+> > >> move it after. =A0Since all the function does is a direct move a=
+fter or
+> > >> before a single device all we can do is pick one and pray that i=
+t's the
+> > >> right device.
+> > >
+> > > Colin,
+> > >
+> > > This thread seems to have died down; how should we make progress?
+> > >
+> > > It sounds like the suspend_irq solution is the current de-facto s=
+tandard;
+> > > not optimal, but all we really have right now and already in use.=
+ I could
+> > > certainly see avoiding this solution if it was the first time it =
+was
+> > > employed, but re-using it seems reasonable to me?
+> > >
+> > > Alternatively, are you attending either Linux Plumbers Conference=
+ or the
+> > > Kernel Summit? Mark implied this topic might well come up for dis=
+cussion
+> > > there. Unfortunately, I won't be able to make LPC due to a confli=
+ct.
+> > I don't think I'll be able to make it.
+> >
+> > > (and you'd mentioned having the subsystem maintainers weigh in on=
+ this;
+> > > which sub-system; IRQ, power, I2C, ...?)
+> >
+> > If Ben says its OK, its fine with me.  Or maybe Arnd wants to weigh=
+ in?
+
+--
+nvpublic
