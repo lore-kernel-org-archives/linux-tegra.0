@@ -1,65 +1,62 @@
 From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] i2c: Add irq_gpio field to struct i2c_client,
- i2c_board_info.
-Date: Tue, 20 Sep 2011 09:54:48 +0100
-Message-ID: <4E7854D8.7000603@cam.ac.uk>
-References: <1314914676-28397-1-git-send-email-swarren@nvidia.com> <20110902085620.4ad918c4@endymion.delvare> <20110920041629.GC30517@ponder.secretlab.ca>
+Subject: Re: [PATCH 1/3] staging:iio:magnetometer:ak8975 use platform_data
+ to pass the gpio number.
+Date: Tue, 20 Sep 2011 10:06:37 +0100
+Message-ID: <4E78579D.9090301@cam.ac.uk>
+References: <1316469452-23575-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110920041629.GC30517-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+In-Reply-To: <1316469452-23575-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/20/11 05:16, Grant Likely wrote:
-> On Fri, Sep 02, 2011 at 08:56:20AM +0200, Jean Delvare wrote:
->> Stephen,
->>
->> Can you please fix your e-mail client / system / whatever so that your
->> patch series are no longer sent duplicated?
->>
->> On Thu,  1 Sep 2011 16:04:27 -0600, Stephen Warren wrote:
->>> Some devices use a single pin as both an IRQ and a GPIO. In that case,
->>> irq_gpio is the GPIO ID for that pin. Not all drivers use this feature.
->>> Where they do, and the use of this feature is optional, and the system
->>> wishes to disable this feature, this field must be explicitly set to a
->>> defined invalid GPIO ID, such as -1.
->>>
->>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> v3: Also add the field to i2c_board_info, and copy the field from
->>>     i2c_board_info to i2c_client upon instantiation
->>
->> I don't get the idea. The i2c core doesn't make any use of the field,
->> and that field will only be used by a few drivers amongst the 420+
->> i2c drivers in the tree. This looks like a waste of memory. What's wrong
->> with including the new field in the private platform or arch data
->> structure for drivers which need it?
+On 09/19/11 22:57, Stephen Warren wrote:
+> From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
 > 
-> I have to second the concern; but for a different reason.  This
-> shouldn't even remotely be necessary.  If the pin is used as an
-> interrupt, then interrupt controller driver (which I would assume is
-> also the gpio controller driver) should be responsible for setting up
-> the pin so that it can be used correctly as a irq line.  Why does the
-> gpio number need to be explicitly passed?
-The particular driver covered here is somewhat of a false positive.
-It really ought to be rewritten to do everything 'properly' with
-interrupts.  Right now no one with the inclination has the hardware
-to fix it up.
+> Tegra doesn't have irq_to_gpio() any more, and ak8975 is included in
+> tegra_defconfig. This causes a build failure. Instead, pass the GPIO name
+> through platform data.
+> 
+> [swarren: Rewrote commit description when I squashed this with my patch
+> to remove the irq_to_gpio() call]
 
-The nasty case we are trying to cover is peripherals that use level
-interrupts talking to gpio chips that only do edge triggered ones.
-We use the pin as an irq but have to query it as a gpio to discover
-if the sneaky chip raised it again without it actually going low.
+As I've stated elsewhere, this is the wrong fix for this particular driver,
+but it is the one with minimal impact and as such I'm happy for it
+to go in as a stop gap until someone has time (and hardware) to clean
+this driver up to make 'correct' use of interrupts.  Note it's not going
+to leave staging until that is done or someone explains why it can't be!
+> 
+> Signed-off-by: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Second one has some trivial one line fuzz against what I think is
+the current state of Greg's tree - I'll push these on in the series I'll be
+sending to Greg later today.  Obviously fine if Greg has already merged
+them and fixed it up!
 
-There are sometimes work arounds involving polling registers on
-the device to check if the interrupt is active, but give the bus is
-slow, pinging the gpio to find out it's state is often much faster.
+Thanks,
 
-So it's a dirty hack for dirty hardware.  Having said that I agree
-that it's a niche case and certainly shouldn't be part of any core
-code, unless it is done right at the core in the generic interrupt
-code and previous discussions suggest that is tricky to say the least!
+Jonathan
+> ---
+>  drivers/staging/iio/magnetometer/ak8975.c |    5 ++++-
+>  1 files changed, 4 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/magnetometer/ak8975.c b/drivers/staging/iio/magnetometer/ak8975.c
+> index a17fa9f..6d17ae5 100644
+> --- a/drivers/staging/iio/magnetometer/ak8975.c
+> +++ b/drivers/staging/iio/magnetometer/ak8975.c
+> @@ -477,7 +477,10 @@ static int ak8975_probe(struct i2c_client *client,
+>  	int err;
+>  
+>  	/* Grab and set up the supplied GPIO. */
+> -	eoc_gpio = irq_to_gpio(client->irq);
+> +	if (client->dev.platform_data == NULL)
+> +		eoc_gpio = -1;
+> +	else
+> +		eoc_gpio = *(int *)(client->dev.platform_data);
+>  
+>  	/* We may not have a GPIO based IRQ to scan, that is fine, we will
+>  	   poll if so */
