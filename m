@@ -1,62 +1,67 @@
-From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Subject: Re: [PATCH 1/3] staging:iio:magnetometer:ak8975 use platform_data
- to pass the gpio number.
-Date: Tue, 20 Sep 2011 10:06:37 +0100
-Message-ID: <4E78579D.9090301@cam.ac.uk>
-References: <1316469452-23575-1-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1316469452-23575-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH REPOST 1/2] arm/dt: Tegra: Update SDHCI nodes to match bindings
+Date: Tue, 20 Sep 2011 10:46:25 -0600
+Message-ID: <1316537186-26753-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Arnd Bergmann <arnd@arndb.de>, nicolas.pitre@linaro.org
+Cc: Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/19/11 22:57, Stephen Warren wrote:
-> From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-> 
-> Tegra doesn't have irq_to_gpio() any more, and ak8975 is included in
-> tegra_defconfig. This causes a build failure. Instead, pass the GPIO name
-> through platform data.
-> 
-> [swarren: Rewrote commit description when I squashed this with my patch
-> to remove the irq_to_gpio() call]
+The bindings were recently updated to have separate properties for each
+type of GPIO. Update the Device Tree source to match that.
 
-As I've stated elsewhere, this is the wrong fix for this particular driver,
-but it is the one with minimal impact and as such I'm happy for it
-to go in as a stop gap until someone has time (and hardware) to clean
-this driver up to make 'correct' use of interrupts.  Note it's not going
-to leave staging until that is done or someone explains why it can't be!
-> 
-> Signed-off-by: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Second one has some trivial one line fuzz against what I think is
-the current state of Greg's tree - I'll push these on in the series I'll be
-sending to Greg later today.  Obviously fine if Greg has already merged
-them and fixed it up!
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Olof Johansson <olof@lixom.net>
+---
+I'd previously sent these to Grant assuming they'd go in his dt/next branch,
+but perhaps these should go in through Arnd's arm-soc next/dt branch?
 
-Thanks,
+ arch/arm/boot/dts/tegra-harmony.dts  |   12 ++++++------
+ arch/arm/boot/dts/tegra-seaboard.dts |    6 +++---
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Jonathan
-> ---
->  drivers/staging/iio/magnetometer/ak8975.c |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/magnetometer/ak8975.c b/drivers/staging/iio/magnetometer/ak8975.c
-> index a17fa9f..6d17ae5 100644
-> --- a/drivers/staging/iio/magnetometer/ak8975.c
-> +++ b/drivers/staging/iio/magnetometer/ak8975.c
-> @@ -477,7 +477,10 @@ static int ak8975_probe(struct i2c_client *client,
->  	int err;
->  
->  	/* Grab and set up the supplied GPIO. */
-> -	eoc_gpio = irq_to_gpio(client->irq);
-> +	if (client->dev.platform_data == NULL)
-> +		eoc_gpio = -1;
-> +	else
-> +		eoc_gpio = *(int *)(client->dev.platform_data);
->  
->  	/* We may not have a GPIO based IRQ to scan, that is fine, we will
->  	   poll if so */
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 4c05334..e581866 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -57,14 +57,14 @@
+ 	};
+ 
+ 	sdhci@c8000200 {
+-		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
+-			<&gpio 57 0>, /* wp, gpio PH1 */
+-			<&gpio 155 0>; /* power, gpio PT3 */
++		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
++		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
++		power-gpios = <&gpio 155 0>; /* gpio PT3 */
+ 	};
+ 
+ 	sdhci@c8000600 {
+-		gpios = <&gpio 58 0>, /* cd, gpio PH2 */
+-			<&gpio 59 0>, /* wp, gpio PH3 */
+-			<&gpio 70 0>; /* power, gpio PI6 */
++		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
++		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
++		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index 1940cae..64cedca 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -21,8 +21,8 @@
+ 	};
+ 
+ 	sdhci@c8000400 {
+-		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
+-			<&gpio 57 0>, /* wp, gpio PH1 */
+-			<&gpio 70 0>; /* power, gpio PI6 */
++		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
++		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
++		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+ 	};
+ };
+-- 
+1.7.0.4
+
