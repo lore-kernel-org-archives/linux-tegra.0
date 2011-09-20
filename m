@@ -1,112 +1,82 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] i2c/tegra: I2C driver uses the
- suspend_noirq/resume_noirq
-Date: Tue, 20 Sep 2011 09:51:08 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9@HQMAIL01.nvidia.com>
-References: <1312586102-27907-1-git-send-email-swarren@nvidia.com>
-	<CAMbhsRScgMaTZ2e3a__OgOrrA6HN9_dkGuuNGaEfP+iqRdjyNQ@mail.gmail.com>
-	<20110806084805.GA18098@sirena.org.uk>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24CC8@HQMAIL01.nvidia.com>
-	<CAMbhsRR2+bhpjhGfUSt9M5tDk1EW2d70yC-tZy27zEgVqtkfSg@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF04AEA24D09@HQMAIL01.nvidia.com>
-	<CAMbhsRTVm+dUODDgqiekpTrrNnpo9trJNNvOQ2ETCNkneh-L-g@mail.gmail.com>
-	<1313109916.19990.28.camel@finisterre.wolfsonmicro.main>
-	<CAMbhsRShLvyc2XKJAL8PwR0Uj4Pnp9rVt7QyK1qAVxJ-R2PSdQ@mail.gmail.com>
-	<20110812031433.GE10218@opensource.wolfsonmicro.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF04B24A3CA6@HQMAIL01.nvidia.com>
- <CAMbhsRRRa_JV8_LHEvsM2h3e8Hbf1GAcpXz8gdU3wCc8Jgz5gw@mail.gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH REPOST 1/2] arm/dt: Tegra: Update SDHCI nodes to match
+ bindings
+Date: Tue, 20 Sep 2011 11:42:29 -0600
+Message-ID: <20110920174229.GH7781@ponder.secretlab.ca>
+References: <1316537186-26753-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1316537186-26753-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Tuesday, August 30, 2011 10:25 AM:
-> Ben, Arnd,
->=20
-> Could you please ack/nack the patch at the start of this thread for C=
-olin;
-> see below.
+On Tue, Sep 20, 2011 at 10:46:25AM -0600, Stephen Warren wrote:
+> The bindings were recently updated to have separate properties for each
+> type of GPIO. Update the Device Tree source to match that.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Ben, can you please comment on the acceptability of this patch?
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Or Arnd, did Mark's most recent explanation of the situation provide en=
-ough
-context for you to ack/nak it?
+> ---
+> I'd previously sent these to Grant assuming they'd go in his dt/next branch,
+> but perhaps these should go in through Arnd's arm-soc next/dt branch?
 
-Thanks.
+Yes, they should probably go via Arnd's tree.
 
-> Thanks.
->=20
-> Colin Cross wrote at Wednesday, August 24, 2011 3:34 PM:
-> > On Wed, Aug 24, 2011 at 2:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org=
-> wrote:
-> > > Mark Brown wrote at Thursday, August 11, 2011 9:15 PM:
-> > >> On Thu, Aug 11, 2011 at 07:59:27PM -0700, Colin Cross wrote:
-> > >> > On Thu, Aug 11, 2011 at 5:45 PM, Mark Brown
-> > >>
-> > >> > > For example with ASoC we'd sort all the components before th=
-e ASoC card
-> > >> > > without regard for their bus dependencies or any other depen=
-dencies they
-> > >> > > have (eg, their regulators). Since the ASoC card is a platfo=
-rm device
-> > >> > > it's likely to have registered early with no regard for wher=
-e the buses
-> > >> > > the card needs are registered. I'd expect there's a reasonab=
-le chance
-> > >> > > it'll actually make things worse in the short term.
-> > >>
-> > >> > You can't just move everything after the card, you have to mov=
-e
-> > >> > everything after the last device that was probed, and it only =
-works if
-> > >> > nothing depends on any of the devices that are moved.
-> > >>
-> > >> Sorry, I said that the wrong way round due to trying to reply qu=
-ickly -
-> > >> the card would be the thing that moves since that's the thing th=
-at
-> > >> actually does the suspend but we've *no* idea which device we ne=
-ed to
-> > >> move it after. =A0Since all the function does is a direct move a=
-fter or
-> > >> before a single device all we can do is pick one and pray that i=
-t's the
-> > >> right device.
-> > >
-> > > Colin,
-> > >
-> > > This thread seems to have died down; how should we make progress?
-> > >
-> > > It sounds like the suspend_irq solution is the current de-facto s=
-tandard;
-> > > not optimal, but all we really have right now and already in use.=
- I could
-> > > certainly see avoiding this solution if it was the first time it =
-was
-> > > employed, but re-using it seems reasonable to me?
-> > >
-> > > Alternatively, are you attending either Linux Plumbers Conference=
- or the
-> > > Kernel Summit? Mark implied this topic might well come up for dis=
-cussion
-> > > there. Unfortunately, I won't be able to make LPC due to a confli=
-ct.
-> > I don't think I'll be able to make it.
-> >
-> > > (and you'd mentioned having the subsystem maintainers weigh in on=
- this;
-> > > which sub-system; IRQ, power, I2C, ...?)
-> >
-> > If Ben says its OK, its fine with me.  Or maybe Arnd wants to weigh=
- in?
+g.
 
---
-nvpublic
+> 
+>  arch/arm/boot/dts/tegra-harmony.dts  |   12 ++++++------
+>  arch/arm/boot/dts/tegra-seaboard.dts |    6 +++---
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+> index 4c05334..e581866 100644
+> --- a/arch/arm/boot/dts/tegra-harmony.dts
+> +++ b/arch/arm/boot/dts/tegra-harmony.dts
+> @@ -57,14 +57,14 @@
+>  	};
+>  
+>  	sdhci@c8000200 {
+> -		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
+> -			<&gpio 57 0>, /* wp, gpio PH1 */
+> -			<&gpio 155 0>; /* power, gpio PT3 */
+> +		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
+> +		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
+> +		power-gpios = <&gpio 155 0>; /* gpio PT3 */
+>  	};
+>  
+>  	sdhci@c8000600 {
+> -		gpios = <&gpio 58 0>, /* cd, gpio PH2 */
+> -			<&gpio 59 0>, /* wp, gpio PH3 */
+> -			<&gpio 70 0>; /* power, gpio PI6 */
+> +		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
+> +		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
+> +		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+> index 1940cae..64cedca 100644
+> --- a/arch/arm/boot/dts/tegra-seaboard.dts
+> +++ b/arch/arm/boot/dts/tegra-seaboard.dts
+> @@ -21,8 +21,8 @@
+>  	};
+>  
+>  	sdhci@c8000400 {
+> -		gpios = <&gpio 69 0>, /* cd, gpio PI5 */
+> -			<&gpio 57 0>, /* wp, gpio PH1 */
+> -			<&gpio 70 0>; /* power, gpio PI6 */
+> +		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
+> +		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
+> +		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+>  	};
+>  };
+> -- 
+> 1.7.0.4
+> 
