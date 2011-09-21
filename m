@@ -1,57 +1,46 @@
-From: =?utf-8?B?5LuFMTDlhYPmr4/lpKk=?= <admin-A3KEvI08YCZkJTXbjpw2ZB2eb7JE58TQ@public.gmane.org>
-Subject: =?utf-8?B?576k5Y+R6L2v5Lu2K+S5sOWutuaQnOe0ouacuisxMDnlsYrlub/kuqTkvJrkubDlrrY=?=
-	=?utf-8?B?44CB5rW35YWz5pWw5o2uLEIyQuivouebmOS5sOWutjUwMOS4hw==?=
-Date: Wed, 21 Sep 2011 07:25:57 +0000 (UTC)
-Message-ID: <20120921152025368420@mail.china-tax.org>
-Reply-To: <1339625218-9uewiaClKEY@public.gmane.org>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Remove redundant change to the CPSR in headsmp.S
+Date: Wed, 21 Sep 2011 09:14:08 -0700
+Message-ID: <CAMbhsRTrwyEwxCKHEYx0PVt7DTFDE7o5+9T8qz=82jZBEYYYxg@mail.gmail.com>
+References: <1315411253-17559-1-git-send-email-dave.martin@linaro.org>
+	<20110912165222.GE2020@arm.com>
+	<CAMbhsRSoSYhuqPC+SmCNk4dseok0vs02su0kihKNqXGpCvUvSg@mail.gmail.com>
+	<20110914091531.GA2104@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Date: Fri, 21 Sep 2012 15:20:14 +0800
+In-Reply-To: <20110914091531.GA2104-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linruey1-e4rLpu1aP80WI+UwmH2aBQ@public.gmane.org, linshunjiaory-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lintefgroup-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lintycodef616-JGs/UdohzUI@public.gmane.org, linuxcall-9uewiaClKEY@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linwu-9Onoh4P/yGk@public.gmane.org, linxirong8
+To: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-576k5Y+R6L2v5Lu2KzEwOeWxiuW5v+S6pOS8muS5sOWutuOAgea1t+WFs+aVsOaNruOAgeaQnOe0
-ouW8leaTjuS5sOWutixCMkLor6Lnm5jkubDlrrblhbE1MDDkuIcs5LuFMTDlhYPmr4/lpKnjgIIg
-DQrnvqTlj5Hova/ku7YrMTA55bGK5bm/5Lqk5Lya5Lmw5a6244CB5rW35YWz5pWw5o2u44CB5pCc
-57Si5byV5pOO5Lmw5a62LEIyQuivouebmOS5sOWutuWFsTUwMOS4hyzku4UxMOWFg+avj+WkqeOA
-giANCuS/neivgeavj+WkqemDveacieS5sOWutuWbnuWkjeOAgg0K5L+d6K+B5q+P5aSp6YO95pyJ
-5Lmw5a625Zue5aSN44CCDQrkv53or4Hmr4/lpKnpg73mnInkubDlrrblm57lpI3jgIINCjHjgIHn
-vqTlj5Hova/ku7bvvJog5pON5L2c566A5Y2V77yM5Yqf6IO95by65aSn77yM5qih5Lu/5Lq65bel
-5pON5L2c5qih5byP77yM5Yiw6L6+546H6auY77yM5pel5Y+R6YCBNeS4h+WwgeS7peS4iuOAgiAN
-CjLjgIE1MDDkuIfkubDlrrbotYTmupDvvJog6LWg6YCB55qENTAw5LiH5Lmw5a626LWE5rqQ5bqT
-77yM5pu05pawICjlj6/ku6XmjInnhafmgqjnmoTkuqflk4Hmj5Dlj5blh7rmnaXvvIzmm7Tnsr7l
-h4blvIDlj5Ep44CCIA0KM+OAgei2hee6p+a1t+WkluS5sOWutkVtYWls5pCc57Si5py677yaIOWG
-hee9ruS6hjYwMOS4h+ihjOS4muWFs+mUruivje+8jOagueaNrumVv+WwvuivjeaQnOe0ou+8jOe7
-k+aenOabtOeyvuehruWMuemFje+8m+avj+WkqeiDveaQnOe0ojEtMuS4h+S7peS4iuS5sOWutuec
-n+WunkVNQUlM77yM5oiQ5Y2V546H6auY44CCIA0KIA0K6KaB55qE5oqT57Sn6IGU57O7UVE6IDEz
-Mzk2MjUyMTggICDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDEzMzk2MjUyMThAcXEuY29tDQro
-poHnmoTmipPntKfogZTns7tRUTogMTMzOTYyNTIxOCAgIOaIluiAheeri+WNs+WbnuWkjemCrueu
-sTogMTMzOTYyNTIxOEBxcS5jb20NCuimgeeahOaKk+e0p+iBlOezu1FROiAxMzM5NjI1MjE4ICAg
-5oiW6ICF56uL5Y2z5Zue5aSN6YKu566xOiAxMzM5NjI1MjE4QHFxLmNvbQ0KIA0K5YWN6LS56LWg
-6YCBOg0K5LiA5YWxOOS4quWMhSjmlbDmja7mmK/lhajooYzkuJrnmoTvvIzmjInnhafooYzkuJrl
-iIblpb3nsbvvvIzlubbkuJTlj6/ku6XmjInnhaflhbPplK7or43mn6Xor6LnmoQp77yaIA0KMe+8
-jDIwMTHmmKXlraMxMDnlsYrlub/kuqTkvJrkubDlrrbnjrDlnLror6Lnm5jmlbDmja7lupPmlrDp
-spzlh7rngonvvIzotoXnuqfmlrDpspzkubDlrrbvvIzmlrDpspzmlbDmja7vvIzlrrnmmJPmiJDl
-jZXvvIEgDQoy77yM6LSt5Lmw5ZCO5Y+v5Lul5YWN6LS55pu05pawMjAxMeeni+Wto+W5v+S6pOS8
-misyMDEy5pil5a2j5bm/5Lqk5Lya5Lmw5a625pWw5o2u44CC5aSq6LaF5YC85LqG44CCDQoz77yM
-5pyA5paw5YWo55CD5Lmw5a625bqTLOWFsTQ1MTY2MOadoeaVsOaNruOAgiAo5pyA5paw5pu05paw
-5pel5pyfIDIwMTEtMDUtMTbml6UpDQo077yMMjAwOOW5tCwyMDA55bm0LDIwMTDlubQg5pil5a2j
-K+eni+Wto+W5v+S6pOS8muS5sOWutuWQjeW9le+8jDEwMyAxMDQgMTA1IDEwNiAxMDcgMTA4IOWF
-seWFreWxiiDlhbExMjAuNuS4h+aVsOaNruOAgg0KNe+8jDIwMTDlubTlm73pmYXkv4PplIDljY/k
-vJrvvIhQUEFJ77yJ5oiQ5ZGY5ZCN5Y2VIFBQQUkgTWVtYmVycyBEaXJlY3RvcnnvvIzpnZ7luLjp
-h43opoHnmoTlpKfkubDlrrbjgIINCjbvvIwyMDEw5bm05Yiw6aaZ5riv6YeH6LSt55qE5Zu95aSW
-5a6i5Lq65ZCN5b2VKOmmmea4r+i0uOWPkeWxgOaPkOS+mynvvIzlhbE3LjLkuIfmlbDmja7vvIzo
-toXnuqfph43opoHnmoTkubDlrrbjgIINCjfvvIw0OC42OOS4h+adoeacgOaWsOS5sOWutuivoueb
-mO+8jOi0reS5sOWQjuavj+aciOabtOaWsCAxLTLkuIfmnaHvvIzljIXmi6wy6YOo5YiG77yMMe+8
-jOacgOaWsOeahOivouebmCAy77yM5pyA5paw55qE5bGV5Lya5Lmw5a6244CC5YWN6LS55pu05paw
-MzbkuKrmnIjjgIINCjjvvIwyMDA55bm05rW35YWz5o+Q5Y2V5pWw5o2ucGllcnPniYjmlbDmja4g
-MeWNg+S4h+OAgg0KDQror5rkv6HkuLrmnKzvvIzmlK/mjIHmlK/ku5jlrp3mi4Xkv53kuqTmmJMg
-KOWFiOWPkei0p+W5tuWuieijheiuvue9rue+pOWPkei9r+S7tu+8jOeEtuWQjuS7mOasvikg5b27
-5bqV5omT5raI5oKo55qEIOmhvuiZkeOAgg0KIA0KDQogDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H
-5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V
-546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ
-5Y2V546H5p6B6auYDQo=
+On Wed, Sep 14, 2011 at 2:15 AM, Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+
+<snip>
+
+> With regard to Thumb-2 kernels, what code is responsible for
+> performing the jump to tegra_secondary_startup?
+arch/arm/mach-tegra/platsmp.c puts the physical address of
+tegra_secondary_startup into the reset vector, and then brings the cpu
+out of reset.  As far as I know, it is always in ARM mode, but it is
+possible that it comes through ROM code that ends with a bx, allowing
+it to be entered in Thumb mode.
+
+> If the jump is done by making an exception return from some firmware,
+> you may find you hit tegra_secondary_starup in ARM state, and
+> everything will go horribly wrong...
+>
+> It could be worth making the secondary kernel entry point ARM code
+> unconditionally (just as is now done for the primary kernel entry
+> point).
+That seems safest.
+
+> Cheers
+> ---Dave
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
