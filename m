@@ -1,56 +1,57 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH REPOST 1/2] arm/dt: Tegra: Update SDHCI nodes to match bindings
-Date: Tue, 20 Sep 2011 14:39:06 -0700
-Message-ID: <CAOesGMg4kBH77Ou1xyyVT-Ojxg=9uyxmfsmhbbKquru=j+z6Gg@mail.gmail.com>
-References: <1316537186-26753-1-git-send-email-swarren@nvidia.com>
-	<20110920180731.GL7781@ponder.secretlab.ca>
-	<201109202134.50242.arnd@arndb.de>
-	<201109202301.56983.arnd@arndb.de>
+From: =?utf-8?B?5LuFMTDlhYPmr4/lpKk=?= <admin-A3KEvI08YCZkJTXbjpw2ZB2eb7JE58TQ@public.gmane.org>
+Subject: =?utf-8?B?576k5Y+R6L2v5Lu2K+S5sOWutuaQnOe0ouacuisxMDnlsYrlub/kuqTkvJrkubDlrrY=?=
+	=?utf-8?B?44CB5rW35YWz5pWw5o2uLEIyQuivouebmOS5sOWutjUwMOS4hw==?=
+Date: Wed, 21 Sep 2011 07:25:57 +0000 (UTC)
+Message-ID: <20120921152025368420@mail.china-tax.org>
+Reply-To: <1339625218-9uewiaClKEY@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <201109202301.56983.arnd@arndb.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Stephen Warren <swarren@nvidia.com>, nicolas.pitre@linaro.org, Shawn Guo <shawn.guo@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Date: Fri, 21 Sep 2012 15:20:14 +0800
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linruey1-e4rLpu1aP80WI+UwmH2aBQ@public.gmane.org, linshunjiaory-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lintefgroup-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lintycodef616-JGs/UdohzUI@public.gmane.org, linuxcall-9uewiaClKEY@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linwu-9Onoh4P/yGk@public.gmane.org, linxirong8
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 20, 2011 at 2:01 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 20 September 2011, Arnd Bergmann wrote:
->> On Tuesday 20 September 2011, Grant Likely wrote:
->> > On Tue, Sep 20, 2011 at 07:43:29PM +0200, Arnd Bergmann wrote:
->> > > On Tuesday 20 September 2011, Stephen Warren wrote:
->> > > > The bindings were recently updated to have separate properties for each
->> > > > type of GPIO. Update the Device Tree source to match that.
->> > > >
->> > > > Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> > > > Acked-by: Olof Johansson <olof@lixom.net>
->> > > > ---
->> > > > I'd previously sent these to Grant assuming they'd go in his dt/next branch,
->> > > > but perhaps these should go in through Arnd's arm-soc next/dt branch?
->> > > >
->> > >
->> > > Which tree has the update that changed the bindings? I think it should
->> > > go into the same one.
->> > >
->> > > If it's already upstream, I can take it into the fixes branch.
->> >
->> > Already upstream
->>
->> Ok, I see. I've applied both patches to the fixes branch and will send
->> it out with the next pull request for 3.1 to Linus then.
->
-> Sorry, I just noticed that the second patch is not a bug fix, so I took it out
-> again and kept only patch 1/2 in the fixes branch for 3.1.
->
-> Should I take the other one as well? It's probably better to let that
-> go the proper way through the tegra tree for 3.2, right?
-
-Given that you have a public tree right now, and I don't (since
-kernel.org is down), please feel free to start a tegra/for-3.2 branch
-for me and apply it there. I'll base further work on top of that if
-needed.
-
-(There also aren't a whole lot of other patches queued for 3.2 right now).
-
--Olof
+576k5Y+R6L2v5Lu2KzEwOeWxiuW5v+S6pOS8muS5sOWutuOAgea1t+WFs+aVsOaNruOAgeaQnOe0
+ouW8leaTjuS5sOWutixCMkLor6Lnm5jkubDlrrblhbE1MDDkuIcs5LuFMTDlhYPmr4/lpKnjgIIg
+DQrnvqTlj5Hova/ku7YrMTA55bGK5bm/5Lqk5Lya5Lmw5a6244CB5rW35YWz5pWw5o2u44CB5pCc
+57Si5byV5pOO5Lmw5a62LEIyQuivouebmOS5sOWutuWFsTUwMOS4hyzku4UxMOWFg+avj+WkqeOA
+giANCuS/neivgeavj+WkqemDveacieS5sOWutuWbnuWkjeOAgg0K5L+d6K+B5q+P5aSp6YO95pyJ
+5Lmw5a625Zue5aSN44CCDQrkv53or4Hmr4/lpKnpg73mnInkubDlrrblm57lpI3jgIINCjHjgIHn
+vqTlj5Hova/ku7bvvJog5pON5L2c566A5Y2V77yM5Yqf6IO95by65aSn77yM5qih5Lu/5Lq65bel
+5pON5L2c5qih5byP77yM5Yiw6L6+546H6auY77yM5pel5Y+R6YCBNeS4h+WwgeS7peS4iuOAgiAN
+CjLjgIE1MDDkuIfkubDlrrbotYTmupDvvJog6LWg6YCB55qENTAw5LiH5Lmw5a626LWE5rqQ5bqT
+77yM5pu05pawICjlj6/ku6XmjInnhafmgqjnmoTkuqflk4Hmj5Dlj5blh7rmnaXvvIzmm7Tnsr7l
+h4blvIDlj5Ep44CCIA0KM+OAgei2hee6p+a1t+WkluS5sOWutkVtYWls5pCc57Si5py677yaIOWG
+hee9ruS6hjYwMOS4h+ihjOS4muWFs+mUruivje+8jOagueaNrumVv+WwvuivjeaQnOe0ou+8jOe7
+k+aenOabtOeyvuehruWMuemFje+8m+avj+WkqeiDveaQnOe0ojEtMuS4h+S7peS4iuS5sOWutuec
+n+WunkVNQUlM77yM5oiQ5Y2V546H6auY44CCIA0KIA0K6KaB55qE5oqT57Sn6IGU57O7UVE6IDEz
+Mzk2MjUyMTggICDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDEzMzk2MjUyMThAcXEuY29tDQro
+poHnmoTmipPntKfogZTns7tRUTogMTMzOTYyNTIxOCAgIOaIluiAheeri+WNs+WbnuWkjemCrueu
+sTogMTMzOTYyNTIxOEBxcS5jb20NCuimgeeahOaKk+e0p+iBlOezu1FROiAxMzM5NjI1MjE4ICAg
+5oiW6ICF56uL5Y2z5Zue5aSN6YKu566xOiAxMzM5NjI1MjE4QHFxLmNvbQ0KIA0K5YWN6LS56LWg
+6YCBOg0K5LiA5YWxOOS4quWMhSjmlbDmja7mmK/lhajooYzkuJrnmoTvvIzmjInnhafooYzkuJrl
+iIblpb3nsbvvvIzlubbkuJTlj6/ku6XmjInnhaflhbPplK7or43mn6Xor6LnmoQp77yaIA0KMe+8
+jDIwMTHmmKXlraMxMDnlsYrlub/kuqTkvJrkubDlrrbnjrDlnLror6Lnm5jmlbDmja7lupPmlrDp
+spzlh7rngonvvIzotoXnuqfmlrDpspzkubDlrrbvvIzmlrDpspzmlbDmja7vvIzlrrnmmJPmiJDl
+jZXvvIEgDQoy77yM6LSt5Lmw5ZCO5Y+v5Lul5YWN6LS55pu05pawMjAxMeeni+Wto+W5v+S6pOS8
+misyMDEy5pil5a2j5bm/5Lqk5Lya5Lmw5a625pWw5o2u44CC5aSq6LaF5YC85LqG44CCDQoz77yM
+5pyA5paw5YWo55CD5Lmw5a625bqTLOWFsTQ1MTY2MOadoeaVsOaNruOAgiAo5pyA5paw5pu05paw
+5pel5pyfIDIwMTEtMDUtMTbml6UpDQo077yMMjAwOOW5tCwyMDA55bm0LDIwMTDlubQg5pil5a2j
+K+eni+Wto+W5v+S6pOS8muS5sOWutuWQjeW9le+8jDEwMyAxMDQgMTA1IDEwNiAxMDcgMTA4IOWF
+seWFreWxiiDlhbExMjAuNuS4h+aVsOaNruOAgg0KNe+8jDIwMTDlubTlm73pmYXkv4PplIDljY/k
+vJrvvIhQUEFJ77yJ5oiQ5ZGY5ZCN5Y2VIFBQQUkgTWVtYmVycyBEaXJlY3RvcnnvvIzpnZ7luLjp
+h43opoHnmoTlpKfkubDlrrbjgIINCjbvvIwyMDEw5bm05Yiw6aaZ5riv6YeH6LSt55qE5Zu95aSW
+5a6i5Lq65ZCN5b2VKOmmmea4r+i0uOWPkeWxgOaPkOS+mynvvIzlhbE3LjLkuIfmlbDmja7vvIzo
+toXnuqfph43opoHnmoTkubDlrrbjgIINCjfvvIw0OC42OOS4h+adoeacgOaWsOS5sOWutuivoueb
+mO+8jOi0reS5sOWQjuavj+aciOabtOaWsCAxLTLkuIfmnaHvvIzljIXmi6wy6YOo5YiG77yMMe+8
+jOacgOaWsOeahOivouebmCAy77yM5pyA5paw55qE5bGV5Lya5Lmw5a6244CC5YWN6LS55pu05paw
+MzbkuKrmnIjjgIINCjjvvIwyMDA55bm05rW35YWz5o+Q5Y2V5pWw5o2ucGllcnPniYjmlbDmja4g
+MeWNg+S4h+OAgg0KDQror5rkv6HkuLrmnKzvvIzmlK/mjIHmlK/ku5jlrp3mi4Xkv53kuqTmmJMg
+KOWFiOWPkei0p+W5tuWuieijheiuvue9rue+pOWPkei9r+S7tu+8jOeEtuWQjuS7mOasvikg5b27
+5bqV5omT5raI5oKo55qEIOmhvuiZkeOAgg0KIA0KDQogDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H
+5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V
+546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ
+5Y2V546H5p6B6auYDQo=
