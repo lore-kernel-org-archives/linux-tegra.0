@@ -1,42 +1,38 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 3/3] arm/tegra: Move "gpio-names.h" into <mach/gpio-tegra.h>
-Date: Wed, 21 Sep 2011 13:14:38 -0700
-Message-ID: <CAOesGMhdkrtjvXWHhbLSj804s+CzTthn_hrGafp5K=Va5MTZ=w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm/tegra: Move EN_VDD_1V05_GPIO to board-harmony.h
+Date: Wed, 21 Sep 2011 13:16:49 -0700
+Message-ID: <CAOesGMisOtEQpcS-hHi-3brpYzJr-UiB6b71c+bwkesPDk9iuA@mail.gmail.com>
 References: <1316633620-13184-1-git-send-email-swarren@nvidia.com>
-	<1316633620-13184-3-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1316633620-13184-3-git-send-email-swarren@nvidia.com>
+In-Reply-To: <1316633620-13184-1-git-send-email-swarren@nvidia.com>
 Sender: linux-mmc-owner@vger.kernel.org
 To: Stephen Warren <swarren@nvidia.com>
 Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Grant Likely <grant.likely@secretlab.ca>, Chris Ball <cjb@laptop.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wed, Sep 21, 2011 at 12:33 PM, Stephen Warren <swarren@nvidia.com> w=
-rote:
-> This centralizes all SoC-level GPIO-related definitions into a single
-> header file.
+On Wed, Sep 21, 2011 at 12:33 PM, Stephen Warren <swarren@nvidia.com> wrote:
+> This centralizes all GPIO naming in one header.
 >
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
+
+Acked-by: Olof Johansson <olof@lixom.net>
+
+> ---
+> This patch series relies on various previous changes to the Tegra GPIO
+> driver that were made in Russell's GPIO tree. I assume this series will
+> go in through that tree.
 >
-> =A0arch/arm/mach-tegra/gpio-names.h =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A02=
-47 -------------------------
-> =A0arch/arm/mach-tegra/include/mach/gpio-tegra.h | =A0225 +++++++++++=
-+++++++++++
-> =A011 files changed, 226 insertions(+), 257 deletions(-)
-> =A0delete mode 100644 arch/arm/mach-tegra/gpio-names.h
+> This first patch is cleanup which makes the second slightly cleaner (no
+> need to edit board-harmony-pcie.c in patch 2). Usually, it would go in
+> through the Tegra tree, but I think it makes sense to merge these 3
+> patches all together in one place.
 
-The main reason that gpio-names.h was only in the mach directory and
-not under include in the first place, is to discourage use outside of
-the base platform code and board definitions.
+Works for me. Or I could stage it in a topic branch that would be
+merged after Russell's GPIO tree.
 
-There should be no need for drivers and non-mach-tegra code to use the
-file, so doing a current-directory include of it should be OK. Or do
-you have other plans for it?
+Russell, Arnd, got any preferences for one or the other?
 
 
 -Olof
