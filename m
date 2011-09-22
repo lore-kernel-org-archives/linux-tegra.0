@@ -1,40 +1,53 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] i2c/tegra: I2C driver uses the suspend_noirq/resume_noirq
-Date: Thu, 22 Sep 2011 17:28:08 +0200
-Message-ID: <201109221728.09063.arnd@arndb.de>
-References: <1312586102-27907-1-git-send-email-swarren@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Thu, 22 Sep 2011 09:26:36 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1739554CB9@HQMAIL01.nvidia.com>
+References: <1316698045-23190-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1316698045-23190-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 20 September 2011, Stephen Warren wrote:
-> Stephen Warren wrote at Tuesday, August 30, 2011 10:25 AM:
-> > Ben, Arnd,
-> > 
-> > Could you please ack/nack the patch at the start of this thread for Colin;
-> > see below.
-> 
-> Ben, can you please comment on the acceptability of this patch?
-> 
-> Or Arnd, did Mark's most recent explanation of the situation provide enough
-> context for you to ack/nak it?
-> 
+Peter De Schrijver wrote at Thursday, September 22, 2011 7:27 AM:
+> This patch causes the kernel uncompressor to determine the physical address
+> of the SDRAM at runtime. This allows the kernel to boot on both tegra2 and
+> tegra3 even though SDRAM is at different physical addresses on both SoCs.
 
-After looking through the discussion again, my feeling is that it's ok
-and I think that Mark's word should count more than mine anyway on this
-issue.
+Since this deals with Tegra, it should be mailed to/cc the Tegra
+Maintainers and mailing list too (I've done that here). get_maintainer.pl
+will no doubt list the main linux-kernel mailing list too.
 
-If you think it helps, you can add my Acked-by, but this is really
-something for Ben to decide. Just resubmit the patch to Ben with an
-an updated changelog that summarises the discussion, in case
-Ben got bored already and put this mail thread into the ignore
-folder...
+> Change-Id: I91857a590946bbc54168c04bea3a5bd576d87824
 
-	Arnd
+And the internal Change-Id lines should be stripped for upstream
+submissions.
+
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> ---
+>  arch/arm/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 4fda167..9fc0678 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -600,6 +600,7 @@ config ARCH_TEGRA
+>  	select HAVE_CLK
+>  	select HAVE_SCHED_CLOCK
+>  	select ARCH_HAS_CPUFREQ
+> +	select AUTO_ZRELADDR
+>  	help
+>  	  This enables support for NVIDIA Tegra based systems (Tegra APX,
+>  	  Tegra 6xx and Tegra 2 series).
+> --
+> 1.7.7.rc0.72.g4b5ea.dirty
+
+-- 
+nvpublic
