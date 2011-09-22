@@ -1,219 +1,128 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] arm/tegra: Replace <mach/gpio.h> with
- <mach/gpio-tegra.h>
-Date: Thu, 22 Sep 2011 11:26:44 -0600
-Message-ID: <20110922172644.GL17168@ponder.secretlab.ca>
-References: <1316633620-13184-1-git-send-email-swarren@nvidia.com>
- <1316633620-13184-2-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] i2c-tegra: Use the suspend_noirq/resume_noirq not suspend/resume
+Date: Thu, 22 Sep 2011 11:51:32 -0600
+Message-ID: <1316713892-357-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1316633620-13184-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 21, 2011 at 01:33:39PM -0600, Stephen Warren wrote:
-> This will eventually allow <mach/gpio.h> to be deleted. This mirrors
-> LinusW's recent equivalent work on various other ARM platforms.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Various drivers need to use the I2C bus during suspend. Generally, this
+is already supported, since devices are suspended based on (the inverse of)
+probe order, and an I2C-based device can't probe until the I2C bus upon
+which it sits has been probed first.
 
-> ---
->  arch/arm/mach-tegra/board-harmony.h           |    2 +
->  arch/arm/mach-tegra/board-paz00.h             |    2 +
->  arch/arm/mach-tegra/board-seaboard.h          |    2 +
->  arch/arm/mach-tegra/board-trimslice.h         |    2 +
->  arch/arm/mach-tegra/include/mach/gpio-tegra.h |   39 +++++++++++++++++++++++++
->  arch/arm/mach-tegra/include/mach/gpio.h       |   39 -------------------------
->  arch/arm/mach-tegra/usb_phy.c                 |    1 +
->  drivers/gpio/gpio-tegra.c                     |    1 +
->  drivers/mmc/host/sdhci-tegra.c                |    2 +
->  9 files changed, 51 insertions(+), 39 deletions(-)
->  create mode 100644 arch/arm/mach-tegra/include/mach/gpio-tegra.h
-> 
-> diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
-> index 280d203..139d96c 100644
-> --- a/arch/arm/mach-tegra/board-harmony.h
-> +++ b/arch/arm/mach-tegra/board-harmony.h
-> @@ -17,6 +17,8 @@
->  #ifndef _MACH_TEGRA_BOARD_HARMONY_H
->  #define _MACH_TEGRA_BOARD_HARMONY_H
->  
-> +#include <mach/gpio-tegra.h>
-> +
->  #define HARMONY_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
->  #define HARMONY_GPIO_WM8903(_x_)	(HARMONY_GPIO_TPS6586X(4) + (_x_))
->  
-> diff --git a/arch/arm/mach-tegra/board-paz00.h b/arch/arm/mach-tegra/board-paz00.h
-> index 86057c3..2dc1899 100644
-> --- a/arch/arm/mach-tegra/board-paz00.h
-> +++ b/arch/arm/mach-tegra/board-paz00.h
-> @@ -17,6 +17,8 @@
->  #ifndef _MACH_TEGRA_BOARD_PAZ00_H
->  #define _MACH_TEGRA_BOARD_PAZ00_H
->  
-> +#include <mach/gpio-tegra.h>
-> +
->  /* SDCARD */
->  #define TEGRA_GPIO_SD1_CD	TEGRA_GPIO_PV5
->  #define TEGRA_GPIO_SD1_WP	TEGRA_GPIO_PH1
-> diff --git a/arch/arm/mach-tegra/board-seaboard.h b/arch/arm/mach-tegra/board-seaboard.h
-> index d06c334..4c45d4c 100644
-> --- a/arch/arm/mach-tegra/board-seaboard.h
-> +++ b/arch/arm/mach-tegra/board-seaboard.h
-> @@ -17,6 +17,8 @@
->  #ifndef _MACH_TEGRA_BOARD_SEABOARD_H
->  #define _MACH_TEGRA_BOARD_SEABOARD_H
->  
-> +#include <mach/gpio-tegra.h>
-> +
->  #define SEABOARD_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
->  #define SEABOARD_GPIO_WM8903(_x_)	(SEABOARD_GPIO_TPS6586X(4) + (_x_))
->  
-> diff --git a/arch/arm/mach-tegra/board-trimslice.h b/arch/arm/mach-tegra/board-trimslice.h
-> index 7a7dee8..50f128d 100644
-> --- a/arch/arm/mach-tegra/board-trimslice.h
-> +++ b/arch/arm/mach-tegra/board-trimslice.h
-> @@ -17,6 +17,8 @@
->  #ifndef _MACH_TEGRA_BOARD_TRIMSLICE_H
->  #define _MACH_TEGRA_BOARD_TRIMSLICE_H
->  
-> +#include <mach/gpio-tegra.h>
-> +
->  #define TRIMSLICE_GPIO_SD4_CD	TEGRA_GPIO_PP1	/* mmc4 cd */
->  #define TRIMSLICE_GPIO_SD4_WP	TEGRA_GPIO_PP2	/* mmc4 wp */
->  
-> diff --git a/arch/arm/mach-tegra/include/mach/gpio-tegra.h b/arch/arm/mach-tegra/include/mach/gpio-tegra.h
-> new file mode 100644
-> index 0000000..87d37fd
-> --- /dev/null
-> +++ b/arch/arm/mach-tegra/include/mach/gpio-tegra.h
-> @@ -0,0 +1,39 @@
-> +/*
-> + * arch/arm/mach-tegra/include/mach/gpio.h
-> + *
-> + * Copyright (C) 2010 Google, Inc.
-> + *
-> + * Author:
-> + *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#ifndef __MACH_TEGRA_GPIO_TEGRA_H
-> +#define __MACH_TEGRA_GPIO_TEGRA_H
-> +
-> +#include <linux/types.h>
-> +#include <mach/irqs.h>
-> +
-> +#define TEGRA_NR_GPIOS		INT_GPIO_NR
-> +
-> +#define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
-> +
-> +struct tegra_gpio_table {
-> +	int	gpio;	/* GPIO number */
-> +	bool	enable;	/* Enable for GPIO at init? */
-> +};
-> +
-> +void tegra_gpio_config(struct tegra_gpio_table *table, int num);
-> +void tegra_gpio_enable(int gpio);
-> +void tegra_gpio_disable(int gpio);
-> +
-> +#endif
-> diff --git a/arch/arm/mach-tegra/include/mach/gpio.h b/arch/arm/mach-tegra/include/mach/gpio.h
-> index 7910d26..e69de29 100644
-> --- a/arch/arm/mach-tegra/include/mach/gpio.h
-> +++ b/arch/arm/mach-tegra/include/mach/gpio.h
-> @@ -1,39 +0,0 @@
-> -/*
-> - * arch/arm/mach-tegra/include/mach/gpio.h
-> - *
-> - * Copyright (C) 2010 Google, Inc.
-> - *
-> - * Author:
-> - *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - */
-> -
-> -#ifndef __MACH_TEGRA_GPIO_H
-> -#define __MACH_TEGRA_GPIO_H
-> -
-> -#include <linux/types.h>
-> -#include <mach/irqs.h>
-> -
-> -#define TEGRA_NR_GPIOS		INT_GPIO_NR
-> -
-> -#define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
-> -
-> -struct tegra_gpio_table {
-> -	int	gpio;	/* GPIO number */
-> -	bool	enable;	/* Enable for GPIO at init? */
-> -};
-> -
-> -void tegra_gpio_config(struct tegra_gpio_table *table, int num);
-> -void tegra_gpio_enable(int gpio);
-> -void tegra_gpio_disable(int gpio);
-> -
-> -#endif
-> diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
-> index 88081bb..37576a7 100644
-> --- a/arch/arm/mach-tegra/usb_phy.c
-> +++ b/arch/arm/mach-tegra/usb_phy.c
-> @@ -28,6 +28,7 @@
->  #include <linux/usb/otg.h>
->  #include <linux/usb/ulpi.h>
->  #include <asm/mach-types.h>
-> +#include <mach/gpio-tegra.h>
->  #include <mach/usb_phy.h>
->  #include <mach/iomap.h>
->  
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index df64536..6b65207 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -27,6 +27,7 @@
->  
->  #include <asm/mach/irq.h>
->  
-> +#include <mach/gpio-tegra.h>
->  #include <mach/iomap.h>
->  #include <mach/suspend.h>
->  
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 67176af..067a4cd 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -25,6 +25,8 @@
->  #include <linux/module.h>
->  
->  #include <asm/gpio.h>
-> +
-> +#include <mach/gpio-tegra.h>
->  #include <mach/sdhci.h>
->  
->  #include "sdhci-pltfm.h"
-> -- 
-> 1.7.0.4
-> 
+However, some subsystems, notably ASoC, do not enjoy such simple bus/child
+probing relationships. In particular, an ASoC machine driver (and hence a
+sound card) may probe very early on before all its required resources are
+available. After all required resources become available, the overall
+machine driver initialization is performed. Suspend of a sound card occurs
+based on the machine driver's probe timing, which may mean suspend occurs
+after an I2C bus has been suspended. In turn, components within the sound
+card suspend when the overall card suspends. If one of those components
+is an I2C device, this may mean the device attempts to suspend after the
+I2C bus it sits upon. Conversely, resume may occur before the I2C bus is
+available. Consequently, I2C accesses during suspend/resume will fail.
+
+This causes the following issue:
+
+  We found the register settings of wm8903(an audio codec) can't be modified
+  in snd_soc_suspend since I2C bus has been suspended before snd_soc_suspend.
+
+  Pop noise will occur when system resume from LP0 if the register settings
+  of wm8903 haven't be modified correctly in snd_soc_suspend.
+
+To solve this, the I2C bus driver is modified to use suspend_noirq and
+resume_noirq instead of suspend and resume. This delays the I2C bus suspend
+until after the ASoC card-level suspend, and everything works.
+
+It is acknowledged that this is not an ideal solution. However, this solution
+is the best currently available within the kernel.
+
+Suggested alternatives are:
+
+* Implement an explicit dependency management system within the kernel for
+  device suspend/resume, such that I2C bus would not be suspended before
+  the sound card that requires it. It is reported that Linus rejected this
+  proposal since he wanted suspend ordering to be based on probe ordering.
+
+* Enhance device probing such that the ASoC sound card device could defer
+  its probing until all required resources were available. This would
+  then cause the overall sound card suspend to occur at an appropriate early
+  time. Grant Likely was reported to have been working towards this goal.
+
+[swarren: Rewrote patch description to reflect upstream discussion]
+
+Signed-off-by: Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Reviewed-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+---
+v2: Summarized the email thread in patch description.
+    Added Arnd/Mark's ack/review tags
+
+ drivers/i2c/busses/i2c-tegra.c |   19 +++++++++++++------
+ 1 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b402435..15ad866 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -705,8 +705,9 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM
+-static int tegra_i2c_suspend(struct platform_device *pdev, pm_message_t state)
++static int tegra_i2c_suspend_noirq(struct device *dev)
+ {
++	struct platform_device *pdev = to_platform_device(dev);
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 
+ 	i2c_lock_adapter(&i2c_dev->adapter);
+@@ -716,8 +717,9 @@ static int tegra_i2c_suspend(struct platform_device *pdev, pm_message_t state)
+ 	return 0;
+ }
+ 
+-static int tegra_i2c_resume(struct platform_device *pdev)
++static int tegra_i2c_resume_noirq(struct device *dev)
+ {
++	struct platform_device *pdev = to_platform_device(dev);
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 	int ret;
+ 
+@@ -736,6 +738,14 @@ static int tegra_i2c_resume(struct platform_device *pdev)
+ 
+ 	return 0;
+ }
++
++static const struct dev_pm_ops tegra_i2c_dev_pm_ops = {
++	.suspend_noirq = tegra_i2c_suspend_noirq,
++	.resume_noirq = tegra_i2c_resume_noirq,
++};
++#define TEGRA_I2C_DEV_PM_OPS (&tegra_i2c_dev_pm_ops)
++#else
++#define TEGRA_I2C_DEV_PM_OPS NULL
+ #endif
+ 
+ #if defined(CONFIG_OF)
+@@ -752,14 +762,11 @@ MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
+ static struct platform_driver tegra_i2c_driver = {
+ 	.probe   = tegra_i2c_probe,
+ 	.remove  = tegra_i2c_remove,
+-#ifdef CONFIG_PM
+-	.suspend = tegra_i2c_suspend,
+-	.resume  = tegra_i2c_resume,
+-#endif
+ 	.driver  = {
+ 		.name  = "tegra-i2c",
+ 		.owner = THIS_MODULE,
+ 		.of_match_table = tegra_i2c_of_match,
++		.pm    = TEGRA_I2C_DEV_PM_OPS,
+ 	},
+ };
+ 
+-- 
+1.7.0.4
