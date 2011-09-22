@@ -1,53 +1,52 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
-Date: Thu, 22 Sep 2011 09:26:36 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1739554CB9@HQMAIL01.nvidia.com>
-References: <1316698045-23190-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH 1/3] arm/tegra: Move EN_VDD_1V05_GPIO to board-harmony.h
+Date: Thu, 22 Sep 2011 09:31:48 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1739554CBD@HQMAIL01.nvidia.com>
+References: <1316633620-13184-1-git-send-email-swarren@nvidia.com>
+ <CAOesGMisOtEQpcS-hHi-3brpYzJr-UiB6b71c+bwkesPDk9iuA@mail.gmail.com>
+ <20110922081140.GH17169@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1316698045-23190-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20110922081140.GH17169@n2100.arm.linux.org.uk>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>
+Cc: Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Grant Likely <grant.likely@secretlab.ca>, Chris Ball <cjb@laptop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Thursday, September 22, 2011 7:27 AM:
-> This patch causes the kernel uncompressor to determine the physical address
-> of the SDRAM at runtime. This allows the kernel to boot on both tegra2 and
-> tegra3 even though SDRAM is at different physical addresses on both SoCs.
-
-Since this deals with Tegra, it should be mailed to/cc the Tegra
-Maintainers and mailing list too (I've done that here). get_maintainer.pl
-will no doubt list the main linux-kernel mailing list too.
-
-> Change-Id: I91857a590946bbc54168c04bea3a5bd576d87824
-
-And the internal Change-Id lines should be stripped for upstream
-submissions.
-
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> ---
->  arch/arm/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+Russell King - ARM Linux wrote at Thursday, September 22, 2011 2:12 AM:
+> On Wed, Sep 21, 2011 at 01:16:49PM -0700, Olof Johansson wrote:
+> > Works for me. Or I could stage it in a topic branch that would be
+> > merged after Russell's GPIO tree.
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 4fda167..9fc0678 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -600,6 +600,7 @@ config ARCH_TEGRA
->  	select HAVE_CLK
->  	select HAVE_SCHED_CLOCK
->  	select ARCH_HAS_CPUFREQ
-> +	select AUTO_ZRELADDR
->  	help
->  	  This enables support for NVIDIA Tegra based systems (Tegra APX,
->  	  Tegra 6xx and Tegra 2 series).
-> --
-> 1.7.7.rc0.72.g4b5ea.dirty
+> Holding stuff off from being merged doesn't work.
+
+Russell,
+
+So I take it I should add the two ack'd patches to the ARM patch system,
+and have you pick them up?
+
+Thanks.
+
+> If you have the following commit structure:
+> 
+> A---...-----M1-B-C-M2
+> +---A1-B1-C1'     /
+> +-A2-B2-C2-------'
+> 
+> Now, lets say A2 depends on C1.  Merely delaying the stuff so that M2
+> happens after M1 is insufficient to ensure git state doesn't break.
+> When bisecting, its entirely possible that the bisect algorithm may
+> chose B2 as a potential test candidate.  At that point you end up with
+> A2, but without C1.
+> 
+> The only way to solve this is to have A2 following on from C1 - which
+> of course requires A1..C1 to be declared stable and either pulled into
+> your local tree or for A2..C2 to be submitted to the same tree which
+> A1..C1 are already in.
 
 -- 
-nvpublic
+nvpupblic
+
