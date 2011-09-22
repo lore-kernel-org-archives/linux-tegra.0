@@ -1,51 +1,59 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2] i2c-tegra: Use the suspend_noirq/resume_noirq not
- suspend/resume
-Date: Thu, 22 Sep 2011 19:13:13 +0100
-Message-ID: <20110922181313.GG5173@opensource.wolfsonmicro.com>
-References: <1316713892-357-1-git-send-email-swarren@nvidia.com>
- <20110922180335.GQ17168@ponder.secretlab.ca>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20110922180335.GQ17168-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] arm/tegra: Convert gpio & pinmux to platform devices
+Date: Thu, 22 Sep 2011 15:06:03 -0600
+Message-ID: <1316725567-17881-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 22, 2011 at 12:03:35PM -0600, Grant Likely wrote:
-> On Thu, Sep 22, 2011 at 11:51:32AM -0600, Stephen Warren wrote:
+This series converts the Tegra GPIO and pinmux drivers to be regular
+platform devices.
 
-> > * Implement an explicit dependency management system within the kernel for
-> >   device suspend/resume, such that I2C bus would not be suspended before
-> >   the sound card that requires it. It is reported that Linus rejected this
-> >   proposal since he wanted suspend ordering to be based on probe ordering.
+The series is extracted from an earlier series I posted that augmented
+these drivers to initialize HW state from the device-tree. I'm holding
+off on that aspect of the changes, since it's not entirely clear to me
+whether the new pinmux API should drive the initial pinmux state setup
+via "system hog" definitions, or whether pinmux drivers should indeed
+do their own thing.
 
-> This really should be revisted.  That was in the context of full
-> system suspend, but we're now in a world of runtime suspend which
-> absolutely does need dependency tracking or reference counting to get
-> the ordering right.
+Dependencies:
+* The patches need to be merged in one branch in order for bisectability.
 
-FWIW this was one of the bigger issues in the PM miniconference in Santa
-Rosa, though a lot of the discission involved explaining the issues to
-some of the x86 guys and there wasn't mssive progress on solutions.
+* At least patch 3 depends on changes in Russell's gpio branch, since it
+  edits a file renamed there. I imagine the series will be merged into
+  that branch.
 
-> > * Enhance device probing such that the ASoC sound card device could defer
-> >   its probing until all required resources were available. This would
-> >   then cause the overall sound card suspend to occur at an appropriate early
-> >   time. Grant Likely was reported to have been working towards this goal.
+* The whole series is based off next-20110922 plus a couple patches in the
+  ARM patch system (7094, 7095).
 
-> Yes, I'll send you my current patch for you to look at.  One of the
-> engineers from Linaro is going to be pushing that patch set forward.
-> However, I don't know if it helps with this problem because I believe
-> that the suspend order is based on the implicit probe order of
-> devices, but my patch allows drivers to cause the probe order to get
-> rearranged at runtime.  I don't believe there is a global list showing
-> the order that devices successfully got probed, but I may be wrong
-> here.
+* This series affects both the GPIO and pinmux drivers. Potentially, the
+  changes to the two driver could be split into separate series, but this
+  would be complicated by the fact patch 1 edits all the board files to
+  make the same change for both GPIO and pinmux; if split up, merging that
+  all back together would cause conflicts.
 
-Yes, I'm not convinced it'll change anything here.  Though I guess it
-should be a simple matter of programming to move devices around the list
-depending on when they probe.
+* Patch 1's changes to board-seaboard-pinmux.c will have some merge
+  conflicts with the patches Peter De Schrijver recently posted to enhance
+  that file to support Ventana; each of our patches will change the context
+  changes in the others' diffs. I'm not sure how best to manage this.
+ 
+Stephen Warren (4):
+  arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
+  arm/dt: Tegra: Add pinmux node to tegra20.dtsi
+  gpio/tegra: Convert to a platform device
+  arm/tegra: Convert pinmux driver to a platform device
+
+ .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |    5 +++
+ arch/arm/boot/dts/tegra20.dtsi                     |    5 +++
+ arch/arm/mach-tegra/board-harmony-pinmux.c         |    8 +++++
+ arch/arm/mach-tegra/board-paz00-pinmux.c           |    8 +++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c        |    9 ++++-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c       |    7 ++++
+ arch/arm/mach-tegra/devices.c                      |   10 ++++++
+ arch/arm/mach-tegra/devices.h                      |    2 +
+ arch/arm/mach-tegra/pinmux.c                       |   26 ++++++++++++++++
+ drivers/gpio/gpio-tegra.c                          |   31 +++++++++++++-------
+ 10 files changed, 98 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
