@@ -1,34 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH REPOST 1/2] arm/dt: Tegra: Update SDHCI nodes to match bindings
-Date: Thu, 22 Sep 2011 16:40:16 +0200
-Message-ID: <201109221640.16985.arnd@arndb.de>
-References: <1316537186-26753-1-git-send-email-swarren@nvidia.com> <201109202301.56983.arnd@arndb.de> <CAOesGMg4kBH77Ou1xyyVT-Ojxg=9uyxmfsmhbbKquru=j+z6Gg@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] i2c/tegra: I2C driver uses the suspend_noirq/resume_noirq
+Date: Thu, 22 Sep 2011 17:28:08 +0200
+Message-ID: <201109221728.09063.arnd@arndb.de>
+References: <1312586102-27907-1-git-send-email-swarren@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF04B3279D4F@HQMAIL01.nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMg4kBH77Ou1xyyVT-Ojxg=9uyxmfsmhbbKquru=j+z6Gg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Stephen Warren <swarren@nvidia.com>, nicolas.pitre@linaro.org, Shawn Guo <shawn.guo@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF04B73215C9-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dilan Lee <dilee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 20 September 2011, Olof Johansson wrote:
-> On Tue, Sep 20, 2011 at 2:01 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-
-> > Should I take the other one as well? It's probably better to let that
-> > go the proper way through the tegra tree for 3.2, right?
+On Tuesday 20 September 2011, Stephen Warren wrote:
+> Stephen Warren wrote at Tuesday, August 30, 2011 10:25 AM:
+> > Ben, Arnd,
+> > 
+> > Could you please ack/nack the patch at the start of this thread for Colin;
+> > see below.
 > 
-> Given that you have a public tree right now, and I don't (since
-> kernel.org is down), please feel free to start a tegra/for-3.2 branch
-> for me and apply it there. I'll base further work on top of that if
-> needed.
+> Ben, can you please comment on the acceptability of this patch?
 > 
-> (There also aren't a whole lot of other patches queued for 3.2 right now).
+> Or Arnd, did Mark's most recent explanation of the situation provide enough
+> context for you to ack/nak it?
+> 
 
-Ok, I've put it into the next/fixes branch now, so it will be in 3.2.
+After looking through the discussion again, my feeling is that it's ok
+and I think that Mark's word should count more than mine anyway on this
+issue.
 
-Thanks,
+If you think it helps, you can add my Acked-by, but this is really
+something for Ben to decide. Just resubmit the patch to Ben with an
+an updated changelog that summarises the discussion, in case
+Ben got bored already and put this mail thread into the ignore
+folder...
 
 	Arnd
