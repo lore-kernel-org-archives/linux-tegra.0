@@ -1,329 +1,57 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Make earlyprintk choose a UART at runtime.
-Date: Mon, 26 Sep 2011 11:23:45 -0700
-Message-ID: <1317061425-1030-1-git-send-email-dianders@chromium.org>
+From: =?utf-8?B?5LuFMTDlhYPmr4/lpKk=?= <user-5fQfRxBQGyVl/0ehK7tmQdBPR1lH4CV8@public.gmane.org>
+Subject: =?utf-8?B?576k5Y+R6L2v5Lu2K+S5sOWutuaQnOe0ouacuisxMDnlsYrlub/kuqTkvJrkubDlrrY=?=
+	=?utf-8?B?44CB5rW35YWz5pWw5o2uLEIyQuivouebmOS5sOWutjUwMOS4h+OAgg==?=
+Date: Tue, 27 Sep 2011 13:40:09 +0000 (UTC)
+Message-ID: <04D8ED8A76CA24EEBAD3788492C37178@kqa>
+Reply-To: <911585605-9uewiaClKEY@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Date: Thu, 27 Sep 2012 18:56:21 +0800
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Jeremy Kerr <jeremy.kerr-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lindsystark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lino68643-uAjRD0nVeow@public.gmane.org, linqinsmile-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org, linuxdcpp-team-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linxi58075871-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org, linyicastin
 List-Id: linux-tegra@vger.kernel.org
 
-With this change we automatically detect which UART to use for
-earlyprintk (and for printing during decompression).  The
-detection involves coordination with the bootloader: it's expected
-that the bootloader will leave a 'D' (for [D]ebug) in the UART
-scratchpad register for whichever UART we should use for debugging.
-
-If we don't find any UART that specified, we'll fall back to the
-UART that was specified during config time:
-CONFIG_TEGRA_DEBUG_UART_XXX.
-
-As a side effect of this change, earlyprintk will no longer fail
-if you've specified CONFIG_TEGRA_DEBUG_UART_NONE.
-
-This change is in line with what is documented in the
-Documentation/arm/Booting file.  In other words: it's expected
-that the bootloader initialize one serial port so that the
-kernel can detect it.
-
-Other approaches considered:
-* Hardcode based on machine ID (as many other ARM boards do).
-  OK, but nice to not have yet another place to add per-board
-  code.  Better to have bootloader parse device tree and pass us
-  this info.
-* Check for TXE bit (like SA1110).  Nice (and doesn't require
-  a bootloader change), but a little less explicit.  Also: if
-  bootloader (for some reason) uses another UART, it needs to
-  remember to turn it off before jumping to the kernel or we may
-  print to it.  NOTE: adapting this patch to check TXE is easy
-  for me to move to if maintainers would prefer it.
-* Check for which UART clock is enabled.  Similar to TXE
-  solution, but might be more robust of reads from an unclocked
-  UART hang the system.
-* Communicate from decompression code to assembly with magic
-  memory area (like OMAP_UART_INFO).  Would prefer to avoid for
-  the downsides described in the OMAP patch that added this,
-  especially the fact that running without a zImage would (I
-  think) make earlyprintk fail.
-
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- arch/arm/mach-tegra/include/mach/debug-macro.S |  155 ++++++++++++++++++++++--
- arch/arm/mach-tegra/include/mach/uncompress.h  |   50 ++++++--
- 2 files changed, 181 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/mach-tegra/include/mach/debug-macro.S
-index e0ebe65..8a4190a 100644
---- a/arch/arm/mach-tegra/include/mach/debug-macro.S
-+++ b/arch/arm/mach-tegra/include/mach/debug-macro.S
-@@ -1,11 +1,12 @@
- /*
-  * arch/arm/mach-tegra/include/mach/debug-macro.S
-  *
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2011 Google, Inc.
-  *
-  * Author:
-  *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-  *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *	Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -18,18 +19,150 @@
-  *
-  */
- 
-+#include <linux/serial_reg.h>
-+
-+#include <asm/memory.h>
-+
- #include <mach/io.h>
- #include <mach/iomap.h>
- 
--	.macro  addruart, rp, rv
--        ldr     \rp, =IO_APB_PHYS       @ physical
--        ldr     \rv, =IO_APB_VIRT        @ virtual
--	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF)
--	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
--	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF)
--	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
--	.endm
-+#define UART_SHIFT			2
-+#define TEGRA_DEBUG_UART_OFFSET		(TEGRA_DEBUG_UART_BASE & 0xFFFF)
-+
-+#define tegra_uart_v2p(x)		((x) - PAGE_OFFSET + PLAT_PHYS_OFFSET)
-+
-+		/*
-+		 * Order matters for this section; code below assumes that
-+		 * phys is 4 from config and virt is 8 from config.
-+		 *
-+		 * By default, we'll start the UART by looking at whatever
-+		 * was specified by CONFIG_TEGRA_DEBUG_UART_XXX, but on the
-+		 * first use of addruart we'll search all UARTs for one with
-+		 * a 'D' in the scratchpad register.  If we find one, we'll
-+		 * use it instead.
-+		 */
-+		.pushsection .data
-+tegra_uart_config:	.word	0
-+tegra_uart_phys:	.word	IO_APB_PHYS + TEGRA_DEBUG_UART_OFFSET
-+tegra_uart_virt:	.word	IO_APB_VIRT + TEGRA_DEBUG_UART_OFFSET
-+		.popsection
-+
-+
-+		/* Put address of tegra_uart_config into \ra */
-+		.macro	get_uart_config_addr, ra
-+		mrc	p15, 0, \ra, c1, c0
-+		tst	\ra, #1					@ MMU enabled?
-+		ldreq	\ra, =tegra_uart_v2p(tegra_uart_config)	@ not enabled
-+		ldrne	\ra, =tegra_uart_config			@ enabled
-+		.endm
-+
-+		/* Check whether a given UART is the debug UART; sets cond. */
-+		.macro	check_uart, rio, rtmp, uart_base
-+		orr	\rtmp, \rio, #(\uart_base & 0xFF)
-+		orr	\rtmp, \rtmp, #(\uart_base & 0xFF00)
-+		ldrb	\rtmp, [\rtmp, #(UART_SCR << UART_SHIFT)]
-+		cmp	\rtmp, #'D'
-+		.endm
-+
-+		/*
-+		 * Store the given UART in the data section; needs two
-+		 * temp registers to work with.
-+		 */
-+		.macro	store_uart, rx, ry, uart_base
-+		get_uart_config_addr \rx
-+		ldr	\ry, =(IO_APB_PHYS + (\uart_base & 0xFFFF))
-+		str	\ry, [\rx, #4]
-+		ldr	\ry, =(IO_APB_VIRT + (\uart_base & 0xFFFF))
-+		str	\ry, [\rx, #8]
-+		.endm
-+
-+
-+		/*
-+		 * Get phys and virt addr of the debug UART.  Return results in
-+		 * registers \rp and \rv, which are the only two registers
-+		 * we get to work with.  Code is loosely based on OMAP
-+		 * version of debug-macro.S.
-+		 */
-+		.macro	addruart, rp, rv
-+
-+10:		get_uart_config_addr \rp
-+		ldr	\rv, [\rp, #0]
-+		cmp	\rv, #1			@ is port configured?
-+		beq	99f			@ ...yes? jump to end
-+
-+		mov	\rv, #1 		@ store so next time we are
-+		str	\rv, [\rp, #0]		@ consider oursevles configured
-+
-+		/* Use \rp to hold IO base address while we search for 'D' */
-+		mrc	p15, 0, \rp, c1, c0
-+		tst	\rp, #1			@ MMU enabled?
-+		ldreq	\rp, =IO_APB_PHYS	@ MMU not enabled
-+		ldrne	\rp, =IO_APB_VIRT	@ MMU enabled
-+
-+		/* Check for UARTA */
-+		check_uart \rp, \rv, TEGRA_UARTA_BASE
-+		bne	21f			@ not UARTA
-+		store_uart \rp, \rv, TEGRA_UARTA_BASE
-+		b	10b
-+
-+		/* Check for UARTB */
-+21:		check_uart \rp, \rv, TEGRA_UARTB_BASE
-+		bne	22f			@ not UARTB
-+		store_uart \rp, \rv, TEGRA_UARTB_BASE
-+		b	10b
-+
-+		/* Check for UARTC */
-+22:		check_uart \rp, \rv, TEGRA_UARTC_BASE
-+		bne	23f			@ not UARTC
-+		store_uart \rp, \rv, TEGRA_UARTC_BASE
-+		b	10b
-+
-+		/* Check for UARTD */
-+23:		check_uart \rp, \rv, TEGRA_UARTD_BASE
-+		bne	24f			@ not UARTD
-+		store_uart \rp, \rv, TEGRA_UARTD_BASE
-+		b	10b
-+
-+		/* Check for UARTE */
-+24:		check_uart \rp, \rv, TEGRA_UARTE_BASE
-+		bne	10b			@ not UARTE; give up
-+		store_uart \rp, \rv, TEGRA_UARTE_BASE
-+		b	10b
-+
-+		/* When you jump to here \rp has addr of tegra_uart_config */
-+99:		ldr	\rv, [\rp, #8]		@ virt is 8 bytes after config
-+		ldr	\rp, [\rp, #4]		@ phys is 4 bytes after config
-+		.endm
-+
-+/*
-+ * Code below is swiped from <asm/hardware/debug-8250.S>, but add an extra
-+ * check to make sure that we aren't in the CONFIG_TEGRA_DEBUG_UART_NONE case.
-+ * We use the fact that all 5 valid UARTS addresses all have something in the
-+ * 2nd-to-lowest byte.
-+ */
-+		.macro	senduart,rd,rx
-+		tst	\rx, #0x0000ff00
-+		strneb	\rd, [\rx, #UART_TX << UART_SHIFT]
-+1001:
-+		.endm
- 
--#define UART_SHIFT	2
--#include <asm/hardware/debug-8250.S>
-+		.macro	busyuart,rd,rx
-+		tst	\rx, #0x0000ff00
-+		beq	1002f
-+1001:		ldrb	\rd, [\rx, #UART_LSR << UART_SHIFT]
-+		and	\rd, \rd, #UART_LSR_TEMT | UART_LSR_THRE
-+		teq	\rd, #UART_LSR_TEMT | UART_LSR_THRE
-+		bne	1001b
-+1002:
-+		.endm
- 
-+		.macro	waituart,rd,rx
-+#ifdef FLOW_CONTROL
-+		tst	\rx, #0x0000ff00
-+		beq	1002f
-+1001:		ldrb	\rd, [\rx, #UART_MSR << UART_SHIFT]
-+		tst	\rd, #UART_MSR_CTS
-+		beq	1001b
-+1002:
-+#endif
-+		.endm
-diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-index 4e83237..2f776bd 100644
---- a/arch/arm/mach-tegra/include/mach/uncompress.h
-+++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-@@ -1,11 +1,12 @@
- /*
-  * arch/arm/mach-tegra/include/mach/uncompress.h
-  *
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2011 Google, Inc.
-  *
-  * Author:
-  *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-  *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *	Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -21,40 +22,63 @@
- #ifndef __MACH_TEGRA_UNCOMPRESS_H
- #define __MACH_TEGRA_UNCOMPRESS_H
- 
-+#include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/serial_reg.h>
- 
- #include <mach/iomap.h>
- 
-+u32 uart_base;
-+
-+#define DEBUG_UART_SHIFT	2
-+
- static void putc(int c)
- {
--	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
--	int shift = 2;
-+	volatile u8 *uart = (volatile u8 *)uart_base;
- 
- 	if (uart == NULL)
- 		return;
- 
--	while (!(uart[UART_LSR << shift] & UART_LSR_THRE))
-+	while (!(uart[UART_LSR << DEBUG_UART_SHIFT] & UART_LSR_THRE))
- 		barrier();
--	uart[UART_TX << shift] = c;
-+	uart[UART_TX << DEBUG_UART_SHIFT] = c;
- }
- 
- static inline void flush(void)
- {
- }
- 
-+/*
-+ * Setup before decompression.  This is where we do UART selection for
-+ * earlyprintk and init the uart_base register.
-+ */
- static inline void arch_decomp_setup(void)
- {
--	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
--	int shift = 2;
-+	static const u32 uarts[] = {
-+		TEGRA_UARTA_BASE,
-+		TEGRA_UARTB_BASE,
-+		TEGRA_UARTC_BASE,
-+		TEGRA_UARTD_BASE,
-+		TEGRA_UARTE_BASE,
-+	};
-+	const u32 num_uarts = ARRAY_SIZE(uarts);
-+	u32 i;
- 
--	if (uart == NULL)
--		return;
-+	/*
-+	 * Look for the first UART that has a 'D' in the scratchpad register,
-+	 * which should be set by the bootloader to tell us which UART to use
-+	 * for debugging.  If nothing found, we'll fall back to what's
-+	 * specified in TEGRA_DEBUG_UART_BASE.
-+	 */
-+	uart_base = TEGRA_DEBUG_UART_BASE;
-+	for (i = 0; i < num_uarts; i++) {
-+		volatile u8 *uart = (volatile u8 *)uarts[i];
- 
--	uart[UART_LCR << shift] |= UART_LCR_DLAB;
--	uart[UART_DLL << shift] = 0x75;
--	uart[UART_DLM << shift] = 0x0;
--	uart[UART_LCR << shift] = 3;
-+		if (uart[UART_SCR << DEBUG_UART_SHIFT] == 'D') {
-+			uart_base = uarts[i];
-+			break;
-+		}
-+	}
- }
- 
- static inline void arch_decomp_wdog(void)
--- 
-1.7.3.1
+576k5Y+R6L2v5Lu2KzEwOeWxiuW5v+S6pOS8muS5sOWutuOAgea1t+WFs+aVsOaNruOAgeaQnOe0
+ouW8leaTjuS5sOWutixCMkLor6Lnm5jkubDlrrblhbE1MDDkuIcs5LuFMTDlhYPmr4/lpKnjgIIg
+DQrnvqTlj5Hova/ku7YrMTA55bGK5bm/5Lqk5Lya5Lmw5a6244CB5rW35YWz5pWw5o2u44CB5pCc
+57Si5byV5pOO5Lmw5a62LEIyQuivouebmOS5sOWutuWFsTUwMOS4hyzku4UxMOWFg+avj+WkqeOA
+giANCuS/neivgeavj+WkqemDveacieS5sOWutuWbnuWkjeOAgg0K5L+d6K+B5q+P5aSp6YO95pyJ
+5Lmw5a625Zue5aSN44CCDQrkv53or4Hmr4/lpKnpg73mnInkubDlrrblm57lpI3jgIINCg0KMeOA
+gee+pOWPkei9r+S7tu+8miDmk43kvZznroDljZXvvIzlip/og73lvLrlpKfvvIzmqKHku7/kurrl
+t6Xmk43kvZzmqKHlvI/vvIzliLDovr7njofpq5jvvIzml6Xlj5HpgIE15LiH5bCB5Lul5LiK44CC
+IA0KMuOAgTUwMOS4h+S5sOWutui1hOa6kO+8miDotaDpgIHnmoQ1MDDkuIfkubDlrrbotYTmupDl
+upPvvIzmm7TmlrAgKOWPr+S7peaMieeFp+aCqOeahOS6p+WTgeaPkOWPluWHuuadpe+8jOabtOey
+vuWHhuW8gOWPkSnjgIIgDQoz44CB6LaF57qn5rW35aSW5Lmw5a62RW1haWzmkJzntKLmnLrvvJog
+5YaF572u5LqGNjAw5LiH6KGM5Lia5YWz6ZSu6K+N77yM5qC55o2u6ZW/5bC+6K+N5pCc57Si77yM
+57uT5p6c5pu057K+56Gu5Yy56YWN77yb5q+P5aSp6IO95pCc57SiMS0y5LiH5Lul5LiK5Lmw5a62
+55yf5a6eRU1BSUzvvIzmiJDljZXnjofpq5jjgIIgDQogDQoNCuimgeeahOaKk+e0p+iBlOezu1FR
+OiA5MTE1ODU2MDUgICDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDkxMTU4NTYwNUBxcS5jb20N
+CuimgeeahOaKk+e0p+iBlOezu1FROiA5MTE1ODU2MDUgICDmiJbogIXnq4vljbPlm57lpI3pgq7n
+rrE6IDkxMTU4NTYwNUBxcS5jb20NCuimgeeahOaKk+e0p+iBlOezu1FROiA5MTE1ODU2MDUgICDm
+iJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDkxMTU4NTYwNUBxcS5jb20NCiANCuWFjei0uei1oOmA
+gToNCuS4gOWFsTjkuKrljIUo5pWw5o2u5piv5YWo6KGM5Lia55qE77yM5oyJ54Wn6KGM5Lia5YiG
+5aW957G777yM5bm25LiU5Y+v5Lul5oyJ54Wn5YWz6ZSu6K+N5p+l6K+i55qEKe+8miANCjHvvIwy
+MDEx5pil5a2jMTA55bGK5bm/5Lqk5Lya5Lmw5a62546w5Zy66K+i55uY5pWw5o2u5bqT5paw6bKc
+5Ye654KJ77yM6LaF57qn5paw6bKc5Lmw5a6277yM5paw6bKc5pWw5o2u77yM5a655piT5oiQ5Y2V
+77yBIA0KMu+8jOi0reS5sOWQjuWPr+S7peWFjei0ueabtOaWsDIwMTHnp4vlraPlub/kuqTkvJor
+MjAxMuaYpeWto+W5v+S6pOS8muS5sOWutuaVsOaNruOAguWkqui2heWAvOS6huOAgg0KM++8jOac
+gOaWsOWFqOeQg+S5sOWutuW6kyzlhbE0NTE2NjDmnaHmlbDmja7jgIIgKOacgOaWsOabtOaWsOaX
+peacnyAyMDExLTA1LTE25pelKQ0KNO+8jDIwMDjlubQsMjAwOeW5tCwyMDEw5bm0IOaYpeWtoyvn
+p4vlraPlub/kuqTkvJrkubDlrrblkI3lvZXvvIwxMDMgMTA0IDEwNSAxMDYgMTA3IDEwOCDlhbHl
+ha3lsYog5YWxMTIwLjbkuIfmlbDmja7jgIINCjXvvIwyMDEw5bm05Zu96ZmF5L+D6ZSA5Y2P5Lya
+77yIUFBBSe+8ieaIkOWRmOWQjeWNlSBQUEFJIE1lbWJlcnMgRGlyZWN0b3J577yM6Z2e5bi46YeN
+6KaB55qE5aSn5Lmw5a6244CCDQo277yMMjAxMOW5tOWIsOmmmea4r+mHh+i0reeahOWbveWkluWu
+ouS6uuWQjeW9lSjpppnmuK/otLjlj5HlsYDmj5Dkvpsp77yM5YWxNy4y5LiH5pWw5o2u77yM6LaF
+57qn6YeN6KaB55qE5Lmw5a6244CCDQo377yMNDguNjjkuIfmnaHmnIDmlrDkubDlrrbor6Lnm5jv
+vIzotK3kubDlkI7mr4/mnIjmm7TmlrAgMS0y5LiH5p2h77yM5YyF5ousMumDqOWIhu+8jDHvvIzm
+nIDmlrDnmoTor6Lnm5ggMu+8jOacgOaWsOeahOWxleS8muS5sOWutuOAguWFjei0ueabtOaWsDM2
+5Liq5pyI44CCDQo477yMMjAwOeW5tOa1t+WFs+aPkOWNleaVsOaNrnBpZXJz54mI5pWw5o2uIDHl
+jYPkuIfjgIINCg0KDQror5rkv6HkuLrmnKzvvIzmlK/mjIHmlK/ku5jlrp3mi4Xkv53kuqTmmJMg
+KOWFiOWPkei0p+W5tuWuieijheiuvue9rue+pOWPkei9r+S7tu+8jOeEtuWQjuS7mOasvikg5b27
+5bqV5omT5raI5oKo55qEIOmhvuiZkeOAgg0KDQogDQoNCg0KIA0KDQrnsr7lh4bmlbDmja4t5oiQ
+5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t
+5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDmja4t5oiQ5Y2V546H5p6B6auYDQrnsr7lh4bmlbDm
+ja4t5oiQ5Y2V546H5p6B6auYDQo=
