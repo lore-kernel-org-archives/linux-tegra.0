@@ -1,30 +1,29 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: cpu clock change latency
-Date: Tue, 27 Sep 2011 16:30:22 +0100
-Message-ID: <20110927153021.GA16150@sirena.org.uk>
-References: <201109231639.33651.marvin24@gmx.de>
- <CAMbhsRTiqLZ2bSefh-DnmDY0RB4JGkSmumh8Tt_7217BsHsa7Q@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/3] Add support for tegra2 based ventana board
+Date: Tue, 27 Sep 2011 20:10:18 +0300
+Message-ID: <1317143421-27286-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAMbhsRTiqLZ2bSefh-DnmDY0RB4JGkSmumh8Tt_7217BsHsa7Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 23, 2011 at 09:49:53AM -0700, Colin Cross wrote:
+This patch set adds support for the tegra2 based ventana development board.                                                                           
 
-> cpu-tegra.c says latency is 300 uS because relocking the CPU pll has a
-> udelay(300).  400 nS would just make the ondemand governor sample more
-> often than it means to.  I doubt changing it to 400 uS makes any
-> difference.
+Boot tested on ventana.                                                                                                                               
 
-The interactive effect of a higher transition latency with ondemand can
-be rather visible.
+Peter De Schrijver (3):
+  arm/tegra: prepare Seaboard pinmux code for derived boards
+  arm/tegra: add support for ventana pinmuxing
+  arm/tegra: device tree support for ventana board
 
-It's probably also worth mentioning that if there's regulators used for
-voltage scaling the system really ought to be including latency for them
-in the estimate, for voltage increases the regulator needs to be updated
-prior to the SoC side starting off.
+ arch/arm/boot/dts/tegra-ventana.dts         |   32 ++++++++++++++
+ arch/arm/mach-tegra/Kconfig                 |    6 +++
+ arch/arm/mach-tegra/Makefile                |    1 +
+ arch/arm/mach-tegra/Makefile.boot           |    1 +
+ arch/arm/mach-tegra/board-dt.c              |    5 ++-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   63 ++++++++++++++++++++++++---
+ 6 files changed, 101 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-ventana.dts
