@@ -1,109 +1,59 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 2/3] arm/tegra: add support for ventana pinmuxing
-Date: Tue, 27 Sep 2011 21:35:23 +0300
-Message-ID: <1317148524-28528-3-git-send-email-pdeschrijver@nvidia.com>
-References: <1317148524-28528-1-git-send-email-pdeschrijver@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: cpu clock change latency
+Date: Tue, 27 Sep 2011 21:31:46 +0200
+Message-ID: <201109272131.46738.marvin24@gmx.de>
+References: <201109231639.33651.marvin24@gmx.de> <CAMbhsRTiqLZ2bSefh-DnmDY0RB4JGkSmumh8Tt_7217BsHsa7Q@mail.gmail.com> <20110927153021.GA16150@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1317148524-28528-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110927153021.GA16150-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for ventana pinmuxing as a seaboard derivative. This is a cut down
-version of work done by Jong Kim <jongk@nvidia.com>.
+On Tuesday 27 September 2011 17:30:22 Mark Brown wrote:
+> On Fri, Sep 23, 2011 at 09:49:53AM -0700, Colin Cross wrote:
+> > cpu-tegra.c says latency is 300 uS because relocking the CPU pll ha=
+s a
+> > udelay(300).  400 nS would just make the ondemand governor sample m=
+ore
+> > often than it means to.  I doubt changing it to 400 uS makes any
+> > difference.
+>=20
+> The interactive effect of a higher transition latency with ondemand c=
+an
+> be rather visible.
 
-Change-Id: I54bbf7a507dac193fa88f339d3e47f3d473dfc96
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/mach-tegra/Makefile                |    1 +
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   49 +++++++++++++++++++++++++-
- 2 files changed, 48 insertions(+), 2 deletions(-)
+True, given the 400 =B5s latency and the multiplier of 1000 we end up h=
+aving=20
+a sample_rate of the ondemand scheduler of 0.4 seconds, which is very=20
+"feelable". My AMD desktop announces a 1 =B5s latency so the default sa=
+mpling=20
+rate is only 10 ms.=20
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index f11b910..91a07e1 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -31,6 +31,7 @@ obj-${CONFIG_MACH_SEABOARD}             += board-seaboard-pinmux.o
- 
- obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
- obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
-+obj-${CONFIG_MACH_TEGRA_DT}             += board-seaboard-pinmux.o
- 
- obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
- obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index b31c765..b62b04d 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -158,8 +158,26 @@ static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
- 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- };
- 
--
--
-+static __initdata struct tegra_pingroup_config ventana_pinmux[] = {
-+	{TEGRA_PINGROUP_DAP3, TEGRA_MUX_DAP3,     TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_DDC,  TEGRA_MUX_RSVD2,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_DTA,  TEGRA_MUX_VI,       TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_DTB,  TEGRA_MUX_VI,       TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_DTC,  TEGRA_MUX_VI,       TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_DTD,  TEGRA_MUX_VI,       TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_GMD,  TEGRA_MUX_SFLASH,   TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_LPW0, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_LPW2, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_LSC1, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_LSCK, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_LSDA, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_PTA,  TEGRA_MUX_RSVD2,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_SLXC, TEGRA_MUX_SDIO3,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_SLXK, TEGRA_MUX_SDIO3,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-+	{TEGRA_PINGROUP_SPIA, TEGRA_MUX_GMI,      TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_SPIC, TEGRA_MUX_GMI,      TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+	{TEGRA_PINGROUP_SPIG, TEGRA_MUX_SPI2_ALT, TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
-+};
- 
- static struct tegra_gpio_table common_gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
-@@ -172,6 +190,26 @@ static struct tegra_gpio_table common_gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
- };
- 
-+static void __init update_pinmux(struct tegra_pingroup_config *newtbl, int size)
-+{
-+	int i, j;
-+	struct tegra_pingroup_config *new_pingroup, *base_pingroup;
-+
-+	/* Update base seaboard pinmux table with secondary board
-+	 * specific pinmux table table.
-+	 */
-+	for (i = 0; i < size; i++) {
-+		new_pingroup = &newtbl[i];
-+		for (j = 0; j < ARRAY_SIZE(seaboard_pinmux); j++) {
-+			base_pingroup = &seaboard_pinmux[j];
-+			if (new_pingroup->pingroup == base_pingroup->pingroup) {
-+				*base_pingroup = *new_pingroup;
-+				break;
-+			}
-+		}
-+	}
-+}
-+
- static void __init seaboard_common_pinmux_init(void)
- {
- 	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
-@@ -186,3 +224,10 @@ void __init seaboard_pinmux_init(void)
- {
- 	seaboard_common_pinmux_init();
- }
-+
-+void __init ventana_pinmux_init(void)
-+{
-+	update_pinmux(ventana_pinmux, ARRAY_SIZE(ventana_pinmux));
-+	seaboard_common_pinmux_init();
-+}
-+
--- 
-1.7.0.4
+A transition latency of 400 ns will set the sampling_rate to 10 ms (the=
+=20
+minimum value allowed, so 10 =B5s would have the same effect).=20
+
+So doing an "echo 40000 >=20
+/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate" is the best we =
+can=20
+do now and almost produces the same result as 10000.=20
+
+We additionaly found that setting io_is_busy=3D1 improves the transfer =
+rate=20
+of the mmc by 50%.=20
+
+> It's probably also worth mentioning that if there's regulators used f=
+or
+> voltage scaling the system really ought to be including latency for t=
+hem
+> in the estimate, for voltage increases the regulator needs to be upda=
+ted
+> prior to the SoC side starting off.
+
+which would make things even worse :-(
+
+Marc
