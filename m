@@ -1,119 +1,64 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 3/3] arm/tegra: device tree support for ventana board
-Date: Wed, 28 Sep 2011 04:05:02 +0300
-Message-ID: <1317171902-14736-4-git-send-email-pdeschrijver@nvidia.com>
-References: <1317171902-14736-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/4] arm/tegra: Convert gpio & pinmux to platform devices
+Date: Tue, 27 Sep 2011 20:56:02 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173955572E@HQMAIL01.nvidia.com>
+References: <1316725567-17881-1-git-send-email-swarren@nvidia.com>
+ <201109231848.52318.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1317171902-14736-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <201109231848.52318.arnd-r2nGTMty4D4@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra-ventana.dts |   32 ++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/Kconfig         |    6 ++++++
- arch/arm/mach-tegra/Makefile.boot   |    1 +
- arch/arm/mach-tegra/board-dt.c      |    5 ++++-
- 4 files changed, 43 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra-ventana.dts
+Arnd Bergmann wrote at Friday, September 23, 2011 10:49 AM:
+> On Thursday 22 September 2011, Stephen Warren wrote:
+> >
+> > This series converts the Tegra GPIO and pinmux drivers to be regular
+> > platform devices.
+> 
+> Looks good overall.
 
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-new file mode 100644
-index 0000000..9b29a62
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra-ventana.dts
-@@ -0,0 +1,32 @@
-+/dts-v1/;
-+
-+/memreserve/ 0x1c000000 0x04000000;
-+/include/ "tegra20.dtsi"
-+
-+/ {
-+	model = "NVIDIA Tegra2 Ventana evaluation board";
-+	compatible = "nvidia,ventana", "nvidia,tegra20";
-+
-+	chosen {
-+		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/ram rdinit=/sbin/init";
-+	};
-+
-+	memory {
-+		reg = < 0x00000000 0x40000000 >;
-+	};
-+
-+	serial@70006300 {
-+		clock-frequency = < 216000000 >;
-+	};
-+
-+	sdhci@c8000400 {
-+		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
-+		power-gpios = <&gpio 155 0>; /* gpio PT3 */
-+	};
-+
-+	sdhci@c8000600 {
-+		power-gpios = <&gpio 70 0>; /* gpio PI6 */
-+		support-8bit;
-+	};
-+};
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index d82ebab..91aff7c 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -69,6 +69,12 @@ config MACH_WARIO
-        help
-          Support for the Wario version of Seaboard
- 
-+config MACH_VENTANA
-+       bool "Ventana board"
-+       select MACH_TEGRA_DT
-+       help
-+         Support for the nVidia Ventana development platform
-+
- choice
-         prompt "Low-level debug console UART"
-         default TEGRA_DEBUG_UART_NONE
-diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index 5e870d2..bd12c9f 100644
---- a/arch/arm/mach-tegra/Makefile.boot
-+++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -4,3 +4,4 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
- 
- dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
- dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
-+dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index 9f47e04..5885102 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -47,7 +47,7 @@
- 
- void harmony_pinmux_init(void);
- void seaboard_pinmux_init(void);
--
-+void ventana_pinmux_init(void);
- 
- struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
-@@ -95,6 +95,8 @@ static void __init tegra_dt_init(void)
- 		harmony_pinmux_init();
- 	else if (of_machine_is_compatible("nvidia,seaboard"))
- 		seaboard_pinmux_init();
-+	else if (of_machine_is_compatible("nvidia,ventana"))
-+		ventana_pinmux_init();
- 
- 	/*
- 	 * Finished with the static registrations now; fill in the missing
-@@ -106,6 +108,7 @@ static void __init tegra_dt_init(void)
- static const char * tegra_dt_board_compat[] = {
- 	"nvidia,harmony",
- 	"nvidia,seaboard",
-+	"nvidia,ventana",
- 	NULL
- };
- 
+Thanks.
+
+> > The series is extracted from an earlier series I posted that augmented
+> > these drivers to initialize HW state from the device-tree. I'm holding
+> > off on that aspect of the changes, since it's not entirely clear to me
+> > whether the new pinmux API should drive the initial pinmux state setup
+> > via "system hog" definitions, or whether pinmux drivers should indeed
+> > do their own thing.
+> 
+> I think at least you should try to do an ioremap of the pinmux register
+> area in the pinmux probe function and make sure that it's called early
+> enough, if at all possible.
+> 
+> Right now, there is an empty probe() function, which is a bit silly,
+> and the pg_readl()/pg_writel() functions use hardcoded register
+> addresses.
+
+For GPIO, calling ioremap() should be pretty easy.
+
+For pinmux, there are complications: The pinmux HW doesn't have a dedicated
+address range, but rather the registers are somewhat scattered in groups
+throughout the "APB_MISC" address range. APB_MISC also includes strapping,
+JTAG configuration, and USB PHY registers, all of which exist between the
+various groups of pinmux registers. On Tegra30, there's slightly less of
+this, yet in turn this means that the number of chunks of address space used
+by the pinmux module differs from Tegra20.
+
+Right now, the pinmux driver data tables (which define the set of pin groups
+known to the pinmux driver) all store register addresses as offsets from the
+base of this APB_MISC region for simplicity.
+
+What are your thoughts here; should I go ahead and update the pinmux driver
+to ioremap() each of these chunks individually, and update the data tables
+to be a tuple (chunk ID, offset_from_chunk), or leave things as is?
+
+Thanks.
+
 -- 
-1.7.0.4
+nvpublic
