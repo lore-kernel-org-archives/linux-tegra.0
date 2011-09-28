@@ -1,67 +1,76 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v4 3/3] arm/tegra: device tree support for ventana board
-Date: Wed, 28 Sep 2011 11:33:21 -0700
-Message-ID: <CAOesGMgv5wqZPMZPS4UKO4owgxBRLP9T6NPSFAVVcLd3vPYkiQ@mail.gmail.com>
-References: <1317171902-14736-1-git-send-email-pdeschrijver@nvidia.com>
-	<1317171902-14736-4-git-send-email-pdeschrijver@nvidia.com>
-	<201109281516.42513.arnd@arndb.de>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v5 1/3] arm/tegra: prepare Seaboard pinmux code for derived
+	boards
+Date: Thu, 29 Sep 2011 01:29:34 +0300
+Message-ID: <1317248978-10829-2-git-send-email-pdeschrijver@nvidia.com>
+References: <1317248978-10829-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201109281516.42513.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1317248978-10829-1-git-send-email-pdeschrijver@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: pdeschrijver@nvidia.com
+Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 28, 2011 at 6:16 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Wednesday 28 September 2011, Peter De Schrijver wrote:
->> --- a/arch/arm/mach-tegra/board-dt.c
->> +++ b/arch/arm/mach-tegra/board-dt.c
->> @@ -47,7 +47,7 @@
->>
->> =A0void harmony_pinmux_init(void);
->> =A0void seaboard_pinmux_init(void);
->> -
->> +void ventana_pinmux_init(void);
->>
->> =A0struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata =3D {
->> =A0 =A0 =A0 =A0 OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_=
-BASE, "sdhci-tegra.0", NULL),
->> @@ -95,6 +95,8 @@ static void __init tegra_dt_init(void)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 harmony_pinmux_init();
->> =A0 =A0 =A0 =A0 else if (of_machine_is_compatible("nvidia,seaboard")=
-)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 seaboard_pinmux_init();
->> + =A0 =A0 =A0 else if (of_machine_is_compatible("nvidia,ventana"))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ventana_pinmux_init();
->
-> Are you (Peter, Colin, Olof) confident that this is not getting out
-> of hand before it's getting better?
->
-> If we are keeping the per-board pinmux configuration in the kernel
-> for longer, I think it would be better to do this table-driven than
-> having a list of top-level of_machine_is_compatible() statements
-> and do something like:
->
-> static struct {
-> =A0 =A0 =A0 =A0const char *machine;
-> =A0 =A0 =A0 =A0struct tegra_pingroup_config *config[];
-> } pinmux_configs[] __initdata =3D {
-> =A0 =A0 =A0 =A0{ "nvidia,ventana", &ventana_pinmux },
-> =A0 =A0 =A0 =A0{ "nvidia,seaboard, &seaboard_pinmux },
-> };
+This patch splits out the common part of pinmux and GPIO initialization for
+seaboard and derived boards. This code is based on work done by Jong Kim
+<jongk@nvidia.com>.
 
-That is definitely a nicer solution. I didn't see a strong need to
-switch to that model now since it should hopefully be a temporary
-thing, but given Stephen's mention of Cardhu, I think it does make
-sense.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
 
-Peter, care to respin this patch with the above solution instead?
-Also, please print a warning if no match is found.
-
-
-Thanks,
-
--Olof
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index 74f78b7..b31c765 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -1,5 +1,6 @@
+ /*
+- * Copyright (C) 2010 NVIDIA Corporation
++ * Copyright (C) 2010,2011 NVIDIA Corporation
++ * Copyright (C) 2011 Google, Inc.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -160,7 +161,7 @@ static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
+ 
+ 
+ 
+-static struct tegra_gpio_table gpio_table[] = {
++static struct tegra_gpio_table common_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
+@@ -171,12 +172,17 @@ static struct tegra_gpio_table gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
+ };
+ 
+-void __init seaboard_pinmux_init(void)
++static void __init seaboard_common_pinmux_init(void)
+ {
+ 	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
+ 
+ 	tegra_drive_pinmux_config_table(seaboard_drive_pinmux,
+ 					ARRAY_SIZE(seaboard_drive_pinmux));
+ 
+-	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
++	tegra_gpio_config(common_gpio_table, ARRAY_SIZE(common_gpio_table));
++}
++
++void __init seaboard_pinmux_init(void)
++{
++	seaboard_common_pinmux_init();
+ }
+-- 
+1.7.0.4
