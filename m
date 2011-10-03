@@ -1,41 +1,33 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ARM: tegra: Make earlyprintk choose a UART at runtime.
-Date: Fri, 30 Sep 2011 15:11:21 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173A2C6B44@HQMAIL01.nvidia.com>
-References: <1317061425-1030-1-git-send-email-dianders@chromium.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 0/3] Add support for tegra2 based ventana board
+Date: Mon, 3 Oct 2011 16:06:45 +0300
+Message-ID: <1317647209-22303-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1317061425-1030-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Jeremy Kerr <jeremy.kerr-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Doug Anderson wrote at Monday, September 26, 2011 12:24 PM:
-> With this change we automatically detect which UART to use for
-> earlyprintk (and for printing during decompression).  The
-> detection involves coordination with the bootloader: it's expected
-> that the bootloader will leave a 'D' (for [D]ebug) in the UART
-> scratchpad register for whichever UART we should use for debugging.
+This patch set adds support for the tegra2 based ventana development board.
 
-This works fine on Tegra20; there, even if the UART clock is off and/or
-the UART is in reset, you can still read the UART_SCR register (and get
-a bogus value) without the system hanging.
+Boot tested on ventana.                                                                                                                               
 
-However, I just tested on Tegra30, and the behavior has changed; if either
-a UART is in reset /or/ the UART clock is stopped, then the system hangs
-when UART_SCR is read.
+Uses a table based approach to select the correct init function.
 
-As such, this change will cause Tegra30 to fail to boot. I'd rather it
-was augmented to check the clock enable and module reset bits as well
-as the scratch register value in all cases.
+Fix some compiler errors.
 
-Yes, I know mainline doesn't support Tegra30 yet, but we're very close
-to posting the first few patches to start enabling it, and I wouldn't
-want to break it right before that!
+Peter De Schrijver (3):
+  arm/tegra: prepare Seaboard pinmux code for derived boards
+  arm/tegra: add support for ventana pinmuxing
+  arm/tegra: device tree support for ventana board
 
--- 
-nvpublic
+ arch/arm/boot/dts/tegra-ventana.dts         |   32 ++++++++++++++
+ arch/arm/mach-tegra/Kconfig                 |    6 +++
+ arch/arm/mach-tegra/Makefile                |    1 +
+ arch/arm/mach-tegra/Makefile.boot           |    1 +
+ arch/arm/mach-tegra/board-dt.c              |    5 ++-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   63 ++++++++++++++++++++++++---
+ 6 files changed, 101 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-ventana.dts
