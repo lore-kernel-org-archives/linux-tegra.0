@@ -1,30 +1,49 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
-Date: Tue, 4 Oct 2011 11:51:29 +0300
-Message-ID: <20111004085129.GA9003@tbergstrom-lnx.Nvidia.com>
-References: <1317647209-22303-1-git-send-email-pdeschrijver@nvidia.com>
- <1317647209-22303-3-git-send-email-pdeschrijver@nvidia.com>
- <20111003131352.GX21166@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173A2C6CAA@HQMAIL01.nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: compile error in cpu-tegra.c
+Date: Tue, 4 Oct 2011 13:39:36 +0200
+Message-ID: <201110041339.36990.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173A2C6CAA-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 03, 2011 at 06:22:47PM +0200, Stephen Warren wrote:
-> Peter De Schrijver wrote at Monday, October 03, 2011 7:14 AM:
-> > Ignore this one.
-> 
-> I assume only ignore this copy of the patch because it's a duplicate;
-> the patch itself is still needed, right?
+Hi,
 
-Yes.
+today I tried linux-next and arm-soc tree (which is to be merged to linux-next 
+soon). Both trees fail to compile with this error:
 
-Cheers,
+arch/arm/mach-tegra/cpu-tegra.c:35:27: error: mach/hardware.h: No such file or 
+directory
+make[1]: *** [arch/arm/mach-tegra/cpu-tegra.o] Error 1
+make: *** [arch/arm/mach-tegra] Error 2
 
-Peter.
+I think the problem was introduced by commmit c9d95fbe. If this is already fixed 
+somewhere, just ignore this message. Otherwise the patch below should fix it:
+
+----
+
+ARM: tegra: fix compilation error due to mach/hardware.h removal
+    
+This fixes a compilation error in cpu-tegra.c which was introduced
+in commit dc8d966bccde0b8b6c9e8c6e663c747030c17435 which removed
+the now obsolete mach/hardware.h from the mach-tegra subtree.
+    
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index 0e1016a..0e0fd4d 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -32,7 +32,6 @@
+ 
+ #include <asm/system.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/clk.h>
+ 
+ /* Frequency table index must be sequential starting at 0 */
