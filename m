@@ -1,60 +1,30 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: tegra: Make earlyprintk choose a UART at runtime.
-Date: Mon, 3 Oct 2011 13:03:00 -0700
-Message-ID: <CAD=FV=WxqKX62vM4r=qtQKVmNKbNP2u4jXd35iF4raveOudUqA@mail.gmail.com>
-References: <1317061425-1030-1-git-send-email-dianders@chromium.org>
-	<74CDBE0F657A3D45AFBB94109FB122FF173A2C6B44@HQMAIL01.nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Tue, 4 Oct 2011 11:51:29 +0300
+Message-ID: <20111004085129.GA9003@tbergstrom-lnx.Nvidia.com>
+References: <1317647209-22303-1-git-send-email-pdeschrijver@nvidia.com>
+ <1317647209-22303-3-git-send-email-pdeschrijver@nvidia.com>
+ <20111003131352.GX21166@tbergstrom-lnx.Nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173A2C6CAA@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173A2C6B44@HQMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jeremy Kerr <jeremy.kerr@canonical.com>, Simon Glass <sjg@chromium.org>, Allen Martin <AMartin@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173A2C6CAA-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen,
+On Mon, Oct 03, 2011 at 06:22:47PM +0200, Stephen Warren wrote:
+> Peter De Schrijver wrote at Monday, October 03, 2011 7:14 AM:
+> > Ignore this one.
+> 
+> I assume only ignore this copy of the patch because it's a duplicate;
+> the patch itself is still needed, right?
 
-OK, thanks for testing!  I will rev the patch and resend in a little bi=
-t.
+Yes.
 
--Doug
+Cheers,
 
----
-
-On Fri, Sep 30, 2011 at 3:11 PM, Stephen Warren <swarren@nvidia.com> wr=
-ote:
-> Doug Anderson wrote at Monday, September 26, 2011 12:24 PM:
->> With this change we automatically detect which UART to use for
->> earlyprintk (and for printing during decompression). =A0The
->> detection involves coordination with the bootloader: it's expected
->> that the bootloader will leave a 'D' (for [D]ebug) in the UART
->> scratchpad register for whichever UART we should use for debugging.
->
-> This works fine on Tegra20; there, even if the UART clock is off and/=
-or
-> the UART is in reset, you can still read the UART_SCR register (and g=
-et
-> a bogus value) without the system hanging.
->
-> However, I just tested on Tegra30, and the behavior has changed; if e=
-ither
-> a UART is in reset /or/ the UART clock is stopped, then the system ha=
-ngs
-> when UART_SCR is read.
->
-> As such, this change will cause Tegra30 to fail to boot. I'd rather i=
-t
-> was augmented to check the clock enable and module reset bits as well
-> as the scratch register value in all cases.
->
-> Yes, I know mainline doesn't support Tegra30 yet, but we're very clos=
-e
-> to posting the first few patches to start enabling it, and I wouldn't
-> want to break it right before that!
->
-> --
-> nvpublic
->
->
+Peter.
