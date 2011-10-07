@@ -1,7 +1,7 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 09/14] ARM: tegra: pcie: 0 -> NULL changes
-Date: Thu,  6 Oct 2011 19:54:19 -0700
-Message-ID: <1317956064-17650-10-git-send-email-olof@lixom.net>
+Subject: [PATCH 11/14] ARM: tegra: tegra_rtc_read_ms should be static
+Date: Thu,  6 Oct 2011 19:54:21 -0700
+Message-ID: <1317956064-17650-12-git-send-email-olof@lixom.net>
 References: <1317956064-17650-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1317956064-17650-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
@@ -10,27 +10,25 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fixes:
-
-arch/arm/mach-tegra/pcie.c:465:10: warning: Using plain integer as NULL pointer
+Not exported and not used externally
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/pcie.c |    2 +-
+ arch/arm/mach-tegra/timer.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-index f7c89ee..f5aa173 100644
---- a/arch/arm/mach-tegra/pcie.c
-+++ b/arch/arm/mach-tegra/pcie.c
-@@ -462,7 +462,7 @@ static struct pci_bus __init *tegra_pcie_scan_bus(int nr,
- 	struct tegra_pcie_port *pp;
- 
- 	if (nr >= tegra_pcie.num_ports)
--		return 0;
-+		return NULL;
- 
- 	pp = tegra_pcie.port + nr;
- 	pp->root_bus_nr = sys->busnr;
+diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
+index 4d6759a..e2272d2 100644
+--- a/arch/arm/mach-tegra/timer.c
++++ b/arch/arm/mach-tegra/timer.c
+@@ -133,7 +133,7 @@ static void notrace tegra_update_sched_clock(void)
+  * tegra_rtc driver could be executing to avoid race conditions
+  * on the RTC shadow register
+  */
+-u64 tegra_rtc_read_ms(void)
++static u64 tegra_rtc_read_ms(void)
+ {
+ 	u32 ms = readl(rtc_base + RTC_MILLISECONDS);
+ 	u32 s = readl(rtc_base + RTC_SHADOW_SECONDS);
 -- 
 1.7.4.1
