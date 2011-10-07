@@ -1,41 +1,43 @@
-From: Sergei Shtylyov <sshtylyov@ru.mvista.com>
-Subject: Re: [PATCH] ARM: tegra: fix compilation error due to mach/hardware.h
-	removal
-Date: Fri, 07 Oct 2011 15:39:35 +0400
-Message-ID: <4E8EE4F7.9040503@ru.mvista.com>
-References: <1317954199-25284-1-git-send-email-olof@lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1317954199-25284-1-git-send-email-olof@lixom.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-tegra@vger.kernel.org, torvalds@linux-foundation.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, Marc Dietrich <marvin24@gmx.de>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH v2] ARM: tegra: fix compilation error due to mach/hardware.h removal
+Date: Fri,  7 Oct 2011 08:31:41 -0700
+Message-ID: <1318001501-14785-1-git-send-email-olof@lixom.net>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: torvalds-de/tnXTf+JLsfHDXvbKv3VaTQe2KTcn/@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sergei Shtylyov <sshtylyov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-On 07-10-2011 6:23, Olof Johansson wrote:
+This fixes a compilation error in cpu-tegra.c which was introduced in
+dc8d966bc (ARM: convert PCI defines to variables) which removed the now
+obsolete mach/hardware.h from the mach-tegra subtree.
 
-> From: Marc Dietrich <marvin24@gmx.de>
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Sergei Shtylyov <sshtylyov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
+---
 
-> This fixes a compilation error in cpu-tegra.c which was introduced
-> in commit dc8d966bccde0b8b6c9e8c6e663c747030c17435 which removed
+v2: Added patch subject of introducing commit
 
-    Please also specify that commit's summary in parens.
+Linus, last minute build fix. Not sure of Arnd is planning another merge
+before release so sending directly.
 
-> the now obsolete mach/hardware.h from the mach-tegra subtree.
+ arch/arm/mach-tegra/cpu-tegra.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-
-WBR, Sergei
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index 0e1016a..0e0fd4d 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -32,7 +32,6 @@
+ 
+ #include <asm/system.h>
+ 
+-#include <mach/hardware.h>
+ #include <mach/clk.h>
+ 
+ /* Frequency table index must be sequential starting at 0 */
+-- 
+1.7.4.1
