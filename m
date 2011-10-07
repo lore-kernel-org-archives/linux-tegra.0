@@ -1,28 +1,31 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/14] Sparse fixes for tegra
-Date: Fri, 7 Oct 2011 08:40:58 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173B23B24F@HQMAIL01.nvidia.com>
-References: <1317956064-17650-1-git-send-email-olof@lixom.net>
+Subject: RE: [PATCH v7 0/3] Add support for tegra2 based ventana board
+Date: Fri, 7 Oct 2011 11:00:55 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173B23B2F1@HQMAIL01.nvidia.com>
+References: <1317647918-22694-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1317956064-17650-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1317647918-22694-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <linux-arm-kernel-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Thursday, October 06, 2011 8:54 PM:
-> Some trivial fixes removing sparse warnings on tegra code.
+Peter De Schrijver wrote at Monday, October 03, 2011 7:19 AM:
+> This patch set adds support for the tegra2 based ventana development board.
+> 
+> Boot tested on ventana.
 
-The series:
+With minor changes to the command-line in tegra-ventana.dts, to put the
+root fs on an SD card, and using mainline U-Boot with the Ventana patch
+series I wrote,
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Although I guess given Arnd's comments, patch 1 will probably be rewritten,
-and 2-3 removed?
+I have a couple of queries in patch 3 that I'll post separately.
 
 -- 
 nvpublic
