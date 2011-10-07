@@ -1,61 +1,54 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH v7 3/3] arm/tegra: device tree support for ventana board
-Date: Fri, 7 Oct 2011 11:04:34 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
-References: <1317647918-22694-1-git-send-email-pdeschrijver@nvidia.com>
-	<1317647918-22694-4-git-send-email-pdeschrijver@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1317647918-22694-4-git-send-email-pdeschrijver@nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] MAINTAINERS: Update tegra maintainer information
+Date: Fri,  7 Oct 2011 13:27:48 -0700
+Message-ID: <1318019268-6946-1-git-send-email-olof@lixom.net>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Monday, October 03, 2011 7:19 AM:
+A couple of changes to the Tegra maintainership setup:
 
-...
-> diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-...
-> +	chosen {
-> +		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/ram rdinit=/sbin/init";
+I'm very glad to bring on Stephen Warren on board as a maintainer. The
+work he has done so far is excellent, and the fact that he works for
+Nvidia means he has long-term interest in the platform.
 
-It might be nice to make this identical to what Harmony and Seaboard have here.
+Erik Gilling did an astounding amount of work on getting things up and
+running but has been a silent partner on the maintainership side for a
+while, and is stepping down. Thanks for your contributions so far, Erik.
 
-Still, it doesn't matter a lot, since I (and I imagine most people) have
-to edit this command-line to point at the correct partition for my disks
-anyway; eventually, U-Boot should be providing/re-writing this property
-too.
+Finally, update the git URL since I'll take over running the main repo
+for a while.
 
-...
-> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-...
-> -	if (of_machine_is_compatible("nvidia,harmony"))
-> -		harmony_pinmux_init();
-> -	else if (of_machine_is_compatible("nvidia,seaboard"))
-> -		seaboard_pinmux_init();
-> +	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
-> +		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
-> +			pinmux_configs[i].init();
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (i == ARRAY_SIZE(pinmux_configs))
-> +		printk(KERN_WARNING "Unknown platform! Pinmuxing not initialized\n");
+Overall maintainership model isn't changing much at this time: We'll all
+three review patches as appropriate, and one of us will collect the main
+repo (me at this time).
 
-Should that be WARN() instead of printk?
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ MAINTAINERS |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ace8f9c..5483e0c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6366,10 +6366,10 @@ F:	net/ipv4/tcp_lp.c
+ 
+ TEGRA SUPPORT
+ M:	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+-M:	Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+ M:	Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
++M:	Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+-T:	git git://android.git.kernel.org/kernel/tegra.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
+ S:	Supported
+ F:	arch/arm/mach-tegra
+ 
 -- 
-nvpublic
+1.7.4.1
