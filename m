@@ -1,44 +1,38 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH] MAINTAINERS: Update tegra maintainer information
-Date: Fri, 7 Oct 2011 14:28:28 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173B23B3B9@HQMAIL01.nvidia.com>
-References: <1318019268-6946-1-git-send-email-olof@lixom.net>
+From: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
+Subject: [PATCH] fix drivers/staging/nvec linkage error when keyboard is disabled
+Date: Sat, 8 Oct 2011 19:29:14 +0200
+Message-ID: <20112.34922.209107.730268@pilspetsen.it.uu.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1318019268-6946-1-git-send-email-olof@lixom.net>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Colin Cross <ccross@android.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Friday, October 07, 2011 2:28 PM:
-> A couple of changes to the Tegra maintainership setup:
-> 
-> I'm very glad to bring on Stephen Warren on board as a maintainer. The
-> work he has done so far is excellent, and the fact that he works for
-> Nvidia means he has long-term interest in the platform.
+Building linux-3.1-rc9 for the Tegra ARM SoC with CONFIG_MFD_NVEC=y
+and CONFIG_KEYBOARD_NVEC=n results in the following linkage error:
 
-Thanks for bringing me on board.
+drivers/built-in.o: In function `tegra_nvec_probe':
+/tmp/linux-3.1-rc9/drivers/staging/nvec/nvec.c:373: undefined reference to `nvec_kbd_init'
+make: *** [.tmp_vmlinux1] Error 1
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Fixed by #ifdef:ing the call to nvec_kbd_init(), similar to the
+existing #ifdef CONFIG_SERIO_NVEC_PS2 around the nvec_ps2() call.
 
-> Erik Gilling did an astounding amount of work on getting things up and
-> running but has been a silent partner on the maintainership side for a
-> while, and is stepping down. Thanks for your contributions so far, Erik.
+Signed-off-by: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
+---
 
-I'd like to echo this, and also extend it to everyone else who's brought
-Tegra support to the point where it is today.
-
--- 
-nvpublic
+--- linux-3.1-rc9/drivers/staging/nvec/nvec.c.~1~	2011-10-08 16:28:20.000000000 +0200
++++ linux-3.1-rc9/drivers/staging/nvec/nvec.c	2011-10-08 19:09:18.000000000 +0200
+@@ -370,7 +370,9 @@ static int __devinit tegra_nvec_probe(st
+ 	nvec_write_async(nvec, EC_ENABLE_EVENT_REPORTING,
+ 				sizeof(EC_ENABLE_EVENT_REPORTING));
+ 
++#ifdef CONFIG_KEYBOARD_NVEC
+ 	nvec_kbd_init(nvec);
++#endif
+ #ifdef CONFIG_SERIO_NVEC_PS2
+ 	nvec_ps2(nvec);
+ #endif
