@@ -1,61 +1,57 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH] fix drivers/staging/nvec linkage error when keyboard is disabled
-Date: Sun, 09 Oct 2011 17:47:38 +0200
-Message-ID: <1534774.fR3YHUzZE9@fb07-iapwap2>
-References: <20112.34922.209107.730268@pilspetsen.it.uu.se>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 0/14] Sparse fixes for tegra
+Date: Sun, 9 Oct 2011 22:32:47 -0700
+Message-ID: <CAOesGMhms2AWY2b9RZQ4XJfoqBmUsaMFQid0BWcFLQ1gm9ONWA@mail.gmail.com>
+References: <1317956064-17650-1-git-send-email-olof@lixom.net>
+	<1578886.3aVd19SPzO@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20112.34922.209107.730268-tgku4HJDRZih8lFjZTKsyTAV6s6igYVG@public.gmane.org>
+In-Reply-To: <1578886.3aVd19SPzO@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mikael,
+Hi,
 
-thanks for review. The nvec driver received some overhaul in the 3.1 release cycle 
-and he fruids can be viewed in linux-next tree. The nvec client drivers were 
-converted to mfd children in the mean time. This solves the build error, but is not 
-very flexible. We are planing to move the mfd stuct to the board file(s) in the next 
-cycle.
+On Fri, Oct 7, 2011 at 1:54 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Thursday 06 October 2011 19:54:10 Olof Johansson wrote:
+>> Some trivial fixes removing sparse warnings on tegra code.
+>
+> Hi Olof,
+>
+> That's a very nice series. I had a go at this across platforms before,
+> but had not finished it yet.
+>
+> One thing I would recommend instead of having a type cast in IO_ADDRESS
+> is to change the definition of IO_{IRAM,CPU,PPSB,APB}_VIRT to be
+> an iomem pointer from the start, so any calculation you do based on
+> that automatically gets the right type.
 
-Also the maintainers were added. If you still find problems, please send email to the 
-linux driver developemnt project and cc Julian and me. You may also check our 
-development tree at http://gitorious.org/ac100/marvin24s-tree.  
+That worked out pretty well but needed asm-conditional defines, since
+some of the constants are used from assembly.
 
-Thanks
+I'll post a new series shortly that includes the above change, drops
+the first to IO_ADDRESS changes and includes a couple of more fixes
+for cpu-tegra.c.
 
-Marc
+I kept IO_ADDRESS() even though it is now just a 1:1 wrapper to
+IO_TO_VIRT(), mostly to not have to churn all drivers just for this --
+see below for plans related to that.
 
-Am Samstag, 8. Oktober 2011, 19:29:14 schrieb Mikael Pettersson:
-> Building linux-3.1-rc9 for the Tegra ARM SoC with CONFIG_MFD_NVEC=y
-> and CONFIG_KEYBOARD_NVEC=n results in the following linkage error:
-> 
-> drivers/built-in.o: In function `tegra_nvec_probe':
-> /tmp/linux-3.1-rc9/drivers/staging/nvec/nvec.c:373: undefined reference to
-> `nvec_kbd_init' make: *** [.tmp_vmlinux1] Error 1
-> 
-> Fixed by #ifdef:ing the call to nvec_kbd_init(), similar to the
-> existing #ifdef CONFIG_SERIO_NVEC_PS2 around the nvec_ps2() call.
-> 
-> Signed-off-by: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
-> ---
-> 
-> --- linux-3.1-rc9/drivers/staging/nvec/nvec.c.~1~	2011-10-08 16:28:20.000000000
-> +0200 +++ linux-3.1-rc9/drivers/staging/nvec/nvec.c	2011-10-08 19:09:18.000000000
-> +0200 @@ -370,7 +370,9 @@ static int __devinit tegra_nvec_probe(st
->  	nvec_write_async(nvec, EC_ENABLE_EVENT_REPORTING,
->  				sizeof(EC_ENABLE_EVENT_REPORTING));
-> 
-> +#ifdef CONFIG_KEYBOARD_NVEC
->  	nvec_kbd_init(nvec);
-> +#endif
->  #ifdef CONFIG_SERIO_NVEC_PS2
->  	nvec_ps2(nvec);
->  #endif
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Also, the arm-global map_desc uses an unsigned long to hold the
+virtual address of the maps so I had to add explicit casts there.
+Switching it requires some changes to the mm/map.c code, I'll do that
+separately from this series.
+
+> In the long run, I would hope to be able to get rid of basically
+> all uses of IO_ADDRESS and IO_TO_VIRT in the tegra code and replace
+> that with device tree lookups, but that is clearly a separate issue.
+
+Yes, probably by moving to local ioremaps for most use -- address can
+come from platform_device or device tree that way (but the platform
+direction is device tree overall).
+
+
+-Olof
