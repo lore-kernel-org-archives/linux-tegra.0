@@ -1,67 +1,39 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v7 3/3] arm/tegra: device tree support for ventana board
-Date: Mon, 10 Oct 2011 11:01:09 +0300
-Message-ID: <20111010080109.GQ9003@tbergstrom-lnx.Nvidia.com>
-References: <1317647918-22694-1-git-send-email-pdeschrijver@nvidia.com>
-	<1317647918-22694-4-git-send-email-pdeschrijver@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: fix another compilation error in 3.1-rc9
+Date: Mon, 10 Oct 2011 11:17:21 +0200
+Message-ID: <3546151.Ds9gZv0JqE@fb07-iapwap2>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 07, 2011 at 08:04:34PM +0200, Stephen Warren wrote:
-> Peter De Schrijver wrote at Monday, October 03, 2011 7:19 AM:
-> 
-> ...
-> > diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-> ...
-> > +	chosen {
-> > +		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/ram rdinit=/sbin/init";
-> 
-> It might be nice to make this identical to what Harmony and Seaboard have here.
-> 
-> Still, it doesn't matter a lot, since I (and I imagine most people) have
-> to edit this command-line to point at the correct partition for my disks
-> anyway; eventually, U-Boot should be providing/re-writing this property
-> too.
-> 
-> ...
-> > diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-> ...
-> > -	if (of_machine_is_compatible("nvidia,harmony"))
-> > -		harmony_pinmux_init();
-> > -	else if (of_machine_is_compatible("nvidia,seaboard"))
-> > -		seaboard_pinmux_init();
-> > +	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
-> > +		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
-> > +			pinmux_configs[i].init();
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	if (i == ARRAY_SIZE(pinmux_configs))
-> > +		printk(KERN_WARNING "Unknown platform! Pinmuxing not initialized\n");
-> 
-> Should that be WARN() instead of printk?
+Hi Olof,
 
-pr_warning() might be better. Or do we want a backtrace and a tainted kernel
-in this case? 
+sorry for being so late, but here is another last minute patch.
 
-Cheers,
+Marc
 
-Peter.
+-----
+
+spi/tegra: fix compilation error in spi-tegra.c
+    
+This adds the missing #include <linux/module.h> to spi-tegra.c
+    
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+
+diff --git a/drivers/spi/spi-tegra.c b/drivers/spi/spi-tegra.c
+index a5a6302..e8cd58f 100644
+--- a/drivers/spi/spi-tegra.c
++++ b/drivers/spi/spi-tegra.c
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
