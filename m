@@ -1,54 +1,49 @@
-From: Sergei Shtylyov <sshtylyov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH v2 10/14] ARM: tegra: tegra_powergate_is_powered should
- be static
-Date: Mon, 10 Oct 2011 14:44:02 +0400
-Message-ID: <4E92CC72.3030809@ru.mvista.com>
-References: <1317956064-17650-1-git-send-email-olof@lixom.net> <1318224484-2090-1-git-send-email-olof@lixom.net> <1318224484-2090-11-git-send-email-olof@lixom.net>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH v7 3/3] arm/tegra: device tree support for ventana board
+Date: Mon, 10 Oct 2011 09:38:47 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173B23B514@HQMAIL01.nvidia.com>
+References: <1317647918-22694-1-git-send-email-pdeschrijver@nvidia.com>
+ <1317647918-22694-4-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
+ <20111010080109.GQ9003@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1318224484-2090-11-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111010080109.GQ9003@tbergstrom-lnx.Nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+Peter De Schrijver wrote at Monday, October 10, 2011 2:01 AM:
+> On Fri, Oct 07, 2011 at 08:04:34PM +0200, Stephen Warren wrote:
+> > Peter De Schrijver wrote at Monday, October 03, 2011 7:19 AM:
+> > ...
+> > > diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+> > ...
+> > > -	if (of_machine_is_compatible("nvidia,harmony"))
+> > > -		harmony_pinmux_init();
+> > > -	else if (of_machine_is_compatible("nvidia,seaboard"))
+> > > -		seaboard_pinmux_init();
+> > > +	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
+> > > +		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
+> > > +			pinmux_configs[i].init();
+> > > +			break;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	if (i == ARRAY_SIZE(pinmux_configs))
+> > > +		printk(KERN_WARNING "Unknown platform! Pinmuxing not initialized\n");
+> >
+> > Should that be WARN() instead of printk?
+> 
+> pr_warning() might be better. Or do we want a backtrace and a tainted kernel
+> in this case?
 
-On 10-10-2011 9:28, Olof Johansson wrote:
+Well, tainting seems like a good idea. I'm less thrilled about the backtrace,
+but perhaps it is a good idea to bring attention to this condition.
 
-> Not exported and not used externally.
-
-> Also, fix return type  and change to instead WARN_ON on bad parameters.
-
-    Change to what? You're changing _to_ WARN_ON() as we can see, not from it...
-
-> Signed-off-by: Olof Johansson<olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> ---
->   arch/arm/mach-tegra/include/mach/powergate.h |    1 -
->   arch/arm/mach-tegra/powergate.c              |    5 ++---
->   2 files changed, 2 insertions(+), 4 deletions(-)
-
-[...]
-> diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powergate.c
-> index 3cee9aa..9483064 100644
-> --- a/arch/arm/mach-tegra/powergate.c
-> +++ b/arch/arm/mach-tegra/powergate.c
-> @@ -89,12 +89,11 @@ int tegra_powergate_power_off(int id)
->   	return tegra_powergate_set(id, false);
->   }
->
-> -bool tegra_powergate_is_powered(int id)
-> +static bool tegra_powergate_is_powered(int id)
->   {
->   	u32 status;
->
-> -	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
-> -		return -EINVAL;
-> +	WARN_ON(id<  0 || id>= TEGRA_NUM_POWERGATE);
->
->   	status = pmc_read(PWRGATE_STATUS)&  (1<<  id);
->   	return !!status;
-
-WBR, Sergei
+-- 
+nvpublic
