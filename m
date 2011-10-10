@@ -1,44 +1,67 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH v2 14/14] ARM: tegra: cpu-tegra: unexport two functions
-Date: Sun,  9 Oct 2011 22:28:04 -0700
-Message-ID: <1318224484-2090-15-git-send-email-olof@lixom.net>
-References: <1317956064-17650-1-git-send-email-olof@lixom.net>
- <1318224484-2090-1-git-send-email-olof@lixom.net>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1318224484-2090-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v7 3/3] arm/tegra: device tree support for ventana board
+Date: Mon, 10 Oct 2011 11:01:09 +0300
+Message-ID: <20111010080109.GQ9003@tbergstrom-lnx.Nvidia.com>
+References: <1317647918-22694-1-git-send-email-pdeschrijver@nvidia.com>
+	<1317647918-22694-4-git-send-email-pdeschrijver@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173B23B2FA@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Two static functions that are not exported:
+On Fri, Oct 07, 2011 at 08:04:34PM +0200, Stephen Warren wrote:
+> Peter De Schrijver wrote at Monday, October 03, 2011 7:19 AM:
+> 
+> ...
+> > diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
+> ...
+> > +	chosen {
+> > +		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/ram rdinit=/sbin/init";
+> 
+> It might be nice to make this identical to what Harmony and Seaboard have here.
+> 
+> Still, it doesn't matter a lot, since I (and I imagine most people) have
+> to edit this command-line to point at the correct partition for my disks
+> anyway; eventually, U-Boot should be providing/re-writing this property
+> too.
+> 
+> ...
+> > diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+> ...
+> > -	if (of_machine_is_compatible("nvidia,harmony"))
+> > -		harmony_pinmux_init();
+> > -	else if (of_machine_is_compatible("nvidia,seaboard"))
+> > -		seaboard_pinmux_init();
+> > +	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
+> > +		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
+> > +			pinmux_configs[i].init();
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (i == ARRAY_SIZE(pinmux_configs))
+> > +		printk(KERN_WARNING "Unknown platform! Pinmuxing not initialized\n");
+> 
+> Should that be WARN() instead of printk?
 
-arch/arm/mach-tegra/cpu-tegra.c:59:5: warning: symbol 'tegra_verify_speed' was not declared. Should it be static?
-arch/arm/mach-tegra/cpu-tegra.c:64:14: warning: symbol 'tegra_getspeed' was not declared. Should it be static?
+pr_warning() might be better. Or do we want a backtrace and a tainted kernel
+in this case? 
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- arch/arm/mach-tegra/cpu-tegra.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Cheers,
 
-diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
-index f15b689..b2647ec 100644
---- a/arch/arm/mach-tegra/cpu-tegra.c
-+++ b/arch/arm/mach-tegra/cpu-tegra.c
-@@ -57,12 +57,12 @@ static unsigned long target_cpu_speed[NUM_CPUS];
- static DEFINE_MUTEX(tegra_cpu_lock);
- static bool is_suspended;
- 
--int tegra_verify_speed(struct cpufreq_policy *policy)
-+static int tegra_verify_speed(struct cpufreq_policy *policy)
- {
- 	return cpufreq_frequency_table_verify(policy, freq_table);
- }
- 
--unsigned int tegra_getspeed(unsigned int cpu)
-+static unsigned int tegra_getspeed(unsigned int cpu)
- {
- 	unsigned long rate;
- 
--- 
-1.7.4.1
+Peter.
