@@ -1,82 +1,63 @@
-From: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
-Subject: Re: [PATCH] fix drivers/staging/nvec linkage error when keyboard is
- disabled
-Date: Mon, 10 Oct 2011 22:20:11 +0200
-Message-ID: <20111010202011.GA7220@jak-linux.org>
-References: <20112.34922.209107.730268@pilspetsen.it.uu.se>
- <1534774.fR3YHUzZE9@fb07-iapwap2>
- <74CDBE0F657A3D45AFBB94109FB122FF173B23B539@HQMAIL01.nvidia.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: Please update linux-next url for tegra
+Date: Tue, 11 Oct 2011 11:32:56 +1100
+Message-ID: <20111011113256.5f3d76c064a33b409cf87be5@canb.auug.org.au>
+References: <CAOesGMjT+vyC8Jsjshrcz2f2xC=VEw+dTQh-rqLpjJMH5OJnag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__11_Oct_2011_11_32_56_+1100_E+mf5ccrbxC2N7DV"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173B23B539-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CAOesGMjT+vyC8Jsjshrcz2f2xC=VEw+dTQh-rqLpjJMH5OJnag-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Greg KH (gregkh-l3A5Bk7waGM@public.gmane.org)" <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 10, 2011 at 10:25:07AM -0700, Stephen Warren wrote:
-> Marc Dietrich wrote at Sunday, October 09, 2011 9:48 AM:
-> > Hi Mikael,
-> > 
-> > thanks for review. The nvec driver received some overhaul in the 3.1 release cycle
-> > and he fruids can be viewed in linux-next tree. The nvec client drivers were
-> > converted to mfd children in the mean time. This solves the build error, but is not
-> > very flexible. We are planing to move the mfd stuct to the board file(s) in the next
-> > cycle.
-> 
-> Indeed, the code in v3.1-rc9 is quite different to that in linux-next, so
-> this exact problem doesn't exist in linux-next.
-> 
-> However, don't we still want to solve build problems for the final v3.1
-> release, or a stable update to that? As such,
-> 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--Signature=_Tue__11_Oct_2011_11_32_56_+1100_E+mf5ccrbxC2N7DV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+Hi Olof,
 
-But I should also add that there are probably more build failures due to
-dependencies, as there are no dependencies specified in Kconfig (so basically
-all nvec-* modules are subject to build failure if there dependencies
-are not enabled (INPUT/SERIO/whatever). There's a patch in -staging
-and -next for that, it may need adoption for 3.1 but would be needed
-to fix all build failures.
+On Mon, 10 Oct 2011 11:09:19 -0700 Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>
+> I'm taking over running the main tegra repo for a while, so please
+> change the old android.git.kernel.org-hosted branch to instead pull:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-next
 
-I do not have good internet currently and am busy, so I can't
-do anything to fix those problems, but I should have time
-and connection to review patches for 3.1 (perhaps adapted
-from the -staging one).
+OK, I will switch to this from today.
 
-> > Am Samstag, 8. Oktober 2011, 19:29:14 schrieb Mikael Pettersson:
-> > > Building linux-3.1-rc9 for the Tegra ARM SoC with CONFIG_MFD_NVEC=y
-> > > and CONFIG_KEYBOARD_NVEC=n results in the following linkage error:
-> > >
-> > > drivers/built-in.o: In function `tegra_nvec_probe':
-> > > /tmp/linux-3.1-rc9/drivers/staging/nvec/nvec.c:373: undefined reference to
-> > > `nvec_kbd_init' make: *** [.tmp_vmlinux1] Error 1
-> > >
-> > > Fixed by #ifdef:ing the call to nvec_kbd_init(), similar to the
-> > > existing #ifdef CONFIG_SERIO_NVEC_PS2 around the nvec_ps2() call.
-> > >
-> > > Signed-off-by: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
-> > > ---
-> > >
-> > > --- linux-3.1-rc9/drivers/staging/nvec/nvec.c.~1~	2011-10-08 16:28:20.000000000
-> > > +0200 +++ linux-3.1-rc9/drivers/staging/nvec/nvec.c	2011-10-08 19:09:18.000000000
-> > > +0200 @@ -370,7 +370,9 @@ static int __devinit tegra_nvec_probe(st
-> > >  	nvec_write_async(nvec, EC_ENABLE_EVENT_REPORTING,
-> > >  				sizeof(EC_ENABLE_EVENT_REPORTING));
-> > >
-> > > +#ifdef CONFIG_KEYBOARD_NVEC
-> > >  	nvec_kbd_init(novec);
-> > > +#endif
-> > >  #ifdef CONFIG_SERIO_NVEC_PS2
-> > >  	nvec_ps2(nvec);
-> > >  #endif
-> 
-Live long and prosper!
--- 
-Julian Andres Klode  - Debian Developer, Ubuntu Member
+> And please pull it after the arm-soc tree.
 
-See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
+No worries.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__11_Oct_2011_11_32_56_+1100_E+mf5ccrbxC2N7DV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOk464AAoJEECxmPOUX5FE/KsP/iTH26to/HAr6ZZD/iFQVBiM
+q80gSat5BAsZ1w5g3QJqUyXp7vtseLAnD7En9QvePEXQSxjLElSwRBYDFo12UIsq
+YLRj9YHScWApL4MylvWS7joYw7mZCC3BnTKT8Dze7xi+FabYxqzNkg2zqQFE362x
+4k6cVG1u1cmScEkNyHsuvN8c8X1L5Zrz8ThG50jTKbjY7ek/GFK+gkzKI57sbyxq
+rpPOQ/JKNjkvKQjPskQB15n7QCqGhp9Bv5t9d44kDOlTViAiav0BfjF02qc+MAIO
+dsn4cmcS63jQjabByI1G2MFvqC3i+kLlDLZORckQF7hnubE8I6Iasn2PjYqCsTge
+WuKcy8sPRgpE6mlMM4TSgp6DtA39A24hBYN5nYL1vYBnkU2/Rlc/iz8ZtXrUKJ5v
+LROk6ehxXuhT+U5VWh5Zz2yN/J59jy78m3hfpGFAT3YFC1p4hBmwW7DTzW6DfQ9W
+JkUrQKaqxvPlE6LZBnYmdd/EsP0fvd/WrhleA6/O5vuo0Kw72RB0CzElHpI66gNI
+muTJElR8tEya1RQI2g6+FKHWlQogPbVzWlabiSyW+wXtVdRwac3MyCJzp2T03HBY
+qAQCrn96n5QD/eu0EkurZS2eMfIGF96yAJ+gvM26ETn2/qH10AskoUmu5cnk+Kg+
+1Vaj2bXg2ygkHbYXk+Lt
+=vA01
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Oct_2011_11_32_56_+1100_E+mf5ccrbxC2N7DV--
