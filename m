@@ -1,61 +1,41 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: What's in the tegra for-3.2 branches
-Date: Wed, 12 Oct 2011 15:54:23 -0700
-Message-ID: <20111012225423.GA25602@quad.lixom.net>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH v4 3/4] gpio/tegra: Convert to a platform device
+Date: Wed, 12 Oct 2011 17:03:24 -0600
+Message-ID: <CACxGe6tf0Ly8AC-6xUeoMrVj3y0KHkrcgj87SerAaCAnNhfNqA@mail.gmail.com>
+References: <1318371375-4083-1-git-send-email-swarren@nvidia.com>
+ <1318371375-4083-3-git-send-email-swarren@nvidia.com> <20111012224131.GD25128@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20111012224131.GD25128-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Wed, Oct 12, 2011 at 4:41 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Tue, Oct 11, 2011 at 04:16:14PM -0600, Stephen Warren wrote:
+>> v3: Make regs variable static. Remove empty init of tegra_gpio_banks.
+>>
+>> v2: Retrieve IRQ and memory addresses from resources instead of hard-
+>> coding them. Add back initialization of tegra_gpio_chip.of_node.
+>
+> In the future, please move the revision log to below the ---, and just have
+> the main patch description above, since that is what goes into the git repo.
 
-Just a short summary of what we've collected in the tegra tree for-3.2/*
-branches. Some of them are already in the arm-soc tree, pull request for the
-others are going out shortly.
+No!  Keep it above the line so it shows up in the Linux commit log.
+It makes it easier to know which version of a patch actually got
+committed.  :-)
 
-If you're missing something that you have posted, please let me know.
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Otherwise, patch looks good. Due to dependencies between this, the rest
+> of this patch series and the pinmux changes, I'll hold off on it until
+> the dependencies land (i.e. target it for 3.3). We're cutting it very close
+> to the merge window as it is, I'll start for-3.3 branches shortly.
 
+Actually, see if you can get it in via the same tree as the pinmux
+changes.  Dependencies is not a reason to hold off from getting it
+into linux-next.
 
-Marc Dietrich (5):
-      ARM: tegra: paz00: add support serial port on JP1
-      ARM: tegra: paz00: enable rfkill for internal wifi card
-      ARM: tegra: paz00: enable wifi led
-      ARM: tegra: paz00: reorder the SDHCI channel init
-      ARM: tegra: paz00: add clocks required for usb operation
-
-Olof Johansson (14):
-      ARM: tegra: annotate IO_*_VIRT pointers
-      ARM: tegra: timer: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: 0 -> NULL changes
-      ARM: tegra: pcie: don't cast __iomem pointers
-      ARM: tegra: pcie: include board.h
-      ARM: tegra: pcie: 0 -> NULL changes
-      ARM: tegra: tegra_init_cache should be static
-      ARM: tegra: tegra_rtc_read_ms should be static
-      ARM: tegra: tegra_powergate_is_powered should be static
-      ARM: tegra: tegra2_clocks: don't export some tables
-      ARM: tegra: dma: staticify some tables and functions
-      ARM: tegra: cpu-tegra: sparse type fix
-      ARM: tegra: cpu-tegra: unexport two functions
-
-Peter De Schrijver (3):
-      arm/tegra: prepare Seaboard pinmux code for derived boards
-      arm/tegra: add support for ventana pinmuxing
-      arm/tegra: device tree support for ventana board
-
-Stephen Warren (10):
-      ARM: Tegra: Harmony: Add USB device
-      ARM: Tegra: Seaboard board updates for audio
-      ARM: Tegra: Seaboard: Add USB devices
-      ARM: Tegra: Force PORT_TEGRA as the UART type
-      arm/dt: Tegra: Add support-8bit to SDHCI nodes
-      arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
-      arm/dt: Tegra: Add pinmux node to tegra20.dtsi
-      arm/tegra: Convert pinmux driver to a platform device
-      arm/tegra: pinmux: ioremap registers
-      arm/tegra: Harmony: Configure PMC for low-level interrupts
+g.
