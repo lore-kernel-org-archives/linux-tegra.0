@@ -1,41 +1,39 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Subject: Re: [PATCH v4 3/4] gpio/tegra: Convert to a platform device
-Date: Wed, 12 Oct 2011 17:03:24 -0600
-Message-ID: <CACxGe6tf0Ly8AC-6xUeoMrVj3y0KHkrcgj87SerAaCAnNhfNqA@mail.gmail.com>
-References: <1318371375-4083-1-git-send-email-swarren@nvidia.com>
- <1318371375-4083-3-git-send-email-swarren@nvidia.com> <20111012224131.GD25128@quad.lixom.net>
+Date: Wed, 12 Oct 2011 17:08:57 -0600
+Message-ID: <CACxGe6u2Ae=6Fso1NEGA1wymczRykBGs0XB=pt7j8XyKmy6b+w@mail.gmail.com>
+References: <1318371375-4083-1-git-send-email-swarren@nvidia.com> <1318371375-4083-3-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111012224131.GD25128-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+In-Reply-To: <1318371375-4083-3-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 12, 2011 at 4:41 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> On Tue, Oct 11, 2011 at 04:16:14PM -0600, Stephen Warren wrote:
->> v3: Make regs variable static. Remove empty init of tegra_gpio_banks.
->>
->> v2: Retrieve IRQ and memory addresses from resources instead of hard-
->> coding them. Add back initialization of tegra_gpio_chip.of_node.
+On Tue, Oct 11, 2011 at 4:16 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> v3: Make regs variable static. Remove empty init of tegra_gpio_banks.
 >
-> In the future, please move the revision log to below the ---, and just have
-> the main patch description above, since that is what goes into the git repo.
-
-No!  Keep it above the line so it shows up in the Linux commit log.
-It makes it easier to know which version of a patch actually got
-committed.  :-)
-
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> v2: Retrieve IRQ and memory addresses from resources instead of hard-
+> coding them. Add back initialization of tegra_gpio_chip.of_node.
 >
-> Otherwise, patch looks good. Due to dependencies between this, the rest
-> of this patch series and the pinmux changes, I'll hold off on it until
-> the dependencies land (i.e. target it for 3.3). We're cutting it very close
-> to the merge window as it is, I'll start for-3.3 branches shortly.
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Actually, see if you can get it in via the same tree as the pinmux
-changes.  Dependencies is not a reason to hold off from getting it
-into linux-next.
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+
+One comment below however.
+
+> @@ -333,28 +335,55 @@ static struct irq_chip tegra_gpio_irq_chip =3D =
+{
+> =A0*/
+> =A0static struct lock_class_key gpio_lock_class;
+>
+> -static int __init tegra_gpio_init(void)
+> +static int __init tegra_gpio_probe(struct platform_device *pdev)
+
+__devinit because this is put in the .probe hook of the driver.
 
 g.
