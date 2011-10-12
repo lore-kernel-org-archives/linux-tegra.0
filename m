@@ -1,40 +1,33 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v9 0/3] Add support for tegra2 based ventana board
-Date: Wed, 12 Oct 2011 15:36:43 -0700
-Message-ID: <20111012223643.GA5368@quad.lixom.net>
-References: <1318420387-6802-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE19D81@HQMAIL01.nvidia.com>
+Subject: Re: [PATCH v4 1/4] arm/tegra: Prep boards for gpio/pinmux conversion
+ to pdevs
+Date: Wed, 12 Oct 2011 15:37:49 -0700
+Message-ID: <20111012223749.GA25128@quad.lixom.net>
+References: <1318371375-4083-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173BE19D81-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1318371375-4083-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 12, 2011 at 08:56:47AM -0700, Stephen Warren wrote:
-> pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote at Wednesday, October 12, 2011 5:53 AM:
-> > This patch set adds support for the tegra2 based ventana development board.
-> > 
-> > Boot tested on ventana.
-> > 
-> > Uses a table based approach to select the correct init function.
-> > 
-> > Provoke kernel warning when no suitable pinmux table can be found.
+On Tue, Oct 11, 2011 at 04:16:12PM -0600, Stephen Warren wrote:
+> The Tegra GPIO driver will be converted from static registration via
+> postcore_initcall() to be a platform device later in this patch series.
+> A new Tegra pinmux platform device will also be added.
 > 
-> Whole series:
+> Prepare for this by modifying all boards to register the appropriate
+> platform devices before-hand, so that when the drivers are converted,
+> those devices will be probed, and git bisectability will be maintained.
 > 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> v2: Add resource definitions for GPIO and pinmux
 > 
-> Thanks for following up on my picky comments:-)
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes, thanks Peter.
-
-Applied to for-3.2/features. I had to do some fixups since I applied it
-on top of some of Stephen's changes for gpio/pinmux, so please verify
-that I did the fixups correctly.
+Thanks, applied to for-3.2/features.
 
 
 -Olof
