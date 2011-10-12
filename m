@@ -1,61 +1,40 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] MAINTAINERS: Update tegra maintainer information
-Date: Wed, 12 Oct 2011 14:51:29 -0600
-Message-ID: <CACxGe6uO0ZypAj2TSqouGdB-LxCO3DL2bvSTAG_zn21PLfLjSQ@mail.gmail.com>
-References: <1318019268-6946-1-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF173B23B3B9@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v9 0/3] Add support for tegra2 based ventana board
+Date: Wed, 12 Oct 2011 15:36:43 -0700
+Message-ID: <20111012223643.GA5368@quad.lixom.net>
+References: <1318420387-6802-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE19D81@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173B23B3B9@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Erik Gilling <konkers@android.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173BE19D81-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 7, 2011 at 3:28 PM, Stephen Warren <swarren@nvidia.com> wrote:
-> Olof Johansson wrote at Friday, October 07, 2011 2:28 PM:
->> A couple of changes to the Tegra maintainership setup:
->>
->> I'm very glad to bring on Stephen Warren on board as a maintainer. The
->> work he has done so far is excellent, and the fact that he works for
->> Nvidia means he has long-term interest in the platform.
->
-> Thanks for bringing me on board.
->
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+On Wed, Oct 12, 2011 at 08:56:47AM -0700, Stephen Warren wrote:
+> pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote at Wednesday, October 12, 2011 5:53 AM:
+> > This patch set adds support for the tegra2 based ventana development board.
+> > 
+> > Boot tested on ventana.
+> > 
+> > Uses a table based approach to select the correct init function.
+> > 
+> > Provoke kernel warning when no suitable pinmux table can be found.
+> 
+> Whole series:
+> 
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Thanks for following up on my picky comments:-)
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Yes, thanks Peter.
 
->
->> Erik Gilling did an astounding amount of work on getting things up and
->> running but has been a silent partner on the maintainership side for a
->> while, and is stepping down. Thanks for your contributions so far, Erik.
->
-> I'd like to echo this, and also extend it to everyone else who's brought
-> Tegra support to the point where it is today.
->
-> --
-> nvpublic
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+Applied to for-3.2/features. I had to do some fixups since I applied it
+on top of some of Stephen's changes for gpio/pinmux, so please verify
+that I did the fixups correctly.
 
 
-
--- 
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+-Olof
