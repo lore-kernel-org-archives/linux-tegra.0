@@ -1,11 +1,11 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: devices.c should include devices.h
-Date: Wed, 12 Oct 2011 18:01:19 -0700
-Message-ID: <1318467679-11927-1-git-send-email-olof@lixom.net>
+Subject: [PATCH] [RESEND]  ARM: tegra: devices.c should include devices.h
+Date: Wed, 12 Oct 2011 18:03:21 -0700
+Message-ID: <1318467801-12184-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Resolves lots of sparse warnings:
@@ -18,6 +18,10 @@ arch/arm/mach-tegra/devices.c:132:24: warning: symbol 'tegra_i2c_device4' was no
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
+
+One of these days I will learn to not typo on the mailing list addresses
+for git send-email. Sigh.
+
  arch/arm/mach-tegra/devices.c |    2 ++
  1 files changed, 2 insertions(+), 0 deletions(-)
 
