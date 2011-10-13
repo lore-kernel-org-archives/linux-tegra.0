@@ -1,43 +1,47 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] [RESEND]  ARM: tegra: devices.c should include devices.h
-Date: Wed, 12 Oct 2011 18:03:21 -0700
-Message-ID: <1318467801-12184-1-git-send-email-olof@lixom.net>
+Subject: Re: fix compilation error for linux 3.2
+Date: Wed, 12 Oct 2011 20:48:15 -0700
+Message-ID: <20111013034815.GA6047@quad.lixom.net>
+References: <3546151.Ds9gZv0JqE@fb07-iapwap2>
+ <CAOesGMgyYebNw1vphaKf8SPLBvtSvwPa0nCLxr81UJ-BtSRhzA@mail.gmail.com>
+ <2109696.pnkA82QAhR@fb07-iapwap2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <2109696.pnkA82QAhR@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Resolves lots of sparse warnings:
+On Tue, Oct 11, 2011 at 10:28:23AM +0200, Marc Dietrich wrote:
+> Hi Olof,
+> 
+> Am Montag, 10. Oktober 2011, 10:45:48 schrieb Olof Johansson:
+> > I can't reproduce this problem. CONFIG_SPI doesn't seem to be on for
+> > tegra_defconfig (I'll revisit the defconfig and turn on missing
+> > options for 3.2), but even after I enable it (plus CONFIG_SPI_TEGRA),
+> > I don't see any errors here. I tried static build as well as module.
+> > Can you provide more detail to what you're seeing?
+> 
+> ah, sorry, it is needed for linux-next (which also happens to have a 3.1-rc9 
+> version). You can easily check if include/linux/device.h has module.h included or not 
+> (if not, tegra-spi fails to compile). I updated the subject.
 
-arch/arm/mach-tegra/devices.c:102:24: warning: symbol 'tegra_i2c_device1' was not declared. Should it be static?
-arch/arm/mach-tegra/devices.c:112:24: warning: symbol 'tegra_i2c_device2' was not declared. Should it be static?
-arch/arm/mach-tegra/devices.c:122:24: warning: symbol 'tegra_i2c_device3' was not declared. Should it be static?
-arch/arm/mach-tegra/devices.c:132:24: warning: symbol 'tegra_i2c_device4' was not declared. Should it be static?
-[...]
+Ok, makes sense. I don't see any relevant direct changes to the driver; it
+seems that some of the include files used to pull in module.h and no longer
+does.
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
+Grant Likely is SPI maintainer, so it should go to him. Based on the commit
+message comments, please resend a new version (and cc linux-tegra please).
 
-One of these days I will learn to not typo on the mailing list addresses
-for git send-email. Sigh.
+> > > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
- arch/arm/mach-tegra/devices.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Feel free to add:
 
-diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
-index 240d5dc..7a2a02d 100644
---- a/arch/arm/mach-tegra/devices.c
-+++ b/arch/arm/mach-tegra/devices.c
-@@ -29,7 +29,9 @@
- #include <mach/iomap.h>
- #include <mach/dma.h>
- #include <mach/usb_phy.h>
-+
- #include "gpio-names.h"
-+#include "devices.h"
- 
- static struct resource gpio_resource[] = {
- 	[0] = {
--- 
-1.7.4.1
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+
+
+
+-Olof
