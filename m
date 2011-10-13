@@ -1,77 +1,69 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL] Please pull tegra cleanups for 3.2
-Date: Thu, 13 Oct 2011 15:27:54 -0700
-Message-ID: <CAOesGMh9OSKpggk2d4PUwKsQwgYcpiO9rc3ukdp2s4X13djT=Q@mail.gmail.com>
-References: <CAOesGMjVAJK2ArOdpYNmKa11vqCfppi8Ofc0qGn4WxuMxLvd_Q@mail.gmail.com>
-	<201110131716.18358.arnd@arndb.de>
+Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Thu, 13 Oct 2011 16:38:46 -0700
+Message-ID: <CAOesGMiuzF47kdmaaFny9Fg1ieox6a75tMFfLRAptvDxz_QPMg@mail.gmail.com>
+References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF173955580F@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201110131716.18358.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173955580F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Arnd Bergmann (arnd-r2nGTMty4D4@public.gmane.org)" <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-On Thu, Oct 13, 2011 at 8:16 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Thursday 13 October 2011, Olof Johansson wrote:
->> Hi Arnd,
+On Wed, Sep 28, 2011 at 10:50 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
+rote:
+> Peter De Schrijver wrote at Tuesday, September 27, 2011 7:08 PM:
+>> This patch causes the kernel uncompressor to determine the physical =
+address
+>> of the SDRAM at runtime. This allows the kernel to boot on both tegr=
+a20 and
+>> tegra30 even though SDRAM is at different physical addresses on both=
+ SoCs.
 >>
->> Please pull the below branch of cleanups for the 3.2 merge window.
->> They have been included in linux-next for a couple of days already.
+>> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> I saw Russell had a comment on the macro name should be addressed.
-> I've put your series plus an additional commit to fix this up
-> into the tegra/cleanup branch. When you ack this patch, I'll include
-> this branch into next/cleanup and the for-next branch.
+> An alternative would be to simply add that config option to the relev=
+ant
+> defconfig/.config file. I see both cases in use in the kernel. Still,=
+ the
+> code change this enables looks fine to just turn on all the time, and=
+ will
+> be needed for Tegra30 support, so I'm fine just selecting it as you h=
+ave.
+>
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>> index 472a7f8..474737b 100644
+>> --- a/arch/arm/Kconfig
+>> +++ b/arch/arm/Kconfig
+>> @@ -596,6 +596,7 @@ config ARCH_TEGRA
+>> =A0 =A0 =A0 select HAVE_CLK
+>> =A0 =A0 =A0 select HAVE_SCHED_CLOCK
+>> =A0 =A0 =A0 select ARCH_HAS_CPUFREQ
+>> + =A0 =A0 select AUTO_ZRELADDR
+>> =A0 =A0 =A0 help
+>> =A0 =A0 =A0 =A0 This enables support for NVIDIA Tegra based systems =
+(Tegra APX,
+>> =A0 =A0 =A0 =A0 Tegra 6xx and Tegra 2 series).
+>
+> P.S. Since this patch relates to Tegra, you should CC the Tegra maint=
+ainers
+> and list; I've done so on this message. I also added Arnd; he might t=
+ake
+> this through the arm-soc tree.
 
-Based on discussion on IRC, I pulled in the edit into the original
-commit instead and rebased the branch.
+While it does touch a file outside of arch/arm/mach-tegra, it's for
+the tegra options and is not likely to cause conflicts upstream. I'll
+apply it with the rest of tegra patches for 3.2 here.
 
-I also added the devices.c fix that I posted yesterday, so here is a
-new pull request.
+So: Applied, thanks.
 
-
-Thanks!
 
 -Olof
-
-
-The following changes since commit 976d167615b64e14bc1491ca51d424e2ba9a5e84:
-
-  Linux 3.1-rc9 (2011-10-04 18:11:50 -0700)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.2/cleanup
-
-Olof Johansson (15):
-      ARM: tegra: annotate IO_*_VIRT pointers
-      ARM: tegra: timer: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: 0 -> NULL changes
-      ARM: tegra: pcie: don't cast __iomem pointers
-      ARM: tegra: pcie: include board.h
-      ARM: tegra: pcie: 0 -> NULL changes
-      ARM: tegra: tegra_init_cache should be static
-      ARM: tegra: tegra_rtc_read_ms should be static
-      ARM: tegra: tegra_powergate_is_powered should be static
-      ARM: tegra: tegra2_clocks: don't export some tables
-      ARM: tegra: dma: staticify some tables and functions
-      ARM: tegra: cpu-tegra: sparse type fix
-      ARM: tegra: cpu-tegra: unexport two functions
-      ARM: tegra: devices.c should include devices.h
-
- arch/arm/mach-tegra/common.c                 |    2 +-
- arch/arm/mach-tegra/cpu-tegra.c              |    6 ++--
- arch/arm/mach-tegra/devices.c                |    2 +
- arch/arm/mach-tegra/dma.c                    |   14 +++++---
- arch/arm/mach-tegra/include/mach/io.h        |   18 ++++++---
- arch/arm/mach-tegra/include/mach/powergate.h |    1 -
- arch/arm/mach-tegra/io.c                     |    8 ++--
- arch/arm/mach-tegra/pcie.c                   |    8 +++--
- arch/arm/mach-tegra/powergate.c              |    5 +--
- arch/arm/mach-tegra/tegra2_clocks.c          |   50 +++++++++++++-------------
- arch/arm/mach-tegra/timer.c                  |    6 ++--
- 11 files changed, 66 insertions(+), 54 deletions(-)
