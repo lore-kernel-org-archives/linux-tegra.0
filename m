@@ -1,56 +1,40 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL] Please pull tegra cleanups for 3.2
-Date: Wed, 12 Oct 2011 16:34:07 -0700
-Message-ID: <CAOesGMjVAJK2ArOdpYNmKa11vqCfppi8Ofc0qGn4WxuMxLvd_Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH] i2c: tegra: __iomem annotation fix
+Date: Wed, 12 Oct 2011 17:33:00 -0700
+Message-ID: <1318465980-625-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
+drivers/i2c/busses/i2c-tegra.c:585:7: warning: incorrect type in assignment (different address spaces)
+drivers/i2c/busses/i2c-tegra.c:585:7:    expected void *base
+drivers/i2c/busses/i2c-tegra.c:585:7:    got void [noderef] <asn:2>*
+drivers/i2c/busses/i2c-tegra.c:619:16: warning: incorrect type in assignment (different address spaces)
+drivers/i2c/busses/i2c-tegra.c:619:16:    expected void [noderef] <asn:2>*base
+drivers/i2c/busses/i2c-tegra.c:619:16:    got void *base
+drivers/i2c/busses/i2c-tegra.c:689:10: warning: incorrect type in argument 1 (different address spaces)
+drivers/i2c/busses/i2c-tegra.c:689:10:    expected void volatile [noderef] <asn:2>*addr
+drivers/i2c/busses/i2c-tegra.c:689:10:    got void *base
 
-Please pull the below branch of cleanups for the 3.2 merge window.
-They have been included in linux-next for a couple of days already.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Thanks!
-
-
--Olof
-
-The following changes since commit 976d167615b64e14bc1491ca51d424e2ba9a5e84:
-
-  Linux 3.1-rc9 (2011-10-04 18:11:50 -0700)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.2/cleanup
-
-Olof Johansson (14):
-      ARM: tegra: annotate IO_*_VIRT pointers
-      ARM: tegra: timer: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: don't cast __iomem pointers
-      ARM: tegra: tegra2_clocks: 0 -> NULL changes
-      ARM: tegra: pcie: don't cast __iomem pointers
-      ARM: tegra: pcie: include board.h
-      ARM: tegra: pcie: 0 -> NULL changes
-      ARM: tegra: tegra_init_cache should be static
-      ARM: tegra: tegra_rtc_read_ms should be static
-      ARM: tegra: tegra_powergate_is_powered should be static
-      ARM: tegra: tegra2_clocks: don't export some tables
-      ARM: tegra: dma: staticify some tables and functions
-      ARM: tegra: cpu-tegra: sparse type fix
-      ARM: tegra: cpu-tegra: unexport two functions
-
- arch/arm/mach-tegra/common.c                 |    2 +-
- arch/arm/mach-tegra/cpu-tegra.c              |    6 ++--
- arch/arm/mach-tegra/dma.c                    |   14 +++++---
- arch/arm/mach-tegra/include/mach/io.h        |   18 ++++++---
- arch/arm/mach-tegra/include/mach/powergate.h |    1 -
- arch/arm/mach-tegra/io.c                     |    8 ++--
- arch/arm/mach-tegra/pcie.c                   |    8 +++--
- arch/arm/mach-tegra/powergate.c              |    5 +--
- arch/arm/mach-tegra/tegra2_clocks.c          |   50 +++++++++++++-------------
- arch/arm/mach-tegra/timer.c                  |    6 ++--
- 10 files changed, 64 insertions(+), 54 deletions(-)
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b402435..46b6500 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -567,7 +567,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	struct clk *clk;
+ 	struct clk *i2c_clk;
+ 	const unsigned int *prop;
+-	void *base;
++	void __iomem *base;
+ 	int irq;
+ 	int ret = 0;
+ 
+-- 
+1.7.4.1
