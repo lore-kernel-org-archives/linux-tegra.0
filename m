@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: RE: [PATCH] ARM: tegra: update defconfig
-Date: Thu, 13 Oct 2011 08:55:22 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A05A@HQMAIL01.nvidia.com>
+Date: Thu, 13 Oct 2011 09:03:31 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A063@HQMAIL01.nvidia.com>
 References: <1318478219-9462-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -25,11 +25,8 @@ Olof Johansson wrote at Wednesday, October 12, 2011 9:57 PM:
 > 
 > Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-This transitively enables USE_OF by default. For Tegra, that's a good
-thing. However, it does mean we won't be able to detect code that only
-compiles with USE_OF enabled, which might affect other platform's
-buildability if we're talking about core code. I'm not sure if we should
-be concerned about this or not, or if ARM should select USE_OF now?
+We should also enable ASoC (sound) support. Do you want to rev the patch, or
+should I submit a patch on top of yours?
 
 -- 
 nvpublic
