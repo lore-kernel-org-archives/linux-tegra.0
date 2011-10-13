@@ -1,47 +1,71 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Add sound support to tegra_defconfig
-Date: Thu, 13 Oct 2011 10:57:01 -0600
-Message-ID: <1318525021-7151-1-git-send-email-swarren@nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH] spi/tegra: fix compilation error in spi-tegra.c
+Date: Thu, 13 Oct 2011 13:27:55 -0600
+Message-ID: <20111013192755.GZ18574@ponder.secretlab.ca>
+References: <1458857.A6MEb356Lm@fb07-iapwap2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1458857.A6MEb356Lm@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable Tegra ALSA/ASoC/sound support, including drivers for TrimSlice,
-and WM8903-based platforms such as Harmony and Seaboard.
+On Thu, Oct 13, 2011 at 11:01:33AM +0200, Marc Dietrich wrote:
+> Add #include <linux/module.h> to spi-tegra.c to fix a compilation error
+> after the removal of module.h from device.h (in patch: "include: replace 
+> linux/module.h with "struct module" wherever possible").
+> 
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Olof, this is for squashing into your recently posted "[PATCH] ARM:
-tegra: update defconfig". Please also consider that patch of yours:
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Applied, thanks
 
- arch/arm/configs/tegra_defconfig |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+g.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index c41e117..1957297 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -105,6 +105,18 @@ CONFIG_SENSORS_LM90=y
- CONFIG_MFD_TPS6586X=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_TPS6586X=y
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+# CONFIG_SND_SUPPORT_OLD_API is not set
-+# CONFIG_SND_DRIVERS is not set
-+# CONFIG_SND_PCI is not set
-+# CONFIG_SND_ARM is not set
-+# CONFIG_SND_SPI is not set
-+# CONFIG_SND_USB is not set
-+CONFIG_SND_SOC=y
-+CONFIG_SND_SOC_TEGRA=y
-+CONFIG_SND_SOC_TEGRA_WM8903=y
-+CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TEGRA=y
--- 
-1.7.0.4
+> ---
+> 
+> Hi Grant,
+> 
+> this fixes the error below:
+> 
+>   CC      drivers/spi/spi-tegra.o
+> drivers/spi/spi-tegra.c:597: error: expected declaration specifiers or '...' before 
+> string constant
+> drivers/spi/spi-tegra.c:597: warning: data definition has no type or storage class
+> drivers/spi/spi-tegra.c:597: warning: type defaults to 'int' in declaration of 
+> 'MODULE_ALIAS'
+> drivers/spi/spi-tegra.c:597: warning: function declaration isn't a prototype
+> drivers/spi/spi-tegra.c:604: warning: data definition has no type or storage class
+> drivers/spi/spi-tegra.c:604: warning: type defaults to 'int' in declaration of 
+> 'MODULE_DEVICE_TABLE'
+> drivers/spi/spi-tegra.c:604: warning: parameter names (without types) in function 
+> declaration
+> drivers/spi/spi-tegra.c:612: error: 'THIS_MODULE' undeclared here (not in a function)
+> drivers/spi/spi-tegra.c:630: error: expected declaration specifiers or '...' before 
+> string constant
+> drivers/spi/spi-tegra.c:630: warning: data definition has no type or storage class
+> drivers/spi/spi-tegra.c:630: warning: type defaults to 'int' in declaration of 
+> 'MODULE_LICENSE'
+> drivers/spi/spi-tegra.c:630: warning: function declaration isn't a prototype
+> make[2]: *** [drivers/spi/spi-tegra.o] Error 1
+> 
+> It is against linux-next (for 3.2). Please apply.
+> 
+> Thanks
+> 			Marc
+> 
+> diff --git a/drivers/spi/spi-tegra.c b/drivers/spi/spi-tegra.c
+> index a5a6302..e8cd58f 100644
+> --- a/drivers/spi/spi-tegra.c
+> +++ b/drivers/spi/spi-tegra.c
+> @@ -18,6 +18,7 @@
+>   */
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/err.h>
+>  #include <linux/platform_device.h>
