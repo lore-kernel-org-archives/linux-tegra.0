@@ -1,71 +1,42 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] spi/tegra: fix compilation error in spi-tegra.c
-Date: Thu, 13 Oct 2011 13:27:55 -0600
-Message-ID: <20111013192755.GZ18574@ponder.secretlab.ca>
-References: <1458857.A6MEb356Lm@fb07-iapwap2>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2 01/14] ARM: tegra: annotate IO_*_VIRT pointers
+Date: Thu, 13 Oct 2011 15:27:13 -0700
+Message-ID: <CAOesGMghHKR5Z3LxH454_OgaeiD+1KN4tFYgPqChbY7h4LsGZw@mail.gmail.com>
+References: <1317956064-17650-1-git-send-email-olof@lixom.net>
+	<1318224484-2090-1-git-send-email-olof@lixom.net>
+	<1318224484-2090-2-git-send-email-olof@lixom.net>
+	<20111013141036.GX21648@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1458857.A6MEb356Lm@fb07-iapwap2>
+In-Reply-To: <20111013141036.GX21648-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 13, 2011 at 11:01:33AM +0200, Marc Dietrich wrote:
-> Add #include <linux/module.h> to spi-tegra.c to fix a compilation error
-> after the removal of module.h from device.h (in patch: "include: replace 
-> linux/module.h with "struct module" wherever possible").
-> 
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+On Thu, Oct 13, 2011 at 7:10 AM, Russell King - ARM Linux
+<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> On Sun, Oct 09, 2011 at 10:27:51PM -0700, Olof Johansson wrote:
+>> +#ifdef __ASSEMBLY__
+>> +#define __IOVADDR(x) (x)
+>> +#else
+>> +#define __IOVADDR(x) ((void __force __iomem *)(x))
+>
+> Please call this IOMEM() - see:
+>
+> grep '#define *IOMEM' arch/arm/*/include/mach -r
+>
+> for its establishment across several implementations.
 
-Applied, thanks
 
-g.
+Ah, thanks! I did look for a pre-existing one, but not closely enough.
+I've revised the patch and will send a fresh pull request to Arnd with
+the new contents.
 
-> ---
-> 
-> Hi Grant,
-> 
-> this fixes the error below:
-> 
->   CC      drivers/spi/spi-tegra.o
-> drivers/spi/spi-tegra.c:597: error: expected declaration specifiers or '...' before 
-> string constant
-> drivers/spi/spi-tegra.c:597: warning: data definition has no type or storage class
-> drivers/spi/spi-tegra.c:597: warning: type defaults to 'int' in declaration of 
-> 'MODULE_ALIAS'
-> drivers/spi/spi-tegra.c:597: warning: function declaration isn't a prototype
-> drivers/spi/spi-tegra.c:604: warning: data definition has no type or storage class
-> drivers/spi/spi-tegra.c:604: warning: type defaults to 'int' in declaration of 
-> 'MODULE_DEVICE_TABLE'
-> drivers/spi/spi-tegra.c:604: warning: parameter names (without types) in function 
-> declaration
-> drivers/spi/spi-tegra.c:612: error: 'THIS_MODULE' undeclared here (not in a function)
-> drivers/spi/spi-tegra.c:630: error: expected declaration specifiers or '...' before 
-> string constant
-> drivers/spi/spi-tegra.c:630: warning: data definition has no type or storage class
-> drivers/spi/spi-tegra.c:630: warning: type defaults to 'int' in declaration of 
-> 'MODULE_LICENSE'
-> drivers/spi/spi-tegra.c:630: warning: function declaration isn't a prototype
-> make[2]: *** [drivers/spi/spi-tegra.o] Error 1
-> 
-> It is against linux-next (for 3.2). Please apply.
-> 
-> Thanks
-> 			Marc
-> 
-> diff --git a/drivers/spi/spi-tegra.c b/drivers/spi/spi-tegra.c
-> index a5a6302..e8cd58f 100644
-> --- a/drivers/spi/spi-tegra.c
-> +++ b/drivers/spi/spi-tegra.c
-> @@ -18,6 +18,7 @@
->   */
->  
->  #include <linux/kernel.h>
-> +#include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/err.h>
->  #include <linux/platform_device.h>
+I suppose there is some value in doing a global variant of this
+instead of having it redefined on all platforms. I'll add it to the
+list of cleanups to look at.
+
+
+-Olof
