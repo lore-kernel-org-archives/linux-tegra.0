@@ -1,69 +1,58 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
-Date: Thu, 13 Oct 2011 16:38:46 -0700
-Message-ID: <CAOesGMiuzF47kdmaaFny9Fg1ieox6a75tMFfLRAptvDxz_QPMg@mail.gmail.com>
-References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173955580F@HQMAIL01.nvidia.com>
+Subject: Re: [PATCH v4 3/4] gpio/tegra: Convert to a platform device
+Date: Thu, 13 Oct 2011 16:42:43 -0700
+Message-ID: <CAOesGMhEL7qgUGP_t_rAueqUndhv=rBPG2eeQBffpfrri_nj4A@mail.gmail.com>
+References: <1318371375-4083-1-git-send-email-swarren@nvidia.com>
+	<1318371375-4083-3-git-send-email-swarren@nvidia.com>
+	<20111012224131.GD25128@quad.lixom.net>
+	<CACxGe6tf0Ly8AC-6xUeoMrVj3y0KHkrcgj87SerAaCAnNhfNqA@mail.gmail.com>
+	<20111012231910.GA13960@quad.lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A08D@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173955580F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A08D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "Arnd Bergmann (arnd-r2nGTMty4D4@public.gmane.org)" <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wed, Sep 28, 2011 at 10:50 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
+On Thu, Oct 13, 2011 at 9:36 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> Olof Johansson wrote at Wednesday, October 12, 2011 5:19 PM:
+>> On Wed, Oct 12, 2011 at 05:03:24PM -0600, Grant Likely wrote:
+>> > On Wed, Oct 12, 2011 at 4:41 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> w=
 rote:
-> Peter De Schrijver wrote at Tuesday, September 27, 2011 7:08 PM:
->> This patch causes the kernel uncompressor to determine the physical =
-address
->> of the SDRAM at runtime. This allows the kernel to boot on both tegr=
-a20 and
->> tegra30 even though SDRAM is at different physical addresses on both=
- SoCs.
+>> > > On Tue, Oct 11, 2011 at 04:16:14PM -0600, Stephen Warren wrote:
+> ...
+>> > > Otherwise, patch looks good. Due to dependencies between this, t=
+he rest
+>> > > of this patch series and the pinmux changes, I'll hold off on it=
+ until
+>> > > the dependencies land (i.e. target it for 3.3). We're cutting it=
+ very close
+>> > > to the merge window as it is, I'll start for-3.3 branches shortl=
+y.
+>> >
+>> > Actually, see if you can get it in via the same tree as the pinmux
+>> > changes. =A0Dependencies is not a reason to hold off from getting =
+it
+>> > into linux-next.
 >>
->> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Ok, the fixup is minimal, should be trivial to spot at git merge tim=
+e.
+>>
+>> Stephen, do you want to respin yourself or should I do the __devinit
+>> change when I apply?
 >
-> An alternative would be to simply add that config option to the relev=
-ant
-> defconfig/.config file. I see both cases in use in the kernel. Still,=
- the
-> code change this enables looks fine to just turn on all the time, and=
- will
-> be needed for Tegra30 support, so I'm fine just selecting it as you h=
-ave.
+> I'm happy for you to fix that up when you apply if you're happy doing=
+ that.
 >
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index 472a7f8..474737b 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -596,6 +596,7 @@ config ARCH_TEGRA
->> =A0 =A0 =A0 select HAVE_CLK
->> =A0 =A0 =A0 select HAVE_SCHED_CLOCK
->> =A0 =A0 =A0 select ARCH_HAS_CPUFREQ
->> + =A0 =A0 select AUTO_ZRELADDR
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 This enables support for NVIDIA Tegra based systems =
-(Tegra APX,
->> =A0 =A0 =A0 =A0 Tegra 6xx and Tegra 2 series).
->
-> P.S. Since this patch relates to Tegra, you should CC the Tegra maint=
-ainers
-> and list; I've done so on this message. I also added Arnd; he might t=
-ake
-> this through the arm-soc tree.
+> The same fixup applies to the pinmux patches too.
 
-While it does touch a file outside of arch/arm/mach-tegra, it's for
-the tegra options and is not likely to cause conflicts upstream. I'll
-apply it with the rest of tegra patches for 3.2 here.
-
-So: Applied, thanks.
+Thanks, applied (and pinmux patch fixed up). for-3.2/features was
+rebased to roll in the pinmux change.
 
 
 -Olof
