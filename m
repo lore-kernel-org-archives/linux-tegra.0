@@ -1,61 +1,71 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL] Please pull tegra feature branch for 3.2
-Date: Thu, 13 Oct 2011 17:21:40 -0700
-Message-ID: <CAOesGMipZUkZG8oHSwK-8xw5Y0u6Ymfjmumq7=ijsztUwdGeDA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Adding board support
+Date: Fri, 14 Oct 2011 07:49:45 +0200
+Message-ID: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
 
-The following changes since commit 976d167615b64e14bc1491ca51d424e2ba9a5e84:
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 3.1-rc9 (2011-10-04 18:11:50 -0700)
+Hi,
 
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.2/features
+I have two Tegra2 based boards that I would like to add mainline support to.
+Currently they run on a modified NVIDIA kernel (Vibrante 1.1 for those who
+know it), but I would very much like to have them eventually boot from a
+mainline kernel. Both boards are rather similar to Harmony.
 
-Olof Johansson (1):
-      ARM: tegra: update defconfig
+I have a couple of questions, though. From what I can tell, the only
+functionality missing from mainline is nvmap/nvhost. While this is required
+for our boards, I was looking for some remote that includes support. The on=
+ly
+source I came across was at git.chromium.org (kernel.git and
+kernel-next.git). I suppose those are kernels that are recommended to run on
+Tegra2 boards if HW-accelerated video decoding and 3D rendering is required,
+right?
 
-Peter De Schrijver (4):
-      arm/tegra: prepare Seaboard pinmux code for derived boards
-      arm/tegra: add support for ventana pinmuxing
-      arm/tegra: device tree support for ventana board
-      arm/tegra: select AUTO_ZRELADDR by default
+I guess for the time being, the best plan would be to work on two branches,
+one based on the code from chromium and one based on the mainline code which
+doesn't contain nvmap/nvhost and used to prepare patches for mainline. Which
+branch or repository should I base such work on? Olof's for-3.2 branches?
 
-Stephen Warren (6):
-      arm/tegra: Prep boards for gpio/pinmux conversion to pdevs
-      arm/dt: Tegra: Add pinmux node to tegra20.dtsi
-      arm/tegra: Convert pinmux driver to a platform device
-      gpio/tegra: Convert to a platform device
-      arm/tegra: pinmux: ioremap registers
-      arm/tegra: Harmony: Configure PMC for low-level interrupts
+Another question concerns testing. So far I've always booted a modified
+U-Boot (from Vibrante 1.1) to allow booting with an initial ramdisk (loaded
+=66rom SD/MMC) as payload for fastboot/quickboot. What are other people usi=
+ng?
+What tools should I be using to update the firmware? Unfortunately nvflash =
+is
+not available in source code, and I haven't found any documentation about t=
+he
+early boot process, so it is kind of hard to figure out how all this is
+supposed to work and consequently find ways to automate these things for
+production boards.
 
- .../devicetree/bindings/pinmux/pinmux_nvidia.txt   |    5 +
- arch/arm/Kconfig                                   |    1 +
- arch/arm/boot/dts/tegra-ventana.dts                |   32 ++++
- arch/arm/boot/dts/tegra20.dtsi                     |    8 +
- arch/arm/configs/tegra_defconfig                   |   39 ++++-
- arch/arm/mach-tegra/Kconfig                        |    6 +
- arch/arm/mach-tegra/Makefile                       |    1 +
- arch/arm/mach-tegra/Makefile.boot                  |    1 +
- arch/arm/mach-tegra/board-dt.c                     |   26 +++-
- arch/arm/mach-tegra/board-harmony-pinmux.c         |    8 +
- arch/arm/mach-tegra/board-harmony-power.c          |   13 ++-
- arch/arm/mach-tegra/board-paz00-pinmux.c           |    8 +
- arch/arm/mach-tegra/board-seaboard-pinmux.c        |   69 ++++++++-
- arch/arm/mach-tegra/board-trimslice-pinmux.c       |    7 +
- arch/arm/mach-tegra/devices.c                      |   84 ++++++++++
- arch/arm/mach-tegra/devices.h                      |    2 +
- arch/arm/mach-tegra/include/mach/pinmux.h          |    4 +
- arch/arm/mach-tegra/pinmux-t2-tables.c             |   76 ++--------
- arch/arm/mach-tegra/pinmux.c                       |  163 ++++++++++++++++----
- drivers/gpio/gpio-tegra.c                          |  143 ++++++++++++------
- 20 files changed, 536 insertions(+), 160 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinmux/pinmux_nvidia.txt
- create mode 100644 arch/arm/boot/dts/tegra-ventana.dts
+I realize that some of these questions may be slightly off-topic here. If s=
+o,
+would someone be so kind as to point me to the correct mailing list?
+
+Thanks,
+Thierry
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk6XzXkACgkQZ+BJyKLjJp+qTwCeOoRVVdyLqqyutYH2sjplEtZR
+lqMAoKDq4euV8i2wqn6On99efzQJvPgF
+=z+5E
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
