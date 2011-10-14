@@ -1,78 +1,57 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Adding board support
-Date: Fri, 14 Oct 2011 09:31:53 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
-References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Fri, 14 Oct 2011 09:44:34 -0700
+Message-ID: <CAOesGMgDwMeVmwo1WJ3tU+ZdjCSJ6F8mY42e_KwTmzAkGQsqmg@mail.gmail.com>
+References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
+	<201110141729.41515.arnd@arndb.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A283@HQMAIL01.nvidia.com>
+	<201110141827.53906.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111014054945.GA32399-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <201110141827.53906.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Thursday, October 13, 2011 11:50 PM:
-...
-> I have a couple of questions, though. From what I can tell, the only
-> functionality missing from mainline is nvmap/nvhost. While this is required
-> for our boards, I was looking for some remote that includes support. The only
-> source I came across was at git.chromium.org (kernel.git and
-> kernel-next.git). I suppose those are kernels that are recommended to run on
-> Tegra2 boards if HW-accelerated video decoding and 3D rendering is required,
-> right?
+On Fri, Oct 14, 2011 at 9:27 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Friday 14 October 2011, Stephen Warren wrote:
+>> Arnd Bergmann wrote at Friday, October 14, 2011 9:30 AM:
+>> ...
+>> > You mention that tegra30 will require AUTO_ZRELADDR.
+>>
+>> Well, just to be clear, here's the situation I think:
+>>
+>> Tegra20's SDRAM starts at physical address 0.
+>>
+>> Tegra30's SDRAM starts at physical address 2G.
+>>
+>> To support that, we could either:
+>>
+>> a) Introduce a new Kconfig variable for Tegra30, make T20/T30 mutually
+>> exclusive, and update arch/arm/mach-tegra/Makefile.boot to set zreladdr
+>> etc. based on the new Tegra30 config variable too. Then, there's no need
+>> for AUTO_ZRELADDR anywhere.
+>>
+>> b) Have no new config variable, build a unified T20/T30 kernel, leave
+>> Makefile.boot untouched, and rely on using AUTO_ZRELADDR for Tegra30 to
+>> account for the different SDRAM physical addresses.
+>
+> Ok, thanks for the explanation, that makes it much clearer. For
+> completeness, you could also do both of the above and make T20/T30 mutually
+> exclusive unless AUTO_ZRELADDR is set. That might be more complex than
+> necessary, I don't know.
 
-There are also some NVIDIA kernel repos that contain this support; see:
-http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=summary
+That is likely to get messy.
 
-I think our current Linux4Tegra releases do use the kernel from ChromeOS, but
-future releases may move to our internal kernels.
+Seems like there could be some use for a (silent) option for a
+platform to indicate that it can do XIP kernel (or zImage), and thus
+not able to use AUTO_ZRELADDR (or other options that require rewriting
+text segment of zImage or kernel).
 
-> I guess for the time being, the best plan would be to work on two branches,
-> one based on the code from chromium and one based on the mainline code which
-> doesn't contain nvmap/nvhost and used to prepare patches for mainline. Which
-> branch or repository should I base such work on? Olof's for-3.2 branches?
+Language gets awkard though, since it'd be a negative option (or all
+platforms would need to add it). MACH_XIP_UNSUPPORTED perhaps?
 
-Just as an FYI, upstreaming nvmap/nvhost isn't a near-term goal. In the longer
-term, we're starting to think about a solution here.
 
-For practical purposes, you'll probably want to base any product kernels off
-one of NVIDIA's various downstream branches. Given your Vibrante usage, it'd
-probably be best to ask your existing NVIDIA contacts some of these questions.
-
-However, please don't let that stop you upstreaming basic board support; you
-should be able to upstream anything that doesn't depend on nvhost/nvmap etc.
-You'll probably want to use device-tree exclusively for any new board support
-in mainline.
-
-> Another question concerns testing. So far I've always booted a modified
-> U-Boot (from Vibrante 1.1) to allow booting with an initial ramdisk (loaded
-> from SD/MMC) as payload for fastboot/quickboot. What are other people using?
-
-Personally, I've recently switched to using mainline U-Boot on almost all my
-boards (Harmony, Seaboard, Ventana). Maybe I'll add TrimSlice support there
-too. Note that this relies on a number of patches that have been posted to
-the U-Boot mailing list, but not yet checked into their repos. This completely
-bypasses fastboot; Tegra's boot ROM runs U-Boot directly instead of fastboot.
-
-> What tools should I be using to update the firmware? Unfortunately nvflash is
-> not available in source code, and I haven't found any documentation about the
-> early boot process, so it is kind of hard to figure out how all this is
-> supposed to work and consequently find ways to automate these things for
-> production boards.
-
-Try grabbing the Linux4Tegra packages from:
-http://developer.nvidia.com/content/linux-tegra-release-12-alpha-1-released
-
-at least that has a publically obtainable/usable nvflash for a few boards.
-You should be able to adjust the flash.cfg files there for other boards.
-
-It's a little early to say much, but there are some early movements towards
-replacing nvflash with something more open for general Linux usage. You may
-also want to look at the "cbootimage" tool here:
-
-https://gitorious.org/cbootimage
-
--- 
-nvpublic
+-Olof
