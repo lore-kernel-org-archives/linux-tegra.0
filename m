@@ -1,81 +1,94 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
-Date: Fri, 14 Oct 2011 22:13:11 +0100
-Message-ID: <20111014211311.GY21648@n2100.arm.linux.org.uk>
-References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com> <201110141729.41515.arnd@arndb.de> <74CDBE0F657A3D45AFBB94109FB122FF173BE1A283@HQMAIL01.nvidia.com> <201110141827.53906.arnd@arndb.de> <alpine.LFD.2.02.1110141353390.17040@xanadu.home> <20111014192057.GT21648@n2100.arm.linux.org.uk> <alpine.LFD.2.02.1110141609510.17040@xanadu.home> <20111014201737.GW21648@n2100.arm.linux.org.uk> <alpine.LFD.2.02.1110141628230.17040@xanadu.home>
+From: Nicolas Pitre <nico@fluxnic.net>
+Subject: RE: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Fri, 14 Oct 2011 17:28:55 -0400 (EDT)
+Message-ID: <alpine.LFD.2.02.1110141718160.17040@xanadu.home>
+References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
+	<201110141729.41515.arnd@arndb.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A283@HQMAIL01.nvidia.com>
+	<201110141827.53906.arnd@arndb.de>
+	<CAOesGMgDwMeVmwo1WJ3tU+ZdjCSJ6F8mY42e_KwTmzAkGQsqmg@mail.gmail.com>
+	<20111014192011.GS21648@n2100.arm.linux.org.uk>
+	<alpine.LFD.2.02.1110141549160.17040@xanadu.home>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A362@HQMAIL01.nvidia.com>
+	<alpine.LFD.2.02.1110141631530.17040@xanadu.home>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A3A6@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.02.1110141628230.17040@xanadu.home>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Colin Cross (ccross@android.com)" <ccross@android.com>, Erik Gilling <konkers@android.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A3A6@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Colin Cross (ccross@android.com)" <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 14, 2011 at 04:31:12PM -0400, Nicolas Pitre wrote:
-> On Fri, 14 Oct 2011, Russell King - ARM Linux wrote:
-> 
-> > On Fri, Oct 14, 2011 at 04:14:12PM -0400, Nicolas Pitre wrote:
-> > > On Fri, 14 Oct 2011, Russell King - ARM Linux wrote:
-> > > 
-> > > > On Fri, Oct 14, 2011 at 02:01:07PM -0400, Nicolas Pitre wrote:
-> > > > > The way I'm restructuring things around this is that AUTO_ZRELADDR will 
-> > > > > always be active by default, just like ARM_PATCH_PHYS_VIRT now.  This 
-> > > > > platform specific exclusion thinking is a step backward so I'd prefer if 
-> > > > > people would refrain from going there for the moment.
-> > > > 
-> > > > Are you expecting everyone to change the way they load the zImage
-> > > > overnight then?
-> > > 
-> > > No, of course.  But adding restrictions in the kernel build because 
-> > > u-Boot's own image format dictates such restrictions doesn't make sense.  
-> > > Those restrictions must be pushed towards the uImage encapsulation step, 
-> > > not higher the kernel config hierarchy.
+On Fri, 14 Oct 2011, Stephen Warren wrote:
+
+> Nicolas Pitre wrote at Friday, October 14, 2011 2:45 PM:
+> > On Fri, 14 Oct 2011, Stephen Warren wrote:
+> ...
+> > > I did originally briefly look into getting U-Boot to boot a zImage, but
+> > > that looked like a far more invasive patch. There were rumours of some
+> > > chip's custom U-Boot already having such support, but I couldn't find
+> > > it, nor any evidence of such support in mainline U-Boot.
 > > 
-> > You're not understanding again.
+> > FRom my clone of the u-Boot repo:
 > > 
-> > I'm talking about people who _explicitly_ load the zImage at a different
-> > address to which the decompressed image ends up.  With AUTO_ZRELADDR=y
-> > their setup will break unless they stop that behaviour, which takes
-> > away one of the advantages of using the zImage format.
+> > $ git grep -l zImage
+> > README
+> > arch/sh/lib/zimageboot.c
+> > arch/x86/lib/zimage.c
+> > ...
+> > 
+> > Even the name of some of those files clearly hints zImage support.
+> > 
+> > In any case, loading zImage should be even simpler than loading uImage.
+> > It is the same as loading uImage except that you just have to skip the
+> > checking and relocating steps.
 > 
-> Would you care to explain where you got this from?  Because I really do 
-> not understand what you're saying indeed.
+> Just by way of background in case anyone is wondering why I wrote the
+> patch I did:
+> 
+> Those files both implement custom commands "zimageboot" and "zboot". I
+> was looking for integration with the existing "bootm" command.
+> 
+> The advantage of re-using "bootm" for this is that it already supports
+> all the stuff like setting up kernel command-lines, initrds, knowing how
+> to pass the FDT to the kernel, and whatever other OS-specific setup might
+> be required.
 
-My I point out that it's you who decided that I was talking about u-boot
-when I said no such thing in my message.  I merely pointed out about
-those people who may be loading the zImage elsewhere in memory and using
-that facility to cut down on the boot time.  u-boot can't load zImages
-directly.
+Absolutely.  And that is a must-have.
 
-Yet you started nattering on about uboot - which we know is a pile of
-crap for dealing with this stuff.
+> The disadvantage of adding zImage support to bootm is that I'd have to
+> teach a bunch of U-Boot image handling code about a new image format; it
+> already knows about "legacy uImage", "FIT" images, and I'd have to add a
+> third "zImage" format. Doing so would at least require adding a lot of
+> "case IMAGE_FORMAT_ZIMAGE" everywhere, but it'd probably be best to add
+> some kind of vtable for image formats to move all the image-format
+> knowledge into format-specific files, leaving the users of the images
+> with much smaller code.
+> 
+> I didn't feel like making such a large change. Hence, I chose to make a
+> small change to the existing uImage support.
 
-But ultimately, how people achieve the loading of the zImage is beyond
-the scope of what I stated: whether that's not using u-boot but some
-other boot loader, or maybe using mkimage outside of the kernel build,
-or whatever.
+And that change is certainly valuable.  Some people do want the extra 
+feature from the uImage format.  REmoving its absolute address 
+limitation is a good thing.
 
-> With AUTO_ZRELADDR=y you _still_ can load zImage to a different location 
-> from where the decompressed kernel ends up.
+However, also supporting zImage directly on ARM doesn't have to be that 
+hard.  Instead of adding "case IMAGE_FORMAT_ZIMAGE" everywhere, all you 
+would have to do is to load zImage in memory according to the load 
+address provided as an argument to the command, and then fake a uImage 
+load by artificially creating the uImage header at run time with the 
+data that u-Boot needs later on.
 
-You are correct for some values of 'different location' but not all -
-and how can we know _what_ people are doing?  We don't.
 
-#ifdef CONFIG_AUTO_ZRELADDR
-                @ determine final kernel image address
-                mov     r4, pc
-                and     r4, r4, #0xf8000000
-                add     r4, r4, #TEXT_OFFSET
-#else
-                ldr     r4, =zreladdr
-#endif
-
-So this means the decompressor _must_ run within the first 128MB chunk
-of memory for the resulting kernel to be correctly placed at expected
-place - at the beginning of system memory + TEXT_OFFSET.
-
-Can we know that this is always the case?  I don't think so.
-Can we expect there to be regressions if we force AUTO_ZRELADDR=y?  We'd
-be stupid not to expect them.
+Nicolas
