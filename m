@@ -1,45 +1,47 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM: mutually exclude ZBOOT_ROM and AUTO_ZRELADDR
-Date: Fri, 14 Oct 2011 08:59:05 -0700
-Message-ID: <1318607945-6807-1-git-send-email-olof@lixom.net>
-References: <20111014071500.GP21648@n2100.arm.linux.org.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111014071500.GP21648@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ccross@android.com, arnd@arndb.de, swarren@nvidia.com, pdeschrijver@nvidia.com, Olof Johansson <olof@lixom.net>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
+Date: Fri, 14 Oct 2011 09:12:18 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A283@HQMAIL01.nvidia.com>
+References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
+ <20111014071500.GP21648@n2100.arm.linux.org.uk>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A260@HQMAIL01.nvidia.com>
+ <201110141729.41515.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201110141729.41515.arnd-r2nGTMty4D4@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This way platforms that want it can select AUTO_ZRELADDR without issues caused by
-someone manually also enabling ZBOOT_ROM.
+Arnd Bergmann wrote at Friday, October 14, 2011 9:30 AM:
+...
+> You mention that tegra30 will require AUTO_ZRELADDR.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- arch/arm/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Well, just to be clear, here's the situation I think:
 
+Tegra20's SDRAM starts at physical address 0.
 
-Russell King wrote at Friday, October 14, 2011 1:15 AM:
+Tegra30's SDRAM starts at physical address 2G.
 
-> I'll point out that this makes Tegra incompatible with ZBOOT_ROM, which
-> can still be enabled.  ZBOOT_ROM=y AUTO_ZRELADDR=y is an invalid
-> configuration at runtime.
+To support that, we could either:
 
-Ah, looks like the dependency is only one-way. Since they are mutually
-exclusive, how about the below?
+a) Introduce a new Kconfig variable for Tegra30, make T20/T30 mutually
+exclusive, and update arch/arm/mach-tegra/Makefile.boot to set zreladdr
+etc. based on the new Tegra30 config variable too. Then, there's no need
+for AUTO_ZRELADDR anywhere.
 
+b) Have no new config variable, build a unified T20/T30 kernel, leave
+Makefile.boot untouched, and rely on using AUTO_ZRELADDR for Tegra30 to
+account for the different SDRAM physical addresses.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 82973b2..2ad58e8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1814,6 +1814,7 @@ config ZBOOT_ROM_BSS
- config ZBOOT_ROM
- 	bool "Compressed boot loader in ROM/flash"
- 	depends on ZBOOT_ROM_TEXT != ZBOOT_ROM_BSS
-+	depends on !AUTO_ZRELADDR
- 	help
- 	  Say Y here if you intend to execute your compressed kernel image
- 	  (zImage) directly from ROM or flash.  If unsure, say N.
+> Does that mean that with tegra30 merged you would no longer be able
+> to build any tegra kernel?
+
+Sorry, I don't quite understand that question.
+
 -- 
-1.7.4.1
+nvpublic
