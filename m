@@ -1,80 +1,59 @@
-From: Tixy <tixy@yxit.co.uk>
-Subject: Re: [PATCH] arm/tegra: select AUTO_ZRELADDR by default
-Date: Sat, 15 Oct 2011 16:29:12 +0100
-Message-ID: <1318692552.2241.47.camel@computer2>
-References: <1317172068-14872-1-git-send-email-pdeschrijver@nvidia.com>
-	<201110141729.41515.arnd@arndb.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A283@HQMAIL01.nvidia.com>
-	<201110141827.53906.arnd@arndb.de>
-	<CAOesGMgDwMeVmwo1WJ3tU+ZdjCSJ6F8mY42e_KwTmzAkGQsqmg@mail.gmail.com>
-	<20111014192011.GS21648@n2100.arm.linux.org.uk>
-	<alpine.LFD.2.02.1110141549160.17040@xanadu.home>
-	<20111014201223.GV21648@n2100.arm.linux.org.uk>
-	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A365@HQMAIL01.nvidia.com>
-	<20111014201953.GX21648@n2100.arm.linux.org.uk>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/1] ARM: tegra: paz00: Fix board pinmux table.
+Date: Sat, 15 Oct 2011 18:34:22 +0200
+Message-ID: <201110151834.22732.marvin24@gmx.de>
+References: <1318691913-9597-1-git-send-email-leon@leon.nu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20111014201953.GX21648@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@nvidia.com>, Erik Gilling <konkers@android.com>, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "Colin Cross
-	(ccross@android.com)" <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1318691913-9597-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2011-10-14 at 21:19 +0100, Russell King - ARM Linux wrote:
-> On Fri, Oct 14, 2011 at 01:16:27PM -0700, Stephen Warren wrote:
-> > Russell King wrote at Friday, October 14, 2011 2:12 PM:
-> > > I don't think that's so with the various flavours of platform specific
-> > > uboot which float around.  For instance, on the OMAP4430 SDP, the
-> > > following commands were used as supplied to load a uImage off the SD
-> > > card into RAM at a different address to which it was built for, and
-> > > execute it at that address:
-> > > 
-> > > mmcinit 0
-> > > fatload mmc 0 0x80300000 uImage
-> > > bootm 80300000
-> > > 
-> > > Whether the 'bootm' command then copied the image and called it there,
-> > > or whether it executed it at 0x80300000 I've no idea - but why then
-> > > load the image at a different address in the first place?
-> > 
-> > Yes, U-Boot's image handling looks at the image at 80300000, extracts the
-> > "load address" from the image header, memcpy()'s the image to that address,
-> > then jumps to the "entry address" in the image header.
+Hi Leon,
+
+Am Samstag 15 Oktober 2011, 17:18:33 schrieb Leon Romanovsky:
+> This fix updates the CDEV1 pinmux for the paz00 board to be as in the
+> Harmony board. Paz00 board is originally based on Harmony design.
+
+the fact that this patch makes sound work on paz00 does not necessary mean
+that this is the "right thing" to do. First, the initial state should be
+TRISTATE, because sound layer should switch between NORMAL/TRISTATE 
+automaticly to save some power. Second, Android has TEGRA_PUPD_PULL_DOWN 
+with sound working and I didn't found out yet why this also works.
+
+So there is something strange going on and we should first find out what
+it is. Furthermore, there is no codec (ALC5632) and no glue for paz00 yet 
+in the mainline kernel (and of course no board support for it) so this can 
+still wait IMHO.
+
+I will include your patch in the series which will add sound support once
+the fog has lifted a bit.
+
+Thanks
+
+Marc
+
+> Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/board-paz00-pinmux.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> Ah, so specifying that address is just a total waste of space then,
-> because you might as well specify an address which results in the
-> copy not being necessary.
+> diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
+> index bdd2627..7de8182 100644
+> --- a/arch/arm/mach-tegra/board-paz00-pinmux.c
+> +++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
+> @@ -27,7 +27,7 @@ static struct tegra_pingroup_config paz00_pinmux[] = {
+>  	{TEGRA_PINGROUP_ATC,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+>  	{TEGRA_PINGROUP_ATD,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+>  	{TEGRA_PINGROUP_ATE,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+> -	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_PLLA_OUT,      TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_TRISTATE},
+> +	{TEGRA_PINGROUP_CDEV1, TEGRA_MUX_PLLA_OUT,      TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+>  	{TEGRA_PINGROUP_CDEV2, TEGRA_MUX_PLLP_OUT4,     TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_NORMAL},
+>  	{TEGRA_PINGROUP_CRTP,  TEGRA_MUX_CRT,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+>  	{TEGRA_PINGROUP_CSUS,  TEGRA_MUX_PLLC_OUT1,     TEGRA_PUPD_PULL_DOWN, TEGRA_TRI_TRISTATE},
 > 
-> However, I'd expect that uboot is dumb enough to still do the copy
-> irrespective of whether its already in the right place.
-
-U-Boot doesn't do an unnecessary copy if the body of the image is
-already at the load address specified in the image header.
-
-Unfortunately, it also doesn't do a copy if the header of the image is
-at the load address, (I guess to support images constructed with an
-embedded header). This means that
-
-  fatload mmc 0 0x80300000 uImage
-  bootm 0x80300000
-
-will crash as it will attempt to boot Linux by executing the image
-header. To successfully boot without requiring a relocation we would
-need:
-
-  fatload mmc 0 0x80300000-sizeof(header) uImage
-  bootm 0x80300000
-
--- 
-Tixy
