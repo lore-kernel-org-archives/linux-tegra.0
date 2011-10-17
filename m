@@ -1,77 +1,174 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Adding board support
-Date: Mon, 17 Oct 2011 09:15:58 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
-References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
- <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
- <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
- <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [RFC] [PATCH] ARM: tegra: emc: device tree bindings
+Date: Mon, 17 Oct 2011 10:52:56 -0700
+Message-ID: <1318873976-25335-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111017102658.GA12373-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Monday, October 17, 2011 4:27 AM:
-> * Thierry Reding wrote:
-> > * Stephen Warren wrote:
-> > > ... [U-Boot patch/build instructions]
-> > > Then, run nvflash just like you would normally.
-> >
-> > Okay, I've been able to build U-Boot and setup some scripts that should
-> > automate the nvflash procedure according to your instructions. I'll have to
-> > wait until I get back to work on Monday to see whether it actually works,
-> > though.
-> 
-> I'm unable to make this work. I've done as you said, branched from the commit
-> you mentioned and applied the patches you listed. Then ran:
-> 
-> 	$ make CROSS_COMPILE=... O=build/harmony harmony_config
-> 	$ make CROSS_COMPILE=... O=build/harmony -j8
-> 
-> And flashed the resulting u-boot.bin like you described, by replacing the
-> fastboot.bin in the configuration with u-boot.bin. When rebooting the device
-> (I used a Harmony for this testing obviously) there's nothing. No output on
-> the serial line. Flashing fastboot.bin I can at least see some debugging
-> output.
-> 
-> I also tried to update the TEXT_BASE, which seems to be 0x00108000 for
-> fastboot, and 0x00E08000 for U-Boot, but that didn't make a difference. Any
-> ideas on what could be the problem?
+First cut at device tree bindings for the EMC tables on tegra.
 
-Ah yes, sorry, I'd forgotten about that.
+Note that I have a prerequisite patch that changes the tegra2_emc code
+to be a platform driver; but I wanted to do a sanity-check of my device
+tree usage here before posting the whole series.
 
-The default load address for fastboot and U-Boot is different. I don't
-know why, but apparently U-Boot doesn't work when built with a load
-address that matches fastboot. I believe we have a bug filed to investigate
-why, but I don't know any more details.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ .../devicetree/bindings/arm/tegra/emc.txt          |   77 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra-seaboard.dts               |   36 +++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |    7 ++
+ 3 files changed, 120 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/emc.txt
 
-> I'm not quite sure where these values come from. Are they hard-coded in the
-> boot ROM? And how does it know from which NAND partition to load the
-> bootloader?
-
-These addresses exist in a couple places:
-
-* In the BCT, which tells the boot ROM the SDRAM address where the boot-
-loader should be copied to, and what the entry point is.
-
-* Hard-coded into nvflash, and the fastboot.bin used during the flashing
-process.
-
-Hence, internally, I believe we use nvflash/fastboot.bin that have been
-specifically recompiled to support U-Boot's load address.
-
-Thinking about this some more, I think we have shipped those rebuilt
-versions outside NVIDIA in a publically accessible place. I'll follow
-up internally and see if we have, or what we can do about it. Sorry for
-sending you on a wild goose chase.
-
+diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+new file mode 100644
+index 0000000..dd7f845
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+@@ -0,0 +1,77 @@
++Embedded Memory Controller
++
++Properties:
++- name : Should be emc
++- #address-cells : Should be 1
++- #size-cells : Should be 0
++- compatible : should contain "nvidia,tegra20-emc".
++- reg : Offset and length of the register set for the device
++- nvidia,use-ram-code : If present, the sub-nodes will be addressed
++  and chosen using the ramcode board selector. If omitted, only one
++  set of tables can be present and said tables will be used
++  irrespective of ram-code configuration.
++
++Child device nodes describe the memory settings for different configurations and clock rates.
++
++Example:
++
++	emc@7000f400 {
++		#address-cells = < 1 >;
++		#size-cells = < 0 >;
++		compatible = "nvidia,tegra20-emc";
++		reg = <0x7000f4000 0x200>;
++	}
++
++
++Embedded Memory Controller configuration table
++
++This is a table containing the EMC register settings for the various
++operating speeds of the memory controller. They are always located as
++subnodes of the emc controller node.
++
++There are two ways of specifying which tables to use:
++
++* The simplest is if there is just one set of tables in the device tree,
++  and they will always be used (based on which frequency is used).
++  This is the preferred method, especially when firmware can fill in
++  this information based on the specific system information and just
++  pass it on to the kernel.
++
++* The slightly more complex one is when more than one memory configuration
++  might exist on the system.  The Tegra20 platform handles this during
++  early boot by selecting one out of possible 4 memory settings based
++  on a 2-pin "ram code" bootstrap setting on the board. The values of
++  these strappings can be read through a register in the SoC, and thus
++  used to select which tables to use.
++
++Properties:
++- name : Should start with emc-table
++- compatible : should contain "nvidia,tegra20-emc-table".
++- reg : only needed if nvidia,use-ram-code is present in the
++  parent. If so, the numerical representation of the selected ram code
++  as reported by the strap option APB misc register.
++- clock-frequency : the clock frequency for the EMC at which this
++  table should be used (in kHz).
++- nvidia,emc-registers : a 46 word array of EMC registers to be programmed
++  for operation at the 'clock-frequency' setting.
++  The order and contents of the registers are defined in the Tegra TRM.
++
++		emc-table-333mhz@0 {
++			reg = <0>;
++			compatible = "nvidia,tegra20-emc-table";
++			clock-frequency = < 333000 >;
++			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 >;
++		};
++
++		emc-table-666mhz@0 {
++			reg = <0>;
++			compatible = "nvidia,tegra20-emc-table";
++			clock-frequency = < 666000 >;
++			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
++						 0 0 0 0 >;
++		};
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index a72299b..2d60b5ff 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -20,6 +20,42 @@
+ 		clock-frequency = < 216000000 >;
+ 	};
+ 
++	emc {
++		emc-table-166 {
++			compatible = "nvidia,tegra20-emc-table";
++			clock-frequency = < 166500 >;
++			nvidia,emc-registers = < 0x0000000a 0x00000021
++				0x00000008 0x00000003 0x00000004 0x00000004
++				0x00000002 0x0000000c 0x00000003 0x00000003
++				0x00000002 0x00000001 0x00000004 0x00000005
++				0x00000004 0x00000009 0x0000000d 0x000004df
++				0x00000000 0x00000003 0x00000003 0x00000003
++				0x00000003 0x00000001 0x0000000a 0x000000c8
++				0x00000003 0x00000006 0x00000004 0x0000000f
++				0x00000002 0x00000000 0x00000000 0x00000002
++				0x00000000 0x00000000 0x00000083 0xa04004ae
++				0x007fd010 0x00000000 0x00000000 0x00000000
++				0x00000000 0x00000000 0x00000000 0x00000000 >;
++		};
++
++		emc-table-333 {
++			compatible = "nvidia,tegra20-emc-table";
++			clock-frequency = < 333000 >;
++			nvidia,emc-registers = < 0x00000014 0x00000041
++				0x0000000f 0x00000005 0x00000004 0x00000005
++				0x00000003 0x0000000c 0x00000005 0x00000005
++				0x00000003 0x00000001 0x00000004 0x00000005
++				0x00000004 0x00000009 0x0000000d 0x000009ff
++				0x00000000 0x00000003 0x00000003 0x00000005
++				0x00000005 0x00000001 0x0000000f 0x000000c8
++				0x00000003 0x0000000c 0x00000006 0x0000000f
++				0x00000002 0x00000000 0x00000000 0x00000002
++				0x00000000 0x00000000 0x00000083 0xe034048b
++				0x007e8010 0x00000000 0x00000000 0x00000000
++				0x00000000 0x00000000 0x00000000 0x00000000 >;
++		};
++	};
++
+ 	sdhci@c8000400 {
+ 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
+ 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 65d7e6a..f4dc8d3 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -120,6 +120,13 @@
+ 		interrupts = < 123 >;
+ 	};
+ 
++	emc@7000f400 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra20-emc";
++		reg = <0x7000f400 0x200>;
++	};
++
+ 	sdhci@c8000000 {
+ 		compatible = "nvidia,tegra20-sdhci";
+ 		reg = <0xc8000000 0x200>;
 -- 
-nvpublic
+1.7.4.1
