@@ -1,40 +1,77 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/1] ARM: tegra: paz00: Fix board pinmux table.
-Date: Mon, 17 Oct 2011 08:29:01 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4A4@HQMAIL01.nvidia.com>
-References: <1318691913-9597-1-git-send-email-leon@leon.nu>
- <201110151834.22732.marvin24@gmx.de>
+Subject: RE: Adding board support
+Date: Mon, 17 Oct 2011 09:15:58 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
+References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
+ <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
+ <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
+ <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201110151834.22732.marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <20111017102658.GA12373-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-TWFyYyBEaWV0cmljaCB3cm90ZSBhdCBTYXR1cmRheSwgT2N0b2JlciAxNSwgMjAxMSAxMDozNCBB
-TToNCj4gQW0gU2Ftc3RhZyAxNSBPa3RvYmVyIDIwMTEsIDE3OjE4OjMzIHNjaHJpZWIgTGVvbiBS
-b21hbm92c2t5Og0KPiA+IFRoaXMgZml4IHVwZGF0ZXMgdGhlIENERVYxIHBpbm11eCBmb3IgdGhl
-IHBhejAwIGJvYXJkIHRvIGJlIGFzIGluIHRoZQ0KPiA+IEhhcm1vbnkgYm9hcmQuIFBhejAwIGJv
-YXJkIGlzIG9yaWdpbmFsbHkgYmFzZWQgb24gSGFybW9ueSBkZXNpZ24uDQo+IA0KPiB0aGUgZmFj
-dCB0aGF0IHRoaXMgcGF0Y2ggbWFrZXMgc291bmQgd29yayBvbiBwYXowMCBkb2VzIG5vdCBuZWNl
-c3NhcnkgbWVhbg0KPiB0aGF0IHRoaXMgaXMgdGhlICJyaWdodCB0aGluZyIgdG8gZG8uDQoNCj4g
-Rmlyc3QsIHRoZSBpbml0aWFsIHN0YXRlIHNob3VsZCBiZQ0KPiBUUklTVEFURSwgYmVjYXVzZSBz
-b3VuZCBsYXllciBzaG91bGQgc3dpdGNoIGJldHdlZW4gTk9STUFML1RSSVNUQVRFDQo+IGF1dG9t
-YXRpY2x5IHRvIHNhdmUgc29tZSBwb3dlci4NCg0KTm9uZSBvZiB0aGUgb3RoZXIgYm9hcmRzIGRv
-IHRoYXQsIGFuZCB0aGUgZHJpdmVycyBkb24ndCBzdXBwb3J0IGl0LiBJDQpiZWxpZXZlIHRoZSBj
-bG9jayB3b3VsZCBuZWVkIHRvIGJlIHN0YXJ0ZWQgYXMgc29vbiBhcyB0aGUgYXVkaW8gZHJpdmVy
-DQptb2R1bGUgd2VyZSBsb2FkZWQsIGFuZCBrZXB0IHJ1bm5pbmcgYXMgbG9uZyBhcyBpdCB3YXMg
-bG9hZGVkLCBzbyB0aGVyZSdzDQpub3QgbXVjaCBjaGFuY2Ugb2Ygb3B0aW1pemluZyBwb3dlciBo
-ZXJlIGF0IHRoZSBtb21lbnQuDQoNCj4gU2Vjb25kLCBBbmRyb2lkIGhhcyBURUdSQV9QVVBEX1BV
-TExfRE9XTg0KPiB3aXRoIHNvdW5kIHdvcmtpbmcgYW5kIEkgZGlkbid0IGZvdW5kIG91dCB5ZXQg
-d2h5IHRoaXMgYWxzbyB3b3Jrcy4NCg0KSSBkb24ndCBrbm93IHdoeSB0aGVyZSdzIGEgcHVsbC1k
-b3duIHRoZXJlIGluIHRoZSBBbmRyb2lkIGtlcm5lbDsgdGhlcmUncw0Kbm8gbmVlZCBhcyBmYXIg
-YXMgSSBrbm93LCBzaW5jZSBpdCdzIGEgY2xvY2sgc2lnbmFsLiBJJ2QgZ28gc28gZmFyIGFzIHRv
-DQpiZWxpZXZlIHRoYXQgYSBwdWxsLWRvd24gd291bGQgZGlzdG9ydCB0aGUgY2xvY2sgc2lnbmFs
-IHNsaWdodGx5Lg0KDQpCdXQgeWVzLCBpdCBwcm9iYWJseSBtYWtlcyBzZW5zZSB0byBpbmNsdWRl
-IHRoaXMgcGF0Y2ggaW4gYSBzZXJpZXMgdGhhdA0KZW5hYmxlcyBhdWRpbyBvbiBQQVowMCB3aGVu
-ZXZlciB0aGF0IGFwcGVhcnMuDQoNCi0tIA0KbnZwdWJsaWMNCg0K
+Thierry Reding wrote at Monday, October 17, 2011 4:27 AM:
+> * Thierry Reding wrote:
+> > * Stephen Warren wrote:
+> > > ... [U-Boot patch/build instructions]
+> > > Then, run nvflash just like you would normally.
+> >
+> > Okay, I've been able to build U-Boot and setup some scripts that should
+> > automate the nvflash procedure according to your instructions. I'll have to
+> > wait until I get back to work on Monday to see whether it actually works,
+> > though.
+> 
+> I'm unable to make this work. I've done as you said, branched from the commit
+> you mentioned and applied the patches you listed. Then ran:
+> 
+> 	$ make CROSS_COMPILE=... O=build/harmony harmony_config
+> 	$ make CROSS_COMPILE=... O=build/harmony -j8
+> 
+> And flashed the resulting u-boot.bin like you described, by replacing the
+> fastboot.bin in the configuration with u-boot.bin. When rebooting the device
+> (I used a Harmony for this testing obviously) there's nothing. No output on
+> the serial line. Flashing fastboot.bin I can at least see some debugging
+> output.
+> 
+> I also tried to update the TEXT_BASE, which seems to be 0x00108000 for
+> fastboot, and 0x00E08000 for U-Boot, but that didn't make a difference. Any
+> ideas on what could be the problem?
+
+Ah yes, sorry, I'd forgotten about that.
+
+The default load address for fastboot and U-Boot is different. I don't
+know why, but apparently U-Boot doesn't work when built with a load
+address that matches fastboot. I believe we have a bug filed to investigate
+why, but I don't know any more details.
+
+> I'm not quite sure where these values come from. Are they hard-coded in the
+> boot ROM? And how does it know from which NAND partition to load the
+> bootloader?
+
+These addresses exist in a couple places:
+
+* In the BCT, which tells the boot ROM the SDRAM address where the boot-
+loader should be copied to, and what the entry point is.
+
+* Hard-coded into nvflash, and the fastboot.bin used during the flashing
+process.
+
+Hence, internally, I believe we use nvflash/fastboot.bin that have been
+specifically recompiled to support U-Boot's load address.
+
+Thinking about this some more, I think we have shipped those rebuilt
+versions outside NVIDIA in a publically accessible place. I'll follow
+up internally and see if we have, or what we can do about it. Sorry for
+sending you on a wild goose chase.
+
+-- 
+nvpublic
