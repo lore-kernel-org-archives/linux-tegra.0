@@ -1,70 +1,61 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/1] ARM: tegra: paz00: Fix board pinmux table.
-Date: Tue, 18 Oct 2011 09:10:42 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173CA2CB3B@HQMAIL01.nvidia.com>
-References: <1318691913-9597-1-git-send-email-leon@leon.nu>
- <201110151834.22732.marvin24@gmx.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4A4@HQMAIL01.nvidia.com>
- <9849440.cSOtOCBmUT@ax5200p>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] [3.3] ARM: tegra: emc: max rate based on emc table
+Date: Tue, 18 Oct 2011 11:14:54 -0700
+Message-ID: <1318961694-21105-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9849440.cSOtOCBmUT@ax5200p>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietrich wrote at Tuesday, October 18, 2011 9:50 AM:
-> On Monday 17 October 2011 08:29:01 Stephen Warren wrote:
-> > Marc Dietrich wrote at Saturday, October 15, 2011 10:34 AM:
-> > > Am Samstag 15 Oktober 2011, 17:18:33 schrieb Leon Romanovsky:
-> > > > This fix updates the CDEV1 pinmux for the paz00 board to be as in the
-> > > > Harmony board. Paz00 board is originally based on Harmony design.
-> > >
-> > > the fact that this patch makes sound work on paz00 does not necessary mean
-> > > that this is the "right thing" to do.
-> >
-> > > First, the initial state should be
-> > > TRISTATE, because sound layer should switch between NORMAL/TRISTATE
-> > > automaticly to save some power.
-> >
-> > None of the other boards do that, and the drivers don't support it. I
-> > believe the clock would need to be started as soon as the audio driver
-> > module were loaded, and kept running as long as it was loaded, so there's
-> > not much chance of optimizing power here at the moment.
-> 
-> Which driver?
+Update max rate for emc clock based on configured EMC timings,
+but by default leave it at the same rate that firmware configured.
 
-The whole ASoC driver stack. It may depend on the codec, but I assume that
-CDEV1 clock output should be running the whole time the ASoC codec driver
-is active. Alsa-devel would be the best place to ask about that kind of
-thing.
+Also update the shared clocks accordingly.
 
-...
-> > I don't know why there's a pull-down there in the Android kernel; there's
-> > no need as far as I know, since it's a clock signal. I'd go so far as to
-> > believe that a pull-down would distort the clock signal slightly.
-> 
-> Is there some docu somewhere about what PUPD_NORMAL and POPD_PULL_DOWN means?
-> I know the meaning of TRISTATE and PULL_DOWN/UP from electronics, but
-> that does not define what the NORMAL state is.
+This patch was based on work by Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 
-"NORMAL" means no pull-up or pull-down, or not tri-stated. It's badly
-named.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra2_emc.c |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
-> I also don't see why you can't get a nice clock signal out of a pull down pin.
-> If inactive, the pin is high (e.g. +3.3V), while when active it is pulled to
-> zero (ok, it's logical inverted).
-
-Well, I may be wrong, but the pin will attempt to drive a nice symmetric
-signal, yet with a pull-up/down, there will be some slight drive on the
-wire that'll tend to pull the signal towards 0v/3.3v the whole time which
-will distort it. Whether this is a problem for this particular signal,
-pull-up/down strength, etc. is something I don't know. Certainly, the
-pull isn't actually needed AFAIK, so it may as well be removed.
-
+diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
+index 0f7ae6e..bed7e74 100644
+--- a/arch/arm/mach-tegra/tegra2_emc.c
++++ b/arch/arm/mach-tegra/tegra2_emc.c
+@@ -23,6 +23,7 @@
+ 
+ #include <mach/iomap.h>
+ 
++#include "clock.h"
+ #include "tegra2_emc.h"
+ 
+ #ifdef CONFIG_TEGRA_EMC_SCALING_ENABLE
+@@ -173,6 +174,24 @@ int tegra_emc_set_rate(unsigned long rate)
+ 
+ void tegra_init_emc(const struct tegra_emc_table *table, int table_size)
+ {
++	struct clk *c = clk_get_sys("emc", NULL);
++	struct clk *user;
++	unsigned long max = 0;
++	int i;
++
++	/* Since default max_rate on emc clock is the same as firmware set
++	 * it to before booting, raise it up here based on known timings.
++	 */
++
++	for (i = 0; i < table_size; i++)
++		if (table[i].rate > max)
++			max = table[i].rate;
++
+ 	tegra_emc_table = table;
+ 	tegra_emc_table_size = table_size;
++
++	c->max_rate = max * 2 * 1000;
++
++	list_for_each_entry(user, &c->shared_bus_list, u.shared_bus_user.node)
++		user->max_rate = c->max_rate;
+ }
 -- 
-nvpublic
+1.7.4.1
