@@ -1,88 +1,122 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] [3.3] ARM: tegra: use APB DMA for accessing APB devices
-Date: Tue, 18 Oct 2011 11:37:28 -0700
-Message-ID: <CAMbhsRRPmd7jAMkbB_HBw-UeQi1W2-+n_qkhsfHfP6rSd01naw@mail.gmail.com>
-References: <1318961898-21254-1-git-send-email-olof@lixom.net>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [RFC] [PATCH] ARM: tegra: emc: device tree bindings
+Date: Tue, 18 Oct 2011 11:42:41 -0700
+Message-ID: <CAOesGMh387Oghyd_TobnTOja6tU2uU5kt-86_HwQe7nFiL+svw@mail.gmail.com>
+References: <1318873976-25335-1-git-send-email-olof@lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF173CA2CBFB@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1318961898-21254-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173CA2CBFB-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 18, 2011 at 11:18 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote=
-:
-> From: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Oct 18, 2011 at 11:30 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
+rote:
+> Olof Johansson wrote at Monday, October 17, 2011 11:53 AM:
+>> First cut at device tree bindings for the EMC tables on tegra.
+>>
+>> Note that I have a prerequisite patch that changes the tegra2_emc co=
+de
+>> to be a platform driver; but I wanted to do a sanity-check of my dev=
+ice
+>> tree usage here before posting the whole series.
 >
-> Tegra2 hangs if APB registers are accessed from the cpu during an
-> apb dma operation. The workaround is to use apb dma to read/write the
-> registers instead.
+> ...
+>> +++ b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+> ...
+>> +Embedded Memory Controller
+>> +
+>> +Properties:
+>> +- name : Should be emc
+>> +- #address-cells : Should be 1
+>> +- #size-cells : Should be 0
 >
-> There is a dependency loop between fuses, clocks, and APBDMA. =A0If d=
-ma
-> is enabled, fuse reads must go through APBDMA to avoid corruption due
-> to a hw bug. =A0APBDMA requires a clock to be enabled. =A0Clocks must=
- read
-> a fuse to determine allowable cpu frequencies.
->
-> Separate out the fuse DMA initialization, and allow the fuse read
-> and write functions to be called without using DMA before the DMA
-> initialization has been completed. =A0Access to the fuses before APBD=
-MA
-> is initialized won't hit the hardware bug because nothing else can be
-> using DMA.
->
-> Original fuse registar access code from Varun Wadekar
-> <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, improved by Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> and later moved to separate driver by Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
->
-> Signed-off-by: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [olof: hooked up init calls to dma init, minor cleanups]
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> ---
-> =A0arch/arm/mach-tegra/Makefile | =A0 =A01 +
-> =A0arch/arm/mach-tegra/apbio.c =A0| =A0149 ++++++++++++++++++++++++++=
-++++++++++++++++
-> =A0arch/arm/mach-tegra/apbio.h =A0| =A0 22 ++++++
-> =A0arch/arm/mach-tegra/dma.c =A0 =A0| =A0 =A04 +
-> =A04 files changed, 176 insertions(+), 0 deletions(-)
-> =A0create mode 100644 arch/arm/mach-tegra/apbio.c
-> =A0create mode 100644 arch/arm/mach-tegra/apbio.h
->
-<snip>
+> The address/size-cells properties define the require number of cells =
+for
+> child nodes, where the child nodes are addressable objects in a bus. =
+=46or
+> the EMC table child nodes, they're more configuration than nodes on a
+> bus, so I don't think it's appropriate for the EMC controller to defi=
+ne
+> the address/size-cells properties. Those properties would be appropri=
+ate
+> if we ever have child nodes for the individual SDRAM chips, but I sus=
+pect
+> we won't ever do that?
 
-> diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-> index c0cf967..b7b6957 100644
-> --- a/arch/arm/mach-tegra/dma.c
-> +++ b/arch/arm/mach-tegra/dma.c
-> @@ -33,6 +33,8 @@
-> =A0#include <mach/iomap.h>
-> =A0#include <mach/suspend.h>
->
-> +#include "apbio.h"
-> +
-> =A0#define APB_DMA_GEN =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A00x000
-> =A0#define GEN_ENABLE =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 (1<<31)
->
-> @@ -735,6 +737,8 @@ int __init tegra_dma_init(void)
->
-> =A0 =A0 =A0 =A0tegra_dma_initialized =3D true;
->
-> + =A0 =A0 =A0 tegra_init_apb_dma();
-> +
-It seems wrong for the dma api init to call init on one of the users
-of the dma api.  For explicit ordering dependencies like this, maybe
-postcore_initcall is not the right way to trigger tegra_dma_init.
+I'm not aware of anyone going down to the granularity of representing
+actual memory chips in the device tree. It's more common to use SPD on
+DIMMs for it.
 
-> =A0 =A0 =A0 =A0return 0;
-> =A0fail:
-> =A0 =A0 =A0 =A0writel(0, addr + APB_DMA_GEN);
-> --
-> 1.7.4.1
+[Also, see below]
+
+> ...
+>> +Embedded Memory Controller configuration table
+> ...
+>> +Properties:
+>> +- name : Should start with emc-table
 >
+>> +- compatible : should contain "nvidia,tegra20-emc-table".
+>> +- reg : only needed if nvidia,use-ram-code is present in the
+>> + =A0parent. If so, the numerical representation of the selected ram=
+ code
+>> + =A0as reported by the strap option APB misc register.
 >
+> I don't think the compatible or reg properties are needed; the EMC ta=
+bles
+> aren't addressable objects on a bus, so no need for reg. I could see =
+an
+> argument that we'd want to version the emc-table format, and so the
+> compatible flag might be useful, yet AIUI, compatible is more for def=
+ining
+> HW compatibility (and hence driver instantiation), rather than a prop=
+erty
+> of some configuration node.
+
+I was struggling with a good way to specify the selection of the
+modules. I can definitely use a nvidia,ram-code property instead of
+reg (with a similar definition to how reg was used here).
+
+Compatible is still needed, in my opinion -- otherwise there will be
+no way to tell if the node is there to describe emc timings or if it's
+some new node used to describe something else (such as SDRAM chips as
+mentioned above).
+
+>> +- clock-frequency : the clock frequency for the EMC at which this
+>> + =A0table should be used (in kHz).
+>> +- nvidia,emc-registers : a 46 word array of EMC registers to be pro=
+grammed
+>> + =A0for operation at the 'clock-frequency' setting.
+>> + =A0The order and contents of the registers are defined in the Tegr=
+a TRM.
+>
+> That's not a very semantic representation. Still, I guess there isn't
+> any benefit representing this at a higher level.
+
+Yeah, it's not all that pretty but I don't see much value in
+describing the actual values for which the register values are derived
+from. It's all black magic from start to finish, as far as I am
+concerned (i.e. we've always received a register blob from nvidia for
+various boards with very little information on why and what certain
+values were tweaked like they were).
+
+
+>> +++ b/arch/arm/boot/dts/tegra-seaboard.dts
+>> @@ -20,6 +20,42 @@
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 clock-frequency =3D < 216000000 >;
+>> =A0 =A0 =A0 };
+>>
+>> + =A0 =A0 emc {
+>
+> I think that should be emc@7000f400, so it matches tegra20.dtsi?
+
+If there is only one entry, unit address should be optional. I thought
+this would match it up with the one from tegra20.dtsi and overlay that
+already. I'll double-check on that dtc behavior and change if needed.
+
+
+-Olof
