@@ -1,43 +1,33 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/dt: Fix ventana SDHCI power-gpios
-Date: Wed, 19 Oct 2011 10:53:57 -0600
-Message-ID: <1319043237-1474-1-git-send-email-swarren@nvidia.com>
+From: Segher Boessenkool <segher-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Subject: Re: [RFC] [PATCH] ARM: tegra: emc: device tree bindings
+Date: Wed, 19 Oct 2011 22:13:21 +0200
+Message-ID: <E8310825-036A-4541-9D8F-6DCED9CA88AA@kernel.crashing.org>
+References: <1318873976-25335-1-git-send-email-olof@lixom.net> <74CDBE0F657A3D45AFBB94109FB122FF173CA2CBFB@HQMAIL01.nvidia.com> <CAOesGMh387Oghyd_TobnTOja6tU2uU5kt-86_HwQe7nFiL+svw@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF173CA2CC18@HQMAIL01.nvidia.com> <CAOesGMghu6Bn3RrFKEUBKkUNS_K8Y0ho3Y2uFZh_LXbfT80hFw@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF173CA2CCA9@HQMAIL01.nvidia.com> <4E9E3801.6080707@gmail.com> <CAOesGMj8TREZ94RFhE3Qy=eaytOuB0YKBWw6--HAERoMB9m7Qg@mail.gmail.com> <4E9EE07A.20301@gmail.com> <CAOesGMhfAxrG4pMQ86XFzmBnHwBgrD=45eTvmA0-G2gTjaSL6Q@mail.gmail.com>
+Mime-Version: 1.0 (Apple Message framework v753.1)
+Content-Type: text/plain; charset=US-ASCII; delsp=yes; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMhfAxrG4pMQ86XFzmBnHwBgrD=45eTvmA0-G2gTjaSL6Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ventana uses the same SDHCI GPIOs as Seaboard; PI6 (70) is the power GPIO
-for the SD port, and there is no power GPIO for the MMC chip.
+> emc {
+>   compatible = "tegra20-emc";
+>   nvidia,use-ram-code;
+>   emc-tables@<ram-code> {
+>      nvidia,ram-code = < <ram-code> >;
+>      emc-table@<dummy enumerator> {
+>         compatible = "tegra20-emc-table";
+>         clock-frequency = < >;
+>         nvidia,emc-regs = < >;
+>      }
+>   }
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Note: This bug doesn't actually prevent anything from working; since the
-GPIO for sdhci@c8000400 was specified for sdhci@c8000600, it ended up
-getting enabled anyway, and hence a card in sdhci@c8000400 would work fine.
-Enabling GPIO 155/PT3 doesn't cause any harm on Ventana; it's not connected
-to anything.
+You need to have a reg in the emc-table node, and #address-cells  
+#size-cells
+in its parent node.
 
- arch/arm/boot/dts/tegra-ventana.dts |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-index 9b29a62..3f9abd6 100644
---- a/arch/arm/boot/dts/tegra-ventana.dts
-+++ b/arch/arm/boot/dts/tegra-ventana.dts
-@@ -22,11 +22,10 @@
- 	sdhci@c8000400 {
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
--		power-gpios = <&gpio 155 0>; /* gpio PT3 */
-+		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 	};
- 
- 	sdhci@c8000600 {
--		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 		support-8bit;
- 	};
- };
--- 
-1.7.0.4
+Segher
