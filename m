@@ -1,70 +1,61 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC] [PATCH] ARM: tegra: emc: device tree bindings
-Date: Wed, 19 Oct 2011 08:11:33 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173D51BDEB@HQMAIL01.nvidia.com>
-References: <1318873976-25335-1-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF173CA2CBFB@HQMAIL01.nvidia.com>
-	<CAOesGMh387Oghyd_TobnTOja6tU2uU5kt-86_HwQe7nFiL+svw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173CA2CC18@HQMAIL01.nvidia.com>
-	<CAOesGMghu6Bn3RrFKEUBKkUNS_K8Y0ho3Y2uFZh_LXbfT80hFw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173CA2CCA9@HQMAIL01.nvidia.com>
-	<4E9E3801.6080707@gmail.com>
-	<CAOesGMj8TREZ94RFhE3Qy=eaytOuB0YKBWw6--HAERoMB9m7Qg@mail.gmail.com>
-	<4E9EE07A.20301@gmail.com>
- <CAOesGMhfAxrG4pMQ86XFzmBnHwBgrD=45eTvmA0-G2gTjaSL6Q@mail.gmail.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 1/1] ARM: tegra: paz00: Fix board pinmux table.
+Date: Wed, 19 Oct 2011 08:18:52 -0700
+Message-ID: <CAOesGMh9502kSvu_Q9XnsFzYMYnQpMvoFM87_VUEhC+Rknt1dQ@mail.gmail.com>
+References: <1318691913-9597-1-git-send-email-leon@leon.nu>
+	<201110151834.22732.marvin24@gmx.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF173BE1A4A4@HQMAIL01.nvidia.com>
+	<9849440.cSOtOCBmUT@ax5200p>
+	<74CDBE0F657A3D45AFBB94109FB122FF173CA2CB3B@HQMAIL01.nvidia.com>
+	<CALq1K=JhD-igHv=yN+kg-Q+3j7TTPxyigC9de95T0xcV8VXWrA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMhfAxrG4pMQ86XFzmBnHwBgrD=45eTvmA0-G2gTjaSL6Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <CALq1K=JhD-igHv=yN+kg-Q+3j7TTPxyigC9de95T0xcV8VXWrA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Wednesday, October 19, 2011 9:07 AM:
-> On Wed, Oct 19, 2011 at 7:36 AM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-...
-> > Using the frequency as was previously proposed would work assuming that
-> > is unique.
-> 
-> Someone suggested (off-list) to just use dummy addressing like cpu
-> nodes do. Sounds reasonable to me.
-> 
-> So:
-> 
-> emc {
->   compatible = "tegra20-emc";
->   nvidia,use-ram-code;
->   emc-tables@<ram-code> {
->      nvidia,ram-code = < <ram-code> >;
->      emc-table@<dummy enumerator> {
->         compatible = "tegra20-emc-table";
->         clock-frequency = < >;
->         nvidia,emc-regs = < >;
->      }
->   }
-> 
-> This also avoids having to handle 2-dimensional dummy numbering (i.e.
-> <ramcode,table-number>) by breaking it in two levels:
-> 
-> Where nvidia,use-ram-code is missing in the emc node, the immediate
-> child nodes will be scanned for the compatible nodes
-> Where nvidia,use-ram-code is present, first scan will be of all child
-> nodes containing an nvidia,ram-code property, then from there treat it
-> the same as the first case.
-> 
-> In the above, none of the names have meaning, so they can be changed
-> as needed (but these seem like a reasonably generic and descriptive
-> name to me).
+Hi,
 
-OK, I'm good with that general structure.
+On Wed, Oct 19, 2011 at 4:29 AM, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org> wrote:
+> On Tue, Oct 18, 2011 at 18:10, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Marc Dietrich wrote at Tuesday, October 18, 2011 9:50 AM:
+>>> On Monday 17 October 2011 08:29:01 Stephen Warren wrote:
+>>> > Marc Dietrich wrote at Saturday, October 15, 2011 10:34 AM:
+>>> > > Am Samstag 15 Oktober 2011, 17:18:33 schrieb Leon Romanovsky:
+>>> > > > This fix updates the CDEV1 pinmux for the paz00 board to be as in the
+>>> > > > Harmony board. Paz00 board is originally based on Harmony design.
+>>> > >
+>>> > > the fact that this patch makes sound work on paz00 does not necessary mean
+>>> > > that this is the "right thing" to do.
+>>> > None of the other boards do that, and the drivers don't support it. I
+>>> > believe the clock would need to be started as soon as the audio driver
+>>> > module were loaded, and kept running as long as it was loaded, so there's
+>>> > not much chance of optimizing power here at the moment.
+>>>
+>>> Which driver?
+>>
+>> The whole ASoC driver stack. It may depend on the codec, but I assume that
+>> CDEV1 clock output should be running the whole time the ASoC codec driver
+>> is active. Alsa-devel would be the best place to ask about that kind of
+>> thing.
+>
+> Let's summarize, we agree that it is a correct way to handle CDEV1,
+> and it is a correct patch.
+> I believe it is a good time to merge the patch before we start to
+> merge the codec itself.
 
-But, as Rob suggests, you may as well use the frequency instead of the
-<dummy enumerator> for the unit address of the final tables, right?
-The search algorithm might not care, but it'll be easier for humans
-to read the resulting dts file.
+It'll be staged for 3.3 when I start those branches, which should be soon.
 
--- 
-nvpublic
+We're close to the merge window, it's not a regression fix and you
+need other changes on top of it anyway to get anything useful out of
+it -- so it can wait.
+
+Thank you for posting it early though, and I'll make sure it makes it
+into linux-next quickly so you can use that as a base for your codec
+work.
+
+
+-Olof
