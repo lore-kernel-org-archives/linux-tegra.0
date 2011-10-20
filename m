@@ -1,39 +1,40 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Adding board support
-Date: Thu, 20 Oct 2011 09:01:55 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
-References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
- <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
- <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
- <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
- <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Please pull tegra feature branch for 3.2
+Date: Thu, 20 Oct 2011 18:18:19 +0200
+Message-ID: <201110201818.19830.arnd@arndb.de>
+References: <CAOesGMipZUkZG8oHSwK-8xw5Y0u6Ymfjmumq7=ijsztUwdGeDA@mail.gmail.com>
+	<CAOesGMgZFSYq02CMM0m7aijT1kXmiPfiHURYWXGcPdi514A6Aw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111020080808.GA5450-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAOesGMgZFSYq02CMM0m7aijT1kXmiPfiHURYWXGcPdi514A6Aw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
-...
-> I've been working some on getting our boards to boot from a device tree.
-> Unfortunately, the U-Boot issue seems to be more of a problem than I
-> anticipated. Since the mainline U-Boot doesn't run properly,
+On Friday 14 October 2011, Olof Johansson wrote:
+> Dropped the AUTO_ZRELADDR patch due to discussions related to
+> dependency issues. New pull request:
+> 
+> 
+> The following changes since commit ecb7b0e33e048e63d1169e6fee277430c70ddf0b:
+> 
+>   ARM: tegra: update defconfig (2011-10-13 15:07:40 -0700)
+> 
+> are available in the git repository at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.2/features
+> 
 
-----------==========----------==========----------==========----------==========
-What issues are you having? I assume you're referring to something more
-than just getting stuff flashed with nvflash.
+Pulled, thanks!
 
-> Are there any news on these rebuilt versions of nvflash that you mentioned?
-
-Sorry, not yet.
-
--- 
-nvpublic
+	Arnd
