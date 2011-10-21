@@ -1,312 +1,60 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/tegra: Don't create duplicate gpio and pinmux devices
-Date: Fri, 21 Oct 2011 11:35:50 -0600
-Message-ID: <1319218550-26002-1-git-send-email-swarren@nvidia.com>
+Subject: RE: Adding board support
+Date: Fri, 21 Oct 2011 13:13:17 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173D51C577@HQMAIL01.nvidia.com>
+References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
+ <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
+ <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
+ <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
+ <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
+ <20111020190827.GA31480@avionic-0098.adnet.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111020190827.GA31480-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-*_pinmux_init() register the GPIO and pinmux devices so that they're ready
-before any other device needs them.
+Thierry Reding wrote at Thursday, October 20, 2011 1:08 PM:
+> * Stephen Warren wrote:
+> > Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
+> > ...
+> > > I've been working some on getting our boards to boot from a device tree.
+> > > Unfortunately, the U-Boot issue seems to be more of a problem than I
+> > > anticipated. Since the mainline U-Boot doesn't run properly,
+> >
+> > What issues are you having? I assume you're referring to something more
+> > than just getting stuff flashed with nvflash.
+> 
+> Flashing U-Boot is not the problem, but when booting the device, there's no
+> output whatsoever on the debug port. That's what I meant in one of the
+> previous mails. nvflash says it's loading fastboot.bin at address 0x00108000,
+> and quickboot seems to use the same load address. However, U-Boot is built
+> with CONFIG_SYS_TEXT_BASE set to 0x00E08000. If it is loaded to the same
+> address as fastboot/quickboot it obviously cannot run. So I went ahead and
+> built U-Boot (both mainline and the one from the Chromium repo) with a load
+> address of 0x00108000 - to no avail.
 
-*_pinmux_init() are also called by board-dt.c in order to set up the GPIO
-and pinmux configurations. In this case, if we register the devices, they
-end up being probed once due to this registration, and a second time due
-to a device-tree node (or vice-versa). The second probe fails since the
-memory regions are already requested. Besides, we don't actually want the
-duplicated devices.
+OK, I built U-Boot with load address 0x00108000 and also see nothing at boot.
+So, I've reproduced at least one of your problems.
 
-To avoid this duplicate registration, pass a parameter into *_pinmux_init()
-indicating whether they should register the device or not. Set this true
-for non-DT boards, and false otherwise.
+(This is with an Android-style nvflash that configures the BCT to tell the CPU
+to load/boot the bootloader at address 0x00108000, so this should work.)
 
-Finally, modify board-dt.c to call the *_pinmux_init() after all devices have
-been instantiated from device-tree. This allows the GPIO and pinmux devices
-to be instantiated and initialized before calling functions to configure the
-hardware.
+So, I've added this observation into the bug I filed. I'll let you know once
+we've had a chance to investigate and/or solve this.
 
-This has one disadvantage: The pinmux and GPIO initialization now happens
-after /all/ devices are instantiated, rather than after just gpio and
-pinmux, but before anything else. So the correct HW configuration is not
-in place when e.g. the SD/MMC device is probed. Long-term, this should be
-solved by doing both:
+Sorry this isn't working yet; it's pretty early days for U-Boot on Tegra
+outside of ChromeOS, which uses the modified nvflash and hence doesn't hit
+these issues.
 
-a) Initializing the HW state from DT nodes during GPIO and pinmux device
-   probe.
-b) Using the deferred driver probe mechanism, so that drivers can defer
-   their probe until after the gpio and pinmux drivers have probed.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Grant, Olof, Colin,
-
-What are your thoughts here? Both with and without the patch there are
-disadvantages. I'm not sure which one is better...
-
- arch/arm/mach-tegra/board-dt.c               |   23 ++++++++++++-----------
- arch/arm/mach-tegra/board-harmony-pinmux.c   |    6 ++++--
- arch/arm/mach-tegra/board-harmony.c          |    2 +-
- arch/arm/mach-tegra/board-harmony.h          |    2 +-
- arch/arm/mach-tegra/board-paz00-pinmux.c     |    6 ++++--
- arch/arm/mach-tegra/board-paz00.c            |    2 +-
- arch/arm/mach-tegra/board-paz00.h            |    2 +-
- arch/arm/mach-tegra/board-seaboard-pinmux.c  |   14 ++++++++------
- arch/arm/mach-tegra/board-seaboard.c         |    2 +-
- arch/arm/mach-tegra/board-seaboard.h         |    2 +-
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    6 ++++--
- arch/arm/mach-tegra/board-trimslice.c        |    2 +-
- arch/arm/mach-tegra/board-trimslice.h        |    2 +-
- 13 files changed, 40 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index d368f8d..0d22212 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -45,9 +45,9 @@
- #include "clock.h"
- #include "devices.h"
- 
--void harmony_pinmux_init(void);
--void seaboard_pinmux_init(void);
--void ventana_pinmux_init(void);
-+void harmony_pinmux_init(int is_dt);
-+void seaboard_pinmux_init(int is_dt);
-+void ventana_pinmux_init(int is_dt);
- 
- struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
-@@ -82,7 +82,7 @@ static struct of_device_id tegra_dt_gic_match[] __initdata = {
- 
- static struct {
- 	char *machine;
--	void (*init)(void);
-+	void (*init)(int is_dt);
- } pinmux_configs[] = {
- 	{ "nvidia,harmony", harmony_pinmux_init },
- 	{ "nvidia,seaboard", seaboard_pinmux_init },
-@@ -101,21 +101,22 @@ static void __init tegra_dt_init(void)
- 
- 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
- 
-+	/*
-+	 * Finished with the static registrations now; fill in the missing
-+	 * devices
-+	 */
-+	of_platform_populate(NULL, tegra_dt_match_table,
-+				tegra20_auxdata_lookup, NULL);
-+
- 	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
- 		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
--			pinmux_configs[i].init();
-+			pinmux_configs[i].init(1);
- 			break;
- 		}
- 	}
- 
- 	WARN(i == ARRAY_SIZE(pinmux_configs),
- 		"Unknown platform! Pinmuxing not initialized\n");
--
--	/*
--	 * Finished with the static registrations now; fill in the missing
--	 * devices
--	 */
--	of_platform_populate(NULL, tegra_dt_match_table, tegra20_auxdata_lookup, NULL);
- }
- 
- static const char * tegra_dt_board_compat[] = {
-diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
-index e99b456..c1f58dd 100644
---- a/arch/arm/mach-tegra/board-harmony-pinmux.c
-+++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
-@@ -159,9 +159,11 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_EXT_MIC_EN,	.enable = true	},
- };
- 
--void harmony_pinmux_init(void)
-+void harmony_pinmux_init(int is_dt)
- {
--	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	if (!is_dt)
-+		platform_add_devices(pinmux_devices,
-+					ARRAY_SIZE(pinmux_devices));
- 
- 	tegra_pinmux_config_table(harmony_pinmux, ARRAY_SIZE(harmony_pinmux));
- 
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index f0bdc5e..e595901 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -170,7 +170,7 @@ static void __init tegra_harmony_init(void)
- {
- 	tegra_clk_init_from_table(harmony_clk_init_table);
- 
--	harmony_pinmux_init();
-+	harmony_pinmux_init(0);
- 
- 	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
- 	tegra_sdhci_device2.dev.platform_data = &sdhci_pdata2;
-diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
-index 139d96c..c194ec5 100644
---- a/arch/arm/mach-tegra/board-harmony.h
-+++ b/arch/arm/mach-tegra/board-harmony.h
-@@ -35,7 +35,7 @@
- #define TEGRA_GPIO_EXT_MIC_EN		TEGRA_GPIO_PX1
- #define TEGRA_GPIO_EN_VDD_1V05_GPIO	HARMONY_GPIO_TPS6586X(2)
- 
--void harmony_pinmux_init(void);
-+void harmony_pinmux_init(int is_dt);
- int harmony_regulator_init(void);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/board-paz00-pinmux.c b/arch/arm/mach-tegra/board-paz00-pinmux.c
-index fb20894..c8301fd 100644
---- a/arch/arm/mach-tegra/board-paz00-pinmux.c
-+++ b/arch/arm/mach-tegra/board-paz00-pinmux.c
-@@ -156,9 +156,11 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TEGRA_WIFI_LED,	.enable = true },
- };
- 
--void paz00_pinmux_init(void)
-+void paz00_pinmux_init(int is_dt)
- {
--	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	if (!is_dt)
-+		platform_add_devices(pinmux_devices,
-+					ARRAY_SIZE(pinmux_devices));
- 
- 	tegra_pinmux_config_table(paz00_pinmux, ARRAY_SIZE(paz00_pinmux));
- 
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 602f8dd..1709e5e 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -173,7 +173,7 @@ static void __init tegra_paz00_init(void)
- {
- 	tegra_clk_init_from_table(paz00_clk_init_table);
- 
--	paz00_pinmux_init();
-+	paz00_pinmux_init(0);
- 
- 	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
- 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
-diff --git a/arch/arm/mach-tegra/board-paz00.h b/arch/arm/mach-tegra/board-paz00.h
-index 2dc1899..8695518 100644
---- a/arch/arm/mach-tegra/board-paz00.h
-+++ b/arch/arm/mach-tegra/board-paz00.h
-@@ -32,6 +32,6 @@
- #define TEGRA_WIFI_RST		TEGRA_GPIO_PD1
- #define TEGRA_WIFI_LED		TEGRA_GPIO_PD0
- 
--void paz00_pinmux_init(void);
-+void paz00_pinmux_init(int is_dt);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index fbce31d..a63bc0e 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -216,9 +216,11 @@ static void __init update_pinmux(struct tegra_pingroup_config *newtbl, int size)
- 	}
- }
- 
--void __init seaboard_common_pinmux_init(void)
-+void __init seaboard_common_pinmux_init(int is_dt)
- {
--	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	if (!is_dt)
-+		platform_add_devices(pinmux_devices,
-+					ARRAY_SIZE(pinmux_devices));
- 
- 	tegra_pinmux_config_table(seaboard_pinmux, ARRAY_SIZE(seaboard_pinmux));
- 
-@@ -228,14 +230,14 @@ void __init seaboard_common_pinmux_init(void)
- 	tegra_gpio_config(common_gpio_table, ARRAY_SIZE(common_gpio_table));
- }
- 
--void __init seaboard_pinmux_init(void)
-+void __init seaboard_pinmux_init(int is_dt)
- {
--	seaboard_common_pinmux_init();
-+	seaboard_common_pinmux_init(is_dt);
- }
- 
--void __init ventana_pinmux_init(void)
-+void __init ventana_pinmux_init(int is_dt)
- {
- 	update_pinmux(ventana_pinmux, ARRAY_SIZE(ventana_pinmux));
--	seaboard_common_pinmux_init();
-+	seaboard_common_pinmux_init(is_dt);
- }
- 
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index bf13ea3..c41e01a 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -226,7 +226,7 @@ static void __init seaboard_i2c_init(void)
- 
- static void __init seaboard_common_init(void)
- {
--	seaboard_pinmux_init();
-+	seaboard_pinmux_init(0);
- 
- 	tegra_clk_init_from_table(seaboard_clk_init_table);
- 
-diff --git a/arch/arm/mach-tegra/board-seaboard.h b/arch/arm/mach-tegra/board-seaboard.h
-index 4c45d4c..d4460c3 100644
---- a/arch/arm/mach-tegra/board-seaboard.h
-+++ b/arch/arm/mach-tegra/board-seaboard.h
-@@ -42,6 +42,6 @@
- #define TEGRA_GPIO_HP_DET		TEGRA_GPIO_PX1
- #define TEGRA_GPIO_KAEN_HP_MUTE		TEGRA_GPIO_PA5
- 
--void seaboard_pinmux_init(void);
-+void seaboard_pinmux_init(int is_dt);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-index 4969dd2..3aa05f9 100644
---- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
-+++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-@@ -155,9 +155,11 @@ static struct tegra_gpio_table gpio_table[] = {
- 	{ .gpio = TRIMSLICE_GPIO_USB2_RST,  .enable = true }, /* USB2 PHY rst */
- };
- 
--void __init trimslice_pinmux_init(void)
-+void __init trimslice_pinmux_init(int is_dt)
- {
--	platform_add_devices(pinmux_devices, ARRAY_SIZE(pinmux_devices));
-+	if (!is_dt)
-+		platform_add_devices(pinmux_devices,
-+					ARRAY_SIZE(pinmux_devices));
- 	tegra_pinmux_config_table(trimslice_pinmux, ARRAY_SIZE(trimslice_pinmux));
- 	tegra_gpio_config(gpio_table, ARRAY_SIZE(gpio_table));
- }
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index e008c0e..2b2f262 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -160,7 +160,7 @@ static void __init tegra_trimslice_init(void)
- {
- 	tegra_clk_init_from_table(trimslice_clk_init_table);
- 
--	trimslice_pinmux_init();
-+	trimslice_pinmux_init(0);
- 
- 	tegra_sdhci_device1.dev.platform_data = &sdhci_pdata1;
- 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
-diff --git a/arch/arm/mach-tegra/board-trimslice.h b/arch/arm/mach-tegra/board-trimslice.h
-index 50f128d..4d19a11 100644
---- a/arch/arm/mach-tegra/board-trimslice.h
-+++ b/arch/arm/mach-tegra/board-trimslice.h
-@@ -25,6 +25,6 @@
- #define TRIMSLICE_GPIO_USB1_MODE	TEGRA_GPIO_PV2 /* USB1 mode */
- #define TRIMSLICE_GPIO_USB2_RST		TEGRA_GPIO_PV0 /* USB2 PHY reset */
- 
--void trimslice_pinmux_init(void);
-+void trimslice_pinmux_init(int is_dt);
- 
- #endif
 -- 
-1.7.0.4
+nvpublic
