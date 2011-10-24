@@ -1,69 +1,106 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: paz00: add support for the embedded
- controller
-Date: Sun, 23 Oct 2011 08:54:58 +0200
-Message-ID: <20111023065222.GA8537@dhcp-172-17-9-83.mtv.corp.google.com>
-References: <cover.1319313019.git.marvin24@gmx.de>
- <b5f0dc6e7996a21d4493f8e7765e322fe6d8b7ef.1319313020.git.marvin24@gmx.de>
- <CAOesGMhVFk6n0n98akeVdM-cLtK9ip0-M01u9jy8WEdJNU+xsg@mail.gmail.com>
- <1625092.81oZlljjhQ@ax5200p>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm/tegra: Add device-tree support for TrimSlice board
+Date: Mon, 24 Oct 2011 12:01:07 +0200
+Message-ID: <1319450467-11819-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1625092.81oZlljjhQ@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[+gregkh]
+* Add device-tree file for TrimSlice
+* Add that to the list of .dts files to build
+* Update board-dt.c to recognize TrimSlice board name
 
-On Sat, Oct 22, 2011 at 10:49:42PM +0200, Marc Dietrich wrote:
-> On Saturday 22 October 2011 13:27:12 Olof Johansson wrote:
-> > On Sat, Oct 22, 2011 at 1:16 PM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
-> > > This adds support for the embedded controller known as NVEC. The driver
-> > > lives currently in the staging tree and we aim to promote it one level
-> > > higher in the near future.
-> > > 
-> > > The NVEC driver uses the I2C resources of the master controller for now
-> > > until slave support is added to the i2c-tegra driver.
-> > > 
-> > > diff --git a/arch/arm/mach-tegra/board-paz00.c
-> > > b/arch/arm/mach-tegra/board-paz00.c index 602f8dd..3f46b37 100644
-> > > --- a/arch/arm/mach-tegra/board-paz00.c
-> > > +++ b/arch/arm/mach-tegra/board-paz00.c
-> > > @@ -44,6 +44,8 @@
-> > >  #include "devices.h"
-> > >  #include "gpio-names.h"
-> > > 
-> > > +#include "../../../drivers/staging/nvec/nvec.h"
-> > 
-> > Ick, no! Move the header file containing platform data to
-> > include/linux/platform_data instead (or break it off in a separate
-> > header file).
-> 
-> I know this looks ugly, but it is AFAIK the only (and the common) way for a 
-> staging driver to be used. Of course the header will be moved to e.g. to 
-> include/linux/mfd once the driver is ready for mainline, but till that we just
-> cannot write somewhere outside of the staging dir.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-trimslice.dts |   38 +++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile.boot     |    1 +
+ arch/arm/mach-tegra/board-dt.c        |    3 ++
+ 3 files changed, 42 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-trimslice.dts
 
-Actually, you should be OK with adding it to include/linux/platform_data.
-
-But if you're just about to add device tree, it might make sense to do
-a device tree binding instead and only do device-tree configuration of the
-device instead. Care to cook up a patch for that?
-
-> > > +       tegra_i2c_device3.name = "nvec";
-> > > +       tegra_i2c_device3.dev.platform_data = &nvec_pdata;
-> > > +       platform_device_register(&tegra_i2c_device3);
-> > 
-> > Please define a separate platform_device instead of hijacking the
-> > current one, please.
-> 
-> ok, I just wanted to keep the patch small ;-)
-
-Keeping the code clean is more important than keeping the change small.
-
-
--Olof
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
+new file mode 100644
+index 0000000..d3d0d20
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra-trimslice.dts
+@@ -0,0 +1,38 @@
++/dts-v1/;
++
++/memreserve/ 0x1c000000 0x04000000;
++/include/ "tegra20.dtsi"
++
++/ {
++	model = "Compulab TrimSlice board";
++	compatible = "compulab,trimslice", "nvidia,tegra20";
++
++	chosen {
++		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8 root=/dev/mmcblk0p1 rw rootwait";
++	};
++
++	memory@0 {
++		reg = < 0x00000000 0x40000000 >;
++	};
++
++	i2c@7000c000 {
++		clock-frequency = <400000>;
++	};
++
++	i2c@7000c400 {
++		clock-frequency = <400000>;
++	};
++
++	i2c@7000c500 {
++		clock-frequency = <400000>;
++	};
++
++	serial@70006000 {
++		clock-frequency = < 216000000 >;
++	};
++
++	sdhci@c8000600 {
++		cd-gpios = <&gpio 121 0>;
++		wp-gpios = <&gpio 122 0>;
++	};
++};
+diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+index bd12c9f..9f177a4 100644
+--- a/arch/arm/mach-tegra/Makefile.boot
++++ b/arch/arm/mach-tegra/Makefile.boot
+@@ -4,4 +4,5 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+ 
+ dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
+ dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
++dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
+ dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index 0d22212..9ac4ed7 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -47,6 +47,7 @@
+ 
+ void harmony_pinmux_init(int is_dt);
+ void seaboard_pinmux_init(int is_dt);
++void trimslice_pinmux_init(int is_dt);
+ void ventana_pinmux_init(int is_dt);
+ 
+ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+@@ -84,6 +85,7 @@ static struct {
+ 	char *machine;
+ 	void (*init)(int is_dt);
+ } pinmux_configs[] = {
++	{ "compulab,trimslice", trimslice_pinmux_init },
+ 	{ "nvidia,harmony", harmony_pinmux_init },
+ 	{ "nvidia,seaboard", seaboard_pinmux_init },
+ 	{ "nvidia,ventana", ventana_pinmux_init },
+@@ -120,6 +122,7 @@ static void __init tegra_dt_init(void)
+ }
+ 
+ static const char * tegra_dt_board_compat[] = {
++	"compulab,trimslice",
+ 	"nvidia,harmony",
+ 	"nvidia,seaboard",
+ 	"nvidia,ventana",
+-- 
+1.7.4.1
