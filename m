@@ -1,125 +1,50 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: Add device-tree support for TrimSlice board
-Date: Mon, 24 Oct 2011 23:27:38 +0200
-Message-ID: <5320972.AGvAdFqRz5@ax5200p>
-References: <1319450467-11819-1-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/tegra: Don't create duplicate gpio and pinmux
+ devices
+Date: Mon, 24 Oct 2011 20:45:01 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173E1B416D@HQMAIL01.nvidia.com>
+References: <1319218550-26002-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1319450467-11819-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1319218550-26002-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+Stephen Warren wrote at Friday, October 21, 2011 11:36 AM:
+...
+> To avoid this duplicate registration, pass a parameter into *_pinmux_init()
+> indicating whether they should register the device or not. Set this true
+> for non-DT boards, and false otherwise.
 
-On Monday 24 October 2011 12:01:07 Stephen Warren wrote:
-> * Add device-tree file for TrimSlice
-> * Add that to the list of .dts files to build
-> * Update board-dt.c to recognize TrimSlice board name
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra-trimslice.dts |   38
-> +++++++++++++++++++++++++++++++++ arch/arm/mach-tegra/Makefile.boot     |  
->  1 +
->  arch/arm/mach-tegra/board-dt.c        |    3 ++
->  3 files changed, 42 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra-trimslice.dts
+Olof,
 
-doesn't this also require to add something like 
+You'd asked if the same effect could be achieved simply setting up AUXDATA
+entries so the DT and non-DT devices end up getting named the same, and
+thus avoiding the duplicate registrations.
 
-obj-${CONFIG_MACH_TEGRA_DT} += board-trimslice-pinmux.o
+The answer is: this sort-of works, but apparently only by accident:
 
-to the Makefile?
+The static registration/probe through board-*-pinmux.c works as expected.
 
-And how is the binary device tree generated? I cannot find the proper CONFIG so 
-that Makefile.boot is executed.
+Then, when instantiating devs from DT, the AUXDATA /only/ sets the dev
+name of the devs (and pdata if AUXDATA specificed it), but doesn't do
+anything more; an attempt to register the dev from DT is still made, even
+though a dev was already registered with that name. The first check that
+catches this is a failure to create a sysfs entry for the dev, since the
+name is the same. This is a WARN, or something with a very noisy backtrace.
 
-Marc
+That doesn't seem ideal; I think on balance I'd rather go with the original
+patch. Hacking the DT code to check for already-existing names might be
+an option, but since it's a temporary measure, I think hiding this in Tegra
+code is better? Finally, for the upcoming T30 support, we really do want to
+probe the pinmux from DT rather than ignoring the instantiation from DT, so
+that the dev's OF node is available, and the driver can use a of_device_id
+table to know which SoC version's data tables to use.
 
-
-> diff --git a/arch/arm/boot/dts/tegra-trimslice.dts
-> b/arch/arm/boot/dts/tegra-trimslice.dts new file mode 100644
-> index 0000000..d3d0d20
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/tegra-trimslice.dts
-> @@ -0,0 +1,38 @@
-> +/dts-v1/;
-> +
-> +/memreserve/ 0x1c000000 0x04000000;
-> +/include/ "tegra20.dtsi"
-> +
-> +/ {
-> +	model = "Compulab TrimSlice board";
-> +	compatible = "compulab,trimslice", "nvidia,tegra20";
-> +
-> +	chosen {
-> +		bootargs = "vmalloc=192M video=tegrafb console=ttyS0,115200n8
-> root=/dev/mmcblk0p1 rw rootwait"; +	};
-> +
-> +	memory@0 {
-> +		reg = < 0x00000000 0x40000000 >;
-> +	};
-> +
-> +	i2c@7000c000 {
-> +		clock-frequency = <400000>;
-> +	};
-> +
-> +	i2c@7000c400 {
-> +		clock-frequency = <400000>;
-> +	};
-> +
-> +	i2c@7000c500 {
-> +		clock-frequency = <400000>;
-> +	};
-> +
-> +	serial@70006000 {
-> +		clock-frequency = < 216000000 >;
-> +	};
-> +
-> +	sdhci@c8000600 {
-> +		cd-gpios = <&gpio 121 0>;
-> +		wp-gpios = <&gpio 122 0>;
-> +	};
-> +};
-> diff --git a/arch/arm/mach-tegra/Makefile.boot
-> b/arch/arm/mach-tegra/Makefile.boot index bd12c9f..9f177a4 100644
-> --- a/arch/arm/mach-tegra/Makefile.boot
-> +++ b/arch/arm/mach-tegra/Makefile.boot
-> @@ -4,4 +4,5 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
-> 
->  dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
->  dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
-> +dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
->  dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-> index 0d22212..9ac4ed7 100644
-> --- a/arch/arm/mach-tegra/board-dt.c
-> +++ b/arch/arm/mach-tegra/board-dt.c
-> @@ -47,6 +47,7 @@
-> 
->  void harmony_pinmux_init(int is_dt);
->  void seaboard_pinmux_init(int is_dt);
-> +void trimslice_pinmux_init(int is_dt);
->  void ventana_pinmux_init(int is_dt);
-> 
->  struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
-> @@ -84,6 +85,7 @@ static struct {
->  	char *machine;
->  	void (*init)(int is_dt);
->  } pinmux_configs[] = {
-> +	{ "compulab,trimslice", trimslice_pinmux_init },
->  	{ "nvidia,harmony", harmony_pinmux_init },
->  	{ "nvidia,seaboard", seaboard_pinmux_init },
->  	{ "nvidia,ventana", ventana_pinmux_init },
-> @@ -120,6 +122,7 @@ static void __init tegra_dt_init(void)
->  }
-> 
->  static const char * tegra_dt_board_compat[] = {
-> +	"compulab,trimslice",
->  	"nvidia,harmony",
->  	"nvidia,seaboard",
->  	"nvidia,ventana",
+-- 
+nvpublic
