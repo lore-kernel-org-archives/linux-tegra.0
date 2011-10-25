@@ -1,100 +1,52 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Adding board support
-Date: Tue, 25 Oct 2011 07:57:37 +0200
-Message-ID: <20111025055737.GB30358@avionic-0098.mockup.avionic-design.de>
-References: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
- <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
- <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
- <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
- <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
- <20111020190827.GA31480@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173D51C577@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: paz00: add support for the embedded controller
+Date: Tue, 25 Oct 2011 09:16:54 +0200
+Message-ID: <CAOesGMgs97awtrKXd=Ek9R62pWMVDtKcxXAx9Xb5_P6wa6wdpg@mail.gmail.com>
+References: <cover.1319313019.git.marvin24@gmx.de>
+	<b5f0dc6e7996a21d4493f8e7765e322fe6d8b7ef.1319313020.git.marvin24@gmx.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF173E1B4187@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173D51C577-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B4187-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 25, 2011 at 7:06 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Marc Dietrich wrote at Saturday, October 22, 2011 2:17 PM:
+>> This adds support for the embedded controller known as NVEC. The driver
+>> lives currently in the staging tree and we aim to promote it one level
+>> higher in the near future.
+>>
+>> The NVEC driver uses the I2C resources of the master controller for now
+>> until slave support is added to the i2c-tegra driver.
+>
+> I'm in two minds about this:
+>
+> The fact that the nvec driver accesses the I2C HW directly is a hack; that
+> should all happen in the I2C driver, and the nvec code should /just/ handle
+> the protocol to talk to the microcontroller.
+>
+> To that end, we're starting to bring on some more engineers internally who
+> will aim to upstream more of our downstream kernel. Part of this includes
+> upstreaming the I2C slave support in a more palatable fashion. I know those
+> engineers are keen in general to get started, but I can't yet estimate a
+> timescale for when this particular change will be ready.
+>
+> That said, I'm not sure that I want to block progress on getting nvec
+> and the AC100 support going. Olof, do you have any input here? Thanks.
 
---WhfpMioaduB5tiZL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, let's not hold up ac100 based on not-yet-ready code, especially
+since the driver is in staging. If the i2c slave driver could be done
+in time to be there before nvec graduates from staging, that would
+probably be ideal.
 
-* Stephen Warren wrote:
-> Thierry Reding wrote at Thursday, October 20, 2011 1:08 PM:
-> > * Stephen Warren wrote:
-> > > Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
-> > > ...
-> > > > I've been working some on getting our boards to boot from a device =
-tree.
-> > > > Unfortunately, the U-Boot issue seems to be more of a problem than I
-> > > > anticipated. Since the mainline U-Boot doesn't run properly,
-> > >
-> > > What issues are you having? I assume you're referring to something mo=
-re
-> > > than just getting stuff flashed with nvflash.
-> >=20
-> > Flashing U-Boot is not the problem, but when booting the device, there'=
-s no
-> > output whatsoever on the debug port. That's what I meant in one of the
-> > previous mails. nvflash says it's loading fastboot.bin at address 0x001=
-08000,
-> > and quickboot seems to use the same load address. However, U-Boot is bu=
-ilt
-> > with CONFIG_SYS_TEXT_BASE set to 0x00E08000. If it is loaded to the same
-> > address as fastboot/quickboot it obviously cannot run. So I went ahead =
-and
-> > built U-Boot (both mainline and the one from the Chromium repo) with a =
-load
-> > address of 0x00108000 - to no avail.
->=20
-> OK, I built U-Boot with load address 0x00108000 and also see nothing at b=
-oot.
-> So, I've reproduced at least one of your problems.
->=20
-> (This is with an Android-style nvflash that configures the BCT to tell th=
-e CPU
-> to load/boot the bootloader at address 0x00108000, so this should work.)
->=20
-> So, I've added this observation into the bug I filed. I'll let you know o=
-nce
-> we've had a chance to investigate and/or solve this.
->=20
-> Sorry this isn't working yet; it's pretty early days for U-Boot on Tegra
-> outside of ChromeOS, which uses the modified nvflash and hence doesn't hit
-> these issues.
+That being said, let's do it reasonably clean -- Marc, if you guys are
+up for trying to define device-tree bindings for this that would be
+awesome, and move to that for driver probing. That avoids adding an
+include/linux/platform_data header file.
 
-I was able to get my hands on the nvflash source code, so I may be able to
-get this to work myself. Any hints as to what exactly was changed? Was it
-only the load/entry address. You mention that nvflash configures the BCT; in
-what way. A quick glimpse at the source code doesn't show any modifications
-being done to the loaded BCT file.
 
-On the other hand, since obviously the paperwork is okay to get the nvflash
-sources, perhaps I could ask my NVIDIA contacts to provide the ChromeOS
-variant of nvflash. Does it have a special name internally that I should
-refer to?
-
-Thierry
-
---WhfpMioaduB5tiZL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk6mT9EACgkQZ+BJyKLjJp80oACfWjXzGYEL6KgSdVACCZWJ5oxq
-VA8An3yVHUolY2veWWeFrITcGuarlBws
-=i81N
------END PGP SIGNATURE-----
-
---WhfpMioaduB5tiZL--
+-Olof
