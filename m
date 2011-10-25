@@ -1,131 +1,108 @@
 From: <pdeschrijver@nvidia.com>
-Subject: [PATCH 4/6] arm/tegra: implement support for tegra30
-Date: Tue, 25 Oct 2011 19:53:58 +0300
-Message-ID: <1319561644-6160-5-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 6/6] arm/tegra: add support for tegra30 based board cardhu
+Date: Tue, 25 Oct 2011 19:54:00 +0300
+Message-ID: <1319561644-6160-7-git-send-email-pdeschrijver@nvidia.com>
 References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: pdeschrijver@nvidia.com
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/arm/mach-tegra/Kconfig    |   18 +++++++++++++-----
- arch/arm/mach-tegra/board-dt.c |    1 +
- arch/arm/mach-tegra/board.h    |    1 +
- arch/arm/mach-tegra/common.c   |   12 +++++++++---
- 4 files changed, 24 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/tegra-cardhu.dts |   37 ++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Kconfig        |    6 +++++
+ arch/arm/mach-tegra/Makefile.boot  |    1 +
+ arch/arm/mach-tegra/board-dt.c     |    1 +
+ 4 files changed, 45 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
 
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+new file mode 100644
+index 0000000..0f3f8a8
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -0,0 +1,37 @@
++/dts-v1/;
++
++/include/ "tegra30.dtsi"
++
++/ {
++	model = "NVIDIA Tegra30 Cardhu evaluation board";
++	compatible = "nvidia,cardhu", "nvidia,tegra30";
++
++	memory {
++		device_type = "memory";
++		reg = < 0x80000000 0x40000000 >;
++	};
++
++	serial@70006000 {
++		clock-frequency = < 408000000 >;
++	};
++
++	i2c@7000c000 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c400 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c500 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c700 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000d000 {
++		clock-frequency = <100000>;
++	};
++};
 diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 91aff7c..21c99f9 100644
+index 21c99f9..3ff191a 100644
 --- a/arch/arm/mach-tegra/Kconfig
 +++ b/arch/arm/mach-tegra/Kconfig
-@@ -2,11 +2,8 @@ if ARCH_TEGRA
+@@ -83,6 +83,12 @@ config MACH_VENTANA
+        help
+          Support for the nVidia Ventana development platform
  
- comment "NVIDIA Tegra options"
- 
--choice
--	prompt "Select Tegra processor family for target system"
--
- config ARCH_TEGRA_2x_SOC
--	bool "Tegra 2 family"
-+	bool "Enable support for Tegra20 family"
- 	select CPU_V7
- 	select ARM_GIC
- 	select ARCH_REQUIRE_GPIOLIB
-@@ -17,7 +14,18 @@ config ARCH_TEGRA_2x_SOC
- 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
- 
--endchoice
-+config ARCH_TEGRA_3x_SOC
-+	bool "Enable support for Tegra30 family"
-+	select CPU_V7
-+	select ARM_GIC
-+	select ARCH_REQUIRE_GPIOLIB
-+	select USB_ARCH_HAS_EHCI if USB_SUPPORT
-+	select USB_ULPI if USB_SUPPORT
-+	select USB_ULPI_VIEWPORT if USB_SUPPORT
-+	select USE_OF
-+	help
-+	  Support for NVIDIA Tegra T30 processorfamily, based on the
-+	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
- 
- config TEGRA_PCI
- 	bool "PCI Express support"
++config MACH_CARDHU
++       bool "Cardhu board"
++       select MACH_TEGRA_DT
++       help
++         Support for the nVidia Cardhu development platform
++
+ choice
+         prompt "Low-level debug console UART"
+         default TEGRA_DEBUG_UART_NONE
+diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+index bd12c9f..b518848 100644
+--- a/arch/arm/mach-tegra/Makefile.boot
++++ b/arch/arm/mach-tegra/Makefile.boot
+@@ -5,3 +5,4 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+ dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
+ dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
+ dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
++dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
 diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index 9130037..01dc31a 100644
+index 01dc31a..7f32616 100644
 --- a/arch/arm/mach-tegra/board-dt.c
 +++ b/arch/arm/mach-tegra/board-dt.c
-@@ -124,6 +124,7 @@ static struct {
- 	void (*init)(void);
- } early_init[] __initdata = {
- 	{ "nvidia,tegra20", tegra20_init_early },
-+	{ "nvidia,tegra30", tegra30_init_early },
+@@ -143,6 +143,7 @@ static const char * tegra_dt_board_compat[] = {
+ 	"nvidia,harmony",
+ 	"nvidia,seaboard",
+ 	"nvidia,ventana",
++	"nvidia,cardhu",
+ 	NULL
  };
  
- static void __init tegra_init_early(void)
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index b86cdab..708b330a 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -24,6 +24,7 @@
- #include <linux/types.h>
- 
- void __init tegra20_init_early(void);
-+void __init tegra30_init_early(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
- void __init tegra_init_clock(void);
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 8553fde..d0ed0b1 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -61,7 +61,7 @@ static __initdata struct tegra_clk_init_table tegra20_clk_init_table[] = {
- 	{ NULL,		NULL,		0,		0},
- };
- 
--static void __init tegra_init_cache(void)
-+static void __init tegra_init_cache(u32 prefetch_ctrl)
- {
- #ifdef CONFIG_CACHE_L2X0
- 	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
-@@ -69,7 +69,7 @@ static void __init tegra_init_cache(void)
- 
- 	writel_relaxed(0x331, p + L2X0_TAG_LATENCY_CTRL);
- 	writel_relaxed(0x441, p + L2X0_DATA_LATENCY_CTRL);
--	writel(2, p + L2X0_PREFETCH_CTRL);
-+	writel(prefetch_ctrl, p + L2X0_PREFETCH_CTRL);
- 
- 	aux_ctrl = readl(p + L2X0_CACHE_TYPE);
- 	aux_ctrl = (aux_ctrl & 0x700) << (17-8);
-@@ -85,5 +85,11 @@ void __init tegra20_init_early(void)
- 	tegra_init_fuse();
- 	tegra_init_clock();
- 	tegra_clk_init_from_table(tegra20_clk_init_table);
--	tegra_init_cache();
-+	tegra_init_cache(2);
-+}
-+
-+void __init tegra30_init_early(void)
-+{
-+	/* Enable PL310 double line fill feature. */
-+	tegra_init_cache(1<<30);
- }
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
