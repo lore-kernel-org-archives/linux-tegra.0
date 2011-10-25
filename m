@@ -1,65 +1,80 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: clk_get should not be fatal
-Date: Tue, 25 Oct 2011 20:00:38 +0300
-Message-ID: <20111025170038.GT1001@tbergstrom-lnx.Nvidia.com>
-References: <1319559329-324-1-git-send-email-pdeschrijver@nvidia.com>
- <1319559968.14932.5.camel@Joe-Laptop>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 3/3] arm/dt: tegra: add dts file for paz00
+Date: Tue, 25 Oct 2011 21:05:08 +0200
+Message-ID: <2821699.TeokzqUUds@ax5200p>
+References: <cover.1319313019.git.marvin24@gmx.de> <90ee88bcde84141e0280ffa4ccbd288462489eba.1319313020.git.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF173E1B4189@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1319559968.14932.5.camel@Joe-Laptop>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B4189-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 25, 2011 at 06:26:08PM +0200, Joe Perches wrote:
-> On Tue, 2011-10-25 at 19:15 +0300, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote:
-> > The timer and rtc-timer clocks aren't gated by default, so there is no reason
-> > to crash the system if the dummy enable call failed.
-> []
-> > diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
-> []
-> > @@ -186,16 +186,20 @@ static void __init tegra_init_timer(void)
-> >  	int ret;
-> >  
-> >  	clk = clk_get_sys("timer", NULL);
-> > -	BUG_ON(IS_ERR(clk));
-> > -	clk_enable(clk);
-> > +	if (IS_ERR(clk))
-> > +		pr_warning("Unable to get timer clock");
-> > +	else
-> > +		clk_enable(clk);
-> >  
-> >  	/*
-> >  	 * rtc registers are used by read_persistent_clock, keep the rtc clock
-> >  	 * enabled
-> >  	 */
-> >  	clk = clk_get_sys("rtc-tegra", NULL);
-> > -	BUG_ON(IS_ERR(clk));
-> > -	clk_enable(clk);
-> > +	if (IS_ERR(clk))
-> > +		pr_warning("Unable to get rtc-tegra clock");
-> > +	else
-> > +		clk_enable(clk);
+On Monday 24 October 2011 22:16:15 Stephen Warren wrote:
+> Marc Dietrich wrote at Saturday, October 22, 2011 2:17 PM:
+> > * NOT FOR COMMIT *
+> > 
+> > This just adds the dts for paz00. I like to add it to board-dt as
+> > well as soon as I find out which tree to base it on.
 > 
-> Are these messages are really necessary?
-
-I think it's still useful to have them as not having a clock fw is a strange
-situation. It's not fatal though, but worth a warning I would say.
-
-> Maybe just:
-> 	if (!IS_ERR(clk))
-> 		clk_enable(clk)
+> ...
 > 
-> If these are really necessary, please use
-> 	pr_warn("Unable to get <foo>\n");
-> pr_warn and with a terminating newline.
+> > +++ b/arch/arm/boot/dts/tegra-paz00.dts
 > 
+> One thing that cross my mind when writing the TrimSlice support and I
+> forgot to mention: Should these files be named ${soc}-${board}.dts or
+> ${vendor}-${board}.dts (tegra-paz00.dts or toshiba-paz00.dts or
+> compal-paz00.dts). I'm OK either way; just want to follow any outside
+> expectations.
 
-Is pr_warn any different then pr_warning? Point taken about the newline.
+I also don't know. I prefer compal for paz00 because Toshiba's code name was 
+procyon (I think) and I don't want to change all the naming. Also Toshiba 
+showed no interest in helping us, so I don't see why they should get the fame.
 
-Cheers,
+> > @@ -0,0 +1,51 @@
+> > +/dts-v1/;
+> > +
+> > +/memreserve/ 0x1c000000 0x04000000;
+> > +/include/ "tegra20.dtsi"
+> > +
+> > +/ {
+> > +	model = "Toshiba AC100 / Dynabook AZ";
+> > +	compatible = "compal,paz00", "nvidia,tegra20";
+> > +
+> > +	chosen {
+> > +		bootargs = "console=ttyS0,115200n8 root=/dev/mmcblk1p1";
+> > +	};
+> > +
+> > +	memory@0 {
+> 
+> The other boards just have "memory" here; which is wrong?
 
-Peter.
+I just copy-pasted from harmony, I guess it doesn't matter.
+
+> 
+> ...
+> 
+> > +	i2c@7000c500 {
+> > +		clock-frequency = <80000>;
+> 
+> That's a pretty odd I2C frequency...
+
+no, 80000 is even ;-) Seriously, it just reflects the fact that the embedded 
+controller bus runs at 80kHz. Even more seriously, reading "booting-without-
+of.txt" in the Documentation/devicetree dir,
+
+      | o PowerPC,970@0
+      |   |- name = "PowerPC,970"
+      |   |- device_type = "cpu"
+      |   |- reg = <0>
+      |   |- clock-frequency = <5f5e1000>
+      |   |- 64-bit
+      |   |- linux,phandle = <2>
+
+ it looks like all clock-frequency values are hexadecimal. In this case even 
+<400000> would be wrong (or the docu is --- ok, the docu is wrong).
+
+Marc
