@@ -1,52 +1,62 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: clk_get should not be fatal
-Date: Tue, 25 Oct 2011 09:26:08 -0700
-Message-ID: <1319559968.14932.5.camel@Joe-Laptop>
-References: <1319559329-324-1-git-send-email-pdeschrijver@nvidia.com>
+From: <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/6] Add support for tegra30 and cardhu
+Date: Tue, 25 Oct 2011 19:53:54 +0300
+Message-ID: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1319559329-324-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2011-10-25 at 19:15 +0300, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote:
-> The timer and rtc-timer clocks aren't gated by default, so there is no reason
-> to crash the system if the dummy enable call failed.
-[]
-> diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
-[]
-> @@ -186,16 +186,20 @@ static void __init tegra_init_timer(void)
->  	int ret;
->  
->  	clk = clk_get_sys("timer", NULL);
-> -	BUG_ON(IS_ERR(clk));
-> -	clk_enable(clk);
-> +	if (IS_ERR(clk))
-> +		pr_warning("Unable to get timer clock");
-> +	else
-> +		clk_enable(clk);
->  
->  	/*
->  	 * rtc registers are used by read_persistent_clock, keep the rtc clock
->  	 * enabled
->  	 */
->  	clk = clk_get_sys("rtc-tegra", NULL);
-> -	BUG_ON(IS_ERR(clk));
-> -	clk_enable(clk);
-> +	if (IS_ERR(clk))
-> +		pr_warning("Unable to get rtc-tegra clock");
-> +	else
-> +		clk_enable(clk);
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Are these messages are really necessary?
-Maybe just:
-	if (!IS_ERR(clk))
-		clk_enable(clk)
+This patchset adds support for the tegra30 SoC and the cardhu development
+board.
 
-If these are really necessary, please use
-	pr_warn("Unable to get <foo>\n");
-pr_warn and with a terminating newline.
+Peter De Schrijver (6):
+  arm/tegra: initial device tree for tegra30
+  arm/tegra: prepare pinmux code for multiple tegra variants
+  arm/tegra: prepare early init for multiple tegra variants
+  arm/tegra: implement support for tegra30
+  arm/tegra: pinmux tables and definitions for tegra30
+  arm/tegra: add support for tegra30 based board cardhu
+
+ arch/arm/boot/dts/tegra-cardhu.dts                |   37 ++
+ arch/arm/boot/dts/tegra30.dtsi                    |  128 +++++++
+ arch/arm/mach-tegra/Kconfig                       |   24 +-
+ arch/arm/mach-tegra/Makefile                      |    3 +-
+ arch/arm/mach-tegra/Makefile.boot                 |    1 +
+ arch/arm/mach-tegra/board-dt.c                    |   21 ++
+ arch/arm/mach-tegra/board-harmony-pcie.c          |    1 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c        |    1 +
+ arch/arm/mach-tegra/board-harmony.c               |    2 +-
+ arch/arm/mach-tegra/board-paz00-pinmux.c          |    1 +
+ arch/arm/mach-tegra/board-paz00.c                 |    2 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c       |    2 +-
+ arch/arm/mach-tegra/board-seaboard.c              |    6 +-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c      |    1 +
+ arch/arm/mach-tegra/board-trimslice.c             |    2 +-
+ arch/arm/mach-tegra/board.h                       |    5 +-
+ arch/arm/mach-tegra/common.c                      |   28 ++-
+ arch/arm/mach-tegra/include/mach/pinmux-t2.h      |  184 ----------
+ arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 ++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 ++++++++++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux.h         |   92 +++++-
+ arch/arm/mach-tegra/pinmux-t2-tables.c            |  228 -------------
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  239 +++++++++++++
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 +++++++++++++++++++++
+ arch/arm/mach-tegra/pinmux.c                      |  148 ++++++---
+ 25 files changed, 1540 insertions(+), 496 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+ create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-t2.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra20.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra30.h
+ delete mode 100644 arch/arm/mach-tegra/pinmux-t2-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra20-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra30-tables.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
