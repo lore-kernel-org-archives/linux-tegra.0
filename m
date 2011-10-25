@@ -1,160 +1,205 @@
-From: <pdeschrijver@nvidia.com>
-Subject: [PATCH 1/6] arm/tegra: initial device tree for tegra30
-Date: Tue, 25 Oct 2011 19:53:55 +0300
-Message-ID: <1319561644-6160-2-git-send-email-pdeschrijver@nvidia.com>
+From: <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 3/6] arm/tegra: prepare early init for multiple tegra variants
+Date: Tue, 25 Oct 2011 19:53:57 +0300
+Message-ID: <1319561644-6160-4-git-send-email-pdeschrijver@nvidia.com>
 References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1319561644-6160-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This patch adds the initial device tree for tegra30
+This patch splits the early init code in a common and a tegra20 specific part.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra30.dtsi |  128 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 128 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+ arch/arm/mach-tegra/board-dt.c        |   19 +++++++++++++++++++
+ arch/arm/mach-tegra/board-harmony.c   |    2 +-
+ arch/arm/mach-tegra/board-paz00.c     |    2 +-
+ arch/arm/mach-tegra/board-seaboard.c  |    6 +++---
+ arch/arm/mach-tegra/board-trimslice.c |    2 +-
+ arch/arm/mach-tegra/board.h           |    4 +---
+ arch/arm/mach-tegra/common.c          |   18 ++++++++++++------
+ 7 files changed, 38 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-new file mode 100644
-index 0000000..3550b9a
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -0,0 +1,128 @@
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	model = "NVIDIA Tegra 30";
-+	compatible = "nvidia,tegra30";
-+	interrupt-parent = <&intc>;
-+
-+	intc: interrupt-controller@50041000 {
-+		compatible = "nvidia,tegra30-gic", "nvidia,tegra20-gic";
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		reg = < 0x50041000 0x1000 >,
-+		< 0x50040100 0x0100 >;
-+	};
-+
-+	i2c@7000c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible =  "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C000 0x100>;
-+		interrupts = < 70 >;
-+	};
-+
-+	i2c@7000c400 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C400 0x100>;
-+		interrupts = < 116 >;
-+	};
-+
-+	i2c@7000c500 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C500 0x100>;
-+		interrupts = < 124 >;
-+	};
-+
-+	i2c@7000c700 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000c700 0x100>;
-+		interrupts = < 152 >;
-+	};
-+
-+	i2c@7000d000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000D000 0x100>;
-+		interrupts = < 85 >;
-+	};
-+
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra30-gpio", "nvidia,tegra20-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+	};
-+
-+	serial@70006000 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 68 >;
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 69 >;
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 78 >;
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 122 >;
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 123 >;
-+	};
-+
-+	sdhci@78000000 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000000 0x200>;
-+		interrupts = < 46 >;
-+	};
-+
-+	sdhci@78000200 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000200 0x200>;
-+		interrupts = < 47 >;
-+	};
-+
-+	sdhci@78000400 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000400 0x200>;
-+		interrupts = < 51 >;
-+	};
-+
-+	sdhci@78000600 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000600 0x200>;
-+		interrupts = < 63 >;
-+	};
-+
-+	pinmux: pinmux@70000000 {
-+		compatible = "nvidia,tegra30-pinmux";
-+		reg = < 0x70000868 0xd0     /* Pad control registers */
-+			0x70003000 0x3e0 >; /* Mux registers */
-+	};
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index 0d22212..9130037 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -119,6 +119,25 @@ static void __init tegra_dt_init(void)
+ 		"Unknown platform! Pinmuxing not initialized\n");
+ }
+ 
++static struct {
++	const char *machine;
++	void (*init)(void);
++} early_init[] __initdata = {
++	{ "nvidia,tegra20", tegra20_init_early },
 +};
++
++static void __init tegra_init_early(void)
++{
++
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(early_init); i++)
++		if (of_machine_is_compatible(early_init[i].machine))
++			return early_init[i].init();
++
++	printk(KERN_WARNING "Unknown platform detected\n");
++}
++
+ static const char * tegra_dt_board_compat[] = {
+ 	"nvidia,harmony",
+ 	"nvidia,seaboard",
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index e595901..adcdec2 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -185,7 +185,7 @@ MACHINE_START(HARMONY, "harmony")
+ 	.atag_offset	= 0x100,
+ 	.fixup		= tegra_harmony_fixup,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early	= tegra_init_early,
++	.init_early	= tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_harmony_init,
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index 1709e5e..8603edf 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -188,7 +188,7 @@ MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
+ 	.atag_offset	= 0x100,
+ 	.fixup		= tegra_paz00_fixup,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early	= tegra_init_early,
++	.init_early	= tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_paz00_init,
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index c41e01a..347b159 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -282,7 +282,7 @@ static void __init tegra_wario_init(void)
+ MACHINE_START(SEABOARD, "seaboard")
+ 	.atag_offset    = 0x100,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early     = tegra_init_early,
++	.init_early     = tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_seaboard_init,
+@@ -291,7 +291,7 @@ MACHINE_END
+ MACHINE_START(KAEN, "kaen")
+ 	.atag_offset    = 0x100,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early     = tegra_init_early,
++	.init_early     = tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_kaen_init,
+@@ -300,7 +300,7 @@ MACHINE_END
+ MACHINE_START(WARIO, "wario")
+ 	.atag_offset    = 0x100,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early     = tegra_init_early,
++	.init_early     = tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_wario_init,
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index 2b2f262..679f166 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -175,7 +175,7 @@ MACHINE_START(TRIMSLICE, "trimslice")
+ 	.atag_offset	= 0x100,
+ 	.fixup		= tegra_trimslice_fixup,
+ 	.map_io         = tegra_map_common_io,
+-	.init_early	= tegra_init_early,
++	.init_early	= tegra20_init_early,
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_trimslice_init,
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 1d14df7..b86cdab 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -23,9 +23,7 @@
+ 
+ #include <linux/types.h>
+ 
+-void tegra_assert_system_reset(char mode, const char *cmd);
+-
+-void __init tegra_init_early(void);
++void __init tegra20_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+ void __init tegra_init_clock(void);
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 690b888..8553fde 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -1,5 +1,5 @@
+ /*
+- * arch/arm/mach-tegra/board-harmony.c
++ * arch/arm/mach-tegra/common.c
+  *
+  * Copyright (C) 2010 Google, Inc.
+  *
+@@ -31,8 +31,6 @@
+ #include "clock.h"
+ #include "fuse.h"
+ 
+-void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
+-
+ void tegra_assert_system_reset(char mode, const char *cmd)
+ {
+ 	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
+@@ -44,7 +42,9 @@ void tegra_assert_system_reset(char mode, const char *cmd)
+ 	writel_relaxed(reg, reset);
+ }
+ 
+-static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
++void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
++
++static __initdata struct tegra_clk_init_table tegra20_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
+ 	{ "clk_m",	NULL,		0,		true },
+ 	{ "pll_p",	"clk_m",	216000000,	true },
+@@ -65,19 +65,25 @@ static void __init tegra_init_cache(void)
+ {
+ #ifdef CONFIG_CACHE_L2X0
+ 	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
++	u32 aux_ctrl;
+ 
+ 	writel_relaxed(0x331, p + L2X0_TAG_LATENCY_CTRL);
+ 	writel_relaxed(0x441, p + L2X0_DATA_LATENCY_CTRL);
++	writel(2, p + L2X0_PREFETCH_CTRL);
++
++	aux_ctrl = readl(p + L2X0_CACHE_TYPE);
++	aux_ctrl = (aux_ctrl & 0x700) << (17-8);
++	aux_ctrl |= 0x6C000001;
+ 
+ 	l2x0_init(p, 0x6C080001, 0x8200c3fe);
+ #endif
+ 
+ }
+ 
+-void __init tegra_init_early(void)
++void __init tegra20_init_early(void)
+ {
+ 	tegra_init_fuse();
+ 	tegra_init_clock();
+-	tegra_clk_init_from_table(common_clk_init_table);
++	tegra_clk_init_from_table(tegra20_clk_init_table);
+ 	tegra_init_cache();
+ }
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
