@@ -1,63 +1,96 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 3/3] arm/dt: tegra: add dts file for paz00
-Date: Wed, 26 Oct 2011 22:18:55 +0200
-Message-ID: <24453918.Ulhj1xIogt@ax5200p>
-References: <cover.1319313019.git.marvin24@gmx.de> <2821699.TeokzqUUds@ax5200p> <74CDBE0F657A3D45AFBB94109FB122FF173E1B4536@HQMAIL01.nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: Adding board support
+Date: Thu, 27 Oct 2011 12:29:34 +0200
+Message-ID: <20111027102934.GA24333@avionic-0098.adnet.avionic-design.de>
+References: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
+ <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
+ <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
+ <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
+ <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
+ <20111020190827.GA31480@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173D51C577@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B4536-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173D51C577-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 25 October 2011 23:43:06 Stephen Warren wrote:
-> Marc Dietrich wrote at Tuesday, October 25, 2011 1:05 PM:
-> > On Monday 24 October 2011 22:16:15 Stephen Warren wrote:
-> > > Marc Dietrich wrote at Saturday, October 22, 2011 2:17 PM:
-> > > > * NOT FOR COMMIT *
-> > > > 
-> > > > This just adds the dts for paz00. I like to add it to board-dt
-> > > > as
-> > > > well as soon as I find out which tree to base it on.
-> > > 
+
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Stephen Warren wrote:
+> Thierry Reding wrote at Thursday, October 20, 2011 1:08 PM:
+> > * Stephen Warren wrote:
+> > > Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
 > > > ...
-> > > 
-> > > > +++ b/arch/arm/boot/dts/tegra-paz00.dts
-> > > 
-> > > One thing that cross my mind when writing the TrimSlice support and
-> > > I
-> > > forgot to mention: Should these files be named ${soc}-${board}.dts
-> > > or
-> > > ${vendor}-${board}.dts (tegra-paz00.dts or toshiba-paz00.dts or
-> > > compal-paz00.dts). I'm OK either way; just want to follow any
-> > > outside
-> > > expectations.
-> > 
-> > I also don't know. I prefer compal for paz00 because Toshiba's code name
-> > was procyon (I think) and I don't want to change all the naming. Also
-> > Toshiba showed no interest in helping us, so I don't see why they
-> > should get the fame.
-> Well, it's more about correctly defining what the HW is than advertising,
-> fame, or support!
+> > > > I've been working some on getting our boards to boot from a device =
+tree.
+> > > > Unfortunately, the U-Boot issue seems to be more of a problem than I
+> > > > anticipated. Since the mainline U-Boot doesn't run properly,
+> > >
+> > > What issues are you having? I assume you're referring to something mo=
+re
+> > > than just getting stuff flashed with nvflash.
+> >=20
+> > Flashing U-Boot is not the problem, but when booting the device, there'=
+s no
+> > output whatsoever on the debug port. That's what I meant in one of the
+> > previous mails. nvflash says it's loading fastboot.bin at address 0x001=
+08000,
+> > and quickboot seems to use the same load address. However, U-Boot is bu=
+ilt
+> > with CONFIG_SYS_TEXT_BASE set to 0x00E08000. If it is loaded to the same
+> > address as fastboot/quickboot it obviously cannot run. So I went ahead =
+and
+> > built U-Boot (both mainline and the one from the Chromium repo) with a =
+load
+> > address of 0x00108000 - to no avail.
+>=20
+> OK, I built U-Boot with load address 0x00108000 and also see nothing at b=
+oot.
+> So, I've reproduced at least one of your problems.
+>=20
+> (This is with an Android-style nvflash that configures the BCT to tell th=
+e CPU
+> to load/boot the bootloader at address 0x00108000, so this should work.)
+>=20
+> So, I've added this observation into the bug I filed. I'll let you know o=
+nce
+> we've had a chance to investigate and/or solve this.
+>=20
+> Sorry this isn't working yet; it's pretty early days for U-Boot on Tegra
+> outside of ChromeOS, which uses the modified nvflash and hence doesn't hit
+> these issues.
 
-define "what the HW is". Warning: the following list is purely fictitious. Any 
-similarities between the companies or products mentiond, real or imaginary, 
-are coincidental.
+I've been able to make limited progress on this. I've been able to
+successfully run a mainline U-Boot (c30a15e) with the patches you mentioned
+previously applied on top. However, this currently only works as quickboot
+payload. Standalone is not working yet. However this allows booting a
+mainline kernel with device tree support. So while the nvflash issues are
+sorted out, I have something I can get work done with.
 
-	- company A creates a cpu (only the IP) and license it to company N.
-	- company N adds some more stuff around it (interfaces, gpu, ...) and 
-creates real cpu hw.
-	- company T likes the cpu and asks company C to build a computer around it
-	- company C takes the evaluation board from company N, modifies it a bit, 
-and builds a whole netbook around it
-	- company T gets the netbook from company C and adds a operating system 
-which will displeased their customers
+Thierry
 
-So how would you define that hw? Or the real question, who made it? And please 
-don't take my second argument too serious. I just expressed my anger in an 
-improper way at an improper place. Sorry for that.
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature
 
-Marc
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk6pMo4ACgkQZ+BJyKLjJp9TeACfVdNd76toJ9SjneaXpa71CvLf
++DgAoKLanE/QFTZLwpG4EDVzRMH2QmUQ
+=Xcyo
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
