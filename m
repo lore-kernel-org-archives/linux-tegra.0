@@ -1,45 +1,37 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 4/6] arm/tegra: implement support for tegra30
-Date: Thu, 27 Oct 2011 13:10:10 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173E1B49B6@HQMAIL01.nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 3/6] arm/tegra: prepare early init for multiple tegra
+	variants
+Date: Thu, 27 Oct 2011 21:16:57 +0100
+Message-ID: <20111027201657.GP19187@n2100.arm.linux.org.uk>
 References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
- <1319561644-6160-5-git-send-email-pdeschrijver@nvidia.com>
+	<1319561644-6160-4-git-send-email-pdeschrijver@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1319561644-6160-5-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at  Tuesday, October 25, 2011 10:54 AM:
-> From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Oct 27, 2011 at 01:06:13PM -0700, Stephen Warren wrote:
+> Peter De Schrijver wrote at Tuesday, October 25, 2011 10:54 AM:
+> > -static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
+> > +void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I'm not sure why you moved that, but I suppose it's fine.
 
-Some description here would be nice. And notes re: stuff like lack of
-clock/... support yet, since this just gets stuff booted to a UART with
-no clocks/devices/...
-
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-
-> +config ARCH_TEGRA_3x_SOC
-> +	bool "Enable support for Tegra30 family"
-> +	select CPU_V7
-> +	select ARM_GIC
-> +	select ARCH_REQUIRE_GPIOLIB
-> +	select USB_ARCH_HAS_EHCI if USB_SUPPORT
-> +	select USB_ULPI if USB_SUPPORT
-> +	select USB_ULPI_VIEWPORT if USB_SUPPORT
-> +	select USE_OF
-> +	help
-> +	  Support for NVIDIA Tegra T30 processorfamily, based on the
-> +	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-
-Either remove "family" or add a space before it to separate the words.
-
--- 
-nvpublic
+Note that Nicolas has a patch set during KS which cleans the arch_reset
+business out of mach/system.h, and effectively gets rid of arch_reset
+entirely, so this probably conflicts with those changes.
