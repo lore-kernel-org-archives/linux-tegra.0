@@ -1,96 +1,34 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Adding board support
-Date: Thu, 27 Oct 2011 12:29:34 +0200
-Message-ID: <20111027102934.GA24333@avionic-0098.adnet.avionic-design.de>
-References: <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
- <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
- <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
- <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
- <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
- <20111020190827.GA31480@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173D51C577@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: Tegra T20 / T25 datasheet (Technical Reference Manual)
+Date: Thu, 27 Oct 2011 08:14:07 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173E1B487B@HQMAIL01.nvidia.com>
+References: <7E91C59574E9954FA075F8D8CCDF78DB38FD04E8C0@HQMAIL04.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173D51C577-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <7E91C59574E9954FA075F8D8CCDF78DB38FD04E8C0-wAPRp6hVlRhDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+(forwarding from U-Boot mailing list)
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tom Warren wrote at Wednesday, October 26, 2011 5:49 PM:
+> The Tegra2 (T20/T25) TRM is now on our web site:
+> http://developer.nvidia.com/tegra-2-technical-reference-manual
+> 
+> You'll need to register to download it, but anybody can get access to
+> the datasheet as long as they don't plan to use the information for
+> malicious purposes.
+> 
+> We plan to work on T30 next, and get that out to the community by the
+> end of the year.
+> 
+> Tom Warren
+> twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 
-* Stephen Warren wrote:
-> Thierry Reding wrote at Thursday, October 20, 2011 1:08 PM:
-> > * Stephen Warren wrote:
-> > > Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
-> > > ...
-> > > > I've been working some on getting our boards to boot from a device =
-tree.
-> > > > Unfortunately, the U-Boot issue seems to be more of a problem than I
-> > > > anticipated. Since the mainline U-Boot doesn't run properly,
-> > >
-> > > What issues are you having? I assume you're referring to something mo=
-re
-> > > than just getting stuff flashed with nvflash.
-> >=20
-> > Flashing U-Boot is not the problem, but when booting the device, there'=
-s no
-> > output whatsoever on the debug port. That's what I meant in one of the
-> > previous mails. nvflash says it's loading fastboot.bin at address 0x001=
-08000,
-> > and quickboot seems to use the same load address. However, U-Boot is bu=
-ilt
-> > with CONFIG_SYS_TEXT_BASE set to 0x00E08000. If it is loaded to the same
-> > address as fastboot/quickboot it obviously cannot run. So I went ahead =
-and
-> > built U-Boot (both mainline and the one from the Chromium repo) with a =
-load
-> > address of 0x00108000 - to no avail.
->=20
-> OK, I built U-Boot with load address 0x00108000 and also see nothing at b=
-oot.
-> So, I've reproduced at least one of your problems.
->=20
-> (This is with an Android-style nvflash that configures the BCT to tell th=
-e CPU
-> to load/boot the bootloader at address 0x00108000, so this should work.)
->=20
-> So, I've added this observation into the bug I filed. I'll let you know o=
-nce
-> we've had a chance to investigate and/or solve this.
->=20
-> Sorry this isn't working yet; it's pretty early days for U-Boot on Tegra
-> outside of ChromeOS, which uses the modified nvflash and hence doesn't hit
-> these issues.
-
-I've been able to make limited progress on this. I've been able to
-successfully run a mainline U-Boot (c30a15e) with the patches you mentioned
-previously applied on top. However, this currently only works as quickboot
-payload. Standalone is not working yet. However this allows booting a
-mainline kernel with device tree support. So while the nvflash issues are
-sorted out, I have something I can get work done with.
-
-Thierry
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk6pMo4ACgkQZ+BJyKLjJp9TeACfVdNd76toJ9SjneaXpa71CvLf
-+DgAoKLanE/QFTZLwpG4EDVzRMH2QmUQ
-=Xcyo
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
+-- 
+nvpublic
