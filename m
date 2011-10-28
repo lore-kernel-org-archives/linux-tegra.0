@@ -1,99 +1,69 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: RE: [PATCH v2 2/3] arm/dt: tegra: add dts file for paz00
-Date: Fri, 28 Oct 2011 12:29:43 +0200
-Message-ID: <3520326.MNh26pzpGT@fb07-iapwap2>
-References: <cover.1319658296.git.marvin24@gmx.de> <e528a8eb783ace4729e0c76ca72d500d5281c9af.1319658296.git.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF173E1B48D7@HQMAIL01.nvidia.com>
+Subject: Re: RE: [PATCH v2 3/3] staging: nvec: add device tree support
+Date: Fri, 28 Oct 2011 13:01:50 +0200
+Message-ID: <1564609.ncycBzfDcY@fb07-iapwap2>
+References: <cover.1319658296.git.marvin24@gmx.de> <48050ec08d248a2a10b4f5faf6cac6b214041ebe.1319658296.git.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF173E1B498B@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B48D7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B498B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org" <devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, 27. Oktober 2011, 09:50:03 schrieb Stephen Warren:
+Am Donnerstag, 27. Oktober 2011, 12:17:25 schrieb Stephen Warren:
 > Marc Dietrich wrote at Wednesday, October 26, 2011 1:59 PM:
-> > This adds a dts file for paz00. As a side effect, this also enables
-> > the embedded controller which controls the keyboard, touchpad, power,
-> > leds, and some other functions.
+> > This adds device tree support to the nvec driver. By using this method
+> > it is no longer necessary to specify platform data through a board
+> > file.
 > 
-> ...
-> 
-> > +++ b/arch/arm/boot/dts/tegra-paz00.dts
-> > @@ -0,0 +1,70 @@
-> > +/dts-v1/;
-> > +
-> > +/memreserve/ 0x1c000000 0x04000000;
-> > +/include/ "tegra20.dtsi"
-> > +
-> > +/ {
-> > +	model = "Toshiba AC100 / Dynabook AZ";
-> > +	compatible = "compal,paz00", "nvidia,tegra20";
-> > +
-> > +	chosen {
-> > +		bootargs = "mem=448@0 console=ttyS0,115200n8 root=/dev/mmcblk1p1";
-> 
-> You shouldn't need the mem= parameter here; it wasn't in your first patch set.
+> You should document the binding in Documentation/devicetree/bindings.
 
-that's because I forgot it. Sorry, I didn't mentioned it in the changelog. I wonder 
-why mem= is still needed. I've seen patches on the chromeos tree which try to reserve 
-the gpu memory on demand. While we are at it, what is the vmalloc=192M used by most 
-other boards for?
+oh, I feared that ... Will go in to v3.
 
-> > +	};
-> > +
-> > +	memory@0 {
-> > +		reg = <0x00000000 0x20000000>;
-> > +	};
-> > +
-> > +	i2c@7000c000 {
-> > +		clock-frequency = <400000>;
-> > +	};
-> > +
-> > +	i2c@7000c400 {
-> > +		clock-frequency = <400000>;
-> > +	};
-> > +
-> > +	i2c@7000c500 {
-> > +		status = "disable";
-> > +	};
-> > +
-> > +	nvec@7000c500 {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +		compatible = "nvidia,nvec";
+> > @@ -892,6 +915,17 @@ static int tegra_nvec_resume(struct platform_device *pdev)
+> > 
+> >  #define tegra_nvec_resume NULL
+> >  #endif
+> > 
+> > +#if defined(CONFIG_OF)
 > 
-> I'm not convinced that's the correct compatible value, but I should
-> discuss this more in the nvec patch...
-> 
-> > +		reg = <0x7000C500 0x100>;
-> > +		interrupts = <124>;
-> > +		clock-frequency = <80000>;
-> > +		request-gpios = <&gpio 170 0>;
-> > +		slave-addr = <138>;
-> > +	};
-> > 
-> > 
-> > +++ b/arch/arm/mach-tegra/Makefile
-> > @@ -31,6 +31,7 @@ obj-${CONFIG_MACH_SEABOARD}             +=
-> > board-seaboard-pinmux.o> 
-> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
-> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
-> > 
-> > +obj-$(CONFIG_MACH_TEGRA_DT)             += board-paz00-pinmux.o
-> > 
-> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-seaboard-pinmux.o
-> 
-> What branch is your patch based on? Those lines use braces not brackets
-> in the latest code (incorrect yes, but that's what's there; Olof said
-> he'll fix it for the next merge window). Do you have some local patches
-> in your branch before this patchset? Note: Feel free to add your lines
-> using the correct syntax; I'm just wondering about the existing context
-> in your patch.
+> I think you can just remove the ifdef and always include this code. Yes, it'll
+> result in slightly more rodata when !CONFIG_OF, but !CONFIG_OF isn't going to
+> exist or be useful for Tegra for that much longer.
 
-branch is based on linux-next. It will create conflicts anyway during merge (given 
-your trimslice update).
+ok, I will check if it causes build regressions first.
+
+> 
+> > +/* Match table for of_platform binding */
+> > +static const struct of_device_id nvidia_nvec_of_match[] __devinitconst = {
+> > +	{ .compatible = "nvidia,nvec", },
+> 
+> I'm not sure that nvidia,nvec is the right value, but need a little more
+> background.
+> 
+> It's my understanding that how this works is a little micro-controller
+> exists on the board, handles various devices like the keyboard, and sends
+> data to Tegra by making I2C master transactions. Isn't it the case that
+> the micro-controller (or at least the SW running on it) is board-specific,
+> and the same for the I2C protocol? If so, nvidia,nvec is a little generic;
+> we probably need to name it compal,paz00-ec or something like that?
+
+The firmware (for the 8051 mc inside the keyboard controller) is likely made by 
+Compal, but as Julian already said, the EC protocol definition is very likely from 
+NVIDIA itself. Compal just implemented it for the master. You may refer to 
+<http://nv-
+tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commitdiff;h=12114faf442a8c6aac81a9702712077364db0e82>
+Also this protocol is not board specific as many first generation boards/device use 
+it, so "nvidia,nvec" should be correct here.
+
+> Either way, we should probably include some kind of version number in
+> the compatible property so we can support upgrades to the protocol if
+> needed.
+
+You may ask your colleagues on that topic, but it seems that the protocol is dead 
+already, e.g. it wasn't implemented for the new-world kernels (>= .36) anymore.
 
 Marc
