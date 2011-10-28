@@ -1,44 +1,33 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 3/6] arm/tegra: prepare early init for multiple tegra
-	variants
-Date: Fri, 28 Oct 2011 17:19:34 +0100
-Message-ID: <20111028161933.GK23539@mudshark.cambridge.arm.com>
-References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
-	<1319561644-6160-4-git-send-email-pdeschrijver@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2@HQMAIL01.nvidia.com>
-	<20111027201657.GP19187@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20111027201657.GP19187@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Taylor Hutt <thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH] arch: arm: tegra: Enable headphone detection gpio
+Date: Fri, 28 Oct 2011 09:27:06 -0700
+Message-ID: <1319819226-19098-1-git-send-email-thutt@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yufeng Shen <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 27, 2011 at 09:16:57PM +0100, Russell King - ARM Linux wrote:
-> On Thu, Oct 27, 2011 at 01:06:13PM -0700, Stephen Warren wrote:
-> > Peter De Schrijver wrote at Tuesday, October 25, 2011 10:54 AM:
-> > > -static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
-> > > +void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
-> > 
-> > I'm not sure why you moved that, but I suppose it's fine.
-> 
-> Note that Nicolas has a patch set during KS which cleans the arch_reset
-> business out of mach/system.h, and effectively gets rid of arch_reset
-> entirely, so this probably conflicts with those changes.
+From: Yufeng Shen <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-I've spammed the ARM list with this patch series now, so the state of the
-conflicts should be evident.
+Enable the headphone detection gpio on tegra platform.
 
-Will
+Signed-off-by: Yufeng Shen <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index 9d0ba80..14e9d576 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -205,6 +205,7 @@ static struct tegra_gpio_table common_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_NCT1008_THERM2_IRQ,.enable = true },
+ 	{ .gpio = TEGRA_GPIO_WLAN_POWER,	.enable = true },
+ 	{ .gpio = TEGRA_GPIO_AC_ONLINE,		.enable = true },
++	{ .gpio = TEGRA_GPIO_HP_DET,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_MXT_IRQ,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_HDMI_ENB,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_MPU3050_IRQ,	.enable = true },
+-- 
+1.7.3.1
