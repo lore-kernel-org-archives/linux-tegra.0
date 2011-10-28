@@ -1,29 +1,99 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 2/6] arm/tegra: prepare pinmux code for multiple tegra variants
-Date: Fri, 28 Oct 2011 02:19:56 -0700
-Message-ID: <CAOesGMi4NgYXUf8HtFM_=YX1aGnHbj2Wh8Wq7w=y17=Z21dqjQ@mail.gmail.com>
-References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
-	<1319561644-6160-3-git-send-email-pdeschrijver@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173E1B49AA@HQMAIL01.nvidia.com>
-	<20111028081738.GA12383@tbergstrom-lnx.Nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: RE: [PATCH v2 2/3] arm/dt: tegra: add dts file for paz00
+Date: Fri, 28 Oct 2011 12:29:43 +0200
+Message-ID: <3520326.MNh26pzpGT@fb07-iapwap2>
+References: <cover.1319658296.git.marvin24@gmx.de> <e528a8eb783ace4729e0c76ca72d500d5281c9af.1319658296.git.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF173E1B48D7@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111028081738.GA12383-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B48D7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 28, 2011 at 1:17 AM, Peter De Schrijver
-<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Thu, Oct 27, 2011 at 09:59:49PM +0200, Stephen Warren wrote:
+Am Donnerstag, 27. Oktober 2011, 09:50:03 schrieb Stephen Warren:
+> Marc Dietrich wrote at Wednesday, October 26, 2011 1:59 PM:
+> > This adds a dts file for paz00. As a side effect, this also enables
+> > the embedded controller which controls the keyboard, touchpad, power,
+> > leds, and some other functions.
+> 
+> ...
+> 
+> > +++ b/arch/arm/boot/dts/tegra-paz00.dts
+> > @@ -0,0 +1,70 @@
+> > +/dts-v1/;
+> > +
+> > +/memreserve/ 0x1c000000 0x04000000;
+> > +/include/ "tegra20.dtsi"
+> > +
+> > +/ {
+> > +	model = "Toshiba AC100 / Dynabook AZ";
+> > +	compatible = "compal,paz00", "nvidia,tegra20";
+> > +
+> > +	chosen {
+> > +		bootargs = "mem=448@0 console=ttyS0,115200n8 root=/dev/mmcblk1p1";
+> 
+> You shouldn't need the mem= parameter here; it wasn't in your first patch set.
 
-> Hmm. Maybe if I split it in 2 patches? 2 rename and 1 modification?
+that's because I forgot it. Sorry, I didn't mentioned it in the changelog. I wonder 
+why mem= is still needed. I've seen patches on the chromeos tree which try to reserve 
+the gpu memory on demand. While we are at it, what is the vmalloc=192M used by most 
+other boards for?
 
-Yep, please do renames separately (you can rename all of them in one
-patch, but no modifications in that please, besides what you need to
-build with the new filename).
+> > +	};
+> > +
+> > +	memory@0 {
+> > +		reg = <0x00000000 0x20000000>;
+> > +	};
+> > +
+> > +	i2c@7000c000 {
+> > +		clock-frequency = <400000>;
+> > +	};
+> > +
+> > +	i2c@7000c400 {
+> > +		clock-frequency = <400000>;
+> > +	};
+> > +
+> > +	i2c@7000c500 {
+> > +		status = "disable";
+> > +	};
+> > +
+> > +	nvec@7000c500 {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +		compatible = "nvidia,nvec";
+> 
+> I'm not convinced that's the correct compatible value, but I should
+> discuss this more in the nvec patch...
+> 
+> > +		reg = <0x7000C500 0x100>;
+> > +		interrupts = <124>;
+> > +		clock-frequency = <80000>;
+> > +		request-gpios = <&gpio 170 0>;
+> > +		slave-addr = <138>;
+> > +	};
+> > 
+> > 
+> > +++ b/arch/arm/mach-tegra/Makefile
+> > @@ -31,6 +31,7 @@ obj-${CONFIG_MACH_SEABOARD}             +=
+> > board-seaboard-pinmux.o> 
+> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
+> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
+> > 
+> > +obj-$(CONFIG_MACH_TEGRA_DT)             += board-paz00-pinmux.o
+> > 
+> >  obj-${CONFIG_MACH_TEGRA_DT}             += board-seaboard-pinmux.o
+> 
+> What branch is your patch based on? Those lines use braces not brackets
+> in the latest code (incorrect yes, but that's what's there; Olof said
+> he'll fix it for the next merge window). Do you have some local patches
+> in your branch before this patchset? Note: Feel free to add your lines
+> using the correct syntax; I'm just wondering about the existing context
+> in your patch.
 
+branch is based on linux-next. It will create conflicts anyway during merge (given 
+your trimslice update).
 
--Olof
+Marc
