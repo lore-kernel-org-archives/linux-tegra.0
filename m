@@ -1,91 +1,76 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] staging: nvec: add device tree support
-Date: Sun, 30 Oct 2011 21:58:50 +0100
-Message-ID: <2542173.LWlOZpfLLJ@ax5200p>
-References: <cover.1319658296.git.marvin24@gmx.de> <1564609.ncycBzfDcY@fb07-iapwap2> <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4D1@HQMAIL01.nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] arm/dt: tegra: add dts file for paz00
+Date: Sun, 30 Oct 2011 21:13:53 -0600
+Message-ID: <20111031031353.GB1174@ponder.secretlab.ca>
+References: <cover.1319658296.git.marvin24@gmx.de>
+ <3520326.MNh26pzpGT@fb07-iapwap2>
+ <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4C7@HQMAIL01.nvidia.com>
+ <4025601.AfFCiixCcK@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4D1-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4025601.AfFCiixCcK@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org" <devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 28 October 2011 09:56:41 you wrote:
-> Marc Dietrich wrote at Friday, October 28, 2011 5:02 AM:
-> > Am Donnerstag, 27. Oktober 2011, 12:17:25 schrieb Stephen Warren:
-> > > Marc Dietrich wrote at Wednesday, October 26, 2011 1:59 PM:
-> > > > This adds device tree support to the nvec driver. By using this
-> > > > method it is no longer necessary to specify platform data
-> > > > through a board file.
-> 
-> ...
-> 
-> > > > +/* Match table for of_platform binding */
-> > > > +static const struct of_device_id nvidia_nvec_of_match[]
-> > > > __devinitconst = { +	{ .compatible = "nvidia,nvec", },
-> > > 
-> > > I'm not sure that nvidia,nvec is the right value, but need a little
-> > > more background.
-> > > 
-> > > It's my understanding that how this works is a little
-> > > micro-controller
-> > > exists on the board, handles various devices like the keyboard, and
-> > > sends data to Tegra by making I2C master transactions. Isn't it the
-> > > case that the micro-controller (or at least the SW running on it)
-> > > is board-specific, and the same for the I2C protocol? If so,
-> > > nvidia,nvec is a little generic; we probably need to name it
-> > > compal,paz00-ec or something like that?> 
-> > The firmware (for the 8051 mc inside the keyboard controller) is likely
-> > made by Compal, but as Julian already said, the EC protocol definition
-> > is very likely from NVIDIA itself. Compal just implemented it for the
-> > master. You may refer to <http://nv-
-> > tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commitdiff;h=12114faf442a8c6a
-> > ac81a9702712077364db0e82> Also this protocol is not board specific as
-> > many first generation boards/device use it, so "nvidia,nvec" should be
-> > correct here.
+On Sun, Oct 30, 2011 at 09:39:37PM +0100, Marc Dietrich wrote:
+> On Friday 28 October 2011 09:49:49 Stephen Warren wrote:
+> > I also see a bunch of code to set up the memory
+> > information from DT e.g. setup_machine_fdt()'s call to:
 > > 
-> > > Either way, we should probably include some kind of version number
-> > > in
-> > > the compatible property so we can support upgrades to the protocol
-> > > if
-> > > needed.
+> > 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
 > > 
-> > You may ask your colleagues on that topic, but it seems that the
-> > protocol is dead already, e.g. it wasn't implemented for the new-world
-> > kernels (>= .36) anymore.
-> OK, I asked internally and it sounds like this is /probably/ standardized.
+> > ... but I assume that happens before the ATAGs are processed, and the
+> > buggy ATAGs end up overriding the information in the DT file. And further,
+> > I assume that specifying "mem=" on the command-line overrides that, thus
+> > solving the problem.
+> > 
+> > It'd be awesome if you could validate this; the simplest way is probably
+> > to:
+> > 
+> > a) Remove mem= from the command-line
 > 
-> That said, there are apparently some OEMs who did change the protocol
-> and do something slightly different. I'm trying to confirm whether PAZ00
-> was one of them. I guess not if PAZ00 works with the standard driver that
-> you linked to.
+> I tested several variations. Without DT, the fixup can compensate a missing 
+> mem entry in the kernel command line, but with a mem= from the kernel command 
+> line, a fixup is not needed.
+> 
+> With DT, the command line specified from nvflash is ignored and the one from 
+> DT comes into the game. If it is also missing there, system detects 512 MB 
+> (which is physical right, but we cannot reserve memory for the gpu). The fixup 
+> is indeed ignored in this case.
 
-There are so called OEM commands which we will move to a board specific nvec 
-file (e.g. nvec_paz00.c). We haven't got the chance to test it on other boards 
-using it yet (e.g. toshiba folio, advent vega, ...). The tablets are mostly 
-using it for power control and maybe also leds/switches. I don't think any 
-other board uses keyboard / mouse functions.
+The /memreserve/ fields are supposed to allow you to do this.
 
-> So the good news is that there's an internal specification for this
-> protocol, and we might be able to release it. I'll let you know if/when
-> there are updates on this.
+> 
+> > b) Modify arch/arm/kernel/setup.c:parse_tag_mem32() to do nothing;
+> >    comment out the call to arm_add_memory()
+> 
+> I leave this out because the bootloader does not send memory info in the 
+> ATAGS.
+> 
+> > c) Test booting, and check what RAM size the kernel thinks you have.
+> 
+> see above. RAM detection works, but it's not what we want ...
+> 
+> > If that works, then ATAGs are the problem. We probably need to modify the
+> > core ARM code not to use memory ATAGs when there is a DT?
+> > 
+> > I'm mainly pushing on this because adding "mem=" to the command-line in
+> > the DT file isn't a great solution; when people start using bootloaders
+> > that rewrite the DT to include the user-specified command-line, then every
+> > user is going to have to start specifying "mem=" in their command-lines.
+> 
+> Well, I see two options for our case:
+> 
+> 	a) use the mem=448M@0 in the DT so the gpu can get its memory
+> 	b) upstream the chromeos changes to reserve gpu memory "on the fly" from 
+> the autodetected 512M (as it should be IMHO).
 
-The original source is well documentated already, but additional info is 
-always welcome ;-)
+b) is the ideal.  a) is absolutely wrong.  /memreserve/ should fix the
+gpu memory problem when not passing a mem= parameter.  If /memreserve/
+isn't working, then I'd like to know why.
 
-> I'd like to call this "nvidia,nvec-1.0" to version this compatible
-> property; that's the specification version in the latest document that
-> I saw. While we do seemed to have abandoned this approach, I want to
-> make sure this is extensible if someone suddenly decides to go back to
-> it and creates a 2.0 in the future. Does that seem reasonable?
-
-mmh, I can't see why we should add it now. There is no V2 I can see in my 
-limited view. If your company plans to expand the protocol you can either 
-enhance our driver or create a new one (nvec2), which can add a nvidia,nvec-2 
-compatibility property (we can also change ours to nvidia,nvec-1 at the same 
-time, but that's not required). 
-
-Marc
+g.
