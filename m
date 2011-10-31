@@ -1,75 +1,55 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 2/6] arm/tegra: prepare pinmux code for multiple tegra
- variants
-Date: Mon, 31 Oct 2011 11:02:49 +0200
-Message-ID: <20111031090249.GL1001@tbergstrom-lnx.Nvidia.com>
-References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
- <1319561644-6160-3-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173E1B49AA@HQMAIL01.nvidia.com>
- <20111028081738.GA12383@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4A4@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: RE: [PATCH v2 2/3] arm/dt: tegra: add dts file for paz00
+Date: Mon, 31 Oct 2011 08:51:43 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173EDAB770@HQMAIL01.nvidia.com>
+References: <cover.1319658296.git.marvin24@gmx.de>
+ <e528a8eb783ace4729e0c76ca72d500d5281c9af.1319658296.git.marvin24@gmx.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173E1B48D7@HQMAIL01.nvidia.com>
+ <3520326.MNh26pzpGT@fb07-iapwap2>
+ <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4C7@HQMAIL01.nvidia.com>
+ <20111029084330.GW19187@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173EDAB4A4@HQMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111029084330.GW19187-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 28, 2011 at 06:18:27PM +0200, Stephen Warren wrote:
-> Peter De Schrijver wrote at Friday, October 28, 2011 2:18 AM:
-> > On Thu, Oct 27, 2011 at 09:59:49PM +0200, Stephen Warren wrote:
-> > > Peter De Schrijver wrote at Tuesday, October 25, 2011 10:54 AM:
-> > > > This patch modifies the pinmux code to be useable for multiple tegra variants.
-> > > > Some tegra20 specific constants will be replaced by variables which will be
-> > > > initialized to the appropriate value at runtime.
-> ...
-> > > > @@ -668,11 +668,24 @@ void tegra_pinmux_config_pullupdown_table(const struct tegra_pingroup_config *co
-> > > >  	}
-> > > >  }
-> > > >
-> > > > +static struct of_device_id tegra_pinmux_of_match[] __devinitdata = {
-> > > > +	{ .compatible = "nvidia,tegra20-pinmux", tegra20_pinmux_init },
-> > > > +	{ },
-> > > > +};
-> > > > +
-> > > >  static int __devinit tegra_pinmux_probe(struct platform_device *pdev)
-> > > >  {
-> > > >  	struct resource *res;
-> > > >  	int i;
-> > > >  	int config_bad = 0;
-> > > > +	const struct of_device_id *match;
-> > > > +
-> > > > +#ifdef CONFIG_OF
-> > > > +	match = of_match_device(tegra_pinmux_of_match, &pdev->dev);
-> > >
-> > > What if match==NULL? I suppose that "can't" happen with DT, since the
-> > > device wouldn't have been probed unless there was a matching entry...
-> > 
-> > Exactly. That was my reasoning as well. We can't get here unless there is a
-> > match.
-> > 
-> > > Does this work when booting without DT; IIRC the internal patches I saw
-> > > fell back to hard-coding a call to tegra20_pinmux_init() when booting
-> > > a static board file (i.e. not booting device-tree)? Perhaps that's in a
-> > 
-
-Indeed. Something went wrong here.
-
-> > Unfortunately I don't have a tegra20 board which is supported without
-> > devicetree.
+Russell King wrote at Saturday, October 29, 2011 2:44 AM:
+> On Fri, Oct 28, 2011 at 09:49:49AM -0700, Stephen Warren wrote:
+> > When boards boot from DT, there is no fixup function to override the
+> > bootloader's ATAGs. I also see a bunch of code to set up the memory
+> > information from DT e.g. setup_machine_fdt()'s call to:
+> >
+> > 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
+> >
+> > ... but I assume that happens before the ATAGs are processed, and the
+> > buggy ATAGs end up overriding the information in the DT file.
 > 
-> Oh, that's quite unfortunate. Still, you need to write the code so it's
-> expected to work for the non-DT case. Once you've fixed this, if you
-> push a complete branch somewhere, I can boot-test it on a few non-DT
-> boards. Hopefully I can test on Cardhu too.
+> As far as the uncompressed kernel is concerned, there is either ATAG
+> or DT information, never both.  If the boot loader provides ATAGs and
+> the zImage has a DT appended to it, the zImage decompressor merges the
+> ATAGs into the appended DT and passes the DT to the kernel.
+> 
+> So anyone who currently 'fixes' their broken boot loader via the fixup
+> function by directly manipulating the ATAGS is going to hit the DT
+> image instead.
 
-I know. But alas I have to base myself on assumptions, which is suboptimal of
-course. I will see if I can find a tegra20 board which doesn't require
-devicetree here in finland or push a complete branch somewhere.
+I believe the PAZ00 fixup function runs on the kernel's internal data-
+structures, not the ATAGs directly, so the issue you point out isn't
+a problem here:
 
-Cheers,
+static void __init tegra_paz00_fixup(struct tag *tags, char **cmdline,
+        struct meminfo *mi)
+{
+        mi->nr_banks = 1;
+        mi->bank[0].start = PHYS_OFFSET;
+        mi->bank[0].size = 448 * SZ_1M;
+}
 
-Peter.
+-- 
+nvpublic
