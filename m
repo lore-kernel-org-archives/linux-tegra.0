@@ -1,136 +1,64 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] arm/dt: tegra: add dts file for paz00
-Date: Mon, 31 Oct 2011 19:18:08 +0100
-Message-ID: <1337919.CKEhhtzWl7@ax5200p>
-References: <cover.1319658296.git.marvin24@gmx.de> <4025601.AfFCiixCcK@ax5200p> <74CDBE0F657A3D45AFBB94109FB122FF173EDAB782@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH v3 0/3] paz00 updates for 3.3
+Date: Mon, 31 Oct 2011 20:58:52 +0100
+Message-ID: <cover.1320088857.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173EDAB782-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-ok, lets bring this to an end.
+Hi,
 
-On Monday 31 October 2011 09:09:13 Stephen Warren wrote:
-> Marc Dietrich wrote at Sunday, October 30, 2011 2:40 PM:
-> > On Friday 28 October 2011 09:49:49 Stephen Warren wrote:
-> > > Marc Dietrich wrote at Friday, October 28, 2011 4:30 AM:
-> > > > Am Donnerstag, 27. Oktober 2011, 09:50:03 schrieb Stephen Warren:
-> > > > > Marc Dietrich wrote at Wednesday, October 26, 2011 1:59 PM:
-> > > > > > This adds a dts file for paz00. As a side effect, this
-> > > > > > also enables the embedded controller which controls the keyboard,
-> > > > > > touchpad, power, leds, and some other functions.
-> > > > > > ...
-> > > > > > +++ b/arch/arm/boot/dts/tegra-paz00.dts
-> > > > > > @@ -0,0 +1,70 @@
-> > > > > > +/dts-v1/;
-> > > > > > +
-> > > > > > +/memreserve/ 0x1c000000 0x04000000;
-> > > > > > +/include/ "tegra20.dtsi"
-> > > > > > +
-> > > > > > +/ {
-> > > > > > +	model = "Toshiba AC100 / Dynabook AZ";
-> > > > > > +	compatible = "compal,paz00", "nvidia,tegra20";
-> > > > > > +
-> > > > > > +	chosen {
-> > > > > > +		bootargs = "mem=448@0 console=ttyS0,115200n8
-> > > > > > root=/dev/mmcblk1p1";
-> > > > > 
-> > > > > You shouldn't need the mem= parameter here; it wasn't in
-> > > > > your first patch set.
-> > > > 
-> > > > that's because I forgot it. Sorry, I didn't mentioned it in the
-> > > > changelog. I wonder why mem= is still needed.
-> > > 
-> > > I wonder if this is some conflict between ATAGs and the DT-specified
-> > > memory node.
-> > > 
-> > > As far as I can tell, the kernel's memory information typically
-> > > comes from ATAGs. Some boards override what's in the ATAGs in their
-> > > machine descriptor's fixup routine, e.g. see tegra_paz00_fixup().
-> > > Presumably, this is because of buggy bootloaders sending incorrect
-> > > memory information in the ATAGs. Do you have any way to check the ATAGs
-> > > that the bootloader is sending? Probably, you could enable DEBUG_LL
-> > > and using the low-level debugging functions to dump some of that
-> > > information to the UART early during boot.
-> > 
-> > I got the ATAGS from /proc/atags and there is no memory entry there,
-> > only
-> > initrd and cmdline (which is the one from nvflash).
-> > 
-> > The machine also has a fixup routine, but it also boots without (I'm
-> > sure it was necessary in the past),
-> 
-> ...
-> 
-> > I tested several variations. Without DT, the fixup can compensate a
-> > missing mem entry in the kernel command line, but with a mem= from the
-> > kernel command line, a fixup is not needed.
-> 
-> OK, that makes sense.
-> 
-> > With DT, the command line specified from nvflash is ignored and the one
-> > from DT comes into the game.
-> 
-> I assume you're using CONFIG_ARM_APPENDED_DTB but not
-> CONFIG_ARM_ATAG_DTB_COMPAT.
-> > If it is also missing there, system detects 512 MB.
+the following three patches are intended for the 3.3 merge window and are based
+on linux-next.
 
-correct.
+The first one adds wakeup support similar to seaboard, but with the difference
+that the wakeup gpio is connected to the embedded controller instead of a real
+gpio key.
 
-> That makes sense; that's the value in the .dts file you posted.
-> 
-> > (which is physical right, but we cannot reserve memory for the gpu). The
-> > fixup is indeed ignored in this case.
-> 
-> It's not "ignored" as such.
-> 
-> When booting without DT, the machine descriptor in board-paz00.c is used,
-> since the descriptor is selected based on the machine ID in the descriptor,
-> and that descriptor includes:
-> 
-> 	.fixup          = tegra_paz00_fixup,
-> 
-> ... which causes that fixup function to be called.
-> 
-> When booting with DT, the machine descriptor in board-dt.c is used, since
-> the descriptor is selected based on the DT's overall compatible property,
-> and that descriptor doesn't refer to tegra_paz00_fixup() at all, so it's
-> not called.
+The second patch adds device tree support for the nvec driver. This way we can
+make use of it without adding more platform devices to the board files (and it
+is also modern to do so).
 
-ok, I think I understood now. Thanks for the detailed explanation.
+The final one adds device tree support for paz00. The way the nvec it is
+initialized will probably change in the future, but we like to include it for
+now as it makes debugging easier.
 
-> >  ...
-> >
-> > > c) Test booting, and check what RAM size the kernel thinks you have.
-> > 
-> > see above. RAM detection works, but it's not what we want ...
-> 
-> At this point, I'd argue that exposing the full 512M to the kernel /is/
-> what we want. There is no Tegra GPU support in the mainline kernel at
-> present. As such, I'd argue that we should give the entire RAM space to
-> the kernel to use. As and when we add GPU support to the kernel, we can
-> use an appropriate mechanism to take RAM away from the kernel for that
-> purpose.
+The patches are against linux-next from Oct 25th.
 
-sound fine. I guess the vmalloc is also due to some gpu requirements...
-
-> So, I'm planning to remove all the /memreserve/ entries from the Tegra
-> .dts files as soon as I can find a minute to do so.
-> 
-> But, as Grant mentioned, the /memreserve/ .dts directive should work
-> right now to reserve memory. I'm not sure if you'd tried that and it didn't
-> work? If so, it'd be good to debug that just to make sure the mechanism
-> works, even if we don't intend to use it.
-
-actually, it works as Grant said. For some reasons it didn't worked here when 
-I tested it. Maybe I just catched a bad setup of linux-next/bootloader/kernel 
-arguments.
-
-Thanks for you patience with me...
+Thanks
 
 Marc
+
+Changes since v2
+    - remove the mem= from the bootargs, this is handled by the memory property
+      already
+    - change the root device until the sdhci init order can be changed
+    - do not init unused serial ports
+    - add dt documentation for nvec
+    - remove CONFIG_OF #ifdefs from nvec.c
+    - exchange the order of patch 2 and 3
+Changes since v1
+    - replace addition of the embedded controller to the board file by a device-tree
+      based implementation.
+
+Marc Dietrich (3):
+  ARM: tegra: paz00: add support for wakeup gpio key
+  staging: nvec: add device tree support
+  arm/dt: tegra: add dts file for paz00
+
+ .../devicetree/bindings/nvec/nvec_nvidia.txt       |    9 ++
+ arch/arm/boot/dts/tegra-paz00.dts                  |   78 ++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile                       |    1 +
+ arch/arm/mach-tegra/Makefile.boot                  |    1 +
+ arch/arm/mach-tegra/board-dt.c                     |    3 +
+ arch/arm/mach-tegra/board-paz00.c                  |   27 +++++++
+ arch/arm/mach-tegra/board-paz00.h                  |    3 +
+ drivers/staging/nvec/nvec.c                        |   35 ++++++++-
+ 8 files changed, 155 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvec/nvec_nvidia.txt
+ create mode 100644 arch/arm/boot/dts/tegra-paz00.dts
+
+-- 
+1.7.5.4
