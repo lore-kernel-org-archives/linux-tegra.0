@@ -1,67 +1,68 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: Re: [PATCH] asoc: tegra: wm8903: Simplify pin
-	disconnect
-Date: Tue, 1 Nov 2011 10:05:15 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173EDABA68@HQMAIL01.nvidia.com>
-References: <1320164771-457-1-git-send-email-thutt@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1320164771-457-1-git-send-email-thutt@chromium.org>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Taylor Hutt <thutt@chromium.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH v4 0/3] paz00 updates for 3.3
+Date: Tue,  1 Nov 2011 21:37:02 +0100
+Message-ID: <cover.1320173572.git.marvin24@gmx.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Taylor Hutt wrote at Tuesday, November 01, 2011 10:26 AM:
-> (Note that this patch fails the kernel patch checker because
->  the 'M' macro produces an error that it's value should be enclosed
->  in parenthesis; this is not actually possible for this use & expansion.)
-> 
-> Detail
-> 
->   This change is a simplification, both in implementation and for
->   reasoning about whcih pins are connected and disconnected.
-> 
->   The impetus for the change was the addition of new boards, and the
->   difficulty in reasoning about the previous code to disconnect pins.
-> 
->   Now, unless a connection is specified for the current board, the pin
->   will be disconnected.
-> 
->   A follow-on change will add the 'asymptote' board.
-> 
-> Testing
-> 
->   Visual inspection from original code.
->   Built kernel.
+Hi,
 
-As I mentioned in the ChromeOS review, I don't like this approach.
+the following three patches are intended for the 3.3 merge window and are based
+on linux-next.
 
-The main issue is that all the connectivity information is already present
-in the ${machine}_audio_maps[] arrays, and this change duplicates it all
-in the data-structures inside tegra_wm8903_disconnect_pins().
+The first one adds wakeup support similar to seaboard, but with the difference
+that the wakeup gpio is connected to the embedded controller instead of a real
+gpio key.
 
-Instead, I believe a function should be added to the ASoC core that reads
-the machine's dapm routes, and does the same thing based on that. Mark
-Brown pointed out that this should be an optional utility function that
-machine drivers should call, since applying it automatically might cause
-issues for some other machines.
+The second patch adds device tree support for the nvec driver. This way we can
+make use of it without adding more platform devices to the board files (and it
+is also modern to do so).
 
-The second issue here is that the new code calls machine_is_ventana()
-and the equivalent for other machines, and some of those functions will go
-away next time Russell updates mach-types and removes entries for boards
-that aren't supported with an explicit board file.
+The final one adds device tree support for paz00. The way the nvec it is
+initialized will probably change in the future, but we like to include it for
+now as it makes debugging easier.
+
+The patches are against linux-next from Nov 1st.
+
+Thanks
+
+Marc
+
+Changes since v3
+    - use of_property_read_u32 in nvec
+    - also disable uart-e in the device tree
+
+Changes since v2
+    - remove the mem= from the bootargs, this is handled by the memory property
+      already
+    - change the root device until the sdhci init order can be changed
+    - do not init unused serial ports
+    - add dt documentation for nvec
+    - remove CONFIG_OF #ifdefs from nvec.c
+    - exchange the order of patch 2 and 3
+Changes since v1
+    - replace addition of the embedded controller to the board file by a device-tree
+      based implementation.
+
+Marc Dietrich (3):
+  ARM: tegra: paz00: add support for wakeup gpio key
+  staging: nvec: add device tree support
+  arm/dt: tegra: add dts file for paz00
+
+ .../devicetree/bindings/nvec/nvec_nvidia.txt       |    9 ++
+ arch/arm/boot/dts/tegra-paz00.dts                  |   82 ++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile                       |    1 +
+ arch/arm/mach-tegra/Makefile.boot                  |    1 +
+ arch/arm/mach-tegra/board-dt.c                     |    3 +
+ arch/arm/mach-tegra/board-paz00.c                  |   27 +++++++
+ arch/arm/mach-tegra/board-paz00.h                  |    3 +
+ drivers/staging/nvec/nvec.c                        |   30 +++++++-
+ 8 files changed, 154 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvec/nvec_nvidia.txt
+ create mode 100644 arch/arm/boot/dts/tegra-paz00.dts
 
 -- 
-nvpublic
+1.7.5.4
