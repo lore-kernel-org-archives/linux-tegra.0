@@ -1,48 +1,67 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ASoc : Tegra : Add audio map for Asymptote
-Date: Tue, 1 Nov 2011 09:55:59 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173EDABA51@HQMAIL01.nvidia.com>
-References: <1320165173-3951-1-git-send-email-thutt@chromium.org>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: Re: [PATCH] asoc: tegra: wm8903: Simplify pin
+	disconnect
+Date: Tue, 1 Nov 2011 10:05:15 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173EDABA68@HQMAIL01.nvidia.com>
+References: <1320164771-457-1-git-send-email-thutt@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1320165173-3951-1-git-send-email-thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1320164771-457-1-git-send-email-thutt@chromium.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Taylor Hutt <thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Liam Girdwood <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Taylor Hutt <thutt@chromium.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>
 List-Id: linux-tegra@vger.kernel.org
 
-Taylor Hutt wrote at Tuesday, November 01, 2011 10:33 AM:
-> Details
+Taylor Hutt wrote at Tuesday, November 01, 2011 10:26 AM:
+> (Note that this patch fails the kernel patch checker because
+>  the 'M' macro produces an error that it's value should be enclosed
+>  in parenthesis; this is not actually possible for this use & expansion.)
 > 
->   Add pin connections and audio map for the Asymptote board.
+> Detail
+> 
+>   This change is a simplification, both in implementation and for
+>   reasoning about whcih pins are connected and disconnected.
+> 
+>   The impetus for the change was the addition of new boards, and the
+>   difficulty in reasoning about the previous code to disconnect pins.
+> 
+>   Now, unless a connection is specified for the current board, the pin
+>   will be disconnected.
+> 
+>   A follow-on change will add the 'asymptote' board.
 > 
 > Testing
 > 
->   Visual inspection with Chromium OS 2.6.38 code.
->   Built kernel
->   Built chromium os image
->   Booted image on asymptote
->   Booted image on kaen
+>   Visual inspection from original code.
+>   Built kernel.
 
-Presumably all that testing was within the chromeos-3.0 kernel, not
-mainline; asymptote isn't supported in mainline.
+As I mentioned in the ChromeOS review, I don't like this approach.
 
-This patch can't be applied for a few reasons:
+The main issue is that all the connectivity information is already present
+in the ${machine}_audio_maps[] arrays, and this change duplicates it all
+in the data-structures inside tegra_wm8903_disconnect_pins().
 
-a) Asymptote isn't in mainline's arch/arm/tools/mach-types. This means
-that function machine_is_asymptote() doesn't exists, and this code can't
-compile.
+Instead, I believe a function should be added to the ASoC core that reads
+the machine's dapm routes, and does the same thing based on that. Mark
+Brown pointed out that this should be an optional utility function that
+machine drivers should call, since applying it automatically might cause
+issues for some other machines.
 
-b) Even if the machine were in mach-types, there's no board file for
-asymptote, so Russell King's automated mach-types cleanup script would
-flag asymptote for removal and eventually it'd go away. This is the same
-reason we recently removed Ventana support from tegra_wm8903.c. I'm not
-sure how this will work once we have device-tree-only boards; I guess
-we need to remove all the machine_is_foo() checks from the code and
-parameterize everything from DT instead.
+The second issue here is that the new code calls machine_is_ventana()
+and the equivalent for other machines, and some of those functions will go
+away next time Russell updates mach-types and removes entries for boards
+that aren't supported with an explicit board file.
 
 -- 
 nvpublic
