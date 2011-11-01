@@ -1,42 +1,48 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/6] arm/tegra: prepare early init for multiple tegra
- variants
-Date: Tue, 1 Nov 2011 15:37:47 +0200
-Message-ID: <20111101133747.GF13358@tbergstrom-lnx.Nvidia.com>
-References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
- <1319561644-6160-4-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2@HQMAIL01.nvidia.com>
- <20111027201657.GP19187@n2100.arm.linux.org.uk>
- <20111028161933.GK23539@mudshark.cambridge.arm.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] ASoc : Tegra : Add audio map for Asymptote
+Date: Tue, 1 Nov 2011 09:55:59 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173EDABA51@HQMAIL01.nvidia.com>
+References: <1320165173-3951-1-git-send-email-thutt@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20111028161933.GK23539-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
+In-Reply-To: <1320165173-3951-1-git-send-email-thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Taylor Hutt <thutt-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Liam Girdwood <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 28, 2011 at 06:19:34PM +0200, Will Deacon wrote:
-> On Thu, Oct 27, 2011 at 09:16:57PM +0100, Russell King - ARM Linux wrote:
-> > On Thu, Oct 27, 2011 at 01:06:13PM -0700, Stephen Warren wrote:
-> > > Peter De Schrijver wrote at Tuesday, October 25, 2011 10:54 AM:
-> > > > -static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
-> > > > +void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
-> > > 
-> > > I'm not sure why you moved that, but I suppose it's fine.
-> > 
-> > Note that Nicolas has a patch set during KS which cleans the arch_reset
-> > business out of mach/system.h, and effectively gets rid of arch_reset
-> > entirely, so this probably conflicts with those changes.
+Taylor Hutt wrote at Tuesday, November 01, 2011 10:33 AM:
+> Details
 > 
-> I've spammed the ARM list with this patch series now, so the state of the
-> conflicts should be evident.
+>   Add pin connections and audio map for the Asymptote board.
 > 
+> Testing
+> 
+>   Visual inspection with Chromium OS 2.6.38 code.
+>   Built kernel
+>   Built chromium os image
+>   Booted image on asymptote
+>   Booted image on kaen
 
-Will be taken into account in the next version.
+Presumably all that testing was within the chromeos-3.0 kernel, not
+mainline; asymptote isn't supported in mainline.
 
-Chers,
+This patch can't be applied for a few reasons:
 
-Peter.
+a) Asymptote isn't in mainline's arch/arm/tools/mach-types. This means
+that function machine_is_asymptote() doesn't exists, and this code can't
+compile.
+
+b) Even if the machine were in mach-types, there's no board file for
+asymptote, so Russell King's automated mach-types cleanup script would
+flag asymptote for removal and eventually it'd go away. This is the same
+reason we recently removed Ventana support from tegra_wm8903.c. I'm not
+sure how this will work once we have device-tree-only boards; I guess
+we need to remove all the machine_is_foo() checks from the code and
+parameterize everything from DT instead.
+
+-- 
+nvpublic
