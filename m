@@ -1,54 +1,88 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH 3/3] arm/dt: tegra: add dts file for paz00
-Date: Mon, 31 Oct 2011 23:20:42 +0100
-Message-ID: <2757750.NnzM46gx6f@ax5200p>
-References: <cover.1320088857.git.marvin24@gmx.de>
-	<855f09f77c03a9f081818a03effdbd3bf7a30c91.1320088857.git.marvin24@gmx.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF173EDAB86E@HQMAIL01.nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/6] arm/tegra: prepare early init for multiple tegra
+ variants
+Date: Tue, 1 Nov 2011 15:37:15 +0200
+Message-ID: <20111101133715.GE13358@tbergstrom-lnx.Nvidia.com>
+References: <1319561644-6160-1-git-send-email-pdeschrijver@nvidia.com>
+ <1319561644-6160-4-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173EDAB86E@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Grant Likely <grant.likely@secretlab.ca>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Colin Cross <ccross@android.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173E1B49B2-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 31 October 2011 13:14:17 Stephen Warren wrote:
-> Marc Dietrich wrote at Monday, October 31, 2011 1:59 PM:
-> > This adds a dts file for paz00. As a side effect, this also enables
-> > the embedded controller which controls the keyboard, touchpad, power,
-> > leds, and some other functions.
+On Thu, Oct 27, 2011 at 10:06:13PM +0200, Stephen Warren wrote:
+> Peter De Schrijver wrote at Tuesday, October 25, 2011 10:54 AM:
+> > This patch splits the early init code in a common and a tegra20 specific part.
 > 
-> ...
+> > diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
 > 
-> > +	serial@70006000 {
-> > +		clock-frequency = <216000000>;
-> > +	};
+> > +static void __init tegra_init_early(void)
+> > +{
 > > +
-> > +	serial@70006040 {
-> > +		status = "disable";
-> > +	};
+> > +	int i;
 > > +
-> > +	serial@70006200 {
-> > +		status = "disable";
-> > +	};
+> > +	for (i = 0; i < ARRAY_SIZE(early_init); i++)
+> > +		if (of_machine_is_compatible(early_init[i].machine))
+> > +			return early_init[i].init();
 > > +
-> > +	serial@70006300 {
-> > +		clock-frequency = <216000000>;
-> > +	};
+> > +	printk(KERN_WARNING "Unknown platform detected\n");
 > 
-> Don't you also want to disable serial@70006400, or set a clock rate for
-> it?
+> pr_warn/WARN/WARN_ON?
+> 
+> > diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+> 
+> > @@ -31,8 +31,6 @@
+> >  #include "clock.h"
+> >  #include "fuse.h"
+> > 
+> > -void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
+> > -
+> >  void tegra_assert_system_reset(char mode, const char *cmd)
+> >  {
+> >  	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
+> > @@ -44,7 +42,9 @@ void tegra_assert_system_reset(char mode, const char *cmd)
+> >  	writel_relaxed(reg, reset);
+> >  }
+> > 
+> > -static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
+> > +void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
+> 
+> I'm not sure why you moved that, but I suppose it's fine.
+> 
+> > +
+> > +static __initdata struct tegra_clk_init_table tegra20_clk_init_table[] = {
+> >  	/* name		parent		rate		enabled */
+> >  	{ "clk_m",	NULL,		0,		true },
+> >  	{ "pll_p",	"clk_m",	216000000,	true },
+> > @@ -65,19 +65,25 @@ static void __init tegra_init_cache(void)
+> >  {
+> >  #ifdef CONFIG_CACHE_L2X0
+> >  	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
+> > +	u32 aux_ctrl;
+> > 
+> >  	writel_relaxed(0x331, p + L2X0_TAG_LATENCY_CTRL);
+> >  	writel_relaxed(0x441, p + L2X0_DATA_LATENCY_CTRL);
+> > +	writel(2, p + L2X0_PREFETCH_CTRL);
 
-I just didn't noticed its existance because I configured a maximum of four 
-serial ports only, so it didn't showed up in the boot log.
+This is actually wrong :)
+
+> > +
+> > +	aux_ctrl = readl(p + L2X0_CACHE_TYPE);
+> > +	aux_ctrl = (aux_ctrl & 0x700) << (17-8);
+> > +	aux_ctrl |= 0x6C000001;
+> 
+> This is an unrelated change?
+> 
+
+This is needed to deal with potential differences in L2 associativity between
+SoCs.
+
+Cheers,
+
+Peter.
