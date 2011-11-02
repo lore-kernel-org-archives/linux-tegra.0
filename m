@@ -1,132 +1,97 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/tegra: add support for tegra30 interrupts
-Date: Wed, 2 Nov 2011 17:38:11 +0200
-Message-ID: <1320248292-22736-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 8/8] arm/tegra: add support for tegra30 based board
+ cardhu
+Date: Wed, 2 Nov 2011 17:46:10 +0200
+Message-ID: <20111102154610.GJ13358@tbergstrom-lnx.Nvidia.com>
+References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
+ <1320242948-21061-9-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1320242948-21061-9-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra30 has 1 extra legacy interrupt controller. Use the GIC ITLinesNumber
-field to determine how many interrupt controllers we have and initialize
-appropriately. Also make room for the extra tegra30 interrupts by moving
-the GPIO IRQ base. This shouldn't affect existing code as it determines the
-correct IRQ number for GPIOs using TEGRA_GPIO_TO_IRQ()
+On Wed, Nov 02, 2011 at 03:09:07PM +0100, Peter De Schrijver wrote:
+> Add support for the tegra30 based cardhu development board. Cardhu is a tablet
+> formfactor reference design for tegra30. The patch provides a device tree for
+> the board, updates Makefile.boot to build the dtb, includes the platform in
+> Kconfig and updates board-dt.c.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra-cardhu.dts |   36 ++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-tegra/Kconfig        |    7 +++++++
+>  arch/arm/mach-tegra/Makefile.boot  |    1 +
+>  arch/arm/mach-tegra/board-dt.c     |    1 +
+>  4 files changed, 45 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+> 
+> diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+> new file mode 100644
+> index 0000000..70c41fc
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/tegra-cardhu.dts
+> @@ -0,0 +1,36 @@
+> +/dts-v1/;
+> +
+> +/include/ "tegra30.dtsi"
+> +
+> +/ {
+> +	model = "NVIDIA Tegra30 Cardhu evaluation board";
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/include/mach/iomap.h |    3 +++
- arch/arm/mach-tegra/include/mach/irqs.h  |   14 +++++++-------
- arch/arm/mach-tegra/irq.c                |   15 ++++++++++-----
- 3 files changed, 20 insertions(+), 12 deletions(-)
+And this should probably be removed.
 
-diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
-index 19dec3a..67644c9 100644
---- a/arch/arm/mach-tegra/include/mach/iomap.h
-+++ b/arch/arm/mach-tegra/include/mach/iomap.h
-@@ -74,6 +74,9 @@
- #define TEGRA_QUATERNARY_ICTLR_BASE	0x60004300
- #define TEGRA_QUATERNARY_ICTLR_SIZE	SZ_64
- 
-+#define TEGRA_QUINARY_ICTLR_BASE	0x60004400
-+#define TEGRA_QUINARY_ICTLR_SIZE	SZ_64
-+
- #define TEGRA_TMR1_BASE			0x60005000
- #define TEGRA_TMR1_SIZE			SZ_8
- 
-diff --git a/arch/arm/mach-tegra/include/mach/irqs.h b/arch/arm/mach-tegra/include/mach/irqs.h
-index 73265af..b6ebb8e 100644
---- a/arch/arm/mach-tegra/include/mach/irqs.h
-+++ b/arch/arm/mach-tegra/include/mach/irqs.h
-@@ -25,7 +25,8 @@
- 
- #define IRQ_LOCALTIMER                  29
- 
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+/* We only list the Tegra20 interrupts here as Tegra30 will always use FDT */
-+
- /* Primary Interrupt Controller */
- #define INT_PRI_BASE			(INT_GIC_BASE + 32)
- #define INT_TMR1			(INT_PRI_BASE + 0)
-@@ -166,18 +167,17 @@
- #define INT_QUAD_RES_30			(INT_QUAD_BASE + 30)
- #define INT_QUAD_RES_31			(INT_QUAD_BASE + 31)
- 
--#define INT_MAIN_NR			(INT_QUAD_BASE + 32 - INT_PRI_BASE)
--
-+/* Tegra30 has 5 banks of 32 IRQs */
-+#define INT_MAIN_NR			(32 * 5)
- #define INT_GPIO_BASE			(INT_PRI_BASE + INT_MAIN_NR)
- 
--#define INT_GPIO_NR			(28 * 8)
-+/* Tegra30 has 8 banks of 32 GPIOs */
-+#define INT_GPIO_NR			(32 * 8)
- 
- #define TEGRA_NR_IRQS			(INT_GPIO_BASE + INT_GPIO_NR)
- 
- #define INT_BOARD_BASE			TEGRA_NR_IRQS
- #define NR_BOARD_IRQS			32
--
--#define NR_IRQS				(INT_BOARD_BASE + NR_BOARD_IRQS)
--#endif
-+#define NR_IRQS                         (INT_BOARD_BASE + NR_BOARD_IRQS)
- 
- #endif
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 8ad82af..aad335b 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -43,14 +43,16 @@
- #define ICTLR_COP_IER_CLR	0x38
- #define ICTLR_COP_IEP_CLASS	0x3c
- 
--#define NUM_ICTLRS 4
- #define FIRST_LEGACY_IRQ 32
- 
-+static int num_ictlrs;
-+
- static void __iomem *ictlr_reg_base[] = {
- 	IO_ADDRESS(TEGRA_PRIMARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_SECONDARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_TERTIARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_QUATERNARY_ICTLR_BASE),
-+	IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
- };
- 
- static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
-@@ -59,7 +61,7 @@ static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
- 	u32 mask;
- 
- 	BUG_ON(irq < FIRST_LEGACY_IRQ ||
--		irq >= FIRST_LEGACY_IRQ + NUM_ICTLRS * 32);
-+		irq >= FIRST_LEGACY_IRQ + num_ictlrs * 32);
- 
- 	base = ictlr_reg_base[(irq - FIRST_LEGACY_IRQ) / 32];
- 	mask = BIT((irq - FIRST_LEGACY_IRQ) % 32);
-@@ -112,8 +114,12 @@ static int tegra_retrigger(struct irq_data *d)
- void __init tegra_init_irq(void)
- {
- 	int i;
-+	void __iomem *distbase;
-+
-+	distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
-+	num_ictlrs = readl_relaxed(distbase + GIC_DIST_CTR) & 0x1f;
- 
--	for (i = 0; i < NUM_ICTLRS; i++) {
-+	for (i = 0; i < num_ictlrs; i++) {
- 		void __iomem *ictlr = ictlr_reg_base[i];
- 		writel(~0, ictlr + ICTLR_CPU_IER_CLR);
- 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
-@@ -125,6 +131,5 @@ void __init tegra_init_irq(void)
- 	gic_arch_extn.irq_unmask = tegra_unmask;
- 	gic_arch_extn.irq_retrigger = tegra_retrigger;
- 
--	gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
--		 IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
-+	gic_init(0, 29, distbase, IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
- }
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> +	compatible = "nvidia,cardhu", "nvidia,tegra30";
+> +
+> +	memory {
+> +		reg = < 0x80000000 0x40000000 >;
+> +	};
+> +
+> +	serial@70006000 {
+> +		clock-frequency = < 408000000 >;
+> +	};
+> +
+> +	i2c@7000c000 {
+> +		clock-frequency = <100000>;
+> +	};
+> +
+> +	i2c@7000c400 {
+> +		clock-frequency = <100000>;
+> +	};
+> +
+> +	i2c@7000c500 {
+> +		clock-frequency = <100000>;
+> +	};
+> +
+> +	i2c@7000c700 {
+> +		clock-frequency = <100000>;
+> +	};
+> +
+> +	i2c@7000d000 {
+> +		clock-frequency = <100000>;
+> +	};
+> +};
+> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+> index f2eb6d1..43a6352 100644
+> --- a/arch/arm/mach-tegra/Kconfig
+> +++ b/arch/arm/mach-tegra/Kconfig
+> @@ -83,6 +83,13 @@ config MACH_VENTANA
+>         help
+>           Support for the nVidia Ventana development platform
+>  
+> +config MACH_CARDHU
+> +       bool "Cardhu board"
+> +       depends on ARCH_TEGRA_3x_SOC
+> +       select MACH_TEGRA_DT
+> +       help
+> +         Support for the nVidia Cardhu development platform
+
+This should have been NVIDIA. Will be fixed in the next version. Most other
+nvidia boards use 'nVidia' in their description. What should we do?
+
+Cheers,
+
+Peter.
