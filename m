@@ -1,120 +1,36 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 8/8] arm/tegra: add support for tegra30 based board cardhu
-Date: Wed, 2 Nov 2011 16:09:07 +0200
-Message-ID: <1320242948-21061-9-git-send-email-pdeschrijver@nvidia.com>
-References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm/tegra: remove unused defines
+Date: Wed, 2 Nov 2011 17:25:23 +0200
+Message-ID: <1320247524-22425-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the tegra30 based cardhu development board. Cardhu is a tablet
-formfactor reference design for tegra30. The patch provides a device tree for
-the board, updates Makefile.boot to build the dtb, includes the platform in
-Kconfig and updates board-dt.c.
+PPI_NR is never used in arch/arm/mach-tegra/irq.c. Remove it.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra-cardhu.dts |   36 ++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/Kconfig        |    7 +++++++
- arch/arm/mach-tegra/Makefile.boot  |    1 +
- arch/arm/mach-tegra/board-dt.c     |    1 +
- 4 files changed, 45 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+ arch/arm/mach-tegra/irq.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-new file mode 100644
-index 0000000..70c41fc
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -0,0 +1,36 @@
-+/dts-v1/;
-+
-+/include/ "tegra30.dtsi"
-+
-+/ {
-+	model = "NVIDIA Tegra30 Cardhu evaluation board";
-+	compatible = "nvidia,cardhu", "nvidia,tegra30";
-+
-+	memory {
-+		reg = < 0x80000000 0x40000000 >;
-+	};
-+
-+	serial@70006000 {
-+		clock-frequency = < 408000000 >;
-+	};
-+
-+	i2c@7000c000 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c400 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c500 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c700 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000d000 {
-+		clock-frequency = <100000>;
-+	};
-+};
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index f2eb6d1..43a6352 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -83,6 +83,13 @@ config MACH_VENTANA
-        help
-          Support for the nVidia Ventana development platform
+diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
+index 4956c3c..8ad82af 100644
+--- a/arch/arm/mach-tegra/irq.c
++++ b/arch/arm/mach-tegra/irq.c
+@@ -28,10 +28,6 @@
  
-+config MACH_CARDHU
-+       bool "Cardhu board"
-+       depends on ARCH_TEGRA_3x_SOC
-+       select MACH_TEGRA_DT
-+       help
-+         Support for the nVidia Cardhu development platform
-+
- choice
-         prompt "Low-level debug console UART"
-         default TEGRA_DEBUG_UART_NONE
-diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index bd12c9f..b518848 100644
---- a/arch/arm/mach-tegra/Makefile.boot
-+++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -5,3 +5,4 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
- dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
- dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
- dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-+dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index 1680e96..88947b5 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -142,6 +142,7 @@ static const char * tegra_dt_board_compat[] = {
- 	"nvidia,harmony",
- 	"nvidia,seaboard",
- 	"nvidia,ventana",
-+	"nvidia,cardhu",
- 	NULL
- };
+ #include "board.h"
  
+-#define INT_SYS_NR	(INT_GPIO_BASE - INT_PRI_BASE)
+-#define INT_SYS_SZ	(INT_SEC_BASE - INT_PRI_BASE)
+-#define PPI_NR		((INT_SYS_NR+INT_SYS_SZ-1)/INT_SYS_SZ)
+-
+ #define ICTLR_CPU_IEP_VFIQ	0x08
+ #define ICTLR_CPU_IEP_FIR	0x14
+ #define ICTLR_CPU_IEP_FIR_SET	0x18
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
