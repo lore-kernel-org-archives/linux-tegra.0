@@ -1,54 +1,62 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 2/8] arm/tegra: prepare early init for multiple
-	tegra variants
-Date: Thu, 3 Nov 2011 10:02:35 +0000
-Message-ID: <20111103100235.GK12913@n2100.arm.linux.org.uk>
-References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
-	<1320242948-21061-3-git-send-email-pdeschrijver@nvidia.com>
-	<CAMbhsRSTcR8qgYESmM6OxkXeVeg6vS49woCe_OX6CY4pAj2g_A@mail.gmail.com>
-	<20111103092116.GO13358@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20111103092116.GO13358@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH 1/2] arm/dt: add basic usb nodes to tegra device trees
+Date: Thu,  3 Nov 2011 20:26:13 -0700
+Message-ID: <1320377174-28047-1-git-send-email-olof@lixom.net>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 03, 2011 at 11:21:16AM +0200, Peter De Schrijver wrote:
-> On Wed, Nov 02, 2011 at 07:30:43PM +0100, Colin Cross wrote:
-> > On Wed, Nov 2, 2011 at 7:09 AM, Peter De Schrijver
-> > <pdeschrijver@nvidia.com> wrote:
-> > > This patch splits the early init code in a common and a tegra20 specific part.
-> > > L2 cache initialization is generalized and discovers the cache associativity
-> > > at runtime.
-> > >
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > ---
-> > <snip>
-> > 
-> > > -static __initdata struct tegra_clk_init_table common_clk_init_table[] = {
-> > > +void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
-> > > +
-> > This is unrelated to the patch description?
-> > 
-> 
-> This is a left over from the past. Will be removed from the next version.
+For now they are a minimal binding. It needs to be amended with
+vendor-specific settings for phy setup and link tuning, etc.
 
-Please can Tegra move over to hooking the restart via arm_pm_restart()
-rather than via arch_reset()?  That would leave arch_reset() for
-software-based reboot methods - which I suspect Tegra doesn't use.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-seaboard.dts |    4 ++++
+ arch/arm/boot/dts/tegra20.dtsi       |   18 ++++++++++++++++++
+ 2 files changed, 22 insertions(+), 0 deletions(-)
 
-That would allow Tegra to dovetail into the arch_reset cleanup work much
-better than it would otherwise do.
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index a72299b..88c682a 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -29,4 +29,8 @@
+ 	sdhci@c8000600 {
+ 		support-8bit;
+ 	};
++
++	usb@c5000000 {
++		nvidia,vbus-gpio = <&gpio 24 0>; /* PD0 */
++	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 65d7e6a..2ad1107 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -143,5 +143,23 @@
+ 		reg = <0xc8000600 0x200>;
+ 		interrupts = < 63 >;
+ 	};
++
++	usb@c5000000 {
++		compatible = "nvidia,tegra20-ehci", "usb-ehci";
++		reg = <0xc5000000 0x4000>;
++		interrupts = < 52 >;
++	};
++
++	usb@c5004000 {
++		compatible = "nvidia,tegra20-ehci", "usb-ehci";
++		reg = <0xc5004000 0x4000>;
++		interrupts = < 53 >;
++	};
++
++	usb@c5008000 {
++		compatible = "nvidia,tegra20-ehci", "usb-ehci";
++		reg = <0xc5008000 0x4000>;
++		interrupts = < 129 >;
++	};
+ };
+ 
+-- 
+1.7.4.1
