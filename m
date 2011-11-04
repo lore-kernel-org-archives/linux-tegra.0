@@ -1,45 +1,39 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 2/8] arm/tegra: prepare early init for multiple
-	tegra variants
-Date: Fri, 4 Nov 2011 16:30:17 +0000
-Message-ID: <20111104163017.GA12913@n2100.arm.linux.org.uk>
-References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
-	<1320242948-21061-3-git-send-email-pdeschrijver@nvidia.com>
-	<CAMbhsRSTcR8qgYESmM6OxkXeVeg6vS49woCe_OX6CY4pAj2g_A@mail.gmail.com>
-	<20111103092116.GO13358@tbergstrom-lnx.Nvidia.com>
-	<20111103100235.GK12913@n2100.arm.linux.org.uk>
-	<CAOesGMh7LqUtBkB5Dffr-bJSkC__V+55yLsp7KAYs-6oRAGMhA@mail.gmail.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm/dt: add basic usb nodes to tegra device trees
+Date: Fri, 4 Nov 2011 14:20:05 -0400
+Message-ID: <CACxGe6u5UJLwE+-iS_GzQxE5wkJ1RH_c9MFdrHfa__Wju-SuHg@mail.gmail.com>
+References: <1320377174-28047-1-git-send-email-olof@lixom.net> <74CDBE0F657A3D45AFBB94109FB122FF173F9A4CAC@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMh7LqUtBkB5Dffr-bJSkC__V+55yLsp7KAYs-6oRAGMhA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Warren <swarren@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173F9A4CAC-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 04, 2011 at 08:09:42AM -0700, Olof Johansson wrote:
-> Sounds reasonable to me. Want a patch to put in your arch_reset
-> cleanup branch, I presume? I'll post something later today.
+On Fri, Nov 4, 2011 at 11:27 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> Olof Johansson wrote at Thursday, November 03, 2011 9:26 PM:
+>> For now they are a minimal binding. It needs to be amended with
+>> vendor-specific settings for phy setup and link tuning, etc.
+> ...
+>> diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dt=
+s/tegra-seaboard.dts
+> ...
+>> + =A0 =A0 usb@c5000000 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 nvidia,vbus-gpio =3D <&gpio 24 0>; /* PD0 =
+*/
+>> + =A0 =A0 };
+>
+> Given that's a custom property, don't we need bindings documentation =
+in
+> Documentation/devictree/bindings/usb/? Even if the binding is pretty =
+self-
+> explanatory.
 
-I would, but I've just changed the method slightly.
+Yes, you're right.  Please add a binding, but you can leave my ack in
+place when reposted.
 
-It was becoming silly adding functions to every platform to initialize
-arm_pm_restart() in some way (preferably as early as possible) so I've
-scrapped that idea.
-
-I've just replaced it with something a little better, which is to put
-a pointer directly in the machine_desc stuff, and have generic code
-setup the pointer if this is set.
-
-I'll post some new patches sometime in the next few days.
+g.
