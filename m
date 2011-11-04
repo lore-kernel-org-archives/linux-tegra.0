@@ -1,69 +1,114 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2 5/8] arm/tegra: add new fields to struct
- tegra_pingroup_desc
-Date: Fri, 4 Nov 2011 14:06:29 -0700
-Message-ID: <20111104210629.GA4685@quad.lixom.net>
-References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
- <1320242948-21061-6-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] crypto: driver for tegra AES hardware
+Date: Fri, 4 Nov 2011 14:21:23 -0700
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173F9A4E83@HQMAIL01.nvidia.com>
+References: <1320405256-29374-1-git-send-email-vwadekar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1320242948-21061-6-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1320405256-29374-1-git-send-email-vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org" <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Cc: "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 02, 2011 at 04:09:04PM +0200, Peter De Schrijver wrote:
-> Add new fields to struct tegra_pingroup_desc to support new hardware features
-> introduced in the tegra30 SoC. The pinmux driver won't use those fields yet,
-> but the tegra30 pinmux tables will already provide the necessary data.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Varun Wadekar wrote at Friday, November 04, 2011 5:14 AM:
+> From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Just a nit below.
+If you teach git your full name, it'll omit this From: header from the
+email body, which will be a little more idiomatic:
 
-> ---
->  arch/arm/mach-tegra/include/mach/pinmux.h   |   10 ++++++++++
->  arch/arm/mach-tegra/pinmux-tegra20-tables.c |    4 ++++
->  2 files changed, 14 insertions(+), 0 deletions(-)
+git config --global sendemail.from "Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>"
+
+> driver supports ecb/cbc/ofb/ansi_x9.31rng modes,
+> 128, 192 and 256-bit key sizes.
 > 
-> diff --git a/arch/arm/mach-tegra/include/mach/pinmux.h b/arch/arm/mach-tegra/include/mach/pinmux.h
-> index fb101f5..1ea2018 100644
-> --- a/arch/arm/mach-tegra/include/mach/pinmux.h
-> +++ b/arch/arm/mach-tegra/include/mach/pinmux.h
-> @@ -2,6 +2,7 @@
->   * linux/arch/arm/mach-tegra/include/mach/pinmux.h
->   *
->   * Copyright (C) 2010 Google, Inc.
-> + * Copyright (C) 2010,2011 Nvidia, Inc.
->   *
->   * This software is licensed under the terms of the GNU General Public
->   * License version 2, as published by the Free Software Foundation, and
-> @@ -99,6 +100,11 @@ enum tegra_tristate {
->  	TEGRA_TRI_TRISTATE = 1,
->  };
->  
-> +enum tegra_pin_io {
-> +	TEGRA_PIN_OUTPUT = 0,
-> +	TEGRA_PIN_INPUT = 1,
-> +};
+> Change-Id: Ic7d8d6d76b8ab6712f3bc9048e2dee7b5ebd13ff
+
+Please remove the Change-Id lines from patches before posting them.
+
+> Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+I ran this patch through checkpatch, and there's one error and some
+warnings to fix.
+
+> +config CRYPTO_DEV_TEGRA_AES
+> +	tristate "Support for TEGRA AES hw engine"
+> +	depends on ARCH_TEGRA_2x_SOC
+
+Is this HW specific to Tegra20 such that the driver won't be useful for
+Tegra30? In other words, should this depend on ARCH_TEGRA instead?
+
+> diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
+...
+>  obj-$(CONFIG_CRYPTO_DEV_S5P) += s5p-sss.o
+> +obj-$(CONFIG_CRYPTO_DEV_TEGRA_AES) += tegra-aes.o
 > +
->  enum tegra_vddio {
->  	TEGRA_VDDIO_BB = 0,
->  	TEGRA_VDDIO_LCD,
-> @@ -211,6 +217,10 @@ struct tegra_pingroup_desc {
->  	s8 tri_bit; 	/* offset into the TRISTATE_REG_* register bit */
->  	s8 mux_bit;	/* offset into the PIN_MUX_CTL_* register bit */
->  	s8 pupd_bit;	/* offset into the PULL_UPDOWN_REG_* register bit */
-> +	s8 lock_bit;	/* offset of the LOCK bit into mux register bit */
-> +	s8 od_bit;	/* offset of the OD bit into mux register bit */
-> +	s8 ioreset_bit;	/* offset of the IO_RESET bit into mux register bit */
-> +	s8 io_default;
 
-Shouldn't this be an enum tegra_pin_io? Also, feel free to move it up above the
-s16/s8 members.
+Can you please remove the extra blank line?
 
+> +static int tegra_aes_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct tegra_aes_dev *dd;
+> +	struct resource *res;
+> +	int err = -ENOMEM, i = 0, j;
+> +
+> +	if (aes_dev)
+> +		return -EEXIST;
+> +
+> +	dd = kzalloc(sizeof(struct tegra_aes_dev), GFP_KERNEL);
 
--Olof
+If you use devm_kzalloc here, and other devm_*() functions throughout,
+you'll need a bunch less cleanup code in the failure path in probe(),
+and the teardown path in remove().
+
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+
+Don't you need to call request_mem_region() between get_resource() and
+ioremap()?
+
+> +	dd->io_base = ioremap(dd->phys_base, resource_size(res));
+
+There's a devm_ variant for this.
+
+> +	/* Initialize the vde clock */
+> +	dd->aes_clk = clk_get(dev, "vde");
+
+That clock doesn't exist in the mainline kernel; "bsev" exists for device
+"tegra-aes"...
+
+> +	err = clk_set_rate(dd->aes_clk, ULONG_MAX);
+
+That's a little fast... What rate should it be running at. Is this
+something the driver should be configuring, or should the board file or
+device-tree be configuring this?
+
+> +	err = request_irq(INT_VDE_BSE_V, aes_irq, IRQF_TRIGGER_HIGH,
+> +		"tegra-aes", dd);
+
+Shouldn't the IRQ number come from a resource rather than being hard-coded?
+
+> +static struct platform_driver tegra_aes_driver = {
+> +	.probe  = tegra_aes_probe,
+> +	.remove = __devexit_p(tegra_aes_remove),
+> +	.driver = {
+> +		.name   = "tegra-aes",
+> +		.owner  = THIS_MODULE,
+> +	},
+> +};
+
+Can you please allow instantiation from device-tree too; see drivers/
+gpio/gpio-tegra.c's tegra_gpio_of_match[] for an example.
+
+> diff --git a/drivers/crypto/tegra-aes.h b/drivers/crypto/tegra-aes.h
+
+> +#define ICMDQUE_WR		0x1000
+
+It'd be nice to prefix all the defines in this file with e.g. TEGRA_AES_
+so that they're guaranteed not to conflict with any unrelated defines.
+
+-- 
+nvpublic
