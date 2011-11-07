@@ -1,166 +1,80 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 1/8] arm/tegra: initial device tree for tegra30
-Date: Mon, 7 Nov 2011 16:20:08 +0200
-Message-ID: <1320675617-20751-2-git-send-email-pdeschrijver@nvidia.com>
-References: <1320675617-20751-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] crypto: driver for tegra AES hardware
+Date: Mon, 7 Nov 2011 09:52:17 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173F9A508D@HQMAIL01.nvidia.com>
+References: <1320405256-29374-1-git-send-email-vwadekar@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173F9A4E83@HQMAIL01.nvidia.com>
+ <4EB4EFC0.1060702@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1320675617-20751-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4EB4EFC0.1060702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org" <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Colin Cross (ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org)" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds the initial device tree for tegra30
+Varun Wadekar wrote at Saturday, November 05, 2011 2:12 AM:
+> >> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > Don't you need to call request_mem_region() between get_resource() and
+> > ioremap()?
+> 
+> I am remapping the module register space. Used IORESOURCE_IO instead.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/boot/dts/tegra30.dtsi |  127 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 127 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+But you should be using IORESOURCE_MEM; that's what it is, and that's what
+all the other entries in arch/arm/mach-tegra/devices.c use.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-new file mode 100644
-index 0000000..fabe243
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -0,0 +1,127 @@
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	compatible = "nvidia,tegra30";
-+	interrupt-parent = <&intc>;
-+
-+	intc: interrupt-controller@50041000 {
-+		compatible = "nvidia,tegra30-gic", "nvidia,tegra20-gic";
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		reg = < 0x50041000 0x1000 >,
-+		      < 0x50040100 0x0100 >;
-+	};
-+
-+	i2c@7000c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible =  "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C000 0x100>;
-+		interrupts = < 70 >;
-+	};
-+
-+	i2c@7000c400 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C400 0x100>;
-+		interrupts = < 116 >;
-+	};
-+
-+	i2c@7000c500 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C500 0x100>;
-+		interrupts = < 124 >;
-+	};
-+
-+	i2c@7000c700 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000c700 0x100>;
-+		interrupts = < 152 >;
-+	};
-+
-+	i2c@7000d000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000D000 0x100>;
-+		interrupts = < 85 >;
-+	};
-+
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra30-gpio", "nvidia,tegra20-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+	};
-+
-+	serial@70006000 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 68 >;
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 69 >;
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 78 >;
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 122 >;
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 123 >;
-+	};
-+
-+	sdhci@78000000 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000000 0x200>;
-+		interrupts = < 46 >;
-+	};
-+
-+	sdhci@78000200 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000200 0x200>;
-+		interrupts = < 47 >;
-+	};
-+
-+	sdhci@78000400 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000400 0x200>;
-+		interrupts = < 51 >;
-+	};
-+
-+	sdhci@78000600 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000600 0x200>;
-+		interrupts = < 63 >;
-+	};
-+
-+	pinmux: pinmux@70000000 {
-+		compatible = "nvidia,tegra30-pinmux";
-+		reg = < 0x70000868 0xd0     /* Pad control registers */
-+			0x70003000 0x3e0 >; /* Mux registers */
-+	};
-+};
+And I don't think simply changing the type of the resource would remove
+the need to request that region of MEM or IO space.
+
+> >> +	/* Initialize the vde clock */
+> >> +	dd->aes_clk = clk_get(dev, "vde");
+> > That clock doesn't exist in the mainline kernel; "bsev" exists for device
+> > "tegra-aes"...
+> 
+> We need to use the "vde" clock. I will submit a patch to add the "vde"
+> clock. "bsev" might not be needed at the moment.
+
+> [from another email by Varun]
+> Just checked and we have "vde" as a duplicate clock for "tegra-aes"
+
+Ah right, I do see the CLK_DUPLICATE line. So, this is probably fine.
+
+> >> +	err = clk_set_rate(dd->aes_clk, ULONG_MAX);
+> > That's a little fast... What rate should it be running at. Is this
+> > something the driver should be configuring, or should the board file or
+> > device-tree be configuring this?
+> 
+> We need to run the hardware at the highest speed. AFAIK,
+> clk_set_rate(ULONG_MAX) will set the clock rate at the max clock
+> specified for the clock. Need to get every bit of performance from that
+> piece of hardware.
+
+Hmmm. This still seems wrong. Hopefully somebody else more familiar with
+clocks will chime in either saying this is fine, or pointing out a better
+way to do this.
+
+> >> +static struct platform_driver tegra_aes_driver = {
+> >> +	.probe  = tegra_aes_probe,
+> >> +	.remove = __devexit_p(tegra_aes_remove),
+> >> +	.driver = {
+> >> +		.name   = "tegra-aes",
+> >> +		.owner  = THIS_MODULE,
+> >> +	},
+> >> +};
+> >>
+> > Can you please allow instantiation from device-tree too; see drivers/
+> > gpio/gpio-tegra.c's tegra_gpio_of_match[] for an example.
+> 
+> Actually, I am planning to add complete device tree support in the next
+> patch. But if you insist, I can add partial support here and then
+> complete it in the next patch.
+
+Why not just add complete device-tree support from the start? Since this
+driver uses no platform data, isn't the of match table the /only/ device-
+tree support this driver needs?
+
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
+nvpublic
