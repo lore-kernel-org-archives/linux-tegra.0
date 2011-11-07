@@ -1,162 +1,98 @@
-From: Kim Phillips <kim.phillips-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
-Date: Sat, 5 Nov 2011 18:10:25 -0500
-Message-ID: <20111105181025.69918e625a169ccb30d9b7c8@freescale.com>
-References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 2/8] arm/tegra: prepare early init for multiple
+ tegra variants
+Date: Mon, 7 Nov 2011 14:36:30 +0200
+Message-ID: <20111107123630.GO29978@tbergstrom-lnx.Nvidia.com>
+References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
+ <1320242948-21061-3-git-send-email-pdeschrijver@nvidia.com>
+ <CAMbhsRSTcR8qgYESmM6OxkXeVeg6vS49woCe_OX6CY4pAj2g_A@mail.gmail.com>
+ <20111103092116.GO13358@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1320489734-9085-1-git-send-email-vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20111103092116.GO13358-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 5 Nov 2011 16:12:14 +0530
-<vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Thu, Nov 03, 2011 at 10:21:16AM +0100, Peter De Schrijver wrote:
+> On Wed, Nov 02, 2011 at 07:30:43PM +0100, Colin Cross wrote:
+> > On Wed, Nov 2, 2011 at 7:09 AM, Peter De Schrijver
+> > <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > > This patch splits the early init code in a common and a tegra20 s=
+pecific part.
+> > > L2 cache initialization is generalized and discovers the cache as=
+sociativity
+> > > at runtime.
+> > >
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > <snip>
+> >=20
+> > > -static __initdata struct tegra_clk_init_table common_clk_init_ta=
+ble[] =3D {
+> > > +void (*arch_reset)(char mode, const char *cmd) =3D tegra_assert_=
+system_reset;
+> > > +
+> > This is unrelated to the patch description?
+> >=20
+>=20
+> This is a left over from the past. Will be removed from the next vers=
+ion.
+>=20
+> > > +static __initdata struct tegra_clk_init_table tegra20_clk_init_t=
+able[] =3D {
+> > > =A0 =A0 =A0 =A0/* name =A0 =A0 =A0 =A0 parent =A0 =A0 =A0 =A0 =A0=
+rate =A0 =A0 =A0 =A0 =A0 =A0enabled */
+> > > =A0 =A0 =A0 =A0{ "clk_m", =A0 =A0 =A0NULL, =A0 =A0 =A0 =A0 =A0 0,=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0true },
+> > > =A0 =A0 =A0 =A0{ "pll_p", =A0 =A0 =A0"clk_m", =A0 =A0 =A0 =A02160=
+00000, =A0 =A0 =A0true },
+> > > @@ -59,25 +61,34 @@ static __initdata struct tegra_clk_init_table=
+ common_clk_init_table[] =3D {
+> > > =A0 =A0 =A0 =A0{ NULL, =A0 =A0 =A0 =A0 NULL, =A0 =A0 =A0 =A0 =A0 =
+0, =A0 =A0 =A0 =A0 =A0 =A0 =A00},
+> > > =A0};
+> > >
+> > > -static void __init tegra_init_cache(void)
+> > > +static void __init tegra_init_cache(u32 tag_latency, u32 data_la=
+tency)
+> > > =A0{
+> > > =A0#ifdef CONFIG_CACHE_L2X0
+> > > =A0 =A0 =A0 =A0void __iomem *p =3D IO_ADDRESS(TEGRA_ARM_PERIF_BAS=
+E) + 0x3000;
+> > > + =A0 =A0 =A0 u32 aux_ctrl;
+> > > +
+> > > + =A0 =A0 =A0 writel_relaxed(tag_latency, p + L2X0_TAG_LATENCY_CT=
+RL);
+> > > + =A0 =A0 =A0 writel_relaxed(data_latency, p + L2X0_DATA_LATENCY_=
+CTRL);
+> > >
+> > > - =A0 =A0 =A0 writel_relaxed(0x331, p + L2X0_TAG_LATENCY_CTRL);
+> > > - =A0 =A0 =A0 writel_relaxed(0x441, p + L2X0_DATA_LATENCY_CTRL);
+> > > + =A0 =A0 =A0 aux_ctrl =3D readl(p + L2X0_CACHE_TYPE);
+> > > + =A0 =A0 =A0 aux_ctrl =3D (aux_ctrl & 0x700) << (17-8);
+> >=20
+> > If I'm interpreting the PL310 TRM correctly, the cache associativit=
+y
+> > value in the L2X0_CACHE_TYPE register is read from the aux control
+> > register, so this is just leaving the existing value in place.  If =
+the
+> > value is not being modified, just take it out of the aux_ctrl mask
+> > passed to l2x0_init.
+> >=20
+>=20
+> This seems to work fine on our android kernels though. Need to dig de=
+eper
+> what's going on here.
 
-> +config CRYPTO_DEV_TEGRA_AES
-> +	tristate "Support for TEGRA AES hw engine"
-> +	depends on ARCH_TEGRA
-> +	select CRYPTO_AES
-> +	help
-> +	  TEGRA processors have AES module accelerator. Select this if you
-> +	  want to use the TEGRA module for AES algorithms.
-> +
+Doesn't seem to be that simple on tegra. The L2X0_CACHE_TYPE can indica=
+te a
+different waysize depending on fuses.
 
-"To compile this driver as a module, choose M here: the module
-will be called tegra-aes."
+Cheers,
 
-> +static int aes_start_crypt(struct tegra_aes_dev *dd, u32 in_addr, u32 out_addr,
-> +	int nblocks, int mode, bool upd_iv)
-> +{
-> +	u32 cmdq[AES_HW_MAX_ICQ_LENGTH];
-> +	int i, eng_busy, icq_empty, ret;
-> +	u32 value;
-> +
-> +	/* reset all the interrupt bits */
-> +	aes_writel(dd, 0xFFFFFFFF, TEGRA_AES_INTR_STATUS);
-> +
-> +	/* enable error, dma xfer complete interrupts */
-> +	aes_writel(dd, 0x33, TEGRA_AES_INT_ENB);
-> +
-> +	/* this module is shared with the other hardware blocks
-> +	 * and there have been cases where another user of the VDE
-> +	 * has caused this irq to trigger */
-> +	enable_irq(dd->irq);
-
-do the other users of the VDE cause this IRQ to trigger in error?
-If so, they should be fixed.  If not, and the IRQ line is shared by
-h/w, then all users of the IRQ should request_irq with IRQF_SHARED,
-and return IRQ_NONE if the IRQ wasn't for them.  Either way, the IRQ
-should be left enabled.
-
-> +	value = aes_readl(dd, TEGRA_AES_CMDQUE_CONTROL);
-> +	/* access SDRAM through AHB */
-> +	value &= ~TEGRA_AES_CMDQ_CTRL_SRC_STM_SEL_FIELD;
-> +	value &= ~TEGRA_AES_CMDQ_CTRL_DST_STM_SEL_FIELD;
-> +	value |= (TEGRA_AES_CMDQ_CTRL_SRC_STM_SEL_FIELD |
-> +		  TEGRA_AES_CMDQ_CTRL_DST_STM_SEL_FIELD |
-> +		  TEGRA_AES_CMDQ_CTRL_ICMDQEN_FIELD);
-
-unnecessary parens
-
-> +	ret = wait_for_completion_timeout(&dd->op_complete,
-> +			msecs_to_jiffies(150));
-
-alignment
-
-> +	total = dd->total;
-> +	rctx = ablkcipher_request_ctx(req);
-> +	ctx = crypto_ablkcipher_ctx(crypto_ablkcipher_reqtfm(req));
-> +	rctx->mode &= FLAGS_MODE_MASK;
-> +	dd->flags = (dd->flags & ~FLAGS_MODE_MASK) | rctx->mode;
-> +
-> +	dd->iv = (u8 *)req->info;
-> +	dd->ivlen = crypto_ablkcipher_ivsize(crypto_ablkcipher_reqtfm(req));
-
-cleaner:
-
-tfm = crypto_ablkcipher_reqtfm(req);
-...
-ctx = crypto_ablkcipher_ctx(tfm);
-...
-dd->ivlen = crypto_ablkcipher_ivsize(tfm);
-
-> +	/* assign new context to device */
-> +	ctx->dd = dd;
-> +	dd->ctx = ctx;
-> +
-> +	if (ctx->flags & FLAGS_NEW_KEY) {
-> +		/* copy the key */
-> +		memset(dd->ivkey_base, 0, AES_HW_KEY_TABLE_LENGTH_BYTES);
-> +		memcpy(dd->ivkey_base, ctx->key, ctx->keylen);
-
-these really should be writes to mutually exclusive addresses.
-
-> +		addr_in = sg_dma_address(in_sg);
-> +		addr_out = sg_dma_address(out_sg);
-> +		dd->flags |= FLAGS_FAST;
-> +		count = min((int)sg_dma_len(in_sg), (int)dma_max);
-
-use min_t
-
-> +static irqreturn_t aes_irq(int irq, void *dev_id)
-> +{
-> +	struct tegra_aes_dev *dd = (struct tegra_aes_dev *)dev_id;
-> +	u32 value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
-> +
-> +	dev_dbg(dd->dev, "irq_stat: 0x%x", value);
-> +	if (value & TEGRA_AES_INT_ERROR_MASK)
-> +		aes_writel(dd, TEGRA_AES_INT_ERROR_MASK, TEGRA_AES_INTR_STATUS);
-> +
-> +	if (!(value & TEGRA_AES_ENGINE_BUSY_FIELD))
-> +		complete(&dd->op_complete);
-> +
-> +	return IRQ_HANDLED;
-
-return IRQ_NONE if there was no error and (value &
-TEGRA_AES_ENGINE_BUSY_FIELD).
-
-> +	ret = aes_start_crypt(dd, (u32)dd->dma_buf_in,
-> +		(u32)dd->dma_buf_out, 1, dd->flags, true);
-
-alignment
-
-> +static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
-> +	unsigned int slen)
-
-alignment
-
-> +	/* copy the key to the key slot */
-> +	memset(dd->ivkey_base, 0, AES_HW_KEY_TABLE_LENGTH_BYTES);
-> +	memcpy(dd->ivkey_base, seed + DEFAULT_RNG_BLK_SZ, AES_KEYSIZE_128);
-
-should be to mutually exclusive addresses
-
-> +	/* set seed to the aes hw slot */
-> +	memcpy(dd->buf_in, dd->iv, DEFAULT_RNG_BLK_SZ);
-> +	ret = aes_start_crypt(dd, (u32)dd->dma_buf_in,
-> +			dd->dma_buf_out, 1, FLAGS_CBC, false);
-
-alignment
-
-> +static int __devexit tegra_aes_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct tegra_aes_dev *dd = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	if (!dd)
-> +		return -ENODEV;
-> +
-
-when would this condition be met?
-
-> +/* init vector select */
-> +#define TEGRA_AES_SECURE_IV_SELECT_SHIFT	(10)
-
-no parens
-
-Kim
+Peter.
