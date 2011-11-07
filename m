@@ -1,40 +1,79 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 7/8] arm/tegra: implement support for tegra30
-Date: Mon, 7 Nov 2011 14:47:46 +0200
-Message-ID: <20111107124746.GP29978@tbergstrom-lnx.Nvidia.com>
-References: <1320242948-21061-1-git-send-email-pdeschrijver@nvidia.com>
- <1320242948-21061-8-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173F9A4E4F@HQMAIL01.nvidia.com>
+Subject: [PATCH v3 0/8] Add support for tegra30 and cardhu
+Date: Mon, 7 Nov 2011 16:20:07 +0200
+Message-ID: <1320675617-20751-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173F9A4E4F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 04, 2011 at 09:43:57PM +0100, Stephen Warren wrote:
-> Peter De Schrijver wrote at Wednesday, November 02, 2011 8:09 AM:
-> > Add support for tegra30 SoC. This includes a device tree compatible type for
-> > this SoC ("nvidia,tegra30") and adds L2 cache initialization for this new SoC.
-> > The clock framework is still missing, which prevents most drivers from working.
-> ...
-> > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> ...
-> > @@ -17,7 +14,18 @@ config ARCH_TEGRA_2x_SOC
-> >  	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
-> >  	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-> > 
-> > -endchoice
-> > +config ARCH_TEGRA_3x_SOC
-> 
-> Wasn't that config option already used earlier in the series, e.g. in
-> [PATCH v2 6/8] arm/tegra: pinmux tables and definitions for tegra30.
+This patchset adds support for the tegra30 SoC and the cardhu development
+board.
 
-It is. Is that a problem?
+Pathset is on top of Will Deacon's ARM reset work.
 
-Cheers,
+Most important changes in v3:
 
-Peter.
+* align with ARM restart rework. might need a bit of rework to merge with the
+  latest version of this.
+* minor cleanups and reformats
+
+Most important changes in v2:
+
+* account for arch_reset cleanup
+* seperate patch for renaming pinmux-t2.h and pinmux-t2-tables.c
+* fixed bug in common cache initialization
+* fixed compatibility with non DT boards (boottested on harmony)
+* improved commit messages
+
+
+Peter De Schrijver (8):
+  arm/tegra: initial device tree for tegra30
+  arm/tegra: prepare early init for multiple tegra variants
+  arm/tegra: rename tegra20 pinmux files
+  arm/tegra: prepare pinmux code for multiple tegra variants
+  arm/tegra: add new fields to struct tegra_pingroup_desc
+  arm/tegra: pinmux tables and definitions for tegra30
+  arm/tegra: implement support for tegra30
+  arm/tegra: add support for tegra30 based board cardhu
+
+ arch/arm/boot/dts/tegra-cardhu.dts                |   36 ++
+ arch/arm/boot/dts/tegra30.dtsi                    |  127 +++++++
+ arch/arm/mach-tegra/Kconfig                       |   25 ++-
+ arch/arm/mach-tegra/Makefile                      |    3 +-
+ arch/arm/mach-tegra/Makefile.boot                 |    1 +
+ arch/arm/mach-tegra/board-dt.c                    |   21 ++
+ arch/arm/mach-tegra/board-harmony-pcie.c          |    1 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c        |    1 +
+ arch/arm/mach-tegra/board-harmony.c               |    2 +-
+ arch/arm/mach-tegra/board-paz00-pinmux.c          |    1 +
+ arch/arm/mach-tegra/board-paz00.c                 |    2 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c       |    2 +-
+ arch/arm/mach-tegra/board-seaboard.c              |    6 +-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c      |    1 +
+ arch/arm/mach-tegra/board-trimslice.c             |    2 +-
+ arch/arm/mach-tegra/board.h                       |    5 +-
+ arch/arm/mach-tegra/common.c                      |   45 ++-
+ arch/arm/mach-tegra/include/mach/pinmux-t2.h      |  184 ----------
+ arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 ++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 ++++++++++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux.h         |   88 ++++-
+ arch/arm/mach-tegra/pinmux-t2-tables.c            |  228 -------------
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 +++++++++++++
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 +++++++++++++++++++++
+ arch/arm/mach-tegra/pinmux.c                      |  153 ++++++---
+ 25 files changed, 1556 insertions(+), 502 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+ create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-t2.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra20.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra30.h
+ delete mode 100644 arch/arm/mach-tegra/pinmux-t2-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra20-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra30-tables.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
