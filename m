@@ -1,29 +1,49 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v3 0/8] Add support for tegra30 and cardhu
-Date: Mon, 7 Nov 2011 23:08:53 +0000
-Message-ID: <20111107230853.GW12913@n2100.arm.linux.org.uk>
+Date: Tue, 8 Nov 2011 13:45:59 +0200
+Message-ID: <20111108114559.GT29978@tbergstrom-lnx.Nvidia.com>
 References: <1320675617-20751-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF173F9A50F3@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1320675617-20751-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173F9A50F3-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 07, 2011 at 04:20:07PM +0200, Peter De Schrijver wrote:
-> This patchset adds support for the tegra30 SoC and the cardhu development
-> board.
+On Mon, Nov 07, 2011 at 08:10:29PM +0100, Stephen Warren wrote:
+> Peter De Schrijver wrote at Monday, November 07, 2011 7:20 AM:
+> > This patchset adds support for the tegra30 SoC and the cardhu development
+> > board.
+> > 
+> > Pathset is on top of Will Deacon's ARM reset work.
 > 
-> Pathset is on top of Will Deacon's ARM reset work.
+> A few minor issues:
+> 
+> 1) If I enable just ARCH_TEGRA_3x_SOC, but not ARCH_TEGRA_2x_SOC, the
+> kernel fails to build because arch/arm/mach-tegra/include/mach/irqs.h
+> only defines NR_IRQS if ARCH_TEGRA_2x_SOC is defined.
+> 
+> 2) All the Tegra20 boards don't depend on ARCH_TEGRA_2x_SOC, so they can
+> be enabled even if only Tegra30 support is enabled.
+> 
 
-Note that there's another solution for the arch_reset() stuff floating
-around (mine) which goes a tad further than Will's, specifically avoiding
-the problems of having multiple function pointers for this stuff.
+Indeed. I also noticed that MACH_VENTANA lacks select MACH_SEABOARD...
+Maybe I should submit a seperate patch to fix all this?
 
-My version also cleans up the use of the identity mappings for non-soft
-restarts, which is going to be needed to fix soft-restarts on ARMv6+v7
-properly (as well as migrating all the soft-restart support to something
-a little saner.)
+> 3) I notice that in "arm/tegra: pinmux tables and definitions for tegra30",
+> you ifdef'd the two entries in tegra_pinmux_of_match[] based on which SoCs
+> were enabled, but in "arm/tegra: implement support for tegra30", you didn't
+> do the same for the two entries in early_init[] (board-dt.c). I'm not sure
+> how far we want to take only-Tegra20 or only-Tegra30 support, but perhaps
+> we should be consistent here?
+
+Yeah. I think didn't do it for the early_init because the savings are so
+small. Consistency makes sense indeed, so I will add those ifdefs.
+
+Cheers,
+
+Peter.
