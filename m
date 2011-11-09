@@ -1,53 +1,42 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: l2x0: fix compile error on !CONFIG_USE_OF
-Date: Wed, 09 Nov 2011 14:14:42 -0600
-Message-ID: <4EBADF32.6040106@gmail.com>
-References: <1320864823-5015-1-git-send-email-olof@lixom.net>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [GIT PULL] arm/tegra fixes for 3.2-rc
+Date: Wed, 9 Nov 2011 13:34:40 -0800
+Message-ID: <CAOesGMip77Y7PMiCRginfZDoGe9k3jj33adP1SkJfNO1BBbrig@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1320864823-5015-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/09/2011 12:53 PM, Olof Johansson wrote:
-> fae2b89ab1 (ARM: l2x0: add empty l2x0_of_init) adds a static inline
-> function that returns -ENODEV, but at least on tegra cache-l2x0.h is
-> included without errno.h being pulled in first, resulting in compile
-> errors if OF isn't enabled:
-> 
-> In file included from arch/arm/mach-tegra/common.c:26:
-> arch/arm/include/asm/hardware/cache-l2x0.h: In function 'l2x0_of_init':
-> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: 'ENODEV' undeclared (first use in this function)
-> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: (Each undeclared identifier is reported only once
-> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: for each function it appears in.)
-> 
-> Add errno.h to the include file to make it self-contained.
-> 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Hi,
 
-Sigh... I guess the platforms I built happened to include errno.h first.
+A couple of fixes for 3.2-rc below. Nothing controversial.
 
-Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 
-> ---
->  arch/arm/include/asm/hardware/cache-l2x0.h |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/include/asm/hardware/cache-l2x0.h
-> index 1db1143..7df239b 100644
-> --- a/arch/arm/include/asm/hardware/cache-l2x0.h
-> +++ b/arch/arm/include/asm/hardware/cache-l2x0.h
-> @@ -20,6 +20,8 @@
->  #ifndef __ASM_ARM_HARDWARE_L2X0_H
->  #define __ASM_ARM_HARDWARE_L2X0_H
->  
-> +#include <linux/errno.h>
-> +
->  #define L2X0_CACHE_ID			0x000
->  #define L2X0_CACHE_TYPE			0x004
->  #define L2X0_CTRL			0x100
+Thanks!
+
+-Olof
+
+The following changes since commit 1ea6b8f48918282bdca0b32a34095504ee65bab5:
+
+  Linux 3.2-rc1 (2011-11-07 16:16:02 -0800)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.2/fixes
+
+Stephen Warren (2):
+      arm/tegra: Don't create duplicate gpio and pinmux devices
+      arm/dt: Fix ventana SDHCI power-gpios
+
+Yufeng Shen (1):
+      arm/tegra: enable headphone detection gpio on seaboard
+
+ arch/arm/boot/dts/tegra-ventana.dts          |    3 +--
+ arch/arm/mach-tegra/board-dt.c               |   13 +++++++------
+ arch/arm/mach-tegra/board-harmony-pinmux.c   |    6 +++++-
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |    6 +++++-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c  |    6 +++++-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |    5 ++++-
+ 6 files changed, 27 insertions(+), 12 deletions(-)
