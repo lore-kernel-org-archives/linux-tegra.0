@@ -1,48 +1,35 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Adding board support
-Date: Wed, 9 Nov 2011 11:41:32 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174080519F@HQMAIL01.nvidia.com>
-References: <20111014054945.GA32399@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A290@HQMAIL01.nvidia.com>
- <20111014185847.GA916@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A33E@HQMAIL01.nvidia.com>
- <20111014232404.GB916@avionic-0098.mockup.avionic-design.de>
- <20111017102658.GA12373@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173BE1A4C4@HQMAIL01.nvidia.com>
- <20111020080808.GA5450@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF173D51C14B@HQMAIL01.nvidia.com>
- <20111020190827.GA31480@avionic-0098.adnet.avionic-design.de>
+From: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH 2/3] staging: nvec: add device tree support
+Date: Wed, 9 Nov 2011 11:57:55 -0800
+Message-ID: <20111109195755.GA7052@suse.de>
+References: <cover.1320173572.git.marvin24@gmx.de>
+ <95b67a12e2b6ea6a9c7e17b0069ec7c9fc6f719c.1320173573.git.marvin24@gmx.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173EDABBF6@HQMAIL01.nvidia.com>
+ <20111109191144.GB5354@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111020190827.GA31480-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20111109191144.GB5354-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Thursday, October 20, 2011 1:08 PM:
-> * Stephen Warren wrote:
-> > Thierry Reding wrote at Thursday, October 20, 2011 2:08 AM:
-> > ...
-> > > I've been working some on getting our boards to boot from a device tree.
-> > > Unfortunately, the U-Boot issue seems to be more of a problem than I
-> > > anticipated. Since the mainline U-Boot doesn't run properly,
-> >
-> > What issues are you having? I assume you're referring to something more
-> > than just getting stuff flashed with nvflash.
+On Wed, Nov 09, 2011 at 11:11:44AM -0800, Olof Johansson wrote:
+> On Tue, Nov 01, 2011 at 03:36:31PM -0700, Stephen Warren wrote:
+> > Marc Dietrich wrote at Tuesday, November 01, 2011 2:37 PM:
+> > > This adds device tree support to the nvec driver. By using this method
+> > > it is no longer necessary to specify platform data through a board
+> > > file.
+> > 
+> > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Flashing U-Boot is not the problem, but when booting the device, there's no
-> output whatsoever on the debug port.
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> 
+> Greg, this one can go through the staging tree. We'll pick up the other pieces
+> of the series through the tegra soc tree.
 
-Just to close the loop on this in the mailing list archives, the issue is
-now solved. The specific fix was to add "USE_PRIVATE_LIBGCC=yes" to the
-make command used to build U-Boot. And just for the record (Thierry was
-already trying this), CONFIG_SYS_TEXT_BASE must match those nvflash and
-fastboot.bin expect, which is 0x00108000 for the binaries shipped with our
-Linux4Tegra alpha 1 release.
+Ok, will do.
 
--- 
-nvpublic
+greg k-h
