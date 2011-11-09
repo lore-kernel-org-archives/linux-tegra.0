@@ -1,55 +1,58 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH v3 0/8] Add support for tegra30 and cardhu
-Date: Tue, 8 Nov 2011 07:56:58 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173F9A5394@HQMAIL01.nvidia.com>
-References: <1320675617-20751-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF173F9A50F3@HQMAIL01.nvidia.com>
- <20111108114559.GT29978@tbergstrom-lnx.Nvidia.com>
- <20111108115153.GU29978@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111108115153.GU29978@tbergstrom-lnx.Nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] arm/tegra: fix variable formatting in makefile
+Date: Wed,  9 Nov 2011 10:34:51 -0800
+Message-ID: <1320863691-22922-1-git-send-email-olof@lixom.net>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Tuesday, November 08, 2011 4:52 AM:
-> On Tue, Nov 08, 2011 at 12:45:59PM +0100, Peter De Schrijver wrote:
-> > On Mon, Nov 07, 2011 at 08:10:29PM +0100, Stephen Warren wrote:
-> > > Peter De Schrijver wrote at Monday, November 07, 2011 7:20 AM:
-> > > > This patchset adds support for the tegra30 SoC and the cardhu development
-> > > > board.
-> > > >
-> > > > Pathset is on top of Will Deacon's ARM reset work.
-> > >
-> > > A few minor issues:
-> > >
-> > > 1) If I enable just ARCH_TEGRA_3x_SOC, but not ARCH_TEGRA_2x_SOC, the
-> > > kernel fails to build because arch/arm/mach-tegra/include/mach/irqs.h
-> > > only defines NR_IRQS if ARCH_TEGRA_2x_SOC is defined.
-> > >
-> > > 2) All the Tegra20 boards don't depend on ARCH_TEGRA_2x_SOC, so they can
-> > > be enabled even if only Tegra30 support is enabled.
-> > >
-> >
-> > Indeed. I also noticed that MACH_VENTANA lacks select MACH_SEABOARD...
-> 
-> I take that back. It's not needed.
-> 
-> > Maybe I should submit a seperate patch to fix all this?
-> >
-> 
-> I will make a patch to cleanup the ARCH_TEGRA_2x_SOC dependencies. Or do you
-> want this as part of the tegra30/cardhu series?
+For some reason it started out using {} instead of (), and it's
+proliferated from there. Switch back to ().
 
-It should be applied before/with the Tegra30/Cardhu series so that when
-Tegra30 support is there, all the correct dependencies are. So, since I
-think you're respinning the Tegra30/Cardhu series, you may as well include
-it in there somewhere, but no big deal if it's posted separately.
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/mach-tegra/Makefile |   26 +++++++++++++-------------
+ 1 files changed, 13 insertions(+), 13 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 91a07e1..5be8e9e 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -18,20 +18,20 @@ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+ obj-$(CONFIG_USB_SUPPORT)		+= usb_phy.o
+ 
+-obj-${CONFIG_MACH_HARMONY}              += board-harmony.o
+-obj-${CONFIG_MACH_HARMONY}              += board-harmony-pinmux.o
+-obj-${CONFIG_MACH_HARMONY}              += board-harmony-pcie.o
+-obj-${CONFIG_MACH_HARMONY}              += board-harmony-power.o
++obj-$(CONFIG_MACH_HARMONY)              += board-harmony.o
++obj-$(CONFIG_MACH_HARMONY)              += board-harmony-pinmux.o
++obj-$(CONFIG_MACH_HARMONY)              += board-harmony-pcie.o
++obj-$(CONFIG_MACH_HARMONY)              += board-harmony-power.o
+ 
+-obj-${CONFIG_MACH_PAZ00}		+= board-paz00.o
+-obj-${CONFIG_MACH_PAZ00}		+= board-paz00-pinmux.o
++obj-$(CONFIG_MACH_PAZ00)		+= board-paz00.o
++obj-$(CONFIG_MACH_PAZ00)		+= board-paz00-pinmux.o
+ 
+-obj-${CONFIG_MACH_SEABOARD}             += board-seaboard.o
+-obj-${CONFIG_MACH_SEABOARD}             += board-seaboard-pinmux.o
++obj-$(CONFIG_MACH_SEABOARD)             += board-seaboard.o
++obj-$(CONFIG_MACH_SEABOARD)             += board-seaboard-pinmux.o
+ 
+-obj-${CONFIG_MACH_TEGRA_DT}             += board-dt.o
+-obj-${CONFIG_MACH_TEGRA_DT}             += board-harmony-pinmux.o
+-obj-${CONFIG_MACH_TEGRA_DT}             += board-seaboard-pinmux.o
++obj-$(CONFIG_MACH_TEGRA_DT)             += board-dt.o
++obj-$(CONFIG_MACH_TEGRA_DT)             += board-harmony-pinmux.o
++obj-$(CONFIG_MACH_TEGRA_DT)             += board-seaboard-pinmux.o
+ 
+-obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice.o
+-obj-${CONFIG_MACH_TRIMSLICE}            += board-trimslice-pinmux.o
++obj-$(CONFIG_MACH_TRIMSLICE)            += board-trimslice.o
++obj-$(CONFIG_MACH_TRIMSLICE)            += board-trimslice-pinmux.o
 -- 
-nvpublic
+1.7.5.4
