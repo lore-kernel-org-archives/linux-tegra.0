@@ -1,44 +1,32 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] ARM: l2x0: fix compile error on !CONFIG_USE_OF
-Date: Wed,  9 Nov 2011 10:53:43 -0800
-Message-ID: <1320864823-5015-1-git-send-email-olof@lixom.net>
+Subject: Re: [PATCH 2/3] staging: nvec: add device tree support
+Date: Wed, 9 Nov 2011 11:11:44 -0800
+Message-ID: <20111109191144.GB5354@quad.lixom.net>
+References: <cover.1320173572.git.marvin24@gmx.de>
+ <95b67a12e2b6ea6a9c7e17b0069ec7c9fc6f719c.1320173573.git.marvin24@gmx.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF173EDABBF6@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173EDABBF6-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-fae2b89ab1 (ARM: l2x0: add empty l2x0_of_init) adds a static inline
-function that returns -ENODEV, but at least on tegra cache-l2x0.h is
-included without errno.h being pulled in first, resulting in compile
-errors if OF isn't enabled:
+On Tue, Nov 01, 2011 at 03:36:31PM -0700, Stephen Warren wrote:
+> Marc Dietrich wrote at Tuesday, November 01, 2011 2:37 PM:
+> > This adds device tree support to the nvec driver. By using this method
+> > it is no longer necessary to specify platform data through a board
+> > file.
+> 
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-In file included from arch/arm/mach-tegra/common.c:26:
-arch/arm/include/asm/hardware/cache-l2x0.h: In function 'l2x0_of_init':
-arch/arm/include/asm/hardware/cache-l2x0.h:110: error: 'ENODEV' undeclared (first use in this function)
-arch/arm/include/asm/hardware/cache-l2x0.h:110: error: (Each undeclared identifier is reported only once
-arch/arm/include/asm/hardware/cache-l2x0.h:110: error: for each function it appears in.)
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Add errno.h to the include file to make it self-contained.
+Greg, this one can go through the staging tree. We'll pick up the other pieces
+of the series through the tegra soc tree.
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/include/asm/hardware/cache-l2x0.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/include/asm/hardware/cache-l2x0.h
-index 1db1143..7df239b 100644
---- a/arch/arm/include/asm/hardware/cache-l2x0.h
-+++ b/arch/arm/include/asm/hardware/cache-l2x0.h
-@@ -20,6 +20,8 @@
- #ifndef __ASM_ARM_HARDWARE_L2X0_H
- #define __ASM_ARM_HARDWARE_L2X0_H
- 
-+#include <linux/errno.h>
-+
- #define L2X0_CACHE_ID			0x000
- #define L2X0_CACHE_TYPE			0x004
- #define L2X0_CTRL			0x100
--- 
-1.7.5.4
+-Olof
