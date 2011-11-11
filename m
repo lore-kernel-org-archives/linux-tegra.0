@@ -1,93 +1,72 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 07/10] arm/tegra: add new fields to struct
- tegra_pingroup_desc
-Date: Fri, 11 Nov 2011 13:22:13 +0200
-Message-ID: <1321010541-31337-8-git-send-email-pdeschrijver@nvidia.com>
+From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH v4 04/10] arm/tegra: prepare early init for multiple
+ tegra variants
+Date: Fri, 11 Nov 2011 11:45:21 +0000
+Message-ID: <20111111114521.GB5114@totoro>
 References: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
+ <1321010541-31337-5-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1321010541-31337-5-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add new fields to struct tegra_pingroup_desc to support new hardware features
-introduced in the tegra30 SoC. The pinmux driver won't use those fields yet,
-but the tegra30 pinmux tables will already provide the necessary data.
+Hi Peter,
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/mach-tegra/include/mach/pinmux.h   |   10 ++++++++++
- arch/arm/mach-tegra/pinmux-tegra20-tables.c |    4 ++++
- 2 files changed, 14 insertions(+), 0 deletions(-)
+On Fri, Nov 11, 2011 at 01:22:10PM +0200, Peter De Schrijver wrote:
+> This patch splits the early init code in a common and a tegra20 specific part.
+> L2 cache initialization is generalized and discovers the cache associativity
+> at runtime. Also use arm_pm_restart instead of arm_arch_reset and reset the
+> the system using the PMC reset feature rather then the CAR system reset.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/board-dt.c        |   21 ++++++++++++++
+>  arch/arm/mach-tegra/board-harmony.c   |    2 +-
+>  arch/arm/mach-tegra/board-paz00.c     |    2 +-
+>  arch/arm/mach-tegra/board-seaboard.c  |    6 ++--
+>  arch/arm/mach-tegra/board-trimslice.c |    2 +-
+>  arch/arm/mach-tegra/board.h           |    6 ++--
+>  arch/arm/mach-tegra/clock.c           |    5 ---
+>  arch/arm/mach-tegra/common.c          |   47 ++++++++++++++++++++++----------
+>  8 files changed, 62 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+> index d368f8d..15ee974 100644
+> --- a/arch/arm/mach-tegra/board-dt.c
+> +++ b/arch/arm/mach-tegra/board-dt.c
+> @@ -118,6 +118,27 @@ static void __init tegra_dt_init(void)
+>  	of_platform_populate(NULL, tegra_dt_match_table, tegra20_auxdata_lookup, NULL);
+>  }
+>  
+> +static struct {
+> +	const char *machine;
+> +	void (*init)(void);
+> +} early_init[] __initdata = {
+> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> +	{ "nvidia,tegra20", tegra20_init_early },
+> +#endif
+> +};
+> +
+> +static void __init tegra_init_early(void)
+> +{
+> +
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(early_init); i++)
+> +		if (of_machine_is_compatible(early_init[i].machine))
+> +			return early_init[i].init();
+> +
+> +	pr_warn("Unknown platform detected\n");
+> +}
 
-diff --git a/arch/arm/mach-tegra/include/mach/pinmux.h b/arch/arm/mach-tegra/include/mach/pinmux.h
-index 35999ce..988c6c5 100644
---- a/arch/arm/mach-tegra/include/mach/pinmux.h
-+++ b/arch/arm/mach-tegra/include/mach/pinmux.h
-@@ -2,6 +2,7 @@
-  * linux/arch/arm/mach-tegra/include/mach/pinmux.h
-  *
-  * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2010,2011 Nvidia, Inc.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -99,6 +100,11 @@ enum tegra_tristate {
- 	TEGRA_TRI_TRISTATE = 1,
- };
- 
-+enum tegra_pin_io {
-+	TEGRA_PIN_OUTPUT = 0,
-+	TEGRA_PIN_INPUT = 1,
-+};
-+
- enum tegra_vddio {
- 	TEGRA_VDDIO_BB = 0,
- 	TEGRA_VDDIO_LCD,
-@@ -202,6 +208,7 @@ struct tegra_pingroup_desc {
- 	int funcs[4];
- 	int func_safe;
- 	int vddio;
-+	enum tegra_pin_io io_default;
- 	s16 tri_bank;	/* Register bank the tri_reg exists within */
- 	s16 mux_bank;	/* Register bank the mux_reg exists within */
- 	s16 pupd_bank;	/* Register bank the pupd_reg exists within */
-@@ -211,6 +218,9 @@ struct tegra_pingroup_desc {
- 	s8 tri_bit; 	/* offset into the TRISTATE_REG_* register bit */
- 	s8 mux_bit;	/* offset into the PIN_MUX_CTL_* register bit */
- 	s8 pupd_bit;	/* offset into the PULL_UPDOWN_REG_* register bit */
-+	s8 lock_bit;	/* offset of the LOCK bit into mux register bit */
-+	s8 od_bit;	/* offset of the OD bit into mux register bit */
-+	s8 ioreset_bit;	/* offset of the IO_RESET bit into mux register bit */
- };
- 
- typedef void (*pinmux_init) (const struct tegra_pingroup_desc **pg,
-diff --git a/arch/arm/mach-tegra/pinmux-tegra20-tables.c b/arch/arm/mach-tegra/pinmux-tegra20-tables.c
-index efe6aee..0fe5335 100644
---- a/arch/arm/mach-tegra/pinmux-tegra20-tables.c
-+++ b/arch/arm/mach-tegra/pinmux-tegra20-tables.c
-@@ -106,6 +106,10 @@ static const struct tegra_drive_pingroup_desc tegra_soc_drive_pingroups[TEGRA_MA
- 		.pupd_bank = 2,				\
- 		.pupd_reg = ((pupd_r) - PULLUPDOWN_REG_A),	\
- 		.pupd_bit = pupd_b,				\
-+		.lock_bit = -1,					\
-+		.od_bit = -1,					\
-+		.ioreset_bit = -1,				\
-+		.io_default = -1,				\
- 	}
- 
- static const struct tegra_pingroup_desc tegra_soc_pingroups[TEGRA_MAX_PINGROUP] = {
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+Wouldn't it be better just to have separate machine descs for tegra20 
+and tegra30 and have a different .init_early for each?  I'm not sure 
+that this extra indirection buys us much, especially if we had to repeat 
+it for any of the other entries.
+
+Jamie
