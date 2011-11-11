@@ -1,104 +1,111 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 02/10] arm/tegra: cleanup tegra20 support
-Date: Fri, 11 Nov 2011 13:22:08 +0200
-Message-ID: <1321010541-31337-3-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 10/10] arm/tegra: add support for tegra30 based board cardhu
+Date: Fri, 11 Nov 2011 13:22:16 +0200
+Message-ID: <1321010541-31337-11-git-send-email-pdeschrijver@nvidia.com>
 References: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1321010541-31337-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* add a dependency to ARCH_TEGRA_2x_SOC in Kconfig to all tegra20 based boards
-  and TEGRA_PCI
-* make powergating dependent on ARCH_TEGRA_2x_SOC
-* remove dependency on ARCH_TEGRA_2x_SOC for clock.c
+Add support for the tegra30 based cardhu development board. Cardhu is a tablet
+formfactor reference design for tegra30. The patch provides a device tree for
+the board, updates Makefile.boot to build the dtb, includes the platform in
+Kconfig and updates board-dt.c.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig  |    8 ++++++++
- arch/arm/mach-tegra/Makefile |    3 +--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra-cardhu.dts |   36 ++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Kconfig        |    7 +++++++
+ arch/arm/mach-tegra/Makefile.boot  |    1 +
+ arch/arm/mach-tegra/board-dt.c     |    1 +
+ 4 files changed, 45 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
 
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+new file mode 100644
+index 0000000..70c41fc
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -0,0 +1,36 @@
++/dts-v1/;
++
++/include/ "tegra30.dtsi"
++
++/ {
++	model = "NVIDIA Tegra30 Cardhu evaluation board";
++	compatible = "nvidia,cardhu", "nvidia,tegra30";
++
++	memory {
++		reg = < 0x80000000 0x40000000 >;
++	};
++
++	serial@70006000 {
++		clock-frequency = < 408000000 >;
++	};
++
++	i2c@7000c000 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c400 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c500 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000c700 {
++		clock-frequency = <100000>;
++	};
++
++	i2c@7000d000 {
++		clock-frequency = <100000>;
++	};
++};
 diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 91aff7c..2b1d49b 100644
+index aad54ca..6bae1bb 100644
 --- a/arch/arm/mach-tegra/Kconfig
 +++ b/arch/arm/mach-tegra/Kconfig
-@@ -21,18 +21,21 @@ endchoice
- 
- config TEGRA_PCI
- 	bool "PCI Express support"
-+	depends on ARCH_TEGRA_2x_SOC
- 	select PCI
- 
- comment "Tegra board type"
- 
- config MACH_HARMONY
-        bool "Harmony board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-          Support for nVidia Harmony development platform
- 
- config MACH_KAEN
-        bool "Kaen board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select MACH_SEABOARD
-        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-@@ -40,11 +43,13 @@ config MACH_KAEN
- 
- config MACH_PAZ00
-        bool "Paz00 board"
-+       depends on ARCH_TEGRA_2x_SOC
-        help
-          Support for the Toshiba AC100/Dynabook AZ netbook
- 
- config MACH_SEABOARD
-        bool "Seaboard board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
-        help
-          Support for nVidia Seaboard development platform. It will
-@@ -59,18 +64,21 @@ config MACH_TEGRA_DT
- 
- config MACH_TRIMSLICE
-        bool "TrimSlice board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select TEGRA_PCI
-        help
-          Support for CompuLab TrimSlice platform
- 
- config MACH_WARIO
-        bool "Wario board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select MACH_SEABOARD
-        help
-          Support for the Wario version of Seaboard
- 
- config MACH_VENTANA
-        bool "Ventana board"
-+       depends on ARCH_TEGRA_2x_SOC
-        select MACH_TEGRA_DT
+@@ -91,6 +91,13 @@ config MACH_VENTANA
         help
           Support for the nVidia Ventana development platform
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 91a07e1..7dc1db3 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -5,9 +5,8 @@ obj-y                                   += irq.o
- obj-y                                   += clock.o
- obj-y                                   += timer.o
- obj-y                                   += pinmux.o
--obj-y                                   += powergate.o
- obj-y					+= fuse.o
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
-+obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= powergate.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
+ 
++config MACH_CARDHU
++       bool "Cardhu board"
++       depends on ARCH_TEGRA_3x_SOC
++       select MACH_TEGRA_DT
++       help
++         Support for the NVIDIA Cardhu development platform
++
+ choice
+         prompt "Low-level debug console UART"
+         default TEGRA_DEBUG_UART_NONE
+diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+index bd12c9f..b518848 100644
+--- a/arch/arm/mach-tegra/Makefile.boot
++++ b/arch/arm/mach-tegra/Makefile.boot
+@@ -5,3 +5,4 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+ dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
+ dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
+ dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
++dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index 486b473..7f3b235 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -146,6 +146,7 @@ static const char * tegra_dt_board_compat[] = {
+ 	"nvidia,harmony",
+ 	"nvidia,seaboard",
+ 	"nvidia,ventana",
++	"nvidia,cardhu",
+ 	NULL
+ };
+ 
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
