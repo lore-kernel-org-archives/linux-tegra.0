@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 01/10] arm/tegra: initial device tree for tegra30
-Date: Fri, 11 Nov 2011 13:22:07 +0200
-Message-ID: <1321010541-31337-2-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v4 02/10] arm/tegra: cleanup tegra20 support
+Date: Fri, 11 Nov 2011 13:22:08 +0200
+Message-ID: <1321010541-31337-3-git-send-email-pdeschrijver@nvidia.com>
 References: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,146 +12,93 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds the initial device tree for tegra30
+* add a dependency to ARCH_TEGRA_2x_SOC in Kconfig to all tegra20 based boards
+  and TEGRA_PCI
+* make powergating dependent on ARCH_TEGRA_2x_SOC
+* remove dependency on ARCH_TEGRA_2x_SOC for clock.c
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi |  127 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 127 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+ arch/arm/mach-tegra/Kconfig  |    8 ++++++++
+ arch/arm/mach-tegra/Makefile |    3 +--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-new file mode 100644
-index 0000000..fabe243
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -0,0 +1,127 @@
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	compatible = "nvidia,tegra30";
-+	interrupt-parent = <&intc>;
-+
-+	intc: interrupt-controller@50041000 {
-+		compatible = "nvidia,tegra30-gic", "nvidia,tegra20-gic";
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		reg = < 0x50041000 0x1000 >,
-+		      < 0x50040100 0x0100 >;
-+	};
-+
-+	i2c@7000c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible =  "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C000 0x100>;
-+		interrupts = < 70 >;
-+	};
-+
-+	i2c@7000c400 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C400 0x100>;
-+		interrupts = < 116 >;
-+	};
-+
-+	i2c@7000c500 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000C500 0x100>;
-+		interrupts = < 124 >;
-+	};
-+
-+	i2c@7000c700 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000c700 0x100>;
-+		interrupts = < 152 >;
-+	};
-+
-+	i2c@7000d000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000D000 0x100>;
-+		interrupts = < 85 >;
-+	};
-+
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra30-gpio", "nvidia,tegra20-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+	};
-+
-+	serial@70006000 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 68 >;
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 69 >;
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 78 >;
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 122 >;
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 123 >;
-+	};
-+
-+	sdhci@78000000 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000000 0x200>;
-+		interrupts = < 46 >;
-+	};
-+
-+	sdhci@78000200 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000200 0x200>;
-+		interrupts = < 47 >;
-+	};
-+
-+	sdhci@78000400 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000400 0x200>;
-+		interrupts = < 51 >;
-+	};
-+
-+	sdhci@78000600 {
-+		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-+		reg = <0x78000600 0x200>;
-+		interrupts = < 63 >;
-+	};
-+
-+	pinmux: pinmux@70000000 {
-+		compatible = "nvidia,tegra30-pinmux";
-+		reg = < 0x70000868 0xd0     /* Pad control registers */
-+			0x70003000 0x3e0 >; /* Mux registers */
-+	};
-+};
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 91aff7c..2b1d49b 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -21,18 +21,21 @@ endchoice
+ 
+ config TEGRA_PCI
+ 	bool "PCI Express support"
++	depends on ARCH_TEGRA_2x_SOC
+ 	select PCI
+ 
+ comment "Tegra board type"
+ 
+ config MACH_HARMONY
+        bool "Harmony board"
++       depends on ARCH_TEGRA_2x_SOC
+        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+        help
+          Support for nVidia Harmony development platform
+ 
+ config MACH_KAEN
+        bool "Kaen board"
++       depends on ARCH_TEGRA_2x_SOC
+        select MACH_SEABOARD
+        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+        help
+@@ -40,11 +43,13 @@ config MACH_KAEN
+ 
+ config MACH_PAZ00
+        bool "Paz00 board"
++       depends on ARCH_TEGRA_2x_SOC
+        help
+          Support for the Toshiba AC100/Dynabook AZ netbook
+ 
+ config MACH_SEABOARD
+        bool "Seaboard board"
++       depends on ARCH_TEGRA_2x_SOC
+        select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+        help
+          Support for nVidia Seaboard development platform. It will
+@@ -59,18 +64,21 @@ config MACH_TEGRA_DT
+ 
+ config MACH_TRIMSLICE
+        bool "TrimSlice board"
++       depends on ARCH_TEGRA_2x_SOC
+        select TEGRA_PCI
+        help
+          Support for CompuLab TrimSlice platform
+ 
+ config MACH_WARIO
+        bool "Wario board"
++       depends on ARCH_TEGRA_2x_SOC
+        select MACH_SEABOARD
+        help
+          Support for the Wario version of Seaboard
+ 
+ config MACH_VENTANA
+        bool "Ventana board"
++       depends on ARCH_TEGRA_2x_SOC
+        select MACH_TEGRA_DT
+        help
+          Support for the nVidia Ventana development platform
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 91a07e1..7dc1db3 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -5,9 +5,8 @@ obj-y                                   += irq.o
+ obj-y                                   += clock.o
+ obj-y                                   += timer.o
+ obj-y                                   += pinmux.o
+-obj-y                                   += powergate.o
+ obj-y					+= fuse.o
+-obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clock.o
++obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= powergate.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-t2-tables.o
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
