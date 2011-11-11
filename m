@@ -1,99 +1,130 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 00/10] Add support for tegra30 and cardhu
-Date: Fri, 11 Nov 2011 13:22:06 +0200
-Message-ID: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v4 09/10] arm/tegra: implement support for tegra30
+Date: Fri, 11 Nov 2011 13:22:15 +0200
+Message-ID: <1321010541-31337-10-git-send-email-pdeschrijver@nvidia.com>
+References: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1321010541-31337-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset adds support for the tegra30 SoC and the cardhu development
-board.
+Add support for tegra30 SoC. This includes a device tree compatible type for
+this SoC ("nvidia,tegra30") and adds L2 cache initialization for this new SoC.
+The clock framework is still missing, which prevents most drivers from working.
+The basic IRQs are the same, so remove the dependency on
+CONFIG_ARCH_TEGRA_2x_SOC.
 
-Pathset is on top of Will Deacon's ARM reset work.                                                                                                             
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ arch/arm/mach-tegra/Kconfig             |   18 +++++++++++++-----
+ arch/arm/mach-tegra/board-dt.c          |    3 +++
+ arch/arm/mach-tegra/board.h             |    3 +++
+ arch/arm/mach-tegra/common.c            |    7 +++++++
+ arch/arm/mach-tegra/include/mach/irqs.h |    2 --
+ 5 files changed, 26 insertions(+), 7 deletions(-)
 
-Most important changes in v4:
-
-* cleanup clock code to work on multiple tegra variants
-* added dependencies to avoid building tegra20 only code for tegra30
-
-Most important changes in v3:
-
-* align with ARM restart rework. might need a bit of rework to merge with the
-  latest version of this.
-* minor cleanups and reformats
-
-Most important changes in v2:
-
-* account for arch_reset cleanup
-* seperate patch for renaming pinmux-t2.h and pinmux-t2-tables.c
-* fixed bug in common cache initialization
-* fixed compatibility with non DT boards (boottested on harmony)
-* improved commit messages
-
-Peter De Schrijver (10):
-  arm/tegra: initial device tree for tegra30
-  arm/tegra: cleanup tegra20 support
-  arm/tegra: prepare clock code for multiple tegra variants
-  arm/tegra: prepare early init for multiple tegra variants
-  arm/tegra: rename tegra20 pinmux files
-  arm/tegra: prepare pinmux code for multiple tegra variants
-  arm/tegra: add new fields to struct tegra_pingroup_desc
-  arm/tegra: pinmux tables and definitions for tegra30
-  arm/tegra: implement support for tegra30
-  arm/tegra: add support for tegra30 based board cardhu
-
- arch/arm/boot/dts/tegra-cardhu.dts                |   36 ++
- arch/arm/boot/dts/tegra30.dtsi                    |  127 +++++++
- arch/arm/mach-tegra/Kconfig                       |   33 ++-
- arch/arm/mach-tegra/Makefile                      |    6 +-
- arch/arm/mach-tegra/Makefile.boot                 |    1 +
- arch/arm/mach-tegra/board-dt.c                    |   25 ++
- arch/arm/mach-tegra/board-harmony-pcie.c          |    1 +
- arch/arm/mach-tegra/board-harmony-pinmux.c        |    1 +
- arch/arm/mach-tegra/board-harmony.c               |    2 +-
- arch/arm/mach-tegra/board-paz00-pinmux.c          |    1 +
- arch/arm/mach-tegra/board-paz00.c                 |    2 +-
- arch/arm/mach-tegra/board-seaboard-pinmux.c       |    2 +-
- arch/arm/mach-tegra/board-seaboard.c              |    6 +-
- arch/arm/mach-tegra/board-trimslice-pinmux.c      |    1 +
- arch/arm/mach-tegra/board-trimslice.c             |    2 +-
- arch/arm/mach-tegra/board.h                       |    9 +-
- arch/arm/mach-tegra/clock.c                       |   19 +-
- arch/arm/mach-tegra/clock.h                       |    3 -
- arch/arm/mach-tegra/common.c                      |   54 +++-
- arch/arm/mach-tegra/include/mach/irqs.h           |    2 -
- arch/arm/mach-tegra/include/mach/pinmux-t2.h      |  184 ----------
- arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 ++++++++++
- arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 ++++++++++++++++++
- arch/arm/mach-tegra/include/mach/pinmux.h         |   88 ++++-
- arch/arm/mach-tegra/pinmux-t2-tables.c            |  228 -------------
- arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 +++++++++++++
- arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 +++++++++++++++++++++
- arch/arm/mach-tegra/pinmux.c                      |  157 ++++++---
- arch/arm/mach-tegra/tegra2_clocks.c               |   14 +-
- arch/arm/mach-tegra/timer.c                       |   13 +-
- 30 files changed, 1603 insertions(+), 538 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
- create mode 100644 arch/arm/boot/dts/tegra30.dtsi
- delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-t2.h
- create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra20.h
- create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra30.h
- delete mode 100644 arch/arm/mach-tegra/pinmux-t2-tables.c
- create mode 100644 arch/arm/mach-tegra/pinmux-tegra20-tables.c
- create mode 100644 arch/arm/mach-tegra/pinmux-tegra30-tables.c
-
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 2b1d49b..aad54ca 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -2,11 +2,8 @@ if ARCH_TEGRA
+ 
+ comment "NVIDIA Tegra options"
+ 
+-choice
+-	prompt "Select Tegra processor family for target system"
+-
+ config ARCH_TEGRA_2x_SOC
+-	bool "Tegra 2 family"
++	bool "Enable support for Tegra20 family"
+ 	select CPU_V7
+ 	select ARM_GIC
+ 	select ARCH_REQUIRE_GPIOLIB
+@@ -17,7 +14,18 @@ config ARCH_TEGRA_2x_SOC
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+ 
+-endchoice
++config ARCH_TEGRA_3x_SOC
++	bool "Enable support for Tegra30 family"
++	select CPU_V7
++	select ARM_GIC
++	select ARCH_REQUIRE_GPIOLIB
++	select USB_ARCH_HAS_EHCI if USB_SUPPORT
++	select USB_ULPI if USB_SUPPORT
++	select USB_ULPI_VIEWPORT if USB_SUPPORT
++	select USE_OF
++	help
++	  Support for NVIDIA Tegra T30 processor family, based on the
++	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+ 
+ config TEGRA_PCI
+ 	bool "PCI Express support"
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index 15ee974..486b473 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -125,6 +125,9 @@ static struct {
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ 	{ "nvidia,tegra20", tegra20_init_early },
+ #endif
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++	{ "nvidia,tegra30", tegra30_init_early },
++#endif
+ };
+ 
+ static void __init tegra_init_early(void)
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 355f488..f508cbb 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -26,6 +26,9 @@
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ void __init tegra20_init_early(void);
+ #endif
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++void __init tegra30_init_early(void);
++#endif
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+ void __init tegra_init_clock(void);
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 3ad1ca3..06f34ec 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -98,3 +98,10 @@ void __init tegra20_init_early(void)
+ 	tegra_common_init();
+ }
+ #endif
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++void __init tegra30_init_early(void)
++{
++	tegra_init_cache(0x441, 0x551);
++	tegra_common_init();
++}
++#endif
+diff --git a/arch/arm/mach-tegra/include/mach/irqs.h b/arch/arm/mach-tegra/include/mach/irqs.h
+index 73265af..a2146cd 100644
+--- a/arch/arm/mach-tegra/include/mach/irqs.h
++++ b/arch/arm/mach-tegra/include/mach/irqs.h
+@@ -25,7 +25,6 @@
+ 
+ #define IRQ_LOCALTIMER                  29
+ 
+-#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ /* Primary Interrupt Controller */
+ #define INT_PRI_BASE			(INT_GIC_BASE + 32)
+ #define INT_TMR1			(INT_PRI_BASE + 0)
+@@ -178,6 +177,5 @@
+ #define NR_BOARD_IRQS			32
+ 
+ #define NR_IRQS				(INT_BOARD_BASE + NR_BOARD_IRQS)
+-#endif
+ 
+ #endif
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
