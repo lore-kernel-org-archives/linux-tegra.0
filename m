@@ -1,40 +1,32 @@
-From: Kim Phillips <kim.phillips@freescale.com>
-Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
-Date: Mon, 14 Nov 2011 13:13:55 -0600
-Message-ID: <20111114131355.88f3b5e782c1bd67625ed914@freescale.com>
-References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com>
-	<20111105181025.69918e625a169ccb30d9b7c8@freescale.com>
-	<4EBE48E8.60205@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
+From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] USB: ehci-tegra: add probing through device tree
+Date: Mon, 14 Nov 2011 11:21:47 -0800
+Message-ID: <20111114192147.GA28643@kroah.com>
+References: <1320433960-18173-1-git-send-email-olof@lixom.net>
+ <1320433960-18173-2-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Varun Wadekar <vwadekar@nvidia.com>, "herbert@gondor.hengli.com.au" <herbert@gondor.hengli.com.au>, "davem@davemloft.net" <davem@davemloft.net>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1320433960-18173-2-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 14 Nov 2011 09:26:16 -0800
-Stephen Warren <swarren@nvidia.com> wrote:
-
-> Varun Wadekar wrote at Saturday, November 12, 2011 3:23 AM:
-> > >> +	/* assign new context to device */
-> > >> +	ctx->dd = dd;
-> > >> +	dd->ctx = ctx;
-> > >> +
-> > >> +	if (ctx->flags & FLAGS_NEW_KEY) {
-> > >> +		/* copy the key */
-> > >> +		memset(dd->ivkey_base, 0, AES_HW_KEY_TABLE_LENGTH_BYTES);
-> > >> +		memcpy(dd->ivkey_base, ctx->key, ctx->keylen);
-> > > these really should be writes to mutually exclusive addresses.
-> > 
-> > Why?
+On Fri, Nov 04, 2011 at 12:12:40PM -0700, Olof Johansson wrote:
+> Rely on platform_data being passed through auxdata for now; more elaborate
+> bindings for phy config and tunings to be added.
 > 
-> To avoid redundant work; there's little point memset()ing a region that's
-> going to be copied over the top of immediately afterwards.
+> v2: moved vbus-gpio check to the helper function, added check for !of_node,
+>     added usb2 clock to board-dt table.
+> 
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
 
-plus, why is the memset needed at all?
+Acked-by: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
 
-Kim
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
