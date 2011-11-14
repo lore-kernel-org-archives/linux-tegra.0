@@ -1,36 +1,40 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3] crypto: driver for tegra AES hardware
-Date: Mon, 14 Nov 2011 10:42:12 -0800
-Message-ID: <CAOesGMheE3r63O2ZijfKH1MNkxXnv_NBWkEtKTjXK5vXYKSDzg@mail.gmail.com>
-References: <1321094567-16561-1-git-send-email-vwadekar@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF1740805ABE@HQMAIL01.nvidia.com>
+From: Kim Phillips <kim.phillips@freescale.com>
+Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
+Date: Mon, 14 Nov 2011 13:13:55 -0600
+Message-ID: <20111114131355.88f3b5e782c1bd67625ed914@freescale.com>
+References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com>
+	<20111105181025.69918e625a169ccb30d9b7c8@freescale.com>
+	<4EBE48E8.60205@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805ABE@HQMAIL01.nvidia.com>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
 Sender: linux-crypto-owner@vger.kernel.org
 To: Stephen Warren <swarren@nvidia.com>
-Cc: Varun Wadekar <vwadekar@nvidia.com>, "Colin Cross (ccross@android.com)" <ccross@android.com>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "herbert@gondor.hengli.com.au" <herbert@gondor.hengli.com.au>, "davem@davemloft.net" <davem@davemloft.net>
+Cc: Varun Wadekar <vwadekar@nvidia.com>, "herbert@gondor.hengli.com.au" <herbert@gondor.hengli.com.au>, "davem@davemloft.net" <davem@davemloft.net>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 14, 2011 at 9:32 AM, Stephen Warren <swarren@nvidia.com> wrote:
-> vwadekar@nvidia.com wrote at Saturday, November 12, 2011 3:43 AM:
->> driver supports ecb/cbc/ofb/ansi_x9.31rng modes,
->> 128, 192 and 256-bit key sizes
->
-> This will fail to build as a module unless your other patch "arm: tegra:
-> export tegra_chip_uid" is also merged. You should mention this fact when
-> posting the patch, below the --- line.
->
-> I'll let Olof and the crypto maintainers comment on the solution they'd
-> prefer for this, but perhaps it's: have one of the Tegra maintainers ack
-> that other patch, then have the crypto maintainer merge both patches in
-> order into the crypto tree.
+On Mon, 14 Nov 2011 09:26:16 -0800
+Stephen Warren <swarren@nvidia.com> wrote:
 
-Yeah, I'll ack it once I'm OK with it.
+> Varun Wadekar wrote at Saturday, November 12, 2011 3:23 AM:
+> > >> +	/* assign new context to device */
+> > >> +	ctx->dd = dd;
+> > >> +	dd->ctx = ctx;
+> > >> +
+> > >> +	if (ctx->flags & FLAGS_NEW_KEY) {
+> > >> +		/* copy the key */
+> > >> +		memset(dd->ivkey_base, 0, AES_HW_KEY_TABLE_LENGTH_BYTES);
+> > >> +		memcpy(dd->ivkey_base, ctx->key, ctx->keylen);
+> > > these really should be writes to mutually exclusive addresses.
+> > 
+> > Why?
+> 
+> To avoid redundant work; there's little point memset()ing a region that's
+> going to be copied over the top of immediately afterwards.
 
-There will be other fuse.c changes for 3.3 but the conflict resolution
-should be trivial if needed at all.
+plus, why is the memset needed at all?
 
-
--Olof
+Kim
