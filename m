@@ -1,32 +1,35 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] USB: ehci-tegra: add probing through device tree
-Date: Mon, 14 Nov 2011 11:21:47 -0800
-Message-ID: <20111114192147.GA28643@kroah.com>
-References: <1320433960-18173-1-git-send-email-olof@lixom.net>
- <1320433960-18173-2-git-send-email-olof@lixom.net>
+From: Henning Heinold <heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
+Subject: Re: [PATCH] arm: tegra: export tegra_chip_uid
+Date: Mon, 14 Nov 2011 22:09:18 +0100
+Message-ID: <20111114210917.GA23107@rhein.zuhause.netz>
+References: <1321248620-5147-1-git-send-email-vwadekar@nvidia.com>
+ <CAOesGMgPfECqOn6eOezAaf3gOm01ZG=CABT_=bi8PL_KbokBnA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1320433960-18173-2-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <CAOesGMgPfECqOn6eOezAaf3gOm01ZG=CABT_=bi8PL_KbokBnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
+Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 04, 2011 at 12:12:40PM -0700, Olof Johansson wrote:
-> Rely on platform_data being passed through auxdata for now; more elaborate
-> bindings for phy config and tunings to be added.
+On Mon, Nov 14, 2011 at 10:37:17AM -0800, Olof Johansson wrote:
+> On Sun, Nov 13, 2011 at 9:30 PM, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > the crypto driver will need this api to use
+> > it in the rng calculations. in order to build
+> > the crypto driver as a module, tegra_chip_uid
+> > has to be exported.
 > 
-> v2: moved vbus-gpio check to the helper function, added check for !of_node,
->     added usb2 clock to board-dt table.
+> Please use proper capitalization.
 > 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
+> > Original author: Henning Heinold <heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
+> 
+> See instructions from Stephen on the other patch. Also, if Henning
+> wrote it, why doesn't it have his signed-off-by?
 
-Acked-by: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
+Hi Varun,
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+feel free to add Signed-off-by from me.
+
+Bye Henning
