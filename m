@@ -1,53 +1,40 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH v1] arm: tegra: export tegra_chip_uid
-Date: Tue, 15 Nov 2011 08:28:19 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740805D45@HQMAIL01.nvidia.com>
-References: <1321330772-2750-1-git-send-email-vwadekar@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v1] dts: tegra-ventana: use proper root instead of
+ /dev/ram
+Date: Tue, 15 Nov 2011 11:16:51 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B@HQMAIL01.nvidia.com>
+References: <1321338087-3662-1-git-send-email-vwadekar@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <1321330772-2750-1-git-send-email-vwadekar@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1321338087-3662-1-git-send-email-vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Language: en-US
-Sender: linux-crypto-owner@vger.kernel.org
-To: Varun Wadekar <vwadekar@nvidia.com>, "olof@lixom.net" <olof@lixom.net>
-Cc: "heinold@inf.fu-berlin.de" <heinold@inf.fu-berlin.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Varun Wadekar wrote at Monday, November 14, 2011 9:20 PM:
-> The crypto driver will need this api to use
-> it in the RNG calculations. In order to build
-> the crypto driver as a module, tegra_chip_uid
-> has to be exported.
+Varun Wadekar wrote at Monday, November 14, 2011 11:21 PM:
+> From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Original author: Henning Heinold <heinold@inf.fu-berlin.de>
+> The root file system on ventana resides on /dev/mmcblk0p1.
 
-You should drop that line from the patch description, and fix the git
-author field for the commit so that it reflects that Henning wrote this.
+Well, that's entirely up to however the user set up their system, although
+I admit mmcblk0p1 is likely to be the common case; I certainly carry
+basically this patch locally for many boards.
 
-If this commit is HEAD, you'd run:
+> Update the dts file to use the proper root instead of /dev/ram.
+> 
+> Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-git commit --amend --author='Henning Heinold <heinold@inf.fu-berlin.de>'
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-If the commit isn't HEAD, you'll need to run "git rebase -i X", choose
-"edit" for this commit, then run the "git commit --amend" command above
-once you're at this commit. Finally, run "git rebase --continue". "X" in
-the above command is the commit ID immediately preceding this current
-commit in your git history.
-
-Second, this patch is really part of a 2-patch series beginning with this
-patch, and ending with the Tegra AES driver implementation. You should
-generate and email out the two patches together, and to the same set of
-people, so it's clear they're related. That way, they'll typically always
-be applied in sequence to the same git tree. Mail me internally if you
-need help with this.
-
-(BTW, Colin Cross is also a Tegra maintainer. He should be CC'd on Tegra
-patches too; see the output from scripts/get_maintainer.pl as a guide)
-
-My inclination is that you'll need to repost to fix at least the git
-author field, but I'd probably wait a little to see if there's any further
-feedback on the AES driver first.
+Of course, perhaps an even better solution is to just remove /chosen from
+all the board .dts files, and stop using CONFIG_APPENDED_DTB since U-boot
+supports FDT, and will update the cmdline with whatever the user chose.
+Still, I think this is probably OK for now.
 
 -- 
 nvpublic
