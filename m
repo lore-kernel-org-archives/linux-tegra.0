@@ -1,35 +1,25 @@
-From: Henning Heinold <heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
-Subject: Re: [PATCH] arm: tegra: export tegra_chip_uid
-Date: Mon, 14 Nov 2011 22:09:18 +0100
-Message-ID: <20111114210917.GA23107@rhein.zuhause.netz>
-References: <1321248620-5147-1-git-send-email-vwadekar@nvidia.com>
- <CAOesGMgPfECqOn6eOezAaf3gOm01ZG=CABT_=bi8PL_KbokBnA@mail.gmail.com>
+From: Varun Wadekar <vwadekar@nvidia.com>
+Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
+Date: Tue, 15 Nov 2011 09:40:42 +0530
+Message-ID: <4EC1E642.2090309@nvidia.com>
+References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com> <20111105181025.69918e625a169ccb30d9b7c8@freescale.com> <4EBE48E8.60205@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgPfECqOn6eOezAaf3gOm01ZG=CABT_=bi8PL_KbokBnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Kim Phillips <kim.phillips@freescale.com>, "herbert@gondor.hengli.com.au" <herbert@gondor.hengli.com.au>, "davem@davemloft.net" <davem@davemloft.net>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 14, 2011 at 10:37:17AM -0800, Olof Johansson wrote:
-> On Sun, Nov 13, 2011 at 9:30 PM, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > the crypto driver will need this api to use
-> > it in the rng calculations. in order to build
-> > the crypto driver as a module, tegra_chip_uid
-> > has to be exported.
-> 
-> Please use proper capitalization.
-> 
-> > Original author: Henning Heinold <heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
-> 
-> See instructions from Stephen on the other patch. Also, if Henning
-> wrote it, why doesn't it have his signed-off-by?
 
-Hi Varun,
+>> Why?
+> To avoid redundant work; there's little point memset()ing a region that's
+> going to be copied over the top of immediately afterwards.
+>
 
-feel free to add Signed-off-by from me.
-
-Bye Henning
+The length used for memset is different from the length being copied
+over. I am initially memsetting the entire key struct (which contains
+the key + original IV + updated IV) and then copying only the key. Down
+the line we copy the original IV and/or the updated IV in this memory space.
