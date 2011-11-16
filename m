@@ -1,40 +1,44 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v1] dts: tegra-ventana: use proper root instead of
- /dev/ram
-Date: Tue, 15 Nov 2011 11:16:51 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B@HQMAIL01.nvidia.com>
-References: <1321338087-3662-1-git-send-email-vwadekar@nvidia.com>
+From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
+Date: Wed, 16 Nov 2011 12:44:50 +0530
+Message-ID: <4EC362EA.3020204@nvidia.com>
+References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com> <20111105181025.69918e625a169ccb30d9b7c8@freescale.com> <4EBE48E8.60205@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com> <4EC1E642.2090309@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF1740805D40@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1321338087-3662-1-git-send-email-vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805D40-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Kim Phillips <kim.phillips-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org" <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Varun Wadekar wrote at Monday, November 14, 2011 11:21 PM:
-> From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The root file system on ventana resides on /dev/mmcblk0p1.
 
-Well, that's entirely up to however the user set up their system, although
-I admit mmcblk0p1 is likely to be the common case; I certainly carry
-basically this patch locally for many boards.
+> That doesn't make the duplicate memset/copy cease to be redundant.
+>
+> Why not copy the key to where it goes, then memset the rest of the data;
+> wouldn't that be as simple as:
+>
+> memcpy(dd->ivkey_base, ctx->key, ctx->keylen);
+> memset(dd->ivkey_base + ctx->keylen, 0, AES_HW_KEY_TABLE_LENGTH_BYTES - ctx->keylen);
 
-> Update the dts file to use the proper root instead of /dev/ram.
-> 
-> Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Seems like the same thing to me. Kim is inclined towards removing the
+memset completely, which I think should not be done. We need the memset
+to clear the entire key table.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Related to this, I wonder why:
+>
+> /*
+>  * The key table length is 64 bytes
+>  * (This includes first upto 32 bytes key + 16 bytes original initial vector
+>  * and 16 bytes updated initial vector)
+>  */ 
+> #define AES_HW_KEY_TABLE_LENGTH_BYTES 64
+>
+> Yet:
+>
+> dd->ivkey_base = dma_alloc_coherent(dev, SZ_512, &dd->ivkey_phys_base, ...
+>
+> Why is SZ_512 used to during alloc instead of AES_HW_KEY_TABLE_LENGTH_BYTES?
 
-Of course, perhaps an even better solution is to just remove /chosen from
-all the board .dts files, and stop using CONFIG_APPENDED_DTB since U-boot
-supports FDT, and will update the cmdline with whatever the user chose.
-Still, I think this is probably OK for now.
-
--- 
-nvpublic
+Correct. Will fix this.
