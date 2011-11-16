@@ -1,29 +1,29 @@
-From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
-Date: Wed, 16 Nov 2011 17:58:45 +0530
-Message-ID: <4EC3AC7D.4080705@nvidia.com>
-References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com>	<20111105181025.69918e625a169ccb30d9b7c8@freescale.com>	<4EBE48E8.60205@nvidia.com>	<74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>	<4EC1E642.2090309@nvidia.com>	<74CDBE0F657A3D45AFBB94109FB122FF1740805D40@HQMAIL01.nvidia.com>	<4EC362EA.3020204@nvidia.com>	<20111116025720.27e6b710e8b333612862bb2e@freescale.com>	<4EC37CBC.4060806@nvidia.com> <20111116031703.e006c81ebf5368365e7a22fb@freescale.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/23] mach/vmalloc.h removal, and ioremap optimization
+Date: Wed, 16 Nov 2011 09:13:42 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740D748BE@HQMAIL01.nvidia.com>
+References: <1321422521-1138-1-git-send-email-nico@fluxnic.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111116031703.e006c81ebf5368365e7a22fb-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+In-Reply-To: <1321422521-1138-1-git-send-email-nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kim Phillips <kim.phillips-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org" <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Nicolas Pitre wrote at Tuesday, November 15, 2011 10:48 PM:
+> This patch series removes all instances of mach/vmalloc.h in order to
+> have a more unified memory map across all ARM architectures. ...
 
->>> why do you need to clear the entire key table if it will be
->>> overwritten anyway?
->> If you set a > 128-bit key and then set a 128-bit key, the remaining
->> bits still remain in the key table. Similarly, if we use updated IV in
->> one operation and want to use the initial IV for the next, the updated
->> IV will still remain in the key table. The entire key table is copied to
->> the AES engine. Even though, we program the engine with the exact number
->> of bits to use for the key and whether to use the updated/initial IV, I
->> feel its better if the unused bits are zero instead of having garbage.
-> you're losing free performance.
+For Tegra, the series:
 
-I am really not comfortable having garbage in the keytable. Can you
-suggest another way to ensure this?
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+(On Seaboard/Springbank, booted DT, booted non-DT and tested audio, both
+with root filesystem on SD card)
+
+-- 
+nvpublic
