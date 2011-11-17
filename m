@@ -1,20 +1,63 @@
-From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v1] crypto: driver for tegra AES hardware
-Date: Thu, 17 Nov 2011 16:59:22 +0530
-Message-ID: <4EC4F012.1070205@nvidia.com>
-References: <1320489734-9085-1-git-send-email-vwadekar@nvidia.com>	<20111105181025.69918e625a169ccb30d9b7c8@freescale.com>	<4EBE48E8.60205@nvidia.com>	<74CDBE0F657A3D45AFBB94109FB122FF1740805AB5@HQMAIL01.nvidia.com>	<4EC1E642.2090309@nvidia.com>	<74CDBE0F657A3D45AFBB94109FB122FF1740805D40@HQMAIL01.nvidia.com>	<4EC362EA.3020204@nvidia.com>	<20111116025720.27e6b710e8b333612862bb2e@freescale.com>	<4EC37CBC.4060806@nvidia.com> <20111116031703.e006c81ebf5368365e7a22fb@freescale.com> <4EC3AC7D.4080705@nvidia.com>
+From: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: l2x0: fix compile error on !CONFIG_USE_OF
+Date: Thu, 17 Nov 2011 21:41:20 +0800
+Message-ID: <CAGsJ_4yrHqzXeBbG6AKyzsqPjt7VLBiStqBi0wnCvFauPbuERw@mail.gmail.com>
+References: <1320864823-5015-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4EC3AC7D.4080705-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1320864823-5015-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kim Phillips <kim.phillips-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org" <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+2011/11/10 Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>:
+> fae2b89ab1 (ARM: l2x0: add empty l2x0_of_init) adds a static inline
+> function that returns -ENODEV, but at least on tegra cache-l2x0.h is
+> included without errno.h being pulled in first, resulting in compile
+> errors if OF isn't enabled:
+>
+> In file included from arch/arm/mach-tegra/common.c:26:
+> arch/arm/include/asm/hardware/cache-l2x0.h: In function 'l2x0_of_init=
+':
+> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: 'ENODEV' undec=
+lared (first use in this function)
+> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: (Each undeclar=
+ed identifier is reported only once
+> arch/arm/include/asm/hardware/cache-l2x0.h:110: error: for each funct=
+ion it appears in.)
+>
+> Add errno.h to the include file to make it self-contained.
+>
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 
->> you're losing free performance.
-> I am really not comfortable having garbage in the keytable. 
+Acked-by: Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>
 
-Kim, do you have any other solution in mind?
+> ---
+> =C2=A0arch/arm/include/asm/hardware/cache-l2x0.h | =C2=A0 =C2=A02 ++
+> =C2=A01 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/in=
+clude/asm/hardware/cache-l2x0.h
+> index 1db1143..7df239b 100644
+> --- a/arch/arm/include/asm/hardware/cache-l2x0.h
+> +++ b/arch/arm/include/asm/hardware/cache-l2x0.h
+> @@ -20,6 +20,8 @@
+> =C2=A0#ifndef __ASM_ARM_HARDWARE_L2X0_H
+> =C2=A0#define __ASM_ARM_HARDWARE_L2X0_H
+>
+> +#include <linux/errno.h>
+> +
+> =C2=A0#define L2X0_CACHE_ID =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A00x000
+> =C2=A0#define L2X0_CACHE_TYPE =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x004
+> =C2=A0#define L2X0_CTRL =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x100
+> --
+> 1.7.5.4
+>
+>
