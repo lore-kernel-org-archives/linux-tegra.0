@@ -1,94 +1,40 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Thu, 17 Nov 2011 11:15:30 -0600
-Message-ID: <4EC54132.5070908@gmail.com>
-References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com> <4EC52BCF.7020609@gmail.com> <20111117155428.GS19069@tbergstrom-lnx.Nvidia.com> <CACxGe6ub2QBO0ZLwNdSvMxP1U087pqL-qL+dfWAbn-08gBQyvg@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
+Date: Thu, 17 Nov 2011 10:51:35 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
+References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACxGe6ub2QBO0ZLwNdSvMxP1U087pqL-qL+dfWAbn-08gBQyvg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Marc Dietrich <marvin24@gmx.de>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Colin Cross <ccross@android.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1321542430-17971-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/17/2011 10:53 AM, Grant Likely wrote:
+Peter De Schrijver wrote at Thursday, November 17, 2011 8:07 AM:
+> Convert tegra20 IRQ intialization to the GIC devicetree binding. Modify the
+> interrupt definitions in the dts files according to
+> Documentation/devicetree/bindings/arm/gic.txt
 > 
-> On Nov 17, 2011 8:54 AM, "Peter De Schrijver" <pdeschrijver@nvidia.com
-> <mailto:pdeschrijver@nvidia.com>> wrote:
->>
->> On Thu, Nov 17, 2011 at 04:44:15PM +0100, Rob Herring wrote:
->> > On 11/17/2011 09:07 AM, Peter De Schrijver wrote:
->> > > Convert tegra20 IRQ intialization to the GIC devicetree binding.
-> Modify the
->> > > interrupt definitions in the dts files according to
->> > > Documentation/devicetree/bindings/arm/gic.txt
->> > >
->> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com
-> <mailto:pdeschrijver@nvidia.com>>
->> >
->> > One minor comment below, but otherwise:
->> >
->> > Acked-by: Rob Herring <rob.herring@calxeda.com
-> <mailto:rob.herring@calxeda.com>>
->> >
->> > > ---
->> > >  arch/arm/boot/dts/tegra-paz00.dts |    2 +-
->> > >  arch/arm/boot/dts/tegra20.dtsi    |   52
-> ++++++++++++++++++------------------
->> > >  arch/arm/mach-tegra/irq.c         |   18 +++++++++++-
->> > >  3 files changed, 43 insertions(+), 29 deletions(-)
->> > >
->> > > diff --git a/arch/arm/boot/dts/tegra-paz00.dts
-> b/arch/arm/boot/dts/tegra-paz00.dts
->> > > index 15a949f..7ff8f6f 100644
->> > > --- a/arch/arm/boot/dts/tegra-paz00.dts
->> > > +++ b/arch/arm/boot/dts/tegra-paz00.dts
->> > > @@ -32,7 +32,7 @@
->> > >             #size-cells = <0>;
->> > >             compatible = "nvidia,nvec";
->> > >             reg = <0x7000C500 0x100>;
->> > > -           interrupts = <124>;
->> > > +           interrupts = <0 92 0x04>;
->> > >             clock-frequency = <80000>;
->> > >             request-gpios = <&gpio 170 0>;
->> > >             slave-addr = <138>;
->> > > diff --git a/arch/arm/boot/dts/tegra20.dtsi
-> b/arch/arm/boot/dts/tegra20.dtsi
->> > > index 795b921..cd01b01 100644
->> > > --- a/arch/arm/boot/dts/tegra20.dtsi
->> > > +++ b/arch/arm/boot/dts/tegra20.dtsi
->> > > @@ -5,9 +5,9 @@
->> > >     interrupt-parent = <&intc>;
->> > >
->> > >     intc: interrupt-controller@50041000 {
->> > > -           compatible = "nvidia,tegra20-gic";
->> > > +           compatible = "arm,cortex-a9-gic";
->> > >             interrupt-controller;
->> >
->> > You should add an "interrupt-parent;" here so the gic's parent is null
->> > and not the gic.
->>
->> Ok. I will add that in the next version.
-> 
-> No, there is no need to do that, nor is it convention. The gic node
-> doesn't have an interrupts property, so the interrupt-parent is irrelevant.
-> 
-Can't resist the inbox? Go back to your sabbatical.. :) We discussed
-this before and I though agreed this was the correct approach.
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It inherits the interrupt-parent from the parent node. Originally
-of_irq_find_parent would return that node, but this was fixed. So it
-doesn't really matter from a functional standpoint.
+tegra-harmony.dts contains an interrupts property that wasn't updated,
+for the WM8903 codec.
 
-So is no interrupt parent defined as no interrupts property or
-interrupt-parent being null phandle?
+board-dt.c contains logic to search for a node with compatible of
+nvidia,tegra20-gic, and then call irq_domain_add_simple. I assume that
+logic is replaced by the new common GIC code, and so should be removed
+from board-dt.c entirely?
 
-> Rob, perhaps we should adjust of_init_irq() to only set the parent
-> pointer if interrupts is present.
-> 
+>  	serial@70006000 {
+>  		compatible = "nvidia,tegra20-uart";
+> -		reg = <0x70006000 0x40>;
+> +		reg = <0x70006000 0x040>;
 
-It works correctly already either way.
+Here and a few other places, why change the reg property?
 
-Rob
+-- 
+nvpublic
