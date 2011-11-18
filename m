@@ -1,40 +1,52 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Fri, 18 Nov 2011 08:25:33 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63@HQMAIL01.nvidia.com>
-References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
- <20111118120352.GZ19069@tbergstrom-lnx.Nvidia.com>
+Subject: RE: [PATCH v7 2/2] crypto: driver for Tegra AES hardware
+Date: Fri, 18 Nov 2011 08:42:57 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1740D74E74@HQMAIL01.nvidia.com>
+References: <1321594953-13390-1-git-send-email-vwadekar@nvidia.com>
+ <1321594953-13390-3-git-send-email-vwadekar@nvidia.com>
+ <20111118100239.GA8023@totoro>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111118120352.GZ19069-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <20111118100239.GA8023@totoro>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Friday, November 18, 2011 5:04 AM:
-> On Thu, Nov 17, 2011 at 07:51:35PM +0100, Stephen Warren wrote:
-> > Peter De Schrijver wrote at Thursday, November 17, 2011 8:07 AM:
-> > > Convert tegra20 IRQ intialization to the GIC devicetree binding. Modify the
-> > > interrupt definitions in the dts files according to
-> > > Documentation/devicetree/bindings/arm/gic.txt
-> > >
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > tegra-harmony.dts contains an interrupts property that wasn't updated,
-> > for the WM8903 codec.
+Jamie Iles wrote at Friday, November 18, 2011 3:03 AM:
+> On Fri, Nov 18, 2011 at 11:12:33AM +0530, Varun Wadekar wrote:
+> > driver supports ecb/cbc/ofb/ansi_x9.31rng modes,
+> > 128, 192 and 256-bit key sizes
+
+> > +static int tegra_aes_probe(struct platform_device *pdev)
+...
+> > +	dev_info(dev, "registered");
+> > +	return 0;
+> > +
+> > +out:
+> > +	for (j = 0; j < i; j++)
+> > +		crypto_unregister_alg(&algs[j]);
+> > +	if (dd->ivkey_base)
+> > +		dma_free_coherent(dev, AES_HW_KEY_TABLE_LENGTH_BYTES,
+> > +			dd->ivkey_base, dd->ivkey_phys_base);
+> > +	if (dd->buf_in)
+> > +		dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> > +			dd->buf_in, dd->dma_buf_in);
+> > +	if (dd->buf_out)
+> > +		dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> > +			dd->buf_out, dd->dma_buf_out);
+> > +	if (dd->aes_clk)
+> > +		clk_put(dd->aes_clk);
 > 
-> But that's a GPIO interrupt no?
+> Note that clk_get() _can_ return NULL as a valid clk even if it doesn't
+> on tegra which makes this check a little difficult.
 
-The interrupt line from codec to Tegra is a GPIO, yes.
-
-But the WM8903 still has the same interrupt-parent as everything else,
-since it's inherited from /interrupt-parent and doesn't define its own.
-Perhaps this is a mistake?
+You can use IS_ERR to check for whether the clock was "got" or not, but
+of course, you'll have to initialize that field to some error value before
+any point where the code can "goto out";
 
 -- 
 nvpublic
