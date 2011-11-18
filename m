@@ -1,517 +1,1316 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: iommu: tegra2: Initial support for GART driver
-Date: Fri, 18 Nov 2011 08:27:29 +0100
-Message-ID: <20111118072729.GC20125@avionic-0098.mockup.avionic-design.de>
-References: <1321527667-12923-1-git-send-email-hdoyu@nvidia.com>
- <1321527667-12923-3-git-send-email-hdoyu@nvidia.com>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCH v7 2/2] crypto: driver for Tegra AES hardware
+Date: Fri, 18 Nov 2011 10:02:39 +0000
+Message-ID: <20111118100239.GA8023@totoro>
+References: <1321594953-13390-1-git-send-email-vwadekar@nvidia.com>
+ <1321594953-13390-3-git-send-email-vwadekar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1321527667-12923-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1321594953-13390-3-git-send-email-vwadekar@nvidia.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Varun Wadekar <vwadekar@nvidia.com>
+Cc: linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, olof@lixom.net, ccross@android.com
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Varun,
 
---ctP54qlpMx3WjD+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just a couple of nitpicks inline, otherwise looks good to me.
 
-* hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org wrote:
-> From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Tegra 2 IOMMU H/W dependent part, GART (Graphics Address Relocation
-> Table). This is one of the tegra_iovmm_device to register to the upper
-> tegra IOVMM framework. This supports only single virtual address
-> space(tegra_iovmm_domain), and manages a simple 1-to-1 mapping
-> H/W translation pagetable.
+Jamie
 
-I know I'm nitpicking, but this has inconsistent spelling for "Tegra" again.
-
-> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Nov 18, 2011 at 11:12:33AM +0530, Varun Wadekar wrote:
+> driver supports ecb/cbc/ofb/ansi_x9.31rng modes,
+> 128, 192 and 256-bit key sizes
+> 
+> Signed-off-by: Varun Wadekar <vwadekar@nvidia.com>
 > ---
->  drivers/iommu/Kconfig      |   10 ++
->  drivers/iommu/Makefile     |    1 +
->  drivers/iommu/tegra-gart.c |  357 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 368 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/iommu/tegra-gart.c
->=20
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 487d1ee..7f342e8 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -133,6 +133,16 @@ config OMAP_IOMMU_DEBUG
-> =20
-> =20
->  # Tegra IOMMU support
-> +config TEGRA_IOVMM_GART
-> +	bool "Enable I/O virtual memory manager for GART"
-> +	depends on ARCH_TEGRA_2x_SOC
-> +	default y
-> +	select TEGRA_IOVMM
+>  drivers/crypto/Kconfig     |   11 +
+>  drivers/crypto/Makefile    |    1 +
+>  drivers/crypto/tegra-aes.c | 1102 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/crypto/tegra-aes.h |  103 ++++
+>  4 files changed, 1217 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/crypto/tegra-aes.c
+>  create mode 100644 drivers/crypto/tegra-aes.h
+> 
+> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> index 6d16b4b..e707979 100644
+> --- a/drivers/crypto/Kconfig
+> +++ b/drivers/crypto/Kconfig
+> @@ -293,4 +293,15 @@ config CRYPTO_DEV_S5P
+>  	  Select this to offload Samsung S5PV210 or S5PC110 from AES
+>  	  algorithms execution.
+>  
+> +config CRYPTO_DEV_TEGRA_AES
+> +	tristate "Support for TEGRA AES hw engine"
+> +	depends on ARCH_TEGRA
+> +	select CRYPTO_AES
 > +	help
-> +	  Enables support for remapping discontiguous physical memory
-> +	  shared with the operating system into contiguous I/O virtual
-> +	  space through the GART (Graphics Address Relocation Table)
-> +	  hardware included on Tegra SoCs.
-> =20
->  config TEGRA_IOVMM
->  	bool
-
-I think you should move TEGRA_IOVMM_GART below TEGRA_IOVMM. Also, is it not
-possible to build this as a module?
-
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index 365eefb..4b61b05 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -8,3 +8,4 @@ obj-$(CONFIG_OMAP_IOMMU) +=3D omap-iommu.o
->  obj-$(CONFIG_OMAP_IOVMM) +=3D omap-iovmm.o
->  obj-$(CONFIG_OMAP_IOMMU_DEBUG) +=3D omap-iommu-debug.o
->  obj-$(CONFIG_TEGRA_IOVMM) +=3D tegra-iovmm.o
-> +obj-$(CONFIG_TEGRA_IOVMM_GART) +=3D tegra-gart.o
-> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> +	  TEGRA processors have AES module accelerator. Select this if you
+> +	  want to use the TEGRA module for AES algorithms.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called tegra-aes.
+> +
+>  endif # CRYPTO_HW
+> diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
+> index 53ea501..f3e64ea 100644
+> --- a/drivers/crypto/Makefile
+> +++ b/drivers/crypto/Makefile
+> @@ -13,3 +13,4 @@ obj-$(CONFIG_CRYPTO_DEV_OMAP_SHAM) += omap-sham.o
+>  obj-$(CONFIG_CRYPTO_DEV_OMAP_AES) += omap-aes.o
+>  obj-$(CONFIG_CRYPTO_DEV_PICOXCELL) += picoxcell_crypto.o
+>  obj-$(CONFIG_CRYPTO_DEV_S5P) += s5p-sss.o
+> +obj-$(CONFIG_CRYPTO_DEV_TEGRA_AES) += tegra-aes.o
+> diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
 > new file mode 100644
-> index 0000000..24f893b
+> index 0000000..914eb6e
 > --- /dev/null
-> +++ b/drivers/iommu/tegra-gart.c
-> @@ -0,0 +1,357 @@
+> +++ b/drivers/crypto/tegra-aes.c
+> @@ -0,0 +1,1102 @@
 > +/*
-> + * Tegra I/O VMM implementation for GART devices in Tegra and Tegra 2 se=
-ries
-> + * systems-on-a-chip.
+> + * drivers/crypto/tegra-aes.c
 > + *
-> + * Copyright (c) 2010-2011, NVIDIA Corporation.
+> + * Driver for NVIDIA Tegra AES hardware engine residing inside the
+> + * Bit Stream Engine for Video (BSEV) hardware block.
+> + *
+> + * The programming sequence for this engine is with the help
+> + * of commands which travel via a command queue residing between the
+> + * CPU and the BSEV block. The BSEV engine has an internal RAM (VRAM)
+> + * where the final input plaintext, keys and the IV have to be copied
+> + * before starting the encrypt/decrypt operation.
+> + *
+> + * Copyright (c) 2010, NVIDIA Corporation.
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License as published by
 > + * the Free Software Foundation; either version 2 of the License, or
 > + * (at your option) any later version.
 > + *
-> + * This program is distributed in the hope that it will be useful, but W=
-ITHOUT
+> + * This program is distributed in the hope that it will be useful, but WITHOUT
 > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
 > + * more details.
 > + *
-> + * You should have received a copy of the GNU General Public License alo=
-ng
-> + * with this program; if not, write to the Free Software Foundation, Inc=
-=2E,
+> + * You should have received a copy of the GNU General Public License along
+> + * with this program; if not, write to the Free Software Foundation, Inc.,
 > + * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 > + */
 > +
 > +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/errno.h>
+> +#include <linux/kernel.h>
+> +#include <linux/clk.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/slab.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/mm.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/dma-mapping.h>
 > +#include <linux/io.h>
+> +#include <linux/mutex.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/completion.h>
+> +#include <linux/workqueue.h>
 > +
-> +#include <asm/cacheflush.h>
+> +#include <mach/clk.h>
 > +
-> +#include <mach/iovmm.h>
+> +#include <crypto/scatterwalk.h>
+> +#include <crypto/aes.h>
+> +#include <crypto/internal/rng.h>
 > +
-> +#define GART_CONFIG		0x24
-> +#define GART_ENTRY_ADDR		0x28
-> +#define GART_ENTRY_DATA		0x2c
+> +#include "tegra-aes.h"
 > +
-> +#define VMM_NAME "iovmm-gart"
-> +#define DRIVER_NAME "tegra_gart"
+> +#define FLAGS_MODE_MASK			0x00FF
+> +#define FLAGS_ENCRYPT			BIT(0)
+> +#define FLAGS_CBC			BIT(1)
+> +#define FLAGS_GIV			BIT(2)
+> +#define FLAGS_RNG			BIT(3)
+> +#define FLAGS_OFB			BIT(4)
+> +#define FLAGS_NEW_KEY			BIT(5)
+> +#define FLAGS_NEW_IV			BIT(6)
+> +#define FLAGS_INIT			BIT(7)
+> +#define FLAGS_FAST			BIT(8)
+> +#define FLAGS_BUSY			9
 > +
-> +#define GART_PAGE_SHIFT		12
-> +#define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
-> +#define GART_PAGE_MASK		(~(GART_PAGE_SIZE - 1))
+> +/*
+> + * Defines AES engine Max process bytes size in one go, which takes 1 msec.
+> + * AES engine spends about 176 cycles/16-bytes or 11 cycles/byte
+> + * The duration CPU can use the BSE to 1 msec, then the number of available
+> + * cycles of AVP/BSE is 216K. In this duration, AES can process 216/11 ~= 19KB
+> + * Based on this AES_HW_DMA_BUFFER_SIZE_BYTES is configured to 16KB.
+> + */
+> +#define AES_HW_DMA_BUFFER_SIZE_BYTES 0x4000
 > +
-> +struct gart_device {
-> +	void __iomem		*regs;
-> +	u32			*savedata;
-> +	u32			page_count; /* total remappable size */
-> +	tegra_iovmm_addr_t	iovmm_base; /* offset to apply to vmm_area */
-> +	spinlock_t		pte_lock;
-> +	struct tegra_iovmm_device iovmm;
-> +	struct tegra_iovmm_domain domain;
-> +	bool			enable;
+> +/*
+> + * The key table length is 64 bytes
+> + * (This includes first upto 32 bytes key + 16 bytes original initial vector
+> + * and 16 bytes updated initial vector)
+> + */
+> +#define AES_HW_KEY_TABLE_LENGTH_BYTES 64
+> +
+> +/*
+> + * The memory being used is divides as follows:
+> + * 1. Key - 32 bytes
+> + * 2. Original IV - 16 bytes
+> + * 3. Updated IV - 16 bytes
+> + * 4. Key schedule - 256 bytes
+> + *
+> + * 1+2+3 constitute the hw key table.
+> + */
+> +#define AES_HW_IV_SIZE 16
+> +#define AES_HW_KEYSCHEDULE_LEN 256
+> +#define AES_IVKEY_SIZE (AES_HW_KEY_TABLE_LENGTH_BYTES + AES_HW_KEYSCHEDULE_LEN)
+> +
+> +/* Define commands required for AES operation */
+> +enum {
+> +	CMD_BLKSTARTENGINE = 0x0E,
+> +	CMD_DMASETUP = 0x10,
+> +	CMD_DMACOMPLETE = 0x11,
+> +	CMD_SETTABLE = 0x15,
+> +	CMD_MEMDMAVD = 0x22,
 > +};
 > +
-> +static inline void __gart_set_pte(struct gart_device *gart,
-> +				tegra_iovmm_addr_t offs, u32 pte)
+> +/* Define sub-commands */
+> +enum {
+> +	SUBCMD_VRAM_SEL = 0x1,
+> +	SUBCMD_CRYPTO_TABLE_SEL = 0x3,
+> +	SUBCMD_KEY_TABLE_SEL = 0x8,
+> +};
+> +
+> +/* memdma_vd command */
+> +#define MEMDMA_DIR_DTOVRAM		0 /* sdram -> vram */
+> +#define MEMDMA_DIR_VTODRAM		1 /* vram -> sdram */
+> +#define MEMDMA_DIR_SHIFT		25
+> +#define MEMDMA_NUM_WORDS_SHIFT		12
+> +
+> +/* command queue bit shifts */
+> +enum {
+> +	CMDQ_KEYTABLEADDR_SHIFT = 0,
+> +	CMDQ_KEYTABLEID_SHIFT = 17,
+> +	CMDQ_VRAMSEL_SHIFT = 23,
+> +	CMDQ_TABLESEL_SHIFT = 24,
+> +	CMDQ_OPCODE_SHIFT = 26,
+> +};
+> +
+> +/*
+> + * The secure key slot contains a unique secure key generated
+> + * and loaded by the bootloader. This slot is marked as non-accessible
+> + * to the kernel.
+> + */
+> +#define SSK_SLOT_NUM		4
+> +
+> +#define AES_NR_KEYSLOTS		8
+> +#define TEGRA_AES_QUEUE_LENGTH	50
+> +#define DEFAULT_RNG_BLK_SZ	16
+> +
+> +/* The command queue depth */
+> +#define AES_HW_MAX_ICQ_LENGTH	5
+> +
+> +struct tegra_aes_slot {
+> +	struct list_head node;
+> +	int slot_num;
+> +	bool available;
+> +};
+> +
+> +static struct tegra_aes_slot ssk = {
+> +	.slot_num = SSK_SLOT_NUM,
+> +	.available = true,
+> +};
+> +
+> +struct tegra_aes_reqctx {
+> +	unsigned long mode;
+> +};
+> +
+> +struct tegra_aes_dev {
+> +	struct device *dev;
+> +	void __iomem *io_base;
+> +	dma_addr_t ivkey_phys_base;
+> +	void __iomem *ivkey_base;
+> +	struct clk *aes_clk;
+> +	struct tegra_aes_ctx *ctx;
+> +	int irq;
+> +	unsigned long flags;
+> +	struct completion op_complete;
+> +	u32 *buf_in;
+> +	dma_addr_t dma_buf_in;
+> +	u32 *buf_out;
+> +	dma_addr_t dma_buf_out;
+> +	u8 *iv;
+> +	u8 dt[DEFAULT_RNG_BLK_SZ];
+> +	int ivlen;
+> +	u64 ctr;
+> +	spinlock_t lock;
+> +	struct crypto_queue queue;
+> +	struct tegra_aes_slot *slots;
+> +	struct ablkcipher_request *req;
+> +	size_t total;
+> +	struct scatterlist *in_sg;
+> +	size_t in_offset;
+> +	struct scatterlist *out_sg;
+> +	size_t out_offset;
+> +};
+> +
+> +static struct tegra_aes_dev *aes_dev;
+> +
+> +struct tegra_aes_ctx {
+> +	struct tegra_aes_dev *dd;
+> +	unsigned long flags;
+> +	struct tegra_aes_slot *slot;
+> +	u8 key[AES_MAX_KEY_SIZE];
+> +	int keylen;
+
+size_t?
+
+> +};
+> +
+> +static struct tegra_aes_ctx rng_ctx = {
+> +	.flags = FLAGS_NEW_KEY,
+> +	.keylen = AES_KEYSIZE_128,
+> +};
+> +
+> +/* keep registered devices data here */
+> +static LIST_HEAD(dev_list);
+> +static DEFINE_SPINLOCK(list_lock);
+> +static DEFINE_MUTEX(aes_lock);
+> +
+> +static void aes_workqueue_handler(struct work_struct *work);
+> +static DECLARE_WORK(aes_work, aes_workqueue_handler);
+> +static struct workqueue_struct *aes_wq;
+> +
+> +extern unsigned long long tegra_chip_uid(void);
+> +
+> +static inline u32 aes_readl(struct tegra_aes_dev *dd, u32 offset)
 > +{
-> +	writel(offs, gart->regs + GART_ENTRY_ADDR);
-> +	writel(pte, gart->regs + GART_ENTRY_DATA);
-> +	/*
-> +	 * Any interaction between any block on PPSB and a block on
-> +	 * APB or AHB must have these barriers to ensure the APB/AHB
-> +	 * bus transaction is complete before initiating activity on
-> +	 * the PPSB block.
-> +	 */
-> +	wmb();
+> +	return readl(dd->io_base + offset);
 > +}
 > +
-> +static inline void gart_set_pte(struct gart_device *gart,
-> +				tegra_iovmm_addr_t offs, u32 pte)
+> +static inline void aes_writel(struct tegra_aes_dev *dd, u32 val, u32 offset)
 > +{
-> +	spin_lock(&gart->pte_lock);
-> +
-> +	__gart_set_pte(gart, offs, pte);
-> +
-> +	spin_unlock(&gart->pte_lock);
+> +	writel(val, dd->io_base + offset);
 > +}
 > +
-> +static int gart_map(struct tegra_iovmm_domain *, struct tegra_iovmm_area=
- *);
-> +static void gart_unmap(struct tegra_iovmm_domain *,
-> +	struct tegra_iovmm_area *, bool);
-> +static void gart_map_pfn(struct tegra_iovmm_domain *,
-> +	struct tegra_iovmm_area *, tegra_iovmm_addr_t, unsigned long);
-> +static struct tegra_iovmm_domain *gart_alloc_domain(
-> +	struct tegra_iovmm_device *, struct tegra_iovmm_client *);
-> +
-> +static int gart_probe(struct platform_device *);
-> +static int gart_remove(struct platform_device *);
-> +static int gart_suspend(struct tegra_iovmm_device *dev);
-> +static void gart_resume(struct tegra_iovmm_device *dev);
-> +
-> +
-> +static struct tegra_iovmm_device_ops tegra_iovmm_gart_ops =3D {
-> +	.map		=3D gart_map,
-> +	.unmap		=3D gart_unmap,
-> +	.map_pfn	=3D gart_map_pfn,
-> +	.alloc_domain	=3D gart_alloc_domain,
-> +	.suspend	=3D gart_suspend,
-> +	.resume		=3D gart_resume,
-> +};
-> +
-> +static struct platform_driver tegra_iovmm_gart_drv =3D {
-> +	.probe		=3D gart_probe,
-> +	.remove		=3D gart_remove,
-> +	.driver		=3D {
-> +		.name	=3D DRIVER_NAME,
-> +	},
-> +};
-> +
-
-You should probably move both of these structures to the end of the file so
-you can get rid of the prototypes above.
-
-> +static int gart_suspend(struct tegra_iovmm_device *dev)
+> +static int aes_start_crypt(struct tegra_aes_dev *dd, u32 in_addr, u32 out_addr,
+> +	int nblocks, int mode, bool upd_iv)
 > +{
-> +	struct gart_device *gart =3D container_of(dev, struct gart_device, iovm=
-m);
-> +	unsigned int i;
-> +	unsigned long reg;
+> +	u32 cmdq[AES_HW_MAX_ICQ_LENGTH];
+> +	int i, eng_busy, icq_empty, ret;
+> +	u32 value;
 > +
-> +	if (!gart)
-> +		return -ENODEV;
-
-gart (or dev for that matter) can never actually be NULL here.
-
+> +	/* reset all the interrupt bits */
+> +	aes_writel(dd, 0xFFFFFFFF, TEGRA_AES_INTR_STATUS);
 > +
-> +	if (!gart->enable)
-> +		return 0;
+> +	/* enable error, dma xfer complete interrupts */
+> +	aes_writel(dd, 0x33, TEGRA_AES_INT_ENB);
 > +
-> +	spin_lock(&gart->pte_lock);
-> +	reg =3D gart->iovmm_base;
-> +	for (i =3D 0; i < gart->page_count; i++) {
-> +		writel(reg, gart->regs + GART_ENTRY_ADDR);
-> +		gart->savedata[i] =3D readl(gart->regs + GART_ENTRY_DATA);
-> +		dmb();
-> +		reg +=3D GART_PAGE_SIZE;
+> +	cmdq[0] = CMD_DMASETUP << CMDQ_OPCODE_SHIFT;
+> +	cmdq[1] = in_addr;
+> +	cmdq[2] = CMD_BLKSTARTENGINE << CMDQ_OPCODE_SHIFT | (nblocks-1);
+> +	cmdq[3] = CMD_DMACOMPLETE << CMDQ_OPCODE_SHIFT;
+> +
+> +	value = aes_readl(dd, TEGRA_AES_CMDQUE_CONTROL);
+> +	/* access SDRAM through AHB */
+> +	value &= ~TEGRA_AES_CMDQ_CTRL_SRC_STM_SEL_FIELD;
+> +	value &= ~TEGRA_AES_CMDQ_CTRL_DST_STM_SEL_FIELD;
+> +	value |= TEGRA_AES_CMDQ_CTRL_SRC_STM_SEL_FIELD |
+> +		 TEGRA_AES_CMDQ_CTRL_DST_STM_SEL_FIELD |
+> +		 TEGRA_AES_CMDQ_CTRL_ICMDQEN_FIELD;
+> +	aes_writel(dd, value, TEGRA_AES_CMDQUE_CONTROL);
+> +	dev_dbg(dd->dev, "cmd_q_ctrl=0x%x", value);
+> +
+> +	value = (0x1 << TEGRA_AES_SECURE_INPUT_ALG_SEL_SHIFT) |
+> +		((dd->ctx->keylen * 8) <<
+> +			TEGRA_AES_SECURE_INPUT_KEY_LEN_SHIFT) |
+> +		((u32)upd_iv << TEGRA_AES_SECURE_IV_SELECT_SHIFT);
+> +
+> +	if (mode & FLAGS_CBC) {
+> +		value |= ((((mode & FLAGS_ENCRYPT) ? 2 : 3)
+> +				<< TEGRA_AES_SECURE_XOR_POS_SHIFT) |
+> +			(((mode & FLAGS_ENCRYPT) ? 2 : 3)
+> +				<< TEGRA_AES_SECURE_VCTRAM_SEL_SHIFT) |
+> +			((mode & FLAGS_ENCRYPT) ? 1 : 0)
+> +				<< TEGRA_AES_SECURE_CORE_SEL_SHIFT);
+> +	} else if (mode & FLAGS_OFB) {
+> +		value |= ((TEGRA_AES_SECURE_XOR_POS_FIELD) |
+> +			(2 << TEGRA_AES_SECURE_INPUT_SEL_SHIFT) |
+> +			(TEGRA_AES_SECURE_CORE_SEL_FIELD));
+> +	} else if (mode & FLAGS_RNG) {
+> +		value |= (((mode & FLAGS_ENCRYPT) ? 1 : 0)
+> +				<< TEGRA_AES_SECURE_CORE_SEL_SHIFT |
+> +			  TEGRA_AES_SECURE_RNG_ENB_FIELD);
+> +	} else {
+> +		value |= (((mode & FLAGS_ENCRYPT) ? 1 : 0)
+> +				<< TEGRA_AES_SECURE_CORE_SEL_SHIFT);
 > +	}
-> +	spin_unlock(&gart->pte_lock);
+> +
+> +	dev_dbg(dd->dev, "secure_in_sel=0x%x", value);
+> +	aes_writel(dd, value, TEGRA_AES_SECURE_INPUT_SELECT);
+> +
+> +	aes_writel(dd, out_addr, TEGRA_AES_SECURE_DEST_ADDR);
+> +	INIT_COMPLETION(dd->op_complete);
+> +
+> +	for (i = 0; i < AES_HW_MAX_ICQ_LENGTH - 1; i++) {
+> +		do {
+> +			value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+> +			eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+> +			icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+> +		} while (eng_busy & (!icq_empty));
+> +		aes_writel(dd, cmdq[i], TEGRA_AES_ICMDQUE_WR);
+> +	}
+> +
+> +	ret = wait_for_completion_timeout(&dd->op_complete,
+> +					  msecs_to_jiffies(150));
+> +	if (ret == 0) {
+> +		dev_err(dd->dev, "timed out (0x%x)\n",
+> +			aes_readl(dd, TEGRA_AES_INTR_STATUS));
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	aes_writel(dd, cmdq[AES_HW_MAX_ICQ_LENGTH - 1], TEGRA_AES_ICMDQUE_WR);
 > +	return 0;
 > +}
 > +
-> +static void do_gart_setup(struct gart_device *gart, const u32 *data)
+> +static void aes_release_key_slot(struct tegra_aes_ctx *ctx)
 > +{
-> +	unsigned long reg;
-> +	unsigned int i;
+> +	spin_lock(&list_lock);
+> +	ctx->slot->available = true;
+> +	ctx->slot = NULL;
+> +	spin_unlock(&list_lock);
+> +}
 > +
-> +	reg =3D gart->iovmm_base;
-> +	for (i =3D 0; i < gart->page_count; i++) {
-> +		__gart_set_pte(gart, reg, data ? data[i] : 0);
-> +		reg +=3D GART_PAGE_SIZE;
+> +static struct tegra_aes_slot *aes_find_key_slot(struct tegra_aes_dev *dd)
+> +{
+> +	struct tegra_aes_slot *slot = NULL;
+> +	bool found = false;
+> +
+> +	spin_lock(&list_lock);
+> +	list_for_each_entry(slot, &dev_list, node) {
+> +		dev_dbg(dd->dev, "empty:%d, num:%d\n", slot->available,
+> +			slot->slot_num);
+> +		if (slot->available) {
+> +			slot->available = false;
+> +			found = true;
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&list_lock);
+> +
+> +	return found ? slot : NULL;
+> +}
+
+I wonder if rather than doing this search each time if it would be worth 
+just having a list of available slots, then allocating one is just an 
+empty test and delete.  Releasing just adds to the list.
+
+> +
+> +static int aes_set_key(struct tegra_aes_dev *dd)
+> +{
+> +	u32 value, cmdq[2];
+> +	struct tegra_aes_ctx *ctx = dd->ctx;
+> +	int eng_busy, icq_empty, dma_busy;
+> +	bool use_ssk = false;
+> +
+> +	/* use ssk? */
+> +	if (!dd->ctx->slot) {
+> +		dev_dbg(dd->dev, "using ssk");
+> +		dd->ctx->slot = &ssk;
+> +		use_ssk = true;
 > +	}
 > +
-> +	writel(1, gart->regs + GART_CONFIG);
-> +}
+> +	/* enable key schedule generation in hardware */
+> +	value = aes_readl(dd, TEGRA_AES_SECURE_CONFIG_EXT);
+> +	value &= ~TEGRA_AES_SECURE_KEY_SCH_DIS_FIELD;
+> +	aes_writel(dd, value, TEGRA_AES_SECURE_CONFIG_EXT);
 > +
-> +static void gart_resume(struct tegra_iovmm_device *dev)
-> +{
-> +	struct gart_device *gart =3D container_of(dev, struct gart_device, iovm=
-m);
+> +	/* select the key slot */
+> +	value = aes_readl(dd, TEGRA_AES_SECURE_CONFIG);
+> +	value &= ~TEGRA_AES_SECURE_KEY_INDEX_FIELD;
+> +	value |= (ctx->slot->slot_num << TEGRA_AES_SECURE_KEY_INDEX_SHIFT);
+> +	aes_writel(dd, value, TEGRA_AES_SECURE_CONFIG);
 > +
-> +	if (!gart || !gart->enable || (gart->enable && !gart->savedata))
-> +		return;
-
-Same here.
-
-> +
-> +	spin_lock(&gart->pte_lock);
-> +	do_gart_setup(gart, gart->savedata);
-> +	spin_unlock(&gart->pte_lock);
-> +}
-> +
-> +static int gart_remove(struct platform_device *pdev)
-> +{
-> +	struct gart_device *gart =3D platform_get_drvdata(pdev);
-> +
-> +	if (!gart)
+> +	if (use_ssk)
 > +		return 0;
 > +
-
-I don't think this can happen here either.
-
-> +	if (gart->enable)
-> +		writel(0, gart->regs + GART_CONFIG);
+> +	/* copy the key table from sdram to vram */
+> +	cmdq[0] = CMD_MEMDMAVD << CMDQ_OPCODE_SHIFT |
+> +		MEMDMA_DIR_DTOVRAM << MEMDMA_DIR_SHIFT |
+> +		AES_HW_KEY_TABLE_LENGTH_BYTES / sizeof(u32) <<
+> +			MEMDMA_NUM_WORDS_SHIFT;
+> +	cmdq[1] = (u32)dd->ivkey_phys_base;
 > +
-> +	gart->enable =3D 0;
-> +	platform_set_drvdata(pdev, NULL);
-> +	tegra_iovmm_unregister(&gart->iovmm);
-> +	if (gart->savedata)
-> +		vfree(gart->savedata);
-> +	if (gart->regs)
-> +		iounmap(gart->regs);
-> +	kfree(gart);
+> +	aes_writel(dd, cmdq[0], TEGRA_AES_ICMDQUE_WR);
+> +	aes_writel(dd, cmdq[1], TEGRA_AES_ICMDQUE_WR);
+> +
+> +	do {
+> +		value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+> +		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+> +		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+> +		dma_busy = value & TEGRA_AES_DMA_BUSY_FIELD;
+> +	} while (eng_busy & (!icq_empty) & dma_busy);
+> +
+> +	/* settable command to get key into internal registers */
+> +	value = CMD_SETTABLE << CMDQ_OPCODE_SHIFT |
+> +		SUBCMD_CRYPTO_TABLE_SEL << CMDQ_TABLESEL_SHIFT |
+> +		SUBCMD_VRAM_SEL << CMDQ_VRAMSEL_SHIFT |
+> +		(SUBCMD_KEY_TABLE_SEL | ctx->slot->slot_num) <<
+> +			CMDQ_KEYTABLEID_SHIFT;
+> +	aes_writel(dd, value, TEGRA_AES_ICMDQUE_WR);
+> +
+> +	do {
+> +		value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+> +		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+> +		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+> +	} while (eng_busy & (!icq_empty));
+> +
 > +	return 0;
 > +}
 > +
-> +static int gart_probe(struct platform_device *pdev)
+> +static int tegra_aes_handle_req(struct tegra_aes_dev *dd)
 > +{
-> +	struct gart_device *gart;
-> +	struct resource *res, *res_remap;
-> +	void __iomem *gart_regs;
-> +	int e;
+> +	struct crypto_async_request *async_req, *backlog;
+> +	struct crypto_ablkcipher *tfm;
+> +	struct tegra_aes_ctx *ctx;
+> +	struct tegra_aes_reqctx *rctx;
+> +	struct ablkcipher_request *req;
+> +	unsigned long flags;
+> +	int dma_max = AES_HW_DMA_BUFFER_SIZE_BYTES;
+> +	int ret = 0, nblocks, total;
+> +	int count = 0;
+> +	dma_addr_t addr_in, addr_out;
+> +	struct scatterlist *in_sg, *out_sg;
 > +
-> +	if (!pdev) {
-> +		pr_err(DRIVER_NAME ": platform_device required\n");
-> +		return -ENODEV;
+> +	if (!dd)
+> +		return -EINVAL;
+> +
+> +	spin_lock_irqsave(&dd->lock, flags);
+> +	backlog = crypto_get_backlog(&dd->queue);
+> +	async_req = crypto_dequeue_request(&dd->queue);
+> +	if (!async_req)
+> +		clear_bit(FLAGS_BUSY, &dd->flags);
+> +	spin_unlock_irqrestore(&dd->lock, flags);
+> +
+> +	if (!async_req)
+> +		return -ENODATA;
+> +
+> +	if (backlog)
+> +		backlog->complete(backlog, -EINPROGRESS);
+> +
+> +	req = ablkcipher_request_cast(async_req);
+> +
+> +	dev_dbg(dd->dev, "%s: get new req\n", __func__);
+> +
+> +	if (!req->src || !req->dst)
+> +		return -EINVAL;
+> +
+> +	/* take mutex to access the aes hw */
+> +	mutex_lock(&aes_lock);
+> +
+> +	/* assign new request to device */
+> +	dd->req = req;
+> +	dd->total = req->nbytes;
+> +	dd->in_offset = 0;
+> +	dd->in_sg = req->src;
+> +	dd->out_offset = 0;
+> +	dd->out_sg = req->dst;
+> +
+> +	in_sg = dd->in_sg;
+> +	out_sg = dd->out_sg;
+> +
+> +	total = dd->total;
+> +
+> +	tfm = crypto_ablkcipher_reqtfm(req);
+> +	rctx = ablkcipher_request_ctx(req);
+> +	ctx = crypto_ablkcipher_ctx(tfm);
+> +	rctx->mode &= FLAGS_MODE_MASK;
+> +	dd->flags = (dd->flags & ~FLAGS_MODE_MASK) | rctx->mode;
+> +
+> +	dd->iv = (u8 *)req->info;
+> +	dd->ivlen = crypto_ablkcipher_ivsize(tfm);
+> +
+> +	/* assign new context to device */
+> +	ctx->dd = dd;
+> +	dd->ctx = ctx;
+> +
+> +	if (ctx->flags & FLAGS_NEW_KEY) {
+> +		/* copy the key */
+> +		memcpy(dd->ivkey_base, ctx->key, ctx->keylen);
+> +		memset(dd->ivkey_base + ctx->keylen, 0, AES_HW_KEY_TABLE_LENGTH_BYTES - ctx->keylen);
+> +		aes_set_key(dd);
+> +		ctx->flags &= ~FLAGS_NEW_KEY;
 > +	}
-
-This check can be dropped.
-
 > +
-> +	if (PAGE_SHIFT !=3D GART_PAGE_SHIFT) {
-> +		pr_err(DRIVER_NAME ": GART and CPU page size must match\n");
-> +		return -ENXIO;
+> +	if (((dd->flags & FLAGS_CBC) || (dd->flags & FLAGS_OFB)) && dd->iv) {
+> +		/* set iv to the aes hw slot
+> +		 * Hw generates updated iv only after iv is set in slot.
+> +		 * So key and iv is passed asynchronously.
+> +		 */
+> +		memcpy(dd->buf_in, dd->iv, dd->ivlen);
+> +
+> +		ret = aes_start_crypt(dd, (u32)dd->dma_buf_in,
+> +				      dd->dma_buf_out, 1, FLAGS_CBC, false);
+> +		if (ret < 0) {
+> +			dev_err(dd->dev, "aes_start_crypt fail(%d)\n", ret);
+> +			goto out;
+> +		}
 > +	}
-
-This should probably be checked at build time using BUILD_BUG_ON().
-
 > +
-> +	/* the GART memory aperture is required */
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	res_remap =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	while (total) {
+> +		dev_dbg(dd->dev, "remain: %d\n", total);
+> +		ret = dma_map_sg(dd->dev, in_sg, 1, DMA_TO_DEVICE);
+> +		if (!ret) {
+> +			dev_err(dd->dev, "dma_map_sg() error\n");
+> +			goto out;
+> +		}
 > +
-> +	if (!res || !res_remap) {
-> +		pr_err(DRIVER_NAME ": GART memory aperture expected\n");
-> +		return -ENXIO;
+> +		ret = dma_map_sg(dd->dev, out_sg, 1, DMA_FROM_DEVICE);
+> +		if (!ret) {
+> +			dev_err(dd->dev, "dma_map_sg() error\n");
+> +			dma_unmap_sg(dd->dev, dd->in_sg,
+> +				1, DMA_TO_DEVICE);
+> +			goto out;
+> +		}
+> +
+> +		addr_in = sg_dma_address(in_sg);
+> +		addr_out = sg_dma_address(out_sg);
+> +		dd->flags |= FLAGS_FAST;
+> +		count = min_t(int, sg_dma_len(in_sg), dma_max);
+> +		WARN_ON(sg_dma_len(in_sg) != sg_dma_len(out_sg));
+> +		nblocks = DIV_ROUND_UP(count, AES_BLOCK_SIZE);
+> +
+> +		ret = aes_start_crypt(dd, addr_in, addr_out, nblocks,
+> +			dd->flags, true);
+> +
+> +		dma_unmap_sg(dd->dev, out_sg, 1, DMA_FROM_DEVICE);
+> +		dma_unmap_sg(dd->dev, in_sg, 1, DMA_TO_DEVICE);
+> +
+> +		if (ret < 0) {
+> +			dev_err(dd->dev, "aes_start_crypt fail(%d)\n", ret);
+> +			goto out;
+> +		}
+> +		dd->flags &= ~FLAGS_FAST;
+> +
+> +		dev_dbg(dd->dev, "out: copied %d\n", count);
+> +		total -= count;
+> +		in_sg = sg_next(in_sg);
+> +		out_sg = sg_next(out_sg);
+> +		WARN_ON(((total != 0) && (!in_sg || !out_sg)));
 > +	}
-> +	gart =3D kzalloc(sizeof(*gart), GFP_KERNEL);
-> +	if (!gart) {
-> +		pr_err(DRIVER_NAME ": failed to allocate tegra_iovmm_device\n");
+> +
+> +out:
+> +	mutex_unlock(&aes_lock);
+> +
+> +	dd->total = total;
+> +
+> +	if (dd->req->base.complete)
+> +		dd->req->base.complete(&dd->req->base, ret);
+> +
+> +	dev_dbg(dd->dev, "%s: exit\n", __func__);
+> +	return ret;
+> +}
+> +
+> +static int tegra_aes_setkey(struct crypto_ablkcipher *tfm, const u8 *key,
+> +			    unsigned int keylen)
+> +{
+> +	struct tegra_aes_ctx *ctx = crypto_ablkcipher_ctx(tfm);
+> +	struct tegra_aes_dev *dd = aes_dev;
+> +	struct tegra_aes_slot *key_slot;
+> +
+> +	if ((keylen != AES_KEYSIZE_128) && (keylen != AES_KEYSIZE_192) &&
+> +		(keylen != AES_KEYSIZE_256)) {
+> +		dev_err(dd->dev, "unsupported key size\n");
+> +		crypto_ablkcipher_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(dd->dev, "keylen: %d\n", keylen);
+> +
+> +	ctx->dd = dd;
+> +
+> +	if (key) {
+> +		if (!ctx->slot) {
+> +			key_slot = aes_find_key_slot(dd);
+> +			if (!key_slot) {
+> +				dev_err(dd->dev, "no empty slot\n");
+> +				return -ENOMEM;
+> +			}
+> +
+> +			ctx->slot = key_slot;
+> +		}
+> +
+> +		memcpy(ctx->key, key, keylen);
+> +		ctx->keylen = keylen;
+> +	}
+> +
+> +	ctx->flags |= FLAGS_NEW_KEY;
+> +	dev_dbg(dd->dev, "done\n");
+> +	return 0;
+> +}
+> +
+> +static void aes_workqueue_handler(struct work_struct *work)
+> +{
+> +	struct tegra_aes_dev *dd = aes_dev;
+> +	int ret;
+> +
+> +	clk_enable(dd->aes_clk);
+
+The return value of clk_enable() should really be checked.
+
+> +
+> +	/* empty the crypto queue and then return */
+> +	do {
+> +		ret = tegra_aes_handle_req(dd);
+> +	} while (!ret);
+> +
+> +	clk_disable(dd->aes_clk);
+> +}
+> +
+> +static irqreturn_t aes_irq(int irq, void *dev_id)
+> +{
+> +	struct tegra_aes_dev *dd = (struct tegra_aes_dev *)dev_id;
+> +	u32 value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+> +	int busy = test_bit(FLAGS_BUSY, &dd->flags);
+> +
+> +	if (!busy) {
+> +		dev_dbg(dd->dev, "spurious interrupt\n");
+> +		return IRQ_NONE;
+> +	}
+> +
+> +	dev_dbg(dd->dev, "irq_stat: 0x%x\n", value);
+> +	if (value & TEGRA_AES_INT_ERROR_MASK)
+> +		aes_writel(dd, TEGRA_AES_INT_ERROR_MASK, TEGRA_AES_INTR_STATUS);
+> +
+> +	if (!(value & TEGRA_AES_ENGINE_BUSY_FIELD))
+> +		complete(&dd->op_complete);
+> +	else
+> +		return IRQ_NONE;
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int tegra_aes_crypt(struct ablkcipher_request *req, unsigned long mode)
+> +{
+> +	struct tegra_aes_reqctx *rctx = ablkcipher_request_ctx(req);
+> +	struct tegra_aes_dev *dd = aes_dev;
+> +	unsigned long flags;
+> +	int err = 0;
+> +	int busy;
+> +
+> +	dev_dbg(dd->dev, "nbytes: %d, enc: %d, cbc: %d, ofb: %d\n",
+> +		req->nbytes, !!(mode & FLAGS_ENCRYPT),
+> +		!!(mode & FLAGS_CBC), !!(mode & FLAGS_OFB));
+> +
+> +	rctx->mode = mode;
+> +
+> +	spin_lock_irqsave(&dd->lock, flags);
+> +	err = ablkcipher_enqueue_request(&dd->queue, req);
+> +	busy = test_and_set_bit(FLAGS_BUSY, &dd->flags);
+> +	spin_unlock_irqrestore(&dd->lock, flags);
+> +
+> +	if (!busy)
+> +		queue_work(aes_wq, &aes_work);
+> +
+> +	return err;
+> +}
+> +
+> +static int tegra_aes_ecb_encrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, FLAGS_ENCRYPT);
+> +}
+> +
+> +static int tegra_aes_ecb_decrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, 0);
+> +}
+> +
+> +static int tegra_aes_cbc_encrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, FLAGS_ENCRYPT | FLAGS_CBC);
+> +}
+> +
+> +static int tegra_aes_cbc_decrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, FLAGS_CBC);
+> +}
+> +
+> +static int tegra_aes_ofb_encrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, FLAGS_ENCRYPT | FLAGS_OFB);
+> +}
+> +
+> +static int tegra_aes_ofb_decrypt(struct ablkcipher_request *req)
+> +{
+> +	return tegra_aes_crypt(req, FLAGS_OFB);
+> +}
+> +
+> +static int tegra_aes_get_random(struct crypto_rng *tfm, u8 *rdata,
+> +				unsigned int dlen)
+> +{
+> +	struct tegra_aes_dev *dd = aes_dev;
+> +	struct tegra_aes_ctx *ctx = &rng_ctx;
+> +	int ret, i;
+> +	u8 *dest = rdata, *dt = dd->dt;
+> +
+> +	/* take mutex to access the aes hw */
+> +	mutex_lock(&aes_lock);
+> +
+> +	clk_enable(dd->aes_clk);
+> +
+> +	ctx->dd = dd;
+> +	dd->ctx = ctx;
+> +	dd->flags = FLAGS_ENCRYPT | FLAGS_RNG;
+> +
+> +	memcpy(dd->buf_in, dt, DEFAULT_RNG_BLK_SZ);
+> +
+> +	ret = aes_start_crypt(dd, (u32)dd->dma_buf_in,
+> +			      (u32)dd->dma_buf_out, 1, dd->flags, true);
+> +	if (ret < 0) {
+> +		dev_err(dd->dev, "aes_start_crypt fail(%d)\n", ret);
+> +		dlen = ret;
+> +		goto out;
+> +	}
+> +	memcpy(dest, dd->buf_out, dlen);
+> +
+> +	/* update the DT */
+> +	for (i = DEFAULT_RNG_BLK_SZ - 1; i >= 0; i--) {
+> +		dt[i] += 1;
+> +		if (dt[i] != 0)
+> +			break;
+> +	}
+> +
+> +out:
+> +	clk_disable(dd->aes_clk);
+> +	mutex_unlock(&aes_lock);
+> +
+> +	dev_dbg(dd->dev, "%s: done\n", __func__);
+> +	return dlen;
+> +}
+> +
+> +static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
+> +			       unsigned int slen)
+> +{
+> +	struct tegra_aes_dev *dd = aes_dev;
+> +	struct tegra_aes_ctx *ctx = &rng_ctx;
+> +	struct tegra_aes_slot *key_slot;
+> +	struct timespec ts;
+> +	int ret = 0;
+> +	u64 nsec, tmp[2];
+> +	u8 *dt;
+> +
+> +	if (!ctx || !dd) {
+> +		dev_err(dd->dev, "ctx=0x%x, dd=0x%x\n",
+> +			(unsigned int)ctx, (unsigned int)dd);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (slen < (DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128)) {
+> +		dev_err(dd->dev, "seed size invalid");
 > +		return -ENOMEM;
 > +	}
 > +
-> +	gart_regs =3D ioremap_wc(res->start, res->end - res->start + 1);
-
-resource_size(res)
-
-> +	if (!gart_regs) {
-> +		pr_err(DRIVER_NAME ": failed to remap GART registers\n");
-> +		e =3D -ENXIO;
-> +		goto fail;
+> +	/* take mutex to access the aes hw */
+> +	mutex_lock(&aes_lock);
+> +
+> +	if (!ctx->slot) {
+> +		key_slot = aes_find_key_slot(dd);
+> +		if (!key_slot) {
+> +			dev_err(dd->dev, "no empty slot\n");
+> +			mutex_unlock(&aes_lock);
+> +			return -ENOMEM;
+> +		}
+> +		ctx->slot = key_slot;
 > +	}
 > +
-> +	gart->iovmm.name =3D VMM_NAME;
-> +	gart->iovmm.ops =3D &tegra_iovmm_gart_ops;
-> +	gart->iovmm.pgsize_bits =3D GART_PAGE_SHIFT;
-> +	spin_lock_init(&gart->pte_lock);
+> +	ctx->dd = dd;
+> +	dd->ctx = ctx;
+> +	dd->ctr = 0;
 > +
-> +	platform_set_drvdata(pdev, gart);
+> +	ctx->keylen = AES_KEYSIZE_128;
+> +	ctx->flags |= FLAGS_NEW_KEY;
 > +
-> +	e =3D tegra_iovmm_register(&gart->iovmm);
-> +	if (e)
-> +		goto fail;
+> +	/* copy the key to the key slot */
+> +	memcpy(dd->ivkey_base, seed + DEFAULT_RNG_BLK_SZ, AES_KEYSIZE_128);
+> +	memset(dd->ivkey_base + AES_KEYSIZE_128, 0, AES_HW_KEY_TABLE_LENGTH_BYTES - AES_KEYSIZE_128);
 > +
-> +	e =3D tegra_iovmm_domain_init(&gart->domain, &gart->iovmm,
-> +		(tegra_iovmm_addr_t)res_remap->start,
-> +		(tegra_iovmm_addr_t)res_remap->end + 1);
-
-Why "end + 1"?
-
-> +	if (e)
-> +		goto fail;
+> +	dd->iv = seed;
+> +	dd->ivlen = slen;
 > +
-> +	gart->regs =3D gart_regs;
-> +	gart->iovmm_base =3D (tegra_iovmm_addr_t)res_remap->start;
-> +	gart->page_count =3D res_remap->end - res_remap->start + 1;
-
-resource_size(res_remap)
-
-> +	gart->page_count >>=3D GART_PAGE_SHIFT;
+> +	dd->flags = FLAGS_ENCRYPT | FLAGS_RNG;
 > +
-> +	gart->savedata =3D vmalloc(sizeof(u32) * gart->page_count);
-> +	if (!gart->savedata) {
-> +		pr_err(DRIVER_NAME ": failed to allocate context save area\n");
-> +		e =3D -ENOMEM;
-> +		goto fail;
+> +	clk_enable(dd->aes_clk);
+> +
+> +	aes_set_key(dd);
+> +
+> +	/* set seed to the aes hw slot */
+> +	memcpy(dd->buf_in, dd->iv, DEFAULT_RNG_BLK_SZ);
+> +	ret = aes_start_crypt(dd, (u32)dd->dma_buf_in,
+> +			      dd->dma_buf_out, 1, FLAGS_CBC, false);
+> +	if (ret < 0) {
+> +		dev_err(dd->dev, "aes_start_crypt fail(%d)\n", ret);
+> +		goto out;
 > +	}
 > +
-> +	spin_lock(&gart->pte_lock);
-> +
-> +	do_gart_setup(gart, NULL);
-> +	gart->enable =3D 1;
-> +
-> +	spin_unlock(&gart->pte_lock);
-
-Is the lock required here? Nothing else should be using the device until
-after the probe function returns 0.
-
-Also, wouldn't it be safer to move this complete setup code before the call
-to tegra_iovmm_register()?
-
-> +	return 0;
-> +
-> +fail:
-> +	if (gart_regs)
-> +		iounmap(gart_regs);
-> +	if (gart && gart->savedata)
-> +		vfree(gart->savedata);
-> +	kfree(gart);
-> +	return e;
-> +}
-> +
-> +static int __devinit gart_init(void)
-> +{
-> +	return platform_driver_register(&tegra_iovmm_gart_drv);
-> +}
-> +
-> +static void __exit gart_exit(void)
-> +{
-> +	return platform_driver_unregister(&tegra_iovmm_gart_drv);
-> +}
-
-Gratuitous "return".
-
-> +
-> +#define GART_PTE(_pfn) (0x80000000ul | ((_pfn) << PAGE_SHIFT))
-> +
-> +
-> +static int gart_map(struct tegra_iovmm_domain *domain,
-> +	struct tegra_iovmm_area *iovma)
-> +{
-> +	struct gart_device *gart =3D
-> +		container_of(domain, struct gart_device, domain);
-> +	unsigned long gart_page, count;
-> +	unsigned int i;
-> +
-> +	gart_page =3D iovma->iovm_start;
-> +	count =3D iovma->iovm_length >> GART_PAGE_SHIFT;
-> +
-> +	for (i =3D 0; i < count; i++) {
-> +		unsigned long pfn;
-> +
-> +		pfn =3D iovma->ops->lock_makeresident(iovma, i << PAGE_SHIFT);
-> +		if (!pfn_valid(pfn))
-> +			goto fail;
-> +
-> +		gart_set_pte(gart, gart_page, GART_PTE(pfn));
-> +		gart_page +=3D GART_PAGE_SIZE;
+> +	if (dd->ivlen >= (2 * DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128)) {
+> +		dt = dd->iv + DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128;
+> +	} else {
+> +		getnstimeofday(&ts);
+> +		nsec = timespec_to_ns(&ts);
+> +		do_div(nsec, 1000);
+> +		nsec ^= dd->ctr << 56;
+> +		dd->ctr++;
+> +		tmp[0] = nsec;
+> +		tmp[1] = tegra_chip_uid();
+> +		dt = (u8 *)tmp;
 > +	}
+> +	memcpy(dd->dt, dt, DEFAULT_RNG_BLK_SZ);
+> +
+> +out:
+> +	clk_disable(dd->aes_clk);
+> +	mutex_unlock(&aes_lock);
+> +
+> +	dev_dbg(dd->dev, "%s: done\n", __func__);
+> +	return ret;
+> +}
+> +
+> +static int tegra_aes_cra_init(struct crypto_tfm *tfm)
+> +{
+> +	tfm->crt_ablkcipher.reqsize = sizeof(struct tegra_aes_reqctx);
 > +
 > +	return 0;
+> +}
 > +
-> +fail:
-> +	spin_lock(&gart->pte_lock);
-> +	while (i--) {
-> +		iovma->ops->release(iovma, i << PAGE_SHIFT);
-> +		gart_page -=3D GART_PAGE_SIZE;
-> +		__gart_set_pte(gart, gart_page, 0);
+> +void tegra_aes_cra_exit(struct crypto_tfm *tfm)
+> +{
+> +	struct tegra_aes_ctx *ctx =
+> +		crypto_ablkcipher_ctx((struct crypto_ablkcipher *)tfm);
+> +
+> +	if (ctx && ctx->slot)
+> +		aes_release_key_slot(ctx);
+> +}
+> +
+> +static struct crypto_alg algs[] = {
+> +	{
+> +		.cra_name = "ecb(aes)",
+> +		.cra_driver_name = "ecb-aes-tegra",
+> +		.cra_priority = 300,
+> +		.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER | CRYPTO_ALG_ASYNC,
+> +		.cra_blocksize = AES_BLOCK_SIZE,
+> +		.cra_alignmask = 3,
+> +		.cra_type = &crypto_ablkcipher_type,
+> +		.cra_u.ablkcipher = {
+> +			.min_keysize = AES_MIN_KEY_SIZE,
+> +			.max_keysize = AES_MAX_KEY_SIZE,
+> +			.setkey = tegra_aes_setkey,
+> +			.encrypt = tegra_aes_ecb_encrypt,
+> +			.decrypt = tegra_aes_ecb_decrypt,
+> +		},
+> +	}, {
+> +		.cra_name = "cbc(aes)",
+> +		.cra_driver_name = "cbc-aes-tegra",
+> +		.cra_priority = 300,
+> +		.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER | CRYPTO_ALG_ASYNC,
+> +		.cra_blocksize = AES_BLOCK_SIZE,
+> +		.cra_alignmask = 3,
+> +		.cra_type = &crypto_ablkcipher_type,
+> +		.cra_u.ablkcipher = {
+> +			.min_keysize = AES_MIN_KEY_SIZE,
+> +			.max_keysize = AES_MAX_KEY_SIZE,
+> +			.ivsize = AES_MIN_KEY_SIZE,
+> +			.setkey = tegra_aes_setkey,
+> +			.encrypt = tegra_aes_cbc_encrypt,
+> +			.decrypt = tegra_aes_cbc_decrypt,
+> +		}
+> +	}, {
+> +		.cra_name = "ofb(aes)",
+> +		.cra_driver_name = "ofb-aes-tegra",
+> +		.cra_priority = 300,
+> +		.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER | CRYPTO_ALG_ASYNC,
+> +		.cra_blocksize = AES_BLOCK_SIZE,
+> +		.cra_alignmask = 3,
+> +		.cra_type = &crypto_ablkcipher_type,
+> +		.cra_u.ablkcipher = {
+> +			.min_keysize = AES_MIN_KEY_SIZE,
+> +			.max_keysize = AES_MAX_KEY_SIZE,
+> +			.ivsize = AES_MIN_KEY_SIZE,
+> +			.setkey = tegra_aes_setkey,
+> +			.encrypt = tegra_aes_ofb_encrypt,
+> +			.decrypt = tegra_aes_ofb_decrypt,
+> +		}
+> +	}, {
+> +		.cra_name = "ansi_cprng",
+> +		.cra_driver_name = "rng-aes-tegra",
+> +		.cra_flags = CRYPTO_ALG_TYPE_RNG,
+> +		.cra_ctxsize = sizeof(struct tegra_aes_ctx),
+> +		.cra_type = &crypto_rng_type,
+> +		.cra_u.rng = {
+> +			.rng_make_random = tegra_aes_get_random,
+> +			.rng_reset = tegra_aes_rng_reset,
+> +			.seedsize = AES_KEYSIZE_128 + (2 * DEFAULT_RNG_BLK_SZ),
+> +		}
 > +	}
-> +	spin_unlock(&gart->pte_lock);
+> +};
 > +
-> +	return -ENOMEM;
-> +}
-> +
-> +static void gart_unmap(struct tegra_iovmm_domain *domain,
-> +	struct tegra_iovmm_area *iovma, bool decommit)
+> +static int tegra_aes_probe(struct platform_device *pdev)
 > +{
-> +	struct gart_device *gart =3D
-> +		container_of(domain, struct gart_device, domain);
-> +	unsigned long gart_page, count;
-> +	unsigned int i;
+> +	struct device *dev = &pdev->dev;
+> +	struct tegra_aes_dev *dd;
+> +	struct resource *res;
+> +	int err = -ENOMEM, i = 0, j;
 > +
-> +	count =3D iovma->iovm_length >> GART_PAGE_SHIFT;
-> +	gart_page =3D iovma->iovm_start;
-> +
-> +	spin_lock(&gart->pte_lock);
-> +	for (i =3D 0; i < count; i++) {
-> +		if (iovma->ops && iovma->ops->release)
-> +			iovma->ops->release(iovma, i << PAGE_SHIFT);
-> +
-> +		__gart_set_pte(gart, gart_page, 0);
-> +		gart_page +=3D GART_PAGE_SIZE;
+> +	dd = devm_kzalloc(dev, sizeof(struct tegra_aes_dev), GFP_KERNEL);
+> +	if (dd == NULL) {
+> +		dev_err(dev, "unable to alloc data struct.\n");
+> +		return err;
 > +	}
-> +	spin_unlock(&gart->pte_lock);
+> +
+> +	dd->dev = dev;
+> +	platform_set_drvdata(pdev, dd);
+> +
+> +	dd->slots = devm_kzalloc(dev, sizeof(struct tegra_aes_slot) *
+> +				 AES_NR_KEYSLOTS, GFP_KERNEL);
+> +	if (dd->slots == NULL) {
+> +		dev_err(dev, "unable to alloc slot struct.\n");
+> +		goto out;
+> +	}
+> +
+> +	spin_lock_init(&dd->lock);
+> +	crypto_init_queue(&dd->queue, TEGRA_AES_QUEUE_LENGTH);
+> +
+> +	/* Get the module base address */
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(dev, "invalid resource type: base\n");
+> +		err = -ENODEV;
+> +		goto out;
+> +	}
+> +
+> +	if (!devm_request_mem_region(&pdev->dev, res->start,
+> +				     resource_size(res),
+> +				     dev_name(&pdev->dev))) {
+> +		dev_err(&pdev->dev, "Couldn't request MEM resource\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	dd->io_base = devm_ioremap(dev, res->start, resource_size(res));
+> +	if (!dd->io_base) {
+> +		dev_err(dev, "can't ioremap register space\n");
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* Initialize the vde clock */
+> +	dd->aes_clk = clk_get(dev, "vde");
+> +	if (IS_ERR(dd->aes_clk)) {
+> +		dev_err(dev, "iclock intialization failed.\n");
+> +		err = -ENODEV;
+> +		goto out;
+> +	}
+> +
+> +	err = clk_set_rate(dd->aes_clk, ULONG_MAX);
+> +	if (err) {
+> +		dev_err(dd->dev, "iclk set_rate fail(%d)\n", err);
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * the foll contiguous memory is allocated as follows -
+> +	 * - hardware key table
+> +	 * - key schedule
+> +	 */
+> +	dd->ivkey_base = dma_alloc_coherent(dev, AES_HW_KEY_TABLE_LENGTH_BYTES,
+> +					    &dd->ivkey_phys_base,
+> +		GFP_KERNEL);
+> +	if (!dd->ivkey_base) {
+> +		dev_err(dev, "can not allocate iv/key buffer\n");
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	dd->buf_in = dma_alloc_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +					&dd->dma_buf_in, GFP_KERNEL);
+> +	if (!dd->buf_in) {
+> +		dev_err(dev, "can not allocate dma-in buffer\n");
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	dd->buf_out = dma_alloc_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +					 &dd->dma_buf_out, GFP_KERNEL);
+> +	if (!dd->buf_out) {
+> +		dev_err(dev, "can not allocate dma-out buffer\n");
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	init_completion(&dd->op_complete);
+> +	aes_wq = alloc_workqueue("tegra_aes_wq", WQ_HIGHPRI | WQ_UNBOUND, 1);
+> +	if (!aes_wq) {
+> +		dev_err(dev, "alloc_workqueue failed\n");
+> +		goto out;
+> +	}
+> +
+> +	/* get the irq */
+> +	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +	if (!res) {
+> +		dev_err(dev, "invalid resource type: base\n");
+> +		err = -ENODEV;
+> +		goto out;
+> +	}
+> +	dd->irq = res->start;
+> +
+> +	err = request_irq(dd->irq, aes_irq, IRQF_TRIGGER_HIGH |
+> +			  IRQF_SHARED, "tegra-aes", dd);
+
+devm_request_irq()?
+
+> +	if (err) {
+> +		dev_err(dev, "request_irq failed\n");
+> +		goto out;
+> +	}
+> +
+> +	spin_lock_init(&list_lock);
+> +	spin_lock(&list_lock);
+> +	for (i = 0; i < AES_NR_KEYSLOTS; i++) {
+> +		if (i == SSK_SLOT_NUM)
+> +			continue;
+> +		dd->slots[i].available = true;
+> +		dd->slots[i].slot_num = i;
+> +		INIT_LIST_HEAD(&dd->slots[i].node);
+> +		list_add_tail(&dd->slots[i].node, &dev_list);
+> +	}
+> +	spin_unlock(&list_lock);
+> +
+> +	aes_dev = dd;
+> +	for (i = 0; i < ARRAY_SIZE(algs); i++) {
+> +		INIT_LIST_HEAD(&algs[i].cra_list);
+> +
+> +		algs[i].cra_priority = 300;
+> +		algs[i].cra_ctxsize = sizeof(struct tegra_aes_ctx);
+> +		algs[i].cra_module = THIS_MODULE;
+> +		algs[i].cra_init = tegra_aes_cra_init;
+> +		algs[i].cra_exit = tegra_aes_cra_exit;
+> +
+> +		err = crypto_register_alg(&algs[i]);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +	dev_info(dev, "registered");
+> +	return 0;
+> +
+> +out:
+> +	for (j = 0; j < i; j++)
+> +		crypto_unregister_alg(&algs[j]);
+> +	if (dd->ivkey_base)
+> +		dma_free_coherent(dev, AES_HW_KEY_TABLE_LENGTH_BYTES,
+> +			dd->ivkey_base, dd->ivkey_phys_base);
+> +	if (dd->buf_in)
+> +		dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +			dd->buf_in, dd->dma_buf_in);
+> +	if (dd->buf_out)
+> +		dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +			dd->buf_out, dd->dma_buf_out);
+> +	if (dd->aes_clk)
+> +		clk_put(dd->aes_clk);
+
+Note that clk_get() _can_ return NULL as a valid clk even if it doesn't 
+on tegra which makes this check a little difficult.
+
+> +	if (aes_wq)
+> +		destroy_workqueue(aes_wq);
+> +	free_irq(dd->irq, dd);
+> +	spin_lock(&list_lock);
+> +	list_del(&dev_list);
+> +	spin_unlock(&list_lock);
+> +
+> +	aes_dev = NULL;
+> +
+> +	dev_err(dev, "%s: initialization failed.\n", __func__);
+> +	return err;
 > +}
 > +
-> +static void gart_map_pfn(struct tegra_iovmm_domain *domain,
-> +	struct tegra_iovmm_area *iovma, tegra_iovmm_addr_t offs,
-> +	unsigned long pfn)
+> +static int __devexit tegra_aes_remove(struct platform_device *pdev)
 > +{
-> +	struct gart_device *gart =3D
-> +		container_of(domain, struct gart_device, domain);
+> +	struct device *dev = &pdev->dev;
+> +	struct tegra_aes_dev *dd = platform_get_drvdata(pdev);
+> +	int i;
 > +
-> +	BUG_ON(!pfn_valid(pfn));
+> +	cancel_work_sync(&aes_work);
+> +	destroy_workqueue(aes_wq);
+> +	free_irq(dd->irq, dd);
+> +	spin_lock(&list_lock);
+> +	list_del(&dev_list);
+> +	spin_unlock(&list_lock);
 > +
-> +	gart_set_pte(gart, offs, GART_PTE(pfn));
+> +	for (i = 0; i < ARRAY_SIZE(algs); i++)
+> +		crypto_unregister_alg(&algs[i]);
+
+I think you probably want to unregister the algs before freeing the 
+resources in case of a race.
+
+> +
+> +	dma_free_coherent(dev, AES_HW_KEY_TABLE_LENGTH_BYTES,
+> +			  dd->ivkey_base, dd->ivkey_phys_base);
+> +	dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +			  dd->buf_in, dd->dma_buf_in);
+> +	dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
+> +			  dd->buf_out, dd->dma_buf_out);
+> +	clk_put(dd->aes_clk);
+> +	aes_dev = NULL;
+> +
+> +	return 0;
 > +}
 > +
-> +static struct tegra_iovmm_domain *gart_alloc_domain(
-> +	struct tegra_iovmm_device *dev, struct tegra_iovmm_client *client)
+> +static struct of_device_id tegra_aes_of_match[] __devinitdata = {
+> +	{ .compatible = "nvidia,tegra20-aes", },
+> +	{ .compatible = "nvidia,tegra30-aes", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver tegra_aes_driver = {
+> +	.probe  = tegra_aes_probe,
+> +	.remove = __devexit_p(tegra_aes_remove),
+> +	.driver = {
+> +		.name   = "tegra-aes",
+> +		.owner  = THIS_MODULE,
+> +		.of_match_table = tegra_aes_of_match,
+> +	},
+> +};
+> +
+> +static int __init tegra_aes_module_init(void)
 > +{
-> +	struct gart_device *gart =3D container_of(dev, struct gart_device, iovm=
-m);
-> +	return &gart->domain;
+> +	mutex_init(&aes_lock);
+> +	INIT_LIST_HEAD(&dev_list);
+
+I'm not sure that you need these as you have the static initializers.  
+If you remove these then you could use module_platform_driver() from 
+next to remove some of the boilerplate code.
+
+> +	return  platform_driver_register(&tegra_aes_driver);
 > +}
-
-All of these functions should go before the platform_driver code.
-
 > +
-> +subsys_initcall(gart_init);
-
-module_init()?
-
-> +module_exit(gart_exit);
-> --=20
-> 1.7.0.4
->=20
+> +static void __exit tegra_aes_module_exit(void)
+> +{
+> +	platform_driver_unregister(&tegra_aes_driver);
+> +}
+> +
+> +module_init(tegra_aes_module_init);
+> +module_exit(tegra_aes_module_exit);
+> +
+> +MODULE_DESCRIPTION("Tegra AES/OFB/CPRNG hw acceleration support.");
+> +MODULE_AUTHOR("NVIDIA Corporation");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/crypto/tegra-aes.h b/drivers/crypto/tegra-aes.h
+> new file mode 100644
+> index 0000000..6006333
+> --- /dev/null
+> +++ b/drivers/crypto/tegra-aes.h
+> @@ -0,0 +1,103 @@
+> +/*
+> + * Copyright (c) 2010, NVIDIA Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along
+> + * with this program; if not, write to the Free Software Foundation, Inc.,
+> + * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+> + */
+> +
+> +#ifndef __CRYPTODEV_TEGRA_AES_H
+> +#define __CRYPTODEV_TEGRA_AES_H
+> +
+> +#define TEGRA_AES_ICMDQUE_WR			0x1000
+> +#define TEGRA_AES_CMDQUE_CONTROL		0x1008
+> +#define TEGRA_AES_INTR_STATUS			0x1018
+> +#define TEGRA_AES_INT_ENB			0x1040
+> +#define TEGRA_AES_CONFIG			0x1044
+> +#define TEGRA_AES_IRAM_ACCESS_CFG		0x10A0
+> +#define TEGRA_AES_SECURE_DEST_ADDR		0x1100
+> +#define TEGRA_AES_SECURE_INPUT_SELECT		0x1104
+> +#define TEGRA_AES_SECURE_CONFIG			0x1108
+> +#define TEGRA_AES_SECURE_CONFIG_EXT		0x110C
+> +#define TEGRA_AES_SECURE_SECURITY		0x1110
+> +#define TEGRA_AES_SECURE_HASH_RESULT0		0x1120
+> +#define TEGRA_AES_SECURE_HASH_RESULT1		0x1124
+> +#define TEGRA_AES_SECURE_HASH_RESULT2		0x1128
+> +#define TEGRA_AES_SECURE_HASH_RESULT3		0x112C
+> +#define TEGRA_AES_SECURE_SEC_SEL0		0x1140
+> +#define TEGRA_AES_SECURE_SEC_SEL1		0x1144
+> +#define TEGRA_AES_SECURE_SEC_SEL2		0x1148
+> +#define TEGRA_AES_SECURE_SEC_SEL3		0x114C
+> +#define TEGRA_AES_SECURE_SEC_SEL4		0x1150
+> +#define TEGRA_AES_SECURE_SEC_SEL5		0x1154
+> +#define TEGRA_AES_SECURE_SEC_SEL6		0x1158
+> +#define TEGRA_AES_SECURE_SEC_SEL7		0x115C
+> +
+> +/* interrupt status reg masks and shifts */
+> +#define TEGRA_AES_ENGINE_BUSY_FIELD		BIT(0)
+> +#define TEGRA_AES_ICQ_EMPTY_FIELD		BIT(3)
+> +#define TEGRA_AES_DMA_BUSY_FIELD		BIT(23)
+> +
+> +/* secure select reg masks and shifts */
+> +#define TEGRA_AES_SECURE_SEL0_KEYREAD_ENB0_FIELD	BIT(0)
+> +
+> +/* secure config ext masks and shifts */
+> +#define TEGRA_AES_SECURE_KEY_SCH_DIS_FIELD	BIT(15)
+> +
+> +/* secure config masks and shifts */
+> +#define TEGRA_AES_SECURE_KEY_INDEX_SHIFT	20
+> +#define TEGRA_AES_SECURE_KEY_INDEX_FIELD	(0x1F << TEGRA_AES_SECURE_KEY_INDEX_SHIFT)
+> +#define TEGRA_AES_SECURE_BLOCK_CNT_SHIFT	0
+> +#define TEGRA_AES_SECURE_BLOCK_CNT_FIELD	(0xFFFFF << TEGRA_AES_SECURE_BLOCK_CNT_SHIFT)
+> +
+> +/* stream interface select masks and shifts */
+> +#define TEGRA_AES_CMDQ_CTRL_UCMDQEN_FIELD	BIT(0)
+> +#define TEGRA_AES_CMDQ_CTRL_ICMDQEN_FIELD	BIT(1)
+> +#define TEGRA_AES_CMDQ_CTRL_SRC_STM_SEL_FIELD	BIT(4)
+> +#define TEGRA_AES_CMDQ_CTRL_DST_STM_SEL_FIELD	BIT(5)
+> +
+> +/* config register masks and shifts */
+> +#define TEGRA_AES_CONFIG_ENDIAN_ENB_FIELD	BIT(10)
+> +#define TEGRA_AES_CONFIG_MODE_SEL_SHIFT		0
+> +#define TEGRA_AES_CONFIG_MODE_SEL_FIELD		(0x1F << TEGRA_AES_CONFIG_MODE_SEL_SHIFT)
+> +
+> +/* extended config */
+> +#define TEGRA_AES_SECURE_OFFSET_CNT_SHIFT	24
+> +#define TEGRA_AES_SECURE_OFFSET_CNT_FIELD	(0xFF << TEGRA_AES_SECURE_OFFSET_CNT_SHIFT)
+> +#define TEGRA_AES_SECURE_KEYSCHED_GEN_FIELD	BIT(15)
+> +
+> +/* init vector select */
+> +#define TEGRA_AES_SECURE_IV_SELECT_SHIFT	10
+> +#define TEGRA_AES_SECURE_IV_SELECT_FIELD	BIT(10)
+> +
+> +/* secure engine input */
+> +#define TEGRA_AES_SECURE_INPUT_ALG_SEL_SHIFT	28
+> +#define TEGRA_AES_SECURE_INPUT_ALG_SEL_FIELD	(0xF << TEGRA_AES_SECURE_INPUT_ALG_SEL_SHIFT)
+> +#define TEGRA_AES_SECURE_INPUT_KEY_LEN_SHIFT	16
+> +#define TEGRA_AES_SECURE_INPUT_KEY_LEN_FIELD	(0xFFF << TEGRA_AES_SECURE_INPUT_KEY_LEN_SHIFT)
+> +#define TEGRA_AES_SECURE_RNG_ENB_FIELD		BIT(11)
+> +#define TEGRA_AES_SECURE_CORE_SEL_SHIFT		9
+> +#define TEGRA_AES_SECURE_CORE_SEL_FIELD		BIT(9)
+> +#define TEGRA_AES_SECURE_VCTRAM_SEL_SHIFT	7
+> +#define TEGRA_AES_SECURE_VCTRAM_SEL_FIELD	(0x3 << TEGRA_AES_SECURE_VCTRAM_SEL_SHIFT)
+> +#define TEGRA_AES_SECURE_INPUT_SEL_SHIFT	5
+> +#define TEGRA_AES_SECURE_INPUT_SEL_FIELD	(0x3 << TEGRA_AES_SECURE_INPUT_SEL_SHIFT)
+> +#define TEGRA_AES_SECURE_XOR_POS_SHIFT		3
+> +#define TEGRA_AES_SECURE_XOR_POS_FIELD		(0x3 << TEGRA_AES_SECURE_XOR_POS_SHIFT)
+> +#define TEGRA_AES_SECURE_HASH_ENB_FIELD		BIT(2)
+> +#define TEGRA_AES_SECURE_ON_THE_FLY_FIELD	BIT(0)
+> +
+> +/* interrupt error mask */
+> +#define TEGRA_AES_INT_ERROR_MASK		0xFFF000
+> +
+> +#endif
+> -- 
+> 1.7.1
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> To unsubscribe from this list: send the line "unsubscribe linux-crypto" in
+> the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
-
---ctP54qlpMx3WjD+/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7GCOEACgkQZ+BJyKLjJp+fDQCfaNMoscAMlFX1PiuEcAjG/sKM
-WycAoLDuupffHKEQlIdT9esQ7SJHDuJz
-=lX/q
------END PGP SIGNATURE-----
-
---ctP54qlpMx3WjD+/--
