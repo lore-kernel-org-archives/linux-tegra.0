@@ -1,59 +1,36 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v1] dts: tegra-ventana: use proper root instead of
- /dev/ram
-Date: Sun, 20 Nov 2011 16:49:30 -0800
-Message-ID: <20111121004930.GA17338@quad.lixom.net>
-References: <1321338087-3662-1-git-send-email-vwadekar@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B@HQMAIL01.nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/3] ARM: iommu: tegra: Add initial Tegra IOMMU driver
+Date: Mon, 21 Nov 2011 07:31:01 +0200
+Message-ID: <20111121073101.6b369421.hdoyu@nvidia.com>
+References: <1321527667-12923-1-git-send-email-hdoyu@nvidia.com>
+	<CAHQjnOM-N9suPrv_nSRQsxGCNrf77rFLNtRcOdsjyz_O6bGdpA@mail.gmail.com>
+	<20111118104354.GA19737@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20111118104354.GA19737-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 15, 2011 at 11:16:51AM -0800, Stephen Warren wrote:
-> Varun Wadekar wrote at Monday, November 14, 2011 11:21 PM:
-> > From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > The root file system on ventana resides on /dev/mmcblk0p1.
+Hi Joerg,
+
+On Fri, 18 Nov 2011 11:43:54 +0100
+Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
+
+> On Fri, Nov 18, 2011 at 07:19:53PM +0900, KyongHo Cho wrote:
 > 
-> Well, that's entirely up to however the user set up their system, although
-> I admit mmcblk0p1 is likely to be the common case; I certainly carry
-> basically this patch locally for many boards.
+> > I found that those patches are not IOMMU API implementations.
+> > I wonder why they need to be located in drivers/iommu?
 > 
-> > Update the dts file to use the proper root instead of /dev/ram.
-> > 
-> > Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> The current effort goes into creating a generic framework for IOMMUs.
+> These patches create their own framework which is totally the wrong
+> direction, they even implement their own version of an IOMMU-API.
 > 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Of course, perhaps an even better solution is to just remove /chosen from
-> all the board .dts files, and stop using CONFIG_APPENDED_DTB since U-boot
-> supports FDT, and will update the cmdline with whatever the user chose.
-> Still, I think this is probably OK for now.
+> I object against merging them until they are converted to the generic
+> IOMMU-API.
 
-Actually, removing the default root path is probably a better idea, since it
-will vary from installation to installation and doesn't make sense to hard
-code.
-
-There's two ways to solve this with u-boot:
-
-* Boot with an u-boot that knows how to pass a device tree (and add the
-  bootargs to it before launching the kernel, and do so by either booting
-  a fitImage or by loading the device tree explicitly.
-
-* Use the appended-dtb kernel format, and select the ARM_ATAG_DTB_COMPAT
-  option. That will mean that the bootargs passed in from atags are moved over
-  to the device tree.
-
-So, I would rather see a patch removing the root= argument alltogether.
-
-
-Thanks!
-
--Olof
+Ok, I'll in v2 of this patchset.
+That was a plan, mentioned in the cover letter of this patchset.
