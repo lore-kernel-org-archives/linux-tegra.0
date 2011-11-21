@@ -1,73 +1,59 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 01/10] arm/tegra: initial device tree for tegra30
-Date: Fri, 18 Nov 2011 16:03:43 -0600
-Message-ID: <4EC6D63F.8030207@gmail.com>
-References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com> <1321546766-26770-2-git-send-email-pdeschrijver@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF1740D74C46@HQMAIL01.nvidia.com> <20111118184942.GA31678@quad.lixom.net> <4EC6B25D.70708@gmail.com> <CAOesGMhRQN2apJMQz7Fcp4-TnXYS6i30GLXOEckJG6kvPVatvw@mail.gmail.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v1] dts: tegra-ventana: use proper root instead of
+ /dev/ram
+Date: Sun, 20 Nov 2011 16:49:30 -0800
+Message-ID: <20111121004930.GA17338@quad.lixom.net>
+References: <1321338087-3662-1-git-send-email-vwadekar@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMhRQN2apJMQz7Fcp4-TnXYS6i30GLXOEckJG6kvPVatvw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Warren <swarren@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2011 03:48 PM, Olof Johansson wrote:
-> On Fri, Nov 18, 2011 at 11:30 AM, Rob Herring <robherring2@gmail.com> wrote:
->> On 11/18/2011 12:49 PM, Olof Johansson wrote:
->>> On Thu, Nov 17, 2011 at 11:39:14AM -0800, Stephen Warren wrote:
->>>> Peter De Schrijver wrote at Thursday, November 17, 2011 9:19 AM:
->>>>> This patch adds the initial device tree for tegra30
->>>>
->>>>> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt
->>>> ...
->>>>> +* harmony: tegra20 based development board
->>>>> +Required root node properties:
->>>>> + - compatible = "nvidia,harmony", "nvidia,tegra20";
->>>>> +
->>>>> +* seaboard: tegra20 based clamshell reference design
->>>>> +Required root node properties:
->>>>> + - compatible = "nvidia,seaboard", "nvidia,tegra20";
->>>>
->>>> Do we really want to list all the board names here? In the future, there
->>>> could be tens or hundreds. I would argue that we should just document
->>>> nvidia,tegra20 and nvidia,tegra30.
->>>
->>> Agreed.
->>
->> It's not really any different than mach-types which does have every
->> board in it.
+On Tue, Nov 15, 2011 at 11:16:51AM -0800, Stephen Warren wrote:
+> Varun Wadekar wrote at Monday, November 14, 2011 11:21 PM:
+> > From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The root file system on ventana resides on /dev/mmcblk0p1.
 > 
-> Yeah, and the whole idea of having device trees is to not have to do
-> code changes when introducing a new derivative board. So enumerating
-> all supported boards in the documentation means we're back to an
-> equivalence to having to add machine ids.
+> Well, that's entirely up to however the user set up their system, although
+> I admit mmcblk0p1 is likely to be the common case; I certainly carry
+> basically this patch locally for many boards.
 > 
->> I think if a board requires a new dts, then it needs a unique name.
+> > Update the dts file to use the proper root instead of /dev/ram.
+> > 
+> > Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Sure, that's fine. But the idea is to be able to do it without
-> changing code for many cases, just provide a new dts that configures
-> the devices in question.
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Of course, perhaps an even better solution is to just remove /chosen from
+> all the board .dts files, and stop using CONFIG_APPENDED_DTB since U-boot
+> supports FDT, and will update the cmdline with whatever the user chose.
+> Still, I think this is probably OK for now.
 
-You can always claim backwards compatibility with any prior board that's
-already supported. You may never need to do any more than that. You
-don't want new kernels to require a new DTB if in fact you do have to
-make code changes.
+Actually, removing the default root path is probably a better idea, since it
+will vary from installation to installation and doesn't make sense to hard
+code.
 
-Rob
+There's two ways to solve this with u-boot:
 
->>>> At a later point, we should fix board-dt.c to solely look for those
->>>> compatible values, although this will have to wait until the pinmux DT
->>>> bindings are present. Then, the kernel won't care about the board names.
->>>
->>> Exactly.
->>
->> That is perfectly acceptable, but you should still have the option to do
->> something specific for any given board.
-> 
-> Of course. That's not what we're objecting to here.
-> 
-> 
-> -Olof
+* Boot with an u-boot that knows how to pass a device tree (and add the
+  bootargs to it before launching the kernel, and do so by either booting
+  a fitImage or by loading the device tree explicitly.
 
+* Use the appended-dtb kernel format, and select the ARM_ATAG_DTB_COMPAT
+  option. That will mean that the bootargs passed in from atags are moved over
+  to the device tree.
+
+So, I would rather see a patch removing the root= argument alltogether.
+
+
+Thanks!
+
+-Olof
