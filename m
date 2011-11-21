@@ -1,45 +1,95 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Mon, 21 Nov 2011 14:22:12 +0200
-Message-ID: <20111121122212.GL19069@tbergstrom-lnx.Nvidia.com>
-References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
- <20111118120352.GZ19069@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63@HQMAIL01.nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 03/10] arm/tegra: prepare clock code for multiple tegra
+ variants
+Date: Mon, 21 Nov 2011 14:44:52 +0200
+Message-ID: <20111121124452.GM19069@tbergstrom-lnx.Nvidia.com>
+References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
+ <1321546766-26770-4-git-send-email-pdeschrijver@nvidia.com>
+ <20111118190649.GB31678@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111118190649.GB31678@quad.lixom.net>
+Sender: linux-doc-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 18, 2011 at 05:25:33PM +0100, Stephen Warren wrote:
-> Peter De Schrijver wrote at Friday, November 18, 2011 5:04 AM:
-> > On Thu, Nov 17, 2011 at 07:51:35PM +0100, Stephen Warren wrote:
-> > > Peter De Schrijver wrote at Thursday, November 17, 2011 8:07 AM:
-> > > > Convert tegra20 IRQ intialization to the GIC devicetree binding. Modify the
-> > > > interrupt definitions in the dts files according to
-> > > > Documentation/devicetree/bindings/arm/gic.txt
-> > > >
-> > > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >
-> > > tegra-harmony.dts contains an interrupts property that wasn't updated,
-> > > for the WM8903 codec.
+On Fri, Nov 18, 2011 at 08:06:49PM +0100, Olof Johansson wrote:
+> Hi,
+> 
+> A nit and two comments below.
+> 
+> On Thu, Nov 17, 2011 at 06:19:17PM +0200, Peter De Schrijver wrote:
+> > Rework the tegra20 clock code to support multiple tegra variants :
 > > 
-> > But that's a GPIO interrupt no?
+> >  * remove tegra2_periph_reset_assert/tegra2_periph_reset_deassert. This
+> >    functionality should be in clock.c.
+> >  * compile tegra_sdmmc_tap_delay only on tegra20 as this feature will not
+> >    be available in future variants.
+> >  * don't export clk_measure_input_freq as its functionality is also available
+> >    using clk_get_rate().
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  arch/arm/mach-tegra/clock.c         |   14 +++++++++-----
+> >  arch/arm/mach-tegra/clock.h         |    3 ---
+> >  arch/arm/mach-tegra/tegra2_clocks.c |   14 +-------------
+> >  arch/arm/mach-tegra/timer.c         |   12 ++++++++----
+> >  4 files changed, 18 insertions(+), 25 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+> > index f8d41ff..47f6366 100644
+> > --- a/arch/arm/mach-tegra/clock.c
+> > +++ b/arch/arm/mach-tegra/clock.c
+> > @@ -387,13 +387,15 @@ EXPORT_SYMBOL(tegra_clk_init_from_table);
+> >  
+> >  void tegra_periph_reset_deassert(struct clk *c)
+> >  {
+> > -	tegra2_periph_reset_deassert(c);
+> > +	BUG_ON(!c->ops->reset);
+> > +	c->ops->reset(c, false);
+> >  }
+> >  EXPORT_SYMBOL(tegra_periph_reset_deassert);
+> >  
+> >  void tegra_periph_reset_assert(struct clk *c)
+> >  {
+> > -	tegra2_periph_reset_assert(c);
+> > +	BUG_ON(!c->ops->reset);
+> > +	c->ops->reset(c, true);
+> >  }
+> >  EXPORT_SYMBOL(tegra_periph_reset_assert);
+> >  
+> > @@ -403,10 +405,11 @@ void __init tegra_init_clock(void)
+> >  }
+> >  
+> >  /*
+> > - * The SDMMC controllers have extra bits in the clock source register that
+> > - * adjust the delay between the clock and data to compenstate for delays
+> > - * on the PCB.
+> > + * The SDMMC controllers on tegra20 have extra bits in the clock source
+> > + * register that adjust the delay between the clock and data to compenstate
+> > + * for delays on the PCB.
+> >   */
+> > +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> >  void tegra_sdmmc_tap_delay(struct clk *c, int delay)
+> >  {
+> >  	unsigned long flags;
+> > @@ -415,6 +418,7 @@ void tegra_sdmmc_tap_delay(struct clk *c, int delay)
+> >  	tegra2_sdmmc_tap_delay(c, delay);
+> >  	spin_unlock_irqrestore(&c->spinlock, flags);
+> >  }
+> > +#endif
 > 
-> The interrupt line from codec to Tegra is a GPIO, yes.
+> Ifdeffing this out doesn't quite make sense. Better to do a #ifdef in the
+> include file with an #else case that fills in an empty function. This
+> needs to be abstracted differently for the two platforms anyway but
+> that can be done separately from this. Does tegra3 have tap delay setup
+> as well? (I don't have the TRM handy right now).
 > 
-> But the WM8903 still has the same interrupt-parent as everything else,
-> since it's inherited from /interrupt-parent and doesn't define its own.
-> Perhaps this is a mistake?
 
-Yes. I think this is a mistake. If we want the device tree to reflect the
-hardware, I think the WM8903 node should specify the GPIO, not the IRQ
-number.
+I couldn't find it in the tegra30 TRM.
 
 Cheers,
 
