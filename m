@@ -1,65 +1,59 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Mon, 21 Nov 2011 09:20:37 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C0E5@HQMAIL01.nvidia.com>
-References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
- <20111118120352.GZ19069@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63@HQMAIL01.nvidia.com>
- <20111121122212.GL19069@tbergstrom-lnx.Nvidia.com>
+Subject: RE: [PATCH 06/10] arm/tegra: prepare pinmux code for multiple tegra
+ variants
+Date: Mon, 21 Nov 2011 09:24:38 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C0EC@HQMAIL01.nvidia.com>
+References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
+ <1321546766-26770-7-git-send-email-pdeschrijver@nvidia.com>
+ <20111118214116.GC31678@quad.lixom.net>
+ <20111121142919.GN19069@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111121122212.GL19069-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20111121142919.GN19069-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Monday, November 21, 2011 5:22 AM:
-> On Fri, Nov 18, 2011 at 05:25:33PM +0100, Stephen Warren wrote:
-> > Peter De Schrijver wrote at Friday, November 18, 2011 5:04 AM:
-> > > On Thu, Nov 17, 2011 at 07:51:35PM +0100, Stephen Warren wrote:
-> > > > Peter De Schrijver wrote at Thursday, November 17, 2011 8:07 AM:
-> > > > > Convert tegra20 IRQ intialization to the GIC devicetree binding. Modify the
-> > > > > interrupt definitions in the dts files according to
-> > > > > Documentation/devicetree/bindings/arm/gic.txt
-> > > > >
-> > > > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > >
-> > > > tegra-harmony.dts contains an interrupts property that wasn't updated,
-> > > > for the WM8903 codec.
-> > >
-> > > But that's a GPIO interrupt no?
+Peter De Schrijver wrote at Monday, November 21, 2011 7:29 AM:
+> On Fri, Nov 18, 2011 at 10:41:16PM +0100, Olof Johansson wrote:
+> > On Thu, Nov 17, 2011 at 06:19:20PM +0200, Peter De Schrijver wrote:
+> > > This patch modifies the pinmux code to be useable for multiple tegra variants.
+> > > Some tegra20 specific constants will be replaced by variables which will be
+> > > initialized to the appropriate value at runtime.
+...
+> > > diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
+...
+> > > +#include <mach/pinmux-tegra20.h>
 > >
-> > The interrupt line from codec to Tegra is a GPIO, yes.
-> >
-> > But the WM8903 still has the same interrupt-parent as everything else,
-> > since it's inherited from /interrupt-parent and doesn't define its own.
-> > Perhaps this is a mistake?
+> > Boards shouldn't have to include this. The idea is that you should only
+> > have to do board code against the pinmux.h interface, which internally
+> > abstracts it for tegra 20 vs tegra 30.
 > 
-> Yes. I think this is a mistake. If we want the device tree to reflect the
-> hardware, I think the WM8903 node should specify the GPIO, not the IRQ
-> number.
+> The pinmux naming is still SoC specific. Unless we move this to devicetree
+> (which should be part of a different patchset), I don't see how we can solve
+> this, except by renaming all the pingroups. That would cause a lot more
+> changes though.
 
-Hmm. This somewhat goes back to the previous irq_to_gpio discussion...
+I believe that Peter's explanation makes sense.
 
-The WM8903 driver only cares about having an interrupt. In this case at
-least, the driver never performs any GPIO-like manipulation on this
-interrupt line. As such, shouldn't the driver receive the interrupt ID
-to use?
-
-The rationale here is that while the WM8903's interrupt output is hooked
-to a GPIO input on Tegra systems, there's no reason to believe that it
-couldn't be hooked to a dedicated interrupt input pin on some other SoC
-(i.e. not a GPIO). In that case, there'd be no GPIO to pass to the driver.
-
-Now perhaps what this means is that we need a DT binding for "the IRQ
-generated by this given GPIO pin", rather than encoding that interrupt
-number into the WM8903 node directly? That's certainly exactly what we
-do when creating the platform data in board files in this case.
+BTW, re: the new pinmux API: I have a driver for both Tegra20 and Tegra30
+now which should work for muxing. All the data is present for all the pin
+configs too (tri-state, pull, ...) but we need to define the core pinctrl
+API for this before I can expose that. Similarly, we need DT bindings for
+all of this before we can make use of it; something I hope to start work
+on in the near future.
 
 -- 
 nvpublic
