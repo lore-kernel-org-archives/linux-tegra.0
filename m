@@ -1,96 +1,42 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 03/10] arm/tegra: prepare clock code for multiple tegra
- variants
-Date: Mon, 21 Nov 2011 14:44:52 +0200
-Message-ID: <20111121124452.GM19069@tbergstrom-lnx.Nvidia.com>
-References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
- <1321546766-26770-4-git-send-email-pdeschrijver@nvidia.com>
- <20111118190649.GB31678@quad.lixom.net>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: Re: [PATCH 2/3] staging: nvec: add device tree support
+Date: Mon, 21 Nov 2011 14:42:34 +0100
+Message-ID: <2139252.qPrj5UdCGj@fb07-iapwap2>
+References: <cover.1320173572.git.marvin24@gmx.de> <20111109191144.GB5354@quad.lixom.net> <20111109195755.GA7052@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20111118190649.GB31678@quad.lixom.net>
-Sender: linux-doc-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111109195755.GA7052-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 18, 2011 at 08:06:49PM +0100, Olof Johansson wrote:
-> Hi,
-> 
-> A nit and two comments below.
-> 
-> On Thu, Nov 17, 2011 at 06:19:17PM +0200, Peter De Schrijver wrote:
-> > Rework the tegra20 clock code to support multiple tegra variants :
+Am Mittwoch, 9. November 2011, 11:57:55 schrieb Greg KH:
+> On Wed, Nov 09, 2011 at 11:11:44AM -0800, Olof Johansson wrote:
+> > On Tue, Nov 01, 2011 at 03:36:31PM -0700, Stephen Warren wrote:
+> > > Marc Dietrich wrote at Tuesday, November 01, 2011 2:37 PM:
+> > > > This adds device tree support to the nvec driver. By using this method
+> > > > it is no longer necessary to specify platform data through a board
+> > > > file.
+> > > 
+> > > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > 
-> >  * remove tegra2_periph_reset_assert/tegra2_periph_reset_deassert. This
-> >    functionality should be in clock.c.
-> >  * compile tegra_sdmmc_tap_delay only on tegra20 as this feature will not
-> >    be available in future variants.
-> >  * don't export clk_measure_input_freq as its functionality is also available
-> >    using clk_get_rate().
+> > Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 > > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  arch/arm/mach-tegra/clock.c         |   14 +++++++++-----
-> >  arch/arm/mach-tegra/clock.h         |    3 ---
-> >  arch/arm/mach-tegra/tegra2_clocks.c |   14 +-------------
-> >  arch/arm/mach-tegra/timer.c         |   12 ++++++++----
-> >  4 files changed, 18 insertions(+), 25 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-> > index f8d41ff..47f6366 100644
-> > --- a/arch/arm/mach-tegra/clock.c
-> > +++ b/arch/arm/mach-tegra/clock.c
-> > @@ -387,13 +387,15 @@ EXPORT_SYMBOL(tegra_clk_init_from_table);
-> >  
-> >  void tegra_periph_reset_deassert(struct clk *c)
-> >  {
-> > -	tegra2_periph_reset_deassert(c);
-> > +	BUG_ON(!c->ops->reset);
-> > +	c->ops->reset(c, false);
-> >  }
-> >  EXPORT_SYMBOL(tegra_periph_reset_deassert);
-> >  
-> >  void tegra_periph_reset_assert(struct clk *c)
-> >  {
-> > -	tegra2_periph_reset_assert(c);
-> > +	BUG_ON(!c->ops->reset);
-> > +	c->ops->reset(c, true);
-> >  }
-> >  EXPORT_SYMBOL(tegra_periph_reset_assert);
-> >  
-> > @@ -403,10 +405,11 @@ void __init tegra_init_clock(void)
-> >  }
-> >  
-> >  /*
-> > - * The SDMMC controllers have extra bits in the clock source register that
-> > - * adjust the delay between the clock and data to compenstate for delays
-> > - * on the PCB.
-> > + * The SDMMC controllers on tegra20 have extra bits in the clock source
-> > + * register that adjust the delay between the clock and data to compenstate
-> > + * for delays on the PCB.
-> >   */
-> > +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-> >  void tegra_sdmmc_tap_delay(struct clk *c, int delay)
-> >  {
-> >  	unsigned long flags;
-> > @@ -415,6 +418,7 @@ void tegra_sdmmc_tap_delay(struct clk *c, int delay)
-> >  	tegra2_sdmmc_tap_delay(c, delay);
-> >  	spin_unlock_irqrestore(&c->spinlock, flags);
-> >  }
-> > +#endif
+> > Greg, this one can go through the staging tree. We'll pick up the other pieces
+> > of the series through the tegra soc tree.
 > 
-> Ifdeffing this out doesn't quite make sense. Better to do a #ifdef in the
-> include file with an #else case that fills in an empty function. This
-> needs to be abstracted differently for the two platforms anyway but
-> that can be done separately from this. Does tegra3 have tap delay setup
-> as well? (I don't have the TRM handy right now).
+> Ok, will do.
 > 
+> greg k-h
 
-I couldn't find it in the tegra30 TRM.
+Ping.
 
-Cheers,
+Greg, it seems that this patch is still not in staging. Please apply 
+http://patchwork.ozlabs.org/patch/123140/
 
-Peter.
+Thanks
+
+Marc
