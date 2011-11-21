@@ -1,57 +1,36 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 06/10] arm/tegra: prepare pinmux code for multiple
- tegra variants
-Date: Mon, 21 Nov 2011 16:29:19 +0200
-Message-ID: <20111121142919.GN19069@tbergstrom-lnx.Nvidia.com>
-References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
- <1321546766-26770-7-git-send-email-pdeschrijver@nvidia.com>
- <20111118214116.GC31678@quad.lixom.net>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v1] dts: tegra-ventana: use proper root instead of
+ /dev/ram
+Date: Mon, 21 Nov 2011 08:56:46 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C0B8@HQMAIL01.nvidia.com>
+References: <1321338087-3662-1-git-send-email-vwadekar@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF1740805E1B@HQMAIL01.nvidia.com>
+ <20111121004930.GA17338@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20111118214116.GC31678-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+In-Reply-To: <20111121004930.GA17338-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 18, 2011 at 10:41:16PM +0100, Olof Johansson wrote:
-> On Thu, Nov 17, 2011 at 06:19:20PM +0200, Peter De Schrijver wrote:
-> > This patch modifies the pinmux code to be useable for multiple tegra variants.
-> > Some tegra20 specific constants will be replaced by variables which will be
-> > initialized to the appropriate value at runtime.
-> >
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/mach-tegra/board-harmony-pcie.c     |    1 +
-> >  arch/arm/mach-tegra/board-harmony-pinmux.c   |    1 +
-> >  arch/arm/mach-tegra/board-paz00-pinmux.c     |    1 +
-> >  arch/arm/mach-tegra/board-trimslice-pinmux.c |    1 +
-> >  arch/arm/mach-tegra/include/mach/pinmux.h    |   25 +++----
-> >  arch/arm/mach-tegra/pinmux-tegra20-tables.c  |   15 +++-
-> >  arch/arm/mach-tegra/pinmux.c                 |  105 ++++++++++++++-----------
-> >  7 files changed, 86 insertions(+), 63 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > index 6db7d69..bd402d0 100644
-> > --- a/arch/arm/mach-tegra/board-harmony-pcie.c
-> > +++ b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > @@ -23,6 +23,7 @@
-> >  #include <asm/mach-types.h>
-> >
-> >  #include <mach/pinmux.h>
-> > +#include <mach/pinmux-tegra20.h>
-> 
-> Boards shouldn't have to include this. The idea is that you should only
-> have to do board code against the pinmux.h interface, which internally
-> abstracts it for tegra 20 vs tegra 30.
+Olof Johansson wrote at Sunday, November 20, 2011 5:50 PM:
+> On Tue, Nov 15, 2011 at 11:16:51AM -0800, Stephen Warren wrote:
+> > Varun Wadekar wrote at Monday, November 14, 2011 11:21 PM:
+> > > From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> > > The root file system on ventana resides on /dev/mmcblk0p1.
+...
+> Actually, removing the default root path is probably a better idea, since it
+> will vary from installation to installation and doesn't make sense to hard
+> code.
+...
+> So, I would rather see a patch removing the root= argument alltogether.
 
-The pinmux naming is still SoC specific. Unless we move this to devicetree
-(which should be part of a different patchset), I don't see how we can solve
-this, except by renaming all the pingroups. That would cause a lot more
-changes though.
+OK, I'll whip up a patch for that along with a few other minor DTS fixes.
 
-Cheers,
-
-Peter.
+-- 
+nvpublic
