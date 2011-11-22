@@ -1,58 +1,67 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 5/5] arm/dt: tegra: Fix SDHCI nodes to match board files
-Date: Tue, 22 Nov 2011 17:23:38 +0100
-Message-ID: <20111122162338.GN21480@game.jcrosoft.org>
-References: <1321911851-10091-1-git-send-email-swarren@nvidia.com>
- <1321911851-10091-5-git-send-email-swarren@nvidia.com>
- <20111122083802.GK21480@game.jcrosoft.org>
- <74CDBE0F657A3D45AFBB94109FB122FF174F08C3AF@HQMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 06/10] arm/tegra: prepare pinmux code for multiple tegra
+ variants
+Date: Tue, 22 Nov 2011 11:01:46 -0800
+Message-ID: <20111122190146.GA31361@quad.lixom.net>
+References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
+ <1321546766-26770-7-git-send-email-pdeschrijver@nvidia.com>
+ <20111118214116.GC31678@quad.lixom.net>
+ <20111121142919.GN19069@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C3AF-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20111121142919.GN19069-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08:12 Tue 22 Nov     , Stephen Warren wrote:
-> Jean-Christophe PLAGNIOL-VILLARD wrote at Tuesday, November 22, 2011 1:38 AM:
-> > On 14:44 Mon 21 Nov     , Stephen Warren wrote:
-> > > Mark any SDHCI controllers that aren't registered by the board files as
-> > > disabled in the device-tree files.
+On Mon, Nov 21, 2011 at 04:29:19PM +0200, Peter De Schrijver wrote:
+> On Fri, Nov 18, 2011 at 10:41:16PM +0100, Olof Johansson wrote:
+> > On Thu, Nov 17, 2011 at 06:19:20PM +0200, Peter De Schrijver wrote:
+> > > This patch modifies the pinmux code to be useable for multiple tegra variants.
+> > > Some tegra20 specific constants will be replaced by variables which will be
+> > > initialized to the appropriate value at runtime.
 > > >
-> > > In practice, these controllers:
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  arch/arm/mach-tegra/board-harmony-pcie.c     |    1 +
+> > >  arch/arm/mach-tegra/board-harmony-pinmux.c   |    1 +
+> > >  arch/arm/mach-tegra/board-paz00-pinmux.c     |    1 +
+> > >  arch/arm/mach-tegra/board-trimslice-pinmux.c |    1 +
+> > >  arch/arm/mach-tegra/include/mach/pinmux.h    |   25 +++----
+> > >  arch/arm/mach-tegra/pinmux-tegra20-tables.c  |   15 +++-
+> > >  arch/arm/mach-tegra/pinmux.c                 |  105 ++++++++++++++-----------
+> > >  7 files changed, 86 insertions(+), 63 deletions(-)
 > > >
-> > > * Have nothing hooked up to them at all, or
-> > > * For ports intended for SDIO usage, the drivers for anything that might
-> > >   be attached are not in the device-tree yet. If/when drivers appear, the
-> > >   SD/MMC port can be re-enabled.
+> > > diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
+> > > index 6db7d69..bd402d0 100644
+> > > --- a/arch/arm/mach-tegra/board-harmony-pcie.c
+> > > +++ b/arch/arm/mach-tegra/board-harmony-pcie.c
+> > > @@ -23,6 +23,7 @@
+> > >  #include <asm/mach-types.h>
 > > >
-> > > The only possible exception is TrimSlice's mico SD slot, but that wasn't
-> > > enabled in the board files before anyway, and doesn't work when all the
-> > > SDHCI controllers are enabled anyway.
-> > it will be better to invert the logic
+> > >  #include <mach/pinmux.h>
+> > > +#include <mach/pinmux-tegra20.h>
 > > 
-> > just enable what you are supposed too
+> > Boards shouldn't have to include this. The idea is that you should only
+> > have to do board code against the pinmux.h interface, which internally
+> > abstracts it for tegra 20 vs tegra 30.
 > 
-> It used to be that way when the files were first added, but they got
-> switched around this way to match standard practice.
-this is a bad practice because you can enable stuff that a hardware is not
-supposed to use
+> The pinmux naming is still SoC specific. Unless we move this to devicetree
+> (which should be part of a different patchset), I don't see how we can solve
+> this, except by renaming all the pingroups. That would cause a lot more
+> changes though.
 
-and this silenty without anyone notice until you test the hardware
+If the pinmux naming and numbering is unique per SoC then sharing
+namespace for them could be a source of confusion. If we need to keep
+them around much longer, then doing that rename would be a good idea. But
+we can do that separately from this change. So the include change is ok
+for now.
 
-and you add more line and changeset
+My other comments about the code changes still stands though, so please
+address those.
 
-Best Regrds,
-J.
+
+-Olof
