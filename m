@@ -1,67 +1,43 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 06/10] arm/tegra: prepare pinmux code for multiple tegra
- variants
-Date: Tue, 22 Nov 2011 11:01:46 -0800
-Message-ID: <20111122190146.GA31361@quad.lixom.net>
-References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
- <1321546766-26770-7-git-send-email-pdeschrijver@nvidia.com>
- <20111118214116.GC31678@quad.lixom.net>
- <20111121142919.GN19069@tbergstrom-lnx.Nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/5] arm/dt: tegra: Remove /memreserve/ from device-treefiles
+Date: Tue, 22 Nov 2011 22:36:34 +0100
+Message-ID: <6361589.UezRydQy0p@ax5200p>
+References: <1321911851-10091-1-git-send-email-swarren@nvidia.com> <2308525.meomQFtUnY@ax5200p> <74CDBE0F657A3D45AFBB94109FB122FF174F08C3BC@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20111121142919.GN19069-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C3BC-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 21, 2011 at 04:29:19PM +0200, Peter De Schrijver wrote:
-> On Fri, Nov 18, 2011 at 10:41:16PM +0100, Olof Johansson wrote:
-> > On Thu, Nov 17, 2011 at 06:19:20PM +0200, Peter De Schrijver wrote:
-> > > This patch modifies the pinmux code to be useable for multiple tegra variants.
-> > > Some tegra20 specific constants will be replaced by variables which will be
-> > > initialized to the appropriate value at runtime.
-> > >
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  arch/arm/mach-tegra/board-harmony-pcie.c     |    1 +
-> > >  arch/arm/mach-tegra/board-harmony-pinmux.c   |    1 +
-> > >  arch/arm/mach-tegra/board-paz00-pinmux.c     |    1 +
-> > >  arch/arm/mach-tegra/board-trimslice-pinmux.c |    1 +
-> > >  arch/arm/mach-tegra/include/mach/pinmux.h    |   25 +++----
-> > >  arch/arm/mach-tegra/pinmux-tegra20-tables.c  |   15 +++-
-> > >  arch/arm/mach-tegra/pinmux.c                 |  105 ++++++++++++++-----------
-> > >  7 files changed, 86 insertions(+), 63 deletions(-)
-> > >
-> > > diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > index 6db7d69..bd402d0 100644
-> > > --- a/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > +++ b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > @@ -23,6 +23,7 @@
-> > >  #include <asm/mach-types.h>
-> > >
-> > >  #include <mach/pinmux.h>
-> > > +#include <mach/pinmux-tegra20.h>
+On Tuesday 22 November 2011 08:25:03 Stephen Warren wrote:
+> Marc Dietrich wrote at Tuesday, November 22, 2011 3:42 AM:
+> > On Monday 21 November 2011 14:44:07 Stephen Warren wrote:
+> > > There are no drivers in the kernel at present which can make use of
+> > > the
+> > > memory reserved by /memreserve/, so there is no point reserving it.
+> > > Remove /memreserve/ to allow the user more memory. It's also
+> > > unclear whether any future driver would actually require
+> > > /memreserve/, or allocate memory through some other mechanism.
 > > 
-> > Boards shouldn't have to include this. The idea is that you should only
-> > have to do board code against the pinmux.h interface, which internally
-> > abstracts it for tegra 20 vs tegra 30.
+> > while this gives 512 MB of usable memory on my AC100, it causes some
+> > funny pictures on the screen ;-) I guess our bootloader (fastboot)
+> > already setups the frambuffer there (and enables the backlight). I
+> > guess it shouldn't be harmful as nothing else writes to this memory
+> > area. Otherwise you may add that the bootloader (or the kernel cmdline
+> > supplied by the bootloader) is now responsible for the reservation to
+> > the description.
 > 
-> The pinmux naming is still SoC specific. Unless we move this to devicetree
-> (which should be part of a different patchset), I don't see how we can solve
-> this, except by renaming all the pingroups. That would cause a lot more
-> changes though.
+> Ah yes, I guess that would happen. I'm only testing with mainline U-Boot...
+> 
+> I'd suggest this is acceptable fallout for now; I don't believe it will
+> cause any active problems, and as you say, you can get the bootloader to
+> set a command-line that excludes the frame-buffer if you want to solve
+> this. Do you agree?
 
-If the pinmux naming and numbering is unique per SoC then sharing
-namespace for them could be a source of confusion. If we need to keep
-them around much longer, then doing that rename would be a good idea. But
-we can do that separately from this change. So the include change is ok
-for now.
+Ok. Hopefully we can also use u-Boot soon.
 
-My other comments about the code changes still stands though, so please
-address those.
-
-
--Olof
+Marc
