@@ -1,133 +1,82 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: Fix build error with
-	tegra_assert_system_reset
-Date: Wed, 23 Nov 2011 09:50:09 +0000
-Message-ID: <20111123095009.GG9581@n2100.arm.linux.org.uk>
-References: <1322009631-711-1-git-send-email-swarren@nvidia.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 04/17] ASoC: Add device tree binding for
+	WM8903
+Date: Wed, 23 Nov 2011 10:20:28 +0000
+Message-ID: <20111123102027.GB4332@opensource.wolfsonmicro.com>
+References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
+	<1322011285-4002-5-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <1322009631-711-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1322011285-4002-5-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, Mike Rapoport <mike@compulab.co.il>, Ian Lartey <ian@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Marc Dietrich <marvin24@gmx.de>, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, John Bonesio <bones@secretlab.ca>, Leon Romanovsky <leon@leon.nu>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 22, 2011 at 05:53:51PM -0700, Stephen Warren wrote:
-> Build error:
-> 
-> error: static declaration of 'tegra_assert_system_reset' follows non-static
-> declaration
-> 
-> Fix:
-> 
-> Remove the non-static declaration; the function should be local now.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Nov 22, 2011 at 06:21:12PM -0700, Stephen Warren wrote:
 
-Thanks Stephen.  I'd prefer to fix this a different way, moving tegra to
-use the .restart method instead.  So, I'm about to merge this into the
-commit which created your error.
+> +  - irq-active-low : Indicates whether the IRQ output should be active low
+> +    (property present) or active high (property absent).
 
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index f6f03ce..e417a83 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -134,5 +134,6 @@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegra (Flattened Device Tree)")
- 	.handle_irq	= gic_handle_irq,
- 	.timer		= &tegra_timer,
- 	.init_machine	= tegra_dt_init,
-+	.restart	= tegra_assert_system_reset,
- 	.dt_compat	= tegra_dt_board_compat,
- MACHINE_END
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index fd190a8..70ee674 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -191,4 +191,5 @@ MACHINE_START(HARMONY, "harmony")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_harmony_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 0b7e1cf..33d6205 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -194,4 +194,5 @@ MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_paz00_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index 7328379..c1599eb 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -288,6 +288,7 @@ MACHINE_START(SEABOARD, "seaboard")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_seaboard_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
- 
- MACHINE_START(KAEN, "kaen")
-@@ -298,6 +299,7 @@ MACHINE_START(KAEN, "kaen")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_kaen_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
- 
- MACHINE_START(WARIO, "wario")
-@@ -308,4 +310,5 @@ MACHINE_START(WARIO, "wario")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_wario_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index 60a36a2..c242314 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -180,4 +180,5 @@ MACHINE_START(TRIMSLICE, "trimslice")
- 	.handle_irq	= gic_handle_irq,
- 	.timer          = &tegra_timer,
- 	.init_machine   = tegra_trimslice_init,
-+	.restart	= tegra_assert_system_reset,
- MACHINE_END
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index f159577..1d14df7 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -23,6 +23,8 @@
- 
- #include <linux/types.h>
- 
-+void tegra_assert_system_reset(char mode, const char *cmd);
-+
- void __init tegra_init_early(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 1374d10..20f396d 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -31,7 +31,7 @@
- #include "clock.h"
- #include "fuse.h"
- 
--static void tegra_assert_system_reset(char mode, const char *cmd)
-+void tegra_assert_system_reset(char mode, const char *cmd)
- {
- 	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
- 	u32 reg;
-@@ -74,7 +74,6 @@ static void __init tegra_init_cache(void)
- 
- void __init tegra_init_early(void)
- {
--	arm_pm_restart = tegra_assert_system_reset;
- 	tegra_init_fuse();
- 	tegra_init_clock();
- 	tegra_clk_init_from_table(common_clk_init_table);
+I think we ought to be coming up with a standard binding for this stuff 
+rather than having every device defining it's own way of plugging the
+interrupt lines together - many devices have lots of flexibility with
+how their interrupt line signals for compatibility reasons.
+
+> +  - gpio-cfg : A list of GPIO pin mux register values. The list must be 5
+> +    entries long. If absent, no configuration of these registers is
+> +    performed.
+
+What's a "GPIO pin mux"?
+
+> +	/* 0x8000 = Not configured */
+> +	gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
+
+The 0x8000 isn't documented in the binding and this doesn't seem
+terribly idiomatic for device tree.
+
+> -static void wm8903_init_gpio(struct snd_soc_codec *codec)
+> +static void wm8903_init_gpio(struct snd_soc_codec *codec,
+> +			     struct wm8903_platform_data *pdata)
+
+Why?
+
+>  static int wm8903_probe(struct snd_soc_codec *codec)
+>  {
+>  	struct wm8903_platform_data *pdata = dev_get_platdata(codec->dev);
+> +	struct wm8903_platform_data lpdata;
+
+Why and what is "lpdata" supposed to mean?
+
+> +	if (!pdata && codec->dev->of_node) {
+> +		lpdata.irq_active_low = 0;
+> +		lpdata.micdet_cfg = 0;
+
+This should be set by default.
+
+> +		lpdata.micdet_delay = 100;
+> +		lpdata.gpio_base = -1;
+
+This means that the defaults are in different different places if we
+have platform data and if we have device tree.  We should restructure
+the code so that we only have defaults in one place.
+
+> +		if (of_property_read_u32(np, "micdet-cfg", &val32) >= 0)
+> +			lpdata.micdet_cfg = val32;
+
+I'd rather have defaults as an else case I think.
+
+> +#if defined(CONFIG_OF)
+
+ifdef.
