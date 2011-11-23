@@ -1,50 +1,24 @@
-From: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: remove declaration of tegra_assert_system_reset
- in board.h
-Date: Wed, 23 Nov 2011 19:04:44 +0800
-Message-ID: <1322046284.27165.1.camel@phoenix>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 10/17] ASoC: Tegra DAS: Add device tree binding
+Date: Wed, 23 Nov 2011 11:07:16 +0000
+Message-ID: <20111123110716.GD21073@opensource.wolfsonmicro.com>
+References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
+ <1322011285-4002-11-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1322011285-4002-11-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ian Lartey <ian-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dimitris Papastamos <dp-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-commit b2f745 "ARM: restart: tegra: use new restart hook"
-changed tegra_assert_system_reset to be static but forgot to
-remove the declaration in arch/arm/mach-tegra/board.h.
+On Tue, Nov 22, 2011 at 06:21:18PM -0700, Stephen Warren wrote:
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Remove the declaration of tegra_assert_system_reset in
-arch/arm/mach-tegra/board.h to fix below build error:
+Applied, thanks - the binding seems entirely uncontroversial as there's
+just a compatible and register binding, if there are problems we can
+always revert or fix before 3.3.
 
-  CC      arch/arm/mach-tegra/common.o
-arch/arm/mach-tegra/common.c:34: error: static declaration of 'tegra_assert_system_reset' follows non-static declaration
-arch/arm/mach-tegra/board.h:26: note: previous declaration of 'tegra_assert_system_reset' was here
-make[1]: *** [arch/arm/mach-tegra/common.o] Error 1
-make: *** [arch/arm/mach-tegra] Error 2
-
-Signed-off-by: Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-I got the build error on linux-next tree.
-This patch is against linux-next 20111123.
-
- arch/arm/mach-tegra/board.h |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index 1d14df7..f159577 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -23,8 +23,6 @@
- 
- #include <linux/types.h>
- 
--void tegra_assert_system_reset(char mode, const char *cmd);
--
- void __init tegra_init_early(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
--- 
-1.7.5.4
+BTW, you probably want to look at your CC list, it's rather large.
