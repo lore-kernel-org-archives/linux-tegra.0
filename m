@@ -1,14 +1,14 @@
 From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 07/17] ASoC: Tegra DAS: Use devm_ APIs and
+Subject: Re: [PATCH 08/17] ASoC: Tegra I2S: Use devm_ APIs and
  module_platform_driver
-Date: Wed, 23 Nov 2011 07:58:08 +0100
-Message-ID: <20111123065808.GB5255@avionic-0098.adnet.avionic-design.de>
+Date: Wed, 23 Nov 2011 08:00:27 +0100
+Message-ID: <20111123070027.GC5255@avionic-0098.adnet.avionic-design.de>
 References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
-	<1322011285-4002-8-git-send-email-swarren@nvidia.com>
+	<1322011285-4002-9-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6605898982696531818=="
+Content-Type: multipart/mixed; boundary="===============8250180263204166593=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1322011285-4002-8-git-send-email-swarren@nvidia.com>
+In-Reply-To: <1322011285-4002-9-git-send-email-swarren@nvidia.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
@@ -23,13 +23,13 @@ Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Peter De Schrijver <pd
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6605898982696531818==
+--===============8250180263204166593==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+	protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
 Content-Disposition: inline
 
 
---NDin8bjvE/0mNLFQ
+--Fig2xvG2VGoz8o/s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -42,60 +42,83 @@ Content-Transfer-Encoding: quoted-printable
 >=20
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
->  sound/soc/tegra/tegra_das.c |   45 +++++++++----------------------------=
+>  sound/soc/tegra/tegra_i2s.c |   45 +++++++++----------------------------=
 -----
 >  1 files changed, 10 insertions(+), 35 deletions(-)
 >=20
-> diff --git a/sound/soc/tegra/tegra_das.c b/sound/soc/tegra/tegra_das.c
+> diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
 [...]
-> @@ -208,32 +208,18 @@ static int __devinit tegra_das_probe(struct platfor=
-m_device *pdev)
+> @@ -422,43 +422,29 @@ static __devinit int tegra_i2s_platform_probe(struc=
+t platform_device *pdev)
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
+>  		ret =3D -ENOMEM;
+> -		goto err_unmap;
+> +		goto err_clk_put;
+>  	}
+> =20
+>  	tegra_i2s_debug_add(i2s, pdev->id);
 > =20
 >  	return 0;
 > =20
+> -err_unmap:
+> -	iounmap(i2s->regs);
 > -err_release:
-> -	release_mem_region(res->start, resource_size(res));
+> -	release_mem_region(mem->start, resource_size(mem));
+>  err_clk_put:
+>  	clk_put(i2s->clk_i2s);
 > -err_free:
-> -	kfree(das);
-> +err:
->  	das =3D NULL;
+> -	kfree(i2s);
 > -exit:
+> +err:
 >  	return ret;
 >  }
 > =20
->  static int __devexit tegra_das_remove(struct platform_device *pdev)
+>  static int __devexit tegra_i2s_platform_remove(struct platform_device *p=
+dev)
 >  {
+>  	struct tegra_i2s *i2s =3D dev_get_drvdata(&pdev->dev);
 > -	struct resource *res;
-> -
->  	if (!das)
->  		return -ENODEV;
 > =20
-> -	platform_set_drvdata(pdev, NULL);
+>  	snd_soc_unregister_dai(&pdev->dev);
+> =20
+>  	tegra_i2s_debug_remove(i2s);
+> =20
+> -	iounmap(i2s->regs);
 > -
+> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	release_mem_region(res->start, resource_size(res));
+> -
+>  	clk_put(i2s->clk_i2s);
+> =20
+> -	kfree(i2s);
+> -
+>  	return 0;
+>  }
 [...]
 
-Setting the driver data to NULL may still be a good idea.
+Is this perhaps missing a dev_set_drvdata(&pdev->dev, NULL) as well?
 
 Thierry
 
---NDin8bjvE/0mNLFQ
+--Fig2xvG2VGoz8o/s
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk7MmYAACgkQZ+BJyKLjJp+lzwCeJ0lRsbhIll0W3N0LcNKzd7+7
-aU8AoJKpCetUwA1nE3YBtmlwjJdwuVvS
-=yZYj
+iEYEARECAAYFAk7MmgsACgkQZ+BJyKLjJp+8YACfYfRZty8MP33bL+GtHBaebKEg
+l0wAn2uzXkGXHruTyPdFfSBKVnU6Ts98
+=4J/Z
 -----END PGP SIGNATURE-----
 
---NDin8bjvE/0mNLFQ--
+--Fig2xvG2VGoz8o/s--
 
---===============6605898982696531818==
+--===============8250180263204166593==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============6605898982696531818==--
+--===============8250180263204166593==--
