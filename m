@@ -1,67 +1,28 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: DT DMA channel binding for Tegra I2S
-Date: Wed, 23 Nov 2011 13:25:28 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C803@HQMAIL01.nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH v2 2/3] ASoC: Tegra+WM903 machine: Set the
+ new fully_routed flag
+Date: Wed, 23 Nov 2011 21:32:20 +0000
+Message-ID: <20111123213220.GA8149@sirena.org.uk>
+References: <1322077326-5538-1-git-send-email-swarren@nvidia.com>
+ <1322077326-5538-2-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1322077326-5538-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "Rob Herring (robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org)" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Rob, Grant,
+On Wed, Nov 23, 2011 at 12:42:05PM -0700, Stephen Warren wrote:
 
-Re: http://www.spinics.net/lists/arm-kernel/msg148899.html
+> v2: Rename flag from auto_nc_pins to fully_routed. Adjust description.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  sound/soc/tegra/tegra_wm8903.c |   22 +---------------------
+>  1 files changed, 1 insertions(+), 21 deletions(-)
 
-Background: Tegra's DMA controller needs to be told which DMA "request
-select" to use for each transfer. The identifies which peripheral to
-transfer to/from.
-
-The Tegra I2S driver needs to know its own "request select" value to
-pass to the audio driver DMA path. The board files typically provide
-this to the driver as an IORESOURCE_DMA. I don't think there's any
-standard binding that creates such a resource when instantiating a
-platform device from device tree, and the discussions I found when
-looking for one didn't seem to reach conclusion that there should be
-one. So, I proposed the following property in the I2S driver's DT
-binding for this:
-
-Doc:
-
-- dma-channel : The Tegra DMA controller's channel ID for this I2S controller
-
-Example:
-
-i2s@70002800 {
-	compatible = "nvidia,tegra20-i2s";
-	reg = <0x70002800 0x200>;
-	interrupts = < 45 >;
-	dma-channel = < 2 >;
-};
-
-Does that look reasonable? Or, should I pursue some more standardized
-solution?
-
-(although perhaps dma-request-select would be a better name, since each
-of the DMA controller's 16 channels can be used for any of the DMA
-selects)
-
-For reference, the code turns out as below; it might be nicer if the
-DT parsing code could create this resource for us, although there was
-some previous discussion about IORESOURCE_DMA not being the correct
-representation for this anyway.
-
-	dmareq = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-	if (!dmareq) {
-		if (of_property_read_u32(pdev->dev.of_node,
-					 "nvidia,dma-channel",
-					 &dma_ch) < 0) {
-...
-
-Thanks.
-
--- 
-nvpublic
+Things like your above "v2" line really ought to go here below the ---
+so they're automatically cut from the changelog by the tools.
