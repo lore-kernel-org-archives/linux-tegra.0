@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 03/17] arm/dt: Tegra: Enable audio on WM8903 boards, disable others
-Date: Tue, 22 Nov 2011 18:21:11 -0700
-Message-ID: <1322011285-4002-4-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 04/17] ASoC: Add device tree binding for WM8903
+Date: Tue, 22 Nov 2011 18:21:12 -0700
+Message-ID: <1322011285-4002-5-git-send-email-swarren@nvidia.com>
 References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1322011285-4002-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,228 +10,184 @@ To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ian Lartey <ian-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dimitris Papastamos <dp-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add complete bindings to instantiate and configure the codec and
-top-level audio complex on all currently supported boards using the
-Tegra+WM8903 audio driver.
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-On those boards, disable the I2S2 controller since it isn't used.
+This patch makes it so the wm8903 is initialized from it's device tree node.
 
-On boards not using the WM8903 codec, disable all the audio devices;
-they can be re-enabled once the relevant codec and ASoC machine drivers
-have been ported to device-tree.
+swarren applied the following modifications:
+* Cleaned up DT parsing code
+* Documented DT binding
+* Set up wm8903->gpio_chip.of_node, extracted from another patch by John.
 
+Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Signed-off-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra-harmony.dts   |   29 ++++++++++++++++++++-----
- arch/arm/boot/dts/tegra-paz00.dts     |   12 ++++++++++
- arch/arm/boot/dts/tegra-seaboard.dts  |   36 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra-trimslice.dts |   12 ++++++++++
- arch/arm/boot/dts/tegra-ventana.dts   |   38 +++++++++++++++++++++++++++++++++
- 5 files changed, 121 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/sound/wm8903.txt |   48 ++++++++++++++++++++
+ sound/soc/codecs/wm8903.c                          |   48 ++++++++++++++++++-
+ 2 files changed, 93 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/wm8903.txt
 
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-index 80afa1b..5cd596f 100644
---- a/arch/arm/boot/dts/tegra-harmony.dts
-+++ b/arch/arm/boot/dts/tegra-harmony.dts
-@@ -21,6 +21,8 @@
- 			gpio-controller;
- 			#gpio-cells = <2>;
+diff --git a/Documentation/devicetree/bindings/sound/wm8903.txt b/Documentation/devicetree/bindings/sound/wm8903.txt
+new file mode 100644
+index 0000000..96edf6c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/wm8903.txt
+@@ -0,0 +1,48 @@
++WM89033 audio CODEC
++
++This device supports I2C only.
++
++Required properties:
++
++  - compatible : "wlf,wm8903"
++
++  - reg : the I2C address of the device.
++
++  - gpio-controller : Indicates this device is a GPIO controller.
++
++  - #gpio-cells : Should be two. The first cell is the pin number and the
++    second cell is used to specify optional parameters (currently unused).
++
++Optional properties:
++
++  - interrupts : The interrupt line the codec is connected to.
++
++  - irq-active-low : Indicates whether the IRQ output should be active low
++    (property present) or active high (property absent).
++
++  - micdet-cfg : Default register value for R6 (Mic Bias). If absent, the
++    default is 0.
++
++  - micdet-delay : The debounce delay for microphone detection in mS. If
++    absent, the default is 100.
++
++  - gpio-cfg : A list of GPIO pin mux register values. The list must be 5
++    entries long. If absent, no configuration of these registers is
++    performed.
++
++Example:
++
++codec: wm8903@1a {
++	compatible = "wlf,wm8903";
++	reg = <0x1a>;
++	interrupts = < 347 >;
++
++	gpio-controller;
++	#gpio-cells = <2>;
++
++	irq-active-low;
++	micdet-cfg = <0>;
++	micdet-delay = <100>;
++	/* 0x8000 = Not configured */
++	gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
++};
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index 4ad8ebd..4c2c7ef 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -1864,10 +1864,10 @@ static struct gpio_chip wm8903_template_chip = {
+ 	.can_sleep		= 1,
+ };
  
-+			micdet-cfg = <0>;
-+			micdet-delay = <100>;
- 			/* 0x8000 = Not configured */
- 			gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
- 		};
-@@ -38,13 +40,28 @@
- 		clock-frequency = <400000>;
- 	};
+-static void wm8903_init_gpio(struct snd_soc_codec *codec)
++static void wm8903_init_gpio(struct snd_soc_codec *codec,
++			     struct wm8903_platform_data *pdata)
+ {
+ 	struct wm8903_priv *wm8903 = snd_soc_codec_get_drvdata(codec);
+-	struct wm8903_platform_data *pdata = dev_get_platdata(codec->dev);
+ 	int ret;
  
--	sound {
--		compatible = "nvidia,harmony-sound", "nvidia,tegra-wm8903";
-+	i2s@70002a00 {
-+		status = "disable";
-+	};
+ 	wm8903->gpio_chip = wm8903_template_chip;
+@@ -1879,6 +1879,8 @@ static void wm8903_init_gpio(struct snd_soc_codec *codec)
+ 	else
+ 		wm8903->gpio_chip.base = -1;
  
--		spkr-en-gpios = <&codec 2 0>;
--		hp-det-gpios = <&gpio 178 0>;
--		int-mic-en-gpios = <&gpio 184 0>;
--		ext-mic-en-gpios = <&gpio 185 0>;
-+	sound {
-+		compatible = "nvidia,tegra-audio-wm8903-harmony",
-+                             "nvidia,tegra-audio-wm8903";
++	wm8903->gpio_chip.of_node = codec->dev->of_node;
 +
-+		nvidia,spkr-en-gpios = <&codec 2 0>;
-+		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
-+		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
-+		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
-+
-+		nvidia,routing =
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"Int Spk", "ROP",
-+			"Int Spk", "RON",
-+			"Int Spk", "LOP",
-+			"Int Spk", "LON",
-+			"Mic Bias", "Mic Jack",
-+			"IN1L", "Mic Bias";
- 	};
+ 	ret = gpiochip_add(&wm8903->gpio_chip);
+ 	if (ret != 0)
+ 		dev_err(codec->dev, "Failed to add GPIOs: %d\n", ret);
+@@ -1906,10 +1908,13 @@ static void wm8903_free_gpio(struct snd_soc_codec *codec)
+ static int wm8903_probe(struct snd_soc_codec *codec)
+ {
+ 	struct wm8903_platform_data *pdata = dev_get_platdata(codec->dev);
++	struct wm8903_platform_data lpdata;
+ 	struct wm8903_priv *wm8903 = snd_soc_codec_get_drvdata(codec);
+ 	int ret, i;
+ 	int trigger, irq_pol;
+ 	u16 val;
++	const struct device_node *np;
++	u32 val32;
  
- 	serial@70006000 {
-diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
-index 4f6a8aa..7010982 100644
---- a/arch/arm/boot/dts/tegra-paz00.dts
-+++ b/arch/arm/boot/dts/tegra-paz00.dts
-@@ -37,6 +37,18 @@
- 		clock-frequency = <400000>;
- 	};
+ 	wm8903->codec = codec;
  
-+	i2s@70002800 {
-+		status = "disable";
-+	};
-+
-+	i2s@70002a00 {
-+		status = "disable";
-+	};
-+
-+	das@70000c00 {
-+		status = "disable";
-+	};
-+
- 	serial@70006000 {
- 		clock-frequency = <216000000>;
- 	};
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index f552bcc..dfbafd8 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -13,6 +13,20 @@
+@@ -1932,6 +1937,31 @@ static int wm8903_probe(struct snd_soc_codec *codec)
  
- 	i2c@7000c000 {
- 		clock-frequency = <400000>;
-+
-+		codec: wm8903@1a {
-+			compatible = "wlf,wm8903";
-+			reg = <0x1a>;
-+			interrupts = < 347 >;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			micdet-cfg = <0>;
-+			micdet-delay = <100>;
-+			/* 0x8000 = Not configured */
-+			gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
-+		};
- 	};
+ 	wm8903_reset(codec);
  
- 	i2c@7000c400 {
-@@ -27,6 +41,28 @@
- 		clock-frequency = <400000>;
- 	};
++	if (!pdata && codec->dev->of_node) {
++		lpdata.irq_active_low = 0;
++		lpdata.micdet_cfg = 0;
++		lpdata.micdet_delay = 100;
++		lpdata.gpio_base = -1;
++		for (i = 0; i < 5; i++)
++			lpdata.gpio_cfg[i] = WM8903_GPIO_NO_CONFIG;
++
++		np = codec->dev->of_node;
++
++		if (of_find_property(np, "irq-active-low", NULL))
++			lpdata.irq_active_low = 1;
++
++		if (of_property_read_u32(np, "micdet-cfg", &val32) >= 0)
++			lpdata.micdet_cfg = val32;
++
++		if (of_property_read_u32(np, "micdet-delay", &val32) >= 0)
++			lpdata.micdet_delay = val32;
++
++		of_property_read_u32_array(np, "gpio-cfg", lpdata.gpio_cfg,
++					   WM8903_NUM_GPIO);
++
++		pdata = &lpdata;
++	}
++
+ 	/* Set up GPIOs and microphone detection */
+ 	if (pdata) {
+ 		bool mic_gpio = false;
+@@ -2038,7 +2068,7 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 	snd_soc_add_controls(codec, wm8903_snd_controls,
+ 				ARRAY_SIZE(wm8903_snd_controls));
  
-+	i2s@70002a00 {
-+		status = "disable";
-+	};
-+
-+	sound {
-+		compatible = "nvidia,tegra-audio-wm8903-seaboard",
-+                             "nvidia,tegra-audio-wm8903";
-+
-+		nvidia,spkr-en-gpios = <&codec 2 0>;
-+		nvidia,hp-det-gpios = <&gpio 185 0>; /* gpio PX1 */
-+
-+		nvidia,routing =
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"Int Spk", "ROP",
-+			"Int Spk", "RON",
-+			"Int Spk", "LOP",
-+			"Int Spk", "LON",
-+			"Mic Bias", "Mic Jack",
-+			"IN1R", "Mic Bias";
-+	};
-+
- 	serial@70006000 {
- 		status = "disable";
- 	};
-diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
-index 3b3ee7d..2524768 100644
---- a/arch/arm/boot/dts/tegra-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra-trimslice.dts
-@@ -26,6 +26,18 @@
- 		status = "disable";
- 	};
+-	wm8903_init_gpio(codec);
++	wm8903_init_gpio(codec, pdata);
  
-+	i2s@70002800 {
-+		status = "disable";
-+	};
-+
-+	i2s@70002a00 {
-+		status = "disable";
-+	};
-+
-+	das@70000c00 {
-+		status = "disable";
-+	};
-+
- 	serial@70006000 {
- 		clock-frequency = < 216000000 >;
- 	};
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-index c7d3b87..c02534e 100644
---- a/arch/arm/boot/dts/tegra-ventana.dts
-+++ b/arch/arm/boot/dts/tegra-ventana.dts
-@@ -12,6 +12,20 @@
+ 	return ret;
+ }
+@@ -2101,6 +2131,17 @@ static __devexit int wm8903_i2c_remove(struct i2c_client *client)
+ 	return 0;
+ }
  
- 	i2c@7000c000 {
- 		clock-frequency = <400000>;
++#if defined(CONFIG_OF)
++/* Match table for of_platform binding */
++static const struct of_device_id wm8903_of_match[] __devinitconst = {
++	{ .compatible = "wlf,wm8903", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, wm8903_of_match);
++#else
++#define wm8903_of_match NULL
++#endif
 +
-+		codec: wm8903@1a {
-+			compatible = "wlf,wm8903";
-+			reg = <0x1a>;
-+			interrupts = < 347 >;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			micdet-cfg = <0>;
-+			micdet-delay = <100>;
-+			/* 0x8000 = Not configured */
-+			gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
-+		};
- 	};
- 
- 	i2c@7000c400 {
-@@ -26,6 +40,30 @@
- 		clock-frequency = <400000>;
- 	};
- 
-+	i2s@70002a00 {
-+		status = "disable";
-+	};
-+
-+	sound {
-+		compatible = "nvidia,tegra-audio-wm8903-ventana",
-+                             "nvidia,tegra-audio-wm8903";
-+
-+		nvidia,spkr-en-gpios = <&codec 2 0>;
-+		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
-+		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
-+		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
-+
-+		nvidia,routing =
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"Int Spk", "ROP",
-+			"Int Spk", "RON",
-+			"Int Spk", "LOP",
-+			"Int Spk", "LON",
-+			"Mic Bias", "Mic Jack",
-+			"IN1L", "Mic Bias";
-+	};
-+
- 	serial@70006000 {
- 		status = "disable";
- 	};
+ static const struct i2c_device_id wm8903_i2c_id[] = {
+ 	{ "wm8903", 0 },
+ 	{ }
+@@ -2111,6 +2152,7 @@ static struct i2c_driver wm8903_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm8903",
+ 		.owner = THIS_MODULE,
++		.of_match_table = wm8903_of_match,
+ 	},
+ 	.probe =    wm8903_i2c_probe,
+ 	.remove =   __devexit_p(wm8903_i2c_remove),
 -- 
 1.7.0.4
