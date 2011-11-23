@@ -1,82 +1,27 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 04/17] ASoC: Add device tree binding for
-	WM8903
-Date: Wed, 23 Nov 2011 10:20:28 +0000
-Message-ID: <20111123102027.GB4332@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 07/17] ASoC: Tegra DAS: Use devm_ APIs and
+ module_platform_driver
+Date: Wed, 23 Nov 2011 10:23:19 +0000
+Message-ID: <20111123102319.GC4332@opensource.wolfsonmicro.com>
 References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
-	<1322011285-4002-5-git-send-email-swarren@nvidia.com>
+ <1322011285-4002-8-git-send-email-swarren@nvidia.com>
+ <20111123065808.GB5255@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1322011285-4002-5-git-send-email-swarren@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, Mike Rapoport <mike@compulab.co.il>, Ian Lartey <ian@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Marc Dietrich <marvin24@gmx.de>, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, John Bonesio <bones@secretlab.ca>, Leon Romanovsky <leon@leon.nu>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20111123065808.GB5255-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ian Lartey <ian-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dimitris Papastamos <dp-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 22, 2011 at 06:21:12PM -0700, Stephen Warren wrote:
+On Wed, Nov 23, 2011 at 07:58:08AM +0100, Thierry Reding wrote:
+> * Stephen Warren wrote:
 
-> +  - irq-active-low : Indicates whether the IRQ output should be active low
-> +    (property present) or active high (property absent).
+> > -	platform_set_drvdata(pdev, NULL);
+> > -
 
-I think we ought to be coming up with a standard binding for this stuff 
-rather than having every device defining it's own way of plugging the
-interrupt lines together - many devices have lots of flexibility with
-how their interrupt line signals for compatibility reasons.
+> Setting the driver data to NULL may still be a good idea.
 
-> +  - gpio-cfg : A list of GPIO pin mux register values. The list must be 5
-> +    entries long. If absent, no configuration of these registers is
-> +    performed.
-
-What's a "GPIO pin mux"?
-
-> +	/* 0x8000 = Not configured */
-> +	gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
-
-The 0x8000 isn't documented in the binding and this doesn't seem
-terribly idiomatic for device tree.
-
-> -static void wm8903_init_gpio(struct snd_soc_codec *codec)
-> +static void wm8903_init_gpio(struct snd_soc_codec *codec,
-> +			     struct wm8903_platform_data *pdata)
-
-Why?
-
->  static int wm8903_probe(struct snd_soc_codec *codec)
->  {
->  	struct wm8903_platform_data *pdata = dev_get_platdata(codec->dev);
-> +	struct wm8903_platform_data lpdata;
-
-Why and what is "lpdata" supposed to mean?
-
-> +	if (!pdata && codec->dev->of_node) {
-> +		lpdata.irq_active_low = 0;
-> +		lpdata.micdet_cfg = 0;
-
-This should be set by default.
-
-> +		lpdata.micdet_delay = 100;
-> +		lpdata.gpio_base = -1;
-
-This means that the defaults are in different different places if we
-have platform data and if we have device tree.  We should restructure
-the code so that we only have defaults in one place.
-
-> +		if (of_property_read_u32(np, "micdet-cfg", &val32) >= 0)
-> +			lpdata.micdet_cfg = val32;
-
-I'd rather have defaults as an else case I think.
-
-> +#if defined(CONFIG_OF)
-
-ifdef.
+It's always been a waste of time.
