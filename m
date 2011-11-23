@@ -1,43 +1,79 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v2 2/3] ASoC: Tegra+WM903 machine: Set the
- new fully_routed flag
-Date: Wed, 23 Nov 2011 22:06:50 +0000
-Message-ID: <20111123220648.GC32201@opensource.wolfsonmicro.com>
-References: <1322077326-5538-1-git-send-email-swarren@nvidia.com>
- <1322077326-5538-2-git-send-email-swarren@nvidia.com>
- <20111123213220.GA8149@sirena.org.uk>
- <74CDBE0F657A3D45AFBB94109FB122FF174F08C81E@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: DT DMA channel binding for Tegra I2S
+Date: Wed, 23 Nov 2011 15:26:12 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C881@HQMAIL01.nvidia.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF174F08C803@HQMAIL01.nvidia.com>
+ <4ECD6BA4.1010607@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C81E-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <4ECD6BA4.1010607-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 23, 2011 at 01:56:14PM -0800, Stephen Warren wrote:
+Rob Herring wrote at Wednesday, November 23, 2011 2:55 PM:
+> On 11/23/2011 03:25 PM, Stephen Warren wrote:
+> > Rob, Grant,
+> >
+> > Re: http://www.spinics.net/lists/arm-kernel/msg148899.html
+> >
+> > Background: Tegra's DMA controller needs to be told which DMA "request
+> > select" to use for each transfer. The identifies which peripheral to
+> > transfer to/from.
+> >
+> > The Tegra I2S driver needs to know its own "request select" value to
+> > pass to the audio driver DMA path. The board files typically provide
+> > this to the driver as an IORESOURCE_DMA. I don't think there's any
+> > standard binding that creates such a resource when instantiating a
+> > platform device from device tree, and the discussions I found when
+> > looking for one didn't seem to reach conclusion that there should be
+> > one. So, I proposed the following property in the I2S driver's DT
+> > binding for this:
+> 
+> I think this is a case of every platform being different and
+> IORESOURCE_DMA is not too widely used. Even on PPC, there's not a
+> standard way.
+> 
+> > Doc:
+> >
+> > - dma-channel : The Tegra DMA controller's channel ID for this I2S controller
+> >
+> > Example:
+> >
+> > i2s@70002800 {
+> > 	compatible = "nvidia,tegra20-i2s";
+> > 	reg = <0x70002800 0x200>;
+> > 	interrupts = < 45 >;
+> > 	dma-channel = < 2 >;
+> > };
+> >
+> > Does that look reasonable? Or, should I pursue some more standardized
+> > solution?
+> 
+> I had some discussion with Thomas Abraham about this for the pl330 dma:
+> 
+> http://lists.ozlabs.org/pipermail/devicetree-discuss/2011-September/008269.html
+> 
+> So I would just add a phandle to the dma controller here.
 
-> * Documents the review process in git, potentially giving some insight
->   into reasoning behind parts of the patch.
+So you mean just modify the binding as follows:
 
-If this is an issue write better changelogs (with similar reasoning to
-why we don't merge incremental versions of the code either; besides
-without knowing what the old versions were it's generally not so useful).
-The lkml-reference: stuff looks a lot more useful if you really do want
-to do that as it'll show the older versions and discussions.
+apbdma: dma@NNNNN { ... };
 
-> * Allows confirmation that the correct version was checked in.
->   (rarely an issue, but occasionally, albeit I haven't seen it in ASoC)
+i2s@70002800 {
+	dma-channel = < &apbdma, 2 >;
+};
 
-Diff is useful for that (especially if people do what I do when I notice
-this stuff and manually strip the noise).
+... and leave the code I quoted as-is?
 
-> It's been mentioned a couple of times briefly on various lists before,
-> and while I'm sure it's not standard practice or anything, at least
-> there are some people supporting it. However, if you prefer, I'll try
-> to remember to move the changelog for ASoC patches.
+I /think/ the rest of the patch you linked isn't really relevant to Tegra
+at present, since it isn't ported to the DMA engine (yet?).
 
-I've genuinely never seen this before except where it looked like an
-error on the part of the sender.
+Thanks.
+
+-- 
+nvpublic
