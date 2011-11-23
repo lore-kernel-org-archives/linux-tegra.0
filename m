@@ -1,85 +1,32 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 17/17] ASoC: Tegra+WM8903 machine: Add device tree binding
-Date: Wed, 23 Nov 2011 08:15:28 +0100
-Message-ID: <20111123071528.GA12558@avionic-0098.adnet.avionic-design.de>
-References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
- <1322011285-4002-18-git-send-email-swarren@nvidia.com>
+From: Leon Romanovsky <leon@leon.nu>
+Subject: Re: [PATCH] ASoC: Tegra: Add support of tegra boards
+ basedon ALC5632 codec
+Date: Wed, 23 Nov 2011 10:04:39 +0200
+Message-ID: <CALq1K=Ka0JYut22FwovAyAcZSbqcQssjUPrk6rUU0Fq2iOZG_g@mail.gmail.com>
+References: <1321906088-29964-1-git-send-email-leon@leon.nu>
+	<2859567.Mz2G74lSW9@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1322011285-4002-18-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ian Lartey <ian-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dimitris Papastamos <dp-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <2859567.Mz2G74lSW9@fb07-iapwap2>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, broonie@opensource.wolfsonmicro.com, olof@lixom.net, linux-tegra@vger.kernel.org, Andrey Danin <danindrey@mail.ru>, lrg@ti.com
 List-Id: linux-tegra@vger.kernel.org
 
-
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-* Stephen Warren wrote:
-> From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
->=20
-> This driver is parameterized in two ways:
->=20
-> a) Platform data, which supplies a set of GPIOs used by the driver.
->    These GPIOs can now be parsed out of device tree.
->=20
-> b) Machine-specific DAPM route arrays embedded into the ASoC machine
->    driver itself. The driver picks the appropriate array to use using
->    machine_is_*(). This array can now be parsed straight out of device
->    tree, allowing the machine driver to be completely machine agnostic.
->=20
-> swarren applied the following modifications:
-> * Moved all pdata and DT parsing into one place.
-> * Added DAPM route parsing from DT.
-> * Added tegra_pcm device registration.
-> * Documented DT binding.
->=20
-> Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> Signed-off-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../bindings/sound/tegra-audio-wm8903.txt          |   63 +++++++++
->  sound/soc/tegra/tegra_wm8903.c                     |  133 ++++++++++++++=
-++----
->  2 files changed, 171 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/sound/tegra-audio-w=
-m8903.txt
-[...]
-> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm890=
-3.c
-[...]
-> @@ -262,6 +266,83 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runt=
-ime *rtd)
->  		return ret;
->  	}
-> =20
-> +	pdata =3D &machine->pdata;
-> +	np =3D card->dev->of_node;
-> +
-> +	if (card->dev->platform_data) {
-> +		*pdata =3D *(struct tegra_wm8903_platform_data *)
-> +						card->dev->platform_data;
-[...]
-
-Minor nit: perhaps this should use memcpy() instead?
-
-Thierry
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7MnZAACgkQZ+BJyKLjJp9dxgCdFtePtwAxEtmChH93TisJ0WSQ
-E9AAn2rVxl3HtxQmL2r+fPm5h/MqGeuX
-=Tvy/
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+PiBJIHN0aWxsIGRvbid0IHNlZSBob3cgdGhlIGhwIGdwaW8gZGV0ZWN0IGNvbWVzIGluLiBDYW4g
+eW91IGV4cGxhaW4gdGhpcz8KVGhlIGRldGVjdGlvbiBpdHNlbGYgaXMgZG9uZSB2aWEgc29jLWph
+Y2sgaW50ZXJmYWNlLgoKLS0gCkxlb24gUm9tYW5vdnNreSB8IEluZGVwZW5kZW50IExpbnV4IENv
+bnN1bHRhbnQKwqAgwqAgwqAgwqDCoHd3dy5sZW9uLm51wqB8IGxlb25AbGVvbi5udQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxp
+bmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDovL21haWxtYW4uYWxzYS1w
+cm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
