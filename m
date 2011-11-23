@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 12/17] ASoC: Tegra+WM8903 machine: Use devm_ APIs and module_platform_driver
-Date: Tue, 22 Nov 2011 18:21:20 -0700
-Message-ID: <1322011285-4002-13-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 15/17] ASoC: Tegra+WM903 machine: Use new auto_nc_codec_pins feature
+Date: Tue, 22 Nov 2011 18:21:23 -0700
+Message-ID: <1322011285-4002-16-git-send-email-swarren@nvidia.com>
 References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1322011285-4002-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,81 +10,53 @@ To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ian Lartey <ian-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Dimitris Papastamos <dp-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-module_platform_drive saves some boiler-plate code.
-
-The devm_ APIs remove the need to manually clean up allocations,
-thus removing some code.
+Set card.auto_nc_codec_pins to true to enable the feature, and remove all
+the open-coded snd_soc_dapm_nc_pin() calls.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra_wm8903.c |   26 +++++++-------------------
- 1 files changed, 7 insertions(+), 19 deletions(-)
+ sound/soc/tegra/tegra_wm8903.c |   22 +---------------------
+ 1 files changed, 1 insertions(+), 21 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 9b0ee15..33feee8 100644
+index 33feee8..8791c69 100644
 --- a/sound/soc/tegra/tegra_wm8903.c
 +++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -390,17 +390,19 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+@@ -331,27 +331,6 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
  
--	machine = kzalloc(sizeof(struct tegra_wm8903), GFP_KERNEL);
-+	machine = devm_kzalloc(&pdev->dev, sizeof(struct tegra_wm8903),
-+			       GFP_KERNEL);
- 	if (!machine) {
- 		dev_err(&pdev->dev, "Can't allocate tegra_wm8903 struct\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err;
- 	}
+ 	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
  
- 	machine->pdata = pdata;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err_free_machine;
-+		goto err;
- 
- 	card->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, card);
-@@ -431,8 +433,7 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 
- err_fini_utils:
- 	tegra_asoc_utils_fini(&machine->util_data);
--err_free_machine:
--	kfree(machine);
-+err:
- 	return ret;
- }
- 
-@@ -460,8 +461,6 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
- 
- 	tegra_asoc_utils_fini(&machine->util_data);
- 
--	kfree(machine);
+-	/* FIXME: Calculate automatically based on DAPM routes? */
+-	if (!machine_is_harmony())
+-		snd_soc_dapm_nc_pin(dapm, "IN1L");
+-	if (!machine_is_seaboard() && !machine_is_aebl())
+-		snd_soc_dapm_nc_pin(dapm, "IN1R");
+-	snd_soc_dapm_nc_pin(dapm, "IN2L");
+-	if (!machine_is_kaen())
+-		snd_soc_dapm_nc_pin(dapm, "IN2R");
+-	snd_soc_dapm_nc_pin(dapm, "IN3L");
+-	snd_soc_dapm_nc_pin(dapm, "IN3R");
+-
+-	if (machine_is_aebl()) {
+-		snd_soc_dapm_nc_pin(dapm, "LON");
+-		snd_soc_dapm_nc_pin(dapm, "RON");
+-		snd_soc_dapm_nc_pin(dapm, "ROP");
+-		snd_soc_dapm_nc_pin(dapm, "LOP");
+-	} else {
+-		snd_soc_dapm_nc_pin(dapm, "LINEOUTR");
+-		snd_soc_dapm_nc_pin(dapm, "LINEOUTL");
+-	}
 -
  	return 0;
  }
  
-@@ -474,18 +473,7 @@ static struct platform_driver tegra_wm8903_driver = {
- 	.probe = tegra_wm8903_driver_probe,
- 	.remove = __devexit_p(tegra_wm8903_driver_remove),
+@@ -375,6 +354,7 @@ static struct snd_soc_card snd_soc_tegra_wm8903 = {
+ 	.num_controls = ARRAY_SIZE(tegra_wm8903_controls),
+ 	.dapm_widgets = tegra_wm8903_dapm_widgets,
+ 	.num_dapm_widgets = ARRAY_SIZE(tegra_wm8903_dapm_widgets),
++	.auto_nc_codec_pins = true,
  };
--
--static int __init tegra_wm8903_modinit(void)
--{
--	return platform_driver_register(&tegra_wm8903_driver);
--}
--module_init(tegra_wm8903_modinit);
--
--static void __exit tegra_wm8903_modexit(void)
--{
--	platform_driver_unregister(&tegra_wm8903_driver);
--}
--module_exit(tegra_wm8903_modexit);
-+module_platform_driver(tegra_wm8903_driver);
  
- MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("Tegra+WM8903 machine ASoC driver");
+ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
 -- 
 1.7.0.4
