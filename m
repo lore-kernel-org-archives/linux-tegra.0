@@ -1,43 +1,39 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/5] arm/dt: tegra: Remove /memreserve/ from device-treefiles
-Date: Tue, 22 Nov 2011 22:36:34 +0100
-Message-ID: <6361589.UezRydQy0p@ax5200p>
-References: <1321911851-10091-1-git-send-email-swarren@nvidia.com> <2308525.meomQFtUnY@ax5200p> <74CDBE0F657A3D45AFBB94109FB122FF174F08C3BC@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm/tegra: Fix build error with tegra_assert_system_reset
+Date: Tue, 22 Nov 2011 17:53:51 -0700
+Message-ID: <1322009631-711-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C3BC-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 22 November 2011 08:25:03 Stephen Warren wrote:
-> Marc Dietrich wrote at Tuesday, November 22, 2011 3:42 AM:
-> > On Monday 21 November 2011 14:44:07 Stephen Warren wrote:
-> > > There are no drivers in the kernel at present which can make use of
-> > > the
-> > > memory reserved by /memreserve/, so there is no point reserving it.
-> > > Remove /memreserve/ to allow the user more memory. It's also
-> > > unclear whether any future driver would actually require
-> > > /memreserve/, or allocate memory through some other mechanism.
-> > 
-> > while this gives 512 MB of usable memory on my AC100, it causes some
-> > funny pictures on the screen ;-) I guess our bootloader (fastboot)
-> > already setups the frambuffer there (and enables the backlight). I
-> > guess it shouldn't be harmful as nothing else writes to this memory
-> > area. Otherwise you may add that the bootloader (or the kernel cmdline
-> > supplied by the bootloader) is now responsible for the reservation to
-> > the description.
-> 
-> Ah yes, I guess that would happen. I'm only testing with mainline U-Boot...
-> 
-> I'd suggest this is acceptable fallout for now; I don't believe it will
-> cause any active problems, and as you say, you can get the bootloader to
-> set a command-line that excludes the frame-buffer if you want to solve
-> this. Do you agree?
+Build error:
 
-Ok. Hopefully we can also use u-Boot soon.
+error: static declaration of 'tegra_assert_system_reset' follows non-static
+declaration
 
-Marc
+Fix:
+
+Remove the non-static declaration; the function should be local now.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board.h |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 1d14df7..f159577 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -23,8 +23,6 @@
+ 
+ #include <linux/types.h>
+ 
+-void tegra_assert_system_reset(char mode, const char *cmd);
+-
+ void __init tegra_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+-- 
+1.7.0.4
