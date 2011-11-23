@@ -1,58 +1,29 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: Re: [PATCH 07/17] ASoC: Tegra DAS: Use devm_ APIs and
- module_platform_driver
-Date: Wed, 23 Nov 2011 09:29:24 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C6F3@HQMAIL01.nvidia.com>
-References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
-	<1322011285-4002-8-git-send-email-swarren@nvidia.com>
-	<20111123065808.GB5255@avionic-0098.adnet.avionic-design.de>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [alsa-devel] [PATCH] ASoC: Tegra: Add support of tegra boards
+ basedon ALC5632 codec
+Date: Wed, 23 Nov 2011 09:37:37 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174F08C6FF@HQMAIL01.nvidia.com>
+References: <1321906088-29964-1-git-send-email-leon@leon.nu>
+ <2859567.Mz2G74lSW9@fb07-iapwap2>
+ <CALq1K=Ka0JYut22FwovAyAcZSbqcQssjUPrk6rUU0Fq2iOZG_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20111123065808.GB5255@avionic-0098.adnet.avionic-design.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CALq1K=Ka0JYut22FwovAyAcZSbqcQssjUPrk6rUU0Fq2iOZG_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Thierry Reding <thierry.reding@avionic-design.de>, "Mark Brown
-	(broonie@opensource.wolfsonmicro.com)" <broonie@opensource.wolfsonmicro.com>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Liam Girdwood <lrg@ti.com>, Olof Johansson <olof@lixom.net>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Colin Cross <ccross@android.com>, Ian Lartey <ian@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Marc Dietrich <marvin24@gmx.de>, Grant Likely <grant.likely@secretlab.ca>, John Bonesio <bones@secretlab.ca>, Leon@alsa-project.org, Mike Rapoport <mike@compulab.co.il>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Romanovsky <leon@leon.nu>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Tuesday, November 22, 2011 11:58 PM:
-> * Stephen Warren wrote:
-> > module_platform_drive saves some boiler-plate code.
-> >
-> > The devm_ APIs remove the need to manually clean up allocations,
-> > thus removing some code.
-...
-> >  static int __devexit tegra_das_remove(struct platform_device *pdev)
-> >  {
-> > -	struct resource *res;
-> > -
-> >  	if (!das)
-> >  		return -ENODEV;
-> >
-> > -	platform_set_drvdata(pdev, NULL);
-> > -
-> [...]
-> 
-> Setting the driver data to NULL may still be a good idea.
-
-When Mark Brown reviewed the TrimSlice machine driver, he mentioned that
-clearing the drvdata was pointless; nothing should be using it when the
-device is not created.
-
-As background, soon after that, I modified the tegra_wm8903.c machine
-driver along the same lines, but evidently didn't update tegra_das.c
-in a similar way, but would have if I'd been paying attention...
-
--- 
-nvpublic
+TGVvbiBSb21hbm92c2t5IHdyb3RlIGF0IFdlZG5lc2RheSwgTm92ZW1iZXIgMjMsIDIwMTEgMTow
+NSBBTToNCj4gTWFyYyBEaWV0cmljaCB3cm90ZToNCj4gPiBJIHN0aWxsIGRvbid0IHNlZSBob3cg
+dGhlIGhwIGdwaW8gZGV0ZWN0IGNvbWVzIGluLiBDYW4geW91IGV4cGxhaW4gdGhpcz8NCj4NCj4g
+VGhlIGRldGVjdGlvbiBpdHNlbGYgaXMgZG9uZSB2aWEgc29jLWphY2sgaW50ZXJmYWNlLg0KDQpJ
+IHRoaW5rIE1hcmMgd2FudGVkIHRvIGtub3cgaG93IHRoZSBkcml2ZXIga25vd3Mgd2hpY2ggR1BJ
+TyB0byB1c2UsIGFuZA0Kd2hlcmUgaXQgc2V0cyB1cCB1c2Ugb2YgdGhhdCBHUElPLiBUaGUgVGVn
+cmErV004OTAzIG1hY2hpbmUgZHJpdmVyIGRvZXMNCnRoZSBmb2xsb3dpbmcsIHdoaWNoIEkgdGhp
+bmsgaXMgbWlzc2luZyBmcm9tIHRoaXMgZHJpdmVyOg0KDQp0ZWdyYV93bTg5MDNfaHBfamFja19n
+cGlvLmdwaW8gPSBwZGF0YS0+Z3Bpb19ocF9kZXQ7DQoNCihJIGhvcGUgdG8gcmV2aWV3IHlvdXIg
+cGF0Y2ggbXlzZWxmIGxhdGVyIHRvZGF5KQ0KDQotLSANCm52cHVibGljDQoNCg==
