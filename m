@@ -1,73 +1,56 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 06/10] arm/tegra: prepare pinmux code for multiple
- tegra variants
-Date: Wed, 23 Nov 2011 05:22:27 +0200
-Message-ID: <20111123032227.GO19069@tbergstrom-lnx.Nvidia.com>
-References: <1321546766-26770-1-git-send-email-pdeschrijver@nvidia.com>
- <1321546766-26770-7-git-send-email-pdeschrijver@nvidia.com>
- <20111118214116.GC31678@quad.lixom.net>
- <20111121142919.GN19069@tbergstrom-lnx.Nvidia.com>
- <20111122190146.GA31361@quad.lixom.net>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
+Date: Wed, 23 Nov 2011 07:00:12 +0200
+Message-ID: <20111123050012.GS19069@tbergstrom-lnx.Nvidia.com>
+References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
+ <20111118120352.GZ19069@tbergstrom-lnx.Nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63@HQMAIL01.nvidia.com>
+ <20111121122212.GL19069@tbergstrom-lnx.Nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF174F08C0E5@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-doc-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20111122190146.GA31361@quad.lixom.net>
-Sender: linux-doc-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C0E5-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 22, 2011 at 08:01:46PM +0100, Olof Johansson wrote:
-> On Mon, Nov 21, 2011 at 04:29:19PM +0200, Peter De Schrijver wrote:
-> > On Fri, Nov 18, 2011 at 10:41:16PM +0100, Olof Johansson wrote:
-> > > On Thu, Nov 17, 2011 at 06:19:20PM +0200, Peter De Schrijver wrote:
-> > > > This patch modifies the pinmux code to be useable for multiple tegra variants.
-> > > > Some tegra20 specific constants will be replaced by variables which will be
-> > > > initialized to the appropriate value at runtime.
-> > > >
-> > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > > ---
-> > > >  arch/arm/mach-tegra/board-harmony-pcie.c     |    1 +
-> > > >  arch/arm/mach-tegra/board-harmony-pinmux.c   |    1 +
-> > > >  arch/arm/mach-tegra/board-paz00-pinmux.c     |    1 +
-> > > >  arch/arm/mach-tegra/board-trimslice-pinmux.c |    1 +
-> > > >  arch/arm/mach-tegra/include/mach/pinmux.h    |   25 +++----
-> > > >  arch/arm/mach-tegra/pinmux-tegra20-tables.c  |   15 +++-
-> > > >  arch/arm/mach-tegra/pinmux.c                 |  105 ++++++++++++++-----------
-> > > >  7 files changed, 86 insertions(+), 63 deletions(-)
-> > > >
-> > > > diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > > index 6db7d69..bd402d0 100644
-> > > > --- a/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > > +++ b/arch/arm/mach-tegra/board-harmony-pcie.c
-> > > > @@ -23,6 +23,7 @@
-> > > >  #include <asm/mach-types.h>
-> > > >
-> > > >  #include <mach/pinmux.h>
-> > > > +#include <mach/pinmux-tegra20.h>
-> > > 
-> > > Boards shouldn't have to include this. The idea is that you should only
-> > > have to do board code against the pinmux.h interface, which internally
-> > > abstracts it for tegra 20 vs tegra 30.
+> > > But the WM8903 still has the same interrupt-parent as everything else,
+> > > since it's inherited from /interrupt-parent and doesn't define its own.
+> > > Perhaps this is a mistake?
 > > 
-> > The pinmux naming is still SoC specific. Unless we move this to devicetree
-> > (which should be part of a different patchset), I don't see how we can solve
-> > this, except by renaming all the pingroups. That would cause a lot more
-> > changes though.
+> > Yes. I think this is a mistake. If we want the device tree to reflect the
+> > hardware, I think the WM8903 node should specify the GPIO, not the IRQ
+> > number.
 > 
-> If the pinmux naming and numbering is unique per SoC then sharing
-> namespace for them could be a source of confusion. If we need to keep
-> them around much longer, then doing that rename would be a good idea. But
-> we can do that separately from this change. So the include change is ok
-> for now.
+> Hmm. This somewhat goes back to the previous irq_to_gpio discussion...
 > 
-> My other comments about the code changes still stands though, so please
-> address those.
+> The WM8903 driver only cares about having an interrupt. In this case at
+> least, the driver never performs any GPIO-like manipulation on this
+> interrupt line. As such, shouldn't the driver receive the interrupt ID
+> to use?
 > 
 
-I'm working on those. I'm on a businesstrip now, so things might go a bit
-slower.
+Maybe it should then. I guess also edge vs level and polarity need to be
+specified?
+
+> The rationale here is that while the WM8903's interrupt output is hooked
+> to a GPIO input on Tegra systems, there's no reason to believe that it
+> couldn't be hooked to a dedicated interrupt input pin on some other SoC
+> (i.e. not a GPIO). In that case, there'd be no GPIO to pass to the driver.
+> 
+> Now perhaps what this means is that we need a DT binding for "the IRQ
+> generated by this given GPIO pin", rather than encoding that interrupt
+> number into the WM8903 node directly? That's certainly exactly what we
+> do when creating the platform data in board files in this case.
+
+I think we need to model the GPIO IRQs as a seperate interrupt controller.
+That way the WM8903 node can refer to the GPIO IRQ as an IRQ without
+hardcoding the global interrupt number, similar to the way we specify the
+SPI number in the device nodes and not the global interrupt number.
 
 Cheers,
 
