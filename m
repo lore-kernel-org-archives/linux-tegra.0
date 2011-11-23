@@ -1,164 +1,176 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/3] ASoC: Implement fully_routed card property
-Date: Wed, 23 Nov 2011 12:42:04 -0700
-Message-ID: <1322077326-5538-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2] ASoC: Tegra I2S: Remove dependency on pdev->id
+Date: Wed, 23 Nov 2011 13:33:25 -0700
+Message-ID: <1322080405-22281-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A card is fully routed if the DAPM route table describes all connections on
-the board.
+When devices are instantiated from device-tree, pdev->id is set to -1.
+Rework the driver so it doesn't depend on the ID.
 
-When a card is fully routed, some operations can be automated by the ASoC
-core. The first, and currently only, such operation is described below, and
-implemented by this patch.
+Tegra I2S instantiated from board files are configured with pdev
+name "tegra-i2s" and ID 0 or 1. The driver core then names the
+device "tegra-i2s.0" or "tegra-i2s.1". This is not changing.
 
-Codecs often have a large number of external pins, and not all of these pins
-will be connected on all board designs. Some machine drivers therefore call
-snd_soc_dapm_nc_pin() for all the unused pins, in order to tell the ASoC core
-never to activate them.
+When a device is instantiated from device-tree, it will have
+pdev->name="" and pdev->id=-1. For this reason, the pdev->id value is
+not something we can rely on.
 
-However, when a card is fully routed, the information needed to derive the
-set of unused pins is present in card->dapm_routes. In this case, have
-the ASoC core automatically call snd_soc_dapm_nc_pin() for each unused
-codec pin.
+This patch doesn't actually change any names though:
 
-This has been tested with soc/tegra/tegra_wm8903.c and soc/tegra/trimslice.c.
+When a device is instantiated from device-tree, the overall device name
+will be "${unit_address}.${node_name}". This causes issues such as
+clk_get() failures due to lack of a device-name match. To solve that,
+AUXDATA was invented, to force a specific device name, thus allowing
+dev_name() to return the same as the non-device-tree case. Tegra
+currently uses AUXDATA for the I2S controllers. Eventually, AUXDATA will
+go away, most likely replaced by phandle-based references within the
+device tree.
 
-v2: Rename flag from auto_nc_pins to fully_routed. Adjust description.
+v2:
+* Use dev_name(&pdev->dev) instead of pdev->name.
+* Expand commit description.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/sound/soc-dapm.h |    1 +
- include/sound/soc.h      |    1 +
- sound/soc/soc-core.c     |    4 ++
- sound/soc/soc-dapm.c     |   73 ++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 79 insertions(+), 0 deletions(-)
+ sound/soc/tegra/tegra_i2s.c |   72 ++++++++++++++-----------------------------
+ sound/soc/tegra/tegra_i2s.h |    1 +
+ 2 files changed, 24 insertions(+), 49 deletions(-)
 
-diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
-index 17a4c17..0c159a7 100644
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -380,6 +380,7 @@ int snd_soc_dapm_force_enable_pin(struct snd_soc_dapm_context *dapm,
- 				  const char *pin);
- int snd_soc_dapm_ignore_suspend(struct snd_soc_dapm_context *dapm,
- 				const char *pin);
-+void snd_soc_dapm_auto_nc_codec_pins(struct snd_soc_codec *codec);
+diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
+index 76014f0..59cd63b 100644
+--- a/sound/soc/tegra/tegra_i2s.c
++++ b/sound/soc/tegra/tegra_i2s.c
+@@ -98,13 +98,11 @@ static const struct file_operations tegra_i2s_debug_fops = {
+ 	.release = single_release,
+ };
  
- /* Mostly internal - should not normally be used */
- void dapm_mark_dirty(struct snd_soc_dapm_widget *w, const char *reason);
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index b21b304..737a4f4 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -815,6 +815,7 @@ struct snd_soc_card {
- 	int num_dapm_widgets;
- 	const struct snd_soc_dapm_route *dapm_routes;
- 	int num_dapm_routes;
-+	bool fully_routed;
- 
- 	struct work_struct deferred_resume_work;
- 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index a5d3685..15f29d3 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1482,6 +1482,10 @@ static void snd_soc_instantiate_card(struct snd_soc_card *card)
- 
- 	snd_soc_dapm_new_widgets(&card->dapm);
- 
-+	if (card->fully_routed)
-+		list_for_each_entry(codec, &codec_list, list)
-+			snd_soc_dapm_auto_nc_codec_pins(codec);
-+
- 	ret = snd_card_register(card->snd_card);
- 	if (ret < 0) {
- 		printk(KERN_ERR "asoc: failed to register soundcard for %s\n", card->name);
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index f42e8b9..1ecd1b4 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2947,6 +2947,79 @@ int snd_soc_dapm_ignore_suspend(struct snd_soc_dapm_context *dapm,
+-static void tegra_i2s_debug_add(struct tegra_i2s *i2s, int id)
++static void tegra_i2s_debug_add(struct tegra_i2s *i2s)
+ {
+-	char name[] = DRV_NAME ".0";
+-
+-	snprintf(name, sizeof(name), DRV_NAME".%1d", id);
+-	i2s->debug = debugfs_create_file(name, S_IRUGO, snd_soc_debugfs_root,
+-						i2s, &tegra_i2s_debug_fops);
++	i2s->debug = debugfs_create_file(i2s->dai.name, S_IRUGO,
++					 snd_soc_debugfs_root, i2s,
++					 &tegra_i2s_debug_fops);
  }
- EXPORT_SYMBOL_GPL(snd_soc_dapm_ignore_suspend);
  
-+static bool snd_soc_dapm_widget_in_card_paths(struct snd_soc_card *card,
-+					      struct snd_soc_dapm_widget *w)
-+{
-+	struct snd_soc_dapm_path *p;
+ static void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
+@@ -311,43 +309,22 @@ static struct snd_soc_dai_ops tegra_i2s_dai_ops = {
+ 	.trigger	= tegra_i2s_trigger,
+ };
+ 
+-static struct snd_soc_dai_driver tegra_i2s_dai[] = {
+-	{
+-		.name = DRV_NAME ".0",
+-		.probe = tegra_i2s_probe,
+-		.playback = {
+-			.channels_min = 2,
+-			.channels_max = 2,
+-			.rates = SNDRV_PCM_RATE_8000_96000,
+-			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+-		},
+-		.capture = {
+-			.channels_min = 2,
+-			.channels_max = 2,
+-			.rates = SNDRV_PCM_RATE_8000_96000,
+-			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+-		},
+-		.ops = &tegra_i2s_dai_ops,
+-		.symmetric_rates = 1,
++static const struct snd_soc_dai_driver tegra_i2s_dai_template = {
++	.probe = tegra_i2s_probe,
++	.playback = {
++		.channels_min = 2,
++		.channels_max = 2,
++		.rates = SNDRV_PCM_RATE_8000_96000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+-	{
+-		.name = DRV_NAME ".1",
+-		.probe = tegra_i2s_probe,
+-		.playback = {
+-			.channels_min = 2,
+-			.channels_max = 2,
+-			.rates = SNDRV_PCM_RATE_8000_96000,
+-			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+-		},
+-		.capture = {
+-			.channels_min = 2,
+-			.channels_max = 2,
+-			.rates = SNDRV_PCM_RATE_8000_96000,
+-			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+-		},
+-		.ops = &tegra_i2s_dai_ops,
+-		.symmetric_rates = 1,
++	.capture = {
++		.channels_min = 2,
++		.channels_max = 2,
++		.rates = SNDRV_PCM_RATE_8000_96000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
++	.ops = &tegra_i2s_dai_ops,
++	.symmetric_rates = 1,
+ };
+ 
+ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+@@ -356,12 +333,6 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+ 	struct resource *mem, *memregion, *dmareq;
+ 	int ret;
+ 
+-	if ((pdev->id < 0) ||
+-		(pdev->id >= ARRAY_SIZE(tegra_i2s_dai))) {
+-		dev_err(&pdev->dev, "ID %d out of range\n", pdev->id);
+-		return -EINVAL;
+-	}
+-
+ 	i2s = devm_kzalloc(&pdev->dev, sizeof(struct tegra_i2s), GFP_KERNEL);
+ 	if (!i2s) {
+ 		dev_err(&pdev->dev, "Can't allocate tegra_i2s\n");
+@@ -370,6 +341,9 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+ 	}
+ 	dev_set_drvdata(&pdev->dev, i2s);
+ 
++	i2s->dai = tegra_i2s_dai_template;
++	i2s->dai.name = dev_name(&pdev->dev);
 +
-+	list_for_each_entry(p, &card->paths, list) {
-+		if ((p->source == w) || (p->sink == w)) {
-+			dev_dbg(card->dev,
-+			    "... Path %s(id:%d dapm:%p) - %s(id:%d dapm:%p)\n",
-+			    p->source->name, p->source->id, p->source->dapm,
-+			    p->sink->name, p->sink->id, p->sink->dapm);
-+
-+			/* Connected to something other than the codec */
-+			if (p->source->dapm != p->sink->dapm)
-+				return true;
-+			/*
-+			 * Loopback connection from codec external pin to
-+			 * codec external pin
-+			 */
-+			if (p->sink->id == snd_soc_dapm_input) {
-+				switch (p->source->id) {
-+				case snd_soc_dapm_output:
-+				case snd_soc_dapm_micbias:
-+					return true;
-+				default:
-+					break;
-+				}
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ * snd_soc_dapm_auto_nc_codec_pins - call snd_soc_dapm_nc_pin for unused pins
-+ * @codec: The codec whose pins should be processed
-+ *
-+ * Automatically call snd_soc_dapm_nc_pin() for any external pins in the codec
-+ * which are unused. Pins are used if they are connected externally to the
-+ * codec, whether that be to some other device, or a loop-back connection to
-+ * the codec itself.
-+ */
-+void snd_soc_dapm_auto_nc_codec_pins(struct snd_soc_codec *codec)
-+{
-+	struct snd_soc_card *card = codec->card;
-+	struct snd_soc_dapm_context *dapm = &codec->dapm;
-+	struct snd_soc_dapm_widget *w;
-+
-+	dev_dbg(card->dev, "Auto NC: DAPMs: card:%p codec:%p\n",
-+		&card->dapm, &codec->dapm);
-+
-+	list_for_each_entry(w, &card->widgets, list) {
-+		if (w->dapm != dapm)
-+			continue;
-+		switch (w->id) {
-+		case snd_soc_dapm_input:
-+		case snd_soc_dapm_output:
-+		case snd_soc_dapm_micbias:
-+			dev_dbg(card->dev, "Auto NC: Checking widget %s\n",
-+				w->name);
-+			if (!snd_soc_dapm_widget_in_card_paths(card, w)) {
-+				dev_dbg(card->dev,
-+					"... Not in map; disabling\n");
-+				snd_soc_dapm_nc_pin(dapm, w->name);
-+			}
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+}
-+
- /**
-  * snd_soc_dapm_free - free dapm resources
-  * @dapm: DAPM context
+ 	i2s->clk_i2s = clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(i2s->clk_i2s)) {
+ 		dev_err(&pdev->dev, "Can't retrieve i2s clock\n");
+@@ -418,14 +392,14 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+ 
+ 	i2s->reg_ctrl = TEGRA_I2S_CTRL_FIFO_FORMAT_PACKED;
+ 
+-	ret = snd_soc_register_dai(&pdev->dev, &tegra_i2s_dai[pdev->id]);
++	ret = snd_soc_register_dai(&pdev->dev, &i2s->dai);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
+ 		ret = -ENOMEM;
+ 		goto err_clk_put;
+ 	}
+ 
+-	tegra_i2s_debug_add(i2s, pdev->id);
++	tegra_i2s_debug_add(i2s);
+ 
+ 	return 0;
+ 
+diff --git a/sound/soc/tegra/tegra_i2s.h b/sound/soc/tegra/tegra_i2s.h
+index 2b38a09..15ce1e2 100644
+--- a/sound/soc/tegra/tegra_i2s.h
++++ b/sound/soc/tegra/tegra_i2s.h
+@@ -153,6 +153,7 @@
+ #define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_TWELVE_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+ 
+ struct tegra_i2s {
++	struct snd_soc_dai_driver dai;
+ 	struct clk *clk_i2s;
+ 	int clk_refs;
+ 	struct tegra_pcm_dma_params capture_dma_data;
 -- 
 1.7.0.4
