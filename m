@@ -1,57 +1,101 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Wed, 23 Nov 2011 07:00:12 +0200
-Message-ID: <20111123050012.GS19069@tbergstrom-lnx.Nvidia.com>
-References: <1321542430-17971-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74C1E@HQMAIL01.nvidia.com>
- <20111118120352.GZ19069@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1740D74E63@HQMAIL01.nvidia.com>
- <20111121122212.GL19069@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF174F08C0E5@HQMAIL01.nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH 07/17] ASoC: Tegra DAS: Use devm_ APIs and
+ module_platform_driver
+Date: Wed, 23 Nov 2011 07:58:08 +0100
+Message-ID: <20111123065808.GB5255@avionic-0098.adnet.avionic-design.de>
+References: <1322011285-4002-1-git-send-email-swarren@nvidia.com>
+	<1322011285-4002-8-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C0E5-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============6605898982696531818=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1322011285-4002-8-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, alsa-devel@alsa-project.org, Mike Rapoport <mike@compulab.co.il>, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Ian Lartey <ian@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Marc Dietrich <marvin24@gmx.de>, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, John Bonesio <bones@secretlab.ca>, Leon Romanovsky <leon@leon.nu>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-> > > But the WM8903 still has the same interrupt-parent as everything else,
-> > > since it's inherited from /interrupt-parent and doesn't define its own.
-> > > Perhaps this is a mistake?
-> > 
-> > Yes. I think this is a mistake. If we want the device tree to reflect the
-> > hardware, I think the WM8903 node should specify the GPIO, not the IRQ
-> > number.
-> 
-> Hmm. This somewhat goes back to the previous irq_to_gpio discussion...
-> 
-> The WM8903 driver only cares about having an interrupt. In this case at
-> least, the driver never performs any GPIO-like manipulation on this
-> interrupt line. As such, shouldn't the driver receive the interrupt ID
-> to use?
-> 
 
-Maybe it should then. I guess also edge vs level and polarity need to be
-specified?
+--===============6605898982696531818==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Disposition: inline
 
-> The rationale here is that while the WM8903's interrupt output is hooked
-> to a GPIO input on Tegra systems, there's no reason to believe that it
-> couldn't be hooked to a dedicated interrupt input pin on some other SoC
-> (i.e. not a GPIO). In that case, there'd be no GPIO to pass to the driver.
-> 
-> Now perhaps what this means is that we need a DT binding for "the IRQ
-> generated by this given GPIO pin", rather than encoding that interrupt
-> number into the WM8903 node directly? That's certainly exactly what we
-> do when creating the platform data in board files in this case.
 
-I think we need to model the GPIO IRQs as a seperate interrupt controller.
-That way the WM8903 node can refer to the GPIO IRQ as an IRQ without
-hardcoding the global interrupt number, similar to the way we specify the
-SPI number in the device nodes and not the global interrupt number.
+--NDin8bjvE/0mNLFQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
+* Stephen Warren wrote:
+> module_platform_drive saves some boiler-plate code.
+>=20
+> The devm_ APIs remove the need to manually clean up allocations,
+> thus removing some code.
+>=20
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+>  sound/soc/tegra/tegra_das.c |   45 +++++++++----------------------------=
+-----
+>  1 files changed, 10 insertions(+), 35 deletions(-)
+>=20
+> diff --git a/sound/soc/tegra/tegra_das.c b/sound/soc/tegra/tegra_das.c
+[...]
+> @@ -208,32 +208,18 @@ static int __devinit tegra_das_probe(struct platfor=
+m_device *pdev)
+> =20
+>  	return 0;
+> =20
+> -err_release:
+> -	release_mem_region(res->start, resource_size(res));
+> -err_free:
+> -	kfree(das);
+> +err:
+>  	das =3D NULL;
+> -exit:
+>  	return ret;
+>  }
+> =20
+>  static int __devexit tegra_das_remove(struct platform_device *pdev)
+>  {
+> -	struct resource *res;
+> -
+>  	if (!das)
+>  		return -ENODEV;
+> =20
+> -	platform_set_drvdata(pdev, NULL);
+> -
+[...]
 
-Peter.
+Setting the driver data to NULL may still be a good idea.
+
+Thierry
+
+--NDin8bjvE/0mNLFQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk7MmYAACgkQZ+BJyKLjJp+lzwCeJ0lRsbhIll0W3N0LcNKzd7+7
+aU8AoJKpCetUwA1nE3YBtmlwjJdwuVvS
+=yZYj
+-----END PGP SIGNATURE-----
+
+--NDin8bjvE/0mNLFQ--
+
+--===============6605898982696531818==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6605898982696531818==--
