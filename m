@@ -1,51 +1,139 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: PCIe MSI support
-Date: Thu, 24 Nov 2011 20:57:04 +0100
-Message-ID: <20111124195704.GA15417@avionic-0098.adnet.avionic-design.de>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] arm/tegra: Fix build error with
+	tegra_assert_system_reset
+Date: Thu, 24 Nov 2011 20:34:43 +0000
+Message-ID: <20111124203443.GU9581@n2100.arm.linux.org.uk>
+References: <1322009631-711-1-git-send-email-swarren@nvidia.com> <20111123095009.GG9581@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF174F08C6CC@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C6CC-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Nov 23, 2011 at 08:59:48AM -0800, Stephen Warren wrote:
+> OK, I tested that and it works too.
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Great.  Here's the final patch - could I have an ack for it please?
 
-Hi,
+Thanks.
 
-I was wondering whether anyone had gotten MSI to work with Tegra2? The code
-in arch/arm/mach-tegra/pcie.c has some comments saying that it currently
-isn't supported.
+8<======
+ARM: restart: tegra: use new restart hook
 
-Looking through the Tegra2 TRM didn't show much related to MSI. In particular
-there doesn't seem to be any mention of the AFI controller or any of it's
-registers (except of how to enable/disable the AFI clock or reset the
-controller).
+Hook these platforms restart code into the new restart hook rather
+than using arch_reset().
 
-Furthermore I wasn't able to get PCIe to work on Harmony with a mainline
-kernel. Is something missing or am I just doing something wrong? I can make
-it work with the Vibrante kernel, but that doesn't have MSI support either.
-Since we're looking at designing an evaluation board with PCIe support I'm
-very interested in seeing this supported in mainline. If there's anything I
-can do to help, please let me know. Also if anyone can provide more insight
-than the TRM, that would be great.
+Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt.c            |    1 +
+ arch/arm/mach-tegra/board-harmony.c       |    1 +
+ arch/arm/mach-tegra/board-paz00.c         |    1 +
+ arch/arm/mach-tegra/board-seaboard.c      |    3 +++
+ arch/arm/mach-tegra/board-trimslice.c     |    1 +
+ arch/arm/mach-tegra/common.c              |    2 --
+ arch/arm/mach-tegra/include/mach/system.h |    6 +++---
+ 7 files changed, 10 insertions(+), 5 deletions(-)
 
-Thierry
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7OoZAACgkQZ+BJyKLjJp8TNACcDXPDMP/EG1+/EDx1CUgHW9P0
-hoUAn3/dEmdzcEnIp5C4kk5gg3eaqd54
-=KZ/Q
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index d368f8d..a00713c 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -131,5 +131,6 @@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegra (Flattened Device Tree)")
+ 	.init_irq	= tegra_init_irq,
+ 	.timer		= &tegra_timer,
+ 	.init_machine	= tegra_dt_init,
++	.restart	= tegra_assert_system_reset,
+ 	.dt_compat	= tegra_dt_board_compat,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index f0bdc5e..7eaa52d 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -189,4 +189,5 @@ MACHINE_START(HARMONY, "harmony")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_harmony_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index 55c55ba..28c97e3 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -192,4 +192,5 @@ MACHINE_START(PAZ00, "Toshiba AC100 / Dynabook AZ")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_paz00_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index bf13ea3..9b2eca1 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -286,6 +286,7 @@ MACHINE_START(SEABOARD, "seaboard")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_seaboard_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+ 
+ MACHINE_START(KAEN, "kaen")
+@@ -295,6 +296,7 @@ MACHINE_START(KAEN, "kaen")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_kaen_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+ 
+ MACHINE_START(WARIO, "wario")
+@@ -304,4 +306,5 @@ MACHINE_START(WARIO, "wario")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_wario_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
+index 1a6617b..1fa9e48 100644
+--- a/arch/arm/mach-tegra/board-trimslice.c
++++ b/arch/arm/mach-tegra/board-trimslice.c
+@@ -178,4 +178,5 @@ MACHINE_START(TRIMSLICE, "trimslice")
+ 	.init_irq       = tegra_init_irq,
+ 	.timer          = &tegra_timer,
+ 	.init_machine   = tegra_trimslice_init,
++	.restart	= tegra_assert_system_reset,
+ MACHINE_END
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 690b888..20f396d 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -31,8 +31,6 @@
+ #include "clock.h"
+ #include "fuse.h"
+ 
+-void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
+-
+ void tegra_assert_system_reset(char mode, const char *cmd)
+ {
+ 	void __iomem *reset = IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
+diff --git a/arch/arm/mach-tegra/include/mach/system.h b/arch/arm/mach-tegra/include/mach/system.h
+index 027c421..b87b8a4 100644
+--- a/arch/arm/mach-tegra/include/mach/system.h
++++ b/arch/arm/mach-tegra/include/mach/system.h
+@@ -21,9 +21,9 @@
+ #ifndef __MACH_TEGRA_SYSTEM_H
+ #define __MACH_TEGRA_SYSTEM_H
+ 
+-#include <mach/iomap.h>
+-
+-extern void (*arch_reset)(char mode, const char *cmd);
++static inline void arch_reset(char mode, const char *cmd)
++{
++}
+ 
+ static inline void arch_idle(void)
+ {
+-- 
+1.7.4.4
