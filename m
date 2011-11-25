@@ -1,59 +1,91 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: PCIe MSI support
-Date: Thu, 24 Nov 2011 14:42:45 -0800
-Message-ID: <CAOesGMjDFsAvvUg8tMt+MbwODVoz3SmW0gqcRsCdD_Zhcz5p4Q@mail.gmail.com>
-References: <20111124195704.GA15417@avionic-0098.adnet.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: GPIO/IRQ expander cannot map interrupt
+Date: Fri, 25 Nov 2011 11:45:11 +0100
+Message-ID: <20111125104511.GA16748@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111124195704.GA15417-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
 Hi,
 
-On Thu, Nov 24, 2011 at 11:57 AM, Thierry Reding
-<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> Hi,
->
-> I was wondering whether anyone had gotten MSI to work with Tegra2? The code
-> in arch/arm/mach-tegra/pcie.c has some comments saying that it currently
-> isn't supported.
->
-> Looking through the Tegra2 TRM didn't show much related to MSI. In particular
-> there doesn't seem to be any mention of the AFI controller or any of it's
-> registers (except of how to enable/disable the AFI clock or reset the
-> controller).
->
-> Furthermore I wasn't able to get PCIe to work on Harmony with a mainline
-> kernel. Is something missing or am I just doing something wrong?
+The following is an extract from a device tree of a Tegra2-based board I'm
+working on:
 
-I think there might be an issue with regulator setup for pci-e, I got
-a vague bug report off-list from someone about it but I'm normally not
-using devices with pci-e on them myself.
+	i2c@7000c000 {
+		clock-frequency = <400000>;
 
-Note that trimslice does enable pci-e, so you can use that for comparison.
+		keypad1: sx8634@2b {
+			compatible = "sx8634";
+			reg = <0x2b>;
+			interrupt-parent = <&gpioext>;
+			interrupts = <2>;
+		};
 
-> I can make
-> it work with the Vibrante kernel, but that doesn't have MSI support either.
-> Since we're looking at designing an evaluation board with PCIe support I'm
-> very interested in seeing this supported in mainline. If there's anything I
-> can do to help, please let me know. Also if anyone can provide more insight
-> than the TRM, that would be great.
+		gpioext: gpio-ad8p@41 {
+			compatible = "gpio-ad8p";
+			reg = <0x41>;
+			interrupts = <320>; /* gpio PU0 */
 
-I have no idea if MSI is supported or not. You are aware of the errata
-list for PCI-e on Tegra though, right? You might want to consider the
-implications of said problems before you decide to use PCI-e on a
-product.
+			gpio-controller;
+			#gpio-cells = <2>;
 
-On more MSI details; I suggest you try to get access to internal
-information through your Nvidia FAE -- I don't have any more
-information on it than you do but if I wanted to find out that is the
-route I would take myself.
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+	};
 
+	i2c@7000c400 {
+		clock-frequency = <400000>;
 
-Regards,
+		keypad2: sx8634@2b {
+			compatible = "sx8634";
+			reg = <0x2b>;
+			interrupt-parent = <&gpioext>;
+			interrupts = <3>;
+		};
+	};
 
--Olof
+So basically I have a GPIO/IRQ expander on the first I2C bus (gpioext) to
+which the two keypad (sx8634) chips are connected. They use GPIOs 2 and 3 of
+the expander as interrupts.
+
+This all seems to work partially: the gpioext is properly detected as parent
+for both keypad controllers during I2C device registration. Within the
+gpio-ad8p driver I register an IRQ domain (using irq_domain_add_simple()) in
+order to allow the OF code to properly map the IRQs for the controller's
+children.
+
+The problem, however, is that the keypad I2C devices are registered before the
+gpioext device is probed, which results in a situation where the IRQs cannot
+be mapped because the gpioext device hasn't had a chance to register the IRQ
+domain yet.
+
+Is there anything I can do to make this work? Perhaps the OF code needs to be
+patched to ensure that devices which have the gpio-/interrupt-controller
+properties are always probed before other devices are registered?
+
+Thierry
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk7PcbcACgkQZ+BJyKLjJp8dlACfUg0vcFqATN5FiAzTyJphmFpO
+/mQAnRHSjeSDNkyWq48pY7m8OHmmysKK
+=GD9P
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
