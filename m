@@ -1,91 +1,87 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: GPIO/IRQ expander cannot map interrupt
-Date: Fri, 25 Nov 2011 11:45:11 +0100
-Message-ID: <20111125104511.GA16748@avionic-0098.adnet.avionic-design.de>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: DT DMA channel binding for Tegra I2S
+Date: Fri, 25 Nov 2011 09:55:23 -0600
+Message-ID: <CAL_JsqLk=ExaPoy9f3CqEthjZsu7CVmAwcckpk5PyJA-NhMGVA@mail.gmail.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF174F08C803@HQMAIL01.nvidia.com>
+	<4ECD6BA4.1010607@gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF174F08C881@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C881-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Mark Brown (broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org)" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/23/2011 05:26 PM, Stephen Warren wrote:
+> Rob Herring wrote at Wednesday, November 23, 2011 2:55 PM:
+>> On 11/23/2011 03:25 PM, Stephen Warren wrote:
+>>> Rob, Grant,
+>>>
+>>> Re: http://www.spinics.net/lists/arm-kernel/msg148899.html
+>>>
+>>> Background: Tegra's DMA controller needs to be told which DMA "request
+>>> select" to use for each transfer. The identifies which peripheral to
+>>> transfer to/from.
+>>>
+>>> The Tegra I2S driver needs to know its own "request select" value to
+>>> pass to the audio driver DMA path. The board files typically provide
+>>> this to the driver as an IORESOURCE_DMA. I don't think there's any
+>>> standard binding that creates such a resource when instantiating a
+>>> platform device from device tree, and the discussions I found when
+>>> looking for one didn't seem to reach conclusion that there should be
+>>> one. So, I proposed the following property in the I2S driver's DT
+>>> binding for this:
+>>
+>> I think this is a case of every platform being different and
+>> IORESOURCE_DMA is not too widely used. Even on PPC, there's not a
+>> standard way.
+>>
+>>> Doc:
+>>>
+>>> - dma-channel : The Tegra DMA controller's channel ID for this I2S controller
+>>>
+>>> Example:
+>>>
+>>> i2s@70002800 {
+>>> 	compatible = "nvidia,tegra20-i2s";
+>>> 	reg = <0x70002800 0x200>;
+>>> 	interrupts = < 45 >;
+>>> 	dma-channel = < 2 >;
+>>> };
+>>>
+>>> Does that look reasonable? Or, should I pursue some more standardized
+>>> solution?
+>>
+>> I had some discussion with Thomas Abraham about this for the pl330 dma:
+>>
+>> http://lists.ozlabs.org/pipermail/devicetree-discuss/2011-September/008269.html
+>>
+>> So I would just add a phandle to the dma controller here.
+>
+> So you mean just modify the binding as follows:
+>
+> apbdma: dma@NNNNN { ... };
+>
+> i2s@70002800 {
+> 	dma-channel = < &apbdma, 2 >;
+> };
+>
+> ... and leave the code I quoted as-is?
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Right.
 
-Hi,
+Although, I think you are possibly missing some other properties for
+i2s mode like word size and master/slave mode. I think the ideal case
+is that a single ASoC platform driver for DT could handle multiple
+SoCs.
 
-The following is an extract from a device tree of a Tegra2-based board I'm
-working on:
+>
+> I /think/ the rest of the patch you linked isn't really relevant to Tegra
+> at present, since it isn't ported to the DMA engine (yet?).
+>
 
-	i2c@7000c000 {
-		clock-frequency = <400000>;
+Yes, of course..
 
-		keypad1: sx8634@2b {
-			compatible = "sx8634";
-			reg = <0x2b>;
-			interrupt-parent = <&gpioext>;
-			interrupts = <2>;
-		};
-
-		gpioext: gpio-ad8p@41 {
-			compatible = "gpio-ad8p";
-			reg = <0x41>;
-			interrupts = <320>; /* gpio PU0 */
-
-			gpio-controller;
-			#gpio-cells = <2>;
-
-			interrupt-controller;
-			#interrupt-cells = <1>;
-		};
-	};
-
-	i2c@7000c400 {
-		clock-frequency = <400000>;
-
-		keypad2: sx8634@2b {
-			compatible = "sx8634";
-			reg = <0x2b>;
-			interrupt-parent = <&gpioext>;
-			interrupts = <3>;
-		};
-	};
-
-So basically I have a GPIO/IRQ expander on the first I2C bus (gpioext) to
-which the two keypad (sx8634) chips are connected. They use GPIOs 2 and 3 of
-the expander as interrupts.
-
-This all seems to work partially: the gpioext is properly detected as parent
-for both keypad controllers during I2C device registration. Within the
-gpio-ad8p driver I register an IRQ domain (using irq_domain_add_simple()) in
-order to allow the OF code to properly map the IRQs for the controller's
-children.
-
-The problem, however, is that the keypad I2C devices are registered before the
-gpioext device is probed, which results in a situation where the IRQs cannot
-be mapped because the gpioext device hasn't had a chance to register the IRQ
-domain yet.
-
-Is there anything I can do to make this work? Perhaps the OF code needs to be
-patched to ensure that devices which have the gpio-/interrupt-controller
-properties are always probed before other devices are registered?
-
-Thierry
-
---SLDf9lqlvOQaIe6s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7PcbcACgkQZ+BJyKLjJp8dlACfUg0vcFqATN5FiAzTyJphmFpO
-/mQAnRHSjeSDNkyWq48pY7m8OHmmysKK
-=GD9P
------END PGP SIGNATURE-----
-
---SLDf9lqlvOQaIe6s--
+Rob
