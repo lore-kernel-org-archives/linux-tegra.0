@@ -1,51 +1,52 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: DT DMA channel binding for Tegra I2S
-Date: Sat, 26 Nov 2011 22:07:01 -0600
-Message-ID: <4ED1B765.9070107@gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF174F08C803@HQMAIL01.nvidia.com> <4ECD6BA4.1010607@gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF174F08C881@HQMAIL01.nvidia.com> <CAL_JsqLk=ExaPoy9f3CqEthjZsu7CVmAwcckpk5PyJA-NhMGVA@mail.gmail.com> <20111125160908.GF5315@opensource.wolfsonmicro.com>
+From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: Tegra: Add support of tegra boards
+ basedon ALC5632 codec
+Date: Sun, 27 Nov 2011 10:37:43 +0200
+Message-ID: <CALq1K=L0BsMixa0DoPiA49th_aF0UiuxjZ8_MwjiNR4x5UJTqg@mail.gmail.com>
+References: <1321906088-29964-1-git-send-email-leon@leon.nu>
+ <2859567.Mz2G74lSW9@fb07-iapwap2> <CALq1K=Ka0JYut22FwovAyAcZSbqcQssjUPrk6rUU0Fq2iOZG_g@mail.gmail.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF174F08C6FF@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111125160908.GF5315-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C6FF-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark,
+On Wed, Nov 23, 2011 at 19:37, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrot=
+e:
+> Leon Romanovsky wrote at Wednesday, November 23, 2011 1:05 AM:
+>> Marc Dietrich wrote:
+>> > I still don't see how the hp gpio detect comes in. Can you explain=
+ this?
+>>
+>> The detection itself is done via soc-jack interface.
+>
+> I think Marc wanted to know how the driver knows which GPIO to use, a=
+nd
+> where it sets up use of that GPIO. The Tegra+WM8903 machine driver do=
+es
+> the following, which I think is missing from this driver:
+I removed it from our code before patch, because it didn't work as
+expected. There is no reason to push the non-working parts.
+Our main reason of this merge is to receive guidance from community on
+"correct" way of implementing.
 
-On 11/25/2011 10:09 AM, Mark Brown wrote:
-> On Fri, Nov 25, 2011 at 09:55:23AM -0600, Rob Herring wrote:
-> 
->> Although, I think you are possibly missing some other properties for
->> i2s mode like word size and master/slave mode. I think the ideal case
->> is that a single ASoC platform driver for DT could handle multiple
->> SoCs.
-> 
-> No.  You're not going to be able to get a single binding which handles
-> the setup for all systems based off a given SoC let alone multiple SoCs.
-> It is possible to come up with some subsets which work over multiple
-> boards but that's going to be outside the binding for the I2S controller
-> and in a board audio hardware binding for the subset.
+>
+> tegra_wm8903_hp_jack_gpio.gpio =3D pdata->gpio_hp_det;
+>
+> (I hope to review your patch myself later today)
+>
+> --
+> nvpublic
+>
+>
 
-I never said a single binding. Part of device tree is describing how
-devices are connected together which is a large part of the audio
-configuration. Whether there's one common driver or not doesn't really
-matter. The important part right now is to define the bindings and do so
-in a common way where possible.
 
-My original point really was that when defining a binding, it should be
-as complete as possible rather than done incrementally over time. You
-are describing the h/w, and that's not changing. For an i2s block, only
-having a dma channel is definitely not complete.
 
-> This has been discussed repeatedly, we really need to work out how to
-> educate device tree people about this stuff, it gets *very* repetitive
-> having the discussion over and over again.
-
-As you might guess, audio is not an area I have been spending time on
-recently. Perhaps seeing a complete binding with all the pieces (codec,
-i2s, misc gpio's, etc.) would help educate us.
-
-Rob
+--=20
+Leon Romanovsky | Independent Linux Consultant
+=C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0www.leon.nu=C2=A0| leon-2ukJVAZIZ/Y@public.gmane.org
