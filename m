@@ -1,294 +1,111 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] arm/tegra: convert tegra20 to GIC devicetree binding
-Date: Mon, 28 Nov 2011 17:54:12 -0700
-Message-ID: <1322528052-6516-1-git-send-email-swarren@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: GPIO/IRQ expander cannot map interrupt
+Date: Tue, 29 Nov 2011 07:59:26 +0100
+Message-ID: <20111129065926.GA5044@avionic-0098.mockup.avionic-design.de>
+References: <20111125104511.GA16748@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF174FDAF8B7@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174FDAF8B7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Convert tegra20 IRQ intialization to the GIC devicetree binding. Modify the
-interrupt definitions in the dts files according to
-Documentation/devicetree/bindings/arm/gic.txt
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2 (swarren):
-* Removed some stale GIC init code from board-dt.c
-* Undid some accidental 0x -> 0x0 search/replace.
+* Stephen Warren wrote:
+> Thierry Reding wrote at Friday, November 25, 2011 3:45 AM:
+> > The following is an extract from a device tree of a Tegra2-based board =
+I'm
+> > working on:
+> >=20
+> [swarren: Abbreviated the DT during quoting]
+> > 	i2c@7000c000 {
+> > 		keypad1: sx8634@2b {
+> > 			interrupt-parent =3D <&gpioext>;
+> > 			interrupts =3D <2>;
+> > 		gpioext: gpio-ad8p@41 {
+> > 			gpio-controller;
+> > 			#gpio-cells =3D <2>;
+> > 			interrupt-controller;
+> > 			#interrupt-cells =3D <1>;
+> > 	i2c@7000c400 {
+> > 		keypad2: sx8634@2b {
+> > 			interrupt-parent =3D <&gpioext>;
+> > 			interrupts =3D <3>;
+> >=20
+> > So basically I have a GPIO/IRQ expander on the first I2C bus (gpioext) =
+to
+> > which the two keypad (sx8634) chips are connected. They use GPIOs 2 and=
+ 3 of
+> > the expander as interrupts.
+> >=20
+> > This all seems to work partially: the gpioext is properly detected as p=
+arent
+> > for both keypad controllers during I2C device registration. Within the
+> > gpio-ad8p driver I register an IRQ domain (using irq_domain_add_simple(=
+)) in
+> > order to allow the OF code to properly map the IRQs for the controller's
+> > children.
+> >=20
+> > The problem, however, is that the keypad I2C devices are registered bef=
+ore the
+> > gpioext device is probed, which results in a situation where the IRQs c=
+annot
+> > be mapped because the gpioext device hasn't had a chance to register th=
+e IRQ
+> > domain yet.
+>=20
+> I believe this is something that the forthcoming "deferred probing"
+> mechanism will solve. This isn't in place yet. I /think/ it's one of the
+> things that Grant Likely is working on getting going during his sabattica=
+l,
+> so hopefully there will be some patches you can try out soon.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra-paz00.dts |    2 +-
- arch/arm/boot/dts/tegra20.dtsi    |   48 ++++++++++++++++++++----------------
- arch/arm/mach-tegra/board-dt.c    |   11 --------
- arch/arm/mach-tegra/irq.c         |   18 ++++++++++++-
- 4 files changed, 44 insertions(+), 35 deletions(-)
+I've seen some patches floating around, but I'm not sure that, in the curre=
+nt
+form, deferred probing will solve this issue. Or at least not solve it in t=
+he
+most efficient way. From what I understand, deferred probing is merely a so=
+rt
+of hook that allows the driver to specify at probe time that some resources
+are still missing and is used for cases where there is no explicit dependen=
+cy
+information and thus the driver core doesn't know in which order devices ne=
+ed
+to be probed.
 
-diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
-index 4f6a8aa..1a1d702 100644
---- a/arch/arm/boot/dts/tegra-paz00.dts
-+++ b/arch/arm/boot/dts/tegra-paz00.dts
-@@ -27,7 +27,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,nvec";
- 		reg = <0x7000C500 0x100>;
--		interrupts = <124>;
-+		interrupts = <0 92 0x04>;
- 		clock-frequency = <80000>;
- 		request-gpios = <&gpio 170 0>;
- 		slave-addr = <138>;
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 795b921..db6f562 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -5,9 +5,9 @@
- 	interrupt-parent = <&intc>;
- 
- 	intc: interrupt-controller@50041000 {
--		compatible = "nvidia,tegra20-gic";
-+		compatible = "arm,cortex-a9-gic";
- 		interrupt-controller;
--		#interrupt-cells = <1>;
-+		#interrupt-cells = <3>;
- 		reg = < 0x50041000 0x1000 >,
- 		      < 0x50040100 0x0100 >;
- 	};
-@@ -17,7 +17,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2c";
- 		reg = <0x7000C000 0x100>;
--		interrupts = < 70 >;
-+		interrupts = < 0 38 0x04 >;
- 	};
- 
- 	i2c@7000c400 {
-@@ -25,7 +25,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2c";
- 		reg = <0x7000C400 0x100>;
--		interrupts = < 116 >;
-+		interrupts = < 0 84 0x04 >;
- 	};
- 
- 	i2c@7000c500 {
-@@ -33,7 +33,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2c";
- 		reg = <0x7000C500 0x100>;
--		interrupts = < 124 >;
-+		interrupts = < 0 92 0x04 >;
- 	};
- 
- 	i2c@7000d000 {
-@@ -41,7 +41,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2c";
- 		reg = <0x7000D000 0x200>;
--		interrupts = < 85 >;
-+		interrupts = < 0 53 0x04 >;
- 	};
- 
- 	i2s@70002800 {
-@@ -49,7 +49,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2s";
- 		reg = <0x70002800 0x200>;
--		interrupts = < 45 >;
-+		interrupts = < 0 13 0x04 >;
- 		dma-channel = < 2 >;
- 	};
- 
-@@ -58,7 +58,7 @@
- 		#size-cells = <0>;
- 		compatible = "nvidia,tegra20-i2s";
- 		reg = <0x70002a00 0x200>;
--		interrupts = < 35 >;
-+		interrupts = < 0 3 0x04 >;
- 		dma-channel = < 1 >;
- 	};
- 
-@@ -72,7 +72,13 @@
- 	gpio: gpio@6000d000 {
- 		compatible = "nvidia,tegra20-gpio";
- 		reg = < 0x6000d000 0x1000 >;
--		interrupts = < 64 65 66 67 87 119 121 >;
-+		interrupts = < 0 32 0x04
-+			       0 33 0x04
-+			       0 34 0x04
-+			       0 35 0x04
-+			       0 55 0x04
-+			       0 87 0x04
-+			       0 89 0x04 >;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 	};
-@@ -89,79 +95,79 @@
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
--		interrupts = < 68 >;
-+		interrupts = < 0 36 0x04 >;
- 	};
- 
- 	serial@70006040 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
--		interrupts = < 69 >;
-+		interrupts = < 0 37 0x04 >;
- 	};
- 
- 	serial@70006200 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
--		interrupts = < 78 >;
-+		interrupts = < 0 46 0x04 >;
- 	};
- 
- 	serial@70006300 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
--		interrupts = < 122 >;
-+		interrupts = < 0 90 0x04 >;
- 	};
- 
- 	serial@70006400 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
--		interrupts = < 123 >;
-+		interrupts = < 0 91 0x04 >;
- 	};
- 
- 	sdhci@c8000000 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000000 0x200>;
--		interrupts = < 46 >;
-+		interrupts = < 0 14 0x04 >;
- 	};
- 
- 	sdhci@c8000200 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000200 0x200>;
--		interrupts = < 47 >;
-+		interrupts = < 0 15 0x04 >;
- 	};
- 
- 	sdhci@c8000400 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000400 0x200>;
--		interrupts = < 51 >;
-+		interrupts = < 0 19 0x04 >;
- 	};
- 
- 	sdhci@c8000600 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000600 0x200>;
--		interrupts = < 63 >;
-+		interrupts = < 0 31 0x04 >;
- 	};
- 
- 	usb@c5000000 {
- 		compatible = "nvidia,tegra20-ehci", "usb-ehci";
- 		reg = <0xc5000000 0x4000>;
--		interrupts = < 52 >;
-+		interrupts = < 0 20 0x04 >;
- 		phy_type = "utmi";
- 	};
- 
- 	usb@c5004000 {
- 		compatible = "nvidia,tegra20-ehci", "usb-ehci";
- 		reg = <0xc5004000 0x4000>;
--		interrupts = < 53 >;
-+		interrupts = < 0 21 0x04 >;
- 		phy_type = "ulpi";
- 	};
- 
- 	usb@c5008000 {
- 		compatible = "nvidia,tegra20-ehci", "usb-ehci";
- 		reg = <0xc5008000 0x4000>;
--		interrupts = < 129 >;
-+		interrupts = < 0 97 0x04 >;
- 		phy_type = "utmi";
- 	};
- };
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index 6e35417..bcbb677 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -87,11 +87,6 @@ static struct of_device_id tegra_dt_match_table[] __initdata = {
- 	{}
- };
- 
--static struct of_device_id tegra_dt_gic_match[] __initdata = {
--	{ .compatible = "nvidia,tegra20-gic", },
--	{}
--};
--
- static struct {
- 	char *machine;
- 	void (*init)(void);
-@@ -105,14 +100,8 @@ static struct {
- 
- static void __init tegra_dt_init(void)
- {
--	struct device_node *node;
- 	int i;
- 
--	node = of_find_matching_node_by_address(NULL, tegra_dt_gic_match,
--						TEGRA_ARM_INT_DIST_BASE);
--	if (node)
--		irq_domain_add_simple(node, INT_GIC_BASE);
--
- 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
- 
- 	/*
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 8ad82af..c6d02a4 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -21,6 +21,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/io.h>
-+#include <linux/of_irq.h>
- 
- #include <asm/hardware/gic.h>
- 
-@@ -109,6 +110,11 @@ static int tegra_retrigger(struct irq_data *d)
- 	return 1;
- }
- 
-+static const struct of_device_id tegra_irq_match[] __initconst = {
-+	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init },
-+	{ /* sentinel */ }
-+};
-+
- void __init tegra_init_irq(void)
- {
- 	int i;
-@@ -125,6 +131,14 @@ void __init tegra_init_irq(void)
- 	gic_arch_extn.irq_unmask = tegra_unmask;
- 	gic_arch_extn.irq_retrigger = tegra_retrigger;
- 
--	gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
--		 IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
-+#ifdef CONFIG_OF
-+	/* Check if there is a devicetree present as of_irq_init doesn't
-+	 * indicate if an interrupt controller node was found.
-+	 */
-+	if (of_find_node_by_path("/"))
-+		of_irq_init(tegra_irq_match);
-+	else
-+#endif
-+		gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
-+			IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
- }
--- 
-1.7.0.4
+However, for this particular case we actually have this explicit dependency
+information because the devices specify an interrupt and/or GPIO parent.
+Moreover it's not really the probing that is the issue here, but rather the
+device instantiation. The OF core instantiates the I2C slaves much too early
+(i.e. together with the interrupt parent) and therefore requires access to
+the IRQ domain mapping at the time of the instantiation already.
+
+Using deferred probing in this case would require the driver to repeat the
+complete IRQ mapping sequence that is already done when OF populates the
+device tree. Perhaps in addition to deferred probing we also need deferred
+*instantiation*.
+
+Thierry
+
+--cWoXeonUoKmBZSoM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk7Ugs4ACgkQZ+BJyKLjJp9htACfYnWdPFgmsxKj9yCxRXjS9RD/
+cakAoK6fz0TIhqxCeYnz5blskZyXWu7U
+=Po6w
+-----END PGP SIGNATURE-----
+
+--cWoXeonUoKmBZSoM--
