@@ -1,110 +1,73 @@
-From: riyer@nvidia.com
-Subject: [PATCH v2] Input: tegra-kbc - report wakeup key for some platforms.
-Date: Wed, 30 Nov 2011 16:33:51 -0800
-Message-ID: <1322699631-30373-1-git-send-email-riyer@nvidia.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-Sender: linux-input-owner@vger.kernel.org
-To: dmitry.torokhov@gmail.com
-Cc: rydberg@euromail.se, swarren@nvidia.com, ldewangan@nvidia.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Rakesh Iyer <riyer@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] arm/tegra: Remove use of TEGRA_GPIO_TO_IRQ
+Date: Wed, 30 Nov 2011 17:45:35 -0700
+Message-ID: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Rakesh Iyer <riyer@nvidia.com>
+Replace compile-time usage of TEGRA_GPIO_TO_IRQ with run-time calls to
+gpio_to_irq(). This will allow the base IRQ number for the Tegra GPIO
+driver to be dynamically allocated in a later patch.
 
-Tegra kbc cannot detect exact keypress causing wakeup in interrupt mode.
-Allow wakeup keypress to be reported for certain platforms.
-
-Signed-off-by: Rakesh Iyer <riyer@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: Modifications based on review by Dmitry Trokhov.
-v1: Initial patch
+ arch/arm/mach-tegra/board-harmony.c  |    2 +-
+ arch/arm/mach-tegra/board-seaboard.c |    5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
- arch/arm/mach-tegra/include/mach/kbc.h |    1 +
- drivers/input/keyboard/tegra-kbc.c     |   20 +++++++++++++++++---
- 2 files changed, 18 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/arch/arm/mach-tegra/include/mach/kbc.h
-index 4f3572a..20bb054 100644
---- a/arch/arm/mach-tegra/include/mach/kbc.h
-+++ b/arch/arm/mach-tegra/include/mach/kbc.h
-@@ -53,6 +53,7 @@ struct tegra_kbc_platform_data {
- 	struct tegra_kbc_pin_cfg pin_cfg[KBC_MAX_GPIO];
- 	const struct matrix_keymap_data *keymap_data;
- 
-+	u32 wakeup_key;
- 	bool wakeup;
- 	bool use_fn_map;
- 	bool use_ghost_filter;
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index cf3228b..249f525 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -52,6 +52,7 @@
- /* KBC Interrupt Register */
- #define KBC_INT_0	0x4
- #define KBC_INT_FIFO_CNT_INT_STATUS	(1 << 2)
-+#define KBC_INT_KEYPRESS_INT_STATUS	(1 << 0)
- 
- #define KBC_ROW_CFG0_0	0x8
- #define KBC_COL_CFG0_0	0x18
-@@ -74,10 +75,12 @@ struct tegra_kbc {
- 	unsigned int cp_to_wkup_dly;
- 	bool use_fn_map;
- 	bool use_ghost_filter;
-+	bool keypress_caused_wake;
- 	const struct tegra_kbc_platform_data *pdata;
- 	unsigned short keycode[KBC_MAX_KEY * 2];
- 	unsigned short current_keys[KBC_MAX_KPENT];
- 	unsigned int num_pressed_keys;
-+	u32 wakeup_key;
- 	struct timer_list timer;
- 	struct clk *clk;
+diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
+index 70ee674..60afd08 100644
+--- a/arch/arm/mach-tegra/board-harmony.c
++++ b/arch/arm/mach-tegra/board-harmony.c
+@@ -101,7 +101,6 @@ static struct wm8903_platform_data harmony_wm8903_pdata = {
+ static struct i2c_board_info __initdata wm8903_board_info = {
+ 	I2C_BOARD_INFO("wm8903", 0x1a),
+ 	.platform_data = &harmony_wm8903_pdata,
+-	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
  };
-@@ -409,6 +412,9 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
- 		 */
- 		tegra_kbc_set_fifo_interrupt(kbc, false);
- 		mod_timer(&kbc->timer, jiffies + kbc->cp_dly_jiffies);
-+	} else if (val & KBC_INT_KEYPRESS_INT_STATUS) {
-+		/* We can be here only through system resume path */
-+		kbc->keypress_caused_wake = true;
- 	}
  
- 	spin_unlock_irqrestore(&kbc->lock, flags);
-@@ -674,9 +680,10 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
- 	keymap_data = pdata->keymap_data ?: &tegra_kbc_default_keymap_data;
- 	matrix_keypad_build_keymap(keymap_data, KBC_ROW_SHIFT,
- 				   input_dev->keycode, input_dev->keybit);
-+	kbc->wakeup_key = pdata->wakeup_key;
+ static void __init harmony_i2c_init(void)
+@@ -111,6 +110,7 @@ static void __init harmony_i2c_init(void)
+ 	platform_device_register(&tegra_i2c_device3);
+ 	platform_device_register(&tegra_i2c_device4);
  
--	err = request_irq(kbc->irq, tegra_kbc_isr, IRQF_TRIGGER_HIGH,
--			  pdev->name, kbc);
-+	err = request_irq(kbc->irq, tegra_kbc_isr,
-+			  IRQF_NO_SUSPEND | IRQF_TRIGGER_HIGH, pdev->name, kbc);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to request keyboard IRQ\n");
- 		goto err_put_clk;
-@@ -754,6 +761,8 @@ static int tegra_kbc_suspend(struct device *dev)
- 		tegra_kbc_setup_wakekeys(kbc, true);
- 		msleep(30);
++	wm8903_board_info.irq = gpio_to_irq(TEGRA_GPIO_CDC_IRQ);
+ 	i2c_register_board_info(0, &wm8903_board_info, 1);
+ }
  
-+		kbc->keypress_caused_wake = false;
-+		enable_irq(kbc->irq);
- 		enable_irq_wake(kbc->irq);
- 	} else {
- 		if (kbc->idev->users)
-@@ -780,7 +789,12 @@ static int tegra_kbc_resume(struct device *dev)
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index c1599eb..ce3c9a2 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -159,7 +159,6 @@ static struct platform_device *seaboard_devices[] __initdata = {
  
- 		tegra_kbc_set_fifo_interrupt(kbc, true);
+ static struct i2c_board_info __initdata isl29018_device = {
+ 	I2C_BOARD_INFO("isl29018", 0x44),
+-	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_ISL29018_IRQ),
+ };
  
--		enable_irq(kbc->irq);
-+		if (kbc->keypress_caused_wake && kbc->wakeup_key) {
-+			input_report_key(kbc->idev, kbc->wakeup_key, 1);
-+			input_sync(kbc->idev);
-+			input_report_key(kbc->idev, kbc->wakeup_key, 0);
-+			input_sync(kbc->idev);
-+		}
- 	} else {
- 		if (kbc->idev->users)
- 			err = tegra_kbc_start(kbc);
+ static struct i2c_board_info __initdata adt7461_device = {
+@@ -183,7 +182,6 @@ static struct wm8903_platform_data wm8903_pdata = {
+ static struct i2c_board_info __initdata wm8903_device = {
+ 	I2C_BOARD_INFO("wm8903", 0x1a),
+ 	.platform_data = &wm8903_pdata,
+-	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
+ };
+ 
+ static int seaboard_ehci_init(void)
+@@ -214,7 +212,10 @@ static void __init seaboard_i2c_init(void)
+ 	gpio_request(TEGRA_GPIO_ISL29018_IRQ, "isl29018");
+ 	gpio_direction_input(TEGRA_GPIO_ISL29018_IRQ);
+ 
++	isl29018_device.irq = gpio_to_irq(TEGRA_GPIO_ISL29018_IRQ);
+ 	i2c_register_board_info(0, &isl29018_device, 1);
++
++	wm8903_device.irq = gpio_to_irq(TEGRA_GPIO_CDC_IRQ);
+ 	i2c_register_board_info(0, &wm8903_device, 1);
+ 
+ 	i2c_register_board_info(3, &adt7461_device, 1);
 -- 
-1.7.4.1
-
+1.7.0.4
