@@ -1,175 +1,288 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and support DT
-Date: Wed, 30 Nov 2011 17:45:36 -0700
-Message-ID: <1322700336-26866-2-git-send-email-swarren@nvidia.com>
-References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH] ASoC: Add device tree binding for WM8903
+Date: Wed, 30 Nov 2011 17:47:35 -0700
+Message-ID: <1322700455-26916-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1322700336-26866-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enhance  the driver to dynamically allocate the base IRQ number, and
-create an IRQ domain for itself. The use of an IRQ domain ensures that
-any device tree node interrupts properties are correctly parsed.
+From: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Fix the DT binding documentation to describe interrupt-related properties,
-and the contents of "child" node interrupts property.
+This patch makes it so the wm8903 is initialized from it's device tree node.
 
-Update tegra20.dtsi to specify the required interrupt-related properties.
+v2: (swarren) Significantly reworked based on review feedback.
+v1: (swarren) Applied the following modifications relative to John's code:
+* Cleaned up DT parsing code
+* Documented DT binding
+* Set up wm8903->gpio_chip.of_node, extracted from another patch by John.
 
-Finally, remove the definition of TEGRA_GPIO_TO_IRQ; this macro no longer
-gives correct results since the IRQ numbers for GPIOs are dynamically
-allocated.
-
+Signed-off-by: John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Signed-off-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/gpio/gpio_nvidia.txt       |   10 ++++++
- arch/arm/boot/dts/tegra20.dtsi                     |    2 +
- arch/arm/mach-tegra/include/mach/gpio-tegra.h      |    2 -
- drivers/gpio/gpio-tegra.c                          |   32 +++++++++++++++----
- 4 files changed, 37 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/sound/wm8903.txt |   44 ++++++++
+ sound/soc/codecs/wm8903.c                          |  113 ++++++++++++++++----
+ 2 files changed, 136 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/wm8903.txt
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-index eb4b530..20b991d 100644
---- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-@@ -6,3 +6,13 @@ Required properties:
-   second cell is used to specify optional parameters:
-   - bit 0 specifies polarity (0 for normal, 1 for inverted)
- - gpio-controller : Marks the device node as a GPIO controller.
-+- #interrupt-cells : Should be 2.
-+  The first cell is the GPIO number.
-+  The second cell is used to specify flags:
-+    bits[3:0] trigger type and level flags:
-+      1 = low-to-high edge triggered.
-+      2 = high-to-low edge triggered.
-+      4 = active high level-sensitive.
-+      8 = active low level-sensitive.
-+      Valid combinations are 1, 2, 3, 4, 8.
-+- interrupt-controller : Marks the device node as an interrupt controller.
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index db6f562..e25f4a6 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -79,6 +79,8 @@
- 			       0 55 0x04
- 			       0 87 0x04
- 			       0 89 0x04 >;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 	};
-diff --git a/arch/arm/mach-tegra/include/mach/gpio-tegra.h b/arch/arm/mach-tegra/include/mach/gpio-tegra.h
-index 87d37fd..6140820 100644
---- a/arch/arm/mach-tegra/include/mach/gpio-tegra.h
-+++ b/arch/arm/mach-tegra/include/mach/gpio-tegra.h
-@@ -25,8 +25,6 @@
- 
- #define TEGRA_NR_GPIOS		INT_GPIO_NR
- 
--#define TEGRA_GPIO_TO_IRQ(gpio) (INT_GPIO_BASE + (gpio))
--
- struct tegra_gpio_table {
- 	int	gpio;	/* GPIO number */
- 	bool	enable;	/* Enable for GPIO at init? */
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 61044c8..9fa5783 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
-+#include <linux/irqdomain.h>
- 
- #include <asm/mach/irq.h>
- 
-@@ -74,7 +75,8 @@ struct tegra_gpio_bank {
- #endif
+diff --git a/Documentation/devicetree/bindings/sound/wm8903.txt b/Documentation/devicetree/bindings/sound/wm8903.txt
+new file mode 100644
+index 0000000..ef3332a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/wm8903.txt
+@@ -0,0 +1,44 @@
++WM89033 audio CODEC
++
++This device supports I2C only.
++
++Required properties:
++
++  - compatible : "wlf,wm8903"
++
++  - reg : the I2C address of the device.
++
++  - gpio-controller : Indicates this device is a GPIO controller.
++
++  - #gpio-cells : Should be two. The first cell is the pin number and the
++    second cell is used to specify optional parameters (currently unused).
++
++Optional properties:
++
++  - interrupts : The interrupt line the codec is connected to.
++
++  - micdet-cfg : Default register value for R6 (Mic Bias). If absent, the
++    default is 0.
++
++  - micdet-delay : The debounce delay for microphone detection in mS. If
++    absent, the default is 100.
++
++  - gpio-cfg : A list of GPIO pin mux register values. The list must be 5
++    entries long. If absent, no configuration of these registers is
++    performed. If any entry has the value 0xffffffff, that GPIO's
++    configuration will not be modified.
++
++Example:
++
++codec: wm8903@1a {
++	compatible = "wlf,wm8903";
++	reg = <0x1a>;
++	interrupts = < 347 >;
++
++	gpio-controller;
++	#gpio-cells = <2>;
++
++	micdet-cfg = <0>;
++	micdet-delay = <100>;
++	gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
++};
+diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
+index 70a2268..6e380b3 100644
+--- a/sound/soc/codecs/wm8903.c
++++ b/sound/soc/codecs/wm8903.c
+@@ -24,6 +24,7 @@
+ #include <linux/pm.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
++#include <linux/irq.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+ #include <sound/pcm.h>
+@@ -1863,20 +1864,20 @@ static struct gpio_chip wm8903_template_chip = {
+ 	.can_sleep		= 1,
  };
  
--
-+static struct irq_domain irq_domain;
-+static struct irq_domain_ops irq_domain_ops;
- static void __iomem *regs;
- static struct tegra_gpio_bank tegra_gpio_banks[7];
- 
-@@ -139,7 +141,7 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 
- static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+-static void wm8903_init_gpio(struct snd_soc_codec *codec)
++static void wm8903_init_gpio(struct snd_soc_codec *codec,
++			     int gpio_base)
  {
--	return TEGRA_GPIO_TO_IRQ(offset);
-+	return irq_domain_to_irq(&irq_domain, offset);
- }
+ 	struct wm8903_priv *wm8903 = snd_soc_codec_get_drvdata(codec);
+-	struct wm8903_platform_data *pdata = dev_get_platdata(codec->dev);
+ 	int ret;
  
- static struct gpio_chip tegra_gpio_chip = {
-@@ -155,28 +157,28 @@ static struct gpio_chip tegra_gpio_chip = {
+ 	wm8903->gpio_chip = wm8903_template_chip;
+ 	wm8903->gpio_chip.ngpio = WM8903_NUM_GPIO;
+ 	wm8903->gpio_chip.dev = codec->dev;
++	wm8903->gpio_chip.base = gpio_base;
  
- static void tegra_gpio_irq_ack(struct irq_data *d)
- {
--	int gpio = d->irq - INT_GPIO_BASE;
-+	int gpio = d->hwirq;
- 
- 	tegra_gpio_writel(1 << GPIO_BIT(gpio), GPIO_INT_CLR(gpio));
- }
- 
- static void tegra_gpio_irq_mask(struct irq_data *d)
- {
--	int gpio = d->irq - INT_GPIO_BASE;
-+	int gpio = d->hwirq;
- 
- 	tegra_gpio_mask_write(GPIO_MSK_INT_ENB(gpio), gpio, 0);
- }
- 
- static void tegra_gpio_irq_unmask(struct irq_data *d)
- {
--	int gpio = d->irq - INT_GPIO_BASE;
-+	int gpio = d->hwirq;
- 
- 	tegra_gpio_mask_write(GPIO_MSK_INT_ENB(gpio), gpio, 1);
- }
- 
- static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
--	int gpio = d->irq - INT_GPIO_BASE;
-+	int gpio = d->hwirq;
- 	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
- 	int port = GPIO_PORT(gpio);
- 	int lvl_type;
-@@ -343,6 +345,22 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
- 	int i;
- 	int j;
- 
-+	irq_domain.irq_base = irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
-+	if (irq_domain.irq_base < 0) {
-+		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
-+		return -ENODEV;
-+	}
-+	irq_domain.nr_irq = TEGRA_NR_GPIOS;
-+	irq_domain.ops = &irq_domain_ops;
-+#ifdef CONFIG_OF
-+	if (pdev->dev.of_node) {
-+		irq_domain.of_node = pdev->dev.of_node;
-+		irq_domain_ops.dt_translate =
-+			irq_domain_simple_ops.dt_translate;
-+	}
+-	if (pdata && pdata->gpio_base)
+-		wm8903->gpio_chip.base = pdata->gpio_base;
+-	else
+-		wm8903->gpio_chip.base = -1;
++#ifdef CONFIG_OF_GPIO
++	wm8903->gpio_chip.of_node = codec->dev->of_node;
 +#endif
-+	irq_domain_add(&irq_domain);
+ 
+ 	ret = gpiochip_add(&wm8903->gpio_chip);
+ 	if (ret != 0)
+@@ -1893,7 +1894,7 @@ static void wm8903_free_gpio(struct snd_soc_codec *codec)
+ 		dev_err(codec->dev, "Failed to remove GPIOs: %d\n", ret);
+ }
+ #else
+-static void wm8903_init_gpio(struct snd_soc_codec *codec)
++static void wm8903_init_gpio(struct snd_soc_codec *codec, int gpio_base)
+ {
+ }
+ 
+@@ -1909,6 +1910,16 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 	int ret, i;
+ 	int trigger, irq_pol;
+ 	u16 val;
++	u32 val32;
++	bool have_pdata = false;
++	int gpio_base = -1;
++	bool irq_active_low = false;
++	int micdet_cfg = 0;
++	bool mic_gpio = false;
++	u32 gpio_cfg_storage[WM8903_NUM_GPIO];
++	u32 *gpio_cfg = NULL;
++	const struct device_node *np;
++	struct irq_data *irq_data;
+ 
+ 	wm8903->codec = codec;
+ 
+@@ -1931,18 +1942,65 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 
+ 	wm8903_reset(codec);
+ 
+-	/* Set up GPIOs and microphone detection */
++	/* Get configuration from platform data, or device tree */
+ 	if (pdata) {
+-		bool mic_gpio = false;
++		have_pdata = true;
++		gpio_base = pdata->gpio_base;
++		irq_active_low = pdata->irq_active_low;
++		micdet_cfg = pdata->micdet_cfg;
++		wm8903->mic_delay = pdata->micdet_delay;
++		gpio_cfg = &pdata->gpio_cfg[0];
++	} else if (codec->dev->of_node) {
++		have_pdata = true;
 +
- 	for (i = 0; i < ARRAY_SIZE(tegra_gpio_banks); i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
- 		if (!res) {
-@@ -388,7 +406,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
- 	gpiochip_add(&tegra_gpio_chip);
++		np = codec->dev->of_node;
++
++		if (wm8903->irq) {
++			irq_data = irq_get_irq_data(wm8903->irq);
++			if (!irq_data) {
++				dev_err(codec->dev, "Invalid IRQ: %d\n",
++					wm8903->irq);
++				return -EINVAL;
++			}
++			trigger = irqd_get_trigger_type(irq_data);
++			switch (trigger) {
++			case IRQ_TYPE_NONE:
++			case IRQ_TYPE_LEVEL_HIGH:
++				irq_active_low = false;
++				break;
++			case IRQ_TYPE_LEVEL_LOW:
++				irq_active_low = true;
++				break;
++			default:
++				dev_err(codec->dev,
++					"Unsupported IRQ trigger: %x\n",
++					trigger);
++				return -EINVAL;
++			}
++		}
++
++		if (of_property_read_u32(np, "micdet-cfg", &val32) >= 0)
++			micdet_cfg = val32;
++
++		if (of_property_read_u32(np, "micdet-delay", &val32) >= 0)
++			wm8903->mic_delay = val32;
  
- 	for (gpio = 0; gpio < TEGRA_NR_GPIOS; gpio++) {
--		int irq = TEGRA_GPIO_TO_IRQ(gpio);
-+		int irq = irq_domain_to_irq(&irq_domain, gpio);
- 		/* No validity check; all Tegra GPIOs are valid IRQs */
+-		for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
+-			if (pdata->gpio_cfg[i] == WM8903_GPIO_NO_CONFIG)
++		if (of_property_read_u32_array(np, "gpio-cfg", gpio_cfg_storage,
++					       WM8903_NUM_GPIO) >= 0) {
++			gpio_cfg = &gpio_cfg_storage[0];
++		}
++	}
++
++	/* Set up GPIOs */
++	if (gpio_cfg) {
++		for (i = 0; i < WM8903_NUM_GPIO; i++) {
++			if (gpio_cfg[i] > 0x7fff)
+ 				continue;
  
- 		bank = &tegra_gpio_banks[GPIO_BANK(gpio)];
+ 			snd_soc_write(codec, WM8903_GPIO_CONTROL_1 + i,
+-				      pdata->gpio_cfg[i] & 0xffff);
++				      gpio_cfg[i] & 0x7fff);
+ 
+-			val = (pdata->gpio_cfg[i] & WM8903_GP1_FN_MASK)
++			val = (gpio_cfg[i] & WM8903_GP1_FN_MASK)
+ 				>> WM8903_GP1_FN_SHIFT;
+ 
+ 			switch (val) {
+@@ -1954,12 +2012,15 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 				break;
+ 			}
+ 		}
++	}
+ 
++	/* Set up microphone detection */
++	if (have_pdata) {
+ 		snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
+-			      pdata->micdet_cfg);
++			      micdet_cfg);
+ 
+ 		/* Microphone detection needs the WSEQ clock */
+-		if (pdata->micdet_cfg)
++		if (micdet_cfg)
+ 			snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
+ 					    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
+ 
+@@ -1969,13 +2030,11 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 		 * IRQs as the IRQs are clear on read.  The detection
+ 		 * will be enabled when the machine driver configures.
+ 		 */
+-		WARN_ON(!mic_gpio && (pdata->micdet_cfg & WM8903_MICDET_ENA));
+-
+-		wm8903->mic_delay = pdata->micdet_delay;
++		WARN_ON(!mic_gpio && (micdet_cfg & WM8903_MICDET_ENA));
+ 	}
+-	
++
+ 	if (wm8903->irq) {
+-		if (pdata && pdata->irq_active_low) {
++		if (irq_active_low) {
+ 			trigger = IRQF_TRIGGER_LOW;
+ 			irq_pol = WM8903_IRQ_POL;
+ 		} else {
+@@ -2037,7 +2096,7 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 	snd_soc_add_controls(codec, wm8903_snd_controls,
+ 				ARRAY_SIZE(wm8903_snd_controls));
+ 
+-	wm8903_init_gpio(codec);
++	wm8903_init_gpio(codec, gpio_base);
+ 
+ 	return ret;
+ }
+@@ -2100,6 +2159,17 @@ static __devexit int wm8903_i2c_remove(struct i2c_client *client)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_OF
++/* Match table for of_platform binding */
++static const struct of_device_id wm8903_of_match[] __devinitconst = {
++	{ .compatible = "wlf,wm8903", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, wm8903_of_match);
++#else
++#define wm8903_of_match NULL
++#endif
++
+ static const struct i2c_device_id wm8903_i2c_id[] = {
+ 	{ "wm8903", 0 },
+ 	{ }
+@@ -2110,6 +2180,7 @@ static struct i2c_driver wm8903_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm8903",
+ 		.owner = THIS_MODULE,
++		.of_match_table = wm8903_of_match,
+ 	},
+ 	.probe =    wm8903_i2c_probe,
+ 	.remove =   __devexit_p(wm8903_i2c_remove),
 -- 
 1.7.0.4
