@@ -1,80 +1,46 @@
-From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and
- support DT
-Date: Thu, 1 Dec 2011 16:55:18 +0000
-Message-ID: <20111201165518.GH4556@totoro>
-References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
- <1322700336-26866-2-git-send-email-swarren@nvidia.com>
- <4ED78461.40006@gmail.com>
- <20111201141112.GG4556@totoro>
- <74CDBE0F657A3D45AFBB94109FB122FF174FDB01DD@HQMAIL01.nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH] ASoC: Add device tree binding for WM8903
+Date: Thu, 1 Dec 2011 17:11:42 +0000
+Message-ID: <20111201171142.GB18120@opensource.wolfsonmicro.com>
+References: <1322700455-26916-1-git-send-email-swarren@nvidia.com>
+ <20111201132559.GG2915@opensource.wolfsonmicro.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF174FDB01D8@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174FDB01DD-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174FDB01D8-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 01, 2011 at 08:52:49AM -0800, Stephen Warren wrote:
-> Jamie Iles wrote at Thursday, December 01, 2011 7:11 AM:
-> > On Thu, Dec 01, 2011 at 07:42:57AM -0600, Rob Herring wrote:
-> > > On 11/30/2011 06:45 PM, Stephen Warren wrote:
-> > > > Enhance  the driver to dynamically allocate the base IRQ number, and
-> > > > create an IRQ domain for itself. The use of an IRQ domain ensures that
-> > > > any device tree node interrupts properties are correctly parsed.
-> > > >
-> > > > Fix the DT binding documentation to describe interrupt-related properties,
-> > > > and the contents of "child" node interrupts property.
-> > > >
-> > > > Update tegra20.dtsi to specify the required interrupt-related properties.
-> > > >
-> > > > Finally, remove the definition of TEGRA_GPIO_TO_IRQ; this macro no longer
-> > > > gives correct results since the IRQ numbers for GPIOs are dynamically
-> > > > allocated.
-> > > >
-> > > > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > [...]
-> > > >  static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-> > > >  {
-> > > > -	int gpio = d->irq - INT_GPIO_BASE;
-> > > > +	int gpio = d->hwirq;
-> > > >  	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
-> > > >  	int port = GPIO_PORT(gpio);
-> > > >  	int lvl_type;
-> > > > @@ -343,6 +345,22 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
-> > > >  	int i;
-> > > >  	int j;
-> > > >
-> > > > +	irq_domain.irq_base = irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
-> > > > +	if (irq_domain.irq_base < 0) {
-> > > > +		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
-> > > > +		return -ENODEV;
-> > > > +	}
-> > > > +	irq_domain.nr_irq = TEGRA_NR_GPIOS;
-> > > > +	irq_domain.ops = &irq_domain_ops;
-> > >
-> > > Why don't you just use irq_domain_simple_ops?
-> > 
-> > This would need the patch I posted earlier
-> > (https://lkml.org/lkml/2011/12/1/109) so they can work for the
-> > !CONFIG_OF case ;-)
-> 
-> Part of my reasoning was that simple_ops appeared to be intended for
-> DT-based controllers; is it safe to use those ops for a controller that
-> wasn't instantiated from DT? I know that right now, the only op in that
-> structure is dt_translate, and that won't ever be called for the non-DT
-> case, but is there a guarantee that more functions won't be added to
-> the simple ops, and that they won't assume DT is in use, and fail if
-> not?
-> 
-> If these are safe to use in the non-DT case, then yet I could build off
-> Jamie's patch, although managing the dependencies might be awkward.
+On Thu, Dec 01, 2011 at 08:46:35AM -0800, Stephen Warren wrote:
+> Mark Brown wrote at Thursday, December 01, 2011 6:26 AM:
 
-Yes, it's absolutely fine to use it just that irq_simple_ops isn't 
-currently exported unless you have CONFIG_OF_IRQ set so you'd get an 
-undefined reference for !CONFIG_OF at the moment.
+> > This all seems really complicated and invasive, especially the
+> > have_pdata flag.  Why not just always have a platform data structure and
+> > fill it in from the device tree?
 
-Jamie
+> The first patch set did that, and you objected to how it was structured...
+
+No, that's what I asked you to do first time round (or at least what we
+discussed on IRC).  The problem with the first version was that you had
+two unrelated places where the defaults were specified, the problem with
+this version is that you copy everything into new variables which makes
+the diff really big and noisy.  I'd *really* expect the device tree data
+to just be a different way of supplying platform data.
+
+> > > +			trigger = irqd_get_trigger_type(irq_data);
+
+> > This stuff isn't device tree specific.
+
+> OK, I could remove the platform data's irq_active_low flag, and determine
+> the IRQ polarity this way in all cases. Do you want that? I avoided doing
+> it this time around since it'd affect non-device-tree users of the codec
+> too, and I aimed for complete backwards compatibility (although that said,
+> the only in-tree user is the Tegra machines, and they don't set this flag,
+> so the impact would be minimal in-tree)
+
+As a first step I'd use this code to set the default if the platform
+data doesn't set the flag.
