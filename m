@@ -1,107 +1,75 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ASoC: Add device tree binding for WM8903
-Date: Thu, 1 Dec 2011 08:46:35 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174FDB01D8@HQMAIL01.nvidia.com>
-References: <1322700455-26916-1-git-send-email-swarren@nvidia.com>
- <20111201132559.GG2915@opensource.wolfsonmicro.com>
+Subject: RE: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and
+ support DT
+Date: Thu, 1 Dec 2011 08:52:49 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF174FDB01DD@HQMAIL01.nvidia.com>
+References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+ <1322700336-26866-2-git-send-email-swarren@nvidia.com>
+ <4ED78461.40006@gmail.com> <20111201141112.GG4556@totoro>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111201132559.GG2915-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <20111201141112.GG4556@totoro>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+To: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Thursday, December 01, 2011 6:26 AM:
-> On Wed, Nov 30, 2011 at 05:47:35PM -0700, Stephen Warren wrote:
-> 
-> > v2: (swarren) Significantly reworked based on review feedback.
-> > v1: (swarren) Applied the following modifications relative to John's code:
-> > * Cleaned up DT parsing code
-> > * Documented DT binding
-> > * Set up wm8903->gpio_chip.of_node, extracted from another patch by John.
-> 
-> Don't put stuff like this in the changelog.  "Significantly reworked"
-> isn't going to help anyone reading the logs...
-
-Sorry, I forgot to move it this time.
-
-> > @@ -1931,18 +1942,65 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+Jamie Iles wrote at Thursday, December 01, 2011 7:11 AM:
+> On Thu, Dec 01, 2011 at 07:42:57AM -0600, Rob Herring wrote:
+> > On 11/30/2011 06:45 PM, Stephen Warren wrote:
+> > > Enhance  the driver to dynamically allocate the base IRQ number, and
+> > > create an IRQ domain for itself. The use of an IRQ domain ensures that
+> > > any device tree node interrupts properties are correctly parsed.
+> > >
+> > > Fix the DT binding documentation to describe interrupt-related properties,
+> > > and the contents of "child" node interrupts property.
+> > >
+> > > Update tegra20.dtsi to specify the required interrupt-related properties.
+> > >
+> > > Finally, remove the definition of TEGRA_GPIO_TO_IRQ; this macro no longer
+> > > gives correct results since the IRQ numbers for GPIOs are dynamically
+> > > allocated.
+> > >
+> > > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [...]
+> > >  static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> > >  {
+> > > -	int gpio = d->irq - INT_GPIO_BASE;
+> > > +	int gpio = d->hwirq;
+> > >  	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+> > >  	int port = GPIO_PORT(gpio);
+> > >  	int lvl_type;
+> > > @@ -343,6 +345,22 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+> > >  	int i;
+> > >  	int j;
+> > >
+> > > +	irq_domain.irq_base = irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
+> > > +	if (irq_domain.irq_base < 0) {
+> > > +		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > > +	irq_domain.nr_irq = TEGRA_NR_GPIOS;
+> > > +	irq_domain.ops = &irq_domain_ops;
 > >
-> >  	wm8903_reset(codec);
-> >
-> > -	/* Set up GPIOs and microphone detection */
-> > +	/* Get configuration from platform data, or device tree */
-> >  	if (pdata) {
-> > -		bool mic_gpio = false;
-> > +		have_pdata = true;
-> > +		gpio_base = pdata->gpio_base;
-> > +		irq_active_low = pdata->irq_active_low;
-> > +		micdet_cfg = pdata->micdet_cfg;
-> > +		wm8903->mic_delay = pdata->micdet_delay;
-> > +		gpio_cfg = &pdata->gpio_cfg[0];
-> > +	} else if (codec->dev->of_node) {
-> > +		have_pdata = true;
+> > Why don't you just use irq_domain_simple_ops?
 > 
-> This all seems really complicated and invasive, especially the
-> have_pdata flag.  Why not just always have a platform data structure and
-> fill it in from the device tree?
+> This would need the patch I posted earlier
+> (https://lkml.org/lkml/2011/12/1/109) so they can work for the
+> !CONFIG_OF case ;-)
 
-The first patch set did that, and you objected to how it was structured...
+Part of my reasoning was that simple_ops appeared to be intended for
+DT-based controllers; is it safe to use those ops for a controller that
+wasn't instantiated from DT? I know that right now, the only op in that
+structure is dt_translate, and that won't ever be called for the non-DT
+case, but is there a guarantee that more functions won't be added to
+the simple ops, and that they won't assume DT is in use, and fail if
+not?
 
-> > +		if (wm8903->irq) {
-> > +			irq_data = irq_get_irq_data(wm8903->irq);
-> > +			if (!irq_data) {
-> > +				dev_err(codec->dev, "Invalid IRQ: %d\n",
-> > +					wm8903->irq);
-> > +				return -EINVAL;
-> > +			}
-> > +			trigger = irqd_get_trigger_type(irq_data);
-> > +			switch (trigger) {
-> > +			case IRQ_TYPE_NONE:
-> > +			case IRQ_TYPE_LEVEL_HIGH:
-> > +				irq_active_low = false;
-> > +				break;
-> > +			case IRQ_TYPE_LEVEL_LOW:
-> > +				irq_active_low = true;
-> > +				break;
-> > +			default:
-> > +				dev_err(codec->dev,
-> > +					"Unsupported IRQ trigger: %x\n",
-> > +					trigger);
-> > +				return -EINVAL;
-> > +			}
-> > +		}
-> 
-> This stuff isn't device tree specific.
-
-OK, I could remove the platform data's irq_active_low flag, and determine
-the IRQ polarity this way in all cases. Do you want that? I avoided doing
-it this time around since it'd affect non-device-tree users of the codec
-too, and I aimed for complete backwards compatibility (although that said,
-the only in-tree user is the Tegra machines, and they don't set this flag,
-so the impact would be minimal in-tree)
-
-> > +#ifdef CONFIG_OF
-> > +/* Match table for of_platform binding */
-> > +static const struct of_device_id wm8903_of_match[] __devinitconst = {
-> > +	{ .compatible = "wlf,wm8903", },
-> > +	{},
-> > +};
-> > +MODULE_DEVICE_TABLE(of, wm8903_of_match);
-> > +#else
-> > +#define wm8903_of_match NULL
-> > +#endif
-> 
-> If you're going to do this then go through and consistently add the
-> defines.  I'd also be inclined to drop the comment.
-
-I'll just drop the ifdefs; looking at all the other codecs, they don't
-have ifdefs anyway - I thought I added the ifdefs to be consistent, but
-I must have checked something other than ASoC codecs...
+If these are safe to use in the non-DT case, then yet I could build off
+Jamie's patch, although managing the dependencies might be awkward.
 
 -- 
 nvpublic
