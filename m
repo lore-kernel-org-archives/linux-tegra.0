@@ -1,36 +1,61 @@
-From: Dmitry Artamonow <mad_soft@inbox.ru>
-Subject: Re: [PATCH] ASoC: Add device tree binding for WM8903
-Date: Thu, 1 Dec 2011 17:58:46 +0400
-Message-ID: <20111201135846.GB17413@rainbow>
-References: <1322700455-26916-1-git-send-email-swarren@nvidia.com>
+From: Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and
+ support DT
+Date: Thu, 1 Dec 2011 14:11:12 +0000
+Message-ID: <20111201141112.GG4556@totoro>
+References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+ <1322700336-26866-2-git-send-email-swarren@nvidia.com>
+ <4ED78461.40006@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1322700455-26916-1-git-send-email-swarren@nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, John Bonesio <bones@secretlab.ca>, linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+In-Reply-To: <4ED78461.40006-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 17:47 Wed 30 Nov     , Stephen Warren wrote:
+On Thu, Dec 01, 2011 at 07:42:57AM -0600, Rob Herring wrote:
+> On 11/30/2011 06:45 PM, Stephen Warren wrote:
+> > Enhance  the driver to dynamically allocate the base IRQ number, and
+> > create an IRQ domain for itself. The use of an IRQ domain ensures that
+> > any device tree node interrupts properties are correctly parsed.
+> > 
+> > Fix the DT binding documentation to describe interrupt-related properties,
+> > and the contents of "child" node interrupts property.
+> > 
+> > Update tegra20.dtsi to specify the required interrupt-related properties.
+> > 
+> > Finally, remove the definition of TEGRA_GPIO_TO_IRQ; this macro no longer
+> > gives correct results since the IRQ numbers for GPIOs are dynamically
+> > allocated.
+> > 
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[...]
+> >  static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> >  {
+> > -	int gpio = d->irq - INT_GPIO_BASE;
+> > +	int gpio = d->hwirq;
+> >  	struct tegra_gpio_bank *bank = irq_data_get_irq_chip_data(d);
+> >  	int port = GPIO_PORT(gpio);
+> >  	int lvl_type;
+> > @@ -343,6 +345,22 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+> >  	int i;
+> >  	int j;
+> >  
+> > +	irq_domain.irq_base = irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
+> > +	if (irq_domain.irq_base < 0) {
+> > +		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
+> > +		return -ENODEV;
+> > +	}
+> > +	irq_domain.nr_irq = TEGRA_NR_GPIOS;
+> > +	irq_domain.ops = &irq_domain_ops;
+> 
+> Why don't you just use irq_domain_simple_ops?
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/wm8903.txt
-> @@ -0,0 +1,44 @@
-> +WM89033 audio CODEC
+This would need the patch I posted earlier 
+(https://lkml.org/lkml/2011/12/1/109) so they can work for the 
+!CONFIG_OF case ;-)
 
-Just a nitpick. s/WM89033/WM8903/
-
--- 
-Best regards,
-Dmitry "MAD" Artamonow
+Jamie
