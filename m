@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 3/5] ASoC: WM8903: Remove conditionals checking pdata != NULL
-Date: Fri,  2 Dec 2011 15:08:39 -0700
-Message-ID: <1322863721-29793-4-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 5/5] ASoC: WM8903: Add device tree binding
+Date: Fri,  2 Dec 2011 15:08:41 -0700
+Message-ID: <1322863721-29793-6-git-send-email-swarren@nvidia.com>
 References: <1322863721-29793-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1322863721-29793-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,133 +10,140 @@ To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane
 Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The pdata pointer is now always valid. Remove any conditions that check
-its validity.
-
-This patch is mostly just removing an indentation level. One variable had
-to be moved due to the removal of a scope, and one comment was split into
-two. Viewing the patch with git show/diff -b will show that it's actually
-very small.
-
-Note that WM8903_MIC_BIAS_CONTROL_0 is now written unconditionally,
-whereas it used to be written only if pdata was supplied. Since
-defpdata.micdet_cfg = 0, this unconditional write simply echos the HW
-defaults in the case where pdata is not supplied.
+Document the device tree binding for the WM8903 codec, and modify the
+driver to extract platform data from the device tree, if present.
 
 Based on work by John Bonesio, but significantly reworked since then.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/codecs/wm8903.c |   74 ++++++++++++++++++++++-----------------------
- 1 files changed, 36 insertions(+), 38 deletions(-)
+ Documentation/devicetree/bindings/sound/wm8903.txt |   50 ++++++++++++++++++++
+ sound/soc/codecs/wm8903.c                          |   49 +++++++++++++++++++
+ 2 files changed, 99 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/wm8903.txt
 
+diff --git a/Documentation/devicetree/bindings/sound/wm8903.txt b/Documentation/devicetree/bindings/sound/wm8903.txt
+new file mode 100644
+index 0000000..f102cbc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/wm8903.txt
+@@ -0,0 +1,50 @@
++WM8903 audio CODEC
++
++This device supports I2C only.
++
++Required properties:
++
++  - compatible : "wlf,wm8903"
++
++  - reg : the I2C address of the device.
++
++  - gpio-controller : Indicates this device is a GPIO controller.
++
++  - #gpio-cells : Should be two. The first cell is the pin number and the
++    second cell is used to specify optional parameters (currently unused).
++
++Optional properties:
++
++  - interrupts : The interrupt line the codec is connected to.
++
++  - micdet-cfg : Default register value for R6 (Mic Bias). If absent, the
++    default is 0.
++
++  - micdet-delay : The debounce delay for microphone detection in mS. If
++    absent, the default is 100.
++
++  - gpio-cfg : A list of GPIO configuration register values. The list must
++    be 5 entries long. If absent, no configuration of these registers is
++    performed. If any entry has the value 0xffffffff, that GPIO's
++    configuration will not be modified.
++
++Example:
++
++codec: wm8903@1a {
++	compatible = "wlf,wm8903";
++	reg = <0x1a>;
++	interrupts = < 347 >;
++
++	gpio-controller;
++	#gpio-cells = <2>;
++
++	micdet-cfg = <0>;
++	micdet-delay = <100>;
++	gpio-cfg = <
++		0x0600 /* DMIC_LR, output */
++		0x0680 /* DMIC_DAT, input */
++		0x0000 /* GPIO, output, low */
++		0x0200 /* Interrupt, output */
++		0x01a0 /* BCLK, input, active high */
++	>;
++};
 diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index 9fd89be..7e3b960 100644
+index a44bbfb..c080a87 100644
 --- a/sound/soc/codecs/wm8903.c
 +++ b/sound/soc/codecs/wm8903.c
-@@ -1842,7 +1842,7 @@ static void wm8903_init_gpio(struct snd_soc_codec *codec)
- 	wm8903->gpio_chip.ngpio = WM8903_NUM_GPIO;
- 	wm8903->gpio_chip.dev = codec->dev;
+@@ -2070,6 +2070,49 @@ static int wm8903_set_pdata_irq_trigger(struct i2c_client *i2c,
+ 	return 0;
+ }
  
--	if (pdata && pdata->gpio_base)
-+	if (pdata->gpio_base)
- 		wm8903->gpio_chip.base = pdata->gpio_base;
- 	else
- 		wm8903->gpio_chip.base = -1;
-@@ -1878,6 +1878,7 @@ static int wm8903_probe(struct snd_soc_codec *codec)
- 	int ret, i;
- 	int trigger, irq_pol;
- 	u16 val;
-+	bool mic_gpio = false;
- 
- 	wm8903->codec = codec;
- 	codec->control_data = wm8903->regmap;
-@@ -1888,52 +1889,49 @@ static int wm8903_probe(struct snd_soc_codec *codec)
- 		return ret;
++static int wm8903_set_pdata_from_of(struct i2c_client *i2c,
++				    struct wm8903_platform_data *pdata)
++{
++	const struct device_node *np = i2c->dev.of_node;
++	u32 val32;
++	int i;
++
++	if (of_property_read_u32(np, "micdet-cfg", &val32) >= 0)
++		pdata->micdet_cfg = val32;
++
++	if (of_property_read_u32(np, "micdet-delay", &val32) >= 0)
++		pdata->micdet_delay = val32;
++
++	if (of_property_read_u32_array(np, "gpio-cfg", pdata->gpio_cfg,
++				       ARRAY_SIZE(pdata->gpio_cfg)) >= 0) {
++		/*
++		 * In device tree: 0 means "write 0",
++		 * 0xffffffff means "don't touch".
++		 *
++		 * In platform data: 0 means "don't touch",
++		 * 0x8000 means "write 0".
++		 *
++		 * Note: WM8903_GPIO_CONFIG_ZERO == 0x8000.
++		 *
++		 *  Convert from DT to pdata representation here,
++		 * so no other code needs to change.
++		 */
++		for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
++			if (pdata->gpio_cfg[i] == 0) {
++				pdata->gpio_cfg[i] = WM8903_GPIO_CONFIG_ZERO;
++			} else if (pdata->gpio_cfg[i] == 0xffffffff) {
++				pdata->gpio_cfg[i] = 0;
++			} else if (pdata->gpio_cfg[i] > 0x7fff) {
++				dev_err(&i2c->dev, "Invalid gpio-cfg[%d] %x\n",
++					i, pdata->gpio_cfg[i]);
++				return -EINVAL;
++			}
++		}
++	}
++
++	return 0;
++}
++
+ static __devinit int wm8903_i2c_probe(struct i2c_client *i2c,
+ 				      const struct i2c_device_id *id)
+ {
+@@ -2111,6 +2154,12 @@ static __devinit int wm8903_i2c_probe(struct i2c_client *i2c,
+ 			if (ret != 0)
+ 				return ret;
+ 		}
++
++		if (i2c->dev.of_node) {
++			ret = wm8903_set_pdata_from_of(i2c, wm8903->pdata);
++			if (ret != 0)
++				return ret;
++		}
  	}
  
--	/* Set up GPIOs and microphone detection */
--	if (pdata) {
--		bool mic_gpio = false;
--
--		for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
--			if ((!pdata->gpio_cfg[i]) ||
--			    (pdata->gpio_cfg[i] > WM8903_GPIO_CONFIG_ZERO))
--				continue;
-+	/* Set up GPIOs, detect if any are MIC detect outputs */
-+	for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
-+		if ((!pdata->gpio_cfg[i]) ||
-+		    (pdata->gpio_cfg[i] > WM8903_GPIO_CONFIG_ZERO))
-+			continue;
- 
--			snd_soc_write(codec, WM8903_GPIO_CONTROL_1 + i,
--				      pdata->gpio_cfg[i] & 0x7fff);
-+		snd_soc_write(codec, WM8903_GPIO_CONTROL_1 + i,
-+				pdata->gpio_cfg[i] & 0x7fff);
- 
--			val = (pdata->gpio_cfg[i] & WM8903_GP1_FN_MASK)
--				>> WM8903_GP1_FN_SHIFT;
-+		val = (pdata->gpio_cfg[i] & WM8903_GP1_FN_MASK)
-+			>> WM8903_GP1_FN_SHIFT;
- 
--			switch (val) {
--			case WM8903_GPn_FN_MICBIAS_CURRENT_DETECT:
--			case WM8903_GPn_FN_MICBIAS_SHORT_DETECT:
--				mic_gpio = true;
--				break;
--			default:
--				break;
--			}
-+		switch (val) {
-+		case WM8903_GPn_FN_MICBIAS_CURRENT_DETECT:
-+		case WM8903_GPn_FN_MICBIAS_SHORT_DETECT:
-+			mic_gpio = true;
-+			break;
-+		default:
-+			break;
- 		}
-+	}
- 
--		snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
--			      pdata->micdet_cfg);
-+	/* Set up microphone detection */
-+	snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
-+			pdata->micdet_cfg);
- 
--		/* Microphone detection needs the WSEQ clock */
--		if (pdata->micdet_cfg)
--			snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
--					    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
-+	/* Microphone detection needs the WSEQ clock */
-+	if (pdata->micdet_cfg)
-+		snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
-+				    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
- 
--		/* If microphone detection is enabled by pdata but
--		 * detected via IRQ then interrupts can be lost before
--		 * the machine driver has set up microphone detection
--		 * IRQs as the IRQs are clear on read.  The detection
--		 * will be enabled when the machine driver configures.
--		 */
--		WARN_ON(!mic_gpio && (pdata->micdet_cfg & WM8903_MICDET_ENA));
-+	/* If microphone detection is enabled by pdata but
-+	    * detected via IRQ then interrupts can be lost before
-+	    * the machine driver has set up microphone detection
-+	    * IRQs as the IRQs are clear on read.  The detection
-+	    * will be enabled when the machine driver configures.
-+	    */
-+	WARN_ON(!mic_gpio && (pdata->micdet_cfg & WM8903_MICDET_ENA));
-+
-+	wm8903->mic_delay = pdata->micdet_delay;
- 
--		wm8903->mic_delay = pdata->micdet_delay;
--	}
--	
- 	if (wm8903->irq) {
--		if (pdata && pdata->irq_active_low) {
-+		if (pdata->irq_active_low) {
- 			trigger = IRQF_TRIGGER_LOW;
- 			irq_pol = WM8903_IRQ_POL;
- 		} else {
+ 	ret = regmap_read(wm8903->regmap, WM8903_SW_RESET_AND_ID, &val);
 -- 
 1.7.0.4
