@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 4/5] ASoC: WM8903: Get default irq_active_low from IRQ controller
-Date: Fri,  2 Dec 2011 15:08:40 -0700
-Message-ID: <1322863721-29793-5-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 3/5] ASoC: WM8903: Remove conditionals checking pdata != NULL
+Date: Fri,  2 Dec 2011 15:08:39 -0700
+Message-ID: <1322863721-29793-4-git-send-email-swarren@nvidia.com>
 References: <1322863721-29793-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1322863721-29793-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,102 +10,133 @@ To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane
 Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-If the WM8903 is hooked up to an interrupt, set the irq_active_low flag
-in the default platform data based on the IRQ's IRQ_TYPE. Map IRQ_TYPE_NONE
-(a lack of explicit configuration/restriction) to irq_active_low = false;
-the previous default.
+The pdata pointer is now always valid. Remove any conditions that check
+its validity.
 
-This code is mainly added to support device tree interrupt bindings,
-although will work perfectly well in a non device tree system too.
+This patch is mostly just removing an indentation level. One variable had
+to be moved due to the removal of a scope, and one comment was split into
+two. Viewing the patch with git show/diff -b will show that it's actually
+very small.
 
-Any interrupt controller that supports only a single IRQ_TYPE could
-set each IRQ's type based on that restriction. This applies equally
-with and without device tree. To cater for interrupt controllers
-that don't do this, for which irqd_get_trigger_type() will return
-IRQ_TYPE_NONE, the platform data irq_active_low field may be used
-in systems that don't use device tree.
+Note that WM8903_MIC_BIAS_CONTROL_0 is now written unconditionally,
+whereas it used to be written only if pdata was supplied. Since
+defpdata.micdet_cfg = 0, this unconditional write simply echos the HW
+defaults in the case where pdata is not supplied.
 
-With device tree, every IRQ must have some IRQ_TYPE set.
-
-Controllers that support DT and multiple IRQ_TYPEs must define the
-interrupts property (as used in interrupt source nodes) such that it
-defines the IRQ_TYPE to use. When the core DT setup code initializes
-wm8903->irq, the interrupts property will be parsed, and as a side-
-effect, set the IRQ's IRQ_TYPE for the WM8903 probe() function to read.
-
-Controllers that support DT and a single IRQ_TYPE could arrange to
-set the IRQ_TYPE somehow during their initialization, or hard-code
-it during the processing of the child interrupts property.
+Based on work by John Bonesio, but significantly reworked since then.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/codecs/wm8903.c |   40 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 40 insertions(+), 0 deletions(-)
+ sound/soc/codecs/wm8903.c |   74 ++++++++++++++++++++++-----------------------
+ 1 files changed, 36 insertions(+), 38 deletions(-)
 
 diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index 7e3b960..a44bbfb 100644
+index 9fd89be..7e3b960 100644
 --- a/sound/soc/codecs/wm8903.c
 +++ b/sound/soc/codecs/wm8903.c
-@@ -25,6 +25,7 @@
- #include <linux/i2c.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/irq.h>
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/pcm.h>
-@@ -2036,6 +2037,39 @@ static const struct regmap_config wm8903_regmap = {
- 	.num_reg_defaults = ARRAY_SIZE(wm8903_reg_defaults),
- };
+@@ -1842,7 +1842,7 @@ static void wm8903_init_gpio(struct snd_soc_codec *codec)
+ 	wm8903->gpio_chip.ngpio = WM8903_NUM_GPIO;
+ 	wm8903->gpio_chip.dev = codec->dev;
  
-+static int wm8903_set_pdata_irq_trigger(struct i2c_client *i2c,
-+					struct wm8903_platform_data *pdata)
-+{
-+	struct irq_data *irq_data = irq_get_irq_data(i2c->irq);
-+	if (!irq_data) {
-+		dev_err(&i2c->dev, "Invalid IRQ: %d\n",
-+			i2c->irq);
-+		return -EINVAL;
-+	}
-+
-+	switch (irqd_get_trigger_type(irq_data)) {
-+	case IRQ_TYPE_NONE:
-+		/*
-+		* We assume the controller imposes no restrictions,
-+		* so we are able to select active-high
-+		*/
-+		/* Fall-through */
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		pdata->irq_active_low = false;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		pdata->irq_active_low = true;
-+		break;
-+	default:
-+		dev_err(&i2c->dev,
-+			"Unsupported IRQ_TYPE %x\n",
-+			irqd_get_trigger_type(irq_data));
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static __devinit int wm8903_i2c_probe(struct i2c_client *i2c,
- 				      const struct i2c_device_id *id)
- {
-@@ -2071,6 +2105,12 @@ static __devinit int wm8903_i2c_probe(struct i2c_client *i2c,
- 			dev_err(&i2c->dev, "Failed to allocate pdata\n");
- 			return -ENOMEM;
- 		}
-+
-+		if (i2c->irq) {
-+			ret = wm8903_set_pdata_irq_trigger(i2c, wm8903->pdata);
-+			if (ret != 0)
-+				return ret;
-+		}
+-	if (pdata && pdata->gpio_base)
++	if (pdata->gpio_base)
+ 		wm8903->gpio_chip.base = pdata->gpio_base;
+ 	else
+ 		wm8903->gpio_chip.base = -1;
+@@ -1878,6 +1878,7 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 	int ret, i;
+ 	int trigger, irq_pol;
+ 	u16 val;
++	bool mic_gpio = false;
+ 
+ 	wm8903->codec = codec;
+ 	codec->control_data = wm8903->regmap;
+@@ -1888,52 +1889,49 @@ static int wm8903_probe(struct snd_soc_codec *codec)
+ 		return ret;
  	}
  
- 	ret = regmap_read(wm8903->regmap, WM8903_SW_RESET_AND_ID, &val);
+-	/* Set up GPIOs and microphone detection */
+-	if (pdata) {
+-		bool mic_gpio = false;
+-
+-		for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
+-			if ((!pdata->gpio_cfg[i]) ||
+-			    (pdata->gpio_cfg[i] > WM8903_GPIO_CONFIG_ZERO))
+-				continue;
++	/* Set up GPIOs, detect if any are MIC detect outputs */
++	for (i = 0; i < ARRAY_SIZE(pdata->gpio_cfg); i++) {
++		if ((!pdata->gpio_cfg[i]) ||
++		    (pdata->gpio_cfg[i] > WM8903_GPIO_CONFIG_ZERO))
++			continue;
+ 
+-			snd_soc_write(codec, WM8903_GPIO_CONTROL_1 + i,
+-				      pdata->gpio_cfg[i] & 0x7fff);
++		snd_soc_write(codec, WM8903_GPIO_CONTROL_1 + i,
++				pdata->gpio_cfg[i] & 0x7fff);
+ 
+-			val = (pdata->gpio_cfg[i] & WM8903_GP1_FN_MASK)
+-				>> WM8903_GP1_FN_SHIFT;
++		val = (pdata->gpio_cfg[i] & WM8903_GP1_FN_MASK)
++			>> WM8903_GP1_FN_SHIFT;
+ 
+-			switch (val) {
+-			case WM8903_GPn_FN_MICBIAS_CURRENT_DETECT:
+-			case WM8903_GPn_FN_MICBIAS_SHORT_DETECT:
+-				mic_gpio = true;
+-				break;
+-			default:
+-				break;
+-			}
++		switch (val) {
++		case WM8903_GPn_FN_MICBIAS_CURRENT_DETECT:
++		case WM8903_GPn_FN_MICBIAS_SHORT_DETECT:
++			mic_gpio = true;
++			break;
++		default:
++			break;
+ 		}
++	}
+ 
+-		snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
+-			      pdata->micdet_cfg);
++	/* Set up microphone detection */
++	snd_soc_write(codec, WM8903_MIC_BIAS_CONTROL_0,
++			pdata->micdet_cfg);
+ 
+-		/* Microphone detection needs the WSEQ clock */
+-		if (pdata->micdet_cfg)
+-			snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
+-					    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
++	/* Microphone detection needs the WSEQ clock */
++	if (pdata->micdet_cfg)
++		snd_soc_update_bits(codec, WM8903_WRITE_SEQUENCER_0,
++				    WM8903_WSEQ_ENA, WM8903_WSEQ_ENA);
+ 
+-		/* If microphone detection is enabled by pdata but
+-		 * detected via IRQ then interrupts can be lost before
+-		 * the machine driver has set up microphone detection
+-		 * IRQs as the IRQs are clear on read.  The detection
+-		 * will be enabled when the machine driver configures.
+-		 */
+-		WARN_ON(!mic_gpio && (pdata->micdet_cfg & WM8903_MICDET_ENA));
++	/* If microphone detection is enabled by pdata but
++	    * detected via IRQ then interrupts can be lost before
++	    * the machine driver has set up microphone detection
++	    * IRQs as the IRQs are clear on read.  The detection
++	    * will be enabled when the machine driver configures.
++	    */
++	WARN_ON(!mic_gpio && (pdata->micdet_cfg & WM8903_MICDET_ENA));
++
++	wm8903->mic_delay = pdata->micdet_delay;
+ 
+-		wm8903->mic_delay = pdata->micdet_delay;
+-	}
+-	
+ 	if (wm8903->irq) {
+-		if (pdata && pdata->irq_active_low) {
++		if (pdata->irq_active_low) {
+ 			trigger = IRQF_TRIGGER_LOW;
+ 			irq_pol = WM8903_IRQ_POL;
+ 		} else {
 -- 
 1.7.0.4
