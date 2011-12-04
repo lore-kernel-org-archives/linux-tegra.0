@@ -1,77 +1,57 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: PCIe MSI support
-Date: Sat, 3 Dec 2011 12:55:08 +0100
-Message-ID: <20111203115507.GA2887@avionic-0098.mockup.avionic-design.de>
-References: <20111124195704.GA15417@avionic-0098.adnet.avionic-design.de>
- <CAOesGMjDFsAvvUg8tMt+MbwODVoz3SmW0gqcRsCdD_Zhcz5p4Q@mail.gmail.com>
- <20111202074342.GB10768@avionic-0098.adnet.avionic-design.de>
- <CAOesGMgoYKnv+ATSx9dnShqXJyjW1X1MoVB=bydBoCcH-rDb2w@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v1] Input: tegra-kbc - report wakeup key for some
+ platforms.
+Date: Sun, 4 Dec 2011 00:50:38 -0800
+Message-ID: <20111204085038.GC14593@core.coreip.homeip.net>
+References: <1322685811-14060-1-git-send-email-riyer@nvidia.com>
+ <20111130212022.GB3108@core.coreip.homeip.net>
+ <1FC56210173BB445BD77F608D6FB8D034F3D1BB4BD@HQMAIL03.nvidia.com>
+ <20111201072649.GE16816@core.coreip.homeip.net>
+ <1FC56210173BB445BD77F608D6FB8D034F3D1BB4C9@HQMAIL03.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAOesGMgoYKnv+ATSx9dnShqXJyjW1X1MoVB=bydBoCcH-rDb2w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1FC56210173BB445BD77F608D6FB8D034F3D1BB4C9-lR+7xdUAJVNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "rydberg-Hk7bIW8heu4wFerOooGFRg@public.gmane.org" <rydberg-Hk7bIW8heu4wFerOooGFRg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Rakesh,
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 01, 2011 at 01:09:59PM -0800, Rakesh Iyer wrote:
+> Hello Dmitry.
+> 
+> Sorry for the wrap issue, my Outlook does not seem to obey the settings.
+> 
+> I wanted to explain the tegra system resume path implementation so I can justify 
+> why I am doing this complicated fix and why I feel it will guarantee the resume 
+> is due to keypress.
+> 
+> The tegra wake resume code is registered as a syscore ops.
+> When the system is resumed due to a wake event, the suspend_enter (after wakeup) 
+> routine will invoke the tegra syscoreops_resume method and that routine will propagate 
+> the wake event to the individual ISR's through genirq.
+> If kbc was wake source, kbc_isr will be invoked in this execution path.
+> 
+> If system is resumed due to other reason, the tegra_syscoreops_resume code will not 
+> find the event.
 
-* Olof Johansson wrote:
-> Hi,
->=20
-> On Thu, Dec 1, 2011 at 11:43 PM, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-[...]
-> > I've verified with a hardware engineer that the voltages indeed seem co=
-rrect.
-> > Even the PCIe reference clock can be measured at the mini-PCIe connecto=
-rs. So
-> > something must be going right.
->=20
-> Ok, that's interesting. I haven't had a chance to give my harmony a
-> spin with a pci-e card here lately, I'll try to give it a go as soon
-> as I can but it'll be a few more days.
+Consider the following sequence:
 
-That'd be great. Perhaps it works fine for you and I'm just doing something
-wrong.
+1. Something other than keyboard generates wakeup event
+2. It's IRQ fires up and gets serviced
+3. System starts resuming devices
+4. User presses a key on the keypad while it is still suspended _and_
+   registered as a wakeup source
+5. Keypad's ISR runs as well and you decide that KEY_POWER should be
+   reported even though keypad wasn't the real reason the system
+   woke up.
 
-[...]
-> > I'm thinking about ordering a Trimslice to use for comparison. Has anyo=
-ne
-> > else verified that mainline has working PCIe for Trimslice? I think Mike
-> > Rapoport is no longer a regular on this list. His last commits seem to
-> > indicate that PCIe was working on Harmony as well at the time, so I'm a
-> > little confused about what might have happened since then.
->=20
-> PCI-e works on mainline on trimslice, I have verified that myself. It
-> has ethernet on pci-e, and both u-boot and the kernel can use it.
+Is this scenario not possible?
 
-I've ordered a Trim-Slice and should have it late next week or beginning of
-the week after. I can also try an older version of mainline from around the
-time that Mike mainlined the Harmony support. I assume that at the time it
-must have worked. Perhaps the issue can be bisected.
+Thanks.
 
-Unfortunately I'm rather busy with other things as well, so I won't be able
-to work on this fulltime.
-
-Thierry
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7aDhsACgkQZ+BJyKLjJp+adwCePYFgHLgd592vglKZ1lvPNCm2
-zvwAn1X6p9wApnTEo/4nvTq/wX5LBERi
-=PVFi
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+-- 
+Dmitry
