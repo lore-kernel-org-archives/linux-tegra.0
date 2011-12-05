@@ -1,105 +1,38 @@
-From: Rakesh Iyer <riyer@nvidia.com>
-Subject: RE: [PATCH v1] Input: tegra-kbc - report wakeup key for some
- platforms.
-Date: Sun, 4 Dec 2011 21:52:47 -0800
-Message-ID: <1FC56210173BB445BD77F608D6FB8D034F3D2587A7@HQMAIL03.nvidia.com>
-References: <1322685811-14060-1-git-send-email-riyer@nvidia.com>
- <20111130212022.GB3108@core.coreip.homeip.net>
- <1FC56210173BB445BD77F608D6FB8D034F3D1BB4BD@HQMAIL03.nvidia.com>
- <20111201072649.GE16816@core.coreip.homeip.net>
- <1FC56210173BB445BD77F608D6FB8D034F3D1BB4C9@HQMAIL03.nvidia.com>
- <20111204085038.GC14593@core.coreip.homeip.net>
- <1323047897.3056.14.camel@riyer-dt2.nvidia.com>,<20111205042736.GA23733@core.coreip.homeip.net>
+From: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: Re: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and
+ support DT
+Date: Mon, 5 Dec 2011 14:55:28 +0800
+Message-ID: <20111205065527.GD2980@S2100-06.ap.freescale.net>
+References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+ <1322700336-26866-2-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20111205042736.GA23733@core.coreip.homeip.net>
-Content-Language: en-US
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "rydberg@euromail.se" <rydberg@euromail.se>, Stephen Warren <swarren@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1322700336-26866-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Nov 30, 2011 at 05:45:36PM -0700, Stephen Warren wrote:
+[...]
+>  static void tegra_gpio_irq_ack(struct irq_data *d)
+>  {
+> -	int gpio = d->irq - INT_GPIO_BASE;
+> +	int gpio = d->hwirq;
+>  
+Though it's working right now, I'm not sure it's safe enough.  This
+only works when d->hwirq_base is 0, which is true for now.  But I doubt
+it will be always true.  I guess hwirq_base was introduced there for
+some reason.  When some day irqdomain starts using this field, the
+above code starts being broken.  IMO, the way that generic-chip.c is
+using to calculate the number, d->irq - gc->irq_base, is much more
+safer.
 
-________________________________________
-From: Dmitry Torokhov [dmitry.torokhov@gmail.com]
-Sent: Sunday, December 04, 2011 8:27 PM
-To: Rakesh Iyer
-Cc: rydberg@euromail.se; Stephen Warren; Laxman Dewangan; linux-kernel@vger.kernel.org; linux-input@vger.kernel.org; linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1] Input: tegra-kbc - report wakeup key for some platforms.
+-- 
+Regards,
+Shawn
 
-On Sun, Dec 04, 2011 at 05:18:17PM -0800, riyer wrote:
-> Hello Dmitry.
-> Please find replies inline.
->
-> On Sun, 2011-12-04 at 00:50 -0800, Dmitry Torokhov wrote:
-> > Hi Rakesh,
-> >
-> > On Thu, Dec 01, 2011 at 01:09:59PM -0800, Rakesh Iyer wrote:
-> > > Hello Dmitry.
-> > >
-> > > Sorry for the wrap issue, my Outlook does not seem to obey the settings.
-> > >
-> > > I wanted to explain the tegra system resume path implementation so I can justify
-> > > why I am doing this complicated fix and why I feel it will guarantee the resume
-> > > is due to keypress.
-> > >
-> > > The tegra wake resume code is registered as a syscore ops.
-> > > When the system is resumed due to a wake event, the suspend_enter (after wakeup)
-> > > routine will invoke the tegra syscoreops_resume method and that routine will propagate
-> > > the wake event to the individual ISR's through genirq.
-> > > If kbc was wake source, kbc_isr will be invoked in this execution path.
-> > >
-> > > If system is resumed due to other reason, the tegra_syscoreops_resume code will not
-> > > find the event.
-> >
-> > Consider the following sequence:
-> >
-> > 1. Something other than keyboard generates wakeup event
-> > 2. It's IRQ fires up and gets serviced
-> At this point syscoreops_resume has finished all its wakeup processing.
->
-> > 3. System starts resuming devices
-> > 4. User presses a key on the keypad while it is still suspended _and_
-> >    registered as a wakeup source
-> This will have no impact on the system and keypad ISR will not be
-> invoked.
-> > 5. Keypad's ISR runs as well and you decide that KEY_POWER should be
-> >    reported even though keypad wasn't the real reason the system
-> >    woke up.
-> The interrupt line we use to detect wakeup processing is the keypress
-> interrupt which is disabled and will never cause the ISR invocation from
-> a device interrupt(i.e. the PIC).
->
-> In other words KBC isr gets invoked for 2 reasons
-> a) FIFO interrupt is generated, which will not happen as long as
-> scanning logic is disabled until kbc_resume executes.
-> b) The syscoreops_resume codepath calls into the ISR after finding KBC
-> was a wakesource. If this happens it will happen only when the kernel
-> resumes from its suspend code path.
-
->> Is this code already in mainline or still somewhere else?
- 
-I think this code has not made it to mainline yet. 
-Its in the Android and ChromeOs kernel trees.
-
-> >
-> > Is this scenario not possible?
-> >
-> > Thanks.
-> >
-> With that being the case do you think the fix makes sense?
-
->> OK, yes. I do not think it is that important if we occasionally report
->> KEY_POWER even if KBC was not a true wakeup source but that's fine.
-
->>Thanks.
-
->>--
->> Dmitry
-
-So can I assume this patch is accepted?
-
-Thanks and Regards
-Rakesh
+>  	tegra_gpio_writel(1 << GPIO_BIT(gpio), GPIO_INT_CLR(gpio));
+>  }
