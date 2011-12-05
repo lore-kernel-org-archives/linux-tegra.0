@@ -1,61 +1,53 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2 4/5] ASoC: WM8903: Get default irq_active_low from
- IRQ controller
-Date: Mon, 5 Dec 2011 08:52:19 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1750B77016@HQMAIL01.nvidia.com>
-References: <1322863721-29793-1-git-send-email-swarren@nvidia.com>
- <1322863721-29793-5-git-send-email-swarren@nvidia.com>
- <20111203111713.GC6043@opensource.wolfsonmicro.com>
+Subject: RE: [PATCH 2/2] gpio/tegra: Dynamically allocate IRQ base, and
+ support DT
+Date: Mon, 5 Dec 2011 09:19:00 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1750B7702E@HQMAIL01.nvidia.com>
+References: <1322700336-26866-1-git-send-email-swarren@nvidia.com>
+ <1322700336-26866-2-git-send-email-swarren@nvidia.com>
+ <20111205065527.GD2980@S2100-06.ap.freescale.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111203111713.GC6043-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20111205065527.GD2980-+NayF8gZjK2ctlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Shawn Guo <shawn.guo-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark Brown wrote at Saturday, December 03, 2011 4:17 AM:
-> On Fri, Dec 02, 2011 at 03:08:40PM -0700, Stephen Warren wrote:
-> 
-> > +	switch (irqd_get_trigger_type(irq_data)) {
-> > +	case IRQ_TYPE_NONE:
-> > +		/*
-> > +		* We assume the controller imposes no restrictions,
-> > +		* so we are able to select active-high
-> > +		*/
-> > +		/* Fall-through */
-> > +	case IRQ_TYPE_LEVEL_HIGH:
-> > +		pdata->irq_active_low = false;
-> > +		break;
-> > +	case IRQ_TYPE_LEVEL_LOW:
-> > +		pdata->irq_active_low = true;
-> > +		break;
-> > +	default:
-> > +		dev_err(&i2c->dev,
-> > +			"Unsupported IRQ_TYPE %x\n",
-> > +			irqd_get_trigger_type(irq_data));
-> > +		return -EINVAL;
-> 
-> Actually, it occurs to me that we should treat the default case in the
-> same way as IRQ_TYPE_NONE - even if the interrupt controller defaults to
-> an edge triggered mode which we can't use it might also support a level
-> triggered interrupt we can use.  If it doesn't then we'll just fail
-> later on when we request the IRQ so the end result should be the same.
+Shawn Guo wrote at Sunday, December 04, 2011 11:55 PM:
+> On Wed, Nov 30, 2011 at 05:45:36PM -0700, Stephen Warren wrote:
+> [...]
+> >  static void tegra_gpio_irq_ack(struct irq_data *d)
+> >  {
+> > -	int gpio = d->irq - INT_GPIO_BASE;
+> > +	int gpio = d->hwirq;
+> >
+> Though it's working right now, I'm not sure it's safe enough.  This
+> only works when d->hwirq_base is 0, which is true for now.  But I doubt
+> it will be always true.  I guess hwirq_base was introduced there for
+> some reason.  When some day irqdomain starts using this field, the
+> above code starts being broken.  IMO, the way that generic-chip.c is
+> using to calculate the number, d->irq - gc->irq_base, is much more
+> safer.
 
-Yes, deferring the failure to later seems reasonable; it's probably better
-to work somehow if the HW supports it rather than being anal about e.g.
-incorrect device tree content.
+If I'm understanding IRQ domains correctly, the hwirq_base value is
+picked by the driver when registering the IRQ domain. Hence, there's
+no way for hwirq_base to not be zero without someone editing gpio-tegra.c,
+and as part of doing that, the quoted code could be adjusted if required.
+Does that seem reasonable?
 
-> Don't worry about respinning for this unless the series needs to get
-> resent for some other reason let's just fix it incrementally (I'll do
-> that myself when I apply unless you want to).
-
-I'm fine if you change that when applying it.
-
-Thanks.
+Rob, you suggested the code above - what's your take?
 
 -- 
 nvpublic
