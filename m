@@ -1,89 +1,112 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/6] ASoC: Allow device tree to specify a card's name
-Date: Wed,  7 Dec 2011 13:58:25 -0700
-Message-ID: <1323291510-22338-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 2/6] ASoC: Allow the DAPM routes to be stored in device tree
+Date: Wed,  7 Dec 2011 13:58:26 -0700
+Message-ID: <1323291510-22338-2-git-send-email-swarren@nvidia.com>
+References: <1323291510-22338-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1323291510-22338-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-If a card's device was instantiated from device tree, and the device tree
-has a "user-visible-name" property, use that as the card's name.
+If a card's device was instantiated from device tree, and card's device
+did not specify a DAPM route map, and the device tree has an "audio-
+routing" property, parse this to construct the DAPM route array.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: New patch implementing new functionality
+v2: New patch; separated this code out of the Tegra+WM8903 machine driver
+into a generic feature.
 
-Re: the binding documentation:
-* "SoC" here refers to the fact this is a binding oriented at System-on-
-  chip audio complexes, rather than having to do with "ASoC"; both names
-  were derived from the same root.
-* Do we need a compatible property for this "base class" binding at all?
-  I think it's a good idea, even though the code doesn't actually rely
-  on it.
-* Should the vendor field in the compatible property be "generic",
-  "linux", or absent? I've tried to make these bindings generic and
-  applicable to other OSs, so "linux," seems wrong.
-* Should the property "user-visible-name" have a "generic," prefix or
-  similar?
+Note that this binding does not allow the "control" field of the routes
+to be specified via device tree. Should the binding be expanded to allow
+this? Representing this while still keeping the binding generic enough
+to be useful outside ASoC might be difficult. I'm not sure if this
+feature is useful at the card level? I quickly checked, and couldn't see
+any in-tree users of this functionality.
 
- .../bindings/sound/soc-audio-complex.txt           |   14 ++++++++
- sound/soc/soc-core.c                               |   35 ++++++++++++++++++-
- 2 files changed, 47 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/soc-audio-complex.txt
+ .../bindings/sound/soc-audio-complex.txt           |   15 ++++++
+ sound/soc/soc-core.c                               |   48 ++++++++++++++++++++
+ 2 files changed, 63 insertions(+), 0 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/sound/soc-audio-complex.txt b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-new file mode 100644
-index 0000000..1cc7059
---- /dev/null
+index 1cc7059..f8e73cc 100644
+--- a/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
 +++ b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-@@ -0,0 +1,14 @@
-+SoC Audio Complex
-+
-+Required properties:
-+- compatible : "generic,soc-audio-complex". Other compatible values
-+  indicating the specific HW model will typically be present too.
-+- user-visible-name : The user-visible name of this sound complex.
-+
-+Example:
-+
-+sound {
-+	compatible = "nvidia,tegra-audio-wm8903",
-+		     "generic,soc-audio-complex";
-+	user-visible-name = "tegra-wm8903-harmony";
-+};
+@@ -4,6 +4,12 @@ Required properties:
+ - compatible : "generic,soc-audio-complex". Other compatible values
+   indicating the specific HW model will typically be present too.
+ - user-visible-name : The user-visible name of this sound complex.
++- audio-routing : A list of the connections between audio components.
++  Each entry is a pair of strings, the first being the connection's sink,
++  the second being the connection's source. Valid names for sources and
++  sinks are the determined by the binding for the HW that comprises the
++  audio complex, e.g. the names of an audio codec's pins, the names of
++  the user-visible jacks (plugs) on the board, etc.
+ 
+ Example:
+ 
+@@ -11,4 +17,13 @@ sound {
+ 	compatible = "nvidia,tegra-audio-wm8903",
+ 		     "generic,soc-audio-complex";
+ 	user-visible-name = "tegra-wm8903-harmony";
++	audio-routing =
++		"Headphone Jack", "HPOUTR",
++		"Headphone Jack", "HPOUTL",
++		"Int Spk", "ROP",
++		"Int Spk", "RON",
++		"Int Spk", "LOP",
++		"Int Spk", "LON",
++		"Mic Jack", "MICBIAS",
++		"IN1L", "Mic Jack";
+ };
 diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 5195f06..56d1bc5 100644
+index 56d1bc5..f60e04f 100644
 --- a/sound/soc/soc-core.c
 +++ b/sound/soc/soc-core.c
-@@ -32,6 +32,7 @@
- #include <linux/platform_device.h>
- #include <linux/ctype.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- #include <sound/ac97_codec.h>
- #include <sound/core.h>
- #include <sound/jack.h>
-@@ -2809,6 +2810,25 @@ int snd_soc_dai_digital_mute(struct snd_soc_dai *dai, int mute)
+@@ -2829,6 +2829,48 @@ static int snd_soc_of_parse_card_name(struct snd_soc_card *card)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
  
-+/* Retrieve a card's name from device tree */
-+static int snd_soc_of_parse_card_name(struct snd_soc_card *card)
++int snd_soc_of_parse_audio_routing(struct snd_soc_card *card)
 +{
 +	struct device_node *np = card->dev->of_node;
-+	int ret;
++	int num_routes;
++	struct snd_soc_dapm_route *routes;
++	int i;
 +
-+	ret = of_property_read_string_index(np, "user-visible-name", 0,
-+					    &card->name);
-+	/*
-+	 * EINVAL means the property does not exist. This is fine providing
-+	 * card->name was previously set, which is checked later in
-+	 * snd_soc_register_card.
-+	 */
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
++	num_routes = of_property_count_strings(np, "audio-routing");
++	if (num_routes & 1) {
++		dev_err(card->dev,
++			"Property 'audio-routing's length is not even\n");
++		return -EINVAL;
++	}
++	num_routes /= 2;
++	if (!num_routes) {
++		dev_err(card->dev,
++			"Property 'audio-routing's length is zero\n");
++		return -EINVAL;
++	}
++
++	routes = kzalloc(
++		num_routes * sizeof(*routes),
++		GFP_KERNEL);
++	if (!routes) {
++		dev_err(card->dev,
++			"Could not allocate DAPM route table\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < num_routes; i++) {
++		of_property_read_string_index(np, "audio-routing",
++			2 * i, &routes[i].sink);
++		of_property_read_string_index(np, "audio-routing",
++			(2 * i) + 1, &routes[i].source);
++	}
++
++	card->num_dapm_routes = num_routes;
++	card->dapm_routes = routes;
 +
 +	return 0;
 +}
@@ -91,30 +114,18 @@ index 5195f06..56d1bc5 100644
  /**
   * snd_soc_register_card - Register a card with the ASoC core
   *
-@@ -2817,11 +2837,22 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
-  */
- int snd_soc_register_card(struct snd_soc_card *card)
- {
--	int i;
-+	int i, ret;
- 
--	if (!card->name || !card->dev)
-+	if (!card->dev)
- 		return -EINVAL;
- 
-+	if (card->dev->of_node) {
-+		ret = snd_soc_of_parse_card_name(card);
-+		if (ret < 0)
-+			return ret;
-+	}
+@@ -2846,6 +2888,12 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 		ret = snd_soc_of_parse_card_name(card);
+ 		if (ret < 0)
+ 			return ret;
 +
-+	if (!card->name) {
-+		dev_err(card->dev, "Card name is not set\n");
-+		return -EINVAL;
-+	}
-+
- 	dev_set_drvdata(card->dev, card);
++		if (!card->num_dapm_routes && !card->dapm_routes) {
++			ret = snd_soc_of_parse_audio_routing(card);
++			if (ret < 0)
++				return ret;
++		}
+ 	}
  
- 	snd_soc_initialize_card_lists(card);
+ 	if (!card->name) {
 -- 
 1.7.0.4
