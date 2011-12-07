@@ -1,33 +1,44 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] ASoC: WM8903: Add device tree binding
-Date: Wed, 7 Dec 2011 12:33:09 +0000
-Message-ID: <20111207123308.GA18715@opensource.wolfsonmicro.com>
-References: <1322863721-29793-1-git-send-email-swarren@nvidia.com>
- <1322863721-29793-6-git-send-email-swarren@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1750B773EE@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH 1/3 v4] usb: tegra20-ehci: Add devicetree support.
+Date: Wed, 7 Dec 2011 09:08:26 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1750B77736@HQMAIL01.nvidia.com>
+References: <1311283067-18952-1-git-send-email-achew@nvidia.com>
+ <20111207034200.GG32515@game.jcrosoft.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1750B773EE-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, John Bonesio <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111207034200.GG32515@game.jcrosoft.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Andrew Chew <AChew@nvidia.com>
+Cc: "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "olof@lixom.net" <olof@lixom.net>, Dan Willemsen <dwillemsen@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, Venkat Moganty <vmoganty@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 06, 2011 at 10:22:24AM -0800, Stephen Warren wrote:
+Jean-Christophe PLAGNIOL-VILLARD wrote at Tuesday, December 06, 2011 8:42 PM:
+> On 14:17 Thu 21 Jul     , achew@nvidia.com wrote:
+> > From: Andrew Chew <achew@nvidia.com>
+> >
+> > Add code to try to get platform data information (register base, irq,
+> > modes, various tuning parameters) from device tree, if not present in board
+> > files.
+...
+> > +static u64 tegra_ehci_dmamask = DMA_BIT_MASK(TEGRA_USB_DMA_ALIGN);
+> I really does not like this
+> as the dmamask is supposed to be device specific
+> 
+> before we put it in the soc codewhich alow to have it generic
+> 
+> this need to be manage a DT level
+> 	dmamask = <32>
+> 
+> or
+> 	dmamask = <0xffffffff>
 
-> Now, everything still works without this. Looking at the Linux OF code,
-> it works by retrieving the compatible property, taking everything after
-> the comma if present, and then creating an i2c_board_info with that
-> type, which in this case is "wm8903" and matches wm8903.c's i2c_device_id
-> table. See drivers/of/of_i2c.c:of_i2c_register_devices() and the call to
-> base.c:of_modalias_node().
+Jean-Christophe,
 
-> So, the question is: Should I go back and add the of_match table, or
-> is I2C intended to work without it perpetually? I notice that you added
-> an of_match table for all the other WM codecs.
+The patch you're replying to is very old; Olof has posted (and applied)
+some basic USB bindings much more recently than the above.
 
-You can't go back and do anything now as the patches are merged, you
-need to fix incrementally.  You should do this for completeness even if
-currently we work without it.
+-- 
+nvpublic
