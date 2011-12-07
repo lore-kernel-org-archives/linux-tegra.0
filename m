@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 2/6] ASoC: Allow the DAPM routes to be stored in device tree
-Date: Wed,  7 Dec 2011 15:13:43 -0700
-Message-ID: <1323296033-28730-5-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 4/8] arm/dt: tegra: Add Tegra APB DMA device tree binding
+Date: Wed,  7 Dec 2011 15:13:46 -0700
+Message-ID: <1323296033-28730-8-git-send-email-swarren@nvidia.com>
 References: <1323296033-28730-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1323296033-28730-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,122 +10,85 @@ To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-If a card's device was instantiated from device tree, and card's device
-did not specify a DAPM route map, and the device tree has an "audio-
-routing" property, parse this to construct the DAPM route array.
+Document binding, and add the node to tegra20.dtsi.
+
+The driver isn't actually instantiated from this node yet, but the I2S
+binding will rely on being able to refer to the APB DMA node using a
+phandle.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: New patch; separated this code out of the Tegra+WM8903 machine driver
-into a generic feature.
+ .../devicetree/bindings/dma/tegra20-apbdma.txt     |   29 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |   21 ++++++++++++++
+ 2 files changed, 50 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
 
-Note that this binding does not allow the "control" field of the routes
-to be specified via device tree. Should the binding be expanded to allow
-this? Representing this while still keeping the binding generic enough
-to be useful outside ASoC might be difficult. I'm not sure if this
-feature is useful at the card level? I quickly checked, and couldn't see
-any in-tree users of this functionality.
-
- .../bindings/sound/soc-audio-complex.txt           |   15 ++++++
- sound/soc/soc-core.c                               |   48 ++++++++++++++++++++
- 2 files changed, 63 insertions(+), 0 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/soc-audio-complex.txt b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-index 1cc7059..f8e73cc 100644
---- a/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-+++ b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-@@ -4,6 +4,12 @@ Required properties:
- - compatible : "generic,soc-audio-complex". Other compatible values
-   indicating the specific HW model will typically be present too.
- - user-visible-name : The user-visible name of this sound complex.
-+- audio-routing : A list of the connections between audio components.
-+  Each entry is a pair of strings, the first being the connection's sink,
-+  the second being the connection's source. Valid names for sources and
-+  sinks are the determined by the binding for the HW that comprises the
-+  audio complex, e.g. the names of an audio codec's pins, the names of
-+  the user-visible jacks (plugs) on the board, etc.
+diff --git a/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt b/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+new file mode 100644
+index 0000000..ee80574
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+@@ -0,0 +1,29 @@
++* NVIDIA Tegra APB DMA controller
++
++Required properties:
++- compatible: Should be "nvidia,<chip>-apbdma"
++- reg: Should contain DMA registers location and length
++- interrupts: Should contain DMA interrupt
++
++Examples:
++
++apbdma: dma@6000a000 {
++	compatible = "nvidia,tegra20-apbdma";
++	reg = <0x6000a000 0x1000>;
++	interrupts = < 0 136 0x04
++		       0 137 0x04
++		       0 138 0x04
++		       0 139 0x04
++		       0 140 0x04
++		       0 141 0x04
++		       0 142 0x04
++		       0 143 0x04
++		       0 144 0x04
++		       0 145 0x04
++		       0 146 0x04
++		       0 147 0x04
++		       0 148 0x04
++		       0 149 0x04
++		       0 150 0x04
++		       0 151 0x04 >;
++};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index e25f4a6..189c31e 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -12,6 +12,27 @@
+ 		      < 0x50040100 0x0100 >;
+ 	};
  
- Example:
- 
-@@ -11,4 +17,13 @@ sound {
- 	compatible = "nvidia,tegra-audio-wm8903",
- 		     "generic,soc-audio-complex";
- 	user-visible-name = "tegra-wm8903-harmony";
-+	audio-routing =
-+		"Headphone Jack", "HPOUTR",
-+		"Headphone Jack", "HPOUTL",
-+		"Int Spk", "ROP",
-+		"Int Spk", "RON",
-+		"Int Spk", "LOP",
-+		"Int Spk", "LON",
-+		"Mic Jack", "MICBIAS",
-+		"IN1L", "Mic Jack";
- };
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 56d1bc5..f60e04f 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2829,6 +2829,48 @@ static int snd_soc_of_parse_card_name(struct snd_soc_card *card)
- 	return 0;
- }
- 
-+int snd_soc_of_parse_audio_routing(struct snd_soc_card *card)
-+{
-+	struct device_node *np = card->dev->of_node;
-+	int num_routes;
-+	struct snd_soc_dapm_route *routes;
-+	int i;
++	apbdma: dma@6000a000 {
++		compatible = "nvidia,tegra20-apbdma";
++		reg = <0x6000a000 0x1000>;
++		interrupts = < 0 136 0x04
++			       0 137 0x04
++			       0 138 0x04
++			       0 139 0x04
++			       0 140 0x04
++			       0 141 0x04
++			       0 142 0x04
++			       0 143 0x04
++			       0 144 0x04
++			       0 145 0x04
++			       0 146 0x04
++			       0 147 0x04
++			       0 148 0x04
++			       0 149 0x04
++			       0 150 0x04
++			       0 151 0x04 >;
++	};
 +
-+	num_routes = of_property_count_strings(np, "audio-routing");
-+	if (num_routes & 1) {
-+		dev_err(card->dev,
-+			"Property 'audio-routing's length is not even\n");
-+		return -EINVAL;
-+	}
-+	num_routes /= 2;
-+	if (!num_routes) {
-+		dev_err(card->dev,
-+			"Property 'audio-routing's length is zero\n");
-+		return -EINVAL;
-+	}
-+
-+	routes = kzalloc(
-+		num_routes * sizeof(*routes),
-+		GFP_KERNEL);
-+	if (!routes) {
-+		dev_err(card->dev,
-+			"Could not allocate DAPM route table\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < num_routes; i++) {
-+		of_property_read_string_index(np, "audio-routing",
-+			2 * i, &routes[i].sink);
-+		of_property_read_string_index(np, "audio-routing",
-+			(2 * i) + 1, &routes[i].source);
-+	}
-+
-+	card->num_dapm_routes = num_routes;
-+	card->dapm_routes = routes;
-+
-+	return 0;
-+}
-+
- /**
-  * snd_soc_register_card - Register a card with the ASoC core
-  *
-@@ -2846,6 +2888,12 @@ int snd_soc_register_card(struct snd_soc_card *card)
- 		ret = snd_soc_of_parse_card_name(card);
- 		if (ret < 0)
- 			return ret;
-+
-+		if (!card->num_dapm_routes && !card->dapm_routes) {
-+			ret = snd_soc_of_parse_audio_routing(card);
-+			if (ret < 0)
-+				return ret;
-+		}
- 	}
- 
- 	if (!card->name) {
+ 	i2c@7000c000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 1.7.0.4
