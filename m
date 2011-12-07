@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/6] ASoC: Allow device tree to specify a card's name
-Date: Wed,  7 Dec 2011 15:13:41 -0700
-Message-ID: <1323296033-28730-3-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 3/8] arm/tegra: Split Seaboard GPIO table to allow for Ventana
+Date: Wed,  7 Dec 2011 15:13:44 -0700
+Message-ID: <1323296033-28730-6-git-send-email-swarren@nvidia.com>
 References: <1323296033-28730-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1323296033-28730-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,113 +10,61 @@ To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-If a card's device was instantiated from device tree, and the device tree
-has a "user-visible-name" property, use that as the card's name.
+Seaboard and Ventana share some GPIOs, but others are different. Split the
+GPIO table into common, seaboard-specific, and ventana-specific tables, so
+that only the correct ones are enabled for each board. Add a few missing
+audio-related GPIOs for Ventana.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: New patch implementing new functionality
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   16 +++++++++++++++-
+ 1 files changed, 15 insertions(+), 1 deletions(-)
 
-Re: the binding documentation:
-* "SoC" here refers to the fact this is a binding oriented at System-on-
-  chip audio complexes, rather than having to do with "ASoC"; both names
-  were derived from the same root.
-* Do we need a compatible property for this "base class" binding at all?
-  I think it's a good idea, even though the code doesn't actually rely
-  on it.
-* Should the vendor field in the compatible property be "generic",
-  "linux", or absent? I've tried to make these bindings generic and
-  applicable to other OSs, so "linux," seems wrong.
-* Should the property "user-visible-name" have a "generic," prefix or
-  similar?
-
- .../bindings/sound/soc-audio-complex.txt           |   14 ++++++++
- sound/soc/soc-core.c                               |   35 ++++++++++++++++++-
- 2 files changed, 47 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/soc-audio-complex.txt b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-new file mode 100644
-index 0000000..1cc7059
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/soc-audio-complex.txt
-@@ -0,0 +1,14 @@
-+SoC Audio Complex
-+
-+Required properties:
-+- compatible : "generic,soc-audio-complex". Other compatible values
-+  indicating the specific HW model will typically be present too.
-+- user-visible-name : The user-visible name of this sound complex.
-+
-+Example:
-+
-+sound {
-+	compatible = "nvidia,tegra-audio-wm8903",
-+		     "generic,soc-audio-complex";
-+	user-visible-name = "tegra-wm8903-harmony";
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index b1c2972..cb5b2e9 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -190,14 +190,26 @@ static struct tegra_gpio_table common_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
++	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
 +};
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 5195f06..56d1bc5 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -32,6 +32,7 @@
- #include <linux/platform_device.h>
- #include <linux/ctype.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- #include <sound/ac97_codec.h>
- #include <sound/core.h>
- #include <sound/jack.h>
-@@ -2809,6 +2810,25 @@ int snd_soc_dai_digital_mute(struct snd_soc_dai *dai, int mute)
- }
- EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
++
++static struct tegra_gpio_table seaboard_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_HP_DET,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_ISL29018_IRQ,	.enable = true },
+-	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
+ };
  
-+/* Retrieve a card's name from device tree */
-+static int snd_soc_of_parse_card_name(struct snd_soc_card *card)
-+{
-+	struct device_node *np = card->dev->of_node;
-+	int ret;
++static struct tegra_gpio_table ventana_gpio_table[] = {
++	/* hp_det */
++	{ .gpio = TEGRA_GPIO_PW2,		.enable = true },
++	/* int_mic_en */
++	{ .gpio = TEGRA_GPIO_PX0,		.enable = true },
++	/* ext_mic_en */
++	{ .gpio = TEGRA_GPIO_PX1,		.enable = true },
++};
 +
-+	ret = of_property_read_string_index(np, "user-visible-name", 0,
-+					    &card->name);
-+	/*
-+	 * EINVAL means the property does not exist. This is fine providing
-+	 * card->name was previously set, which is checked later in
-+	 * snd_soc_register_card.
-+	 */
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
-+
-+	return 0;
-+}
-+
- /**
-  * snd_soc_register_card - Register a card with the ASoC core
-  *
-@@ -2817,11 +2837,22 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_digital_mute);
-  */
- int snd_soc_register_card(struct snd_soc_card *card)
+ static void __init update_pinmux(struct tegra_pingroup_config *newtbl, int size)
  {
--	int i;
-+	int i, ret;
+ 	int i, j;
+@@ -235,11 +247,13 @@ void __init seaboard_common_pinmux_init(void)
+ void __init seaboard_pinmux_init(void)
+ {
+ 	seaboard_common_pinmux_init();
++	tegra_gpio_config(seaboard_gpio_table, ARRAY_SIZE(seaboard_gpio_table));
+ }
  
--	if (!card->name || !card->dev)
-+	if (!card->dev)
- 		return -EINVAL;
+ void __init ventana_pinmux_init(void)
+ {
+ 	update_pinmux(ventana_pinmux, ARRAY_SIZE(ventana_pinmux));
+ 	seaboard_common_pinmux_init();
++	tegra_gpio_config(ventana_gpio_table, ARRAY_SIZE(ventana_gpio_table));
+ }
  
-+	if (card->dev->of_node) {
-+		ret = snd_soc_of_parse_card_name(card);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (!card->name) {
-+		dev_err(card->dev, "Card name is not set\n");
-+		return -EINVAL;
-+	}
-+
- 	dev_set_drvdata(card->dev, card);
- 
- 	snd_soc_initialize_card_lists(card);
 -- 
 1.7.0.4
