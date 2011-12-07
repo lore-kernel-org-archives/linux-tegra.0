@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 5/6] ASoC: Tegra: Move DAS configuration into DAS driver
-Date: Wed,  7 Dec 2011 15:13:49 -0700
-Message-ID: <1323296033-28730-11-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 8/8] arm/dt: tegra: Enable audio on WM8903 boards, disable others
+Date: Wed,  7 Dec 2011 15:13:53 -0700
+Message-ID: <1323296033-28730-15-git-send-email-swarren@nvidia.com>
 References: <1323296033-28730-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1323296033-28730-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,120 +10,257 @@ To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Move DAS routing setup into the DAS driver itself. This removes the need
-to duplicate this in each machine driver, of which we'll soon have three.
+Add complete bindings to instantiate and configure the codec and
+top-level audio complex on all currently supported boards using the
+Tegra+WM8903 audio driver.
 
-An added advantage is that the machine drivers no longer call the Tegra20-
-specific DAS functions by name, so the machine driver no longer needs to
-be split up into Tegra20 and Tegra30 versions.
+On those boards, disable the I2S2 controller since it isn't used.
 
-If individual machine drivers need a different routing setup to this
-default, they can still call the DAS functions to set that up.
-
-Long-term, DAS will be a codec driver, and user-space will be able to
-control its routing, possibly within constraints that the machine driver
-sets up. Configuring the DAS routing from the DAS driver is a very slight
-move in that direction.
+On boards not using the WM8903 codec, disable all the audio devices;
+they can be re-enabled once the relevant codec and ASoC machine drivers
+have been ported to device-tree.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: New patch. Sorry for the churn here. This should avoid the Paz00
-(Toshiba AC100) machine driver from having to add the calls to the DAS
-driver.
+ arch/arm/boot/dts/tegra-harmony.dts   |   42 ++++++++++++++++++++++++-------
+ arch/arm/boot/dts/tegra-paz00.dts     |   12 +++++++++
+ arch/arm/boot/dts/tegra-seaboard.dts  |   41 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra-trimslice.dts |   12 +++++++++
+ arch/arm/boot/dts/tegra-ventana.dts   |   43 +++++++++++++++++++++++++++++++++
+ 5 files changed, 140 insertions(+), 10 deletions(-)
 
- sound/soc/tegra/tegra_das.c    |   13 +++++++++++++
- sound/soc/tegra/tegra_wm8903.c |   13 -------------
- sound/soc/tegra/trimslice.c    |   23 -----------------------
- 3 files changed, 13 insertions(+), 36 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_das.c b/sound/soc/tegra/tegra_das.c
-index 5b82b4e..3b3c1ba 100644
---- a/sound/soc/tegra/tegra_das.c
-+++ b/sound/soc/tegra/tegra_das.c
-@@ -202,6 +202,19 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
- 		goto err;
- 	}
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 80afa1b..b098d40 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -13,16 +13,18 @@
+ 	i2c@7000c000 {
+ 		clock-frequency = <400000>;
  
-+	ret = tegra_das_connect_dap_to_dac(TEGRA_DAS_DAP_ID_1,
-+					   TEGRA_DAS_DAP_SEL_DAC1);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Can't set up DAS DAP connection\n");
-+		goto err;
-+	}
-+	ret = tegra_das_connect_dac_to_dap(TEGRA_DAS_DAC_ID_1,
-+					   TEGRA_DAS_DAC_SEL_DAP1);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Can't set up DAS DAC connection\n");
-+		goto err;
-+	}
+-		codec: wm8903@1a {
++		wm8903: wm8903@1a {
+ 			compatible = "wlf,wm8903";
+ 			reg = <0x1a>;
+-			interrupts = < 347 >;
++			interrupt-parent = <&gpio>;
++			interrupts = < 187 0x04 >;
+ 
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 
+-			/* 0x8000 = Not configured */
+-			gpio-cfg = < 0x8000 0x8000 0 0x8000 0x8000 >;
++			micdet-cfg = <0>;
++			micdet-delay = <100>;
++			gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
+ 		};
+ 	};
+ 
+@@ -38,13 +40,33 @@
+ 		clock-frequency = <400000>;
+ 	};
+ 
+-	sound {
+-		compatible = "nvidia,harmony-sound", "nvidia,tegra-wm8903";
++	i2s@70002a00 {
++		status = "disable";
++	};
+ 
+-		spkr-en-gpios = <&codec 2 0>;
+-		hp-det-gpios = <&gpio 178 0>;
+-		int-mic-en-gpios = <&gpio 184 0>;
+-		ext-mic-en-gpios = <&gpio 185 0>;
++	sound {
++		compatible = "nvidia,tegra-audio-wm8903-harmony",
++			     "nvidia,tegra-audio-wm8903",
++			     "generic,soc-audio-complex";
++		user-visible-name = "tegra-wm8903-harmony";
 +
- 	tegra_das_debug_add(das);
++		audio-routing =
++			"Headphone Jack", "HPOUTR",
++			"Headphone Jack", "HPOUTL",
++			"Int Spk", "ROP",
++			"Int Spk", "RON",
++			"Int Spk", "LOP",
++			"Int Spk", "LON",
++			"Mic Jack", "MICBIAS",
++			"IN1L", "Mic Jack";
++
++		nvidia,i2s-controller = <&tegra_i2s1>;
++		nvidia,audio-codec = <&wm8903>;
++
++		nvidia,spkr-en-gpios = <&wm8903 2 0>;
++		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
++		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
++		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
+ 	};
  
- 	platform_set_drvdata(pdev, das);
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 2f5b107..ba2d23e 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -249,19 +249,6 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
- 	struct tegra_wm8903_platform_data *pdata = machine->pdata;
- 	int ret;
+ 	serial@70006000 {
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+index 1a1d702..4d1bcdc 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -37,6 +37,18 @@
+ 		clock-frequency = <400000>;
+ 	};
  
--	ret = tegra_das_connect_dap_to_dac(TEGRA_DAS_DAP_ID_1,
--					   TEGRA_DAS_DAP_SEL_DAC1);
--	if (ret) {
--		dev_err(card->dev, "Can't set up DAS DAP connection\n");
--		return ret;
--	}
--	ret = tegra_das_connect_dac_to_dap(TEGRA_DAS_DAC_ID_1,
--					   TEGRA_DAS_DAC_SEL_DAP1);
--	if (ret) {
--		dev_err(card->dev, "Can't set up DAS DAC connection\n");
--		return ret;
--	}
--
- 	if (gpio_is_valid(pdata->gpio_spkr_en)) {
- 		ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
- 		if (ret) {
-diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
-index 043eb7c..7d95b76 100644
---- a/sound/soc/tegra/trimslice.c
-+++ b/sound/soc/tegra/trimslice.c
-@@ -115,28 +115,6 @@ static const struct snd_soc_dapm_route trimslice_audio_map[] = {
- 	{"RLINEIN", NULL, "Line In"},
- };
++	i2s@70002800 {
++		status = "disable";
++	};
++
++	i2s@70002a00 {
++		status = "disable";
++	};
++
++	das@70000c00 {
++		status = "disable";
++	};
++
+ 	serial@70006000 {
+ 		clock-frequency = <216000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index f552bcc..d6ea0ea 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -13,6 +13,20 @@
  
--static int trimslice_asoc_init(struct snd_soc_pcm_runtime *rtd)
--{
--	struct snd_soc_codec *codec = rtd->codec;
--	struct snd_soc_card *card = codec->card;
--	int ret;
--
--	ret = tegra_das_connect_dap_to_dac(TEGRA_DAS_DAP_ID_1,
--					   TEGRA_DAS_DAP_SEL_DAC1);
--	if (ret) {
--		dev_err(card->dev, "Can't set up DAS DAP connection\n");
--		return ret;
--	}
--	ret = tegra_das_connect_dac_to_dap(TEGRA_DAS_DAC_ID_1,
--					   TEGRA_DAS_DAC_SEL_DAP1);
--	if (ret) {
--		dev_err(card->dev, "Can't set up DAS DAC connection\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
- 	.name = "TLV320AIC23",
- 	.stream_name = "AIC23",
-@@ -144,7 +122,6 @@ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
- 	.platform_name = "tegra-pcm-audio",
- 	.cpu_dai_name = "tegra-i2s.0",
- 	.codec_dai_name = "tlv320aic23-hifi",
--	.init = trimslice_asoc_init,
- 	.ops = &trimslice_asoc_ops,
- };
+ 	i2c@7000c000 {
+ 		clock-frequency = <400000>;
++
++		wm8903: wm8903@1a {
++			compatible = "wlf,wm8903";
++			reg = <0x1a>;
++			interrupt-parent = <&gpio>;
++			interrupts = < 187 0x04 >;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			micdet-cfg = <0>;
++			micdet-delay = <100>;
++			gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
++		};
+ 	};
  
+ 	i2c@7000c400 {
+@@ -27,6 +41,33 @@
+ 		clock-frequency = <400000>;
+ 	};
+ 
++	i2s@70002a00 {
++		status = "disable";
++	};
++
++	sound {
++		compatible = "nvidia,tegra-audio-wm8903-seaboard",
++			     "nvidia,tegra-audio-wm8903",
++			     "generic,soc-audio-complex";
++		user-visible-name = "tegra-wm8903-seaboard";
++
++		audio-routing =
++			"Headphone Jack", "HPOUTR",
++			"Headphone Jack", "HPOUTL",
++			"Int Spk", "ROP",
++			"Int Spk", "RON",
++			"Int Spk", "LOP",
++			"Int Spk", "LON",
++			"Mic Jack", "MICBIAS",
++			"IN1R", "Mic Jack";
++
++		nvidia,i2s-controller = <&tegra_i2s1>;
++		nvidia,audio-codec = <&wm8903>;
++
++		nvidia,spkr-en-gpios = <&wm8903 2 0>;
++		nvidia,hp-det-gpios = <&gpio 185 0>; /* gpio PX1 */
++	};
++
+ 	serial@70006000 {
+ 		status = "disable";
+ 	};
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
+index 3b3ee7d..2524768 100644
+--- a/arch/arm/boot/dts/tegra-trimslice.dts
++++ b/arch/arm/boot/dts/tegra-trimslice.dts
+@@ -26,6 +26,18 @@
+ 		status = "disable";
+ 	};
+ 
++	i2s@70002800 {
++		status = "disable";
++	};
++
++	i2s@70002a00 {
++		status = "disable";
++	};
++
++	das@70000c00 {
++		status = "disable";
++	};
++
+ 	serial@70006000 {
+ 		clock-frequency = < 216000000 >;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
+index c7d3b87..9e6c7eb 100644
+--- a/arch/arm/boot/dts/tegra-ventana.dts
++++ b/arch/arm/boot/dts/tegra-ventana.dts
+@@ -12,6 +12,20 @@
+ 
+ 	i2c@7000c000 {
+ 		clock-frequency = <400000>;
++
++		wm8903: wm8903@1a {
++			compatible = "wlf,wm8903";
++			reg = <0x1a>;
++			interrupt-parent = <&gpio>;
++			interrupts = < 187 0x04 >;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			micdet-cfg = <0>;
++			micdet-delay = <100>;
++			gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
++		};
+ 	};
+ 
+ 	i2c@7000c400 {
+@@ -26,6 +40,35 @@
+ 		clock-frequency = <400000>;
+ 	};
+ 
++	i2s@70002a00 {
++		status = "disable";
++	};
++
++	sound {
++		compatible = "nvidia,tegra-audio-wm8903-ventana",
++			     "nvidia,tegra-audio-wm8903",
++			     "generic,soc-audio-complex";
++		user-visible-name = "tegra-wm8903-ventana";
++
++		audio-routing =
++			"Headphone Jack", "HPOUTR",
++			"Headphone Jack", "HPOUTL",
++			"Int Spk", "ROP",
++			"Int Spk", "RON",
++			"Int Spk", "LOP",
++			"Int Spk", "LON",
++			"Mic Jack", "MICBIAS",
++			"IN1L", "Mic Jack";
++
++		nvidia,i2s-controller = <&tegra_i2s1>;
++		nvidia,audio-codec = <&wm8903>;
++
++		nvidia,spkr-en-gpios = <&wm8903 2 0>;
++		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
++		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
++		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
++	};
++
+ 	serial@70006000 {
+ 		status = "disable";
+ 	};
 -- 
 1.7.0.4
