@@ -1,52 +1,39 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/8] arm/tegra: Device tree support for audio
-Date: Wed,  7 Dec 2011 15:13:39 -0700
-Message-ID: <1323296033-28730-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v2 2/8] arm/tegra: board-dt: Enable audio-related clocks
+Date: Wed,  7 Dec 2011 15:13:42 -0700
+Message-ID: <1323296033-28730-4-git-send-email-swarren@nvidia.com>
+References: <1323296033-28730-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1323296033-28730-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series shouldn't be considered final until the relevant ASoC
-changes are accepted, since the documentation and implementation of most
-of the DT bindings are in those ASoC patches and this series just puts
-those bindings into use.
+Certain clocks are required for core audio functionality. Set up the
+appropriate parenting relationships, and enable clocks that must be
+on permanently.
 
-Still, I figured I should post them all for early review.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-The one binding that's actually defined here is that for the APB DMA
-engine.
-
-For the record, this series depends on at least the following for context
-and to merge and compile:
-
-series ending: arm/dt: tegra: Fix SDHCI nodes to match board files
-arm/tegra: convert tegra20 to GIC devicetree binding
-arm/tegra: Remove use of TEGRA_GPIO_TO_IRQ
-gpio/tegra: Dynamically allocate IRQ base, and support DT
-
-... and all the patches I've posted to the ASoC list in order to actually
-enable the audio card through DT at run-time.
-
-Stephen Warren (8):
-  arm/tegra: board-dt: Fix AUXDATA typo
-  arm/tegra: board-dt: Enable audio-related clocks
-  arm/tegra: Split Seaboard GPIO table to allow for Ventana
-  arm/dt: tegra: Add Tegra APB DMA device tree binding
-  arm/dt: tegra: Clean up I2S and DAS nodes
-  arm/dt: tegra: Modify I2S nodes to match binding
-  arm/dt: tegra: Add labels for I2S controllers
-  arm/dt: tegra: Enable audio on WM8903 boards, disable others
-
- .../devicetree/bindings/dma/tegra20-apbdma.txt     |   29 +++++++++++++
- arch/arm/boot/dts/tegra-harmony.dts                |   42 +++++++++++++++-----
- arch/arm/boot/dts/tegra-paz00.dts                  |   12 +++++
- arch/arm/boot/dts/tegra-seaboard.dts               |   41 +++++++++++++++++++
- arch/arm/boot/dts/tegra-trimslice.dts              |   12 +++++
- arch/arm/boot/dts/tegra-ventana.dts                |   43 ++++++++++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |   35 +++++++++++-----
- arch/arm/mach-tegra/board-dt.c                     |    7 +++-
- arch/arm/mach-tegra/board-seaboard-pinmux.c        |   16 +++++++-
- 9 files changed, 215 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index ad13bb0..4c1541a 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -90,6 +90,11 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+ 	{ "usbd",	"clk_m",	12000000,	false },
+ 	{ "usb2",	"clk_m",	12000000,	false },
+ 	{ "usb3",	"clk_m",	12000000,	false },
++	{ "pll_a",      "pll_p_out1",   56448000,       true },
++	{ "pll_a_out0", "pll_a",        11289600,       true },
++	{ "cdev1",      NULL,           0,              true },
++	{ "i2s1",       "pll_a_out0",   11289600,       false},
++	{ "i2s2",       "pll_a_out0",   11289600,       false},
+ 	{ NULL,		NULL,		0,		0},
+ };
+ 
+-- 
+1.7.0.4
