@@ -1,72 +1,105 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: tegra for-next and for-3.3/ branches updated
-Date: Wed, 7 Dec 2011 22:11:40 -0800
-Message-ID: <20111208061140.GB20760@quad.lixom.net>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 00/10] Add support for tegra30 and cardhu
+Date: Thu, 8 Dec 2011 14:41:01 +0200
+Message-ID: <1323348092-28732-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "open list:OPEN FIRMWARE AND..." <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "open list:DOCUMENTATION" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:ARM PORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:TEGRA SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+This patchset adds support for the tegra30 SoC and the cardhu development
+board.
 
-I've pushed a new set of for-3.3 branches, contents below.
+Patchset is on top of linux-next and
+http://www.spinics.net/lists/linux-tegra/msg03016.html.
 
-I decided to start a for-3.3/dt branch that holds all the devicetree-enablement
-patches since there were some cross-dependencies between /soc and /board
-if some of the later patches would just go in one. I thus moved some of the
-previous patches that were in /soc and /boards over to /dt instead.
+Most important changes in v6:
 
-It does make sense to have the dt-enablement stuff in a separate topic
-branch anyway, so that fits everything quite well.
+* Align with latest version of the ARM restart implementation
+* Address comments on tegra_sdmmc_tap_delay()
+* Fix git bisection breakage for 'arm/tegra: implement support for tegra30'
 
-I have a few patches I will post hopefully within the next few days,
-and I expect that the Tegra3 series should be posted soon so we can get
-it into 3.3.
+Most important changes in v5:
 
+* use devicetree binding for GIC
+* define a seperate machine for tegra30
+* add documentation for tegra devicetree compatible definitions
 
-for-3.3/cleanup:
-Olof Johansson (1):
-      arm/tegra: fix variable formatting in makefile
+Most important changes in v4:
 
-Stephen Warren (1):
-      arm/tegra: Remove code that's ifndef CONFIG_ARM_GIC
+* cleanup clock code to work on multiple tegra variants
+* added dependencies to avoid building tegra20 only code for tegra30
 
-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org (1):
-      arm/tegra: remove unused defines
+Most important changes in v3:
 
-for-3.3/dt:
-Marc Dietrich (1):
-      arm/dt: tegra: add dts file for paz00
+* align with ARM restart rework. might need a bit of rework to merge with the
+  latest version of this.
+* minor cleanups and reformats
 
-Olof Johansson (2):
-      arm/dt: add basic usb nodes to tegra device trees
-      USB: ehci-tegra: add probing through device tree
+Most important changes in v2:
 
-Stephen Warren (9):
-      arm/dt: tegra: Clean up I2S and DAS nodes
-      arm/tegra: Add device-tree support for TrimSlice board
-      arm/tegra: board-dt: Fix AUXDATA typo
-      arm/tegra: board-dt: Enable audio-related clocks
-      arm/dt: tegra: Remove /memreserve/ from device-tree files
-      arm/dt: tegra: Remove /chosen node
-      arm/dt: tegra: Fix I2C nodes to match board files
-      arm/dt: tegra: Fix serial nodes to match board files
-      arm/dt: tegra: Fix SDHCI nodes to match board files
+* account for arch_reset cleanup
+* seperate patch for renaming pinmux-t2.h and pinmux-t2-tables.c                                                                                               
+* fixed bug in common cache initialization
+* fixed compatibility with non DT boards (boottested on harmony)
+* improved commit messages
 
-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org (1):
-      arm/tegra: convert tegra20 to GIC devicetree binding
+Peter De Schrijver (10):
+  arm/tegra: initial device tree for tegra30
+  arm/tegra: cleanup tegra20 support
+  arm/tegra: prepare clock code for multiple tegra variants
+  arm/tegra: prepare early init for multiple tegra variants
+  arm/tegra: rename tegra20 pinmux files
+  arm/tegra: prepare pinmux code for multiple tegra variants
+  arm/tegra: add new fields to struct tegra_pingroup_desc
+  arm/tegra: pinmux tables and definitions for tegra30
+  arm/tegra: implement support for tegra30
+  arm/tegra: add support for tegra30 based board cardhu
 
-for-3.3/soc:
-Peter De Schrijver (1):
-      arm/tegra: clk_get should not be fatal
+ Documentation/devicetree/bindings/arm/tegra.txt   |   14 +
+ arch/arm/boot/dts/tegra-cardhu.dts                |   36 ++
+ arch/arm/boot/dts/tegra30.dtsi                    |  127 +++++++
+ arch/arm/mach-tegra/Kconfig                       |   33 ++-
+ arch/arm/mach-tegra/Makefile                      |    6 +-
+ arch/arm/mach-tegra/Makefile.boot                 |    1 +
+ arch/arm/mach-tegra/board-dt.c                    |   28 ++-
+ arch/arm/mach-tegra/board-harmony-pcie.c          |    1 +
+ arch/arm/mach-tegra/board-harmony-pinmux.c        |    1 +
+ arch/arm/mach-tegra/board-harmony.c               |    2 +-
+ arch/arm/mach-tegra/board-paz00-pinmux.c          |    1 +
+ arch/arm/mach-tegra/board-paz00.c                 |    2 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c       |    2 +-
+ arch/arm/mach-tegra/board-seaboard.c              |    6 +-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c      |    1 +
+ arch/arm/mach-tegra/board-trimslice.c             |    2 +-
+ arch/arm/mach-tegra/board.h                       |    3 +-
+ arch/arm/mach-tegra/clock.c                       |   17 +-
+ arch/arm/mach-tegra/clock.h                       |    8 +-
+ arch/arm/mach-tegra/common.c                      |   40 ++-
+ arch/arm/mach-tegra/include/mach/irqs.h           |    2 -
+ arch/arm/mach-tegra/include/mach/pinmux-t2.h      |  184 ----------
+ arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 ++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 ++++++++++++++++++
+ arch/arm/mach-tegra/include/mach/pinmux.h         |   88 ++++-
+ arch/arm/mach-tegra/pinmux-t2-tables.c            |  228 -------------
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 +++++++++++++
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 +++++++++++++++++++++
+ arch/arm/mach-tegra/pinmux.c                      |  153 ++++++---
+ arch/arm/mach-tegra/tegra2_clocks.c               |   14 +-
+ arch/arm/mach-tegra/timer.c                       |   12 +-
+ 31 files changed, 1597 insertions(+), 539 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
+ create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+ create mode 100644 arch/arm/boot/dts/tegra30.dtsi
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-t2.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra20.h
+ create mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra30.h
+ delete mode 100644 arch/arm/mach-tegra/pinmux-t2-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra20-tables.c
+ create mode 100644 arch/arm/mach-tegra/pinmux-tegra30-tables.c
 
-for-3.3/boards:
-Leon Romanovsky (1):
-      ARM: tegra: paz00: Fix board pinmux table.
-
-Marc Dietrich (1):
-      ARM: tegra: paz00: add support for wakeup gpio key
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
