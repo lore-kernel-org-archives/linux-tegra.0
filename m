@@ -1,39 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
-Date: Sat, 10 Dec 2011 00:49:11 +0100
-Message-ID: <CACRpkdaco=967cKHUcj9VNKc_HyT7Mw30Z9HVdfgsUsHbps8bQ@mail.gmail.com>
+Date: Sat, 10 Dec 2011 00:55:58 +0100
+Message-ID: <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg@mail.gmail.com>
 References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
 	<1323382390-14892-2-git-send-email-swarren@nvidia.com>
 	<CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
-	<20111209170722.GO31337@atomide.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17518604D7@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111209170722.GO31337@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17518604D7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 9, 2011 at 6:07 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Fri, Dec 9, 2011 at 6:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-> - We currently have hard time supporting pin groups with pins
-> =A0coming from multiple pinmux driver instances
+> Hence, there's no point parsing it from device tree; we end up with exactly
+> the same data in the driver, yet have spent a bunch of time parsing it out
+> from device tree instead of just embedding it into the kernel binary.
 
-Pin groups are per definiton per-controller inctance. That is a
-given side effect of not having a global pin space.
+For me there are two points:
 
-But you can create two groups of the same name on two
-pin controllers so that e.g. pinctrl.0 and pinctrl.1 have
-a group named "foo", then map both to a certain device
-in the board pinmux map.
+- Avoiding clash with kernel maintainers who hate firmware-like tables and
+  binary data filling up the kernel. Some certain other guy bearing my
+  name comes to mind.
 
-You will have to request them individually however, like
-with two hogs or two pinmux_get() calls specifying the
-name of each map, else you will just get the first one.
-
-Not that I've tried it, but that's how it's supposed to work...
+- Footprint: the majority of the stuff in your driver ends up in non-discardable
+  memory, and will be kept around. Since we have this concept of a
+  single zImage for a number of say ARMv7 systems, and since pin
+  controllers can be pretty hard to load from modules, *all* of them
+  may have to be compiled-in. If every driver for every board takes this
+  approach I am afraid it will be end up with a measurable footprint.
 
 Yours,
 Linus Walleij
