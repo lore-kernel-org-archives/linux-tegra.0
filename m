@@ -1,125 +1,41 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 10/10] arm/tegra: add support for tegra30 based board
- cardhu
-Date: Fri, 09 Dec 2011 08:29:59 -0600
-Message-ID: <4EE21B67.5040006@gmail.com>
-References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com> <1323348254-29072-11-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 10/10] arm/tegra: add support for tegra30 based
+ board cardhu
+Date: Fri, 9 Dec 2011 17:52:03 +0200
+Message-ID: <20111209155203.GM27578@tbergstrom-lnx.Nvidia.com>
+References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com>
+ <1323348254-29072-11-git-send-email-pdeschrijver@nvidia.com>
+ <4EE21B67.5040006@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1323348254-29072-11-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4EE21B67.5040006-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/08/2011 06:43 AM, Peter De Schrijver wrote:
-> Add support for the tegra30 based cardhu development board. Cardhu is a tablet
-> formfactor reference design for tegra30. The patch provides a device tree for
-> the board, updates Makefile.boot to build the dtb, includes the platform in
-> Kconfig and updates board-dt.c.
+> >  choice
+> >          prompt "Low-level debug console UART"
+> >          default TEGRA_DEBUG_UART_NONE
+> > diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+> > index cf51a00..7c1110f 100644
+> > --- a/arch/arm/mach-tegra/Makefile.boot
+> > +++ b/arch/arm/mach-tegra/Makefile.boot
+> > @@ -7,3 +7,4 @@ dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
+> >  dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
+> >  dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
+> >  dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
+> > +dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra-cardhu.dts |   36 ++++++++++++++++++++++++++++++++++++
->  arch/arm/mach-tegra/Kconfig        |    7 +++++++
->  arch/arm/mach-tegra/Makefile.boot  |    1 +
->  arch/arm/mach-tegra/board-dt.c     |    1 +
->  4 files changed, 45 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+> Likewise, this should be more like:
+> dtb-$(CONFIG_MACH_TEGRA_DT) += tegra-seaboard.dtb tegra-trimslice.dtb
+> tegra-ventana.dtb ...
 > 
-> diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-> new file mode 100644
-> index 0000000..70c41fc
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/tegra-cardhu.dts
-> @@ -0,0 +1,36 @@
-> +/dts-v1/;
-> +
-> +/include/ "tegra30.dtsi"
-> +
-> +/ {
-> +	model = "NVIDIA Tegra30 Cardhu evaluation board";
-> +	compatible = "nvidia,cardhu", "nvidia,tegra30";
-> +
-> +	memory {
 
-memory@80000000
+I think is subject of a different patch.
 
-> +		reg = < 0x80000000 0x40000000 >;
-> +	};
-> +
-> +	serial@70006000 {
-> +		clock-frequency = < 408000000 >;
-> +	};
-> +
-> +	i2c@7000c000 {
-> +		clock-frequency = <100000>;
-> +	};
-> +
-> +	i2c@7000c400 {
-> +		clock-frequency = <100000>;
-> +	};
-> +
-> +	i2c@7000c500 {
-> +		clock-frequency = <100000>;
-> +	};
-> +
-> +	i2c@7000c700 {
-> +		clock-frequency = <100000>;
-> +	};
-> +
-> +	i2c@7000d000 {
-> +		clock-frequency = <100000>;
-> +	};
-> +};
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index aad54ca..6bae1bb 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -91,6 +91,13 @@ config MACH_VENTANA
->         help
->           Support for the nVidia Ventana development platform
->  
-> +config MACH_CARDHU
-> +       bool "Cardhu board"
-> +       depends on ARCH_TEGRA_3x_SOC
-> +       select MACH_TEGRA_DT
-> +       help
-> +         Support for the NVIDIA Cardhu development platform
-> +
+Cheers,
 
-You should not be adding kconfig entries for boards. They should
-eventually go away with DT.
-
->  choice
->          prompt "Low-level debug console UART"
->          default TEGRA_DEBUG_UART_NONE
-> diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-> index cf51a00..7c1110f 100644
-> --- a/arch/arm/mach-tegra/Makefile.boot
-> +++ b/arch/arm/mach-tegra/Makefile.boot
-> @@ -7,3 +7,4 @@ dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
->  dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
->  dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
->  dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-> +dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
-
-Likewise, this should be more like:
-dtb-$(CONFIG_MACH_TEGRA_DT) += tegra-seaboard.dtb tegra-trimslice.dtb
-tegra-ventana.dtb ...
-
-Rob
-> diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-> index d1ed473..14ef047 100644
-> --- a/arch/arm/mach-tegra/board-dt.c
-> +++ b/arch/arm/mach-tegra/board-dt.c
-> @@ -157,6 +157,7 @@ MACHINE_END
->  
->  #ifdef CONFIG_ARCH_TEGRA_3x_SOC
->  static const char *tegra30_dt_board_compat[] = {
-> +	"nvidia,cardhu",
->  	NULL
->  };
->  
+Peter.
