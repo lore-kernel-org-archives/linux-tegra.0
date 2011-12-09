@@ -1,37 +1,42 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH 1/1] input: keyboard: Set configuration registers
-Date: Fri, 9 Dec 2011 12:10:43 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
-References: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 1/1] input: keyboard: Set configuration registers
+Date: Fri, 09 Dec 2011 13:25:06 -0800
+Message-ID: <3849551.l2KNPKMSmh@dtor-d630.eng.vmware.com>
+References: <1323415758-16822-1-git-send-email-srasal@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
 Sender: linux-input-owner@vger.kernel.org
-To: Shridhar Rasal <srasal@nvidia.com>, "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
-Cc: "rydberg@euromail.se" <rydberg@euromail.se>, Rakesh Iyer <riyer@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Shridhar Rasal <srasal@nvidia.com>, "rydberg@euromail.se" <rydberg@euromail.se>, Rakesh Iyer <riyer@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Shridhar Rasal wrote at Friday, December 09, 2011 12:29 AM:
-> To: dmitry.torokhov@gmail.com
-> Cc: rydberg@euromail.se; Stephen Warren; Rakesh Iyer; linux-kernel@vger.kernel.org; linux-
-> input@vger.kernel.org; linux-tegra@vger.kernel.org; Shridhar Rasal
-> Subject: [PATCH 1/1] input: keyboard: Set configuration registers
+On Friday, December 09, 2011 12:10:43 PM Stephen Warren wrote:
+> Shridhar Rasal wrote at Friday, December 09, 2011 12:29 AM:
+> > To: dmitry.torokhov@gmail.com
+> > Cc: rydberg@euromail.se; Stephen Warren; Rakesh Iyer;
+> > linux-kernel@vger.kernel.org; linux- input@vger.kernel.org;
+> > linux-tegra@vger.kernel.org; Shridhar Rasal Subject: [PATCH 1/1] input:
+> > keyboard: Set configuration registers
+> > 
+> > -Set only REQUIRED row and column configuration register to
+> > PROPER values to avoid continuously generating KBC input events.
+> > -Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
+> > should be set or clear.
+> > 
+> > Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
 > 
-> -Set only REQUIRED row and column configuration register to
-> PROPER values to avoid continuously generating KBC input events.
-> -Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
-> should be set or clear.
+> I wondered if num==0 could be used instead of a new en field, but 0 is a
+> valid row/column number, so no. As such,
 > 
-> Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 
-I wondered if num==0 could be used instead of a new en field, but 0 is a
-valid row/column number, so no. As such,
+Can we pass in number of pin_cfg instances in pdata and simply do not
+mention unneeded pins instead?
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Thanks.
 
 -- 
-nvpublic
-
+Dmitry
