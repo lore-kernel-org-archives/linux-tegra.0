@@ -1,60 +1,111 @@
-From: Shridhar Rasal <srasal@nvidia.com>
-Subject: [PATCH 1/1] input: keyboard: Set configuration registers
-Date: Fri,  9 Dec 2011 12:59:18 +0530
-Message-ID: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-Sender: linux-input-owner@vger.kernel.org
-To: dmitry.torokhov@gmail.com
-Cc: rydberg@euromail.se, swarren@nvidia.com, riyer@nvidia.com, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Shridhar Rasal <srasal@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v6 03/10] arm/tegra: prepare clock code for multiple
+ tegra variants
+Date: Fri, 9 Dec 2011 11:13:20 +0200
+Message-ID: <20111209091319.GI27578@tbergstrom-lnx.Nvidia.com>
+References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com>
+ <1323348254-29072-4-git-send-email-pdeschrijver@nvidia.com>
+ <CAMbhsRT97Oq-=8f9++f6Jgg=YVaimKSz68xcDDNbDbvL+V5fJg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMbhsRT97Oq-=8f9++f6Jgg=YVaimKSz68xcDDNbDbvL+V5fJg@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Gary King <gking@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
--Set only REQUIRED row and column configuration register to
-PROPER values to avoid continuously generating KBC input events.
--Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
-should be set or clear.
+On Thu, Dec 08, 2011 at 07:25:53PM +0100, Colin Cross wrote:
+> On Thu, Dec 8, 2011 at 4:43 AM, Peter De Schrijver <pdeschrijver@nvidia.com<mailto:pdeschrijver@nvidia.com>> wrote:
+> Rework the tegra20 clock code to support multiple tegra variants :
+> 
+>  * remove tegra2_periph_reset_assert/tegra2_periph_reset_deassert. This
+>   functionality should be in clock.c.
+>  * compile tegra_sdmmc_tap_delay only on tegra20 as this feature will not
+>   be available in future variants.
+>  * don't export clk_measure_input_freq as its functionality is also available
+>   using clk_get_rate().
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com<mailto:pdeschrijver@nvidia.com>>
+> ---
+>  arch/arm/mach-tegra/clock.c         |   12 +++++++-----
+>  arch/arm/mach-tegra/clock.h         |    8 ++++----
+>  arch/arm/mach-tegra/tegra2_clocks.c |   14 +-------------
+>  arch/arm/mach-tegra/timer.c         |   12 ++++++++----
+>  4 files changed, 20 insertions(+), 26 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+> index f8d41ff..f27bdcc 100644
+> --- a/arch/arm/mach-tegra/clock.c
+> +++ b/arch/arm/mach-tegra/clock.c
+> @@ -387,13 +387,15 @@ EXPORT_SYMBOL(tegra_clk_init_from_table);
+> 
+>  void tegra_periph_reset_deassert(struct clk *c)
+>  {
+> -       tegra2_periph_reset_deassert(c);
+> +       BUG_ON(!c->ops->reset);
+> +       c->ops->reset(c, false);
+>  }
+>  EXPORT_SYMBOL(tegra_periph_reset_deassert);
+> 
+>  void tegra_periph_reset_assert(struct clk *c)
+>  {
+> -       tegra2_periph_reset_assert(c);
+> +       BUG_ON(!c->ops->reset);
+> +       c->ops->reset(c, true);
+>  }
+>  EXPORT_SYMBOL(tegra_periph_reset_assert);
+> 
+> @@ -403,9 +405,9 @@ void __init tegra_init_clock(void)
+>  }
+> 
+>  /*
+> - * The SDMMC controllers have extra bits in the clock source register that
+> - * adjust the delay between the clock and data to compenstate for delays
+> - * on the PCB.
+> + * The SDMMC controllers on tegra20 have extra bits in the clock source
+> + * register that adjust the delay between the clock and data to compenstate
+> + * for delays on the PCB.
+>  */
+>  void tegra_sdmmc_tap_delay(struct clk *c, int delay)
+>  {
+> 
+> I created this wrapper around tegra2_sdmmc_tap_delay because I guessed the same requirement would be present in tegra3.  If you don't expect this to be required on anything but tegra2, you could drop the wrapper and just have callers use tegra2_sdmmc_tap_delay.
+> 
 
-Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
----
- arch/arm/mach-tegra/include/mach/kbc.h |    1 +
- drivers/input/keyboard/tegra-kbc.c     |   13 ++++++++-----
- 2 files changed, 9 insertions(+), 5 deletions(-)
+I will ask around if this is needed for tegra30.
 
-diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/arch/arm/mach-tegra/include/mach/kbc.h
-index 4f3572a..2212284 100644
---- a/arch/arm/mach-tegra/include/mach/kbc.h
-+++ b/arch/arm/mach-tegra/include/mach/kbc.h
-@@ -38,6 +38,7 @@
- 
- struct tegra_kbc_pin_cfg {
- 	bool is_row;
-+	bool en;
- 	unsigned char num;
- };
- 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index cf3228b..faf4f3e 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -447,11 +447,14 @@ static void tegra_kbc_config_pins(struct tegra_kbc *kbc)
- 		row_cfg &= ~r_mask;
- 		col_cfg &= ~c_mask;
- 
--		if (pdata->pin_cfg[i].is_row)
--			row_cfg |= ((pdata->pin_cfg[i].num << 1) | 1) << r_shft;
--		else
--			col_cfg |= ((pdata->pin_cfg[i].num << 1) | 1) << c_shft;
--
-+		if (pdata->pin_cfg[i].en) {
-+			if (pdata->pin_cfg[i].is_row)
-+				row_cfg |= ((pdata->pin_cfg[i].num << 1) | 1)
-+						<< r_shft;
-+			else
-+				col_cfg |= ((pdata->pin_cfg[i].num << 1) | 1)
-+						<< c_shft;
-+		}
- 		writel(row_cfg, kbc->mmio + r_offs);
- 		writel(col_cfg, kbc->mmio + c_offs);
- 	}
--- 
-1.7.1
+> diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
+> index 688316a..135bb5f 100644
+> --- a/arch/arm/mach-tegra/clock.h
+> +++ b/arch/arm/mach-tegra/clock.h
+> @@ -146,15 +146,15 @@ struct tegra_clk_init_table {
+>  };
+> 
+>  void tegra2_init_clocks(void);
+> -void tegra2_periph_reset_deassert(struct clk *c);
+> -void tegra2_periph_reset_assert(struct clk *c);
+>  void clk_init(struct clk *clk);
+>  struct clk *tegra_get_clock_by_name(const char *name);
+> -unsigned long clk_measure_input_freq(void);
+>  int clk_reparent(struct clk *c, struct clk *parent);
+>  void tegra_clk_init_from_table(struct tegra_clk_init_table *table);
+>  unsigned long clk_get_rate_locked(struct clk *c);
+>  int clk_set_rate_locked(struct clk *c, unsigned long rate);
+> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+>  void tegra2_sdmmc_tap_delay(struct clk *c, int delay);
+> -
+> +#else
+> +#define tegra2_sdmmc_tap_delay(c, d) do {} while(0);
+> 
+> It's more standard to use an empty static inline function here.
+> 
 
+clock.h is included in several board files. So making this a static inline
+function results in a number of 'static function declared but not used'
+warnings.
+
+Cheers,
+
+Peter.
