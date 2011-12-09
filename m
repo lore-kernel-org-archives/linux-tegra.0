@@ -1,59 +1,39 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH 1/1] input: keyboard: Set configuration registers
-Date: Fri, 9 Dec 2011 15:17:54 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17518605E5@HQMAIL01.nvidia.com>
-References: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
- <3849551.l2KNPKMSmh@dtor-d630.eng.vmware.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
+Date: Sat, 10 Dec 2011 00:49:11 +0100
+Message-ID: <CACRpkdaco=967cKHUcj9VNKc_HyT7Mw30Z9HVdfgsUsHbps8bQ@mail.gmail.com>
+References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
+	<1323382390-14892-2-git-send-email-swarren@nvidia.com>
+	<CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
+	<20111209170722.GO31337@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3849551.l2KNPKMSmh@dtor-d630.eng.vmware.com>
-Content-Language: en-US
+In-Reply-To: <20111209170722.GO31337@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Shridhar Rasal <srasal@nvidia.com>, "rydberg@euromail.se" <rydberg@euromail.se>, Rakesh Iyer <riyer@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dmitry Torokhov wrote at Friday, December 09, 2011 2:25 PM:
-> On Friday, December 09, 2011 12:10:43 PM Stephen Warren wrote:
-> > Shridhar Rasal wrote at Friday, December 09, 2011 12:29 AM:
-> > > To: dmitry.torokhov@gmail.com
-> > > Cc: rydberg@euromail.se; Stephen Warren; Rakesh Iyer;
-> > > linux-kernel@vger.kernel.org; linux- input@vger.kernel.org;
-> > > linux-tegra@vger.kernel.org; Shridhar Rasal Subject: [PATCH 1/1] input:
-> > > keyboard: Set configuration registers
-> > >
-> > > -Set only REQUIRED row and column configuration register to
-> > > PROPER values to avoid continuously generating KBC input events.
-> > > -Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
-> > > should be set or clear.
-> > >
-> > > Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
-> >
-> > I wondered if num==0 could be used instead of a new en field, but 0 is a
-> > valid row/column number, so no. As such,
-> >
-> > Acked-by: Stephen Warren <swarren@nvidia.com>
-> 
-> Can we pass in number of pin_cfg instances in pdata and simply do not
-> mention unneeded pins instead?
+On Fri, Dec 9, 2011 at 6:07 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-IIUC, the array is currently a fixed size (based on the set of pins
-Supported by the KBC), hence that won't work; there's an entry for each
-pin saying which row/column it is.
+> - We currently have hard time supporting pin groups with pins
+> =A0coming from multiple pinmux driver instances
 
-However, I suppose if we were to change the structure of the pdata to be:
+Pin groups are per definiton per-controller inctance. That is a
+given side effect of not having a global pin space.
 
-struct tegra_kbc_pin_cfg {
-    bool is_row;
-    u8 row_col_id;
-    u8 pin_id;
-};
+But you can create two groups of the same name on two
+pin controllers so that e.g. pinctrl.0 and pinctrl.1 have
+a group named "foo", then map both to a certain device
+in the board pinmux map.
 
-Then struct tegra_kbc_platform_data could indeed have a pointer to a
-variable-sized array of these, which would avoid the "en" member.
+You will have to request them individually however, like
+with two hogs or two pinmux_get() calls specifying the
+name of each map, else you will just get the first one.
 
--- 
-nvpublic
+Not that I've tried it, but that's how it's supposed to work...
+
+Yours,
+Linus Walleij
