@@ -1,55 +1,37 @@
-From: Colin Cross <ccross@android.com>
-Subject: Re: [PATCH v6 04/10] arm/tegra: prepare early init for multiple tegra variants
-Date: Fri, 9 Dec 2011 10:35:09 -0800
-Message-ID: <CAMbhsRR1HdG6QnNdrnD3y9DApnDR3RrUqFyTt5vZT0qR9n=ECg@mail.gmail.com>
-References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com>
-	<1323348254-29072-5-git-send-email-pdeschrijver@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF1750B77A7E@HQMAIL01.nvidia.com>
-	<CAMbhsRTD1rQBY7Sn2km=XsUYsHMdqQqZSKu4agc0GB6+QE79fA@mail.gmail.com>
-	<20111209111925.GK27578@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH 1/1] input: keyboard: Set configuration registers
+Date: Fri, 9 Dec 2011 12:10:43 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
+References: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20111209111925.GK27578@tbergstrom-lnx.Nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Gary King <gking@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
+Content-Language: en-US
+Sender: linux-input-owner@vger.kernel.org
+To: Shridhar Rasal <srasal@nvidia.com>, "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
+Cc: "rydberg@euromail.se" <rydberg@euromail.se>, Rakesh Iyer <riyer@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 9, 2011 at 3:19 AM, Peter De Schrijver
-<pdeschrijver@nvidia.com> wrote:
-> On Thu, Dec 08, 2011 at 07:29:43PM +0100, Colin Cross wrote:
->> On Thu, Dec 8, 2011 at 9:57 AM, Stephen Warren <swarren@nvidia.com> =
-wrote:
->> > Peter De Schrijver wrote at Thursday, December 08, 2011 5:44 AM:
->> >> This patch splits the early init code in a common and a tegra20 s=
-pecific part.
->> >> L2 cache initialization is generalized and discovers the cache as=
-sociativity
->> >> at runtime. Also use arm_pm_restart instead of arm_arch_reset and=
- reset the
->> >> the system using the PMC reset feature rather then the CAR system=
- reset.
->> >
->> > This one really should be at least 3 separate patches:
->> > * s/tegra_init_early/tegra20_init_early/ in machine descriptions
->> > * Switch reset mechanism from CAR to PMC
->> > * tegra_init_cache modifications
->> > * Not sure if all the ifdef additions go in the above, or if some =
-should be
->> > =A0separate?
->> >
->> > Still, I think it's probably OK to go in as it is even if it isn't=
- optimal.
->>
->> Please at least split out the reset change. =A0Does using the PMC re=
-set
->> instead of the CAR reset still result in a warm reset, or does it
->> change to a cold reset?
->
-> What do you consider a cold reset in the tegra world?
+Shridhar Rasal wrote at Friday, December 09, 2011 12:29 AM:
+> To: dmitry.torokhov@gmail.com
+> Cc: rydberg@euromail.se; Stephen Warren; Rakesh Iyer; linux-kernel@vger.kernel.org; linux-
+> input@vger.kernel.org; linux-tegra@vger.kernel.org; Shridhar Rasal
+> Subject: [PATCH 1/1] input: keyboard: Set configuration registers
+> 
+> -Set only REQUIRED row and column configuration register to
+> PROPER values to avoid continuously generating KBC input events.
+> -Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
+> should be set or clear.
+> 
+> Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
 
-Power rails turn off and on.  Some of our debugging tools rely on
-memory contents surviving across a reset, and that is generally true
-of a warm reset, but not a cold reset.
+I wondered if num==0 could be used instead of a new en field, but 0 is a
+valid row/column number, so no. As such,
+
+Acked-by: Stephen Warren <swarren@nvidia.com>
+
+-- 
+nvpublic
+
