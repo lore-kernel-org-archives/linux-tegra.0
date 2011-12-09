@@ -1,71 +1,130 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
-Date: Fri, 9 Dec 2011 10:00:40 -0800
-Message-ID: <20111209180039.GR31337@atomide.com>
-References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
- <1323382390-14892-2-git-send-email-swarren@nvidia.com>
- <CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF17518604D7@HQMAIL01.nvidia.com>
+From: Colin Cross <ccross@android.com>
+Subject: Re: [PATCH v6 03/10] arm/tegra: prepare clock code for multiple tegra variants
+Date: Fri, 9 Dec 2011 10:32:25 -0800
+Message-ID: <CAMbhsRSBtkOybN+SDgQyjHZffUT=YxeQ1YnSd52WPS0BL+q=HA@mail.gmail.com>
+References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com>
+	<1323348254-29072-4-git-send-email-pdeschrijver@nvidia.com>
+	<CAMbhsRT97Oq-=8f9++f6Jgg=YVaimKSz68xcDDNbDbvL+V5fJg@mail.gmail.com>
+	<20111209091319.GI27578@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17518604D7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111209091319.GI27578@tbergstrom-lnx.Nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Gary King <gking@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> [111209 08:56]:
-> Linus Walleij wrote at Friday, December 09, 2011 7:01 AM:
-> > 
-> > What we could worry about is the amount of hard-coded chip data
-> > which sort of correlates with the discussion with Tony on how to
-> > provide DT info for pin control drivers.
-> 
-> My thinking here is that irrespective of whether the data in future chips
-> is the same or different to the current chips, it's better in the driver.
-> 
-> For a given SoC, the data is static; it can never ever change.
-> 
-> Hence, there's no point parsing it from device tree; we end up with exactly
-> the same data in the driver, yet have spent a bunch of time parsing it out
-> from device tree instead of just embedding it into the kernel binary.
-> 
-> If parts of Tegra X and Tegra Y are similar, it should be possible to have
-> them co-ordinate together and share the common data, and do whatever it
-> takes to create the appropriate completed view before passing it back from
-> tegraX_pinctrl_init() to the core. You could perhaps do it using /include/
-> in the .dtsi file too, but I think allowing the SoC init code to unify the
-> tables gives more flexibility; in your example below of the same data with
-> different pin names, that'd be implementable with code without too much
-> difficulty, but probably impossible with dtc since it has no macro/define
-> support at present.
-> 
-> Also, the representation of the data in a .c file will likely be far
-> smaller than in the .dtsi file, so this way saves space. Admittedly with
-> a multi-SoC binary, you end up with all the large per-SoC data in the
-> binary initially, so the space-savings aren't exactly seen, but it's
-> all init data, so does get dumped soon after boot.
-> 
-> Another point here: I don't have to maintain a DT binding for the Tegra
-> pinctrl driver this way, so if the next Tegra's pinmux HW is different,
-> all I need to do is edit the driver, not be shackled by a need to keep
-> the DT binding for it backwards-compatible. Although that said, I
-> /think/ even an obvious DT binding derived from struct
-> tegra_pinctrl_soc_data would be flexible enough for most things, perhaps
-> with the addition of allowing config param field definitions for pins
-> as well as groups.
+On Fri, Dec 9, 2011 at 1:13 AM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> On Thu, Dec 08, 2011 at 07:25:53PM +0100, Colin Cross wrote:
+>> On Thu, Dec 8, 2011 at 4:43 AM, Peter De Schrijver <pdeschrijver@nvi=
+dia.com<mailto:pdeschrijver@nvidia.com>> wrote:
+>> Rework the tegra20 clock code to support multiple tegra variants :
+>>
+>> =A0* remove tegra2_periph_reset_assert/tegra2_periph_reset_deassert.=
+ This
+>> =A0 functionality should be in clock.c.
+>> =A0* compile tegra_sdmmc_tap_delay only on tegra20 as this feature w=
+ill not
+>> =A0 be available in future variants.
+>> =A0* don't export clk_measure_input_freq as its functionality is als=
+o available
+>> =A0 using clk_get_rate().
+>>
+>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com<mailto:pd=
+eschrijver@nvidia.com>>
+>> ---
+>> =A0arch/arm/mach-tegra/clock.c =A0 =A0 =A0 =A0 | =A0 12 +++++++-----
+>> =A0arch/arm/mach-tegra/clock.h =A0 =A0 =A0 =A0 | =A0 =A08 ++++----
+>> =A0arch/arm/mach-tegra/tegra2_clocks.c | =A0 14 +-------------
+>> =A0arch/arm/mach-tegra/timer.c =A0 =A0 =A0 =A0 | =A0 12 ++++++++----
+>> =A04 files changed, 20 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock=
+=2Ec
+>> index f8d41ff..f27bdcc 100644
+>> --- a/arch/arm/mach-tegra/clock.c
+>> +++ b/arch/arm/mach-tegra/clock.c
+>> @@ -387,13 +387,15 @@ EXPORT_SYMBOL(tegra_clk_init_from_table);
+>>
+>> =A0void tegra_periph_reset_deassert(struct clk *c)
+>> =A0{
+>> - =A0 =A0 =A0 tegra2_periph_reset_deassert(c);
+>> + =A0 =A0 =A0 BUG_ON(!c->ops->reset);
+>> + =A0 =A0 =A0 c->ops->reset(c, false);
+>> =A0}
+>> =A0EXPORT_SYMBOL(tegra_periph_reset_deassert);
+>>
+>> =A0void tegra_periph_reset_assert(struct clk *c)
+>> =A0{
+>> - =A0 =A0 =A0 tegra2_periph_reset_assert(c);
+>> + =A0 =A0 =A0 BUG_ON(!c->ops->reset);
+>> + =A0 =A0 =A0 c->ops->reset(c, true);
+>> =A0}
+>> =A0EXPORT_SYMBOL(tegra_periph_reset_assert);
+>>
+>> @@ -403,9 +405,9 @@ void __init tegra_init_clock(void)
+>> =A0}
+>>
+>> =A0/*
+>> - * The SDMMC controllers have extra bits in the clock source regist=
+er that
+>> - * adjust the delay between the clock and data to compenstate for d=
+elays
+>> - * on the PCB.
+>> + * The SDMMC controllers on tegra20 have extra bits in the clock so=
+urce
+>> + * register that adjust the delay between the clock and data to com=
+penstate
+>> + * for delays on the PCB.
+>> =A0*/
+>> =A0void tegra_sdmmc_tap_delay(struct clk *c, int delay)
+>> =A0{
+>>
+>> I created this wrapper around tegra2_sdmmc_tap_delay because I guess=
+ed the same requirement would be present in tegra3. =A0If you don't exp=
+ect this to be required on anything but tegra2, you could drop the wrap=
+per and just have callers use tegra2_sdmmc_tap_delay.
+>>
+>
+> I will ask around if this is needed for tegra30.
+>
+>> diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock=
+=2Eh
+>> index 688316a..135bb5f 100644
+>> --- a/arch/arm/mach-tegra/clock.h
+>> +++ b/arch/arm/mach-tegra/clock.h
+>> @@ -146,15 +146,15 @@ struct tegra_clk_init_table {
+>> =A0};
+>>
+>> =A0void tegra2_init_clocks(void);
+>> -void tegra2_periph_reset_deassert(struct clk *c);
+>> -void tegra2_periph_reset_assert(struct clk *c);
+>> =A0void clk_init(struct clk *clk);
+>> =A0struct clk *tegra_get_clock_by_name(const char *name);
+>> -unsigned long clk_measure_input_freq(void);
+>> =A0int clk_reparent(struct clk *c, struct clk *parent);
+>> =A0void tegra_clk_init_from_table(struct tegra_clk_init_table *table=
+);
+>> =A0unsigned long clk_get_rate_locked(struct clk *c);
+>> =A0int clk_set_rate_locked(struct clk *c, unsigned long rate);
+>> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+>> =A0void tegra2_sdmmc_tap_delay(struct clk *c, int delay);
+>> -
+>> +#else
+>> +#define tegra2_sdmmc_tap_delay(c, d) do {} while(0);
+>>
+>> It's more standard to use an empty static inline function here.
+>>
+>
+> clock.h is included in several board files. So making this a static i=
+nline
+> function results in a number of 'static function declared but not use=
+d'
+> warnings.
 
-What you're describing should be supported for sure.
-
-IMHO the key issue here from pinctrl fwk point of view is: We want to
-allow multiple data sources for describing the pinmux functions.
-
-The data sources supported should be any combination of static platform_data,
-DT data, loadable modules, and /lib/firmware. Then it's just a question of
-using the most suitable method for each SoC.
-
-Regards,
-
-Tony
+That's true for "static", but not for "static inline".  Look at a
+commonly used header like include/kernel.h, it's full of static
+inlines that are not used by most of the includers.
