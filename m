@@ -1,38 +1,39 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
-Date: Sat, 10 Dec 2011 00:55:58 +0100
-Message-ID: <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg@mail.gmail.com>
-References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
-	<1323382390-14892-2-git-send-email-swarren@nvidia.com>
-	<CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17518604D7@HQMAIL01.nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 2/6] ASoC: Allow the DAPM routes to be stored in
+	device tree
+Date: Sat, 10 Dec 2011 12:49:23 +0000
+Message-ID: <20111210124921.GA20568@opensource.wolfsonmicro.com>
+References: <1323291510-22338-1-git-send-email-swarren@nvidia.com> <1323291510-22338-2-git-send-email-swarren@nvidia.com> <20111208043149.GA31372@opensource.wolfsonmicro.com> <74CDBE0F657A3D45AFBB94109FB122FF17518605B1@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17518604D7-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17518605B1-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 9, 2011 at 6:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Fri, Dec 09, 2011 at 01:52:00PM -0800, Stephen Warren wrote:
 
-> Hence, there's no point parsing it from device tree; we end up with exactly
-> the same data in the driver, yet have spent a bunch of time parsing it out
-> from device tree instead of just embedding it into the kernel binary.
+> I'd originally made this property specific to the Tegra+WM8903 machine
+> driver, and you'd asked me to make it generic. Is there room to use
+> the binding above for the Tegra+WM8903 machine driver only, in order
+> to get the driver converted to DT, then define/implement something
+> completely generic to replace it, i.e. the stuff below?
 
-For me there are two points:
+I was asking for the code to be generic, not the binding itself.  If the 
+code could for example take a property name as an argument that'd allow 
+other bindings to use the same code without having to have a generic 
+binding which has bits which depend strongly on some Linux specific
+machine driver.
 
-- Avoiding clash with kernel maintainers who hate firmware-like tables and
-  binary data filling up the kernel. Some certain other guy bearing my
-  name comes to mind.
+> This would be a fair bit of work to implement, but what are your thoughts
+> on the binding example below? It's very strongly based on ASoC, but since
+> that's so strongly based on the HW, I think you can consider it a pure
+> HW model rather than something derived from the way the driver works.
 
-- Footprint: the majority of the stuff in your driver ends up in non-discardable
-  memory, and will be kept around. Since we have this concept of a
-  single zImage for a number of say ARMv7 systems, and since pin
-  controllers can be pretty hard to load from modules, *all* of them
-  may have to be compiled-in. If every driver for every board takes this
-  approach I am afraid it will be end up with a measurable footprint.
-
-Yours,
-Linus Walleij
+It's starting to get an idiomatic way of representing the external
+nodes, HDA is probably a good source of inspiration :)  We do need to
+have a think about the jacks, though - simple ones are fine but
+multifinction is more fun.
