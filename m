@@ -1,39 +1,47 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2 2/6] ASoC: Allow the DAPM routes to be stored in
-	device tree
-Date: Sat, 10 Dec 2011 12:49:23 +0000
-Message-ID: <20111210124921.GA20568@opensource.wolfsonmicro.com>
-References: <1323291510-22338-1-git-send-email-swarren@nvidia.com> <1323291510-22338-2-git-send-email-swarren@nvidia.com> <20111208043149.GA31372@opensource.wolfsonmicro.com> <74CDBE0F657A3D45AFBB94109FB122FF17518605B1@HQMAIL01.nvidia.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
+Date: Sun, 11 Dec 2011 11:36:25 -0800
+Message-ID: <20111211193625.GE31337@atomide.com>
+References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
+ <1323382390-14892-2-git-send-email-swarren@nvidia.com>
+ <CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
+ <20111209170722.GO31337@atomide.com>
+ <CACRpkdaco=967cKHUcj9VNKc_HyT7Mw30Z9HVdfgsUsHbps8bQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17518605B1-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CACRpkdaco=967cKHUcj9VNKc_HyT7Mw30Z9HVdfgsUsHbps8bQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 09, 2011 at 01:52:00PM -0800, Stephen Warren wrote:
+* Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [111209 15:17]:
+> On Fri, Dec 9, 2011 at 6:07 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrot=
+e:
+>=20
+> > - We currently have hard time supporting pin groups with pins
+> > =C2=A0coming from multiple pinmux driver instances
+>=20
+> Pin groups are per definiton per-controller inctance. That is a
+> given side effect of not having a global pin space.
+>=20
+> But you can create two groups of the same name on two
+> pin controllers so that e.g. pinctrl.0 and pinctrl.1 have
+> a group named "foo", then map both to a certain device
+> in the board pinmux map.
+>=20
+> You will have to request them individually however, like
+> with two hogs or two pinmux_get() calls specifying the
+> name of each map, else you will just get the first one.
+>=20
+> Not that I've tried it, but that's how it's supposed to work...
 
-> I'd originally made this property specific to the Tegra+WM8903 machine
-> driver, and you'd asked me to make it generic. Is there room to use
-> the binding above for the Tegra+WM8903 machine driver only, in order
-> to get the driver converted to DT, then define/implement something
-> completely generic to replace it, i.e. the stuff below?
+Yes a little bit of trickery is needed there, I'll look into
+it more as we already have two controller instances on omap4.
 
-I was asking for the code to be generic, not the binding itself.  If the 
-code could for example take a property name as an argument that'd allow 
-other bindings to use the same code without having to have a generic 
-binding which has bits which depend strongly on some Linux specific
-machine driver.
+Regards,
 
-> This would be a fair bit of work to implement, but what are your thoughts
-> on the binding example below? It's very strongly based on ASoC, but since
-> that's so strongly based on the HW, I think you can consider it a pure
-> HW model rather than something derived from the way the driver works.
-
-It's starting to get an idiomatic way of representing the external
-nodes, HDA is probably a good source of inspiration :)  We do need to
-have a think about the jacks, though - simple ones are fine but
-multifinction is more fun.
+Tony
