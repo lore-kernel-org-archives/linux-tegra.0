@@ -1,93 +1,355 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 1/3] ASoC: Add utility to set a card's name from device tree
-Date: Mon, 12 Dec 2011 15:55:34 -0700
-Message-ID: <1323730536-19915-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH v4 3/3] ASoC: Tegra+WM8903 machine: Add device tree binding
+Date: Mon, 12 Dec 2011 15:55:36 -0700
+Message-ID: <1323730536-19915-3-git-send-email-swarren@nvidia.com>
+References: <1323730536-19915-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1323730536-19915-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement snd_soc_of_parse_card_name(), a utility function that sets a
-card's name from device tree. The machine driver specifies the DT
-property to use, since this is binding-specific.
+This driver is parameterized in two ways:
+
+a) Platform data, which supplies the set of GPIOs used by the driver.
+   These GPIOs can now be parsed out of device tree.
+
+b) Machine-specific DAPM route arrays embedded into the ASoC machine
+   driver itself. Historically, the driver picks the appropriate array
+   to use using machine_is_*(). The driver now requires this array to
+   be parsed from device tree when instantiated through device tree,
+   using the core ASoC support for this parsing.
+
+Based on work by John Bonesio, but significantly reworked since then.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
 ---
-This series is based on my previously posted patch "ASoC: Allow DAI
-links to be specified using device tree nodes" v4. Patches 1 & 2 at
-most rely on that for context. Patch 3 relies on it for functionality.
+v2:
+* Split DAPM map parsing into a core ASoC feature.
+* Updating binding to require codec and I2S controller phandles, use new
+  ASoC core feature to bind DAI links using OF nodes rather than device
+  names.
+* Rebase on top of WM8903 MICBIAS supply conversion.
+* Other minor cleanups.
+v3:
+* Numbering discontinuity due to patch series splitting/merging.
+v4:
+* Call snd_soc_of_parse_card_name() and snd_soc_of_parse_audio_routing()
+  explicitly, rather than relying on snd_soc_register_card() to do this.
+* Restore complete binding documentation into tegra-audio-wm8903.txt
+  instead of referencing embedded-audio-complex.txt
 
-v2: New patch implementing new functionality
-v3: Name this embedded-audio-complex instead of soc-audio-complex.
-    Change property name from user-visible-name to model.
-    Remove compatible property from binding.
-v4: Convert this to a utility function that cards can call if desired.
-    Modify snd_soc_register_card() not to call this automatically.
-    Allow cards to specify the name of the device tree property that
-    stores that card's name. Don't specify the property as a generic
-    binding; remove embedded-audio-complex.txt
+ .../bindings/sound/tegra-audio-wm8903.txt          |   71 +++++++++++
+ sound/soc/tegra/tegra_wm8903.c                     |  128 ++++++++++++++++----
+ 2 files changed, 174 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt
 
- include/sound/soc.h  |    3 +++
- sound/soc/soc-core.c |   25 +++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 0 deletions(-)
-
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 40c256e..6e51a3f 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -966,6 +966,9 @@ static inline bool snd_soc_volsw_is_stereo(struct soc_mixer_control *mc)
- int snd_soc_util_init(void);
- void snd_soc_util_exit(void);
- 
-+int snd_soc_of_parse_card_name(struct snd_soc_card *card,
-+			       const char *propname);
+diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt b/Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt
+new file mode 100644
+index 0000000..d5b0da8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt
+@@ -0,0 +1,71 @@
++NVIDIA Tegra audio complex
 +
- #include <sound/soc-dai.h>
- 
- #ifdef CONFIG_DEBUG_FS
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 83aa82e..4e8d762 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -32,6 +32,7 @@
++Required properties:
++- compatible : "nvidia,tegra-audio-wm8903"
++- nvidia,model : The user-visible name of this sound complex.
++- nvidia,audio-routing : A list of the connections between audio components.
++  Each entry is a pair of strings, the first being the connection's sink,
++  the second being the connection's source. Valid names for sources and
++  sinks are the WM8903's pins, and the jacks on the board:
++
++  WM8903 pins:
++
++  * IN1L
++  * IN1R
++  * IN2L
++  * IN2R
++  * IN3L
++  * IN3R
++  * DMICDAT
++  * HPOUTL
++  * HPOUTR
++  * LINEOUTL
++  * LINEOUTR
++  * LOP
++  * LON
++  * ROP
++  * RON
++  * MICBIAS
++
++  Board connectors:
++
++  * Headphone Jack
++  * Int Spk
++  * Mic Jack
++
++- nvidia,i2s-controller : The phandle of the Tegra I2S1 controller
++- nvidia,audio-codec : The phandle of the WM8903 audio codec
++
++Optional properties:
++- nvidia,spkr-en-gpios : The GPIO that enables the speakers
++- nvidia,hp-mute-gpios : The GPIO that mutes the headphones
++- nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
++- nvidia,int-mic-en-gpios : The GPIO that enables the internal microphone
++- nvidia,ext-mic-en-gpios : The GPIO that enables the external microphone
++
++Example:
++
++sound {
++	compatible = "nvidia,tegra-audio-wm8903-harmony",
++		     "nvidia,tegra-audio-wm8903"
++	nvidia,model = "tegra-wm8903-harmony";
++
++	nvidia,audio-routing =
++		"Headphone Jack", "HPOUTR",
++		"Headphone Jack", "HPOUTL",
++		"Int Spk", "ROP",
++		"Int Spk", "RON",
++		"Int Spk", "LOP",
++		"Int Spk", "LON",
++		"Mic Jack", "MICBIAS",
++		"IN1L", "Mic Jack";
++
++	nvidia,i2s-controller = <&i2s1>;
++	nvidia,audio-codec = <&wm8903>;
++
++	nvidia,spkr-en-gpios = <&codec 2 0>;
++	nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
++	nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
++	nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
++};
++
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index ba2d23e..4677f26 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -34,6 +34,7 @@
  #include <linux/platform_device.h>
- #include <linux/ctype.h>
  #include <linux/slab.h>
-+#include <linux/of.h>
- #include <sound/ac97_codec.h>
- #include <sound/core.h>
- #include <sound/jack.h>
-@@ -3367,6 +3368,30 @@ found:
- }
- EXPORT_SYMBOL_GPL(snd_soc_unregister_codec);
+ #include <linux/gpio.h>
++#include <linux/of_gpio.h>
  
-+/* Retrieve a card's name from device tree */
-+int snd_soc_of_parse_card_name(struct snd_soc_card *card,
-+			       const char *propname)
-+{
+ #include <mach/tegra_wm8903_pdata.h>
+ 
+@@ -59,8 +60,9 @@
+ #define GPIO_HP_DET     BIT(4)
+ 
+ struct tegra_wm8903 {
++	struct tegra_wm8903_platform_data pdata;
++	struct platform_device *pcm_dev;
+ 	struct tegra_asoc_utils_data util_data;
+-	struct tegra_wm8903_platform_data *pdata;
+ 	int gpio_requested;
+ };
+ 
+@@ -160,7 +162,7 @@ static int tegra_wm8903_event_int_spk(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_dapm_context *dapm = w->dapm;
+ 	struct snd_soc_card *card = dapm->card;
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+-	struct tegra_wm8903_platform_data *pdata = machine->pdata;
++	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+ 
+ 	if (!(machine->gpio_requested & GPIO_SPKR_EN))
+ 		return 0;
+@@ -177,7 +179,7 @@ static int tegra_wm8903_event_hp(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_dapm_context *dapm = w->dapm;
+ 	struct snd_soc_card *card = dapm->card;
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+-	struct tegra_wm8903_platform_data *pdata = machine->pdata;
++	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+ 
+ 	if (!(machine->gpio_requested & GPIO_HP_MUTE))
+ 		return 0;
+@@ -246,9 +248,36 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+ 	struct snd_soc_card *card = codec->card;
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+-	struct tegra_wm8903_platform_data *pdata = machine->pdata;
++	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
 +	struct device_node *np = card->dev->of_node;
-+	int ret;
-+
-+	ret = of_property_read_string_index(np, propname, 0, &card->name);
-+	/*
-+	 * EINVAL means the property does not exist. This is fine providing
-+	 * card->name was previously set, which is checked later in
-+	 * snd_soc_register_card.
-+	 */
-+	if (ret < 0 && ret != -EINVAL) {
-+		dev_err(card->dev,
-+			"Property '%s' could not be read: %d\n",
-+			propname, ret);
-+		return ret;
+ 	int ret;
+ 
++	if (card->dev->platform_data) {
++		memcpy(pdata, card->dev->platform_data, sizeof(*pdata));
++	} else if (np) {
++		/*
++		 * This part must be in init() rather than probe() in order to
++		 * guarantee that the WM8903 has been probed, and hence its
++		 * GPIO controller registered, which is a pre-condition for
++		 * of_get_named_gpio() to be able to map the phandles in the
++		 * properties to the controller node. Given this, all
++		 * pdata handling is in init() for consistency.
++		 */
++		pdata->gpio_spkr_en = of_get_named_gpio(np,
++						"nvidia,spkr-en-gpios", 0);
++		pdata->gpio_hp_mute = of_get_named_gpio(np,
++						"nvidia,hp-mute-gpios", 0);
++		pdata->gpio_hp_det = of_get_named_gpio(np,
++						"nvidia,hp-det-gpios", 0);
++		pdata->gpio_int_mic_en = of_get_named_gpio(np,
++						"nvidia,int-mic-en-gpios", 0);
++		pdata->gpio_ext_mic_en = of_get_named_gpio(np,
++						"nvidia,ext-mic-en-gpios", 0);
++	} else {
++		dev_err(card->dev, "No platform data supplied\n");
++		return -EINVAL;
 +	}
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(snd_soc_of_parse_card_name);
-+
- static int __init snd_soc_init(void)
+ 	if (gpio_is_valid(pdata->gpio_spkr_en)) {
+ 		ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
+ 		if (ret) {
+@@ -348,11 +377,9 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
  {
- #ifdef CONFIG_DEBUG_FS
+ 	struct snd_soc_card *card = &snd_soc_tegra_wm8903;
+ 	struct tegra_wm8903 *machine;
+-	struct tegra_wm8903_platform_data *pdata;
+ 	int ret;
+ 
+-	pdata = pdev->dev.platform_data;
+-	if (!pdata) {
++	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
+ 		dev_err(&pdev->dev, "No platform data supplied\n");
+ 		return -EINVAL;
+ 	}
+@@ -364,31 +391,70 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+-
+-	machine->pdata = pdata;
+-
+-	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
+-	if (ret)
+-		goto err;
++	machine->pcm_dev = ERR_PTR(-EINVAL);
+ 
+ 	card->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, card);
+ 	snd_soc_card_set_drvdata(card, machine);
+ 
+-	if (machine_is_harmony()) {
+-		card->dapm_routes = harmony_audio_map;
+-		card->num_dapm_routes = ARRAY_SIZE(harmony_audio_map);
+-	} else if (machine_is_seaboard()) {
+-		card->dapm_routes = seaboard_audio_map;
+-		card->num_dapm_routes = ARRAY_SIZE(seaboard_audio_map);
+-	} else if (machine_is_kaen()) {
+-		card->dapm_routes = kaen_audio_map;
+-		card->num_dapm_routes = ARRAY_SIZE(kaen_audio_map);
++	if (pdev->dev.of_node) {
++		ret = snd_soc_of_parse_card_name(card, "nvidia,model");
++		if (ret)
++			goto err;
++
++		ret = snd_soc_of_parse_audio_routing(card,
++						     "nvidia,audio-routing");
++		if (ret)
++			goto err;
++
++		tegra_wm8903_dai.codec_name = NULL;
++		tegra_wm8903_dai.codec_of_node = of_parse_phandle(
++				pdev->dev.of_node, "nvidia,audio-codec", 0);
++		if (!tegra_wm8903_dai.codec_of_node) {
++			dev_err(&pdev->dev,
++				"Property 'nvidia,audio-codec' missing or invalid\n");
++			ret = -EINVAL;
++			goto err;
++		}
++
++		tegra_wm8903_dai.cpu_dai_name = NULL;
++		tegra_wm8903_dai.cpu_dai_of_node = of_parse_phandle(
++				pdev->dev.of_node, "nvidia,i2s-controller", 0);
++		if (!tegra_wm8903_dai.cpu_dai_of_node) {
++			dev_err(&pdev->dev,
++				"Property 'nvidia,i2s-controller' missing or invalid\n");
++			ret = -EINVAL;
++			goto err;
++		}
++
++		machine->pcm_dev = platform_device_register_simple(
++					"tegra-pcm-audio", -1, NULL, 0);
++		if (IS_ERR(machine->pcm_dev)) {
++			dev_err(&pdev->dev,
++				"Can't instantiate tegra-pcm-audio\n");
++			ret = PTR_ERR(machine->pcm_dev);
++			goto err;
++		}
+ 	} else {
+-		card->dapm_routes = aebl_audio_map;
+-		card->num_dapm_routes = ARRAY_SIZE(aebl_audio_map);
++		if (machine_is_harmony()) {
++			card->dapm_routes = harmony_audio_map;
++			card->num_dapm_routes = ARRAY_SIZE(harmony_audio_map);
++		} else if (machine_is_seaboard()) {
++			card->dapm_routes = seaboard_audio_map;
++			card->num_dapm_routes = ARRAY_SIZE(seaboard_audio_map);
++		} else if (machine_is_kaen()) {
++			card->dapm_routes = kaen_audio_map;
++			card->num_dapm_routes = ARRAY_SIZE(kaen_audio_map);
++		} else {
++			card->dapm_routes = aebl_audio_map;
++			card->num_dapm_routes = ARRAY_SIZE(aebl_audio_map);
++		}
+ 	}
+ 
++	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
++	if (ret)
++		goto err_unregister;
++
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
+@@ -400,6 +466,9 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
+ 
+ err_fini_utils:
+ 	tegra_asoc_utils_fini(&machine->util_data);
++err_unregister:
++	if (!IS_ERR(machine->pcm_dev))
++		platform_device_unregister(machine->pcm_dev);
+ err:
+ 	return ret;
+ }
+@@ -408,7 +477,7 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+ {
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+ 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+-	struct tegra_wm8903_platform_data *pdata = machine->pdata;
++	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+ 
+ 	if (machine->gpio_requested & GPIO_HP_DET)
+ 		snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack,
+@@ -427,15 +496,23 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+ 	snd_soc_unregister_card(card);
+ 
+ 	tegra_asoc_utils_fini(&machine->util_data);
++	if (!IS_ERR(machine->pcm_dev))
++		platform_device_unregister(machine->pcm_dev);
+ 
+ 	return 0;
+ }
+ 
++static const struct of_device_id tegra_wm8903_of_match[] __devinitconst = {
++	{ .compatible = "nvidia,tegra-audio-wm8903", },
++	{},
++};
++
+ static struct platform_driver tegra_wm8903_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.owner = THIS_MODULE,
+ 		.pm = &snd_soc_pm_ops,
++		.of_match_table = tegra_wm8903_of_match,
+ 	},
+ 	.probe = tegra_wm8903_driver_probe,
+ 	.remove = __devexit_p(tegra_wm8903_driver_remove),
+@@ -446,3 +523,4 @@ MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+ MODULE_DESCRIPTION("Tegra+WM8903 machine ASoC driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" DRV_NAME);
++MODULE_DEVICE_TABLE(of, tegra_wm8903_of_match);
 -- 
 1.7.0.4
