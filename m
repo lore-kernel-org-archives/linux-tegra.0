@@ -1,104 +1,55 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v6 10/10] arm/tegra: add support for tegra30 based board
- cardhu
-Date: Sun, 11 Dec 2011 16:26:16 -0800
-Message-ID: <20111212002616.GB26598@quad.lixom.net>
-References: <1323348254-29072-1-git-send-email-pdeschrijver@nvidia.com>
- <1323348254-29072-11-git-send-email-pdeschrijver@nvidia.com>
- <4EE21B67.5040006@gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
+Date: Mon, 12 Dec 2011 10:06:24 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17518607C1@HQMAIL01.nvidia.com>
+References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
+	<1323382390-14892-2-git-send-email-swarren@nvidia.com>
+	<CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17518604D7@HQMAIL01.nvidia.com>
+ <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4EE21B67.5040006-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 09, 2011 at 08:29:59AM -0600, Rob Herring wrote:
-> On 12/08/2011 06:43 AM, Peter De Schrijver wrote:
-> > Add support for the tegra30 based cardhu development board. Cardhu is a tablet
-> > formfactor reference design for tegra30. The patch provides a device tree for
-> > the board, updates Makefile.boot to build the dtb, includes the platform in
-> > Kconfig and updates board-dt.c.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/tegra-cardhu.dts |   36 ++++++++++++++++++++++++++++++++++++
-> >  arch/arm/mach-tegra/Kconfig        |    7 +++++++
-> >  arch/arm/mach-tegra/Makefile.boot  |    1 +
-> >  arch/arm/mach-tegra/board-dt.c     |    1 +
-> >  4 files changed, 45 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
-> > 
-> > diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-> > new file mode 100644
-> > index 0000000..70c41fc
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/tegra-cardhu.dts
-> > @@ -0,0 +1,36 @@
-> > +/dts-v1/;
-> > +
-> > +/include/ "tegra30.dtsi"
-> > +
-> > +/ {
-> > +	model = "NVIDIA Tegra30 Cardhu evaluation board";
-> > +	compatible = "nvidia,cardhu", "nvidia,tegra30";
-> > +
-> > +	memory {
+Linus Walleij wrote at Friday, December 09, 2011 4:56 PM:
+> On Fri, Dec 9, 2011 at 6:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > 
-> memory@80000000
-
-If there is only one memory node, then there is no need to specify the unit
-address after the name, it's just noise.
-
-> > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> > index aad54ca..6bae1bb 100644
-> > --- a/arch/arm/mach-tegra/Kconfig
-> > +++ b/arch/arm/mach-tegra/Kconfig
-> > @@ -91,6 +91,13 @@ config MACH_VENTANA
-> >         help
-> >           Support for the nVidia Ventana development platform
-> >  
-> > +config MACH_CARDHU
-> > +       bool "Cardhu board"
-> > +       depends on ARCH_TEGRA_3x_SOC
-> > +       select MACH_TEGRA_DT
-> > +       help
-> > +         Support for the NVIDIA Cardhu development platform
-> > +
+> > Hence, there's no point parsing it from device tree; we end up with exactly
+> > the same data in the driver, yet have spent a bunch of time parsing it out
+> > from device tree instead of just embedding it into the kernel binary.
 > 
-> You should not be adding kconfig entries for boards. They should
-> eventually go away with DT.
-
-Agreed. On Tegra2 we still want board configs since it allows us to leave out
-some of the kernel code that is still per-board (i.e. pinmux tables, etc). Once
-that has been moved to device tree we can remove all board kconfig options
-there. We might as well not start adding them on T30.
-
-> >  choice
-> >          prompt "Low-level debug console UART"
-> >          default TEGRA_DEBUG_UART_NONE
-> > diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-> > index cf51a00..7c1110f 100644
-> > --- a/arch/arm/mach-tegra/Makefile.boot
-> > +++ b/arch/arm/mach-tegra/Makefile.boot
-> > @@ -7,3 +7,4 @@ dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
-> >  dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
-> >  dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
-> >  dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-> > +dtb-$(CONFIG_MACH_CARDHU) += tegra-cardhu.dtb
+> For me there are two points:
 > 
-> Likewise, this should be more like:
-> dtb-$(CONFIG_MACH_TEGRA_DT) += tegra-seaboard.dtb tegra-trimslice.dtb
-> tegra-ventana.dtb ...
+> - Avoiding clash with kernel maintainers who hate firmware-like tables and
+>   binary data filling up the kernel. Some certain other guy bearing my
+>   name comes to mind.
 
-Actually, the cardhu dts CONFIG_ARCH_TEGRA_3x_SOC, since there will only be DT
-boards for that platform.
+Well, one of the nice things here is that everything to conctrol the HW
+is in the driver, unlike on other systems without all this data that
+have to rely on opaque BIOS/ACPI/EFI/... hooks.
 
-Moving the others to TEGRA_DT is a later change (see above comments about some
-C code still needed).
+> - Footprint: the majority of the stuff in your driver ends up in non-discardable
+>   memory, and will be kept around. Since we have this concept of a
+>   single zImage for a number of say ARMv7 systems, and since pin
+>   controllers can be pretty hard to load from modules, *all* of them
+>   may have to be compiled-in. If every driver for every board takes this
+>   approach I am afraid it will be end up with a measurable footprint.
 
+Perhaps what we need is a way to build all these drivers as modules, but
+still link them into the kernel so they're statically available during
+early boot, but allow them to be unloaded like modules after the system
+has booted and determined they aren't needed.
 
--Olof
+This would have the advantage of getting rid of the unused driver code
+as well, whereas putting the data into DT only handles ensuring the data
+for other SoCs isn't present in the kernel after boot.
+
+-- 
+nvpublic
