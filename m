@@ -1,55 +1,63 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC 1/3] pinctrl: add a driver for NVIDIA Tegra
-Date: Mon, 12 Dec 2011 10:06:24 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17518607C1@HQMAIL01.nvidia.com>
-References: <1323382390-14892-1-git-send-email-swarren@nvidia.com>
-	<1323382390-14892-2-git-send-email-swarren@nvidia.com>
-	<CACRpkdYDn0V7SeQuFiFDMxGkybvg6PGf7jxid8ECGB7Azkj3zw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17518604D7@HQMAIL01.nvidia.com>
- <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] ASoC: Allow the DAPM routes to be stored in	device
+ tree
+Date: Mon, 12 Dec 2011 12:08:24 -0700
+Message-ID: <4EE65128.2090209@nvidia.com>
+References: <1323291510-22338-1-git-send-email-swarren@nvidia.com> <1323291510-22338-2-git-send-email-swarren@nvidia.com> <20111208043149.GA31372@opensource.wolfsonmicro.com> <74CDBE0F657A3D45AFBB94109FB122FF17518605B1@HQMAIL01.nvidia.com> <20111210124921.GA20568@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdahqb0qMVcKF9NBT5pwRgK4FOob5ABtb7ids9Bhh5XbZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20111210124921.GA20568-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Linus Walleij wrote at Friday, December 09, 2011 4:56 PM:
-> On Fri, Dec 9, 2011 at 6:28 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On 12/10/2011 05:49 AM, Mark Brown wrote:
+> On Fri, Dec 09, 2011 at 01:52:00PM -0800, Stephen Warren wrote:
 > 
-> > Hence, there's no point parsing it from device tree; we end up with exactly
-> > the same data in the driver, yet have spent a bunch of time parsing it out
-> > from device tree instead of just embedding it into the kernel binary.
+>> I'd originally made this property specific to the Tegra+WM8903 machine
+>> driver, and you'd asked me to make it generic. Is there room to use
+>> the binding above for the Tegra+WM8903 machine driver only, in order
+>> to get the driver converted to DT, then define/implement something
+>> completely generic to replace it, i.e. the stuff below?
 > 
-> For me there are two points:
-> 
-> - Avoiding clash with kernel maintainers who hate firmware-like tables and
->   binary data filling up the kernel. Some certain other guy bearing my
->   name comes to mind.
+> I was asking for the code to be generic, not the binding itself.  If the 
+> code could for example take a property name as an argument that'd allow 
+> other bindings to use the same code without having to have a generic 
+> binding which has bits which depend strongly on some Linux specific
+> machine driver.
 
-Well, one of the nice things here is that everything to conctrol the HW
-is in the driver, unlike on other systems without all this data that
-have to rely on opaque BIOS/ACPI/EFI/... hooks.
+Ah right, I misunderstood then.
 
-> - Footprint: the majority of the stuff in your driver ends up in non-discardable
->   memory, and will be kept around. Since we have this concept of a
->   single zImage for a number of say ARMv7 systems, and since pin
->   controllers can be pretty hard to load from modules, *all* of them
->   may have to be compiled-in. If every driver for every board takes this
->   approach I am afraid it will be end up with a measurable footprint.
+So, does the following sound reasonable:
 
-Perhaps what we need is a way to build all these drivers as modules, but
-still link them into the kernel so they're statically available during
-early boot, but allow them to be unloaded like modules after the system
-has booted and determined they aren't needed.
+Add:
 
-This would have the advantage of getting rid of the unused driver code
-as well, whereas putting the data into DT only handles ensuring the data
-for other SoCs isn't present in the kernel after boot.
+snd_soc_of_parse_card_name(struct snd_soc_card *card,
+			   const char *prop);
+
+.. and have the machine driver call that whenever it decides, rather
+than having e.g. snd_soc_register_card() call it.
+
+Add:
+
+int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
+				   const char *prop);
+
+.. and have the machine driver call that whenever it decides, rather
+than having e.g. snd_soc_register_card() call it.
+
+Remove
+Documentation/devicetree/bindings/sound/embedded-audio-complex.txt from
+the patches completely, and document the properties solely in the
+Tegra+WM8903 machine driver binding; we can write
+embedded-audio-complex.txt if we create a truly generic ASoC driver binding.
+
+Does that sound reasonable?
+
+Thanks.
 
 -- 
 nvpublic
