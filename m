@@ -1,92 +1,74 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v7 14/14] arm/tegra: add support for tegra30 based board cardhu
-Date: Wed, 14 Dec 2011 17:03:26 +0200
-Message-ID: <1323875032-18221-15-git-send-email-pdeschrijver@nvidia.com>
-References: <1323875032-18221-1-git-send-email-pdeschrijver@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v4 REPOST 3/5] omap4: Unconditionally require l2x0 L2
+ cache controller support
+Date: Wed, 14 Dec 2011 10:14:25 -0800
+Message-ID: <20111214181425.GB32251@atomide.com>
+References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
+ <1323862781-3465-4-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1323875032-18221-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Gary King <gking@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1323862781-3465-4-git-send-email-dave.martin@linaro.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Dave Martin <dave.martin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, patches@linaro.org, Anton Vorontsov <avorontsov@mvista.com>, Barry Song <baohua.song@csr.com>, Catalin Marinas <catalin.marinas@arm.com>, Colin Cross <ccross@google.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the tegra30 based cardhu development board. Cardhu is a tablet
-formfactor reference design for tegra30. The patch provides a device tree for
-the board, updates Makefile.boot to build the dtb, includes the platform in
-Kconfig and updates board-dt.c.
+* Dave Martin <dave.martin@linaro.org> [111214 03:08]:
+> If running in the Normal World on a TrustZone-enabled SoC, Linux
+> does not have complete control over the L2 cache controller
+> configuration.  The kernel cannot work reliably on such platforms
+> without the l2x0 cache support code built in.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/boot/dts/tegra-cardhu.dts     |   36 ++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/Makefile.boot      |    1 +
- arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
- 3 files changed, 38 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra-cardhu.dts
+There are HS and GP omaps (High Security and General Purpose).
+GP omaps do have full control of the L2. Also HS omaps most likely
+provide control over enabling and disabling L2 depending how the
+secure code is implemented.
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-new file mode 100644
-index 0000000..70c41fc
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -0,0 +1,36 @@
-+/dts-v1/;
-+
-+/include/ "tegra30.dtsi"
-+
-+/ {
-+	model = "NVIDIA Tegra30 Cardhu evaluation board";
-+	compatible = "nvidia,cardhu", "nvidia,tegra30";
-+
-+	memory {
-+		reg = < 0x80000000 0x40000000 >;
-+	};
-+
-+	serial@70006000 {
-+		clock-frequency = < 408000000 >;
-+	};
-+
-+	i2c@7000c000 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c400 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c500 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c700 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000d000 {
-+		clock-frequency = <100000>;
-+	};
-+};
-diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index cf51a00..9a82094 100644
---- a/arch/arm/mach-tegra/Makefile.boot
-+++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -7,3 +7,4 @@ dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
- dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
- dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
- dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra-cardhu.dtb
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index f44a29c..3c197e2 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -47,6 +47,7 @@ static void __init tegra30_dt_init(void)
- }
+BTW, the real problem is that because the secure code is implemented
+in various ways, we don't really have any handling for it in Linux.
+
+The SMI instruction numbers don't seem to be standardized at all,
+and can mean different things on different boards, even different
+board versions :(
+
+Sounds like devicetree is the only safe way to deal with the L2
+control options.
+
+Regards,
+
+Tony
+
  
- static const char *tegra30_dt_board_compat[] = {
-+	"nvidia,cardhu",
- 	NULL
- };
- 
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> This patch unconditionally enables l2x0 support for the OMAP4 SoCs.
+> 
+> Thanks to Rob Herring for this suggestion. [1]
+> 
+> Signed-off-by: Dave Martin <dave.martin@linaro.org>
+> 
+> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074495.html
+> ---
+>  arch/arm/mach-omap2/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
+> index bb1b670..94e568a 100644
+> --- a/arch/arm/mach-omap2/Kconfig
+> +++ b/arch/arm/mach-omap2/Kconfig
+> @@ -41,11 +41,11 @@ config ARCH_OMAP4
+>  	bool "TI OMAP4"
+>  	default y
+>  	depends on ARCH_OMAP2PLUS
+> +	select CACHE_L2X0
+>  	select CPU_V7
+>  	select ARM_GIC
+>  	select HAVE_SMP
+>  	select LOCAL_TIMERS if SMP
+> -	select MIGHT_HAVE_CACHE_L2X0
+>  	select PL310_ERRATA_588369
+>  	select PL310_ERRATA_727915
+>  	select ARM_ERRATA_720789
+> -- 
+> 1.7.4.1
+> 
