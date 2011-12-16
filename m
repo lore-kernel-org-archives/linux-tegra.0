@@ -1,70 +1,70 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/9] arm/tegra: Split Seaboard GPIO table to allow for Ventana
-Date: Fri, 16 Dec 2011 15:12:24 -0700
-Message-ID: <1324073552-15542-2-git-send-email-swarren@nvidia.com>
-References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 0/9] arm/tegra: Various pinmux-related cleanups
+Date: Fri, 16 Dec 2011 15:12:23 -0700
+Message-ID: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324073552-15542-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Seaboard and Ventana share some GPIOs, but others are different. Split the
-GPIO table into common, seaboard-specific, and ventana-specific tables, so
-that only the correct ones are enabled for each board. Add a few missing
-audio-related GPIOs for Ventana.
+While working on switching Tegra to a new pinctrl-based pin mux driver,
+I made a bunch of small pinmux-related fixes; this patch series.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard-pinmux.c |   16 +++++++++++++++-
- 1 files changed, 15 insertions(+), 1 deletions(-)
+This patch series will have a few small context conflicts with Peter
+De Schrijver's Tegra30 support. Peter's patch series should have
+priority over this one (i.e. be the one merged if it's difficult to
+merge both).
 
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index b1c2972..cb5b2e9 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -190,14 +190,26 @@ static struct tegra_gpio_table common_gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
-+	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
-+};
-+
-+static struct tegra_gpio_table seaboard_gpio_table[] = {
- 	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_HP_DET,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_ISL29018_IRQ,	.enable = true },
--	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
- 	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
- };
- 
-+static struct tegra_gpio_table ventana_gpio_table[] = {
-+	/* hp_det */
-+	{ .gpio = TEGRA_GPIO_PW2,		.enable = true },
-+	/* int_mic_en */
-+	{ .gpio = TEGRA_GPIO_PX0,		.enable = true },
-+	/* ext_mic_en */
-+	{ .gpio = TEGRA_GPIO_PX1,		.enable = true },
-+};
-+
- static void __init update_pinmux(struct tegra_pingroup_config *newtbl, int size)
- {
- 	int i, j;
-@@ -235,11 +247,13 @@ void __init seaboard_common_pinmux_init(void)
- void __init seaboard_pinmux_init(void)
- {
- 	seaboard_common_pinmux_init();
-+	tegra_gpio_config(seaboard_gpio_table, ARRAY_SIZE(seaboard_gpio_table));
- }
- 
- void __init ventana_pinmux_init(void)
- {
- 	update_pinmux(ventana_pinmux, ARRAY_SIZE(ventana_pinmux));
- 	seaboard_common_pinmux_init();
-+	tegra_gpio_config(ventana_gpio_table, ARRAY_SIZE(ventana_gpio_table));
- }
- 
--- 
-1.7.0.4
+In particular:
+* My patch 3 "arm/tegra: Harmony PCIe: Don't touch pinmux" and Peter's
+  patch "arm/tegra: prepare pinmux code for multiple tegra variants"
+  will have context conflicts; I've described the best way to resolve
+  this in my patch's commit description.
+* This series edits board-dt.c whereas Peter's series renames that to
+  board-dt-tegra20.c. I assume git will handle this without any issue.
+* There may be other obvious context conflicts that should be trivial
+  to resolve.
+
+This series is based on next-20111215, but I don't think has any
+dependencies on anything in any of the Tegra for-3.3 branches.
+
+Following this series, I have 3 patches in my local tree:
+  arm/tegra: Select PINMUX Kconfig variables
+  arm/tegra: Switch to new pinctrl driver
+  arm/tegra: Remove pre-pinctrl pinmux driver
+
+(all work in DT and non-DT on all supported Tegra20 boards)
+
+I need to rebase those on top of Peter's patches (the first patch needs
+updates for Tegra30 support, the last patch needs to delete the new
+Tegra30 pinmux driver that Peter's series adds). It will also depend on
+the pinctrl subsystem, which is being merged for the first time in 3.3,
+and probably also patches to pinctrl that may only show up in 3.4. So,
+I'll probably hold off posting those patches for merge until after 3.3
+is out, but will probably send them out as a preview before that.
+
+Stephen Warren (9):
+  arm/tegra: Split Seaboard GPIO table to allow for Ventana
+  arm/tegra: Add AUXDATA for tegra-pinmux and tegra-gpio
+  arm/tegra: Harmony PCIe: Don't touch pinmux
+  arm/tegra: PCIe: Remove include of mach/pinmux.h
+  arm/tegra: Remove useless entries from ventana_pinmux[]
+  arm/tegra: Rework Seaboard-vs-Ventana pinmux table
+  arm/tegra: Fix mistake in Trimslice's pinmux
+  arm/tegra: Refactor board-*-pinmux.c to share code
+  arm/tegra: Use bus notifiers to trigger pinmux setup
+
+ arch/arm/mach-tegra/Makefile                 |    1 +
+ arch/arm/mach-tegra/board-dt.c               |   16 ++--
+ arch/arm/mach-tegra/board-harmony-pcie.c     |    9 --
+ arch/arm/mach-tegra/board-harmony-pinmux.c   |   22 ++---
+ arch/arm/mach-tegra/board-paz00-pinmux.c     |   22 ++---
+ arch/arm/mach-tegra/board-pinmux.c           |  104 +++++++++++++++++++++++
+ arch/arm/mach-tegra/board-pinmux.h           |   38 +++++++++
+ arch/arm/mach-tegra/board-seaboard-pinmux.c  |  116 ++++++++++++--------------
+ arch/arm/mach-tegra/board-trimslice-pinmux.c |   24 +++---
+ arch/arm/mach-tegra/pcie.c                   |    1 -
+ 10 files changed, 235 insertions(+), 118 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-pinmux.h
