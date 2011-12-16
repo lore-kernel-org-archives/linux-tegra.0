@@ -1,90 +1,77 @@
-From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] [RFC] ARM: IOMMU: Tegra30: iommu_ops for SMMU
- driver
-Date: Fri, 16 Dec 2011 16:39:04 +0100
-Message-ID: <20111216153904.GC29877@amd.com>
-References: <1323954690-7000-1-git-send-email-hdoyu@nvidia.com>
- <1323954690-7000-3-git-send-email-hdoyu@nvidia.com>
+From: Dave Martin <dave.martin@linaro.org>
+Subject: [PATCH v5 REPOST 0/5] Refactor common Kconfigs for easier maintenance
+Date: Fri, 16 Dec 2011 16:35:27 +0000
+Message-ID: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1323954690-7000-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Colin Cross <ccross@google.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 15, 2011 at 03:11:30PM +0200, Hiroshi DOYU wrote:
-> +static int smmu_iommu_attach_dev(struct iommu_domain *domain,
-> +				 struct device *dev)
-> +{
-> +	struct smmu_as *as = domain->priv;
-> +	struct smmu_client *client, *c;
-> +	u32 map;
-> +	int err;
-> +
-> +	client = kmalloc(sizeof(*c), GFP_KERNEL);
-> +	if (!client)
-> +		return -ENOMEM;
-> +	client->dev = dev;
-> +	client->as = as;
-> +	map = (unsigned long)dev->platform_data;
-> +	if (!map)
-> +		return -EINVAL;
-> +
-> +	err = smmu_client_enable_hwgrp(client, map);
-> +	if (err)
-> +		goto err_hwgrp;
-> +
-> +	spin_lock(&as->client_lock);
-> +	list_for_each_entry(c, &as->client, list) {
-> +		if (c->dev == dev) {
-> +			pr_err("%s is already attached\n", dev_name(dev));
-> +			err = -EINVAL;
-> +			goto err_client;
-> +		}
-> +	}
-> +	list_add(&client->list, &as->client);
-> +	spin_unlock(&as->client_lock);
-> +
-> +	/*
-> +	 * Reserve "page zero" for AVP vectors using a common dummy
-> +	 * page.
-> +	 */
-> +	if (map & HWG_AVPC) {
-> +		struct page *page;
-> +
-> +		page = as->smmu->avp_vector_page;
-> +		__smmu_iommu_map_pfn(as, 0, page_to_pfn(page));
-> +
-> +		pr_info("Reserve \"page zero\" for AVP vectors using a common dummy\n");
-> +	}
-> +
-> +	pr_debug("Attached %s\n", dev_name(dev));
-> +	return 0;
-> +err_client:
-> +	smmu_client_disable_hwgrp(client);
-> +	spin_unlock(&as->client_lock);
-> +err_hwgrp:
-> +	kfree(client);
-> +	return err;
-> +}
+[Expanding the CC list again so that affected people get a final
+chance to comment -- David Brown pointed out that a few people/
+ists were still missing.  This is otherwise a repost of v5 with
+no changes.  Apologies to anyone who has already read this series.]
 
-Hmm, I have a question about that. Reading the code it looks like your
-SMMU exists per pheripheral device and the SMMU hardware supports
-multiple address spaces per device, right? The domains are implemented
-for one address-space. So is it right that a device can have multiple
-address-spaces? If so, what kind of devices do you bind to the domains
-then. I doesn't make sense to bind whole peripheral devices in this
-case.
+Common Kconfig options which depend on a long list of board- and
+SoC- specific Kconfigs can be cumbersome to maintain, leading to
+annoying merge conflicts (although rather trivial ones).
+
+This series factors out the dependencies of CACHE_L2X0 and SMP so
+that the knowledge about when these can be enabled is moved to the
+relevant board/SoC Kconfig files instead.  New
+MIGHT_HAVE_CACHE_L2X0 and HAVE_SMP options are defined to mediate
+the dependencies.
+
+This series has been substantially reworked compared with the
+previous post, and is now in two parts:
+
+  * The first two patches simply refactor the way the Kconfig
+    options for CACHE_L2X0 and SMP are implemented, without
+    making any other changes.
+
+  * The final three patches apply functional changes suggested by
+    the contributors to this series, to make the config
+    dependencies more correct for some specific boards.
 
 
-	Joerg
+Thanks to Rob Herring, Shawn Guo and Russell King for their
+contributions to this series.  Thanks also to David Brown for
+pointing out the lack of a comprehensive CC list.
+
+
+I have briefly build-tested on some of the affected boards, but any
+further reviews or Tested-Bys would be much appreciated.
+
+
+Dave Martin (5):
+  ARM: l2x0/pl310: Refactor Kconfig to be more maintainable
+  ARM: SMP: Refactor Kconfig to be more maintainable
+  omap4: Unconditionally require l2x0 L2 cache controller support
+  highbank: Unconditionally require l2x0 L2 cache controller support
+  imx6q: Remove unconditional dependency on l2x0 L2 cache support
+
+ arch/arm/Kconfig               |   26 ++++++++++++++++++++++----
+ arch/arm/mach-exynos/Kconfig   |    2 ++
+ arch/arm/mach-imx/Kconfig      |    2 +-
+ arch/arm/mach-msm/Kconfig      |    1 +
+ arch/arm/mach-omap2/Kconfig    |    2 ++
+ arch/arm/mach-realview/Kconfig |    9 +++++++++
+ arch/arm/mach-vexpress/Kconfig |    2 ++
+ arch/arm/mm/Kconfig            |   23 ++++++++++++++++-------
+ arch/arm/plat-mxc/Kconfig      |    1 +
+ 9 files changed, 56 insertions(+), 12 deletions(-)
 
 -- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+1.7.4.1
