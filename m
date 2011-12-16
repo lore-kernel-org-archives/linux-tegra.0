@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/9] arm/tegra: Harmony PCIe: Don't touch pinmux
-Date: Fri, 16 Dec 2011 15:12:26 -0700
-Message-ID: <1324073552-15542-4-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 1/9] arm/tegra: Split Seaboard GPIO table to allow for Ventana
+Date: Fri, 16 Dec 2011 15:12:24 -0700
+Message-ID: <1324073552-15542-2-git-send-email-swarren@nvidia.com>
 References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1324073552-15542-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,54 +10,61 @@ To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Harmony pinmux table is already set up to mux the PCIe signals onto
-the appropriate pin groups. Don't manually fiddle with the pinmux in the
-Harmony PCIe setup code.
-
-Merge note: This will have a merge conflict with Peter De Schrijver's
-"arm/tegra: prepare pinmux code for multiple tegra variants" due to
-context. When merging the two, make sure to also remove the include
-of <mach/pinmux-tegra20.h> that his patch added, since it's no longer
-needed after this patch.
+Seaboard and Ventana share some GPIOs, but others are different. Split the
+GPIO table into common, seaboard-specific, and ventana-specific tables, so
+that only the correct ones are enabled for each board. Add a few missing
+audio-related GPIOs for Ventana.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-harmony-pcie.c |    9 ---------
- 1 files changed, 0 insertions(+), 9 deletions(-)
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |   16 +++++++++++++++-
+ 1 files changed, 15 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
-index 6db7d69..33c4fed 100644
---- a/arch/arm/mach-tegra/board-harmony-pcie.c
-+++ b/arch/arm/mach-tegra/board-harmony-pcie.c
-@@ -22,7 +22,6 @@
+diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+index b1c2972..cb5b2e9 100644
+--- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
++++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
+@@ -190,14 +190,26 @@ static struct tegra_gpio_table common_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_SD2_CD,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_WP,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_SD2_POWER,		.enable = true },
++	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
++};
++
++static struct tegra_gpio_table seaboard_gpio_table[] = {
+ 	{ .gpio = TEGRA_GPIO_LIDSWITCH,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_POWERKEY,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_HP_DET,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_ISL29018_IRQ,	.enable = true },
+-	{ .gpio = TEGRA_GPIO_CDC_IRQ,		.enable = true },
+ 	{ .gpio = TEGRA_GPIO_USB1,		.enable = true },
+ };
  
- #include <asm/mach-types.h>
++static struct tegra_gpio_table ventana_gpio_table[] = {
++	/* hp_det */
++	{ .gpio = TEGRA_GPIO_PW2,		.enable = true },
++	/* int_mic_en */
++	{ .gpio = TEGRA_GPIO_PX0,		.enable = true },
++	/* ext_mic_en */
++	{ .gpio = TEGRA_GPIO_PX1,		.enable = true },
++};
++
+ static void __init update_pinmux(struct tegra_pingroup_config *newtbl, int size)
+ {
+ 	int i, j;
+@@ -235,11 +247,13 @@ void __init seaboard_common_pinmux_init(void)
+ void __init seaboard_pinmux_init(void)
+ {
+ 	seaboard_common_pinmux_init();
++	tegra_gpio_config(seaboard_gpio_table, ARRAY_SIZE(seaboard_gpio_table));
+ }
  
--#include <mach/pinmux.h>
- #include "board.h"
- #include "board-harmony.h"
+ void __init ventana_pinmux_init(void)
+ {
+ 	update_pinmux(ventana_pinmux, ARRAY_SIZE(ventana_pinmux));
+ 	seaboard_common_pinmux_init();
++	tegra_gpio_config(ventana_gpio_table, ARRAY_SIZE(ventana_gpio_table));
+ }
  
-@@ -48,10 +47,6 @@ static int __init harmony_pcie_init(void)
- 
- 	regulator_enable(regulator);
- 
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_NORMAL);
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_NORMAL);
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_NORMAL);
--
- 	err = tegra_pcie_init(true, true);
- 	if (err)
- 		goto err_pcie;
-@@ -59,10 +54,6 @@ static int __init harmony_pcie_init(void)
- 	return 0;
- 
- err_pcie:
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_GPV, TEGRA_TRI_TRISTATE);
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXA, TEGRA_TRI_TRISTATE);
--	tegra_pinmux_set_tristate(TEGRA_PINGROUP_SLXK, TEGRA_TRI_TRISTATE);
--
- 	regulator_disable(regulator);
- 	regulator_put(regulator);
- err_reg:
 -- 
 1.7.0.4
