@@ -1,31 +1,39 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH v8 0/2] crypto: driver for Tegra AES hardware
-Date: Fri, 16 Dec 2011 11:58:40 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE927A0@HQMAIL01.nvidia.com>
-References: <1324034755-3295-1-git-send-email-vwadekar@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <1324034755-3295-1-git-send-email-vwadekar@nvidia.com>
-Content-Language: en-US
-Sender: linux-crypto-owner@vger.kernel.org
-To: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Varun Wadekar <vwadekar@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/9] arm/tegra: Add AUXDATA for tegra-pinmux and tegra-gpio
+Date: Fri, 16 Dec 2011 15:12:25 -0700
+Message-ID: <1324073552-15542-3-git-send-email-swarren@nvidia.com>
+References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1324073552-15542-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Varun Wadekar wrote at Friday, December 16, 2011 4:26 AM:
-> The tegra crypto driver uses the tegra_chip_uid API for the RNG
-> calculation. If one wants to build tegra-aes as a module, then
-> tegra_chip_uid needs to be exported.
+The pinctrl device name is included in the pinctrl map table, and used
+as a parameter to pin_config_*() functions. Hence, it must be the same
+for non-DT and DT kernels. Add AUXDATA to cause this.
 
-Varun,
+The GPIO device name will be used by the pinmux/GPIO initialization code
+in a later patch, and needs to stay constant.
 
-I notice you didn't CC any of the maintainers of the crypto or Tegra
-subsystems, so those people may simply not have seen your message in
-the tide of other mailing lists postings.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-I've CC'd them on this email to alert them to this thread.
-
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index ddc5eff..f062051 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -65,6 +65,8 @@ void __init tegra_dt_init_irq(void)
+ }
+ 
+ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
++	OF_DEV_AUXDATA("nvidia,tegra20-pinmux", TEGRA_APB_MISC_BASE + 0x14, "tegra-pinmux", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-gpio", TEGRA_GPIO_BASE, "tegra-gpio", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC2_BASE, "sdhci-tegra.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC3_BASE, "sdhci-tegra.2", NULL),
 -- 
-nvpublic
+1.7.0.4
