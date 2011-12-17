@@ -1,181 +1,150 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 9/9] arm/tegra: Use bus notifiers to trigger pinmux setup
-Date: Fri, 16 Dec 2011 15:12:32 -0700
-Message-ID: <1324073552-15542-10-git-send-email-swarren@nvidia.com>
-References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] [RFC] ARM: IOMMU: Tegra30: iommu_ops for SMMU
+ driver
+Date: Sat, 17 Dec 2011 02:03:15 +0100
+Message-ID: <20111217.030315.2218721757650628823.hdoyu@nvidia.com>
+References: <1323954690-7000-1-git-send-email-hdoyu@nvidia.com><1323954690-7000-3-git-send-email-hdoyu@nvidia.com><20111216153904.GC29877@amd.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324073552-15542-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20111216153904.GC29877-5C7GfCeVMHo@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org" <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org" <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org" <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently, the Tegra pinmux is initialized at different times when booting
-with and without device tree:
+Hi Joerg, Thank you for your quick review.
 
-Without device tree:
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] [RFC] ARM: IOMMU: Tegra30: iommu_ops for SMMU driver
+Date: Fri, 16 Dec 2011 16:39:04 +0100
+Message-ID: <20111216153904.GC29877-5C7GfCeVMHo@public.gmane.org>
 
-1) Pinmux and GPIO drivers are registered.
-2) Pinmux is configured.
-3) All other drivers are registered.
+> On Thu, Dec 15, 2011 at 03:11:30PM +0200, Hiroshi DOYU wrote:
+> > +static int smmu_iommu_attach_dev(struct iommu_domain *domain,
+> > +				 struct device *dev)
+> > +{
+> > +	struct smmu_as *as = domain->priv;
+> > +	struct smmu_client *client, *c;
+> > +	u32 map;
+> > +	int err;
+> > +
+> > +	client = kmalloc(sizeof(*c), GFP_KERNEL);
+> > +	if (!client)
+> > +		return -ENOMEM;
+> > +	client->dev = dev;
+> > +	client->as = as;
+> > +	map = (unsigned long)dev->platform_data;
+> > +	if (!map)
+> > +		return -EINVAL;
+> > +
+> > +	err = smmu_client_enable_hwgrp(client, map);
+> > +	if (err)
+> > +		goto err_hwgrp;
+> > +
+> > +	spin_lock(&as->client_lock);
+> > +	list_for_each_entry(c, &as->client, list) {
+> > +		if (c->dev == dev) {
+> > +			pr_err("%s is already attached\n", dev_name(dev));
+> > +			err = -EINVAL;
+> > +			goto err_client;
+> > +		}
+> > +	}
+> > +	list_add(&client->list, &as->client);
+> > +	spin_unlock(&as->client_lock);
+> > +
+> > +	/*
+> > +	 * Reserve "page zero" for AVP vectors using a common dummy
+> > +	 * page.
+> > +	 */
+> > +	if (map & HWG_AVPC) {
+> > +		struct page *page;
+> > +
+> > +		page = as->smmu->avp_vector_page;
+> > +		__smmu_iommu_map_pfn(as, 0, page_to_pfn(page));
+> > +
+> > +		pr_info("Reserve \"page zero\" for AVP vectors using a common dummy\n");
+> > +	}
+> > +
+> > +	pr_debug("Attached %s\n", dev_name(dev));
+> > +	return 0;
+> > +err_client:
+> > +	smmu_client_disable_hwgrp(client);
+> > +	spin_unlock(&as->client_lock);
+> > +err_hwgrp:
+> > +	kfree(client);
+> > +	return err;
+> > +}
+> 
+> Hmm, I have a question about that. Reading the code it looks like your
+> SMMU exists per pheripheral device
 
-With device tree:
+A single SMMU is shared with multiple peripheral devices, a single
+SMMU has multiple ASIDs. ASID is used per group of peripheral
+devices. These peripheral groups can be configured by the above
+"hwgrp"/"map" passed via platform_data. The above "struct device"
+represents a groupd of peripheral devices, a kind of virtual device.
 
-1) All drivers are registered and probed, including pinmux and GPIO.
-2) Pinmux is configured.
+The above "struct device" ~= a group of peripheral devices.
 
-This change modifies board-pinmux.c to detect pinmux and GPIO driver
-registration using bus notifiers. This allows pinmux configuration to
-happen immediately after the pinmux driver is probed, irrespective of
-whether the pinmux driver is manually registered by board-pinmux.c, or
-if it's instantiated during device tree parsing.
+> and the SMMU hardware supports multiple address spaces per device,
+> right?
 
-To support this with device tree, the pinmux init functions must be
-called prior to instantiating devices from device tree, so that the
-notifiers are set up before-hand.
+Yes, where "device" is a gropud of peripheral devices.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt.c     |   14 +++---
- arch/arm/mach-tegra/board-pinmux.c |   72 +++++++++++++++++++++++++++++++-----
- 2 files changed, 69 insertions(+), 17 deletions(-)
+> The domains are implemented for one address-space.
 
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index f062051..b44633b 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -123,13 +123,6 @@ static void __init tegra_dt_init(void)
- 
- 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
- 
--	/*
--	 * Finished with the static registrations now; fill in the missing
--	 * devices
--	 */
--	of_platform_populate(NULL, tegra_dt_match_table,
--				tegra20_auxdata_lookup, NULL);
--
- 	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
- 		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
- 			pinmux_configs[i].init();
-@@ -139,6 +132,13 @@ static void __init tegra_dt_init(void)
- 
- 	WARN(i == ARRAY_SIZE(pinmux_configs),
- 		"Unknown platform! Pinmuxing not initialized\n");
-+
-+	/*
-+	 * Finished with the static registrations now; fill in the missing
-+	 * devices
-+	 */
-+	of_platform_populate(NULL, tegra_dt_match_table,
-+				tegra20_auxdata_lookup, NULL);
- }
- 
- static const char * tegra_dt_board_compat[] = {
-diff --git a/arch/arm/mach-tegra/board-pinmux.c b/arch/arm/mach-tegra/board-pinmux.c
-index 103ef65..adc3efe 100644
---- a/arch/arm/mach-tegra/board-pinmux.c
-+++ b/arch/arm/mach-tegra/board-pinmux.c
-@@ -12,7 +12,11 @@
-  *
-  */
- 
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/notifier.h>
- #include <linux/of.h>
-+#include <linux/string.h>
- 
- #include <mach/gpio-tegra.h>
- #include <mach/pinmux.h>
-@@ -20,19 +24,23 @@
- #include "board-pinmux.h"
- #include "devices.h"
- 
--static struct platform_device *devices[] = {
--	&tegra_gpio_device,
--	&tegra_pinmux_device,
--};
-+struct tegra_board_pinmux_conf *confs[2];
- 
--void tegra_board_pinmux_init(struct tegra_board_pinmux_conf *conf_a,
--			     struct tegra_board_pinmux_conf *conf_b)
-+static void tegra_board_pinmux_setup_gpios(void)
- {
--	struct tegra_board_pinmux_conf *confs[] = {conf_a, conf_b};
- 	int i;
- 
--	if (of_machine_is_compatible("nvidia,tegra20"))
--		platform_add_devices(devices, ARRAY_SIZE(devices));
-+	for (i = 0; i < ARRAY_SIZE(confs); i++) {
-+		if (!confs[i])
-+			continue;
-+
-+		tegra_gpio_config(confs[i]->gpios, confs[i]->gpio_count);
-+	}
-+}
-+
-+static void tegra_board_pinmux_setup_pinmux(void)
-+{
-+	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(confs); i++) {
- 		if (!confs[i])
-@@ -43,10 +51,54 @@ void tegra_board_pinmux_init(struct tegra_board_pinmux_conf *conf_a,
- 		if (confs[i]->drives)
- 			tegra_drive_pinmux_config_table(confs[i]->drives,
- 							confs[i]->drive_count);
-+	}
-+}
- 
--		tegra_gpio_config(confs[i]->gpios, confs[i]->gpio_count);
-+static int tegra_board_pinmux_bus_notify(struct notifier_block *nb,
-+					 unsigned long event, void *vdev)
-+{
-+	static bool had_gpio;
-+	static bool had_pinmux;
-+
-+	struct device *dev = vdev;
-+	const char *devname;
-+
-+	if (event != BUS_NOTIFY_BOUND_DRIVER)
-+		return NOTIFY_DONE;
-+
-+	devname = dev_name(dev);
-+
-+	if (!had_gpio && !strcmp(devname, GPIO_DEV)) {
-+		tegra_board_pinmux_setup_gpios();
-+		had_gpio = true;
-+	} else if (!had_pinmux && !strcmp(devname, PINMUX_DEV)) {
-+		tegra_board_pinmux_setup_pinmux();
-+		had_pinmux = true;
- 	}
- 
-+	if (had_gpio && had_pinmux)
-+		return NOTIFY_STOP_MASK;
-+	else
-+		return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block nb = {
-+	.notifier_call = tegra_board_pinmux_bus_notify,
-+};
-+
-+static struct platform_device *devices[] = {
-+	&tegra_gpio_device,
-+	&tegra_pinmux_device,
-+};
-+
-+void tegra_board_pinmux_init(struct tegra_board_pinmux_conf *conf_a,
-+			     struct tegra_board_pinmux_conf *conf_b)
-+{
-+	confs[0] = conf_a;
-+	confs[1] = conf_b;
-+
-+	bus_register_notifier(&platform_bus_type, &nb);
-+
- 	if (!of_machine_is_compatible("nvidia,tegra20"))
- 		platform_add_devices(devices, ARRAY_SIZE(devices));
- }
--- 
-1.7.0.4
+Yes.
+
+> So is it right that a device can have multiple
+> address-spaces?
+
+No, at least, the following code prevents if a peripheral is already
+assigned ASID.
+
+smmu_client_enable_hwgrp():
+....
++	for_each_set_bit(i, &map, BITS_PER_LONG) {
++		offs = HWGRP_ASID_REG(i);
++		val = smmu_read(smmu, offs);
++		if (on) {
++			if (WARN_ON(val & mask))
++				goto err_hw_busy;
+
+
+> If so, what kind of devices do you bind to the domains
+> then. I doesn't make sense to bind whole peripheral devices in this
+> case.
+
+Here, the above "struct device" ~= a group of any peripheral
+devices. Those groups are configurable.
+
+
+In my simple DMA API test(not posted), the above hwgrp/map is configured as below:
+
+   146  static int __init dmaapi_test_init(void)
+   147  {
+   148          int i;
+   149          struct dma_iommu_mapping *map;
+   150  
+   151          map = arm_iommu_create_mapping(IOVA_START, IOVA_SIZE, 0);
+   152          BUG_ON(!map);
+   153          pr_debug("Allocate IOVA: %08x-%08x\n", map->base, map->base + IOVA_SIZE);
+   154  
+   155          for (i = 0; i < ARRAY_SIZE(dmaapi_dummy_device); i++) {
+   156                  int err;
+   157                  struct platform_device *pdev = &dmaapi_dummy_device[i];
+   158  
+   159                  pdev->dev.platform_data = (void *)dummy_hwgrp_map[i];
+   160                  err = platform_device_register(pdev);
+   161                  BUG_ON(err);
+   162  
+   163                  err = arm_iommu_attach_device(&pdev->dev, map);
+   164                  BUG_ON(err);
+   165                  pr_debug("IOMMU API: Attached to %s\n", dev_name(&pdev->dev));
+   166          }
+
+So peripheral devices can be divided into multiple groups, and each
+each group represents struct device with hwgrp/map info in
+platform_data.
