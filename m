@@ -1,52 +1,59 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 3/4] arm/dt: tegra: Use new compatible value for DVC I2C controller
-Date: Sat, 17 Dec 2011 23:29:31 -0700
-Message-ID: <1324189772-26914-3-git-send-email-swarren@nvidia.com>
-References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 1/3] i2c: tegra: Support DVC controller in device tree
+Date: Sun, 18 Dec 2011 16:42:08 +0100
+Message-ID: <20111218154208.GA5600@avionic-0098.mockup.avionic-design.de>
+References: <1324186101-23695-1-git-send-email-swarren@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324189772-26914-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1324186101-23695-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Update the device tree to indicate which I2C controller is the DVC
-controller. AUXDATA needs to be updated too, since the compatible
-value changed.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: No change
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm/boot/dts/tegra20.dtsi |    2 +-
- arch/arm/mach-tegra/board-dt.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+* Stephen Warren wrote:
+[...]
+> @@ -636,7 +649,18 @@ static int tegra_i2c_probe(struct platform_device *p=
+dev)
+>  			i2c_dev->bus_clk_rate =3D be32_to_cpup(prop);
+>  	}
+> =20
+> -	if (pdev->id =3D=3D 3)
+> +#if defined(CONFIG_OF)
+> +	if (pdev->dev.of_node) {
+> +		const struct of_device_id *match;
+> +
+> +		match =3D of_match_device(tegra_i2c_of_match, &pdev->dev);
+> +		if (!match)
+> +			return -EINVAL;
+> +
+> +		i2c_dev->is_dvc =3D match->data;
+> +	}
+> +#endif
+> +	else if (pdev->id =3D=3D 3)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 660c8ad..3da7afd 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -39,7 +39,7 @@
- 	i2c@7000d000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "nvidia,tegra20-i2c";
-+		compatible = "nvidia,tegra20-i2c-dvc";
- 		reg = <0x7000D000 0x200>;
- 		interrupts = < 0 53 0x04 >;
- 	};
-diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
-index b44633b..9abc89d 100644
---- a/arch/arm/mach-tegra/board-dt.c
-+++ b/arch/arm/mach-tegra/board-dt.c
-@@ -74,7 +74,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C_BASE, "tegra-i2c.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C2_BASE, "tegra-i2c.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C3_BASE, "tegra-i2c.2", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_DVC_BASE, "tegra-i2c.3", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-i2c-dvc", TEGRA_DVC_BASE, "tegra-i2c.3", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra-i2s.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra-i2s.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra-das", NULL),
--- 
-1.7.5.4
+Shouldn't the "else" move into the CONFIG_OF branch?
+
+Thierry
+
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk7uCdAACgkQZ+BJyKLjJp/pmwCghUU/1etIwAHlqCnGS+I0PME0
+xPIAni06+o1xv9sOWMNpgltL/OR4DdJm
+=/Zst
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
