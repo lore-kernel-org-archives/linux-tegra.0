@@ -1,49 +1,100 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/tegra: Seaboard: Add GPIO key device tree nodes
-Date: Sat, 17 Dec 2011 22:18:23 -0700
-Message-ID: <1324185503-23413-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 1/3] i2c: tegra: Support DVC controller in device tree
+Date: Sat, 17 Dec 2011 22:28:19 -0700
+Message-ID: <1324186101-23695-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This brings all the GPIO key definitions from board-seaboard.c into
-tegra-seaboard.dtsi.
+One of the Tegra I2C blocks is inside the DVC (Digital Voltage Controller)
+block. This block is identical to the rest of the I2C blocks, except that
+it only supports master mode, it has registers moved around, and it needs
+some extra init to get it into I2C mode.  The register moves are handled
+by i2c_readl and i2c_writel
+
+This patch adds a new compatible value for controllers of this "DVC"
+type; I figured that this approach was reasonable, as opposed to adding
+an is-dvc property under the existing compatible value, since the HW
+truly is different.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra-seaboard.dts |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+Ben, it'd probably be simplest if you could ack this patch, and we
+could take it through the Tegra tree.
 
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index f552bcc..3cfbd04 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -68,4 +68,24 @@
- 	usb@c5000000 {
- 		nvidia,vbus-gpio = <&gpio 24 0>; /* PD0 */
- 	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio 170 1>; /* gpio PV2, active low */
-+			linux,code = <116>; /* KEY_POWER */
-+			gpio-key,wakeup;
-+		};
-+
-+		lid {
-+			label = "Lid";
-+			gpios = <&gpio 23 0>; /* gpio PC7 */
-+			linux,input-type = <5>; /* EV_SW */
-+			linux,code = <0>; /* SW_LID */
-+			debounce-interval = <1>;
-+			gpio-key,wakeup;
-+		};
-+	};
+ drivers/i2c/busses/i2c-tegra.c |   37 +++++++++++++++++++++++++------------
+ 1 files changed, 25 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 46b6500..c264e8c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/i2c-tegra.h>
++#include <linux/of_device.h>
+ #include <linux/of_i2c.h>
+ #include <linux/module.h>
+ 
+@@ -558,6 +559,18 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+ 	.functionality	= tegra_i2c_func,
  };
+ 
++#if defined(CONFIG_OF)
++/* Match table for of_platform binding */
++static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
++	{ .compatible = "nvidia,tegra20-i2c",     .data = (void *)0},
++	{ .compatible = "nvidia,tegra20-i2c-dvc", .data = (void *)1},
++	{},
++};
++MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
++#else
++#define tegra_i2c_of_match NULL
++#endif
++
+ static int tegra_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev;
+@@ -636,7 +649,18 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 			i2c_dev->bus_clk_rate = be32_to_cpup(prop);
+ 	}
+ 
+-	if (pdev->id == 3)
++#if defined(CONFIG_OF)
++	if (pdev->dev.of_node) {
++		const struct of_device_id *match;
++
++		match = of_match_device(tegra_i2c_of_match, &pdev->dev);
++		if (!match)
++			return -EINVAL;
++
++		i2c_dev->is_dvc = match->data;
++	}
++#endif
++	else if (pdev->id == 3)
+ 		i2c_dev->is_dvc = 1;
+ 	init_completion(&i2c_dev->msg_complete);
+ 
+@@ -738,17 +762,6 @@ static int tegra_i2c_resume(struct platform_device *pdev)
+ }
+ #endif
+ 
+-#if defined(CONFIG_OF)
+-/* Match table for of_platform binding */
+-static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
+-	{ .compatible = "nvidia,tegra20-i2c", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
+-#else
+-#define tegra_i2c_of_match NULL
+-#endif
+-
+ static struct platform_driver tegra_i2c_driver = {
+ 	.probe   = tegra_i2c_probe,
+ 	.remove  = tegra_i2c_remove,
 -- 
 1.7.5.4
