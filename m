@@ -1,64 +1,42 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 0/9] arm/tegra: Various pinmux-related cleanups
-Date: Sat, 17 Dec 2011 16:57:02 -0800
-Message-ID: <20111218005702.GA4336@quad.lixom.net>
-References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
+Subject: Re: [PATCH v5 1/5] ARM: l2x0/pl310: Refactor Kconfig to be more maintainable
+Date: Sat, 17 Dec 2011 20:23:56 -0800
+Message-ID: <CAOesGMibYSA-hJUzpeqFAR0NwewvqHYgujU7SW6-Ua7vxC=-3w@mail.gmail.com>
+References: <1323964434-6764-1-git-send-email-dave.martin@linaro.org>
+	<1323964434-6764-2-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1324073552-15542-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1323964434-6764-2-git-send-email-dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Anton Vorontsov <avorontsov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, John Linn <john.linn-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 16, 2011 at 03:12:23PM -0700, Stephen Warren wrote:
-> While working on switching Tegra to a new pinctrl-based pin mux driver,
-> I made a bunch of small pinmux-related fixes; this patch series.
+On Thu, Dec 15, 2011 at 7:53 AM, Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> w=
+rote:
+> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
+> is bothersome to maintain and likely to lead to merge conflicts.
 >
-> This patch series will have a few small context conflicts with Peter
-> De Schrijver's Tegra30 support. Peter's patch series should have
-> priority over this one (i.e. be the one merged if it's difficult to
-> merge both).
+> This patch moves the knowledge of which platforms have a L2x0 or
+> PL310 cache controller to the individual machines. =A0To enable this,
+> a new MIGHT_HAVE_CACHE_L2X0 config option is introduced to allow
+> machines to indicate that they may have such a cache controller
+> independently of each other.
+>
+> Boards/SoCs which cannot reliably operate without the L2 cache
+> controller support will need to select CACHE_L2X0 directly from
+> their own Kconfigs instead. =A0This applies to some TrustZone-enabled
+> boards where Linux runs in the Normal World, for example.
+>
+> Signed-off-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Acked-by: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> =A0 =A0 =A0 =A0(for cns3xxx)
+> Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+> =A0 =A0 =A0 =A0(for omap)
 
-Contents of the series as a whole looks good to me, but I did notice a
-bunch of section mismatches. Instead of commenting on the specific
-ones, just compile with CONFIG_DEBUG_SECTION_MISMATCH=y and fix up the
-new ones and repost, please. :)
-
-> In particular:
-> * My patch 3 "arm/tegra: Harmony PCIe: Don't touch pinmux" and Peter's
->   patch "arm/tegra: prepare pinmux code for multiple tegra variants"
->   will have context conflicts; I've described the best way to resolve
->   this in my patch's commit description.
-> * This series edits board-dt.c whereas Peter's series renames that to
->   board-dt-tegra20.c. I assume git will handle this without any issue.
-> * There may be other obvious context conflicts that should be trivial
->   to resolve.
-
-The fixups were indeed trivial and no big deal, thanks for providing the
-preferred resolutions and heads-up though.
-
-> Following this series, I have 3 patches in my local tree:
->   arm/tegra: Select PINMUX Kconfig variables
->   arm/tegra: Switch to new pinctrl driver
->   arm/tegra: Remove pre-pinctrl pinmux driver
-> 
-> (all work in DT and non-DT on all supported Tegra20 boards)
-> 
-> I need to rebase those on top of Peter's patches (the first patch needs
-> updates for Tegra30 support, the last patch needs to delete the new
-> Tegra30 pinmux driver that Peter's series adds). It will also depend on
-> the pinctrl subsystem, which is being merged for the first time in 3.3,
-> and probably also patches to pinctrl that may only show up in 3.4. So,
-> I'll probably hold off posting those patches for merge until after 3.3
-> is out, but will probably send them out as a preview before that.
-
-It's no problem to add a topic branch that has dependencies and make
-sure it gets merged upstream with said dependencies resolved, as long as
-they are on stable branches by then (i.e. that they won't be rebased). So
-either way works, it's up to you.
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> (for tegra)
 
 
 -Olof
