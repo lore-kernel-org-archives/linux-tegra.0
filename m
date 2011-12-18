@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] arm/dt: Add ADT7461 to Seaboard
-Date: Sat, 17 Dec 2011 22:28:21 -0700
-Message-ID: <1324186101-23695-3-git-send-email-swarren@nvidia.com>
+Subject: [PATCH 2/3] arm/dt: tegra: Use new compatible value for DVC I2C controller
+Date: Sat, 17 Dec 2011 22:28:20 -0700
+Message-ID: <1324186101-23695-2-git-send-email-swarren@nvidia.com>
 References: <1324186101-23695-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1324186101-23695-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,33 +10,49 @@ To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The ADT7461 is a temperature monitoring IC. One is present on the DVC
-I2C bus on Seaboard.
+Update the device tree to indicate which I2C controller is the DVC
+controller. AUXDATA needs to be updated too, since the compatible
+value changed.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-For this to be useful, the previous two patches are required. Without
-them, all the I2C transactions to this device will time out and spew
-errors, but other device shouldn't be affected.
+It'd be best to apply this to the same tree as the previous patch. If
+that doesn't happen, the DVC I2C driver won't be instantiated due to
+the compatible value not being supported. In practice, this isn't an
+issue though, since nothing uses the DVC I2C controller yet.
 
- arch/arm/boot/dts/tegra-seaboard.dts |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+This relies on 0d4f747 "arm/tegra: convert tegra20 to GIC devicetree
+binding" for context.
 
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index 3cfbd04..b55a02e 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -25,6 +25,11 @@
- 
+ arch/arm/boot/dts/tegra20.dtsi |    2 +-
+ arch/arm/mach-tegra/board-dt.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 660c8ad..3da7afd 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -39,7 +39,7 @@
  	i2c@7000d000 {
- 		clock-frequency = <400000>;
-+
-+		adt7461@4c {
-+			compatible = "adt7461";
-+			reg = <0x4c>;
-+		};
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "nvidia,tegra20-i2c";
++		compatible = "nvidia,tegra20-i2c-dvc";
+ 		reg = <0x7000D000 0x200>;
+ 		interrupts = < 0 53 0x04 >;
  	};
- 
- 	serial@70006000 {
+diff --git a/arch/arm/mach-tegra/board-dt.c b/arch/arm/mach-tegra/board-dt.c
+index b44633b..9abc89d 100644
+--- a/arch/arm/mach-tegra/board-dt.c
++++ b/arch/arm/mach-tegra/board-dt.c
+@@ -74,7 +74,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C_BASE, "tegra-i2c.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C2_BASE, "tegra-i2c.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C3_BASE, "tegra-i2c.2", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_DVC_BASE, "tegra-i2c.3", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-i2c-dvc", TEGRA_DVC_BASE, "tegra-i2c.3", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra-i2s.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra-i2s.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra-das", NULL),
 -- 
 1.7.5.4
