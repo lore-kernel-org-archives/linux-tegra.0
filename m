@@ -1,42 +1,60 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] ARM: l2x0/pl310: Refactor Kconfig to be more maintainable
-Date: Sat, 17 Dec 2011 20:23:56 -0800
-Message-ID: <CAOesGMibYSA-hJUzpeqFAR0NwewvqHYgujU7SW6-Ua7vxC=-3w@mail.gmail.com>
-References: <1323964434-6764-1-git-send-email-dave.martin@linaro.org>
-	<1323964434-6764-2-git-send-email-dave.martin@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH] arm/tegra: refresh defconfig for tegra30
+Date: Sat, 17 Dec 2011 20:48:04 -0800
+Message-ID: <1324183684-19606-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1323964434-6764-2-git-send-email-dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Anton Vorontsov <avorontsov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, John Linn <john.linn-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 15, 2011 at 7:53 AM, Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> w=
-rote:
-> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
-> is bothersome to maintain and likely to lead to merge conflicts.
->
-> This patch moves the knowledge of which platforms have a L2x0 or
-> PL310 cache controller to the individual machines. =A0To enable this,
-> a new MIGHT_HAVE_CACHE_L2X0 config option is introduced to allow
-> machines to indicate that they may have such a cache controller
-> independently of each other.
->
-> Boards/SoCs which cannot reliably operate without the L2 cache
-> controller support will need to select CACHE_L2X0 directly from
-> their own Kconfigs instead. =A0This applies to some TrustZone-enabled
-> boards where Linux runs in the Normal World, for example.
->
-> Signed-off-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Acked-by: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> =A0 =A0 =A0 =A0(for cns3xxx)
-> Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-> =A0 =A0 =A0 =A0(for omap)
+Update the defconfig for tegra due to the addition of tegra30 and rename
+of t20/t30 options.
 
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> (for tegra)
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
 
-
--Olof
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 1957297..fd5d304 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -9,9 +9,8 @@ CONFIG_RESOURCE_COUNTERS=y
+ CONFIG_CGROUP_SCHED=y
+ CONFIG_RT_GROUP_SCHED=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_EMBEDDED=y
+-# CONFIG_SYSCTL_SYSCALL is not set
+ # CONFIG_ELF_CORE is not set
++CONFIG_EMBEDDED=y
+ CONFIG_SLAB=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+@@ -20,6 +19,8 @@ CONFIG_MODULE_FORCE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+ CONFIG_ARCH_TEGRA=y
++CONFIG_ARCH_TEGRA_2x_SOC=y
++CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_MACH_HARMONY=y
+ CONFIG_MACH_KAEN=y
+ CONFIG_MACH_PAZ00=y
+@@ -78,14 +79,12 @@ CONFIG_BLK_DEV_SD=y
+ # CONFIG_SCSI_LOWLEVEL is not set
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=y
+-CONFIG_NET_ETHERNET=y
+ CONFIG_R8169=y
+-# CONFIG_NETDEV_10000 is not set
+-# CONFIG_WLAN is not set
+ CONFIG_USB_PEGASUS=y
+ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_SMSC75XX=y
+ CONFIG_USB_NET_SMSC95XX=y
++# CONFIG_WLAN is not set
+ # CONFIG_INPUT is not set
+ # CONFIG_SERIO is not set
+ # CONFIG_VT is not set
+-- 
+1.7.5.4
