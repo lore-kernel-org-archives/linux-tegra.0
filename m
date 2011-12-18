@@ -1,63 +1,70 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/3] i2c: tegra: Support DVC controller in device tree
-Date: Sun, 18 Dec 2011 16:46:21 +0100
-Message-ID: <20111218154621.GB5600@avionic-0098.mockup.avionic-design.de>
-References: <1324186101-23695-1-git-send-email-swarren@nvidia.com>
- <20111218154208.GA5600@avionic-0098.mockup.avionic-design.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v5 REPOST 1/5] ARM: l2x0/pl310: Refactor Kconfig to be
+ more maintainable
+Date: Mon, 19 Dec 2011 00:57:25 +0900
+Message-ID: <4EEE0D65.1050700@samsung.com>
+References: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
+ <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WYTEVAkct0FjGQmd"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20111218154208.GA5600-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dave Martin <dave.martin@linaro.org>
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.>
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/17/11 01:35, Dave Martin wrote:
+> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
+> is bothersome to maintain and likely to lead to merge conflicts.
+>
+> This patch moves the knowledge of which platforms have a L2x0 or
+> PL310 cache controller to the individual machines.  To enable this,
+> a new MIGHT_HAVE_CACHE_L2X0 config option is introduced to allow
+> machines to indicate that they may have such a cache controller
+> independently of each other.
+>
+> Boards/SoCs which cannot reliably operate without the L2 cache
+> controller support will need to select CACHE_L2X0 directly from
+> their own Kconfigs instead.  This applies to some TrustZone-enabled
+> boards where Linux runs in the Normal World, for example.
+>
+> Signed-off-by: Dave Martin<dave.martin@linaro.org>
+> Acked-by: Anton Vorontsov<cbouatmailru@gmail.com>
+>          (for cns3xxx)
+> Acked-by: Tony Lindgren<tony@atomide.com>
+>          (for omap)
+> Acked-by: Shawn Guo<shawn.guo@linaro.org>
+>          (for imx)
 
---WYTEVAkct0FjGQmd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+for exynos:
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-* Thierry Reding wrote:
-> * Stephen Warren wrote:
-> [...]
-> > @@ -636,7 +649,18 @@ static int tegra_i2c_probe(struct platform_device =
-*pdev)
-> >  			i2c_dev->bus_clk_rate =3D be32_to_cpup(prop);
-> >  	}
-> > =20
-> > -	if (pdev->id =3D=3D 3)
-> > +#if defined(CONFIG_OF)
-> > +	if (pdev->dev.of_node) {
-> > +		const struct of_device_id *match;
-> > +
-> > +		match =3D of_match_device(tegra_i2c_of_match, &pdev->dev);
-> > +		if (!match)
-> > +			return -EINVAL;
-> > +
-> > +		i2c_dev->is_dvc =3D match->data;
-> > +	}
-> > +#endif
-> > +	else if (pdev->id =3D=3D 3)
->=20
-> Shouldn't the "else" move into the CONFIG_OF branch?
+> ---
+>   arch/arm/Kconfig               |    8 ++++++++
+>   arch/arm/mach-exynos/Kconfig   |    1 +
+>   arch/arm/mach-omap2/Kconfig    |    1 +
+>   arch/arm/mach-realview/Kconfig |    5 +++++
+>   arch/arm/mach-vexpress/Kconfig |    1 +
+>   arch/arm/mm/Kconfig            |   23 ++++++++++++++++-------
+>   arch/arm/plat-mxc/Kconfig      |    1 +
+>   7 files changed, 33 insertions(+), 7 deletions(-)
 
-Okay, I hadn't seen v2. Please ignore.
+(snip)
 
-Thierry
+Thanks.
 
---WYTEVAkct0FjGQmd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7uCs0ACgkQZ+BJyKLjJp9zjgCgp3ScbUwDibzHsQp5Zax4T4ik
-+v0AoKeC59wb36uy22bf4A8lQV/d1hT1
-=0pd+
------END PGP SIGNATURE-----
-
---WYTEVAkct0FjGQmd--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
