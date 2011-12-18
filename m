@@ -1,92 +1,43 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/3] i2c: tegra: Support DVC controller in device tree
-Date: Sat, 17 Dec 2011 21:41:43 -0800
-Message-ID: <20111218054143.GA20372@quad.lixom.net>
-References: <1324186101-23695-1-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
+Date: Sat, 17 Dec 2011 23:29:29 -0700
+Message-ID: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1324186101-23695-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+This fixes some section mismatch build warnings.
 
-On Sat, Dec 17, 2011 at 10:28:19PM -0700, Stephen Warren wrote:
-> One of the Tegra I2C blocks is inside the DVC (Digital Voltage Controller)
-> block. This block is identical to the rest of the I2C blocks, except that
-> it only supports master mode, it has registers moved around, and it needs
-> some extra init to get it into I2C mode.  The register moves are handled
-> by i2c_readl and i2c_writel
-> 
-> This patch adds a new compatible value for controllers of this "DVC"
-> type; I figured that this approach was reasonable, as opposed to adding
-> an is-dvc property under the existing compatible value, since the HW
-> truly is different.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Ben, it'd probably be simplest if you could ack this patch, and we
-> could take it through the Tegra tree.
-> 
->  drivers/i2c/busses/i2c-tegra.c |   37 +++++++++++++++++++++++++------------
->  1 files changed, 25 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 46b6500..c264e8c 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -26,6 +26,7 @@
->  #include <linux/delay.h>
->  #include <linux/slab.h>
->  #include <linux/i2c-tegra.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_i2c.h>
->  #include <linux/module.h>
->  
-> @@ -558,6 +559,18 @@ static const struct i2c_algorithm tegra_i2c_algo = {
->  	.functionality	= tegra_i2c_func,
->  };
->  
-> +#if defined(CONFIG_OF)
-> +/* Match table for of_platform binding */
-> +static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
-> +	{ .compatible = "nvidia,tegra20-i2c",     .data = (void *)0},
-> +	{ .compatible = "nvidia,tegra20-i2c-dvc", .data = (void *)1},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
-> +#else
-> +#define tegra_i2c_of_match NULL
-> +#endif
-> +
->  static int tegra_i2c_probe(struct platform_device *pdev)
->  {
->  	struct tegra_i2c_dev *i2c_dev;
-> @@ -636,7 +649,18 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->  			i2c_dev->bus_clk_rate = be32_to_cpup(prop);
->  	}
->  
-> -	if (pdev->id == 3)
-> +#if defined(CONFIG_OF)
-> +	if (pdev->dev.of_node) {
-> +		const struct of_device_id *match;
-> +
-> +		match = of_match_device(tegra_i2c_of_match, &pdev->dev);
-> +		if (!match)
-> +			return -EINVAL;
-> +
-> +		i2c_dev->is_dvc = match->data;
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: New patch.
 
-I would rather see a:
+ drivers/i2c/busses/i2c-tegra.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-		i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
-						"nvidia,tegra20-i2c-dvc");
-
-...instead of passing a flag through the match data.
-
-
--Olof
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 46b6500..e8560ed 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -558,7 +558,7 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+ 	.functionality	= tegra_i2c_func,
+ };
+ 
+-static int tegra_i2c_probe(struct platform_device *pdev)
++static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev;
+ 	struct tegra_i2c_platform_data *pdata = pdev->dev.platform_data;
+@@ -690,7 +690,7 @@ err_iounmap:
+ 	return ret;
+ }
+ 
+-static int tegra_i2c_remove(struct platform_device *pdev)
++static int __devexit tegra_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 	i2c_del_adapter(&i2c_dev->adapter);
+-- 
+1.7.5.4
