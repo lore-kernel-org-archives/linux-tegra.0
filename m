@@ -1,42 +1,49 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v7 00/14] Add support for tegra30 and cardhu
-Date: Sat, 17 Dec 2011 20:48:31 -0800
-Message-ID: <20111218044831.GB4336@quad.lixom.net>
-References: <1323875032-18221-1-git-send-email-pdeschrijver@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1323875032-18221-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Randy Dunlap <rdunlap@xenotime.net>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, Gary King <gking@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm/tegra: Seaboard: Add GPIO key device tree nodes
+Date: Sat, 17 Dec 2011 22:18:23 -0700
+Message-ID: <1324185503-23413-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 14, 2011 at 05:03:12PM +0200, Peter De Schrijver wrote:
-> This patchset adds support for the tegra30 SoC and the cardhu development
-> board.
+This brings all the GPIO key definitions from board-seaboard.c into
+tegra-seaboard.dtsi.
 
-Thanks, applied to for-3.3/dt (first patch) and for-3.3/soc (the rest).
-I didn't want to split up too much between the branches and make
-cross-dependencies since that defeats most of the idea behind topic branches,
-so I left it at that.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-seaboard.dts |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
 
-I rebased for-3.3/soc (which only had one patch on it before) to be on top of
-rmk's devel-stable and for-3.3/dt, and will tell Arnd about those dependencies
-when sending up the branches -- other SoCs have similar dependencies already so
-it's not a problem.
-
-I had to do some minor touchups, including redoing the move of board-dt.c due
-to other changes to the file. Please check final contents of the branch and let
-me know if there's a problem.
-
-Also, the defconfig needs to be updated to enable t30 support as well as move
-over to the new config option for t20. I'll post a patch in a few minutes.
-
-Please let me know how the branch looks as soon as practical, since the
-clock is ticking on getting the branches into arm-soc in the next few
-days for the upcoming merge window.
-
-
--Olof
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index f552bcc..3cfbd04 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -68,4 +68,24 @@
+ 	usb@c5000000 {
+ 		nvidia,vbus-gpio = <&gpio 24 0>; /* PD0 */
+ 	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "Power";
++			gpios = <&gpio 170 1>; /* gpio PV2, active low */
++			linux,code = <116>; /* KEY_POWER */
++			gpio-key,wakeup;
++		};
++
++		lid {
++			label = "Lid";
++			gpios = <&gpio 23 0>; /* gpio PC7 */
++			linux,input-type = <5>; /* EV_SW */
++			linux,code = <0>; /* SW_LID */
++			debounce-interval = <1>;
++			gpio-key,wakeup;
++		};
++	};
+ };
+-- 
+1.7.5.4
