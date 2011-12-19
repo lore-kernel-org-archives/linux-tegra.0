@@ -1,62 +1,79 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 REPOST 2/5] ARM: SMP: Refactor Kconfig to be more
- maintainable
-Date: Mon, 19 Dec 2011 00:57:47 +0900
-Message-ID: <4EEE0D7B.5080805@samsung.com>
-References: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
- <1324053332-6431-3-git-send-email-dave.martin@linaro.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] [RFC] ARM: IOMMU: Tegra20: iommu_ops for GART
+ driver
+Date: Mon, 19 Dec 2011 07:27:28 +0100
+Message-ID: <20111219.082728.2074123164274991497.hdoyu@nvidia.com>
+References: <1323954690-7000-1-git-send-email-hdoyu@nvidia.com><1323954690-7000-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1324053332-6431-3-git-send-email-dave.martin@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dave Martin <dave.martin@linaro.org>
-Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1323954690-7000-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: "ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org" <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org" <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org" <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/17/11 01:35, Dave Martin wrote:
-> Making SMP depend on (huge list of MACH_ and ARCH_ configs) is
-> bothersome to maintain and likely to lead to merge conflicts.
->
-> This patch moves the knowledge of which platforms are SMP-capable
-> to the individual machines.  To enable this, a new HAVE_SMP config
-> option is introduced to allow machines to indicate that they can
-> run in a SMP configuration.
->
-> Signed-off-by: Dave Martin<dave.martin@linaro.org>
-> Acked-by: Linus Walleij<linus.walleij@linaro.org>
->          (for nomadik, ux500)
-> Acked-by: Tony Lindgren<tony@atomide.com>
->          (for omap)
+Hi,
 
-for exynos:
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+One question is inlined below:
 
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/2] [RFC] ARM: IOMMU: Tegra20: iommu_ops for GART driver
+Date: Thu, 15 Dec 2011 14:11:29 +0100
+Message-ID: <1323954690-7000-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+> Tegra 20 IOMMU H/W, GART (Graphics Address Relocation Table). This
+> patch implements struct iommu_ops for GART for the upper IOMMU API.
+>
+> This H/W module supports only single virtual address space(domain),
+> and manages a single level 1-to-1 mapping H/W translation page table.
+>
+> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->   arch/arm/Kconfig               |   18 ++++++++++++++----
->   arch/arm/mach-exynos/Kconfig   |    1 +
->   arch/arm/mach-imx/Kconfig      |    1 +
->   arch/arm/mach-msm/Kconfig      |    1 +
->   arch/arm/mach-omap2/Kconfig    |    1 +
->   arch/arm/mach-realview/Kconfig |    4 ++++
->   arch/arm/mach-vexpress/Kconfig |    1 +
->   7 files changed, 23 insertions(+), 4 deletions(-)
+>  drivers/iommu/Kconfig      |   11 +
+>  drivers/iommu/Makefile     |    1 +
+>  drivers/iommu/tegra-gart.c |  451 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 463 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/iommu/tegra-gart.c
+>
+....
+> +
+> +struct gart_device {
+> +       void __iomem            *regs;
+> +       u32                     *savedata;
+> +       u32                     page_count; /* total remappable size */
+> +       dma_addr_t              iovmm_base; /* offset to apply to vmm_area */
+> +       spinlock_t              pte_lock; /* for pagetable */
+> +       struct list_head        client;
+> +       spinlock_t              client_lock; /* for client list */
+> +       struct device           *dev;
+> +};
+> +
+> +static struct gart_device *gart_handle; /* unique for a system */
+			      ^^^^^^^^^^^
+.....
+> +
+> +static int gart_iommu_domain_init(struct iommu_domain *domain)
+> +{
+> +       domain->priv = gart_handle;
+	  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +       pr_debug("gart@%p\n", gart_handle);
+> +       return 0;
+> +}
 
-(snip)
+In the above, the global pointer is used to pass gart_device to set it
+in dmain->priv. It works with a single gart_device, but not with
+multiple gart_devices. This is too bad, I know;). I guess that this
+can be solved with device tree info where a client device is set as a
+child of gart_device at device registration. Is this the right way
+from IOMMU API POV?
 
-Thanks.
+ for (i = 0; i < ARRAY_SIZE(dmaapi_dummy_device); i++) {
+	 int err;
+	 struct platform_device *pdev = &dmaapi_dummy_device[i];
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+	 pdev->dev.platform_data = (void *)dummy_hwgrp_map[i];
+	 pdev->dev.parent = &tegra_gart_device;
+			    ^^^^^^^^^^^^^^^^^^^
+	 err = platform_device_register(pdev);
