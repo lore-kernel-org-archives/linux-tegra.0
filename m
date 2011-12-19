@@ -1,54 +1,25 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/9] arm/tegra: Various pinmux-related cleanups
-Date: Mon, 19 Dec 2011 09:49:57 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE92A4A@HQMAIL01.nvidia.com>
-References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
- <20111218005702.GA4336@quad.lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH 0/2] arm/tegra: Fix section mismatch errors in pinmux
+Date: Mon, 19 Dec 2011 11:01:56 -0700
+Message-ID: <1324317718-24464-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111218005702.GA4336-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Saturday, December 17, 2011 5:57 PM:
-> On Fri, Dec 16, 2011 at 03:12:23PM -0700, Stephen Warren wrote:
-> > While working on switching Tegra to a new pinctrl-based pin mux driver,
-> > I made a bunch of small pinmux-related fixes; this patch series.
-> >
-> > This patch series will have a few small context conflicts with Peter
-> > De Schrijver's Tegra30 support. Peter's patch series should have
-> > priority over this one (i.e. be the one merged if it's difficult to
-> > merge both).
-> 
-> Contents of the series as a whole looks good to me, but I did notice a
-> bunch of section mismatches. Instead of commenting on the specific
-> ones, just compile with CONFIG_DEBUG_SECTION_MISMATCH=y and fix up the
-> new ones and repost, please. :)
+Patches in Tegra's for-3.3/soc branch introduce some section mismatch
+errors when building with CONFIG_DEBUG_SECTION_MISMATCH=y. This series
+fixes them. I patched each file separately in case you want to squash
+these into the original patches.
 
-Just to close the loop on our IRC conversation, I believe those problems
-were introduced by the pinmux rework in Peter's T30 patches rather than
-my patch series. In particular, some in:
+tegra20: 6996e08 arm/tegra: prepare pinmux code for multiple tegra variants
+tegra30: 241682c arm/tegra: pinmux tables and definitions for tegra30
 
-6996e08 arm/tegra: prepare pinmux code for multiple tegra variants
+Stephen Warren (2):
+  arm/tegra: Fix section mismatch errors in tegra20 pinmux
+  arm/tegra: Fix section mismatch errors in tegra30 pinmux
 
-And some in:
-
-241682c arm/tegra: pinmux tables and definitions for tegra30
-
-Although the latter don't show up until:
-
-44107d8 arm/tegra: implement support for tegra30
-
-Since that actually creates the Kconfig option that allows the T30 pinmux
-code to be built.
-
-I'll take a look and come up with a patch for this that can be applied to
-Tegra's for-3.3/soc branch.
-
--- 
-nvpublic
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c |    2 +-
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
