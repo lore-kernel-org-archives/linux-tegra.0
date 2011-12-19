@@ -1,38 +1,54 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
-Date: Mon, 19 Dec 2011 08:59:44 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE929ED@HQMAIL01.nvidia.com>
-References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
- <CAM=Q2csGoQR8PZhQO_oeVZt9CqEq377Ut8swY5g12M_=71on9g@mail.gmail.com>
+Subject: RE: [PATCH 0/9] arm/tegra: Various pinmux-related cleanups
+Date: Mon, 19 Dec 2011 09:49:57 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE92A4A@HQMAIL01.nvidia.com>
+References: <1324073552-15542-1-git-send-email-swarren@nvidia.com>
+ <20111218005702.GA4336@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAM=Q2csGoQR8PZhQO_oeVZt9CqEq377Ut8swY5g12M_=71on9g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111218005702.GA4336-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Shubhrajyoti Datta wrote at Sunday, December 18, 2011 11:54 PM:
-> On Sun, Dec 18, 2011 at 11:59 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > This fixes some section mismatch build warnings.
->
-> What was the error was a devinit function called from these?
+Olof Johansson wrote at Saturday, December 17, 2011 5:57 PM:
+> On Fri, Dec 16, 2011 at 03:12:23PM -0700, Stephen Warren wrote:
+> > While working on switching Tegra to a new pinctrl-based pin mux driver,
+> > I made a bunch of small pinmux-related fixes; this patch series.
+> >
+> > This patch series will have a few small context conflicts with Peter
+> > De Schrijver's Tegra30 support. Peter's patch series should have
+> > priority over this one (i.e. be the one merged if it's difficult to
+> > merge both).
+> 
+> Contents of the series as a whole looks good to me, but I did notice a
+> bunch of section mismatches. Instead of commenting on the specific
+> ones, just compile with CONFIG_DEBUG_SECTION_MISMATCH=y and fix up the
+> new ones and repost, please. :)
 
-As I Understand It, probe/remove are devinit/exit functions, and hence
-should be marked as such.
+Just to close the loop on our IRC conversation, I believe those problems
+were introduced by the pinmux rework in Peter's T30 patches rather than
+my patch series. In particular, some in:
 
-The errors were from building with CONFIG_DEBUG_SECTION_MISMATCH=y.
+6996e08 arm/tegra: prepare pinmux code for multiple tegra variants
 
-I guess the section mismatch errors won't actually show up in the code
-that's in the kernel right now; they only showed up because I had a local
-patch that modified probe() to reference tegra_i2c_of_match[] which is
-__devinitconst. I since reworked that patch so that it doesn't introduce
-that reference, for other reasons. Still, I think this is a good cleanup
-change even if nothing is actually causing these mismatch errors to fire
-right now.
+And some in:
+
+241682c arm/tegra: pinmux tables and definitions for tegra30
+
+Although the latter don't show up until:
+
+44107d8 arm/tegra: implement support for tegra30
+
+Since that actually creates the Kconfig option that allows the T30 pinmux
+code to be built.
+
+I'll take a look and come up with a patch for this that can be applied to
+Tegra's for-3.3/soc branch.
 
 -- 
 nvpublic
