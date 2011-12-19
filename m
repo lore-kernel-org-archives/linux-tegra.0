@@ -1,26 +1,55 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] arm/tegra: refresh defconfig for tegra30
-Date: Mon, 19 Dec 2011 10:24:56 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE92A88@HQMAIL01.nvidia.com>
-References: <1324183684-19606-1-git-send-email-olof@lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH 1/3] arm/tegra: Delete tegra_init_clock()
+Date: Mon, 19 Dec 2011 12:24:03 -0700
+Message-ID: <1324322645-30653-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324183684-19606-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Saturday, December 17, 2011 9:48 PM:
-> Update the defconfig for tegra due to the addition of tegra30 and rename
-> of t20/t30 options.
-> 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+tegra_init_clock() is written to call tegra2_init_clocks(), which only
+exists if Tegra20 support is enabled. This breaks the build of a
+Tegra30-only kernel.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+tegra_init_clock() isn't actually used any more; tegra20_init_early()
+calls tegra2_init_clocks() directly. So, just delete this function.
 
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+These 3 patches are all cleanup for Tegra's for-3.3/soc branch.
+
+ arch/arm/mach-tegra/board.h |    1 -
+ arch/arm/mach-tegra/clock.c |    5 -----
+ 2 files changed, 0 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 628f5a8..75d1543 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -30,7 +30,6 @@ void __init tegra30_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+ void __init tegra_dt_init_irq(void);
+-void __init tegra_init_clock(void);
+ int __init tegra_pcie_init(bool init_port0, bool init_port1);
+ 
+ extern struct sys_timer tegra_timer;
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index a8f359d..8337068 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -399,11 +399,6 @@ void tegra_periph_reset_assert(struct clk *c)
+ }
+ EXPORT_SYMBOL(tegra_periph_reset_assert);
+ 
+-void __init tegra_init_clock(void)
+-{
+-	tegra2_init_clocks();
+-}
+-
+ #ifdef CONFIG_DEBUG_FS
+ 
+ static int __clk_lock_all_spinlocks(void)
 -- 
-nvpublic
+1.7.0.4
