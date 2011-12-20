@@ -1,103 +1,69 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: What's in linux-tegra for 3.3 (and last call for patches)
-Date: Mon, 19 Dec 2011 20:14:40 -0800
-Message-ID: <CAOesGMj5=3Cbp9KYqn6OSBE05P7Q6Na5khzqhxU3su76KzhpDA@mail.gmail.com>
+From: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
+Date: Tue, 20 Dec 2011 11:45:08 +0530
+Message-ID: <CAM=Q2cs8K4vraWPNqervcmxEqUGiAbng+44+L9OhD3ijPw9tAA@mail.gmail.com>
+References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
+	<20111220015634.GA27789@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111220015634.GA27789-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is what is currently sitting in the
-for-3.3/{cleanup,soc,boards,drivers,dt} trees, and what I plan on
-sending up to arm-soc shortly.
+On Tue, Dec 20, 2011 at 7:26 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Sat, Dec 17, 2011 at 11:29:29PM -0700, Stephen Warren wrote:
+>> This fixes some section mismatch build warnings.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Ben, since the patch is trivial, I've picked it up in tegra
+> for-3.3/drivers and will merge that way. Let me know if you disagree.
+>
+>
+Hi Stephen ,
+could you check this one also
+thanks.
 
-If you have any outstanding patches that are not part of the below,
-let me know as soon as possible. I certainly have a bunch myself that
-will not make the 3.3, but will post them in a bit for review and 3.4
-staging.
+=46rom: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+Date: Tue, 20 Dec 2011 11:40:51 +0530
+Subject: [PATCH] I2C : tegra : devexit in remove
 
+Adding I2C __devexxit in remove
 
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+---
+Untested
 
+ drivers/i2c/busses/i2c-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Leon Romanovsky (1):
-      ARM: tegra: paz00: Fix board pinmux table.
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-te=
+gra.c
+index 46b6500..b25f78b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -751,7 +751,7 @@ MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
 
-Marc Dietrich (3):
-      arm/dt: tegra: add dts file for paz00
-      ARM: tegra: paz00: add support for wakeup gpio key
-      arm/dt: tegra: add dts file for paz00
+ static struct platform_driver tegra_i2c_driver =3D {
+        .probe   =3D tegra_i2c_probe,
+-       .remove  =3D tegra_i2c_remove,
++       .remove  =3D__devexit_p(tegra_i2c_remove),
+ #ifdef CONFIG_PM
+        .suspend =3D tegra_i2c_suspend,
+        .resume  =3D tegra_i2c_resume,
+--=20
+1.7.1
 
-Olof Johansson (9):
-      arm/tegra: fix variable formatting in makefile
-      arm/dt: add basic usb nodes to tegra device trees
-      USB: ehci-tegra: add probing through device tree
-      arm/tegra: boards: more __init/__initdata annotations
-      arm/tegra: fix variable formatting in makefile
-      arm/dt: add basic usb nodes to tegra device trees
-      USB: ehci-tegra: add probing through device tree
-      arm/tegra: refresh defconfig for tegra30
-      arm/tegra: fix variable formatting in makefile
-
-Peter De Schrijver (15):
-      arm/tegra: initial device tree for tegra30
-      arm/tegra: clk_get should not be fatal
-      arm/tegra: cleanup tegra20 support
-      arm/tegra: prepare clock code for multiple tegra variants
-      arm/tegra: don't export clk_measure_input_freq
-      arm/tegra: prepare early init for multiple tegra variants
-      arm/tegra: rename board-dt.c to board-dt-tegra20.c
-      arm/tegra: use PMC reset
-      arm/tegra: generalize L2 cache initialization
-      arm/tegra: rename tegra20 pinmux files
-      arm/tegra: prepare pinmux code for multiple tegra variants
-      arm/tegra: add new fields to struct tegra_pingroup_desc
-      arm/tegra: pinmux tables and definitions for tegra30
-      arm/tegra: implement support for tegra30
-      arm/tegra: add support for tegra30 based board cardhu
-
-Stephen Warren (38):
-      i2c: tegra: Add __devinit/exit to probe/remove
-      i2c: tegra: Support DVC controller in device tree
-      arm/dt: tegra: Clean up I2S and DAS nodes
-      arm/tegra: Add device-tree support for TrimSlice board
-      arm/tegra: board-dt: Fix AUXDATA typo
-      arm/tegra: board-dt: Enable audio-related clocks
-      arm/dt: tegra: Remove /memreserve/ from device-tree files
-      arm/dt: tegra: Remove /chosen node
-      arm/dt: tegra: Fix I2C nodes to match board files
-      arm/dt: tegra: Fix serial nodes to match board files
-      arm/dt: tegra: Fix SDHCI nodes to match board files
-      arm/dt: tegra: Use new compatible value for DVC I2C controller
-      arm/dt: Add ADT7461 to Seaboard
-      arm/tegra: Seaboard: Add GPIO key device tree nodes
-      arm/tegra: Split Seaboard GPIO table to allow for Ventana
-      arm/tegra: Add AUXDATA for tegra-pinmux and tegra-gpio
-      arm/tegra: Harmony PCIe: Don't touch pinmux
-      arm/tegra: PCIe: Remove include of mach/pinmux.h
-      arm/tegra: Remove useless entries from ventana_pinmux[]
-      arm/tegra: Rework Seaboard-vs-Ventana pinmux table
-      arm/tegra: Fix mistake in Trimslice's pinmux
-      arm/tegra: Refactor board-*-pinmux.c to share code
-      arm/tegra: Use bus notifiers to trigger pinmux setup
-      arm/dt: tegra: Clean up I2S and DAS nodes
-      arm/tegra: Add device-tree support for TrimSlice board
-      arm/tegra: board-dt: Fix AUXDATA typo
-      arm/tegra: board-dt: Enable audio-related clocks
-      arm/dt: tegra: Remove /memreserve/ from device-tree files
-      arm/dt: tegra: Remove /chosen node
-      arm/dt: tegra: Fix I2C nodes to match board files
-      arm/dt: tegra: Fix serial nodes to match board files
-      arm/dt: tegra: Fix SDHCI nodes to match board files
-      arm/tegra: Fix section mismatch errors in tegra20 pinmux
-      arm/tegra: Fix section mismatch errors in tegra30 pinmux
-      arm/tegra: Delete tegra_init_clock()
-      arm/tegra: Make MACH_TEGRA_DT depend on ARCH_TEGRA_2x_SOC
-
-      arm/tegra: Compile tegra_dt_init_irq only when CONFIG_OF
-      arm/tegra: Remove code that's ifndef CONFIG_ARM_GIC
-
-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org (2):
-      arm/tegra: convert tegra20 to GIC devicetree binding
-      arm/tegra: remove unused defines
+> Thanks,
+>
+> -Olof
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-i2c" =
+in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
