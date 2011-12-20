@@ -1,73 +1,30 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] arm/tegra: remove __initdata annotation from pinmux tables
-Date: Tue, 20 Dec 2011 09:33:38 -0800
-Message-ID: <1324402418-20279-1-git-send-email-olof@lixom.net>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] arm/tegra: remove __initdata annotation from pinmux
+ tables
+Date: Tue, 20 Dec 2011 10:53:28 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE92D95@HQMAIL01.nvidia.com>
+References: <1324402418-20279-1-git-send-email-olof@lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1324402418-20279-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of reshuffling what functions in the pinmux paths should be
-__init and thus could keep references to __initdata, let's just remove
-the annotations for now -- the tables are moving to device tree in the
-next version anyway and the whole subsystem is being wired up. We will
-go back and re-annotate where appropriate once things settle down.
+Olof Johansson wrote at Tuesday, December 20, 2011 10:34 AM:
+> Instead of reshuffling what functions in the pinmux paths should be
+> __init and thus could keep references to __initdata, let's just remove
+> the annotations for now -- the tables are moving to device tree in the
+> next version anyway and the whole subsystem is being wired up. We will
+> go back and re-annotate where appropriate once things settle down.
+> 
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard-pinmux.c  |    8 ++++----
- arch/arm/mach-tegra/board-trimslice-pinmux.c |    2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/arch/arm/mach-tegra/board-seaboard-pinmux.c b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-index af28fd3..a448f29 100644
---- a/arch/arm/mach-tegra/board-seaboard-pinmux.c
-+++ b/arch/arm/mach-tegra/board-seaboard-pinmux.c
-@@ -37,11 +37,11 @@
- 		.slew_falling = TEGRA_SLEW_SLOWEST,		\
- 	}
- 
--static __initdata struct tegra_drive_pingroup_config seaboard_drive_pinmux[] = {
-+static struct tegra_drive_pingroup_config seaboard_drive_pinmux[] = {
- 	DEFAULT_DRIVE(SDIO1),
- };
- 
--static __initdata struct tegra_pingroup_config common_pinmux[] = {
-+static struct tegra_pingroup_config common_pinmux[] = {
- 	{TEGRA_PINGROUP_ATA,   TEGRA_MUX_IDE,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_ATB,   TEGRA_MUX_SDIO4,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_ATC,   TEGRA_MUX_NAND,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-@@ -147,7 +147,7 @@ static __initdata struct tegra_pingroup_config common_pinmux[] = {
- 	{TEGRA_PINGROUP_XM2D,  TEGRA_MUX_NONE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- };
- 
--static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
-+static struct tegra_pingroup_config seaboard_pinmux[] = {
- 	{TEGRA_PINGROUP_DDC,   TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_GMD,   TEGRA_MUX_SFLASH,        TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_LPW0,  TEGRA_MUX_HDMI,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-@@ -163,7 +163,7 @@ static __initdata struct tegra_pingroup_config seaboard_pinmux[] = {
- 	{TEGRA_PINGROUP_SPIG,  TEGRA_MUX_SPI2_ALT,      TEGRA_PUPD_PULL_UP,   TEGRA_TRI_TRISTATE},
- };
- 
--static __initdata struct tegra_pingroup_config ventana_pinmux[] = {
-+static struct tegra_pingroup_config ventana_pinmux[] = {
- 	{TEGRA_PINGROUP_DDC,  TEGRA_MUX_RSVD2,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_GMD,  TEGRA_MUX_SFLASH,   TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_LPW0, TEGRA_MUX_RSVD4,    TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
-diff --git a/arch/arm/mach-tegra/board-trimslice-pinmux.c b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-index be2f3e8..1b3ccec 100644
---- a/arch/arm/mach-tegra/board-trimslice-pinmux.c
-+++ b/arch/arm/mach-tegra/board-trimslice-pinmux.c
-@@ -24,7 +24,7 @@
- #include "board-pinmux.h"
- #include "board-trimslice.h"
- 
--static __initdata struct tegra_pingroup_config trimslice_pinmux[] = {
-+static struct tegra_pingroup_config trimslice_pinmux[] = {
- 	{TEGRA_PINGROUP_ATA,   TEGRA_MUX_IDE,           TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
- 	{TEGRA_PINGROUP_ATB,   TEGRA_MUX_SDIO4,         TEGRA_PUPD_NORMAL,	TEGRA_TRI_NORMAL},
- 	{TEGRA_PINGROUP_ATC,   TEGRA_MUX_NAND,          TEGRA_PUPD_NORMAL,	TEGRA_TRI_TRISTATE},
 -- 
-1.7.5.4
+nvpublic
