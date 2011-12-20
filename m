@@ -1,34 +1,36 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: What's in linux-tegra for 3.3 (and last call for patches)
-Date: Tue, 20 Dec 2011 09:18:02 -0800
-Message-ID: <CAOesGMhN-a1WGFD7UQuk-Vp-XuUsU=9cJBEKV5z3FJoMw1c=kA@mail.gmail.com>
-References: <CAOesGMj5=3Cbp9KYqn6OSBE05P7Q6Na5khzqhxU3su76KzhpDA@mail.gmail.com>
-	<CALq1K=LeR=mv_YL1t_4guRQJw8+PwbaHO19LpvJYDx-_RJ82UA@mail.gmail.com>
+Subject: Re: [PATCH] arm/tegra: boards: more __init/__initdata annotations
+Date: Tue, 20 Dec 2011 09:32:39 -0800
+Message-ID: <CAOesGMj73O79=hwFfLFpepTy1WDXCztppZQmZ_5b4tYRhjQFjQ@mail.gmail.com>
+References: <1324353802-31774-1-git-send-email-olof@lixom.net>
+	<20111220082641.GQ14542@n2100.arm.linux.org.uk>
+	<CAOesGMjh2DmzgjvoYZyDygADDcMwf-m7E3Np0f=h8xRWZZ6-4Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALq1K=LeR=mv_YL1t_4guRQJw8+PwbaHO19LpvJYDx-_RJ82UA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAOesGMjh2DmzgjvoYZyDygADDcMwf-m7E3Np0f=h8xRWZZ6-4Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Tue, Dec 20, 2011 at 9:06 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Tue, Dec 20, 2011 at 12:26 AM, Russell King - ARM Linux
+> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>> On Mon, Dec 19, 2011 at 08:03:22PM -0800, Olof Johansson wrote:
+>>> Silence a bunch of section warnings, and mark some of the init functions as
+>>> __init.
+[...]
+> Thanks for pointing it out -- looks like a couple of other instances
+> use the wrong location as well (probably added by me in the past).
+> I'll respin the patch, and fix up those cases as well.
 
-On Tue, Dec 20, 2011 at 6:42 AM, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org> wrote:
-> On Tue, Dec 20, 2011 at 06:14, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->> This is what is currently sitting in the
->> for-3.3/{cleanup,soc,boards,drivers,dt} trees, and what I plan on
->> sending up to arm-soc shortly.
->
-> Is the 3.3 window closing?
-> What is the expected date to close?
 
-The upstream development model is that pretty much any code targeted
-for the next release should be in for-next by -rc6 of the previous
-release or so. We're beyond that point now, so I want to close down
-the staging trees and get them into arm-soc within the next day, two
-at most.
+Actually, after some brief discussion on IRC, I'll go the other way
+instead: These tables are all moving to devicetree in the next release
+or so, and it's uncertain what functions should (long-term) be __init
+and not. For now, I'll just remove __initdata from the seaboard pinmux
+tables. Sending separate patch for that.
 
 
 -Olof
