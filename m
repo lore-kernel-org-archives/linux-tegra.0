@@ -1,55 +1,34 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: boards: more __init/__initdata annotations
-Date: Tue, 20 Dec 2011 09:06:41 -0800
-Message-ID: <CAOesGMjh2DmzgjvoYZyDygADDcMwf-m7E3Np0f=h8xRWZZ6-4Q@mail.gmail.com>
-References: <1324353802-31774-1-git-send-email-olof@lixom.net>
-	<20111220082641.GQ14542@n2100.arm.linux.org.uk>
+Subject: Re: What's in linux-tegra for 3.3 (and last call for patches)
+Date: Tue, 20 Dec 2011 09:18:02 -0800
+Message-ID: <CAOesGMhN-a1WGFD7UQuk-Vp-XuUsU=9cJBEKV5z3FJoMw1c=kA@mail.gmail.com>
+References: <CAOesGMj5=3Cbp9KYqn6OSBE05P7Q6Na5khzqhxU3su76KzhpDA@mail.gmail.com>
+	<CALq1K=LeR=mv_YL1t_4guRQJw8+PwbaHO19LpvJYDx-_RJ82UA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111220082641.GQ14542-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <CALq1K=LeR=mv_YL1t_4guRQJw8+PwbaHO19LpvJYDx-_RJ82UA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 20, 2011 at 12:26 AM, Russell King - ARM Linux
-<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> On Mon, Dec 19, 2011 at 08:03:22PM -0800, Olof Johansson wrote:
->> Silence a bunch of section warnings, and mark some of the init funct=
-ions as
->> __init.
->>
->> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
->> ---
->> =A0arch/arm/mach-tegra/board-harmony-pinmux.c =A0 | =A0 =A08 ++++---=
--
->> =A0arch/arm/mach-tegra/board-paz00-pinmux.c =A0 =A0 | =A0 =A08 ++++-=
----
->> =A0arch/arm/mach-tegra/board-seaboard-pinmux.c =A0| =A0 16 ++++++++-=
--------
->> =A0arch/arm/mach-tegra/board-trimslice-pinmux.c | =A0 =A04 ++--
->> =A04 files changed, 18 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/m=
-ach-tegra/board-harmony-pinmux.c
->> index 465808c..84cfbef 100644
->> --- a/arch/arm/mach-tegra/board-harmony-pinmux.c
->> +++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
->> @@ -25,7 +25,7 @@
->> =A0#include "board-harmony.h"
->> =A0#include "board-pinmux.h"
->>
->> -static struct tegra_pingroup_config harmony_pinmux[] =3D {
->> +static __initdata struct tegra_pingroup_config harmony_pinmux[] =3D=
- {
->
-> __initdata goes at the end of the declaration - just before the '=3D'=
-=2E
+Hi,
 
-Thanks for pointing it out -- looks like a couple of other instances
-use the wrong location as well (probably added by me in the past).
-I'll respin the patch, and fix up those cases as well.
+On Tue, Dec 20, 2011 at 6:42 AM, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org> wrote:
+> On Tue, Dec 20, 2011 at 06:14, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>> This is what is currently sitting in the
+>> for-3.3/{cleanup,soc,boards,drivers,dt} trees, and what I plan on
+>> sending up to arm-soc shortly.
+>
+> Is the 3.3 window closing?
+> What is the expected date to close?
+
+The upstream development model is that pretty much any code targeted
+for the next release should be in for-next by -rc6 of the previous
+release or so. We're beyond that point now, so I want to close down
+the staging trees and get them into arm-soc within the next day, two
+at most.
+
 
 -Olof
