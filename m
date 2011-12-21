@@ -1,138 +1,64 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 7/7] pwm-backlight: Add rudimentary device-tree support
-Date: Wed, 21 Dec 2011 10:32:57 +0100
-Message-ID: <20111221093257.GF542@avionic-0098.mockup.avionic-design.de>
-References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
- <1324377138-32129-8-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE92EBE@HQMAIL01.nvidia.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 21 Dec 2011 01:40:54 -0800
+Message-ID: <CAMbhsRRP7s9xsHqxhb=iMfHAJFcqAea-6CDORZS34RCPNo+UWw@mail.gmail.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
+	<4EF1A0B4.5080307@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0692743372463030905=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF176BE92EBE-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4EF1A0B4.5080307-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Trinabh Gupta <g.trinabh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Dec 21, 2011 at 1:02 AM, Arjan van de Ven <arjan-VuQAYsv1562vlLw7lfJaRg@public.gmane.org=
+m> wrote:
+> On 12/21/2011 1:09 AM, Colin Cross wrote:
+>> On some ARM SMP SoCs (OMAP4460, Tegra 2, and probably more), the
+>> cpus cannot be independently powered down, either due to
+>> sequencing restrictions (on Tegra 2, cpu 0 must be the last to
+>> power down), or due to HW bugs (on OMAP4460, a cpu powering up
+>> will corrupt the gic state unless the other cpu runs a work
+>> around). =A0Each cpu has a power state that it can enter without
+>> coordinating with the other cpu (usually Wait For Interrupt, or
+>> WFI), and one or more "coupled" power states that affect blocks
+>> shared between the cpus (L2 cache, interrupt controller, and
+>> sometimes the whole SoC). =A0Entering a coupled power state must
+>> be tightly controlled on both cpus.
+>>
+>> The easiest solution to implementing coupled cpu power states is
+>> to hotplug all but one cpu whenever possible, usually using a
+>> cpufreq governor that looks at cpu load to determine when to
+>> enable the secondary cpus. =A0This causes problems, as hotplug is an
+>> expensive operation, so the number of hotplug transitions must be
+>> minimized, leading to very slow response to loads, often on the
+>> order of seconds.
+>>
+>> This patch series implements an alternative solution, where each
+>> cpu will wait in the WFI state until all cpus are ready to enter
+>> a coupled state, at which point the coupled state function will
+>> be called on all cpus at approximately the same time.
+>>
+>> Once all cpus are ready to enter idle, they are woken by an smp
+>> cross call. =A0At this point, there is a chance that one of the
+>> cpus will find work to do, and choose not to enter suspend. =A0A
+>> final pass is needed to guarantee that all cpus will call the
+>> power state enter function at the same time. =A0During this pass,
+>> each cpu will increment the ready counter, and continue once the
+>> ready counter matches the number of online coupled cpus. =A0If any
+>> cpu exits idle, the other cpus will decrement their counter and
+>> retry.
+>
+> this smells fundamentally racey to me; you can get an interrupt one
+> cycle after you think you're done, but before the last guy enters WFI=
+=2E..
+>
+> how do you solve that issue ?
 
---===============0692743372463030905==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="f61P+fpdnY2FZS1u"
-Content-Disposition: inline
-
-
---f61P+fpdnY2FZS1u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-* Stephen Warren wrote:
-> Thierry Reding wrote at Tuesday, December 20, 2011 3:32 AM:
-[...]
-> > +  - default-brightness: the default brightness setting
-> > +  - max-brightness: the maximum brightness setting
->=20
-> What are the units of those two properties? Percentage seems like a
-> reasonable choice, although that's not what the patch implements.
-
-That's just the way the pwm-backlight driver works. Typically the maximum
-brightness is set to 255. I think you can set these values to pretty much
-anything, and the driver will convert the brightness set via sysfs to the
-range from 0 to max-brightness.
-
-> > +Example:
-> > +
-> > +	backlight {
-> > +		compatible =3D "pwm-backlight";
-> > +		default-brightness =3D <224>;
-> > +		max-brightness =3D <255>;
-> > +		pwm =3D <&pwm 0 5000000>;
-> > +	};
->=20
-> This may be fine, but I'm not sure that representing the backlight as a
-> standalone object is correct;
-
-I don't think there really is any other way because we need the device node=
- in
-order to have the corresponding platform device instantiated.
-
-> I wonder if you want to represent a complete
-> LCD display complex, including backlight, various GPIOs, and other display
-> properties, all in the one node? That said, I suppose you could easily
-> layer this as follows:
->=20
-> reg: regulator {
->     // GPIO regulator
-> };
->=20
-> bl: backlight {
->     compatible =3D "pwm-backlight";
->     default-brightness =3D <224>;
->     max-brightness =3D <255>;
->     pwm =3D <&pwm 0 5000000>;
->     power-supply =3D <&reg>;
-> };
->=20
-> lcd@x {
->     backlight =3D <&bl>;
->     ...
-> };
->=20
-> so this probably is OK.
-
-This looks pretty reasonable. I actually like it. I don't think there's any
-code to resolve the &bl reference from the lcd driver yet, but that should =
-be
-rather easy to do.
-
-> > +	/*
-> > +	 * TODO: Most users of this driver use a number of GPIOs to control
-> > +	 *       backlight power. Support for specifying these needs to be
-> > +	 *       added.
-> > +	 */
->=20
-> At least for the power GPIO, this should probably modeled as a GPIO-based
-> fixed voltage regulator. Are there other GPIOs that are directly related
-> to a backlight rather than an LCD complex?
-
-Currently some platforms seem to use more than a single GPIO for the power.
-PXA/Magician has two, depending on the brightness. Viper for example takes a
-shortcut and controls both the backlight power and LCD enable from the
-pwm-backlight callbacks. I guess if/when those machines are converted, they
-can use a complete LCD complex as you described.
-
-Thierry
-
---f61P+fpdnY2FZS1u
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7xp8kACgkQZ+BJyKLjJp9c5ACeJ+2pXOV8de1z1Kx+1WuYs7c7
-OL4AnjDW9pzOcXRggJhCNpz7uj4eyLOX
-=EjB5
------END PGP SIGNATURE-----
-
---f61P+fpdnY2FZS1u--
-
---===============0692743372463030905==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============0692743372463030905==--
+All the cpus have interrupts off when they increment the counter, so
+they cannot receive an interrupt.  If an interrupt is pending on one
+of those cpus, it will be handled later when WFI aborts due to the
+pending interrupt.
