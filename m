@@ -1,95 +1,55 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 3/7] of: Add PWM support.
-Date: Wed, 21 Dec 2011 09:09:35 +0100
-Message-ID: <20111221080935.GC542@avionic-0098.mockup.avionic-design.de>
-References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
- <1324377138-32129-4-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE92E6A@HQMAIL01.nvidia.com>
+From: Arjan van de Ven <arjan@linux.intel.com>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 21 Dec 2011 10:02:44 +0100
+Message-ID: <4EF1A0B4.5080307@linux.intel.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="t0UkRYy7tHLRMCai"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF176BE92E6A-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1324426147-16735-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/21/2011 1:09 AM, Colin Cross wrote:
+> On some ARM SMP SoCs (OMAP4460, Tegra 2, and probably more), the
+> cpus cannot be independently powered down, either due to
+> sequencing restrictions (on Tegra 2, cpu 0 must be the last to
+> power down), or due to HW bugs (on OMAP4460, a cpu powering up
+> will corrupt the gic state unless the other cpu runs a work
+> around).  Each cpu has a power state that it can enter without
+> coordinating with the other cpu (usually Wait For Interrupt, or
+> WFI), and one or more "coupled" power states that affect blocks
+> shared between the cpus (L2 cache, interrupt controller, and
+> sometimes the whole SoC).  Entering a coupled power state must
+> be tightly controlled on both cpus.
+> 
+> The easiest solution to implementing coupled cpu power states is
+> to hotplug all but one cpu whenever possible, usually using a
+> cpufreq governor that looks at cpu load to determine when to
+> enable the secondary cpus.  This causes problems, as hotplug is an
+> expensive operation, so the number of hotplug transitions must be
+> minimized, leading to very slow response to loads, often on the
+> order of seconds.
+> 
+> This patch series implements an alternative solution, where each
+> cpu will wait in the WFI state until all cpus are ready to enter
+> a coupled state, at which point the coupled state function will
+> be called on all cpus at approximately the same time.
+> 
+> Once all cpus are ready to enter idle, they are woken by an smp
+> cross call.  At this point, there is a chance that one of the
+> cpus will find work to do, and choose not to enter suspend.  A
+> final pass is needed to guarantee that all cpus will call the
+> power state enter function at the same time.  During this pass,
+> each cpu will increment the ready counter, and continue once the
+> ready counter matches the number of online coupled cpus.  If any
+> cpu exits idle, the other cpus will decrement their counter and
+> retry.
 
---t0UkRYy7tHLRMCai
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this smells fundamentally racey to me; you can get an interrupt one
+cycle after you think you're done, but before the last guy enters WFI...
 
-* Stephen Warren wrote:
-> Thierry Reding wrote at Tuesday, December 20, 2011 3:32 AM:
-> > This patch adds helpers to support device-tree bindings for the generic
-> > PWM API.
->=20
-> > diff --git a/drivers/of/pwm.c b/drivers/of/pwm.c
->=20
-> > +/**
-> > + * of_get_named_pwm() - get a PWM number and period to use with the PW=
-M API
-> > + * @np:		device node to get the PWM from
-> > + * @propname:	property name containing PWM specifier(s)
-> > + * @index:	index of the PWM
-> > + * @period_ns:	a pointer to the PWM period (in ns) to fill in
-> > + *
-> > + * Returns PWM number to use with the Linux generic PWM API or a negat=
-ive
-> > + * error code on failure. If @period_ns is not NULL the function fills=
- in
-> > + * the value parsed from the period-ns property.
-> > + */
-> > +int of_get_named_pwm(struct device_node *np, const char *propname,
-> > +		     int index, unsigned int *period_ns)
-> > +{
-> ...
-> > +	if ((cells > 1) && period_ns)
-> > +		*period_ns =3D be32_to_cpu(spec[1]);
->=20
-> What if the client needs to know period_ns, yet the DT doesn't provide
-> it?
->=20
-> I think a better approach would be to use an "of_xlate" function like
-> GPIO and IRQ do. This way, the PWM device's own bindings get to define
-> what the extra cells mean, and the definition of of_xlate can be such
-> that it must return a period_ns value in all cases; in some cases, the
-> driver may return a hard-coded value if the HW doesn't support the
-> feature, whereas in most cases the value would be parsed from the
-> extra cells.
->=20
-> Without seeing the complete binding documentation and an example, it's
-> difficult to think about whether it's a good idea to include period_ns
-> in the PWM specifier or not. An alternative might be a property in the
-> PWM node itself.
-
-I like the "of_xlate" alternative better. Adding a property to the PWM node
-would hard-code the period regardless of the user. That doesn't really
-reflect the PWM API.
-
-I will play around with it a bit and make sure to include PWM binding
-documentation in the next version.
-
-> Actually, even better would be for struct pwm_chip to contain a struct
-> device * instead. That'd allow the PWM core to use that for e.g. dev_err
-> calls, and it includes the of_node for use in the match function above.
-
-I like that idea. I'll address that in the next version.
-
-Thierry
-
---t0UkRYy7tHLRMCai
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7xlD8ACgkQZ+BJyKLjJp9hNwCgijBDUJB4BsQ3oHvQQd2ggFlN
-EWIAn3wjv+1u9dSzxY7IPwXH2F9PPnbH
-=AIfI
------END PGP SIGNATURE-----
-
---t0UkRYy7tHLRMCai--
+how do you solve that issue ?
