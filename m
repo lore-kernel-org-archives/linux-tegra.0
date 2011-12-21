@@ -1,64 +1,159 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RFC 2/7] pwm: Allow chips to support multiple PWMs.
-Date: Wed, 21 Dec 2011 08:55:20 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF176BE92FEC@HQMAIL01.nvidia.com>
-References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
- <1324377138-32129-3-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE92E67@HQMAIL01.nvidia.com>
- <20111221075141.GB542@avionic-0098.mockup.avionic-design.de>
- <20111221140944.GA30666@avionic-0098.adnet.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20111221140944.GA30666-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Subject: [PATCH V5] ASoC: Allow DAI links to be specified using device tree nodes
+Date: Wed, 21 Dec 2011 10:40:59 -0700
+Message-ID: <1324489259-17483-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Wednesday, December 21, 2011 7:10 AM:
-> * Thierry Reding wrote:
-> > * Stephen Warren wrote:
-> > > In other words, can you do away with NR_PWM, and make it completely
-> > > dynamic?
-> >
-> > IRQ can be configured to use a radix tree if CONFIG_SPARSE_IRQ=y. I guess it
-> > doesn't hurt to always use a radix tree for PWM, so I'll read up on it and
-> > will try to address that in the next version.
-> 
-> I guess something like idr/ida can be used to dynamically assign a PWM ID,
-> which would allow us to get rid of the bitmap. Then again, ida itself is not
-> much more than a bitmap either. It would complicate things a little in that
-> the ID assignment could no longer be assumed to be sequential for one given
-> PWM chip, so the lookup (or rather mapping the ID to a chip-relative number)
-> will be trickier to do.
+DAI link endpoints and platform (DMA) devices are currently specified
+by name. When instantiating sound cards from device tree, it may be more
+convenient to refer to these devices by phandle in the device tree, and
+for code to describe DAI links using the "struct device_node *"
+("of_node") those phandles map to.
 
-You can support both dynamic assignment of IDs, and assigning each PWM
-chip's IDs in a contiguous block. Just search for n contiguous free IDs
-instead of looping n times looking for 1 free ID.
+This change adds new fields to snd_soc_dai_link which can "name" devices
+using of_node, enhances soc_bind_dai_link() to allow binding based on
+of_node, and enhances snd_soc_register_card() to ensure that illegal
+combinations of name and of_node are not used.
 
-...
-> pinctrl doesn't solve this because it uses statically allocated pin numbers.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+---
+v2: New patch implementing a new feature
+v3: Add Liam's ack
+v4: Rebased to re-order this patch directly onto ASoC for-next
+v5: Rebased again now that my other patches are ASoC for-next
 
-Well, they're per-device IDs, so the issue doesn't really come up.
+ include/sound/soc.h  |    4 +++
+ sound/soc/soc-core.c |   64 ++++++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
-> Interestingly though it uses per-device numbering as well, which would be
-> fine for PWM as well if we had only device tree based probing. In order to
-> support other devices, we'll still need a global namespace.
-
-Yes, that's probably true. I guess a global namespace is reasonable for
-now. If you do plan to rework the API though, the sooner the better since
-the tree will grow fewer users before it's done:-)
-
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index db8acd2..8391b0e 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -231,6 +231,7 @@ enum snd_soc_bias_level {
+ 	SND_SOC_BIAS_ON = 3,
+ };
+ 
++struct device_node;
+ struct snd_jack;
+ struct snd_soc_card;
+ struct snd_soc_pcm_stream;
+@@ -703,8 +704,11 @@ struct snd_soc_dai_link {
+ 	const char *name;			/* Codec name */
+ 	const char *stream_name;		/* Stream name */
+ 	const char *codec_name;		/* for multi-codec */
++	const struct device_node *codec_of_node;
+ 	const char *platform_name;	/* for multi-platform */
++	const struct device_node *platform_of_node;
+ 	const char *cpu_dai_name;
++	const struct device_node *cpu_dai_of_node;
+ 	const char *codec_dai_name;
+ 
+ 	unsigned int dai_fmt;           /* format to set on init */
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 42ad2db..a4592cb 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -764,8 +764,13 @@ static int soc_bind_dai_link(struct snd_soc_card *card, int num)
+ 	}
+ 	/* no, then find CPU DAI from registered DAIs*/
+ 	list_for_each_entry(cpu_dai, &dai_list, list) {
+-		if (strcmp(cpu_dai->name, dai_link->cpu_dai_name))
+-			continue;
++		if (dai_link->cpu_dai_of_node) {
++			if (cpu_dai->dev->of_node != dai_link->cpu_dai_of_node)
++				continue;
++		} else {
++			if (strcmp(cpu_dai->name, dai_link->cpu_dai_name))
++				continue;
++		}
+ 
+ 		rtd->cpu_dai = cpu_dai;
+ 		goto find_codec;
+@@ -781,8 +786,13 @@ find_codec:
+ 
+ 	/* no, then find CODEC from registered CODECs*/
+ 	list_for_each_entry(codec, &codec_list, list) {
+-		if (strcmp(codec->name, dai_link->codec_name))
+-			continue;
++		if (dai_link->codec_of_node) {
++			if (codec->dev->of_node != dai_link->codec_of_node)
++				continue;
++		} else {
++			if (strcmp(codec->name, dai_link->codec_name))
++				continue;
++		}
+ 
+ 		rtd->codec = codec;
+ 
+@@ -814,13 +824,19 @@ find_platform:
+ 
+ 	/* if there's no platform we match on the empty platform */
+ 	platform_name = dai_link->platform_name;
+-	if (!platform_name)
++	if (!platform_name && !dai_link->platform_of_node)
+ 		platform_name = "snd-soc-dummy";
+ 
+ 	/* no, then find one from the set of registered platforms */
+ 	list_for_each_entry(platform, &platform_list, list) {
+-		if (strcmp(platform->name, platform_name))
+-			continue;
++		if (dai_link->platform_of_node) {
++			if (platform->dev->of_node !=
++			    dai_link->platform_of_node)
++				continue;
++		} else {
++			if (strcmp(platform->name, platform_name))
++				continue;
++		}
+ 
+ 		rtd->platform = platform;
+ 		goto out;
+@@ -2831,6 +2847,40 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 	if (!card->name || !card->dev)
+ 		return -EINVAL;
+ 
++	for (i = 0; i < card->num_links; i++) {
++		struct snd_soc_dai_link *link = &card->dai_link[i];
++
++		/*
++		 * Codec must be specified by 1 of name or OF node,
++		 * not both or neither.
++		 */
++		if (!!link->codec_name == !!link->codec_of_node) {
++			dev_err(card->dev,
++				"Neither/both codec name/of_node are set\n");
++			return -EINVAL;
++		}
++
++		/*
++		 * Platform may be specified by either name or OF node, but
++		 * can be left unspecified, and a dummy platform will be used.
++		 */
++		if (link->platform_name && link->platform_of_node) {
++			dev_err(card->dev,
++				"Both platform name/of_node are set\n");
++			return -EINVAL;
++		}
++
++		/*
++		 * CPU DAI must be specified by 1 of name or OF node,
++		 * not both or neither.
++		 */
++		if (!!link->cpu_dai_name == !!link->cpu_dai_of_node) {
++			dev_err(card->dev,
++				"Neither/both cpu_dai name/of_node are set\n");
++			return -EINVAL;
++		}
++	}
++
+ 	dev_set_drvdata(card->dev, card);
+ 
+ 	snd_soc_initialize_card_lists(card);
 -- 
-nvpublic
+1.7.0.4
