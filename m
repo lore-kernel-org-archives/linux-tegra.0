@@ -1,55 +1,67 @@
-From: Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [PATCH 0/3] coupled cpuidle state support
-Date: Wed, 21 Dec 2011 10:02:44 +0100
-Message-ID: <4EF1A0B4.5080307@linux.intel.com>
-References: <1324426147-16735-1-git-send-email-ccross@android.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC 4/7] arm: tegra: Fix PWM clock programming
+Date: Wed, 21 Dec 2011 10:12:27 +0100
+Message-ID: <20111221091227.GE542@avionic-0098.mockup.avionic-design.de>
+References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
+ <1324377138-32129-5-git-send-email-thierry.reding@avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF176BE92E7E@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1324426147-16735-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7CZp05NP8/gJM8Cl"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF176BE92E7E-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/21/2011 1:09 AM, Colin Cross wrote:
-> On some ARM SMP SoCs (OMAP4460, Tegra 2, and probably more), the
-> cpus cannot be independently powered down, either due to
-> sequencing restrictions (on Tegra 2, cpu 0 must be the last to
-> power down), or due to HW bugs (on OMAP4460, a cpu powering up
-> will corrupt the gic state unless the other cpu runs a work
-> around).  Each cpu has a power state that it can enter without
-> coordinating with the other cpu (usually Wait For Interrupt, or
-> WFI), and one or more "coupled" power states that affect blocks
-> shared between the cpus (L2 cache, interrupt controller, and
-> sometimes the whole SoC).  Entering a coupled power state must
-> be tightly controlled on both cpus.
-> 
-> The easiest solution to implementing coupled cpu power states is
-> to hotplug all but one cpu whenever possible, usually using a
-> cpufreq governor that looks at cpu load to determine when to
-> enable the secondary cpus.  This causes problems, as hotplug is an
-> expensive operation, so the number of hotplug transitions must be
-> minimized, leading to very slow response to loads, often on the
-> order of seconds.
-> 
-> This patch series implements an alternative solution, where each
-> cpu will wait in the WFI state until all cpus are ready to enter
-> a coupled state, at which point the coupled state function will
-> be called on all cpus at approximately the same time.
-> 
-> Once all cpus are ready to enter idle, they are woken by an smp
-> cross call.  At this point, there is a chance that one of the
-> cpus will find work to do, and choose not to enter suspend.  A
-> final pass is needed to guarantee that all cpus will call the
-> power state enter function at the same time.  During this pass,
-> each cpu will increment the ready counter, and continue once the
-> ready counter matches the number of online coupled cpus.  If any
-> cpu exits idle, the other cpus will decrement their counter and
-> retry.
 
-this smells fundamentally racey to me; you can get an interrupt one
-cycle after you think you're done, but before the last guy enters WFI...
+--7CZp05NP8/gJM8Cl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-how do you solve that issue ?
+* Stephen Warren wrote:
+> Thierry Reding wrote at Tuesday, December 20, 2011 3:32 AM:
+> > From: Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >=20
+> > PWM clock source registers in Tegra 2 have different clock source selec=
+tion bit
+> > fields than other registers.  PWM clock source bits in CLK_SOURCE_PWM_0=
+ register
+> > are located at bit field bit[30:28] while others are at bit field bit[3=
+1:30] in
+> > their respective clock source register.
+> >=20
+> > This patch updates the clock programming to correctly reflect that, by =
+adding a
+> > flag to indicate the alternate bit field format and checking for it when
+> > selecting a clock source (parent clock).
+> >=20
+> > Also, adjusts for the frequency divider being offset by 1.
+>=20
+> That last line applies to the original patch in the ChromeOS tree, but
+> not to the patch you posted (the edit to arch/arm/mach-tegra/pwm.c that
+> was in the original patch isn't part of this patch).
+
+Right, I've adjusted the commit message to take that into account. I assume
+the commit now also requires my Signed-off-by because I actually modified t=
+he
+patch? This would be true even in the previous version because I had to make
+some small adjustments.
+
+Thierry
+
+--7CZp05NP8/gJM8Cl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEUEARECAAYFAk7xovsACgkQZ+BJyKLjJp8LOwCgqxWVZ5xy1a/3jf7aJCt/p6x+
+aAMAmLBbJWN+sDQ0E/MkMnG7M62qsIQ=
+=Lgp5
+-----END PGP SIGNATURE-----
+
+--7CZp05NP8/gJM8Cl--
