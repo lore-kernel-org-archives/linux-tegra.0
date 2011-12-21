@@ -1,25 +1,26 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL 4/5] Tegra board updates for 3.3
-Date: Wed, 21 Dec 2011 11:15:03 -0800
-Message-ID: <CAOesGMh7P6-=LbgUbYe1o7iO_-yALjce3H9ujXHW8hhikeTOsQ@mail.gmail.com>
+Subject: [GIT PULL 5/5] Tegra driver updates for 3.3
+Date: Wed, 21 Dec 2011 11:15:07 -0800
+Message-ID: <CAOesGMgFCiMqGMA4mVFxKT7tQ_OK+XbAgwXrnvWKp=N2LAouKQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
+Arnd,
 
-Please pull the below board updates for tegra for the 3.3 merge window.
+Please pull the below driver updates for tegra for 3.3. They are two
+device-tree-enablement related patches for i2c, I haven't seen acks
+from Ben on them but they are trivial and tegra-specific patches so I
+picked them up anyway.
 
-Some of the board changes went into the soc branch due to close
-dependencies, most of these are pinmux cleanup and prep for pinctrl
-integration.
 
+Thanks,
 
-They are based on the for-3.3/soc branch.
+-Olof
 
 
 The following changes since commit 6cc04a4420391c3f034afe8ea6e28d75912a70a3:
@@ -65,3 +66,19 @@ Stephen Warren (9):
  12 files changed, 269 insertions(+), 122 deletions(-)
  create mode 100644 arch/arm/mach-tegra/board-pinmux.c
  create mode 100644 arch/arm/mach-tegra/board-pinmux.h
+olof@quad:~/work/tegra (for-3.3/cleanup) $ git request-pull v3.2-rc5
+git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
+for-3.3/driversThe following changes since commit
+dc47ce90c3a822cd7c9e9339fe4d5f61dcb26b50:
+
+  Linux 3.2-rc5 (2011-12-09 15:09:32 -0800)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.3/drivers
+
+Stephen Warren (2):
+      i2c: tegra: Add __devinit/exit to probe/remove
+      i2c: tegra: Support DVC controller in device tree
+
+ drivers/i2c/busses/i2c-tegra.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
