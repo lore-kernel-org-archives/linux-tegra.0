@@ -1,107 +1,68 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 7/7] pwm-backlight: Add rudimentary device-tree support
-Date: Thu, 22 Dec 2011 08:45:05 +0100
-Message-ID: <20111222074505.GB21973@avionic-0098.mockup.avionic-design.de>
-References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
- <1324377138-32129-8-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE92EBE@HQMAIL01.nvidia.com>
- <20111221093257.GF542@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE9302E@HQMAIL01.nvidia.com>
- <4EF22DCB.10502@firmworks.com>
+From: "Shilimkar, Santosh" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [linux-pm] [PATCH 0/3] coupled cpuidle state support
+Date: Thu, 22 Dec 2011 14:05:36 +0530
+Message-ID: <CAMQu2gxws83BUdj_eMbF0xpA1Mo_OA_MswE7KUm5pvbn3YbMuQ@mail.gmail.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
+ <4EF1A0B4.5080307@linux.intel.com> <CAMbhsRRP7s9xsHqxhb=iMfHAJFcqAea-6CDORZS34RCPNo+UWw@mail.gmail.com>
+ <4EF1AA8A.8060304@linux.intel.com> <CAMbhsRSNTUvou9Gf6T4Ggq=jfxsWUcn7M2yNsKQz6aNrt6gLDg@mail.gmail.com>
+ <4EF1CD49.9020800@linux.intel.com> <CAMbhsRRnKoR3YPWrZzVynVe+dcuU5v0siYvmp2vbBcS1hquC7Q@mail.gmail.com>
+ <4EF2352C.3060102@linux.intel.com> <CAMbhsRSPCo9MSGp57Fv0sRdYUFcdwx8jEz1-CfX8LdKf8X4MVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8030846339884227577=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <4EF22DCB.10502-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMbhsRSPCo9MSGp57Fv0sRdYUFcdwx8jEz1-CfX8LdKf8X4MVg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Dec 22, 2011 at 1:12 AM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote=
+:
+> On Wed, Dec 21, 2011 at 11:36 AM, Arjan van de Ven
+> <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> wrote:
+>>>>
+>>>> .. or it enters WFI, and a physical device sends it an interrupt,
+>>>> at which point it exits.
+>>>
+>>> None of the cpus will return to the idle loop until all cpus have
+>>> decremented the ready counter back to 0, so they can't wrap around
+>>> again.
+>>
+>>
+>> yikes, so you IPI all the cpus on the first exit.
+>> that must burn power ;-(
+>
+> No, you're not understanding the point of this series.
+>
+> If your cpus can go in and out of idle independently, you don't use
+> this code at all. =A0Each cpu can call WFI and come back out without
+> talking to the other cpu.
+>
+Indeed. The SOCs, Arch's which does support low power
+state independently and doesn't need any co-ordination between CPU's
+will continue to work same way as before with this series.
 
---===============8030846339884227577==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Content-Disposition: inline
+> However, if you have two cpus that share some part of the SoC that ca=
+n
+> be turned off in idle, like the L2 cache controller or the system bus=
+,
+> the two cpus need to go to idle together, and they will both boot
+> together when either one receives an interrupt (although one will
+> likely immediately go back to a shallower state that doesn't require
+> coordination with the other cpu). =A0There is no way around this, it'=
+s
+> how the hardware works on some ARM platforms.
 
+Apart from shared peripherals which Colin pointed out, OMAP also
+brings in the security software state which is kind of executing in
+parallel with linux. This state is lost in certain deeper low power
+states and since the security software is affine to only master CPU
+(because of OMAP security architecture), the co-ordination is
+mandatory to achieve those low power states.
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So this additional CPU co-ordination logic for such C-states
+really helps to solve the issue in most generic way.
 
-* Mitch Bradley wrote:
-> To further complicate matters, the relationship between PWM duty
-> cycle and perceived brightness is usually nonlinear, so
-> equally-spaced duty cycle percentages might not result in the best
-> perceived brightness ramp.
-
-Yes, I've seen that on numerous devices as well.
-
-> One useful way to describe a given hardware system would be to have
-> properties reporting values that work well for that hardware.  You
-> would need to report a good base clock frequency, a good base
-> period, and an array of N values that give a good perceived
-> brightness ramp.
-
-I'm not sure I quite understand what you mean by base period. Would the
-base period not be simply the inverse of the frequency? Or should the base
-period be the "step size" to multiply each element of the brightness levels
-with?
-
-> The backlight control on my PC laptop has 16 levels, 0 to 15.  That
-> seems adequate to me.
-
-I have a laptop that uses 8 level, 0 to 7. Combining that with the above it
-should be easy to represent in the DT:
-
-	bl: backlight {
-		pwms = <&pwm 0 5000000>;
-		base-period = <...>;
-		brightness-levels = <...>;
-	};
-
-However, that would entail some major modifications to the pwm-backlight
-driver to make it compute the actual duty cycle based on the array of
-brightness levels.
-
-This also raises a more general question: in a lot of drivers the DT binding
-is used to provide an alternative source for platform data. With that
-assumption, is it still reasonable to describe data in DT is such a different
-way from the platform data? I mean in this particular case, there will be no
-way to convert the DT data to the corresponding platform data because there
-simply is no correspondence.
-
-Thierry
-
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iEYEARECAAYFAk7y4AEACgkQZ+BJyKLjJp8DbACeNAYDZRXUFuSi+OAOdiQiNSG0
-NyAAmwUX0QjUq1x9v81hmi4XWgMM5Z46
-=gNfA
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
-
---===============8030846339884227577==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============8030846339884227577==--
+Regards
+Santosh
