@@ -1,69 +1,40 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm/tegra: Support Tegra30 in decompressor UART setup
-Date: Thu, 22 Dec 2011 14:01:59 -0700
-Message-ID: <1324587719-32731-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: Add delay before reset the controller
+Date: Thu, 22 Dec 2011 13:17:46 -0800
+Message-ID: <CAOesGMire-13yiA9gVQYFWdTa6ZLJLbTW8qoRoPMRQ1ExavVUQ@mail.gmail.com>
+References: <1324550480-26308-1-git-send-email-alokc@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1324550480-26308-1-git-send-email-alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra20, the UART clock runs at 216MHz, whereas on Tegra30 it runs at
-408MHz. Modify arch_decomp_setup() to detect Tegra20-vs-Tegra30 at run-
-time, and program the correct divisor.
+Hi,
 
-This makes uncompressor messages work correctly on Tegra30. This also
-fixes early printk, assuming zImage is used and this setup code runs.
+(Adding linux-tegra and Dylan Reid who was debugging this before)
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/include/mach/uncompress.h |   20 ++++++++++++++++++--
- 1 files changed, 18 insertions(+), 2 deletions(-)
+On Thu, Dec 22, 2011 at 2:41 AM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> In NACK error condition, I2C controller violates
+> clock-to-data setup time before stop. In Software,
+> because of this reset of controller is happening
+> before I2C controller could complete STOP condition.
+>
+> Added worst case delay of 1 ms (assuming lowest
+> clock frequency will be 1 KHZ) before reset the
+> controller in case of NACK error.
 
-diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-index 4e83237..61d6e08 100644
---- a/arch/arm/mach-tegra/include/mach/uncompress.h
-+++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-@@ -24,6 +24,8 @@
- #include <linux/types.h>
- #include <linux/serial_reg.h>
- 
-+#include <asm/hardware/gic.h>
-+
- #include <mach/iomap.h>
- 
- static void putc(int c)
-@@ -45,15 +47,29 @@ static inline void flush(void)
- 
- static inline void arch_decomp_setup(void)
- {
-+	u8 *distctr = (u8 *)(TEGRA_ARM_INT_DIST_BASE +
-+			     GIC_DIST_CTR);
-+	u32 ctlrs, div;
- 	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
- 	int shift = 2;
- 
- 	if (uart == NULL)
- 		return;
- 
-+	/*
-+	 * Tegra20 has 4 interrupt controllers
-+	 * Tegra30 has 5 interrupt controllers
-+	 * Future SoCs may need additional means of identification
-+	 */
-+	ctlrs = (*distctr) & 0x1f;
-+	if (ctlrs == 4)
-+		div = 0x0075;
-+	else
-+		div = 0x00dd;
-+
- 	uart[UART_LCR << shift] |= UART_LCR_DLAB;
--	uart[UART_DLL << shift] = 0x75;
--	uart[UART_DLM << shift] = 0x0;
-+	uart[UART_DLL << shift] = div & 0xff;
-+	uart[UART_DLM << shift] = div >> 8;
- 	uart[UART_LCR << shift] = 3;
- }
- 
--- 
-1.7.0.4
+This change causes problems systems with some models of i2c TPMs, since
+the first transaction to them will always time out (TPM quirk), and the delay
+means that the tpm will have time to go back to sleep and thus timeout
+even on the retry. So you'll never make progress.
+
+In other words: this patch will break some systems and thus shouldn't be
+applied.
+
+
+-Olof
