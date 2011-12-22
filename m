@@ -1,58 +1,22 @@
-From: "Shilimkar, Santosh" <santosh.shilimkar@ti.com>
-Subject: Re: [linux-pm] [PATCH 0/3] coupled cpuidle state support
-Date: Thu, 22 Dec 2011 15:00:34 +0530
-Message-ID: <CAMQu2gxq26=pNA3L8aXUbLR4ZAT5RqyNawtm2qsPVc5cJCdOLg@mail.gmail.com>
-References: <1324426147-16735-1-git-send-email-ccross@android.com>
- <4EF1A0B4.5080307@linux.intel.com> <CAMbhsRRP7s9xsHqxhb=iMfHAJFcqAea-6CDORZS34RCPNo+UWw@mail.gmail.com>
- <4EF1AA8A.8060304@linux.intel.com> <CAMbhsRSNTUvou9Gf6T4Ggq=jfxsWUcn7M2yNsKQz6aNrt6gLDg@mail.gmail.com>
- <4EF1CD49.9020800@linux.intel.com> <CAMbhsRRnKoR3YPWrZzVynVe+dcuU5v0siYvmp2vbBcS1hquC7Q@mail.gmail.com>
- <4EF2352C.3060102@linux.intel.com> <CAMbhsRSPCo9MSGp57Fv0sRdYUFcdwx8jEz1-CfX8LdKf8X4MVg@mail.gmail.com>
- <CAMQu2gxws83BUdj_eMbF0xpA1Mo_OA_MswE7KUm5pvbn3YbMuQ@mail.gmail.com> <4EF2F01E.8060307@linux.intel.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V5] ASoC: Allow DAI links to be specified using device
+ tree nodes
+Date: Thu, 22 Dec 2011 11:00:54 +0000
+Message-ID: <20111222110053.GD4546@opensource.wolfsonmicro.com>
+References: <1324489259-17483-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <4EF2F01E.8060307@linux.intel.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Colin Cross <ccross@android.com>, Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>, linux-tegra@vger.kernel.org, linux-pm@lists.linux-foundation.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1324489259-17483-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 22, 2011 at 2:23 PM, Arjan van de Ven <arjan@linux.intel.com> wrote:
-> On 12/22/2011 9:35 AM, Shilimkar, Santosh wrote:
->
->> Indeed. The SOCs, Arch's which does support low power
->> state independently and doesn't need any co-ordination between CPU's
->> will continue to work same way as before with this series.
->
-> btw I think you misunderstand; I don't object to a need for something
-> like this,
-I did. Thanks for clarification.
+On Wed, Dec 21, 2011 at 10:40:59AM -0700, Stephen Warren wrote:
+> DAI link endpoints and platform (DMA) devices are currently specified
+> by name. When instantiating sound cards from device tree, it may be more
+> convenient to refer to these devices by phandle in the device tree, and
 
-> I am just very concerned that this may not be possible to be
-> done in a race-free way.
->
-I agree to those races but may be they are harmless.
-Also the safe state need not be just WFI and can be bit deeper
-where the co-ordination between isn't necessary. So that should
-still not burn the power that much.
-
-For simplicity let's assume a two CPU scenario.
-Ideal scenario:
-CPU 1 has entered idle and incremented counter for the
-co-ordinated C state. CPU0 also enter and increments the
-counter and now the subsystem and interconnect can go
-down along with CPU cluster.
-
-Few of the race conditions will possibly lead to void
-the above conditions  and in that case the counter would
-reflect that and such a C-state won't be attempted and
-a safe C-state would be attempted. That should still work
-fine.
-
-Some how this hardware/security restriction is bit stupid
-and likely going against the existing CPUIDLE design
-which expect that a CPUIDLE thread are per CPU and it should
-be independent and local to that CPU.
-
-Regards
-Santosh
+Applied, thanks.
