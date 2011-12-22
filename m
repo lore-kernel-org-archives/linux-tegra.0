@@ -1,57 +1,117 @@
-From: Colin Cross <ccross@android.com>
-Subject: Re: [PATCH 0/3] coupled cpuidle state support
-Date: Wed, 21 Dec 2011 11:42:28 -0800
-Message-ID: <CAMbhsRSPCo9MSGp57Fv0sRdYUFcdwx8jEz1-CfX8LdKf8X4MVg@mail.gmail.com>
-References: <1324426147-16735-1-git-send-email-ccross@android.com>
-	<4EF1A0B4.5080307@linux.intel.com>
-	<CAMbhsRRP7s9xsHqxhb=iMfHAJFcqAea-6CDORZS34RCPNo+UWw@mail.gmail.com>
-	<4EF1AA8A.8060304@linux.intel.com>
-	<CAMbhsRSNTUvou9Gf6T4Ggq=jfxsWUcn7M2yNsKQz6aNrt6gLDg@mail.gmail.com>
-	<4EF1CD49.9020800@linux.intel.com>
-	<CAMbhsRRnKoR3YPWrZzVynVe+dcuU5v0siYvmp2vbBcS1hquC7Q@mail.gmail.com>
-	<4EF2352C.3060102@linux.intel.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC 2/7] pwm: Allow chips to support multiple PWMs.
+Date: Thu, 22 Dec 2011 07:57:11 +0100
+Message-ID: <20111222065711.GA21973@avionic-0098.mockup.avionic-design.de>
+References: <1324377138-32129-1-git-send-email-thierry.reding@avionic-design.de>
+ <1324377138-32129-3-git-send-email-thierry.reding@avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF176BE92E67@HQMAIL01.nvidia.com>
+ <20111221075141.GB542@avionic-0098.mockup.avionic-design.de>
+ <20111221140944.GA30666@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF176BE92FEC@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <4EF2352C.3060102@linux.intel.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>, linux-tegra@vger.kernel.org, linux-pm@lists.linux-foundation.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============1279860037953189822=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF176BE92FEC-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 21, 2011 at 11:36 AM, Arjan van de Ven
-<arjan@linux.intel.com> wrote:
->>>
->>> .. or it enters WFI, and a physical device sends it an interrupt,
->>> at which point it exits.
->>
->> None of the cpus will return to the idle loop until all cpus have
->> decremented the ready counter back to 0, so they can't wrap around
->> again.
->
->
-> yikes, so you IPI all the cpus on the first exit.
-> that must burn power ;-(
 
-No, you're not understanding the point of this series.
+--===============1279860037953189822==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Content-Disposition: inline
 
-If your cpus can go in and out of idle independently, you don't use
-this code at all.  Each cpu can call WFI and come back out without
-talking to the other cpu.
 
-However, if you have two cpus that share some part of the SoC that can
-be turned off in idle, like the L2 cache controller or the system bus,
-the two cpus need to go to idle together, and they will both boot
-together when either one receives an interrupt (although one will
-likely immediately go back to a shallower state that doesn't require
-coordination with the other cpu).  There is no way around this, it's
-how the hardware works on some ARM platforms.
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Stephen Warren wrote:
+> Thierry Reding wrote at Wednesday, December 21, 2011 7:10 AM:
+> > * Thierry Reding wrote:
+> > > * Stephen Warren wrote:
+> > > > In other words, can you do away with NR_PWM, and make it completely
+> > > > dynamic?
+> > >
+> > > IRQ can be configured to use a radix tree if CONFIG_SPARSE_IRQ=3Dy. I=
+ guess it
+> > > doesn't hurt to always use a radix tree for PWM, so I'll read up on i=
+t and
+> > > will try to address that in the next version.
+> >=20
+> > I guess something like idr/ida can be used to dynamically assign a PWM =
+ID,
+> > which would allow us to get rid of the bitmap. Then again, ida itself i=
+s not
+> > much more than a bitmap either. It would complicate things a little in =
+that
+> > the ID assignment could no longer be assumed to be sequential for one g=
+iven
+> > PWM chip, so the lookup (or rather mapping the ID to a chip-relative nu=
+mber)
+> > will be trickier to do.
+>=20
+> You can support both dynamic assignment of IDs, and assigning each PWM
+> chip's IDs in a contiguous block. Just search for n contiguous free IDs
+> instead of looping n times looking for 1 free ID.
+
+Yes, but that doesn't buy us anything over using a bitmap like we're doing
+now, since ida is really only a bitmap with a different API on top (it is
+also limited to 1024 entries). For our purposes, using a bitmap should work
+just as well.
+
+> > Interestingly though it uses per-device numbering as well, which would =
+be
+> > fine for PWM as well if we had only device tree based probing. In order=
+ to
+> > support other devices, we'll still need a global namespace.
+>=20
+> Yes, that's probably true. I guess a global namespace is reasonable for
+> now. If you do plan to rework the API though, the sooner the better since
+> the tree will grow fewer users before it's done:-)
+
+Right =3D) If you think it better to do it all in one go, perhaps we should
+rather get the API rework done now. I was hoping it could be avoided, but
+perhaps it would be just as well to bite the bullet now. Perhaps Sascha or
+Arnd (Cc'ed) can comment on this. One of the reasons why Sascha's solution
+was preferred over Bill Gatliff's proposal was that it doesn't change the
+existing API.
+
+Thierry
+
+--UlVJffcvxoiEqYs2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk7y1McACgkQZ+BJyKLjJp/0vwCgkdZDzHHFXO5a0KDT+xO3G8/z
+4YoAn2hDFmoJEMBMBa3V1fQHVMK1npOx
+=KwpM
+-----END PGP SIGNATURE-----
+
+--UlVJffcvxoiEqYs2--
+
+--===============1279860037953189822==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============1279860037953189822==--
