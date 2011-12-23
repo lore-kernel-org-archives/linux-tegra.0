@@ -1,243 +1,77 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 9/9] arm/tegra: emc: device tree support
-Date: Thu, 22 Dec 2011 16:17:48 -0800
-Message-ID: <1324599468-12845-10-git-send-email-olof@lixom.net>
-References: <1324599468-12845-1-git-send-email-olof@lixom.net>
+Subject: [PATCH] dt/tegra: seaboard: add i2c devices
+Date: Thu, 22 Dec 2011 18:33:13 -0800
+Message-ID: <1324607593-2378-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324599468-12845-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, device-tree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device tree support to the emc driver, filling in the platform data
-based on the DT bindings.
+Add the known i2c devices on seaboard to the i2c table.
+
+Also rename the temperature sensor device node, and mark it as a nct1008 instead
+of an adt7461 (which it is -- the chips are compatible though).
+
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/apbio.c      |    2 +-
- arch/arm/mach-tegra/tegra2_emc.c |  154 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 134 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/tegra-seaboard.dts |   29 +++++++++++++++++++++++++++--
+ 1 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
-index 7af9a4e..ee0ea89 100644
---- a/arch/arm/mach-tegra/apbio.c
-+++ b/arch/arm/mach-tegra/apbio.c
-@@ -64,7 +64,7 @@ out:
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index b55a02e..b64e0bd 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -13,6 +13,18 @@
  
- out_fail:
- 	mutex_unlock(&tegra_apb_dma_lock);
--	return true;
-+	return false;
- }
+ 	i2c@7000c000 {
+ 		clock-frequency = <400000>;
++
++		light-sensor@44 {
++			compatible = "isil,isl29018";
++			reg = <0x44>;
++			interrupts = < 0 202 0x04 >; /* gpio PZ2 */
++		};
++
++		gyrometer@68 {
++			compatible = "invn,mpu3050";
++			reg = <0x68>;
++			interrupts = < 0 204 0x04 >; /* gpio PZ4 */
++		};
+ 	};
  
- static void apb_dma_complete(struct tegra_dma_req *req)
-diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
-index 9ef61e8..34749fa 100644
---- a/arch/arm/mach-tegra/tegra2_emc.c
-+++ b/arch/arm/mach-tegra/tegra2_emc.c
-@@ -20,12 +20,14 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/tegra_emc.h>
+ 	i2c@7000c400 {
+@@ -21,15 +33,28 @@
  
- #include <mach/iomap.h>
+ 	i2c@7000c500 {
+ 		clock-frequency = <400000>;
++
++		smart-battery@b {
++			compatible = "ti,bq20z75", "smart-battery-1.1";
++			ti,i2c-retry-count = < 2 >;
++			ti,poll-retry-count = < 10 >;
++			reg = <0xb>;
++		};
+ 	};
  
- #include "tegra2_emc.h"
-+#include "fuse.h"
+ 	i2c@7000d000 {
+ 		clock-frequency = <400000>;
  
- #ifdef CONFIG_TEGRA_EMC_SCALING_ENABLE
- static bool emc_enable = true;
-@@ -175,27 +177,135 @@ int tegra_emc_set_rate(unsigned long rate)
- 	return 0;
- }
+-		adt7461@4c {
+-			compatible = "adt7461";
++		temperature-sensor@4c {
++			compatible = "nct1008";
+ 			reg = <0x4c>;
+ 		};
++
++		magnetometer@c {
++			compatible = "ak8975";
++			reg = <0xc>;
++			interrupts = < 0 109 0x04 >; /* gpio PN5 */
++		};
+ 	};
  
-+#ifdef CONFIG_OF
-+static struct device_node *tegra_emc_ramcode_devnode(struct device_node *np)
-+{
-+	struct device_node *iter;
-+	u32 reg;
-+
-+	for_each_child_of_node(np, iter) {
-+		if (!of_property_read_u32(np, "nvidia,ram-code", &reg))
-+			continue;
-+		if (reg == tegra_bct_strapping)
-+			return of_node_get(iter);
-+	}
-+
-+	return NULL;
-+}
-+
-+static struct tegra_emc_pdata *tegra_emc_dt_parse_pdata(
-+		struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *tnp, *iter;
-+	struct tegra_emc_pdata *pdata;
-+	int ret, i, num_tables;
-+
-+	if (!np)
-+		return NULL;
-+
-+	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
-+		tnp = tegra_emc_ramcode_devnode(np);
-+		if (!tnp)
-+			dev_warn(&pdev->dev,
-+				 "can't find emc table for ram-code 0x%02x\n",
-+				 tegra_bct_strapping);
-+	} else
-+		tnp = of_node_get(np);
-+
-+	if (!tnp)
-+		return NULL;
-+
-+	num_tables = 0;
-+	for_each_child_of_node(tnp, iter)
-+		if (of_device_is_compatible(iter, "nvidia,tegra20-emc-table"))
-+			num_tables++;
-+
-+	if (!num_tables) {
-+		pdata = NULL;
-+		goto out;
-+	}
-+
-+	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-+	pdata->tables = devm_kzalloc(&pdev->dev,
-+				     sizeof(struct tegra_emc_table) * num_tables,
-+				     GFP_KERNEL);
-+
-+	i = 0;
-+	for_each_child_of_node(tnp, iter) {
-+		u32 prop;
-+
-+		ret = of_property_read_u32(iter, "clock-frequency", &prop);
-+		if (ret) {
-+			dev_err(&pdev->dev, "no clock-frequency in %s\n",
-+				iter->full_name);
-+			continue;
-+		}
-+		pdata->tables[i].rate = prop;
-+
-+		ret = of_property_read_u32_array(iter, "nvidia,emc-registers",
-+						 pdata->tables[i].regs,
-+						 TEGRA_EMC_NUM_REGS);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"malformed emc-registers property in %s\n",
-+				iter->full_name);
-+			continue;
-+		}
-+
-+		i++;
-+	}
-+	pdata->num_tables = i;
-+
-+out:
-+	of_node_put(tnp);
-+	return pdata;
-+}
-+#else
-+static struct tegra_emc_pdata *tegra_emc_dt_parse_pdata(
-+		struct platform_device *pdev)
-+{
-+	return NULL;
-+}
-+#endif
-+
-+static struct tegra_emc_pdata __devinit *tegra_emc_fill_pdata(struct platform_device *pdev)
-+{	
-+	struct clk *c = clk_get_sys(NULL, "emc");
-+	struct tegra_emc_pdata *pdata;
-+	int i;
-+
-+	WARN_ON(pdev->dev.platform_data);
-+	BUG_ON(IS_ERR_OR_NULL(c));
-+
-+	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-+	pdata->tables = devm_kzalloc(&pdev->dev,
-+				     sizeof(struct tegra_emc_table),
-+				     GFP_KERNEL);
-+
-+	pdata->tables[0].rate = clk_get_rate(c);
-+
-+	for (i = 0; i < TEGRA_EMC_NUM_REGS; i++)
-+		pdata->tables[0].regs[i] = emc_readl(emc_reg_addr[i]);
-+
-+	pdata->num_tables = 1;
-+
-+	dev_info(&pdev->dev, "no tables provided, using settings for %ld kHz\n",
-+		 pdata->tables[0].rate / 2000);
-+
-+	return pdata;
-+}
-+
- static int __devinit tegra_emc_probe(struct platform_device *pdev)
- {
- 	struct tegra_emc_pdata *pdata;
--	struct clk *c = clk_get_sys("emc", NULL);
--	struct clk *user;
- 	struct resource *res;
--	unsigned long max = 0;
--	int i;
- 
- 	if (!emc_enable) {
- 		dev_err(&pdev->dev, "disabled per module parameter\n");
- 		return -ENODEV;
- 	}
- 
--	pdata = pdev->dev.platform_data;
--
--	if (!pdata) {
--		dev_err(&pdev->dev, "missing platform data\n");
--		return -ENXIO;
--	}
--
-         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-         if (!res) {
- 		dev_err(&pdev->dev, "missing register base\n");
-@@ -209,28 +319,30 @@ static int __devinit tegra_emc_probe(struct platform_device *pdev)
- 
- 	emc_regbase = ioremap(res->start, resource_size(res));
- 
--	/* Since default max_rate on emc clock is the same as firmware set
--	 * it to before booting, raise it up here based on known timings.
--	 */
--
--	for (i = 0; i < pdata->num_tables; i++)
--		if (pdata->tables[i].rate > max)
--			max = pdata->tables[i].rate;
-+	pdata = pdev->dev.platform_data;
- 
--	c->max_rate = max * 2 * 1000;
-+	if (!pdata)
-+		pdata = tegra_emc_dt_parse_pdata(pdev);
- 
--	list_for_each_entry(user, &c->shared_bus_list, u.shared_bus_user.node)
--		user->max_rate = c->max_rate;
-+	if (!pdata)
-+		pdata = tegra_emc_fill_pdata(pdev);
- 
-+	pdev->dev.platform_data = pdata;
- 	emc_pdev = pdev;
- 
- 	return 0;
- }
- 
-+static struct of_device_id tegra_emc_of_match[] __devinitdata = {
-+	{ .compatible = "nvidia,tegra20-emc", },
-+	{ },
-+};
-+
- static struct platform_driver tegra_emc_driver = {
- 	.driver         = {
- 		.name   = "tegra-emc",
- 		.owner  = THIS_MODULE,
-+		.of_match_table = tegra_emc_of_match,
- 	},
- 	.probe          = tegra_emc_probe,
- };
+ 	serial@70006000 {
 -- 
 1.7.8.GIT
