@@ -1,77 +1,71 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] dt/tegra: seaboard: add i2c devices
-Date: Thu, 22 Dec 2011 18:33:13 -0800
-Message-ID: <1324607593-2378-1-git-send-email-olof@lixom.net>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, device-tree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Henning Heinold <heinold@inf.fu-berlin.de>
+Subject: Re: [PATCH 4/9] arm/tegra: fuse: add functions to access chip revision
+Date: Fri, 23 Dec 2011 11:47:51 +0100
+Message-ID: <20111223104751.GA22157@rhein.zuhause.netz>
+References: <1324599468-12845-1-git-send-email-olof@lixom.net>
+ <1324599468-12845-5-git-send-email-olof@lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1324599468-12845-5-git-send-email-olof@lixom.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-tegra@vger.kernel.org, swarren@nvidia.com, linux-arm-kernel@lists.infradead.org, ccross@android.com
 List-Id: linux-tegra@vger.kernel.org
 
-Add the known i2c devices on seaboard to the i2c table.
+On Thu, Dec 22, 2011 at 04:17:43PM -0800, Olof Johansson wrote:
+> Add function to get chip revision, and print it out at boot time.
+> 
+> Restructure the fuse access to just use cached variables instead
+> of always reading the fuses, and export those variables directly
+> instead of using accessor functions.
+> 
+> Add a SKU ID table of currently known values.
+> 
+> Based on code originally by Colin Cross <ccross@android.com>.
+> 
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>  arch/arm/mach-tegra/fuse.c          |   80 +++++++++++++++++++++++------------
+>  arch/arm/mach-tegra/fuse.h          |   31 +++++++++++--
+>  arch/arm/mach-tegra/tegra2_clocks.c |    2 +-
+>  3 files changed, 80 insertions(+), 33 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+> index daf3f57..2ddede9 100644
+> --- a/arch/arm/mach-tegra/fuse.c
+> +++ b/arch/arm/mach-tegra/fuse.c
+> @@ -30,20 +30,70 @@
+>  #define FUSE_SKU_INFO		0x110
+>  #define FUSE_SPARE_BIT		0x200
+>  
+> +int tegra_sku_id;
+> +int tegra_cpu_process_id;
+> +int tegra_core_process_id;
+> +enum tegra_revision tegra_revision;
+> +
+> +static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
+> +	[TEGRA_REVISION_UNKNOWN] = "unknown",
+> +	[TEGRA_REVISION_A02]     = "A02",
+> +	[TEGRA_REVISION_A03]     = "A03",
+> +	[TEGRA_REVISION_A03p]    = "A03 prime",
+> +	[TEGRA_REVISION_A04]     = "A04",
+> +};
+> +
 
-Also rename the temperature sensor device node, and mark it as a nct1008 instead
-of an adt7461 (which it is -- the chips are compatible though).
+Hi Olof,
 
+can you please add here [TEGRA_REVISION_A01] = "A01", too. It is used in the nvidia git tree and affects the new beta xorg
+driver.
 
-Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- arch/arm/boot/dts/tegra-seaboard.dts |   29 +++++++++++++++++++++++++++--
- 1 files changed, 27 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index b55a02e..b64e0bd 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -13,6 +13,18 @@
- 
- 	i2c@7000c000 {
- 		clock-frequency = <400000>;
-+
-+		light-sensor@44 {
-+			compatible = "isil,isl29018";
-+			reg = <0x44>;
-+			interrupts = < 0 202 0x04 >; /* gpio PZ2 */
-+		};
-+
-+		gyrometer@68 {
-+			compatible = "invn,mpu3050";
-+			reg = <0x68>;
-+			interrupts = < 0 204 0x04 >; /* gpio PZ4 */
-+		};
- 	};
- 
- 	i2c@7000c400 {
-@@ -21,15 +33,28 @@
- 
- 	i2c@7000c500 {
- 		clock-frequency = <400000>;
-+
-+		smart-battery@b {
-+			compatible = "ti,bq20z75", "smart-battery-1.1";
-+			ti,i2c-retry-count = < 2 >;
-+			ti,poll-retry-count = < 10 >;
-+			reg = <0xb>;
-+		};
- 	};
- 
- 	i2c@7000d000 {
- 		clock-frequency = <400000>;
- 
--		adt7461@4c {
--			compatible = "adt7461";
-+		temperature-sensor@4c {
-+			compatible = "nct1008";
- 			reg = <0x4c>;
- 		};
-+
-+		magnetometer@c {
-+			compatible = "ak8975";
-+			reg = <0xc>;
-+			interrupts = < 0 109 0x04 >; /* gpio PN5 */
-+		};
- 	};
- 
- 	serial@70006000 {
--- 
-1.7.8.GIT
+Bye Henning
