@@ -1,71 +1,54 @@
-From: Henning Heinold <heinold@inf.fu-berlin.de>
-Subject: Re: [PATCH 4/9] arm/tegra: fuse: add functions to access chip revision
-Date: Fri, 23 Dec 2011 11:47:51 +0100
-Message-ID: <20111223104751.GA22157@rhein.zuhause.netz>
-References: <1324599468-12845-1-git-send-email-olof@lixom.net>
- <1324599468-12845-5-git-send-email-olof@lixom.net>
+From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] i2c: tegra: Add delay before reset the controller
+Date: Fri, 23 Dec 2011 16:45:05 +0530
+Message-ID: <7A0BFCFE3DA5CD47B0FB7984326F201A134F2CCC73@BGMAIL01.nvidia.com>
+References: <1324550480-26308-1-git-send-email-alokc@nvidia.com>
+ <CAOesGMire-13yiA9gVQYFWdTa6ZLJLbTW8qoRoPMRQ1ExavVUQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1324599468-12845-5-git-send-email-olof@lixom.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-tegra@vger.kernel.org, swarren@nvidia.com, linux-arm-kernel@lists.infradead.org, ccross@android.com
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMire-13yiA9gVQYFWdTa6ZLJLbTW8qoRoPMRQ1ExavVUQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org" <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 22, 2011 at 04:17:43PM -0800, Olof Johansson wrote:
-> Add function to get chip revision, and print it out at boot time.
-> 
-> Restructure the fuse access to just use cached variables instead
-> of always reading the fuses, and export those variables directly
-> instead of using accessor functions.
-> 
-> Add a SKU ID table of currently known values.
-> 
-> Based on code originally by Colin Cross <ccross@android.com>.
-> 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
->  arch/arm/mach-tegra/fuse.c          |   80 +++++++++++++++++++++++------------
->  arch/arm/mach-tegra/fuse.h          |   31 +++++++++++--
->  arch/arm/mach-tegra/tegra2_clocks.c |    2 +-
->  3 files changed, 80 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-> index daf3f57..2ddede9 100644
-> --- a/arch/arm/mach-tegra/fuse.c
-> +++ b/arch/arm/mach-tegra/fuse.c
-> @@ -30,20 +30,70 @@
->  #define FUSE_SKU_INFO		0x110
->  #define FUSE_SPARE_BIT		0x200
->  
-> +int tegra_sku_id;
-> +int tegra_cpu_process_id;
-> +int tegra_core_process_id;
-> +enum tegra_revision tegra_revision;
-> +
-> +static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
-> +	[TEGRA_REVISION_UNKNOWN] = "unknown",
-> +	[TEGRA_REVISION_A02]     = "A02",
-> +	[TEGRA_REVISION_A03]     = "A03",
-> +	[TEGRA_REVISION_A03p]    = "A03 prime",
-> +	[TEGRA_REVISION_A04]     = "A04",
-> +};
-> +
+Hi,
 
-Hi Olof,
+(Adding Laxman Dewangan)
 
-can you please add here [TEGRA_REVISION_A01] = "A01", too. It is used in the nvidia git tree and affects the new beta xorg
-driver.
+>This change causes problems systems with some models of i2c TPMs, since the first transaction to them will always time out (TPM quirk), and the delay means that the tpm will have time to go back to sleep and thus timeout >even on the retry. So you'll never make progress.
+Working on this.
 
-Bye Henning
+-Alok
+
+
+-----Original Message-----
+From: Olof Johansson [mailto:olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org] 
+Sent: Friday, December 23, 2011 2:48 AM
+To: Alok Chauhan
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; Stephen Warren; bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org; paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org
+Subject: Re: [PATCH] i2c: tegra: Add delay before reset the controller
+
+Hi,
+
+(Adding linux-tegra and Dylan Reid who was debugging this before)
+
+On Thu, Dec 22, 2011 at 2:41 AM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> In NACK error condition, I2C controller violates clock-to-data setup 
+> time before stop. In Software, because of this reset of controller is 
+> happening before I2C controller could complete STOP condition.
+>
+> Added worst case delay of 1 ms (assuming lowest clock frequency will 
+> be 1 KHZ) before reset the controller in case of NACK error.
+
+This change causes problems systems with some models of i2c TPMs, since the first transaction to them will always time out (TPM quirk), and the delay means that the tpm will have time to go back to sleep and thus timeout even on the retry. So you'll never make progress.
+
+In other words: this patch will break some systems and thus shouldn't be applied.
+
+
+-Olof
