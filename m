@@ -1,34 +1,56 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH] spi/tegra: depend instead of select TEGRA_SYSTEM_DMA
-Date: Thu, 22 Dec 2011 15:57:57 -0800
-Message-ID: <1324598277-4751-1-git-send-email-olof@lixom.net>
+Subject: [PATCH] arm/tegra: dma: fix buildbreak for !CONFIG_TEGRA_SYSTEM_DMA
+Date: Thu, 22 Dec 2011 16:03:12 -0800
+Message-ID: <1324598592-9855-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-It's unlikely that anyone ever wants to turn off SYSTEM_DMA, but just in
-case, it makes more sense to have the driver depend on it than select it.
+There's no need to keep the DMA_REQ_SEL defines inside the ifdef.
+
+Fixes the following build break with CONFIG_TEGRA_SYSTEM_DMA=n:
+
+arch/arm/mach-tegra/devices.c:645: error: 'TEGRA_DMA_REQ_SEL_I2S_1' undeclared here (not in a function)
+arch/arm/mach-tegra/devices.c:663: error: 'TEGRA_DMA_REQ_SEL_I2S2_1' undeclared here (not in a function)
+arch/arm/mach-tegra/devices.c:663: error: initializer element is not constant
+arch/arm/mach-tegra/devices.c:663: error: (near initialization for 'i2s_resource2[1].start')
+arch/arm/mach-tegra/devices.c:664: error: initializer element is not constant
+arch/arm/mach-tegra/devices.c:664: error: (near initialization for 'i2s_resource2[1].end')
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- drivers/spi/Kconfig |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ arch/arm/mach-tegra/include/mach/dma.h |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 3d292be..326f77a 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -332,8 +332,7 @@ config SPI_STMP3XXX
+diff --git a/arch/arm/mach-tegra/include/mach/dma.h b/arch/arm/mach-tegra/include/mach/dma.h
+index d0132e8..3c9339058 100644
+--- a/arch/arm/mach-tegra/include/mach/dma.h
++++ b/arch/arm/mach-tegra/include/mach/dma.h
+@@ -23,11 +23,6 @@
  
- config SPI_TEGRA
- 	tristate "Nvidia Tegra SPI controller"
--	depends on ARCH_TEGRA
--	select TEGRA_SYSTEM_DMA
-+	depends on ARCH_TEGRA && TEGRA_SYSTEM_DMA
- 	help
- 	  SPI driver for NVidia Tegra SoCs
+ #include <linux/list.h>
  
+-#if defined(CONFIG_TEGRA_SYSTEM_DMA)
+-
+-struct tegra_dma_req;
+-struct tegra_dma_channel;
+-
+ #define TEGRA_DMA_REQ_SEL_CNTR			0
+ #define TEGRA_DMA_REQ_SEL_I2S_2			1
+ #define TEGRA_DMA_REQ_SEL_I2S_1			2
+@@ -56,6 +51,11 @@ struct tegra_dma_channel;
+ #define TEGRA_DMA_REQ_SEL_OWR			25
+ #define TEGRA_DMA_REQ_SEL_INVALID		31
+ 
++#if defined(CONFIG_TEGRA_SYSTEM_DMA)
++
++struct tegra_dma_req;
++struct tegra_dma_channel;
++
+ enum tegra_dma_mode {
+ 	TEGRA_DMA_SHARED = 1,
+ 	TEGRA_DMA_MODE_CONTINOUS = 2,
 -- 
 1.7.8.GIT
