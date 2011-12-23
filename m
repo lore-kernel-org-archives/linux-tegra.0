@@ -1,7 +1,7 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH 2/9] arm/tegra: use APB DMA for accessing APB devices
-Date: Thu, 22 Dec 2011 16:17:41 -0800
-Message-ID: <1324599468-12845-3-git-send-email-olof@lixom.net>
+Subject: [PATCH 6/9] arm/tegra: emc: convert tegra2_emc to a platform driver
+Date: Thu, 22 Dec 2011 16:17:45 -0800
+Message-ID: <1324599468-12845-7-git-send-email-olof@lixom.net>
 References: <1324599468-12845-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1324599468-12845-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
@@ -10,255 +10,270 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra2 hangs if APB registers are accessed from the cpu during an
-apb dma operation. The workaround is to use apb dma to read/write the
-registers instead.
+This is the first step in making it device-tree aware and get rid of the
+in-kernel EMC tables (of which there are none in mainline, thankfully).
 
-There is a dependency loop between fuses, clocks, and APBDMA.  If dma
-is enabled, fuse reads must go through APBDMA to avoid corruption due
-to a hw bug.  APBDMA requires a clock to be enabled.  Clocks must read
-a fuse to determine allowable cpu frequencies.
-
-Separate out the fuse DMA initialization, and allow the fuse read
-and write functions to be called without using DMA before the DMA
-initialization has been completed.  Access to the fuses before APBDMA
-is initialized won't hit the hardware bug because nothing else can be
-using DMA.
-
-Original fuse registar access code from Varun Wadekar
-<vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, improved by Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-and later moved to separate driver by Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
-
-Major refactoring/cleanup by Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>.
-
-From: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
-Signed-off-by: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/Makefile |    2 +-
- arch/arm/mach-tegra/apbio.c  |  140 ++++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/apbio.h  |   39 ++++++++++++
- arch/arm/mach-tegra/dma.c    |    2 +
- 4 files changed, 182 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-tegra/apbio.c
- create mode 100644 arch/arm/mach-tegra/apbio.h
+ arch/arm/mach-tegra/tegra2_emc.c        |  110 ++++++++++++++++++++++++-------
+ arch/arm/mach-tegra/tegra2_emc.h        |   11 +--
+ include/linux/platform_data/tegra_emc.h |   34 ++++++++++
+ 3 files changed, 125 insertions(+), 30 deletions(-)
+ create mode 100644 include/linux/platform_data/tegra_emc.h
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index e120ff5..23d15fb 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -15,7 +15,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pinmux-tegra30-tables.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
- obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
--obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
-+obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o apbio.o
- obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
- obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
- obj-$(CONFIG_USB_SUPPORT)		+= usb_phy.o
-diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
-new file mode 100644
-index 0000000..7af9a4e
---- /dev/null
-+++ b/arch/arm/mach-tegra/apbio.c
-@@ -0,0 +1,140 @@
-+/*
-+ * Copyright (C) 2010 NVIDIA Corporation.
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/io.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/spinlock.h>
-+#include <linux/completion.h>
-+#include <linux/sched.h>
-+#include <linux/mutex.h>
-+
-+#include <mach/dma.h>
-+#include <mach/iomap.h>
-+
-+#include "apbio.h"
-+
-+static DEFINE_MUTEX(tegra_apb_dma_lock);
-+
-+static struct tegra_dma_channel *tegra_apb_dma;
-+static u32 *tegra_apb_bb;
-+static dma_addr_t tegra_apb_bb_phys;
-+static DECLARE_COMPLETION(tegra_apb_wait);
-+
-+bool tegra_apb_init(void)
-+{
-+	struct tegra_dma_channel *ch;
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+
-+	/* Check to see if we raced to setup */
-+	if (tegra_apb_dma)
-+		goto out;
-+
-+	ch = tegra_dma_allocate_channel(TEGRA_DMA_MODE_ONESHOT |
-+		TEGRA_DMA_SHARED);
-+
-+	if (!ch)
-+		goto out_fail;
-+
-+	tegra_apb_bb = dma_alloc_coherent(NULL, sizeof(u32),
-+		&tegra_apb_bb_phys, GFP_KERNEL);
-+	if (!tegra_apb_bb) {
-+		pr_err("%s: can not allocate bounce buffer\n", __func__);
-+		tegra_dma_free_channel(ch);
-+		goto out_fail;
-+	}
-+
-+	tegra_apb_dma = ch;
-+out:
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return true;
-+
-+out_fail:
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return true;
-+}
-+
-+static void apb_dma_complete(struct tegra_dma_req *req)
-+{
-+	complete(&tegra_apb_wait);
-+}
-+
-+u32 tegra_apb_readl(unsigned long offset)
-+{
-+	struct tegra_dma_req req;
-+	int ret;
-+
-+	if (!tegra_apb_dma && !tegra_apb_init())
-+		return readl(IO_TO_VIRT(offset));
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+	req.complete = apb_dma_complete;
-+	req.to_memory = 1;
-+	req.dest_addr = tegra_apb_bb_phys;
-+	req.dest_bus_width = 32;
-+	req.dest_wrap = 1;
-+	req.source_addr = offset;
-+	req.source_bus_width = 32;
-+	req.source_wrap = 4;
-+	req.req_sel = 0;
-+	req.size = 4;
-+
-+	INIT_COMPLETION(tegra_apb_wait);
-+
-+	tegra_dma_enqueue_req(tegra_apb_dma, &req);
-+
-+	ret = wait_for_completion_timeout(&tegra_apb_wait,
-+		msecs_to_jiffies(50));
-+
-+	if (WARN(ret == 0, "apb read dma timed out"))
-+		*(u32 *)tegra_apb_bb = 0;
-+
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return *((u32 *)tegra_apb_bb);
-+}
-+
-+void tegra_apb_writel(u32 value, unsigned long offset)
-+{
-+	struct tegra_dma_req req;
-+	int ret;
-+
-+	if (!tegra_apb_dma && !tegra_apb_init()) {
-+		writel(value, IO_TO_VIRT(offset));
-+		return;
-+	}
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+	*((u32 *)tegra_apb_bb) = value;
-+	req.complete = apb_dma_complete;
-+	req.to_memory = 0;
-+	req.dest_addr = offset;
-+	req.dest_wrap = 4;
-+	req.dest_bus_width = 32;
-+	req.source_addr = tegra_apb_bb_phys;
-+	req.source_bus_width = 32;
-+	req.source_wrap = 1;
-+	req.req_sel = 0;
-+	req.size = 4;
-+
-+	INIT_COMPLETION(tegra_apb_wait);
-+
-+	tegra_dma_enqueue_req(tegra_apb_dma, &req);
-+
-+	ret = wait_for_completion_timeout(&tegra_apb_wait,
-+		msecs_to_jiffies(50));
-+
-+	mutex_unlock(&tegra_apb_dma_lock);
-+}
-diff --git a/arch/arm/mach-tegra/apbio.h b/arch/arm/mach-tegra/apbio.h
-new file mode 100644
-index 0000000..8b49e8c
---- /dev/null
-+++ b/arch/arm/mach-tegra/apbio.h
-@@ -0,0 +1,39 @@
-+/*
-+ * Copyright (C) 2010 NVIDIA Corporation.
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#ifndef __MACH_TEGRA_APBIO_H
-+#define __MACH_TEGRA_APBIO_H
-+
-+#ifdef CONFIG_TEGRA_SYSTEM_DMA
-+
-+u32 tegra_apb_readl(unsigned long offset);
-+void tegra_apb_writel(u32 value, unsigned long offset);
-+
-+#else
-+#include <asm/io.h>
-+#include <mach/io.h>
-+
-+static inline u32 tegra_apb_readl(unsigned long offset)
-+{
-+        return readl(IO_TO_VIRT(offset));
-+}
-+
-+static inline void tegra_apb_writel(u32 value, unsigned long offset)
-+{
-+        writel(value, IO_TO_VIRT(offset));
-+}
-+#endif
-+
-+#endif
-diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-index 98b33c8..122e467 100644
---- a/arch/arm/mach-tegra/dma.c
-+++ b/arch/arm/mach-tegra/dma.c
-@@ -33,6 +33,8 @@
+diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
+index 0f7ae6e..9ef61e8 100644
+--- a/arch/arm/mach-tegra/tegra2_emc.c
++++ b/arch/arm/mach-tegra/tegra2_emc.c
+@@ -20,6 +20,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/platform_data/tegra_emc.h>
+ 
  #include <mach/iomap.h>
- #include <mach/suspend.h>
  
-+#include "apbio.h"
+@@ -32,18 +34,17 @@ static bool emc_enable;
+ #endif
+ module_param(emc_enable, bool, 0644);
+ 
+-static void __iomem *emc = IO_ADDRESS(TEGRA_EMC_BASE);
+-static const struct tegra_emc_table *tegra_emc_table;
+-static int tegra_emc_table_size;
++static struct platform_device *emc_pdev;
++static void __iomem *emc_regbase;
+ 
+ static inline void emc_writel(u32 val, unsigned long addr)
+ {
+-	writel(val, emc + addr);
++	writel(val, emc_regbase + addr);
+ }
+ 
+ static inline u32 emc_readl(unsigned long addr)
+ {
+-	return readl(emc + addr);
++	return readl(emc_regbase + addr);
+ }
+ 
+ static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
+@@ -98,15 +99,15 @@ static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
+ /* Select the closest EMC rate that is higher than the requested rate */
+ long tegra_emc_round_rate(unsigned long rate)
+ {
++	struct tegra_emc_pdata *pdata;
+ 	int i;
+ 	int best = -1;
+ 	unsigned long distance = ULONG_MAX;
+ 
+-	if (!tegra_emc_table)
++	if (!emc_pdev)
+ 		return -EINVAL;
+ 
+-	if (!emc_enable)
+-		return -EINVAL;
++	pdata = emc_pdev->dev.platform_data;
+ 
+ 	pr_debug("%s: %lu\n", __func__, rate);
+ 
+@@ -116,10 +117,10 @@ long tegra_emc_round_rate(unsigned long rate)
+ 	 */
+ 	rate = rate / 2 / 1000;
+ 
+-	for (i = 0; i < tegra_emc_table_size; i++) {
+-		if (tegra_emc_table[i].rate >= rate &&
+-		    (tegra_emc_table[i].rate - rate) < distance) {
+-			distance = tegra_emc_table[i].rate - rate;
++	for (i = 0; i < pdata->num_tables; i++) {
++		if (pdata->tables[i].rate >= rate &&
++		    (pdata->tables[i].rate - rate) < distance) {
++			distance = pdata->tables[i].rate - rate;
+ 			best = i;
+ 		}
+ 	}
+@@ -127,9 +128,9 @@ long tegra_emc_round_rate(unsigned long rate)
+ 	if (best < 0)
+ 		return -EINVAL;
+ 
+-	pr_debug("%s: using %lu\n", __func__, tegra_emc_table[best].rate);
++	pr_debug("%s: using %lu\n", __func__, pdata->tables[best].rate);
+ 
+-	return tegra_emc_table[best].rate * 2 * 1000;
++	return pdata->tables[best].rate * 2 * 1000;
+ }
+ 
+ /*
+@@ -142,37 +143,100 @@ long tegra_emc_round_rate(unsigned long rate)
+  */
+ int tegra_emc_set_rate(unsigned long rate)
+ {
++	struct tegra_emc_pdata *pdata;
+ 	int i;
+ 	int j;
+ 
+-	if (!tegra_emc_table)
++	if (!emc_pdev)
+ 		return -EINVAL;
+ 
++	pdata = emc_pdev->dev.platform_data;
 +
- #define APB_DMA_GEN				0x000
- #define GEN_ENABLE				(1<<31)
+ 	/*
+ 	 * The EMC clock rate is twice the bus rate, and the bus rate is
+ 	 * measured in kHz
+ 	 */
+ 	rate = rate / 2 / 1000;
  
+-	for (i = 0; i < tegra_emc_table_size; i++)
+-		if (tegra_emc_table[i].rate == rate)
++	for (i = 0; i < pdata->num_tables; i++)
++		if (pdata->tables[i].rate == rate)
+ 			break;
+ 
+-	if (i >= tegra_emc_table_size)
++	if (i >= pdata->num_tables)
+ 		return -EINVAL;
+ 
+ 	pr_debug("%s: setting to %lu\n", __func__, rate);
+ 
+ 	for (j = 0; j < TEGRA_EMC_NUM_REGS; j++)
+-		emc_writel(tegra_emc_table[i].regs[j], emc_reg_addr[j]);
++		emc_writel(pdata->tables[i].regs[j], emc_reg_addr[j]);
+ 
+-	emc_readl(tegra_emc_table[i].regs[TEGRA_EMC_NUM_REGS - 1]);
++	emc_readl(pdata->tables[i].regs[TEGRA_EMC_NUM_REGS - 1]);
+ 
+ 	return 0;
+ }
+ 
+-void tegra_init_emc(const struct tegra_emc_table *table, int table_size)
++static int __devinit tegra_emc_probe(struct platform_device *pdev)
++{
++	struct tegra_emc_pdata *pdata;
++	struct clk *c = clk_get_sys("emc", NULL);
++	struct clk *user;
++	struct resource *res;
++	unsigned long max = 0;
++	int i;
++
++	if (!emc_enable) {
++		dev_err(&pdev->dev, "disabled per module parameter\n");
++		return -ENODEV;
++	}
++
++	pdata = pdev->dev.platform_data;
++
++	if (!pdata) {
++		dev_err(&pdev->dev, "missing platform data\n");
++		return -ENXIO;
++	}
++
++        res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++        if (!res) {
++		dev_err(&pdev->dev, "missing register base\n");
++                return -ENOMEM;
++        }
++
++	if (!request_mem_region(res->start, resource_size(res), "tegra_emc")) {
++		dev_err(&pdev->dev, "failed to request register region\n");
++		return -EBUSY;
++	}
++
++	emc_regbase = ioremap(res->start, resource_size(res));
++
++	/* Since default max_rate on emc clock is the same as firmware set
++	 * it to before booting, raise it up here based on known timings.
++	 */
++
++	for (i = 0; i < pdata->num_tables; i++)
++		if (pdata->tables[i].rate > max)
++			max = pdata->tables[i].rate;
++
++	c->max_rate = max * 2 * 1000;
++
++	list_for_each_entry(user, &c->shared_bus_list, u.shared_bus_user.node)
++		user->max_rate = c->max_rate;
++
++	emc_pdev = pdev;
++
++	return 0;
++}
++
++static struct platform_driver tegra_emc_driver = {
++	.driver         = {
++		.name   = "tegra-emc",
++		.owner  = THIS_MODULE,
++	},
++	.probe          = tegra_emc_probe,
++};
++
++static int __init tegra_emc_init(void)
+ {
+-	tegra_emc_table = table;
+-	tegra_emc_table_size = table_size;
++	return platform_driver_register(&tegra_emc_driver);
+ }
++device_initcall(tegra_emc_init);
+diff --git a/arch/arm/mach-tegra/tegra2_emc.h b/arch/arm/mach-tegra/tegra2_emc.h
+index 19f08cb..f61409b 100644
+--- a/arch/arm/mach-tegra/tegra2_emc.h
++++ b/arch/arm/mach-tegra/tegra2_emc.h
+@@ -15,13 +15,10 @@
+  *
+  */
+ 
+-#define TEGRA_EMC_NUM_REGS 46
+-
+-struct tegra_emc_table {
+-	unsigned long rate;
+-	u32 regs[TEGRA_EMC_NUM_REGS];
+-};
++#ifndef __MACH_TEGRA_TEGRA2_EMC_H_
++#define __MACH_TEGRA_TEGRA2_EMC_H
+ 
+ int tegra_emc_set_rate(unsigned long rate);
+ long tegra_emc_round_rate(unsigned long rate);
+-void tegra_init_emc(const struct tegra_emc_table *table, int table_size);
++
++#endif
+diff --git a/include/linux/platform_data/tegra_emc.h b/include/linux/platform_data/tegra_emc.h
+new file mode 100644
+index 0000000..df67505
+--- /dev/null
++++ b/include/linux/platform_data/tegra_emc.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2011 Google, Inc.
++ *
++ * Author:
++ *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
++ *	Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#ifndef __TEGRA_EMC_H_
++#define __TEGRA_EMC_H_
++
++#define TEGRA_EMC_NUM_REGS 46
++
++struct tegra_emc_table {
++	unsigned long rate;
++	u32 regs[TEGRA_EMC_NUM_REGS];
++};
++
++struct tegra_emc_pdata {
++	int num_tables;
++	struct tegra_emc_table *tables;
++};
++
++#endif
 -- 
 1.7.8.GIT
