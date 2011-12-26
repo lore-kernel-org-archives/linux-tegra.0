@@ -1,59 +1,48 @@
-From: Sergei Shtylyov <sshtylyov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
-Subject: Re: [PATCH] arm/tegra: Support Tegra30 in decompressor UART setup
-Date: Mon, 26 Dec 2011 14:51:27 +0400
-Message-ID: <4EF851AF.60203@ru.mvista.com>
-References: <1324587719-32731-1-git-send-email-swarren@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324587719-32731-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Mon, 26 Dec 2011 16:44:41 +0530
+Message-ID: <1324898081-10308-1-git-send-email-alokc@nvidia.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org, dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 23-12-2011 1:01, Stephen Warren wrote:
+In NACK error condition, I2C controller violates
+clock-to-data setup time before stop. In Software,
+because of this reset of controller is happening
+before I2C controller could complete STOP condition.
 
-> On Tegra20, the UART clock runs at 216MHz, whereas on Tegra30 it runs at
-> 408MHz. Modify arch_decomp_setup() to detect Tegra20-vs-Tegra30 at run-
-> time, and program the correct divisor.
+Added delay of 2 clock period before reset the
+controller in case of NACK error.
 
-> This makes uncompressor messages work correctly on Tegra30. This also
-> fixes early printk, assuming zImage is used and this setup code runs.
+Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Instead of setting constant value for delay as was in previous patch, now in
+the current modification delay will be calculated based on clock frequency of the bus.
+ drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   arch/arm/mach-tegra/include/mach/uncompress.h |   20 ++++++++++++++++++--
->   1 files changed, 18 insertions(+), 2 deletions(-)
-
-> diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-> index 4e83237..61d6e08 100644
-> --- a/arch/arm/mach-tegra/include/mach/uncompress.h
-> +++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-[...]
-> @@ -45,15 +47,29 @@ static inline void flush(void)
->
->   static inline void arch_decomp_setup(void)
->   {
-> +	u8 *distctr = (u8 *)(TEGRA_ARM_INT_DIST_BASE +
-> +			     GIC_DIST_CTR);
-> +	u32 ctlrs, div;
->   	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
->   	int shift = 2;
->
->   	if (uart == NULL)
->   		return;
->
-> +	/*
-> +	 * Tegra20 has 4 interrupt controllers
-> +	 * Tegra30 has 5 interrupt controllers
-> +	 * Future SoCs may need additional means of identification
-> +	 */
-> +	ctlrs = (*distctr) & 0x1f;
-
-    () not necessary.
-
-WBR, Sergei
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 6381604..62e197c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
++	/*
++	 * In NACK error condition resetting of I2C controller happens
++	 * before STOP condition is properly completed by I2C controller,
++	 * so wait for 2 clock cycle to complete STOP condition.
++	 */
++	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
++		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+-- 
+1.7.4.1
