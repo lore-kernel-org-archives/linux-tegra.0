@@ -1,15 +1,14 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] Input: tegra-kbc - add device tree bindings
-Date: Tue, 27 Dec 2011 23:10:37 -0800
-Message-ID: <CAOesGMg7dC8RRST7z1E3-dFD_Cr3fTwqhEP8V1NnXEiHFZvnGg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] Input: tegra-kbc - add default chromeos map
+Date: Tue, 27 Dec 2011 23:33:13 -0800
+Message-ID: <CAOesGMheQqYjpDRaf6TTce2YEcD4hkTzS2JTdoCe3ue6+dBhDQ@mail.gmail.com>
 References: <1325053170-6984-1-git-send-email-olof@lixom.net>
-	<1325053170-6984-2-git-send-email-olof@lixom.net>
-	<20111228064832.GA29273@core.coreip.homeip.net>
+	<1325053170-6984-3-git-send-email-olof@lixom.net>
+	<20111228065013.GB29273@core.coreip.homeip.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111228064832.GA29273-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
+In-Reply-To: <20111228065013.GB29273-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
@@ -17,43 +16,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi,
 
-On Tue, Dec 27, 2011 at 10:48 PM, Dmitry Torokhov
+On Tue, Dec 27, 2011 at 10:50 PM, Dmitry Torokhov
 <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Olof,
->
-> On Tue, Dec 27, 2011 at 10:19:29PM -0800, Olof Johansson wrote:
->> This adds a simple device tree binding to the tegra keyboard control=
-ler.
+> On Tue, Dec 27, 2011 at 10:19:30PM -0800, Olof Johansson wrote:
+>> This adds a simple way to specify the ChromeOS-specific keyboard map
+>> instead of the "standard" map that is used on other Tegra devices such
+>> as Harmony-with-keyboard and Seaboard.
 >>
->> Also, mark the default keymap as __devinitdata since it is not refer=
-enced
->> after boot, and shorten the name to not have to avoid line wraps.
+>> I expect the number of different keyboard layouts to be quite limited,
+>> and not many should be added over time. So instead of encoding the layout
+>> in the device tree, with all the can of worms that entails w.r.t. agreeing
+>> on a suitable binding, just add a property to specify that this is the
+>> map to be used, and include it in the driver.
+>>
+>> If, over time, the number of mappings increase, the binding can be
+>> updated to include a custom map as a new property, without having to
+>> worry about backwards compatibility on existing devices.
+>>
 >
-> No, let's keep the names prefixed to match the rest of the driver(s).
+> I'd rather we did not make shortcuts and did the proper DT binding.
+> Samsung folks want the similar thing so making a generic DT keymap
+> parser and using it in the driver would be the best way.
 
-Sure, if you prefer.
+Ok, fair point. I found the last posted version of the samsung driver
+in my archives so I'll continue the discussion there (see separate
+followup there).
 
->> +
->> + =A0 =A0 pdata =3D devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KER=
-NEL);
->
-> Error handling is missing. I also dislike devm_* facilities as it cau=
-ses
-> inconsistencies in the way we handle releasing of resources: some of
-> them will be released automatically while others need t be released
-> manually. I prefer having consistent model.
+> Another option is to simply loading proper keymap by the early
+> userspace.
 
-I disagree -- I think the devm allocators are an excellent invention
-instead of open-coding the error handling, which tends to be error
-prone and just adds special cases just like you explained below.
-
-But, it's your subsystem and with that being said...
-
-> Does the patch below still work for you?
-
-=2E.. sure, if you're happy I'm happy -- it gets the work done, couldn'=
-t
-ask for more. No need to argue the details further. :)
+I would prefer to do it in hardware, mostly because I don't want to
+have to add the keymaps to all possible distros I'd be interested in
+running on this hardware. :)
 
 
 -Olof
