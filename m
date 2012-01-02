@@ -1,49 +1,50 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V1] regulator: Enable supply regulator if child rail is enabled.
-Date: Mon,  2 Jan 2012 13:08:45 +0530
-Message-ID: <1325489925-5148-1-git-send-email-ldewangan@nvidia.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] Input: tegra-kbc - add device tree bindings
+Date: Mon, 2 Jan 2012 01:16:13 -0700
+Message-ID: <20120102081613.GA18381@ponder.secretlab.ca>
+References: <1325053170-6984-1-git-send-email-olof@lixom.net>
+ <1325053170-6984-2-git-send-email-olof@lixom.net>
+ <20111228064832.GA29273@core.coreip.homeip.net>
+ <74CDBE0F657A3D45AFBB94109FB122FF17755DC8CE@HQMAIL01.nvidia.com>
+ <20111229092308.GA3397@core.coreip.homeip.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20111229092308.GA3397-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-During regulator_register, the rail is set on the provided
-machine constraints and if it is enabled then it is also
-require to enable the supply regulator. This will make sure
-that:
-   1. Proper reference count for supply regulator to be maintain.
-   2. Supply regulator should be enable when given rail is enabled.
+On Thu, Dec 29, 2011 at 01:23:08AM -0800, Dmitry Torokhov wrote:
+> On Wed, Dec 28, 2011 at 10:00:06PM -0800, Stephen Warren wrote:
+> > Dmitry Torokhov wrote at Tuesday, December 27, 2011 11:49 PM:
+> > > On Tue, Dec 27, 2011 at 10:19:29PM -0800, Olof Johansson wrote:
+> > > > This adds a simple device tree binding to the tegra keyboard controller.
+> > ...
+> > > > +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> > > 
+> > > Error handling is missing. I also dislike devm_* facilities as it causes
+> > > inconsistencies in the way we handle releasing of resources: some of
+> > > them will be released automatically while others need t be released
+> > > manually. I prefer having consistent model.
+> > 
+> > I have to say that I also disagree here. Weren't the devm_* function
+> > specifically added to allow people not to write all the error-handling
+> > code themselves.
+> 
+> I guess they were. Unfortunately they also introduce inconsistency in
+> the way resources are tracked and freed since some of them support
+> devm_* facilities while others don't. I might be OK with drivers that
+> use one model for all resources but this patch was mixing the two.
+> 
+> devm_* facilities are also not free; you are saving on error handling
+> code but pay with memory footprint required to implement tracking.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-When given rail is registered and if it has machine constratins to
-enable the rail then it is also require to enable the supply rail for
-a given rail. This will make sure that given rail is enabled and
-proper reference count is maintained for the supply rail to avoid
-disable of supply rail even child rail is enabled.
+FWIW, I agree with Olof and Stephen.  The devm_* functions are a good thing
+and I strongly encourage driver authors to use them.  The cost in memory
+footprint is pretty negligible, but making it easier for driver authors to
+get things right is huge.
 
- drivers/regulator/core.c |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index dbdebed..6e7a4f1 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2801,6 +2801,14 @@ struct regulator_dev *regulator_register(struct regulator_desc *regulator_desc,
- 		ret = set_supply(rdev, r);
- 		if (ret < 0)
- 			goto scrub;
-+
-+		/* Enable supply if rail is enabled */
-+		if (rdev->desc->ops->is_enabled &&
-+				rdev->desc->ops->is_enabled(rdev)) {
-+			ret = regulator_enable(rdev->supply);
-+			if (ret < 0)
-+				goto scrub;
-+		}
- 	}
- 
- 	/* add consumers devices */
--- 
-1.7.1.1
+g.
