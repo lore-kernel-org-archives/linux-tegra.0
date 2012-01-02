@@ -1,44 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 REPOST 1/5] ARM: l2x0/pl310: Refactor Kconfig to be
- more maintainable
-Date: Sun, 1 Jan 2012 14:44:51 +0100
-Message-ID: <CACRpkdaZ8fph0tgQMceVKzSNo9gbsaRFrz9c2TKYqYZgtbgdbw@mail.gmail.com>
-References: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
- <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] Input: keyboard - add device tree bindings for simple key matrixes
+Date: Mon, 2 Jan 2012 09:41:19 +0530
+Message-ID: <CAJuYYwQSgM+zevsSZ71LTYnScLq+q=D7KO3uD5A1O_gOnDAQ=A@mail.gmail.com>
+References: <1325112771-31941-1-git-send-email-olof@lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF17755DC8D2@HQMAIL01.nvidia.com>
+	<CAOesGMiNuW3mexN_8PtunZkaVX4Uph-OgZFr5zLhaB1nih_EEw@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17755DC8DB@HQMAIL01.nvidia.com>
+	<CAOesGMjZoP+FsGWo9cWKvgs8KD9tT6KBHbK5qKX8NTGOY3HUjQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dave Martin <dave.martin@linaro.org>
-Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Barry Song <baohua.song@csr.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Anton Vorontsov <cbouatmailru@gmail.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.com>, Colin Cross <ccross@google.com>B
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <CAOesGMjZoP+FsGWo9cWKvgs8KD9tT6KBHbK5qKX8NTGOY3HUjQ@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Warren <swarren@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <rob.herring@calxeda.com>, "Simon Glass (sjg@chromium.org)" <sjg@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Rakesh Iyer <riyer@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 16, 2011 at 5:35 PM, Dave Martin <dave.martin@linaro.org> wrote:
+Hi Olof,
 
-> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
-> is bothersome to maintain and likely to lead to merge conflicts.
-(...)
+On 29 December 2011 12:36, Olof Johansson <olof@lixom.net> wrote:
+[...]
+
+>> Can we deprecate the Samsung format, and only allow it for that Samsung
+>> device (and allow both there), and require a single format for any other
+>> keyboard?
 >
-> Signed-off-by: Dave Martin <dave.martin@linaro.org>
-> Acked-by: Anton Vorontsov <cbouatmailru@gmail.com>
-> =A0 =A0 =A0 =A0(for cns3xxx)
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> =A0 =A0 =A0 =A0(for omap)
-> Acked-by: Shawn Guo <shawn.guo@linaro.org>
-> =A0 =A0 =A0 =A0(for imx)
+> I'm definitely ok with that. Thomas, Grant, Rob? The code in question
+> is queued for 3.3, so it hasn't been out in a real release yet.
+>
+> Adding Kukjin as well since it's getting merged through his tree.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-(for ux500)
+I am okay with switching to the new keyboard binding. I will modify
+the Samsung keyboard device tree support and prepare a patch.
 
-Yours,
-Linus Walleij
+Thanks,
+Thomas.
