@@ -1,164 +1,46 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 7/9] arm/tegra: emc: device tree bindings
-Date: Mon, 2 Jan 2012 02:00:36 -0700
-Message-ID: <20120102090036.GM18381@ponder.secretlab.ca>
-References: <1324599468-12845-1-git-send-email-olof@lixom.net>
- <1324599468-12845-8-git-send-email-olof@lixom.net>
+Subject: Re: [PATCH] spi/tegra: depend instead of select TEGRA_SYSTEM_DMA
+Date: Mon, 2 Jan 2012 02:01:47 -0700
+Message-ID: <20120102090147.GN18381@ponder.secretlab.ca>
+References: <1324598277-4751-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1324599468-12845-8-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1324598277-4751-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 22, 2011 at 04:17:46PM -0800, Olof Johansson wrote:
-> Device tree bindings for the EMC tables on tegra.
+On Thu, Dec 22, 2011 at 03:57:57PM -0800, Olof Johansson wrote:
+> It's unlikely that anyone ever wants to turn off SYSTEM_DMA, but just in
+> case, it makes more sense to have the driver depend on it than select it.
 > 
 > Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-Okay by me.
+Applied, thanks
 
-Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+g.
 
 > ---
->  .../devicetree/bindings/arm/tegra/emc.txt          |  100 ++++++++++++++++++++
->  arch/arm/boot/dts/tegra20.dtsi                     |    7 ++
->  2 files changed, 107 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/emc.txt
+>  drivers/spi/Kconfig |    3 +--
+>  1 files changed, 1 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt b/Documentation/devicetree/bindings/arm/tegra/emc.txt
-> new file mode 100644
-> index 0000000..09335f8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/tegra/emc.txt
-> @@ -0,0 +1,100 @@
-> +Embedded Memory Controller
-> +
-> +Properties:
-> +- name : Should be emc
-> +- #address-cells : Should be 1
-> +- #size-cells : Should be 0
-> +- compatible : Should contain "nvidia,tegra20-emc".
-> +- reg : Offset and length of the register set for the device
-> +- nvidia,use-ram-code : If present, the sub-nodes will be addressed
-> +  and chosen using the ramcode board selector. If omitted, only one
-> +  set of tables can be present and said tables will be used
-> +  irrespective of ram-code configuration.
-> +
-> +Child device nodes describe the memory settings for different configurations and clock rates.
-> +
-> +Example:
-> +
-> +	emc@7000f400 {
-> +		#address-cells = < 1 >;
-> +		#size-cells = < 0 >;
-> +		compatible = "nvidia,tegra20-emc";
-> +		reg = <0x7000f4000 0x200>;
-> +	}
-> +
-> +
-> +Embedded Memory Controller ram-code table
-> +
-> +If the emc node has the nvidia,use-ram-code property present, then the
-> +next level of nodes below the emc table are used to specify which settings
-> +apply for which ram-code settings.
-> +
-> +If the emc node lacks the nvidia,use-ram-code property, this level is omitted
-> +and the tables are stored directly under the emc node (see below).
-> +
-> +Properties:
-> +
-> +- name : Should be emc-tables
-> +- nvidia,ram-code : the binary representation of the ram-code board strappings
-> +  for which this node (and children) are valid.
-> +
-> +
-> +
-> +Embedded Memory Controller configuration table
-> +
-> +This is a table containing the EMC register settings for the various
-> +operating speeds of the memory controller. They are always located as
-> +subnodes of the emc controller node.
-> +
-> +There are two ways of specifying which tables to use:
-> +
-> +* The simplest is if there is just one set of tables in the device tree,
-> +  and they will always be used (based on which frequency is used).
-> +  This is the preferred method, especially when firmware can fill in
-> +  this information based on the specific system information and just
-> +  pass it on to the kernel.
-> +
-> +* The slightly more complex one is when more than one memory configuration
-> +  might exist on the system.  The Tegra20 platform handles this during
-> +  early boot by selecting one out of possible 4 memory settings based
-> +  on a 2-pin "ram code" bootstrap setting on the board. The values of
-> +  these strappings can be read through a register in the SoC, and thus
-> +  used to select which tables to use.
-> +
-> +Properties:
-> +- name : Should be emc-table
-> +- compatible : Should contain "nvidia,tegra20-emc-table".
-> +- reg : either an opaque enumerator to tell different tables apart, or
-> +  the valid frequency for which the table should be used (in kHz).
-> +- clock-frequency : the clock frequency for the EMC at which this
-> +  table should be used (in kHz).
-> +- nvidia,emc-registers : a 46 word array of EMC registers to be programmed
-> +  for operation at the 'clock-frequency' setting.
-> +  The order and contents of the registers are:
-> +    RC, RFC, RAS, RP, R2W, W2R, R2P, W2P, RD_RCD, WR_RCD, RRD, REXT,
-> +    WDV, QUSE, QRST, QSAFE, RDV, REFRESH, BURST_REFRESH_NUM, PDEX2WR,
-> +    PDEX2RD, PCHG2PDEN, ACT2PDEN, AR2PDEN, RW2PDEN, TXSR, TCKE, TFAW,
-> +    TRPAB, TCLKSTABLE, TCLKSTOP, TREFBW, QUSE_EXTRA, FBIO_CFG6, ODT_WRITE,
-> +    ODT_READ, FBIO_CFG5, CFG_DIG_DLL, DLL_XFORM_DQS, DLL_XFORM_QUSE,
-> +    ZCAL_REF_CNT, ZCAL_WAIT_CNT, AUTO_CAL_INTERVAL, CFG_CLKTRIM_0,
-> +    CFG_CLKTRIM_1, CFG_CLKTRIM_2
-> +
-> +		emc-table@166000 {
-> +			reg = <166000>;
-> +			compatible = "nvidia,tegra20-emc-table";
-> +			clock-frequency = < 166000 >;
-> +			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 >;
-> +		};
-> +
-> +		emc-table@333000 {
-> +			reg = <333000>;
-> +			compatible = "nvidia,tegra20-emc-table";
-> +			clock-frequency = < 333000 >;
-> +			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-> +						 0 0 0 0 >;
-> +		};
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 3da7afd..c162241 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -120,6 +120,13 @@
->  		interrupts = < 0 91 0x04 >;
->  	};
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 3d292be..326f77a 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -332,8 +332,7 @@ config SPI_STMP3XXX
 >  
-> +	emc@7000f400 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "nvidia,tegra20-emc";
-> +		reg = <0x7000f400 0x200>;
-> +	};
-> +
->  	sdhci@c8000000 {
->  		compatible = "nvidia,tegra20-sdhci";
->  		reg = <0xc8000000 0x200>;
+>  config SPI_TEGRA
+>  	tristate "Nvidia Tegra SPI controller"
+> -	depends on ARCH_TEGRA
+> -	select TEGRA_SYSTEM_DMA
+> +	depends on ARCH_TEGRA && TEGRA_SYSTEM_DMA
+>  	help
+>  	  SPI driver for NVidia Tegra SoCs
+>  
 > -- 
 > 1.7.8.GIT
 > 
-> _______________________________________________
-> devicetree-discuss mailing list
-> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> https://lists.ozlabs.org/listinfo/devicetree-discuss
