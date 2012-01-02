@@ -1,46 +1,35 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] spi/tegra: depend instead of select TEGRA_SYSTEM_DMA
-Date: Mon, 2 Jan 2012 02:01:47 -0700
-Message-ID: <20120102090147.GN18381@ponder.secretlab.ca>
-References: <1324598277-4751-1-git-send-email-olof@lixom.net>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V1] regulator: Enable supply regulator if child rail is
+ enabled.
+Date: Mon, 2 Jan 2012 11:36:23 +0000
+Message-ID: <20120102113623.GC2899@opensource.wolfsonmicro.com>
+References: <1325489925-5148-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1324598277-4751-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1325489925-5148-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: lrg-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 22, 2011 at 03:57:57PM -0800, Olof Johansson wrote:
-> It's unlikely that anyone ever wants to turn off SYSTEM_DMA, but just in
-> case, it makes more sense to have the driver depend on it than select it.
+On Mon, Jan 02, 2012 at 01:08:45PM +0530, Laxman Dewangan wrote:
+> During regulator_register, the rail is set on the provided
+> machine constraints and if it is enabled then it is also
+> require to enable the supply regulator. This will make sure
+> that:
+>    1. Proper reference count for supply regulator to be maintain.
+>    2. Supply regulator should be enable when given rail is enabled.
 > 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied, thanks
+Applied, thanks.
 
-g.
+> When given rail is registered and if it has machine constratins to
+> enable the rail then it is also require to enable the supply rail for
+> a given rail. This will make sure that given rail is enabled and
+> proper reference count is maintained for the supply rail to avoid
+> disable of supply rail even child rail is enabled.
 
-> ---
->  drivers/spi/Kconfig |    3 +--
->  1 files changed, 1 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 3d292be..326f77a 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -332,8 +332,7 @@ config SPI_STMP3XXX
->  
->  config SPI_TEGRA
->  	tristate "Nvidia Tegra SPI controller"
-> -	depends on ARCH_TEGRA
-> -	select TEGRA_SYSTEM_DMA
-> +	depends on ARCH_TEGRA && TEGRA_SYSTEM_DMA
->  	help
->  	  SPI driver for NVidia Tegra SoCs
->  
-> -- 
-> 1.7.8.GIT
-> 
+Why is this not in the changelog?
