@@ -1,45 +1,49 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] Input: keyboard - add device tree bindings for simple
- key matrixes
-Date: Mon, 2 Jan 2012 00:21:21 -0700
-Message-ID: <20120102072121.GB13015@ponder.secretlab.ca>
-References: <1325112771-31941-1-git-send-email-olof@lixom.net>
- <74CDBE0F657A3D45AFBB94109FB122FF17755DC8D2@HQMAIL01.nvidia.com>
- <CAOesGMiNuW3mexN_8PtunZkaVX4Uph-OgZFr5zLhaB1nih_EEw@mail.gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF17755DC8DB@HQMAIL01.nvidia.com>
- <CAOesGMjZoP+FsGWo9cWKvgs8KD9tT6KBHbK5qKX8NTGOY3HUjQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1] regulator: Enable supply regulator if child rail is enabled.
+Date: Mon,  2 Jan 2012 13:08:45 +0530
+Message-ID: <1325489925-5148-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjZoP+FsGWo9cWKvgs8KD9tT6KBHbK5qKX8NTGOY3HUjQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Simon Glass (sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org)" <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 28, 2011 at 11:06:02PM -0800, Olof Johansson wrote:
-> On Wed, Dec 28, 2011 at 11:01 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Can we deprecate the Samsung format, and only allow it for that Samsung
-> > device (and allow both there), and require a single format for any other
-> > keyboard?
-> 
-> I'm definitely ok with that. Thomas, Grant, Rob? The code in question
-> is queued for 3.3, so it hasn't been out in a real release yet.
-> 
-> Adding Kukjin as well since it's getting merged through his tree.
+During regulator_register, the rail is set on the provided
+machine constraints and if it is enabled then it is also
+require to enable the supply regulator. This will make sure
+that:
+   1. Proper reference count for supply regulator to be maintain.
+   2. Supply regulator should be enable when given rail is enabled.
 
-Yeah, I'm okay with that.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+When given rail is registered and if it has machine constratins to
+enable the rail then it is also require to enable the supply rail for
+a given rail. This will make sure that given rail is enabled and
+proper reference count is maintained for the supply rail to avoid
+disable of supply rail even child rail is enabled.
 
-BTW, please drop the "compatible" value for this binding.  This binding
-describes a common way of describing key mappings, but it isn't a complete
-device binding in and of itself.  Rather, it is a binding used by other
-bindings; and as such no driver should ever bind against it directly.  The
-samsung driver can continue to use the other format if it so desires; there
-is no harm in it doing so.
+ drivers/regulator/core.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-Instead, a driver that expects the binding can just call the
-matrix_keyboard_of_fill_keymap() library function without checking
-the compatible list.
-
-g.
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index dbdebed..6e7a4f1 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2801,6 +2801,14 @@ struct regulator_dev *regulator_register(struct regulator_desc *regulator_desc,
+ 		ret = set_supply(rdev, r);
+ 		if (ret < 0)
+ 			goto scrub;
++
++		/* Enable supply if rail is enabled */
++		if (rdev->desc->ops->is_enabled &&
++				rdev->desc->ops->is_enabled(rdev)) {
++			ret = regulator_enable(rdev->supply);
++			if (ret < 0)
++				goto scrub;
++		}
+ 	}
+ 
+ 	/* add consumers devices */
+-- 
+1.7.1.1
