@@ -1,195 +1,164 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] Input: tegra-kbc - add device tree bindings
-Date: Mon, 2 Jan 2012 01:18:28 -0700
-Message-ID: <20120102081828.GB18381@ponder.secretlab.ca>
-References: <1325053170-6984-1-git-send-email-olof@lixom.net>
- <1325053170-6984-2-git-send-email-olof@lixom.net>
+Subject: Re: [PATCH 7/9] arm/tegra: emc: device tree bindings
+Date: Mon, 2 Jan 2012 02:00:36 -0700
+Message-ID: <20120102090036.GM18381@ponder.secretlab.ca>
+References: <1324599468-12845-1-git-send-email-olof@lixom.net>
+ <1324599468-12845-8-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1325053170-6984-2-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1324599468-12845-8-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 27, 2011 at 10:19:29PM -0800, Olof Johansson wrote:
-> This adds a simple device tree binding to the tegra keyboard controller.
-> 
-> Also, mark the default keymap as __devinitdata since it is not referenced
-> after boot, and shorten the name to not have to avoid line wraps.
+On Thu, Dec 22, 2011 at 04:17:46PM -0800, Olof Johansson wrote:
+> Device tree bindings for the EMC tables on tegra.
 > 
 > Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> ---
->  .../devicetree/bindings/input/tegra-kbc.txt        |   18 +++++
->  drivers/input/keyboard/tegra-kbc.c                 |   70 ++++++++++++++++++--
->  2 files changed, 83 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/input/tegra-kbc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/input/tegra-kbc.txt b/Documentation/devicetree/bindings/input/tegra-kbc.txt
-> new file mode 100644
-> index 0000000..a7c1d40
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/tegra-kbc.txt
-> @@ -0,0 +1,18 @@
-> +* Tegra keyboard controller
-> +
-> +Required properties:
-> +- compatible : "nvidia,tegra20-kbc"
-> +
-> +Optional properties:
-> +- debounce-delay: delay in milliseconds per row scan for debouncing
-> +- repeat-delay: delay in milliseconds before repeat starts
-> +- ghost-filter : enable ghost filtering for this device
-> +- wakeup-source : configure keyboard as a wakeup source for suspend/resume
+> Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-I'd like to see a "tegra," prefix on these custom properties, but otherwise
-the binding looks okay to me.  You should also consider a '-ms' suffix on
-the millisecond properties.
-
-Otherwise;
+Okay by me.
 
 Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
+> ---
+>  .../devicetree/bindings/arm/tegra/emc.txt          |  100 ++++++++++++++++++++
+>  arch/arm/boot/dts/tegra20.dtsi                     |    7 ++
+>  2 files changed, 107 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/emc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+> new file mode 100644
+> index 0000000..09335f8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+> @@ -0,0 +1,100 @@
+> +Embedded Memory Controller
+> +
+> +Properties:
+> +- name : Should be emc
+> +- #address-cells : Should be 1
+> +- #size-cells : Should be 0
+> +- compatible : Should contain "nvidia,tegra20-emc".
+> +- reg : Offset and length of the register set for the device
+> +- nvidia,use-ram-code : If present, the sub-nodes will be addressed
+> +  and chosen using the ramcode board selector. If omitted, only one
+> +  set of tables can be present and said tables will be used
+> +  irrespective of ram-code configuration.
+> +
+> +Child device nodes describe the memory settings for different configurations and clock rates.
 > +
 > +Example:
 > +
-> +keyboard: keyboard {
-> +	compatible = "nvidia,tegra20-kbc";
-> +	reg = <0x7000e200 0x100>;
-> +	ghost-filter;
-> +};
-> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> index cf3228b..4ce6cc8 100644
-> --- a/drivers/input/keyboard/tegra-kbc.c
-> +++ b/drivers/input/keyboard/tegra-kbc.c
-> @@ -26,6 +26,7 @@
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/interrupt.h>
-> +#include <linux/of.h>
->  #include <linux/clk.h>
->  #include <linux/slab.h>
->  #include <mach/clk.h>
-> @@ -82,7 +83,7 @@ struct tegra_kbc {
->  	struct clk *clk;
->  };
->  
-> -static const u32 tegra_kbc_default_keymap[] = {
-> +static const u32 default_keymap[] __devinitdata = {
->  	KEY(0, 2, KEY_W),
->  	KEY(0, 3, KEY_S),
->  	KEY(0, 4, KEY_A),
-> @@ -217,9 +218,9 @@ static const u32 tegra_kbc_default_keymap[] = {
->  	KEY(31, 4, KEY_HELP),
->  };
->  
-> -static const struct matrix_keymap_data tegra_kbc_default_keymap_data = {
-> -	.keymap		= tegra_kbc_default_keymap,
-> -	.keymap_size	= ARRAY_SIZE(tegra_kbc_default_keymap),
-> +static const struct matrix_keymap_data default_keymap_data __devinitdata = {
-> +	.keymap		= default_keymap,
-> +	.keymap_size	= ARRAY_SIZE(default_keymap),
->  };
->  
->  static void tegra_kbc_report_released_keys(struct input_dev *input,
-> @@ -576,6 +577,55 @@ tegra_kbc_check_pin_cfg(const struct tegra_kbc_platform_data *pdata,
->  	return true;
->  }
->  
-> +#ifdef CONFIG_OF
-> +static struct tegra_kbc_platform_data * __devinit tegra_kbc_dt_parse_pdata(
-> +	struct platform_device *pdev)
-> +{
-> +	struct tegra_kbc_platform_data *pdata;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	int i;
-> +	u32 prop;
-> +
-> +	if (!np)
-> +		return NULL;
-> +
-> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-> +
-> +	if (!of_property_read_u32(np, "debounce-delay", &prop))
-> +		pdata->debounce_cnt = prop;
-> +
-> +	if (!of_property_read_u32(np, "repeat-delay", &prop))
-> +		pdata->repeat_cnt = prop;
-> +
-> +	if (of_find_property(np, "needs-ghost-filter", NULL))
-> +		pdata->use_ghost_filter = true;
-> +
-> +	if (of_find_property(np, "wakeup-source", NULL))
-> +		pdata->wakeup = true;
-> +
-> +	/* All currently known keymaps with device tree support use the same
-> +	 * pin_cfg, so set it up here.
-> +	 */
-> +	for (i = 0; i < KBC_MAX_ROW; i++) {
-> +		pdata->pin_cfg[i].num = i;
-> +		pdata->pin_cfg[i].is_row = true;
-> +	}
-> +	
-> +	for (i = 0; i < KBC_MAX_COL; i++) {
-> +		pdata->pin_cfg[KBC_MAX_ROW + i].num = i;
-> +		pdata->pin_cfg[KBC_MAX_ROW + i].is_row = false;
+> +	emc@7000f400 {
+> +		#address-cells = < 1 >;
+> +		#size-cells = < 0 >;
+> +		compatible = "nvidia,tegra20-emc";
+> +		reg = <0x7000f4000 0x200>;
 > +	}
 > +
-> +	return pdata;
-> +}
-> +#else
-> +static inline struct tegra_kbc_platform_data *tegra_kbc_dt_parse_pdata(
-> +	struct platform_device *pdev)
-> +{
-> +	return NULL;
-> +}
-> +#endif
 > +
->  static int __devinit tegra_kbc_probe(struct platform_device *pdev)
->  {
->  	const struct tegra_kbc_platform_data *pdata = pdev->dev.platform_data;
-> @@ -590,6 +640,9 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
->  	unsigned int scan_time_rows;
->  
->  	if (!pdata)
-> +		pdata = tegra_kbc_dt_parse_pdata(pdev);
+> +Embedded Memory Controller ram-code table
 > +
-> +	if (!pdata)
->  		return -EINVAL;
->  
->  	if (!tegra_kbc_check_pin_cfg(pdata, &pdev->dev, &num_rows))
-> @@ -671,7 +724,7 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
->  
->  	kbc->use_fn_map = pdata->use_fn_map;
->  	kbc->use_ghost_filter = pdata->use_ghost_filter;
-> -	keymap_data = pdata->keymap_data ?: &tegra_kbc_default_keymap_data;
-> +	keymap_data = pdata->keymap_data ?: &default_keymap_data;
->  	matrix_keypad_build_keymap(keymap_data, KBC_ROW_SHIFT,
->  				   input_dev->keycode, input_dev->keybit);
->  
-> @@ -793,6 +846,12 @@ static int tegra_kbc_resume(struct device *dev)
->  
->  static SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops, tegra_kbc_suspend, tegra_kbc_resume);
->  
-> +static const struct of_device_id tegra_kbc_of_match[] = {
-> +	{ .compatible = "nvidia,tegra20-kbc", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_kbc_of_match);
+> +If the emc node has the nvidia,use-ram-code property present, then the
+> +next level of nodes below the emc table are used to specify which settings
+> +apply for which ram-code settings.
 > +
->  static struct platform_driver tegra_kbc_driver = {
->  	.probe		= tegra_kbc_probe,
->  	.remove		= __devexit_p(tegra_kbc_remove),
-> @@ -800,6 +859,7 @@ static struct platform_driver tegra_kbc_driver = {
->  		.name	= "tegra-kbc",
->  		.owner  = THIS_MODULE,
->  		.pm	= &tegra_kbc_pm_ops,
-> +		.of_match_table = tegra_kbc_of_match,
->  	},
->  };
+> +If the emc node lacks the nvidia,use-ram-code property, this level is omitted
+> +and the tables are stored directly under the emc node (see below).
+> +
+> +Properties:
+> +
+> +- name : Should be emc-tables
+> +- nvidia,ram-code : the binary representation of the ram-code board strappings
+> +  for which this node (and children) are valid.
+> +
+> +
+> +
+> +Embedded Memory Controller configuration table
+> +
+> +This is a table containing the EMC register settings for the various
+> +operating speeds of the memory controller. They are always located as
+> +subnodes of the emc controller node.
+> +
+> +There are two ways of specifying which tables to use:
+> +
+> +* The simplest is if there is just one set of tables in the device tree,
+> +  and they will always be used (based on which frequency is used).
+> +  This is the preferred method, especially when firmware can fill in
+> +  this information based on the specific system information and just
+> +  pass it on to the kernel.
+> +
+> +* The slightly more complex one is when more than one memory configuration
+> +  might exist on the system.  The Tegra20 platform handles this during
+> +  early boot by selecting one out of possible 4 memory settings based
+> +  on a 2-pin "ram code" bootstrap setting on the board. The values of
+> +  these strappings can be read through a register in the SoC, and thus
+> +  used to select which tables to use.
+> +
+> +Properties:
+> +- name : Should be emc-table
+> +- compatible : Should contain "nvidia,tegra20-emc-table".
+> +- reg : either an opaque enumerator to tell different tables apart, or
+> +  the valid frequency for which the table should be used (in kHz).
+> +- clock-frequency : the clock frequency for the EMC at which this
+> +  table should be used (in kHz).
+> +- nvidia,emc-registers : a 46 word array of EMC registers to be programmed
+> +  for operation at the 'clock-frequency' setting.
+> +  The order and contents of the registers are:
+> +    RC, RFC, RAS, RP, R2W, W2R, R2P, W2P, RD_RCD, WR_RCD, RRD, REXT,
+> +    WDV, QUSE, QRST, QSAFE, RDV, REFRESH, BURST_REFRESH_NUM, PDEX2WR,
+> +    PDEX2RD, PCHG2PDEN, ACT2PDEN, AR2PDEN, RW2PDEN, TXSR, TCKE, TFAW,
+> +    TRPAB, TCLKSTABLE, TCLKSTOP, TREFBW, QUSE_EXTRA, FBIO_CFG6, ODT_WRITE,
+> +    ODT_READ, FBIO_CFG5, CFG_DIG_DLL, DLL_XFORM_DQS, DLL_XFORM_QUSE,
+> +    ZCAL_REF_CNT, ZCAL_WAIT_CNT, AUTO_CAL_INTERVAL, CFG_CLKTRIM_0,
+> +    CFG_CLKTRIM_1, CFG_CLKTRIM_2
+> +
+> +		emc-table@166000 {
+> +			reg = <166000>;
+> +			compatible = "nvidia,tegra20-emc-table";
+> +			clock-frequency = < 166000 >;
+> +			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 >;
+> +		};
+> +
+> +		emc-table@333000 {
+> +			reg = <333000>;
+> +			compatible = "nvidia,tegra20-emc-table";
+> +			clock-frequency = < 333000 >;
+> +			nvidia,emc-registers = < 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+> +						 0 0 0 0 >;
+> +		};
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 3da7afd..c162241 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -120,6 +120,13 @@
+>  		interrupts = < 0 91 0x04 >;
+>  	};
 >  
+> +	emc@7000f400 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "nvidia,tegra20-emc";
+> +		reg = <0x7000f400 0x200>;
+> +	};
+> +
+>  	sdhci@c8000000 {
+>  		compatible = "nvidia,tegra20-sdhci";
+>  		reg = <0xc8000000 0x200>;
 > -- 
 > 1.7.8.GIT
 > 
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
