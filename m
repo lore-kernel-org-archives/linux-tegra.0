@@ -1,43 +1,39 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] regulator: Rail is said to be enable only if this and
- supply rails are enabled.
-Date: Tue, 3 Jan 2012 20:16:24 +0000
-Message-ID: <20120103201624.GC2843@opensource.wolfsonmicro.com>
-References: <1325570983-3700-1-git-send-email-ldewangan@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] Input: tegra-kbc - add device tree bindings
+Date: Tue, 3 Jan 2012 12:58:39 -0800
+Message-ID: <CAOesGMg_MKGenRyTa9PkSLvV3CsWxYcY=sGb5awPQn=9Ng8ENQ@mail.gmail.com>
+References: <1325053170-6984-1-git-send-email-olof@lixom.net>
+	<1325053170-6984-2-git-send-email-olof@lixom.net>
+	<20120102081828.GB18381@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1325570983-3700-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120102081828.GB18381-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan.com-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 03, 2012 at 11:39:43AM +0530, Laxman Dewangan wrote:
-> From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The given rail is said to be enabled only if this rail is eanbled
-> along with supply rail.
-> Adding check for the supply rail whether it is enabled or not when
-> query about rail enabled.
+On Mon, Jan 2, 2012 at 12:18 AM, Grant Likely <grant.likely@secretlab.c=
+a> wrote:
 
-This feels wrong - the code in general assumes that the parents will all
-be enabled for an enabled child (and does the required stuff on enable
-and disable).  Doing the check isn't unreasonable but if it fails we
-really ought to be complaining loudly as we're probably confused and
-things might be going wrong elsewhere.
+> I'd like to see a "tegra," prefix on these custom properties, but oth=
+erwise
+> the binding looks okay to me. =A0You should also consider a '-ms' suf=
+fix on
+> the millisecond properties.
 
-We should also look at the bootstrapping code, we're not really making
-much effort to verify that the hardware configuration on boot is sane
-(though realistically it's unlikely that it won't be).
+Ok, I added "nvidia," prefix for the properties, and pushed down the
+linux,fn-keymap binding to this level (but I left the implementation
+as a FIXME).
 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> When consumer of any rails query about whether rail is enabled
-> or not, the function regulator_is_enabled() should return enabled
-> only if this rail and supply rail (both) are enabled.
-> if any one of rail, whether the given rail or supply rail, is enabled
-> then function should return as not enabled.
+> Otherwise;
+>
+> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Please just put things in the changelog if they're useful.
+Thanks, added and I'll repost the patch together with the shared
+binding in a bit.
+
+
+-Olof
