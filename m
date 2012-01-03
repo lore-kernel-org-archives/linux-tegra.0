@@ -1,204 +1,256 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] ARM: tegra: Pass uncompress.h UART selection to DEBUG_LL
-Date: Tue,  3 Jan 2012 15:25:20 -0700
-Message-ID: <1325629520-23018-5-git-send-email-swarren@nvidia.com>
-References: <1325629520-23018-1-git-send-email-swarren@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] Input: tegra-kbc - add device tree support
+Date: Tue,  3 Jan 2012 14:28:22 -0800
+Message-ID: <1325629702-10307-1-git-send-email-olof@lixom.net>
+References: <1325484557-27695-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1325629520-23018-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1325484557-27695-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-uncompress.h now saves the selected UART's physical address in Tegra's
-IRAM, along with a cookie to indicate validity.
+This includes an optional "linux,fn-keymap" binding that is not yet implemented,
+that will be used to specify the Fn-key modifier layout if needed.
 
-The first time it's run, macro addruart in debug-macro.S looks for this
-cookie, and if it's present, uses the UART address stored there. If not,
-the static value TEGRA_DEBUG_UART_BASE is used, as was previous behaviour.
-The static behaviour will thus be used when not booting using a zImage.
-
-This work was inspired by work by Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>;
-see http://lkml.org/lkml/2011/9/26/284. However, this patch relies on
-the data passing describe above, rather than duplicating the UART
-selection logic in debug-macro.S; the latest selection logic is more
-complex due to the need to check reset/clock bits too.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 ---
- arch/arm/mach-tegra/common.c                   |   17 +++++
- arch/arm/mach-tegra/include/mach/debug-macro.S |   87 +++++++++++++++++++++---
- arch/arm/mach-tegra/include/mach/uncompress.h  |   12 +++
- 3 files changed, 105 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index a2eb901..76210e5 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -33,6 +33,23 @@
- #include "clock.h"
- #include "fuse.h"
- 
-+/*
-+ * Storage for debug-macro.S's state.
-+ *
-+ * This must be in .data not .bss so that it gets initialized each time the
-+ * kernel is loaded. The data is declared here rather than debug-macro.S so
-+ * that multiple inclusions of debug-macro.S point at the same data.
-+ */
-+#define TEGRA_DEBUG_UART_OFFSET (TEGRA_DEBUG_UART_BASE & 0xFFFF)
-+u32 tegra_uart_config[3] = {
-+	/* Debug UART initialization required */
-+	1,
-+	/* Debug UART physical address */
-+	(u32)(IO_APB_PHYS + TEGRA_DEBUG_UART_OFFSET),
-+	/* Debug UART virtual address */
-+	(u32)(IO_APB_VIRT + TEGRA_DEBUG_UART_OFFSET),
+This patch depends on "Input: keyboard - add device tree bindings for
+simple key matrixes".
+
+
+-Olof
+ .../devicetree/bindings/input/tegra-kbc.txt        |   23 +++++
+ drivers/input/keyboard/tegra-kbc.c                 |  103 ++++++++++++++++++--
+ 2 files changed, 118 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/tegra-kbc.txt
+
+diff --git a/Documentation/devicetree/bindings/input/tegra-kbc.txt b/Documentation/devicetree/bindings/input/tegra-kbc.txt
+new file mode 100644
+index 0000000..b630eeb4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/tegra-kbc.txt
+@@ -0,0 +1,23 @@
++* Tegra keyboard controller
++
++Required properties:
++- compatible: "nvidia,tegra20-kbc", "matrix-keyboard-controller"
++
++Optional properties, in addition to those specified by
++"matrix-keyboard-controller" bindings:
++
++- linux,fn-keymap: a second keymap, same specification as the
++matrix-keyboard-controller spec but to be used when the KEY_FN modifier
++key is pressed.
++- nvidia,debounce-delay-ms: delay in milliseconds per row scan for debouncing
++- nvidia,repeat-delay-ms: delay in milliseconds before repeat starts
++- nvidia,ghost-filter: enable ghost filtering for this device
++- nvidia,wakeup-source: configure keyboard as a wakeup source for suspend/resume
++
++Example:
++
++keyboard: keyboard {
++	compatible = "nvidia,tegra20-kbc";
++	reg = <0x7000e200 0x100>;
++	nvidia,ghost-filter;
 +};
-+
- #ifdef CONFIG_OF
- static const struct of_device_id tegra_dt_irq_match[] __initconst = {
- 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init },
-diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/mach-tegra/include/mach/debug-macro.S
-index 619abc6..94802a5 100644
---- a/arch/arm/mach-tegra/include/mach/debug-macro.S
-+++ b/arch/arm/mach-tegra/include/mach/debug-macro.S
-@@ -1,11 +1,17 @@
- /*
-  * arch/arm/mach-tegra/include/mach/debug-macro.S
-  *
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2010,2011 Google, Inc.
-+ * Copyright (C) 2011 NVIDIA CORPORATION. All Rights Reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-  *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *	Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-+ *	Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * Portions based on mach-omap2's debug-macro.S
-+ * Copyright (C) 1994-1999 Russell King
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -18,18 +24,77 @@
-  *
-  */
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 08d02f2..0794879 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
++#include <linux/of.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <mach/clk.h>
+@@ -82,7 +83,7 @@ struct tegra_kbc {
+ 	struct clk *clk;
+ };
  
-+#include <linux/serial_reg.h>
-+
- #include <mach/io.h>
- #include <mach/iomap.h>
+-static const u32 tegra_kbc_default_keymap[] = {
++static const u32 tegra_kbc_default_keymap[] __devinitdata = {
+ 	KEY(0, 2, KEY_W),
+ 	KEY(0, 3, KEY_S),
+ 	KEY(0, 4, KEY_A),
+@@ -217,7 +218,8 @@ static const u32 tegra_kbc_default_keymap[] = {
+ 	KEY(31, 4, KEY_HELP),
+ };
  
--	.macro  addruart, rp, rv, tmp
--        ldr     \rp, =IO_APB_PHYS       @ physical
--        ldr     \rv, =IO_APB_VIRT        @ virtual
--	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF)
--	orr	\rp, \rp, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
--	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF)
--	orr	\rv, \rv, #(TEGRA_DEBUG_UART_BASE & 0xFF00)
--	.endm
-+		.macro  addruart, rp, rv, tmp
-+		adr	\rp, 99f		@ actual addr of 99f
-+		ldr	\rv, [\rp]		@ linked addr is stored there
-+		sub	\rv, \rv, \rp		@ offset between the two
-+		ldr	\rp, [\rp, #4]		@ linked tegra_uart_config
-+		sub	\tmp, \rp, \rv		@ actual tegra_uart_config
-+		ldr	\rp, [\tmp]		@ Load tegra_uart_config
-+		cmp	\rp, #1			@ needs intitialization?
-+		bne	100f			@ no; go load the addresses
-+		mov	\rv, #0			@ yes; record init is done
-+		str	\rv, [\tmp]
-+		mov	\rp, #TEGRA_IRAM_BASE	@ See if cookie is in IRAM
-+		ldr	\rv, [\rp, #0x100]
-+		movw	\rp, #0x5254		@ "UART"
-+		movt	\rp, #0x5541
-+		cmp	\rv, \rp		@ Cookie present?
-+		bne	100f			@ No, use default UART
-+		mov	\rp, #TEGRA_IRAM_BASE	@ Load UART address from IRAM
-+		ldr	\rv, [\rp, #0x104]
-+		str	\rv, [\tmp, #4]		@ Store in tegra_uart_phys
-+		sub	\rv, \rv, #IO_APB_PHYS	@ Calculate virt address
-+		add	\rv, \rv, #IO_APB_VIRT
-+		str	\rv, [\tmp, #8]		@ Store in tegra_uart_virt
-+		b	100f
-+
-+		.align
-+99:		.word	.
-+		.word	tegra_uart_config
-+		.ltorg
-+
-+100:		ldr	\rp, [\tmp, #4]		@ Load tegra_uart_phys
-+		ldr	\rv, [\tmp, #8]		@ Load tegra_uart_virt
-+		.endm
-+
-+#define UART_SHIFT 2
-+
-+/*
-+ * Code below is swiped from <asm/hardware/debug-8250.S>, but add an extra
-+ * check to make sure that we aren't in the CONFIG_TEGRA_DEBUG_UART_NONE case.
-+ * We use the fact that all 5 valid UART addresses all have something in the
-+ * 2nd-to-lowest byte.
-+ */
-+
-+		.macro	senduart, rd, rx
-+		tst	\rx, #0x0000ff00
-+		strneb	\rd, [\rx, #UART_TX << UART_SHIFT]
-+1001:
-+		.endm
- 
--#define UART_SHIFT	2
--#include <asm/hardware/debug-8250.S>
-+		.macro	busyuart, rd, rx
-+		tst	\rx, #0x0000ff00
-+		beq	1002f
-+1001:		ldrb	\rd, [\rx, #UART_LSR << UART_SHIFT]
-+		and	\rd, \rd, #UART_LSR_TEMT | UART_LSR_THRE
-+		teq	\rd, #UART_LSR_TEMT | UART_LSR_THRE
-+		bne	1001b
-+1002:
-+		.endm
- 
-+		.macro	waituart, rd, rx
-+#ifdef FLOW_CONTROL
-+		tst	\rx, #0x0000ff00
-+		beq	1002f
-+1001:		ldrb	\rd, [\rx, #UART_MSR << UART_SHIFT]
-+		tst	\rd, #UART_MSR_CTS
-+		beq	1001b
-+1002:
-+#endif
-+		.endm
-diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-index 4d8e1b7..6bcb2bd 100644
---- a/arch/arm/mach-tegra/include/mach/uncompress.h
-+++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-@@ -48,6 +48,17 @@ static inline void flush(void)
- {
+-static const struct matrix_keymap_data tegra_kbc_default_keymap_data = {
++static const
++struct matrix_keymap_data tegra_kbc_default_keymap_data __devinitdata = {
+ 	.keymap		= tegra_kbc_default_keymap,
+ 	.keymap_size	= ARRAY_SIZE(tegra_kbc_default_keymap),
+ };
+@@ -576,6 +578,62 @@ tegra_kbc_check_pin_cfg(const struct tegra_kbc_platform_data *pdata,
+ 	return true;
  }
  
-+static inline void save_uart_address(void)
++#ifdef CONFIG_OF
++static struct tegra_kbc_platform_data * __devinit
++tegra_kbc_dt_parse_pdata(struct platform_device *pdev)
 +{
-+	u32 *iram = (u32 *)(TEGRA_IRAM_BASE + 0x100);
++	struct tegra_kbc_platform_data *pdata;
++	struct device_node *np = pdev->dev.of_node;
++	u32 prop;
++	int i;
 +
-+	if (uart) {
-+		iram[0] = 0x55415254; /* "UART" */
-+		iram[1] = (u32)uart;
-+	} else
-+		iram[0] = 0;
++	if (!np)
++		return NULL;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
++		pdata->debounce_cnt = prop;
++
++	if (!of_property_read_u32(np, "nvidia,repeat-delay-ms", &prop))
++		pdata->repeat_cnt = prop;
++
++	if (of_find_property(np, "nvidia,needs-ghost-filter", NULL))
++		pdata->use_ghost_filter = true;
++
++	if (of_find_property(np, "nvidia,wakeup-source", NULL))
++		pdata->wakeup = true;
++
++	/*
++	 * All currently known keymaps with device tree support use the same
++	 * pin_cfg, so set it up here.
++	 */
++	for (i = 0; i < KBC_MAX_ROW; i++) {
++		pdata->pin_cfg[i].num = i;
++		pdata->pin_cfg[i].is_row = true;
++	}
++
++	for (i = 0; i < KBC_MAX_COL; i++) {
++		pdata->pin_cfg[KBC_MAX_ROW + i].num = i;
++		pdata->pin_cfg[KBC_MAX_ROW + i].is_row = false;
++	}
++
++	pdata->keymap_data = matrix_keyboard_of_fill_keymap(np, "linux,keymap");
++
++	/* FIXME: Add handling of linux,fn-keymap here */
++
++	return pdata;
 +}
++#else
++static inline struct tegra_kbc_platform_data *tegra_kbc_dt_parse_pdata(
++	struct platform_device *pdev)
++{
++	return NULL;
++}
++#endif
 +
- /*
-  * Setup before decompression.  This is where we do UART selection for
-  * earlyprintk and init the uart_base register.
-@@ -124,6 +135,7 @@ static inline void arch_decomp_setup(void)
- 	}
- 	if (i == ARRAY_SIZE(uarts))
- 		uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
-+	save_uart_address();
- 	if (uart == NULL)
- 		return;
+ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
+ {
+ 	const struct tegra_kbc_platform_data *pdata = pdev->dev.platform_data;
+@@ -590,21 +648,28 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
+ 	unsigned int scan_time_rows;
  
+ 	if (!pdata)
+-		return -EINVAL;
++		pdata = tegra_kbc_dt_parse_pdata(pdev);
+ 
+-	if (!tegra_kbc_check_pin_cfg(pdata, &pdev->dev, &num_rows))
++	if (!pdata)
+ 		return -EINVAL;
+ 
++	if (!tegra_kbc_check_pin_cfg(pdata, &pdev->dev, &num_rows)) {
++		err = -EINVAL;
++		goto err_free_pdata;
++	}
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get I/O memory\n");
+-		return -ENXIO;
++		err = -ENXIO;
++		goto err_free_pdata;
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "failed to get keyboard IRQ\n");
+-		return -ENXIO;
++		err = -ENXIO;
++		goto err_free_pdata;
+ 	}
+ 
+ 	kbc = kzalloc(sizeof(*kbc), GFP_KERNEL);
+@@ -693,6 +758,9 @@ static int __devinit tegra_kbc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, kbc);
+ 	device_init_wakeup(&pdev->dev, pdata->wakeup);
+ 
++	if (!pdev->dev.platform_data)
++		matrix_keyboard_of_free_keymap(pdata->keymap_data);
++
+ 	return 0;
+ 
+ err_free_irq:
+@@ -706,6 +774,11 @@ err_free_mem_region:
+ err_free_mem:
+ 	input_free_device(input_dev);
+ 	kfree(kbc);
++err_free_pdata:
++	if (!pdev->dev.platform_data) {
++		matrix_keyboard_of_free_keymap(pdata->keymap_data);
++		kfree(pdata);
++	}
+ 
+ 	return err;
+ }
+@@ -715,6 +788,8 @@ static int __devexit tegra_kbc_remove(struct platform_device *pdev)
+ 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
+ 	struct resource *res;
+ 
++	platform_set_drvdata(pdev, NULL);
++
+ 	free_irq(kbc->irq, pdev);
+ 	clk_put(kbc->clk);
+ 
+@@ -723,9 +798,14 @@ static int __devexit tegra_kbc_remove(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	release_mem_region(res->start, resource_size(res));
+ 
+-	kfree(kbc);
++	/*
++	 * If we do not have platform data attached to the device we
++	 * allocated it ourselves and thus need to free it.
++	 */
++	if (!pdev->dev.platform_data)
++		kfree(kbc->pdata);
+ 
+-	platform_set_drvdata(pdev, NULL);
++	kfree(kbc);
+ 
+ 	return 0;
+ }
+@@ -793,6 +873,12 @@ static int tegra_kbc_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops, tegra_kbc_suspend, tegra_kbc_resume);
+ 
++static const struct of_device_id tegra_kbc_of_match[] = {
++	{ .compatible = "nvidia,tegra20-kbc", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_kbc_of_match);
++
+ static struct platform_driver tegra_kbc_driver = {
+ 	.probe		= tegra_kbc_probe,
+ 	.remove		= __devexit_p(tegra_kbc_remove),
+@@ -800,6 +886,7 @@ static struct platform_driver tegra_kbc_driver = {
+ 		.name	= "tegra-kbc",
+ 		.owner  = THIS_MODULE,
+ 		.pm	= &tegra_kbc_pm_ops,
++		.of_match_table = tegra_kbc_of_match,
+ 	},
+ };
+ module_platform_driver(tegra_kbc_driver);
 -- 
-1.7.0.4
+1.7.8.GIT
