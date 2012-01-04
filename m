@@ -1,77 +1,94 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 4/9] arm/tegra: fuse: add functions to access chip revision
-Date: Wed, 4 Jan 2012 15:36:28 -0800
-Message-ID: <CAOesGMg4-kkWdqEuorzzmKhg-HPChrcM1SeOsfcMkSKkohi5Gw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] arm/tegra: use APB DMA for accessing APB devices
+Date: Wed, 4 Jan 2012 15:39:20 -0800
+Message-ID: <CAOesGMjWAMsUtCxwAkaVp24jRMgYREJd_C6figuB4NW1aerd3Q@mail.gmail.com>
 References: <1324599468-12845-1-git-send-email-olof@lixom.net>
-	<1324599468-12845-5-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF17761F156A@HQMAIL01.nvidia.com>
+	<1324599468-12845-3-git-send-email-olof@lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF17761F14F6@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17761F156A-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17761F14F6-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 4, 2012 at 3:20 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+On Wed, Jan 4, 2012 at 2:08 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
 te:
 > Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
->> Add function to get chip revision, and print it out at boot time.
->>
->> Restructure the fuse access to just use cached variables instead
->> of always reading the fuses, and export those variables directly
->> instead of using accessor functions.
->>
->> Add a SKU ID table of currently known values.
->
->> +static enum tegra_revision tegra_get_revision(void)
+>> Tegra2 hangs if APB registers are accessed from the cpu during an
+>> apb dma operation. The workaround is to use apb dma to read/write th=
+e
+>> registers instead.
+> ...
+>> diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio=
+=2Ec
+> ...
+>> +bool tegra_apb_init(void)
 >> +{
->> + =A0 =A0 void __iomem *chip_id =3D IO_ADDRESS(TEGRA_APB_MISC_BASE) =
-+ 0x804;
->> + =A0 =A0 u32 id =3D readl(chip_id);
+> ...
+>> +out:
+>> + =A0 =A0 mutex_unlock(&tegra_apb_dma_lock);
+>> + =A0 =A0 return true;
 >> +
->> + =A0 =A0 switch ((id >> 16) & 0xf) {
+>> +out_fail:
+>> + =A0 =A0 mutex_unlock(&tegra_apb_dma_lock);
+>> + =A0 =A0 return true;
 >
-> We probably should decode A01 too; I certainly had a Tegra30 A01 unti=
+> Presumably that should be "return false".
+
+Yes, my bad. There's an accidental chunk in a later patch that swaps
+it back to false that got squashed with the wrong patch.
+
+>
+>> +u32 tegra_apb_readl(unsigned long offset)
+>> +{
+>> + =A0 =A0 struct tegra_dma_req req;
+>> + =A0 =A0 int ret;
+>> +
+>> + =A0 =A0 if (!tegra_apb_dma && !tegra_apb_init())
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return readl(IO_TO_VIRT(offset));
+>> +
+>> + =A0 =A0 mutex_lock(&tegra_apb_dma_lock);
+>> + =A0 =A0 req.complete =3D apb_dma_complete;
+>> + =A0 =A0 req.to_memory =3D 1;
+>> + =A0 =A0 req.dest_addr =3D tegra_apb_bb_phys;
+>> + =A0 =A0 req.dest_bus_width =3D 32;
+>> + =A0 =A0 req.dest_wrap =3D 1;
+>> + =A0 =A0 req.source_addr =3D offset;
+>> + =A0 =A0 req.source_bus_width =3D 32;
+>> + =A0 =A0 req.source_wrap =3D 4;
+>> + =A0 =A0 req.req_sel =3D 0;
+>
+> Should that be TEGRA_DMA_REQ_SEL_CNTR instead of 0? Although I'm not
+> sure what "CNTR" means, and the documentation doesn't seem to say.
+
+Sure, will update.
+
+>> + =A0 =A0 req.size =3D 4;
+>> +
+>> + =A0 =A0 INIT_COMPLETION(tegra_apb_wait);
+>> +
+>> + =A0 =A0 tegra_dma_enqueue_req(tegra_apb_dma, &req);
+>> +
+>> + =A0 =A0 ret =3D wait_for_completion_timeout(&tegra_apb_wait,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 msecs_to_jiffies(50));
+>> +
+>> + =A0 =A0 if (WARN(ret =3D=3D 0, "apb read dma timed out"))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 *(u32 *)tegra_apb_bb =3D 0;
+>
+> On failure, you should probably call tegra_dma_dequeue_req() to cance=
 l
-> recently, so it's entirely possible others do and want a meaningful
-> result.
-
-Ah yes, T30. I was thinking of T20/25 A01. I'll add it.
-
-> Should the "A" should be decoded from the register too? It's bits 7:4
-> of the register and IIRC, 0=3D??? 1=3DA, presumably 2=3DB etc.
-
-Well, only A is documented in my TRM. :-)   I think it's safe to keep
-it UNKNOWN until known.
-
->> + =A0 =A0 case 2:
->> + =A0 =A0 =A0 =A0 =A0 =A0 return TEGRA_REVISION_A02;
->> + =A0 =A0 case 3:
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (get_spare_fuse(18) || get_spare_fuse(1=
-9))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return TEGRA_REVISION_A03p=
-;
+> the DMA request, otherwise (a) it'll wake up and trash some future
+> transfer, or (b) it'll be in the queue forever, and prevent any futur=
+e
+> DMA requests from being programmed into HW.
 >
-> Does that apply equally to Tegra30 as well as Tegra20? I'm afraid I d=
-on't
-> know, but if you need I can try and find out.
+> Those two comments repeated from tegra_apb_writel().
 
-I doubt it, so it needs to be conditional. Will add.
-
->> + =A0 =A0 =A0 =A0 =A0 =A0 else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return TEGRA_REVISION_A03;
->> + =A0 =A0 case 4:
->> + =A0 =A0 =A0 =A0 =A0 =A0 return TEGRA_REVISION_A04;
->
-> And there's space in the register for numbers higher than 4, although=
- I
-> don't think there's any current silicon where this would matter.
-
-Same here, not necessarily need to allocate all that much more than
-what's known to be needed.
+Good point, will update.
 
 
 -Olof
