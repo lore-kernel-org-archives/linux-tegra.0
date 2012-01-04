@@ -1,48 +1,46 @@
-From: Laxman Dewangan <ldewangan.com@nvidia.com>
-Subject: [PATCH V1] regulator: fixed: Move drivers to subsys_initcall_sync()
-Date: Wed,  4 Jan 2012 21:38:55 +0530
-Message-ID: <1325693335-1905-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, ldewangan@nvidia.com
+From: "Shilimkar, Santosh" <santosh.shilimkar@ti.com>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 4 Jan 2012 18:27:29 +0100
+Message-ID: <CAMQu2gwsw+RC+Y9P8r9Yjy+ADuQ-tPzcXPPncLxMjjb3tvdbbQ@mail.gmail.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com> <87sjjw70zs.fsf@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <87sjjw70zs.fsf@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Kevin Hilman <khilman@ti.com>
+Cc: Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Laxman Dewangan <ldewangan@nvidia.com>
+On Wed, Jan 4, 2012 at 1:41 AM, Kevin Hilman <khilman@ti.com> wrote:
+> Colin Cross <ccross@android.com> writes:
+>
+>
+>> This patch series implements an alternative solution, where each
+>> cpu will wait in the WFI state until all cpus are ready to enter
+>> a coupled state, at which point the coupled state function will
+>> be called on all cpus at approximately the same time.
+>
+> This looks great, and is certainly preferred to hotplug IMO.
+>
+> [...]
+>
+>> None of the platforms I work with have an SMP idle implementation
+>> upstream, so I can't easily show a patch that converts a platform
+>> from hotplug governor to coupled cpuidle states.
+>
+> Basic OMAP4 CPUidle support is in now queued for v3.3 (see omap4
+> branch Tony's tree[1].)
+>
+> Can you (or Santosh) send a patch that adds coupled support to that
+> driver so it can see some broader testing on OMAP4?
+>
+I briefly attempted OMAP4 idle with this series but had some lock
+up related issues which we faced in the older development.
 
-The fixed regulator is used to enable/disable rails which are
-mainly controlled by the switch. The switches are toggled by
-gpio apis.
-The switches are connected through on-chip gpios or through
-external devices' gpios like mfd, i2c based gpio expander etc.
-The registration of the fixed regulator get success only if the
-required gpios are already available in the system at this time.
-The on-chip gpios are available till this time as on-chip gpios
-are initialized in arch_init(). But external peripheral's gpios
-may not be available at this time as they get initialized as part
-of subsys_initcall() and due to this registration of the fixed
-regulator may fails.
-Moving the driver to subsys_initcall_sync() will make sure that
-all gpios i.e. on-chip gpios as well as external peripheral's gpios
-are available before fixed regulator registration.
+Then I got busy into other activities which will keep me occupied for
+next few weeks. I will be happy to share the patches in case some one
+would like to have a look till then.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/regulator/fixed.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index a44a017..baec76e 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -307,7 +307,7 @@ static int __init regulator_fixed_voltage_init(void)
- {
- 	return platform_driver_register(&regulator_fixed_voltage_driver);
- }
--subsys_initcall(regulator_fixed_voltage_init);
-+subsys_initcall_sync(regulator_fixed_voltage_init);
- 
- static void __exit regulator_fixed_voltage_exit(void)
- {
--- 
-1.7.1.1
+Regards
+Santosh
