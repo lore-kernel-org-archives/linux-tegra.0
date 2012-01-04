@@ -1,65 +1,42 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 4/9] arm/tegra: fuse: add functions to access chip
- revision
-Date: Wed, 4 Jan 2012 15:20:33 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F156A@HQMAIL01.nvidia.com>
-References: <1324599468-12845-1-git-send-email-olof@lixom.net>
- <1324599468-12845-5-git-send-email-olof@lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: select required CPU and L2 errata options
+Date: Wed,  4 Jan 2012 15:29:12 -0800
+Message-ID: <1325719752-818-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324599468-12845-5-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
-> Add function to get chip revision, and print it out at boot time.
-> 
-> Restructure the fuse access to just use cached variables instead
-> of always reading the fuses, and export those variables directly
-> instead of using accessor functions.
-> 
-> Add a SKU ID table of currently known values.
+Only one of the L2 erratas are needed on T30, but T20/25
+needs a few more.
 
-> +static enum tegra_revision tegra_get_revision(void)
-> +{
-> +	void __iomem *chip_id = IO_ADDRESS(TEGRA_APB_MISC_BASE) + 0x804;
-> +	u32 id = readl(chip_id);
-> +
-> +	switch ((id >> 16) & 0xf) {
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ arch/arm/mach-tegra/Kconfig |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-We probably should decode A01 too; I certainly had a Tegra30 A01 until
-recently, so it's entirely possible others do and want a meaningful
-result.
-
-Should the "A" should be decoded from the register too? It's bits 7:4
-of the register and IIRC, 0=??? 1=A, presumably 2=B etc.
-
-> +	case 2:
-> +		return TEGRA_REVISION_A02;
-> +	case 3:
-> +		if (get_spare_fuse(18) || get_spare_fuse(19))
-> +			return TEGRA_REVISION_A03p;
-
-Does that apply equally to Tegra30 as well as Tegra20? I'm afraid I don't
-know, but if you need I can try and find out.
-
-> +		else
-> +			return TEGRA_REVISION_A03;
-> +	case 4:
-> +		return TEGRA_REVISION_A04;
-
-And there's space in the register for numbers higher than 4, although I
-don't think there's any current silicon where this would matter.
-
-> +	default:
-> +		return TEGRA_REVISION_UNKNOWN;
-> +	}
-> +}
-
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 373652d..a2c76ee 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -10,6 +10,9 @@ config ARCH_TEGRA_2x_SOC
+ 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+ 	select USB_ULPI if USB_SUPPORT
+ 	select USB_ULPI_VIEWPORT if USB_SUPPORT
++	select ARM_ERRATA_742230
++	select PL310_ERRATA_753970 if CACHE_PL310
++	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -23,6 +26,7 @@ config ARCH_TEGRA_3x_SOC
+ 	select USB_ULPI if USB_SUPPORT
+ 	select USB_ULPI_VIEWPORT if USB_SUPPORT
+ 	select USE_OF
++	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	help
+ 	  Support for NVIDIA Tegra T30 processor family, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
 -- 
-nvpublic
+1.7.8.GIT
