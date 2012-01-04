@@ -1,60 +1,80 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 6/6] gpio: tegra: Parameterize the number of banks
-Date: Wed, 4 Jan 2012 15:00:36 -0700
-Message-ID: <CACxGe6tyZKW37sGiDauvikU70ZVLHFVrXjBPJk2Kgee1Rj3sbg@mail.gmail.com>
-References: <1325702378-20863-1-git-send-email-swarren@nvidia.com>
- <1325702378-20863-6-git-send-email-swarren@nvidia.com> <4F04AE71.2090203@gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF17761F145E@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 2/9] arm/tegra: use APB DMA for accessing APB devices
+Date: Wed, 4 Jan 2012 14:08:35 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F14F6@HQMAIL01.nvidia.com>
+References: <1324599468-12845-1-git-send-email-olof@lixom.net>
+ <1324599468-12845-3-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17761F145E-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1324599468-12845-3-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 4, 2012 at 1:00 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
-te:
-> Rob Herring wrote at Wednesday, January 04, 2012 12:54 PM:
->> On 01/04/2012 12:39 PM, Stephen Warren wrote:
->> > Tegra20's GPIO controller has 7 banks, and Tegra30's controller ha=
-s 8
->> > banks. Allow the number of banks to be configured at run-time by t=
-he
->> > device tree.
-> ...
->> > diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.tx=
-t
-> ...
->> > =A0Required properties:
->> > =A0- compatible : "nvidia,tegra20-gpio"
->> > =A0- reg : Physical base address and length of the controller's re=
-gisters.
->> > +- nvidia,num-banks : The number of GPIO banks. This should be 7 f=
-or
->> > + =A0Tegra20 and 8 for Tegra30. This must match the number of inte=
-rrupt
->> > + =A0specifiers in the interrupts property.
->>
->> You can determine the number of banks based on the compatible proper=
-ty
->> rather than needing an additional property.
->
-> That's certainly possible.
->
-> However, if say nvidia,tegraNNN-gpio has 9 banks, we then have to
-> explicitly edit the driver to know that, whereas by using a property,
-> we wouldn't have to change the driver at all to support a future GPIO
-> controller. So, isn't it better to explicitly represent this in DT?
->
-> Note that I have no idea how many GPIO banks our future chips will ha=
-ve,
-> so this might not turn out to save any work at all, but perhaps.
+Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
+> Tegra2 hangs if APB registers are accessed from the cpu during an
+> apb dma operation. The workaround is to use apb dma to read/write the
+> registers instead.
+...
+> diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+...
+> +bool tegra_apb_init(void)
+> +{
+...
+> +out:
+> +	mutex_unlock(&tegra_apb_dma_lock);
+> +	return true;
+> +
+> +out_fail:
+> +	mutex_unlock(&tegra_apb_dma_lock);
+> +	return true;
 
-It's an engineering/design decision that requires taste and instinct.
-Either approach is fine, you decide which one will be the best in the
-long term.
+Presumably that should be "return false".
 
-g.
+> +u32 tegra_apb_readl(unsigned long offset)
+> +{
+> +	struct tegra_dma_req req;
+> +	int ret;
+> +
+> +	if (!tegra_apb_dma && !tegra_apb_init())
+> +		return readl(IO_TO_VIRT(offset));
+> +
+> +	mutex_lock(&tegra_apb_dma_lock);
+> +	req.complete = apb_dma_complete;
+> +	req.to_memory = 1;
+> +	req.dest_addr = tegra_apb_bb_phys;
+> +	req.dest_bus_width = 32;
+> +	req.dest_wrap = 1;
+> +	req.source_addr = offset;
+> +	req.source_bus_width = 32;
+> +	req.source_wrap = 4;
+> +	req.req_sel = 0;
+
+Should that be TEGRA_DMA_REQ_SEL_CNTR instead of 0? Although I'm not
+sure what "CNTR" means, and the documentation doesn't seem to say.
+
+> +	req.size = 4;
+> +
+> +	INIT_COMPLETION(tegra_apb_wait);
+> +
+> +	tegra_dma_enqueue_req(tegra_apb_dma, &req);
+> +
+> +	ret = wait_for_completion_timeout(&tegra_apb_wait,
+> +		msecs_to_jiffies(50));
+> +
+> +	if (WARN(ret == 0, "apb read dma timed out"))
+> +		*(u32 *)tegra_apb_bb = 0;
+
+On failure, you should probably call tegra_dma_dequeue_req() to cancel
+the DMA request, otherwise (a) it'll wake up and trash some future
+transfer, or (b) it'll be in the queue forever, and prevent any future
+DMA requests from being programmed into HW.
+
+Those two comments repeated from tegra_apb_writel().
+
+-- 
+nvpublic
