@@ -1,31 +1,28 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: Fix typo in conversion of ARCH_NR_GPIOS to Kconfig
-Date: Thu, 5 Jan 2012 20:33:46 +0000
-Message-ID: <20120105203346.GE11810@n2100.arm.linux.org.uk>
-References: <1325795370-21576-1-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v2] arm/tegra: add support for tegra30 interrupts
+Date: Thu, 5 Jan 2012 12:38:35 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F17AB@HQMAIL01.nvidia.com>
+References: <1325770305-21637-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1325795370-21576-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1325770305-21637-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 05, 2012 at 01:29:30PM -0700, Stephen Warren wrote:
-> Commit 44986ab "ARM: 7240/1: Make ARCH_NR_GPIO a Kconfig variable"
-> spelled ARCH_NR_GPIOS as ARCH_NR_GPIO, hence making the change
-> ineffective. This change fixes that.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This should probably go into 3.3 since the patch it fixes is there. I
-> don't think this issue affects any Tegra platform, but I didn't investigate
-> the other platforms that set CONFIG_ARCH_NR_GPIO by default now.
+Peter De Schrijver wrote at Thursday, January 05, 2012 6:32 AM:
+> Tegra30 has 1 extra legacy interrupt controller. Use the GIC ITLinesNumber
+> field to determine how many interrupt controllers we have and initialize
+> appropriately. Also make room for the extra tegra30 interrupts by moving
+> the GPIO IRQ base. This shouldn't affect existing code as it determines the
+> correct IRQ number for GPIOs using TEGRA_GPIO_TO_IRQ().
 
-Bah, I've just sent my first batch of pull requests to Linus.  Oh well,
-things can stay as they are until I send the second set roughly half way
-through.  Please stick it in the patch system so it doesn't get forgotten.
+Due to a typo in ARM patch 7240/1, this current patch also relies on
+http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7271/1
 
-Thanks.
+-- 
+nvpublic
