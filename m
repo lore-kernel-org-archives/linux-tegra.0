@@ -1,102 +1,46 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V1] TPS62360: Add tps62360 regulator driver
-Date: Thu, 5 Jan 2012 06:29:19 +0000
-Message-ID: <20120105062919.GI11867@opensource.wolfsonmicro.com>
-References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan.com@nvidia.com>
-Cc: lrg@slimlogic.co.uk, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, ldewangan@nvidia.com
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/2] ARM: IOMMU: tegra: Add iommu_ops for GART/SMMU driver
+Date: Thu,  5 Jan 2012 09:11:47 +0200
+Message-ID: <1325747509-29665-1-git-send-email-hdoyu@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 04, 2012 at 02:50:18PM +0530, Laxman Dewangan wrote:
-> Change-Id: I93739aad865401047738f899b2248f2714d824ea
+This patchset adds support for IOMMU API for Tegra20(GART) and
+Tegra30(SMMU). "struct iommu_ops" are implemented for both H/W IOMMU
+modules.
 
-Don't include gerritt droppings in upstream submissions.
+Tested with "Ion memory manager" and "DMA mapping API"(*1).
 
-> +/* Supported voltage values for regulators */
-> +static const u16 TPS62360_VOLTAGES[] = {
-> +	 770,  780,  790,  800,  810,  820,  830,  840,  850,  860,
-> +	 870,  880,  890,  900,  910,  920,  930,  940,  950,  960,
-> +	 970,  980,  990, 1000, 1010, 1020, 1030, 1040, 1050, 1060,
-> +	1070, 1080, 1090, 1110, 1110, 1120, 1130, 1140, 1150, 1160,
-> +	1170, 1180, 1190, 1200, 1210, 1220, 1230, 1240, 1250, 1260,
-> +	1270, 1280, 1290, 1300, 1310, 1320, 1330, 1340, 1350, 1360,
-> +	1370, 1380, 1390, 1400,
-> +};
+This was originally developed with Tegra specific IOMMU
+API(tegra_iovmm_*()) in:
 
-Why are you using a lookup table here?  Just calaculate the values.
-This is a pervasive problem with the TI drivers which leads me to
-suspect cut'n'paste and therefore an opportunity to factor some code
-out.
+git://nv-tegra.nvidia.com/linux-2.6.git.
 
-> +static int tps62360_reg_modify_bits(struct tps62360_chip *tps, u8 reg,
-> +		u8 set_mask, u8 clear_mask)
-> +{
+v2:
+https://lkml.org/lkml/2011/12/15/203
 
-There's a lot of code in this driver that looks like it could be
-factored out by using the regmap API, not just the register I/O but also
-the cache.
+v1:
+https://lkml.org/lkml/2011/11/17/111
 
-> +static int tps62360_dcdc_is_enabled(struct regulator_dev *dev)
-> +{
-> +	/**
-> +	 * Always return 1 as the EN is not controlled by register
-> +	 * programming */
-> +	return 1;
-> +}
+*1: Reworking the DMA mapping code (especially on ARM)
+    http://lwn.net/Articles/467509/
 
-Don't implement unsupported operations.
+Hiroshi DOYU (2):
+  ARM: IOMMU: Tegra20: Add iommu_ops for GART driver
+  ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
 
-> +
-> +	for (vsel = 0; vsel < tps->desc.n_voltages; ++vsel) {
-> +		int uV = tps->voltages[vsel] * 1000;
-> +		if (min_uV <= uV && uV <= max_uV) {
+ arch/arm/mach-tegra/include/mach/smmu.h |   63 ++
+ drivers/iommu/Kconfig                   |   22 +
+ drivers/iommu/Makefile                  |    2 +
+ drivers/iommu/tegra-gart.c              |  436 +++++++++++++
+ drivers/iommu/tegra-smmu.c              | 1026 +++++++++++++++++++++++++++++++
+ 5 files changed, 1549 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/include/mach/smmu.h
+ create mode 100644 drivers/iommu/tegra-gart.c
+ create mode 100644 drivers/iommu/tegra-smmu.c
 
-Not only do all the drivers coming in for these devices use lookup
-tables they also all open code the lookup :/
-
-> +	init_data = &pdata->reg_init_data;
-> +	tps = kzalloc(sizeof(*tps), GFP_KERNEL);
-> +	if (!tps) {
-
-Use devm_kzalloc(), saves having to worry about cleanup.
-
-> +static void tps62360_shutdown(struct i2c_client *client)
-> +{
-> +	struct tps62360_chip *tps = i2c_get_clientdata(client);
-> +	int st;
-> +
-> +	if (!tps->en_discharge)
-> +		return;
-> +
-> +	/* Configure the output discharge path */
-> +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
-> +	if (st < 0)
-> +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
-> +			__func__, REG_RAMPCTRL);
-> +}
-
-I rather suspect that if this is worth doing it's also worth doing over
-suspend...
-
-> +MODULE_DESCRIPTION("TPS62360 voltage regulator driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:tps62360");
-
-This isn't a platform driver, it's a driver for an I2C device.
-
-> + * @vsel: Select the voltage id register.
-
-What's this?
-
-> + * @init_uV: initial micro volts which need to be set.
-
-No, there's no way stuff like this should be being open coded in
-individual regulator drivers - this isn't at all specific to this
-regulator so it should be (and is) supported by the standard
-constraints.
+-- 
+1.7.5.4
