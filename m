@@ -1,134 +1,49 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] arm/tegra: add support for tegra30 interrupts
-Date: Thu, 5 Jan 2012 15:31:45 +0200
-Message-ID: <1325770305-21637-1-git-send-email-pdeschrijver@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: RE: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Thu, 5 Jan 2012 19:18:25 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+ <20120105062919.GI11867@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120105062919.GI11867@opensource.wolfsonmicro.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan.com@nvidia.com>
+Cc: "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra30 has 1 extra legacy interrupt controller. Use the GIC ITLinesNumber
-field to determine how many interrupt controllers we have and initialize
-appropriately. Also make room for the extra tegra30 interrupts by moving
-the GPIO IRQ base. This shouldn't affect existing code as it determines the
-correct IRQ number for GPIOs using TEGRA_GPIO_TO_IRQ().
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> From: Mark Brown [mailto:broonie@opensource.wolfsonmicro.com]
+> Sent: Thursday, January 05, 2012 11:59 AM
 
----
-This patch is against
-git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.3/soc
-commit 6cc04a4420391c3f034afe8ea6e28d75912a70a3
+Thanks for feedback. I have taken care of all your feedback and send
+the patch V2.
 
-On top of this the following patches are needed:
+> > +	/* Configure the output discharge path */
+> > +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
+> > +	if (st < 0)
+> > +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
+> > +			__func__, REG_RAMPCTRL);
+> > +}
+> 
+> I rather suspect that if this is worth doing it's also worth doing over
+> suspend...
 
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7240/1
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7244/1
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7241/1
----
- arch/arm/mach-tegra/include/mach/iomap.h |    3 +++
- arch/arm/mach-tegra/include/mach/irqs.h  |    7 ++++---
- arch/arm/mach-tegra/irq.c                |   20 ++++++++++++++++----
- 3 files changed, 23 insertions(+), 7 deletions(-)
+The discharge path should be only enabled when the output voltage will go to 0.
+If it stay in non-zero voltage and enabling discharge path  will consume more power.
+In suspend, it is not necessarily that voltage output will be 0 and hence it should not
+be enabled. In shutdown all power goes off from pmu and hence it is worth to enable
+discharge path for quick fall of output voltage.
 
-diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
-index 19dec3a..67644c9 100644
---- a/arch/arm/mach-tegra/include/mach/iomap.h
-+++ b/arch/arm/mach-tegra/include/mach/iomap.h
-@@ -74,6 +74,9 @@
- #define TEGRA_QUATERNARY_ICTLR_BASE	0x60004300
- #define TEGRA_QUATERNARY_ICTLR_SIZE	SZ_64
- 
-+#define TEGRA_QUINARY_ICTLR_BASE	0x60004400
-+#define TEGRA_QUINARY_ICTLR_SIZE	SZ_64
-+
- #define TEGRA_TMR1_BASE			0x60005000
- #define TEGRA_TMR1_SIZE			SZ_8
- 
-diff --git a/arch/arm/mach-tegra/include/mach/irqs.h b/arch/arm/mach-tegra/include/mach/irqs.h
-index a2146cd..aad1a2c 100644
---- a/arch/arm/mach-tegra/include/mach/irqs.h
-+++ b/arch/arm/mach-tegra/include/mach/irqs.h
-@@ -165,11 +165,12 @@
- #define INT_QUAD_RES_30			(INT_QUAD_BASE + 30)
- #define INT_QUAD_RES_31			(INT_QUAD_BASE + 31)
- 
--#define INT_MAIN_NR			(INT_QUAD_BASE + 32 - INT_PRI_BASE)
--
-+/* Tegra30 has 5 banks of 32 IRQs */
-+#define INT_MAIN_NR			(32 * 5)
- #define INT_GPIO_BASE			(INT_PRI_BASE + INT_MAIN_NR)
- 
--#define INT_GPIO_NR			(28 * 8)
-+/* Tegra30 has 8 banks of 32 GPIOs */
-+#define INT_GPIO_NR			(32 * 8)
- 
- #define TEGRA_NR_IRQS			(INT_GPIO_BASE + INT_GPIO_NR)
- 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 004b0fd..6ad5255 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -48,14 +48,16 @@
- #define ICTLR_COP_IER_CLR	0x38
- #define ICTLR_COP_IEP_CLASS	0x3c
- 
--#define NUM_ICTLRS 4
- #define FIRST_LEGACY_IRQ 32
- 
-+static int num_ictlrs;
-+
- static void __iomem *ictlr_reg_base[] = {
- 	IO_ADDRESS(TEGRA_PRIMARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_SECONDARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_TERTIARY_ICTLR_BASE),
- 	IO_ADDRESS(TEGRA_QUATERNARY_ICTLR_BASE),
-+	IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
- };
- 
- static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
-@@ -64,7 +66,7 @@ static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
- 	u32 mask;
- 
- 	BUG_ON(irq < FIRST_LEGACY_IRQ ||
--		irq >= FIRST_LEGACY_IRQ + NUM_ICTLRS * 32);
-+		irq >= FIRST_LEGACY_IRQ + num_ictlrs * 32);
- 
- 	base = ictlr_reg_base[(irq - FIRST_LEGACY_IRQ) / 32];
- 	mask = BIT((irq - FIRST_LEGACY_IRQ) % 32);
-@@ -117,8 +119,18 @@ static int tegra_retrigger(struct irq_data *d)
- void __init tegra_init_irq(void)
- {
- 	int i;
-+	void __iomem *distbase;
-+
-+	distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
-+	num_ictlrs = readl_relaxed(distbase + GIC_DIST_CTR) & 0x1f;
-+
-+	if (num_ictlrs > ARRAY_SIZE(ictlr_reg_base)) {
-+		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %d.",
-+			num_ictlrs, ARRAY_SIZE(ictlr_reg_base));
-+		num_ictlrs = ARRAY_SIZE(ictlr_reg_base);
-+	}
- 
--	for (i = 0; i < NUM_ICTLRS; i++) {
-+	for (i = 0; i < num_ictlrs; i++) {
- 		void __iomem *ictlr = ictlr_reg_base[i];
- 		writel(~0, ictlr + ICTLR_CPU_IER_CLR);
- 		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
-@@ -135,6 +147,6 @@ void __init tegra_init_irq(void)
- 	 * initialized elsewhere under DT.
- 	 */
- 	if (!of_have_populated_dt())
--		gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
-+		gic_init(0, 29, distbase,
- 			IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
- }
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> 
+> > + * @vsel: Select the voltage id register.
+> 
+> What's this?
+There is 4 sets of voltage configuration register for voltage output. The power
+on reset values for this registers are different and selection of the voltage
+configuration register is done by 2 pins of the pmu chip which is board dependent.
+Based on board connection, it need to be program the desired voltage configuration
+Register to achieve the desired output.
