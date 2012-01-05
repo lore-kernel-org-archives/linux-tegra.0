@@ -1,207 +1,270 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [PATCH v2] arm/tegra: fuse: add functions to access chip revision
-Date: Wed,  4 Jan 2012 21:50:41 -0800
-Message-ID: <1325742641-384-1-git-send-email-olof@lixom.net>
-References: <1324599468-12845-5-git-send-email-olof@lixom.net>
+Subject: [PATCH v2] arm/tegra: emc: convert tegra2_emc to a platform driver
+Date: Wed,  4 Jan 2012 21:56:34 -0800
+Message-ID: <1325742994-1178-1-git-send-email-olof@lixom.net>
+References: <1324599468-12845-7-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1324599468-12845-5-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1324599468-12845-7-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add function to get chip revision, and print it out at boot time.
-
-Restructure the fuse access to just use cached variables instead
-of always reading the fuses, and export those variables directly
-instead of using accessor functions.
-
-Add a SKU ID table of currently known values.
-
-Based on code originally by Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>.
+This is the first step in making it device-tree aware and get rid of the
+in-kernel EMC tables (of which there are none in mainline, thankfully).
 
 Changes since v1:
 
-* Add A01 minor rev support
-* Don't decode for A03p on anything but T2x
+* Fixed messed up indentation
+* Removed code that should be gone (was added here and removed later in series)
 
 Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/fuse.c          |   85 ++++++++++++++++++++++++-----------
- arch/arm/mach-tegra/fuse.h          |   32 +++++++++++--
- arch/arm/mach-tegra/tegra2_clocks.c |    2 +-
- 3 files changed, 86 insertions(+), 33 deletions(-)
+ arch/arm/mach-tegra/tegra2_emc.c        |   96 +++++++++++++++++++++++-------
+ arch/arm/mach-tegra/tegra2_emc.h        |   11 +--
+ include/linux/platform_data/tegra_emc.h |   34 +++++++++++
+ 3 files changed, 111 insertions(+), 30 deletions(-)
+ create mode 100644 include/linux/platform_data/tegra_emc.h
 
-diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-index daf3f57..b1895c5 100644
---- a/arch/arm/mach-tegra/fuse.c
-+++ b/arch/arm/mach-tegra/fuse.c
-@@ -30,20 +30,75 @@
- #define FUSE_SKU_INFO		0x110
- #define FUSE_SPARE_BIT		0x200
+diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
+index 0f7ae6e..604d6fc 100644
+--- a/arch/arm/mach-tegra/tegra2_emc.c
++++ b/arch/arm/mach-tegra/tegra2_emc.c
+@@ -20,6 +20,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/platform_data/tegra_emc.h>
  
-+int tegra_sku_id;
-+int tegra_cpu_process_id;
-+int tegra_core_process_id;
-+enum tegra_revision tegra_revision;
+ #include <mach/iomap.h>
+ 
+@@ -32,18 +34,17 @@ static bool emc_enable;
+ #endif
+ module_param(emc_enable, bool, 0644);
+ 
+-static void __iomem *emc = IO_ADDRESS(TEGRA_EMC_BASE);
+-static const struct tegra_emc_table *tegra_emc_table;
+-static int tegra_emc_table_size;
++static struct platform_device *emc_pdev;
++static void __iomem *emc_regbase;
+ 
+ static inline void emc_writel(u32 val, unsigned long addr)
+ {
+-	writel(val, emc + addr);
++	writel(val, emc_regbase + addr);
+ }
+ 
+ static inline u32 emc_readl(unsigned long addr)
+ {
+-	return readl(emc + addr);
++	return readl(emc_regbase + addr);
+ }
+ 
+ static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
+@@ -98,15 +99,15 @@ static const unsigned long emc_reg_addr[TEGRA_EMC_NUM_REGS] = {
+ /* Select the closest EMC rate that is higher than the requested rate */
+ long tegra_emc_round_rate(unsigned long rate)
+ {
++	struct tegra_emc_pdata *pdata;
+ 	int i;
+ 	int best = -1;
+ 	unsigned long distance = ULONG_MAX;
+ 
+-	if (!tegra_emc_table)
++	if (!emc_pdev)
+ 		return -EINVAL;
+ 
+-	if (!emc_enable)
+-		return -EINVAL;
++	pdata = emc_pdev->dev.platform_data;
+ 
+ 	pr_debug("%s: %lu\n", __func__, rate);
+ 
+@@ -116,10 +117,10 @@ long tegra_emc_round_rate(unsigned long rate)
+ 	 */
+ 	rate = rate / 2 / 1000;
+ 
+-	for (i = 0; i < tegra_emc_table_size; i++) {
+-		if (tegra_emc_table[i].rate >= rate &&
+-		    (tegra_emc_table[i].rate - rate) < distance) {
+-			distance = tegra_emc_table[i].rate - rate;
++	for (i = 0; i < pdata->num_tables; i++) {
++		if (pdata->tables[i].rate >= rate &&
++		    (pdata->tables[i].rate - rate) < distance) {
++			distance = pdata->tables[i].rate - rate;
+ 			best = i;
+ 		}
+ 	}
+@@ -127,9 +128,9 @@ long tegra_emc_round_rate(unsigned long rate)
+ 	if (best < 0)
+ 		return -EINVAL;
+ 
+-	pr_debug("%s: using %lu\n", __func__, tegra_emc_table[best].rate);
++	pr_debug("%s: using %lu\n", __func__, pdata->tables[best].rate);
+ 
+-	return tegra_emc_table[best].rate * 2 * 1000;
++	return pdata->tables[best].rate * 2 * 1000;
+ }
+ 
+ /*
+@@ -142,37 +143,86 @@ long tegra_emc_round_rate(unsigned long rate)
+  */
+ int tegra_emc_set_rate(unsigned long rate)
+ {
++	struct tegra_emc_pdata *pdata;
+ 	int i;
+ 	int j;
+ 
+-	if (!tegra_emc_table)
++	if (!emc_pdev)
+ 		return -EINVAL;
+ 
++	pdata = emc_pdev->dev.platform_data;
 +
-+static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
-+	[TEGRA_REVISION_UNKNOWN] = "unknown",
-+	[TEGRA_REVISION_A01]     = "A01",
-+	[TEGRA_REVISION_A02]     = "A02",
-+	[TEGRA_REVISION_A03]     = "A03",
-+	[TEGRA_REVISION_A03p]    = "A03 prime",
-+	[TEGRA_REVISION_A04]     = "A04",
+ 	/*
+ 	 * The EMC clock rate is twice the bus rate, and the bus rate is
+ 	 * measured in kHz
+ 	 */
+ 	rate = rate / 2 / 1000;
+ 
+-	for (i = 0; i < tegra_emc_table_size; i++)
+-		if (tegra_emc_table[i].rate == rate)
++	for (i = 0; i < pdata->num_tables; i++)
++		if (pdata->tables[i].rate == rate)
+ 			break;
+ 
+-	if (i >= tegra_emc_table_size)
++	if (i >= pdata->num_tables)
+ 		return -EINVAL;
+ 
+ 	pr_debug("%s: setting to %lu\n", __func__, rate);
+ 
+ 	for (j = 0; j < TEGRA_EMC_NUM_REGS; j++)
+-		emc_writel(tegra_emc_table[i].regs[j], emc_reg_addr[j]);
++		emc_writel(pdata->tables[i].regs[j], emc_reg_addr[j]);
++
++	emc_readl(pdata->tables[i].regs[TEGRA_EMC_NUM_REGS - 1]);
++
++	return 0;
++}
++
++static int __devinit tegra_emc_probe(struct platform_device *pdev)
++{
++	struct tegra_emc_pdata *pdata;
++	struct clk *c = clk_get_sys("emc", NULL);
++	struct clk *user;
++	struct resource *res;
++	unsigned long max = 0;
++	int i;
++
++	if (!emc_enable) {
++		dev_err(&pdev->dev, "disabled per module parameter\n");
++		return -ENODEV;
++	}
++
++	pdata = pdev->dev.platform_data;
++
++	if (!pdata) {
++		dev_err(&pdev->dev, "missing platform data\n");
++		return -ENXIO;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(&pdev->dev, "missing register base\n");
++		return -ENOMEM;
++	}
++
++	if (!request_mem_region(res->start, resource_size(res), "tegra_emc")) {
++		dev_err(&pdev->dev, "failed to request register region\n");
++		return -EBUSY;
++	}
+ 
+-	emc_readl(tegra_emc_table[i].regs[TEGRA_EMC_NUM_REGS - 1]);
++	emc_regbase = ioremap(res->start, resource_size(res));
++	emc_pdev = pdev;
+ 
+ 	return 0;
+ }
+ 
+-void tegra_init_emc(const struct tegra_emc_table *table, int table_size)
++static struct platform_driver tegra_emc_driver = {
++	.driver         = {
++		.name   = "tegra-emc",
++		.owner  = THIS_MODULE,
++	},
++	.probe          = tegra_emc_probe,
 +};
 +
- static inline u32 tegra_fuse_readl(unsigned long offset)
++static int __init tegra_emc_init(void)
  {
- 	return tegra_apb_readl(TEGRA_FUSE_BASE + offset);
+-	tegra_emc_table = table;
+-	tegra_emc_table_size = table_size;
++	return platform_driver_register(&tegra_emc_driver);
  }
- 
-+static inline bool get_spare_fuse(int bit)
-+{
-+	return tegra_fuse_readl(FUSE_SPARE_BIT + bit * 4);
-+}
-+
-+static enum tegra_revision tegra_get_revision(void)
-+{
-+	void __iomem *chip_id = IO_ADDRESS(TEGRA_APB_MISC_BASE) + 0x804;
-+	u32 id = readl(chip_id);
-+	u32 minor_rev = (id >> 16) & 0xf;
-+	u32 chipid = (id >> 8) & 0xff;
-+
-+	switch (minor_rev) {
-+	case 1:
-+		return TEGRA_REVISION_A01;
-+	case 2:
-+		return TEGRA_REVISION_A02;
-+	case 3:
-+		if (chipid == 0x20 && (get_spare_fuse(18) || get_spare_fuse(19)))
-+			return TEGRA_REVISION_A03p;
-+		else
-+			return TEGRA_REVISION_A03;
-+	case 4:
-+		return TEGRA_REVISION_A04;
-+	default:
-+		return TEGRA_REVISION_UNKNOWN;
-+	}
-+}
-+
- void tegra_init_fuse(void)
- {
- 	u32 reg = readl(IO_TO_VIRT(TEGRA_CLK_RESET_BASE + 0x48));
- 	reg |= 1 << 28;
- 	writel(reg, IO_TO_VIRT(TEGRA_CLK_RESET_BASE + 0x48));
- 
--	pr_info("Tegra SKU: %d CPU Process: %d Core Process: %d\n",
--		tegra_sku_id(), tegra_cpu_process_id(),
--		tegra_core_process_id());
-+	reg = tegra_fuse_readl(FUSE_SKU_INFO);
-+	tegra_sku_id = reg & 0xFF;
-+
-+	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
-+	tegra_cpu_process_id = (reg >> 6) & 3;
-+
-+	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
-+	tegra_core_process_id = (reg >> 12) & 3;
-+
-+	tegra_revision = tegra_get_revision();
-+
-+	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d Core Process: %d\n",
-+		tegra_revision_name[tegra_get_revision()],
-+		tegra_sku_id, tegra_cpu_process_id,
-+		tegra_core_process_id);
- }
- 
- unsigned long long tegra_chip_uid(void)
-@@ -54,27 +109,3 @@ unsigned long long tegra_chip_uid(void)
- 	hi = tegra_fuse_readl(FUSE_UID_HIGH);
- 	return (hi << 32ull) | lo;
- }
--
--int tegra_sku_id(void)
--{
--	int sku_id;
--	u32 reg = tegra_fuse_readl(FUSE_SKU_INFO);
--	sku_id = reg & 0xFF;
--	return sku_id;
--}
--
--int tegra_cpu_process_id(void)
--{
--	int cpu_process_id;
--	u32 reg = tegra_fuse_readl(FUSE_SPARE_BIT);
--	cpu_process_id = (reg >> 6) & 3;
--	return cpu_process_id;
--}
--
--int tegra_core_process_id(void)
--{
--	int core_process_id;
--	u32 reg = tegra_fuse_readl(FUSE_SPARE_BIT);
--	core_process_id = (reg >> 12) & 3;
--	return core_process_id;
--}
-diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
-index 584b2e2..7576aaf 100644
---- a/arch/arm/mach-tegra/fuse.h
-+++ b/arch/arm/mach-tegra/fuse.h
-@@ -1,6 +1,4 @@
- /*
-- * arch/arm/mach-tegra/fuse.c
-- *
-  * Copyright (C) 2010 Google, Inc.
-  *
-  * Author:
-@@ -17,8 +15,32 @@
++device_initcall(tegra_emc_init);
+diff --git a/arch/arm/mach-tegra/tegra2_emc.h b/arch/arm/mach-tegra/tegra2_emc.h
+index 19f08cb..f61409b 100644
+--- a/arch/arm/mach-tegra/tegra2_emc.h
++++ b/arch/arm/mach-tegra/tegra2_emc.h
+@@ -15,13 +15,10 @@
   *
   */
  
-+#ifndef __MACH_TEGRA_FUSE_H
-+#define __MACH_TEGRA_FUSE_H
-+
-+enum tegra_revision {
-+	TEGRA_REVISION_UNKNOWN = 0,
-+	TEGRA_REVISION_A01,
-+	TEGRA_REVISION_A02,
-+	TEGRA_REVISION_A03,
-+	TEGRA_REVISION_A03p,
-+	TEGRA_REVISION_A04,
-+	TEGRA_REVISION_MAX,
-+};
-+
-+#define SKU_ID_T20	8
-+#define SKU_ID_T25SE	20
-+#define SKU_ID_AP25	23
-+#define SKU_ID_T25	24
-+#define SKU_ID_AP25E	27
-+#define SKU_ID_T25E	28
-+
-+extern int tegra_sku_id;
-+extern int tegra_cpu_process_id;
-+extern int tegra_core_process_id;
-+extern enum tegra_revision tegra_revision;
-+
- unsigned long long tegra_chip_uid(void);
--int tegra_sku_id(void);
--int tegra_cpu_process_id(void);
--int tegra_core_process_id(void);
- void tegra_init_fuse(void);
+-#define TEGRA_EMC_NUM_REGS 46
+-
+-struct tegra_emc_table {
+-	unsigned long rate;
+-	u32 regs[TEGRA_EMC_NUM_REGS];
+-};
++#ifndef __MACH_TEGRA_TEGRA2_EMC_H_
++#define __MACH_TEGRA_TEGRA2_EMC_H
+ 
+ int tegra_emc_set_rate(unsigned long rate);
+ long tegra_emc_round_rate(unsigned long rate);
+-void tegra_init_emc(const struct tegra_emc_table *table, int table_size);
 +
 +#endif
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index ff9e6b6..74d314fd 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -720,7 +720,7 @@ static void tegra2_pllx_clk_init(struct clk *c)
- {
- 	tegra2_pll_clk_init(c);
- 
--	if (tegra_sku_id() == 7)
-+	if (tegra_sku_id == 7)
- 		c->max_rate = 750000000;
- }
- 
+diff --git a/include/linux/platform_data/tegra_emc.h b/include/linux/platform_data/tegra_emc.h
+new file mode 100644
+index 0000000..df67505
+--- /dev/null
++++ b/include/linux/platform_data/tegra_emc.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2011 Google, Inc.
++ *
++ * Author:
++ *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
++ *	Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#ifndef __TEGRA_EMC_H_
++#define __TEGRA_EMC_H_
++
++#define TEGRA_EMC_NUM_REGS 46
++
++struct tegra_emc_table {
++	unsigned long rate;
++	u32 regs[TEGRA_EMC_NUM_REGS];
++};
++
++struct tegra_emc_pdata {
++	int num_tables;
++	struct tegra_emc_table *tables;
++};
++
++#endif
 -- 
 1.7.8.GIT
