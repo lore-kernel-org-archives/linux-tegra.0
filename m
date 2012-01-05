@@ -1,31 +1,102 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] regulator: Rail is said to be enable only if this and
-	supply rails are enabled.
-Date: Thu, 5 Jan 2012 06:06:46 +0000
-Message-ID: <20120105060646.GG11867@opensource.wolfsonmicro.com>
-References: <1325570983-3700-1-git-send-email-ldewangan@nvidia.com> <20120103201624.GC2843@opensource.wolfsonmicro.com> <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9C2E@BGMAIL01.nvidia.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Thu, 5 Jan 2012 06:29:19 +0000
+Message-ID: <20120105062919.GI11867@opensource.wolfsonmicro.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9C2E-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan.com-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan.com@nvidia.com>
+Cc: lrg@slimlogic.co.uk, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 04, 2012 at 11:49:14AM +0530, Laxman Dewangan wrote:
+On Wed, Jan 04, 2012 at 02:50:18PM +0530, Laxman Dewangan wrote:
+> Change-Id: I93739aad865401047738f899b2248f2714d824ea
 
-> > This feels wrong - the code in general assumes that the parents will all
-> > be enabled for an enabled child (and does the required stuff on enable
-> > and disable).  Doing the check isn't unreasonable but if it fails we
-> > really ought to be complaining loudly as we're probably confused and
-> > things might be going wrong elsewhere.
+Don't include gerritt droppings in upstream submissions.
 
-> returns true but actually the rail is not enabled because supply rail was not enabled.
-> Although it is fixed in other patch but such checks help more.
+> +/* Supported voltage values for regulators */
+> +static const u16 TPS62360_VOLTAGES[] = {
+> +	 770,  780,  790,  800,  810,  820,  830,  840,  850,  860,
+> +	 870,  880,  890,  900,  910,  920,  930,  940,  950,  960,
+> +	 970,  980,  990, 1000, 1010, 1020, 1030, 1040, 1050, 1060,
+> +	1070, 1080, 1090, 1110, 1110, 1120, 1130, 1140, 1150, 1160,
+> +	1170, 1180, 1190, 1200, 1210, 1220, 1230, 1240, 1250, 1260,
+> +	1270, 1280, 1290, 1300, 1310, 1320, 1330, 1340, 1350, 1360,
+> +	1370, 1380, 1390, 1400,
+> +};
 
-You're not quite getting my point here - we should be treating this as
-an error and complaining about it when we notice it, your patch will
-silently mask the condition which seems likely to just cause the bug to
-manifest elsewhere.
+Why are you using a lookup table here?  Just calaculate the values.
+This is a pervasive problem with the TI drivers which leads me to
+suspect cut'n'paste and therefore an opportunity to factor some code
+out.
+
+> +static int tps62360_reg_modify_bits(struct tps62360_chip *tps, u8 reg,
+> +		u8 set_mask, u8 clear_mask)
+> +{
+
+There's a lot of code in this driver that looks like it could be
+factored out by using the regmap API, not just the register I/O but also
+the cache.
+
+> +static int tps62360_dcdc_is_enabled(struct regulator_dev *dev)
+> +{
+> +	/**
+> +	 * Always return 1 as the EN is not controlled by register
+> +	 * programming */
+> +	return 1;
+> +}
+
+Don't implement unsupported operations.
+
+> +
+> +	for (vsel = 0; vsel < tps->desc.n_voltages; ++vsel) {
+> +		int uV = tps->voltages[vsel] * 1000;
+> +		if (min_uV <= uV && uV <= max_uV) {
+
+Not only do all the drivers coming in for these devices use lookup
+tables they also all open code the lookup :/
+
+> +	init_data = &pdata->reg_init_data;
+> +	tps = kzalloc(sizeof(*tps), GFP_KERNEL);
+> +	if (!tps) {
+
+Use devm_kzalloc(), saves having to worry about cleanup.
+
+> +static void tps62360_shutdown(struct i2c_client *client)
+> +{
+> +	struct tps62360_chip *tps = i2c_get_clientdata(client);
+> +	int st;
+> +
+> +	if (!tps->en_discharge)
+> +		return;
+> +
+> +	/* Configure the output discharge path */
+> +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
+> +	if (st < 0)
+> +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
+> +			__func__, REG_RAMPCTRL);
+> +}
+
+I rather suspect that if this is worth doing it's also worth doing over
+suspend...
+
+> +MODULE_DESCRIPTION("TPS62360 voltage regulator driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:tps62360");
+
+This isn't a platform driver, it's a driver for an I2C device.
+
+> + * @vsel: Select the voltage id register.
+
+What's this?
+
+> + * @init_uV: initial micro volts which need to be set.
+
+No, there's no way stuff like this should be being open coded in
+individual regulator drivers - this isn't at all specific to this
+regulator so it should be (and is) supported by the standard
+constraints.
