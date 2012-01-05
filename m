@@ -1,52 +1,107 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 8/9] arm/tegra: seaboard: add EMC table to device tree
-Date: Thu, 5 Jan 2012 01:11:33 +0100
-Message-ID: <CACRpkdbtY+vOc-X8Ay1RyN61Xseepc2X-NnvFe=G++ASwrpOxQ@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 9/9] arm/tegra: emc: device tree support
+Date: Wed, 4 Jan 2012 16:27:24 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F15B3@HQMAIL01.nvidia.com>
 References: <1324599468-12845-1-git-send-email-olof@lixom.net>
-	<1324599468-12845-9-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF17761F1590@HQMAIL01.nvidia.com>
-	<CAOesGMhROzwyqMS89Nq0m6KRLNTbrkFrH9pUe6tfPR8gKTU+QA@mail.gmail.com>
+ <1324599468-12845-10-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMhROzwyqMS89Nq0m6KRLNTbrkFrH9pUe6tfPR8gKTU+QA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1324599468-12845-10-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 5, 2012 at 12:55 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> On Wed, Jan 4, 2012 at 3:51 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
-rote:
->> Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
->>> Timings for the T25 version of seaboard, only one memory manufactur=
-er
->>> and timing table (two speeds).
->>
->> There exist Seaboards with Tegra20 rather than Tegra25. Should we:
->> * Rename tegra-seaboard.dts to tegra-seaboard.dtsi
->> * Create tegra-seaboard-t20.dts and tegra-seaboard-t25.dts which inc=
-lude
->> =A0tegra-seaboard.dtsi, and add the EMC tables to the Tegra25 versio=
-n only?
->
-> Honestly, T20 seaboards are deprecated around here, we've been
-> replacing all we have with T25 models and keeping T20 support around
-> is a pain. I'd rather just ignore them if we can.
+Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
+> Add device tree support to the emc driver, filling in the platform data
+> based on the DT bindings.
 
-It's fun how board prototype problems sping up in several similar
-companies :-)
+> diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+...
+>  out_fail:
+>  	mutex_unlock(&tegra_apb_dma_lock);
+> -	return true;
+> +	return false;
 
-When I am confronted with similar problems I have taken the stance:
+There's the Easter egg;-)
 
-Q: is the board available outside my company esp to community
- people and other hackers who will be pissed if I screw it up?
+> diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
 
-If the answer is no, and there is no risk that anyone will blame you
-for it on this mailinglist - delete it. Then handle the people that
-yell at you internally and ask them to bring their board to the
-junkpile.
+> +#ifdef CONFIG_OF
+> +static struct device_node *tegra_emc_ramcode_devnode(struct device_node *np)
+> +{
+> +	struct device_node *iter;
+> +	u32 reg;
+> +
+> +	for_each_child_of_node(np, iter) {
+> +		if (!of_property_read_u32(np, "nvidia,ram-code", &reg))
+> +			continue;
 
-Yours,
-Linus Walleij
+I think that test is inverted; it returns 0 on success.
+
+> +static struct tegra_emc_pdata *tegra_emc_dt_parse_pdata(
+> +		struct platform_device *pdev)
+...
+> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> +	pdata->tables = devm_kzalloc(&pdev->dev,
+> +				     sizeof(struct tegra_emc_table) * num_tables,
+> +				     GFP_KERNEL);
+
+May as well use sizeof(*pdata->tables) there too for consistency?
+
+> +
+> +	i = 0;
+> +	for_each_child_of_node(tnp, iter) {
+> +		u32 prop;
+> +
+> +		ret = of_property_read_u32(iter, "clock-frequency", &prop);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "no clock-frequency in %s\n",
+> +				iter->full_name);
+> +			continue;
+
+Not goto out?
+
+> +		}
+> +		pdata->tables[i].rate = prop;
+> +
+> +		ret = of_property_read_u32_array(iter, "nvidia,emc-registers",
+> +						 pdata->tables[i].regs,
+> +						 TEGRA_EMC_NUM_REGS);
+> +		if (ret) {
+> +			dev_err(&pdev->dev,
+> +				"malformed emc-registers property in %s\n",
+> +				iter->full_name);
+> +			continue;
+> +		}
+> +
+> +		i++;
+> +	}
+> +	pdata->num_tables = i;
+
+Or here, "if (i != num_tables) error"?
+
+> +
+> +out:
+> +	of_node_put(tnp);
+> +	return pdata;
+> +}
+
++static struct tegra_emc_pdata __devinit *tegra_emc_fill_pdata(struct platform_device *pdev)
++{	
+...
++	pdata->tables[0].rate = clk_get_rate(c);
+...
++	dev_info(&pdev->dev, "no tables provided, using settings for %ld kHz\n",
++		 pdata->tables[0].rate / 2000);
+
+Is that right; I'm not sure if the /2 should be applied to what's stored
+in .rate, or to the EMC clock value from clk_get_rate(). Similarly, is
+the DT frequency the /2 version; there's no /2 in the DT parsing, but I
+think I expect there to be.
+
+-- 
+nvpublic
