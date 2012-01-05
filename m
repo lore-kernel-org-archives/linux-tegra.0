@@ -1,249 +1,70 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] ARM: IOMMU: tegra: Add iommu_ops for GART/SMMU
- driver
-Date: Thu, 5 Jan 2012 09:17:18 +0200
-Message-ID: <20120105091718.3fb378b2a1d390f9dd63c396@nvidia.com>
-References: <1325747509-29665-1-git-send-email-hdoyu@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 5/6] gpio: tegra: Dynamically allocate IRQ base, and
+ support DT
+Date: Thu, 5 Jan 2012 08:23:06 +0100
+Message-ID: <20120105072306.GA3980@avionic-0098.mockup.avionic-design.de>
+References: <1325702378-20863-1-git-send-email-swarren@nvidia.com>
+ <1325702378-20863-5-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1325747509-29665-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1325702378-20863-5-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 5 Jan 2012 08:11:47 +0100
-Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-> This patchset adds support for IOMMU API for Tegra20(GART) and
-> Tegra30(SMMU). "struct iommu_ops" are implemented for both H/W IOMMU
-> modules.
-> 
-> Tested with "Ion memory manager" and "DMA mapping API"(*1).
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just for DMA mapping test from MPU side, the following one is used.
+* Stephen Warren wrote:
+> @@ -343,6 +344,16 @@ static int __devinit tegra_gpio_probe(struct platfor=
+m_device *pdev)
+>  	int i;
+>  	int j;
+> =20
+> +	irq_domain.irq_base =3D irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
+> +	if (irq_domain.irq_base < 0) {
+> +		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
+> +		return -ENODEV;
+> +	}
+> +	irq_domain.nr_irq =3D TEGRA_NR_GPIOS;
+> +	irq_domain.ops =3D &irq_domain_simple_ops;
+> +	irq_domain.of_node =3D pdev->dev.of_node;
+> +	irq_domain_add(&irq_domain);
 
-From a7a163c29694c056e020ba9200648120498e1764 Mon Sep 17 00:00:00 2001
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Thu, 15 Dec 2011 13:24:24 +0200
-Subject: [PATCH 1/1] [NOT-FOR-MERGE] TEST: Simple dma-iommu-mapping API TEST
- module
+I was wondering: except for setting the nr_irq field this is pretty much wh=
+at
+irq_domain_add_simple() does. While I get that you need access to the domain
+later on and cannot use the helper, I'm still wondering why the nr_irq field
+is not initialized by irq_domain_add_simple().
 
-This is not posted to merge but this is necessary to understand how
-SMMU/GART works with DMA(-iommu-mapping-)API.
+I have a driver for a GPIO/IRQ expander that does exactly the same and was
+always wondering why the irq_data.hwirq field isn't properly setup, and
+irq_domain.nr_irq being 0 seems to be exactly the reason. So am I supposed =
+to
+not use irq_domain_add_simple() in this case or should we rather update the
+helper to take a nr_irq parameter that can be used to initialize the nr_irq
+field?
 
-This is a test to verify DMA API(DMA iommu mapping API), where SoC
-specific iommu_ops is used internally.
+Thierry
 
-This does alloc/(un)map/free, but there's no actual access from device
-side since it requires device specific communications.
+P.S.: sorry for hijacking
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/dmaapi-test.c |  193 +++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 193 insertions(+), 0 deletions(-)
- create mode 100644 drivers/iommu/dmaapi-test.c
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature
 
-diff --git a/drivers/iommu/dmaapi-test.c b/drivers/iommu/dmaapi-test.c
-new file mode 100644
-index 0000000..f386249
---- /dev/null
-+++ b/drivers/iommu/dmaapi-test.c
-@@ -0,0 +1,193 @@
-+/*
-+ * DMA IOMMU mapping API test module
-+ *
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Author: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>,
-+ *	Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program; if not, write to the Free Software Foundation, Inc.,
-+ * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-+ */
-+
-+#define DEBUG
-+#define pr_fmt(fmt)	KBUILD_MODNAME ":" fmt
-+
-+#include <linux/module.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/kthread.h>
-+#include <linux/delay.h>
-+#include <linux/highmem.h>
-+#include <linux/pfn.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+
-+#include <mach/iomap.h>
-+#include <mach/smmu.h>
-+
-+#include <asm/dma-iommu.h>
-+
-+#include "devices.h"
-+
-+/* FIXME: 2x and 3x should be supported at once */
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+#define IOVA_START	TEGRA_GART_BASE
-+#define IOVA_SIZE	TEGRA_GART_SIZE
-+static struct platform_device *tegra_iommu_device = &tegra_gart_device;
-+#elif CONFIG_ARCH_TEGRA_3x_SOC
-+#define IOVA_START	TEGRA_SMMU_BASE
-+#define IOVA_SIZE	TEGRA_SMMU_SIZE
-+static struct platform_device *tegra_iommu_device = &tegra_smmu_device;
-+#else
-+#error Unsupported device
-+#endif
-+
-+#define NUM_TEST	3
-+#define MAP_SIZE	(4 * PAGE_SIZE)
-+
-+struct dmaapi_test_case {
-+	char *name;
-+	void (*fn)(struct device *);
-+};
-+
-+static void dmaapi_test_map_page(struct device *dev)
-+{
-+	struct page *page;
-+	dma_addr_t dma_addr;
-+	void *cpu_addr;
-+
-+	page = alloc_page(GFP_KERNEL);
-+	BUG_ON(!page);
-+
-+	dma_addr = dma_map_page(dev, page, 0, PAGE_SIZE, DMA_TO_DEVICE);
-+	BUG_ON(!dma_addr);
-+
-+	cpu_addr = kmap(page);
-+	BUG_ON(!cpu_addr);
-+	memset(cpu_addr, 0xa5, PAGE_SIZE);
-+	kunmap(cpu_addr);
-+
-+	pr_debug("pid:%d,%s mapped\t%08x:%08x\n",
-+		 current->pid, dev_name(dev), dma_addr, page_to_phys(page));
-+
-+	dma_unmap_page(dev, dma_addr, PAGE_SIZE, DMA_TO_DEVICE);
-+	__free_page(page);
-+}
-+
-+static void dmaapi_test_alloc_coherent(struct device *dev)
-+{
-+	dma_addr_t da[NUM_TEST];
-+	void *va[NUM_TEST];
-+	int i;
-+
-+	for (i = 0; i < NUM_TEST; i++) {
-+		void *cpu_addr;
-+		dma_addr_t dma_addr;
-+
-+		cpu_addr = dma_alloc_coherent(dev, MAP_SIZE,
-+					      &dma_addr, GFP_KERNEL);
-+		BUG_ON(!cpu_addr);
-+		memset(cpu_addr, 0xa5, MAP_SIZE);
-+
-+		pr_debug("pid:%d,%s,[%d] mapped\t%08x:%08x\n",
-+			 current->pid, dev_name(dev), i,
-+			 dma_addr, virt_to_phys(cpu_addr));
-+
-+		da[i] = dma_addr;
-+		va[i] = cpu_addr;
-+	}
-+
-+	while (--i >= 0) {
-+		pr_debug("pid:%d,%s,[%d] unmapping\t%08x:%08x\n",
-+			 current->pid, dev_name(dev), i,
-+			 da[i], virt_to_phys(va[i]));
-+		dma_free_coherent(dev, MAP_SIZE, va[i], da[i]);
-+	}
-+}
-+
-+static struct dmaapi_test_case test[] = {
-+	{
-+		.name = "dmaapi/map page",
-+		.fn = dmaapi_test_map_page,
-+	},
-+	{
-+		.name = "dmaapi/alloc coherent",
-+		.fn = dmaapi_test_alloc_coherent,
-+	},
-+};
-+
-+static u32 dummy_hwgrp_map[] = {
-+	HWG_DC | HWG_AFI | HWG_AVPC | HWG_DCB,
-+	HWG_EPP | HWG_HC | HWG_G2 | HWG_MPE | HWG_HDA | HWG_ISP,
-+	HWG_NV | HWG_PPCS | HWG_SATA | HWG_NV2 | HWG_VI | HWG_VDE,
-+};
-+
-+/* FIXME: Need driver for iommu context? */
-+static struct platform_device dmaapi_dummy_device[] = {
-+	{ .name = "hwgrp@a", .id = -1, },
-+	{ .name = "hwgrp@b", .id = -1, },
-+	{ .name = "hwgrp@c", .id = -1, },
-+};
-+
-+static int dmaapi_test_thread(void *data)
-+{
-+	int i;
-+	struct dmaapi_test_case *c = data;
-+
-+	for (i = 0; true; i++) {
-+		struct device *dev;
-+		int interval[] = {7, 3, 5,};
-+		int n;
-+
-+		n = i % ARRAY_SIZE(dmaapi_dummy_device);
-+		ssleep(interval[n]);
-+		dev = &dmaapi_dummy_device[n].dev;
-+		c->fn(dev);
-+	}
-+	return 0;
-+}
-+
-+static int __init dmaapi_test_init(void)
-+{
-+	int i;
-+	struct dma_iommu_mapping *map;
-+
-+	map = arm_iommu_create_mapping(IOVA_START, IOVA_SIZE, 0);
-+	BUG_ON(!map);
-+	pr_debug("Allocate IOVA: %08x-%08x\n", map->base, map->base + IOVA_SIZE);
-+
-+	for (i = 0; i < ARRAY_SIZE(dmaapi_dummy_device); i++) {
-+		int err;
-+		struct platform_device *pdev = &dmaapi_dummy_device[i];
-+
-+		pdev->dev.platform_data = (void *)dummy_hwgrp_map[i];
-+		pdev->dev.parent = &tegra_iommu_device->dev;
-+		err = platform_device_register(pdev);
-+		BUG_ON(err);
-+
-+		err = arm_iommu_attach_device(&pdev->dev, map);
-+		BUG_ON(err);
-+		pr_debug("IOMMU API: Attached to %s\n", dev_name(&pdev->dev));
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(test); i++)
-+		kthread_run(dmaapi_test_thread, &test[i], test[i].name);
-+
-+	return 0;
-+}
-+module_init(dmaapi_test_init);
-+
-+MODULE_AUTHOR("Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_AUTHOR("Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_DESCRIPTION("DMA IOMMU mapping API test");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.5.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk8FT9oACgkQZ+BJyKLjJp+f7gCgpfvZAC/ERlLDht/P6iXt0bzG
+dtIAn0Nx7gbLeaODJfRRjLUtGLKuT9NG
+=Lwq4
+-----END PGP SIGNATURE-----
+
+--n8g4imXOkfNTN/H1--
