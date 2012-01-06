@@ -1,48 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V1] TPS62360: Add tps62360 regulator driver
-Date: Fri, 6 Jan 2012 09:44:39 -0800
-Message-ID: <20120106174438.GA3485@opensource.wolfsonmicro.com>
-References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
- <20120105062919.GI11867@opensource.wolfsonmicro.com>
- <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
+Date: Fri, 6 Jan 2012 09:45:01 -0800
+Message-ID: <CAOesGMjx0nA5Y_Cv8ECBcZP45EyR5BPUNXEapCN3JjdWTjpo8A@mail.gmail.com>
+References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
+	<20111220015634.GA27789@quad.lixom.net>
+	<CAM=Q2cs8K4vraWPNqervcmxEqUGiAbng+44+L9OhD3ijPw9tAA@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF176BE92E21@HQMAIL01.nvidia.com>
+	<20120106162615.GA8441@trinity.fluff.org>
+	<74CDBE0F657A3D45AFBB94109FB122FF177EE39E15@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Laxman Dewangan <ldewangan.com@nvidia.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF177EE39E15-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 05, 2012 at 07:18:25PM +0530, Laxman Dewangan wrote:
+On Fri, Jan 6, 2012 at 8:47 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> Ben Dooks wrote at Friday, January 06, 2012 9:26 AM:
+>> On Tue, Dec 20, 2011 at 01:47:29PM -0800, Stephen Warren wrote:
+>> > Shubhrajyoti Datta wrote at Monday, December 19, 2011 11:15 PM:
+>> > ...
+>> > > Hi Stephen ,
+>> > > could you check this one also
+>> > > thanks.
+>> > >
+>> > > From: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+>> > > Date: Tue, 20 Dec 2011 11:40:51 +0530
+>> > > Subject: [PATCH] I2C : tegra : devexit in remove
+>> > >
+>> > > Adding I2C __devexxit in remove
+>> > >
+>> > > Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> > > Signed-off-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+>> >
+>> > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> >
+>> > Ben or Olof,
+>> >
+>> > > - =A0 =A0 =A0 .remove =A0=3D tegra_i2c_remove,
+>> > > + =A0 =A0 =A0 .remove =A0=3D__devexit_p(tegra_i2c_remove),
+>> >
+>> > When you apply this, can you fix it up to add a space after the =3D=
+ in
+>> > the modified line? If you want, I can post an updated version to d=
+o that.
+>>
+>> Let me know if you want anything applying or a pull-request processe=
+d.
+>>
+>> I think once fixed the patches would be fine and I ack them:
+>>
+>> Acked-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+>
+> Olof, since you took the original through the Tegra tree, I think it
+> makes sense for us to take this fix through there too, and for 3.3?
+> The patch above is http://patchwork.ozlabs.org/patch/132349/
 
-Please fix your mailer to word wrap at less than 80 columns.  I've
-reflowed your text for legibility.
+Yep, will do.
 
-> > > +	/* Configure the output discharge path */
-> > > +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
-> > > +	if (st < 0)
-> > > +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
-> > > +			__func__, REG_RAMPCTRL);
-> > > +}
 
-> > I rather suspect that if this is worth doing it's also worth doing over
-> > suspend...
-
-> The discharge path should be only enabled when the output voltage will go to 0.
-> If it stay in non-zero voltage and enabling discharge path  will consume more power.
-> In suspend, it is not necessarily that voltage output will be 0 and hence it should not
-> be enabled. In shutdown all power goes off from pmu and hence it is worth to enable
-> discharge path for quick fall of output voltage.
-
-> > 
-> > > + * @vsel: Select the voltage id register.
-> > 
-> > What's this?
-> There is 4 sets of voltage configuration register for voltage output. The power
-> on reset values for this registers are different and selection of the voltage
-> configuration register is done by 2 pins of the pmu chip which is board dependent.
-> Based on board connection, it need to be program the desired voltage configuration
-> Register to achieve the desired output.
-> 
+-Olof
