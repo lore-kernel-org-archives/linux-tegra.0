@@ -1,25 +1,52 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V3] regulator: TPS62360: Add tps62360 regulator driver
-Date: Fri, 6 Jan 2012 10:59:28 -0800
-Message-ID: <20120106185927.GD2893@opensource.wolfsonmicro.com>
-References: <1325776504-31738-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 2/4] ARM: tegra: uncompress.h: Store UART address in a variable
+Date: Fri,  6 Jan 2012 13:43:20 -0700
+Message-ID: <1325882602-7573-2-git-send-email-swarren@nvidia.com>
+References: <1325882602-7573-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1325776504-31738-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1325882602-7573-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan.com-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 05, 2012 at 08:45:04PM +0530, Laxman Dewangan wrote:
-> From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The regulator module consists of 1 DCDC. The output voltage
-> is configurable and is meant for supply power to the core
-> voltage of Soc.
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-This looks a lot better but please see my comments on vsel in reply to
-your earlier e-mail.  I've no issues with this other than the ones that
-are still under discussion for v2.
+This will allow a future change to auto-detect which UART to use.
+
+Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+[swarren: Extracted from a larger patch by Doug]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/include/mach/uncompress.h |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
+index 9797279..bb3fd35 100644
+--- a/arch/arm/mach-tegra/include/mach/uncompress.h
++++ b/arch/arm/mach-tegra/include/mach/uncompress.h
+@@ -30,10 +30,10 @@
+ 
+ #define DEBUG_UART_SHIFT 2
+ 
++volatile u8 *uart;
++
+ static void putc(int c)
+ {
+-	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
+-
+ 	if (uart == NULL)
+ 		return;
+ 
+@@ -50,8 +50,8 @@ static inline void arch_decomp_setup(void)
+ {
+ 	volatile u32 *apb_misc = (volatile u32 *)TEGRA_APB_MISC_BASE;
+ 	u32 chip, div;
+-	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
+ 
++	uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
+ 	if (uart == NULL)
+ 		return;
+ 
+-- 
+1.7.0.4
