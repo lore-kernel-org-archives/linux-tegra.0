@@ -1,45 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V1] regulator: fixed: Move drivers to
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: RE: [PATCH V1] regulator: fixed: Move drivers to
  subsys_initcall_sync()
-Date: Thu, 5 Jan 2012 22:53:30 -0800
-Message-ID: <20120106065329.GC3496@opensource.wolfsonmicro.com>
+Date: Fri, 6 Jan 2012 16:49:50 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD907DBD3AA01F@BGMAIL01.nvidia.com>
 References: <1325693335-1905-1-git-send-email-ldewangan@nvidia.com>
  <20120105055900.GE11867@opensource.wolfsonmicro.com>
  <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9DEC@BGMAIL01.nvidia.com>
+ <20120106065329.GC3496@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9DEC@BGMAIL01.nvidia.com>
+In-Reply-To: <20120106065329.GC3496@opensource.wolfsonmicro.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: Laxman Dewangan <ldewangan.com@nvidia.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 05, 2012 at 01:05:25PM +0530, Laxman Dewangan wrote:
+> From: linux-pm-owner@vger.kernel.org [mailto:linux-pm-owner@vger.kernel.org]
+> On Behalf Of Mark Brown
+> Sent: Friday, January 06, 2012 12:24 PM
 
-> > I don't really think this is worth faffing about with, it seems at least
-> > as likely to create more problems with things that depend on the
-> > regulator as it is to make the regulator work.  Really we need Grant's
+> > is in subsys_initcall_sync() in place of arch_init, although driver is in
+> > subsys_initcall() to postponed the probe calling.
+> 
+> > What do you suggest on this case?
+> 
+> Honestly I'd suggest that you contribute to the effort to get the probe
+> ordering handling code implemented in mainline.  This just seems like a
+> big can of worms to open up for something that's hopefully just going to
+> be a short term thing.  It's a real problem but this seems fairly niche
+> and like if we start doing more than we're already doing we're going to
+> end up running around chasing our own tails on this stuff.  I'm really
+> not sure what the status is on that work, though - it may be that you
+> actually need to pick the patches up and push them forwards yourself.
 
-> Yes, I agree, the init ordering need to be done properly but this is how we
-> have as of now to make ordering.
-> I have the switchA which is connected on regulatorA (from PMIC) and the
-> switchB which is in the gpio of the pmic. The fixed regulator registration for
-> switchA and switchB are failing because it did not found the valid supply/gpio.
-> The one way to resolve the call probe of the fixed regulator only when pmic
-> initialization is done and it is in subsys_init().
-> The other way is to do the platform device registration of the fixed regulator
-> is in subsys_initcall_sync() in place of arch_init, although driver is in
-> subsys_initcall() to postponed the probe calling.
+Completely agree with you. I went through the Grant's change 
+" drivercore: Add driver probe deferral mechanism" and it is
+discussed in more details here. I will start different thread
+communication on this issue.
 
-> What do you suggest on this case?
 
-Honestly I'd suggest that you contribute to the effort to get the probe
-ordering handling code implemented in mainline.  This just seems like a
-big can of worms to open up for something that's hopefully just going to
-be a short term thing.  It's a real problem but this seems fairly niche
-and like if we start doing more than we're already doing we're going to
-end up running around chasing our own tails on this stuff.  I'm really
-not sure what the status is on that work, though - it may be that you
-actually need to pick the patches up and push them forwards yourself.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
