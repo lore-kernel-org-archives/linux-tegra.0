@@ -1,75 +1,67 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: select required CPU and L2 errata options
-Date: Fri, 06 Jan 2012 19:36:37 +0100
-Message-ID: <4535343.dMzhSsBukX@ax5200p>
-References: <1325719752-818-1-git-send-email-olof@lixom.net> <3197939.ZpLiSGWdou@ax5200p> <20230.64932.51663.410120@pilspetsen.it.uu.se>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Fri, 6 Jan 2012 10:57:58 -0800
+Message-ID: <20120106185755.GC2893@opensource.wolfsonmicro.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+ <20120105062919.GI11867@opensource.wolfsonmicro.com>
+ <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20230.64932.51663.410120-tgku4HJDRZih8lFjZTKsyTAV6s6igYVG@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan.com-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 06 January 2012 14:56:52 Mikael Pettersson wrote:
-> Marc Dietrich writes:
->  > On Thursday 05 January 2012 10:40:48 Doug Anderson wrote:
->  > > I can't comment on the L2 stuff (haven't looked there), but just
->  > > going
->  > > by Cortex-A9 revisions (T25 has roughly r1p1 and T30 has r2p7),
->  > > I've
->  > > got this table:
->  > > 
->  > > Errata             T25 (A9 ~r1p1)   T30 (A9 r2p7)    Applies to
->  > > ARM_ERRATA_364296                                    pre A8
->  > > ARM_ERRATA_411920                                    pre A8
->  > > ARM_ERRATA_430973                                    A8
->  > > ARM_ERRATA_458693                                    A8
->  > > ARM_ERRATA_460075                                    A8
->  > > ARM_ERRATA_720789  yes                               A9 (prior to
->  > > r2p0) ARM_ERRATA_742230  yes                               A9
->  > > (r1p0..r2p2) ARM_ERRATA_742231                                   
->  > > A9 (r2p0..r2p2) ARM_ERRATA_743622                                
->  > >    A9 (r2p0..r2p2) ARM_ERRATA_751472  yes              yes       
->  > >       A9 (prior to r3p0) ARM_ERRATA_754322                   yes 
->  > >             A9 (r2p*, r3p*) ARM_ERRATA_754327  yes               
->  > >                A9 (prior to r2p0) ARM_ERRATA_764369  yes         
->  > >     yes              A9 MPCore (all revs)
->  > > 
->  > > ...so that means we should also be adding in 720789 (T2x), 751472
->  > > (T2x, T30), 754322 (T30), 754327 (T2x), 764369 (T2x, T30).
->  > 
->  > AFAIK, 720789 (TLBIASIDIS and TLBIMVAIS operations can broadcast a
->  > faulty ASID) is fixed in userspace (or gcc) nowadays (at least in
->  > Ubuntu) so I think this can be neglected.
-> 
-> Not everyone uses Ubuntu.
+On Thu, Jan 05, 2012 at 07:18:25PM +0530, Laxman Dewangan wrote:
 
-yeah, I know. I just said this because nvidias reference filesystem is based 
-upon it.
+Please fix your mailer to word wrap in less than 80 columns.  I've
+reflowed your text for legibility.
 
-> Can you provide a reference to the corresponding gcc and/or Ubuntu patch?
+> > > +	/* Configure the output discharge path */
+> > > +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
+> > > +	if (st < 0)
+> > > +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
+> > > +			__func__, REG_RAMPCTRL);
+> > > +}
 
-all I found in the haste is 
-https://bugs.launchpad.net/ubuntu/+source/eglibc/+bug/739374
+> > I rather suspect that if this is worth doing it's also worth doing over
+> > suspend...
 
-I think in the end gcc was patched not emit get/set_tls syscalls but to use 
-MCR/MRC cp15 ops (sorry, I don't know what this means - just copied from irc 
-log). This meant that the whole userspace needed recompilation. It is possible 
-that all newer gcc behave like this. As far as I understood, enabling the 
-erratum in the kernel with fixed userspace will make the problem reapear. 
-Someone with more knowledge may correct me.
+> The discharge path should be only enabled when the output voltage will
+> go to 0.  If it stay in non-zero voltage and enabling discharge path
+> will consume more power.  In suspend, it is not necessarily that
+> voltage output will be 0 and hence it should not be enabled. In
+> shutdown all power goes off from pmu and hence it is worth to enable
+> discharge path for quick fall of output voltage.
 
-> (I got a Tegra-2 based trimslice last summer, but it's been completely
-> unreliable under load (hangs hard during "make -j2" gcc bootstraps),
-> hence I'm looking for patches or any other information that can help
-> me fix or work around whatever bugs it has.)
+Why is shutdown particularly special in this regard, and surely the
+hardware is capable of automatically disabling the discharge while the
+regulator is enabled?
 
-I think this can't be related to the erratum above because it manifestated 
-itself in a segfault or illegal instruction userspace error.
+Though frankly it seems rather broken if the hardware doesn't
+automatically remove the clamp when 
 
-Did you tried to ask in the trimslice forum about this error?
+> > > + * @vsel: Select the voltage id register.
 
-Marc
+> > What's this?
+
+> There is 4 sets of voltage configuration register for voltage output.
+> The power on reset values for this registers are different and
+> selection of the voltage configuration register is done by 2 pins of
+> the pmu chip which is board dependent.  Based on board connection, it
+> need to be program the desired voltage configuration Register to
+> achieve the desired output.
+
+Ah, you've misunderstood this functionality.  The reason regulators have
+these pin based register selections is that they'll be connected to
+GPIOs so that we can change voltages quickly without having to take the
+cost of I2C I/O.
+
+For all practical purposes it's reasonable to assume that if vsel is
+fixed to anything rather than being connected to GPIOs it'll be
+connected to ground.
+
+The other thing is that the naming is really unclear.
