@@ -1,48 +1,54 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: RE: [PATCH V1] regulator: fixed: Move drivers to
- subsys_initcall_sync()
-Date: Fri, 6 Jan 2012 16:49:50 +0530
-Message-ID: <96C9D994977DD0439FB6D3FE3B13DD907DBD3AA01F@BGMAIL01.nvidia.com>
-References: <1325693335-1905-1-git-send-email-ldewangan@nvidia.com>
- <20120105055900.GE11867@opensource.wolfsonmicro.com>
- <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9DEC@BGMAIL01.nvidia.com>
- <20120106065329.GC3496@opensource.wolfsonmicro.com>
+From: Mikael Pettersson <mikpe-1zs4UD6AkMk@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: select required CPU and L2 errata options
+Date: Fri, 6 Jan 2012 14:56:52 +0100
+Message-ID: <20230.64932.51663.410120@pilspetsen.it.uu.se>
+References: <1325719752-818-1-git-send-email-olof@lixom.net>
+	<6121078.4q2inFFXlB@fb07-iapwap2>
+	<CAD=FV=V3qO-=DOz5Qc95fyYJC4656WvmUYGXMAHgXcGf96+aeQ@mail.gmail.com>
+	<3197939.ZpLiSGWdou@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120106065329.GC3496@opensource.wolfsonmicro.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Laxman Dewangan <ldewangan.com@nvidia.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3197939.ZpLiSGWdou@ax5200p>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> From: linux-pm-owner@vger.kernel.org [mailto:linux-pm-owner@vger.kernel.org]
-> On Behalf Of Mark Brown
-> Sent: Friday, January 06, 2012 12:24 PM
+Marc Dietrich writes:
+ > On Thursday 05 January 2012 10:40:48 Doug Anderson wrote:
+ > > I can't comment on the L2 stuff (haven't looked there), but just going
+ > > by Cortex-A9 revisions (T25 has roughly r1p1 and T30 has r2p7), I've
+ > > got this table:
+ > > 
+ > > Errata             T25 (A9 ~r1p1)   T30 (A9 r2p7)    Applies to
+ > > ARM_ERRATA_364296                                    pre A8
+ > > ARM_ERRATA_411920                                    pre A8
+ > > ARM_ERRATA_430973                                    A8
+ > > ARM_ERRATA_458693                                    A8
+ > > ARM_ERRATA_460075                                    A8
+ > > ARM_ERRATA_720789  yes                               A9 (prior to r2p0)
+ > > ARM_ERRATA_742230  yes                               A9 (r1p0..r2p2)
+ > > ARM_ERRATA_742231                                    A9 (r2p0..r2p2)
+ > > ARM_ERRATA_743622                                    A9 (r2p0..r2p2)
+ > > ARM_ERRATA_751472  yes              yes              A9 (prior to r3p0)
+ > > ARM_ERRATA_754322                   yes              A9 (r2p*, r3p*)
+ > > ARM_ERRATA_754327  yes                               A9 (prior to r2p0)
+ > > ARM_ERRATA_764369  yes              yes              A9 MPCore (all revs)
+ > > 
+ > > ...so that means we should also be adding in 720789 (T2x), 751472
+ > > (T2x, T30), 754322 (T30), 754327 (T2x), 764369 (T2x, T30).
+ > 
+ > AFAIK, 720789 (TLBIASIDIS and TLBIMVAIS operations can broadcast a faulty 
+ > ASID) is fixed in userspace (or gcc) nowadays (at least in Ubuntu) so I think 
+ > this can be neglected.
 
-> > is in subsys_initcall_sync() in place of arch_init, although driver is in
-> > subsys_initcall() to postponed the probe calling.
-> 
-> > What do you suggest on this case?
-> 
-> Honestly I'd suggest that you contribute to the effort to get the probe
-> ordering handling code implemented in mainline.  This just seems like a
-> big can of worms to open up for something that's hopefully just going to
-> be a short term thing.  It's a real problem but this seems fairly niche
-> and like if we start doing more than we're already doing we're going to
-> end up running around chasing our own tails on this stuff.  I'm really
-> not sure what the status is on that work, though - it may be that you
-> actually need to pick the patches up and push them forwards yourself.
+Not everyone uses Ubuntu.
 
-Completely agree with you. I went through the Grant's change 
-" drivercore: Add driver probe deferral mechanism" and it is
-discussed in more details here. I will start different thread
-communication on this issue.
+Can you provide a reference to the corresponding gcc and/or Ubuntu patch?
 
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+(I got a Tegra-2 based trimslice last summer, but it's been completely
+unreliable under load (hangs hard during "make -j2" gcc bootstraps),
+hence I'm looking for patches or any other information that can help
+me fix or work around whatever bugs it has.)
