@@ -1,103 +1,162 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 1/4] ARM: tegra: Introduce define DEBUG_UART_SHIFT
-Date: Fri,  6 Jan 2012 13:43:19 -0700
-Message-ID: <1325882602-7573-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH V2 3/4] ARM: tegra: uncompress.h: Choose a UART at runtime
+Date: Fri,  6 Jan 2012 13:43:21 -0700
+Message-ID: <1325882602-7573-3-git-send-email-swarren@nvidia.com>
+References: <1325882602-7573-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1325882602-7573-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+With this change we automatically detect which UART to use for
+for printing during decompression. The detection involves coordination
+with the bootloader: it's expected that the bootloader will leave a
+'D' (for [D]ebug) in the UART scratchpad register for whichever UART we
+should use for debugging.
 
-This removes the need for the variable "shift" in all functions in
-uncompress.h.
+If we don't find any such UART, we fall back to the UART that was
+specified during config time: CONFIG_TEGRA_DEBUG_UART_XXX.
+
+As a side effect of this change, uncompress debug messages will work
+if you've specified CONFIG_TEGRA_DEBUG_UART_NONE, provided the
+bootloader obeys the protocol.
+
+This change is in line with what is documented in
+Documentation/arm/Booting.
+
+Other approaches considered:
+* Hardcode based on machine ID (as many other ARM boards do).
+  OK, but nice to not have yet another place to add per-board
+  code. Better to have bootloader parse device tree and pass us
+  this info.
+* Check for TXE bit (like SA1110). Nice (and doesn't require
+  a bootloader change), but a little less explicit. Also: if
+  bootloader (for some reason) uses another UART, it needs to
+  remember to turn it off before jumping to the kernel or we may
+  print to it. NOTE: adapting this patch to check TXE too would
+  be easy if desired.
 
 Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-[swarren: Extracted from a larger patch by Doug]
+[swarren: Added clock/reset condition checks]
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
 ---
-This patch series depends on patch "[PATCH V2] arm/tegra: Support Tegra30
-in decompressor UART setup" for context.
-
-This series allows a Tegra zImage to automatically select the UART to use
-for the zImage decompressor and early printk, based on information from
-the bootloader. The code scans each UART, looking for one that is clocked,
-is out of reset, and that the bootloader has written 'D' (for 'D'ebug) to
-the scratch register.
-
-At present, the ChromiumOS branch of U-Boot sets up UARTs in this way. If
-this patch is accepted into the kernel, I'll upstream the U-Boot change to
-mainline U-Boot.
-
-This is important, since different boards use different UARTs, and it's
-nice not to have to configure the kernel differently when switching
-boards.
-
- arch/arm/mach-tegra/include/mach/uncompress.h |   18 ++++++++++--------
- 1 files changed, 10 insertions(+), 8 deletions(-)
+v2: Include <linux/kernel.h>
+---
+ arch/arm/mach-tegra/include/mach/uncompress.h |   75 ++++++++++++++++++++++++-
+ 1 files changed, 74 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
-index 39bd5e5..9797279 100644
+index bb3fd35..6c087b6 100644
 --- a/arch/arm/mach-tegra/include/mach/uncompress.h
 +++ b/arch/arm/mach-tegra/include/mach/uncompress.h
-@@ -2,10 +2,12 @@
-  * arch/arm/mach-tegra/include/mach/uncompress.h
+@@ -3,11 +3,13 @@
   *
   * Copyright (C) 2010 Google, Inc.
-+ * Copyright (C) 2011 Google, Inc.
+  * Copyright (C) 2011 Google, Inc.
++ * Copyright (C) 2011 NVIDIA CORPORATION. All Rights Reserved.
   *
   * Author:
   *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
   *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-+ *	Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+  *	Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
++ *	Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
   *
   * This software is licensed under the terms of the GNU General Public
   * License version 2, as published by the Free Software Foundation, and
-@@ -26,17 +28,18 @@
+@@ -23,6 +25,7 @@
+ #ifndef __MACH_TEGRA_UNCOMPRESS_H
+ #define __MACH_TEGRA_UNCOMPRESS_H
  
- #include <mach/iomap.h>
++#include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/serial_reg.h>
  
-+#define DEBUG_UART_SHIFT 2
-+
- static void putc(int c)
+@@ -46,12 +49,82 @@ static inline void flush(void)
  {
- 	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
--	int shift = 2;
- 
- 	if (uart == NULL)
- 		return;
- 
--	while (!(uart[UART_LSR << shift] & UART_LSR_THRE))
-+	while (!(uart[UART_LSR << DEBUG_UART_SHIFT] & UART_LSR_THRE))
- 		barrier();
--	uart[UART_TX << shift] = c;
-+	uart[UART_TX << DEBUG_UART_SHIFT] = c;
  }
  
- static inline void flush(void)
-@@ -48,7 +51,6 @@ static inline void arch_decomp_setup(void)
++/*
++ * Setup before decompression.  This is where we do UART selection for
++ * earlyprintk and init the uart_base register.
++ */
+ static inline void arch_decomp_setup(void)
+ {
++	static const struct {
++		u32 base;
++		u32 reset_reg;
++		u32 clock_reg;
++		u32 bit;
++	} uarts[] = {
++		{
++			TEGRA_UARTA_BASE,
++			TEGRA_CLK_RESET_BASE + 0x04,
++			TEGRA_CLK_RESET_BASE + 0x10,
++			6,
++		},
++		{
++			TEGRA_UARTB_BASE,
++			TEGRA_CLK_RESET_BASE + 0x04,
++			TEGRA_CLK_RESET_BASE + 0x10,
++			7,
++		},
++		{
++			TEGRA_UARTC_BASE,
++			TEGRA_CLK_RESET_BASE + 0x08,
++			TEGRA_CLK_RESET_BASE + 0x14,
++			23,
++		},
++		{
++			TEGRA_UARTD_BASE,
++			TEGRA_CLK_RESET_BASE + 0x0c,
++			TEGRA_CLK_RESET_BASE + 0x18,
++			1,
++		},
++		{
++			TEGRA_UARTE_BASE,
++			TEGRA_CLK_RESET_BASE + 0x0c,
++			TEGRA_CLK_RESET_BASE + 0x18,
++			2,
++		},
++	};
++	int i;
  	volatile u32 *apb_misc = (volatile u32 *)TEGRA_APB_MISC_BASE;
  	u32 chip, div;
- 	volatile u8 *uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
--	int shift = 2;
  
+-	uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
++	/*
++	 * Look for the first UART that:
++	 * a) Is not in reset.
++	 * b) Is clocked.
++	 * c) Has a 'D' in the scratchpad register.
++	 *
++	 * Note that on Tegra30, the first two conditions are required, since
++	 * if not true, accesses to the UART scratch register will hang.
++	 * Tegra20 doesn't have this issue.
++	 *
++	 * The intent is that the bootloader will tell the kernel which UART
++	 * to use by setting up those conditions. If nothing found, we'll fall
++	 * back to what's specified in TEGRA_DEBUG_UART_BASE.
++	 */
++	for (i = 0; i < ARRAY_SIZE(uarts); i++) {
++		if (*(u8 *)uarts[i].reset_reg & BIT(uarts[i].bit))
++			continue;
++
++		if (!(*(u8 *)uarts[i].clock_reg & BIT(uarts[i].bit)))
++			continue;
++
++		uart = (volatile u8 *)uarts[i].base;
++		if (uart[UART_SCR << DEBUG_UART_SHIFT] != 'D')
++			continue;
++
++		break;
++	}
++	if (i == ARRAY_SIZE(uarts))
++		uart = (volatile u8 *)TEGRA_DEBUG_UART_BASE;
  	if (uart == NULL)
  		return;
-@@ -59,10 +61,10 @@ static inline void arch_decomp_setup(void)
- 	else
- 		div = 0x00dd;
  
--	uart[UART_LCR << shift] |= UART_LCR_DLAB;
--	uart[UART_DLL << shift] = div & 0xff;
--	uart[UART_DLM << shift] = div >> 8;
--	uart[UART_LCR << shift] = 3;
-+	uart[UART_LCR << DEBUG_UART_SHIFT] |= UART_LCR_DLAB;
-+	uart[UART_DLL << DEBUG_UART_SHIFT] = div & 0xff;
-+	uart[UART_DLM << DEBUG_UART_SHIFT] = div >> 8;
-+	uart[UART_LCR << DEBUG_UART_SHIFT] = 3;
- }
- 
- static inline void arch_decomp_wdog(void)
 -- 
 1.7.0.4
