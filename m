@@ -1,42 +1,48 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v4] ARM: tegra: emc: convert tegra2_emc to a platform
- driver
-Date: Fri, 6 Jan 2012 09:17:48 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF177EE39E37@HQMAIL01.nvidia.com>
-References: <1325743288-2460-1-git-send-email-olof@lixom.net>
- <1325814163-23980-1-git-send-email-olof@lixom.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Fri, 6 Jan 2012 09:44:39 -0800
+Message-ID: <20120106174438.GA3485@opensource.wolfsonmicro.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+ <20120105062919.GI11867@opensource.wolfsonmicro.com>
+ <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1325814163-23980-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Laxman Dewangan <ldewangan.com@nvidia.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Thursday, January 05, 2012 6:43 PM:
-> This is the first step in making it device-tree aware and get rid of the
-> in-kernel EMC tables (of which there are none in mainline, thankfully).
-> 
-> Changes since v3:
-> 
-> * moved to devm_request_and_ioremap() in probe()
-> *
-> Changes since v2:
-> 
-> * D'oh -- missed a couple of variables that were added, never used and then
->   later removed in a later patch.
-> 
-> Changes since v1:
-> 
-> * Fixed messed up indentation
-> * Removed code that should be gone (was added here and removed later in series)
-> 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+On Thu, Jan 05, 2012 at 07:18:25PM +0530, Laxman Dewangan wrote:
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Please fix your mailer to word wrap at less than 80 columns.  I've
+reflowed your text for legibility.
 
--- 
-nvpublic
+> > > +	/* Configure the output discharge path */
+> > > +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
+> > > +	if (st < 0)
+> > > +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
+> > > +			__func__, REG_RAMPCTRL);
+> > > +}
+
+> > I rather suspect that if this is worth doing it's also worth doing over
+> > suspend...
+
+> The discharge path should be only enabled when the output voltage will go to 0.
+> If it stay in non-zero voltage and enabling discharge path  will consume more power.
+> In suspend, it is not necessarily that voltage output will be 0 and hence it should not
+> be enabled. In shutdown all power goes off from pmu and hence it is worth to enable
+> discharge path for quick fall of output voltage.
+
+> > 
+> > > + * @vsel: Select the voltage id register.
+> > 
+> > What's this?
+> There is 4 sets of voltage configuration register for voltage output. The power
+> on reset values for this registers are different and selection of the voltage
+> configuration register is done by 2 pins of the pmu chip which is board dependent.
+> Based on board connection, it need to be program the desired voltage configuration
+> Register to achieve the desired output.
+> 
