@@ -1,47 +1,45 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2] arm/tegra: emc: device tree support
-Date: Thu, 5 Jan 2012 14:35:55 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F182F@HQMAIL01.nvidia.com>
-References: <1324599468-12845-10-git-send-email-olof@lixom.net>
- <1325743338-2533-1-git-send-email-olof@lixom.net>
+Subject: RE: [PATCH 7/9] arm/tegra: emc: device tree bindings
+Date: Thu, 5 Jan 2012 16:01:05 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17761F18A6@HQMAIL01.nvidia.com>
+References: <1324599468-12845-1-git-send-email-olof@lixom.net>
+ <1324599468-12845-8-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1325743338-2533-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <1324599468-12845-8-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Wednesday, January 04, 2012 11:02 PM:
-> Add device tree support to the emc driver, filling in the platform data
-> based on the DT bindings.
-> 
-> Changes since v1:
-> 
-> * Unmangled some messed up patch squashes, moving changes to earlier patches
-> * Flipped an of_property_read_u32 return value test
-> * Clarified clock settings message on case where no table is provided
-> 
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
+> Device tree bindings for the EMC tables on tegra.
 ...
-> diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt
 ...
-> +static struct tegra_emc_pdata __devinit *tegra_emc_fill_pdata(struct platform_device *pdev)
+> +Embedded Memory Controller ram-code table
 ...
-> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-> +	pdata->tables = devm_kzalloc(&pdev->dev,
-> +				     sizeof(struct tegra_emc_table),
-> +				     GFP_KERNEL);
+> +- name : Should be emc-tables
+> +- nvidia,ram-code : the binary representation of the ram-code board strappings
+> +  for which this node (and children) are valid.
+...
+> +Embedded Memory Controller configuration table
+...
+> +- name : Should be emc-table
+> +- compatible : Should contain "nvidia,tegra20-emc-table".
+> +- reg : either an opaque enumerator to tell different tables apart, or
+...
 
-You could convert that one to sizeof(*pdata->tables) too, although feel
-free to ignore this picky comment, or fix it up when you apply the change.
+One more thought:
 
-Otherwise,
-
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+For consistency, should the "emc-tables" node also require a compatible
+value? I suppose the existence of an "nvidia,ram-code" property is quite
+likely to be indication enough that the node is compatible, but I wonder
+if we shouldn't require and check an explicit compatible value at this
+level too?
 
 -- 
 nvpublic
