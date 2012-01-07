@@ -1,74 +1,105 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v1 0/3] Tegra30 clockframework
-Date: Fri, 6 Jan 2012 13:13:08 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF177EE39F6B@HQMAIL01.nvidia.com>
-References: <1325517486-22458-1-git-send-email-pdeschrijver@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Sat, 7 Jan 2012 23:16:55 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD907DBD3AA0DE@BGMAIL01.nvidia.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+ <20120105062919.GI11867@opensource.wolfsonmicro.com>
+ <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
+ <20120106185755.GC2893@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1325517486-22458-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120106185755.GC2893-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan.com-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Monday, January 02, 2012 8:18 AM:
-> This patchset introduces the tegra30 clockframework. Clocks which require
-> voltage scaling are not included in this version. The implementation doesn't
-> use the generic clock code yet. It's the intention to move to it, once the
-> semantics are fully clarified.
+> On Saturday, January 07, 2012 12:28 AM, Mark Brown [mailto:broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org] wrote
+> Please fix your mailer to word wrap in less than 80 columns.  I've
+> reflowed your text for legibility.
+> 
+> > > > +	/* Configure the output discharge path */
+> > > > +	st = tps62360_reg_modify_bits(tps, REG_RAMPCTRL, BIT(2), BIT(2));
+> > > > +	if (st < 0)
+> > > > +		dev_err(tps->dev, "%s() fails in updating reg %d\n",
+> > > > +			__func__, REG_RAMPCTRL);
+> > > > +}
+> 
+> > > I rather suspect that if this is worth doing it's also worth doing over
+> > > suspend...
+> 
+> > The discharge path should be only enabled when the output voltage will
+> > go to 0.  If it stay in non-zero voltage and enabling discharge path
+> > will consume more power.  In suspend, it is not necessarily that
+> > voltage output will be 0 and hence it should not be enabled. In
+> > shutdown all power goes off from pmu and hence it is worth to enable
+> > discharge path for quick fall of output voltage.
+> 
+> Why is shutdown particularly special in this regard, and surely the
+> hardware is capable of automatically disabling the discharge while the
+> regulator is enabled?
+> 
+> Though frankly it seems rather broken if the hardware doesn't
+> automatically remove the clamp when
+>
+The enable through external input line does not remove the clamp.
+It need to do the reset of the pmu chip (through power off) to
+remove the clamp automatically. The fast discharging is require
+in shutdown if we want to again power ON device quickly.
 
-I tried testing this, and the kernel crashes/hangs as shown below:
+Personally, I would like to have this piece of code as it is
+configurable from platform data and does not hurt if someone does not set.
 
-[    0.088340] CPU: Testing write buffer coherency: ok
-[    0.093638] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.099573] Division by zero in kernel.
-[    0.103643] [<c001396c>] (unwind_backtrace+0x0/0x11c) from [<c013c1cc>] (Ldiv0_64+0x8/0x18)
-[    0.112332] [<c013c1cc>] (Ldiv0_64+0x8/0x18) from [<c0056754>] (clockevents_config.part.0+0x1c/0x64)
-[    0.121810] [<c0056754>] (clockevents_config.part.0+0x1c/0x64) from [<c00569ac>] (clockevents_config_and_register+0x20/0x2c)
-[    0.133433] [<c00569ac>] (clockevents_config_and_register+0x20/0x2c) from [<c0280fec>] (twd_timer_setup+0x144/0x190)
-[    0.144335] [<c0280fec>] (twd_timer_setup+0x144/0x190) from [<c0281334>] (local_timer_setup+0x10/0x18)
-[    0.153986] [<c0281334>] (local_timer_setup+0x10/0x18) from [<c0280c00>] (percpu_timer_setup+0x54/0xa8)
-[    0.163727] [<c0280c00>] (percpu_timer_setup+0x54/0xa8) from [<c03904e0>] (smp_prepare_cpus+0x6c/0x90)
-[    0.173391] [<c03904e0>] (smp_prepare_cpus+0x6c/0x90) from [<c038d844>] (kernel_init+0x48/0x12c)
-[    0.182520] [<c038d844>] (kernel_init+0x48/0x12c) from [<c000ebf4>] (kernel_thread_exit+0x0/0x8)
-[    0.191628] ------------[ cut here ]------------
-[    0.196454] WARNING: at kernel/time/clockevents.c:46 clockevent_delta2ns+0x3c/0x84()
-[    0.204490] Modules linked in:
-[    0.207735] [<c001396c>] (unwind_backtrace+0x0/0x11c) from [<c0022284>] (warn_slowpath_common+0x4c/0x64)
-[    0.217568] [<c0022284>] (warn_slowpath_common+0x4c/0x64) from [<c00222b4>] (warn_slowpath_null+0x18/0x1c)
-[    0.227577] [<c00222b4>] (warn_slowpath_null+0x18/0x1c) from [<c005668c>] (clockevent_delta2ns+0x3c/0x84)
-[    0.237497] [<c005668c>] (clockevent_delta2ns+0x3c/0x84) from [<c0056780>] (clockevents_config.part.0+0x48/0x64)
-[    0.248040] [<c0056780>] (clockevents_config.part.0+0x48/0x64) from [<c00569ac>] (clockevents_config_and_register+0x20/0x2c)
-[    0.259654] [<c00569ac>] (clockevents_config_and_register+0x20/0x2c) from [<c0280fec>] (twd_timer_setup+0x144/0x190)
-[    0.270553] [<c0280fec>] (twd_timer_setup+0x144/0x190) from [<c0281334>] (local_timer_setup+0x10/0x18)
-[    0.280202] [<c0281334>] (local_timer_setup+0x10/0x18) from [<c0280c00>] (percpu_timer_setup+0x54/0xa8)
-[    0.289934] [<c0280c00>] (percpu_timer_setup+0x54/0xa8) from [<c03904e0>] (smp_prepare_cpus+0x6c/0x90)
-[    0.299582] [<c03904e0>] (smp_prepare_cpus+0x6c/0x90) from [<c038d844>] (kernel_init+0x48/0x12c)
-[    0.308699] [<c038d844>] (kernel_init+0x48/0x12c) from [<c000ebf4>] (kernel_thread_exit+0x0/0x8)
-[    0.317830] ---[ end trace 1b75b31a2719ed1c ]---
-[    0.322697] Setting up static identity map for 0x8028cf98 - 0x8028cff0
-<<no more output>>
+If it really blocks the patch to go through then I will remove it.
+ 
+> > > > + * @vsel: Select the voltage id register.
+> 
+> > > What's this?
+> 
+> > There is 4 sets of voltage configuration register for voltage output.
+> > The power on reset values for this registers are different and
+> > selection of the voltage configuration register is done by 2 pins of
+> > the pmu chip which is board dependent.  Based on board connection, it
+> > need to be program the desired voltage configuration Register to
+> > achieve the desired output.
+> 
+> Ah, you've misunderstood this functionality.  The reason regulators have
+> these pin based register selections is that they'll be connected to
+> GPIOs so that we can change voltages quickly without having to take the
+> cost of I2C I/O.
+> 
+> For all practical purposes it's reasonable to assume that if vsel is
+> fixed to anything rather than being connected to GPIOs it'll be
+> connected to ground.
+> 
+> The other thing is that the naming is really unclear.
 
-Without these patches, the same tree gets all the way to waiting for the
-root filesystem:
+In my board it is tied to fix input and does not change. Also it is
+tied such that it should output the voltage which is require by
+system be default without any i2c programming. The default output
+is 0.96V, 1.4V, 1.16V and 1.16V and VSEL0/1 which decides the voltage
+selection is tied to high.
 
-[    0.088329] CPU: Testing write buffer coherency: ok
-[    0.093631] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.099545] smp_twd: clock not found: -2
-[    0.103667] Calibrating local timer... 500.06MHz.
-[    0.161249] Setting up static identity map for 0x8028a918 - 0x8028a970
-[    2.261492] CPU1: failed to come online
-[    2.265684] Brought up 1 CPUs
-[    2.268813] SMP: Total of 1 processors activated (1987.37 BogoMIPS).
-...
-[    2.704845] Registering SWP/SWPB emulation handler
-[    2.710558] Waiting for root device /dev/mmcblk1p1...
+I think I should  go with your suggestion to allow the VSEL0/1 to be
+dynamically changeable. If I implement this then client need to provide
+4 sets of the regulator init data to register regulator. Each will have
+different sets of consumer. Client will get regulator for all sets of
+consumer and sets the appropriate voltage around optimum performance/
+operating mode. And later on client will just change gpio to select
+proper VSELs and so result will be changing output voltage without i2c.
 
-I tested using commit e4421e71fa89bee67d2b67079041ca346ae49ea3 in my
-per-user repo on nv-tegra.nvidia.com.
+If above is OK then I can push the next patch. My approach will be:
 
--- 
-nvpublic
+In the platform data, I will take 4 sets of regulator_init_data
+corresponding to VSEL0/1. If client is not interested in all and tied
+to fixed high/low, he will just pass NULL to unused index and proper
+information to used option.
+
+The 4 regulator (if all reg init data is passed, ignore the NULL
+data) will get registered in probe of the driver.
+The information flow will be such that the corresponding voltage
+register will be selected as per the consumer which is passed with
+corresponding regulator init data for configuration.
