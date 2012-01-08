@@ -1,78 +1,49 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v4] Input: keyboard - add device tree bindings for simple
- key matrixes
-Date: Sat, 7 Jan 2012 17:05:31 -0800
-Message-ID: <CAPnjgZ3G7yFOrngJP=KtJNcgAWtZg3xn22tRMMi+pUnZ2rJpBQ@mail.gmail.com>
-References: <1325484557-27695-1-git-send-email-olof@lixom.net>
-	<1325626648-9425-1-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF17761F11FF@HQMAIL01.nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: RE: [PATCH V1] TPS62360: Add tps62360 regulator driver
+Date: Sun, 8 Jan 2012 13:12:47 +0530
+Message-ID: <96C9D994977DD0439FB6D3FE3B13DD907DBD3AA0E4@BGMAIL01.nvidia.com>
+References: <1325668818-1096-1-git-send-email-ldewangan@nvidia.com>
+ <20120105062919.GI11867@opensource.wolfsonmicro.com>
+ <96C9D994977DD0439FB6D3FE3B13DD907DBD3A9E9B@BGMAIL01.nvidia.com>
+ <20120106185755.GC2893@opensource.wolfsonmicro.com>
+ <96C9D994977DD0439FB6D3FE3B13DD907DBD3AA0DE@BGMAIL01.nvidia.com>
+ <20120107191047.GA3590@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17761F11FF@HQMAIL01.nvidia.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Olof Johansson <olof@lixom.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <rob.herring@calxeda.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Rakesh Iyer <riyer@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120107191047.GA3590@opensource.wolfsonmicro.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Laxman Dewangan <ldewangan.com@nvidia.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olof,
+> On Sunday, January 08, 2012 12:41 AM +5:30, Mark Brown Wrote
 
-On Tue, Jan 3, 2012 at 2:37 PM, Stephen Warren <swarren@nvidia.com> wro=
-te:
-> Olof Johansson wrote at Tuesday, January 03, 2012 2:37 PM:
->> This adds a simple device tree binding for simple key matrix data an=
-d
->> a helper to fill in the platform data.
->>
->> The implementation is in a shared file outside if drivers/input/keyb=
-oard
->> since some drivers in drivers/input/misc might be making use of it
->> as well.
->>
->> Changes since v3:
->> =A0* Dropped compatible field in matrix-keymap.txt
->> =A0* Dropped linux,fn-key
->> =A0* Dropped linux,fn-keymap optional property but included guidelin=
-e on
->> =A0 =A0naming convention
->> =A0* Now passing property name in to the helper function (or will as=
-sume
->> =A0 =A0"linux,keymap" if passed NULL)
->
->> diff --git a/drivers/input/of_keymap.c b/drivers/input/of_keymap.c
->
->> +struct matrix_keymap_data *
->> +matrix_keyboard_of_fill_keymap(struct device_node *np, char *propna=
-me)
->> +{
-> ...
->> + =A0 =A0 kd =3D kmalloc(sizeof(*kd), GFP_KERNEL);
->> + =A0 =A0 if (!kd)
->> + =A0 =A0 =A0 =A0 =A0 =A0 return NULL;
->
-> Should that use kzalloc in case struct matrix_keymap_data grows some
-> new fields that people will assume are set to zero since the struct
-> would usually be in .data? Still, people should probably grep the cod=
-e
-> when making such changes...
->
-> Otherwise,
->
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+> > In the platform data, I will take 4 sets of regulator_init_data
+> > corresponding to VSEL0/1. If client is not interested in all and tied
+> > to fixed high/low, he will just pass NULL to unused index and proper
+> > information to used option.
+> 
+> Taking multiple different regulator_init_data is definitely not what we
+> want, there's a whole bunch of information in there, not just the
+> voltages.  You should just use platform data to specify the GPIOs (and
+> a set of voltages if you go with that approach).
 
-Do you have a Tegra .dts binding for the Seaboard keyboard that I can
-test with please?
 
-Regards,
-Simon
+How do you pass the voltages along with gpios? If I understand correctly
+then it may be wither in range form or discrete form.
+Like in range form 500-700 for VSEL:00, 710-800 VSEL:01 etc.
+In discrete form VSEL00:500, 540, 550..
+For, VSEL01, VSEL00:510, 900,
 
->
-> --
-> nvpublic
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-input" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In range form, the disadvantages is that, most of time, the voltage
+requirement is surrounding operating voltage and so it will use only
+one combination of VSEL in most of time and will not get the benefit.
+The discrete form have long list of voltage and filling table is pain.
+Also need to maintain the big list of lookuptable to select voltage
+configuration register.
+
+If above is not correct then can you please help on understanding how
+the information will be pass from platform data?
