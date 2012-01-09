@@ -1,61 +1,78 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v3 0/2] ARM: IOMMU: tegra: Add iommu_ops for GART/SMMU
-	driver
-Date: Mon, 9 Jan 2012 11:45:10 +0000
-Message-ID: <20120109114510.GK21765@n2100.arm.linux.org.uk>
-References: <1325747509-29665-1-git-send-email-hdoyu@nvidia.com> <20120105091718.3fb378b2a1d390f9dd63c396@nvidia.com> <20120105125326.GT11810@n2100.arm.linux.org.uk> <CAHQjnONDAmH+zpSmmOCCs9aYxT+LJGso98=exf+_WFYKT=fE3A@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v1 0/3] Tegra30 clockframework
+Date: Mon, 9 Jan 2012 14:53:55 +0200
+Message-ID: <20120109125355.GU32619@tbergstrom-lnx.Nvidia.com>
+References: <1325517486-22458-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF177EE39F6B@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAHQjnONDAmH+zpSmmOCCs9aYxT+LJGso98=exf+_WFYKT=fE3A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linaro-mm-sig-bounces@lists.linaro.org" <linaro-mm-sig-bounces@lists.linaro.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF177EE39F6B-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 09, 2012 at 09:39:48AM +0900, KyongHo Cho wrote:
-> On Thu, Jan 5, 2012 at 9:53 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Thu, Jan 05, 2012 at 09:17:18AM +0200, Hiroshi Doyu wrote:
-> >> Just for DMA mapping test from MPU side, the following one is used=
-=2E
-> >
-> > This patch is buggy.
-> >
-> >> +static void dmaapi_test_map_page(struct device *dev)
-> >> +{
-> >> + =A0 =A0 struct page *page;
-> >> + =A0 =A0 dma_addr_t dma_addr;
-> >> + =A0 =A0 void *cpu_addr;
-> >> +
-> >> + =A0 =A0 page =3D alloc_page(GFP_KERNEL);
-> >> + =A0 =A0 BUG_ON(!page);
-> >> +
-> >> + =A0 =A0 dma_addr =3D dma_map_page(dev, page, 0, PAGE_SIZE, DMA_T=
-O_DEVICE);
-> >> + =A0 =A0 BUG_ON(!dma_addr);
-> >> +
-> >> + =A0 =A0 cpu_addr =3D kmap(page);
-> >> + =A0 =A0 BUG_ON(!cpu_addr);
-> >> + =A0 =A0 memset(cpu_addr, 0xa5, PAGE_SIZE);
-> >> + =A0 =A0 kunmap(cpu_addr);
-> >
-> > The DMA API works like this:
-> >
-> > - The CPU owns the page or buffer and can access it.
-> > - You map the page or buffer.
-> > - The device owns the page or buffer; the CPU must explicitly acces=
-s it.
+On Fri, Jan 06, 2012 at 10:13:08PM +0100, Stephen Warren wrote:
+> Peter De Schrijver wrote at Monday, January 02, 2012 8:18 AM:
+> > This patchset introduces the tegra30 clockframework. Clocks which require
+> > voltage scaling are not included in this version. The implementation doesn't
+> > use the generic clock code yet. It's the intention to move to it, once the
+> > semantics are fully clarified.
+> 
+> I tried testing this, and the kernel crashes/hangs as shown below:
+> 
+> [    0.088340] CPU: Testing write buffer coherency: ok
+> [    0.093638] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+> [    0.099573] Division by zero in kernel.
+> [    0.103643] [<c001396c>] (unwind_backtrace+0x0/0x11c) from [<c013c1cc>] (Ldiv0_64+0x8/0x18)
+> [    0.112332] [<c013c1cc>] (Ldiv0_64+0x8/0x18) from [<c0056754>] (clockevents_config.part.0+0x1c/0x64)
+> [    0.121810] [<c0056754>] (clockevents_config.part.0+0x1c/0x64) from [<c00569ac>] (clockevents_config_and_register+0x20/0x2c)
+> [    0.133433] [<c00569ac>] (clockevents_config_and_register+0x20/0x2c) from [<c0280fec>] (twd_timer_setup+0x144/0x190)
+> [    0.144335] [<c0280fec>] (twd_timer_setup+0x144/0x190) from [<c0281334>] (local_timer_setup+0x10/0x18)
+> [    0.153986] [<c0281334>] (local_timer_setup+0x10/0x18) from [<c0280c00>] (percpu_timer_setup+0x54/0xa8)
+> [    0.163727] [<c0280c00>] (percpu_timer_setup+0x54/0xa8) from [<c03904e0>] (smp_prepare_cpus+0x6c/0x90)
+> [    0.173391] [<c03904e0>] (smp_prepare_cpus+0x6c/0x90) from [<c038d844>] (kernel_init+0x48/0x12c)
+> [    0.182520] [<c038d844>] (kernel_init+0x48/0x12c) from [<c000ebf4>] (kernel_thread_exit+0x0/0x8)
+> [    0.191628] ------------[ cut here ]------------
+> [    0.196454] WARNING: at kernel/time/clockevents.c:46 clockevent_delta2ns+0x3c/0x84()
+> [    0.204490] Modules linked in:
+> [    0.207735] [<c001396c>] (unwind_backtrace+0x0/0x11c) from [<c0022284>] (warn_slowpath_common+0x4c/0x64)
+> [    0.217568] [<c0022284>] (warn_slowpath_common+0x4c/0x64) from [<c00222b4>] (warn_slowpath_null+0x18/0x1c)
+> [    0.227577] [<c00222b4>] (warn_slowpath_null+0x18/0x1c) from [<c005668c>] (clockevent_delta2ns+0x3c/0x84)
+> [    0.237497] [<c005668c>] (clockevent_delta2ns+0x3c/0x84) from [<c0056780>] (clockevents_config.part.0+0x48/0x64)
+> [    0.248040] [<c0056780>] (clockevents_config.part.0+0x48/0x64) from [<c00569ac>] (clockevents_config_and_register+0x20/0x2c)
+> [    0.259654] [<c00569ac>] (clockevents_config_and_register+0x20/0x2c) from [<c0280fec>] (twd_timer_setup+0x144/0x190)
+> [    0.270553] [<c0280fec>] (twd_timer_setup+0x144/0x190) from [<c0281334>] (local_timer_setup+0x10/0x18)
+> [    0.280202] [<c0281334>] (local_timer_setup+0x10/0x18) from [<c0280c00>] (percpu_timer_setup+0x54/0xa8)
+> [    0.289934] [<c0280c00>] (percpu_timer_setup+0x54/0xa8) from [<c03904e0>] (smp_prepare_cpus+0x6c/0x90)
+> [    0.299582] [<c03904e0>] (smp_prepare_cpus+0x6c/0x90) from [<c038d844>] (kernel_init+0x48/0x12c)
+> [    0.308699] [<c038d844>] (kernel_init+0x48/0x12c) from [<c000ebf4>] (kernel_thread_exit+0x0/0x8)
+> [    0.317830] ---[ end trace 1b75b31a2719ed1c ]---
+> [    0.322697] Setting up static identity map for 0x8028cf98 - 0x8028cff0
+> <<no more output>>
+> 
+> Without these patches, the same tree gets all the way to waiting for the
+> root filesystem:
+> 
+> [    0.088329] CPU: Testing write buffer coherency: ok
+> [    0.093631] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+> [    0.099545] smp_twd: clock not found: -2
+> [    0.103667] Calibrating local timer... 500.06MHz.
+> [    0.161249] Setting up static identity map for 0x8028a918 - 0x8028a970
+> [    2.261492] CPU1: failed to come online
+> [    2.265684] Brought up 1 CPUs
+> [    2.268813] SMP: Total of 1 processors activated (1987.37 BogoMIPS).
+> ...
+> [    2.704845] Registering SWP/SWPB emulation handler
+> [    2.710558] Waiting for root device /dev/mmcblk1p1...
+> 
+> I tested using commit e4421e71fa89bee67d2b67079041ca346ae49ea3 in my
+> per-user repo on nv-tegra.nvidia.com.
 
-Sorry, that 'must' should have been a 'must not'.
+Ok... Figured out why it doesn't work.
 
-> I don't understand what  "CPU must __explicitly__ access it" means.
->=20
-> Do you mean that CPU must access the mapped buffer when
-> it __explicitly__ knows that the access does not cause any side effec=
-t?
+Cheers,
 
-No - I mean that the program must not attempt to read or write the
-buffer.
+Peter.
