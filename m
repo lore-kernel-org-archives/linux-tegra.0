@@ -1,28 +1,33 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RESEND PATCH v2 0/3] Tegra30 clockframework
-Date: Mon, 9 Jan 2012 17:40:03 +0200
-Message-ID: <20120109154003.GW32619@tbergstrom-lnx.Nvidia.com>
-References: <1326123224-32522-1-git-send-email-pdeschrijver@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v4] Input: keyboard - add device tree bindings for simple
+ key matrixes
+Date: Mon, 9 Jan 2012 10:38:20 -0800
+Message-ID: <CAOesGMitmYb2jb1VvjNfU8jcsCrDJ5zQkm+Hh171ddMi4POUYA@mail.gmail.com>
+References: <1325484557-27695-1-git-send-email-olof@lixom.net>
+	<1325626648-9425-1-git-send-email-olof@lixom.net>
+	<74CDBE0F657A3D45AFBB94109FB122FF17761F11FF@HQMAIL01.nvidia.com>
+	<CAPnjgZ3G7yFOrngJP=KtJNcgAWtZg3xn22tRMMi+pUnZ2rJpBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1326123224-32522-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAPnjgZ3G7yFOrngJP=KtJNcgAWtZg3xn22tRMMi+pUnZ2rJpBQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "open list:TEGRA SUPPORT" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:ARM PORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 09, 2012 at 04:33:38PM +0100, Peter De Schrijver wrote:
-> This patchset introduces the tegra30 clockframework. Clocks which require
-> voltage scaling are not included in this version. The implementation doesn't
-> use the generic clock code yet. It's the intention to move to it, once the
-> semantics are fully clarified.
-> 
-> ---
+[pruned cc list]
 
-Some people seem to be missing. So I will send this series again. Sorry for
-the noise.
+Hi,
 
-Cheers,
+On Sat, Jan 7, 2012 at 5:05 PM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
 
-Peter.
+> Do you have a Tegra .dts binding for the Seaboard keyboard that I can
+> test with please?
+
+Hmm, I had one for the previous binding. If you didn't get tired of
+waiting for this reply and make one yourself, I'll send one over in a
+bit. :)
+
+
+-Olof
