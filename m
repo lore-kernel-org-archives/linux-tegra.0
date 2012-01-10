@@ -1,62 +1,35 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RESEND PATCH v2 0/3] Tegra30 clockframework
-Date: Tue, 10 Jan 2012 18:39:05 +0200
-Message-ID: <20120110163905.GL32619@tbergstrom-lnx.Nvidia.com>
-References: <1326123315-32670-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF177EE3A286@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] ARM: tegra: initialize basic system clocks
+Date: Tue, 10 Jan 2012 09:23:52 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF177EE3A404@HQMAIL01.nvidia.com>
+References: <74CDBE0F657A3D45AFBB94109FB122FF177EE3A286@HQMAIL01.nvidia.com>
+ <1326212538-15419-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF177EE3A286-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1326212538-15419-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 09, 2012 at 10:30:05PM +0100, Stephen Warren wrote:
-> Peter De Schrijver wrote at Monday, January 09, 2012 8:35 AM:
-> > This patchset introduces the tegra30 clockframework. Clocks which require
-> > voltage scaling are not included in this version. The implementation doesn't
-> > use the generic clock code yet. It's the intention to move to it, once the
-> > semantics are fully clarified.
-> > 
-> > ---
-> > 
-> > Changes in v2:
-> >  * Fix parent clocks for TWD. This makes the SMP configuration booting again.
-> 
-> Peter,
-> 
-> This version seems to still boot as well as without these patches.
-> 
-> I hacked some AUXDATA into board-dt-tegra30.c in an attempt to get SDHCI
-> working, but found that:
-> 
-> a) sdhci_add_host() fails due to:
-> 
-> mmc0: Hardware doesn't specify timeout clock frequency.
-> 
-> I haven't investigated why this happens.
-> 
+Peter De Schrijver wrote at Tuesday, January 10, 2012 9:22 AM:
+> Initialize basic system clocks and provide a auxdata table to allow some
+> peripheral drivers to find their clocks.
+...
+> This should fix the hang you observed when sdhci_add_host() fails.
 
-I had a look at it, but I haven't found the rootcause.
+Yes, it does. This plus the Tegra30 clock patch series you posted stops
+I2C and SDHCI drivers complaining about a lack of clocks during boot,
+which is a great step forwards, even if SDHCI doesn't yet initialize
+successfully. Thanks.
 
-> b) More directly related to these patches, when sdhci_add_host() fails,
-> sdhci_tegra_probe() calls clk_disable() and clk_put() on its clock. One
-> of these hangs somehow. I assume that's a bug in this clock patch?
-> 
+This patch and the clock series:
 
-Sortof. The rootcause for this one is that pll_p gets disabled when
-sdhci_tegra_probe() calls  clk_disable(). pll_p also provides the input clock
-for UARTD however, so the next printk() call will hang the system. The reason
-for this is that no kernel driver has actually enabled the UARTD clock at that
-point, and thus pll_p hasn't been turned on from a clock framework point of
-view.
-Workaround is to enable UARTD in board-dt-tegra30 like we do for tegra20. I
-guess we need a better solution to cope with a different UART being the
-console UART. (See next mail)
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Cheers,
-
-Peter.
+-- 
+nvpublic
