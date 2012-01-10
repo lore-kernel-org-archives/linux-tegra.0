@@ -1,49 +1,70 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [RESEND PATCH v2 0/3] Tegra30 clockframework
-Date: Mon, 9 Jan 2012 13:30:05 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF177EE3A286@HQMAIL01.nvidia.com>
-References: <1326123315-32670-1-git-send-email-pdeschrijver@nvidia.com>
+From: Alok Chauhan <alokc@nvidia.com>
+Subject: RE: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Tue, 10 Jan 2012 09:42:50 +0530
+Message-ID: <7A0BFCFE3DA5CD47B0FB7984326F201A134F2CD4F1@BGMAIL01.nvidia.com>
+References: <1324898081-10308-1-git-send-email-alokc@nvidia.com>
+ <20120106161803.GQ19115@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1326123315-32670-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120106161803.GQ19115@trinity.fluff.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-i2c@fluff.org>
+Cc: "khali@linux-fr.org" <khali@linux-fr.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, Stephen Warren <swarren@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, "bones@secretlab.ca" <bones@secretlab.ca>, "paul.gortmaker@windriver.com" <paul.gortmaker@windriver.com>, "dgreid@google.com" <dgreid@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver wrote at Monday, January 09, 2012 8:35 AM:
-> This patchset introduces the tegra30 clockframework. Clocks which require
-> voltage scaling are not included in this version. The implementation doesn't
-> use the generic clock code yet. It's the intention to move to it, once the
-> semantics are fully clarified.
+On Mon, Dec 26, 2011 at 04:44:41PM +0530, Alok Chauhan wrote:
+> From: Alok Chauhan <alokc@nvidia.com>
 > 
+> In NACK error condition, I2C controller violates clock-to-data setup 
+> time before stop. In Software, because of this reset of controller is 
+> happening before I2C controller could complete STOP condition.
+> 
+> Added delay of 2 clock period before reset the controller in case of 
+> NACK error.
+> 
+> Signed-off-by: Alok Chauhan <alokc@nvidia.com>
 > ---
+> Instead of setting constant value for delay as was in previous patch, 
+> now in the current modification delay will be calculated based on clock frequency of the bus.
+>  drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
+>  1 files changed, 8 insertions(+), 0 deletions(-)
 > 
-> Changes in v2:
->  * Fix parent clocks for TWD. This makes the SMP configuration booting again.
+> diff --git a/drivers/i2c/busses/i2c-tegra.c 
+> b/drivers/i2c/busses/i2c-tegra.c index 6381604..62e197c 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+>  		return 0;
+>  
+> +	/*
+> +	 * In NACK error condition resetting of I2C controller happens
+> +	 * before STOP condition is properly completed by I2C controller,
+> +	 * so wait for 2 clock cycle to complete STOP condition.
+> +	 */
+> +	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+> +		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+> +
 
-Peter,
+>Is a delay here good, would it be better to sleep so that some other process can gain cpu time?
+We mostly used 100 khz i2c clock frequency and delay in that case will be 20 usec. Would it be 
+ok to sleep for such a smaller time? Won't it increase any other overhead?
 
-This version seems to still boot as well as without these patches.
+  	tegra_i2c_init(i2c_dev);
+>  	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+>  		if (msg->flags & I2C_M_IGNORE_NAK)
+> --
+> 1.7.4.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-i2c" 
+> in the body of a message to majordomo@vger.kernel.org More majordomo 
+> info at  http://vger.kernel.org/majordomo-info.html
 
-I hacked some AUXDATA into board-dt-tegra30.c in an attempt to get SDHCI
-working, but found that:
+--
+Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
 
-a) sdhci_add_host() fails due to:
-
-mmc0: Hardware doesn't specify timeout clock frequency.
-
-I haven't investigated why this happens.
-
-b) More directly related to these patches, when sdhci_add_host() fails,
-sdhci_tegra_probe() calls clk_disable() and clk_put() on its clock. One
-of these hangs somehow. I assume that's a bug in this clock patch?
-
-A couple of I2C devices did end up probing OK with these patches plus
-AUXDATA, although I doubt any I2C accesses were actually performed.
-
--- 
-nvpublic
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
