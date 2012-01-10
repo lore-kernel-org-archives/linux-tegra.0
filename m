@@ -1,70 +1,28 @@
-From: Alok Chauhan <alokc@nvidia.com>
-Subject: RE: [PATCH v2] i2c: tegra: Add delay before reset the controller
-Date: Tue, 10 Jan 2012 09:42:50 +0530
-Message-ID: <7A0BFCFE3DA5CD47B0FB7984326F201A134F2CD4F1@BGMAIL01.nvidia.com>
-References: <1324898081-10308-1-git-send-email-alokc@nvidia.com>
- <20120106161803.GQ19115@trinity.fluff.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v8 2/2] crypto: driver for Tegra AES hardware
+Date: Tue, 10 Jan 2012 05:29:00 +0000
+Message-ID: <20120110052900.GB5433@sirena.org.uk>
+References: <1324034755-3295-1-git-send-email-vwadekar@nvidia.com>
+ <1324034755-3295-3-git-send-email-vwadekar@nvidia.com>
+ <4F0A7AA9.6020104@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120106161803.GQ19115@trinity.fluff.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben-i2c@fluff.org>
-Cc: "khali@linux-fr.org" <khali@linux-fr.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, Stephen Warren <swarren@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, "bones@secretlab.ca" <bones@secretlab.ca>, "paul.gortmaker@windriver.com" <paul.gortmaker@windriver.com>, "dgreid@google.com" <dgreid@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F0A7AA9.6020104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 26, 2011 at 04:44:41PM +0530, Alok Chauhan wrote:
-> From: Alok Chauhan <alokc@nvidia.com>
-> 
-> In NACK error condition, I2C controller violates clock-to-data setup 
-> time before stop. In Software, because of this reset of controller is 
-> happening before I2C controller could complete STOP condition.
-> 
-> Added delay of 2 clock period before reset the controller in case of 
-> NACK error.
-> 
-> Signed-off-by: Alok Chauhan <alokc@nvidia.com>
-> ---
-> Instead of setting constant value for delay as was in previous patch, 
-> now in the current modification delay will be calculated based on clock frequency of the bus.
->  drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
->  1 files changed, 8 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c 
-> b/drivers/i2c/busses/i2c-tegra.c index 6381604..62e197c 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
->  		return 0;
->  
-> +	/*
-> +	 * In NACK error condition resetting of I2C controller happens
-> +	 * before STOP condition is properly completed by I2C controller,
-> +	 * so wait for 2 clock cycle to complete STOP condition.
-> +	 */
-> +	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
-> +		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
-> +
+On Mon, Jan 09, 2012 at 10:57:05AM +0530, Varun Wadekar wrote:
+> Is this patch good to go? I did not receive any comments, so I am
+> assuming that this patch is good but might have slipped from the
+> maintainers' list of patches to review.
 
->Is a delay here good, would it be better to sleep so that some other process can gain cpu time?
-We mostly used 100 khz i2c clock frequency and delay in that case will be 20 usec. Would it be 
-ok to sleep for such a smaller time? Won't it increase any other overhead?
+> Can some one please review/ack these changes so that we can move
+> forward in the review process?
 
-  	tegra_i2c_init(i2c_dev);
->  	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
->  		if (msg->flags & I2C_M_IGNORE_NAK)
-> --
-> 1.7.4.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-i2c" 
-> in the body of a message to majordomo@vger.kernel.org More majordomo 
-> info at  http://vger.kernel.org/majordomo-info.html
-
---
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
-
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+You've not CCed the relevant maintainers on the patches so there's a
+reasonable chance they haven't even seen them, much less reviewed them.
+You should *always* CC maintainers on patches.
