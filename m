@@ -1,27 +1,52 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ARM: tegra: Harmony PCIe: Remove unnecessary include
-Date: Wed, 11 Jan 2012 15:17:17 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF177EE3A80F@HQMAIL01.nvidia.com>
-References: <1326323440-23977-1-git-send-email-swarren@nvidia.com>
+From: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v8 1/2] arm: tegra: export tegra_chip_uid
+Date: Thu, 12 Jan 2012 16:09:51 +0530
+Message-ID: <4F0EB877.2050407@nvidia.com>
+References: <1324034755-3295-1-git-send-email-vwadekar@nvidia.com> <1324034755-3295-2-git-send-email-vwadekar@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1326323440-23977-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1324034755-3295-2-git-send-email-vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Henning Heinold <heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>, herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Wednesday, January 11, 2012 4:11 PM:
-> This file no longer uses pinmux APIs, and hence doesn't need to include
-> a pinmux header.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add Herbert and David
 
-Oops. Ignore this; I see it was already fixed up when arm-soc's for-next
-was rebuilt.
-
--- 
-nvpublic
+On Friday 16 December 2011 04:55 PM, Varun Wadekar wrote:
+> From: Henning Heinold<heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
+>
+> The crypto driver will need this api to use
+> it in the RNG calculations. In order to build
+> the crypto driver as a module, tegra_chip_uid
+> has to be exported.
+>
+> Acked-by: Olof Johansson<olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Signed-off-by: Henning Heinold<heinold-cPcqOTmdTlv31zTM6d8ziw@public.gmane.org>
+> Signed-off-by: Varun Wadekar<vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   arch/arm/mach-tegra/fuse.c |    2 ++
+>   1 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+> index 1fa26d9..ea49bd9 100644
+> --- a/arch/arm/mach-tegra/fuse.c
+> +++ b/arch/arm/mach-tegra/fuse.c
+> @@ -19,6 +19,7 @@
+>
+>   #include<linux/kernel.h>
+>   #include<linux/io.h>
+> +#include<linux/module.h>
+>
+>   #include<mach/iomap.h>
+>
+> @@ -58,6 +59,7 @@ unsigned long long tegra_chip_uid(void)
+>   	hi = fuse_readl(FUSE_UID_HIGH);
+>   	return (hi<<  32ull) | lo;
+>   }
+> +EXPORT_SYMBOL(tegra_chip_uid);
+>
+>   int tegra_sku_id(void)
+>   {
