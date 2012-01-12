@@ -1,50 +1,69 @@
 From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Subject: Re: [PATCH 7/9] arm/tegra: emc: device tree bindings
-Date: Thu, 12 Jan 2012 13:01:51 -0800
-Message-ID: <CAPnjgZ1Bw6DUnbA2_z3CR_bcwNe29SDAvVXdb=g-hYV-hjc9Ww@mail.gmail.com>
+Date: Thu, 12 Jan 2012 13:48:10 -0800
+Message-ID: <CAPnjgZ2vLiNWTweDduMgpEF-Jeucszvef20p3abv0kk6Pj3XTA@mail.gmail.com>
 References: <1324599468-12845-1-git-send-email-olof@lixom.net>
 	<1324599468-12845-8-git-send-email-olof@lixom.net>
-	<74CDBE0F657A3D45AFBB94109FB122FF17761F18A6@HQMAIL01.nvidia.com>
-	<CAOesGMjeVm_PcsBnxfKX9Oe96QUaCsJrvuESCRZq5vwq9gD5xA@mail.gmail.com>
-	<CAPnjgZ2p63C1UNr_RxCcwKjjqJFXzZppXD14hXh85zXH35POrw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17801D1DCF@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17801D1DCF-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1324599468-12845-8-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+Hi Olof,
 
-On Thu, Jan 12, 2012 at 12:50 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Simon Glass wrote at Thursday, January 12, 2012 1:04 PM:
->> On Thu, Jan 5, 2012 at 5:20 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->> > On Thu, Jan 5, 2012 at 4:01 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> >> Olof Johansson wrote at Thursday, December 22, 2011 5:18 PM:
->> >>> Device tree bindings for the EMC tables on tegra.
-> ...
->> I am looking at maybe bringing this into U-Boot.
->>
->> Do you have an example of the ram-code table? Would it look something like this?
+On Thu, Dec 22, 2011 at 4:17 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> Device tree bindings for the EMC tables on tegra.
 >
-> There's an example for Seaboard here:
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> ---
+> =A0.../devicetree/bindings/arm/tegra/emc.txt =A0 =A0 =A0 =A0 =A0| =A0=
+100 ++++++++++++++++++++
+> =A0arch/arm/boot/dts/tegra20.dtsi =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A07 ++
+> =A02 files changed, 107 insertions(+), 0 deletions(-)
+> =A0create mode 100644 Documentation/devicetree/bindings/arm/tegra/emc=
+=2Etxt
 >
-> http://patchwork.ozlabs.org/patch/132929/
->
-> The base EMC node was added earlier in the patch series:
->
-> http://patchwork.ozlabs.org/patch/132928/
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt b/Do=
+cumentation/devicetree/bindings/arm/tegra/emc.txt
+> new file mode 100644
+> index 0000000..09335f8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/emc.txt
+> @@ -0,0 +1,100 @@
+> +Embedded Memory Controller
+> +
+> +Properties:
+> +- name : Should be emc
+> +- #address-cells : Should be 1
+> +- #size-cells : Should be 0
+> +- compatible : Should contain "nvidia,tegra20-emc".
+> +- reg : Offset and length of the register set for the device
+> +- nvidia,use-ram-code : If present, the sub-nodes will be addressed
+> + =A0and chosen using the ramcode board selector. If omitted, only on=
+e
+> + =A0set of tables can be present and said tables will be used
+> + =A0irrespective of ram-code configuration.
+> +
+> +Child device nodes describe the memory settings for different config=
+urations and clock rates.
+> +
+> +Example:
+> +
+> + =A0 =A0 =A0 emc@7000f400 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D < 1 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D < 0 >;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra20-emc";
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x7000f4000 0x200>;
 
-Thanks for that. There is a single level example, but from what I can
-tell it will do fine for U-Boot.
+Minor point - that should be 0x7000f400.
 
 Regards,
-Simon
-
->
-> --
-> nvpublic
->
+SImon
