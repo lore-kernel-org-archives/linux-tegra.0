@@ -1,23 +1,29 @@
-From: Varun Wadekar <vwadekar@nvidia.com>
-Subject: Re: [PATCH v8 0/2] crypto: driver for Tegra AES hardware
-Date: Fri, 13 Jan 2012 11:07:42 +0530
-Message-ID: <4F0FC326.7080307@nvidia.com>
-References: <1324034755-3295-1-git-send-email-vwadekar@nvidia.com> <20120113053557.GA13918@gondor.apana.org.au>
+From: Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: Fix typo in conversion of ARCH_NR_GPIOS to Kconfig
+Date: Fri, 13 Jan 2012 18:55:43 +0900
+Message-ID: <CANqRtoRnLZewfcQ-ZNd0yGodq0-xia3ND4E9gQminU=fkyh0Mg@mail.gmail.com>
+References: <1325795370-21576-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20120113053557.GA13918@gondor.apana.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1325795370-21576-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 13 January 2012 11:05 AM, Herbert Xu wrote:
-> On Fri, Dec 16, 2011 at 11:25:53AM +0000, Varun Wadekar wrote:
->> The tegra crypto driver uses the tegra_chip_uid API for the RNG
->> calculation. If one wants to build tegra-aes as a module, then
->> tegra_chip_uid needs to be exported.
-> Both patches applied.  Thanks!
+On Fri, Jan 6, 2012 at 5:29 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Commit 44986ab "ARM: 7240/1: Make ARCH_NR_GPIO a Kconfig variable"
+> spelled ARCH_NR_GPIOS as ARCH_NR_GPIO, hence making the change
+> ineffective. This change fixes that.
+>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> This should probably go into 3.3 since the patch it fixes is there. I
+> don't think this issue affects any Tegra platform, but I didn't investigate
+> the other platforms that set CONFIG_ARCH_NR_GPIO by default now.
 
-Thanks Herbert.
+Thanks for this! We would like to see this included in 3.3 to fix
+regressions on most ARM shmobile SoCs.
+
+Acked-by: Magnus Damm <damm-yzvPICuk2ACczHhG9Qg4qA@public.gmane.org>
