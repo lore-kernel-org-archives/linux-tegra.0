@@ -1,51 +1,75 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH V1] gpio: tps65910: Use correct offset for gpio
- initialization
-Date: Wed, 18 Jan 2012 13:49:59 -0700
-Message-ID: <20120118204959.GK4223@ponder.secretlab.ca>
-References: <1326897455-8298-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 10/20] tegra: fdt: Add additional USB binding
+Date: Wed, 18 Jan 2012 15:48:30 -0700
+Message-ID: <4F174C3E.2090403@nvidia.com>
+References: <1326342789-5781-1-git-send-email-sjg@chromium.org> <1326342789-5781-11-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1326897455-8298-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1326342789-5781-11-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 18, 2012 at 08:07:35PM +0530, Laxman Dewangan wrote:
-> Using the correct gpio offset for setting the initial value
-> of gpio when setting output direction.
+On 01/11/2012 09:32 PM, Simon Glass wrote:
+> This adds a property to indicate a port which can switch between host and device
+> mode.
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Applied, thanks.
-
-g.
-
+> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > ---
->  drivers/gpio/gpio-tps65910.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
-> index b9c1c29..91f45b9 100644
-> --- a/drivers/gpio/gpio-tps65910.c
-> +++ b/drivers/gpio/gpio-tps65910.c
-> @@ -52,7 +52,7 @@ static int tps65910_gpio_output(struct gpio_chip *gc, unsigned offset,
->  	struct tps65910 *tps65910 = container_of(gc, struct tps65910, gpio);
->  
->  	/* Set the initial value */
-> -	tps65910_gpio_set(gc, 0, value);
-> +	tps65910_gpio_set(gc, offset, value);
->  
->  	return tps65910_set_bits(tps65910, TPS65910_GPIO0 + offset,
->  						GPIO_CFG_MASK);
-> -- 
-> 1.7.1.1
+>  doc/device-tree-bindings/usb/tegra-usb.txt |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> diff --git a/doc/device-tree-bindings/usb/tegra-usb.txt b/doc/device-tree-bindings/usb/tegra-usb.txt
+> index 035d63d..96fd022 100644
+> --- a/doc/device-tree-bindings/usb/tegra-usb.txt
+> +++ b/doc/device-tree-bindings/usb/tegra-usb.txt
+> @@ -11,3 +11,7 @@ Required properties :
+>   - phy_type : Should be one of "ulpi" or "utmi".
+>   - nvidia,vbus-gpio : If present, specifies a gpio that needs to be
+>     activated for the bus to be powered.
+> +
+> +Optional properties:
+> + - support-host-mode : If present then this peripheral can switch between
+> +   host and device mode
+
+All of Tegra's USB ports support host mode, and it's the typical mode of
+operation. The TRM also indicates that all USB ports support device mode
+(possibly depending on the PHY type that's been selected for or attached
+to port). Port 2 explicitly doesn't support run-time switching, but by
+omission, ports 1 and 3 do.
+
+Hence, "support-host-mode" is not an accurate name, and doesn't match
+the description given either.
+
+I think that it'd be better to:
+* Add properties to explicitly specify whether the port is
+intended/allowed to operate (per board design) in each of host or device
+mode.
+* Default to static host mode if no properties are present.
+
+i.e.:
+
++Optional properties:
++ - enable-host-mode : Indicate that the port is intended to operate in
++   host mode.
++ - enable-device-mode : Indicate that the port is intended to operate
++   in device mode.
+
+We should error out if both properties are set for USB 2, since it
+doesn't support run-time switching. Perhaps you can skip this
+error-checking for now since we aren't implementing device mode anywhere
+anyway...
+
+Then in the later patch in your series that was using support-host-mode,
+
+* Do VBUS detection only if both enable-host-mode and enable-device-mode
+are present.
+* Do VBUS GPIO enable if enable-host-mode is present (or assumed by
+default) and VBUS detection passed (if it ran).
+
+-- 
+nvpublic
