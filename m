@@ -1,104 +1,104 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [Ce-android-mainline] [RFC][PATCH 1/1] gpu: ion: Add IOMMU heap allocator with IOMMU API
-Date: Thu, 19 Jan 2012 16:27:19 +0000
-Message-ID: <201201191627.19732.arnd@arndb.de>
-References: <20120118.094004.1564213980840408030.hdoyu@nvidia.com> <201201191204.35067.arnd@arndb.de> <20120119.161538.1686847422348460522.hdoyu@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] ARM: tegra: Define Tegra20 CAR binding
+Date: Thu, 19 Jan 2012 09:17:40 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1780DAB0CA@HQMAIL01.nvidia.com>
+References: <1326342789-5781-12-git-send-email-sjg@chromium.org>
+ <1326932212-30346-1-git-send-email-swarren@nvidia.com>
+ <20120119053143.GA27447@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120119.161538.1686847422348460522.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120119053143.GA27447-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "ce-android-mainline-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ce-android-mainline-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "rebecca-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <rebecca-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "sumit.semwal-l0cyMroinI0@public.gmane.org" <sumit.semwal-l0cyMroinI0@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 19 January 2012, Hiroshi Doyu wrote:
-
-> > The main advantage of the IOMMU API is that it is able to separate
-> > multiple contexts, per user, so one application that is able to
-> > program a DMA engine cannot access memory that another application
-> > has mapped. Is that what you do with ion_iommu_heap_create(), i.e.
-> > that it gets called for each GPU context?
+Olof Johansson wrote at Wednesday, January 18, 2012 10:32 PM:
+> On Wed, Jan 18, 2012 at 05:16:52PM -0700, Stephen Warren wrote:
+> > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+> > +* NVIDIA Tegra20 Clock And Reset Controller
+> > +
+> > +This binding uses the common clock binding:
+> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +
+> > +The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
+> > +for muxing and gating Tegra's clocks, and setting their rates.
+> > +
+> > +Required properties :
+> > +- compatible : Should be "nvidia,<chip>-car"
+> > +- reg : Should contain CAR registers location and length
+> > +- clocks : Should contain phandle and clock specifiers for two clocks:
+> > +  the 32 KHz "32k_in", and the board-specific oscillator "osc".
+> > +- clock-names : Should contain a list of strings, with values "32k_in",
+> > +  and "osc".
 > 
-> Yes. The concept of this part cames from dma-mapping API code.
+> Hmm. I'd prefer to just ditch the notion of "clock-names" in the cases
+> where it isn't strictly necessary. Just because some vendors don't want
+> to define an order between their clocks doesn't mean it's a good idea
+> for everybody to use that model. In this case, just declaring that the
+> two clocks refs have to be to those two clocks in that order should
+> be sufficient.
 
-I don't understand. The dma-mapping code on top of IOMMU does *not*
-use one iommu context per GPU context, it uses one IOMMU context
-for everything together.
+OK, that seems reasonable. I'm happy using of_clk_get() rather than
+of_clk_get_by_name(). I guess that means we should just avoid any
+discussion of clock-output-names too.
 
-> > >+
-> > >+static int ion_buffer_allocate(struct ion_buffer *buf)
-> > >+{
-> > >+       int i, npages = NUM_PAGES(buf);
-> > >+
-> > >+       buf->pages = kmalloc(npages * sizeof(*buf->pages), GFP_KERNEL);
-> > >+       if (!buf->pages)
-> > >+               goto err_pages;
-> > >+
-> > >+       buf->sglist = vzalloc(npages * sizeof(*buf->sglist));
-> > >+       if (!buf->sglist)
-> > >+               goto err_sgl;
-> >
-> > Using vzalloc here probably goes a bit too far, it's fairly expensive
-> > to use compared with kzalloc, not only do you have to maintain the
-> > page table entries for the new mapping, it also means you use up
-> > precious space in the vmalloc area and have to use small pages for
-> > accessing the data in it.
+> > +- #clock-cells : Should be 1.
+> > +  In clock consumers, this cell represents the clock ID exposed by the CAR.
+> > +  For a list of valid values, see the clock-output-names property.
+> > +
+> > +Optional properties :
+> > +- clock-output-names : Should contain a list of strings defining the clocks
+> > +  that the CAR provides. The list of names and clock IDs is below. The IDs
+> > +  may be used in clock specifiers. The names should be listed in this clock-
+> > +  output-names property, sorted in ID order, if this property is present.
+> > +
+> > +  The first 96 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
+> > +  registers. Later, subsequent IDs will be assigned to all other clocks the
+> > +  CAR controls.
 > 
-> Should I use "kzalloc()" instead here?
+> Aren't these names hardcoded per SoC? If so, they can be derived from the
+> compatible field + output number without having a table in the device tree.
+>
+> If anything, you might want to enumerate the allowed/expected values, but
+> actually putting them in a property seems overkill.
 
-Yes, that would be better, at least if you can prove that there is
-a reasonable upper bound on the size of the allocation. kmalloc/kzalloc
-usually work ok up to 16kb or at most 128kb. If you think the total
-allocation might be larger than that, you have to use vzalloc anyway
-but that should come with a long comment explaining what is going
-on.
+Yes, the set of clocks is hard-coded per SoC, and the clock is uniquely
+identified by compatible+id.
 
-More likely if you end up needing vzalloc because of the size of the
-allocation, you should see that as a sign that you are doing something
-wrong and you should use larger chunks than single allocations in
-order to cut down the number of sglist entries.
+clock-output-names doesn't actually serve any functional purpose in
+Grant's common clock bindings patches; it's more of a documentation
+thing. As such, yes, I can remove the suggestion to actually put the
+table into the device tree, and rework the binding to simply define
+what the mapping is independently.
 
-Another option would be to just use sg_alloc_table(), which was
-made for this exact purpuse ;-)
-
-> > >+static void *iommu_heap_map_kernel(struct ion_heap *heap,
-> > >+                                  struct ion_buffer *buf)
-> > >+{
-> > >+       int npages = NUM_PAGES(buf);
-> > >+
-> > >+       BUG_ON(!buf->pages);
-> > >+       buf->vaddr = vm_map_ram(buf->pages, npages, -1,
-> > >+                               pgprot_noncached(pgprot_kernel));
-> > >+       pr_debug("va:%p\n", buf->vaddr);
-> > >+       WARN_ON(!buf->vaddr);
-> > >+       return buf->vaddr;
-> > >+}
-> >
-> > You can't do this on ARMv6 or ARMv7: There is already a cacheable
-> > mapping of all entries in buf->pages, so you must not install
-> > a second noncached mapping. Either make sure you have only
-> > noncached pages, or only cached ones.
+...
+> > +Example:
+> > +
+> > +clocks {
+> > +	clk_32k: oscillator@0 {
 > 
-> Ok, any example to maintain both mappings?
+> If it has a unit addres (@<x>) it needs a reg property with the same base
+> address.
 
-The dma_mapping implementation on ARM takes care of this by unmapping
-any allocation that goes through dma_alloc_coherent() from the linear
-mapping, at least in the CMA version that Marek did.
-In order to take advantage of this, you either need to call
-dma_alloc_coherent on a kernel that provides CMA, or call the CMA
-allocator directly (not generally recommended). Without CMA support,
-your only option is to use memory that was never part of the
-linear kernel mapping, but that would remove the main advantage of
-your patch, which is aimed at removing the need to take out memory
-from the linear mapping.
+I thought everything needed a unit address period? Is the rule more like
+the unit address is optional, but if present must match reg, so I can
+simply remove @0 and @1 here? I guess that makes a lot more sense.
 
-Using only cacheable memory would be valid here, but is probably
-not desired for performance reasons, or even allowed in ION because
-it requires explicit cache management functions for flushing
-the caches while handing data back and forth between software
-and the device.
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		clock-frequency = <32768>;
+> > +	};
+> > +
+> > +	osc: oscillator@1 {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		clock-frequency = <12000000>;
+> > +	};
+> > +};
 
-	Arnd
+-- 
+nvpublic
