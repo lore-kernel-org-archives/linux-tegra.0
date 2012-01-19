@@ -1,66 +1,152 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v4 10/20] tegra: fdt: Add additional USB binding
-Date: Thu, 19 Jan 2012 09:33:19 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1780DAB0D4@HQMAIL01.nvidia.com>
-References: <1326342789-5781-1-git-send-email-sjg@chromium.org>
-	<1326342789-5781-11-git-send-email-sjg@chromium.org>
-	<4F174C3E.2090403@nvidia.com>	<20120119053523.GB27447@quad.lixom.net>
-	<CAPnjgZ0JAyV8+0kLv=EcM-AhBxE-YSyG-Y7rYPS8PhOAOnq6dw@mail.gmail.com>
-	<CAOesGMjCxryS+3yQZqCP3JYeHpCbUuNHM+rtDBoOQjF6rwLv5g@mail.gmail.com>
-	<CAPnjgZ10mwQJ7RubrO_VFdHF+39cHOjLPmQNbYBeERjTWJMU4Q@mail.gmail.com>
- <CAOesGMhOe6enf9BFgpCbvEgtT3F-p5rEsxp8=PG57sxBaQvawQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH V2] gpio: tegra: Parameterize the number of banks
+Date: Thu, 19 Jan 2012 11:16:35 -0700
+Message-ID: <1326996995-23096-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMhOe6enf9BFgpCbvEgtT3F-p5rEsxp8=PG57sxBaQvawQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Thursday, January 19, 2012 12:13 AM:
-> On Wed, Jan 18, 2012 at 10:59 PM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrot=
-e:
-> > Hi Olof,
-> >
-> > On Wed, Jan 18, 2012 at 10:41 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> w=
-rote:
-> >> Hi,
-> >>
-> >> On Wed, Jan 18, 2012 at 9:55 PM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wr=
-ote:
-> >>
-> >>>> fsl-usb.txt uses "dr_mode" here, which might make sense to reuse=
- given some of
-> >>>> the shared IP in question for device mode:
-> >>>>
-> >>>> =A0- dr_mode : indicates the working mode for "fsl-usb2-dr" comp=
-atible
-> >>>> =A0 controllers. =A0Can be "host", "peripheral", or "otg". =A0De=
-fault to
-> >>>> =A0 "host" if not defined for backward compatibility.
-> >>>
-> >>> What does 'dr' mean?
-> >>
-> >> After some searching, it looks like it means "dual-role", which se=
-ems
-> >> appropriate terminology for the tegra SoC as well.
-> >
-> > Thanks for looking that up.
-> >
-> > Well maybe, but it could mean data reverse mode or distinctive
-> > ring...I like Stephen's nice device-tree-friendly naming and
-> > explanation :-) Are we stuck with this?
->=20
-> I think there's value in staying common with similar bindings on othe=
-r
-> platforms, yes. Sorry. :)
+Tegra20's GPIO controller has 7 banks, and Tegra30's controller has 8
+banks. Allow the number of banks to be configured at run-time by the
+device tree.
 
-Ack from me too. If there's an existing convention, I'd prefer to stick
-with it. Sorry, I should have looked this up before coming up with
-something new.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch depends on:
+http://ftp.arm.linux.org.uk/pub/armlinux/kernel/git-cur/linux-2.6-arm.git
+devel-stable 44986ab056076e9dc9fb9f8b4729afef7fa72616
 
---=20
-nvpublic
+This is a replacement for:
+http://patchwork.ozlabs.org/patch/134321/
+
+v2: Determine # banks by the number of interrupt properties rather than
+adding a custom property for this.
+---
+ .../devicetree/bindings/gpio/gpio_nvidia.txt       |    8 ++-
+ drivers/gpio/gpio-tegra.c                          |   42 +++++++++++++++----
+ 2 files changed, 38 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+index d114e19..023c952 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
+@@ -1,9 +1,11 @@
+-NVIDIA Tegra 2 GPIO controller
++NVIDIA Tegra GPIO controller
+ 
+ Required properties:
+-- compatible : "nvidia,tegra20-gpio"
++- compatible : "nvidia,tegra<chip>-gpio"
+ - reg : Physical base address and length of the controller's registers.
+-- interrupts : The interrupt outputs from the controller.
++- interrupts : The interrupt outputs from the controller. For Tegra20,
++  there should be 7 interrupts specified, and for Tegra30, there should
++  be 8 interrupts specified.
+ - #gpio-cells : Should be two. The first cell is the pin number and the
+   second cell is used to specify optional parameters:
+   - bit 0 specifies polarity (0 for normal, 1 for inverted)
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index bc923c7..98f3980 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -77,7 +77,8 @@ struct tegra_gpio_bank {
+ 
+ static struct irq_domain irq_domain;
+ static void __iomem *regs;
+-static struct tegra_gpio_bank tegra_gpio_banks[7];
++static u32 tegra_gpio_bank_count;
++static struct tegra_gpio_bank *tegra_gpio_banks;
+ 
+ static inline void tegra_gpio_writel(u32 val, u32 reg)
+ {
+@@ -274,7 +275,7 @@ void tegra_gpio_resume(void)
+ 
+ 	local_irq_save(flags);
+ 
+-	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
++	for (b = 0; b < tegra_gpio_bank_count; b++) {
+ 		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+ 
+ 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+@@ -297,7 +298,7 @@ void tegra_gpio_suspend(void)
+ 	int p;
+ 
+ 	local_irq_save(flags);
+-	for (b = 0; b < ARRAY_SIZE(tegra_gpio_banks); b++) {
++	for (b = 0; b < tegra_gpio_bank_count; b++) {
+ 		struct tegra_gpio_bank *bank = &tegra_gpio_banks[b];
+ 
+ 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+@@ -338,23 +339,46 @@ static struct lock_class_key gpio_lock_class;
+ 
+ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ {
++	int irq_base;
+ 	struct resource *res;
+ 	struct tegra_gpio_bank *bank;
+ 	int gpio;
+ 	int i;
+ 	int j;
+ 
+-	irq_domain.irq_base = irq_alloc_descs(-1, 0, TEGRA_NR_GPIOS, 0);
+-	if (irq_domain.irq_base < 0) {
++	for (;;) {
++		res = platform_get_resource(pdev, IORESOURCE_IRQ, tegra_gpio_bank_count);
++		if (!res)
++			break;
++		tegra_gpio_bank_count++;
++	}
++	if (!tegra_gpio_bank_count) {
++		dev_err(&pdev->dev, "Missing IRQ resource\n");
++		return -ENODEV;
++	}
++
++	tegra_gpio_chip.ngpio = tegra_gpio_bank_count * 32;
++
++	tegra_gpio_banks = devm_kzalloc(&pdev->dev,
++			tegra_gpio_bank_count * sizeof(*tegra_gpio_banks),
++			GFP_KERNEL);
++	if (!tegra_gpio_banks) {
++		dev_err(&pdev->dev, "Couldn't allocate bank structure\n");
++		return -ENODEV;
++	}
++
++	irq_base = irq_alloc_descs(-1, 0, tegra_gpio_chip.ngpio, 0);
++	if (irq_base < 0) {
+ 		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
+ 		return -ENODEV;
+ 	}
+-	irq_domain.nr_irq = TEGRA_NR_GPIOS;
++	irq_domain.irq_base = irq_base;
++	irq_domain.nr_irq = tegra_gpio_chip.ngpio;
+ 	irq_domain.ops = &irq_domain_simple_ops;
+ 	irq_domain.of_node = pdev->dev.of_node;
+ 	irq_domain_add(&irq_domain);
+ 
+-	for (i = 0; i < ARRAY_SIZE(tegra_gpio_banks); i++) {
++	for (i = 0; i < tegra_gpio_bank_count; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+ 		if (!res) {
+ 			dev_err(&pdev->dev, "Missing IRQ resource\n");
+@@ -391,7 +415,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ 
+ 	gpiochip_add(&tegra_gpio_chip);
+ 
+-	for (gpio = 0; gpio < TEGRA_NR_GPIOS; gpio++) {
++	for (gpio = 0; gpio < tegra_gpio_chip.ngpio; gpio++) {
+ 		int irq = irq_domain_to_irq(&irq_domain, gpio);
+ 		/* No validity check; all Tegra GPIOs are valid IRQs */
+ 
+@@ -404,7 +428,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ 		set_irq_flags(irq, IRQF_VALID);
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(tegra_gpio_banks); i++) {
++	for (i = 0; i < tegra_gpio_bank_count; i++) {
+ 		bank = &tegra_gpio_banks[i];
+ 
+ 		irq_set_chained_handler(bank->irq, tegra_gpio_irq_handler);
+-- 
+1.7.0.4
