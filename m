@@ -1,81 +1,100 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v4 10/20] tegra: fdt: Add additional USB binding
-Date: Thu, 19 Jan 2012 15:55:48 -0800
-Message-ID: <CAPnjgZ1J-GyvtbH8tSBzcwgfQJj9v=9Y=ibJNWv6Ru1+qXzLJQ@mail.gmail.com>
-References: <1326342789-5781-1-git-send-email-sjg@chromium.org>
-	<1326342789-5781-11-git-send-email-sjg@chromium.org>
-	<4F174C3E.2090403@nvidia.com>
-	<20120119053523.GB27447@quad.lixom.net>
-	<CAPnjgZ0JAyV8+0kLv=EcM-AhBxE-YSyG-Y7rYPS8PhOAOnq6dw@mail.gmail.com>
-	<CAOesGMjCxryS+3yQZqCP3JYeHpCbUuNHM+rtDBoOQjF6rwLv5g@mail.gmail.com>
-	<CAPnjgZ10mwQJ7RubrO_VFdHF+39cHOjLPmQNbYBeERjTWJMU4Q@mail.gmail.com>
-	<CAOesGMhOe6enf9BFgpCbvEgtT3F-p5rEsxp8=PG57sxBaQvawQ@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF1780DAB0D4@HQMAIL01.nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Fri, 20 Jan 2012 09:46:33 +0100
+Message-ID: <4F1929E9.7070707@linaro.org>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF1780DAB0D4@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Stephen Warren <swarren@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, U-Boot Mailing List <u-boot@lists.denx.de>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <TWarren@nvidia.com>, Colin Cross <ccross@android.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1324426147-16735-1-git-send-email-ccross@android.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Thu, Jan 19, 2012 at 9:33 AM, Stephen Warren <swarren@nvidia.com> wrote:
-> Olof Johansson wrote at Thursday, January 19, 2012 12:13 AM:
->> On Wed, Jan 18, 2012 at 10:59 PM, Simon Glass <sjg@chromium.org> wrote:
->> > Hi Olof,
->> >
->> > On Wed, Jan 18, 2012 at 10:41 PM, Olof Johansson <olof@lixom.net> wrot=
-e:
->> >> Hi,
->> >>
->> >> On Wed, Jan 18, 2012 at 9:55 PM, Simon Glass <sjg@chromium.org> wrote:
->> >>
->> >>>> fsl-usb.txt uses "dr_mode" here, which might make sense to reuse gi=
-ven some of
->> >>>> the shared IP in question for device mode:
->> >>>>
->> >>>> =A0- dr_mode : indicates the working mode for "fsl-usb2-dr" compati=
-ble
->> >>>> =A0 controllers. =A0Can be "host", "peripheral", or "otg". =A0Defau=
-lt to
->> >>>> =A0 "host" if not defined for backward compatibility.
->> >>>
->> >>> What does 'dr' mean?
->> >>
->> >> After some searching, it looks like it means "dual-role", which seems
->> >> appropriate terminology for the tegra SoC as well.
->> >
->> > Thanks for looking that up.
->> >
->> > Well maybe, but it could mean data reverse mode or distinctive
->> > ring...I like Stephen's nice device-tree-friendly naming and
->> > explanation :-) Are we stuck with this?
->>
->> I think there's value in staying common with similar bindings on other
->> platforms, yes. Sorry. :)
+On 12/21/2011 01:09 AM, Colin Cross wrote:
+> On some ARM SMP SoCs (OMAP4460, Tegra 2, and probably more), the
+> cpus cannot be independently powered down, either due to
+> sequencing restrictions (on Tegra 2, cpu 0 must be the last to
+> power down), or due to HW bugs (on OMAP4460, a cpu powering up
+> will corrupt the gic state unless the other cpu runs a work
+> around).  Each cpu has a power state that it can enter without
+> coordinating with the other cpu (usually Wait For Interrupt, or
+> WFI), and one or more "coupled" power states that affect blocks
+> shared between the cpus (L2 cache, interrupt controller, and
+> sometimes the whole SoC).  Entering a coupled power state must
+> be tightly controlled on both cpus.
 >
-> Ack from me too. If there's an existing convention, I'd prefer to stick
-> with it. Sorry, I should have looked this up before coming up with
-> something new.
-
-OK thanks for that. Will take a look.
-
-Regards,
-Simon
-
+> The easiest solution to implementing coupled cpu power states is
+> to hotplug all but one cpu whenever possible, usually using a
+> cpufreq governor that looks at cpu load to determine when to
+> enable the secondary cpus.  This causes problems, as hotplug is an
+> expensive operation, so the number of hotplug transitions must be
+> minimized, leading to very slow response to loads, often on the
+> order of seconds.
 >
-> --
-> nvpublic
+> This patch series implements an alternative solution, where each
+> cpu will wait in the WFI state until all cpus are ready to enter
+> a coupled state, at which point the coupled state function will
+> be called on all cpus at approximately the same time.
 >
+> Once all cpus are ready to enter idle, they are woken by an smp
+> cross call.  At this point, there is a chance that one of the
+> cpus will find work to do, and choose not to enter suspend.  A
+> final pass is needed to guarantee that all cpus will call the
+> power state enter function at the same time.  During this pass,
+> each cpu will increment the ready counter, and continue once the
+> ready counter matches the number of online coupled cpus.  If any
+> cpu exits idle, the other cpus will decrement their counter and
+> retry.
+>
+> To use coupled cpuidle states, a cpuidle driver must:
+>
+>     Set struct cpuidle_device.coupled_cpus to the mask of all
+>     coupled cpus, usually the same as cpu_possible_mask if all cpus
+>     are part of the same cluster.  The coupled_cpus mask must be
+>     set in the struct cpuidle_device for each cpu.
+>
+>     Set struct cpuidle_device.safe_state to a state that is not a
+>     coupled state.  This is usually WFI.
+>
+>     Set CPUIDLE_FLAG_COUPLED in struct cpuidle_state.flags for each
+>     state that affects multiple cpus.
+>
+>     Provide a struct cpuidle_state.enter function for each state
+>     that affects multiple cpus.  This function is guaranteed to be
+>     called on all cpus at approximately the same time.  The driver
+>     should ensure that the cpus all abort together if any cpu tries
+>     to abort once the function is called.
+>
+> This series was functionally tested on v3.0, but has only been
+> compile-tested on v3.2 after the removal of per-cpu state fields.
+
+Hi Colin,
+
+this patchset could be interesting to resolve in a generic way the cpu=20
+dependencies.
+What is the status of this patchset ?
+
+Did you have the opportunity to measure the power consumption with and=20
+without this patchset ?
+
+Thanks
+-- Daniel
+
+--=20
+  <http://www.linaro.org/>  Linaro.org =E2=94=82 Open source software f=
+or ARM SoCs
+
+=46ollow Linaro:<http://www.facebook.com/pages/Linaro>  Facebook |
+<http://twitter.com/#!/linaroorg>  Twitter |
+<http://www.linaro.org/linaro-blog/>  Blog
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
