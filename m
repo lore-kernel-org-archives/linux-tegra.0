@@ -1,27 +1,44 @@
-From: H Hartley Sweeten <hartleys-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
-Subject: RE: [PATCH] ARM: move CP15 definitions to separate header file
-Date: Fri, 20 Jan 2012 11:36:59 -0600
-Message-ID: <ADE657CA350FB648AAC2C43247A983F001F3F9D06870@AUSP01VMBX24.collaborationhost.net>
-References: <E1RoBJw-0005UP-By@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1RoBJw-0005UP-By-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH 2/4] ARM: tegra: Select PINCTRL Kconfig variables
+Date: Fri, 20 Jan 2012 11:22:24 -0700
+Message-ID: <1327083746-31430-2-git-send-email-swarren@nvidia.com>
+References: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, January 20, 2012 3:04 AM, Russell King wrote:
-> Avoid namespace conflicts with drivers over the CP15 definitions by
-> moving CP15 related prototypes and definitions to a private header
-> file.
->
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+This causes the Tegra pinctrl driver to be built whenever core Tegra
+support is enabled.
 
-For EP93xx,
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ arch/arm/mach-tegra/Kconfig |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-Acked-by: H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
-Tested-by: H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 373652d..32b420a 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -7,6 +7,8 @@ config ARCH_TEGRA_2x_SOC
+ 	select CPU_V7
+ 	select ARM_GIC
+ 	select ARCH_REQUIRE_GPIOLIB
++	select PINCTRL
++	select PINCTRL_TEGRA20
+ 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+ 	select USB_ULPI if USB_SUPPORT
+ 	select USB_ULPI_VIEWPORT if USB_SUPPORT
+@@ -19,6 +21,8 @@ config ARCH_TEGRA_3x_SOC
+ 	select CPU_V7
+ 	select ARM_GIC
+ 	select ARCH_REQUIRE_GPIOLIB
++	select PINCTRL
++	select PINCTRL_TEGRA30
+ 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+ 	select USB_ULPI if USB_SUPPORT
+ 	select USB_ULPI_VIEWPORT if USB_SUPPORT
+-- 
+1.7.0.4
