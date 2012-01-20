@@ -1,100 +1,451 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 0/3] coupled cpuidle state support
-Date: Fri, 20 Jan 2012 09:46:33 +0100
-Message-ID: <4F1929E9.7070707@linaro.org>
-References: <1324426147-16735-1-git-send-email-ccross@android.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [PATCH] ARM: move CP15 definitions to separate header file
+Date: Fri, 20 Jan 2012 10:03:44 +0000
+Message-ID: <E1RoBJw-0005UP-By@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1324426147-16735-1-git-send-email-ccross@android.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/21/2011 01:09 AM, Colin Cross wrote:
-> On some ARM SMP SoCs (OMAP4460, Tegra 2, and probably more), the
-> cpus cannot be independently powered down, either due to
-> sequencing restrictions (on Tegra 2, cpu 0 must be the last to
-> power down), or due to HW bugs (on OMAP4460, a cpu powering up
-> will corrupt the gic state unless the other cpu runs a work
-> around).  Each cpu has a power state that it can enter without
-> coordinating with the other cpu (usually Wait For Interrupt, or
-> WFI), and one or more "coupled" power states that affect blocks
-> shared between the cpus (L2 cache, interrupt controller, and
-> sometimes the whole SoC).  Entering a coupled power state must
-> be tightly controlled on both cpus.
->
-> The easiest solution to implementing coupled cpu power states is
-> to hotplug all but one cpu whenever possible, usually using a
-> cpufreq governor that looks at cpu load to determine when to
-> enable the secondary cpus.  This causes problems, as hotplug is an
-> expensive operation, so the number of hotplug transitions must be
-> minimized, leading to very slow response to loads, often on the
-> order of seconds.
->
-> This patch series implements an alternative solution, where each
-> cpu will wait in the WFI state until all cpus are ready to enter
-> a coupled state, at which point the coupled state function will
-> be called on all cpus at approximately the same time.
->
-> Once all cpus are ready to enter idle, they are woken by an smp
-> cross call.  At this point, there is a chance that one of the
-> cpus will find work to do, and choose not to enter suspend.  A
-> final pass is needed to guarantee that all cpus will call the
-> power state enter function at the same time.  During this pass,
-> each cpu will increment the ready counter, and continue once the
-> ready counter matches the number of online coupled cpus.  If any
-> cpu exits idle, the other cpus will decrement their counter and
-> retry.
->
-> To use coupled cpuidle states, a cpuidle driver must:
->
->     Set struct cpuidle_device.coupled_cpus to the mask of all
->     coupled cpus, usually the same as cpu_possible_mask if all cpus
->     are part of the same cluster.  The coupled_cpus mask must be
->     set in the struct cpuidle_device for each cpu.
->
->     Set struct cpuidle_device.safe_state to a state that is not a
->     coupled state.  This is usually WFI.
->
->     Set CPUIDLE_FLAG_COUPLED in struct cpuidle_state.flags for each
->     state that affects multiple cpus.
->
->     Provide a struct cpuidle_state.enter function for each state
->     that affects multiple cpus.  This function is guaranteed to be
->     called on all cpus at approximately the same time.  The driver
->     should ensure that the cpus all abort together if any cpu tries
->     to abort once the function is called.
->
-> This series was functionally tested on v3.0, but has only been
-> compile-tested on v3.2 after the removal of per-cpu state fields.
+Avoid namespace conflicts with drivers over the CP15 definitions by
+moving CP15 related prototypes and definitions to a private header
+file.
 
-Hi Colin,
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/include/asm/cp15.h      |   87 ++++++++++++++++++++++++++++++++++++++
+ arch/arm/include/asm/system.h    |   77 ---------------------------------
+ arch/arm/kernel/fiq.c            |    2 +-
+ arch/arm/kernel/head-nommu.S     |    2 +-
+ arch/arm/kernel/head.S           |    2 +-
+ arch/arm/kernel/setup.c          |    2 +-
+ arch/arm/mach-exynos/hotplug.c   |    1 +
+ arch/arm/mach-realview/hotplug.c |    1 +
+ arch/arm/mach-tegra/hotplug.c    |    1 +
+ arch/arm/mach-vexpress/hotplug.c |    2 +-
+ arch/arm/mm/alignment.c          |    2 +-
+ arch/arm/mm/cache-feroceon-l2.c  |    1 +
+ arch/arm/mm/cache-tauros2.c      |    1 +
+ arch/arm/mm/cache-xsc3l2.c       |    2 +-
+ arch/arm/mm/ioremap.c            |    1 +
+ arch/arm/mm/mmu.c                |    1 +
+ arch/arm/mm/pgd.c                |    1 +
+ arch/arm/vfp/vfpmodule.c         |    1 +
+ 18 files changed, 103 insertions(+), 84 deletions(-)
+ create mode 100644 arch/arm/include/asm/cp15.h
 
-this patchset could be interesting to resolve in a generic way the cpu=20
-dependencies.
-What is the status of this patchset ?
-
-Did you have the opportunity to measure the power consumption with and=20
-without this patchset ?
-
-Thanks
--- Daniel
-
---=20
-  <http://www.linaro.org/>  Linaro.org =E2=94=82 Open source software f=
-or ARM SoCs
-
-=46ollow Linaro:<http://www.facebook.com/pages/Linaro>  Facebook |
-<http://twitter.com/#!/linaroorg>  Twitter |
-<http://www.linaro.org/linaro-blog/>  Blog
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
+new file mode 100644
+index 0000000..3dabd8dd
+--- /dev/null
++++ b/arch/arm/include/asm/cp15.h
+@@ -0,0 +1,87 @@
++#ifndef __ASM_ARM_CP15_H
++#define __ASM_ARM_CP15_H
++
++#include <asm/system.h>
++
++/*
++ * CR1 bits (CP#15 CR1)
++ */
++#define CR_M	(1 << 0)	/* MMU enable				*/
++#define CR_A	(1 << 1)	/* Alignment abort enable		*/
++#define CR_C	(1 << 2)	/* Dcache enable			*/
++#define CR_W	(1 << 3)	/* Write buffer enable			*/
++#define CR_P	(1 << 4)	/* 32-bit exception handler		*/
++#define CR_D	(1 << 5)	/* 32-bit data address range		*/
++#define CR_L	(1 << 6)	/* Implementation defined		*/
++#define CR_B	(1 << 7)	/* Big endian				*/
++#define CR_S	(1 << 8)	/* System MMU protection		*/
++#define CR_R	(1 << 9)	/* ROM MMU protection			*/
++#define CR_F	(1 << 10)	/* Implementation defined		*/
++#define CR_Z	(1 << 11)	/* Implementation defined		*/
++#define CR_I	(1 << 12)	/* Icache enable			*/
++#define CR_V	(1 << 13)	/* Vectors relocated to 0xffff0000	*/
++#define CR_RR	(1 << 14)	/* Round Robin cache replacement	*/
++#define CR_L4	(1 << 15)	/* LDR pc can set T bit			*/
++#define CR_DT	(1 << 16)
++#define CR_IT	(1 << 18)
++#define CR_ST	(1 << 19)
++#define CR_FI	(1 << 21)	/* Fast interrupt (lower latency mode)	*/
++#define CR_U	(1 << 22)	/* Unaligned access operation		*/
++#define CR_XP	(1 << 23)	/* Extended page tables			*/
++#define CR_VE	(1 << 24)	/* Vectored interrupts			*/
++#define CR_EE	(1 << 25)	/* Exception (Big) Endian		*/
++#define CR_TRE	(1 << 28)	/* TEX remap enable			*/
++#define CR_AFE	(1 << 29)	/* Access flag enable			*/
++#define CR_TE	(1 << 30)	/* Thumb exception enable		*/
++
++#ifndef __ASSEMBLY__
++
++#if __LINUX_ARM_ARCH__ >= 4
++#define vectors_high()	(cr_alignment & CR_V)
++#else
++#define vectors_high()	(0)
++#endif
++
++extern unsigned long cr_no_alignment;	/* defined in entry-armv.S */
++extern unsigned long cr_alignment;	/* defined in entry-armv.S */
++
++static inline unsigned int get_cr(void)
++{
++	unsigned int val;
++	asm("mrc p15, 0, %0, c1, c0, 0	@ get CR" : "=r" (val) : : "cc");
++	return val;
++}
++
++static inline void set_cr(unsigned int val)
++{
++	asm volatile("mcr p15, 0, %0, c1, c0, 0	@ set CR"
++	  : : "r" (val) : "cc");
++	isb();
++}
++
++#ifndef CONFIG_SMP
++extern void adjust_cr(unsigned long mask, unsigned long set);
++#endif
++
++#define CPACC_FULL(n)		(3 << (n * 2))
++#define CPACC_SVC(n)		(1 << (n * 2))
++#define CPACC_DISABLE(n)	(0 << (n * 2))
++
++static inline unsigned int get_copro_access(void)
++{
++	unsigned int val;
++	asm("mrc p15, 0, %0, c1, c0, 2 @ get copro access"
++	  : "=r" (val) : : "cc");
++	return val;
++}
++
++static inline void set_copro_access(unsigned int val)
++{
++	asm volatile("mcr p15, 0, %0, c1, c0, 2 @ set copro access"
++	  : : "r" (val) : "cc");
++	isb();
++}
++
++#endif
++
++#endif
+diff --git a/arch/arm/include/asm/system.h b/arch/arm/include/asm/system.h
+index e4c96cc..774c41e 100644
+--- a/arch/arm/include/asm/system.h
++++ b/arch/arm/include/asm/system.h
+@@ -15,37 +15,6 @@
+ #define CPU_ARCH_ARMv7		9
+ 
+ /*
+- * CR1 bits (CP#15 CR1)
+- */
+-#define CR_M	(1 << 0)	/* MMU enable				*/
+-#define CR_A	(1 << 1)	/* Alignment abort enable		*/
+-#define CR_C	(1 << 2)	/* Dcache enable			*/
+-#define CR_W	(1 << 3)	/* Write buffer enable			*/
+-#define CR_P	(1 << 4)	/* 32-bit exception handler		*/
+-#define CR_D	(1 << 5)	/* 32-bit data address range		*/
+-#define CR_L	(1 << 6)	/* Implementation defined		*/
+-#define CR_B	(1 << 7)	/* Big endian				*/
+-#define CR_S	(1 << 8)	/* System MMU protection		*/
+-#define CR_R	(1 << 9)	/* ROM MMU protection			*/
+-#define CR_F	(1 << 10)	/* Implementation defined		*/
+-#define CR_Z	(1 << 11)	/* Implementation defined		*/
+-#define CR_I	(1 << 12)	/* Icache enable			*/
+-#define CR_V	(1 << 13)	/* Vectors relocated to 0xffff0000	*/
+-#define CR_RR	(1 << 14)	/* Round Robin cache replacement	*/
+-#define CR_L4	(1 << 15)	/* LDR pc can set T bit			*/
+-#define CR_DT	(1 << 16)
+-#define CR_IT	(1 << 18)
+-#define CR_ST	(1 << 19)
+-#define CR_FI	(1 << 21)	/* Fast interrupt (lower latency mode)	*/
+-#define CR_U	(1 << 22)	/* Unaligned access operation		*/
+-#define CR_XP	(1 << 23)	/* Extended page tables			*/
+-#define CR_VE	(1 << 24)	/* Vectored interrupts			*/
+-#define CR_EE	(1 << 25)	/* Exception (Big) Endian		*/
+-#define CR_TRE	(1 << 28)	/* TEX remap enable			*/
+-#define CR_AFE	(1 << 29)	/* Access flag enable			*/
+-#define CR_TE	(1 << 30)	/* Thumb exception enable		*/
+-
+-/*
+  * This is used to ensure the compiler did actually allocate the register we
+  * asked it for some inline assembly sequences.  Apparently we can't trust
+  * the compiler from one version to another so a bit of paranoia won't hurt.
+@@ -119,12 +88,6 @@ extern void (*arm_pm_restart)(char str, const char *cmd);
+ 
+ extern unsigned int user_debug;
+ 
+-#if __LINUX_ARM_ARCH__ >= 4
+-#define vectors_high()	(cr_alignment & CR_V)
+-#else
+-#define vectors_high()	(0)
+-#endif
+-
+ #if __LINUX_ARM_ARCH__ >= 7 ||		\
+ 	(__LINUX_ARM_ARCH__ == 6 && defined(CONFIG_CPU_32v6K))
+ #define sev()	__asm__ __volatile__ ("sev" : : : "memory")
+@@ -185,46 +148,6 @@ extern unsigned int user_debug;
+ #define set_mb(var, value)	do { var = value; smp_mb(); } while (0)
+ #define nop() __asm__ __volatile__("mov\tr0,r0\t@ nop\n\t");
+ 
+-extern unsigned long cr_no_alignment;	/* defined in entry-armv.S */
+-extern unsigned long cr_alignment;	/* defined in entry-armv.S */
+-
+-static inline unsigned int get_cr(void)
+-{
+-	unsigned int val;
+-	asm("mrc p15, 0, %0, c1, c0, 0	@ get CR" : "=r" (val) : : "cc");
+-	return val;
+-}
+-
+-static inline void set_cr(unsigned int val)
+-{
+-	asm volatile("mcr p15, 0, %0, c1, c0, 0	@ set CR"
+-	  : : "r" (val) : "cc");
+-	isb();
+-}
+-
+-#ifndef CONFIG_SMP
+-extern void adjust_cr(unsigned long mask, unsigned long set);
+-#endif
+-
+-#define CPACC_FULL(n)		(3 << (n * 2))
+-#define CPACC_SVC(n)		(1 << (n * 2))
+-#define CPACC_DISABLE(n)	(0 << (n * 2))
+-
+-static inline unsigned int get_copro_access(void)
+-{
+-	unsigned int val;
+-	asm("mrc p15, 0, %0, c1, c0, 2 @ get copro access"
+-	  : "=r" (val) : : "cc");
+-	return val;
+-}
+-
+-static inline void set_copro_access(unsigned int val)
+-{
+-	asm volatile("mcr p15, 0, %0, c1, c0, 2 @ set copro access"
+-	  : : "r" (val) : "cc");
+-	isb();
+-}
+-
+ /*
+  * switch_mm() may do a full cache flush over the context switch,
+  * so enable interrupts over the context switch to avoid high
+diff --git a/arch/arm/kernel/fiq.c b/arch/arm/kernel/fiq.c
+index 4c164ec..c32f845 100644
+--- a/arch/arm/kernel/fiq.c
++++ b/arch/arm/kernel/fiq.c
+@@ -42,9 +42,9 @@
+ #include <linux/seq_file.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ #include <asm/fiq.h>
+ #include <asm/irq.h>
+-#include <asm/system.h>
+ #include <asm/traps.h>
+ 
+ static unsigned long no_fiq_insn;
+diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
+index d46f259..278cfc1 100644
+--- a/arch/arm/kernel/head-nommu.S
++++ b/arch/arm/kernel/head-nommu.S
+@@ -17,8 +17,8 @@
+ #include <asm/assembler.h>
+ #include <asm/ptrace.h>
+ #include <asm/asm-offsets.h>
++#include <asm/cp15.h>
+ #include <asm/thread_info.h>
+-#include <asm/system.h>
+ 
+ /*
+  * Kernel startup entry point.
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 6d57911..a2e9694 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -15,12 +15,12 @@
+ #include <linux/init.h>
+ 
+ #include <asm/assembler.h>
++#include <asm/cp15.h>
+ #include <asm/domain.h>
+ #include <asm/ptrace.h>
+ #include <asm/asm-offsets.h>
+ #include <asm/memory.h>
+ #include <asm/thread_info.h>
+-#include <asm/system.h>
+ #include <asm/pgtable.h>
+ 
+ #ifdef CONFIG_DEBUG_LL
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 9b65cb4..e5c37fc 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -34,6 +34,7 @@
+ #include <linux/sort.h>
+ 
+ #include <asm/unified.h>
++#include <asm/cp15.h>
+ #include <asm/cpu.h>
+ #include <asm/cputype.h>
+ #include <asm/elf.h>
+@@ -45,7 +46,6 @@
+ #include <asm/cacheflush.h>
+ #include <asm/cachetype.h>
+ #include <asm/tlbflush.h>
+-#include <asm/system.h>
+ 
+ #include <asm/prom.h>
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index da70e7e..c9146fa 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ 
+ #include <mach/regs-pmu.h>
+ 
+diff --git a/arch/arm/mach-realview/hotplug.c b/arch/arm/mach-realview/hotplug.c
+index ac1aed2..5e64fbf 100644
+--- a/arch/arm/mach-realview/hotplug.c
++++ b/arch/arm/mach-realview/hotplug.c
+@@ -13,6 +13,7 @@
+ #include <linux/smp.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ 
+ extern volatile int pen_release;
+ 
+diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
+index f329404..d8dc9dd 100644
+--- a/arch/arm/mach-tegra/hotplug.c
++++ b/arch/arm/mach-tegra/hotplug.c
+@@ -13,6 +13,7 @@
+ #include <linux/smp.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ 
+ static inline void cpu_enter_lowpower(void)
+ {
+diff --git a/arch/arm/mach-vexpress/hotplug.c b/arch/arm/mach-vexpress/hotplug.c
+index 813ee08..7a05548 100644
+--- a/arch/arm/mach-vexpress/hotplug.c
++++ b/arch/arm/mach-vexpress/hotplug.c
+@@ -13,7 +13,7 @@
+ #include <linux/smp.h>
+ 
+ #include <asm/cacheflush.h>
+-#include <asm/system.h>
++#include <asm/cp15.h>
+ 
+ extern volatile int pen_release;
+ 
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index caf14dc..78459b8 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -22,7 +22,7 @@
+ #include <linux/sched.h>
+ #include <linux/uaccess.h>
+ 
+-#include <asm/system.h>
++#include <asm/cp15.h>
+ #include <asm/unaligned.h>
+ 
+ #include "fault.h"
+diff --git a/arch/arm/mm/cache-feroceon-l2.c b/arch/arm/mm/cache-feroceon-l2.c
+index e0b0e7a..dd3d591 100644
+--- a/arch/arm/mm/cache-feroceon-l2.c
++++ b/arch/arm/mm/cache-feroceon-l2.c
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/highmem.h>
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ #include <plat/cache-feroceon-l2.h>
+ 
+ /*
+diff --git a/arch/arm/mm/cache-tauros2.c b/arch/arm/mm/cache-tauros2.c
+index 5086865..1fbca05 100644
+--- a/arch/arm/mm/cache-tauros2.c
++++ b/arch/arm/mm/cache-tauros2.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/init.h>
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ #include <asm/hardware/cache-tauros2.h>
+ 
+ 
+diff --git a/arch/arm/mm/cache-xsc3l2.c b/arch/arm/mm/cache-xsc3l2.c
+index 5a32020..6c3edeb 100644
+--- a/arch/arm/mm/cache-xsc3l2.c
++++ b/arch/arm/mm/cache-xsc3l2.c
+@@ -18,7 +18,7 @@
+  */
+ #include <linux/init.h>
+ #include <linux/highmem.h>
+-#include <asm/system.h>
++#include <asm/cp15.h>
+ #include <asm/cputype.h>
+ #include <asm/cacheflush.h>
+ 
+diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
+index 80632e8..66daf17 100644
+--- a/arch/arm/mm/ioremap.c
++++ b/arch/arm/mm/ioremap.c
+@@ -26,6 +26,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/io.h>
+ 
++#include <asm/cp15.h>
+ #include <asm/cputype.h>
+ #include <asm/cacheflush.h>
+ #include <asm/mmu_context.h>
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index c1263ad..f77f1db 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -17,6 +17,7 @@
+ #include <linux/fs.h>
+ #include <linux/vmalloc.h>
+ 
++#include <asm/cp15.h>
+ #include <asm/cputype.h>
+ #include <asm/sections.h>
+ #include <asm/cachetype.h>
+diff --git a/arch/arm/mm/pgd.c b/arch/arm/mm/pgd.c
+index a3e78cc..0acb089 100644
+--- a/arch/arm/mm/pgd.c
++++ b/arch/arm/mm/pgd.c
+@@ -12,6 +12,7 @@
+ #include <linux/highmem.h>
+ #include <linux/slab.h>
+ 
++#include <asm/cp15.h>
+ #include <asm/pgalloc.h>
+ #include <asm/page.h>
+ #include <asm/tlbflush.h>
+diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
+index 8f3ccdd..d89068f 100644
+--- a/arch/arm/vfp/vfpmodule.c
++++ b/arch/arm/vfp/vfpmodule.c
+@@ -18,6 +18,7 @@
+ #include <linux/smp.h>
+ #include <linux/init.h>
+ 
++#include <asm/cp15.h>
+ #include <asm/cputype.h>
+ #include <asm/thread_notify.h>
+ #include <asm/vfp.h>
+-- 
+1.7.4.4
