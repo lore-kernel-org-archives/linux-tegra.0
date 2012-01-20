@@ -1,31 +1,30 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V1] mfd: tps65910: Add wakeup support
-Date: Fri, 20 Jan 2012 13:13:55 +0000
-Message-ID: <20120120131355.GG18297@opensource.wolfsonmicro.com>
-References: <1327057770-6688-1-git-send-email-ldewangan@nvidia.com>
- <20120120125152.GE18297@opensource.wolfsonmicro.com>
- <4F196568.1080503@nvidia.com>
- <20120120130201.GF18297@opensource.wolfsonmicro.com>
- <4F19671E.7030003@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] ARM: move CP15 definitions to separate header file
+Date: Fri, 20 Jan 2012 08:43:58 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF1780DAB37A@HQMAIL01.nvidia.com>
+References: <E1RoBJw-0005UP-By@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F19671E.7030003-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <E1RoBJw-0005UP-By-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 20, 2012 at 06:37:42PM +0530, Laxman Dewangan wrote:
-> On Friday 20 January 2012 06:32 PM, Mark Brown wrote:
+Russell King wrote at Friday, January 20, 2012 3:04 AM:
+> Avoid namespace conflicts with drivers over the CP15 definitions by
+> moving CP15 related prototypes and definitions to a private header
+> file.
+> 
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 
-> >No, that's it - when you call those userspace will get control via sysfs
-> >for turning on and off the wakeup support.
+For Tegra,
 
-> So should I call them in driver by default without taking parameter
-> from platform data?
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-That's the normal behaviour for drivers unless there's some specific
-reason for doing something different.  The choice may well depend on the
-application software running on the system rather than the kernel.
+-- 
+nvpublic
