@@ -1,451 +1,272 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCH] ARM: move CP15 definitions to separate header file
-Date: Fri, 20 Jan 2012 10:03:44 +0000
-Message-ID: <E1RoBJw-0005UP-By@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1] regulator: tps65910: use appropriate variable names.
+Date: Fri, 20 Jan 2012 16:36:22 +0530
+Message-ID: <1327057582-6635-1-git-send-email-ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Avoid namespace conflicts with drivers over the CP15 definitions by
-moving CP15 related prototypes and definitions to a private header
-file.
+Renaming the variables "table" to "voltage_table" and
+"table_len" to "n_voltages" of regulator information
+to have more meaningful.
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/include/asm/cp15.h      |   87 ++++++++++++++++++++++++++++++++++++++
- arch/arm/include/asm/system.h    |   77 ---------------------------------
- arch/arm/kernel/fiq.c            |    2 +-
- arch/arm/kernel/head-nommu.S     |    2 +-
- arch/arm/kernel/head.S           |    2 +-
- arch/arm/kernel/setup.c          |    2 +-
- arch/arm/mach-exynos/hotplug.c   |    1 +
- arch/arm/mach-realview/hotplug.c |    1 +
- arch/arm/mach-tegra/hotplug.c    |    1 +
- arch/arm/mach-vexpress/hotplug.c |    2 +-
- arch/arm/mm/alignment.c          |    2 +-
- arch/arm/mm/cache-feroceon-l2.c  |    1 +
- arch/arm/mm/cache-tauros2.c      |    1 +
- arch/arm/mm/cache-xsc3l2.c       |    2 +-
- arch/arm/mm/ioremap.c            |    1 +
- arch/arm/mm/mmu.c                |    1 +
- arch/arm/mm/pgd.c                |    1 +
- arch/arm/vfp/vfpmodule.c         |    1 +
- 18 files changed, 103 insertions(+), 84 deletions(-)
- create mode 100644 arch/arm/include/asm/cp15.h
+As per discussion in other patch 
+regulator: tps65910: Initialize n_voltages for rails.
+sending this patch on top of above where the variable
+names are renamed to have more meaningful.
 
-diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
-new file mode 100644
-index 0000000..3dabd8dd
---- /dev/null
-+++ b/arch/arm/include/asm/cp15.h
-@@ -0,0 +1,87 @@
-+#ifndef __ASM_ARM_CP15_H
-+#define __ASM_ARM_CP15_H
-+
-+#include <asm/system.h>
-+
-+/*
-+ * CR1 bits (CP#15 CR1)
-+ */
-+#define CR_M	(1 << 0)	/* MMU enable				*/
-+#define CR_A	(1 << 1)	/* Alignment abort enable		*/
-+#define CR_C	(1 << 2)	/* Dcache enable			*/
-+#define CR_W	(1 << 3)	/* Write buffer enable			*/
-+#define CR_P	(1 << 4)	/* 32-bit exception handler		*/
-+#define CR_D	(1 << 5)	/* 32-bit data address range		*/
-+#define CR_L	(1 << 6)	/* Implementation defined		*/
-+#define CR_B	(1 << 7)	/* Big endian				*/
-+#define CR_S	(1 << 8)	/* System MMU protection		*/
-+#define CR_R	(1 << 9)	/* ROM MMU protection			*/
-+#define CR_F	(1 << 10)	/* Implementation defined		*/
-+#define CR_Z	(1 << 11)	/* Implementation defined		*/
-+#define CR_I	(1 << 12)	/* Icache enable			*/
-+#define CR_V	(1 << 13)	/* Vectors relocated to 0xffff0000	*/
-+#define CR_RR	(1 << 14)	/* Round Robin cache replacement	*/
-+#define CR_L4	(1 << 15)	/* LDR pc can set T bit			*/
-+#define CR_DT	(1 << 16)
-+#define CR_IT	(1 << 18)
-+#define CR_ST	(1 << 19)
-+#define CR_FI	(1 << 21)	/* Fast interrupt (lower latency mode)	*/
-+#define CR_U	(1 << 22)	/* Unaligned access operation		*/
-+#define CR_XP	(1 << 23)	/* Extended page tables			*/
-+#define CR_VE	(1 << 24)	/* Vectored interrupts			*/
-+#define CR_EE	(1 << 25)	/* Exception (Big) Endian		*/
-+#define CR_TRE	(1 << 28)	/* TEX remap enable			*/
-+#define CR_AFE	(1 << 29)	/* Access flag enable			*/
-+#define CR_TE	(1 << 30)	/* Thumb exception enable		*/
-+
-+#ifndef __ASSEMBLY__
-+
-+#if __LINUX_ARM_ARCH__ >= 4
-+#define vectors_high()	(cr_alignment & CR_V)
-+#else
-+#define vectors_high()	(0)
-+#endif
-+
-+extern unsigned long cr_no_alignment;	/* defined in entry-armv.S */
-+extern unsigned long cr_alignment;	/* defined in entry-armv.S */
-+
-+static inline unsigned int get_cr(void)
-+{
-+	unsigned int val;
-+	asm("mrc p15, 0, %0, c1, c0, 0	@ get CR" : "=r" (val) : : "cc");
-+	return val;
-+}
-+
-+static inline void set_cr(unsigned int val)
-+{
-+	asm volatile("mcr p15, 0, %0, c1, c0, 0	@ set CR"
-+	  : : "r" (val) : "cc");
-+	isb();
-+}
-+
-+#ifndef CONFIG_SMP
-+extern void adjust_cr(unsigned long mask, unsigned long set);
-+#endif
-+
-+#define CPACC_FULL(n)		(3 << (n * 2))
-+#define CPACC_SVC(n)		(1 << (n * 2))
-+#define CPACC_DISABLE(n)	(0 << (n * 2))
-+
-+static inline unsigned int get_copro_access(void)
-+{
-+	unsigned int val;
-+	asm("mrc p15, 0, %0, c1, c0, 2 @ get copro access"
-+	  : "=r" (val) : : "cc");
-+	return val;
-+}
-+
-+static inline void set_copro_access(unsigned int val)
-+{
-+	asm volatile("mcr p15, 0, %0, c1, c0, 2 @ set copro access"
-+	  : : "r" (val) : "cc");
-+	isb();
-+}
-+
-+#endif
-+
-+#endif
-diff --git a/arch/arm/include/asm/system.h b/arch/arm/include/asm/system.h
-index e4c96cc..774c41e 100644
---- a/arch/arm/include/asm/system.h
-+++ b/arch/arm/include/asm/system.h
-@@ -15,37 +15,6 @@
- #define CPU_ARCH_ARMv7		9
+ drivers/regulator/tps65910-regulator.c |   82 ++++++++++++++++----------------
+ 1 files changed, 41 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
+index 3ac5f91..1d13cf9 100644
+--- a/drivers/regulator/tps65910-regulator.c
++++ b/drivers/regulator/tps65910-regulator.c
+@@ -83,8 +83,8 @@ struct tps_info {
+ 	const char *name;
+ 	unsigned min_uV;
+ 	unsigned max_uV;
+-	u8 table_len;
+-	const u16 *table;
++	u8 n_voltages;
++	const u16 *voltage_table;
+ };
  
- /*
-- * CR1 bits (CP#15 CR1)
-- */
--#define CR_M	(1 << 0)	/* MMU enable				*/
--#define CR_A	(1 << 1)	/* Alignment abort enable		*/
--#define CR_C	(1 << 2)	/* Dcache enable			*/
--#define CR_W	(1 << 3)	/* Write buffer enable			*/
--#define CR_P	(1 << 4)	/* 32-bit exception handler		*/
--#define CR_D	(1 << 5)	/* 32-bit data address range		*/
--#define CR_L	(1 << 6)	/* Implementation defined		*/
--#define CR_B	(1 << 7)	/* Big endian				*/
--#define CR_S	(1 << 8)	/* System MMU protection		*/
--#define CR_R	(1 << 9)	/* ROM MMU protection			*/
--#define CR_F	(1 << 10)	/* Implementation defined		*/
--#define CR_Z	(1 << 11)	/* Implementation defined		*/
--#define CR_I	(1 << 12)	/* Icache enable			*/
--#define CR_V	(1 << 13)	/* Vectors relocated to 0xffff0000	*/
--#define CR_RR	(1 << 14)	/* Round Robin cache replacement	*/
--#define CR_L4	(1 << 15)	/* LDR pc can set T bit			*/
--#define CR_DT	(1 << 16)
--#define CR_IT	(1 << 18)
--#define CR_ST	(1 << 19)
--#define CR_FI	(1 << 21)	/* Fast interrupt (lower latency mode)	*/
--#define CR_U	(1 << 22)	/* Unaligned access operation		*/
--#define CR_XP	(1 << 23)	/* Extended page tables			*/
--#define CR_VE	(1 << 24)	/* Vectored interrupts			*/
--#define CR_EE	(1 << 25)	/* Exception (Big) Endian		*/
--#define CR_TRE	(1 << 28)	/* TEX remap enable			*/
--#define CR_AFE	(1 << 29)	/* Access flag enable			*/
--#define CR_TE	(1 << 30)	/* Thumb exception enable		*/
--
--/*
-  * This is used to ensure the compiler did actually allocate the register we
-  * asked it for some inline assembly sequences.  Apparently we can't trust
-  * the compiler from one version to another so a bit of paranoia won't hurt.
-@@ -119,12 +88,6 @@ extern void (*arm_pm_restart)(char str, const char *cmd);
+ static struct tps_info tps65910_regs[] = {
+@@ -95,8 +95,8 @@ static struct tps_info tps65910_regs[] = {
+ 		.name = "VIO",
+ 		.min_uV = 1500000,
+ 		.max_uV = 3300000,
+-		.table_len = ARRAY_SIZE(VIO_VSEL_table),
+-		.table = VIO_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VIO_VSEL_table),
++		.voltage_table = VIO_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VDD1",
+@@ -112,64 +112,64 @@ static struct tps_info tps65910_regs[] = {
+ 		.name = "VDD3",
+ 		.min_uV = 5000000,
+ 		.max_uV = 5000000,
+-		.table_len = ARRAY_SIZE(VDD3_VSEL_table),
+-		.table = VDD3_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VDD3_VSEL_table),
++		.voltage_table = VDD3_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VDIG1",
+ 		.min_uV = 1200000,
+ 		.max_uV = 2700000,
+-		.table_len = ARRAY_SIZE(VDIG1_VSEL_table),
+-		.table = VDIG1_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VDIG1_VSEL_table),
++		.voltage_table = VDIG1_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VDIG2",
+ 		.min_uV = 1000000,
+ 		.max_uV = 1800000,
+-		.table_len = ARRAY_SIZE(VDIG2_VSEL_table),
+-		.table = VDIG2_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VDIG2_VSEL_table),
++		.voltage_table = VDIG2_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VPLL",
+ 		.min_uV = 1000000,
+ 		.max_uV = 2500000,
+-		.table_len = ARRAY_SIZE(VPLL_VSEL_table),
+-		.table = VPLL_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VPLL_VSEL_table),
++		.voltage_table = VPLL_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VDAC",
+ 		.min_uV = 1800000,
+ 		.max_uV = 2850000,
+-		.table_len = ARRAY_SIZE(VDAC_VSEL_table),
+-		.table = VDAC_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VDAC_VSEL_table),
++		.voltage_table = VDAC_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VAUX1",
+ 		.min_uV = 1800000,
+ 		.max_uV = 2850000,
+-		.table_len = ARRAY_SIZE(VAUX1_VSEL_table),
+-		.table = VAUX1_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VAUX1_VSEL_table),
++		.voltage_table = VAUX1_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VAUX2",
+ 		.min_uV = 1800000,
+ 		.max_uV = 3300000,
+-		.table_len = ARRAY_SIZE(VAUX2_VSEL_table),
+-		.table = VAUX2_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VAUX2_VSEL_table),
++		.voltage_table = VAUX2_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VAUX33",
+ 		.min_uV = 1800000,
+ 		.max_uV = 3300000,
+-		.table_len = ARRAY_SIZE(VAUX33_VSEL_table),
+-		.table = VAUX33_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VAUX33_VSEL_table),
++		.voltage_table = VAUX33_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VMMC",
+ 		.min_uV = 1800000,
+ 		.max_uV = 3300000,
+-		.table_len = ARRAY_SIZE(VMMC_VSEL_table),
+-		.table = VMMC_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VMMC_VSEL_table),
++		.voltage_table = VMMC_VSEL_table,
+ 	},
+ };
  
- extern unsigned int user_debug;
+@@ -181,74 +181,74 @@ static struct tps_info tps65911_regs[] = {
+ 		.name = "VIO",
+ 		.min_uV = 1500000,
+ 		.max_uV = 3300000,
+-		.table_len = ARRAY_SIZE(VIO_VSEL_table),
+-		.table = VIO_VSEL_table,
++		.n_voltages = ARRAY_SIZE(VIO_VSEL_table),
++		.voltage_table = VIO_VSEL_table,
+ 	},
+ 	{
+ 		.name = "VDD1",
+ 		.min_uV = 600000,
+ 		.max_uV = 4500000,
+-		.table_len = 73,
++		.n_voltages = 73,
+ 	},
+ 	{
+ 		.name = "VDD2",
+ 		.min_uV = 600000,
+ 		.max_uV = 4500000,
+-		.table_len = 73,
++		.n_voltages = 73,
+ 	},
+ 	{
+ 		.name = "VDDCTRL",
+ 		.min_uV = 600000,
+ 		.max_uV = 1400000,
+-		.table_len = 65,
++		.n_voltages = 65,
+ 	},
+ 	{
+ 		.name = "LDO1",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 47,
++		.n_voltages = 47,
+ 	},
+ 	{
+ 		.name = "LDO2",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 47,
++		.n_voltages = 47,
+ 	},
+ 	{
+ 		.name = "LDO3",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 24,
++		.n_voltages = 24,
+ 	},
+ 	{
+ 		.name = "LDO4",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 47,
++		.n_voltages = 47,
+ 	},
+ 	{
+ 		.name = "LDO5",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 24,
++		.n_voltages = 24,
+ 	},
+ 	{
+ 		.name = "LDO6",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 24,
++		.n_voltages = 24,
+ 	},
+ 	{
+ 		.name = "LDO7",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 24,
++		.n_voltages = 24,
+ 	},
+ 	{
+ 		.name = "LDO8",
+ 		.min_uV = 1000000,
+ 		.max_uV = 3300000,
+-		.table_len = 24,
++		.n_voltages = 24,
+ 	},
+ };
  
--#if __LINUX_ARM_ARCH__ >= 4
--#define vectors_high()	(cr_alignment & CR_V)
--#else
--#define vectors_high()	(0)
--#endif
--
- #if __LINUX_ARM_ARCH__ >= 7 ||		\
- 	(__LINUX_ARM_ARCH__ == 6 && defined(CONFIG_CPU_32v6K))
- #define sev()	__asm__ __volatile__ ("sev" : : : "memory")
-@@ -185,46 +148,6 @@ extern unsigned int user_debug;
- #define set_mb(var, value)	do { var = value; smp_mb(); } while (0)
- #define nop() __asm__ __volatile__("mov\tr0,r0\t@ nop\n\t");
+@@ -586,7 +586,7 @@ static int tps65910_get_voltage(struct regulator_dev *dev)
+ 		return -EINVAL;
+ 	}
  
--extern unsigned long cr_no_alignment;	/* defined in entry-armv.S */
--extern unsigned long cr_alignment;	/* defined in entry-armv.S */
--
--static inline unsigned int get_cr(void)
--{
--	unsigned int val;
--	asm("mrc p15, 0, %0, c1, c0, 0	@ get CR" : "=r" (val) : : "cc");
--	return val;
--}
--
--static inline void set_cr(unsigned int val)
--{
--	asm volatile("mcr p15, 0, %0, c1, c0, 0	@ set CR"
--	  : : "r" (val) : "cc");
--	isb();
--}
--
--#ifndef CONFIG_SMP
--extern void adjust_cr(unsigned long mask, unsigned long set);
--#endif
--
--#define CPACC_FULL(n)		(3 << (n * 2))
--#define CPACC_SVC(n)		(1 << (n * 2))
--#define CPACC_DISABLE(n)	(0 << (n * 2))
--
--static inline unsigned int get_copro_access(void)
--{
--	unsigned int val;
--	asm("mrc p15, 0, %0, c1, c0, 2 @ get copro access"
--	  : "=r" (val) : : "cc");
--	return val;
--}
--
--static inline void set_copro_access(unsigned int val)
--{
--	asm volatile("mcr p15, 0, %0, c1, c0, 2 @ set copro access"
--	  : : "r" (val) : "cc");
--	isb();
--}
--
- /*
-  * switch_mm() may do a full cache flush over the context switch,
-  * so enable interrupts over the context switch to avoid high
-diff --git a/arch/arm/kernel/fiq.c b/arch/arm/kernel/fiq.c
-index 4c164ec..c32f845 100644
---- a/arch/arm/kernel/fiq.c
-+++ b/arch/arm/kernel/fiq.c
-@@ -42,9 +42,9 @@
- #include <linux/seq_file.h>
+-	voltage = pmic->info[id]->table[value] * 1000;
++	voltage = pmic->info[id]->voltage_table[value] * 1000;
  
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- #include <asm/fiq.h>
- #include <asm/irq.h>
--#include <asm/system.h>
- #include <asm/traps.h>
+ 	return voltage;
+ }
+@@ -636,7 +636,7 @@ static int tps65911_get_voltage(struct regulator_dev *dev)
+ 		step_mv = 100;
+ 		break;
+ 	case TPS65910_REG_VIO:
+-		return pmic->info[id]->table[value] * 1000;
++		return pmic->info[id]->voltage_table[value] * 1000;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -770,10 +770,10 @@ static int tps65910_list_voltage(struct regulator_dev *dev,
+ 	if (id < TPS65910_REG_VIO || id > TPS65910_REG_VMMC)
+ 		return -EINVAL;
  
- static unsigned long no_fiq_insn;
-diff --git a/arch/arm/kernel/head-nommu.S b/arch/arm/kernel/head-nommu.S
-index d46f259..278cfc1 100644
---- a/arch/arm/kernel/head-nommu.S
-+++ b/arch/arm/kernel/head-nommu.S
-@@ -17,8 +17,8 @@
- #include <asm/assembler.h>
- #include <asm/ptrace.h>
- #include <asm/asm-offsets.h>
-+#include <asm/cp15.h>
- #include <asm/thread_info.h>
--#include <asm/system.h>
+-	if (selector >= pmic->info[id]->table_len)
++	if (selector >= pmic->info[id]->n_voltages)
+ 		return -EINVAL;
+ 	else
+-		voltage = pmic->info[id]->table[selector] * 1000;
++		voltage = pmic->info[id]->voltage_table[selector] * 1000;
  
- /*
-  * Kernel startup entry point.
-diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index 6d57911..a2e9694 100644
---- a/arch/arm/kernel/head.S
-+++ b/arch/arm/kernel/head.S
-@@ -15,12 +15,12 @@
- #include <linux/init.h>
+ 	return voltage;
+ }
+@@ -809,7 +809,7 @@ static int tps65911_list_voltage(struct regulator_dev *dev, unsigned selector)
+ 		step_mv = 100;
+ 		break;
+ 	case TPS65910_REG_VIO:
+-		return pmic->info[id]->table[selector] * 1000;
++		return pmic->info[id]->voltage_table[selector] * 1000;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -940,7 +940,7 @@ static __devinit int tps65910_probe(struct platform_device *pdev)
  
- #include <asm/assembler.h>
-+#include <asm/cp15.h>
- #include <asm/domain.h>
- #include <asm/ptrace.h>
- #include <asm/asm-offsets.h>
- #include <asm/memory.h>
- #include <asm/thread_info.h>
--#include <asm/system.h>
- #include <asm/pgtable.h>
+ 		pmic->desc[i].name = info->name;
+ 		pmic->desc[i].id = i;
+-		pmic->desc[i].n_voltages = info->table_len;
++		pmic->desc[i].n_voltages = info->n_voltages;
  
- #ifdef CONFIG_DEBUG_LL
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 9b65cb4..e5c37fc 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -34,6 +34,7 @@
- #include <linux/sort.h>
- 
- #include <asm/unified.h>
-+#include <asm/cp15.h>
- #include <asm/cpu.h>
- #include <asm/cputype.h>
- #include <asm/elf.h>
-@@ -45,7 +46,6 @@
- #include <asm/cacheflush.h>
- #include <asm/cachetype.h>
- #include <asm/tlbflush.h>
--#include <asm/system.h>
- 
- #include <asm/prom.h>
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index da70e7e..c9146fa 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -16,6 +16,7 @@
- #include <linux/io.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- 
- #include <mach/regs-pmu.h>
- 
-diff --git a/arch/arm/mach-realview/hotplug.c b/arch/arm/mach-realview/hotplug.c
-index ac1aed2..5e64fbf 100644
---- a/arch/arm/mach-realview/hotplug.c
-+++ b/arch/arm/mach-realview/hotplug.c
-@@ -13,6 +13,7 @@
- #include <linux/smp.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- 
- extern volatile int pen_release;
- 
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index f329404..d8dc9dd 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -13,6 +13,7 @@
- #include <linux/smp.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- 
- static inline void cpu_enter_lowpower(void)
- {
-diff --git a/arch/arm/mach-vexpress/hotplug.c b/arch/arm/mach-vexpress/hotplug.c
-index 813ee08..7a05548 100644
---- a/arch/arm/mach-vexpress/hotplug.c
-+++ b/arch/arm/mach-vexpress/hotplug.c
-@@ -13,7 +13,7 @@
- #include <linux/smp.h>
- 
- #include <asm/cacheflush.h>
--#include <asm/system.h>
-+#include <asm/cp15.h>
- 
- extern volatile int pen_release;
- 
-diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-index caf14dc..78459b8 100644
---- a/arch/arm/mm/alignment.c
-+++ b/arch/arm/mm/alignment.c
-@@ -22,7 +22,7 @@
- #include <linux/sched.h>
- #include <linux/uaccess.h>
- 
--#include <asm/system.h>
-+#include <asm/cp15.h>
- #include <asm/unaligned.h>
- 
- #include "fault.h"
-diff --git a/arch/arm/mm/cache-feroceon-l2.c b/arch/arm/mm/cache-feroceon-l2.c
-index e0b0e7a..dd3d591 100644
---- a/arch/arm/mm/cache-feroceon-l2.c
-+++ b/arch/arm/mm/cache-feroceon-l2.c
-@@ -15,6 +15,7 @@
- #include <linux/init.h>
- #include <linux/highmem.h>
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- #include <plat/cache-feroceon-l2.h>
- 
- /*
-diff --git a/arch/arm/mm/cache-tauros2.c b/arch/arm/mm/cache-tauros2.c
-index 5086865..1fbca05 100644
---- a/arch/arm/mm/cache-tauros2.c
-+++ b/arch/arm/mm/cache-tauros2.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/init.h>
- #include <asm/cacheflush.h>
-+#include <asm/cp15.h>
- #include <asm/hardware/cache-tauros2.h>
- 
- 
-diff --git a/arch/arm/mm/cache-xsc3l2.c b/arch/arm/mm/cache-xsc3l2.c
-index 5a32020..6c3edeb 100644
---- a/arch/arm/mm/cache-xsc3l2.c
-+++ b/arch/arm/mm/cache-xsc3l2.c
-@@ -18,7 +18,7 @@
-  */
- #include <linux/init.h>
- #include <linux/highmem.h>
--#include <asm/system.h>
-+#include <asm/cp15.h>
- #include <asm/cputype.h>
- #include <asm/cacheflush.h>
- 
-diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-index 80632e8..66daf17 100644
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@ -26,6 +26,7 @@
- #include <linux/vmalloc.h>
- #include <linux/io.h>
- 
-+#include <asm/cp15.h>
- #include <asm/cputype.h>
- #include <asm/cacheflush.h>
- #include <asm/mmu_context.h>
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index c1263ad..f77f1db 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -17,6 +17,7 @@
- #include <linux/fs.h>
- #include <linux/vmalloc.h>
- 
-+#include <asm/cp15.h>
- #include <asm/cputype.h>
- #include <asm/sections.h>
- #include <asm/cachetype.h>
-diff --git a/arch/arm/mm/pgd.c b/arch/arm/mm/pgd.c
-index a3e78cc..0acb089 100644
---- a/arch/arm/mm/pgd.c
-+++ b/arch/arm/mm/pgd.c
-@@ -12,6 +12,7 @@
- #include <linux/highmem.h>
- #include <linux/slab.h>
- 
-+#include <asm/cp15.h>
- #include <asm/pgalloc.h>
- #include <asm/page.h>
- #include <asm/tlbflush.h>
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index 8f3ccdd..d89068f 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -18,6 +18,7 @@
- #include <linux/smp.h>
- #include <linux/init.h>
- 
-+#include <asm/cp15.h>
- #include <asm/cputype.h>
- #include <asm/thread_notify.h>
- #include <asm/vfp.h>
+ 		if (i == TPS65910_REG_VDD1 || i == TPS65910_REG_VDD2) {
+ 			pmic->desc[i].ops = &tps65910_ops_dcdc;
 -- 
-1.7.4.4
+1.7.1.1
