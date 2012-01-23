@@ -1,61 +1,56 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] mfd: tps65910: Add wakeup support
-Date: Mon, 23 Jan 2012 13:16:15 +0530
-Message-ID: <1327304775-12202-1-git-send-email-ldewangan@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: possible hrtimer related problem on tegra
+Date: Mon, 23 Jan 2012 00:09:42 -0800
+Message-ID: <CAOesGMhaXjxzoz-OWF3V0HsdWzuxRJMaE-MSjdAFwN8+KgQLBg@mail.gmail.com>
+References: <1539302.lfXQIS47Lr@ax5200p>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1539302.lfXQIS47Lr@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implementing irq_set_wake() so that device should able
-to wakeup the system through different interrupt provided
-by this device like gpios, onkey, rtc etc.
+Hi,
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-As discussed on patch V1, the device should call the api 
-device_set_wakeup_capable() to expose proper sysfs interface
-to userspace to choose the wakeup enable/disable by application.
-Then before suspend, driver need to check whether user application
-have selected wakeup enabled or not through device_may_wakeup()
-and accordingly call the enable_irq_wake().
-The above code should be implemented in rtc/onkey or gpio-
-client driver to provide proper sysfs interface if require and call
-the enable_irq_wake() accordingly.
-This patch will just implement the api require to enable the 
-wakeup through interrupt from this device.
+On Sun, Jan 22, 2012 at 7:18 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
+> Hi,
+>
+> I've been plagued with random lockups starting with Linux 3.0.13 (pulled from
+> ChromeOS-3.0 tree) on a Tegra board (paz00). First symtoms are slowly losing
+> responsiveness followed by a total lockup (nothing in dmesg, no oops). Using
+> performance governor instead of ondemand, made it go away.
+>
+> So I started bisecting 3.0.12..3.0.13 and finially found that reverting
+> 24ee8bfe (hrtimer: Fix extra wakeups from __remove_hrtimer()) fixes the
+> problem.
+>
+> As Olof mentioned on IRC it is likely that the patch does not directly causes
+> lockups but something else which was hidden before. It isn't clear to me if
+> other tegra boards (seaboard, harmony) also suffer from this.
+>
+> Any hints on this issue are appreciated.
 
- drivers/mfd/tps65910-irq.c |   11 +++++++++++
- 1 files changed, 11 insertions(+), 0 deletions(-)
+You're asking on a community list about issues with a distro kernel.
+In general that is frowned upon.
 
-diff --git a/drivers/mfd/tps65910-irq.c b/drivers/mfd/tps65910-irq.c
-index a56be93..0c13042 100644
---- a/drivers/mfd/tps65910-irq.c
-+++ b/drivers/mfd/tps65910-irq.c
-@@ -145,12 +145,23 @@ static void tps65910_irq_disable(struct irq_data *data)
- 	tps65910->irq_mask |= ( 1 << irq_to_tps65910_irq(tps65910, data->irq));
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int tps65910_irq_set_wake(struct irq_data *data, unsigned int enable)
-+{
-+	struct tps65910 *tps65910 = irq_data_get_irq_chip_data(data);
-+	return irq_set_irq_wake(tps65910->chip_irq, enable);
-+}
-+#else
-+#define tps65910_irq_set_wake NULL
-+#endif
-+
- static struct irq_chip tps65910_irq_chip = {
- 	.name = "tps65910",
- 	.irq_bus_lock = tps65910_irq_lock,
- 	.irq_bus_sync_unlock = tps65910_irq_sync_unlock,
- 	.irq_disable = tps65910_irq_disable,
- 	.irq_enable = tps65910_irq_enable,
-+	.irq_set_wake = tps65910_irq_set_wake,
- };
- 
- int tps65910_irq_init(struct tps65910 *tps65910, int irq,
--- 
-1.7.1.1
+Since I'm one of the people looking after the distro kernel in
+particular though; The current 3.0 tegra branch has a handful of
+stability issues with power management/cpufreq/dvfs enabled, and we
+have chosen to (at least for now) disable those features in our
+configs. Chances are good that that patch in question is tickling a
+bug that is specific to the Chrome OS tree so without further
+investigation I don't see a reason to pull in external folks right now
+either.
+
+The other tegra maintainers don't particularly know what's in our
+distro tree either, and I wouldn't expect them to spend time on
+working on out-of-tree code that isn't their own.
+
+Best way forward is probably for you to do a local revert on the
+offending patch and to open a new issue at http://crosbug.com/ for it.
+Feel free to cc me (olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org) on the bug.
+
+
+-Olof
