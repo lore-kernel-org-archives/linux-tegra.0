@@ -1,56 +1,114 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: How to represent active low ARM GIC interrupts, enabled by
- external inverter?
-Date: Mon, 23 Jan 2012 15:24:26 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB81C21@HQMAIL01.nvidia.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: How to represent active low ARM GIC interrupts,
+ enabled by external inverter?
+Date: Mon, 23 Jan 2012 17:48:27 -0600
+Message-ID: <4F1DF1CB.20707@gmail.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF178CB81BA2@HQMAIL01.nvidia.com>
- <20120123223315.GB1068@n2100.arm.linux.org.uk> <4F1DE962.6030906@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F1DE962.6030906-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: "Grant Likely (grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org)" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Thomas Gleixner (tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org)" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178CB81BA2@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: "Grant Likely (grant.likely@secretlab.ca)" <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Thomas Gleixner (tglx@linutronix.de)" <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Rob Herring wrote at Monday, January 23, 2012 4:13 PM:
-> On 01/23/2012 04:33 PM, Russell King - ARM Linux wrote:
-> > On Mon, Jan 23, 2012 at 01:18:50PM -0800, Stephen Warren wrote:
-> >> I'd like guidance on how to model one aspect of Tegra's interrupt
-> >> structure.
-> >>
-> >> Tegra has an interrupt input pin for use by a PMU chip.
-> >>
-> >> The PMC HW module within Tegra can optionally invert this signal, but
-> >> otherwise has no control over it; no interrupt status bits, no masking,
-> >> etc.
-> >>
-> >> The (potentially inverted) signal is then fed into the ARM GIC, which
-> >> supports level high or rising edge interrupts only.
+On 01/23/2012 03:18 PM, Stephen Warren wrote:
+> I'd like guidance on how to model one aspect of Tegra's interrupt
+> structure.
 > 
-> Stephen, isn't this the same question you posted before except where the
-> inverter is is different?
+> Tegra has an interrupt input pin for use by a PMU chip.
 > 
-> http://lists.ozlabs.org/pipermail/devicetree-discuss/2011-December/009880.html
+> The PMC HW module within Tegra can optionally invert this signal, but
+> otherwise has no control over it; no interrupt status bits, no masking,
+> etc.
+> 
+> The (potentially inverted) signal is then fed into the ARM GIC, which
+> supports level high or rising edge interrupts only.
+> 
+> So my question is: How to model this.
+> 
+> I assume the best thing to do is have the PMC be an explicit irq_chip,
+> and have its .set_type op configure the inversion based on whether
+> its interrupt source requests low or high, and allow either level or
+> edge.
+> 
+> However, the irq_chip for the PMC couldn't implement any mask or shutdown
+> operation. Is it acceptable to simple provide dummy/no-op functions in
+> that case? I see that kernel/irq/dummychip.c does exactly that, but I'm
+> not sure what use-cases that file is supposed to cover.
+> 
+> That'd result in something like this for device tree:
+> 
+> / {
+>     intc: interrupt-controller@50041000 {
+>         compatible = "arm,cortex-a9-gic";
+>         /* reg and other properties omitted for brevity throughout */
+>         interrupt-controller;
+>         /* 
+>          * cell 0, 1: interrupt type/ID
+>          * cell 2: Linux IRQ flags
+>          */
+>         #interrupt-cells = <3>;
+>     };
+>     interrupt-parent = <&intc>;
+> 
+>     pmc: interrupt-controller@7000e400 {
+>         compatible = "nvidia,tegra20-pmc";
+>         interrupt-controller;
+>         /* 
+>          * cell 0: interrupt ID (always 0; should we omit this field?)
+>          * cell 1: 0=no invert, 1=invert
+>          */
+>         #interrupt-cells = <2>;
+>         /*
+>          * Always high. Level or edge of the PMU interrupt output must be
+>          * configured here. Or, should it somehow be passed through from
+>          * the PMU's client's interrupt specifier?
+>          */
+>         interrupts = <0 88 0x04>;
+>     };
+> 
+>     i2c@7000c000 {
+>         compatible = "nvidia,tegra20-i2c";
+> 
+>         pmu@xxx {
+>             interrupt-parent = <&pmc>;
+>             interrupts = <0 1>;
+>         }
+>     };
+> };
+> 
+> Does that look reasonable?
+> 
+> Other alternatives:
+> 
+> 1) Don't hook the PMC driver and binding into the interrupt tree, but
+> simply have a property that controls the inversion of the signal.
+> The disadvantage is that the PMU's interrupt specifier would need to
+> always specify active high even if it was really active low with inversion
+> activated in the PMC.
 
-That is somewhat similar, but I don't think quite the same:
+I think i would go this route considering it's only a single interrupt
+line and probably just a couple of lines of code to set a bit if a
+property is present.
 
-* That thread deals with a single interrupt source and a single sink, which
-need to negotiate to use one of n possible interrupt types. Whereas this
-thread is about a sink connected to a source+sink connected to a sink.
+Rob
 
-* That thread dealt with negotiating one of n supported types, whereas
-this thread is about a restricted sink (GIC only supporting high types),
-connecting through an intermediary to a source, and I have no idea whether
-that source is flexible and can support both high or low types; I assume
-it can only support low types.
-
-I suppose if the auto-negotiation logic were enhanced to jump across n
-levels instead of just 1 link, it might be applicable. That sounds complex
-though.
-
--- 
-nvpublic
+> 2) Modify the ARM GIC's driver to allow active low interrupts, and call
+> some plugin code to request any required inversion. Most platforms
+> wouldn't provide such a plugin, and hence would still disallow such
+> requests. The disadvantage here is that it complicates the cross-SoC
+> GIC driver with something that may only be useful for Tegra.
+> 
+> Thanks.
+> 
