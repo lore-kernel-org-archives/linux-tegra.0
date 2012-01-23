@@ -1,70 +1,39 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: Re: possible hrtimer related problem on tegra
-Date: Mon, 23 Jan 2012 11:08:24 +0100
-Message-ID: <1429397.hdcPX4fuRz@fb07-iapwap2>
-References: <1539302.lfXQIS47Lr@ax5200p> <CAOesGMhaXjxzoz-OWF3V0HsdWzuxRJMaE-MSjdAFwN8+KgQLBg@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: ARM/ARM-SoC plans for v3.4 merge window
+Date: Mon, 23 Jan 2012 11:49:02 +0000
+Message-ID: <20120123114902.GY1068@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMhaXjxzoz-OWF3V0HsdWzuxRJMaE-MSjdAFwN8+KgQLBg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olof,
+This is an outline of the plan for this cycle, up to the next merge
+window, agreed between Olof and myself.
 
-Am Montag, 23. Januar 2012, 00:09:42 schrieb Olof Johansson:
-> On Sun, Jan 22, 2012 at 7:18 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
-> > I've been plagued with random lockups starting with Linux 3.0.13 (pulled from
-> > ChromeOS-3.0 tree) on a Tegra board (paz00). First symtoms are slowly losing
-> > responsiveness followed by a total lockup (nothing in dmesg, no oops). Using
-> > performance governor instead of ondemand, made it go away.
-> > 
-> > So I started bisecting 3.0.12..3.0.13 and finially found that reverting
-> > 24ee8bfe (hrtimer: Fix extra wakeups from __remove_hrtimer()) fixes the
-> > problem.
-> > 
-> > As Olof mentioned on IRC it is likely that the patch does not directly causes
-> > lockups but something else which was hidden before. It isn't clear to me if
-> > other tegra boards (seaboard, harmony) also suffer from this.
-> > 
-> > Any hints on this issue are appreciated.
-> 
-> You're asking on a community list about issues with a distro kernel.
-> In general that is frowned upon.
+As Nicolas' idle changes weren't merged before the last merge window
+opened, we have decided that Nicolas will resubmit his changes after
+-rc1 (in other words, now) and they will be merged into both the
+arm-soc and my trees.
 
-I'm sorry to have this reported on a non appropriate place. I had the impression that 
-the ChromeOS kernel, and especially the timer related code, doesn't differ too much 
-from the mainline kernel (only suspend code added?).
+I have at least one other patch which has a high 'will cause horrible
+conficts' rating (the debug option rearrangement patch), so I'll be
+including that for the arm-soc tree as well.
 
-On the other hand, there is no other place I know of to report problems with Android 
-or ChromeOS kernels and which is reaching most of tegra kernel developers/users 
-(sorry again if readers feel that I just spammed the list). There are at least some 
-chances other users also see this issue, if it is not strictly related to the 
-ChromeOS kernel only.
+However, what this does mean is that Arnd, Olof, and myself will be
+in for up to three months of merge hell unless people take account of
+these changes.
 
-> Since I'm one of the people looking after the distro kernel in
-> particular though; The current 3.0 tegra branch has a handful of
-> stability issues with power management/cpufreq/dvfs enabled, and we
-> have chosen to (at least for now) disable those features in our
-> configs. Chances are good that that patch in question is tickling a
-> bug that is specific to the Chrome OS tree so without further
-> investigation I don't see a reason to pull in external folks right now
-> either.
-> 
-> The other tegra maintainers don't particularly know what's in our
-> distro tree either, and I wouldn't expect them to spend time on
-> working on out-of-tree code that isn't their own.
-> 
-> Best way forward is probably for you to do a local revert on the
-> offending patch and to open a new issue at http://crosbug.com/ for it.
-> Feel free to cc me (olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org) on the bug.
+Therefore, our plan is to publish this as a baseline, and we'd really
+appreciate any development submitted after that baseline has been
+established is based upon those changes and does not conflict with
+them.  That may mean you have to pull these changes into your tree
+and merge them into your development work (and fix up any conflicts
+there yourself.)
 
-Ok, I filed a bug report: http://code.google.com/p/chromium-os/issues/detail?id=25334 
-(no idea how to add a CC).
-
-I'll also try to reproduce it on a mainline kernel.
-
-Marc
+Once you've taken these changes into your tree, you must not rebase or
+modify them.  Changing those commits will cause all hell to break loose,
+and we'll have to refuse merging your tree (otherwise we'll be in Linus'
+sights for a roasting at gas mark 2 million.)
