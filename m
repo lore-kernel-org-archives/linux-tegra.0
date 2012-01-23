@@ -1,18 +1,18 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] mfd: tps65910: Add wakeup support
-Date: Mon, 23 Jan 2012 13:14:09 +0530
-Message-ID: <1327304649-10851-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sameo@linux.intel.com, jedu@slimlogic.co.uk, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, gg@slimlogic.co.uk, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, ldewangan@nvidia.com
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] mfd: tps65910: Add wakeup support
+Date: Mon, 23 Jan 2012 13:16:15 +0530
+Message-ID: <1327304775-12202-1-git-send-email-ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 Implementing irq_set_wake() so that device should able
 to wakeup the system through different interrupt provided
 by this device like gpios, onkey, rtc etc.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 As discussed on patch V1, the device should call the api 
 device_set_wakeup_capable() to expose proper sysfs interface
