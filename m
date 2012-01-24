@@ -1,87 +1,109 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
-Date: Tue, 24 Jan 2012 13:07:40 +0100
-Message-ID: <20120124.140740.446867797082060957.hdoyu@nvidia.com>
-References: <20120124110444.GB19255@amd.com><20120124.133614.1646093482547685131.hdoyu@nvidia.com><20120124115723.GC19255@amd.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1] regulator: tps65910: Sleep control through external
+ inputs
+Date: Tue, 24 Jan 2012 17:49:52 +0530
+Message-ID: <4F1EA1E8.90104@nvidia.com>
+References: <1327395919-32378-1-git-send-email-ldewangan@nvidia.com> <20120124115855.GC14888@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120124115723.GC19255-5C7GfCeVMHo@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120124115855.GC14888-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
-Date: Tue, 24 Jan 2012 12:57:23 +0100
-Message-ID: <20120124115723.GC19255-5C7GfCeVMHo@public.gmane.org>
+Thank you very much for review.
 
-> On Tue, Jan 24, 2012 at 12:36:14PM +0100, Hiroshi Doyu wrote:
-> > > A domain is, as you said, a virtual address space for IO devices. But
-> > > the important point is, an arbitrary number of devices can be part of a
-> > > domain. This also means that the devices can be behind different
-> > > hardware SMMUs. In this case your driver needs to program the page-table
-> > > pointer into more than one SMMU to give devices behind different SMMUs
-> > > the same address space.
-> > 
-> > Thank you for explaining.
-> > 
-> > Does the above mean that a buffer can be shared with different devices
-> > which belong to different IOMMU devices(virtual address spaces)?
-> > 
-> > For example, assuming the following:
-> > 
-> > - We have "struct iommu_domain *domain1".
-> > - "domain1" has iommu device "iommu_dev1" and "iommu_dev2".
-> > - "iommu_dev1" has "client_dev1" and "client_dev2".
-> > - "iommu_dev2" has "client_dev3" and "client_dev4".
-> > 
-> > "iommu_map(domain1, iova, pa, ...)" will create the following mapping
-> > ___at once___:
-> > 
-> > - (iova)-(pa) mapping in iommu_dev1(iommmu_dev1's virtual address space)
-> > - (iova)-(pa) mapping in iommu_dev2(iommmu_dev2's virtual address space)
-> > 
-> > Is the above correct?
-> 
-> Yes, this is correct.
-> 
-> > It seems that the same (iova) is used for different virtual address
-> > spaces. What kind of case is this beneficial most in?
-> 
-> It is actually the _same_ virtual address space which is used by
-> iommu_dev1 and iommu_dev2. Think of it like multiple threads of a single
-> process. They also share the address space.
+On Tuesday 24 January 2012 05:28 PM, Mark Brown wrote:
+> On Tue, Jan 24, 2012 at 02:35:19PM +0530, Laxman Dewangan wrote:
+>
+>> +	/*
+>> +	 * Rail can not be control from all external input EN1, EN2 and EN3
+>> +	 * together.
+>> +	 */
+>> +	if ((ext_sleep_config&  EXT_SLEEP_CONTROL) == EXT_SLEEP_CONTROL) {
+>> +		dev_err(mfd->dev, "External sleep control flag is not "
+>> +					" not proper\n");
+>> +		return -EINVAL;
+>> +	}
+> Don't split log messages over multiple lines, it makes grepping the logs
+> harder.  Also, are combinations of two external enables valid?
+>
+OK, I will make the log message as single liner.
+Combination of two external enables are also invalid. Need to check 
+differently.
+probably by:
+int en_count = 0;
+en_count += ((ext_sleep_config & TPS65910_SLEEP_CONTROL_EXT_INPUT_EN1) 
+== 0);
+en_count += ((ext_sleep_config & TPS65910_SLEEP_CONTROL_EXT_INPUT_EN2) 
+== 0);
+en_count += ((ext_sleep_config & TPS65910_SLEEP_CONTROL_EXT_INPUT_EN3) 
+== 0);
+if (en_count > 1)
+     return -EINVAL.
 
-I see. The above makes more sense.
+>> +static void tps65910_shutdown(struct platform_device *pdev)
+>> +{
+>> +	struct tps65910_reg *pmic = platform_get_drvdata(pdev);
+>> +	int i;
+>> +	int err;
+>> +	dev_err(&pdev->dev, "%s() is called\n", __func__);
+>> +
+>> +	/* Remove all external control before shutting down the device */
+>> +	for (i = 0; i<  pmic->num_regulators; i++) {
+>> +		if (!pmic->rdev[i])
+>> +			continue;
+>> +
+>> +		err = tps65910_set_ext_sleep_config(pmic, i, 0);
+>> +		if (err<  0)
+>> +			dev_err(&pdev->dev, "Error in clearing external "
+>> +				"control\n");
+>> +	}
+> Why?
+The external controls for different rails are managed by power manament 
+driver of soc in kernel to toggel them. The bootloader make sure that 
+all external control signals are active just before jumping into kernel 
+so that there is no issue during regulator init.
+When system reboots in kernel by kernel command, the configuration of 
+the pmu still maintain as what it was in kernel before reboot and issue  
+system reboots. There is possibility that the default (POR) of these 
+control signals are not active on soc reset or initial stage of the 
+bootloader and hence it can turn off the rails which can avoid system 
+booting.
+So kernel need to remove all external controls before reboot system.
 
-> This is a requirement of the iommu-api which is beneficial for
-> virtualization and simplifies the usage of the api in general. The user
-> does not need to care which devices can be assigned to which domain
-> because of underlying hardware constraints. The goal of the iommu-api is
-> to hide such contraints.
+>> +/*
+>> + * Regulator mode when rail is in sleep state which controlled by external
+>> + * input. The regultor will be OFF if it is in sleep state by default but
+>> + * can be set in LOW power mode by ORing following macro with any of
+>> + * above exterenl input option.
+>> + */
+>> +#define TPS65910_SLEEP_CONTROL_REG_LOW_POWER		0x10
+> There's the suspend mode API for configuring suspend modes.
+>
+Hmm.., I thought that  suspend mode apis manages the low/full-on power 
+mode when the controls are not through external inputs. There is 
+different register for configuring the power mode by i2c- write.
+This macro help in configuration of mode when enabled with external 
+controls which configures in different sets of register.
+>> +
+>>   /**
+>>    * struct tps65910_board
+>>    * Board platform data may be used to initialize regulators.
+>> @@ -779,6 +792,7 @@ struct tps65910_board {
+>>   	int irq_base;
+>>   	int vmbch_threshold;
+>>   	int vmbch2_threshold;
+>> +	unsigned long regulator_ext_sleep_control[TPS65910_NUM_REGS];
+> I can't see anything in this code which will manage the enable signals?
+I used this  member in the probe as for configuring the rails..
++        err = tps65910_set_ext_sleep_config(pmic, i,
++                pmic_plat_data->regulator_ext_sleep_control[i]);
 
-Now it's clear to me. I'll send the update patch soon.
-Thank you for explaining all of this.
-
-> 
-> 
-> 	Joerg
-> 
-> -- 
-> AMD Operating System Research Center
-> 
-> Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-> General Managers: Alberto Bozzo
-> Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
-> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
