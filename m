@@ -1,89 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Wed, 25 Jan 2012 00:27:31 +0100
-Message-ID: <CACRpkdb5eu+5k98XKkZXA0m0FHEP4XjVGwD9F=Ezm5gVP5WrQQ@mail.gmail.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: RE: [PATCH 1/4] pinctrl: add a driver for NVIDIA Tegra
+Date: Tue, 24 Jan 2012 15:36:06 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB81F1A@HQMAIL01.nvidia.com>
 References: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
 	<CACRpkdZvakueQGYX0wyTFWmpC6wiixj2g1PTuKM4CgEzqJbmig@mail.gmail.com>
 	<74CDBE0F657A3D45AFBB94109FB122FF178CB81F06@HQMAIL01.nvidia.com>
+ <CACRpkdb5eu+5k98XKkZXA0m0FHEP4XjVGwD9F=Ezm5gVP5WrQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178CB81F06@HQMAIL01.nvidia.com>
+In-Reply-To: <CACRpkdb5eu+5k98XKkZXA0m0FHEP4XjVGwD9F=Ezm5gVP5WrQQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 25, 2012 at 12:09 AM, Stephen Warren <swarren@nvidia.com> w=
-rote:
-> [Me]
->> Why are all of these things (reg bank bit ets) signed?
->
-> The basic issue is that all of these features are optional for any
-> given pin group. I used -1 to indicate an unsupported feature.
+Linus Walleij wrote at Tuesday, January 24, 2012 4:28 PM:
+> On Wed, Jan 25, 2012 at 12:09 AM, Stephen Warren <swarren@nvidia.com>=
+ wrote:
+> > [Me]
+> >> Why are all of these things (reg bank bit ets) signed?
+> >
+> > The basic issue is that all of these features are optional for any
+> > given pin group. I used -1 to indicate an unsupported feature.
+>=20
+> Ahyeah. Makes sense. Well do it any way that makes sense
+> to you. Plus note in the kerneldoc that this is the reason these
+> are signed.
+>=20
+> >> Also, things named =A0*_bit are a bit (no pun intended) binary,
+> >> are they containing a single bit? In that case say
+> >
+> > They're the bit number/shift within a register. Range 0..31
+>=20
+> Can that thing really be negative then?
+> Or is it really: u8 foo_bit:5 ?
 
-Ahyeah. Makes sense. Well do it any way that makes sense
-to you. Plus note in the kerneldoc that this is the reason these
-are signed.
+Only reg needs to be signed/negative; the rest I just did for consisten=
+cy
+in the struct definition; I think an old version of the code wrote -1 t=
+o
+foo_reg, foo_bank and foo_bit too.
 
->> Also, things named =A0*_bit are a bit (no pun intended) binary,
->> are they containing a single bit? In that case say
->
-> They're the bit number/shift within a register. Range 0..31
+> >> u8 foo:1
+> >>
+> >> To mark that it's only one bit wide, or u8 foo:4 for four bits
+> >> etc.
+> >
+> > I guess I could be explicit about the max range for each value. It =
+might
+> > save up to about 8 bytes per pin group, perhaps less based on how w=
+ell
+> > things pack to u32 boundaries.
+>=20
+> Nah I think you would have to pack the struct with #pragmas for that
+> and I don't even know if it'd pack below byte limits. Probably not.
 
-Can that thing really be negative then?
-Or is it really: u8 foo_bit:5 ?
+u32 x:4;
+u32 y:5;
+u32 z:4;
 
->> u8 foo:1
->>
->> To mark that it's only one bit wide, or u8 foo:4 for four bits
->> etc.
->
-> I guess I could be explicit about the max range for each value. It mi=
-ght
-> save up to about 8 bytes per pin group, perhaps less based on how wel=
-l
-> things pack to u32 boundaries.
+should pack them all together, and adjacent u32s in the struct would be
+packed into the struct without padding.
 
-Nah I think you would have to pack the struct with #pragmas for that
-and I don't even know if it'd pack below byte limits. Probably not.
+=2E..
+> >> func_safe doesn't look like an int either when I look at
+> >> the code. It's something else, u8?
+> >
+> > It's a "enum tegra_mux", which IIRC is technically an int, but unsi=
+gned
+> > is more consistent with the rest of pinctrl.
+>=20
+> Hm "enum tegra_mux foo" should work fine too then,
+> what am I missing here...
 
-The valid usecase is for static code analyzers like people tend to
-run on military systems and such and loop over every state
-of a code path, this restricts the search space.
+Good point. It's because each chip has a different set definition of
+enum tegra_mux, and pinctrl-tegra.h is shared across both chips.
 
-But it's admittedly *very* esoteric.
-
->> func_safe doesn't look like an int either when I look at
->> the code. It's something else, u8?
->
-> It's a "enum tegra_mux", which IIRC is technically an int, but unsign=
-ed
-> is more consistent with the rest of pinctrl.
-
-Hm "enum tegra_mux foo" should work fine too then,
-what am I missing here...
-
-> On Tegra20, each of these features is configured at a pin group level=
-;
-> there is a single register field that affects multiple pins at once.
-> (...)
-> Tegra30 is somewhat simpler; each pin can be mux'd separately,
-> (...)
-> some advanced
-> drive-strength-related parameters are still configured at a pin-group
-> level not a per-pin level, and again not all groups support every
-> parameter.
-
-This actually makes me understand what makes Tegra so special
-when it comes to muxing, it's the mix of group-level control in
-one architecture and pin-level control in another.
-
-=46or my systems U300 is a pure Tegra20 type, Nomadik is
-pure per-pin controlled. This mixture of group and pin-level
-control is what makes the Tegra30 so special, with all effects
-on how we model it etc...
-
-Yours,
-Linus Walleij
+--=20
+nvpublic
