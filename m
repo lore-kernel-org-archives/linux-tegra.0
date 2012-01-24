@@ -1,41 +1,68 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Tue, 24 Jan 2012 10:56:45 +0000
-Message-ID: <20120124105645.GE19798@mudshark.cambridge.arm.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
- <20120124095009.GS16726@n2100.arm.linux.org.uk>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
+Date: Tue, 24 Jan 2012 12:04:44 +0100
+Message-ID: <20120124110444.GB19255@amd.com>
+References: <1325747509-29665-1-git-send-email-hdoyu@nvidia.com>
+ <1325747509-29665-3-git-send-email-hdoyu@nvidia.com>
+ <20120123154310.GC6269@8bytes.org>
+ <20120124.115701.2179509760878976509.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20120124095009.GS16726@n2100.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>
+In-Reply-To: <20120124.115701.2179509760878976509.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Russell,
-
-On Tue, Jan 24, 2012 at 09:50:09AM +0000, Russell King - ARM Linux wrote:
-> Right, although it's out there - but I'd like to get the AMBA changes
-> into it which are already conflicting the Samsung development.  So I'm
-> going to hold off officially asking for people to include the baseline
-> until this evening.  At that point, I will shut down my 'amba' branch
-> and transfer that over; that means I won't be accepting any further
-> acks etc for that work.
+On Tue, Jan 24, 2012 at 10:57:01AM +0100, Hiroshi Doyu wrote:
+> > Why do you completly ignore the size parameter in this function (and
+> > in the unmap part below)?
+> > According to the page-sizes you export to the generic layer size can be
+> > 4k or 4M. You need to take care of that in this function.
 > 
-> If you haven't acked changes in the amba branch (eg, to Versatile,
-> Realview etc) then it'll soon be too late...
+> I'll drop 4MB support here once. I'll make another patch for 4MB page
+> support later.
 
-I took a look at your amba branch, but all I can see in there is:
+Okay, so when you only export 4k everything should be fine.
 
-6cfa627 ARM: 7079/1: spi: Fix builderror in spi-pl022.c
-1c3be36 PM: add runtime PM support to MMCI
-92b97f0 PM: add runtime PM support to core Primecell driver
+> > Hmm, this looks like there is a 1-1 mapping between hardware SMMU
+> > devices and domains. This is not consistent with IOMMU-API semantics
+> > where a domain can contain devices behind different SMMUs. Please fix
+> > that.
+> 
+> I'm a bit confused with the concept of "domain". I thought that
+> "domain" is equivalent to a "virtual address space". Usually a IOMMU
+> device provides a virtual address space for multiple client
+> devices. IOW, a IOMMU device provides a virtual address space, which
+> can be shared with multiple client devices.
+> 
+> Actually Tegra SMMU case, a single IOMMU device has 4 different
+> virtual address speace("smmu_as"). Each "smmu_as" has its own virtual
+> address space. "smmu_as[i]" has mutiple "smmu_client" devices.
+> 
+>   smmu_as[i] == domain[i]
+> 
+> I don't understand why "a domain can contain devices behind different
+> SMMUs" because those client devices belong to different virtual
+> address spaces, and they should belong to different "domains".
+> 
+> Could you please explain a bit more about "domain"?
 
-which don't seem to touch Versatile or Realview. Am I looking in the wrong
-place?
+A domain is, as you said, a virtual address space for IO devices. But
+the important point is, an arbitrary number of devices can be part of a
+domain. This also means that the devices can be behind different
+hardware SMMUs. In this case your driver needs to program the page-table
+pointer into more than one SMMU to give devices behind different SMMUs
+the same address space.
 
-Cheers,
 
-Will
+	Joerg
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
