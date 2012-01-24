@@ -1,53 +1,24 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Tue, 24 Jan 2012 09:50:09 +0000
-Message-ID: <20120124095009.GS16726@n2100.arm.linux.org.uk>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Define Tegra20 CAR binding
+Date: Tue, 24 Jan 2012 11:52:41 +0200
+Message-ID: <20120124095241.GO10446@tbergstrom-lnx.Nvidia.com>
+References: <1326342789-5781-12-git-send-email-sjg@chromium.org>
+ <1326932212-30346-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20120123114902.GY1068@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+In-Reply-To: <1326932212-30346-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 23, 2012 at 11:49:02AM +0000, Russell King - ARM Linux wrote:
-> This is an outline of the plan for this cycle, up to the next merge
-> window, agreed between Olof and myself.
-> 
-> As Nicolas' idle changes weren't merged before the last merge window
-> opened, we have decided that Nicolas will resubmit his changes after
-> -rc1 (in other words, now) and they will be merged into both the
-> arm-soc and my trees.
-> 
-> I have at least one other patch which has a high 'will cause horrible
-> conficts' rating (the debug option rearrangement patch), so I'll be
-> including that for the arm-soc tree as well.
-> 
-> However, what this does mean is that Arnd, Olof, and myself will be
-> in for up to three months of merge hell unless people take account of
-> these changes.
-> 
-> Therefore, our plan is to publish this as a baseline, and we'd really
-> appreciate any development submitted after that baseline has been
-> established is based upon those changes and does not conflict with
-> them.  That may mean you have to pull these changes into your tree
-> and merge them into your development work (and fix up any conflicts
-> there yourself.)
-> 
-> Once you've taken these changes into your tree, you must not rebase or
-> modify them.  Changing those commits will cause all hell to break loose,
-> and we'll have to refuse merging your tree (otherwise we'll be in Linus'
-> sights for a roasting at gas mark 2 million.)
+What about the peripheral resets which are also handled by CAR? Peripheral
+clock nodes also offer assert and deassert methods for the reset signal
+associated with them. Those methods are used when powergating domains for
+example. Should we model this in the same binding?
 
-Right, although it's out there - but I'd like to get the AMBA changes
-into it which are already conflicting the Samsung development.  So I'm
-going to hold off officially asking for people to include the baseline
-until this evening.  At that point, I will shut down my 'amba' branch
-and transfer that over; that means I won't be accepting any further
-acks etc for that work.
+Thanks,
 
-If you haven't acked changes in the amba branch (eg, to Versatile,
-Realview etc) then it'll soon be too late...
+Peter.
