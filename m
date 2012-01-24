@@ -1,71 +1,100 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] ARM: tegra: Define Tegra20 CAR binding
-Date: Tue, 24 Jan 2012 14:43:09 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB81EEB@HQMAIL01.nvidia.com>
-References: <1326342789-5781-12-git-send-email-sjg@chromium.org>
- <1326932212-30346-1-git-send-email-swarren@nvidia.com>
- <20120124095241.GO10446@tbergstrom-lnx.Nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF178CB81EC4@HQMAIL01.nvidia.com>
- <CAMbhsRQYt7RoXTDDPxCgGG2UX5_T86saOyns_0f_Sz-p7-gMTw@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 3/4] ARM: tegra: Switch to new pinctrl driver
+Date: Tue, 24 Jan 2012 14:44:25 -0800
+Message-ID: <CAOesGMjuewhO2H+QFQtAX+xFb5hyNn8Q65Cuup4vaXWAFvX87w@mail.gmail.com>
+References: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
+	<1327083746-31430-3-git-send-email-swarren@nvidia.com>
+	<CACRpkdZ_hBviswq7pXoLozC8gjzvowCBrj9yjw1xJT79b5rtwQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAMbhsRQYt7RoXTDDPxCgGG2UX5_T86saOyns_0f_Sz-p7-gMTw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ_hBviswq7pXoLozC8gjzvowCBrj9yjw1xJT79b5rtwQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Colin Cross wrote at Tuesday, January 24, 2012 3:33 PM:
-> On Tue, Jan 24, 2012 at 2:08 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Peter De Schrijver wrote at Tuesday, January 24, 2012 2:53 AM:
-> >> What about the peripheral resets which are also handled by CAR? Peripheral
-> >> clock nodes also offer assert and deassert methods for the reset signal
-> >> associated with them. Those methods are used when powergating domains for
-> >> example. Should we model this in the same binding?
-> >
-> > In most cases, I think the resets are handled purely within clock enable
-> > and disable, so there's no need to explicitly manage them or represent
-> > them in the device tree. Do you agree here?
-> 
-> clk_enable could force a deasserted reset, but clk_disable cannot
-> imply asserting reset.  The clocks need to be turned off for power
-> management without resetting the registers.
+On Tue, Jan 24, 2012 at 2:36 PM, Linus Walleij <linus.walleij@linaro.or=
+g> wrote:
+> On Fri, Jan 20, 2012 at 7:22 PM, Stephen Warren <swarren@nvidia.com> =
+wrote:
+>
+>> * Rename old pinmux and new pinctrl platform driver and DT match tab=
+le
+>> =A0entries, so the new driver gets instantiated.
+>> * Re-write board-pinmux.c, so that it uses pinctrl APIs to configura=
+ the
+>> =A0pinmux.
+>> * Re-write board-*-pinmux.c so that the pinmux configuration tables =
+are
+>> =A0in pinctrl format.
+>>
+>> Ventana's pin mux table needed some edits on top of the basic format
+>> conversion, since some mux options that were previously marked as
+>> reserved are now valid in the new pinctrl driver. Attempting to use =
+the
+>> old reserved names will result in a failure. Specifically, groups lp=
+w0,
+>> lpw2, lsc1, lsck, and lsda were changed from function rsvd4 to displ=
+aya,
+>> and group pta was changed from function rsvd2 to hdmi.
+>>
+>> All boards' pin mux tables needed some edits on top of the based for=
+mat
+>> conversion, since function i2c was split into i2c1 (first general I2=
+C
+>> controller) and i2cp (power I2C controller) to better align function
+>> definitions with HW blocks.
+>>
+>> Due to the split of mux tables into pure mux and pull/tristate table=
+s,
+>> many entries in the separate Seaboard/Ventana tables could be merged
+>> into the common table, since the entries differed only in the portio=
+n
+>> in one of the tables, not both.
+>>
+>> Most pin groups allow configuration of mux, tri-state, and pull. How=
+ever,
+>> some don't allow pull configuration, which is instead configured by =
+new
+>> groups that only allow pull configuration. This is a reflection of t=
+he
+>> true HW capabilities, which weren't fully represented by the old pin=
+mux
+>> driver. This required adding new pull table entries for those new gr=
+oups,
+>> and setting many other entries' pull configuration to
+>> TEGRA_PINCONFIG_DONT_SET.
+>>
+>> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+>> ---
+>> =A0arch/arm/mach-tegra/board-harmony-pinmux.c =A0 | =A0362 +++++++++=
++++++-------
+>> =A0arch/arm/mach-tegra/board-paz00-pinmux.c =A0 =A0 | =A0362 +++++++=
++++++++-------
+>> =A0arch/arm/mach-tegra/board-pinmux.c =A0 =A0 =A0 =A0 =A0 | =A0 62 +=
++++-
+>> =A0arch/arm/mach-tegra/board-pinmux.h =A0 =A0 =A0 =A0 =A0 | =A0 39 +=
++-
+>> =A0arch/arm/mach-tegra/board-seaboard-pinmux.c =A0| =A0442 +++++++++=
++++++++---------
+>> =A0arch/arm/mach-tegra/board-trimslice-pinmux.c | =A0366 +++++++++++=
++++--------
+>> =A0arch/arm/mach-tegra/pinmux.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A06 +-
+>> =A0drivers/pinctrl/pinctrl-tegra.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
+=A06 +-
+>> =A08 files changed, 1095 insertions(+), 550 deletions(-)
+>
+> Can I have Colin's or Olof's ACK on this Tegra stuff too?
+> Would feel better...
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yes, I just spoke to someone off-list, and he said the same thing. He
-went on to say that therefore even the reset removal with clk_enable
-was questionable, and that drivers should explicitly manage reset
-removal themselves. Does that seem a reasonable stance? It'd certainly
-take away the somewhat asymmetric nature of reset removal just magically
-working when you first enable the clocks. We'd presumably then want a
-common reset infra-structure and binding to match that change?
+Yup, I've just been waiting on things to settle,
+bindings/implementation wise. Will look at it over the next day or two
+and get back.
 
-(I know that'd make Simon happy, since then we'd be able to represent
-the reset IDs directly everywhere, unrelated to the clock IDs, and
-hence he could just use the reset IDs directly in the U-Boot code he's
-writing and ignore the non 1:1 mapping between clock and reset IDs)
 
-> > I recall that you mentioned some power-management code might need to
-> > manage reset separately though. Can you explain why a module would be
-> > reset separately from disabling the clocks though?
-> 
-> The TRM lists a very specific sequence of clocks, resets, clamps, and
-> power for power domain gating.  Other than that, I think the only use
-> for directly calling reset that ended up in the Android Tegra2 tree
-> was for error recovery on HW blocks that could get locked up, probably
-> I2C.
-
-OK, those reasons make sense.
-
--- 
-nvpublic
+-Olof
