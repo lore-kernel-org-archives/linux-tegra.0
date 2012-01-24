@@ -1,68 +1,51 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1] regulator: tps65910: Sleep control through external
- inputs
-Date: Tue, 24 Jan 2012 18:07:28 +0530
-Message-ID: <4F1EA608.3020204@nvidia.com>
-References: <1327395919-32378-1-git-send-email-ldewangan@nvidia.com> <20120124115855.GC14888@opensource.wolfsonmicro.com> <4F1EA1E8.90104@nvidia.com> <20120124122411.GB31839@opensource.wolfsonmicro.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
+Date: Tue, 24 Jan 2012 14:41:21 +0100
+Message-ID: <20120124.154121.1062920821192552748.hdoyu@nvidia.com>
+References: <1325747509-29665-1-git-send-email-hdoyu@nvidia.com><1325747509-29665-3-git-send-email-hdoyu@nvidia.com><20120123154310.GC6269@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120124122411.GB31839-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <20120123154310.GC6269-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 24 January 2012 05:54 PM, Mark Brown wrote:
-> On Tue, Jan 24, 2012 at 05:49:52PM +0530, Laxman Dewangan wrote:
-> The external controls for different rails are managed by power
->> manament driver of soc in kernel to toggel them. The bootloader make
->> sure that all external control signals are active just before
->> jumping into kernel so that there is no issue during regulator init.
->> When system reboots in kernel by kernel command, the configuration
->> of the pmu still maintain as what it was in kernel before reboot and
->> issue  system reboots. There is possibility that the default (POR)
->> of these control signals are not active on soc reset or initial
->> stage of the bootloader and hence it can turn off the rails which
->> can avoid system booting.
->> So kernel need to remove all external controls before reboot system.
-> The code needs to explain this stuff so readers will know.
->
-Will add this information in code.
->
->> Hmm.., I thought that  suspend mode apis manages the low/full-on
->> power mode when the controls are not through external inputs. There
->> is different register for configuring the power mode by i2c- write.
->> This macro help in configuration of mode when enabled with external
->> controls which configures in different sets of register.
-> No, usually it's used for configuring suspend mode when the PMIC knows
-> about system suspend.
->
-Ok, will move this configuration with the  suspend mode and program the 
-correct register based on external signals.
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: IOMMU: Tegra30: Add iommu_ops for SMMU driver
+Date: Mon, 23 Jan 2012 16:43:10 +0100
+Message-ID: <20120123154310.GC6269-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 
-> I used this member in the probe as for configuring the rails..
->> +        err = tps65910_set_ext_sleep_config(pmic, i,
->> +                pmic_plat_data->regulator_ext_sleep_control[i]);
-> Right, but I can't see any code which manages the signals at runtime.
-> You tell the device to use the signals but the signals aren't (as far as
-> I can see) controlled by software.
-I dont think we need to supply information that how EN1/EN2/EN3 toggles 
-from external word?
-This should be done on the consumer driver  for these rails to toggle 
-the signals based on requirements.
+> > +	}
+> > +
+> > +	spin_unlock_irqrestore(&as->lock, flags);
+> > +
+> > +	domain->priv = NULL;
+> > +	dev_dbg(smmu->dev, "smmu_as@%p\n", as);
+> > +}
+> > +
+> > +static int smmu_iommu_attach_dev(struct iommu_domain *domain,
+> > +				 struct device *dev)
+> > +{
+> > +	struct smmu_as *as = domain->priv;
+> > +	struct smmu_device *smmu = as->smmu;
+> 
+> Hmm, this looks like there is a 1-1 mapping between hardware SMMU
+> devices and domains. This is not consistent with IOMMU-API semantics
+> where a domain can contain devices behind different SMMUs. Please fix
+> that.
 
-E.g. If cpu power is in VDDCTRL rail and if DVFS mechanism of SOC wants 
-that cpu rails to be ON, it will make the control signal active and if 
-it wants to disable the rail then it will deactivate it.
-The toggling of the control lines depends on how the power management 
-controller is designed for a given SOC and how it manages.
+Actually I really like the concept of this "domain" now, which hides
+the H/W hierarchy from users.
 
+But in Tegra SMMU/GART case, there's a single one IOMMU device in the
+system. Keeping a iommu device list in a domain and iterating iommu
+device list in each iommu_ops seem to be so nice, but I'm afraid that
+this may be a bit too much when one already knows that there's only
+one IOMMU device in the system.
 
-
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+If there's no actual problem for 1-1 mapping between IOMMU H/Ws and
+domains, I think that it may not so bad to keep the original code(1-1)
+for GART and SMMU. What do you think?
