@@ -1,70 +1,58 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V1] regulator: tps65910: Sleep control through external
- inputs
-Date: Tue, 24 Jan 2012 21:21:44 +0000
-Message-ID: <20120124212144.GG1135@opensource.wolfsonmicro.com>
-References: <1327395919-32378-1-git-send-email-ldewangan@nvidia.com>
- <20120124115855.GC14888@opensource.wolfsonmicro.com>
- <4F1EA1E8.90104@nvidia.com>
- <20120124122411.GB31839@opensource.wolfsonmicro.com>
- <4F1EA608.3020204@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] ARM: tegra: Define Tegra20 CAR binding
+Date: Tue, 24 Jan 2012 14:08:54 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB81EC4@HQMAIL01.nvidia.com>
+References: <1326342789-5781-12-git-send-email-sjg@chromium.org>
+ <1326932212-30346-1-git-send-email-swarren@nvidia.com>
+ <20120124095241.GO10446@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F1EA608.3020204-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120124095241.GO10446-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Peter De Schrijver wrote at Tuesday, January 24, 2012 2:53 AM:
+> What about the peripheral resets which are also handled by CAR? Peripheral
+> clock nodes also offer assert and deassert methods for the reset signal
+> associated with them. Those methods are used when powergating domains for
+> example. Should we model this in the same binding?
 
---rMWmSaSbD7nr+du9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In most cases, I think the resets are handled purely within clock enable
+and disable, so there's no need to explicitly manage them or represent
+them in the device tree. Do you agree here?
 
-On Tue, Jan 24, 2012 at 06:07:28PM +0530, Laxman Dewangan wrote:
+I recall that you mentioned some power-management code might need to
+manage reset separately though. Can you explain why a module would be
+reset separately from disabling the clocks though?
 
-> E.g. If cpu power is in VDDCTRL rail and if DVFS mechanism of SOC
-> wants that cpu rails to be ON, it will make the control signal
-> active and if it wants to disable the rail then it will deactivate
-> it.
+If we do need this, I think we can just add a property to the node of
+each device that needs such explicit management. Something like:
 
-> The toggling of the control lines depends on how the power
-> management controller is designed for a given SOC and how it
-> manages.
+tegra_car: clock@60006000 {
+    compatible = "nvidia,tegra20-car";
+    ....
+};
 
-Hrm, right.  This isn't something that the regulator API usually deals
-with - normally we just deal with things that Linux owns and assume that
-if the hardware is wired up for something else to own the regulator it
-will deal with that completely including the configuration.  If we do
-need to do something here we need to make sure that the normal regulator
-code doesn't try to do anything clever with the regulator which messes
-up the other device.  But I guess this doesn't really have a problem
-with that, someone can always add a further patch optionally specifying
-GPIOs which won't conflict with this approach.
+foo@70007000 {
+    compatible = "nvidia,tegra20-foo";
+    regs = <...>;
+    nvidia,car-reset-id = <&tegra_car 30>;
+};
 
---rMWmSaSbD7nr+du9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+And the driver for "foo" can ignore cell 0, and extract the cell 1 and
+pass the value to tegra_periph_reset_assert().
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+I'd expect to put the CAR phandle into the property in case we ever get
+a more generalized reset subsystem, and need more general code to
+interpret the property. I did the same for the Tegra APB DMA controller
+client binding where clients need to know the "DMA select" value.
 
-iQIcBAEBAgAGBQJPHyDhAAoJEBus8iNuMP3dcqMP/2igwR+ANMFPX9ZSdBNf8Rso
-SkI6/bn704xEZ6YKOnsZVgoSN3Dq/5fxmG/Fm1AlQ8xmI0w/WIvZQveTPPm7+/gW
-J+GCrm+XXE3oipuXUb6yQmwV9vSDCLlUR24EpAghRF3ATWpj8S7bVD78ngHmvF4T
-Evy1G8lTMWK6kK19SOFcLnAsGhhaUWnE9oAoxiXMhQddBXgBv4cjuEuHhObOvyaF
-wHBbBI8ai9VNIPoQrlQdzrUVHmFOSpYgBJRMj6yiPtVltsH0HLc+Pjedv+fo7fCV
-T6ykpcnBB+bekRSlvAaF3PqA/Bx+ZVM+042zwE5imRHOemGtR4xFA9+mP5T1hEud
-hvqKNK7yiXvtEquT8w9AUk3qtUlh2nGq3fgSw6y19mLNziiC5S23AxXskE1hAa6A
-hcDhiXdEax0yp18OtVgr568kD4/ggs6Xf6/zWvE4YbzLC16aQDvT+ADPasy5iXAU
-DyqZJ1Ij8AFdr89YoRw95eiDe2owBYIng8Li1LMSQH3fwjqqM9C1u/LA1NA4E4va
-VbPZqXoRHub3bQjiZYSWtWCBH1dVrJDxHqFVgbyMz/3LCg0nuXOwMrm/VNJvYfwK
-8ihdCiZCDtOUdmwlMagoZeFFs64t6pe2axMztb6spq/D53K+jKFOau/Xo2b3jyFv
-A3rosxKorB87DayaFKeN
-=Hv+Z
------END PGP SIGNATURE-----
+Does that all seem reasonable?
 
---rMWmSaSbD7nr+du9--
+-- 
+nvpublic
