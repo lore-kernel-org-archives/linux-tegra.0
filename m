@@ -1,180 +1,159 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3] ARM: tegra: Add a simple PMC driver
-Date: Wed, 25 Jan 2012 14:43:28 -0700
-Message-ID: <1327527809-10179-2-git-send-email-swarren@nvidia.com>
-References: <1327527809-10179-1-git-send-email-swarren@nvidia.com>
+Subject: RE: [PATCH 1/3] ARM: dt: tegra: Enable device tree audio on PAZ00
+ board.
+Date: Wed, 25 Jan 2012 14:21:19 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB821B2@HQMAIL01.nvidia.com>
+References: <1327517363-29698-1-git-send-email-leon@leon.nu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327527809-10179-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1327517363-29698-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org" <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This PMC driver is enough to parse the nvidia,invert-interrupt property
-from device tree, and configure the PMC's to honor that.
+Leon Romanovsky wrote at Wednesday, January 25, 2012 11:49 AM:
+> This patch adds initial device tree support of ALC5632 sound codec and
+> machine driver for PAZ00 board. The implementation is based on the WM8903 codec.
 
-In the future, this file could expand to centralize all other PMC accesses
-within the mach-tegra code.
+>  .../devicetree/bindings/sound/alc5632.txt          |   24 ++++++
+>  .../bindings/sound/tegra-audio-alc5632.txt         |   55 ++++++++++++++
+>  arch/arm/boot/dts/tegra-paz00.dts                  |   29 ++++++--
+>  sound/soc/tegra/tegra_alc5632.c                    |   78 ++++++++++++++++++--
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile |    1 +
- arch/arm/mach-tegra/common.c |    3 ++
- arch/arm/mach-tegra/pmc.c    |   76 ++++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/pmc.h    |   23 +++++++++++++
- 4 files changed, 103 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/pmc.c
- create mode 100644 arch/arm/mach-tegra/pmc.h
+I worry this patch does a little too much at once; perhaps it should be
+split up a little?
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 49ff80c..749bb7e 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -6,6 +6,7 @@ obj-y                                   += irq.o
- obj-y                                   += clock.o
- obj-y                                   += timer.o
- obj-y					+= fuse.o
-+obj-y					+= pmc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= powergate.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 1b1dee0..1cdcda1 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -32,6 +32,7 @@
- #include "board.h"
- #include "clock.h"
- #include "fuse.h"
-+#include "pmc.h"
- 
- /*
-  * Storage for debug-macro.S's state.
-@@ -117,6 +118,7 @@ void __init tegra20_init_early(void)
- 	tegra2_init_clocks();
- 	tegra_clk_init_from_table(tegra20_clk_init_table);
- 	tegra_init_cache(0x331, 0x441);
-+	tegra_pmc_init();
- }
- #endif
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
-@@ -124,5 +126,6 @@ void __init tegra30_init_early(void)
- {
- 	tegra30_init_clocks();
- 	tegra_init_cache(0x441, 0x551);
-+	tegra_pmc_init();
- }
- #endif
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-new file mode 100644
-index 0000000..7af6a54
---- /dev/null
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -0,0 +1,76 @@
-+/*
-+ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+
-+#include <mach/iomap.h>
-+
-+#define PMC_CTRL		0x0
-+#define PMC_CTRL_INTR_LOW	(1 << 17)
-+
-+static inline u32 tegra_pmc_readl(u32 reg)
-+{
-+	return readl(IO_ADDRESS(TEGRA_PMC_BASE + reg));
-+}
-+
-+static inline void tegra_pmc_writel(u32 val, u32 reg)
-+{
-+	writel(val, IO_ADDRESS(TEGRA_PMC_BASE + reg));
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id matches[] __initconst = {
-+	{ .compatible = "nvidia,tegra20-pmc" },
-+	{ }
-+};
-+#endif
-+
-+void __init tegra_pmc_init(void)
-+{
-+	/*
-+	 * For now, Harmony is the only board that uses the PMC, and it wants
-+	 * the signal inverted. Seaboard would too if it used the PMC.
-+	 * Hopefully by the time other boards want to use the PMC, everything
-+	 * will be device-tree, or they also want it inverted.
-+	 */
-+	bool invert_interrupt = true;
-+	u32 val;
-+
-+#ifdef CONFIG_OF
-+	if (of_have_populated_dt()) {
-+		struct device_node *np;
-+
-+		invert_interrupt = false;
-+
-+		np = of_find_matching_node(NULL, matches);
-+		if (np) {
-+			if (of_find_property(np, "nvidia,invert-interrupt",
-+						NULL))
-+				invert_interrupt = true;
-+		}
-+	}
-+#endif
-+
-+	val = tegra_pmc_readl(PMC_CTRL);
-+	if (invert_interrupt)
-+		val |= PMC_CTRL_INTR_LOW;
-+	else
-+		val &= ~PMC_CTRL_INTR_LOW;
-+	tegra_pmc_writel(val, PMC_CTRL);
-+}
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-new file mode 100644
-index 0000000..8995ee4
---- /dev/null
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -0,0 +1,23 @@
-+/*
-+ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#ifndef __MACH_TEGRA_PMC_H
-+#define __MACH_TEGRA_PMC_H
-+
-+void tegra_pmc_init(void);
-+
-+#endif
+
+> diff --git a/Documentation/devicetree/bindings/sound/alc5632.txt
+...
+> +Required properties:
+> +
+> +  - compatible : "realtek,alc5632"
+
+You should update Documentation/devicetree/bindings/vendor-prefixes.txt
+too. Separately from this patch is probably fine.
+
+> diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
+> b/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
+> new file mode 100644
+> index 0000000..315213f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
+> @@ -0,0 +1,55 @@
+> +NVIDIA Tegra audio complex
+> +
+> +Required properties:
+> +- compatible : "nvidia,tegra-audio-alc5632"
+> +- nvidia,model : The user-visible name of this sound complex.
+> +- nvidia,audio-routing : A list of the connections between audio components.
+> +  Each entry is a pair of strings, the first being the connection's sink,
+> +  the second being the connection's source. Valid names for sources and
+> +  sinks are the ALC5632's pins:
+> +
+> +  ALC5632 pins:
+> +
+> +  * SPKOUT
+> +  * SPKOUTN
+> +  * HPL
+> +  * HPR
+> +  * AUXOUT
+
+My copy of the ALC5632 datasheet indicates there are both AUX_OUT_P and
+AUX_OUTN pins. Are they always used together such that it makes sense to
+group them together in the device tree binding?
+
+> +  * LINEINL
+> +  * LINEINR
+> +  * PHONEP
+> +  * PHONEP
+
+PHONEN
+
+> +  * MIC1
+> +  * MIC2
+
+Same as above; the datasheet lists MIC1_P, MIC1_N, MIC2_P, MIC2_N.
+
+> +  * MICBIAS1
+> +  * MICBIAS2
+
+I only see MICBIAS1 in the datasheet, not MICBIAS2.
+
+> +
+> +  Board connectors:
+> +
+> +  * Headset Stereophone
+> +  * Int Spk
+> +  * MIC1
+> +  * MICBIAS1
+
+Those last two are codec pins, not board connectors.
+
+Don't you need "Headset Mic" in the list too?
+
+...
+> +	nvidia,audio-routing =
+> +				"Int Spk", "SPKOUT",
+> +				"Int Spk", "SPKOUTN",
+> +				"MIC1", "MICBIAS1",
+> +				"MICBIAS1", "Headset Mic",
+
+I think those last two lines should read:
+
+				"Headset Mic", "MICBIAS1",
+				"MIC1", " Headset Mic",
+
+The DAPM route table in the driver probably needs updating to say the
+same thing too.
+
+(all the comments on the example above apply to the copy in the .dts
+file too)
+
+...
+> diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+
+> +	sound {
+> +		compatible = "nvidia,tegra-audio-alc5632-paz00",
+> +		"nvidia,tegra-audio-alc5632";
+
+That last line needs some extra indent.
+
+> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+
+> @@ -163,26 +164,80 @@ static __devinit int tegra_alc5632_probe(struct platform_device *pdev)
+...
+> +	alc5632->pcm_dev = ERR_PTR(-EINVAL);
+> +
+> +	if (!(pdev->dev.of_node)) {
+> +		dev_err(&pdev->dev, "No platform data supplied\n");
+
+I think I'd phrase that more like "Must be instantiated using device tree".
+
+> +	tegra_alc5632_dai.codec_name = NULL;
+
+Given you're only supporting instantiation using device tree now, why
+not just not initialize that field, and remove that assignment?
+
+> +	tegra_alc5632_dai.codec_of_node = of_parse_phandle(
+> +	pdev->dev.of_node, "nvidia,audio-codec", 0);
+
+Indent that last line a bit more.
+
+> +	tegra_alc5632_dai.cpu_dai_name = NULL;
+
+Same comment; you can remove that.
+
+> +	tegra_alc5632_dai.cpu_dai_of_node = of_parse_phandle(
+> +	pdev->dev.of_node, "nvidia,i2s-controller", 0);
+
+Indent that last line a bit more.
+
+Overall, this looks like the same structure as the Tegra+WM8903 bindings,
+so it works for me.
+
 -- 
-1.7.0.4
+nvpublic
