@@ -1,46 +1,55 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Subject: Re: [PATCH V2] regulator: tps65910: Sleep control through external
  inputs
-Date: Wed, 25 Jan 2012 19:37:15 +0530
-Message-ID: <4F200C93.30502@nvidia.com>
-References: <1327489068-9460-1-git-send-email-ldewangan@nvidia.com> <20120125124250.GH3687@opensource.wolfsonmicro.com> <4F1FF9EF.9000004@nvidia.com> <20120125125020.GI3687@opensource.wolfsonmicro.com>
+Date: Wed, 25 Jan 2012 14:36:21 +0000
+Message-ID: <20120125143621.GN3687@opensource.wolfsonmicro.com>
+References: <1327489068-9460-1-git-send-email-ldewangan@nvidia.com>
+ <20120125124250.GH3687@opensource.wolfsonmicro.com>
+ <4F1FF9EF.9000004@nvidia.com>
+ <20120125125020.GI3687@opensource.wolfsonmicro.com>
+ <4F200C93.30502@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mI5TpPl/qDRoXxBg"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120125125020.GI3687-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F200C93.30502-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 25 January 2012 06:20 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jan 25, 2012 at 06:17:43PM +0530, Laxman Dewangan wrote:
->> On Wednesday 25 January 2012 06:12 PM, Mark Brown wrote:
->>> This really isn't what the set_mode() API is for - especially the fact
->>> that it supports turning the regulator off which really isn't what
->>> set_mode() is supposed to do.  A generic driver using this API isn't
->>> going to play too well.
->> Then what should be the method? Is it through the macro similar to
->> patch V1 where LOW_POWER mode option come from platform data? The
->> idea  is to set the regulator in OFF or low power mode based on
->> external control.
-> Like I said we've got the various suspend callbacks for setting the
-> behaviour in suspend mode.
-Then in this case, I will implement the
-set_suspend_enable() and put the device in low power mode.
-set_suspend_disable() and put the device in full power, normal mode.
-set_suspend_mode(): based on mode and external control, either it will 
-call existing set_mode() if it is not externally controlled otherwise 
-set the mode locally for the case of externally controlled.
 
-The board file will set the regulator_state accordingly for a given 
-requirements through the constraints.
+--mI5TpPl/qDRoXxBg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Does it make sense?
+On Wed, Jan 25, 2012 at 07:37:15PM +0530, Laxman Dewangan wrote:
 
+> Does it make sense?
 
-> * Unknown Key
-> * 0x6E30FDDD
+Probably but I'd need to see the code to confirm.
+
+--mI5TpPl/qDRoXxBg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPIBNeAAoJEBus8iNuMP3d878P/jQA11gY7F0kjhCmVCXOpRd1
+A+azLzvxxvDHLtkB4hGN6+bnGvwiPF3SdZ03QfWDTxeInB5wY33+SUCFlv56v1bN
+v18R6nE5PzgX8JJvV4hV3nwqK4b7EYgIej74Mf6fCshLtCCZ0pGDrMZ0dUW7fiNM
+FwlPHGXsFY3+uvAnUJGCQ4kyjYNaYYrE387To5wf60H4l41GC5+xZB8bsfhyaF7s
+sg/bUeFGNaI5NeBFrZephzoQv6BURhyyIygB7o+shBsE3LQQEZ75sc9QN6aUoCIH
+MOGlCIWzm5wsAFHSTUjvKeZoxdlLQtGsQ22ffs1Mv1xx55Me5yrTlGlKKhhGdaDB
+EomV//FHFupklmueH5/YngltYz26oPmv3rXhRERGSINKeWUCiw6rd6r6MZW4RzRd
+bUCzSro0yGJDUXKAI48XPS5JRUBjDL9PZzKD9DBfW2Wpp/AUAZ+QHAzhxxjfalf3
+d//2BOfYrqKTE2YDhE7Fx0ofqlapm6wxIi3nXZjwX9/iPuH8Cv9oL2g+jNQqSeWf
+5yBeB3jrAgXuweLnU+ZEAiMtBzYr4hhQIHORZHa8fR4rO6L4oZkxUfn6kWq3qh9s
+uRkK29xCrvBijSNWBE3TrhOWHGHH7OAT6DbiuTE/50JVVyTmc9Q2dW7dTOZ0clFm
+PlwgH4VBqS1WlakxKLWm
+=AIxF
+-----END PGP SIGNATURE-----
+
+--mI5TpPl/qDRoXxBg--
