@@ -1,65 +1,221 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V1] ARM: tegra: dma: Support variable transfer sizes
-Date: Wed, 25 Jan 2012 09:03:16 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB8202B@HQMAIL01.nvidia.com>
-References: <1327490378-10904-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: [PATCH] ARM: tegra: Add pinmux board file for Cardhu
+Date: Wed, 25 Jan 2012 10:15:15 -0700
+Message-ID: <1327511715-27350-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327490378-10904-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Laxman Dewangan wrote at Wednesday, January 25, 2012 4:20 AM:
-> Allow the transfer size to vary in each DMA request,
-> rather than assuming all requests to be the same size
-> as the first request made.
-...
-> diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
-...
-> @@ -434,6 +435,15 @@ static void tegra_dma_update_hw_partial(struct tegra_dma_channel *ch,
->  	writel(apb_ptr, ch->addr + APB_DMA_CHAN_APB_PTR);
->  	writel(ahb_ptr, ch->addr + APB_DMA_CHAN_AHB_PTR);
-> 
-> +	if (ch->mode & TEGRA_DMA_MODE_CONTINOUS)
-> +		ch->req_transfer_count = (req->size >> 3) - 1;
-> +	else
-> +		ch->req_transfer_count = (req->size >> 2) - 1;
+For now, this just sets up the pinmux and GPIOs required for the SD
+card slot.
 
-There are cases in the current continuous mode where HW is working on
-one buffer and the next buffer is queued in HW. Once we've written the
-new request to HW, we don't know exactly which buffer HW is operating
-on. Hence, we don't know which buffer ch->req_transfer_count refers to.
-If req->size changes, might this change cause the new req->size value
-to be used when the old buffer's final completion interrupt goes off
-and hence the old buffer's req->bytes_transferred be wrong?
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This will hopefully be replaced by the pinmux DT binding in the near
+future, but until that happens, Tegra30 pinmux functionality needs to
+be exposed somehow to unblock getting drivers tested on Tegra30.
 
-Actually looking at the current continuous mode, I'm not convinced that
-it correctly handles replacing an in-progress buffer with a new buffer;
-I certainly see where handle_continuous_dma() checks for a second (SW)
-queued buffer and tells the HW to use that buffer instead, but I don't
-see where the (SW) queue management is done; where is the old req removed
-from the head of ch->list and marked complete? I assume the "out of sync"
-case is only intended to be an error condition and not part of the
-buffer switch?
+This of course depends on my recently posted patches that implement a
+pinctrl subsystem driver for Tegra.
 
-Perhaps for the current continuous mode, it'd be best to require the
-client to dequeue any existing request before queuing another, i.e. to
-fail tegra_dma_enqueue_req() if there's already something in ch->list
-in continuous mode?
+(Peter said: Boot tested on Cardhu, MMC still doesn't work but that might
+have another rootcause...)
 
-> +	csr = readl(ch->addr + APB_DMA_CHAN_CSR);
-> +	csr &= ~CSR_WCOUNT_MASK;
-> +	csr |= ch->req_transfer_count << CSR_WCOUNT_SHIFT;
-> +	writel(csr, ch->addr + APB_DMA_CHAN_CSR);
-> +
->  	req->status = TEGRA_DMA_REQ_INFLIGHT;
->  	return;
->  }
+ arch/arm/mach-tegra/Makefile              |    1 +
+ arch/arm/mach-tegra/board-cardhu-pinmux.c |   60 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-cardhu.h        |   28 +++++++++++++
+ arch/arm/mach-tegra/board-dt-tegra30.c    |   25 +++++++++++-
+ arch/arm/mach-tegra/board-pinmux.c        |    2 +-
+ 5 files changed, 114 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/board-cardhu-pinmux.c
+ create mode 100644 arch/arm/mach-tegra/board-cardhu.h
 
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index b78bda8..49ff80c 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
++obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-cardhu-pinmux.o
+ obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o apbio.o
+diff --git a/arch/arm/mach-tegra/board-cardhu-pinmux.c b/arch/arm/mach-tegra/board-cardhu-pinmux.c
+new file mode 100644
+index 0000000..2590650
+--- /dev/null
++++ b/arch/arm/mach-tegra/board-cardhu-pinmux.c
+@@ -0,0 +1,60 @@
++/*
++ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include <linux/kernel.h>
++
++#include <mach/gpio-tegra.h>
++
++#include "board-cardhu.h"
++#include "board-pinmux.h"
++
++static struct pinmux_map cardhu_map[] = {
++	TEGRA_PINMUX_MAP("sdmmc1_dat0_py7", "sdmmc1"),
++	TEGRA_PINMUX_MAP("sdmmc1_dat1_py6", "sdmmc1"),
++	TEGRA_PINMUX_MAP("sdmmc1_dat2_py5", "sdmmc1"),
++	TEGRA_PINMUX_MAP("sdmmc1_dat3_py4", "sdmmc1"),
++	TEGRA_PINMUX_MAP("sdmmc1_clk_pz0",  "sdmmc1"),
++	TEGRA_PINMUX_MAP("sdmmc1_cmd_pz1",  "sdmmc1"),
++};
++
++struct tegra_board_pinmux_pg_conf cardhu_pg[] = {
++	{"sdmmc1_dat0_py7", TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++	{"sdmmc1_dat1_py6", TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++	{"sdmmc1_dat2_py5", TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++	{"sdmmc1_dat3_py4", TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++	{"sdmmc1_clk_pz0",  TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++	{"sdmmc1_cmd_pz1",  TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
++};
++
++static struct tegra_gpio_table gpio_table[] = {
++	{ .gpio = TEGRA_GPIO_SD1_CD,		.enable = true  },
++	{ .gpio = TEGRA_GPIO_SD1_WP,		.enable = true  },
++};
++
++static struct tegra_board_pinmux_conf conf = {
++	.maps = cardhu_map,
++	.map_count = ARRAY_SIZE(cardhu_map),
++	.pgs = cardhu_pg,
++	.pg_count = ARRAY_SIZE(cardhu_pg),
++	.gpios = gpio_table,
++	.gpio_count = ARRAY_SIZE(gpio_table),
++};
++
++void cardhu_pinmux_init(void)
++{
++	tegra_board_pinmux_init(&conf, NULL);
++}
+diff --git a/arch/arm/mach-tegra/board-cardhu.h b/arch/arm/mach-tegra/board-cardhu.h
+new file mode 100644
+index 0000000..184410e
+--- /dev/null
++++ b/arch/arm/mach-tegra/board-cardhu.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#ifndef _MACH_TEGRA_BOARD_CARDHU_H
++#define _MACH_TEGRA_BOARD_CARDHU_H
++
++#include "gpio-names.h"
++
++#define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PI5
++#define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PT3
++
++void cardhu_pinmux_init(void);
++
++#endif
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index b4124b1..918cbbf 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -3,7 +3,7 @@
+  *
+  * NVIDIA Tegra30 device tree board support
+  *
+- * Copyright (C) 2011 NVIDIA Corporation
++ * Copyright (C) 2011-2012 NVIDIA Corporation
+  *
+  * Derived from:
+  *
+@@ -36,12 +36,16 @@
+ #include "board.h"
+ #include "clock.h"
+ 
++void cardhu_pinmux_init(void);
++
+ static struct of_device_id tegra_dt_match_table[] __initdata = {
+ 	{ .compatible = "simple-bus", },
+ 	{}
+ };
+ 
+ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
++	OF_DEV_AUXDATA("nvidia,tegra30-pinmux", 0x70000868, "tegra-pinmux", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-gpio", 0x6000d000, "tegra-gpio", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000400, "sdhci-tegra.2", NULL),
+@@ -60,10 +64,29 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+ 	{ NULL,		NULL,		0,		0},
+ };
+ 
++static struct {
++	char *machine;
++	void (*init)(void);
++} pinmux_configs[] = {
++	{ "nvidia,cardhu", cardhu_pinmux_init },
++};
++
+ static void __init tegra30_dt_init(void)
+ {
++	int i;
++
+ 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
+ 
++	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
++		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
++			pinmux_configs[i].init();
++			break;
++		}
++	}
++
++	WARN(i == ARRAY_SIZE(pinmux_configs),
++		"Unknown platform! Pinmuxing not initialized\n");
++
+ 	of_platform_populate(NULL, tegra_dt_match_table,
+ 				tegra30_auxdata_lookup, NULL);
+ }
+diff --git a/arch/arm/mach-tegra/board-pinmux.c b/arch/arm/mach-tegra/board-pinmux.c
+index 4e18e14..0e145b6 100644
+--- a/arch/arm/mach-tegra/board-pinmux.c
++++ b/arch/arm/mach-tegra/board-pinmux.c
+@@ -147,6 +147,6 @@ void tegra_board_pinmux_init(struct tegra_board_pinmux_conf *conf_a,
+ 
+ 	bus_register_notifier(&platform_bus_type, &nb);
+ 
+-	if (!of_machine_is_compatible("nvidia,tegra20"))
++	if (!of_have_populated_dt())
+ 		platform_add_devices(devices, ARRAY_SIZE(devices));
+ }
 -- 
-nvpublic
+1.7.0.4
