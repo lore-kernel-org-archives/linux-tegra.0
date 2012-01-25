@@ -1,83 +1,40 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Tue, 24 Jan 2012 15:36:06 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178CB81F1A@HQMAIL01.nvidia.com>
-References: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
-	<CACRpkdZvakueQGYX0wyTFWmpC6wiixj2g1PTuKM4CgEzqJbmig@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF178CB81F06@HQMAIL01.nvidia.com>
- <CACRpkdb5eu+5k98XKkZXA0m0FHEP4XjVGwD9F=Ezm5gVP5WrQQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V1] regulator: tps65910: Sleep control through external
+ inputs
+Date: Wed, 25 Jan 2012 11:52:25 +0530
+Message-ID: <4F1F9FA1.4000000@nvidia.com>
+References: <1327395919-32378-1-git-send-email-ldewangan@nvidia.com> <20120124115855.GC14888@opensource.wolfsonmicro.com> <4F1EA1E8.90104@nvidia.com> <20120124122411.GB31839@opensource.wolfsonmicro.com> <4F1EA608.3020204@nvidia.com> <20120124212144.GG1135@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb5eu+5k98XKkZXA0m0FHEP4XjVGwD9F=Ezm5gVP5WrQQ@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20120124212144.GG1135@opensource.wolfsonmicro.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: "lrg@ti.com" <lrg@ti.com>, "jedu@slimlogic.co.uk" <jedu@slimlogic.co.uk>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "gg@slimlogic.co.uk" <gg@slimlogic.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Linus Walleij wrote at Tuesday, January 24, 2012 4:28 PM:
-> On Wed, Jan 25, 2012 at 12:09 AM, Stephen Warren <swarren@nvidia.com>=
- wrote:
-> > [Me]
-> >> Why are all of these things (reg bank bit ets) signed?
-> >
-> > The basic issue is that all of these features are optional for any
-> > given pin group. I used -1 to indicate an unsupported feature.
->=20
-> Ahyeah. Makes sense. Well do it any way that makes sense
-> to you. Plus note in the kerneldoc that this is the reason these
-> are signed.
->=20
-> >> Also, things named =A0*_bit are a bit (no pun intended) binary,
-> >> are they containing a single bit? In that case say
-> >
-> > They're the bit number/shift within a register. Range 0..31
->=20
-> Can that thing really be negative then?
-> Or is it really: u8 foo_bit:5 ?
-
-Only reg needs to be signed/negative; the rest I just did for consisten=
-cy
-in the struct definition; I think an old version of the code wrote -1 t=
-o
-foo_reg, foo_bank and foo_bit too.
-
-> >> u8 foo:1
-> >>
-> >> To mark that it's only one bit wide, or u8 foo:4 for four bits
-> >> etc.
-> >
-> > I guess I could be explicit about the max range for each value. It =
-might
-> > save up to about 8 bytes per pin group, perhaps less based on how w=
-ell
-> > things pack to u32 boundaries.
->=20
-> Nah I think you would have to pack the struct with #pragmas for that
-> and I don't even know if it'd pack below byte limits. Probably not.
-
-u32 x:4;
-u32 y:5;
-u32 z:4;
-
-should pack them all together, and adjacent u32s in the struct would be
-packed into the struct without padding.
-
-=2E..
-> >> func_safe doesn't look like an int either when I look at
-> >> the code. It's something else, u8?
-> >
-> > It's a "enum tegra_mux", which IIRC is technically an int, but unsi=
-gned
-> > is more consistent with the rest of pinctrl.
->=20
-> Hm "enum tegra_mux foo" should work fine too then,
-> what am I missing here...
-
-Good point. It's because each chip has a different set definition of
-enum tegra_mux, and pinctrl-tegra.h is shared across both chips.
-
---=20
-nvpublic
+On Wednesday 25 January 2012 02:51 AM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Jan 24, 2012 at 06:07:28PM +0530, Laxman Dewangan wrote:
+>
+>> E.g. If cpu power is in VDDCTRL rail and if DVFS mechanism of SOC
+>> wants that cpu rails to be ON, it will make the control signal
+>> active and if it wants to disable the rail then it will deactivate
+>> it.
+>> The toggling of the control lines depends on how the power
+>> management controller is designed for a given SOC and how it
+>> manages.
+> Hrm, right.  This isn't something that the regulator API usually deals
+> with - normally we just deal with things that Linux owns and assume that
+> if the hardware is wired up for something else to own the regulator it
+> will deal with that completely including the configuration.  If we do
+> need to do something here we need to make sure that the normal regulator
+> code doesn't try to do anything clever with the regulator which messes
+> up the other device.  But I guess this doesn't really have a problem
+> with that, someone can always add a further patch optionally specifying
+> GPIOs which won't conflict with this approach.
+Thanks, I will send patch v2 having all fixes which is discuss in patch V1.
+> * Unknown Key
+> * 0x6E30FDDD
