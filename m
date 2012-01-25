@@ -1,63 +1,61 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] regulator: tps65910: Sleep control through external
- inputs
-Date: Wed, 25 Jan 2012 12:50:20 +0000
-Message-ID: <20120125125020.GI3687@opensource.wolfsonmicro.com>
-References: <1327489068-9460-1-git-send-email-ldewangan@nvidia.com>
- <20120125124250.GH3687@opensource.wolfsonmicro.com>
- <4F1FF9EF.9000004@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@free.fr>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 25 Jan 2012 15:04:18 +0100
+Message-ID: <4F200BE2.2070301@free.fr>
+References: <1324426147-16735-1-git-send-email-ccross@android.com> <4F1929E9.7070707@linaro.org> <CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AptwxgnoZDC4KQWS"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F1FF9EF.9000004-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/20/2012 09:40 PM, Colin Cross wrote:
+> On Fri, Jan 20, 2012 at 12:46 AM, Daniel Lezcano
+> <daniel.lezcano@linaro.org>  wrote:
+>> Hi Colin,
+>>
+>> this patchset could be interesting to resolve in a generic way the cpu
+>> dependencies.
+>> What is the status of this patchset ?
+> I can't do much with it right now, because I don't have any devices
+> that can do SMP idle with a v3.2 kernel.  I've started working on an
+> updated version that avoids the spinlock, but it might be a while
+> before I can test and post it.  I'm mostly looking for feedback on the
+> approach taken in this patch, and whether it will be useful for other
+> SoCs besides Tegra and OMAP4.
 
---AptwxgnoZDC4KQWS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Colin,
 
-On Wed, Jan 25, 2012 at 06:17:43PM +0530, Laxman Dewangan wrote:
-> On Wednesday 25 January 2012 06:12 PM, Mark Brown wrote:
+I will be happy to test your patchset. Do you have a pointer to a more 
+recent kernel ?
 
-> >This really isn't what the set_mode() API is for - especially the fact
-> >that it supports turning the regulator off which really isn't what
-> >set_mode() is supposed to do.  A generic driver using this API isn't
-> >going to play too well.
 
-> Then what should be the method? Is it through the macro similar to
-> patch V1 where LOW_POWER mode option come from platform data? The
-> idea  is to set the regulator in OFF or low power mode based on
-> external control.
+>> Did you have the opportunity to measure the power consumption with and
+>> without this patchset ?
+> Power consumption will be very dependent on the specific SoC in
+> question.  The most important factors are the power savings of the
+> independent cpuidle state (normally WFI) vs. the hotplug state
+> (normally 1 cpu in OFF), and the workload being tested.
+>
+> On a very idle system, these patches result in the same total power as
+> hotplugging one cpu and letting the other idle normally.  On a 25%
+> busy system, you might see a slight increase in power, as the best
+> independent cpuidle state might be WFI, vs 1 cpu in OFF mode in
+> hotplug.  On OMAP4, that difference is small, on the order of 10 mW.
+> Once you hit the threshold where a hotplug governor would have
+> hotplugged in the second cpu (lets say 40%), the savings from these
+> patches are enormous, as you can hit the lowest power state up to 60%
+> of the time, where the hotplug solution would never be going below WFI
+> on both cpus.  On OMAP4, that can be well over 100 mW.
 
-Like I said we've got the various suspend callbacks for setting the
-behaviour in suspend mode.
+Interesting.
 
---AptwxgnoZDC4KQWS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Thanks
 
-iQIcBAEBAgAGBQJPH/pwAAoJEBus8iNuMP3dIewQAILgQll5a7NUoiobDIiXvWFy
-mL7YPabxYtTgclVOkeFLE298KvUgZtOa7l15aeovOcUkUlP9fh1Lw/fb3D/P8w/X
-OMcxkMFb36w4gB6ebnYSSCF82tlD557OoBXFotqtk+4N/eTV/YyvYnGoesC732NB
-PmuZM0mNUfNH2+b+H/hr7+0DeiN9MnXHRbuCYIJ4zwPUL1rFhF42ziUXlgXXC5kX
-842hGYs1xkCdAqscwSXcEfM6fWqBkCmEoGSGOXjc9tFuh7mP/0bRmV3pphHvajKX
-wxYxr6JX3gnCaM0BuUJLXlQgb2sKv6OsSVMZA+QUURxda8qYVoTXKJB/gDoXH48D
-Y4IdxUMxQqHB+XqCwrIWVVAP4PAOsQ6Chd99amK4jNUxZVs67UwF835SqPJdjv0g
-nS+ABwWKdx4rxmXvbEWWXCpP16RAzQxQh4AiW/37zzCt/fOdziLWGSQEub/ybc1u
-frXfDLkst+Yi3gXQJgc0fJlN8acMZZA/bVmQsKdzCssTQMVx9sm5eLS+hAmDNtYZ
-6xMcaeY8me6nKfO1y5mQTX4ttwpdZ3DxI13pFBYRGn1RLrpR3ikh3BaoBtO3Tq7i
-Is8E3X/FRcUZDgAXDa2Fqt0YSDtbdAuCYuOgz+4ZQFjVweXd/pwqeFcO9nmo7bII
-GwNwC2R9QZn7WDlLSVlA
-=zBv4
------END PGP SIGNATURE-----
+   -- Daniel
 
---AptwxgnoZDC4KQWS--
