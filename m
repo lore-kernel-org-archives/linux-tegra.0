@@ -1,55 +1,72 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] mfd: tps65910: Add wakeup support
-Date: Thu, 26 Jan 2012 10:54:53 +0000
-Message-ID: <20120126105452.GB8041@opensource.wolfsonmicro.com>
-References: <1327304775-12202-1-git-send-email-ldewangan@nvidia.com>
+From: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: IOMMU: Tegra20: Add iommu_ops for GART driver
+Date: Thu, 26 Jan 2012 12:58:13 +0100
+Message-ID: <20120126115813.GF6269@8bytes.org>
+References: <20120123150048.GB6269@8bytes.org> <20120125.094020.983282777619146490.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1327304775-12202-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120125.094020.983282777619146490.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Jan 25, 2012 at 08:40:20AM +0100, Hiroshi Doyu wrote:
+> From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date: Wed, 16 Nov 2011 17:36:37 +0200
+> Subject: [PATCH 1/2] ARM: IOMMU: Tegra20: Add iommu_ops for GART driver
+> 
+> Tegra 20 IOMMU H/W, GART (Graphics Address Relocation Table). This
+> patch implements struct iommu_ops for GART for the upper IOMMU API.
+> 
+> This H/W module supports only single virtual address space(domain),
+> and manages a single level 1-to-1 mapping H/W translation page table.
 
---zx4FCpZtqtKETZ7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks. Applied with a few minor changes and fixes. Please see below.
 
-On Mon, Jan 23, 2012 at 01:16:15PM +0530, Laxman Dewangan wrote:
-> Implementing irq_set_wake() so that device should able
-> to wakeup the system through different interrupt provided
-> by this device like gpios, onkey, rtc etc.
+> +config TEGRA_IOMMU_GART
+> +	bool "Tegra GART IOMMU Support"
+> +	depends on ARCH_TEGRA_2x_SOC
+> +	default y
 
-Reviewed-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+I removed 'default y'. New drivers shouldn't be selected by default.
 
-It will have the side effect of making all interrupts on the PMIC wake
-if any of them does but I suspect this is actually going to be fine in
-practice.
+> +static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+> +			  phys_addr_t pa, size_t bytes, int prot)
+> +{
+> +	struct gart_device *gart = domain->priv;
+> +	unsigned long flags;
+> +	unsigned long pfn;
+> +
+> +	if (!gart_iova_range_valid(gart, iova, bytes))
+> +		return -EINVAL;
+> +
+> +	spin_lock_irqsave(&gart->pte_lock, flags);
+> +	pfn = __phys_to_pfn(pa);
+> +	if (!pfn_valid(pfn)) {
+> +		dev_err(gart->dev, "Invalid page: %08x\n", pa);
+> +		spin_unlock(&gart->pte_lock);
 
---zx4FCpZtqtKETZ7O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changed this to spin_unlock_irqrestore().
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+> +		return -EINVAL;
+> +	}
+> +	gart_set_pte(gart, iova, GART_PTE(pfn));
+> +	FLUSH_GART_REGS(gart);
+> +	spin_unlock_irqrestore(&gart->pte_lock, flags);
+> +	return 0;
+> +}
+> +
+> +static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
+> +			       size_t bytes)
+> +{
+> +	struct gart_device *gart = domain->priv;
+> +	unsigned long flags;
+> +
+> +	if (!gart_iova_range_valid(gart, iova, bytes))
+> +		return -EINVAL;
 
-iQIcBAEBAgAGBQJPITD2AAoJEBus8iNuMP3d7FUP/iL/NwRCNdLdMYyLds2P7Ipg
-7PWeb61jfrbpaclypnLSvDbwMzywCQI7ltVq9GCvY87L/ukw2E18fLXJf+J4AQZD
-O3TFqesMJpsi8fxWvppZwIdIjIGgYH4HReEXtOaRo6wHVOadixA94chSNbNXY4rr
-rb9RUYKUk7pJszkBhqXRLjtdDqdFLepzU+Do8tKsSPJDZB8kmXyBOlj8uDLPAGlo
-B3xkrqxgzcb748aTK6EGz/QVACeI2+hrRM1Fh4Ew9NRqfjZm7S5cOm/eWkDWuSG/
-/3KGtljNMpAeVKgkdemVm05r0YRlxQYcH0I3NTMAihZmN4kvPWUmo/qO7szXRoZQ
-fSuc+Gv0WKm53DyG6z5UzzPTMDtogaIPNcHArA+l2ilT3AzmZL6DaLASIGXx1Dg5
-2M6zwear3Yk0WJaQnqmeshy2zcj0/JDjUQNL86KFJDhNZ4Gl9pm6QzV8iVdyuREX
-Ssed5LTQIv6MrTmGZAg9Dt2VI9+XCDHjNe56VeENf71KyPvZuNMelCFxGU8aPlkk
-eNkdn2NtnFmBUibP43imLb8/AE57PDpznvf2O8+0mxq5FkEkvPsGTVWe+HTPDsR6
-gNE2v6fn7ZfGmxXS6xfayiXn2//IJqacPHAg2N3FggPkJJVvhCyHGqoNqBwW9QdZ
-MRdL5E4xHl2c8YQSihpr
-=L0QZ
------END PGP SIGNATURE-----
-
---zx4FCpZtqtKETZ7O--
+Return 0 here instead of -EINVAL. Size_t is unsigned and the unmap path
+returns 0 on failure.
