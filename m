@@ -1,130 +1,83 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dt: tegra: Enable device tree audio on PAZ00 board.
-Date: Fri, 27 Jan 2012 18:02:00 +0200
-Message-ID: <CALq1K=+1czTOPyQOU05H8psyGO5RncOHrJm+tLtzOdTLHqtVDQ@mail.gmail.com>
-References: <1327517363-29698-1-git-send-email-leon@leon.nu> <74CDBE0F657A3D45AFBB94109FB122FF178CB821B2@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/3] ARM: dt: tegra: Enable device tree audio on PAZ00
+ board.
+Date: Fri, 27 Jan 2012 08:45:47 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E123E36@HQMAIL01.nvidia.com>
+References: <1327517363-29698-1-git-send-email-leon@leon.nu>
+ <74CDBE0F657A3D45AFBB94109FB122FF178CB821B2@HQMAIL01.nvidia.com>
+ <CALq1K=+1czTOPyQOU05H8psyGO5RncOHrJm+tLtzOdTLHqtVDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178CB821B2-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CALq1K=+1czTOPyQOU05H8psyGO5RncOHrJm+tLtzOdTLHqtVDQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
 Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org" <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 26, 2012 at 00:21, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrot=
-e:
-> Leon Romanovsky wrote at Wednesday, January 25, 2012 11:49 AM:
->> This patch adds initial device tree support of ALC5632 sound codec a=
-nd
->> machine driver for PAZ00 board. The implementation is based on the W=
-M8903 codec.
->
->> +++ b/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.tx=
-t
->> @@ -0,0 +1,55 @@
->> +NVIDIA Tegra audio complex
->> +
->> +Required properties:
->> +- compatible : "nvidia,tegra-audio-alc5632"
->> +- nvidia,model : The user-visible name of this sound complex.
->> +- nvidia,audio-routing : A list of the connections between audio co=
-mponents.
->> + =C2=A0Each entry is a pair of strings, the first being the connect=
-ion's sink,
->> + =C2=A0the second being the connection's source. Valid names for so=
-urces and
->> + =C2=A0sinks are the ALC5632's pins:
->> +
->> + =C2=A0ALC5632 pins:
->> +
->> + =C2=A0* SPKOUT
->> + =C2=A0* SPKOUTN
->> + =C2=A0* HPL
->> + =C2=A0* HPR
->> + =C2=A0* AUXOUT
->
-> My copy of the ALC5632 datasheet indicates there are both AUX_OUT_P a=
-nd
-> AUX_OUTN pins. Are they always used together such that it makes sense=
- to
-> group them together in the device tree binding?
-
-You are right, it must be the same as SPKOUT
-
->
->> + =C2=A0* LINEINL
->> + =C2=A0* LINEINR
->> + =C2=A0* PHONEP
->> + =C2=A0* PHONEP
->
-> PHONEN
->
->> + =C2=A0* MIC1
->> + =C2=A0* MIC2
->
-> Same as above; the datasheet lists MIC1_P, MIC1_N, MIC2_P, MIC2_N.
->
->> + =C2=A0* MICBIAS1
->> + =C2=A0* MICBIAS2
->
-> I only see MICBIAS1 in the datasheet, not MICBIAS2.
-You are right if you are looking on function block only (page 3), but
-in register description you can find reference to MICBIAS2 (reg 22h,
-microphone control).
-
->
->> +
->> + =C2=A0Board connectors:
->> +
->> + =C2=A0* Headset Stereophone
->> + =C2=A0* Int Spk
->> + =C2=A0* MIC1
->> + =C2=A0* MICBIAS1
->
-> Those last two are codec pins, not board connectors.
->
-> Don't you need "Headset Mic" in the list too?
->
-> ...
->> + =C2=A0 =C2=A0 nvidia,audio-routing =3D
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "Int Spk", "SPKOUT",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "Int Spk", "SPKOUTN",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "MIC1", "MICBIAS1",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "MICBIAS1", "Headset Mic",
->
-> I think those last two lines should read:
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0"Headset Mic", "MICBIAS1",
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0"MIC1", " Headset Mic",
->
-> The DAPM route table in the driver probably needs updating to say the
-> same thing too.
->
-> (all the comments on the example above apply to the copy in the .dts
-> file too)
-Microphone is not tested at all, so you probably right. I prefer to be
-close as possible to previous board implementation and provide
-followup patches to clean the microphone path.
-
-> Overall, this looks like the same structure as the Tegra+WM8903 bindi=
-ngs,
-> so it works for me.
-
-
-> --
-> nvpublic
->
-
-
-
---=20
-Leon Romanovsky | Independent Linux Consultant
-=C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0www.leon.nu=C2=A0| leon-2ukJVAZIZ/Y@public.gmane.org
+TGVvbiBSb21hbm92c2t5IHdyb3RlIGF0IEZyaWRheSwgSmFudWFyeSAyNywgMjAxMiA5OjAyIEFN
+Og0KPiBPbiBUaHUsIEphbiAyNiwgMjAxMiBhdCAwMDoyMSwgU3RlcGhlbiBXYXJyZW4gPHN3YXJy
+ZW5AbnZpZGlhLmNvbT4gd3JvdGU6DQo+ID4gTGVvbiBSb21hbm92c2t5IHdyb3RlIGF0IFdlZG5l
+c2RheSwgSmFudWFyeSAyNSwgMjAxMiAxMTo0OSBBTToNCj4gPj4gVGhpcyBwYXRjaCBhZGRzIGlu
+aXRpYWwgZGV2aWNlIHRyZWUgc3VwcG9ydCBvZiBBTEM1NjMyIHNvdW5kIGNvZGVjIGFuZA0KPiA+
+PiBtYWNoaW5lIGRyaXZlciBmb3IgUEFaMDAgYm9hcmQuIFRoZSBpbXBsZW1lbnRhdGlvbiBpcyBi
+YXNlZCBvbiB0aGUgV004OTAzIGNvZGVjLg0KPiA+DQo+ID4+ICsrKyBiL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9zb3VuZC90ZWdyYS1hdWRpby1hbGM1NjMyLnR4dA0KPiA+PiBA
+QCAtMCwwICsxLDU1IEBADQo+ID4+ICtOVklESUEgVGVncmEgYXVkaW8gY29tcGxleA0KPiA+PiAr
+DQo+ID4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+PiArLSBjb21wYXRpYmxlIDogIm52aWRp
+YSx0ZWdyYS1hdWRpby1hbGM1NjMyIg0KPiA+PiArLSBudmlkaWEsbW9kZWwgOiBUaGUgdXNlci12
+aXNpYmxlIG5hbWUgb2YgdGhpcyBzb3VuZCBjb21wbGV4Lg0KPiA+PiArLSBudmlkaWEsYXVkaW8t
+cm91dGluZyA6IEEgbGlzdCBvZiB0aGUgY29ubmVjdGlvbnMgYmV0d2VlbiBhdWRpbyBjb21wb25l
+bnRzLg0KPiA+PiArIMKgRWFjaCBlbnRyeSBpcyBhIHBhaXIgb2Ygc3RyaW5ncywgdGhlIGZpcnN0
+IGJlaW5nIHRoZSBjb25uZWN0aW9uJ3Mgc2luaywNCj4gPj4gKyDCoHRoZSBzZWNvbmQgYmVpbmcg
+dGhlIGNvbm5lY3Rpb24ncyBzb3VyY2UuIFZhbGlkIG5hbWVzIGZvciBzb3VyY2VzIGFuZA0KPiA+
+PiArIMKgc2lua3MgYXJlIHRoZSBBTEM1NjMyJ3MgcGluczoNCj4gPj4gKw0KPiA+PiArIMKgQUxD
+NTYzMiBwaW5zOg0KPiA+PiArDQo+ID4+ICsgwqAqIFNQS09VVA0KPiA+PiArIMKgKiBTUEtPVVRO
+DQo+ID4+ICsgwqAqIEhQTA0KPiA+PiArIMKgKiBIUFINCj4gPj4gKyDCoCogQVVYT1VUDQo+ID4N
+Cj4gPiBNeSBjb3B5IG9mIHRoZSBBTEM1NjMyIGRhdGFzaGVldCBpbmRpY2F0ZXMgdGhlcmUgYXJl
+IGJvdGggQVVYX09VVF9QIGFuZA0KPiA+IEFVWF9PVVROIHBpbnMuIEFyZSB0aGV5IGFsd2F5cyB1
+c2VkIHRvZ2V0aGVyIHN1Y2ggdGhhdCBpdCBtYWtlcyBzZW5zZSB0bw0KPiA+IGdyb3VwIHRoZW0g
+dG9nZXRoZXIgaW4gdGhlIGRldmljZSB0cmVlIGJpbmRpbmc/DQo+IA0KPiBZb3UgYXJlIHJpZ2h0
+LCBpdCBtdXN0IGJlIHRoZSBzYW1lIGFzIFNQS09VVA0KDQpJIHRoaW5rIHRoZSBvcHBvc2l0ZTsg
+QVVYT1VUIGFuZCBTUEtPVVQgYXJlbid0IHRoZSBzYW1lIHBpbi4gSSBtZWFudA0KdGhhdCBBVVhf
+T1VUX1AgYW5kIEFVWF9PVVRfTiBhcmUgZGlmZmVyZW50IHBpbnMsIHNvIEknbSBhc2tpbmcgd2h5
+IHRoZXkncmUNCmEgc2luZ2xlIHBpbiBpbiB0aGUgYWJvdmUgcGluIGxpc3QgKGFuZCBpbiB0aGUg
+QVNvQyBjb2RlYyBkcml2ZXIpLiBJbg0KY29udHJhc3QsIFNQS09VVCBpcyByZXByZXNlbnRlZCBl
+eHBsaWNpdGx5IGFzIHR3byBwaW5zIHdoaWNoIHNlZW1zIHRvIG1ha2UNCm1vcmUgc2Vuc2UuDQoN
+Cj4gPj4gKyDCoCogTElORUlOTA0KPiA+PiArIMKgKiBMSU5FSU5SDQo+ID4+ICsgwqAqIFBIT05F
+UA0KPiA+PiArIMKgKiBQSE9ORVANCj4gPg0KPiA+IFBIT05FTg0KPiA+DQo+ID4+ICsgwqAqIE1J
+QzENCj4gPj4gKyDCoCogTUlDMg0KPiA+DQo+ID4gU2FtZSBhcyBhYm92ZTsgdGhlIGRhdGFzaGVl
+dCBsaXN0cyBNSUMxX1AsIE1JQzFfTiwgTUlDMl9QLCBNSUMyX04uDQo+ID4NCj4gPj4gKyDCoCog
+TUlDQklBUzENCj4gPj4gKyDCoCogTUlDQklBUzINCj4gPg0KPiA+IEkgb25seSBzZWUgTUlDQklB
+UzEgaW4gdGhlIGRhdGFzaGVldCwgbm90IE1JQ0JJQVMyLg0KPg0KPiBZb3UgYXJlIHJpZ2h0IGlm
+IHlvdSBhcmUgbG9va2luZyBvbiBmdW5jdGlvbiBibG9jayBvbmx5IChwYWdlIDMpLCBidXQNCj4g
+aW4gcmVnaXN0ZXIgZGVzY3JpcHRpb24geW91IGNhbiBmaW5kIHJlZmVyZW5jZSB0byBNSUNCSUFT
+MiAocmVnIDIyaCwNCj4gbWljcm9waG9uZSBjb250cm9sKS4NCg0KSSBkbyBzZWUgdGhhdCByZWdp
+c3RlciBiaXQsIGJ1dCB0aGUgcGlub3V0IGRvZXNuJ3QgaW5jbHVkZSBpdCBpbiB0aGUNCmNvZGVj
+J3Mgb3duIGRhdGFzaGVldCBub3IgdGhlIEFDMTAwIHNjaGVtYXRpY3MuIEkgc3VzcGVjdCB0aGF0
+IHRoZXJlDQpyZWFsbHkgaXMgbm8gTUlDQklBUzIgZmVhdHVyZSBhbmQgdGhlIHJlZ2lzdGVyIGRv
+Y3VtZW50YXRpb24gaXMgc2ltcGx5DQppbmNvcnJlY3QsIHBlcmhhcHMgYSBjYXJyeS1vdmVyIGZy
+b20gc29tZSBvdGhlciBjb2RlYz8gU3RpbGwsIEkgc3VwcG9zZQ0KdGhhdCBqdXN0IGluIGNhc2Ug
+dGhlIHNpZ25hbCByZWFsbHkgaXMgcm91dGVkIHRvIG9uZSBvZiB0aGUgcGlucyBsYWJlbGVkDQoi
+TkMiIGluIHRoZSBkYXRhc2hlZXQsIHRoZXJlIGlzbid0IHRvbyBtdWNoIGhhcm0gaW5jbHVkaW5n
+IGl0IGluIHRoZQ0KZHJpdmVyLCBhbmQgdGhpcyBiaW5kaW5nLg0KDQo+ID4+ICsgwqBCb2FyZCBj
+b25uZWN0b3JzOg0KLi4uDQo+ID4gRG9uJ3QgeW91IG5lZWQgIkhlYWRzZXQgTWljIiBpbiB0aGUg
+bGlzdCB0b28/DQouLi4NCj4gPj4gKyDCoCDCoCBudmlkaWEsYXVkaW8tcm91dGluZyA9DQouLi4N
+Cj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAiTUlDMSIs
+ICJNSUNCSUFTMSIsDQo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgIk1JQ0JJQVMxIiwgIkhlYWRzZXQgTWljIiwNCj4gPg0KPiA+IEkgdGhpbmsgdGhvc2Ug
+bGFzdCB0d28gbGluZXMgc2hvdWxkIHJlYWQ6DQo+ID4NCj4gPiDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCJIZWFkc2V0IE1pYyIsICJNSUNCSUFTMSIsDQo+
+ID4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAiTUlDMSIs
+ICIgSGVhZHNldCBNaWMiLA0KPiA+DQo+ID4gVGhlIERBUE0gcm91dGUgdGFibGUgaW4gdGhlIGRy
+aXZlciBwcm9iYWJseSBuZWVkcyB1cGRhdGluZyB0byBzYXkgdGhlDQo+ID4gc2FtZSB0aGluZyB0
+b28uDQo+DQo+IE1pY3JvcGhvbmUgaXMgbm90IHRlc3RlZCBhdCBhbGwsIHNvIHlvdSBwcm9iYWJs
+eSByaWdodC4gSSBwcmVmZXIgdG8gYmUNCj4gY2xvc2UgYXMgcG9zc2libGUgdG8gcHJldmlvdXMg
+Ym9hcmQgaW1wbGVtZW50YXRpb24gYW5kIHByb3ZpZGUNCj4gZm9sbG93dXAgcGF0Y2hlcyB0byBj
+bGVhbiB0aGUgbWljcm9waG9uZSBwYXRoLg0KDQpJIGd1ZXNzIHRoYXQgZG9lc24ndCBhY3R1YWxs
+eSBhZmZlY3QgdGhlIHN0cnVjdHVyZSBvZiB0aGUgYmluZGluZywganVzdA0KdGhlIGRhdGEgY29u
+dGFpbmVkIGluIHRoZSBwcm9wZXJ0aWVzLCBzbyBpdCdzIG5vdCBhIGJpZyBkZWFsIGlmIGl0IGdv
+ZXMNCmluIGxpa2UgdGhpcy4gTWFyayBtaWdodCBoYXZlIGEgZGlmZmVyZW50IG9waW5pb24gdGhv
+dWdoLCBzaW5jZSBpdCdzDQphIHNpbXBsZSBmaXguLi4NCg0KLS0gDQpudnB1YmxpYw0KDQo=
