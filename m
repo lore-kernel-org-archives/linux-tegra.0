@@ -1,89 +1,79 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V3] regulator: tps65910: Sleep control through external
- inputs
-Date: Fri, 27 Jan 2012 17:07:58 +0000
-Message-ID: <20120127170757.GD18572@opensource.wolfsonmicro.com>
-References: <1327506510-15948-1-git-send-email-ldewangan@nvidia.com>
+From: Colin Cross <ccross@android.com>
+Subject: Re: [linux-pm] [PATCH 0/3] coupled cpuidle state support
+Date: Fri, 27 Jan 2012 09:32:17 -0800
+Message-ID: <CAMbhsRQYVXTZ2pX4mBrM6=SyGTqn_GY8xsW4rt_e21zerEzctA@mail.gmail.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
+	<4F1929E9.7070707@linaro.org>
+	<CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com>
+	<CAKfTPtAsO8z_8AnR8zSGZ9cm_7orDNxB3r09JAFk+2jdezUVmQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZARJHfwaSJQLOEUz"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1327506510-15948-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <CAKfTPtAsO8z_8AnR8zSGZ9cm_7orDNxB3r09JAFk+2jdezUVmQ@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, linux-kernel@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>, linux-tegra@vger.kernel.org, linux-pm@lists.linux-foundation.org, linux-omap@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jan 27, 2012 at 12:54 AM, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+> On 20 January 2012 21:40, Colin Cross <ccross@android.com> wrote:
+>> On Fri, Jan 20, 2012 at 12:46 AM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org> wrote:
+>>> Hi Colin,
+>>>
+>>> this patchset could be interesting to resolve in a generic way the =
+cpu
+>>> dependencies.
+>>> What is the status of this patchset ?
+>>
+>> I can't do much with it right now, because I don't have any devices
+>> that can do SMP idle with a v3.2 kernel. =A0I've started working on =
+an
+>> updated version that avoids the spinlock, but it might be a while
+>> before I can test and post it. =A0I'm mostly looking for feedback on=
+ the
+>> approach taken in this patch, and whether it will be useful for othe=
+r
+>> SoCs besides Tegra and OMAP4.
+>>
+>
+> Hi Colin,
+>
+> In your patch, you put in safe state (WFI for most of platform) the
+> cpus that become idle and these cpus are woken up each time a new cpu
+> of the cluster becomes idle. Then, the cluster state is chosen and th=
+e
+> cpus enter the selected C-state. On ux500, we are using another
+> behavior for synchronizing =A0the cpus. The cpus are prepared to ente=
+r
+> the c-state that has been chosen by the governor and the last cpu,
+> that enters idle, chooses the final cluster state (according to cpus'
+> C-state). The main advantage of this solution is that you don't need
+> to wake other cpus to enter the C-state of a cluster. This can be
+> quite worth full when tasks mainly run on one cpu. Have you also thin=
+k
+> about such behavior when developing the coupled cpuidle driver ? It
+> could be interesting to add such behavior.
 
---ZARJHfwaSJQLOEUz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Waking up the cpus that are in the safe state is not done just to
+choose the target state, it's done to allow the cpus to take
+themselves to the target low power state.  On ux500, are you saying
+you take the cpus directly from the safe state to a lower power state
+without ever going back to the active state?  I once implemented Tegra
+that way, and it required lots of nasty synchronization to prevent
+resetting the cpu at the same time that it was booting due to an
+interrupt, and I was later told that Tegra can't handle that sequence
+at all, although I haven't verified it yet.
 
-On Wed, Jan 25, 2012 at 09:18:30PM +0530, Laxman Dewangan wrote:
-
-> +static int tps65910_set_suspend_enable(struct regulator_dev *dev)
-> +{
-> +	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
-> +	int id = rdev_get_id(dev);
-> +	/*
-> +	 * If regulator is controlled through external control then
-> +	 * it can be enable/disable by toggling external signal.
-> +	 */
-> +	if (pmic->board_ext_control[id])
-> +		return 0;
-> +	else
-> +		return tps65910_set_mode(dev, REGULATOR_MODE_NORMAL);
-> +}
-
-I'm really confuseed now.  This definitely looks like it's doing the
-wrong thing for the non-ext_control case, it's setting the mode which
-really isn't what this is supposed to do and collides with any actual
-configuration of the mode that might happen...
-
-> +	/*
-> +	 * Keep the regulator in OFF state if it needs to be disable
-> +	 * in suspend state.
-> +	 */
-> +	if (pmic->board_ext_control[id]) {
-> +		u8 regoffs = (pmic->ext_sleep_control[id] >> 8) & 0xFF;
-> +		u8 bit_pos = (1 << pmic->ext_sleep_control[id] & 0xFF);
-> +		int ret;
-> +		ret = tps65910_clear_bits(mfd,
-> +			TPS65910_SLEEP_KEEP_LDO_ON + regoffs, bit_pos);
-> +		if (!ret)
-> +			ret = tps65910_set_bits(mfd,
-> +				TPS65910_SLEEP_SET_LDO_OFF + regoffs, bit_pos);
-> +		if (ret < 0)
-> +			dev_err(mfd->dev,
-> +				"Error in configuring SLEEP register\n");
-
-...and I'd really expect something that reverses these changes?
-
-The actual bits setting up the ext_control look OK - can you split those
-off from the bits implementing the suspend mode callbacks please so they
-can be applied while the callbacks are reviewed?
-
---ZARJHfwaSJQLOEUz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPItnhAAoJEBus8iNuMP3ddbIQAIuUrG6usBhEGEmnFwRpijCR
-1VQvuU0ZLOQajh379z+CG4yuClrLLaoaUB7XQAeUEbpYlSY6Gp8RkE85/R+pNbde
-FsdIxdfM7fOOLG6HD2OL3bGiFeZzPZKM0DZXoIXIzLorInZnYEyAH5DAwY6/v6IJ
-508TWBEEbvDSaz/+UrxkG4X7UP+Cxk89jF5bNVscwDO2n4EGGxEx9pKy90DgfjnZ
-O4WqVuNIi5kP4V6265Qo345bq67De6v5Fqf4qrNbUvL/QWxRONCRlklYrHVnRCIE
-9Ibeh4ai4I0jGXVDSfC0syCW/Hm5/aZqWJ3XfHITxc0UnDg+JeDJ25XYyZ++4ZKI
-opVszVotqa+3zMNcvKZrS9+vYy89y+Cp8IhPy/fdZpFeTWsL7QAsZfF/X/utOhaM
-4RvmzpaEfXEIcSaShMErsH28FphWG1gTVjPwA5bNxPMzKKAHXv+EIVIG/6g0twtP
-qqdNL7We5OAyZBNw/HV3a41jpWF3HMPJbfvUJPnlulRjVrJfFVuLTDqv3vrpTkyO
-EEAz5vKXivzXYNDrxzdD6HL0ASf76wuWJuwG0sZYsRLC3ykSg+QR/4sJPuKh1JQC
-XmspSxaDOZwpFv80hdRC3Oka3W+buyVlPkZz2hp1yB5IC8LraSB/EMAXoDyumMCl
-+xse1zTd8+1wdjRSt1nq
-=J5vm
------END PGP SIGNATURE-----
-
---ZARJHfwaSJQLOEUz--
+On platforms that can't turn the cpus off in a random order, or that
+can't take a cpu directly from the safe state to the target state,
+something like these coupled cpuidle patches are required.  On
+platforms that can, the low power modes can be implemented without
+these patches, although it is very hard to do without race conditions.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
