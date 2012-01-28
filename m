@@ -1,89 +1,52 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V3] regulator: tps65910: Sleep control through external
- inputs
-Date: Sat, 28 Jan 2012 15:06:38 +0530
-Message-ID: <4F23C1A6.3090201@nvidia.com>
-References: <1327506510-15948-1-git-send-email-ldewangan@nvidia.com> <20120127170757.GD18572@opensource.wolfsonmicro.com>
+From: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: tegra3 vSMP cpu hotplug and LP=>G & G=>LP switch
+Date: Sat, 28 Jan 2012 22:58:35 +0800
+Message-ID: <CAGsJ_4y1t7Hp5RwUms1r04max98-edeDhag4o520jYJ3T+7t-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120127170757.GD18572@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: "lrg@ti.com" <lrg@ti.com>, "jedu@slimlogic.co.uk" <jedu@slimlogic.co.uk>, "sameo@linux.intel.com" <sameo@linux.intel.com>, "gg@slimlogic.co.uk" <gg@slimlogic.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 27 January 2012 10:37 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jan 25, 2012 at 09:18:30PM +0530, Laxman Dewangan wrote:
->
->> +static int tps65910_set_suspend_enable(struct regulator_dev *dev)
->> +{
->> +	struct tps65910_reg *pmic = rdev_get_drvdata(dev);
->> +	int id = rdev_get_id(dev);
->> +	/*
->> +	 * If regulator is controlled through external control then
->> +	 * it can be enable/disable by toggling external signal.
->> +	 */
->> +	if (pmic->board_ext_control[id])
->> +		return 0;
->> +	else
->> +		return tps65910_set_mode(dev, REGULATOR_MODE_NORMAL);
->> +}
-> I'm really confuseed now.  This definitely looks like it's doing the
-> wrong thing for the non-ext_control case, it's setting the mode which
-> really isn't what this is supposed to do and collides with any actual
-> configuration of the mode that might happen...
->
-So in non-ext control modes, should it return with doing nothing? And 
-for ext-control case, should it do reverse of disable?
+hi guys,
+As tegra3 is using vSMP (Variable Symmetric Multiprocessing) arch,
+there are 4 high-performance(G) cores and one low-power(LP) core. At
+runtime, both cpu dynamic hotplug and dynamic LP/G swith are used in a
+real tegra3 product as a DVFS way to save power. kernel log in EeePad:
+*cpu dynamic hotplug*
+<4>[104626.426957] CPU1: Booted secondary processor
+<7>[104627.427412] tegra CPU: force EDP limit 720000 kHz
+<4>[104627.427670] CPU2: Booted secondary processor
+<4>[104628.537005] stop_machine_cpu_stop cpu=0
+<4>[104628.537017] stop_machine_cpu_stop cpu=2
+<4>[104628.537059] stop_machine_cpu_stop cpu=1
+<4>[104628.537702] __stop_cpus: wait_for_completion_timeout+
+<4>[104628.537810] __stop_cpus: smp=0 done.executed=1 done.ret =0-
+<5>[104628.537960] CPU1: clean shutdown
+<4>[104630.537092] stop_machine_cpu_stop cpu=0
+<4>[104630.537172] stop_machine_cpu_stop cpu=2
+<4>[104630.537739] __stop_cpus: wait_for_completion_timeout+
+<4>[104630.538060] __stop_cpus: smp=0 done.executed=1 done.ret =0-
+<5>[104630.538203] CPU2: clean shutdown
+<4>[104631.306984] tegra_watchdog_touch
 
->> +	/*
->> +	 * Keep the regulator in OFF state if it needs to be disable
->> +	 * in suspend state.
->> +	 */
->> +	if (pmic->board_ext_control[id]) {
->> +		u8 regoffs = (pmic->ext_sleep_control[id]>>  8)&  0xFF;
->> +		u8 bit_pos = (1<<  pmic->ext_sleep_control[id]&  0xFF);
->> +		int ret;
->> +		ret = tps65910_clear_bits(mfd,
->> +			TPS65910_SLEEP_KEEP_LDO_ON + regoffs, bit_pos);
->> +		if (!ret)
->> +			ret = tps65910_set_bits(mfd,
->> +				TPS65910_SLEEP_SET_LDO_OFF + regoffs, bit_pos);
->> +		if (ret<  0)
->> +			dev_err(mfd->dev,
->> +				"Error in configuring SLEEP register\n");
-> ...and I'd really expect something that reverses these changes?
-I though following case:
-non-ext control:
-     If suspend-enable is selected then it will be in NORMAL mode, if 
-suspend-disable is selected then it should be in OFF state and if there 
-is suspend modes then it will select accordingly. The enable or disable 
-with modes can come with regulator suspend states through reg_init data.
-If regulator goes into suspend and configure different modes for suspend 
-mode then in resume path, the regulator should be enabled (if before 
-suspend it was enabled and set to mode which was there before suspend). 
-I just saw the code in core driver for enabling the regulator again but 
-not for re-setting the mode.
+*G<->LP switch*
+<3>[104666.799152] LP=>G: prolog 22 us, switch 2129 us, epilog 24 us,
+total 2175 us
+<3>[104667.807273] G=>LP: prolog 18 us, switch 157 us, epilog 25 us,
+total 200 us
+<4>[104671.407008] tegra_watchdog_touch
+<4>[104671.408816] nct1008_get_temp: ret temp=35C
+<3>[104671.939060] LP=>G: prolog 17 us, switch 2127 us, epilog 22 us,
+total 2166 us
+<3>[104672.938091] G=>LP: prolog 18 us, switch 156 us, epilog 24 us,
+total 198 us
 
-in ext control case:
-In ext control mode, the regulator is controlled from external signal 
-and hence it can set on full power/low power /off states based on 
-external control i.e.ext control high then it is full power mode, low 
-then based on configuration, it can set to low power or off.
-And hence I implemented suspend-enable for do nothing, suspend-disable 
-for complete off and suspend mode for setting modes for low power.
+Related codes don't exist in both http://nv-tegra.nvidia.com/gitweb
+and kernel org, any people know the address to locate these kernel
+source codes?
 
-> The actual bits setting up the ext_control look OK - can you split those
-> off from the bits implementing the suspend mode callbacks please so they
-> can be applied while the callbacks are reviewed?
->
-Yes, this will be easy to review also. I will split the change in two 
-parts, one for external control configuration and other for suspend modes.
-Based on above discussion/comment I will send the suspend mode support.
-
-> * Unknown Key
-> * 0x6E30FDDD
+Thanks
+barry
