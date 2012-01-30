@@ -1,59 +1,56 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Mon, 30 Jan 2012 11:08:19 +0100
-Message-ID: <4F266C13.5080302@atmel.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk> <20120124095009.GS16726@n2100.arm.linux.org.uk> <20120126212319.GE11941@n2100.arm.linux.org.uk> <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V4] regulator: tps65910: Sleep control through external
+ inputs
+Date: Mon, 30 Jan 2012 13:31:22 +0000
+Message-ID: <20120130133122.GE4882@opensource.wolfsonmicro.com>
+References: <1327743477-31512-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1327743477-31512-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: lrg-l0cyMroinI0@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/29/2012 12:57 AM, Olof Johansson :
-> Hi,
-> 
-> 
-> On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> 
-> 
->> And we're now there.  So...
->>
->> Arnd, Olaf,
->>
->> Please incorporate the latest ARM (for-armsoc branch) changes, which can be found at:
->>
->>        git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-arm.git for-armsoc
->>
->> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
-> 
-> Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc repo.
-> 
-> Any next/ branch we start will have this as the base of said branch,
-> so any vendor branches must either already be developed against this
-> stable branch, or merge on top of this with minimal conflicts.
 
-Ok, great.
+--gMR3gsNFwZpnI/Ts
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I just let you know that there is a conflict between the current Linus'
-tree (with recently updated at91 fixes) and this rmk/for-armsoc branch.
+On Sat, Jan 28, 2012 at 03:07:57PM +0530, Laxman Dewangan wrote:
+> Add support for sleep controls of different regulator through
+> external inputs EN1, EN2 or EN3.
+> Each regulator's output will be active when its external
+> input is high and turns to OFF/Low power mode when its
+> external input is low.
+> The configuration parameters for sleep control is provided through
+> board specific platform data.
 
-I can give you the resolution of this conflict easily but I would like
-to know which way I execute the merge:
+Applied, thanks.
 
-I use this rmk/for-armsoc as a baseline and merge the fixes already in
-Linus' tree on top of it or the other way around?
+--gMR3gsNFwZpnI/Ts
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Maybe it is preferable that I wait for 3.3-rc2 and merge rmk/for-armsoc
-on top of it. This result can be the base of our AT91 work for 3.4
-preparation.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Your thought?
+iQIcBAEBAgAGBQJPJpujAAoJEBus8iNuMP3dvgMP/ibQLpN7RwjUamWKuB7+ViC+
+g7sWj8MRmJ5wnqDMtraHaqTkNfGt7+UeNW8rN9G7Y1AvXEc4MhMA65Bb6wqzQMQk
+HqrI46y4N1U0TAsFmJAOlBOqqNX6uRwZRtDdA3E9pvKKe09aTo9lEtAQ0ahzpQNV
+qQon32HswvDaMCU6lhioflT4/EX79wrNRCM9PJlFFgPcspmhBtqzHaitCq3h0liy
+54Esx/up0qe0Gw5hPYGROhM4e4biP0nc3CDMh+XDcJ7M7WPucczIRz/pV5Ms67Ij
+Dnp4OiATOBqdlb5BhLZMl305lmpy0FmbRF9PNnLe5uQ8Mb1kc8BNJmph3EYhkxrl
+4Zw6OXSy0tqS2LBWpFEFWOmr0xK1ImJ6kGqiOPrdQLVcoj44lACIqp/s+TzLGgUh
+9IkzMvweETYpHLuO5umemJU4CccU8C8EODOOs6mNI1dfQRKuZx3FOLkPjGhhQjxV
+mp2oMnuPZdod3tlVyNT/HaXYyW9CTviz3YpTQ2S0MsE/rfBo+5R1X0qPQbKdK8sq
+ZnYztoL7KSPDUXkyL096yqTlNIi0XravoPjuDkwAOGc3y85V0dhdy9fYcOD2ZNhd
+UrBB4fD+LLgYQN722Kl3ZEnCAewTDzeY4q/wyzRwjMIyo4TR22h885XUlmYAPohz
+szgnyEScuIjtzXHfDEf6
+=oBo7
+-----END PGP SIGNATURE-----
 
-Best regards,
--- 
-Nicolas Ferre
+--gMR3gsNFwZpnI/Ts--
