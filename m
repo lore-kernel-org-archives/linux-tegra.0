@@ -1,44 +1,44 @@
-From: Daniel Lezcano <daniel.lezcano@free.fr>
-Subject: Re: [PATCH 0/3] coupled cpuidle state support
-Date: Tue, 31 Jan 2012 15:13:04 +0100
-Message-ID: <4F27F6F0.7010508@free.fr>
-References: <1324426147-16735-1-git-send-email-ccross@android.com> <4F1929E9.7070707@linaro.org> <CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com> <4F200BE2.2070301@free.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4F200BE2.2070301@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/8] Add tegra30 support for secondary cores
+Date: Tue, 31 Jan 2012 18:40:38 +0200
+Message-ID: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/25/2012 03:04 PM, Daniel Lezcano wrote:
-> On 01/20/2012 09:40 PM, Colin Cross wrote:
->> On Fri, Jan 20, 2012 at 12:46 AM, Daniel Lezcano
->> <daniel.lezcano@linaro.org>  wrote:
->>> Hi Colin,
->>>
->>> this patchset could be interesting to resolve in a generic way the cpu
->>> dependencies.
->>> What is the status of this patchset ?
->> I can't do much with it right now, because I don't have any devices
->> that can do SMP idle with a v3.2 kernel.  I've started working on an
->> updated version that avoids the spinlock, but it might be a while
->> before I can test and post it.  I'm mostly looking for feedback on the
->> approach taken in this patch, and whether it will be useful for other
->> SoCs besides Tegra and OMAP4.
->
-> Hi Colin,
->
-> I will be happy to test your patchset. Do you have a pointer to a more 
-> recent kernel ?
+This patchset introduces support for secondary cores on tegra30. It also
+introduces some functions for the flowcontroller and adds basic support for
+tegra30 powerdomains.
 
-Hi Colin,
+Peter De Schrijver (8):
+  ARM: tegra: export the chipid
+  ARM: tegra: functions to access the flowcontroller
+  ARM: tegra: rework Tegra secondary CPU core bringup
+  ARM: tegra: prepare powergate.c for multiple variants
+  ARM: tegra: export tegra_powergate_is_powered()
+  ARM: tegra: add support for Tegra30 powerdomains
+  ARM: tegra: support for Tegra30 CPU powerdomains
+  ARM: tegra: support for secondary cores on Tegra30
 
-sorry for bothering you. I am working on a cpuidle driver for an ARM SMP 
-board, I will be really happy to test your patchset and look how it fits 
-with the cpuidle driver.
+ arch/arm/mach-tegra/Makefile                 |    2 +
+ arch/arm/mach-tegra/common.c                 |    4 +
+ arch/arm/mach-tegra/flowctrl.c               |   62 ++++++++
+ arch/arm/mach-tegra/flowctrl.h               |    5 +
+ arch/arm/mach-tegra/fuse.c                   |   18 ++-
+ arch/arm/mach-tegra/fuse.h                   |    4 +
+ arch/arm/mach-tegra/headsmp.S                |  192 ++++++++++++++++++++++++-
+ arch/arm/mach-tegra/include/mach/iomap.h     |    3 +
+ arch/arm/mach-tegra/include/mach/powergate.h |   15 ++-
+ arch/arm/mach-tegra/platsmp.c                |  139 +++++++++++++------
+ arch/arm/mach-tegra/powergate.c              |   53 +++++++-
+ arch/arm/mach-tegra/reset.c                  |   84 +++++++++++
+ arch/arm/mach-tegra/reset.h                  |   50 +++++++
+ 13 files changed, 568 insertions(+), 63 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/flowctrl.c
+ create mode 100644 arch/arm/mach-tegra/reset.c
+ create mode 100644 arch/arm/mach-tegra/reset.h
 
-Thanks
-   -- Daniel
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
