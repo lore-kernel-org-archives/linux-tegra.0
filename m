@@ -1,50 +1,62 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/5] ASoC: ALC5632: Add device tree binding documentation
-Date: Tue, 31 Jan 2012 19:35:50 +0000
-Message-ID: <20120131193542.GC3429@opensource.wolfsonmicro.com>
-References: <1327994985-27101-1-git-send-email-leon@leon.nu>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/5] ASoC: Tegra+ALC5632 machine: Add device tree binding
+ documentation
+Date: Tue, 31 Jan 2012 19:38:14 +0000
+Message-ID: <20120131193810.GD3429@opensource.wolfsonmicro.com>
+References: <1327995040-27152-1-git-send-email-leon@leon.nu>
+ <74CDBE0F657A3D45AFBB94109FB122FF178E124438@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1327994985-27101-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E124438@HQMAIL01.nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Leon Romanovsky <leon@leon.nu>, "lrg@ti.com" <lrg@ti.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "olof@lixom.net" <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ctP54qlpMx3WjD+/
+--8w3uRX/HFJGApMzv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jan 31, 2012 at 09:29:45AM +0200, Leon Romanovsky wrote:
-> Document the device tree binding for the ALC5632 codec and update vendor
-> specific prefix for the Realtek.
+On Tue, Jan 31, 2012 at 09:52:42AM -0800, Stephen Warren wrote:
 
-Applied, thanks.
+> Hmm, actually the block diagram and "pin assignment" diagram are
+> inconsistent, e.g. AUX_OUTP+AUX_OUTN in the block diagram vs.
+> AUX_OUT+AUX_OUTN in the pin assignment, or PHONE_N (block diagram) vs.
+> PHONEN (pin assignments).
 
---ctP54qlpMx3WjD+/
+> Mark, do you care about this level of detail? I think we should use the
+> names in the pin assignments section if we do change this patch, but I
+> guess things are clear enough as it stands, so I'm not excessively
+> bothered.
+
+Not really, especially if the datasheet doesn't agree with itself.  This
+is the sort of thing that can vary between revisions of the datasheet
+anyway, so long as it's clear we should be fine.
+
+--8w3uRX/HFJGApMzv
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPKEKIAAoJEBus8iNuMP3dvtYP/Rw9cYMp9KMu9MwDDh0eoBJ9
-0aVuAGSyM2XzjTfuO5R1XiIJ8tHq58kzo5q+C/fO2HlxV4WefT58NKbjLZKh9k3V
-DLapgugqBBB7EjWveBTxwhFFpyKa/o8M9nwSzOGx2S1gA4ufAfyEohUyA42lPxWe
-4cXLIqD9dO+YJLJiseag4OpSQnqwQIGNPBOMiprcoxqMI6P5Ufuo5VctK9DwPyFs
-JEORnxzy3nm4rrvdOpFKg9+9JCNIuusbo5n8g7tfP3iFsrBZZpwdulgqVt9hhQDv
-FM4JBAGQkdnzlZegqGw087ll2SRuRAZ7xrwUiPDHfFCOY4aKtgGahf7OW8QCGsZq
-/ZWVm2zyTmF4jKK0MlJsbsyTWwOeenA+SArH1dTJWtnEIV5vjnYjx97HeAFePPDO
-OM4fQYRzHJVhWTbYJNNuuVJKaixRqFCDVgHfnJx+yjq3mvvFy8/ZwJEjOHrpBTLB
-yI+eYO3Xu4FI4w5b4INHdzxkgAzUkalHUTgBi3XLVZ3IW9VIxloA844LdWYe1luK
-x/kzlb/zyN46PC6QMnEOe/ci4wI2Cqz4I2E0kM3Cje3ABi0cYeTHjWlROM+QvQCj
-7DRMp12c4FPiAOtWzklC1ef1hdJer2/LZoNF6OZPkwrVkYHleSQo0wgPo792+b1I
-RQ71if/j2JUrrcVAX7Am
-=p10I
+iQIcBAEBAgAGBQJPKEMKAAoJEBus8iNuMP3dLJEP/0KCBDgv0igTEl8r3q32OQN3
+w/HY42ew56TaYTWSU+6IsKDLvjb9pJmUfLWq89yErAdAFlFu/1OPpz77f9mK5eSD
+1iYopDwMYPz7iT72llSm3RkmMot5DENV1ziScN5M56d0HZN5v7A8zEEMzLjUv8DQ
+zMQ0Trsh5/2mv5XLbZZhVKJLBOoLkgmUWFNdHlleTTbsYYJ3pGvtWHuakmbeXiYC
+7Svk9x2+KgFeiQZtCMKtxzku94te1D5Vd+ZkXVA+9Lw5SFpZ5vvUUX3+AaDe9nlq
+MR7HqgwAk84fWPDohJIkY5RgNHICX0v5ysxIKwHGAzIVwcCVyZXvLiOhE40j+uq+
+qAgkV+ZNpORsaL7p3hFoIgVYdeR4HfCtuXBS944DPo63NPiC5LtPwg3KU585IVu4
+z//0D+pxmFXlNDBbC07AlowW72GH4f1PsdSchCuIPX749L/YUEx/Dx3LubQxgwhX
+TVYD+rN+C+lm7nvCdYLb7tXHkFc0T3Q05pWCJKvwGOIoxAsmtrszwTKSKOrLYcTu
+COnjqT5q5OcV7iH8OuvZkdZWbiUTg0gE9TI2oMEPB3+CpGd5CsBAh5p4uADDPZkI
+dx+wcYWNnc1jnyU2DWYWi860WtrtFXdkVZHpy8QpxQhAVsNulCwIS3UCzo0PfeH0
+VHoUMAbnYtztuZxC6FBh
+=IYzD
 -----END PGP SIGNATURE-----
 
---ctP54qlpMx3WjD+/--
+--8w3uRX/HFJGApMzv--
