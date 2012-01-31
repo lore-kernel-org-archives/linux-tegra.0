@@ -1,77 +1,84 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 0/5] Add device tree support of audio
- (ALC5632) on PAZ00 board
-Date: Tue, 31 Jan 2012 19:42:54 +0000
-Message-ID: <20120131194249.GF3429@opensource.wolfsonmicro.com>
-References: <1327994757-26950-1-git-send-email-leon@leon.nu>
-	<74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 1/1] input: keyboard: Set configuration registers
+Date: Tue, 31 Jan 2012 11:47:35 -0800
+Message-ID: <20120131194735.GA22872@core.coreip.homeip.net>
+References: <1323415758-16822-1-git-send-email-srasal@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF1751860550@HQMAIL01.nvidia.com>
+ <3849551.l2KNPKMSmh@dtor-d630.eng.vmware.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF17518605E5@HQMAIL01.nvidia.com>
+ <20111230032559.GB17850@core.coreip.homeip.net>
+ <20120131190904.GA20672@core.coreip.homeip.net>
+ <74CDBE0F657A3D45AFBB94109FB122FF178E1244A2@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0353425297465316699=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E1244A2@HQMAIL01.nvidia.com>
+Sender: linux-input-owner@vger.kernel.org
 To: Stephen Warren <swarren@nvidia.com>
-Cc: "olof@lixom.net" <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Leon Romanovsky <leon@leon.nu>, "lrg@ti.com" <lrg@ti.com>
+Cc: Shridhar Rasal <srasal@nvidia.com>, "rydberg@euromail.se" <rydberg@euromail.se>, Rakesh Iyer <riyer@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jan 31, 2012 at 11:29:35AM -0800, Stephen Warren wrote:
+> Dmitry Torokhov wrote at Tuesday, January 31, 2012 12:09 PM:
+> > On Thu, Dec 29, 2011 at 07:25:59PM -0800, Dmitry Torokhov wrote:
+> > > On Fri, Dec 09, 2011 at 03:17:54PM -0800, Stephen Warren wrote:
+> > > > Dmitry Torokhov wrote at Friday, December 09, 2011 2:25 PM:
+> > > > > On Friday, December 09, 2011 12:10:43 PM Stephen Warren wrote:
+> > > > > > Shridhar Rasal wrote at Friday, December 09, 2011 12:29 AM:
+> > > > > > > To: dmitry.torokhov@gmail.com
+> > > > > > > Cc: rydberg@euromail.se; Stephen Warren; Rakesh Iyer;
+> > > > > > > linux-kernel@vger.kernel.org; linux- input@vger.kernel.org;
+> > > > > > > linux-tegra@vger.kernel.org; Shridhar Rasal Subject: [PATCH 1/1] input:
+> > > > > > > keyboard: Set configuration registers
+> > > > > > >
+> > > > > > > -Set only REQUIRED row and column configuration register to
+> > > > > > > PROPER values to avoid continuously generating KBC input events.
+> > > > > > > -Use *en* field in pin_cfg, to check GPIO_x_ROW_EN register
+> > > > > > > should be set or clear.
+> > > > > > >
+> > > > > > > Signed-off-by: Shridhar Rasal <srasal@nvidia.com>
+> > > > > >
+> > > > > > I wondered if num==0 could be used instead of a new en field, but 0 is a
+> > > > > > valid row/column number, so no. As such,
+> > > > > >
+> > > > > > Acked-by: Stephen Warren <swarren@nvidia.com>
+> > > > >
+> > > > > Can we pass in number of pin_cfg instances in pdata and simply do not
+> > > > > mention unneeded pins instead?
+> > > >
+> > > > IIUC, the array is currently a fixed size (based on the set of pins
+> > > > Supported by the KBC), hence that won't work; there's an entry for each
+> > > > pin saying which row/column it is.
+> > > >
+> > > > However, I suppose if we were to change the structure of the pdata to be:
+> > > >
+> > > > struct tegra_kbc_pin_cfg {
+> > > >     bool is_row;
+> > > >     u8 row_col_id;
+> > > >     u8 pin_id;
+> > > > };
+> > > >
+> > > > Then struct tegra_kbc_platform_data could indeed have a pointer to a
+> > > > variable-sized array of these, which would avoid the "en" member.
+> > > >
+> > >
+> > > How about we change bool to enum instead, like in the patch below?
+> > 
+> > *ping*
+> 
+> That's conceptually fine by me. I was assuming you were asking Rakesh...
 
---===============0353425297465316699==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uTRFFR9qmiCqR05s"
-Content-Disposition: inline
+Everyone... Anyone ;)
 
+> 
+> I'd rather PIN_CFG_IGNORE was the first enum, so it gets value 0, or this
+> probably won't solve the original issue?
 
---uTRFFR9qmiCqR05s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The benefit of current definition is that it is compatible with old
+ones using bool...
 
-On Tue, Jan 31, 2012 at 10:00:45AM -0800, Stephen Warren wrote:
+Thanks.
 
-> (Olof may wish to comment on whether he wishes the patches split up to
-> apply the Tegra/ASoC parts separately, or merge them into both trees,
-> to avoid any potential merge conflicts on the .dts files)
-
-I'm leaving the last two patches to see what Olof thinks; Leon, if you
-get to it first splitting the DTS file update from the patch updating
-the machine driver would avoid any issue.
-
---uTRFFR9qmiCqR05s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPKEPyAAoJEBus8iNuMP3dSqoP/2r/Z0Mc4PFvLzN6+k1Vimov
-nS2Eri1PFyzneio2C85cDhu/krbxO7pi1W6eHmFjqFCJM0AzvUsa8UB6AmRbfAz0
-GhcVPw9vV6mset1WVDjoXG0yBrbCamdU6qUZsfw1AkCeLjGQXe31d3b4hsJ1aZLW
-VAfP3FHdhRJb6dkmQiUQakM8O6x2yKOOInJSboDdWvEEXdEL3yXmXFsrSlmpX18r
-n/YFK/ddGKtSfiuRPREgjlfwDfgE1O8p/0pGmPVCjOnhTT9V1TFr0JxstNMl+ICu
-aaCLLVkm6fYg87aroH+5JWPu66ssY3LDjGn7atPuWxV/uvhqKnxWJScLq9TskGnR
-aTi5IrGNl52ymWOzxf29leLbL3uZJtZX2HSIIRjhaa0vfn4u7S4IFjb032QBhdXC
-QCpPeTjwBwIUNcP9cWmYZToSrcLH7d8Y4PuZfkzdSzJ9M3mWjvI1feHIiyWD63EE
-/O90zeMpWJDoEXzyssFc+8gIzmJn+ZE7VkHFpT6P3mlfaZ31sb73TXjw3cpji5Yx
-Q3TgWsI9QQw0Y+CjMHUoxO1rZhZqqw+jJcPTPAhV9YCc7A91Q5gzK3zVcwLg5wVQ
-l2qtRjIc/BKbucfC/Pbf+Xusf/p4pIQfeXtS6uWpxEMYvye72qQVb9ugHdHqYY4E
-416Znocs/YwxUWIThRmV
-=DsD2
------END PGP SIGNATURE-----
-
---uTRFFR9qmiCqR05s--
-
---===============0353425297465316699==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0353425297465316699==--
+-- 
+Dmitry
