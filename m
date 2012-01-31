@@ -1,31 +1,48 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/5] paz00 updates for 3.4
-Date: Mon, 30 Jan 2012 09:28:59 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124150@HQMAIL01.nvidia.com>
-References: <cover.1327776641.git.marvin24@gmx.de>
+From: Leon Romanovsky <leon@leon.nu>
+Subject: [PATCH 0/5] Add device tree support of audio (ALC5632)
+	on PAZ00 board
+Date: Tue, 31 Jan 2012 09:25:57 +0200
+Message-ID: <1327994757-26950-1-git-send-email-leon@leon.nu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1327776641.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: broonie@opensource.wolfsonmicro.com, lrg@ti.com, swarren@nvidia.com, alsa-devel@alsa-project.org, olof@lixom.net, linux-tegra@vger.kernel.org
+Cc: Leon Romanovsky <leon@leon.nu>
 List-Id: linux-tegra@vger.kernel.org
 
-Marc Dietrich wrote at Saturday, January 28, 2012 12:03 PM:
-...
-> Marc Dietrich (5):
->   ARM: tegra: paz00: fix wrong SD1 power gpio
->   ARM: tegra: paz00: fix wrong UART port on mini-pcie plug
->   ARM: dt: tegra: add ADT7461 temperature sensor to paz00 device tree
->   ARM: dt: tegra: add the power gpio key to paz00 device tree
->   ARM: dt: tegra: add the wifi led to paz00 device tree
+The following patchset is going to:
+	* add device tree support of audio (ALC5632) on PAZ00 board. 
+	* enable headset autodetection.
+	* enable headset microphone.
 
-Aside from the one comment I made, the series:
+---
+I will update the ALC5632 codec to routing names used in documentation, in the later patches,
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Leon Romanovsky (5):
+  ASoC: Tegra+ALC5632: Implement device tree support in board file
+  ASoC: ALC5632: Add device tree binding documentation
+  ASoC: Tegra+ALC5632 machine: Add device tree binding documentation
+  ASoC: dt: tegra: Enable headset autodetection on PAZ00 board.
+  ASoC: tegra: Remove unused DAPM route structure.
+
+ .../devicetree/bindings/sound/alc5632.txt          |   24 ++++
+ .../bindings/sound/tegra-audio-alc5632.txt         |   57 +++++++++
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ arch/arm/boot/dts/tegra-paz00.dts                  |    1 +
+ sound/soc/tegra/tegra_alc5632.c                    |  129 +++++++++++++++----
+ 5 files changed, 185 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/alc5632.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
 
 -- 
-nvpublic
+1.7.3.4
