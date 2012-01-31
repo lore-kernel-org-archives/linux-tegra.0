@@ -1,54 +1,91 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: [PATCH 5/5] ASoC: tegra: Remove unused DAPM route structure.
-Date: Tue, 31 Jan 2012 09:32:17 +0200
-Message-ID: <1327995137-27237-1-git-send-email-leon@leon.nu>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1] gpio: tps65910: Add sleep control support
+Date: Tue, 31 Jan 2012 14:15:12 +0530
+Message-ID: <1327999512-4935-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-All DAPM routes are configured via device tree, and there is no need in
-DAPM route structures in board file.
+The device tps65910/tps65911 supports the sleep
+functionality in some of gpios. If gpio is configured
+in output mode and sleep is enabled then during device
+sleep state, the output of gpio becomes LOW regardless
+of non-sleep output value.
+Such gpio can be used to control regulator switch such
+that output of regulator is off in device sleep state.
 
-Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra_alc5632.c |   16 ----------------
- 1 files changed, 0 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-tps65910.c |   16 ++++++++++++++++
+ include/linux/mfd/tps65910.h |    6 ++++++
+ 2 files changed, 22 insertions(+), 0 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index 1794139..c000f51 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -104,20 +104,6 @@ static const struct snd_soc_dapm_widget tegra_alc5632_dapm_widgets[] = {
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
- };
+diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
+index 91f45b9..ec7323a 100644
+--- a/drivers/gpio/gpio-tps65910.c
++++ b/drivers/gpio/gpio-tps65910.c
+@@ -69,6 +69,7 @@ static int tps65910_gpio_input(struct gpio_chip *gc, unsigned offset)
+ void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base)
+ {
+ 	int ret;
++	struct tps65910_board *board_data;
  
--static const struct snd_soc_dapm_route tegra_alc5632_audio_map[] = {
--	/* Internal Speaker */
--	{"Int Spk", NULL, "SPKOUT"},
--	{"Int Spk", NULL, "SPKOUTN"},
--
--	/* Headset Mic */
--	{"MIC1", NULL, "MICBIAS1"},
--	{"MICBIAS1", NULL, "Headset Mic"},
--
--	/* Headset Stereophone */
--	{"Headset Stereophone", NULL, "HPR"},
--	{"Headset Stereophone", NULL, "HPL"},
--};
--
- static const struct snd_kcontrol_new tegra_alc5632_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Int Spk"),
- };
-@@ -172,8 +158,6 @@ static struct snd_soc_card snd_soc_tegra_alc5632 = {
- 	.num_controls = ARRAY_SIZE(tegra_alc5632_controls),
- 	.dapm_widgets = tegra_alc5632_dapm_widgets,
- 	.num_dapm_widgets = ARRAY_SIZE(tegra_alc5632_dapm_widgets),
--	.dapm_routes = tegra_alc5632_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(tegra_alc5632_audio_map),
- 	.fully_routed = true,
- };
+ 	if (!gpio_base)
+ 		return;
+@@ -95,6 +96,21 @@ void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base)
+ 	tps65910->gpio.set		= tps65910_gpio_set;
+ 	tps65910->gpio.get		= tps65910_gpio_get;
  
++	/* Configure sleep control for gpios */
++	board_data = dev_get_platdata(tps65910->dev);
++	if (board_data) {
++		int i;
++		for (i = 0; i < tps65910->gpio.ngpio; ++i) {
++			if (board_data->en_gpio_sleep[i]) {
++				ret = tps65910_set_bits(tps65910,
++					TPS65910_GPIO0 + i, GPIO_SLEEP_MASK);
++				if (ret < 0)
++					dev_warn(tps65910->dev,
++						"GPIO Sleep setting failed\n");
++			}
++		}
++	}
++
+ 	ret = gpiochip_add(&tps65910->gpio);
+ 
+ 	if (ret)
+diff --git a/include/linux/mfd/tps65910.h b/include/linux/mfd/tps65910.h
+index fa6c6bf..b641690 100644
+--- a/include/linux/mfd/tps65910.h
++++ b/include/linux/mfd/tps65910.h
+@@ -657,6 +657,8 @@
+ 
+ 
+ /*Register GPIO  (0x80) register.RegisterDescription */
++#define GPIO_SLEEP_MASK                         0x80
++#define GPIO_SLEEP_SHIFT                        7
+ #define GPIO_DEB_MASK                           0x10
+ #define GPIO_DEB_SHIFT                          4
+ #define GPIO_PUEN_MASK                          0x08
+@@ -740,6 +742,9 @@
+ #define TPS65910_GPIO_STS				BIT(1)
+ #define TPS65910_GPIO_SET				BIT(0)
+ 
++/* Max number of TPS65910/11 GPIOs */
++#define TPS65911_NUM_GPIO				9
++
+ /* Regulator Index Definitions */
+ #define TPS65910_REG_VRTC				0
+ #define TPS65910_REG_VIO				1
+@@ -786,6 +791,7 @@ struct tps65910_board {
+ 	int irq_base;
+ 	int vmbch_threshold;
+ 	int vmbch2_threshold;
++	int en_gpio_sleep[TPS65911_NUM_GPIO];
+ 	unsigned long regulator_ext_sleep_control[TPS65910_NUM_REGS];
+ 	struct regulator_init_data *tps65910_pmic_init_data[TPS65910_NUM_REGS];
+ };
 -- 
-1.7.3.4
+1.7.1.1
