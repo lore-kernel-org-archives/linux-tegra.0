@@ -1,91 +1,35 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V1] gpio: tps65910: Add sleep control support
-Date: Tue, 31 Jan 2012 14:15:12 +0530
-Message-ID: <1327999512-4935-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH V1] arm: tegra: dma: not required to move requestor when
+ stopping.
+Date: Tue, 31 Jan 2012 16:32:48 +0530
+Message-ID: <4F27CA58.2020809@nvidia.com>
+References: <1327392649-27605-1-git-send-email-ldewangan@nvidia.com> <74CDBE0F657A3D45AFBB94109FB122FF178CB81E5F@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178CB81E5F-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The device tps65910/tps65911 supports the sleep
-functionality in some of gpios. If gpio is configured
-in output mode and sleep is enabled then during device
-sleep state, the output of gpio becomes LOW regardless
-of non-sleep output value.
-Such gpio can be used to control regulator switch such
-that output of regulator is off in device sleep state.
+On Wednesday 25 January 2012 02:27 AM, Stephen Warren wrote:
+> Laxman Dewangan wrote at Tuesday, January 24, 2012 1:11 AM:
+>> It is not require to move the requestor of dma to INVALID
+>> option before stopping dma.
+>>
+>> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> I know that Laxman has checked with the HW engineers, and they see no
+> reason to do this. I was originally worried about hung FIFOs preventing
+> an in-progress DMA from completely without the removed code, but according
+> to HW, that isn't a concern.
+>
+Olaf,
+Can it be applied if it is OK to you?
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpio-tps65910.c |   16 ++++++++++++++++
- include/linux/mfd/tps65910.h |    6 ++++++
- 2 files changed, 22 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
-index 91f45b9..ec7323a 100644
---- a/drivers/gpio/gpio-tps65910.c
-+++ b/drivers/gpio/gpio-tps65910.c
-@@ -69,6 +69,7 @@ static int tps65910_gpio_input(struct gpio_chip *gc, unsigned offset)
- void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base)
- {
- 	int ret;
-+	struct tps65910_board *board_data;
- 
- 	if (!gpio_base)
- 		return;
-@@ -95,6 +96,21 @@ void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base)
- 	tps65910->gpio.set		= tps65910_gpio_set;
- 	tps65910->gpio.get		= tps65910_gpio_get;
- 
-+	/* Configure sleep control for gpios */
-+	board_data = dev_get_platdata(tps65910->dev);
-+	if (board_data) {
-+		int i;
-+		for (i = 0; i < tps65910->gpio.ngpio; ++i) {
-+			if (board_data->en_gpio_sleep[i]) {
-+				ret = tps65910_set_bits(tps65910,
-+					TPS65910_GPIO0 + i, GPIO_SLEEP_MASK);
-+				if (ret < 0)
-+					dev_warn(tps65910->dev,
-+						"GPIO Sleep setting failed\n");
-+			}
-+		}
-+	}
-+
- 	ret = gpiochip_add(&tps65910->gpio);
- 
- 	if (ret)
-diff --git a/include/linux/mfd/tps65910.h b/include/linux/mfd/tps65910.h
-index fa6c6bf..b641690 100644
---- a/include/linux/mfd/tps65910.h
-+++ b/include/linux/mfd/tps65910.h
-@@ -657,6 +657,8 @@
- 
- 
- /*Register GPIO  (0x80) register.RegisterDescription */
-+#define GPIO_SLEEP_MASK                         0x80
-+#define GPIO_SLEEP_SHIFT                        7
- #define GPIO_DEB_MASK                           0x10
- #define GPIO_DEB_SHIFT                          4
- #define GPIO_PUEN_MASK                          0x08
-@@ -740,6 +742,9 @@
- #define TPS65910_GPIO_STS				BIT(1)
- #define TPS65910_GPIO_SET				BIT(0)
- 
-+/* Max number of TPS65910/11 GPIOs */
-+#define TPS65911_NUM_GPIO				9
-+
- /* Regulator Index Definitions */
- #define TPS65910_REG_VRTC				0
- #define TPS65910_REG_VIO				1
-@@ -786,6 +791,7 @@ struct tps65910_board {
- 	int irq_base;
- 	int vmbch_threshold;
- 	int vmbch2_threshold;
-+	int en_gpio_sleep[TPS65911_NUM_GPIO];
- 	unsigned long regulator_ext_sleep_control[TPS65910_NUM_REGS];
- 	struct regulator_init_data *tps65910_pmic_init_data[TPS65910_NUM_REGS];
- };
--- 
-1.7.1.1
+Thanks,
+Laxman
