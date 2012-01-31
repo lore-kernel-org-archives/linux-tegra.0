@@ -1,51 +1,77 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 3/5] ASoC: Tegra+ALC5632 machine: Add device tree binding
- documentation
-Date: Tue, 31 Jan 2012 19:39:17 +0000
-Message-ID: <20120131193912.GE3429@opensource.wolfsonmicro.com>
-References: <1327995040-27152-1-git-send-email-leon@leon.nu>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 0/5] Add device tree support of audio
+ (ALC5632) on PAZ00 board
+Date: Tue, 31 Jan 2012 19:42:54 +0000
+Message-ID: <20120131194249.GF3429@opensource.wolfsonmicro.com>
+References: <1327994757-26950-1-git-send-email-leon@leon.nu>
+	<74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1327995040-27152-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0353425297465316699=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: "olof@lixom.net" <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Leon Romanovsky <leon@leon.nu>, "lrg@ti.com" <lrg@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---r7U+bLA8boMOj+mD
+--===============0353425297465316699==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uTRFFR9qmiCqR05s"
+Content-Disposition: inline
+
+
+--uTRFFR9qmiCqR05s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jan 31, 2012 at 09:30:40AM +0200, Leon Romanovsky wrote:
-> Document device tree binding for the tegra board with ALC5632 codec
-> according to datasheet functional block description.
+On Tue, Jan 31, 2012 at 10:00:45AM -0800, Stephen Warren wrote:
 
-Applied, thanks.
+> (Olof may wish to comment on whether he wishes the patches split up to
+> apply the Tegra/ASoC parts separately, or merge them into both trees,
+> to avoid any potential merge conflicts on the .dts files)
 
---r7U+bLA8boMOj+mD
+I'm leaving the last two patches to see what Olof thinks; Leon, if you
+get to it first splitting the DTS file update from the patch updating
+the machine driver would avoid any issue.
+
+--uTRFFR9qmiCqR05s
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPKENaAAoJEBus8iNuMP3dEBgP/j2B21NuLtVFGm0diOjJSM0E
-Dm3JfF/1kVN/X9Hd262jCHWwACodI0Ko8Ae4afI4YdV9Z3FKM/s3NQe75sh/MTzP
-sP+xfkCYvuS+BVIoTl2MdlEri2kBOjC51NzJ1HpuVmu+f/j6hxjyiHba5wCXXIjP
-EmRK6REWx3CRl3Gbety0xJb5m9XWm4HYSVRyFMt1tegj9NL11JpOp61UlqAqdBzJ
-CBffRuQPGTOj4wubeSm557rW80KH3X8Uj3VeVP/HT+LXwmYwEC4EDhrJiMlAQ7Nk
-Dd3WIOtFiOHY5wMwKAozXE6KiA8p5mNtY8QoisvH0A1YGWoO0f0o9/R+cjKBqWw3
-hIu/3erEk8pGM7RAhSzfmjF2tgR25Rd1yd72ImqGz8eVRP5p2BgsAAqhAgsQl8c5
-8oQTfQo5wSLlntJRys9HcPbrETggGxz2dO+jqOa4KGvhoWMACMdO4sjL5QqPqnKa
-pmYrTR4TbI5/0lAJdSVMZeGBkWPvCquvWx9vK1I8Ksjly6d0q3r2m7Ktq1ED7sF2
-h6YUb0eWNopd9tXNEOn2LJxOKOI+6kKwtfcVjBKfUyz6CA3l9Si24RQ2Gfc0N1WP
-YFMVIo5ps0AAwIwpd//w96ASmMcM9ZGJx5lqdzQlNGuZdACX97+lWbHL5KojdTAO
-WHxmEk0N4D1y2uy1OA90
-=4XvP
+iQIcBAEBAgAGBQJPKEPyAAoJEBus8iNuMP3dSqoP/2r/Z0Mc4PFvLzN6+k1Vimov
+nS2Eri1PFyzneio2C85cDhu/krbxO7pi1W6eHmFjqFCJM0AzvUsa8UB6AmRbfAz0
+GhcVPw9vV6mset1WVDjoXG0yBrbCamdU6qUZsfw1AkCeLjGQXe31d3b4hsJ1aZLW
+VAfP3FHdhRJb6dkmQiUQakM8O6x2yKOOInJSboDdWvEEXdEL3yXmXFsrSlmpX18r
+n/YFK/ddGKtSfiuRPREgjlfwDfgE1O8p/0pGmPVCjOnhTT9V1TFr0JxstNMl+ICu
+aaCLLVkm6fYg87aroH+5JWPu66ssY3LDjGn7atPuWxV/uvhqKnxWJScLq9TskGnR
+aTi5IrGNl52ymWOzxf29leLbL3uZJtZX2HSIIRjhaa0vfn4u7S4IFjb032QBhdXC
+QCpPeTjwBwIUNcP9cWmYZToSrcLH7d8Y4PuZfkzdSzJ9M3mWjvI1feHIiyWD63EE
+/O90zeMpWJDoEXzyssFc+8gIzmJn+ZE7VkHFpT6P3mlfaZ31sb73TXjw3cpji5Yx
+Q3TgWsI9QQw0Y+CjMHUoxO1rZhZqqw+jJcPTPAhV9YCc7A91Q5gzK3zVcwLg5wVQ
+l2qtRjIc/BKbucfC/Pbf+Xusf/p4pIQfeXtS6uWpxEMYvye72qQVb9ugHdHqYY4E
+416Znocs/YwxUWIThRmV
+=DsD2
 -----END PGP SIGNATURE-----
 
---r7U+bLA8boMOj+mD--
+--uTRFFR9qmiCqR05s--
+
+--===============0353425297465316699==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0353425297465316699==--
