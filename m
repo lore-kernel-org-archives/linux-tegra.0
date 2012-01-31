@@ -1,56 +1,44 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 3/5] ASoC: Tegra+ALC5632 machine: Add device tree binding
- documentation
-Date: Tue, 31 Jan 2012 11:53:02 +0000
-Message-ID: <20120131115302.GF18444@opensource.wolfsonmicro.com>
-References: <1327995040-27152-1-git-send-email-leon@leon.nu>
- <20120131112706.GE18444@opensource.wolfsonmicro.com>
- <CALq1K=JbPspu2ShkfgcvQ_+cw6kxZNxe_zUdwrz3Sfn3YFv_rg@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@free.fr>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Tue, 31 Jan 2012 15:13:04 +0100
+Message-ID: <4F27F6F0.7010508@free.fr>
+References: <1324426147-16735-1-git-send-email-ccross@android.com> <4F1929E9.7070707@linaro.org> <CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com> <4F200BE2.2070301@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2FkSFaIQeDFoAt0B"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CALq1K=JbPspu2ShkfgcvQ_+cw6kxZNxe_zUdwrz3Sfn3YFv_rg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F200BE2.2070301@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@lists.linux-foundation.org, Len Brown <len.brown@intel.com>, Kevin Hilman <khilman@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Amit Kucheria <amit.kucheria@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/25/2012 03:04 PM, Daniel Lezcano wrote:
+> On 01/20/2012 09:40 PM, Colin Cross wrote:
+>> On Fri, Jan 20, 2012 at 12:46 AM, Daniel Lezcano
+>> <daniel.lezcano@linaro.org>  wrote:
+>>> Hi Colin,
+>>>
+>>> this patchset could be interesting to resolve in a generic way the cpu
+>>> dependencies.
+>>> What is the status of this patchset ?
+>> I can't do much with it right now, because I don't have any devices
+>> that can do SMP idle with a v3.2 kernel.  I've started working on an
+>> updated version that avoids the spinlock, but it might be a while
+>> before I can test and post it.  I'm mostly looking for feedback on the
+>> approach taken in this patch, and whether it will be useful for other
+>> SoCs besides Tegra and OMAP4.
+>
+> Hi Colin,
+>
+> I will be happy to test your patchset. Do you have a pointer to a more 
+> recent kernel ?
 
---2FkSFaIQeDFoAt0B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Colin,
 
-On Tue, Jan 31, 2012 at 01:51:43PM +0200, Leon Romanovsky wrote:
-> On Tue, Jan 31, 2012 at 13:27, Mark Brown
+sorry for bothering you. I am working on a cpuidle driver for an ARM SMP 
+board, I will be really happy to test your patchset and look how it fits 
+with the cpuidle driver.
 
-> > This should really be more detailed, mentioning the CODEC.
-
-> Can it be done in followup patch ? or do I need resend them all ?
-
-Followup.
-
---2FkSFaIQeDFoAt0B
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPJ9YTAAoJEBus8iNuMP3d648P/3plWOOkSYyeNWK0fRg6WRph
-T9dSL9/L/Y5T+JtK/bzEZNfDftIJRF1UeOHObXfexnPcA5eNNhBzcjio2+PPkJFJ
-faPf199MzspxEZ84m2mTOiTcPSGfRQ/fkHZyMXVi+kN3MkHSsbpp2S+lLYNcwWKf
-j6+sGtTHuw9++hmV5spiJwcMlPk+ROy+C1C1BKcS5NgBnloQ1+isPFzhwhYgVbCk
-1tv2mvQPpvuiwZr4SNdftg3JAVxHF6hmmBTSF0/VBMzi/2gRrbEo67gWspWF2ui9
-E2CCsejy8PnMLBE7bof2ilPdF/t44qgMFAE7uyWJIq/pmXQHHq85sM+17tZBtLJh
-62bFmbTGEa/X3MchdTpH6oDH2+OtSUjStzfr3WneCn/cgRT3usZxA02ulKU3Q63C
-kxmntGYDXmctjep2jgf+R03dAvQUKdbl/1hpvd7nh6R2qa+QG8Fv2RiaQmX156M+
-6EphTr7DvQXz8uR14Ye47f1dlm3lMh9dODScoi0U6SP6x7a5ZXj5qPJBCpIkHugv
-EGinkzLMxM0XP0AsDmbLu/RaG7mFLeVUBQnu2LNffc6OzDJhJmGF8S/U8nscHnLN
-d6qxwH4ZU/yYbeWMWMFKDGDhvHzDfDNfwWwpw4VSrMMID/o/46+3QV+hyxCGZGRO
-R7YybyZLebIjBUXlf7Ny
-=EOo5
------END PGP SIGNATURE-----
-
---2FkSFaIQeDFoAt0B--
+Thanks
+   -- Daniel
