@@ -1,57 +1,32 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH 3/5] ASoC: Tegra+ALC5632 machine: Add device tree
- binding documentation
-Date: Tue, 31 Jan 2012 09:52:42 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124438@HQMAIL01.nvidia.com>
-References: <1327995040-27152-1-git-send-email-leon@leon.nu>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/5] Add device tree support of audio (ALC5632) on PAZ00
+ board
+Date: Tue, 31 Jan 2012 10:00:45 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
+References: <1327994757-26950-1-git-send-email-leon@leon.nu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1327995040-27152-1-git-send-email-leon@leon.nu>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1327994757-26950-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
 Content-Language: en-US
-Sender: linux-doc-owner@vger.kernel.org
-To: Leon Romanovsky <leon@leon.nu>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "lrg@ti.com" <lrg@ti.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "olof@lixom.net" <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Leon Romanovsky wrote at Tuesday, January 31, 2012 12:31 AM:
-> Document device tree binding for the tegra board with ALC5632 codec
-> according to datasheet functional block description.
+Leon Romanovsky wrote at Tuesday, January 31, 2012 12:26 AM:
+> The following patchset is going to:
+> 	* add device tree support of audio (ALC5632) on PAZ00 board.
+> 	* enable headset autodetection.
+> 	* enable headset microphone.
 
-> diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
+Aside from the issue I already comment on, the series:
 
-> +  ALC5632 pins:
-> +
-> +  * SPK_OUTP
-> +  * SPK_OUTN
-> +  * HP_OUT_L
-> +  * HP_OUT_R
-> +  * AUX_OUT_P
-> +  * AUX_OUT_N
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Sorry this is picky, but those are AUX_OUTP and AUX_OUTN in the block
-diagram in the datasheet; only 1 underscore in the name.
-
-Hmm, actually the block diagram and "pin assignment" diagram are
-inconsistent, e.g. AUX_OUTP+AUX_OUTN in the block diagram vs.
-AUX_OUT+AUX_OUTN in the pin assignment, or PHONE_N (block diagram) vs.
-PHONEN (pin assignments).
-
-Mark, do you care about this level of detail? I think we should use the
-names in the pin assignments section if we do change this patch, but I
-guess things are clear enough as it stands, so I'm not excessively
-bothered.
-
-> +  * LINE_IN_L
-> +  * LINE_IN_R
-> +  * PHONE_P
-> +  * PHONE_N
-> +  * MIC1_P
-> +  * MIC1_N
-> +  * MIC2_P
-> +  * MIC2_N
-> +  * MICBIAS1
+(Olof may wish to comment on whether he wishes the patches split up to
+apply the Tegra/ASoC parts separately, or merge them into both trees,
+to avoid any potential merge conflicts on the .dts files)
 
 -- 
 nvpublic
-
