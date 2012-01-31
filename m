@@ -1,109 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V1] gpio: tps65910: Add sleep control support
-Date: Tue, 31 Jan 2012 22:31:08 +0100
-Message-ID: <CACRpkdZ-1VBkZN71eFqaxVi5dakP4Dt3yXLa9TTdrKE=dGq__w@mail.gmail.com>
-References: <1327999512-4935-1-git-send-email-ldewangan@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/8] ARM: tegra: rework Tegra secondary CPU core
+	bringup
+Date: Tue, 31 Jan 2012 22:50:45 +0000
+Message-ID: <20120131225045.GE8338@n2100.arm.linux.org.uk>
+References: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com> <1328028051-24271-4-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327999512-4935-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1328028051-24271-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 31, 2012 at 9:45 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
- wrote:
-
-> The device tps65910/tps65911 supports the sleep
-> functionality in some of gpios. If gpio is configured
-> in output mode and sleep is enabled then during device
-> sleep state, the output of gpio becomes LOW regardless
-> of non-sleep output value.
-> Such gpio can be used to control regulator switch such
-> that output of regulator is off in device sleep state.
->
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Strictly speaking this is pin control business, but since it is already
-doing other stuff like this from platform data why not...
-
-Comments:
-
-> diff --git a/include/linux/mfd/tps65910.h b/include/linux/mfd/tps6591=
-0.h
-> index fa6c6bf..b641690 100644
-> --- a/include/linux/mfd/tps65910.h
-> +++ b/include/linux/mfd/tps65910.h
-> @@ -657,6 +657,8 @@
->
->
-> =A0/*Register GPIO =A0(0x80) register.RegisterDescription */
-> +#define GPIO_SLEEP_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 0x80
-> +#define GPIO_SLEEP_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A07
-> =A0#define GPIO_DEB_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 0x10
-> =A0#define GPIO_DEB_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A04
-> =A0#define GPIO_PUEN_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A00x08
-> @@ -740,6 +742,9 @@
-> =A0#define TPS65910_GPIO_STS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0BIT(1)
-> =A0#define TPS65910_GPIO_SET =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0BIT(0)
->
-> +/* Max number of TPS65910/11 GPIOs */
-> +#define TPS65911_NUM_GPIO =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A09
-
-Then name it TPS_6591X_MAX_NUM_GPIO
-
-I would write:
-
-#define TPS65910_NUM_GPIO 6
-#define TPS65911_NUM_GPIO 9
-#define TPS6591X_MAX_NUM_GPIO 9
-
-And then also refactor this code in the driver:
-
-        switch(tps65910_chip_id(tps65910)) {
-        case TPS65910:
-                tps65910->gpio.ngpio    =3D 6;
-                break;
-        case TPS65911:
-                tps65910->gpio.ngpio    =3D 9;
-                break;
-        default:
-                return;
-
-to use the new defines instead of magic numbers while
-you're at it.
-
+On Tue, Jan 31, 2012 at 06:40:41PM +0200, Peter De Schrijver wrote:
+> +ENTRY(__tegra_cpu_reset_handler_start)
 > +
-> =A0/* Regulator Index Definitions */
-> =A0#define TPS65910_REG_VRTC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A00
-> =A0#define TPS65910_REG_VIO =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 1
-> @@ -786,6 +791,7 @@ struct tps65910_board {
-> =A0 =A0 =A0 =A0int irq_base;
-> =A0 =A0 =A0 =A0int vmbch_threshold;
-> =A0 =A0 =A0 =A0int vmbch2_threshold;
-> + =A0 =A0 =A0 int en_gpio_sleep[TPS65911_NUM_GPIO];
+> +/*
+> + * __tegra_cpu_reset_handler:
+> + *
+> + * Common handler for all CPU reset events.
+> + *
+> + * Register usage within the reset handler:
+> + *
+> + *      R7  = CPU present (to the OS) mask
+> + *      R8  = CPU in LP1 state mask
+> + *      R9  = CPU in LP2 state mask
+> + *      R10 = CPU number
+> + *      R11 = CPU mask
+> + *      R12 = pointer to reset handler data
+> + *
+> + * NOTE: This code is copied to IRAM. All code and data accesses
+> + *       must be position-independent.
+> + */
+> +
+> +	.align L1_CACHE_SHIFT
+> +ENTRY(__tegra_cpu_reset_handler)
+> +
+> +#if DEBUG_CPU_RESET_HANDLER
+> +	enable_coresight r0
+> +	b	.
+> +#endif
+> +	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
+> +	mrc	p15, 0, r0, c0, c0, 0		@ read main ID register
+> +	and	r5, r0, #0x00f00000		@ variant
+> +	and	r6, r0, #0x0000000f		@ revision
+> +	orr	r6, r6, r5, lsr #20-4		@ combine variant and revision
+> +#ifdef CONFIG_ARM_ERRATA_743622
+> +	teq	r6, #0x20			@ present in r2p0
+> +	teqne	r6, #0x21			@ present in r2p1
+> +	teqne	r6, #0x22			@ present in r2p2
+> +	teqne	r6, #0x27			@ present in r2p7
+> +	teqne	r6, #0x29			@ present in r2p9
 
-This is used as a bool so use bool.
+Okay, so we have this errata in proc-v7.S, but only for p0..p2.  If
+it's also p7 and p9, then it shows that the errata in the kernel aren't
+being actively maintained, and brings into question their worth.
 
-> =A0 =A0 =A0 =A0unsigned long regulator_ext_sleep_control[TPS65910_NUM=
-_REGS];
-> =A0 =A0 =A0 =A0struct regulator_init_data *tps65910_pmic_init_data[TP=
-S65910_NUM_REGS];
-> =A0};
-> --
-> 1.7.1.1
+Plus, of course, we don't want platforms re-implementing the errata
+in their own code if we're already implementing it somewhere in the
+kernel.  So, that's something which needs to be thought about.
 
-Thanks,
-Linus Walleij
+That's something that needs considering along side the whole 'what
+to do about errata when running in non-secure mode' problem which
+OMAP suffers from.
+
+> +	mrceq	p15, 0, r10, c15, c0, 1		@ read diagnostic register
+> +	orreq	r10, r10, #1 << 6		@ set bit #6
+> +	mcreq	p15, 0, r10, c15, c0, 1		@ write diagnostic register
+> +#endif
