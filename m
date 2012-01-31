@@ -1,32 +1,42 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/5] Add device tree support of audio (ALC5632) on PAZ00
- board
-Date: Tue, 31 Jan 2012 10:00:45 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
-References: <1327994757-26950-1-git-send-email-leon@leon.nu>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH v2 3/5] ARM: dt: tegra: add ADT7461 temperature sensor to paz00 device tree
+Date: Tue, 31 Jan 2012 19:53:21 +0100
+Message-ID: <9421201.72pNsFM5zn@ax5200p>
+References: <cover.1327776641.git.marvin24@gmx.de> <58e24ac63a8388bb9de6be0e75cea26a1af99195.1327776641.git.marvin24@gmx.de> <74CDBE0F657A3D45AFBB94109FB122FF178E12414D@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327994757-26950-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E12414D-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Leon Romanovsky wrote at Tuesday, January 31, 2012 12:26 AM:
-> The following patchset is going to:
-> 	* add device tree support of audio (ALC5632) on PAZ00 board.
-> 	* enable headset autodetection.
-> 	* enable headset microphone.
+Add the ADT7461 temperature monitoring IC which is connected via
+the DVC controller.
 
-Aside from the issue I already comment on, the series:
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-paz00.dts |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-(Olof may wish to comment on whether he wishes the patches split up to
-apply the Tegra/ASoC parts separately, or merge them into both trees,
-to avoid any potential merge conflicts on the .dts files)
-
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-
+paz00.dts
+index f667343..81e1d30 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -35,6 +35,11 @@
+ 
+        i2c@7000d000 {
+                clock-frequency = <400000>;
++
++               adt7461@4c {
++                       compatible = "adi,adt7461";
++                       reg = <0x4c>;
++               };
+        };
+ 
+        i2s@70002800 {
 -- 
-nvpublic
+1.7.5.4
