@@ -1,79 +1,40 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: Re: [PATCH 5/5] ASoC: tegra: Remove unused DAPM route structure.
-Date: Wed, 1 Feb 2012 08:47:35 +0200
-Message-ID: <CALq1K=J+GroRmHuXunjW=629bwfCOkLTSFZB3i_nNVMHeY-iHg@mail.gmail.com>
-References: <1327995137-27237-1-git-send-email-leon@leon.nu>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH V1] arm: tegra: dma: not required to move requestor when
+ stopping.
+Date: Tue, 31 Jan 2012 23:09:18 -0800
+Message-ID: <20120201070918.GA7399@quad.lixom.net>
+References: <1327392649-27605-1-git-send-email-ldewangan@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF178CB81E5F@HQMAIL01.nvidia.com>
+ <4F27CA58.2020809@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327995137-27237-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F27CA58.2020809-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 31, 2012 at 09:32, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org> wrote:
-> All DAPM routes are configured via device tree, and there is no need =
-in
-> DAPM route structures in board file.
->
-> Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-> ---
-> =C2=A0sound/soc/tegra/tegra_alc5632.c | =C2=A0 16 ----------------
-> =C2=A01 files changed, 0 insertions(+), 16 deletions(-)
->
-> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_=
-alc5632.c
-> index 1794139..c000f51 100644
-> --- a/sound/soc/tegra/tegra_alc5632.c
-> +++ b/sound/soc/tegra/tegra_alc5632.c
-> @@ -104,20 +104,6 @@ static const struct snd_soc_dapm_widget tegra_al=
-c5632_dapm_widgets[] =3D {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0SND_SOC_DAPM_MIC("Headset Mic", NULL),
-> =C2=A0};
->
-> -static const struct snd_soc_dapm_route tegra_alc5632_audio_map[] =3D=
- {
-> - =C2=A0 =C2=A0 =C2=A0 /* Internal Speaker */
-> - =C2=A0 =C2=A0 =C2=A0 {"Int Spk", NULL, "SPKOUT"},
-> - =C2=A0 =C2=A0 =C2=A0 {"Int Spk", NULL, "SPKOUTN"},
-> -
-> - =C2=A0 =C2=A0 =C2=A0 /* Headset Mic */
-> - =C2=A0 =C2=A0 =C2=A0 {"MIC1", NULL, "MICBIAS1"},
-> - =C2=A0 =C2=A0 =C2=A0 {"MICBIAS1", NULL, "Headset Mic"},
-> -
-> - =C2=A0 =C2=A0 =C2=A0 /* Headset Stereophone */
-> - =C2=A0 =C2=A0 =C2=A0 {"Headset Stereophone", NULL, "HPR"},
-> - =C2=A0 =C2=A0 =C2=A0 {"Headset Stereophone", NULL, "HPL"},
-> -};
-> -
-> =C2=A0static const struct snd_kcontrol_new tegra_alc5632_controls[] =3D=
- {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0SOC_DAPM_PIN_SWITCH("Int Spk"),
-> =C2=A0};
-> @@ -172,8 +158,6 @@ static struct snd_soc_card snd_soc_tegra_alc5632 =
-=3D {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0.num_controls =3D ARRAY_SIZE(tegra_alc5632=
-_controls),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0.dapm_widgets =3D tegra_alc5632_dapm_widge=
-ts,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0.num_dapm_widgets =3D ARRAY_SIZE(tegra_alc=
-5632_dapm_widgets),
-> - =C2=A0 =C2=A0 =C2=A0 .dapm_routes =3D tegra_alc5632_audio_map,
-> - =C2=A0 =C2=A0 =C2=A0 .num_dapm_routes =3D ARRAY_SIZE(tegra_alc5632_=
-audio_map),
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0.fully_routed =3D true,
-> =C2=A0};
->
-> --
-> 1.7.3.4
->
+On Tue, Jan 31, 2012 at 04:32:48PM +0530, Laxman Dewangan wrote:
+> On Wednesday 25 January 2012 02:27 AM, Stephen Warren wrote:
+> >Laxman Dewangan wrote at Tuesday, January 24, 2012 1:11 AM:
+> >>It is not require to move the requestor of dma to INVALID
+> >>option before stopping dma.
+> >>
+> >>Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >Acked-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >Tested-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> >I know that Laxman has checked with the HW engineers, and they see no
+> >reason to do this. I was originally worried about hung FIFOs preventing
+> >an in-progress DMA from completely without the removed code, but according
+> >to HW, that isn't a concern.
+> >
+> Olaf,
+> Can it be applied if it is OK to you?
 
-Please don't apply it. I will resend it.
+Yep, applied.
 
 
-
---=20
-Leon Romanovsky | Independent Linux Consultant
-=C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0www.leon.nu=C2=A0| leon-2ukJVAZIZ/Y@public.gmane.org
+-Olof
