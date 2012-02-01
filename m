@@ -1,114 +1,36 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH 0/3] coupled cpuidle state support
-Date: Wed, 1 Feb 2012 18:07:05 +0000
-Message-ID: <20120201180705.GA20936@e102568-lin.cambridge.arm.com>
-References: <1324426147-16735-1-git-send-email-ccross@android.com>
-	<4F1929E9.7070707@linaro.org>
-	<CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com>
-	<CAKfTPtAsO8z_8AnR8zSGZ9cm_7orDNxB3r09JAFk+2jdezUVmQ@mail.gmail.com>
-	<CAMbhsRQYVXTZ2pX4mBrM6=SyGTqn_GY8xsW4rt_e21zerEzctA@mail.gmail.com>
-	<CAKfTPtB3Kcy41H9g9u3u81kEHJeypi=GvOfOjcpdztzqN991nA@mail.gmail.com>
-	<20120201145934.GA20421@e102568-lin.cambridge.arm.com>
-	<CAMbhsRTFzc8aGsSGUs2==4FiqBb7zOit4cO=6U698k+RCE+kqQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: tegra: Switch to new pinctrl driver
+Date: Wed, 1 Feb 2012 21:11:55 +0100
+Message-ID: <CACRpkdZ76PamNGOuhuqNvMx9k6hRR2MD2L7sJnv7nU_A45Yypg@mail.gmail.com>
+References: <1327083746-31430-1-git-send-email-swarren@nvidia.com>
+	<1327083746-31430-3-git-send-email-swarren@nvidia.com>
+	<CACRpkdZ_hBviswq7pXoLozC8gjzvowCBrj9yjw1xJT79b5rtwQ@mail.gmail.com>
+	<20120201082011.GK7399@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <CAMbhsRTFzc8aGsSGUs2==4FiqBb7zOit4cO=6U698k+RCE+kqQ@mail.gmail.com>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Colin Cross <ccross@android.com>
-Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Arjan van de Ven <arjan@linux.intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120201082011.GK7399-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 01, 2012 at 05:30:15PM +0000, Colin Cross wrote:
-> On Wed, Feb 1, 2012 at 6:59 AM, Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com> wrote:
-> > On Wed, Feb 01, 2012 at 12:13:26PM +0000, Vincent Guittot wrote:
-> >
-> > [...]
-> >
-> >> >> In your patch, you put in safe state (WFI for most of platform) the
-> >> >> cpus that become idle and these cpus are woken up each time a new cpu
-> >> >> of the cluster becomes idle. Then, the cluster state is chosen and the
-> >> >> cpus enter the selected C-state. On ux500, we are using another
-> >> >> behavior for synchronizing  the cpus. The cpus are prepared to enter
-> >> >> the c-state that has been chosen by the governor and the last cpu,
-> >> >> that enters idle, chooses the final cluster state (according to cpus'
-> >> >> C-state). The main advantage of this solution is that you don't need
-> >> >> to wake other cpus to enter the C-state of a cluster. This can be
-> >> >> quite worth full when tasks mainly run on one cpu. Have you also think
-> >> >> about such behavior when developing the coupled cpuidle driver ? It
-> >> >> could be interesting to add such behavior.
-> >> >
-> >> > Waking up the cpus that are in the safe state is not done just to
-> >> > choose the target state, it's done to allow the cpus to take
-> >> > themselves to the target low power state.  On ux500, are you saying
-> >> > you take the cpus directly from the safe state to a lower power state
-> >> > without ever going back to the active state?  I once implemented Tegra
-> >>
-> >> yes it is
-> >
-> > But if there is a single power rail for the entire cluster, when a CPU
-> > is "prepared" for shutdown this means that you have to save the context and
-> > clean L1, maybe for nothing since if other CPUs are up and running the
-> > CPU going idle can just enter a simple standby wfi (clock-gated but power on).
-> >
-> > With Colin's approach, context is saved and L1 cleaned only when it is
-> > almost certain the cluster is powered off (so the CPUs).
-> >
-> > It is a trade-off, I am not saying one approach is better than the
-> > other; we just have to make sure that preparing the CPU for "possible" shutdown
-> > is better than sending IPIs to take CPUs out of wfi and synchronize
-> > them (this happens if and only if CPUs enter coupled C-states).
-> >
-> > As usual this will depend on use cases (and silicon implementations :) )
-> >
-> > It is definitely worth benchmarking them.
-> >
-> 
-> I'm less worried about performance, and more worried about race
-> conditions.  How do you deal with the following situation:
-> CPU0 goes to WFI, and saves its state
-> CPU1 goes idle, and selects a deep idle state that powers down CPU0
-> CPU1 saves is state, and is about to trigger the power down
-> CPU0 gets an interrupt, restores its state, and modifies state (maybe
-> takes a spinlock during boot)
-> CPU1 cuts the power to CPU0
-> 
-> On OMAP4, the race is handled in hardware.  When CPU1 tries to cut the
-> power to the blocks shared by CPU0 the hardware will ignore the
-> request if CPU0 is not in WFI.  On Tegra2, there is no hardware
-> support and I had to handle it with a spinlock implemented in scratch
-> registers because CPU0 is out of coherency when it starts booting and
-> ldrex/strex don't work.  I'm not convinced my implementation is
-> correct, and I'd be curious to see any other implementations.
+On Wed, Feb 1, 2012 at 9:20 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
 
-That's a problem you solved with coupled C-states (ie your example in
-the cover letter), where the primary waits for other CPUs to be reset
-before issuing the power down command, right ? At that point in time 
-secondaries cannot wake up (?) and if wfi (ie power down) aborts you just
-take the secondaries out of reset and restart executing simultaneously,
-correct ? It mirrors the suspend behaviour, which is easier to deal with
-than completely random idle paths.
+> This series is:
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 
-It is true that this should be managed by the PM HW; if HW is not
-capable of managing these situations things get nasty as you highlighted.
+OK that's great!
 
-And it is also true ldrex/strex on cacheable memory might not be available in
-those early warm-boot stages. I came up with a locking algorithm on
-strongly ordered memory to deal with that, but I am still not sure it is
-something we really really need.
+> can you land this series in a stable branch in
+> your tree that you promise not to rebase between now and upstream
+> submission?
 
-I will test coupled C-state code ASAP, and come back with feedback.
+I thinkso, I rebased to some fixes from -rc2 today but no need to
+do that again, there is one bug fix which may end up in both
+mainline and my tree but whatever, git will cope.
 
-Thanks,
-Lorenzo
+However I am waiting for Stephen to do some fixes and arrive
+at a final version first.
+
+Linus Walleij
