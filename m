@@ -1,33 +1,57 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 0/5] Add device tree support of audio (ALC5632) on PAZ00
- board
-Date: Tue, 31 Jan 2012 23:12:43 -0800
-Message-ID: <20120201071243.GB7399@quad.lixom.net>
-References: <1327994757-26950-1-git-send-email-leon@leon.nu>
- <74CDBE0F657A3D45AFBB94109FB122FF178E124441@HQMAIL01.nvidia.com>
- <20120131194249.GF3429@opensource.wolfsonmicro.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 2/8] ARM: tegra: functions to access the flowcontroller
+Date: Tue, 31 Jan 2012 23:26:17 -0800
+Message-ID: <20120201072617.GC7399@quad.lixom.net>
+References: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com>
+ <1328028051-24271-3-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120131194249.GF3429-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1328028051-24271-3-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 31, 2012 at 07:42:54PM +0000, Mark Brown wrote:
-> On Tue, Jan 31, 2012 at 10:00:45AM -0800, Stephen Warren wrote:
+On Tue, Jan 31, 2012 at 06:40:40PM +0200, Peter De Schrijver wrote:
+> Introduce some functions to write to the flowcontroller registers.
 > 
-> > (Olof may wish to comment on whether he wishes the patches split up to
-> > apply the Tegra/ASoC parts separately, or merge them into both trees,
-> > to avoid any potential merge conflicts on the .dts files)
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  arch/arm/mach-tegra/Makefile   |    1 +
+>  arch/arm/mach-tegra/flowctrl.c |   62 ++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-tegra/flowctrl.h |    5 +++
+>  3 files changed, 68 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-tegra/flowctrl.c
 > 
-> I'm leaving the last two patches to see what Olof thinks; Leon, if you
-> get to it first splitting the DTS file update from the patch updating
-> the machine driver would avoid any issue.
+> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+> index b78bda8..60c286e 100644
+> --- a/arch/arm/mach-tegra/Makefile
+> +++ b/arch/arm/mach-tegra/Makefile
+> @@ -6,6 +6,7 @@ obj-y                                   += irq.o
+>  obj-y                                   += clock.o
+>  obj-y                                   += timer.o
+>  obj-y					+= fuse.o
+> +obj-y					+= flowctrl.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= powergate.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+> diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
+> new file mode 100644
+> index 0000000..fef66a7
+> --- /dev/null
+> +++ b/arch/arm/mach-tegra/flowctrl.c
+> @@ -0,0 +1,62 @@
+> +/*
+> + * arch/arm/mach-tegra/flowctrl.c
+> + *
+> + * functions and macros to control the flowcontroller
 
-Agreed -- Leon, please just send the dts update separately.
+Nit:
+
+It would be more useful here to get one or two sentences about what the flow
+controller unit is used for, etc.
 
 
 -Olof
