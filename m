@@ -1,242 +1,222 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 1/2] ARM: tegra: Add pinmux board file for Cardhu
-Date: Wed,  1 Feb 2012 16:29:56 -0700
-Message-ID: <1328138997-25665-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH] mmc: tegra: Explicitly support Tegra30
+Date: Wed,  1 Feb 2012 16:30:55 -0700
+Message-ID: <1328139055-25714-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For now, this just sets up the pinmux and GPIOs required for the SD
-card slot.
+Tegra30 differs from Tegra20 in a number of ways. This patch implements a
+minimal set of differences in order to get the Cardhu board's SD slot and
+eMMC working. Given the diffs between the mainline sdhci-tegra.c and our
+downstream versions, I expect we'll eventually need to add many more
+differences, hence the seemingly heavy-weight addition of the soc_data
+structure.
+
+* Tegra30 doesn't need to override register access to SDHCI_HOST_VERSION or
+  SDHCI_INT_ENABLE.
+
+* Tegra30 needs quirk SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2:
-* Set PULL_UP for CMD and DATA pins on SD interface
-* Add power GPIO for SDMMC1
-* Add pinmux configuration for SDMMC4
+ drivers/mmc/host/sdhci-tegra.c |   98 +++++++++++++++++++++++++++++++++++-----
+ 1 files changed, 86 insertions(+), 12 deletions(-)
 
-This will hopefully be replaced by the pinmux DT binding in the near
-future, but until that happens, Tegra30 pinmux functionality needs to
-be exposed somehow to unblock getting drivers tested on Tegra30.
----
- arch/arm/mach-tegra/Makefile              |    1 +
- arch/arm/mach-tegra/board-cardhu-pinmux.c |   82 +++++++++++++++++++++++++++++
- arch/arm/mach-tegra/board-cardhu.h        |   29 ++++++++++
- arch/arm/mach-tegra/board-dt-tegra30.c    |   25 ++++++++-
- arch/arm/mach-tegra/board-pinmux.c        |    2 +-
- 5 files changed, 137 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/mach-tegra/board-cardhu-pinmux.c
- create mode 100644 arch/arm/mach-tegra/board-cardhu.h
-
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index b78bda8..49ff80c 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
-+obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-cardhu-pinmux.o
- obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o apbio.o
-diff --git a/arch/arm/mach-tegra/board-cardhu-pinmux.c b/arch/arm/mach-tegra/board-cardhu-pinmux.c
-new file mode 100644
-index 0000000..92e7ac6
---- /dev/null
-+++ b/arch/arm/mach-tegra/board-cardhu-pinmux.c
-@@ -0,0 +1,82 @@
-+/*
-+ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+
-+#include <mach/gpio-tegra.h>
-+
-+#include "board-cardhu.h"
-+#include "board-pinmux.h"
-+
-+static struct pinmux_map cardhu_map[] = {
-+	TEGRA_PINMUX_MAP("sdmmc1_dat0_py7",   "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc1_dat1_py6",   "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc1_dat2_py5",   "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc1_dat3_py4",   "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc1_clk_pz0",    "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc1_cmd_pz1",    "sdmmc1"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat0_paa0",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat1_paa1",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat2_paa2",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat3_paa3",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat4_paa4",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat5_paa5",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat6_paa6",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_dat7_paa7",  "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_rst_n_pcc3", "sdmmc4"),
-+	TEGRA_PINMUX_MAP("sdmmc4_clk_pcc4",   "sdmmc4"),
-+
-+};
-+
-+struct tegra_board_pinmux_pg_conf cardhu_pg[] = {
-+	{"sdmmc1_dat0_py7",   TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc1_dat1_py6",   TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc1_dat2_py5",   TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc1_dat3_py4",   TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc1_clk_pz0",    TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc1_cmd_pz1",    TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat0_paa0",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat1_paa1",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat2_paa2",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat3_paa3",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat4_paa4",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat5_paa5",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat6_paa6",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_dat7_paa7",  TEGRA_PINCONFIG_PULL_UP,   TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_rst_n_pcc3", TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
-+	{"sdmmc4_clk_pcc4",   TEGRA_PINCONFIG_PULL_NONE, TEGRA_PINCONFIG_DRIVEN},
-+};
-+
-+static struct tegra_gpio_table gpio_table[] = {
-+	{ .gpio = TEGRA_GPIO_SD1_CD,		.enable = true  },
-+	{ .gpio = TEGRA_GPIO_SD1_WP,		.enable = true  },
-+	{ .gpio = TEGRA_GPIO_SD1_POWER,		.enable = true  },
-+};
-+
-+static struct tegra_board_pinmux_conf conf = {
-+	.maps = cardhu_map,
-+	.map_count = ARRAY_SIZE(cardhu_map),
-+	.pgs = cardhu_pg,
-+	.pg_count = ARRAY_SIZE(cardhu_pg),
-+	.gpios = gpio_table,
-+	.gpio_count = ARRAY_SIZE(gpio_table),
-+};
-+
-+void cardhu_pinmux_init(void)
-+{
-+	tegra_board_pinmux_init(&conf, NULL);
-+}
-diff --git a/arch/arm/mach-tegra/board-cardhu.h b/arch/arm/mach-tegra/board-cardhu.h
-new file mode 100644
-index 0000000..0d8dd91
---- /dev/null
-+++ b/arch/arm/mach-tegra/board-cardhu.h
-@@ -0,0 +1,29 @@
-+/*
-+ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#ifndef _MACH_TEGRA_BOARD_CARDHU_H
-+#define _MACH_TEGRA_BOARD_CARDHU_H
-+
-+#include "gpio-names.h"
-+
-+#define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PI5 /* GMI_IORDY */
-+#define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PT3 /* VI_D11 */
-+#define TEGRA_GPIO_SD1_POWER		TEGRA_GPIO_PD7 /* VI_HSYNC */
-+
-+void cardhu_pinmux_init(void);
-+
-+#endif
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index b4124b1..918cbbf 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -3,7 +3,7 @@
-  *
-  * NVIDIA Tegra30 device tree board support
-  *
-- * Copyright (C) 2011 NVIDIA Corporation
-+ * Copyright (C) 2011-2012 NVIDIA Corporation
-  *
-  * Derived from:
-  *
-@@ -36,12 +36,16 @@
- #include "board.h"
- #include "clock.h"
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 78a36eb..f159dd6 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -19,6 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+ #include <linux/gpio.h>
+ #include <linux/mmc/card.h>
+@@ -32,6 +33,19 @@
  
-+void cardhu_pinmux_init(void);
+ #include "sdhci-pltfm.h"
+ 
++#define NVQUIRK_FORCE_SDHCI_SPEC_200	BIT(0)
++#define NVQUIRK_ENABLE_BLOCK_GAP_DET	BIT(1)
 +
- static struct of_device_id tegra_dt_match_table[] __initdata = {
- 	{ .compatible = "simple-bus", },
++struct sdhci_tegra_soc_data {
++	struct sdhci_pltfm_data *pdata;
++	u32 nvquirks;
++};
++
++struct sdhci_tegra {
++	const struct tegra_sdhci_platform_data *plat;
++	const struct sdhci_tegra_soc_data *soc_data;
++};
++
+ static u32 tegra_sdhci_readl(struct sdhci_host *host, int reg)
+ {
+ 	u32 val;
+@@ -47,7 +61,12 @@ static u32 tegra_sdhci_readl(struct sdhci_host *host, int reg)
+ 
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+ {
+-	if (unlikely(reg == SDHCI_HOST_VERSION)) {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
++
++	if (unlikely((soc_data->nvquirks & NVQUIRK_FORCE_SDHCI_SPEC_200) &&
++			(reg == SDHCI_HOST_VERSION))) {
+ 		/* Erratum: Version register is invalid in HW. */
+ 		return SDHCI_SPEC_200;
+ 	}
+@@ -57,6 +76,10 @@ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+ 
+ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ {
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
++
+ 	/* Seems like we're getting spurious timeout and crc errors, so
+ 	 * disable signalling of them. In case of real errors software
+ 	 * timers should take care of eventually detecting them.
+@@ -66,7 +89,8 @@ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ 
+ 	writel(val, host->ioaddr + reg);
+ 
+-	if (unlikely(reg == SDHCI_INT_ENABLE)) {
++	if (unlikely((soc_data->nvquirks & NVQUIRK_ENABLE_BLOCK_GAP_DET) &&
++			(reg == SDHCI_INT_ENABLE))) {
+ 		/* Erratum: Must enable block gap interrupt detection */
+ 		u8 gap_ctrl = readb(host->ioaddr + SDHCI_BLOCK_GAP_CONTROL);
+ 		if (val & SDHCI_INT_CARD_INT)
+@@ -77,10 +101,11 @@ static void tegra_sdhci_writel(struct sdhci_host *host, u32 val, int reg)
+ 	}
+ }
+ 
+-static unsigned int tegra_sdhci_get_ro(struct sdhci_host *sdhci)
++static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+ {
+-	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(sdhci);
+-	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct tegra_sdhci_platform_data *plat = tegra_host->plat;
+ 
+ 	if (!gpio_is_valid(plat->wp_gpio))
+ 		return -1;
+@@ -99,7 +124,8 @@ static irqreturn_t carddetect_irq(int irq, void *data)
+ static int tegra_sdhci_8bit(struct sdhci_host *host, int bus_width)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+-	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct tegra_sdhci_platform_data *plat = tegra_host->plat;
+ 	u32 ctrl;
+ 
+ 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+@@ -125,16 +151,44 @@ static struct sdhci_ops tegra_sdhci_ops = {
+ 	.platform_8bit_width = tegra_sdhci_8bit,
+ };
+ 
+-static struct sdhci_pltfm_data sdhci_tegra_pdata = {
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++static struct sdhci_pltfm_data sdhci_tegra20_pdata = {
++	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
++		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
++		  SDHCI_QUIRK_NO_HISPD_BIT |
++		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
++	.ops  = &tegra_sdhci_ops,
++};
++
++static struct sdhci_tegra_soc_data soc_data_tegra20 = {
++	.pdata = &sdhci_tegra20_pdata,
++	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
++		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
++};
++#endif
++
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++static struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
++		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
+ 	.ops  = &tegra_sdhci_ops,
+ };
+ 
++static struct sdhci_tegra_soc_data soc_data_tegra30 = {
++	.pdata = &sdhci_tegra30_pdata,
++};
++#endif
++
+ static const struct of_device_id sdhci_tegra_dt_match[] __devinitdata = {
+-	{ .compatible = "nvidia,tegra20-sdhci", },
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30},
++#endif
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20},
++#endif
  	{}
  };
+ MODULE_DEVICE_TABLE(of, sdhci_dt_ids);
+@@ -165,13 +219,22 @@ static struct tegra_sdhci_platform_data * __devinit sdhci_tegra_dt_parse_pdata(
  
- struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
-+	OF_DEV_AUXDATA("nvidia,tegra30-pinmux", 0x70000868, "tegra-pinmux", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-gpio", 0x6000d000, "tegra-gpio", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000400, "sdhci-tegra.2", NULL),
-@@ -60,10 +64,29 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	{ NULL,		NULL,		0,		0},
- };
- 
-+static struct {
-+	char *machine;
-+	void (*init)(void);
-+} pinmux_configs[] = {
-+	{ "nvidia,cardhu", cardhu_pinmux_init },
-+};
-+
- static void __init tegra30_dt_init(void)
+ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
  {
-+	int i;
-+
- 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
++	const struct of_device_id *match;
++	const struct sdhci_tegra_soc_data *soc_data;
++	struct sdhci_host *host;
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	struct tegra_sdhci_platform_data *plat;
+-	struct sdhci_host *host;
++	struct sdhci_tegra *tegra_host;
+ 	struct clk *clk;
+ 	int rc;
  
-+	for (i = 0; i < ARRAY_SIZE(pinmux_configs); i++) {
-+		if (of_machine_is_compatible(pinmux_configs[i].machine)) {
-+			pinmux_configs[i].init();
-+			break;
-+		}
+-	host = sdhci_pltfm_init(pdev, &sdhci_tegra_pdata);
++	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
++	if (match)
++		soc_data = match->data;
++	else
++		soc_data = &soc_data_tegra20;
++
++	host = sdhci_pltfm_init(pdev, soc_data->pdata);
+ 	if (IS_ERR(host))
+ 		return PTR_ERR(host);
+ 
+@@ -188,7 +251,17 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
+ 		goto err_no_plat;
+ 	}
+ 
+-	pltfm_host->priv = plat;
++	tegra_host = devm_kzalloc(&pdev->dev, sizeof(*tegra_host), GFP_KERNEL);
++	if (!tegra_host) {
++		dev_err(mmc_dev(host->mmc), "failed to allocate tegra_host\n");
++		rc = -ENOMEM;
++		goto err_no_plat;
 +	}
 +
-+	WARN(i == ARRAY_SIZE(pinmux_configs),
-+		"Unknown platform! Pinmuxing not initialized\n");
++	tegra_host->plat = plat;
++	tegra_host->soc_data = soc_data;
 +
- 	of_platform_populate(NULL, tegra_dt_match_table,
- 				tegra30_auxdata_lookup, NULL);
- }
-diff --git a/arch/arm/mach-tegra/board-pinmux.c b/arch/arm/mach-tegra/board-pinmux.c
-index 4e18e14..0e145b6 100644
---- a/arch/arm/mach-tegra/board-pinmux.c
-+++ b/arch/arm/mach-tegra/board-pinmux.c
-@@ -147,6 +147,6 @@ void tegra_board_pinmux_init(struct tegra_board_pinmux_conf *conf_a,
++	pltfm_host->priv = tegra_host;
  
- 	bus_register_notifier(&platform_bus_type, &nb);
+ 	if (gpio_is_valid(plat->power_gpio)) {
+ 		rc = gpio_request(plat->power_gpio, "sdhci_power");
+@@ -284,7 +357,8 @@ static int __devexit sdhci_tegra_remove(struct platform_device *pdev)
+ {
+ 	struct sdhci_host *host = platform_get_drvdata(pdev);
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+-	struct tegra_sdhci_platform_data *plat = pltfm_host->priv;
++	struct sdhci_tegra *tegra_host = pltfm_host->priv;
++	const struct tegra_sdhci_platform_data *plat = tegra_host->plat;
+ 	int dead = (readl(host->ioaddr + SDHCI_INT_STATUS) == 0xffffffff);
  
--	if (!of_machine_is_compatible("nvidia,tegra20"))
-+	if (!of_have_populated_dt())
- 		platform_add_devices(devices, ARRAY_SIZE(devices));
- }
+ 	sdhci_remove_host(host, dead);
 -- 
 1.7.0.4
