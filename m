@@ -1,36 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2] gpio: tps65910: Add sleep control support
-Date: Wed, 1 Feb 2012 13:30:54 +0100
-Message-ID: <CACRpkdbNxTe928p=7XdZVbqqfC5k0s1fqE=8DNa5zmg40pjwrQ@mail.gmail.com>
-References: <1328078344-11670-1-git-send-email-ldewangan@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 1 Feb 2012 14:59:35 +0000
+Message-ID: <20120201145934.GA20421@e102568-lin.cambridge.arm.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
+	<4F1929E9.7070707@linaro.org>
+	<CAMbhsRTbVqV6p0py9NGZrpFPf2yvp-B0dr+o-m7qbdja_-Lfzw@mail.gmail.com>
+	<CAKfTPtAsO8z_8AnR8zSGZ9cm_7orDNxB3r09JAFk+2jdezUVmQ@mail.gmail.com>
+	<CAMbhsRQYVXTZ2pX4mBrM6=SyGTqn_GY8xsW4rt_e21zerEzctA@mail.gmail.com>
+	<CAKfTPtB3Kcy41H9g9u3u81kEHJeypi=GvOfOjcpdztzqN991nA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328078344-11670-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <CAKfTPtB3Kcy41H9g9u3u81kEHJeypi=GvOfOjcpdztzqN991nA@mail.gmail.com>
+Content-Disposition: inline
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Arjan van de Ven <arjan@linux.intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 1, 2012 at 7:39 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Wed, Feb 01, 2012 at 12:13:26PM +0000, Vincent Guittot wrote:
 
-> The device tps65910/tps65911 supports the sleep
-> functionality in some of gpios. If gpio is configured
-> in output mode and sleep is enabled then during device
-> sleep state, the output of gpio becomes LOW regardless
-> of non-sleep output value.
-> Such gpio can be used to control regulator switch such
-> that output of regulator is off in device sleep state.
->
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes from V1:
-> Taken care of review comments from Linus Walleij's
-> - Remove magic numbers and added macro for defining them.
-> - Used bool type for the platform's gpio sleep control data.
+[...]
 
-Thanks, looks good!
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> >> In your patch, you put in safe state (WFI for most of platform) the
+> >> cpus that become idle and these cpus are woken up each time a new cpu
+> >> of the cluster becomes idle. Then, the cluster state is chosen and the
+> >> cpus enter the selected C-state. On ux500, we are using another
+> >> behavior for synchronizing  the cpus. The cpus are prepared to enter
+> >> the c-state that has been chosen by the governor and the last cpu,
+> >> that enters idle, chooses the final cluster state (according to cpus'
+> >> C-state). The main advantage of this solution is that you don't need
+> >> to wake other cpus to enter the C-state of a cluster. This can be
+> >> quite worth full when tasks mainly run on one cpu. Have you also think
+> >> about such behavior when developing the coupled cpuidle driver ? It
+> >> could be interesting to add such behavior.
+> >
+> > Waking up the cpus that are in the safe state is not done just to
+> > choose the target state, it's done to allow the cpus to take
+> > themselves to the target low power state.  On ux500, are you saying
+> > you take the cpus directly from the safe state to a lower power state
+> > without ever going back to the active state?  I once implemented Tegra
+> 
+> yes it is
 
-Yours,
-Linus Walleij
+But if there is a single power rail for the entire cluster, when a CPU
+is "prepared" for shutdown this means that you have to save the context and
+clean L1, maybe for nothing since if other CPUs are up and running the
+CPU going idle can just enter a simple standby wfi (clock-gated but power on).
+
+With Colin's approach, context is saved and L1 cleaned only when it is
+almost certain the cluster is powered off (so the CPUs).
+
+It is a trade-off, I am not saying one approach is better than the
+other; we just have to make sure that preparing the CPU for "possible" shutdown 
+is better than sending IPIs to take CPUs out of wfi and synchronize
+them (this happens if and only if CPUs enter coupled C-states).
+
+As usual this will depend on use cases (and silicon implementations :) )
+
+It is definitely worth benchmarking them.
+
+Lorenzo
