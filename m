@@ -1,52 +1,28 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH v2 3/5] ARM: dt: tegra: add ADT7461 temperature sensor to
- paz00 device tree
-Date: Wed, 1 Feb 2012 00:26:04 -0800
-Message-ID: <20120201082604.GL7399@quad.lixom.net>
-References: <cover.1327776641.git.marvin24@gmx.de>
- <58e24ac63a8388bb9de6be0e75cea26a1af99195.1327776641.git.marvin24@gmx.de>
- <74CDBE0F657A3D45AFBB94109FB122FF178E12414D@HQMAIL01.nvidia.com>
- <9421201.72pNsFM5zn@ax5200p>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 0/8] Add tegra30 support for secondary cores
+Date: Wed, 1 Feb 2012 00:33:34 -0800
+Message-ID: <20120201083334.GM7399@quad.lixom.net>
+References: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <9421201.72pNsFM5zn@ax5200p>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Colin Cross <ccross@android.com>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 31, 2012 at 07:53:21PM +0100, Marc Dietrich wrote:
-> Add the ADT7461 temperature monitoring IC which is connected via
-> the DVC controller.
-> 
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra-paz00.dts |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-
-> paz00.dts
-> index f667343..81e1d30 100644
-> --- a/arch/arm/boot/dts/tegra-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra-paz00.dts
-> @@ -35,6 +35,11 @@
->  
->         i2c@7000d000 {
->                 clock-frequency = <400000>;
-> +
-> +               adt7461@4c {
-> +                       compatible = "adi,adt7461";
-> +                       reg = <0x4c>;
-> +               };
+Hi,
 
-It's common to name the device node temp-sensor (or temperature-sensor) instead
-of the model of the actual chip. The name isn't significant for the binding,
-but it's a practice that's been used on other platforms for a long time.
+On Tue, Jan 31, 2012 at 06:40:38PM +0200, Peter De Schrijver wrote:
+> This patchset introduces support for secondary cores on tegra30. It also
+> introduces some functions for the flowcontroller and adds basic support for
+> tegra30 powerdomains.
 
-I'll just fix it up when applying, if ok with you. No need to respin just for
-this.
+It would be very useful to get a quick recap of what has changed since
+previous versions in the cover email, if not detailed in the individual
+patches (which it doesn't seem to be).
 
 
 -Olof
