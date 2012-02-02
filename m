@@ -1,42 +1,70 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1] mfd: tps65910: Initialize irq platform data properly
-Date: Thu, 2 Feb 2012 19:26:02 +0530
-Message-ID: <4F2A95F2.9000006@nvidia.com>
-References: <1326898156-11293-1-git-send-email-ldewangan@nvidia.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
+Date: Thu, 2 Feb 2012 22:43:46 +0800
+Message-ID: <20120202144344.GI9773@S2101-09.ap.freescale.net>
+References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
+ <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1326898156-11293-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 18 January 2012 08:19 PM, Laxman Dewangan wrote:
-> irq_base of the tps65910 irq platform data should be
-> initialized with the board provided irq_base data.
->
-> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/mfd/tps65910.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-> index c1da84b..8517481 100644
-> --- a/drivers/mfd/tps65910.c
-> +++ b/drivers/mfd/tps65910.c
-> @@ -168,7 +168,7 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
->   		goto err;
->
->   	init_data->irq = pmic_plat_data->irq;
-> -	init_data->irq_base = pmic_plat_data->irq;
-> +	init_data->irq_base = pmic_plat_data->irq_base;
->
->   	tps65910_gpio_init(tps65910, pmic_plat_data->gpio_base);
->
-Hi Samuel,
-Any feedback on this patch?
+On Thu, Feb 02, 2012 at 02:26:54PM +0100, Linus Walleij wrote:
+> On Wed, Feb 1, 2012 at 10:04 PM, Stephen Warren <swarren@nvidia.com> wrote:
+> 
+> > This adds a driver for the Tegra pinmux, and required parameterization
+> > data for Tegra20 and Tegra30.
+> 
+> OK so I've applied this monster patch and the three others,
+> 
+> the diffstat looks like so:
+> 
+> git diff --stat v3.3-rc2..HEAD
+>  arch/arm/mach-tegra/Kconfig                       |    4 +
+>  arch/arm/mach-tegra/Makefile                      |    3 -
+>  arch/arm/mach-tegra/board-harmony-pinmux.c        |  362 ++-
+>  arch/arm/mach-tegra/board-paz00-pinmux.c          |  362 ++-
+>  arch/arm/mach-tegra/board-pinmux.c                |   62 +-
+>  arch/arm/mach-tegra/board-pinmux.h                |   39 +-
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c       |  442 ++-
+>  arch/arm/mach-tegra/board-trimslice-pinmux.c      |  366 ++-
+>  arch/arm/mach-tegra/include/mach/pinconf-tegra.h  |   63 +
+>  arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 -
+>  arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 --
+>  arch/arm/mach-tegra/include/mach/pinmux.h         |  302 --
+>  arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 --
+>  arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 ---
+>  arch/arm/mach-tegra/pinmux.c                      |  987 ------
+>  drivers/pinctrl/Kconfig                           |   15 +
+>  drivers/pinctrl/Makefile                          |    3 +
+>  drivers/pinctrl/pinctrl-tegra.c                   |  559 +++
+>  drivers/pinctrl/pinctrl-tegra.h                   |  163 +
+>  drivers/pinctrl/pinctrl-tegra20.c                 | 2860 ++++++++++++++++
+>  drivers/pinctrl/pinctrl-tegra30.c                 | 3726 +++++++++++++++++++++
+>  21 files changed, 8482 insertions(+), 2960 deletions(-)
+> 
+> It's still pretty big, adding some 6000 lines in sum total, but you've made
+> your case for having all information about the hardware in the driver
+> quite clear so I've not got much more to say. Short story: the driver knows
+> all about what the hardware can do, and the platform data or device
+> tree will decide how these capabilities are employed on a certain
+> system.
+> 
+> What is nice is to have this out of the ARM tree and under pinctrl
+> subsystem control.
+> 
+Heh, omap and imx have a much big SoC family than tegra.  Imaging what
+if omap and imx do the same thing here, probably will move Linus'
+attention from arch/arm/ to drivers/pinctrl :)
 
-Thanks,
-Laxman
+Fortunately, it seems omap and imx will try to get those huge data out
+of the driver/kernel.
+
+-- 
+Regards,
+Shawn
