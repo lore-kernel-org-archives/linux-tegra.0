@@ -1,20 +1,20 @@
-From: Shawn Guo <shawn.guo@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Thu, 2 Feb 2012 22:43:46 +0800
-Message-ID: <20120202144344.GI9773@S2101-09.ap.freescale.net>
-References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
- <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
+Date: Thu, 2 Feb 2012 15:33:14 +0000
+Message-ID: <201202021533.14650.arnd@arndb.de>
+References: <1328130290-17607-1-git-send-email-swarren@nvidia.com> <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 02, 2012 at 02:26:54PM +0100, Linus Walleij wrote:
+On Thursday 02 February 2012, Linus Walleij wrote:
 > On Wed, Feb 1, 2012 at 10:04 PM, Stephen Warren <swarren@nvidia.com> wrote:
 > 
 > > This adds a driver for the Tegra pinmux, and required parameterization
@@ -58,13 +58,29 @@ On Thu, Feb 02, 2012 at 02:26:54PM +0100, Linus Walleij wrote:
 > What is nice is to have this out of the ARM tree and under pinctrl
 > subsystem control.
 > 
-Heh, omap and imx have a much big SoC family than tegra.  Imaging what
-if omap and imx do the same thing here, probably will move Linus'
-attention from arch/arm/ to drivers/pinctrl :)
+> Olof, Arnd: please verify that this is a direction you accept for the Tegra.
+> (Olof has already ACK:ed it, mainly thinking about Arnd.)
 
-Fortunately, it seems omap and imx will try to get those huge data out
-of the driver/kernel.
+I would have liked to see a smaller pinctrl driver and one with fewer macros,
+but I'm not going to complain about it -- drivers/pinctrl is definitely your
+turf not mine and I assume that Olof's Ack was meant in his position as Tegra
+maintainer instead of his position as arm-soc maintainer.
 
--- 
-Regards,
-Shawn
+It's unfortunate that the number of lines in the board specific pinmux
+files is actually growing, even though the contents seem to be smaller
+and it seems to be done in a way that all the data will move into the
+device tree eventually. What is holding up that move right now?
+I guess if we could move the per-board pinmux data into dts files,
+that would mean we could actually get rid of the per-board source
+files in tegra, right?
+
+One thing that worries me a bit is the object size of the tegra
+pinctrl driver: There are now about 70kb pinmux driver binary in
+each kernel that wants to run on tegra (about the same as the
+remaining tegra platform code), which can become a bottleneck
+in future multi-platform kernels that also want to run on a lot of
+other things. 
+Will it be possible to eventually put the pinmux driver into a loadable
+module?
+
+	Arnd
