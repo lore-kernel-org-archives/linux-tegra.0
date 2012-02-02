@@ -1,40 +1,72 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH V2] gpio: tps65910: Add sleep control support
-Date: Wed, 1 Feb 2012 17:15:08 -0700
-Message-ID: <20120202001508.GD15343@ponder.secretlab.ca>
-References: <1328078344-11670-1-git-send-email-ldewangan@nvidia.com>
- <CACRpkdbNxTe928p=7XdZVbqqfC5k0s1fqE=8DNa5zmg40pjwrQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
+Date: Thu, 2 Feb 2012 14:26:54 +0100
+Message-ID: <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
+References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbNxTe928p=7XdZVbqqfC5k0s1fqE=8DNa5zmg40pjwrQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1328130290-17607-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 01, 2012 at 01:30:54PM +0100, Linus Walleij wrote:
-> On Wed, Feb 1, 2012 at 7:39 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
-> > The device tps65910/tps65911 supports the sleep
-> > functionality in some of gpios. If gpio is configured
-> > in output mode and sleep is enabled then during device
-> > sleep state, the output of gpio becomes LOW regardless
-> > of non-sleep output value.
-> > Such gpio can be used to control regulator switch such
-> > that output of regulator is off in device sleep state.
-> >
-> > Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Changes from V1:
-> > Taken care of review comments from Linus Walleij's
-> > - Remove magic numbers and added macro for defining them.
-> > - Used bool type for the platform's gpio sleep control data.
-> 
-> Thanks, looks good!
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+On Wed, Feb 1, 2012 at 10:04 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-Applied, thanks.
+> This adds a driver for the Tegra pinmux, and required parameterization
+> data for Tegra20 and Tegra30.
 
-g.
+OK so I've applied this monster patch and the three others,
+
+the diffstat looks like so:
+
+git diff --stat v3.3-rc2..HEAD
+ arch/arm/mach-tegra/Kconfig                       |    4 +
+ arch/arm/mach-tegra/Makefile                      |    3 -
+ arch/arm/mach-tegra/board-harmony-pinmux.c        |  362 ++-
+ arch/arm/mach-tegra/board-paz00-pinmux.c          |  362 ++-
+ arch/arm/mach-tegra/board-pinmux.c                |   62 +-
+ arch/arm/mach-tegra/board-pinmux.h                |   39 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c       |  442 ++-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c      |  366 ++-
+ arch/arm/mach-tegra/include/mach/pinconf-tegra.h  |   63 +
+ arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 -
+ arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 --
+ arch/arm/mach-tegra/include/mach/pinmux.h         |  302 --
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 --
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 ---
+ arch/arm/mach-tegra/pinmux.c                      |  987 ------
+ drivers/pinctrl/Kconfig                           |   15 +
+ drivers/pinctrl/Makefile                          |    3 +
+ drivers/pinctrl/pinctrl-tegra.c                   |  559 +++
+ drivers/pinctrl/pinctrl-tegra.h                   |  163 +
+ drivers/pinctrl/pinctrl-tegra20.c                 | 2860 ++++++++++++++++
+ drivers/pinctrl/pinctrl-tegra30.c                 | 3726 +++++++++++++++++++++
+ 21 files changed, 8482 insertions(+), 2960 deletions(-)
+
+It's still pretty big, adding some 6000 lines in sum total, but you've made
+your case for having all information about the hardware in the driver
+quite clear so I've not got much more to say. Short story: the driver knows
+all about what the hardware can do, and the platform data or device
+tree will decide how these capabilities are employed on a certain
+system.
+
+What is nice is to have this out of the ARM tree and under pinctrl
+subsystem control.
+
+Olof, Arnd: please verify that this is a direction you accept for the Tegra.
+(Olof has already ACK:ed it, mainly thinking about Arnd.)
+
+I've created a separate branch named pinctrl-tegra-for-next for this
+series and merged it into my devel and for-next branches and pushed.
+As suggested by Olof devel and for-next may be rebased but the
+tegra branch will stay intact (fixes on top is OK).
+
+Olof: I've published the pinctrl-tegra-for-next branch based on v3.3-rc2
+here:
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+pinctrl-tegra-for-next
+
+Yours,
+Linus Walleij
