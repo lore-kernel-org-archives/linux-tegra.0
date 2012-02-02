@@ -1,56 +1,42 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: [PATCH v2 4/4] ASoC: tegra: Remove unused DAPM route structure.
-Date: Thu,  2 Feb 2012 22:13:38 +0200
-Message-ID: <1328213618-15870-5-git-send-email-leon@leon.nu>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: Re: [PATCH v2 1/4] ARM: dt: tegra: Enable device tree
+ audio codec on PAZ00 board.
+Date: Thu, 2 Feb 2012 12:40:03 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124B60@HQMAIL01.nvidia.com>
 References: <1328213618-15870-1-git-send-email-leon@leon.nu>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328213618-15870-1-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+	<1328213618-15870-2-git-send-email-leon@leon.nu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1328213618-15870-2-git-send-email-leon@leon.nu>
+Content-Language: en-US
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Leon Romanovsky <leon@leon.nu>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "lrg@ti.com" <lrg@ti.com>, "olof@lixom.net" <olof@lixom.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: Marc Dietrich <marvin24@gmx.de>
 List-Id: linux-tegra@vger.kernel.org
 
-All DAPM routes are configured via device tree, and there is no need in
-DAPM route structures in board file.
+Leon Romanovsky wrote at Thursday, February 02, 2012 1:14 PM:
+> This patch adds initial device tree support of ALC5632 sound codec and
+> machine driver for PAZ00 board. The implementation is based on the WM8903 codec.
 
-Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
----
- sound/soc/tegra/tegra_alc5632.c |   16 ----------------
- 1 files changed, 0 insertions(+), 16 deletions(-)
+This patch description seems a little unclear, since this is just adding
+the .dts changes to instantiate the drivers that already support DT, and
+mentioning WM8903 is a little confusing, since that's more relevant to
+the commit where you wrote the binding docs and implemented the driver
+changes.
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index 1794139..c000f51 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -104,20 +104,6 @@ static const struct snd_soc_dapm_widget tegra_alc5632_dapm_widgets[] = {
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
- };
- 
--static const struct snd_soc_dapm_route tegra_alc5632_audio_map[] = {
--	/* Internal Speaker */
--	{"Int Spk", NULL, "SPKOUT"},
--	{"Int Spk", NULL, "SPKOUTN"},
--
--	/* Headset Mic */
--	{"MIC1", NULL, "MICBIAS1"},
--	{"MICBIAS1", NULL, "Headset Mic"},
--
--	/* Headset Stereophone */
--	{"Headset Stereophone", NULL, "HPR"},
--	{"Headset Stereophone", NULL, "HPL"},
--};
--
- static const struct snd_kcontrol_new tegra_alc5632_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Int Spk"),
- };
-@@ -172,8 +158,6 @@ static struct snd_soc_card snd_soc_tegra_alc5632 = {
- 	.num_controls = ARRAY_SIZE(tegra_alc5632_controls),
- 	.dapm_widgets = tegra_alc5632_dapm_widgets,
- 	.num_dapm_widgets = ARRAY_SIZE(tegra_alc5632_dapm_widgets),
--	.dapm_routes = tegra_alc5632_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(tegra_alc5632_audio_map),
- 	.fully_routed = true,
- };
- 
+Aside from that, the series,
+
+Acked-by: Stephen Warren <swarren@nvidia.com>
+
 -- 
-1.7.3.4
+nvpublic
