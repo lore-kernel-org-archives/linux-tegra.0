@@ -1,86 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Thu, 2 Feb 2012 15:33:14 +0000
-Message-ID: <201202021533.14650.arnd@arndb.de>
-References: <1328130290-17607-1-git-send-email-swarren@nvidia.com> <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v1 3/8] ARM: tegra: rework Tegra secondary CPU core
+ bringup
+Date: Thu, 2 Feb 2012 09:32:12 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124A8B@HQMAIL01.nvidia.com>
+References: <1327597641-7519-1-git-send-email-pdeschrijver@nvidia.com>
+ <1327597641-7519-4-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF178CB8246B@HQMAIL01.nvidia.com>
+ <20120127081802.GU29914@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@nvidia.com>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120127081802.GU29914-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 02 February 2012, Linus Walleij wrote:
-> On Wed, Feb 1, 2012 at 10:04 PM, Stephen Warren <swarren@nvidia.com> wrote:
+Peter De Schrijver wrote at Friday, January 27, 2012 1:18 AM:
+> On Thu, Jan 26, 2012 at 09:25:53PM +0100, Stephen Warren wrote:
+> > Peter De Schrijver wrote at Thursday, January 26, 2012 10:07 AM:
+> > > Prepare the Tegra secondary CPU core bringup code for other Tegra variants.
+> > > The reset handler is also generalized to allow for future introduction of
+> > > powersaving modes which turn off the CPU cores.
+> >
+> > > diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
+> >
+> > >  ENTRY(tegra_secondary_startup)
+> > ...
+> > > +	enable_coresight r0
+> >
+> > > +ENTRY(__tegra_cpu_reset_handler)
+> > > +
+> > > +#if DEBUG_CPU_RESET_HANDLER
+> > > +	enable_coresight r0
+> > > +	b	.
+> > > +#endif
+> >
+> > I'm not sure why the macro call enable_coresight is ifdef'd in one place
+> > but not the other... Should just the instruction "b ." be inside the
+> > ifdef?
 > 
-> > This adds a driver for the Tegra pinmux, and required parameterization
-> > data for Tegra20 and Tegra30.
-> 
-> OK so I've applied this monster patch and the three others,
-> 
-> the diffstat looks like so:
-> 
-> git diff --stat v3.3-rc2..HEAD
->  arch/arm/mach-tegra/Kconfig                       |    4 +
->  arch/arm/mach-tegra/Makefile                      |    3 -
->  arch/arm/mach-tegra/board-harmony-pinmux.c        |  362 ++-
->  arch/arm/mach-tegra/board-paz00-pinmux.c          |  362 ++-
->  arch/arm/mach-tegra/board-pinmux.c                |   62 +-
->  arch/arm/mach-tegra/board-pinmux.h                |   39 +-
->  arch/arm/mach-tegra/board-seaboard-pinmux.c       |  442 ++-
->  arch/arm/mach-tegra/board-trimslice-pinmux.c      |  366 ++-
->  arch/arm/mach-tegra/include/mach/pinconf-tegra.h  |   63 +
->  arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 -
->  arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 --
->  arch/arm/mach-tegra/include/mach/pinmux.h         |  302 --
->  arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 --
->  arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 ---
->  arch/arm/mach-tegra/pinmux.c                      |  987 ------
->  drivers/pinctrl/Kconfig                           |   15 +
->  drivers/pinctrl/Makefile                          |    3 +
->  drivers/pinctrl/pinctrl-tegra.c                   |  559 +++
->  drivers/pinctrl/pinctrl-tegra.h                   |  163 +
->  drivers/pinctrl/pinctrl-tegra20.c                 | 2860 ++++++++++++++++
->  drivers/pinctrl/pinctrl-tegra30.c                 | 3726 +++++++++++++++++++++
->  21 files changed, 8482 insertions(+), 2960 deletions(-)
-> 
-> It's still pretty big, adding some 6000 lines in sum total, but you've made
-> your case for having all information about the hardware in the driver
-> quite clear so I've not got much more to say. Short story: the driver knows
-> all about what the hardware can do, and the platform data or device
-> tree will decide how these capabilities are employed on a certain
-> system.
-> 
-> What is nice is to have this out of the ARM tree and under pinctrl
-> subsystem control.
-> 
-> Olof, Arnd: please verify that this is a direction you accept for the Tegra.
-> (Olof has already ACK:ed it, mainly thinking about Arnd.)
+> This code path will also be used by LP2 and LP1 resume in the future, I'm not
+> sure we should unconditionally enable Coresight in that case.
 
-I would have liked to see a smaller pinctrl driver and one with fewer macros,
-but I'm not going to complain about it -- drivers/pinctrl is definitely your
-turf not mine and I assume that Olof's Ack was meant in his position as Tegra
-maintainer instead of his position as arm-soc maintainer.
+What I'm unclear on is why it's a good idea to unconditionally enable
+coresight in tegra_secondary_startup if it's not a good idea to
+unconditionally enable it in __tegra_cpu_reset_handler.
 
-It's unfortunate that the number of lines in the board specific pinmux
-files is actually growing, even though the contents seem to be smaller
-and it seems to be done in a way that all the data will move into the
-device tree eventually. What is holding up that move right now?
-I guess if we could move the per-board pinmux data into dts files,
-that would mean we could actually get rid of the per-board source
-files in tegra, right?
-
-One thing that worries me a bit is the object size of the tegra
-pinctrl driver: There are now about 70kb pinmux driver binary in
-each kernel that wants to run on tegra (about the same as the
-remaining tegra platform code), which can become a bottleneck
-in future multi-platform kernels that also want to run on a lot of
-other things. 
-Will it be possible to eventually put the pinmux driver into a loadable
-module?
-
-	Arnd
+-- 
+nvpublic
