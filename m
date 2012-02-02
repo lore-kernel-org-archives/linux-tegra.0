@@ -1,74 +1,51 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 3/4] ASoC: Tegra+ALC5632: Enable headset
- autodetection on PAZ00 board.
-Date: Thu, 2 Feb 2012 22:44:02 +0000
-Message-ID: <20120202224355.GD3112@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] ASoC: tegra: Remove unused DAPM route structure.
+Date: Thu, 2 Feb 2012 22:44:33 +0000
+Message-ID: <20120202224422.GE3112@opensource.wolfsonmicro.com>
 References: <1328213618-15870-1-git-send-email-leon@leon.nu>
-	<1328213618-15870-4-git-send-email-leon@leon.nu>
+ <1328213618-15870-5-git-send-email-leon@leon.nu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4750929100721639268=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1328213618-15870-4-git-send-email-leon@leon.nu>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Leon Romanovsky <leon@leon.nu>
-Cc: olof@lixom.net, linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, swarren@nvidia.com, lrg@ti.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ILuaRSyQpoVaJ1HG"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1328213618-15870-5-git-send-email-leon-2ukJVAZIZ/Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============4750929100721639268==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5gxpn/Q6ypwruk0T"
-Content-Disposition: inline
-
-
---5gxpn/Q6ypwruk0T
+--ILuaRSyQpoVaJ1HG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Feb 02, 2012 at 10:13:37PM +0200, Leon Romanovsky wrote:
-> This patch is adding device tree support of headset autodetection on PAZ00 board.
+On Thu, Feb 02, 2012 at 10:13:38PM +0200, Leon Romanovsky wrote:
+> All DAPM routes are configured via device tree, and there is no need in
+> DAPM route structures in board file.
 
-Applied, thanks.  I wonder if we ought to have a standard binding for
-GPIO based headset detect...  can be tricky, though, when it gets
-integrated with more advanced mechanisms.
+Applied, thanks.
 
---5gxpn/Q6ypwruk0T
+--ILuaRSyQpoVaJ1HG
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPKxGkAAoJEBus8iNuMP3dU/4P/jboAM0QqO/kvYtT8CtabdMF
-2Tcw4tF3EFMBv7BpxBRsmrAqgvEVmB7ea1IHcv9inB27GhIzQTyv2uFUMk7xUhgl
-4OWcliNRPTK4KqoFRNwWZvpAKjLmPrhvKHjDm8o7FxPsiHs8lhJZfaXlP69DuUjc
-lVSn6TtfNDNcp81Z9SABiIP7jIb/CTdcZrzDA7gTc639Z0UatbXs2x0S39nmzrS5
-FjVEYIyJie4UXJgciGATDmyd2iMDEGNk8Ld0e8HflxXbp31oGx1ct9545gNiRVEn
-byHGEPpYyr6D3Kqr0WCc2U/n5ukJ/1Jne+4UwYtSUXL243oeW4f8/oYgPzqm7CWT
-lTRkYtpekJVvqpf4CJE5UTHXOe25uxWLhYcoabjlfZ6e0ci5D1NdPOXQmVNX5ZVP
-1jTf2vF5LAFP3hXcftmHFCrWho9khPuc/ebhHcNcZx529Yokf67ck+1nA59jelM4
-hc68bAV67V0J23PpjE8H85dpf80lA5UOPkS/gGHXqvENbXgRFUqAovqxn1e2GH7a
-0teXTVyS8kwB+MAVUOUM4uOMpxG0KR0hUuyRkbLXmlnoWWhNkNk7JKi/UyE/vGNR
-b7QdhdQzA65DLUWOBeX8ouYvAySJyOLNkH5wfArMzjB3gZPC5KhFdbXISUL8+wTH
-Hv3qpS9RrTXy795MW/vb
-=oUsS
+iQIcBAEBAgAGBQJPKxG9AAoJEBus8iNuMP3d26YP/20k4D8eJAInkQrfq4c+lqQc
+NZyS3qmndhuwdVIIkxlY1UVl0u1F5N4PA6SxmUV0x25us8xOM58D5YjtE5JS1nlw
+a7KHdRih9e8k5Va+rIiYN9mTz4jWMpywzF6GAdAYRVHQiDmHQwmVIkyQ2AfTCFEn
+ebiGY+WZwFT/tW8xWypvlSpeaM2jOPwEfFqtfn9BYWJFga5xD7Eg73T1RCMiAR4G
+jisIw3W4nYoqaZSXpxazDjKy19z0BDumuKAphLQ99YcpMc4tnrDPM0fXFgcCFidN
+cXU8EJSGiPERZGlAqwVq9PCs7BKxBsnqpeZt5znaUQSSAaMj2APAqnCuOGiUbTsG
+33g0WayMcHtz647/kUb/k+/q07nfGLVtC//tH+S97Dws5G2V2BLEFd0uSd41+8TM
+22HcDlJEGrqxH0wD5YIBfuwkFJWvbBZlxj6TagCGiYyK5uIPoj2k0Yjtb00eI2pl
+cCsKYxOLY8JzB+E3qWjATvammJvlYAlUCvMQtAlA0laqrZUsP1xW63HZRmFfmqAA
+OLyPn9Z0N2AGOWDBsnW1FjCGitS06r8xdvx9mx3f5PfnQfbNEWOq5DaCA01VjQ0k
+7zJIjZP9cM10FuJqzrQxIH//lfr9eOcjQm8bqGi5FlDU/7s3V/ME6HoLG84/Eh7i
+0NzZjDOAoz10aBfzuvw/
+=azGH
 -----END PGP SIGNATURE-----
 
---5gxpn/Q6ypwruk0T--
-
---===============4750929100721639268==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4750929100721639268==--
+--ILuaRSyQpoVaJ1HG--
