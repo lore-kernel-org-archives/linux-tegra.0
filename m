@@ -1,99 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Fri, 3 Feb 2012 22:44:48 +0100
-Message-ID: <CACRpkdbOjNTGJ1F9OsoJuA4ymh5=AMAGAWK-gUcsLbEB+PSENg@mail.gmail.com>
+Date: Fri, 3 Feb 2012 23:12:12 +0100
+Message-ID: <CACRpkdbtPjDPb=hJkW99jvfaSTZZoeg91XArhjo3RMUcEfkRBg@mail.gmail.com>
 References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
-	<CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
 	<201202021533.14650.arnd@arndb.de>
 	<CACRpkdbMPrvN80cLyVLUNvTjx4ZV4iLeHcJaJyM_qvTHHAfWww@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF178E124DB9@HQMAIL01.nvidia.com>
+	<201202031855.20589.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E124DB9@HQMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <dong.aisheng@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Rajendra Nayak <rajendra.nayak@linaro.org>, ext Tony Lindgren <tony@atomide.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201202031855.20589.arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rajendra Nayak <rajendra.nayak-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dong Aisheng <dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 3, 2012 at 6:50 PM, Stephen Warren <swarren@nvidia.com> wrote:
-> Linus Walleij wrote at Friday, February 03, 2012 7:57 AM:
->> Which is actually bad enough for me to have second thoughts on
->> this.
+On Fri, Feb 3, 2012 at 7:55 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Friday 03 February 2012, Linus Walleij wrote:
 >>
 >> So I'm taking this branch off from -next until we resolve this.
 >
-> Seriously? That's lame.
+> That is the opposite of what I intended :(
 
-I'm not saying I won't add it back in when we've discussed
-this some more.
+OK I might put it back in next week after conferring with some
+of the involved people. I just want a credible story for my
+pull request at the end of the day and that's all.
 
-Several involved people are going to meet in person next week to
-discuss this, so let's see what kind of conclusions we can come to.
+> I really meant that you don't need my Ack: the Tegra changes got an
+> Ack from the subarch maintainers and the drivers/pinctrl changes are
+> for you to judge.
 
-Try to see it from my point of view: when I presented the pinctrl
-subsystem to Torvalds it was with the promise that this would
-shrink the stuff stacking up in arch/arm/*, naturally I am afraid
-of breaking that promise.
+OK so this was more from the point of "the ARM stuff is
+growing wild again" point of view, and Mr. Torvalds has made it
+pretty clear to me that he don't like it growing anywhere, no
+matter whether that is under arch/arm/* or any place else,
+like drivers/pinctrl/*.
 
-If the end result is that none of the pinctrl stuff gets pulled for
-the next merge window, it will hit us all. For that reason I am
-requesting more consensus.
+If I had a few Atom, MIPS, Blackfin or CRIS pin controllers in
+tree or in the pipe, it wouldn't be so much of an ARM issue, but
+currently it sort of is, that's basically why I want to involve
+you guys.
 
-What speaks for it, even though it adds a few thousand lines,
-is that the added lines are functionality growth, so after this
-the T20 and T30 pin muxing is *complete*, and the versions
-that used to live up in arch/arm were *incomplete* which
-is nice.
+BTW does anyone know of some inherent muxing in Intel
+hardware like the Langwell PCH?
 
-What we need to figure out is if we really must have all these
-lines of code. And I must have something I can write in
-my pull request that justifies it. So I want help with that.
+> I don't have the resources to look into every patch
+> with the level of detail required to make a final decision, I really
+> have to rely on someone I trust like you to decide if something goes
+> in or not. Of course I can offer an opinion when you ask me, which
+> I did, but also didn't feel I understand the patch well enough to
+> ack them -- even though it looks reasonable to me.
 
->> (A) open-coded in the driver or
->> (B) provided as data in the device tree
+OK sorry it wasn't meant to stress you.
+
+> Regarding the process, you have my full Ack on the plan to merge
+> them into mainline through your tree when you find them good enough
+> and also put a copy into the arm-soc tree if needed to resolve
+> any dependencies or conflicts with other stuff in arm-soc.
+
+Yes, well the patches are a *real* *good* pinctrl driver, there is
+no question of that.
+
+The only issue is size and open-coding.
+
+I am open to any smart ideas on how to get rid of excess tables,
+I just happen to have run out of them myself, all sort of comes
+to the point of wanting the C preprocessor to have loop
+statements...
+
+I'm leaning toward creating a pin and group specification
+language and put that into the kbuild to generate headers with
+them to cut the open-coded data down.
+
+>> Tony had made it possible to have pinctrl drivers as modules,
+>> but some systems may need their pin control up before
+>> they even bring up the filesystem :-(
+>>
+>> Booting from initramfs and switchroot can solve the above
+>> but will slow down boot I believe, and ARM systems
+>> usually don't like that.
 >
-> There's really no need for everyone to do the same thing here; it's an
-> issue that's completely isolated within the individual drivers, and has
-> no effect outside of them, other than kernel size in a multi-SoC kernel.
->
-> The main issue with (B) is that it slows down boot time measurably by
-> requiring a ton of data to be parsed from it, which entails a bunch of
-> string handling. And then, you end up with exactly the same data as if
-> you'd just bundled it into the kernel in the first place.
+> Sounds good enough for me. Anyone who wants a single kernel that runs on
+> a lot different machines (distros like ubuntu, fedora, debian, opensuse)
+> typically relies on initramfs already, the others can have the code built-in.
 
-That is for a tailored image for one system. If you compile in a few
-dozen platforms as is the goal of the single uImage. In which case
-we only end up with the stuff from one device tree and a few slim
-drivers with no data in them. (As observed by Arnd.)
-
-But I think we could say that if one is preparing a multi-platform
-kernel, one should also take the hit of using an initramfs and as
-much modules as possible.
-
->> nVidia Tegra have opted for the former, Texas OMAP for the latter.
->> The in-kernel drivers also do like Tegra. However they
->> are smaller due to less combinatorics.
->
-> Well, I think not so much because the SoCs don't have the same number of
-> combinations, but that the drivers don't support all the HW's options.
-
-Yes that's true, we certainly have these different ideas as to
-whether the driver shall present all possible options or just
-the subset used by current kernel board files. Maybe I should
-implement all of U300's pin control just to get an idea of how
-much it really is, for comparison.
-
-> Rather, it might be interesting to pursue building the pinctrl drivers
-> as modules, but somehow binding them into the kernel image itself, and
-> allowing them to be unloaded (like __init functions and __initdata) once
-> we know they aren't used. That's somewhat similar to an initramfs, but
-> avoids the need to package everything into a filesystem and explicitly
-> load it before it can be used.
-
-That is a pretty interesting approach if it could be made to work, but
-since the sectioning is done at compile-time I think the currently
-endorsed mechanism is using modules and initramfs:es for this.
+Yep single uImage mandates modules, I thought so for long
+but now I'm ever more certain of it.
 
 Yours,
 Linus Walleij
