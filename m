@@ -1,102 +1,112 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Fri, 3 Feb 2012 09:50:40 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E124DB9@HQMAIL01.nvidia.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
+Date: Fri, 3 Feb 2012 09:58:54 -0800
+Message-ID: <20120203175854.GC1426@atomide.com>
 References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
-	<CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
-	<201202021533.14650.arnd@arndb.de>
+ <CACRpkda+KCutSFgPwH2Xvd14h0OCrArFGXAidp3n_ZgG28KB5g@mail.gmail.com>
+ <201202021533.14650.arnd@arndb.de>
  <CACRpkdbMPrvN80cLyVLUNvTjx4ZV4iLeHcJaJyM_qvTHHAfWww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbMPrvN80cLyVLUNvTjx4ZV4iLeHcJaJyM_qvTHHAfWww@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <dong.aisheng@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Rajendra Nayak <rajendra.nayak@linaro.org>, ext Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbMPrvN80cLyVLUNvTjx4ZV4iLeHcJaJyM_qvTHHAfWww-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dong Aisheng <dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rajendra Nayak <rajendra.nayak-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Linus Walleij wrote at Friday, February 03, 2012 7:57 AM:
-> On Thu, Feb 2, 2012 at 4:33 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > [Me]
-> >> Olof, Arnd: please verify that this is a direction you accept for the Tegra.
-> >> (Olof has already ACK:ed it, mainly thinking about Arnd.)
-> >
-> > I would have liked to see a smaller pinctrl driver and one with fewer macros,
-> > but I'm not going to complain about it -- drivers/pinctrl is definitely your
-> > turf not mine and I assume that Olof's Ack was meant in his position as Tegra
-> > maintainer instead of his position as arm-soc maintainer.
-> 
-> Which means I have no ACK from any of the ARM SoC maintainers
-> on this which is touching the ARM tree substantially and affecting
-> more or less all recent ARM SoCs,
-> 
-> Which is actually bad enough for me to have second thoughts on
-> this.
-> 
-> So I'm taking this branch off from -next until we resolve this.
+Hi,
 
-Seriously? That's lame.
-
-To be completely honest, I'm losing interest in spending time on pinctrl.
-Perhaps the solution here is to require bootloaders to set up the complete
-initial pinmux state, and only use pinctrl for dynamic pinmux. Then, most
-people can simply ignore pinctrl.
-
+* Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [120203 06:26]:
+> On Thu, Feb 2, 2012 at 4:33 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> > I guess if we could move the per-board pinmux data into dts files,
+> > that would mean we could actually get rid of the per-board source
+> > files in tegra, right?
+> 
+> If you mean these:
+> 
+>  arch/arm/mach-tegra/board-harmony-pinmux.c        |  362 ++-
+>  arch/arm/mach-tegra/board-paz00-pinmux.c          |  362 ++-
+>  arch/arm/mach-tegra/board-pinmux.c                |   62 +-
+>  arch/arm/mach-tegra/board-pinmux.h                |   39 +-
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c       |  442 ++-
+>  arch/arm/mach-tegra/board-trimslice-pinmux.c      |  366 ++-
+> 
+> Then the answer is yes.
+> 
+> But not if you mean these:
+> 
+>  drivers/pinctrl/pinctrl-tegra20.c                 | 2860 ++++++++++++++++
+>  drivers/pinctrl/pinctrl-tegra30.c                 | 3726 +++++++++++++++++++++
+> 
+> Because the large number of lines come from SoC
+> properties rather than board properties.
+> 
 > The big issue here is whether SoC hardware block
 > properties (such as the pins and their names, and their
 > groups) should be:
 > 
 > (A) open-coded in the driver or
 > (B) provided as data in the device tree
-
-There's really no need for everyone to do the same thing here; it's an
-issue that's completely isolated within the individual drivers, and has
-no effect outside of them, other than kernel size in a multi-SoC kernel.
-
-The main issue with (B) is that it slows down boot time measurably by
-requiring a ton of data to be parsed from it, which entails a bunch of
-string handling. And then, you end up with exactly the same data as if
-you'd just bundled it into the kernel in the first place.
-
+> 
 > nVidia Tegra have opted for the former, Texas OMAP for the latter.
 > The in-kernel drivers also do like Tegra. However they
 > are smaller due to less combinatorics.
-
-Well, I think not so much because the SoCs don't have the same number of
-combinations, but that the drivers don't support all the HW's options.
-
-> > One thing that worries me a bit is the object size of the tegra
-> > pinctrl driver: There are now about 70kb pinmux driver binary in
-> > each kernel that wants to run on tegra (about the same as the
-> > remaining tegra platform code), which can become a bottleneck
-> > in future multi-platform kernels that also want to run on a lot of
-> > other things.
 > 
-> This sounds like a correct observation and I think I have said
-> the same previously.
-> 
+> This means that the Tegra driver gets (quite a bit) bigger and
+> the OMAP driver (quite a bit) smaller.
+
+Well I think both A and B should be supported, and also
+support a combination of A and B in the same driver if
+needed.
+
+For doing DT only pinmux driver, my observations so far are:
+
+1. Most of the pinmux data in the drivers is only needed for
+   debugging and actually not needed in the driver at all.
+
+   The pinmux driver can get away without knowing what the
+   settings are, it just needs to know where the registers
+   are and how they should set based on the board specific
+   .dts configuration.
+
+2. Knowing how the pinmux registers are set is crucial for
+   debugging. But this all can be done with userspace tools
+   using pinctrl debugfs entries. So again the pinmux driver
+   just needs to know just "how many, what type of registers,
+   and where they are".
+
+3. The board specific pinmux configuration for groups and values
+   can be passed from .dts files without passing any strings
+   in most cases. Once we have preprocessor working, the .dts
+   mux configuration should be quite readable.
+
 > > Will it be possible to eventually put the pinmux driver into a loadable
 > > module?
 > 
 > Tony had made it possible to have pinctrl drivers as modules,
 > but some systems may need their pin control up before
 > they even bring up the filesystem :-(
-> 
+
+For development work loadable modules are much nicer to work with ;)
+
+Loadable modules also automatically cut away the SoC specific
+spaghetti calls as things need to work in a standard way limited
+to EXPORT_SYMBOL.
+
+So in general, from sanity checking point of view, we should
+probably require that anything under drivers at least builds
+as a loadable module.
+
 > Booting from initramfs and switchroot can solve the above
 > but will slow down boot I believe, and ARM systems
 > usually don't like that.
 
-I guess we could load modules from an initrd OK, but that does indeed
-add some complexity.
+Yeah I guess for now most people would want to build it in.
+Then when ARM distros will be able to use the common zImage,
+most people will probably switch to initramfs based boot.
 
-Rather, it might be interesting to pursue building the pinctrl drivers
-as modules, but somehow binding them into the kernel image itself, and
-allowing them to be unloaded (like __init functions and __initdata) once
-we know they aren't used. That's somewhat similar to an initramfs, but
-avoids the need to package everything into a filesystem and explicitly
-load it before it can be used.
+Regards,
 
--- 
-nvpublic
+Tony
