@@ -1,91 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 1/4] pinctrl: add a driver for NVIDIA Tegra
-Date: Fri, 3 Feb 2012 23:12:12 +0100
-Message-ID: <CACRpkdbtPjDPb=hJkW99jvfaSTZZoeg91XArhjo3RMUcEfkRBg@mail.gmail.com>
-References: <1328130290-17607-1-git-send-email-swarren@nvidia.com>
-	<201202021533.14650.arnd@arndb.de>
-	<CACRpkdbMPrvN80cLyVLUNvTjx4ZV4iLeHcJaJyM_qvTHHAfWww@mail.gmail.com>
-	<201202031855.20589.arnd@arndb.de>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
+Date: Fri, 3 Feb 2012 16:05:49 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E5D30DD@HQMAIL01.nvidia.com>
+References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
+	<20111220015634.GA27789@quad.lixom.net>
+	<CAM=Q2cs8K4vraWPNqervcmxEqUGiAbng+44+L9OhD3ijPw9tAA@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF176BE92E21@HQMAIL01.nvidia.com>
+	<20120106162615.GA8441@trinity.fluff.org>
+	<74CDBE0F657A3D45AFBB94109FB122FF177EE39E15@HQMAIL01.nvidia.com>
+ <CAOesGMjx0nA5Y_Cv8ECBcZP45EyR5BPUNXEapCN3JjdWTjpo8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201202031855.20589.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <CAOesGMjx0nA5Y_Cv8ECBcZP45EyR5BPUNXEapCN3JjdWTjpo8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rajendra Nayak <rajendra.nayak-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dong Aisheng <dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 3, 2012 at 7:55 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Friday 03 February 2012, Linus Walleij wrote:
->>
->> So I'm taking this branch off from -next until we resolve this.
->
-> That is the opposite of what I intended :(
+Olof Johansson wrote at Friday, January 06, 2012 10:45 AM:
+> On Fri, Jan 6, 2012 at 8:47 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
+rote:
+> > Ben Dooks wrote at Friday, January 06, 2012 9:26 AM:
+> >> On Tue, Dec 20, 2011 at 01:47:29PM -0800, Stephen Warren wrote:
+> >> > Shubhrajyoti Datta wrote at Monday, December 19, 2011 11:15 PM:
+> >> > ...
+> >> > > Hi Stephen ,
+> >> > > could you check this one also
+> >> > > thanks.
+> >> > >
+> >> > > From: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+> >> > > Date: Tue, 20 Dec 2011 11:40:51 +0530
+> >> > > Subject: [PATCH] I2C : tegra : devexit in remove
+> >> > >
+> >> > > Adding I2C __devexxit in remove
+> >> > >
+> >> > > Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> > > Signed-off-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
+> >> >
+> >> > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> >
+> >> > Ben or Olof,
+> >> >
+> >> > > - =A0 =A0 =A0 .remove =A0=3D tegra_i2c_remove,
+> >> > > + =A0 =A0 =A0 .remove =A0=3D__devexit_p(tegra_i2c_remove),
+> >> >
+> >> > When you apply this, can you fix it up to add a space after the =
+=3D in
+> >> > the modified line? If you want, I can post an updated version to=
+ do that.
+> >>
+> >> Let me know if you want anything applying or a pull-request proces=
+sed.
+> >>
+> >> I think once fixed the patches would be fine and I ack them:
+> >>
+> >> Acked-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+> >
+> > Olof, since you took the original through the Tegra tree, I think i=
+t
+> > makes sense for us to take this fix through there too, and for 3.3?
+> > The patch above is http://patchwork.ozlabs.org/patch/132349/
+>=20
+> Yep, will do.
 
-OK I might put it back in next week after conferring with some
-of the involved people. I just want a credible story for my
-pull request at the end of the day and that's all.
+I haven't seen this show up anywhere yet.
 
-> I really meant that you don't need my Ack: the Tegra changes got an
-> Ack from the subarch maintainers and the drivers/pinctrl changes are
-> for you to judge.
-
-OK so this was more from the point of "the ARM stuff is
-growing wild again" point of view, and Mr. Torvalds has made it
-pretty clear to me that he don't like it growing anywhere, no
-matter whether that is under arch/arm/* or any place else,
-like drivers/pinctrl/*.
-
-If I had a few Atom, MIPS, Blackfin or CRIS pin controllers in
-tree or in the pipe, it wouldn't be so much of an ARM issue, but
-currently it sort of is, that's basically why I want to involve
-you guys.
-
-BTW does anyone know of some inherent muxing in Intel
-hardware like the Langwell PCH?
-
-> I don't have the resources to look into every patch
-> with the level of detail required to make a final decision, I really
-> have to rely on someone I trust like you to decide if something goes
-> in or not. Of course I can offer an opinion when you ask me, which
-> I did, but also didn't feel I understand the patch well enough to
-> ack them -- even though it looks reasonable to me.
-
-OK sorry it wasn't meant to stress you.
-
-> Regarding the process, you have my full Ack on the plan to merge
-> them into mainline through your tree when you find them good enough
-> and also put a copy into the arm-soc tree if needed to resolve
-> any dependencies or conflicts with other stuff in arm-soc.
-
-Yes, well the patches are a *real* *good* pinctrl driver, there is
-no question of that.
-
-The only issue is size and open-coding.
-
-I am open to any smart ideas on how to get rid of excess tables,
-I just happen to have run out of them myself, all sort of comes
-to the point of wanting the C preprocessor to have loop
-statements...
-
-I'm leaning toward creating a pin and group specification
-language and put that into the kbuild to generate headers with
-them to cut the open-coded data down.
-
->> Tony had made it possible to have pinctrl drivers as modules,
->> but some systems may need their pin control up before
->> they even bring up the filesystem :-(
->>
->> Booting from initramfs and switchroot can solve the above
->> but will slow down boot I believe, and ARM systems
->> usually don't like that.
->
-> Sounds good enough for me. Anyone who wants a single kernel that runs on
-> a lot different machines (distros like ubuntu, fedora, debian, opensuse)
-> typically relies on initramfs already, the others can have the code built-in.
-
-Yep single uImage mandates modules, I thought so for long
-but now I'm ever more certain of it.
-
-Yours,
-Linus Walleij
+--=20
+nvpublic
