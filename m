@@ -1,105 +1,109 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: [PATCH v3 0/9] tegra: Add I2C driver and associated parts
-Date: Fri,  3 Feb 2012 17:13:51 -0800
-Message-ID: <1328318041-10943-1-git-send-email-sjg@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <u-boot-bounces@lists.denx.de>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: U-Boot Mailing List <u-boot@lists.denx.de>
-Cc: linux-tegra@vger.kernel.org, Tom Warren <twarren@nvidia.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v3 1/9] tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
+Date: Fri,  3 Feb 2012 17:13:52 -0800
+Message-ID: <1328318041-10943-2-git-send-email-sjg@chromium.org>
+References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1328318041-10943-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series brings in an I2C driver for Tegra which can be
-configured by a flat device tree.
+Change this name to fit with the current convention in the Tegra
+header file.
 
-It supports 8- and 16-bit addresses and both the normal I2C ports and
-the DVC port (for controlling the power management unit (PMU)).
+Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-Recent Linux bindings are used, based on example .dts files found in
-branch for-3.3/dt at:
+ arch/arm/cpu/armv7/tegra2/ap20.c          |   10 +++++-----
+ arch/arm/cpu/armv7/tegra2/board.c         |    2 +-
+ arch/arm/include/asm/arch-tegra2/tegra2.h |    4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
-
-(I could not find the actual binding documentation to include here)
-
-Note: There is still an open question on I2C2 pinmux. The idea of an
-'nvidia,pinmux-config' settings did not find favour, so we have no way
-of passing the correct config to funcmux for this port. Therefore we have
-disabled it for now. The impact on Seaboard is that the TPM and battery
-charger cannot be accessed.
-
-I am sending this series to the linux-tegra list also, and will do so for
-future series also. This is because anything to do with fdt also affects
-the kernel bindings. Please advise if this is not useful.
-
-Changes in v2:
-- Add build warning if CONFIG_SYS_I2C_INIT_BOARD is not defined
-- Adjust definitions to fit new peripheral clock bindings
-- Change 'speed' to 'clock-frequency'
-- Change i2c array to static
-- Disable port 2 as it is not used
-- Make i2c/dvc decision come from fdt
-- Remove i2c configuring using CONFIG (use fdt instead)
-- Remove u-boot,pinmux binding (sadly)
-- Return an error if an unavailable i2c bus is selected
-- Simplify code in i2c_addr_ok()
-- Tidy comment style
-- Use DIV_ROUND_UP() instead of a home-grown macro
-- Use new fdtdec alias decode function
-
-Changes in v3:
-- Add TEGRA_I2C_NUM_CONTROLLERS to select number of I2C ports
-- Add comment on how to select pinmux for I2C2
-- Add comments and warning for mixed alias use in fdtdec
-- Add new patch to support 16-bit clock divisors required by I2C
-- Change i2c_init() to reset speed and override the fdt setting
-- Fix i2c_addr_ok() function to check addresses correctly
-- Move speed setting from tegra20.dtsi to board .dts file
-- Rename driver to tegra_i2c since it will later be shared with Tegra3
-- Tidy up I2C speed selection to use the peripheral clock
-- Use CONFIG_TEGRA_I2C instead of CONFIG_TEGRA2_I2C
-
-Simon Glass (8):
-  tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
-  fdt: Add function to allow aliases to refer to multiple nodes
-  tegra: Enhance clock support to handle 16-bit clock divisors
-  tegra: fdt: i2c: Add extra I2C bindings for U-Boot
-  tegra: i2c: Initialise I2C on Nvidia boards
-  tegra: i2c: Select I2C ordering for Seaboard
-  tegra: i2c: Select number of controllers for Tegra2 boards
-  tegra: i2c: Enable I2C on Seaboard
-
-Yen Lin (1):
-  tegra: i2c: Add I2C driver
-
- arch/arm/cpu/armv7/tegra2/ap20.c             |   10 +-
- arch/arm/cpu/armv7/tegra2/board.c            |    2 +-
- arch/arm/cpu/armv7/tegra2/clock.c            |   63 ++-
- arch/arm/dts/tegra20.dtsi                    |    6 +-
- arch/arm/include/asm/arch-tegra2/clk_rst.h   |   10 +-
- arch/arm/include/asm/arch-tegra2/tegra2.h    |    4 +-
- arch/arm/include/asm/arch-tegra2/tegra_i2c.h |  160 ++++++++
- board/nvidia/common/board.c                  |    7 +
- board/nvidia/dts/tegra2-seaboard.dts         |   21 +
- drivers/i2c/Makefile                         |    1 +
- drivers/i2c/tegra_i2c.c                      |  566 ++++++++++++++++++++++++++
- include/configs/seaboard.h                   |    8 +
- include/configs/tegra2-common.h              |    3 +
- include/fdtdec.h                             |   25 ++
- lib/fdtdec.c                                 |   24 +-
- 15 files changed, 873 insertions(+), 37 deletions(-)
- create mode 100644 arch/arm/include/asm/arch-tegra2/tegra_i2c.h
- create mode 100644 drivers/i2c/tegra_i2c.c
-
+diff --git a/arch/arm/cpu/armv7/tegra2/ap20.c b/arch/arm/cpu/armv7/tegra2/ap20.c
+index 4c44bb3..3ea2e26 100644
+--- a/arch/arm/cpu/armv7/tegra2/ap20.c
++++ b/arch/arm/cpu/armv7/tegra2/ap20.c
+@@ -105,14 +105,14 @@ static void enable_cpu_clock(int enable)
+ 
+ static int is_cpu_powered(void)
+ {
+-	struct pmc_ctlr *pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 
+ 	return (readl(&pmc->pmc_pwrgate_status) & CPU_PWRED) ? 1 : 0;
+ }
+ 
+ static void remove_cpu_io_clamps(void)
+ {
+-	struct pmc_ctlr *pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 	u32 reg;
+ 
+ 	/* Remove the clamps on the CPU I/O signals */
+@@ -126,7 +126,7 @@ static void remove_cpu_io_clamps(void)
+ 
+ static void powerup_cpu(void)
+ {
+-	struct pmc_ctlr *pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 	u32 reg;
+ 	int timeout = IO_STABILIZATION_DELAY;
+ 
+@@ -157,7 +157,7 @@ static void powerup_cpu(void)
+ 
+ static void enable_cpu_power_rail(void)
+ {
+-	struct pmc_ctlr *pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 	u32 reg;
+ 
+ 	reg = readl(&pmc->pmc_cntrl);
+@@ -277,7 +277,7 @@ void enable_scu(void)
+ 
+ void init_pmc_scratch(void)
+ {
+-	struct pmc_ctlr *const pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *const pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 	int i;
+ 
+ 	/* SCRATCH0 is initialized by the boot ROM and shouldn't be cleared */
+diff --git a/arch/arm/cpu/armv7/tegra2/board.c b/arch/arm/cpu/armv7/tegra2/board.c
+index 410d0bd..77a627d 100644
+--- a/arch/arm/cpu/armv7/tegra2/board.c
++++ b/arch/arm/cpu/armv7/tegra2/board.c
+@@ -47,7 +47,7 @@ enum {
+ 
+ unsigned int query_sdram_size(void)
+ {
+-	struct pmc_ctlr *const pmc = (struct pmc_ctlr *)NV_PA_PMC_BASE;
++	struct pmc_ctlr *const pmc = (struct pmc_ctlr *)TEGRA2_PMC_BASE;
+ 	u32 reg;
+ 
+ 	reg = readl(&pmc->pmc_scratch20);
+diff --git a/arch/arm/include/asm/arch-tegra2/tegra2.h b/arch/arm/include/asm/arch-tegra2/tegra2.h
+index baae2eb..ca1881e 100644
+--- a/arch/arm/include/asm/arch-tegra2/tegra2.h
++++ b/arch/arm/include/asm/arch-tegra2/tegra2.h
+@@ -39,7 +39,7 @@
+ #define NV_PA_APB_UARTD_BASE	(NV_PA_APB_MISC_BASE + 0x6300)
+ #define NV_PA_APB_UARTE_BASE	(NV_PA_APB_MISC_BASE + 0x6400)
+ #define TEGRA2_SPI_BASE		(NV_PA_APB_MISC_BASE + 0xC380)
+-#define NV_PA_PMC_BASE		0x7000E400
++#define TEGRA2_PMC_BASE		(NV_PA_APB_MISC_BASE + 0xE400)
+ #define NV_PA_CSITE_BASE	0x70040000
+ #define TEGRA_USB1_BASE		0xC5000000
+ #define TEGRA_USB3_BASE		0xC5008000
+@@ -55,7 +55,7 @@ struct timerus {
+ 	unsigned int cntr_1us;
+ };
+ #else  /* __ASSEMBLY__ */
+-#define PRM_RSTCTRL		NV_PA_PMC_BASE
++#define PRM_RSTCTRL		TEGRA2_PMC_BASE
+ #endif
+ 
+ #endif	/* TEGRA2_H */
 -- 
 1.7.7.3
