@@ -1,72 +1,97 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/remove
-Date: Fri, 3 Feb 2012 16:05:49 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178E5D30DD@HQMAIL01.nvidia.com>
-References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
-	<20111220015634.GA27789@quad.lixom.net>
-	<CAM=Q2cs8K4vraWPNqervcmxEqUGiAbng+44+L9OhD3ijPw9tAA@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF176BE92E21@HQMAIL01.nvidia.com>
-	<20120106162615.GA8441@trinity.fluff.org>
-	<74CDBE0F657A3D45AFBB94109FB122FF177EE39E15@HQMAIL01.nvidia.com>
- <CAOesGMjx0nA5Y_Cv8ECBcZP45EyR5BPUNXEapCN3JjdWTjpo8A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMjx0nA5Y_Cv8ECBcZP45EyR5BPUNXEapCN3JjdWTjpo8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Subject: [PATCH 1/2] i2c: tegra: Remove unnecessary clk_get
+Date: Fri,  3 Feb 2012 17:10:16 -0700
+Message-ID: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Olof Johansson wrote at Friday, January 06, 2012 10:45 AM:
-> On Fri, Jan 6, 2012 at 8:47 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> w=
-rote:
-> > Ben Dooks wrote at Friday, January 06, 2012 9:26 AM:
-> >> On Tue, Dec 20, 2011 at 01:47:29PM -0800, Stephen Warren wrote:
-> >> > Shubhrajyoti Datta wrote at Monday, December 19, 2011 11:15 PM:
-> >> > ...
-> >> > > Hi Stephen ,
-> >> > > could you check this one also
-> >> > > thanks.
-> >> > >
-> >> > > From: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
-> >> > > Date: Tue, 20 Dec 2011 11:40:51 +0530
-> >> > > Subject: [PATCH] I2C : tegra : devexit in remove
-> >> > >
-> >> > > Adding I2C __devexxit in remove
-> >> > >
-> >> > > Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> > > Signed-off-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
-> >> >
-> >> > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> >
-> >> > Ben or Olof,
-> >> >
-> >> > > - =A0 =A0 =A0 .remove =A0=3D tegra_i2c_remove,
-> >> > > + =A0 =A0 =A0 .remove =A0=3D__devexit_p(tegra_i2c_remove),
-> >> >
-> >> > When you apply this, can you fix it up to add a space after the =
-=3D in
-> >> > the modified line? If you want, I can post an updated version to=
- do that.
-> >>
-> >> Let me know if you want anything applying or a pull-request proces=
-sed.
-> >>
-> >> I think once fixed the patches would be fine and I ack them:
-> >>
-> >> Acked-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-> >
-> > Olof, since you took the original through the Tegra tree, I think i=
-t
-> > makes sense for us to take this fix through there too, and for 3.3?
-> > The patch above is http://patchwork.ozlabs.org/patch/132349/
->=20
-> Yep, will do.
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I haven't seen this show up anywhere yet.
+The clock table has just one entry for a given i2c controller.
+Hence, the second clk_get is not required in the driver.
 
---=20
-nvpublic
+Originally by Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, but S-o-b is
+missing in our internal repo.
+
+[swarren: Reworded commit description, resolved merge issue when cherry-
+picking to mainline]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c |   17 ++---------------
+ 1 files changed, 2 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 0ab4a95..a546ede 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -123,7 +123,6 @@ struct tegra_i2c_dev {
+ 	struct device *dev;
+ 	struct i2c_adapter adapter;
+ 	struct clk *clk;
+-	struct clk *i2c_clk;
+ 	struct resource *iomem;
+ 	void __iomem *base;
+ 	int cont_id;
+@@ -565,7 +564,6 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct resource *iomem;
+ 	struct clk *clk;
+-	struct clk *i2c_clk;
+ 	const unsigned int *prop;
+ 	void __iomem *base;
+ 	int irq;
+@@ -603,22 +601,14 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 		goto err_release_region;
+ 	}
+ 
+-	i2c_clk = clk_get(&pdev->dev, "i2c");
+-	if (IS_ERR(i2c_clk)) {
+-		dev_err(&pdev->dev, "missing bus clock");
+-		ret = PTR_ERR(i2c_clk);
+-		goto err_clk_put;
+-	}
+-
+ 	i2c_dev = kzalloc(sizeof(struct tegra_i2c_dev), GFP_KERNEL);
+ 	if (!i2c_dev) {
+ 		ret = -ENOMEM;
+-		goto err_i2c_clk_put;
++		goto err_clk_put;
+ 	}
+ 
+ 	i2c_dev->base = base;
+ 	i2c_dev->clk = clk;
+-	i2c_dev->i2c_clk = i2c_clk;
+ 	i2c_dev->iomem = iomem;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->irq = irq;
+@@ -657,7 +647,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 		goto err_free;
+ 	}
+ 
+-	clk_enable(i2c_dev->i2c_clk);
++	clk_enable(i2c_dev->clk);
+ 
+ 	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
+ 	i2c_dev->adapter.owner = THIS_MODULE;
+@@ -682,8 +672,6 @@ err_free_irq:
+ 	free_irq(i2c_dev->irq, i2c_dev);
+ err_free:
+ 	kfree(i2c_dev);
+-err_i2c_clk_put:
+-	clk_put(i2c_clk);
+ err_clk_put:
+ 	clk_put(clk);
+ err_release_region:
+@@ -698,7 +686,6 @@ static int __devexit tegra_i2c_remove(struct platform_device *pdev)
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 	i2c_del_adapter(&i2c_dev->adapter);
+ 	free_irq(i2c_dev->irq, i2c_dev);
+-	clk_put(i2c_dev->i2c_clk);
+ 	clk_put(i2c_dev->clk);
+ 	release_mem_region(i2c_dev->iomem->start,
+ 		resource_size(i2c_dev->iomem));
+-- 
+1.7.0.4
