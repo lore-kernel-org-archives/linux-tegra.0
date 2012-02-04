@@ -1,41 +1,105 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] i2c: tegra: Remove unnecessary write to INT_STATUS
-Date: Fri,  3 Feb 2012 17:10:17 -0700
-Message-ID: <1328314217-16632-2-git-send-email-swarren@nvidia.com>
-References: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328314217-16632-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Simon Glass <sjg@chromium.org>
+Subject: [PATCH v3 0/9] tegra: Add I2C driver and associated parts
+Date: Fri,  3 Feb 2012 17:13:51 -0800
+Message-ID: <1328318041-10943-1-git-send-email-sjg@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <u-boot-bounces@lists.denx.de>
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Sender: u-boot-bounces@lists.denx.de
+Errors-To: u-boot-bounces@lists.denx.de
+To: U-Boot Mailing List <u-boot@lists.denx.de>
+Cc: linux-tegra@vger.kernel.org, Tom Warren <twarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This series brings in an I2C driver for Tegra which can be
+configured by a flat device tree.
 
-The write is not necessary and may cause the I2C controller to misbehave.
-With this fix, I2C on Tegra30 works (at least, running i2cdump repeatedly
-on the WM8903 on Cardhu's I2C5/DVC bus).
+It supports 8- and 16-bit addresses and both the normal I2C ports and
+the DVC port (for controlling the power management unit (PMU)).
 
-Originally by Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, but S-o-b missing in our
-internal repo.
+Recent Linux bindings are used, based on example .dts files found in
+branch for-3.3/dt at:
 
-[swarren: Reworded commit description]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a546ede..edac27b 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -456,7 +456,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	int ret;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
--	i2c_writel(i2c_dev, 0xFF, I2C_INT_STATUS);
- 
- 	if (msg->len == 0)
- 		return -EINVAL;
+(I could not find the actual binding documentation to include here)
+
+Note: There is still an open question on I2C2 pinmux. The idea of an
+'nvidia,pinmux-config' settings did not find favour, so we have no way
+of passing the correct config to funcmux for this port. Therefore we have
+disabled it for now. The impact on Seaboard is that the TPM and battery
+charger cannot be accessed.
+
+I am sending this series to the linux-tegra list also, and will do so for
+future series also. This is because anything to do with fdt also affects
+the kernel bindings. Please advise if this is not useful.
+
+Changes in v2:
+- Add build warning if CONFIG_SYS_I2C_INIT_BOARD is not defined
+- Adjust definitions to fit new peripheral clock bindings
+- Change 'speed' to 'clock-frequency'
+- Change i2c array to static
+- Disable port 2 as it is not used
+- Make i2c/dvc decision come from fdt
+- Remove i2c configuring using CONFIG (use fdt instead)
+- Remove u-boot,pinmux binding (sadly)
+- Return an error if an unavailable i2c bus is selected
+- Simplify code in i2c_addr_ok()
+- Tidy comment style
+- Use DIV_ROUND_UP() instead of a home-grown macro
+- Use new fdtdec alias decode function
+
+Changes in v3:
+- Add TEGRA_I2C_NUM_CONTROLLERS to select number of I2C ports
+- Add comment on how to select pinmux for I2C2
+- Add comments and warning for mixed alias use in fdtdec
+- Add new patch to support 16-bit clock divisors required by I2C
+- Change i2c_init() to reset speed and override the fdt setting
+- Fix i2c_addr_ok() function to check addresses correctly
+- Move speed setting from tegra20.dtsi to board .dts file
+- Rename driver to tegra_i2c since it will later be shared with Tegra3
+- Tidy up I2C speed selection to use the peripheral clock
+- Use CONFIG_TEGRA_I2C instead of CONFIG_TEGRA2_I2C
+
+Simon Glass (8):
+  tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
+  fdt: Add function to allow aliases to refer to multiple nodes
+  tegra: Enhance clock support to handle 16-bit clock divisors
+  tegra: fdt: i2c: Add extra I2C bindings for U-Boot
+  tegra: i2c: Initialise I2C on Nvidia boards
+  tegra: i2c: Select I2C ordering for Seaboard
+  tegra: i2c: Select number of controllers for Tegra2 boards
+  tegra: i2c: Enable I2C on Seaboard
+
+Yen Lin (1):
+  tegra: i2c: Add I2C driver
+
+ arch/arm/cpu/armv7/tegra2/ap20.c             |   10 +-
+ arch/arm/cpu/armv7/tegra2/board.c            |    2 +-
+ arch/arm/cpu/armv7/tegra2/clock.c            |   63 ++-
+ arch/arm/dts/tegra20.dtsi                    |    6 +-
+ arch/arm/include/asm/arch-tegra2/clk_rst.h   |   10 +-
+ arch/arm/include/asm/arch-tegra2/tegra2.h    |    4 +-
+ arch/arm/include/asm/arch-tegra2/tegra_i2c.h |  160 ++++++++
+ board/nvidia/common/board.c                  |    7 +
+ board/nvidia/dts/tegra2-seaboard.dts         |   21 +
+ drivers/i2c/Makefile                         |    1 +
+ drivers/i2c/tegra_i2c.c                      |  566 ++++++++++++++++++++++++++
+ include/configs/seaboard.h                   |    8 +
+ include/configs/tegra2-common.h              |    3 +
+ include/fdtdec.h                             |   25 ++
+ lib/fdtdec.c                                 |   24 +-
+ 15 files changed, 873 insertions(+), 37 deletions(-)
+ create mode 100644 arch/arm/include/asm/arch-tegra2/tegra_i2c.h
+ create mode 100644 drivers/i2c/tegra_i2c.c
+
 -- 
-1.7.0.4
+1.7.7.3
