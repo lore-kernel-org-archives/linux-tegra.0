@@ -1,102 +1,123 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c: tegra: Remove unnecessary clk_get
-Date: Sat, 4 Feb 2012 22:02:41 -0800
-Message-ID: <CAPnjgZ2r1+tSiiKg0rHH_atrLVqn6h+7ueMdtcmaRYtkdXiTRw@mail.gmail.com>
-References: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
-	<4F2D1400.5050907@nvidia.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF178E5D3162@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E5D3162-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH 1/3] net: rfkill-gpio: add device tree support
+Date: Sun,  5 Feb 2012 18:18:40 +0100
+Message-ID: <215249735783e9fe35db1c594d901f591725de50.1328461986.git.marvin24@gmx.de>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+This adds device tree support for rfkill-gpio. The optional platform
+paramters gpio_runtime_close and gpio_runtime_setup are not implemented.
 
-On Sat, Feb 4, 2012 at 9:51 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
-te:
-> Laxman Dewangan wrote at Saturday, February 04, 2012 4:18 AM
->> On Saturday 04 February 2012 05:40 AM, Stephen Warren wrote:
->> > From: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> >
->> > The clock table has just one entry for a given i2c controller.
->> > Hence, the second clk_get is not required in the driver.
->> >
->> > Originally by Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, but S-o-b is
->> > missing in our internal repo.
->> >
->> > [swarren: Reworded commit description, resolved merge issue when c=
-herry-
->> > picking to mainline]
->> > Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Ben, Wolfram. The two changes in this patch series are completely
-> independent. The 2nd patch is what I really care about, and can be
-> applied irrespective of the resolution of the discussion below.
->
->> The tegra i2c controller have two clock inputs i2c_div and i2c_fast_=
-clk.
->
-> Is this true on Tegra20 or just Tegra30? The Tegra20 TRM explicitly l=
-ists
-> the clock domains the I2C controller users, and doesn't mention anyth=
-ing
-> about this...
+Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ include/linux/rfkill-gpio.h |    2 +-
+ net/rfkill/rfkill-gpio.c    |   60 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 60 insertions(+), 2 deletions(-)
 
-As I happened to be looking at this on Friday, it seems that Tegra20
-supports the fast I2C also. I couldn't quite see how to select the
-fast clock, but since I wasn't planning to support it I didn't mind.
-=46rom what I could tell, the slow clock can switch between four option=
-s
-and the fast clock is fixed at 72MHz (based off PLLP), as below.
-
->
->> There is way to select the clock source for i2c_div clock but
->> i2c_fast_clk is fixed to PLLP_OUT3 clock source.
->> Both clocks are needed to proper functionality. This change assume t=
-hat
->> fast-clk (pllp_out3) is always be ON which is wrong assumption. For
->
-> That's not something this change assumes; the assumption was already
-> there. The two clk_get() calls in the I2C driver today end up getting
-> the same clock I believe, since there is only a single clock listed i=
-n
-> tegra2_clock.c for the I2C controller.
->
->> aggressive power management, if there is no client for pllp_out3, it
->> will be turned off. And so this is require.
->>
->> However, the code enable fast_clk always once it is registered which=
- is
->> also not correct. The div_clk and fast_clk should be enable together=
- and
->> diable together and so driver need to call the clk_enable(div_clk) a=
-nd
->> clk_enable(fast_clk) for enabling clock. We have fixed this in our
->> internal tree (K3.1). Let me know if I can help here.:
->
-> The K3.1 tree is where I got this change from, although I did notice
-> that there were some other changes in that tree to implement the more
-> aggressive clock management you described.
->
-> If I'm not making sense, We should probably continue this discussion
-> off-list (just between ourselves) so as to avoid spamming the mailing
-> list; I can summarize any results for the list archive later.
-
-
-Regards,
-Simon
-
->
-> --
-> nvpublic
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+diff --git a/include/linux/rfkill-gpio.h b/include/linux/rfkill-gpio.h
+index 4d09f6e..76a9674 100644
+--- a/include/linux/rfkill-gpio.h
++++ b/include/linux/rfkill-gpio.h
+@@ -35,7 +35,7 @@
+  */
+ 
+ struct rfkill_gpio_platform_data {
+-	char			*name;
++	const char		*name;
+ 	int			reset_gpio;
+ 	int			shutdown_gpio;
+ 	const char		*power_clk_name;
+diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
+index 865adb6..6b4c5e8 100644
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -21,6 +21,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/rfkill.h>
++#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+@@ -77,13 +78,70 @@ static const struct rfkill_ops rfkill_gpio_ops = {
+ 	.set_block = rfkill_gpio_set_power,
+ };
+ 
++#ifdef CONFIG_OF
++static struct rfkill_gpio_platform_data * __devinit
++			rfkill_gpio_parse_pdata(struct platform_device *pdev)
++{
++	struct rfkill_gpio_platform_data *pdata, *rfkill;
++	struct device_node *np = pdev->dev.of_node, *child;
++	int count = 0;
++
++	for_each_child_of_node(np, child)
++		count++;
++	if (!count)
++		return NULL;
++
++	pdata = devm_kzalloc(&pdev->dev,
++				sizeof(struct rfkill_gpio_platform_data) *
++				count, GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	rfkill = pdata;
++
++	for_each_child_of_node(np, child) {
++		of_property_read_string(child, "label", &rfkill->name);
++		if (!rfkill->name)
++			rfkill->name = child->name;
++		rfkill->reset_gpio = of_get_named_gpio(child, "reset-gpio", 0);
++		rfkill->shutdown_gpio = of_get_named_gpio(child,
++							  "shutdown-gpio", 0);
++		of_property_read_u32(child, "type", &rfkill->type);
++		of_property_read_string(child, "clock",
++					&rfkill->power_clk_name);
++
++		rfkill += sizeof(struct rfkill_gpio_platform_data);
++	}
++
++	return pdata;
++}
++
++static const struct of_device_id of_rfkill_gpio_match[] = {
++	{ .compatible = "rfkill-gpio", },
++	{},
++};
++
++#else
++static inline struct rfkill_gpio_platform_data
++			*rfkill_gpio_parse_pdata(struct platform_device *pdev)
++{
++	return NULL;
++}
++
++#define of_rfkill_gpio_match NULL
++#endif
++
+ static int rfkill_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct rfkill_gpio_data *rfkill;
+ 	struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
++	struct device_node *np = pdev->dev.of_node;
+ 	int ret = 0;
+ 	int len = 0;
+ 
++	if (np)
++		pdata = rfkill_gpio_parse_pdata(pdev);
++
+ 	if (!pdata) {
+ 		pr_warn("%s: No platform data specified\n", __func__);
+ 		return -EINVAL;
+@@ -210,13 +268,13 @@ static int rfkill_gpio_remove(struct platform_device *pdev)
+ 
+ 	return 0;
+ }
