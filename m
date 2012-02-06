@@ -1,64 +1,42 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH V2 1/4] i2c: tegra: Add __devinit/exit to probe/removeG
-Date: Mon, 6 Feb 2012 08:52:22 -0800
-Message-ID: <20120206165222.GA25597@quad.lixom.net>
-References: <1324189772-26914-1-git-send-email-swarren@nvidia.com>
- <20111220015634.GA27789@quad.lixom.net>
- <CAM=Q2cs8K4vraWPNqervcmxEqUGiAbng+44+L9OhD3ijPw9tAA@mail.gmail.com>
- <74CDBE0F657A3D45AFBB94109FB122FF176BE92E21@HQMAIL01.nvidia.com>
- <20120106162615.GA8441@trinity.fluff.org>
- <74CDBE0F657A3D45AFBB94109FB122FF177EE39E15@HQMAIL01.nvidia.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] pwm: Allow chips to support multiple PWMs.
+Date: Mon, 06 Feb 2012 22:22:49 +0100
+Message-ID: <4F3044A9.8000202@metafoo.de>
+References: <1328541585-24642-1-git-send-email-thierry.reding@avionic-design.de> <1328541585-24642-3-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF177EE39E15-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1328541585-24642-3-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 06, 2012 at 08:47:11AM -0800, Stephen Warren wrote:
-> Ben Dooks wrote at Friday, January 06, 2012 9:26 AM:
-> > On Tue, Dec 20, 2011 at 01:47:29PM -0800, Stephen Warren wrote:
-> > > Shubhrajyoti Datta wrote at Monday, December 19, 2011 11:15 PM:
-> > > ...
-> > > > Hi Stephen ,
-> > > > could you check this one also
-> > > > thanks.
-> > > >
-> > > > From: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
-> > > > Date: Tue, 20 Dec 2011 11:40:51 +0530
-> > > > Subject: [PATCH] I2C : tegra : devexit in remove
-> > > >
-> > > > Adding I2C __devexxit in remove
-> > > >
-> > > > Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > Signed-off-by: Shubhrajyoti D <shubhrajyoti-l0cyMroinI0@public.gmane.org>
-> > >
-> > > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >
-> > > Ben or Olof,
-> > >
-> > > > -       .remove  = tegra_i2c_remove,
-> > > > +       .remove  =__devexit_p(tegra_i2c_remove),
-> > >
-> > > When you apply this, can you fix it up to add a space after the = in
-> > > the modified line? If you want, I can post an updated version to do that.
-> > 
-> > Let me know if you want anything applying or a pull-request processed.
-> > 
-> > I think once fixed the patches would be fine and I ack them:
-> > 
-> > Acked-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+On 02/06/2012 04:19 PM, Thierry Reding wrote:
+> This commit modifies the PWM core to support multiple PWMs per struct
+> pwm_chip.
+
+I think you should mention what motivates this change.
+
+> It achieves this in a similar way to how gpiolib works, by
+> allowing PWM ranges to be requested dynamically (pwm_chip.base == -1) or
+> starting at a given offset (pwm_chip.base >= 0).
+
+If we've learned one thing from gpiolib, I think it is that using a global
+index to identify a resource was a bad idea.
+
+> A chip specifies how
+> many PWMs it controls using the npwm member. Each of the functions in
+> the pwm_ops structure gets an additional argument that specified the PWM
+> number (it can be converted to a per-chip index by subtracting the
+> chip's base).
 > 
-> Olof, since you took the original through the Tegra tree, I think it
-> makes sense for us to take this fix through there too, and for 3.3?
-> The patch above is http://patchwork.ozlabs.org/patch/132349/
+> The total maximum number of PWM devices is currently fixed to 64, but
+> can easily be made configurable via Kconfig.
 
-Done, applied, sorry for the delay.
+The code says 1024.
 
-The patch has whitespace damage but I fixed it up manually.
-
-
--Olof
+> 
+> The patch is incomplete in that it doesn't convert any existing drivers
+> that are now broken.
