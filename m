@@ -1,530 +1,366 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 02/10] pwm: Allow chips to support multiple PWMs.
-Date: Mon,  6 Feb 2012 16:19:37 +0100
-Message-ID: <1328541585-24642-3-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v2 03/10] of: Add PWM support.
+Date: Mon,  6 Feb 2012 16:19:38 +0100
+Message-ID: <1328541585-24642-4-git-send-email-thierry.reding@avionic-design.de>
 References: <1328541585-24642-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 In-Reply-To: <1328541585-24642-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This commit modifies the PWM core to support multiple PWMs per struct
-pwm_chip. It achieves this in a similar way to how gpiolib works, by
-allowing PWM ranges to be requested dynamically (pwm_chip.base == -1) or
-starting at a given offset (pwm_chip.base >= 0). A chip specifies how
-many PWMs it controls using the npwm member. Each of the functions in
-the pwm_ops structure gets an additional argument that specified the PWM
-number (it can be converted to a per-chip index by subtracting the
-chip's base).
-
-The total maximum number of PWM devices is currently fixed to 64, but
-can easily be made configurable via Kconfig.
-
-The patch is incomplete in that it doesn't convert any existing drivers
-that are now broken.
+This patch adds helpers to support device tree bindings for the generic
+PWM API. Device tree binding documentation for PWM controllers is also
+provided.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
 Changes in v2:
-  - add 'struct device *dev' field to pwm_chip, drop label field
-  - use radix tree for PWM descriptors
-  - add pwm_set_chip_data() and pwm_get_chip_data() functions to allow
-    storing and retrieving chip-specific per-PWM data
+  - add device tree binding documentation
+  - add of_xlate to parse controller-specific PWM-specifier
 
-TODO:
-  - pass chip-indexed PWM number (PWM descriptor?) to drivers
-  - merge with Sascha's patch
+ Documentation/devicetree/bindings/pwm/pwm.txt |   50 ++++++++++
+ drivers/of/Kconfig                            |    6 +
+ drivers/of/Makefile                           |    1 +
+ drivers/of/pwm.c                              |  130 +++++++++++++++++++++++++
+ include/linux/of_pwm.h                        |   51 ++++++++++
+ include/linux/pwm.h                           |   17 +++
+ 6 files changed, 255 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm.txt
+ create mode 100644 drivers/of/pwm.c
+ create mode 100644 include/linux/of_pwm.h
 
- drivers/pwm/core.c  |  287 ++++++++++++++++++++++++++++++++++++++-------------
- include/linux/pwm.h |   37 +++++--
- 2 files changed, 242 insertions(+), 82 deletions(-)
-
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 71de479..a223bd6 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -17,154 +17,292 @@
-  *  along with this program; see the file COPYING.  If not, write to
-  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
+diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
+new file mode 100644
+index 0000000..1c34e86
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+@@ -0,0 +1,50 @@
++Specifying PWM information for devices
++======================================
 +
- #include <linux/module.h>
-+#include <linux/of_pwm.h>
- #include <linux/pwm.h>
-+#include <linux/radix-tree.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/device.h>
++1) PWM user nodes
++-----------------
++
++PWM users should specify a list of PWM devices that they want to use
++with a property containing a 'pwm-list':
++
++	pwm-list ::= <single-pwm> [pwm-list]
++	single-pwm ::= <pwm-phandle> <pwm-specifier>
++	pwm-phandle : phandle to PWM controller node
++	pwm-specifier : array of #pwm-cells specifying the given PWM
++			(controller specific)
++
++PWM properties should be named "[<name>-]pwms". Exact meaning of each
++pwms property must be documented in the device tree binding for each
++device.
++
++The following example could be used to describe a PWM-based backlight
++device:
++
++	pwm: pwm {
++		#pwm-cells = <2>;
++	};
++
++	[...]
++
++	bl: backlight {
++		pwms = <&pwm 0 5000000>;
++	};
++
++pwm-specifier typically encodes the chip-relative PWM number and the PWM
++period in nanoseconds.
++
++2) PWM controller nodes
++-----------------------
++
++PWM controller nodes must specify the number of cells used for the
++specifier using the '#pwm-cells' property.
++
++An example PWM controller might look like this:
++
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
++
++TODO: do we need an empty 'pwm-controller' property?
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index 268163d..9635468 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -56,6 +56,12 @@ config OF_GPIO
+ 	help
+ 	  OpenFirmware GPIO accessors
  
-+#define MAX_PWMS 1024
++config OF_PWM
++	def_bool y
++	depends on PWM
++	help
++	  OpenFirmware PWM accessors
 +
- struct pwm_device {
--	struct			pwm_chip *chip;
--	const char		*label;
-+	const char *label;
-+	unsigned int pwm;
-+};
+ config OF_I2C
+ 	def_tristate I2C
+ 	depends on I2C && !SPARC
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index a73f5a5..3dd13e3 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_OF_ADDRESS)  += address.o
+ obj-$(CONFIG_OF_IRQ)    += irq.o
+ obj-$(CONFIG_OF_DEVICE) += device.o platform.o
+ obj-$(CONFIG_OF_GPIO)   += gpio.o
++obj-$(CONFIG_OF_PWM)	+= pwm.o
+ obj-$(CONFIG_OF_I2C)	+= of_i2c.o
+ obj-$(CONFIG_OF_NET)	+= of_net.o
+ obj-$(CONFIG_OF_SPI)	+= of_spi.o
+diff --git a/drivers/of/pwm.c b/drivers/of/pwm.c
+new file mode 100644
+index 0000000..d6f7f33
+--- /dev/null
++++ b/drivers/of/pwm.c
+@@ -0,0 +1,130 @@
++/*
++ * OF helpers for the PWM API
++ *
++ * Copyright (c) 2011 Avionic Design GmbH
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
 +
-+struct pwm_desc {
-+	struct pwm_chip		*chip;
-+	void			*chip_data;
- 	unsigned long		flags;
- #define FLAG_REQUESTED	0
- #define FLAG_ENABLED	1
--	struct list_head	node;
-+	struct pwm_device	pwm;
- };
- 
--static LIST_HEAD(pwm_list);
--
- static DEFINE_MUTEX(pwm_lock);
-+static DECLARE_BITMAP(allocated_pwms, MAX_PWMS);
-+static RADIX_TREE(pwm_desc_tree, GFP_KERNEL);
++#include <linux/errno.h>
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/pwm.h>
 +
-+static struct pwm_desc *pwm_to_desc(unsigned int pwm)
++static int of_pwmchip_is_match(struct pwm_chip *chip, void *data)
 +{
-+	return radix_tree_lookup(&pwm_desc_tree, pwm);
++	return chip->dev ? chip->dev->of_node == data : 0;
 +}
 +
-+static struct pwm_desc *alloc_desc(unsigned int pwm)
++/**
++ * of_node_to_pwmchip() - finds the PWM chip associated with a device node
++ * @np: device node of the PWM chip
++ *
++ * Returns a pointer to the PWM chip associated with the specified device
++ * node or NULL if the device node doesn't represent a PWM chip.
++ */
++struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
 +{
-+	struct pwm_desc *desc;
-+
-+	desc = kzalloc(sizeof(*desc), GFP_KERNEL);
-+	if (!desc)
-+		return NULL;
- 
--static struct pwm_device *_find_pwm(int pwm_id)
-+	return desc;
++	return pwmchip_find(np, of_pwmchip_is_match);
 +}
 +
-+static void free_desc(unsigned int pwm)
++int of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args,
++			struct pwm_spec *spec)
 +{
-+	struct pwm_desc *desc = pwm_to_desc(pwm);
++	if (pc->of_pwm_n_cells < 2)
++		return -EINVAL;
 +
-+	radix_tree_delete(&pwm_desc_tree, pwm);
-+	kfree(desc);
++	if (args->args_count < pc->of_pwm_n_cells)
++		return -EINVAL;
++
++	if (args->args[0] >= pc->npwm)
++		return -EINVAL;
++
++	if (spec)
++		spec->period = args->args[1];
++
++	return args->args[0];
 +}
 +
-+static int alloc_descs(int pwm, unsigned int from, unsigned int count)
- {
--	struct pwm_device *pwm;
-+	unsigned int start;
-+	unsigned int i;
-+	int ret = 0;
++void of_pwmchip_add(struct pwm_chip *chip)
++{
++	if (!chip->dev || !chip->dev->of_node)
++		return;
 +
-+	if (pwm >= 0) {
-+		if (from > pwm)
-+			return -EINVAL;
-+
-+		from = pwm;
++	if (!chip->of_xlate) {
++		chip->of_xlate = of_pwm_simple_xlate;
++		chip->of_pwm_n_cells = 2;
 +	}
 +
-+	start = bitmap_find_next_zero_area(allocated_pwms, MAX_PWMS, from,
-+			count, 0);
- 
--	list_for_each_entry(pwm, &pwm_list, node) {
--		if (pwm->chip->pwm_id == pwm_id)
--			return pwm;
-+	if ((pwm >= 0) && (start != pwm))
-+		return -EEXIST;
++	of_node_get(chip->dev->of_node);
++}
 +
-+	if (start + count > MAX_PWMS)
-+		return -ENOSPC;
++void of_pwmchip_remove(struct pwm_chip *chip)
++{
++	if (chip->dev && chip->dev->of_node)
++		of_node_put(chip->dev->of_node);
++}
 +
-+	for (i = start; i < start + count; i++) {
-+		struct pwm_desc *desc = alloc_desc(i);
-+		if (!desc) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
++/**
++ * of_get_named_pwm() - get a PWM number and period to use with the PWM API
++ * @np: device node to get the PWM from
++ * @propname: property name containing PWM specifier(s)
++ * @index: index of the PWM
++ * @spec: a pointer to a struct pwm_spec to fill in
++ *
++ * Returns PWM number to use with the Linux generic PWM API or a negative
++ * error code on failure. If @spec is not NULL the function fills in the
++ * values parsed from the device tree.
++ */
++int of_get_named_pwm(struct device_node *np, const char *propname,
++		     int index, struct pwm_spec *spec)
++{
++	struct of_phandle_args args;
++	struct pwm_chip *pc;
++	int ret;
 +
-+		radix_tree_insert(&pwm_desc_tree, i, desc);
- 	}
- 
--	return NULL;
-+	bitmap_set(allocated_pwms, start, count);
++	ret = of_parse_phandle_with_args(np, propname, "#pwm-cells", index,
++					  &args);
++	if (ret) {
++		pr_debug("%s(): can't parse pwms property\n", __func__);
++		goto out;
++	}
 +
-+	return start;
++	pc = of_node_to_pwmchip(args.np);
++	if (!pc) {
++		ret = -ENODEV;
++		goto put;
++	}
 +
-+err:
-+	for (i--; i >= 0; i--)
-+		free_desc(i);
++	if (args.args_count != pc->of_pwm_n_cells) {
++		pr_debug("%s: wrong #pwm-cells for %s\n", np->full_name,
++			 args.np->full_name);
++		ret = -EINVAL;
++		goto put;
++	}
 +
++	/*
++	 * reset the specifier structure since .of_xlate might decide not to
++	 * fill it in
++	 */
++	if (spec)
++		spec->period = 0;
++
++	ret = pc->of_xlate(pc, &args, spec);
++	if (ret < 0)
++		goto put;
++
++	ret += pc->base;
++
++put:
++	of_node_put(args.np);
++out:
++	pr_debug("%s() exited with status %d\n", __func__, ret);
 +	return ret;
 +}
-+
-+static void free_descs(unsigned int from, unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = from; i < from + count; i++)
-+		free_desc(i);
-+
-+	bitmap_clear(allocated_pwms, from, count);
- }
- 
- /**
-- * pwmchip_add() - register a new pwm
-- * @chip: the pwm
-- *
-- * register a new pwm. pwm->pwm_id must be initialized. if pwm_id < 0 then
-- * a dynamically assigned id will be used, otherwise the id specified,
-+ * pwm_set_chip_data - set private chip data for a PWM
-+ * @pwm: PWM number
-+ * @data: pointer to chip-specific data
-  */
--int pwmchip_add(struct pwm_chip *chip)
-+int pwm_set_chip_data(unsigned int pwm, void *data)
- {
--	struct pwm_device *pwm;
--	int ret = 0;
-+	struct pwm_desc *desc = pwm_to_desc(pwm);
- 
--	pwm = kzalloc(sizeof(*pwm), GFP_KERNEL);
--	if (!pwm)
--		return -ENOMEM;
-+	if (!desc)
-+		return -EINVAL;
- 
--	pwm->chip = chip;
-+	desc->chip_data = data;
-+	return 0;
-+}
-+
-+/**
-+ * pwm_get_chip_data - get private chip data for a PWM
-+ * @pwm: PWM number
-+ */
-+void *pwm_get_chip_data(unsigned int pwm)
-+{
-+	struct pwm_desc *desc = pwm_to_desc(pwm);
-+
-+	return desc ? desc->chip_data : NULL;
-+}
-+
-+/**
-+ * pwmchip_add() - register a new PWM chip
-+ * @chip: the PWM chip to add
++EXPORT_SYMBOL(of_get_named_pwm);
+diff --git a/include/linux/of_pwm.h b/include/linux/of_pwm.h
+new file mode 100644
+index 0000000..a6af951
+--- /dev/null
++++ b/include/linux/of_pwm.h
+@@ -0,0 +1,51 @@
++/*
++ * OF helpers for the PWM API
 + *
-+ * Register a new PWM chip. If pwm->base < 0 then a dynamically assigned base
-+ * will be used.
++ * Copyright (c) 2011 Avionic Design GmbH
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + */
-+int pwmchip_add(struct pwm_chip *chip)
++
++#ifndef __LINUX_OF_PWM_H
++#define __LINUX_OF_PWM_H
++
++#include <linux/pwm.h>
++
++struct device_node;
++
++#ifdef CONFIG_OF_PWM
++
++struct pwm_chip *of_node_to_pwmchip(struct device_node *np);
++int of_get_named_pwm(struct device_node *np, const char *propname,
++		     int index, struct pwm_spec *spec);
++void of_pwmchip_add(struct pwm_chip *pc);
++void of_pwmchip_remove(struct pwm_chip *pc);
++
++#else
++
++static inline struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
 +{
-+	unsigned int i;
-+	int ret;
- 
- 	mutex_lock(&pwm_lock);
- 
--	if (chip->pwm_id >= 0 && _find_pwm(chip->pwm_id)) {
--		ret = -EBUSY;
-+	ret = alloc_descs(chip->base, 0, chip->npwm);
-+	if (ret < 0)
- 		goto out;
-+
-+	chip->base = ret;
-+	ret = 0;
-+
-+	/* initialize descriptors */
-+	for (i = chip->base; i < chip->base + chip->npwm; i++) {
-+		struct pwm_desc *desc = pwm_to_desc(i);
-+
-+		if (!desc) {
-+			pr_debug("pwm: descriptor %u not initialized\n", i);
-+			continue;
-+		}
-+
-+		desc->chip = chip;
- 	}
- 
--	list_add_tail(&pwm->node, &pwm_list);
-+	of_pwmchip_add(chip);
-+
- out:
- 	mutex_unlock(&pwm_lock);
--
--	if (ret)
--		kfree(pwm);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pwmchip_add);
- 
- /**
-- * pwmchip_remove() - remove a pwm
-- * @chip: the pwm
-+ * pwmchip_remove() - remove a PWM chip
-+ * @chip: the PWM chip to remove
-  *
-- * remove a pwm. This function may return busy if the pwm is still requested.
-+ * Removes a PWM chip. This function may return busy if the PWM chip provides
-+ * a PWM device that is still requested.
-  */
- int pwmchip_remove(struct pwm_chip *chip)
- {
--	struct pwm_device *pwm;
-+	unsigned int i;
- 	int ret = 0;
- 
- 	mutex_lock(&pwm_lock);
- 
--	pwm = _find_pwm(chip->pwm_id);
--	if (!pwm) {
--		ret = -ENOENT;
--		goto out;
--	}
-+	for (i = chip->base; i < chip->base + chip->npwm; i++) {
-+		struct pwm_desc *desc = pwm_to_desc(i);
- 
--	if (test_bit(FLAG_REQUESTED, &pwm->flags)) {
--		ret = -EBUSY;
--		goto out;
-+		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
- 	}
- 
--	list_del(&pwm->node);
-+	free_descs(chip->base, chip->npwm);
-+	of_pwmchip_remove(chip);
- 
--	kfree(pwm);
- out:
- 	mutex_unlock(&pwm_lock);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pwmchip_remove);
- 
-+/**
-+ * pwmchip_find() - iterator for locating a specific pwm_chip
-+ * @data: data to pass to match function
-+ * @match: callback function to check pwm_chip
-+ */
-+struct pwm_chip *pwmchip_find(void *data, int (*match)(struct pwm_chip *chip,
-+						       void *data))
-+{
-+	struct pwm_chip *chip = NULL;
-+	unsigned long i;
-+
-+	mutex_lock(&pwm_lock);
-+
-+	for_each_set_bit(i, allocated_pwms, MAX_PWMS) {
-+		struct pwm_desc *desc = pwm_to_desc(i);
-+
-+		if (!desc || !desc->chip)
-+			continue;
-+
-+		if (match(desc->chip, data)) {
-+			chip = desc->chip;
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&pwm_lock);
-+
-+	return chip;
++	return NULL;
 +}
-+EXPORT_SYMBOL_GPL(pwmchip_find);
 +
- /*
-  * pwm_request - request a PWM device
-  */
--struct pwm_device *pwm_request(int pwm_id, const char *label)
-+struct pwm_device *pwm_request(int pwm, const char *label)
- {
--	struct pwm_device *pwm;
-+	struct pwm_device *dev;
-+	struct pwm_desc *desc;
- 	int ret;
- 
-+	if ((pwm < 0) || (pwm >= MAX_PWMS))
-+		return ERR_PTR(-ENOENT);
++static inline int of_get_named_pwm(struct device_node *np,
++				   const char *propname, int index,
++				   unsigned int *period_ns)
++{
++	return -ENOSYS;
++}
 +
- 	mutex_lock(&pwm_lock);
- 
--	pwm = _find_pwm(pwm_id);
--	if (!pwm) {
--		pwm = ERR_PTR(-ENOENT);
--		goto out;
--	}
-+	desc = pwm_to_desc(pwm);
-+	dev = &desc->pwm;
- 
--	if (test_bit(FLAG_REQUESTED, &pwm->flags)) {
--		pwm = ERR_PTR(-EBUSY);
-+	if (test_bit(FLAG_REQUESTED, &desc->flags)) {
-+		dev = ERR_PTR(-EBUSY);
- 		goto out;
- 	}
- 
--	if (!try_module_get(pwm->chip->ops->owner)) {
--		pwm = ERR_PTR(-ENODEV);
-+	if (!try_module_get(desc->chip->ops->owner)) {
-+		dev = ERR_PTR(-ENODEV);
- 		goto out;
- 	}
- 
--	if (pwm->chip->ops->request) {
--		ret = pwm->chip->ops->request(pwm->chip);
-+	if (desc->chip->ops->request) {
-+		ret = desc->chip->ops->request(desc->chip, pwm);
- 		if (ret) {
--			pwm = ERR_PTR(ret);
-+			dev = ERR_PTR(ret);
- 			goto out_put;
- 		}
- 	}
- 
--	pwm->label = label;
--	set_bit(FLAG_REQUESTED, &pwm->flags);
-+	dev->label = label;
-+	dev->pwm = pwm;
-+	set_bit(FLAG_REQUESTED, &desc->flags);
- 
- 	goto out;
- 
- out_put:
--	module_put(pwm->chip->ops->owner);
-+	module_put(desc->chip->ops->owner);
- out:
- 	mutex_unlock(&pwm_lock);
- 
--	return pwm;
-+	return dev;
- }
- EXPORT_SYMBOL_GPL(pwm_request);
- 
-@@ -173,16 +311,19 @@ EXPORT_SYMBOL_GPL(pwm_request);
-  */
- void pwm_free(struct pwm_device *pwm)
- {
-+	struct pwm_desc *desc = container_of(pwm, struct pwm_desc, pwm);
++static inline void of_pwmchip_add(struct pwm_chip *pc)
++{
++}
 +
- 	mutex_lock(&pwm_lock);
- 
--	if (!test_and_clear_bit(FLAG_REQUESTED, &pwm->flags)) {
-+	if (!test_and_clear_bit(FLAG_REQUESTED, &desc->flags)) {
- 		pr_warning("PWM device already freed\n");
- 		goto out;
- 	}
- 
- 	pwm->label = NULL;
-+	pwm->pwm = 0;
- 
--	module_put(pwm->chip->ops->owner);
-+	module_put(desc->chip->ops->owner);
- out:
- 	mutex_unlock(&pwm_lock);
- }
-@@ -193,7 +334,9 @@ EXPORT_SYMBOL_GPL(pwm_free);
-  */
- int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
- {
--	return pwm->chip->ops->config(pwm->chip, duty_ns, period_ns);
-+	struct pwm_desc *desc = container_of(pwm, struct pwm_desc, pwm);
-+	return desc->chip->ops->config(desc->chip, pwm->pwm, duty_ns,
-+			period_ns);
- }
- EXPORT_SYMBOL_GPL(pwm_config);
- 
-@@ -202,8 +345,10 @@ EXPORT_SYMBOL_GPL(pwm_config);
-  */
- int pwm_enable(struct pwm_device *pwm)
- {
--	if (!test_and_set_bit(FLAG_ENABLED, &pwm->flags))
--		return pwm->chip->ops->enable(pwm->chip);
-+	struct pwm_desc *desc = container_of(pwm, struct pwm_desc, pwm);
++static inline void of_pwmchip_remove(struct pwm_chip *pc)
++{
++}
 +
-+	if (!test_and_set_bit(FLAG_ENABLED, &desc->flags))
-+		return desc->chip->ops->enable(desc->chip, pwm->pwm);
- 
- 	return 0;
- }
-@@ -214,7 +359,9 @@ EXPORT_SYMBOL_GPL(pwm_enable);
-  */
- void pwm_disable(struct pwm_device *pwm)
- {
--	if (test_and_clear_bit(FLAG_ENABLED, &pwm->flags))
--		pwm->chip->ops->disable(pwm->chip);
-+	struct pwm_desc *desc = container_of(pwm, struct pwm_desc, pwm);
++#endif /* CONFIG_OF_PWM */
 +
-+	if (test_and_clear_bit(FLAG_ENABLED, &desc->flags))
-+		desc->chip->ops->disable(desc->chip, pwm->pwm);
- }
- EXPORT_SYMBOL_GPL(pwm_disable);
++#endif /* __LINUX_OF_PWM_H */
 diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index df9681b..0f8d105 100644
+index 0f8d105..8595be4 100644
 --- a/include/linux/pwm.h
 +++ b/include/linux/pwm.h
-@@ -32,37 +32,50 @@ void pwm_disable(struct pwm_device *pwm);
- struct pwm_chip;
+@@ -1,6 +1,8 @@
+ #ifndef __LINUX_PWM_H
+ #define __LINUX_PWM_H
  
- /**
-- * struct pwm_ops - PWM operations
-+ * struct pwm_ops - PWM controller operations
-  * @request: optional hook for requesting a PWM
-  * @free: optional hook for freeing a PWM
-  * @config: configure duty cycles and period length for this PWM
-  * @enable: enable PWM output toggling
-  * @disable: disable PWM output toggling
-+ * @owner: helps prevent removal of modules exporting active PWMs
-  */
- struct pwm_ops {
--	int			(*request)(struct pwm_chip *chip);
--	void			(*free)(struct pwm_chip *chip);
--	int			(*config)(struct pwm_chip *chip, int duty_ns,
-+	int			(*request)(struct pwm_chip *chip,
-+						unsigned int pwm);
-+	void			(*free)(struct pwm_chip *chip,
-+						unsigned int pwm);
-+	int			(*config)(struct pwm_chip *chip,
-+						unsigned int pwm, int duty_ns,
- 						int period_ns);
--	int			(*enable)(struct pwm_chip *chip);
--	void			(*disable)(struct pwm_chip *chip);
-+	int			(*enable)(struct pwm_chip *chip,
-+						unsigned int pwm);
-+	void			(*disable)(struct pwm_chip *chip,
-+						unsigned int pwm);
- 	struct module		*owner;
- };
- 
- /**
-- * struct pwm_chip - abstract a PWM
-- * @label: for diagnostics
-- * @owner: helps prevent removal of modules exporting active PWMs
-- * @ops: The callbacks for this PWM
-+ * struct pwm_chip - abstract a PWM controller
-+ * @dev: device providing the PWMs
-+ * @ops: callbacks for this PWM controller
-+ * @base: number of first PWM controlled by this chip
-+ * @npwm: number of PWMs controlled by this chip
-  */
- struct pwm_chip {
--	int			pwm_id;
--	const char		*label;
-+	struct device		*dev;
- 	struct pwm_ops		*ops;
-+	int			base;
-+	unsigned int		npwm;
- };
- 
-+int pwm_set_chip_data(unsigned int pwm, void *data);
-+void *pwm_get_chip_data(unsigned int pwm);
++#include <linux/of.h>
 +
- int pwmchip_add(struct pwm_chip *chip);
- int pwmchip_remove(struct pwm_chip *chip);
-+struct pwm_chip *pwmchip_find(void *data, int (*match)(struct pwm_chip *chip,
-+						       void *data));
- #endif
+ struct pwm_device;
  
- #endif /* __LINUX_PWM_H */
+ /*
+@@ -56,6 +58,14 @@ struct pwm_ops {
+ };
+ 
+ /**
++ * struct pwm_spec - device tree PWM specifier
++ * @period: PWM period (in nanoseconds)
++ */
++struct pwm_spec {
++	unsigned int period;
++};
++
++/**
+  * struct pwm_chip - abstract a PWM controller
+  * @dev: device providing the PWMs
+  * @ops: callbacks for this PWM controller
+@@ -67,6 +77,13 @@ struct pwm_chip {
+ 	struct pwm_ops		*ops;
+ 	int			base;
+ 	unsigned int		npwm;
++
++#ifdef CONFIG_OF_PWM
++	int			(*of_xlate)(struct pwm_chip *pc,
++					    const struct of_phandle_args *args,
++					    struct pwm_spec *spec);
++	unsigned int		of_pwm_n_cells;
++#endif
+ };
+ 
+ int pwm_set_chip_data(unsigned int pwm, void *data);
 -- 
 1.7.9
