@@ -1,51 +1,66 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 8/8] ARM: tegra: support for secondary cores on
- Tegra30
-Date: Tue, 7 Feb 2012 01:23:05 +0200
-Message-ID: <20120206232305.GV24948@tbergstrom-lnx.Nvidia.com>
-References: <1328028051-24271-1-git-send-email-pdeschrijver@nvidia.com>
- <1328028051-24271-9-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF178E124AA5@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Demote EMC clock inconsistency BUG to WARN
+Date: Mon,  6 Feb 2012 17:09:15 -0800
+Message-ID: <1328576955-6295-1-git-send-email-swarren@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E124AA5-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 02, 2012 at 07:04:12PM +0100, Stephen Warren wrote:
-> Peter De Schrijver wrote at Tuesday, January 31, 2012 9:41 AM:
-> > Add support for bringing up secondary cores on Tegra30. On Tegra30 secondary
-> > CPU cores are powergated, so we need to turn on the domains before we can bring
-> > the CPU cores online. Bringing secondary cores online happens early during the
-> > sytem boot, so we call powergating initialization from platform early_init
-> > function.
-> > 
-> > Based on work by:
-> > 
-> > Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> > Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The series,
-> 
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This time, since I now have the SD card working, I managed to test real
-> user-space processes running on all 4 cores.
-> 
-> Note, patch 3 shouldn't compile due to a typo in a .size directive. It
-> does for me, so I could test this! But, it didn't for Olof. Aside from
-> that (which perhaps Olof would fixup during patch application?),
+When this inconsistency occurs, the system will typically operate without
+issue, it's just that EMC scaling won't optimally. Convert the BUG_ON to
+a WARN_ONCE in order to allow the kernel to boot, but still complain.
 
-Indeed. The .size symbol is never used though, which might explain why it
-compiled for you and me. I will leave it out in th enext version.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra2_clocks.c |   30 +++++++++++++++++++++++++-----
+ 1 files changed, 25 insertions(+), 5 deletions(-)
 
-Cheers,
-
-Peter.
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 74d314fd..592a4ee 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -1143,15 +1143,35 @@ static void tegra2_emc_clk_init(struct clk *c)
+ 
+ static long tegra2_emc_clk_round_rate(struct clk *c, unsigned long rate)
+ {
+-	long new_rate = rate;
++	long emc_rate;
++	long clk_rate;
+ 
+-	new_rate = tegra_emc_round_rate(new_rate);
+-	if (new_rate < 0)
++	/*
++	 * The slowest entry in the EMC clock table that is at least as
++	 * fast as rate.
++	 */
++	emc_rate = tegra_emc_round_rate(rate);
++	if (emc_rate < 0)
+ 		return c->max_rate;
+ 
+-	BUG_ON(new_rate != tegra2_periph_clk_round_rate(c, new_rate));
++	/*
++	 * The fastest rate the PLL will generate that is at most the
++	 * requested rate.
++	 */
++	clk_rate = tegra2_periph_clk_round_rate(c, emc_rate);
++
++	/*
++	 * If this fails, and emc_rate > clk_rate, it's because the maximum
++	 * rate in the EMC tables is larger than the maximum rate of the EMC
++	 * clock. The EMC clock's max rate is the rate it was running when the
++	 * kernel booted. Such a mismatch is probably due to using the wrong
++	 * BCT, i.e. using a Tegra20 BCT with an EMC table written for Tegra25.
++	 */
++	WARN_ONCE(emc_rate != clk_rate,
++		"emc_rate %ld != clk_rate %ld",
++		emc_rate, clk_rate);
+ 
+-	return new_rate;
++	return emc_rate;
+ }
+ 
+ static int tegra2_emc_clk_set_rate(struct clk *c, unsigned long rate)
+-- 
+1.7.5.4
