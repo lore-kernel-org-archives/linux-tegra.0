@@ -1,66 +1,38 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Demote EMC clock inconsistency BUG to WARN
-Date: Mon,  6 Feb 2012 17:09:15 -0800
-Message-ID: <1328576955-6295-1-git-send-email-swarren@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] ARM: dt: tegra: Enable headset autodetection on
+ PAZ00 board.
+Date: Mon, 6 Feb 2012 18:06:22 -0800
+Message-ID: <20120207020622.GA12233@quad.lixom.net>
+References: <1328213618-15870-1-git-send-email-leon@leon.nu>
+ <1328213618-15870-3-git-send-email-leon@leon.nu>
+ <20120202224224.GC3112@opensource.wolfsonmicro.com>
+ <CALq1K=+XgD71uAXqXMFhD35u+v_v6yv1mXsxkd4o2MA_rbkVqg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CALq1K=+XgD71uAXqXMFhD35u+v_v6yv1mXsxkd4o2MA_rbkVqg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When this inconsistency occurs, the system will typically operate without
-issue, it's just that EMC scaling won't optimally. Convert the BUG_ON to
-a WARN_ONCE in order to allow the kernel to boot, but still complain.
+On Fri, Feb 03, 2012 at 11:44:00PM +0200, Leon Romanovsky wrote:
+> On Fri, Feb 3, 2012 at 00:42, Mark Brown
+> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> >
+> > On Thu, Feb 02, 2012 at 10:13:36PM +0200, Leon Romanovsky wrote:
+> > > This patch is adding device tree support of headset autodetection on PAZ00 board.
+> > >
+> > > Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+> >
+> > Reviewed-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> >
+> > Same as the last patch - happy to merge via ASoC if people prefer that.
+> 
+> Mark,
+> I think for dts changes the tegra tree is a better place.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/tegra2_clocks.c |   30 +++++++++++++++++++++++++-----
- 1 files changed, 25 insertions(+), 5 deletions(-)
+Ok, applying the series to the tegra tree. Thanks!
 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 74d314fd..592a4ee 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -1143,15 +1143,35 @@ static void tegra2_emc_clk_init(struct clk *c)
- 
- static long tegra2_emc_clk_round_rate(struct clk *c, unsigned long rate)
- {
--	long new_rate = rate;
-+	long emc_rate;
-+	long clk_rate;
- 
--	new_rate = tegra_emc_round_rate(new_rate);
--	if (new_rate < 0)
-+	/*
-+	 * The slowest entry in the EMC clock table that is at least as
-+	 * fast as rate.
-+	 */
-+	emc_rate = tegra_emc_round_rate(rate);
-+	if (emc_rate < 0)
- 		return c->max_rate;
- 
--	BUG_ON(new_rate != tegra2_periph_clk_round_rate(c, new_rate));
-+	/*
-+	 * The fastest rate the PLL will generate that is at most the
-+	 * requested rate.
-+	 */
-+	clk_rate = tegra2_periph_clk_round_rate(c, emc_rate);
-+
-+	/*
-+	 * If this fails, and emc_rate > clk_rate, it's because the maximum
-+	 * rate in the EMC tables is larger than the maximum rate of the EMC
-+	 * clock. The EMC clock's max rate is the rate it was running when the
-+	 * kernel booted. Such a mismatch is probably due to using the wrong
-+	 * BCT, i.e. using a Tegra20 BCT with an EMC table written for Tegra25.
-+	 */
-+	WARN_ONCE(emc_rate != clk_rate,
-+		"emc_rate %ld != clk_rate %ld",
-+		emc_rate, clk_rate);
- 
--	return new_rate;
-+	return emc_rate;
- }
- 
- static int tegra2_emc_clk_set_rate(struct clk *c, unsigned long rate)
--- 
-1.7.5.4
+-Olof
