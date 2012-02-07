@@ -1,39 +1,55 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: heads up: for-3.4 branch will be split up
-Date: Mon, 6 Feb 2012 18:31:09 -0800
-Message-ID: <CAOesGMiHbpds_HYKp3vD+_eiaxzYXUY2_hV6GnEDKrEtm_L5+A@mail.gmail.com>
-References: <CAOesGMi_+_wprZkM3jcJ=BX8V2Efi-XF0DWGDT78hnEQunbTPw@mail.gmail.com>
+From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] ARM: dt: tegra: Enable headset autodetection on
+ PAZ00 board.
+Date: Tue, 7 Feb 2012 08:37:43 +0200
+Message-ID: <CALq1K=JgGO3KipHjPXaN9_iaP287KokpkSxsfdd9yeNw_cQu1w@mail.gmail.com>
+References: <1328213618-15870-1-git-send-email-leon@leon.nu>
+ <1328213618-15870-3-git-send-email-leon@leon.nu> <20120202224224.GC3112@opensource.wolfsonmicro.com>
+ <CALq1K=+XgD71uAXqXMFhD35u+v_v6yv1mXsxkd4o2MA_rbkVqg@mail.gmail.com>
+ <20120207020622.GA12233@quad.lixom.net> <CAOesGMg2TWELqca3tsOAPLwq0hw4_UgE_U6C6MQq6yR7=bpgjw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMi_+_wprZkM3jcJ=BX8V2Efi-XF0DWGDT78hnEQunbTPw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAOesGMg2TWELqca3tsOAPLwq0hw4_UgE_U6C6MQq6yR7=bpgjw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, lrg-l0cyMroinI0@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 1, 2012 at 12:44 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> When I started collecting patches for 3.4, I wasn't sure how much
-> activity there would be on different topics. So I just applied all
-> patches to the same (for-3.4) branch.
+On Tue, Feb 7, 2012 at 04:09, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
 >
-> That branch is growing, and it's time to split it up. Likely in
-> similar categories as we used for 3.3 -- 'cleanup', 'soc', 'board' are
-> the obvious first choices. If there's enough standalone patches for
-> it, I might do a separate 'dt' branch too.
+> On Mon, Feb 6, 2012 at 6:06 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote=
+:
+> > On Fri, Feb 03, 2012 at 11:44:00PM +0200, Leon Romanovsky wrote:
+> >> On Fri, Feb 3, 2012 at 00:42, Mark Brown
+> >> <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> >> >
+> >> > On Thu, Feb 02, 2012 at 10:13:36PM +0200, Leon Romanovsky wrote:
+> >> > > This patch is adding device tree support of headset autodetect=
+ion on PAZ00 board.
+> >> > >
+> >> > > Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+> >> >
+> >> > Reviewed-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> >> >
+> >> > Same as the last patch - happy to merge via ASoC if people prefe=
+r that.
+> >>
+> >> Mark,
+> >> I think for dts changes the tegra tree is a better place.
+> >
+> > Ok, applying the series to the tegra tree. Thanks!
 >
-> I'll likely do this tomorrow or the next day. I think most people work
-> on top of the for-next branch anyway, which will not change in
-> contents.
+> Uh, and with "series", I of course mean only the first two patches. :=
+)
+>
+>
+> -Olof
 
-This has now been done. Branches are:
-
-for-3.4/cleanups-and-fixes
-for-3.4/dt
-for-3.4/soc
-for-3.4/soc-drivers   (depends on, and is based on, /dt)
-for-3.4/boards
-
-I also rebuilt for-next with the above contents.
+Thanks.
 
 
--Olof
+--
+Leon Romanovsky | Independent Linux Consultant
+=C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0www.leon.nu=C2=A0| leon-2ukJVAZIZ/Y@public.gmane.org
