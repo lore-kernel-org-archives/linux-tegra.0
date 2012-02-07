@@ -1,154 +1,60 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V1] regulator: fixed: Support for open-drain gpio
-Date: Tue,  7 Feb 2012 16:16:36 +0530
-Message-ID: <1328611596-13279-1-git-send-email-ldewangan@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] pwm: Allow chips to support multiple PWMs.
+Date: Tue, 7 Feb 2012 11:38:55 +0000
+Message-ID: <20120207113854.GI3332@opensource.wolfsonmicro.com>
+References: <1328541585-24642-1-git-send-email-thierry.reding@avionic-design.de>
+ <1328541585-24642-3-git-send-email-thierry.reding@avionic-design.de>
+ <4F3044A9.8000202@metafoo.de>
+ <20120207070400.GA29238@avionic-0098.mockup.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WHz+neNWvhIGAO8A"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120207070400.GA29238-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The open drain pins act as bidirectional and it should
-not be driven to high as it can cause power to ground
-shorting in some cases. And hence gpio which is controlling
-this pin should not drive output to high.
-To make the pin to high/low for enabling/disabling the switches,
-the pins will have the pull-up connected and the high/low can be
-set using following methods:
-LOW: gpio_direction_output(gpio, 0) ... this drives the signal
-	and overrides the pullup.
-HIGH: gpio_direction_input(gpio) ... this turns off the output,
-	so the pullup (or some other device) controls the signal.
 
-Implementing a mechanism to properly handle the open-drain gpio
-to control the regulator switches.
+--WHz+neNWvhIGAO8A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
--Adding the flag in platform data to tell whether gpio is
- open-drain or not.
-- Based on flag, setting the pins state. If it is non-open-drain
-  then driver output to high/low. if it is open drain then only
-  driver low or set to input for making the pin to high through
-  pullups.
+On Tue, Feb 07, 2012 at 08:04:00AM +0100, Thierry Reding wrote:
+> * Lars-Peter Clausen wrote:
 
+> > If we've learned one thing from gpiolib, I think it is that using a global
+> > index to identify a resource was a bad idea.
 
- drivers/regulator/fixed.c       |   42 ++++++++++++++++++++++++++++++++++++--
- include/linux/regulator/fixed.h |    7 ++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
+> Yes, that concern has been raised several times already. The reason for it
+> being this way is that the current API requires it. So either we keep it as
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index e24e3a1..d47d684 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -40,6 +40,7 @@ struct fixed_voltage_data {
- 	unsigned startup_delay;
- 	bool enable_high;
- 	bool is_enabled;
-+	bool gpio_is_open_drain;
- };
- 
- 
-@@ -94,6 +95,20 @@ of_get_fixed_voltage_config(struct device *dev)
- 	return config;
- }
- 
-+static int set_open_drain_gpio(struct device *dev, int gpio, bool is_high)
-+{
-+	int ret;
-+	if (is_high)
-+		ret = gpio_direction_input(gpio);
-+	else
-+		ret = gpio_direction_output(gpio, 0);
-+	if (ret < 0)
-+		dev_err(dev,
-+		    "Could not configure open drain GPIO %d direction: %d\n",
-+				gpio, ret);
-+	return ret;
-+}
-+
- static int fixed_voltage_is_enabled(struct regulator_dev *dev)
- {
- 	struct fixed_voltage_data *data = rdev_get_drvdata(dev);
-@@ -106,7 +121,15 @@ static int fixed_voltage_enable(struct regulator_dev *dev)
- 	struct fixed_voltage_data *data = rdev_get_drvdata(dev);
- 
- 	if (gpio_is_valid(data->gpio)) {
--		gpio_set_value_cansleep(data->gpio, data->enable_high);
-+		if (data->gpio_is_open_drain) {
-+			struct device *parent_dev = rdev_get_dev(dev);
-+			int ret;
-+			ret = set_open_drain_gpio(parent_dev, data->gpio,
-+					data->enable_high);
-+			if (ret < 0)
-+				return ret;
-+		} else
-+			gpio_set_value_cansleep(data->gpio, data->enable_high);
- 		data->is_enabled = true;
- 	}
- 
-@@ -118,7 +141,15 @@ static int fixed_voltage_disable(struct regulator_dev *dev)
- 	struct fixed_voltage_data *data = rdev_get_drvdata(dev);
- 
- 	if (gpio_is_valid(data->gpio)) {
--		gpio_set_value_cansleep(data->gpio, !data->enable_high);
-+		if (data->gpio_is_open_drain) {
-+			struct device *parent_dev = rdev_get_dev(dev);
-+			int ret;
-+			ret = set_open_drain_gpio(parent_dev, data->gpio,
-+					!data->enable_high);
-+			if (ret < 0)
-+				return ret;
-+		} else
-+			gpio_set_value_cansleep(data->gpio, !data->enable_high);
- 		data->is_enabled = false;
- 	}
- 
-@@ -200,6 +231,7 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
- 
- 	if (gpio_is_valid(config->gpio)) {
- 		drvdata->enable_high = config->enable_high;
-+		drvdata->gpio_is_open_drain = config->gpio_is_open_drain;
- 
- 		/* FIXME: Remove below print warning
- 		 *
-@@ -231,7 +263,11 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
- 		ret = drvdata->is_enabled ?
- 				config->enable_high : !config->enable_high;
- 
--		ret = gpio_direction_output(config->gpio, ret);
-+		if (drvdata->gpio_is_open_drain)
-+			ret = set_open_drain_gpio(&pdev->dev, config->gpio,
-+							ret);
-+		else
-+			ret = gpio_direction_output(config->gpio, ret);
- 		if (ret) {
- 			dev_err(&pdev->dev,
- 			   "Could not configure regulator enable GPIO %d direction: %d\n",
-diff --git a/include/linux/regulator/fixed.h b/include/linux/regulator/fixed.h
-index ffd7d50..9dcd135 100644
---- a/include/linux/regulator/fixed.h
-+++ b/include/linux/regulator/fixed.h
-@@ -26,6 +26,12 @@ struct regulator_init_data;
-  * @gpio:		GPIO to use for enable control
-  * 			set to -EINVAL if not used
-  * @startup_delay:	Start-up time in microseconds
-+ * @gpio_is_open_drain: Gpio is normal or open-drain.
-+ *			if it is open drain then HIGH will be set
-+ *			through PULL-UP and gpio will be set as input
-+ *			and low will be set as gpio-output with driven
-+ *			to low. For non-open-drain case, the gpio will
-+ *			will be in output and drive to low/high accordingly.
-  * @enable_high:	Polarity of enable GPIO
-  *			1 = Active high, 0 = Active low
-  * @enabled_at_boot:	Whether regulator has been enabled at
-@@ -43,6 +49,7 @@ struct fixed_voltage_config {
- 	int microvolts;
- 	int gpio;
- 	unsigned startup_delay;
-+	unsigned gpio_is_open_drain:1;
- 	unsigned enable_high:1;
- 	unsigned enabled_at_boot:1;
- 	struct regulator_init_data *init_data;
--- 
-1.7.1.1
+Might be worth calling this out in the changelog to preempt further
+discussion - it's a totally sensible approach to take but it's not
+going to be immediately obvious to reviewers.
+
+--WHz+neNWvhIGAO8A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPMQ1CAAoJEBus8iNuMP3dZhEP/1I/rBEFpQagT0SUyx7G/lPR
+bkyNYLgv9exVkCmuZj6NF2v86WPg76PrMyQkxhQAf3pDE5qFXM7CCd2KYiUZbEEE
+AvyN+p45J2MbzDh3n7sNTqA+kKXInl4ib0m9iJNxqUGBi9HQQU9YF3xIfNxd2CWu
+fsQS3E5poBi4UmjxVI1sDwL1hhZ2R2sIGRfepBohgVkFG5nKyDvKlbOS6zr7x3TJ
+Pg+o7v6Ncpn4MiVKH19u31NQvoHCxEQj92tHZmCqMSp6wQ4/5VgG1s/m85I3GqgY
+qw+L8xeh2KZuz7e910sxHfLAzXsSbYnbIsW6q/c7AELv1YBmCvLHz51zqGQECKvh
+1pOHZSFStTWf/Hxe0xwcZhWM/gwQWIg/gTDzaAlIBCzsOQLt3eMk+h/oyWU4nMIh
+gaGFIcj/OWlt5hYIyK163u2eY+No+L575D3RAgh2U/HcBxIEjnYiOVFs9LqaoTYV
+qIgsYOWLtL5+QLPs+oREgnS79ljnQIW5LDDowcQ5a0Ee2WsC5nvIiowgQ1Nz+lwo
+Y03NrxBfi4D/DvyQSTPsAs08HIe74r2oyNv/MRNrtH2XEtWQYHinVxfqgWXmvSp8
+yF+6/ZA0obXvEYPpTTaCeS0dUShMKYb0X8cCWh12/iKCFAebOAS2SdANTaIigaIu
+EFpAQ6Xk/lZ7vmEBeKME
+=56QR
+-----END PGP SIGNATURE-----
+
+--WHz+neNWvhIGAO8A--
