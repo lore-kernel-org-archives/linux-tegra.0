@@ -1,68 +1,96 @@
-From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] ARM: tegra: Add support for USB2 port on Seaboard
-Date: Wed,  8 Feb 2012 19:24:58 +0800
-Message-ID: <1328700298-14408-1-git-send-email-jilin@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V1 1/2] mfd: tps65910: use regmap for device register
+ access.
+Date: Wed, 8 Feb 2012 11:41:20 +0000
+Message-ID: <20120208114120.GF3120@opensource.wolfsonmicro.com>
+References: <1328697985-22504-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1328697985-22504-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-1. ULPI_RESET* is routed to GPIO_PV1, based on schematic file.
-2. Reference clock to ULPI PHY is 24MHz. It comes from PLL_P_OUT4.
-3. Because PLL_P_OUT4 is assigned to provide clock to ULPI PHY. We use
-PLL_C_OUT1 as clock source to SCLK (also update its children like HCLK
-and PCLK).
-4. Also modify the clock rate of SCLK from 108MHz to 120MHz (copied from
-ChromeOs kernel code).
 
-Signed-off-by: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard.c |    6 ++++++
- arch/arm/mach-tegra/devices.c        |    5 +++++
- 2 files changed, 11 insertions(+), 0 deletions(-)
+--L2Brqb15TUChFOBK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index bf13ea3..462ba1d 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -64,6 +64,11 @@ static struct platform_device debug_uart = {
- 
- static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
- 	/* name		parent		rate		enabled */
-+	{ "pll_p_out4",	"pll_p",	24000000,	true },
-+	{ "pll_c_out1",	"pll_c",	120000000,	true },
-+	{ "sclk",	"pll_c_out1",	120000000,	true },
-+	{ "hclk",	"sclk",		120000000,	true },
-+	{ "pclk",	"hclk",		60000000,	true },
- 	{ "uartb",	"pll_p",	216000000,	true},
- 	{ "uartd",	"pll_p",	216000000,	true},
- 	{ "pll_a",	"pll_p_out1",	56448000,	true },
-@@ -203,6 +208,7 @@ static int seaboard_ehci_init(void)
- 	gpio_set_value(TEGRA_GPIO_USB1, 1);
- 
- 	platform_device_register(&tegra_ehci1_device);
-+	platform_device_register(&tegra_ehci2_device);
- 	platform_device_register(&tegra_ehci3_device);
- 
- 	return 0;
-diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
-index 7a2a02d..977716e 100644
---- a/arch/arm/mach-tegra/devices.c
-+++ b/arch/arm/mach-tegra/devices.c
-@@ -441,8 +441,13 @@ static struct resource tegra_usb3_resources[] = {
- };
- 
- static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
-+#ifdef CONFIG_MACH_SEABOARD
-+	/* Use GPIO PV1 for phy reset */
-+	.reset_gpio = TEGRA_GPIO_PV1,
-+#else
- 	/* All existing boards use GPIO PV0 for phy reset */
- 	.reset_gpio = TEGRA_GPIO_PV0,
-+#endif
- 	.clk = "cdev2",
- };
- 
--- 
-1.7.3
+On Wed, Feb 08, 2012 at 04:16:24PM +0530, Laxman Dewangan wrote:
+
+> +static bool is_volatile_reg(struct device *dev, unsigned int reg)
+> +{
+> +	struct tps65910 *tps65910 = dev_get_drvdata(dev);
+> +	return test_bit(reg, tps65910->cache_reg) ? false : true;
+> +}
+
+This is *really* odd.  Why is this not static data (or mostly static
+data), why does it vary at runtime?
+
+> +static bool regmap_volatile_range(struct tps65910 *tps65910,
+> +			unsigned int reg, unsigned int bytes)
+> +{
+> +	unsigned int i;
+> +	for (i = 0; i < bytes; i++)
+> +		if (!is_volatile_reg(tps65910->dev, reg + i))
+> +			return false;
+> +	return true;
+> +}
+
+I don't think this should be here (the naming is a bit of a clue - it's
+named like a core function), see below where you're using it...
+
+> +	unsigned char *wbuf = src;
+> +	unsigned int ival;
+> +
+> +	if (regmap_volatile_range(tps65910, reg, bytes))
+> +		return regmap_raw_write(tps65910->regmap, reg, src, bytes);
+> +
+> +	/* If any of register is non-volatile then use byte-wise transfer */
+> +	for (i = 0; i < bytes; ++i) {
+> +		ival = (unsigned int) (*wbuf++);
+> +		ret = regmap_write(tps65910->regmap, reg, ival);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+
+There's nothing specific to the driver about this, if this is a good
+idea add support for it to the core.
+
+> +void tps65910_enable_reg_cache(struct tps65910 *tps65910, int reg)
+> +{
+> +	set_bit(reg, tps65910->cache_reg);
+> +}
+> +EXPORT_SYMBOL_GPL(tps65910_enable_reg_cache);
+
+Why are you doing this?  This looks very icky, and if it is needed there
+needs to be more code here to make sure the register cache and device
+are in sync.
+
+--L2Brqb15TUChFOBK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPMl9ZAAoJEBus8iNuMP3dWm0P/07RW2USrlt6KRqEVbGYSVQB
+nl3BKqCYUFup+jQV/Hcyz+4f6i2dfbVANZu60EaK0fQ/xa4FmQ444rrTxDdXaH/W
+yfEPS0wtSZnfP+RO05snjBWkqd4e1MT6XrOw4j7pT96wbzn0TiVa0slGz3AfQGGg
+FoMnceEKKrgtpIamOazHZ35SgQ/h9J/IS4PARO4WBVSAMX7hCKMGcrfGMTzJhOtP
+HhdSTvrV7r350JElh4DUNZIzPlqh6e/Gwb07ckVS6ae36DEnugbg72KC6lmFNGmC
+g9XbcIZPzEzP0NMUFB04yGX/oJcrvksf7PLi/Zl8mLEDsr5AlhQpRdDxQYUkVcdt
+rLFOwedE/+W7zpzU2k5RCSaaMN2zeGg7+LW934/MXEl2nraA97dxV/cCKQsRt70j
+WEE0GaQCdWaJSEQLPOSPsPOW8VPxPKiGdVQnKKFGuNxMAcxz17NUpRP4De+hn+mv
+e9vgC8q6ABECjPf4lNfVv3vrFCz8uqL3u6QRt4XRssDmtsF895L0WOc0WzPJbJzA
+nCGwOxgIGVyUNxws/4XFvLNV8IA/zz653E1YSamE3VeLgovnfjbGYV8UafoBgn7c
+Gu2ZuBFHVF5DtXX8BxG9XBcaiWcOue3jZAHA1p98GZ1Vj5zWQBl87CRfh9/XVDCF
+j1QA5DinEhT/W4Q9Grb/
+=jAVZ
+-----END PGP SIGNATURE-----
+
+--L2Brqb15TUChFOBK--
