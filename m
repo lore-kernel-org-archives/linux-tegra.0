@@ -1,73 +1,268 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 02/10] pwm: Allow chips to support multiple PWMs.
-Date: Wed, 8 Feb 2012 11:31:20 +0100
-Message-ID: <20120208103119.GA17615@avionic-0098.mockup.avionic-design.de>
-References: <1328541585-24642-1-git-send-email-thierry.reding@avionic-design.de>
- <1328541585-24642-3-git-send-email-thierry.reding@avionic-design.de>
- <4F31AB63.3020301@gmail.com>
- <20120208081508.GA6673@avionic-0098.mockup.avionic-design.de>
- <20120208091720.GI889@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1 1/2] mfd: tps65910: use regmap for device register access.
+Date: Wed,  8 Feb 2012 16:16:24 +0530
+Message-ID: <1328697985-22504-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20120208091720.GI889-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+To: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Using regmap apis for accessing the device register.
+using the RBTREE caching mechanims for caching registers.
+Also provided apis for enabling register cache from
+different sub devices of ts65910.
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch is towards the performance improvements in the 
+voltage change.
 
-* Russell King - ARM Linux wrote:
-> On Wed, Feb 08, 2012 at 09:15:08AM +0100, Thierry Reding wrote:
-> > * Ryan Mallon wrote:
-> > > On 07/02/12 02:19, Thierry Reding wrote:
-> > > > The total maximum number of PWM devices is currently fixed to 64, b=
-ut
-> > > > can easily be made configurable via Kconfig.
-> > >=20
-> > > It would be better to make the code handle arbitrary numbers of PWMs.=
- A
-> > > Kconfig knob becomes annoying when you have more than one platform
-> > > configured into the kernel.
-> >=20
-> > AFAICT handling an arbitrary number of PWMs will only be possible once =
-we get
-> > rid of the global namespace and therefore should be postponed for later=
-=2E I
-> > may be wrong, though, so if anybody can point me in the right direction=
- I'm
-> > perfectly happy to change that in this series.
->=20
-> One solution would be to look at how genirq handles this.  Eg, it uses a
-> radix tree to store the irqdescs rather than an array, and a bitmap
-> showing which global numbers are allocated.
+ drivers/mfd/Kconfig          |    1 +
+ drivers/mfd/tps65910.c       |  136 +++++++++++++++++++-----------------------
+ include/linux/mfd/tps65910.h |    3 +
+ 3 files changed, 65 insertions(+), 75 deletions(-)
 
-That's exactly the solution implemented by this second version of the serie=
-s.
-In fact I did turn to genirq for inspiration at the time I wrote the code.
-My understanding was that Ryan proposed to get rid of the bitmap altogether
-because it arbitrarily limits the number of PWMs. How that can be achieved
-with a global namespace I don't know. Thus my proposal to keep it as-is for
-now and get rid of it once per-chip indexing is implemented.
-
-Thierry
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAk8yTvcACgkQZ+BJyKLjJp8PbwCgrCBbVZUCMReek2/gDUDQIDOh
-dU0An0TcaUMDNUOIgsNJxcaoTLyWo5eB
-=K7Ve
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index cd13e9f..0e066cd 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -162,6 +162,7 @@ config MFD_TPS65910
+ 	depends on I2C=y && GPIOLIB
+ 	select MFD_CORE
+ 	select GPIO_TPS65910
++	select REGMAP_I2C
+ 	help
+ 	  if you say yes here you get support for the TPS65910 series of
+ 	  Power Management chips.
+diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+index 01cf501..1f2b004 100644
+--- a/drivers/mfd/tps65910.c
++++ b/drivers/mfd/tps65910.c
+@@ -16,10 +16,12 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/init.h>
++#include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
+ #include <linux/gpio.h>
+ #include <linux/mfd/core.h>
++#include <linux/regmap.h>
+ #include <linux/mfd/tps65910.h>
+ 
+ static struct mfd_cell tps65910s[] = {
+@@ -34,103 +36,76 @@ static struct mfd_cell tps65910s[] = {
+ 	},
+ };
+ 
++static bool is_volatile_reg(struct device *dev, unsigned int reg)
++{
++	struct tps65910 *tps65910 = dev_get_drvdata(dev);
++	return test_bit(reg, tps65910->cache_reg) ? false : true;
++}
++
++static bool regmap_volatile_range(struct tps65910 *tps65910,
++			unsigned int reg, unsigned int bytes)
++{
++	unsigned int i;
++	for (i = 0; i < bytes; i++)
++		if (!is_volatile_reg(tps65910->dev, reg + i))
++			return false;
++	return true;
++}
+ 
+ static int tps65910_i2c_read(struct tps65910 *tps65910, u8 reg,
+ 				  int bytes, void *dest)
+ {
+-	struct i2c_client *i2c = tps65910->i2c_client;
+-	struct i2c_msg xfer[2];
+-	int ret;
+-
+-	/* Write register */
+-	xfer[0].addr = i2c->addr;
+-	xfer[0].flags = 0;
+-	xfer[0].len = 1;
+-	xfer[0].buf = &reg;
+-
+-	/* Read data */
+-	xfer[1].addr = i2c->addr;
+-	xfer[1].flags = I2C_M_RD;
+-	xfer[1].len = bytes;
+-	xfer[1].buf = dest;
+-
+-	ret = i2c_transfer(i2c->adapter, xfer, 2);
+-	if (ret == 2)
+-		ret = 0;
+-	else if (ret >= 0)
+-		ret = -EIO;
+-
+-	return ret;
++	return regmap_bulk_read(tps65910->regmap, reg, dest, bytes);
+ }
+ 
+ static int tps65910_i2c_write(struct tps65910 *tps65910, u8 reg,
+-				   int bytes, void *src)
++				  int bytes, void *src)
+ {
+-	struct i2c_client *i2c = tps65910->i2c_client;
+-	/* we add 1 byte for device register */
+-	u8 msg[TPS65910_MAX_REGISTER + 1];
++	int i;
+ 	int ret;
+-
+-	if (bytes > TPS65910_MAX_REGISTER)
+-		return -EINVAL;
+-
+-	msg[0] = reg;
+-	memcpy(&msg[1], src, bytes);
+-
+-	ret = i2c_master_send(i2c, msg, bytes + 1);
+-	if (ret < 0)
+-		return ret;
+-	if (ret != bytes + 1)
+-		return -EIO;
++	unsigned char *wbuf = src;
++	unsigned int ival;
++
++	if (regmap_volatile_range(tps65910, reg, bytes))
++		return regmap_raw_write(tps65910->regmap, reg, src, bytes);
++
++	/* If any of register is non-volatile then use byte-wise transfer */
++	for (i = 0; i < bytes; ++i) {
++		ival = (unsigned int) (*wbuf++);
++		ret = regmap_write(tps65910->regmap, reg, ival);
++		if (ret < 0)
++			return ret;
++	}
+ 	return 0;
+ }
+ 
+ int tps65910_set_bits(struct tps65910 *tps65910, u8 reg, u8 mask)
+ {
+-	u8 data;
+-	int err;
+-
+-	mutex_lock(&tps65910->io_mutex);
+-	err = tps65910_i2c_read(tps65910, reg, 1, &data);
+-	if (err) {
+-		dev_err(tps65910->dev, "read from reg %x failed\n", reg);
+-		goto out;
+-	}
+-
+-	data |= mask;
+-	err = tps65910_i2c_write(tps65910, reg, 1, &data);
+-	if (err)
+-		dev_err(tps65910->dev, "write to reg %x failed\n", reg);
+-
+-out:
+-	mutex_unlock(&tps65910->io_mutex);
+-	return err;
++	return regmap_update_bits(tps65910->regmap, reg, mask, mask);
+ }
+ EXPORT_SYMBOL_GPL(tps65910_set_bits);
+ 
+ int tps65910_clear_bits(struct tps65910 *tps65910, u8 reg, u8 mask)
+ {
+-	u8 data;
+-	int err;
+-
+-	mutex_lock(&tps65910->io_mutex);
+-	err = tps65910_i2c_read(tps65910, reg, 1, &data);
+-	if (err) {
+-		dev_err(tps65910->dev, "read from reg %x failed\n", reg);
+-		goto out;
+-	}
+-
+-	data &= ~mask;
+-	err = tps65910_i2c_write(tps65910, reg, 1, &data);
+-	if (err)
+-		dev_err(tps65910->dev, "write to reg %x failed\n", reg);
+-
+-out:
+-	mutex_unlock(&tps65910->io_mutex);
+-	return err;
++	return regmap_update_bits(tps65910->regmap, reg, mask, 0);
+ }
+ EXPORT_SYMBOL_GPL(tps65910_clear_bits);
+ 
++void tps65910_enable_reg_cache(struct tps65910 *tps65910, int reg)
++{
++	set_bit(reg, tps65910->cache_reg);
++}
++EXPORT_SYMBOL_GPL(tps65910_enable_reg_cache);
++
++static const struct regmap_config rc5t583_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.volatile_reg = is_volatile_reg,
++	.max_register = TPS65910_MAX_REGISTER,
++	.num_reg_defaults_raw = TPS65910_MAX_REGISTER,
++	.cache_type = REGCACHE_RBTREE,
++};
++
+ static int tps65910_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+@@ -161,6 +136,13 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
+ 	tps65910->write = tps65910_i2c_write;
+ 	mutex_init(&tps65910->io_mutex);
+ 
++	tps65910->regmap = regmap_init_i2c(i2c, &rc5t583_regmap_config);
++	if (IS_ERR(tps65910->regmap)) {
++		ret = PTR_ERR(tps65910->regmap);
++		dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
++		goto regmap_err;
++	}
++
+ 	ret = mfd_add_devices(tps65910->dev, -1,
+ 			      tps65910s, ARRAY_SIZE(tps65910s),
+ 			      NULL, 0);
+@@ -178,6 +160,9 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
+ 	return ret;
+ 
+ err:
++	mfd_remove_devices(tps65910->dev);
++	regmap_exit(tps65910->regmap);
++regmap_err:
+ 	kfree(tps65910);
+ 	kfree(init_data);
+ 	return ret;
+@@ -189,6 +174,7 @@ static int tps65910_i2c_remove(struct i2c_client *i2c)
+ 
+ 	tps65910_irq_exit(tps65910);
+ 	mfd_remove_devices(tps65910->dev);
++	regmap_exit(tps65910->regmap);
+ 	kfree(tps65910);
+ 
+ 	return 0;
+diff --git a/include/linux/mfd/tps65910.h b/include/linux/mfd/tps65910.h
+index 5c76b96..6c68e2e 100644
+--- a/include/linux/mfd/tps65910.h
++++ b/include/linux/mfd/tps65910.h
+@@ -805,6 +805,7 @@ struct tps65910_board {
+ struct tps65910 {
+ 	struct device *dev;
+ 	struct i2c_client *i2c_client;
++	struct regmap *regmap;
+ 	struct mutex io_mutex;
+ 	unsigned int id;
+ 	int (*read)(struct tps65910 *tps65910, u8 reg, int size, void *dest);
+@@ -824,6 +825,7 @@ struct tps65910 {
+ 	int irq_base;
+ 	int irq_num;
+ 	u32 irq_mask;
++	unsigned long cache_reg[BITS_TO_LONGS(TPS65910_MAX_REGISTER)];
+ };
+ 
+ struct tps65910_platform_data {
+@@ -837,6 +839,7 @@ void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base);
+ int tps65910_irq_init(struct tps65910 *tps65910, int irq,
+ 		struct tps65910_platform_data *pdata);
+ int tps65910_irq_exit(struct tps65910 *tps65910);
++void tps65910_enable_reg_cache(struct tps65910 *tps65910, int reg);
+ 
+ static inline int tps65910_chip_id(struct tps65910 *tps65910)
+ {
+-- 
+1.7.1.1
