@@ -1,76 +1,68 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 02/10] pwm: Allow chips to support multiple PWMs.
-Date: Wed, 8 Feb 2012 12:16:43 +0100
-Message-ID: <20120208111643.GC17615@avionic-0098.mockup.avionic-design.de>
-References: <1328541585-24642-1-git-send-email-thierry.reding@avionic-design.de>
- <1328541585-24642-3-git-send-email-thierry.reding@avionic-design.de>
- <4F31AB63.3020301@gmail.com>
- <20120208081508.GA6673@avionic-0098.mockup.avionic-design.de>
- <20120208090055.GP3852@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1671393895899940456=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20120208090055.GP3852-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra: Add support for USB2 port on Seaboard
+Date: Wed,  8 Feb 2012 19:24:58 +0800
+Message-ID: <1328700298-14408-1-git-send-email-jilin@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+1. ULPI_RESET* is routed to GPIO_PV1, based on schematic file.
+2. Reference clock to ULPI PHY is 24MHz. It comes from PLL_P_OUT4.
+3. Because PLL_P_OUT4 is assigned to provide clock to ULPI PHY. We use
+PLL_C_OUT1 as clock source to SCLK (also update its children like HCLK
+and PCLK).
+4. Also modify the clock rate of SCLK from 108MHz to 120MHz (copied from
+ChromeOs kernel code).
 
---===============1671393895899940456==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
-Content-Disposition: inline
+Signed-off-by: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-seaboard.c |    6 ++++++
+ arch/arm/mach-tegra/devices.c        |    5 +++++
+ 2 files changed, 11 insertions(+), 0 deletions(-)
 
-
---+xNpyl7Qekk2NvDX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-* Sascha Hauer wrote:
-> I have a series porting all in kernel drivers to this framework. I can
-> follow up on this series once it's clear we want to go this way. With
-> this series the way will be free to move to a better pwm matching
-> without a global pwm index because the drivers won't be affected by
-> this change anymore.
-
-Nice. I already ported the PXA and Blackfin drivers in this series and was
-planning to port more in subsequent versions but if you've already done most
-of the work I can just skip. I should probably keep the Tegra driver in the
-series because it doesn't exist in the kernel tree yet.
-
-Thierry
-
---+xNpyl7Qekk2NvDX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAk8yWZsACgkQZ+BJyKLjJp+uCgCglPEhUwBVcBggn8OpWBVon6v/
-D7kAnjVaB2CpZuwHBLyG2Q95SwyAcIdU
-=aTFJ
------END PGP SIGNATURE-----
-
---+xNpyl7Qekk2NvDX--
-
---===============1671393895899940456==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============1671393895899940456==--
+diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
+index bf13ea3..462ba1d 100644
+--- a/arch/arm/mach-tegra/board-seaboard.c
++++ b/arch/arm/mach-tegra/board-seaboard.c
+@@ -64,6 +64,11 @@ static struct platform_device debug_uart = {
+ 
+ static __initdata struct tegra_clk_init_table seaboard_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
++	{ "pll_p_out4",	"pll_p",	24000000,	true },
++	{ "pll_c_out1",	"pll_c",	120000000,	true },
++	{ "sclk",	"pll_c_out1",	120000000,	true },
++	{ "hclk",	"sclk",		120000000,	true },
++	{ "pclk",	"hclk",		60000000,	true },
+ 	{ "uartb",	"pll_p",	216000000,	true},
+ 	{ "uartd",	"pll_p",	216000000,	true},
+ 	{ "pll_a",	"pll_p_out1",	56448000,	true },
+@@ -203,6 +208,7 @@ static int seaboard_ehci_init(void)
+ 	gpio_set_value(TEGRA_GPIO_USB1, 1);
+ 
+ 	platform_device_register(&tegra_ehci1_device);
++	platform_device_register(&tegra_ehci2_device);
+ 	platform_device_register(&tegra_ehci3_device);
+ 
+ 	return 0;
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index 7a2a02d..977716e 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -441,8 +441,13 @@ static struct resource tegra_usb3_resources[] = {
+ };
+ 
+ static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
++#ifdef CONFIG_MACH_SEABOARD
++	/* Use GPIO PV1 for phy reset */
++	.reset_gpio = TEGRA_GPIO_PV1,
++#else
+ 	/* All existing boards use GPIO PV0 for phy reset */
+ 	.reset_gpio = TEGRA_GPIO_PV0,
++#endif
+ 	.clk = "cdev2",
+ };
+ 
+-- 
+1.7.3
