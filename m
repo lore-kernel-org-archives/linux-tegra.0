@@ -1,134 +1,143 @@
-From: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [U-Boot] [PATCH v3 0/9] tegra: Add I2C driver and associated
- parts
-Date: Thu, 9 Feb 2012 09:35:53 -0800
-Message-ID: <5FBF8E85CA34454794F0F7ECBA79798F3792269860@HQMAIL04.nvidia.com>
-References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
- <4F336F75.3010202@denx.de>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V1] regmap: add bulk_write() for non-volatile register set
+Date: Thu, 9 Feb 2012 18:12:25 +0000
+Message-ID: <20120209181224.GK3058@opensource.wolfsonmicro.com>
+References: <1328789531-10067-1-git-send-email-ldewangan@nvidia.com>
+ <20120209121704.GF3058@opensource.wolfsonmicro.com>
+ <4F33BFDE.7020006@nvidia.com>
+ <20120209125505.GI3058@opensource.wolfsonmicro.com>
+ <4F33FEE7.9080608@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fLj60tP2PZ34xyqD"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F336F75.3010202-ynQEQJNshbs@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <4F33FEE7.9080608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "hs-ynQEQJNshbs@public.gmane.org" <hs-ynQEQJNshbs@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "gregkh-l3A5Bk7waGM@public.gmane.org" <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Heiko,
 
-> -----Original Message-----
-> From: Heiko Schocher [mailto:hs-ynQEQJNshbs@public.gmane.org]
-> Sent: Thursday, February 09, 2012 12:02 AM
-> To: Simon Glass
-> Cc: U-Boot Mailing List; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Tom Warren
-> Subject: Re: [U-Boot] [PATCH v3 0/9] tegra: Add I2C driver and associated
-> parts
-> 
-> Hello Tom,
-> 
-> Simon Glass wrote:
-> > This series brings in an I2C driver for Tegra which can be configured
-> > by a flat device tree.
-> >
-> > It supports 8- and 16-bit addresses and both the normal I2C ports and
-> > the DVC port (for controlling the power management unit (PMU)).
-> >
-> > Recent Linux bindings are used, based on example .dts files found in
-> > branch for-3.3/dt at:
-> >
-> > git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
-> >
-> > (I could not find the actual binding documentation to include here)
-> >
-> > Note: There is still an open question on I2C2 pinmux. The idea of an
-> > 'nvidia,pinmux-config' settings did not find favour, so we have no way
-> > of passing the correct config to funcmux for this port. Therefore we
-> > have disabled it for now. The impact on Seaboard is that the TPM and
-> > battery charger cannot be accessed.
-> >
-> > I am sending this series to the linux-tegra list also, and will do so
-> > for future series also. This is because anything to do with fdt also
-> > affects the kernel bindings. Please advise if this is not useful.
-> >
-> > Changes in v2:
-> > - Add build warning if CONFIG_SYS_I2C_INIT_BOARD is not defined
-> > - Adjust definitions to fit new peripheral clock bindings
-> > - Change 'speed' to 'clock-frequency'
-> > - Change i2c array to static
-> > - Disable port 2 as it is not used
-> > - Make i2c/dvc decision come from fdt
-> > - Remove i2c configuring using CONFIG (use fdt instead)
-> > - Remove u-boot,pinmux binding (sadly)
-> > - Return an error if an unavailable i2c bus is selected
-> > - Simplify code in i2c_addr_ok()
-> > - Tidy comment style
-> > - Use DIV_ROUND_UP() instead of a home-grown macro
-> > - Use new fdtdec alias decode function
-> >
-> > Changes in v3:
-> > - Add TEGRA_I2C_NUM_CONTROLLERS to select number of I2C ports
-> > - Add comment on how to select pinmux for I2C2
-> > - Add comments and warning for mixed alias use in fdtdec
-> > - Add new patch to support 16-bit clock divisors required by I2C
-> > - Change i2c_init() to reset speed and override the fdt setting
-> > - Fix i2c_addr_ok() function to check addresses correctly
-> > - Move speed setting from tegra20.dtsi to board .dts file
-> > - Rename driver to tegra_i2c since it will later be shared with Tegra3
-> > - Tidy up I2C speed selection to use the peripheral clock
-> > - Use CONFIG_TEGRA_I2C instead of CONFIG_TEGRA2_I2C
-> >
-> > Simon Glass (8):
-> >   tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
-> >   fdt: Add function to allow aliases to refer to multiple nodes
-> >   tegra: Enhance clock support to handle 16-bit clock divisors
-> >   tegra: fdt: i2c: Add extra I2C bindings for U-Boot
-> >   tegra: i2c: Initialise I2C on Nvidia boards
-> >   tegra: i2c: Select I2C ordering for Seaboard
-> >   tegra: i2c: Select number of controllers for Tegra2 boards
-> >   tegra: i2c: Enable I2C on Seaboard
-> >
-> > Yen Lin (1):
-> >   tegra: i2c: Add I2C driver
-> >
-> >  arch/arm/cpu/armv7/tegra2/ap20.c             |   10 +-
-> >  arch/arm/cpu/armv7/tegra2/board.c            |    2 +-
-> >  arch/arm/cpu/armv7/tegra2/clock.c            |   63 ++-
-> >  arch/arm/dts/tegra20.dtsi                    |    6 +-
-> >  arch/arm/include/asm/arch-tegra2/clk_rst.h   |   10 +-
-> >  arch/arm/include/asm/arch-tegra2/tegra2.h    |    4 +-
-> >  arch/arm/include/asm/arch-tegra2/tegra_i2c.h |  160 ++++++++
-> >  board/nvidia/common/board.c                  |    7 +
-> >  board/nvidia/dts/tegra2-seaboard.dts         |   21 +
-> >  drivers/i2c/Makefile                         |    1 +
-> >  drivers/i2c/tegra_i2c.c                      |  566
-> ++++++++++++++++++++++++++
-> >  include/configs/seaboard.h                   |    8 +
-> >  include/configs/tegra2-common.h              |    3 +
-> >  include/fdtdec.h                             |   25 ++
-> >  lib/fdtdec.c                                 |   24 +-
-> >  15 files changed, 873 insertions(+), 37 deletions(-)  create mode
-> > 100644 arch/arm/include/asm/arch-tegra2/tegra_i2c.h
-> >  create mode 100644 drivers/i2c/tegra_i2c.c
-> 
-> Do you want to pick up this patchserie? So I can send my Ack for it.
-> If I should pick it up, please send your Acked-by, thanks!
+--fLj60tP2PZ34xyqD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'm not sure what you mean by 'pick up' this patch series. I'm applying these (USB, then I2C) to u-boot-tegra as they are Acked in toto. USB is still pending a single (#10 of 18) Ack by Stephen Warren for the CAR binding rewrite. I2C depends on the fdt stuff in the USB series, so it's blocked until USB is resolved.
+On Thu, Feb 09, 2012 at 10:44:15PM +0530, Laxman Dewangan wrote:
+> On Thursday 09 February 2012 06:25 PM, Mark Brown wrote:
 
-I've put the latest USB patchset (v5/v6) in a 'test' branch in u-boot-tegra - I'll push that to denx.de. I can also add the I2C patchset (assuming it applies w/o error) and push that, too, if it would help anyone. But I can't in good conscience apply it to u-boot-tegra/master or /next until it's fully Acked.  And I don't have enough fdt, USB or I2C knowledge to do the Acking myself.  If you are offering to Ack the entire I2C series, that's great, and will speed up getting it into u-boot-tegra once the USB issue is resolved (hopefully next week).
+> >That's the whole point with the difference between the bulk and raw APIs
+> >though, the raw API skips the byte swapping and the bulk does it.
 
-Thanks,
+> Ok, re-going through the apis again about the byte swapping, what I
+> understand is that raw_read or raw_write always happen in
+> bing-endian regardless of cpu. And bulk read/write supported the
+> data which is in the cpu-endianess.
 
-Tom
+Well, technically raw operations always work with device native data -
+it's just that nobody actually makes devices that are little endian so
+we've no software support for that.  But pretty much, yes.
 
--- 
-nvpublic
+> So we need to convert the data from cpu_to_bexx if we want to call
+> raw_write from bulk_write. Similarly we need to convert the data
+> from bexx_to_cpu when we read from raw-read which is called from
+> bulk_read().
 
-> 
-> bye,
-> Heiko
-> --
-> DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Yes.
+
+> If this is case then if we want the data in integer type from
+> bulk_write data pointer then just memcpy will be fine like
+> unsigned int ival;
+> memcpy(&ival, bulk_val_ptr, val_bytes);
+> and for calling raw_write, it need to call format_val() so this will
+> do byte swapping. This require to duplicate the data pointer to new
+> pointer and then do manipulation. Once we do this then we will be
+> able to call raw_write() with the new duplicated pointer.
+
+Indeed, taking a copy of the data and modifying it will do the trick.
+
+> This may be require mem alloc/free on every call. It can be avoided
+> by allocating memory for size (val_bytes + max_register) in advance
+> during init..
+> Is it correct?
+
+val_bytes * max_register, and obviously the worst case on that is rather
+large.
+
+> >Well, there's no fundamental reason why we can't support cache on raw
+> >operations too.  It's not implemented because there's no need for it
+> >with any current users rather than because it's impossible.
+
+> Now if we want to support the caching from raw-write then we need to
+> either do caching first or device write first.
+
+Yes.
+
+> I am seeing one issue with this approach:
+> Whichever is first, if we do caching (which is in loop) and if it
+> fails in between inside loop then we may not able to revert it
+> or it will be complicate to implement the reversal of old values.
+> Also if it is stored in cache first and later if write fails then
+> also it will be difficult to revert it.
+
+I'm not overly worried about failed writes, they should essentially
+never happen and if they do happen we can always resync with the device
+by either reading the registers or discarding the cache (assuming we
+didn't completely loose track of the device).  Doing something really
+expensive isn't too bad for rare events, and practically speaking if we
+fail to write once we'll never succeed.
+
+Besides, when we do get an error we have no way of telling what exactly
+the hardware did - even if we see that it got an error on the nth byte
+we don't know if it might've done something with that before it
+complained or if there was damage to some of the earlier data too.
+Upper layers are going to have to implement recovery mechanisms if they
+want them.
+
+> - remove the warnings from raw-write...
+> - Let allow the reg_write as what it is already  there.
+> - Then parse input val pointer and put in cache register by register
+>                for (i = 0; i < val_len / map->format.val_bytes; i++) {
+>                   memcpy(map->work_buf, val + (i * val_bytes), val_bytes);
+>                   ival = map->format.parse_val(map->work_buf);
+>                   ret = regcache_write(map, reg + i, ival);
+>                   if (ret != 0)
+>                       dev_warn("Unable to cache register %d\n", reg +i);
+>                }
+
+Hrm, we also need to handle cache bypass and cache only in here - and
+for consistency with vanilla write we need to cache before write.
+Indeed, we'll need to push all the cache handling down into
+_regmap_raw_write() from regmap_reg_write() as that's where writes from
+regmap_reg_write() end up.
+
+> It seems modifying raw_write() looks simple if we are able to ignore
+> the caching error..
+> Let me know your opinion?
+
+We can't ignore errors completely but we don't need to go to great
+lengths to handle it due to the issues discussed above.
+
+--fLj60tP2PZ34xyqD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPNAyCAAoJEBus8iNuMP3dzPMQAJNfrlUrPQVS4aNrIzbs1n2K
+uhXb2lRhSkRZHnva0DdMI7qvgbn5e2SZ4yuWEkOsUBWAP70iWOxUz4K3IYpxtdzv
+7rnH56vVGgbNjSXcujB0ezCbQexZUP3Jcvd2+ScxedbukKTZir9oXOiKI9JKVFv7
+10mSEjKIwyNA75MMyuScr+09icjUZOmyXGv1JjuuKeOquCSehSoF1oj/ZNeEtVYf
+2zMYuYNfxgsYAJoRSMHMYIkRDSqU5n8SjSuOdCLQ/Tk3GQHnh+i4g5RvwH7BhPZh
+WSMheOA3P1hqmSdTL5xU3nB9Sc9Et81Bvh4Oc76RsdGgETbatT4rVs/XdW1zFIj3
+plUzFrNTthOKIk4dYB69FGzoFUhD7iQm8MJ87iH8vPLoEo+QURN1eWpVZ2PcOIVG
+rXFv+B4t+AHlSPAN3vJtjReKPAEpZxFTBPClqesP+lVgP9BB8iokFtRfyI2p77Z+
+53jWRU7HQNgPifUioOx2s0R3CrE3B153dA7bh7wkJ+Wk3IDknOwMASDQ7oXgN/Gm
+jwE6PeNLmWIYbCUab5hUQ5D7oZZnpklYvssmMU52PtpdlC5HEUwU24nbruw5r3Dx
+v5/MDZUMgR15uWJeNzD1s1nAJW9a1g9VCusav4aSaHnAQGxKUn/S8phiMU/bFubG
+8tvP9riNoHbdPJttKvY4
+=P65S
+-----END PGP SIGNATURE-----
+
+--fLj60tP2PZ34xyqD--
