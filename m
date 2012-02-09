@@ -1,162 +1,140 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 10/10] ARM: tegra: support for secondary cores on Tegra30
-Date: Fri, 10 Feb 2012 01:47:50 +0200
-Message-ID: <1328831277-21002-11-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v3 06/10] ARM: tegra: prepare powergate.c for multiple variants
+Date: Fri, 10 Feb 2012 01:47:46 +0200
+Message-ID: <1328831277-21002-7-git-send-email-pdeschrijver@nvidia.com>
 References: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for bringing up secondary cores on Tegra30. On Tegra30 secondary
-CPU cores are powergated, so we need to turn on the domains before we can bring
-the CPU cores online. Bringing secondary cores online happens early during the
-sytem boot, so we call powergating initialization from platform early_init
-function.
-
-Based on work by:
-
-Scott Williams <scwilliams@nvidia.com>
-Colin Cross <ccross@android.com>
-Alex Frid <afrid@nvidia.com>
+Prepare the powergating code for other Tegra variants which have a different
+number of powerdomains.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/arm/mach-tegra/headsmp.S |   32 ++++++++++++++++++++++++++
- arch/arm/mach-tegra/platsmp.c |   50 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 81 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/include/mach/powergate.h |    1 -
+ arch/arm/mach-tegra/powergate.c              |   33 +++++++++++++++++++++----
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-index 7973f1c..b63a4f7 100644
---- a/arch/arm/mach-tegra/headsmp.S
-+++ b/arch/arm/mach-tegra/headsmp.S
-@@ -163,6 +163,38 @@ __die:
- 	str	r1, [r7, #0x340]		@ CLK_RST_CPU_CMPLX_SET
- #endif
- 1:
-+#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-+	mov32	r6, TEGRA_FLOW_CTRL_BASE
-+
-+	cmp	r10, #0
-+	moveq	r1, #FLOW_CTRL_HALT_CPU0_EVENTS
-+	moveq	r2, #FLOW_CTRL_CPU0_CSR
-+	movne	r1, r10, lsl #3
-+	addne	r2, r1, #(FLOW_CTRL_CPU1_CSR-8)
-+	addne	r1, r1, #(FLOW_CTRL_HALT_CPU1_EVENTS-8)
-+
-+	/* Clear CPU "event" and "interrupt" flags and power gate
-+	   it when halting but not before it is in the "WFI" state. */
-+	ldr	r0, [r6, +r2]
-+	orr	r0, r0, #FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
-+	orr	r0, r0, #FLOW_CTRL_CSR_ENABLE
-+	str	r0, [r6, +r2]
-+
-+	/* Unconditionally halt this CPU */
-+	mov	r0, #FLOW_CTRL_WAITEVENT
-+	str	r0, [r6, +r1]
-+	ldr	r0, [r6, +r1]			@ memory barrier
-+
-+	dsb
-+	isb
-+	wfi					@ CPU should be power gated here
-+
-+	/* If the CPU didn't power gate above just kill it's clock. */
-+
-+	mov	r0, r11, lsl #8
-+	str	r0, [r7, #348]			@ CLK_CPU_CMPLX_SET
-+#endif
-+
- 	/* If the CPU still isn't dead, just spin here. */
- 	b	.
- ENDPROC(__tegra_cpu_reset_handler)
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 79a241a..1a208db 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -24,7 +24,9 @@
- #include <asm/mach-types.h>
- #include <asm/smp_scu.h>
+diff --git a/arch/arm/mach-tegra/include/mach/powergate.h b/arch/arm/mach-tegra/include/mach/powergate.h
+index 39c396d..36846dc 100644
+--- a/arch/arm/mach-tegra/include/mach/powergate.h
++++ b/arch/arm/mach-tegra/include/mach/powergate.h
+@@ -27,7 +27,6 @@
+ #define TEGRA_POWERGATE_VDEC	4
+ #define TEGRA_POWERGATE_L2	5
+ #define TEGRA_POWERGATE_MPE	6
+-#define TEGRA_NUM_POWERGATE	7
  
-+#include <mach/clk.h>
+ int tegra_powergate_power_on(int id);
+ int tegra_powergate_power_off(int id);
+diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powergate.c
+index 9483064..9b828f2 100644
+--- a/arch/arm/mach-tegra/powergate.c
++++ b/arch/arm/mach-tegra/powergate.c
+@@ -31,6 +31,8 @@
  #include <mach/iomap.h>
-+#include <mach/powergate.h>
+ #include <mach/powergate.h>
  
- #include "fuse.h"
- #include "flowctrl.h"
-@@ -42,6 +44,8 @@ static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
- 	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x340)
- #define CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR \
- 	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x344)
-+#define CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR \
-+	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x34c)
++#include "fuse.h"
++
+ #define PWRGATE_TOGGLE		0x30
+ #define  PWRGATE_TOGGLE_START	(1 << 8)
  
- #define CPU_CLOCK(cpu)	(0x1<<(8+cpu))
- #define CPU_RESET(cpu)	(0x1111ul<<(cpu))
-@@ -73,11 +77,52 @@ static int tegra20_power_up_cpu(unsigned int cpu)
- 	return 0;
+@@ -38,6 +40,8 @@
+ 
+ #define PWRGATE_STATUS		0x38
+ 
++static int tegra_num_powerdomains;
++
+ static DEFINE_SPINLOCK(tegra_powergate_lock);
+ 
+ static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
+@@ -75,7 +79,7 @@ static int tegra_powergate_set(int id, bool new_state)
+ 
+ int tegra_powergate_power_on(int id)
+ {
+-	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++	if (id < 0 || id >= tegra_num_powerdomains)
+ 		return -EINVAL;
+ 
+ 	return tegra_powergate_set(id, true);
+@@ -83,17 +87,18 @@ int tegra_powergate_power_on(int id)
+ 
+ int tegra_powergate_power_off(int id)
+ {
+-	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++	if (id < 0 || id >= tegra_num_powerdomains)
+ 		return -EINVAL;
+ 
+ 	return tegra_powergate_set(id, false);
  }
  
-+static int tegra30_power_up_cpu(unsigned int cpu)
+-static bool tegra_powergate_is_powered(int id)
++static int tegra_powergate_is_powered(int id)
+ {
+ 	u32 status;
+ 
+-	WARN_ON(id < 0 || id >= TEGRA_NUM_POWERGATE);
++	if (id < 0 || id >= tegra_num_powerdomains)
++		return -EINVAL;
+ 
+ 	status = pmc_read(PWRGATE_STATUS) & (1 << id);
+ 	return !!status;
+@@ -103,7 +108,7 @@ int tegra_powergate_remove_clamping(int id)
+ {
+ 	u32 mask;
+ 
+-	if (id < 0 || id >= TEGRA_NUM_POWERGATE)
++	if (id < 0 || id >= tegra_num_powerdomains)
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -156,6 +161,22 @@ err_power:
+ 	return ret;
+ }
+ 
++int __init tegra_powergate_init(void)
 +{
-+	u32 reg;
-+	int ret, pwrgateid;
-+	unsigned long timeout;
-+
-+	pwrgateid = tegra_cpu_powergate_id(cpu);
-+	if (pwrgateid < 0)
-+		return pwrgateid;
-+
-+	/* If this is the first boot, toggle powergates directly. */
-+	if (!tegra_powergate_is_powered(pwrgateid)) {
-+		ret = tegra_powergate_power_on(pwrgateid);
-+		if (ret)
-+			return ret;
-+
-+		/* Wait for the power to come up. */
-+		timeout = jiffies + 10*HZ;
-+		while (tegra_powergate_is_powered(pwrgateid)) {
-+			if (time_after(jiffies, timeout))
-+				return -ETIMEDOUT;
-+			udelay(10);
-+		}
++	switch (tegra_chip_id) {
++	case TEGRA20:
++		tegra_num_powerdomains = 7;
++		break;
++	default:
++		/* Unknown Tegra variant. Disable powergating */
++		tegra_num_powerdomains = 0;
++		break;
 +	}
-+
-+	/* CPU partition is powered. Enable the CPU clock. */
-+	writel(CPU_CLOCK(cpu), CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
-+	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
-+	udelay(10);
-+
-+	/* Remove I/O clamps. */
-+	ret = tegra_powergate_remove_clamping(pwrgateid);
-+	udelay(10);
-+
-+	/* Clear flow controller CSR. */
-+	flowctrl_write_cpu_csr(cpu, 0);
 +
 +	return 0;
 +}
++arch_initcall(tegra_powergate_init);
 +
- int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	int status;
+ #ifdef CONFIG_DEBUG_FS
  
--	/* Force the CPU into reset. The CPU must remain in reset when the
-+	/*
-+	 * Force the CPU into reset. The CPU must remain in reset when the
- 	 * flow controller state is cleared (which will cause the flow
- 	 * controller to stop driving reset if the CPU has been power-gated
- 	 * via the flow controller). This will have no effect on first boot
-@@ -98,6 +143,9 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	case TEGRA20:
- 		status = tegra20_power_up_cpu(cpu);
- 		break;
-+	case TEGRA30:
-+		status = tegra30_power_up_cpu(cpu);
-+		break;
- 	default:
- 		status = -EINVAL;
- 		break;
+ static const char * const powergate_name[] = {
+@@ -175,7 +196,7 @@ static int powergate_show(struct seq_file *s, void *data)
+ 	seq_printf(s, " powergate powered\n");
+ 	seq_printf(s, "------------------\n");
+ 
+-	for (i = 0; i < TEGRA_NUM_POWERGATE; i++)
++	for (i = 0; i < tegra_num_powerdomains; i++)
+ 		seq_printf(s, " %9s %7s\n", powergate_name[i],
+ 			tegra_powergate_is_powered(i) ? "yes" : "no");
+ 	return 0;
 -- 
 1.7.4.1
