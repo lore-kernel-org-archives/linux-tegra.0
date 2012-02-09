@@ -1,118 +1,81 @@
-From: Heiko Schocher <hs@denx.de>
-Subject: Re: [PATCH v3 0/9] tegra: Add I2C driver and associated
-	parts
-Date: Thu, 09 Feb 2012 08:02:13 +0100
-Message-ID: <4F336F75.3010202@denx.de>
-References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
-Reply-To: hs@denx.de
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V1 1/2] mfd: tps65910: use regmap for device register
+ access.
+Date: Thu, 9 Feb 2012 11:55:03 +0000
+Message-ID: <20120209115502.GD3058@opensource.wolfsonmicro.com>
+References: <1328697985-22504-1-git-send-email-ldewangan@nvidia.com>
+ <20120208114120.GF3120@opensource.wolfsonmicro.com>
+ <4F32676F.1010305@nvidia.com>
+ <20120208130726.GB5943@opensource.wolfsonmicro.com>
+ <4F3279D6.4000009@nvidia.com>
+ <20120208135816.GE5943@opensource.wolfsonmicro.com>
+ <4F335385.5040400@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <u-boot-bounces@lists.denx.de>
-In-reply-to: <1328318041-10943-1-git-send-email-sjg@chromium.org>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Simon Glass <sjg@chromium.org>
-Cc: linux-tegra@vger.kernel.org, U-Boot Mailing List <u-boot@lists.denx.de>, Tom Warren <twarren@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W5WqUoFLvi1M7tJE"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F335385.5040400-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Tom,
 
-Simon Glass wrote:
-> This series brings in an I2C driver for Tegra which can be
-> configured by a flat device tree.
-> 
-> It supports 8- and 16-bit addresses and both the normal I2C ports and
-> the DVC port (for controlling the power management unit (PMU)).
-> 
-> Recent Linux bindings are used, based on example .dts files found in
-> branch for-3.3/dt at:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
-> 
-> (I could not find the actual binding documentation to include here)
-> 
-> Note: There is still an open question on I2C2 pinmux. The idea of an
-> 'nvidia,pinmux-config' settings did not find favour, so we have no way
-> of passing the correct config to funcmux for this port. Therefore we have
-> disabled it for now. The impact on Seaboard is that the TPM and battery
-> charger cannot be accessed.
-> 
-> I am sending this series to the linux-tegra list also, and will do so for
-> future series also. This is because anything to do with fdt also affects
-> the kernel bindings. Please advise if this is not useful.
-> 
-> Changes in v2:
-> - Add build warning if CONFIG_SYS_I2C_INIT_BOARD is not defined
-> - Adjust definitions to fit new peripheral clock bindings
-> - Change 'speed' to 'clock-frequency'
-> - Change i2c array to static
-> - Disable port 2 as it is not used
-> - Make i2c/dvc decision come from fdt
-> - Remove i2c configuring using CONFIG (use fdt instead)
-> - Remove u-boot,pinmux binding (sadly)
-> - Return an error if an unavailable i2c bus is selected
-> - Simplify code in i2c_addr_ok()
-> - Tidy comment style
-> - Use DIV_ROUND_UP() instead of a home-grown macro
-> - Use new fdtdec alias decode function
-> 
-> Changes in v3:
-> - Add TEGRA_I2C_NUM_CONTROLLERS to select number of I2C ports
-> - Add comment on how to select pinmux for I2C2
-> - Add comments and warning for mixed alias use in fdtdec
-> - Add new patch to support 16-bit clock divisors required by I2C
-> - Change i2c_init() to reset speed and override the fdt setting
-> - Fix i2c_addr_ok() function to check addresses correctly
-> - Move speed setting from tegra20.dtsi to board .dts file
-> - Rename driver to tegra_i2c since it will later be shared with Tegra3
-> - Tidy up I2C speed selection to use the peripheral clock
-> - Use CONFIG_TEGRA_I2C instead of CONFIG_TEGRA2_I2C
-> 
-> Simon Glass (8):
->   tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
->   fdt: Add function to allow aliases to refer to multiple nodes
->   tegra: Enhance clock support to handle 16-bit clock divisors
->   tegra: fdt: i2c: Add extra I2C bindings for U-Boot
->   tegra: i2c: Initialise I2C on Nvidia boards
->   tegra: i2c: Select I2C ordering for Seaboard
->   tegra: i2c: Select number of controllers for Tegra2 boards
->   tegra: i2c: Enable I2C on Seaboard
-> 
-> Yen Lin (1):
->   tegra: i2c: Add I2C driver
-> 
->  arch/arm/cpu/armv7/tegra2/ap20.c             |   10 +-
->  arch/arm/cpu/armv7/tegra2/board.c            |    2 +-
->  arch/arm/cpu/armv7/tegra2/clock.c            |   63 ++-
->  arch/arm/dts/tegra20.dtsi                    |    6 +-
->  arch/arm/include/asm/arch-tegra2/clk_rst.h   |   10 +-
->  arch/arm/include/asm/arch-tegra2/tegra2.h    |    4 +-
->  arch/arm/include/asm/arch-tegra2/tegra_i2c.h |  160 ++++++++
->  board/nvidia/common/board.c                  |    7 +
->  board/nvidia/dts/tegra2-seaboard.dts         |   21 +
->  drivers/i2c/Makefile                         |    1 +
->  drivers/i2c/tegra_i2c.c                      |  566 ++++++++++++++++++++++++++
->  include/configs/seaboard.h                   |    8 +
->  include/configs/tegra2-common.h              |    3 +
->  include/fdtdec.h                             |   25 ++
->  lib/fdtdec.c                                 |   24 +-
->  15 files changed, 873 insertions(+), 37 deletions(-)
->  create mode 100644 arch/arm/include/asm/arch-tegra2/tegra_i2c.h
->  create mode 100644 drivers/i2c/tegra_i2c.c
+--W5WqUoFLvi1M7tJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Do you want to pick up this patchserie? So I can send my Ack for it.
-If I should pick it up, please send your Acked-by, thanks!
+On Thu, Feb 09, 2012 at 10:33:01AM +0530, Laxman Dewangan wrote:
+> On Wednesday 08 February 2012 07:28 PM, Mark Brown wrote:
 
-bye,
-Heiko
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> >But that's just raw_write(), there's no benefit to the additional API
+> >call.
+
+> raw_write supported for the volatile register only.
+
+That's an implementation detail since there's little if any use case for
+such use, the main use of raw_write() is dumping blocks of data like
+firmwares and coefficients which are rarely cached.
+
+> I require an api which can work for volatile as well as non-volatile
+> registers.
+> Either extend raw_write to support both cases (remove warning and
+> handle properly) or add bulk_write.
+
+> I think as bulk_read is there and so having bulk_write on same line
+> should be OK.
+
+Note that there's a very important difference between the bulk and raw
+versions of the API which you're not taking into account: the bulk
+version takes care of endianness differences between the device and the
+host.  This would mean that for send we'd need to rewrite the input
+array which means we have to take a copy of the data as we probably
+shouldn't be changing the input data.
+
+Indeed, looking at the drivers in mainline I can't actually see any of
+them which do block writes.
+
+--W5WqUoFLvi1M7tJE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPM7QQAAoJEBus8iNuMP3dLRkP/iuVLtpni03P5BSvWFmus4PX
+yuseBnRJftR7+P8NCkJwhlCJwG2WGPPKXA3yjKjiCiy/6+9k86KYBCKMsKV6s+5P
+ezRAVASqvBHJeUHJdmDh/xBwwr24gX65QVU3OuR74hCrsE0YnyFzAyQuTkrp+VIi
+iP8uWQRWs/LnDBdKdHAOffnonA7iYIa69RGF3MX0fmX9RmPtKhMCM0C2oKVKaaTR
+FajJozIP1huPHyc6kUuwtZiDZKOwY9LfaJXe/Pd3f+DUkAizxOuF/E0SHNBafy2v
+yhdeB6ejWcGbodOwYtC9fDhZjmlUubSjKJNry2CKcmXd4kWofbadTv8LEoKTDorv
+jhFjfHSKBhSadstLUpHMX7cCEzr9vtRTup1i+c5Rd32uNsnfx6JIPRR78MVRC8c3
+jNVGB3CQYW5/0z4z5P6EQbtThTDG3qyF3DdZCerUE7IK+dQLGzwG2WiUjWOMDTIs
+ONEI0xIeGMZm+OaUx9HxR1Aepvda+bRKHkJCklh0LuTet1FEuNYhwEE3ECrZnllk
+uk17d/IRmhSyKdsu6y/E4aB7hWF198NI4wNo6qqfTbi4czS5bBc6B2vcHzqq+GSr
+bXAUsEUaQG1Je/i/K4qltIoUC0jT81vC/3psMPZudwZjybuRXzmi+LBGQEdsDCRB
+yWaMUZRfNFIXzdDR0i1w
+=IO5P
+-----END PGP SIGNATURE-----
+
+--W5WqUoFLvi1M7tJE--
