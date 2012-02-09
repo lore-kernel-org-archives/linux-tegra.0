@@ -1,54 +1,118 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1] regulator: fixed: Support for open-drain gpio
-Date: Thu, 9 Feb 2012 11:31:35 +0530
-Message-ID: <4F33613F.2080805@nvidia.com>
-References: <1328611596-13279-1-git-send-email-ldewangan@nvidia.com> <20120207114341.GJ3332@opensource.wolfsonmicro.com>
+From: Heiko Schocher <hs@denx.de>
+Subject: Re: [PATCH v3 0/9] tegra: Add I2C driver and associated
+	parts
+Date: Thu, 09 Feb 2012 08:02:13 +0100
+Message-ID: <4F336F75.3010202@denx.de>
+References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
+Reply-To: hs@denx.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120207114341.GJ3332-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "grant-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <u-boot-bounces@lists.denx.de>
+In-reply-to: <1328318041-10943-1-git-send-email-sjg@chromium.org>
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Sender: u-boot-bounces@lists.denx.de
+Errors-To: u-boot-bounces@lists.denx.de
+To: Simon Glass <sjg@chromium.org>
+Cc: linux-tegra@vger.kernel.org, U-Boot Mailing List <u-boot@lists.denx.de>, Tom Warren <twarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 07 February 2012 05:13 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Tue, Feb 07, 2012 at 04:16:36PM +0530, Laxman Dewangan wrote:
->
->> To make the pin to high/low for enabling/disabling the switches,
->> the pins will have the pull-up connected and the high/low can be
->> set using following methods:
->> LOW: gpio_direction_output(gpio, 0) ... this drives the signal
->> 	and overrides the pullup.
->> HIGH: gpio_direction_input(gpio) ... this turns off the output,
->> 	so the pullup (or some other device) controls the signal.
-> Thinking about this further this is potentially going to apply to any
-> GPIO output - perhaps we should push the implementation down into
-> gpiolib so we just specify a flag when requesting the GPIO and then
-> gpiolib does the pull low/high Z thing for us.  That would be much less
-> effort in individual drivers, we'd just need to be able to set the flag
-> and could potentially directly use any hardware open drain output
-> support (some GPIO controllers will do all this in hardware) if the
-> driver API were extended.  Grant, does that sound reasonable?
->
-If Grant agree on this then we can have following thing:
-- we have already apis like gpio_request_one() and 
-gpio_request_multiple() which take the flags.
-- We need to add the flag GPIOF_OD in current list of flags for requester.
-- In the gpio_request_xx(), just store this flag in gpio_desc for 
-corresponding gpios.
-- When client set direction_output() with val 1 then do 
-direction_input(). So check will be in function direction_output()
-- When client  call set_value(), again check for value ==1 and GPIO_OD 
-and if it is there, call direction_input.
+Hello Tom,
 
-On client side change, call proper request function with proper flag 
-(with GPIOF_OD if it is require).
+Simon Glass wrote:
+> This series brings in an I2C driver for Tegra which can be
+> configured by a flat device tree.
+> 
+> It supports 8- and 16-bit addresses and both the normal I2C ports and
+> the DVC port (for controlling the power management unit (PMU)).
+> 
+> Recent Linux bindings are used, based on example .dts files found in
+> branch for-3.3/dt at:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
+> 
+> (I could not find the actual binding documentation to include here)
+> 
+> Note: There is still an open question on I2C2 pinmux. The idea of an
+> 'nvidia,pinmux-config' settings did not find favour, so we have no way
+> of passing the correct config to funcmux for this port. Therefore we have
+> disabled it for now. The impact on Seaboard is that the TPM and battery
+> charger cannot be accessed.
+> 
+> I am sending this series to the linux-tegra list also, and will do so for
+> future series also. This is because anything to do with fdt also affects
+> the kernel bindings. Please advise if this is not useful.
+> 
+> Changes in v2:
+> - Add build warning if CONFIG_SYS_I2C_INIT_BOARD is not defined
+> - Adjust definitions to fit new peripheral clock bindings
+> - Change 'speed' to 'clock-frequency'
+> - Change i2c array to static
+> - Disable port 2 as it is not used
+> - Make i2c/dvc decision come from fdt
+> - Remove i2c configuring using CONFIG (use fdt instead)
+> - Remove u-boot,pinmux binding (sadly)
+> - Return an error if an unavailable i2c bus is selected
+> - Simplify code in i2c_addr_ok()
+> - Tidy comment style
+> - Use DIV_ROUND_UP() instead of a home-grown macro
+> - Use new fdtdec alias decode function
+> 
+> Changes in v3:
+> - Add TEGRA_I2C_NUM_CONTROLLERS to select number of I2C ports
+> - Add comment on how to select pinmux for I2C2
+> - Add comments and warning for mixed alias use in fdtdec
+> - Add new patch to support 16-bit clock divisors required by I2C
+> - Change i2c_init() to reset speed and override the fdt setting
+> - Fix i2c_addr_ok() function to check addresses correctly
+> - Move speed setting from tegra20.dtsi to board .dts file
+> - Rename driver to tegra_i2c since it will later be shared with Tegra3
+> - Tidy up I2C speed selection to use the peripheral clock
+> - Use CONFIG_TEGRA_I2C instead of CONFIG_TEGRA2_I2C
+> 
+> Simon Glass (8):
+>   tegra: Rename NV_PA_PMC_BASE to TEGRA2_PMC_BASE
+>   fdt: Add function to allow aliases to refer to multiple nodes
+>   tegra: Enhance clock support to handle 16-bit clock divisors
+>   tegra: fdt: i2c: Add extra I2C bindings for U-Boot
+>   tegra: i2c: Initialise I2C on Nvidia boards
+>   tegra: i2c: Select I2C ordering for Seaboard
+>   tegra: i2c: Select number of controllers for Tegra2 boards
+>   tegra: i2c: Enable I2C on Seaboard
+> 
+> Yen Lin (1):
+>   tegra: i2c: Add I2C driver
+> 
+>  arch/arm/cpu/armv7/tegra2/ap20.c             |   10 +-
+>  arch/arm/cpu/armv7/tegra2/board.c            |    2 +-
+>  arch/arm/cpu/armv7/tegra2/clock.c            |   63 ++-
+>  arch/arm/dts/tegra20.dtsi                    |    6 +-
+>  arch/arm/include/asm/arch-tegra2/clk_rst.h   |   10 +-
+>  arch/arm/include/asm/arch-tegra2/tegra2.h    |    4 +-
+>  arch/arm/include/asm/arch-tegra2/tegra_i2c.h |  160 ++++++++
+>  board/nvidia/common/board.c                  |    7 +
+>  board/nvidia/dts/tegra2-seaboard.dts         |   21 +
+>  drivers/i2c/Makefile                         |    1 +
+>  drivers/i2c/tegra_i2c.c                      |  566 ++++++++++++++++++++++++++
+>  include/configs/seaboard.h                   |    8 +
+>  include/configs/tegra2-common.h              |    3 +
+>  include/fdtdec.h                             |   25 ++
+>  lib/fdtdec.c                                 |   24 +-
+>  15 files changed, 873 insertions(+), 37 deletions(-)
+>  create mode 100644 arch/arm/include/asm/arch-tegra2/tegra_i2c.h
+>  create mode 100644 drivers/i2c/tegra_i2c.c
 
-Does it sound good?
+Do you want to pick up this patchserie? So I can send my Ack for it.
+If I should pick it up, please send your Acked-by, thanks!
 
-> * Unknown Key
-> * 0x6E30FDDD
+bye,
+Heiko
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
