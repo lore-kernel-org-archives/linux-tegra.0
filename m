@@ -1,40 +1,103 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1 1/2] mfd: tps65910: use regmap for device register
- access.
-Date: Thu, 9 Feb 2012 17:39:03 +0530
-Message-ID: <4F33B75F.6050300@nvidia.com>
-References: <1328697985-22504-1-git-send-email-ldewangan@nvidia.com> <20120208114120.GF3120@opensource.wolfsonmicro.com> <4F32676F.1010305@nvidia.com> <20120208130726.GB5943@opensource.wolfsonmicro.com> <4F3279D6.4000009@nvidia.com> <20120208135816.GE5943@opensource.wolfsonmicro.com> <4F335385.5040400@nvidia.com> <20120209115502.GD3058@opensource.wolfsonmicro.com> <4F33B52A.5020900@nvidia.com> <20120209120312.GE3058@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V1] regmap: add bulk_write() for non-volatile register set
+Date: Thu,  9 Feb 2012 17:42:11 +0530
+Message-ID: <1328789531-10067-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120209120312.GE3058-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 09 February 2012 05:33 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Thu, Feb 09, 2012 at 05:29:38PM +0530, Laxman Dewangan wrote:
->
->> I am working on mfd/tps65910.c and function is:
->> static int tps65910_i2c_write(struct tps65910 *tps65910, u8 reg,
->>                                     int bytes, void *src)
->> All your feedback will help me to improve my next two mfd/pmic
->> drivers which I am planning to upstream...
-> Yeah, I know that's the i2c_write() function but all the callers I
-> noticed were calling it with bytes set to 1.
->
-Yes, currently all callers are calling with 1 byte but when we will add 
-rtc (which is not there currently), at that time, it may call multibyte 
-read/write.
-The interface is such that it can support multi-byte transfer. And when 
-using for single byte transfer (currently) and if it is cached, 
-regmap_raw_write() is creating warnings and that's why I broken transfer 
-in multi-transfer in tps65910.c which was not a good idea..
+Adding bulk write which is used for writing a large block of
+data to the device.
+If all registers which need to be written are volatile then all
+data will be send in single transfer.
+If any of the register is non-volatile and caching is enabled then
+data will be written to device in single register wise and hence
+complete transfer is done in multiple small transfer.
 
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/base/regmap/regmap.c |   53 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/regmap.h       |    2 +
+ 2 files changed, 55 insertions(+), 0 deletions(-)
 
-> * Unknown Key
-> * 0x6E30FDDD
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 80129c0..28dbe96 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -466,6 +466,59 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
+ }
+ EXPORT_SYMBOL_GPL(regmap_raw_write);
+ 
++/*
++ * regmap_bulk_write(): Write multiple registers from the device
++ *
++ * @map: Register map to write to
++ * @reg: First register to be write from
++ * @val: Block of data to be written, laid out for direct transmission to
++ *       the device
++ * @val_count: Number of registers to write
++ *
++ * This function is intended to be used for writing a large block of
++ * data to be device either in single transfer or multiple transfer.
++ * If all registers which need to be written are volatile then all
++ * data will be send in single transfer. No data formatting is done in
++ * this case.
++ * If any of the register is non-volatile and caching is enabled then
++ * data will be written to device in single register wise and hence
++ * complete transfer is done in multiple small transfer. In this case,
++ * the register data will be formatted to device register value format.
++ *
++ * A value of zero will be returned on success, a negative errno will
++ * be returned in error cases.
++ */
++int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
++		     size_t val_count)
++{
++	int ret = 0, i;
++	unsigned int ival;
++	size_t val_bytes = map->format.val_bytes;
++	size_t reg_bytes = map->format.reg_bytes;
++	bool vol = regmap_volatile_range(map, reg, val_count);
++
++	if (!map->format.parse_val)
++		return -EINVAL;
++
++	mutex_lock(&map->lock);
++
++	if (vol || map->cache_type == REGCACHE_NONE) {
++		ret = _regmap_raw_write(map, reg, val, val_bytes * val_count);
++	} else {
++		for (i = 0; i < val_count; i++) {
++			memcpy(map->work_buf, val + (i * val_bytes), val_bytes);
++			ival = map->format.parse_val(map->work_buf);
++			ret = _regmap_write(map, reg + (i * reg_bytes), ival);
++			if (ret)
++				break;
++		}
++	}
++
++	mutex_unlock(&map->lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regmap_bulk_write);
++
+ static int _regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
+ 			    unsigned int val_len)
+ {
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index a6ed6e6..0925e24 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -135,6 +135,8 @@ int regmap_reinit_cache(struct regmap *map,
+ int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
+ int regmap_raw_write(struct regmap *map, unsigned int reg,
+ 		     const void *val, size_t val_len);
++int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
++			size_t val_count);
+ int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val);
+ int regmap_raw_read(struct regmap *map, unsigned int reg,
+ 		    void *val, size_t val_len);
+-- 
+1.7.1.1
