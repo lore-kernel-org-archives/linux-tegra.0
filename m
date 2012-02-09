@@ -1,51 +1,54 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V1 1/2] mfd: tps65910: use regmap for device register
- access.
-Date: Thu, 9 Feb 2012 10:33:01 +0530
-Message-ID: <4F335385.5040400@nvidia.com>
-References: <1328697985-22504-1-git-send-email-ldewangan@nvidia.com> <20120208114120.GF3120@opensource.wolfsonmicro.com> <4F32676F.1010305@nvidia.com> <20120208130726.GB5943@opensource.wolfsonmicro.com> <4F3279D6.4000009@nvidia.com> <20120208135816.GE5943@opensource.wolfsonmicro.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1] regulator: fixed: Support for open-drain gpio
+Date: Thu, 9 Feb 2012 11:31:35 +0530
+Message-ID: <4F33613F.2080805@nvidia.com>
+References: <1328611596-13279-1-git-send-email-ldewangan@nvidia.com> <20120207114341.GJ3332@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120208135816.GE5943@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, "lrg@ti.com" <lrg@ti.com>, "jedu@slimlogic.co.uk" <jedu@slimlogic.co.uk>, "gg@slimlogic.co.uk" <gg@slimlogic.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120207114341.GJ3332-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "grant-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 08 February 2012 07:28 PM, Mark Brown wrote:
+On Tuesday 07 February 2012 05:13 PM, Mark Brown wrote:
 > * PGP Signed by an unknown key
 >
-> On Wed, Feb 08, 2012 at 07:04:14PM +0530, Laxman Dewangan wrote:
->> On Wednesday 08 February 2012 06:37 PM, Mark Brown wrote:
->>> Yes, though bulk_write() is tricky as it's *really* unclear what it
->>> should take as an argument - should it be raw register size (in which
->>> case it's just raw_write()) or should it be ints (in which case it needs
->>> to repack the data too)?  I suspect ints but I'm really not convinced
->>> there's much use case for this.
->>   * @map: Register map to write to
->>   * @reg: Initial register to write to
->>   * @val: Block of data to be written, laid out for direct transmission to the
->>   *       device
->>   * @@val_count: Number of registers to write
->> int regmap_bulk_write(struct regmap *map, unsigned int reg, void *val,
->>                       size_t val_count)
->> only support if map->format.parse_val not null like bulk_read.
->> It will just do the regamp_raw_write() if all regs are volatile
->> otherwise make the unsigned int from the val by function
->> map->format.parse_val for separate write for each register.
-> But that's just raw_write(), there's no benefit to the additional API
-> call.
+> On Tue, Feb 07, 2012 at 04:16:36PM +0530, Laxman Dewangan wrote:
 >
-raw_write supported for the volatile register only.
-I require an api which can work for volatile as well as non-volatile 
-registers.
-Either extend raw_write to support both cases (remove warning and handle 
-properly) or add bulk_write.
+>> To make the pin to high/low for enabling/disabling the switches,
+>> the pins will have the pull-up connected and the high/low can be
+>> set using following methods:
+>> LOW: gpio_direction_output(gpio, 0) ... this drives the signal
+>> 	and overrides the pullup.
+>> HIGH: gpio_direction_input(gpio) ... this turns off the output,
+>> 	so the pullup (or some other device) controls the signal.
+> Thinking about this further this is potentially going to apply to any
+> GPIO output - perhaps we should push the implementation down into
+> gpiolib so we just specify a flag when requesting the GPIO and then
+> gpiolib does the pull low/high Z thing for us.  That would be much less
+> effort in individual drivers, we'd just need to be able to set the flag
+> and could potentially directly use any hardware open drain output
+> support (some GPIO controllers will do all this in hardware) if the
+> driver API were extended.  Grant, does that sound reasonable?
+>
+If Grant agree on this then we can have following thing:
+- we have already apis like gpio_request_one() and 
+gpio_request_multiple() which take the flags.
+- We need to add the flag GPIOF_OD in current list of flags for requester.
+- In the gpio_request_xx(), just store this flag in gpio_desc for 
+corresponding gpios.
+- When client set direction_output() with val 1 then do 
+direction_input(). So check will be in function direction_output()
+- When client  call set_value(), again check for value ==1 and GPIO_OD 
+and if it is there, call direction_input.
 
-I think as bulk_read is there and so having bulk_write on same line 
-should be OK.
+On client side change, call proper request function with proper flag 
+(with GPIOF_OD if it is require).
+
+Does it sound good?
 
 > * Unknown Key
 > * 0x6E30FDDD
