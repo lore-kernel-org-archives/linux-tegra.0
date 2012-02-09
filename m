@@ -1,95 +1,104 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: tegra: Add support for USB2 port on Seaboard
-Date: Wed, 8 Feb 2012 11:29:56 -0800
-Message-ID: <CAOesGMhPj2mikibbuJ-HbB5TbwM7b7kjWF_s1fAMkq8oMnEdOw@mail.gmail.com>
-References: <1328700298-14408-1-git-send-email-jilin@nvidia.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
+Date: Wed, 8 Feb 2012 17:19:21 -0800
+Message-ID: <CAOesGMjm+irNw-kHStLf_H3QyJHa04ProG6i0Zyum1iy7TJxpA@mail.gmail.com>
+References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+ <20120124095009.GS16726@n2100.arm.linux.org.uk>
+ <20120126212319.GE11941@n2100.arm.linux.org.uk>
+ <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
+ <4F266C13.5080302@atmel.com>
+ <CAOesGMh1wHpaDmYY6_oCu_u0s4fmTfKMLiPaa9bHh9YaiDJozw@mail.gmail.com>
+ <4F326213.3030500@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328700298-14408-1-git-send-email-jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4F326213.3030500@atmel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: davinci-linux-open-source@linux.davincidsp.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wed, Feb 8, 2012 at 3:24 AM, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 1. ULPI_RESET* is routed to GPIO_PV1, based on schematic file.
-> 2. Reference clock to ULPI PHY is 24MHz. It comes from PLL_P_OUT4.
-> 3. Because PLL_P_OUT4 is assigned to provide clock to ULPI PHY. We us=
-e
-> PLL_C_OUT1 as clock source to SCLK (also update its children like HCL=
-K
-> and PCLK).
-
-This is something that is more or less true for all tegra2 platforms
-(that could be using ULPI), correct? If so, these table changes should
-be made in the common.c table instead.
-
-> 4. Also modify the clock rate of SCLK from 108MHz to 120MHz (copied f=
-rom
-> ChromeOs kernel code).
-
-Unrelated to this change so should be a separate patch. Also, the need
-for the change needs to be motivated.
-
-> diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-teg=
-ra/board-seaboard.c
-> index bf13ea3..462ba1d 100644
-> --- a/arch/arm/mach-tegra/board-seaboard.c
-> +++ b/arch/arm/mach-tegra/board-seaboard.c
-> @@ -64,6 +64,11 @@ static struct platform_device debug_uart =3D {
+On Wed, Feb 8, 2012 at 3:52 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wro=
+te:
+> On 02/08/2012 02:18 AM, Olof Johansson :
+>> Hi,
+>>
+>> On Mon, Jan 30, 2012 at 2:08 AM, Nicolas Ferre <nicolas.ferre@atmel.com>=
+ wrote:
+>>> On 01/29/2012 12:57 AM, Olof Johansson :
+>>>> Hi,
+>>>>
+>>>>
+>>>> On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
+>>>> <linux@arm.linux.org.uk> wrote:
+>>>>
+>>>>
+>>>>> And we're now there. =A0So...
+>>>>>
+>>>>> Arnd, Olaf,
+>>>>>
+>>>>> Please incorporate the latest ARM (for-armsoc branch) changes, which =
+can be found at:
+>>>>>
+>>>>> =A0 =A0 =A0 =A0git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cu=
+r/linux-arm.git for-armsoc
+>>>>>
+>>>>> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
+>>>>
+>>>> Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc rep=
+o.
+>>>>
+>>>> Any next/ branch we start will have this as the base of said branch,
+>>>> so any vendor branches must either already be developed against this
+>>>> stable branch, or merge on top of this with minimal conflicts.
+>>>
+>>> Ok, great.
+>>>
+>>> I just let you know that there is a conflict between the current Linus'
+>>> tree (with recently updated at91 fixes) and this rmk/for-armsoc branch.
+>>>
+>>> I can give you the resolution of this conflict easily but I would like
+>>> to know which way I execute the merge:
+>>>
+>>> I use this rmk/for-armsoc as a baseline and merge the fixes already in
+>>> Linus' tree on top of it or the other way around?
+>>>
+>>> Maybe it is preferable that I wait for 3.3-rc2 and merge rmk/for-armsoc
+>>> on top of it. This result can be the base of our AT91 work for 3.4
+>>> preparation.
+>>>
+>>> Your thought?
+>>
+>> I missed replying to this email until now when I started looking at
+>> picking up branches for the 3.4 staging, sorry for the delay.
+>>
+>> Russell, would you prefer merging in v3.3-rc2 into your branch so I
+>> can pull the exact same resolution from there, or should we do it
+>> locally in arm-soc? It probably makes sense for you to do it so
+>> there's no more conflicts from there on out for dependent branches.
 >
-> =A0static __initdata struct tegra_clk_init_table seaboard_clk_init_ta=
-ble[] =3D {
-> =A0 =A0 =A0 =A0/* name =A0 =A0 =A0 =A0 parent =A0 =A0 =A0 =A0 =A0rate=
- =A0 =A0 =A0 =A0 =A0 =A0enabled */
-> + =A0 =A0 =A0 { "pll_p_out4", "pll_p", =A0 =A0 =A0 =A024000000, =A0 =A0=
- =A0 true },
-> + =A0 =A0 =A0 { "pll_c_out1", "pll_c", =A0 =A0 =A0 =A0120000000, =A0 =
-=A0 =A0true },
-> + =A0 =A0 =A0 { "sclk", =A0 =A0 =A0 "pll_c_out1", =A0 120000000, =A0 =
-=A0 =A0true },
-> + =A0 =A0 =A0 { "hclk", =A0 =A0 =A0 "sclk", =A0 =A0 =A0 =A0 120000000=
-, =A0 =A0 =A0true },
-> + =A0 =A0 =A0 { "pclk", =A0 =A0 =A0 "hclk", =A0 =A0 =A0 =A0 60000000,=
- =A0 =A0 =A0 true },
-> =A0 =A0 =A0 =A0{ "uartb", =A0 =A0 =A0"pll_p", =A0 =A0 =A0 =A021600000=
-0, =A0 =A0 =A0true},
-> =A0 =A0 =A0 =A0{ "uartd", =A0 =A0 =A0"pll_p", =A0 =A0 =A0 =A021600000=
-0, =A0 =A0 =A0true},
-> =A0 =A0 =A0 =A0{ "pll_a", =A0 =A0 =A0"pll_p_out1", =A0 56448000, =A0 =
-=A0 =A0 true },
-> @@ -203,6 +208,7 @@ static int seaboard_ehci_init(void)
-> =A0 =A0 =A0 =A0gpio_set_value(TEGRA_GPIO_USB1, 1);
+> Olof,
 >
-> =A0 =A0 =A0 =A0platform_device_register(&tegra_ehci1_device);
-> + =A0 =A0 =A0 platform_device_register(&tegra_ehci2_device);
-> =A0 =A0 =A0 =A0platform_device_register(&tegra_ehci3_device);
->
-> =A0 =A0 =A0 =A0return 0;
-> diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devi=
-ces.c
-> index 7a2a02d..977716e 100644
-> --- a/arch/arm/mach-tegra/devices.c
-> +++ b/arch/arm/mach-tegra/devices.c
-> @@ -441,8 +441,13 @@ static struct resource tegra_usb3_resources[] =3D=
- {
-> =A0};
->
-> =A0static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config =3D {
-> +#ifdef CONFIG_MACH_SEABOARD
-> + =A0 =A0 =A0 /* Use GPIO PV1 for phy reset */
-> + =A0 =A0 =A0 .reset_gpio =3D TEGRA_GPIO_PV1,
-> +#else
-> =A0 =A0 =A0 =A0/* All existing boards use GPIO PV0 for phy reset */
-> =A0 =A0 =A0 =A0.reset_gpio =3D TEGRA_GPIO_PV0,
-> +#endif
+> For your information the conflict resolution is already present in
+> linux-next (and in my 3.4 preparation branches actually).
 
-No ifdef in C files please. You should consider moving this to device
-tree instead.
+Yeah, it's just convenient if it's resolved once in the base branch
+instead of every time we pull in something based on it.
 
+I've pulled in and resolved the conflict with v3.3-rc2 into
+depends/rmk/for-armsoc now so it should be covered for anyone basing
+new branches off of it.
+
+
+Thanks,
 
 -Olof
