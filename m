@@ -1,143 +1,28 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V1] regmap: add bulk_write() for non-volatile register set
-Date: Thu, 9 Feb 2012 18:12:25 +0000
-Message-ID: <20120209181224.GK3058@opensource.wolfsonmicro.com>
-References: <1328789531-10067-1-git-send-email-ldewangan@nvidia.com>
- <20120209121704.GF3058@opensource.wolfsonmicro.com>
- <4F33BFDE.7020006@nvidia.com>
- <20120209125505.GI3058@opensource.wolfsonmicro.com>
- <4F33FEE7.9080608@nvidia.com>
+From: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 5/9] tegra: i2c: Add I2C driver
+Date: Thu, 09 Feb 2012 15:17:37 -0800
+Message-ID: <1328829457.31192.8.camel@yelin-desktop>
+References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
+	 <1328318041-10943-6-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fLj60tP2PZ34xyqD"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F33FEE7.9080608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1328318041-10943-6-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "gregkh-l3A5Bk7waGM@public.gmane.org" <gregkh-l3A5Bk7waGM@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 2012-02-03 at 17:13 -0800, Simon Glass wrote:
+> From: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Add basic i2c driver for Tegra2 with 8- and 16-bit address support.
+> The driver requires CONFIG_OF_CONTROL to obtain its configuration
+> from the device tree.
+> 
+> (Simon Glass: sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org modified for upstream)
+> 
+> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
---fLj60tP2PZ34xyqD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Feb 09, 2012 at 10:44:15PM +0530, Laxman Dewangan wrote:
-> On Thursday 09 February 2012 06:25 PM, Mark Brown wrote:
-
-> >That's the whole point with the difference between the bulk and raw APIs
-> >though, the raw API skips the byte swapping and the bulk does it.
-
-> Ok, re-going through the apis again about the byte swapping, what I
-> understand is that raw_read or raw_write always happen in
-> bing-endian regardless of cpu. And bulk read/write supported the
-> data which is in the cpu-endianess.
-
-Well, technically raw operations always work with device native data -
-it's just that nobody actually makes devices that are little endian so
-we've no software support for that.  But pretty much, yes.
-
-> So we need to convert the data from cpu_to_bexx if we want to call
-> raw_write from bulk_write. Similarly we need to convert the data
-> from bexx_to_cpu when we read from raw-read which is called from
-> bulk_read().
-
-Yes.
-
-> If this is case then if we want the data in integer type from
-> bulk_write data pointer then just memcpy will be fine like
-> unsigned int ival;
-> memcpy(&ival, bulk_val_ptr, val_bytes);
-> and for calling raw_write, it need to call format_val() so this will
-> do byte swapping. This require to duplicate the data pointer to new
-> pointer and then do manipulation. Once we do this then we will be
-> able to call raw_write() with the new duplicated pointer.
-
-Indeed, taking a copy of the data and modifying it will do the trick.
-
-> This may be require mem alloc/free on every call. It can be avoided
-> by allocating memory for size (val_bytes + max_register) in advance
-> during init..
-> Is it correct?
-
-val_bytes * max_register, and obviously the worst case on that is rather
-large.
-
-> >Well, there's no fundamental reason why we can't support cache on raw
-> >operations too.  It's not implemented because there's no need for it
-> >with any current users rather than because it's impossible.
-
-> Now if we want to support the caching from raw-write then we need to
-> either do caching first or device write first.
-
-Yes.
-
-> I am seeing one issue with this approach:
-> Whichever is first, if we do caching (which is in loop) and if it
-> fails in between inside loop then we may not able to revert it
-> or it will be complicate to implement the reversal of old values.
-> Also if it is stored in cache first and later if write fails then
-> also it will be difficult to revert it.
-
-I'm not overly worried about failed writes, they should essentially
-never happen and if they do happen we can always resync with the device
-by either reading the registers or discarding the cache (assuming we
-didn't completely loose track of the device).  Doing something really
-expensive isn't too bad for rare events, and practically speaking if we
-fail to write once we'll never succeed.
-
-Besides, when we do get an error we have no way of telling what exactly
-the hardware did - even if we see that it got an error on the nth byte
-we don't know if it might've done something with that before it
-complained or if there was damage to some of the earlier data too.
-Upper layers are going to have to implement recovery mechanisms if they
-want them.
-
-> - remove the warnings from raw-write...
-> - Let allow the reg_write as what it is already  there.
-> - Then parse input val pointer and put in cache register by register
->                for (i = 0; i < val_len / map->format.val_bytes; i++) {
->                   memcpy(map->work_buf, val + (i * val_bytes), val_bytes);
->                   ival = map->format.parse_val(map->work_buf);
->                   ret = regcache_write(map, reg + i, ival);
->                   if (ret != 0)
->                       dev_warn("Unable to cache register %d\n", reg +i);
->                }
-
-Hrm, we also need to handle cache bypass and cache only in here - and
-for consistency with vanilla write we need to cache before write.
-Indeed, we'll need to push all the cache handling down into
-_regmap_raw_write() from regmap_reg_write() as that's where writes from
-regmap_reg_write() end up.
-
-> It seems modifying raw_write() looks simple if we are able to ignore
-> the caching error..
-> Let me know your opinion?
-
-We can't ignore errors completely but we don't need to go to great
-lengths to handle it due to the issues discussed above.
-
---fLj60tP2PZ34xyqD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPNAyCAAoJEBus8iNuMP3dzPMQAJNfrlUrPQVS4aNrIzbs1n2K
-uhXb2lRhSkRZHnva0DdMI7qvgbn5e2SZ4yuWEkOsUBWAP70iWOxUz4K3IYpxtdzv
-7rnH56vVGgbNjSXcujB0ezCbQexZUP3Jcvd2+ScxedbukKTZir9oXOiKI9JKVFv7
-10mSEjKIwyNA75MMyuScr+09icjUZOmyXGv1JjuuKeOquCSehSoF1oj/ZNeEtVYf
-2zMYuYNfxgsYAJoRSMHMYIkRDSqU5n8SjSuOdCLQ/Tk3GQHnh+i4g5RvwH7BhPZh
-WSMheOA3P1hqmSdTL5xU3nB9Sc9Et81Bvh4Oc76RsdGgETbatT4rVs/XdW1zFIj3
-plUzFrNTthOKIk4dYB69FGzoFUhD7iQm8MJ87iH8vPLoEo+QURN1eWpVZ2PcOIVG
-rXFv+B4t+AHlSPAN3vJtjReKPAEpZxFTBPClqesP+lVgP9BB8iokFtRfyI2p77Z+
-53jWRU7HQNgPifUioOx2s0R3CrE3B153dA7bh7wkJ+Wk3IDknOwMASDQ7oXgN/Gm
-jwE6PeNLmWIYbCUab5hUQ5D7oZZnpklYvssmMU52PtpdlC5HEUwU24nbruw5r3Dx
-v5/MDZUMgR15uWJeNzD1s1nAJW9a1g9VCusav4aSaHnAQGxKUn/S8phiMU/bFubG
-8tvP9riNoHbdPJttKvY4
-=P65S
------END PGP SIGNATURE-----
-
---fLj60tP2PZ34xyqD--
+Signed-off-by: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
