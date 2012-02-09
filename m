@@ -1,28 +1,65 @@
-From: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 5/9] tegra: i2c: Add I2C driver
-Date: Thu, 09 Feb 2012 15:17:37 -0800
-Message-ID: <1328829457.31192.8.camel@yelin-desktop>
-References: <1328318041-10943-1-git-send-email-sjg@chromium.org>
-	 <1328318041-10943-6-git-send-email-sjg@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328318041-10943-6-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v3 00/10] Add tegra30 support for secondary cores
+Date: Fri, 10 Feb 2012 01:47:40 +0200
+Message-ID: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Gary King <gking@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-02-03 at 17:13 -0800, Simon Glass wrote:
-> From: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Add basic i2c driver for Tegra2 with 8- and 16-bit address support.
-> The driver requires CONFIG_OF_CONTROL to obtain its configuration
-> from the device tree.
-> 
-> (Simon Glass: sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org modified for upstream)
-> 
-> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+This patchset introduces support for secondary cores on tegra30. It also
+introduces some functions for the flowcontroller and adds basic support for
+tegra30 powerdomains.
 
-Signed-off-by: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+
+This patchset requires http://www.spinics.net/lists/arm-kernel/msg158016.html
+for the cortex A9 erratum #743622 workaround
+
+Changes in v3:
+
+ * split out chip id changes in several patches
+ * remove reset handler debugging code
+ * remove unused size declartion for reset SRAM code
+ * remove workaround for cortex A9 erratum #743622. This will be handled by
+   generic code.
+
+Changes in v2:
+
+ * moved chip id reading to fuse.c and cleanup code
+ * don't set bit 1 of SB_CTRL on Tegra20
+ * removed unused variables in tegra_cpu_reset_handler_init()
+
+Peter De Schrijver (10):
+  ARM: tegra: cleanup use of chipid register
+  ARM: tegra: export Tegra chipid
+  ARM: tegra: initialize Tegra chipid early
+  ARM: tegra: functions to access the flowcontroller
+  ARM: tegra: rework Tegra secondary CPU core bringup
+  ARM: tegra: prepare powergate.c for multiple variants
+  ARM: tegra: export tegra_powergate_is_powered()
+  ARM: tegra: add support for Tegra30 powerdomains
+  ARM: tegra: support for Tegra30 CPU powerdomains
+  ARM: tegra: support for secondary cores on Tegra30
+
+ arch/arm/mach-tegra/Makefile                 |    2 +
+ arch/arm/mach-tegra/common.c                 |    4 +
+ arch/arm/mach-tegra/flowctrl.c               |   62 ++++++++++
+ arch/arm/mach-tegra/flowctrl.h               |    5 +
+ arch/arm/mach-tegra/fuse.c                   |   18 ++-
+ arch/arm/mach-tegra/fuse.h                   |    4 +
+ arch/arm/mach-tegra/headsmp.S                |  166 ++++++++++++++++++++++++--
+ arch/arm/mach-tegra/include/mach/iomap.h     |    3 +
+ arch/arm/mach-tegra/include/mach/powergate.h |   15 ++-
+ arch/arm/mach-tegra/platsmp.c                |  137 +++++++++++++++-------
+ arch/arm/mach-tegra/powergate.c              |   53 +++++++-
+ arch/arm/mach-tegra/reset.c                  |   84 +++++++++++++
+ arch/arm/mach-tegra/reset.h                  |   50 ++++++++
+ 13 files changed, 540 insertions(+), 63 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/flowctrl.c
+ create mode 100644 arch/arm/mach-tegra/reset.c
+ create mode 100644 arch/arm/mach-tegra/reset.h
+
+-- 
+1.7.4.1
