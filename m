@@ -1,68 +1,86 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
 Subject: Re: [PATCH V1] regmap: Support for caching in reg_raw_write()
-Date: Fri, 10 Feb 2012 11:45:42 +0000
-Message-ID: <20120210114541.GB6472@opensource.wolfsonmicro.com>
+Date: Fri, 10 Feb 2012 13:01:26 +0100
+Message-ID: <4F350716.9050407@metafoo.de>
 References: <1328873572-12603-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1328873572-12603-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1328873572-12603-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: broonie@opensource.wolfsonmicro.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 02/10/2012 12:32 PM, Laxman Dewangan wrote:
+> Adding support for caching of data into the
+> non-volatile register from the call of reg_raw_write().
+> 
+> This will allow the larger block of data write into multiple
+> register without worrying whether register is cached or not
+> through reg_raw_write().
+> 
 
---cmJC7u66zC7hs+87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In my opinion it makes more sense to introduce a regmap_bulk_write function
+for this. regmap_raw_write was not really meant to write registers but
+rather binary blobs, like firmware. Also this keeps things consistent with
+the read part of the regmap API.
 
-On Fri, Feb 10, 2012 at 05:02:52PM +0530, Laxman Dewangan wrote:
-
-This looks good, but could you make the few small improvements below
-please?
-
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+>  drivers/base/regmap/regmap.c |   25 ++++++++++++++++++++-----
+>  1 files changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+> index 80129c0..e5986ab 100644
+> --- a/drivers/base/regmap/regmap.c
+> +++ b/drivers/base/regmap/regmap.c
+> @@ -323,6 +323,25 @@ static int _regmap_raw_write(struct regmap *map, unsigned int reg,
+>  			if (!map->writeable_reg(map->dev, reg + i))
+>  				return -EINVAL;
+>  
 > +	if (!map->cache_bypass && map->format.parse_val) {
 > +		int val_bytes = map->format.val_bytes;
 > +		unsigned int ival;
 > +		for (i = 0; i < val_len / map->format.val_bytes; i++) {
-
-A bit nit picky but since you've got a local val_bytes you may as well
-use it.
-
 > +			memcpy(map->work_buf, val + (i * val_bytes), val_bytes);
 > +			ival = map->format.parse_val(map->work_buf);
 > +			ret = regcache_write(map, reg + i, ival);
 > +			if (ret) {
 > +				dev_warn(map->dev,
 > +					"Error in caching of register\n");
-
-Say which register and the return value here - knowing the register
-might be very helpful for debug.  This should probably also be at least
-a dev_err().
-
---cmJC7u66zC7hs+87
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPNQNfAAoJEBus8iNuMP3dvl4QAJXDu0MPk+oWCsua2sdGprtf
-AAnjUwTO5/0CfFnElfn+GHCBTXlf/QnIsxz42u+7QF9cjz3x2jqL2mmoRLEIK1w9
-tvVL4U5huXi+I+1UcMGhIwh5+1MtPJhsEPteBVevv5/RRWU4IcniMhosRQeyPRrq
-9E7LIUQ18niV68AxihDqnWc0JO0LpnU5OZFJyFJeP5r4cYVFpVwE1m5zlki9iJjL
-5w0pZIJ8HO46k0myXDUwE2vjgqKyX2HLKiXLwXVLDP/+/nyW/xRi1wZnSuD4EYnw
-Ce3iT3Q4YsT1XaxENeh9DWJs14J6W6YkrxVX0vbqzl1sL4i8WRw5iUlw8tgb2Fv2
-0ZohwpEa/Tt1LnF1K2bu+BL//zJwrxaxW+k/qPcoW/F+Ts8/Cn5z17PRyQxQL77J
-I92xkIYmmD4s+CNJayZZ3/oETF2JPkEdFRRs9Pc3ByRXG3nxRZNWga4DwmrOcBIM
-djz86tSe+FP5SddLYEhqua25B/ZVgXxENVL/tnJPcWg3pU+4CQY1UnOuL8qVjUM+
-CD/Fk4tfviltjHm3PGe8CxrjLUaA8yzBg7d1dU7wUxxv34xLuI4q6ZcWkY5fjB4m
-GimbWBbyfnVsCE+F+he7Fbi/+Me0hyBWT5wi5QTYX3XbLus2mILZEIY/K+GcJYUg
-s7a0dcFN1tCndbLuFT3u
-=2/MY
------END PGP SIGNATURE-----
-
---cmJC7u66zC7hs+87--
+> +				return ret;
+> +			}
+> +		}
+> +		if (map->cache_only) {
+> +			map->cache_dirty = true;
+> +			return 0;
+> +		}
+> +	}
+> +
+>  	map->format.format_reg(map->work_buf, reg);
+>  
+>  	u8[0] |= map->write_flag_mask;
+> @@ -373,7 +392,7 @@ int _regmap_write(struct regmap *map, unsigned int reg,
+>  	int ret;
+>  	BUG_ON(!map->format.format_write && !map->format.format_val);
+>  
+> -	if (!map->cache_bypass) {
+> +	if (!map->cache_bypass && map->format.format_write) {
+>  		ret = regcache_write(map, reg, val);
+>  		if (ret != 0)
+>  			return ret;
+> @@ -450,12 +469,8 @@ EXPORT_SYMBOL_GPL(regmap_write);
+>  int regmap_raw_write(struct regmap *map, unsigned int reg,
+>  		     const void *val, size_t val_len)
+>  {
+> -	size_t val_count = val_len / map->format.val_bytes;
+>  	int ret;
+>  
+> -	WARN_ON(!regmap_volatile_range(map, reg, val_count) &&
+> -		map->cache_type != REGCACHE_NONE);
+> -
+>  	mutex_lock(&map->lock);
+>  
+>  	ret = _regmap_raw_write(map, reg, val, val_len);
