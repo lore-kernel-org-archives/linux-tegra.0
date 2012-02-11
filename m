@@ -1,65 +1,56 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V3 2/2] regmap: add regmap_bulk_write() for register write
-Date: Sat, 11 Feb 2012 21:47:55 +0000
-Message-ID: <20120211214754.GF31887@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V3 1/2] regmap: Support for caching in reg_raw_write()
+Date: Sat, 11 Feb 2012 23:05:46 +0000
+Message-ID: <20120211230545.GG3745@opensource.wolfsonmicro.com>
 References: <1328889628-13151-1-git-send-email-ldewangan@nvidia.com>
- <1328889628-13151-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XaUbO9McV5wPQijU"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="ulDeV4rPMk/y39in"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1328889628-13151-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: gregkh@linuxfoundation.org, lars@metafoo.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <1328889628-13151-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---XaUbO9McV5wPQijU
+--ulDeV4rPMk/y39in
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 10, 2012 at 09:30:28PM +0530, Laxman Dewangan wrote:
+On Fri, Feb 10, 2012 at 09:30:27PM +0530, Laxman Dewangan wrote:
+> Adding support for caching of data into the
+> non-volatile register from the call of reg_raw_write().
+>=20
+> This will allow the larger block of data write into multiple
+> register without worrying whether register is cached or not
+> through reg_raw_write().
 
-> +		/* No formatting is require if val_byte is 1 */
-> +		if (val_bytes == 1)
-> +			wval = (void *)val;
-> +		else {
+Applied, thanks.  We really should refactor later on to not do the
+encode/decode dance if we don't have to but this is fine for now.
 
-Please don't combine branches with and without braces.
-
-> +			wval = kmemdup(val, val_count * val_bytes, GFP_KERNEL);
-> +			if (!wval) {
-> +				mutex_unlock(&map->lock);
-> +				dev_err(map->dev,
-> +					"Error in memory allocation\n");
-> +				return -ENOMEM;
-
-As a style thing a goto error pattern is clearer for stuff like this -
-there's so many branches that it's complex to keep track of the
-unwinding.
-
---XaUbO9McV5wPQijU
+--ulDeV4rPMk/y39in
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPNtx5AAoJEBus8iNuMP3dGwkP/05UHp/6mjkf8naAO6w9jNiY
-SqXJV6zqyYGp0tWyz4vWHPpfWYIbiZyfF61ZJCOSk1elVyr7DLJTxTKiT/viuJmi
-/hafkqW0z/CK7oFKfxgddAO3UvMlXObEXlh8TF4qEdZzOY04l/xJzL09RfKNrNaR
-NcRBz2DZ/0BA9HFqfCb09FsZ3nuQEqY2HgOGWXKkb6YJ9SR315vChzaPkHUSDzcf
-B7gLzLgf2g4rkKecy9aXAQVWQJrjuEyW1PnUFOYmNf4Hjr8aFCPxnGH+lD4qR8qD
-cKdSdhfVAzyehreY53xP9uiFSRLkywAk5lWCJYGxGOWbj1K7b+irE2WfZjlARBwu
-os6CeVH8eRoy1OlKmas/P9SrJD30SRnlxIvhoKWAqiH7E2YQmZMOwKU3zHWAxDyh
-N7v2Nb4RwTfsVcbh8xMq6XSuCIE27t6ZN0zXFRCtoXmsNeOYmyLzutfhRVi7VO9A
-ted9e6t4h0I6m21GENPna8kTPYLSShKNxineyiLa6V+pyVeLKMJnWprqEezb7Qi4
-h82+0rXABAlz4naPaUOw9izUQQXUArzuFtLUBsUAo0CTyHC005XYDMbatKbMPTcK
-9miul462WN527szgL1b38RWJmgfihiam/zCSI05DC8EkSzs2bkfajP3hWqT6AAKE
-wxfnYKb7vh7BQfcm1/Iv
-=D9xs
+iQIcBAEBAgAGBQJPNvP8AAoJEBus8iNuMP3dYuoP/0bY2CZQ3WI7nFOWrYijdEPa
+Veg1+VTZtYEdXgrtZ/7ByEjYh9QnBf9gz5pzsf67Od51EJh7fJeRRhXreUXZ00aK
+e4Lxm/rfGz6wnkPEnJSqBulLHXWQhrHP1ADB89fuT151HujKB8+DJXxHl+/bokMl
+NlTu61JM3APtlj3SZ9lF7eFE0GQUMkjgaqipTdYEJ2bE1W6R2b9Otmg99GOWhVTd
+wismNgu0INp+RIUXFeQNkIa/HJUCCGhlR3xkmV+x/gJk/AsYJqBhacqVwwceCbCc
+Adm2IPuzFucwuf2A+x2m3zgABObLgINYgshFSQeIOsc50kVMgM93L5Sq8o6C7sT8
+5Axi7IGADygag89dxcA23Nf+Szq5B0r8/MIYtRv9ALLPrI/AzdAkndROiLfj0kyg
+Ne1UX+lETjLgYkP3JbizIhxkV4jyUchTiSpKNlXylfj1JrOAtr/qvGZddiPx/LxZ
+uj2iCBcVkCI/+pjm+SxMDonEmiv/6yhFSnQoTNWm4zKXRj2EcXjgGcBAQ7iP6E13
+IdIYRylSv6fcNHr5bV/U+NnCQQLnRkuzBefM4fYzpHyP7Th9RBD0IE1PbwoQa9ap
+D+1Hr06Nsg9at/RECR3SUkc14QcFT8PSc8v+qsnrsyHY25i1Coleoz6xbVCUHD7M
+Fy5zuyqFZvtjq+3k/RZI
+=ZNEh
 -----END PGP SIGNATURE-----
 
---XaUbO9McV5wPQijU--
+--ulDeV4rPMk/y39in--
