@@ -1,120 +1,33 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 2/2] regmap: add regmap_bulk_write() for register write
-Date: Sun, 12 Feb 2012 14:19:16 +0530
-Message-ID: <1329036556-15408-1-git-send-email-ldewangan@nvidia.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH V4 2/2] regmap: add regmap_bulk_write() for register write
+Date: Sun, 12 Feb 2012 12:57:25 +0100
+Message-ID: <4F37A925.90507@metafoo.de>
+References: <1329036556-15408-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1329036556-15408-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The bulk_write() supports the data transfer to multi
-register which takes the data into cpu_endianness format
-and does formatting of data to device format before
-sending to device.
-The transfer can be completed in single transfer or multiple
-transfer based on data formatting.
+On 02/12/2012 09:49 AM, Laxman Dewangan wrote:
+> [...]
+> +	} else {
+> +		for (i = 0; i < val_count; i++) {
+> +			memcpy(&ival, val + (i * val_bytes), val_bytes);
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes from V1: 
-- Change commit message.
-- Byte swapping in input data packet.
-Changes from V2: 
-- Remove formatting if val_byte is 1.
-- Allocating proper size of memory for val_byte != 1
-Changes from V3:
-- Stylish fixes.
+This will have endianess issues. You'll need something like regcache_get_val.
 
- drivers/base/regmap/regmap.c |   62 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/regmap.h       |    2 +
- 2 files changed, 64 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index ba92217..39be1b3 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -482,6 +482,68 @@ int regmap_raw_write(struct regmap *map, unsigned int reg,
- }
- EXPORT_SYMBOL_GPL(regmap_raw_write);
- 
-+/*
-+ * regmap_bulk_write(): Write multiple registers to the device
-+ *
-+ * @map: Register map to write to
-+ * @reg: First register to be write from
-+ * @val: Block of data to be written, in native register size for device
-+ * @val_count: Number of registers to write
-+ *
-+ * This function is intended to be used for writing a large block of
-+ * data to be device either in single transfer or multiple transfer.
-+ *
-+ * A value of zero will be returned on success, a negative errno will
-+ * be returned in error cases.
-+ */
-+int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
-+		     size_t val_count)
-+{
-+	int ret = 0, i;
-+	unsigned int ival;
-+	size_t val_bytes = map->format.val_bytes;
-+
-+	mutex_lock(&map->lock);
-+
-+	if (map->format.parse_val) {
-+		void *wval;
-+		/* No formatting is require if val_byte is 1 */
-+		if (val_bytes == 1) {
-+			wval = (void *)val;
-+		} else {
-+			wval = kmemdup(val, val_count * val_bytes, GFP_KERNEL);
-+			if (!wval) {
-+				ret = -ENOMEM;
-+				dev_err(map->dev,
-+					"Error in memory allocation\n");
-+				goto out;
-+			}
-+			for (i = 0; i < val_count * val_bytes; i += val_bytes)
-+				map->format.parse_val(wval + i);
-+		}
-+		ret = _regmap_raw_write(map, reg, wval, val_bytes * val_count);
-+
-+		if (val_bytes != 1)
-+			kfree(wval);
-+	} else {
-+		for (i = 0; i < val_count; i++) {
-+			memcpy(&ival, val + (i * val_bytes), val_bytes);
-+			ret = _regmap_write(map, reg + i, ival);
-+			if (ret) {
-+				dev_err(map->dev,
-+				    "Error in register %u write, ret %d\n",
-+						reg + i, ret);
-+				break;
-+			}
-+		}
-+	}
-+
-+out:
-+	mutex_unlock(&map->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regmap_bulk_write);
-+
- static int _regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
- 			    unsigned int val_len)
- {
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index a6ed6e6..0925e24 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -135,6 +135,8 @@ int regmap_reinit_cache(struct regmap *map,
- int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
- int regmap_raw_write(struct regmap *map, unsigned int reg,
- 		     const void *val, size_t val_len);
-+int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
-+			size_t val_count);
- int regmap_read(struct regmap *map, unsigned int reg, unsigned int *val);
- int regmap_raw_read(struct regmap *map, unsigned int reg,
- 		    void *val, size_t val_len);
--- 
-1.7.1.1
+> +			ret = _regmap_write(map, reg + i, ival);
+> +			if (ret) {
+> +				dev_err(map->dev,
+> +				    "Error in register %u write, ret %d\n",
+> +						reg + i, ret);
+> +				break;
+> +			}
+> +		}
+> +	}
+> [...]
