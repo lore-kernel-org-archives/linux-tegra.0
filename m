@@ -1,127 +1,74 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH 1/3] net: rfkill-gpio: add device tree support
-Date: Sun, 12 Feb 2012 20:13:06 +0100
-Message-ID: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de>
+Subject: [PATCH 2/3] dt: rfkill-gpio: add bindings documentation
+Date: Sun, 12 Feb 2012 20:13:07 +0100
+Message-ID: <86044d44009316a48b402050f9dd742391d46eac.1329073559.git.marvin24@gmx.de>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This adds device tree support for rfkill-gpio. The optional platform
-paramters gpio_runtime_close and gpio_runtime_setup are not implemented.
+Add device tree bindings information for rfkill gpio switches.
 
 Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
 Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
 Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 ---
- include/linux/rfkill-gpio.h |    2 +-
- net/rfkill/rfkill-gpio.c    |   57 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+), 1 deletions(-)
+ Documentation/devicetree/bindings/gpio/rfkill.txt |   38 +++++++++++++++++++++
+ 1 files changed, 38 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/rfkill.txt
 
-diff --git a/include/linux/rfkill-gpio.h b/include/linux/rfkill-gpio.h
-index 4d09f6e..76a9674 100644
---- a/include/linux/rfkill-gpio.h
-+++ b/include/linux/rfkill-gpio.h
-@@ -35,7 +35,7 @@
-  */
- 
- struct rfkill_gpio_platform_data {
--	char			*name;
-+	const char		*name;
- 	int			reset_gpio;
- 	int			shutdown_gpio;
- 	const char		*power_clk_name;
-diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
-index 865adb6..4db343d 100644
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -21,6 +21,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/rfkill.h>
-+#include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/clk.h>
- #include <linux/slab.h>
-@@ -77,13 +78,68 @@ static const struct rfkill_ops rfkill_gpio_ops = {
- 	.set_block = rfkill_gpio_set_power,
- };
- 
-+#ifdef CONFIG_OF
-+static struct rfkill_gpio_platform_data * __devinit
-+			rfkill_gpio_parse_pdata(struct platform_device *pdev)
-+{
-+	struct rfkill_gpio_platform_data *pdata, *rfkill;
-+	struct device_node *np = pdev->dev.of_node, *child;
-+	int count = 0;
+diff --git a/Documentation/devicetree/bindings/gpio/rfkill.txt b/Documentation/devicetree/bindings/gpio/rfkill.txt
+new file mode 100644
+index 0000000..22bf22a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/rfkill.txt
+@@ -0,0 +1,38 @@
++RFKILL switches connected to GPIO lines
 +
-+	for_each_child_of_node(np, child)
-+		count++;
-+	if (!count)
-+		return NULL;
++Required properties:
++- compatible : should be "rfkill-gpio".
 +
-+	pdata = devm_kzalloc(&pdev->dev,
-+				sizeof(struct rfkill_gpio_platform_data) *
-+				count, GFP_KERNEL);
-+	if (!pdata)
-+		return NULL;
++Each rfkill switch is represented as a sub-node of the rfkill-gpio device.
++Each node has a label property which represents the name of the corresponding
++rfkill device.
 +
-+	rfkill = pdata;
++RFKILL sub-node properties:
++- label :  (optional) The label for this rfkill switch.  If omitted, the label is
++  taken from the node name (excluding the unit address).
++- reset-gpio, shutdown-gpio :  Should specify the rfkill gpios for reset and
++  shutdown (see "Specifying GPIO information for devices" in
++  Documentation/devicetree/booting-without-of.txt).
++- type : enumerated type of the gpio (see include/linux/rfkill.h).
++- clock : (optional) name of the clock name associated with the rfkill switch
++  (see include/linux/rfkill-gpio.h)
 +
-+	for_each_child_of_node(np, child) {
-+		of_property_read_string(child, "label", &rfkill->name);
-+		if (!rfkill->name)
-+			rfkill->name = child->name;
-+		rfkill->reset_gpio = of_get_named_gpio(child, "reset-gpio", 0);
-+		rfkill->shutdown_gpio = of_get_named_gpio(child,
-+							  "shutdown-gpio", 0);
-+		of_property_read_u32(child, "type", &rfkill->type);
-+		of_property_read_string(child, "clock",
-+					&rfkill->power_clk_name);
++Examples:
 +
-+		rfkill += sizeof(struct rfkill_gpio_platform_data);
-+	}
++rfkill-switches {
++	compatible = "rfkill-gpio";
 +
-+	return pdata;
-+}
++	wifi {
++		label = "wifi";
++		reset-gpio = <&gpio 25 0>; /* Active high */
++		shutdown-gpio = <&gpio 85 0>; /* Active high */
++		type = <1>;
++	};
 +
-+static const struct of_device_id of_rfkill_gpio_match[] = {
-+	{ .compatible = "rfkill-gpio", },
-+	{},
++	bt {
++		label = "bluetooth";
++		reset-gpio = <&gpio 17 0>; /* Active high */
++		shutdown-gpio = <&gpio 35 0>; /* Active high */
++		type = <1>;
++	};
 +};
-+
-+#else
-+static inline struct rfkill_gpio_platform_data
-+			*rfkill_gpio_parse_pdata(struct platform_device *pdev)
-+{
-+	return NULL;
-+}
-+#endif
-+
- static int rfkill_gpio_probe(struct platform_device *pdev)
- {
- 	struct rfkill_gpio_data *rfkill;
- 	struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
-+	struct device_node *np = pdev->dev.of_node;
- 	int ret = 0;
- 	int len = 0;
- 
-+	if (np)
-+		pdata = rfkill_gpio_parse_pdata(pdev);
-+
- 	if (!pdata) {
- 		pr_warn("%s: No platform data specified\n", __func__);
- 		return -EINVAL;
-@@ -217,6 +273,7 @@ static struct platform_driver rfkill_gpio_driver = {
- 	.driver = {
- 		   .name = "rfkill_gpio",
- 		   .owner = THIS_MODULE,
-+		   .of_match_table = of_match_ptr(of_rfkill_gpio_match),
- 	},
- };
- 
 -- 
 1.7.5.4
