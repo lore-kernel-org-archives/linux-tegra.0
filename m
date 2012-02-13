@@ -1,55 +1,61 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: [PATCH 2/2] ASoC: DT: Add digital microphone binding to PAZ00 board.
-Date: Mon, 13 Feb 2012 21:29:51 +0200
-Message-ID: <1329161391-10197-1-git-send-email-leon@leon.nu>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 1/3] net: rfkill-gpio: add device tree support
+Date: Mon, 13 Feb 2012 11:36:09 -0800
+Message-ID: <CAOesGMgJW7bRZn84VSZNVvc3G6z4S6HPzFEv3MJ8DcNYVsV2uQ@mail.gmail.com>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de>
+	<1329161159.22948.3.camel@rklein-linux>
 Mime-Version: 1.0
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1329161159.22948.3.camel@rklein-linux>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds device tree binding of digital microphone to PAZ00
-board.
+On Mon, Feb 13, 2012 at 11:25 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> On Sun, 2012-02-12 at 11:13 -0800, Marc Dietrich wrote:
+>> This adds device tree support for rfkill-gpio. The optional platform
+>> paramters gpio_runtime_close and gpio_runtime_setup are not implemen=
+ted.
+>>
+>> Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+>> Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+>> Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+>> +
+>> =A0static int rfkill_gpio_probe(struct platform_device *pdev)
+>> =A0{
+>> =A0 =A0 =A0 struct rfkill_gpio_data *rfkill;
+>> =A0 =A0 =A0 struct rfkill_gpio_platform_data *pdata =3D pdev->dev.pl=
+atform_data;
+>> + =A0 =A0 struct device_node *np =3D pdev->dev.of_node;
+>> =A0 =A0 =A0 int ret =3D 0;
+>> =A0 =A0 =A0 int len =3D 0;
+>>
+>> + =A0 =A0 if (np)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 pdata =3D rfkill_gpio_parse_pdata(pdev);
+>> +
+>
+> The only concern I have is the precedence of devicetree settings vs
+> platform data settings? If there is pdata passed in from board file
+> initialization, and there is a device tree (a corner case but I think=
+ a
+> valid one) then I believe the order would be that defined pdata would
+> override the devicetree settings. That way if someone wanted to make =
+a
+> quick update, they wouldn't need to change the boot loader as well.
 
-Signed-off-by: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
----
- .../bindings/sound/tegra-audio-alc5632.txt         |    2 ++
- arch/arm/boot/dts/tegra-paz00.dts                  |    3 ++-
- 2 files changed, 4 insertions(+), 1 deletions(-)
+Yes, that is how other drivers tend to be coded -- only of pdata is
+null will the driver try to fill in from the DT.
 
-diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt b/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
-index 300f2da..9e305bb 100644
---- a/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
-+++ b/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
-@@ -25,12 +25,14 @@ Required properties:
-   * MIC2_P
-   * MIC2_N
-   * MICBIAS1
-+  * DMICDAT
- 
-   Board connectors:
- 
-   * Headset Stereophone
-   * Int Spk
-   * Headset Mic
-+  * Digital Mic
- 
- - nvidia,i2s-controller : The phandle of the Tegra I2S controller
- - nvidia,audio-codec : The phandle of the ALC5632 audio codec
-diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
-index fa9dd9e..07e6f5a 100644
---- a/arch/arm/boot/dts/tegra-paz00.dts
-+++ b/arch/arm/boot/dts/tegra-paz00.dts
-@@ -60,7 +60,8 @@
- 			"Headset Mic", "MICBIAS1",
- 			"MIC1", "Headset Mic",
- 			"Headset Stereophone", "HPR",
--			"Headset Stereophone", "HPL";
-+			"Headset Stereophone", "HPL",
-+			"DMICDAT", "Digital Mic";
- 
- 		nvidia,audio-codec = <&alc5632>;
- 		nvidia,i2s-controller = <&tegra_i2s1>;
--- 
-1.7.3.4
+
+-Olof
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireles=
+s" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
