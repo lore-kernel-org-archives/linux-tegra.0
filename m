@@ -1,108 +1,120 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V1 3/3] regulator: fixed: Support for open-drain gpio
-Date: Mon, 13 Feb 2012 11:59:48 +0530
-Message-ID: <1329114588-15430-4-git-send-email-ldewangan@nvidia.com>
-References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/3] dt: rfkill-gpio: add bindings documentation
+Date: Mon, 13 Feb 2012 07:47:28 -0600
+Message-ID: <4F391470.3090102@gmail.com>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de> <86044d44009316a48b402050f9dd742391d46eac.1329073559.git.marvin24@gmx.de> <CAPnjgZ2b4QjKMKjKyHqGGU1TbMamq6pBPUAAO99gMa98Rd+Erw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329114588-15430-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAPnjgZ2b4QjKMKjKyHqGGU1TbMamq6pBPUAAO99gMa98Rd+Erw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Some of regulator switches like bidirectional load switches
-connected through the open drain gpios. As open drain gpios
-should not be driven to output with value of 1, it needs to
-handle differently to set the pin state to HIGH.
-Adding the flag to find out if gpio is open drain and pass
-this information to gpio library for handling open-drain gpio
-configuration accordingly.
+On 02/12/2012 02:21 PM, Simon Glass wrote:
+> Hi Marc,
+> 
+> On Sun, Feb 12, 2012 at 11:13 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
+>> Add device tree bindings information for rfkill gpio switches.
+>>
+>> Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+>> Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+>> Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+>> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+>> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+>> ---
+>>  Documentation/devicetree/bindings/gpio/rfkill.txt |   38 +++++++++++++++++++++
+>>  1 files changed, 38 insertions(+), 0 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/gpio/rfkill.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/rfkill.txt b/Documentation/devicetree/bindings/gpio/rfkill.txt
+>> new file mode 100644
+>> index 0000000..22bf22a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/rfkill.txt
+>> @@ -0,0 +1,38 @@
+>> +RFKILL switches connected to GPIO lines
+>> +
+>> +Required properties:
+>> +- compatible : should be "rfkill-gpio".
+>> +
+>> +Each rfkill switch is represented as a sub-node of the rfkill-gpio device.
+>> +Each node has a label property which represents the name of the corresponding
+>> +rfkill device.
+>> +
+>> +RFKILL sub-node properties:
+>> +- label :  (optional) The label for this rfkill switch.  If omitted, the label is
+>> +  taken from the node name (excluding the unit address).
+>> +- reset-gpio, shutdown-gpio :  Should specify the rfkill gpios for reset and
+>> +  shutdown (see "Specifying GPIO information for devices" in
+> 
+> Should that be reset-gpios, shutdown-gpios? Even though you have only
+> one it seems that people put an 's' on the end.
+> 
+>> +  Documentation/devicetree/booting-without-of.txt).
+>> +- type : enumerated type of the gpio (see include/linux/rfkill.h).
+> 
+> It would be better I think if this were explicit here. If you have a
+> number, then what values does it take and what do they mean?
+> 
+>> +- clock : (optional) name of the clock name associated with the rfkill switch
+> 
+> Can this be a phandle instead of a string?
+> 
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/regulator/fixed.c       |   29 +++++++++++++----------------
- include/linux/regulator/fixed.h |    7 +++++++
- 2 files changed, 20 insertions(+), 16 deletions(-)
+This seems to be in the wrong place altogether. The gpio controller
+would have a clock, not particular gpio line.
 
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index e24e3a1..d6c8d66 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -199,7 +199,9 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
- 	drvdata->startup_delay = config->startup_delay;
- 
- 	if (gpio_is_valid(config->gpio)) {
-+		int gpio_flag;
- 		drvdata->enable_high = config->enable_high;
-+		drvdata->is_enabled = config->enabled_at_boot;
- 
- 		/* FIXME: Remove below print warning
- 		 *
-@@ -216,29 +218,24 @@ static int __devinit reg_fixed_voltage_probe(struct platform_device *pdev)
- 			dev_warn(&pdev->dev,
- 				"using GPIO 0 for regulator enable control\n");
- 
--		ret = gpio_request(config->gpio, config->supply_name);
--		if (ret) {
--			dev_err(&pdev->dev,
--			   "Could not obtain regulator enable GPIO %d: %d\n",
--							config->gpio, ret);
--			goto err_name;
--		}
--
--		/* set output direction without changing state
-+		/*
-+		 * set output direction without changing state
- 		 * to prevent glitch
- 		 */
--		drvdata->is_enabled = config->enabled_at_boot;
--		ret = drvdata->is_enabled ?
--				config->enable_high : !config->enable_high;
-+		gpio_flag = drvdata->is_enabled ?
-+				GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW;
-+
-+		if (config->gpio_is_open_drain)
-+			gpio_flag |= GPIOF_OD;
- 
--		ret = gpio_direction_output(config->gpio, ret);
-+		ret = gpio_request_one(config->gpio, gpio_flag,
-+						config->supply_name);
- 		if (ret) {
- 			dev_err(&pdev->dev,
--			   "Could not configure regulator enable GPIO %d direction: %d\n",
-+			   "Could not obtain regulator enable GPIO %d: %d\n",
- 							config->gpio, ret);
--			goto err_gpio;
-+			goto err_name;
- 		}
--
- 	} else {
- 		/* Regulator without GPIO control is considered
- 		 * always enabled
-diff --git a/include/linux/regulator/fixed.h b/include/linux/regulator/fixed.h
-index ffd7d50..350edb5 100644
---- a/include/linux/regulator/fixed.h
-+++ b/include/linux/regulator/fixed.h
-@@ -26,6 +26,12 @@ struct regulator_init_data;
-  * @gpio:		GPIO to use for enable control
-  * 			set to -EINVAL if not used
-  * @startup_delay:	Start-up time in microseconds
-+ * @gpio_is_open_drain: Gpio pin is open drain or normal type.
-+ *			If it is open drain then HIGH will be set
-+ *			through PULL-UP and gpio will be set as input
-+ *			and low will be set as gpio-output with driven
-+ *			to low. For non-open-drain case, the gpio will
-+ *			will be in output and drive to low/high accordingly.
-  * @enable_high:	Polarity of enable GPIO
-  *			1 = Active high, 0 = Active low
-  * @enabled_at_boot:	Whether regulator has been enabled at
-@@ -43,6 +49,7 @@ struct fixed_voltage_config {
- 	int microvolts;
- 	int gpio;
- 	unsigned startup_delay;
-+	unsigned gpio_is_open_drain:1;
- 	unsigned enable_high:1;
- 	unsigned enabled_at_boot:1;
- 	struct regulator_init_data *init_data;
--- 
-1.7.1.1
+>> +  (see include/linux/rfkill-gpio.h)
+> 
+> IMO device tree bindings should be fully documented in this file,
+> rather than needing to look at a separate header. This is particularly
+> true if the binding is used in another project.
+> 
+
+Correct. A binding should not be Linux specific. It should describe the h/w.
+
+>> +
+>> +Examples:
+>> +
+>> +rfkill-switches {
+>> +       compatible = "rfkill-gpio";
+>> +
+>> +       wifi {
+>> +               label = "wifi";
+>> +               reset-gpio = <&gpio 25 0>; /* Active high */
+>> +               shutdown-gpio = <&gpio 85 0>; /* Active high */
+>> +               type = <1>;
+>> +       };
+>> +
+>> +       bt {
+>> +               label = "bluetooth";
+>> +               reset-gpio = <&gpio 17 0>; /* Active high */
+>> +               shutdown-gpio = <&gpio 35 0>; /* Active high */
+>> +               type = <1>;
+>> +       };
+
+Why wouldn't the gpio lines just be part of the bt and wifi device nodes
+themselves? The DT is supposed to describe h/w connections.
+
+Rob
+
+>> +};
+>> --
+>> 1.7.5.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Regards,
+> Simon
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
