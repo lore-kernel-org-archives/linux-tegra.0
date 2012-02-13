@@ -1,122 +1,81 @@
-From: Grant Likely <grant.likely@secretlab.ca>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain
  configuration
-Date: Mon, 13 Feb 2012 14:18:09 -0700
-Message-ID: <20120213211809.GI11077@ponder.secretlab.ca>
+Date: Mon, 13 Feb 2012 14:06:57 -0800
+Message-ID: <20120213220656.GA11931@opensource.wolfsonmicro.com>
 References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
  <1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
+ <20120213211809.GI11077@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
 Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <20120213211809.GI11077@ponder.secretlab.ca>
 Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@stericsson.com, dunlap@xenotime.net, lrg@ti.com, broonie@opensource.wolfsonmicro.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@stericsson.com, dunlap@xenotime.net, lrg@ti.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 13, 2012 at 11:59:47AM +0530, Laxman Dewangan wrote:
-> Adding details of open drain configuration of the gpio so that
-> client can set the pin as open drain at the time of gpio request.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Implicitly, the gpio api already supports open-drain and several drivers
-make use of it.  Instead of being a separate flag; users who need open
-drain will set the pin to input.  For example, see the i2c-gpio driver.
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'm not convinced this is needed; but my opinion could be swayed.
+On Mon, Feb 13, 2012 at 02:18:09PM -0700, Grant Likely wrote:
+> On Mon, Feb 13, 2012 at 11:59:47AM +0530, Laxman Dewangan wrote:
+> > Adding details of open drain configuration of the gpio so that
+> > client can set the pin as open drain at the time of gpio request.
 
-Linus mentioned that this should be part of pinctrl instead of the gpio API,
-but I think there is an argument for making it part of the gpio API,
-particularly since open-drain is pretty much a universal concept that all
-gpio controllers can support (unlike driver strength) and as I said above, it
-is already implicitly supported by gpiolib.  The difference with this
-method is it would allow drivers like the gpio-i2c.c driver to set the
-flag at gpio request time and then be able to always use gpio_set_value()
-regardless of the pin mode.
+> Implicitly, the gpio api already supports open-drain and several drivers
+> make use of it.  Instead of being a separate flag; users who need open
+> drain will set the pin to input.  For example, see the i2c-gpio driver.
 
-However, I'm not thrilled about adding things to the already-horrible sysfs
-abi.  Please drop that hunk entirely or put it into a separate patch so it
-doesn't block the core functionality.
+> I'm not convinced this is needed; but my opinion could be swayed.
 
-Also, you should include a patch to make i2c-gpio.c use this new
-functionality as a proof-of-concept.  You may not be able to test it,
-but it will make it a lot easier to justify merging by showing how it
-cleans up a gpio user.
+The actual idea is to provide support for doing the switch to input to
+drivers that just want to set a logic level and don't (at their level)
+care one way or another if it's a CMOS or open drain output but instead
+leaves it up to board configuration which mode is used.  Laxman posted a
+patch for doing this to a regulator driver but looking at it the code
+for emulating open drain while also maintaining support for regular CMOS
+is fiddly enough that it seemed like it should be factored out of the
+individual drivers.
 
-Have you though about support for lines that are pulled low instead of
-high?  Those aren't as common, but it is conceivable that some
-hardware would need it.
+> Also, you should include a patch to make i2c-gpio.c use this new
+> functionality as a proof-of-concept.  You may not be able to test it,
+> but it will make it a lot easier to justify merging by showing how it
+> cleans up a gpio user.
 
-g.
+The regulator patch is one example - I think things that could be CMOS
+are probably more interesting here than drivers that always want open
+drain as they have more of a complexity hit from needing to decide if
+they'll use the emulation or not.
 
-> ---
->  Documentation/gpio.txt |   21 +++++++++++++++++++--
->  1 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
-> index 792faa3..b08933c 100644
-> --- a/Documentation/gpio.txt
-> +++ b/Documentation/gpio.txt
-> @@ -302,6 +302,7 @@ where 'flags' is currently defined to specify the following properties:
->  
->  	* GPIOF_INIT_LOW	- as output, set initial level to LOW
->  	* GPIOF_INIT_HIGH	- as output, set initial level to HIGH
-> +	* GPIOF_OD		- gpio pin is open drain type.
->  
->  since GPIOF_INIT_* are only valid when configured as output, so group valid
->  combinations as:
-> @@ -310,8 +311,7 @@ combinations as:
->  	* GPIOF_OUT_INIT_LOW	- configured as output, initial level LOW
->  	* GPIOF_OUT_INIT_HIGH	- configured as output, initial level HIGH
->  
-> -In the future, these flags can be extended to support more properties such
-> -as open-drain status.
-> +In the future, these flags can be extended to support more properties.
->  
->  Further more, to ease the claim/release of multiple GPIOs, 'struct gpio' is
->  introduced to encapsulate all three fields as:
-> @@ -641,6 +641,13 @@ and have the following read/write attributes:
->  		for "rising" and "falling" edges will follow this
->  		setting.
->  
-> +	"open_drain" ... reads as either 0 (false) or 1 (true).  Write
-> +		any nonzero value to make the pin in open drain.
-> +		By setting open drain to true, the output can be set
-> +		to HIGH by external PULL UP and setting direction to input.
-> +		The output will be set to LOW by setting direction to
-> +		output with value is 0.
-> +
->  GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
->  controller implementing GPIOs starting at #42) and have the following
->  read-only attributes:
-> @@ -679,6 +686,9 @@ requested using gpio_request():
->  	/* change the polarity of a GPIO node in sysfs */
->  	int gpio_sysfs_set_active_low(unsigned gpio, int value);
->  
-> +	/* change the pin to open drain in sysfs */
-> +	int gpio_sysfs_set_open_drain(unsigned gpio, int value);
-> +
->  After a kernel driver requests a GPIO, it may only be made available in
->  the sysfs interface by gpio_export().  The driver can control whether the
->  signal direction may change.  This helps drivers prevent userspace code
-> @@ -698,3 +708,10 @@ differences between boards from user space.  This only affects the
->  sysfs interface.  Polarity change can be done both before and after
->  gpio_export(), and previously enabled poll(2) support for either
->  rising or falling edge will be reconfigured to follow this setting.
-> +
-> +Drivers can use gpio_sysfs_set_open_drain() to enable/disable the open
-> +drain property of that pins. This only affect the sysfs interface.
-> +The flag will be set as open drain if thsi function is called with value
-> +of 1. It is recommended to set the open drain property before setting
-> +the value in output mode so that pin state cn be set properly based
-> +on the value.
-> -- 
-> 1.7.1.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+We could also at some later point add support for hardware which can
+implement open drain mode itself though I'm not sure if there's enough
+problem with emulating to make it worth the effort.
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPOYl5AAoJEBus8iNuMP3de9MP/j/7PumfKyRuR9LkeTN4A/t6
+9q4YRm7GaSs/J6P7C/Qe/Ifm6NSNzb6BjHN2nO/o58EZ2OeGO3MRIT9vWtRAtD6K
+M3MmvSCVVVL8B+9WJjbX1J9zq9nPGSc7UOrIV8YGYSz1e6c2OJof/2MNftRzHyo3
+rcd7Ewlas3yq3FOYZNJMIh8N66JYsy4wnBZmhzoMZOorK2i2cQW6Tr8ZNMeykBRr
+Ws1lF4oKD4/5D65ckuUUrFFRKeIBxxVaisQ6K9PyxagzhxOz/vKd9vSUVevJbObe
+qwWVogZzmzwmukk4T3eGnZXznJDU2AJjoVe1xfOabtjnc/Ah/CgEfnF4aZ6pNCTC
+/lsOipbV6mDFQo9/S3tuTdk51Ou2+xmxxDCCNlLIPHELDUp+Bg1NQJiyMkreN/uW
+V4M1YNINGPY8megh/QniqcCbupTszqqRQFN/fxbsB0ZnO2IZpA381mJwh1Pcs7In
+P8E/M7sjFXJe9C6N4aYBkXddlucGVe49wFnvf3HnGJtruuxH0KXwp4ozDdc5etKn
+MCdx5ffQ3S6TVxU6qO7/Nh6RmJKyOOb2PBiOrN2IEvSeCB59knFhLvtcm/QaYnT5
+pWWzmjiicT9M5mUaIH4Rp+nz3f1jGXOrgsYNjvqVUIfRzRPk+Hdj1sII+S0Zc03h
+5sQnQw25ZyW7MhUUj9uL
+=zQFX
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
