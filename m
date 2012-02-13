@@ -1,46 +1,122 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V1 0/3] Support for open drain gpios in gpilib/fixed regulators.
-Date: Mon, 13 Feb 2012 21:02:03 +0100
-Message-ID: <CACRpkdb5VA4GJpB_0Xra=R0LUD9fz4CoDLjuwFHZ8SnTMz3fpg@mail.gmail.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain
+ configuration
+Date: Mon, 13 Feb 2012 14:18:09 -0700
+Message-ID: <20120213211809.GI11077@ponder.secretlab.ca>
 References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
+ <1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329114588-15430-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@stericsson.com, dunlap@xenotime.net, lrg@ti.com, broonie@opensource.wolfsonmicro.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 13, 2012 at 7:29 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
- wrote:
+On Mon, Feb 13, 2012 at 11:59:47AM +0530, Laxman Dewangan wrote:
+> Adding details of open drain configuration of the gpio so that
+> client can set the pin as open drain at the time of gpio request.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-> This is series of patches =A0to add support of the open drain gpios
-> in standard gpio library and using this in fixed regulators.
-> - Added GPIOF_OD flag so that client can request the gpio with this f=
-lag.
-> - Added support for the sysfs interface for open-drain.
-> - Handle open drain gpio configuration properly.
-> - Use this flag in fixed regualtor to tell that gpio is open drain.
-> - Gpio documentation changes to have support for open-drain.
+Implicitly, the gpio api already supports open-drain and several drivers
+make use of it.  Instead of being a separate flag; users who need open
+drain will set the pin to input.  For example, see the i2c-gpio driver.
 
-My gut feeling is that this stuff needs to go into pinctrl.
+I'm not convinced this is needed; but my opinion could be swayed.
 
-The reason, which has been discussed when similar patches (from me,
-for example) were NACK:ed in the past, is that if we put in OD pin
-properties, we put in all pin properties (open source, drive strength,
-biasing pull-up/pull-down etc etc) and that is the reason to why the
-orthogonal pinctrl subsystem was created in the first place.
+Linus mentioned that this should be part of pinctrl instead of the gpio API,
+but I think there is an argument for making it part of the gpio API,
+particularly since open-drain is pretty much a universal concept that all
+gpio controllers can support (unlike driver strength) and as I said above, it
+is already implicitly supported by gpiolib.  The difference with this
+method is it would allow drivers like the gpio-i2c.c driver to set the
+flag at gpio request time and then be able to always use gpio_set_value()
+regardless of the pin mode.
 
-So I'd opt for moving the driver you need to drivers/pinctrl and
-expose the gpiolib interface from there, while adding pinctrl
-on the side.
+However, I'm not thrilled about adding things to the already-horrible sysfs
+abi.  Please drop that hunk entirely or put it into a separate patch so it
+doesn't block the core functionality.
 
-Also, we had a flamefest a while back as to whether we should
-enumerate all config options (like OD, OS...) or have it all-custom,
-and I was sort of shot down on that. But I have a generic control patch
-set boiling so if you like that kind of stuff I'll respin it.
+Also, you should include a patch to make i2c-gpio.c use this new
+functionality as a proof-of-concept.  You may not be able to test it,
+but it will make it a lot easier to justify merging by showing how it
+cleans up a gpio user.
 
-Yours,
-Linus Walleij
+Have you though about support for lines that are pulled low instead of
+high?  Those aren't as common, but it is conceivable that some
+hardware would need it.
+
+g.
+
+> ---
+>  Documentation/gpio.txt |   21 +++++++++++++++++++--
+>  1 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
+> index 792faa3..b08933c 100644
+> --- a/Documentation/gpio.txt
+> +++ b/Documentation/gpio.txt
+> @@ -302,6 +302,7 @@ where 'flags' is currently defined to specify the following properties:
+>  
+>  	* GPIOF_INIT_LOW	- as output, set initial level to LOW
+>  	* GPIOF_INIT_HIGH	- as output, set initial level to HIGH
+> +	* GPIOF_OD		- gpio pin is open drain type.
+>  
+>  since GPIOF_INIT_* are only valid when configured as output, so group valid
+>  combinations as:
+> @@ -310,8 +311,7 @@ combinations as:
+>  	* GPIOF_OUT_INIT_LOW	- configured as output, initial level LOW
+>  	* GPIOF_OUT_INIT_HIGH	- configured as output, initial level HIGH
+>  
+> -In the future, these flags can be extended to support more properties such
+> -as open-drain status.
+> +In the future, these flags can be extended to support more properties.
+>  
+>  Further more, to ease the claim/release of multiple GPIOs, 'struct gpio' is
+>  introduced to encapsulate all three fields as:
+> @@ -641,6 +641,13 @@ and have the following read/write attributes:
+>  		for "rising" and "falling" edges will follow this
+>  		setting.
+>  
+> +	"open_drain" ... reads as either 0 (false) or 1 (true).  Write
+> +		any nonzero value to make the pin in open drain.
+> +		By setting open drain to true, the output can be set
+> +		to HIGH by external PULL UP and setting direction to input.
+> +		The output will be set to LOW by setting direction to
+> +		output with value is 0.
+> +
+>  GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
+>  controller implementing GPIOs starting at #42) and have the following
+>  read-only attributes:
+> @@ -679,6 +686,9 @@ requested using gpio_request():
+>  	/* change the polarity of a GPIO node in sysfs */
+>  	int gpio_sysfs_set_active_low(unsigned gpio, int value);
+>  
+> +	/* change the pin to open drain in sysfs */
+> +	int gpio_sysfs_set_open_drain(unsigned gpio, int value);
+> +
+>  After a kernel driver requests a GPIO, it may only be made available in
+>  the sysfs interface by gpio_export().  The driver can control whether the
+>  signal direction may change.  This helps drivers prevent userspace code
+> @@ -698,3 +708,10 @@ differences between boards from user space.  This only affects the
+>  sysfs interface.  Polarity change can be done both before and after
+>  gpio_export(), and previously enabled poll(2) support for either
+>  rising or falling edge will be reconfigured to follow this setting.
+> +
+> +Drivers can use gpio_sysfs_set_open_drain() to enable/disable the open
+> +drain property of that pins. This only affect the sysfs interface.
+> +The flag will be set as open drain if thsi function is called with value
+> +of 1. It is recommended to set the open drain property before setting
+> +the value in output mode so that pin state cn be set properly based
+> +on the value.
+> -- 
+> 1.7.1.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
