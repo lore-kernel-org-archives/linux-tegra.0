@@ -1,67 +1,72 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V1 0/3] Support for open drain gpios in gpilib/fixed
- regulators.
-Date: Mon, 13 Feb 2012 14:10:16 -0800
-Message-ID: <20120213221015.GB11931@opensource.wolfsonmicro.com>
-References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
- <CACRpkdb5VA4GJpB_0Xra=R0LUD9fz4CoDLjuwFHZ8SnTMz3fpg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb5VA4GJpB_0Xra=R0LUD9fz4CoDLjuwFHZ8SnTMz3fpg@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, linus.walleij@stericsson.com, dunlap@xenotime.net, lrg@ti.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] gpio: tegra: Fix build issue due to irq_domain rework.
+Date: Mon, 13 Feb 2012 16:21:15 -0700
+Message-ID: <1329175275-19404-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Commit 7da5a66 "irq_domain: Remove 'new' irq_domain in favour of the
+ppc one" changed the set of available irq domain APIs. Update the Tegra
+GPIO driver to account for those changes, to solve a build break.
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+With this patch, next-20120206 works. There are one or two other issues
+that prevent more recent nexts from working though; I'm still tracking
+those down. However, I think this patch is fine by itself, since it solves
+all issues in next-20120206.
 
-On Mon, Feb 13, 2012 at 09:02:03PM +0100, Linus Walleij wrote:
-> On Mon, Feb 13, 2012 at 7:29 AM, Laxman Dewangan <ldewangan@nvidia.com> w=
-rote:
+ drivers/gpio/gpio-tegra.c |   14 ++++++--------
+ 1 files changed, 6 insertions(+), 8 deletions(-)
 
-> > This is series of patches =A0to add support of the open drain gpios
-> > in standard gpio library and using this in fixed regulators.
-> > - Added GPIOF_OD flag so that client can request the gpio with this fla=
-g.
-> > - Added support for the sysfs interface for open-drain.
-> > - Handle open drain gpio configuration properly.
-> > - Use this flag in fixed regualtor to tell that gpio is open drain.
-> > - Gpio documentation changes to have support for open-drain.
-
-> My gut feeling is that this stuff needs to go into pinctrl.
-
-Does that really make sense for cases like this where we're emulating
-the open drain support rather than actually configuring the hardware
-into an open drain mode?  That emulation is a pretty GPIO specific
-thing.
-
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPOYpBAAoJEBus8iNuMP3doK8P/RJqkDHgKuFEdybO5UCAt+K4
-pZcWrolaDlHU+GHfjhSGi5l9bAm9XbViwnv9WiGPaePwrRU9go06EIbSfAsDZ2PA
-AAOv9X/gAXdnVUn7rJhA3wVB4EzrzYHpU2U+ei4SZLSzxMMDzGzvFrUweTYN3o4s
-huHvG8BMTheqpRelxXM5UrRsNZ7IM5npJzmFbEeVwCN5ROxDSkXljDoKtqZjON6G
-8y/H+KiJD5WdRiIO5w/6vgRz1ytDxryVj8wPZy4zrI8mb4rGnID2AcV9M9NIFfHm
-GgR+PW0tIO+2qp44G94MApbHr4mb+LNJAXuE1tT3nKMxCQr3vMQJjR9q3/9/yJQq
-P8dKCsE1ISEOJg7lZJmljMpGxr999VOFM4VueN5v/XJrvVG+Nomasl4dhu4KpI1c
-L31TPQ6Q4yG4JohpQYIMBLpMfYNmBAK3xrEg+CgeVq4R5I6QvPKL2WkeKn7up7b8
-rju2uY0lCLhL+fMxtbblLey4yqauYGVsg8tOUQRmJVcPZ5bV/J5Sdq78j/ggElF9
-tb5+nrdYEYGCEFnHlZ88HI4qHqfPExh+fhUswEg5tBgcDx35bMKGbAK5HApLvT0p
-4vLxXw3m72wMNWLwB0PaS7llxlKiPCaqHkCvKtYALAdQtiy40IExXkWFI5GI1K4a
-Lh+1sCHvziouusjVxPwS
-=/udR
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 98f3980..6f17671 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -75,7 +75,7 @@ struct tegra_gpio_bank {
+ #endif
+ };
+ 
+-static struct irq_domain irq_domain;
++static struct irq_domain *irq_domain;
+ static void __iomem *regs;
+ static u32 tegra_gpio_bank_count;
+ static struct tegra_gpio_bank *tegra_gpio_banks;
+@@ -141,7 +141,7 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 
+ static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+-	return irq_domain_to_irq(&irq_domain, offset);
++	return irq_find_mapping(irq_domain, offset);
+ }
+ 
+ static struct gpio_chip tegra_gpio_chip = {
+@@ -372,11 +372,9 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Couldn't allocate IRQ numbers\n");
+ 		return -ENODEV;
+ 	}
+-	irq_domain.irq_base = irq_base;
+-	irq_domain.nr_irq = tegra_gpio_chip.ngpio;
+-	irq_domain.ops = &irq_domain_simple_ops;
+-	irq_domain.of_node = pdev->dev.of_node;
+-	irq_domain_add(&irq_domain);
++	irq_domain = irq_domain_add_legacy(pdev->dev.of_node,
++					   tegra_gpio_chip.ngpio, irq_base, 0,
++					   &irq_domain_simple_ops, NULL);
+ 
+ 	for (i = 0; i < tegra_gpio_bank_count; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+@@ -416,7 +414,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ 	gpiochip_add(&tegra_gpio_chip);
+ 
+ 	for (gpio = 0; gpio < tegra_gpio_chip.ngpio; gpio++) {
+-		int irq = irq_domain_to_irq(&irq_domain, gpio);
++		int irq = irq_find_mapping(irq_domain, gpio);
+ 		/* No validity check; all Tegra GPIOs are valid IRQs */
+ 
+ 		bank = &tegra_gpio_banks[GPIO_BANK(gpio)];
+-- 
+1.7.0.4
