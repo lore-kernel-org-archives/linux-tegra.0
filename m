@@ -1,120 +1,62 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] dt: rfkill-gpio: add bindings documentation
-Date: Mon, 13 Feb 2012 07:47:28 -0600
-Message-ID: <4F391470.3090102@gmail.com>
-References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de> <86044d44009316a48b402050f9dd742391d46eac.1329073559.git.marvin24@gmx.de> <CAPnjgZ2b4QjKMKjKyHqGGU1TbMamq6pBPUAAO99gMa98Rd+Erw@mail.gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] net: rfkill-gpio: add device tree support
+Date: Mon, 13 Feb 2012 11:25:59 -0800
+Message-ID: <1329161159.22948.3.camel@rklein-linux>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ2b4QjKMKjKyHqGGU1TbMamq6pBPUAAO99gMa98Rd+Erw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2012 02:21 PM, Simon Glass wrote:
-> Hi Marc,
+On Sun, 2012-02-12 at 11:13 -0800, Marc Dietrich wrote:
+> This adds device tree support for rfkill-gpio. The optional platform
+> paramters gpio_runtime_close and gpio_runtime_setup are not implemented.
 > 
-> On Sun, Feb 12, 2012 at 11:13 AM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
->> Add device tree bindings information for rfkill gpio switches.
->>
->> Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
->> Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
->> Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
->> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
->> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/gpio/rfkill.txt |   38 +++++++++++++++++++++
->>  1 files changed, 38 insertions(+), 0 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/rfkill.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/rfkill.txt b/Documentation/devicetree/bindings/gpio/rfkill.txt
->> new file mode 100644
->> index 0000000..22bf22a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/rfkill.txt
->> @@ -0,0 +1,38 @@
->> +RFKILL switches connected to GPIO lines
->> +
->> +Required properties:
->> +- compatible : should be "rfkill-gpio".
->> +
->> +Each rfkill switch is represented as a sub-node of the rfkill-gpio device.
->> +Each node has a label property which represents the name of the corresponding
->> +rfkill device.
->> +
->> +RFKILL sub-node properties:
->> +- label :  (optional) The label for this rfkill switch.  If omitted, the label is
->> +  taken from the node name (excluding the unit address).
->> +- reset-gpio, shutdown-gpio :  Should specify the rfkill gpios for reset and
->> +  shutdown (see "Specifying GPIO information for devices" in
-> 
-> Should that be reset-gpios, shutdown-gpios? Even though you have only
-> one it seems that people put an 's' on the end.
-> 
->> +  Documentation/devicetree/booting-without-of.txt).
->> +- type : enumerated type of the gpio (see include/linux/rfkill.h).
-> 
-> It would be better I think if this were explicit here. If you have a
-> number, then what values does it take and what do they mean?
-> 
->> +- clock : (optional) name of the clock name associated with the rfkill switch
-> 
-> Can this be a phandle instead of a string?
-> 
+> Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+> Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+> Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> +
+>  static int rfkill_gpio_probe(struct platform_device *pdev)
+>  {
+>  	struct rfkill_gpio_data *rfkill;
+>  	struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
+> +	struct device_node *np = pdev->dev.of_node;
+>  	int ret = 0;
+>  	int len = 0;
+>  
+> +	if (np)
+> +		pdata = rfkill_gpio_parse_pdata(pdev);
+> +
 
-This seems to be in the wrong place altogether. The gpio controller
-would have a clock, not particular gpio line.
+The only concern I have is the precedence of devicetree settings vs
+platform data settings? If there is pdata passed in from board file
+initialization, and there is a device tree (a corner case but I think a
+valid one) then I believe the order would be that defined pdata would
+override the devicetree settings. That way if someone wanted to make a
+quick update, they wouldn't need to change the boot loader as well.
 
->> +  (see include/linux/rfkill-gpio.h)
-> 
-> IMO device tree bindings should be fully documented in this file,
-> rather than needing to look at a separate header. This is particularly
-> true if the binding is used in another project.
-> 
+>  	if (!pdata) {
+>  		pr_warn("%s: No platform data specified\n", __func__);
+>  		return -EINVAL;
+> @@ -217,6 +273,7 @@ static struct platform_driver rfkill_gpio_driver = {
+>  	.driver = {
+>  		   .name = "rfkill_gpio",
+>  		   .owner = THIS_MODULE,
+> +		   .of_match_table = of_match_ptr(of_rfkill_gpio_match),
+>  	},
+>  };
+>  
 
-Correct. A binding should not be Linux specific. It should describe the h/w.
+-rhyland
 
->> +
->> +Examples:
->> +
->> +rfkill-switches {
->> +       compatible = "rfkill-gpio";
->> +
->> +       wifi {
->> +               label = "wifi";
->> +               reset-gpio = <&gpio 25 0>; /* Active high */
->> +               shutdown-gpio = <&gpio 85 0>; /* Active high */
->> +               type = <1>;
->> +       };
->> +
->> +       bt {
->> +               label = "bluetooth";
->> +               reset-gpio = <&gpio 17 0>; /* Active high */
->> +               shutdown-gpio = <&gpio 35 0>; /* Active high */
->> +               type = <1>;
->> +       };
-
-Why wouldn't the gpio lines just be part of the bt and wifi device nodes
-themselves? The DT is supposed to describe h/w connections.
-
-Rob
-
->> +};
->> --
->> 1.7.5.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> Regards,
-> Simon
-> _______________________________________________
-> devicetree-discuss mailing list
-> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> https://lists.ozlabs.org/listinfo/devicetree-discuss
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
