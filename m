@@ -1,72 +1,59 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain
  configuration
-Date: Tue, 14 Feb 2012 14:29:32 +0530
-Message-ID: <4F3A2274.5080000@nvidia.com>
-References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com> <1329114588-15430-3-git-send-email-ldewangan@nvidia.com> <20120213211809.GI11077@ponder.secretlab.ca> <20120213220656.GA11931@opensource.wolfsonmicro.com>
+Date: Tue, 14 Feb 2012 14:46:45 +0530
+Message-ID: <4F3A267D.5020407@nvidia.com>
+References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com> <1329114588-15430-3-git-send-email-ldewangan@nvidia.com> <20120213211809.GI11077@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20120213220656.GA11931@opensource.wolfsonmicro.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, "linus.walleij@stericsson.com" <linus.walleij@stericsson.com>, "dunlap@xenotime.net" <dunlap@xenotime.net>, "lrg@ti.com" <lrg@ti.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120213211809.GI11077-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, "dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org" <dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 14 February 2012 03:36 AM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Tuesday 14 February 2012 02:48 AM, Grant Likely wrote:
+> On Mon, Feb 13, 2012 at 11:59:47AM +0530, Laxman Dewangan wrote:
+>> Adding details of open drain configuration of the gpio so that
+>> client can set the pin as open drain at the time of gpio request.
+>>
+>> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
->> Implicitly, the gpio api already supports open-drain and several drivers
->> make use of it.  Instead of being a separate flag; users who need open
->> drain will set the pin to input.  For example, see the i2c-gpio driver.
->> I'm not convinced this is needed; but my opinion could be swayed.
-> The actual idea is to provide support for doing the switch to input to
-> drivers that just want to set a logic level and don't (at their level)
-> care one way or another if it's a CMOS or open drain output but instead
-> leaves it up to board configuration which mode is used.  Laxman posted a
-> patch for doing this to a regulator driver but looking at it the code
-> for emulating open drain while also maintaining support for regular CMOS
-> is fiddly enough that it seemed like it should be factored out of the
-> individual drivers.
+> Linus mentioned that this should be part of pinctrl instead of the gpio API,
+> but I think there is an argument for making it part of the gpio API,
+> particularly since open-drain is pretty much a universal concept that all
+> gpio controllers can support (unlike driver strength) and as I said above, it
+> is already implicitly supported by gpiolib.
+
+I am not sure about other soc but taking Tegra as example, the gpio 
+controller is almost same for same series of soc. It does not very much 
+about different version of the socs. The pins, number of pins. pin 
+controls, pin is OD or not etc vary from variant of socs and so it is 
+much more depends on the particular soc rather than  the major family.
+Bringing pincontrol information in gpio driver will make the gpio driver 
+complex which need to take care of every variant of chips.
+
+>    The difference with this
+> method is it would allow drivers like the gpio-i2c.c driver to set the
+> flag at gpio request time and then be able to always use gpio_set_value()
+> regardless of the pin mode.
+>
+> However, I'm not thrilled about adding things to the already-horrible sysfs
+> abi.  Please drop that hunk entirely or put it into a separate patch so it
+> doesn't block the core functionality.
 >
 
-Implementing open-drain handling in every gpio client (like 
-i2c-gpio/regulator/fixed.c) is just duplicating the code everywhere. 
-Also it leaves to have such implementation buggy which is in following 
-piece of code (taken from i2c-gpio.c)
+I will split the change in two parts one for core driver and other for 
+the sysfs interface if all changes are fine here.
 
-         if (pdata->sda_is_open_drain) {
-                 gpio_direction_output(pdata->sda_pin, 1);
-                 bit_data->setsda = i2c_gpio_setsda_val;
-         } else {
-                 gpio_direction_input(pdata->sda_pin);
-                 bit_data->setsda = i2c_gpio_setsda_dir;
-         }
+> Have you though about support for lines that are pulled low instead of
+> high?  Those aren't as common, but it is conceivable that some
+> hardware would need it.
+I think open drain pin should not be pulled low otherwise it will not be 
+possible to make the pin as HIGH with the assumption that the OD pin 
+should never be driven to HIGH
 
-Header says
-  * @sda_is_open_drain: SDA is configured as open drain, i.e. the pin
-  *      isn't actively driven high when setting the output value high.
-  *      gpio_get_value() must return the actual pin state even if the
-  *      pin is configured as an output.
-
-And hence the check should be
-if (!pdata->sda_is_open_drain) {
-:::::
-}
-
-
-All these can be avoided by supporting open-drain flag and handling in 
-gpio library.
-
->> Also, you should include a patch to make i2c-gpio.c use this new
->> functionality as a proof-of-concept.  You may not be able to test it,
->> but it will make it a lot easier to justify merging by showing how it
->> cleans up a gpio user.
-
-I can do the cleanup in i2c-gpio also which will reduce lots of code if 
-this change in gpiolib is acceptable and fine with everyone.
-Let me know if patch regulator/fixed.c V1 is sufficient or not to 
-justify. I will create the patch for i2c-gpio  also.
-
-
+But if it is there in any case then it should be handle differently at  
+client level without letting the gpio driver that it is open-drain.
