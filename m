@@ -1,59 +1,156 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain
- configuration
-Date: Tue, 14 Feb 2012 14:46:45 +0530
-Message-ID: <4F3A267D.5020407@nvidia.com>
-References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com> <1329114588-15430-3-git-send-email-ldewangan@nvidia.com> <20120213211809.GI11077@ponder.secretlab.ca>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 2/3] dt: rfkill-gpio: add bindings documentation
+Date: Tue, 14 Feb 2012 11:12:41 +0100
+Message-ID: <4F3A3399.2010203@gmx.de>
+References: <1ec0e63a7453072689618430ebc2bdd7b62542a2.1329073559.git.marvin24@gmx.de> <86044d44009316a48b402050f9dd742391d46eac.1329073559.git.marvin24@gmx.de> <CAPnjgZ2b4QjKMKjKyHqGGU1TbMamq6pBPUAAO99gMa98Rd+Erw@mail.gmail.com> <4F391470.3090102@gmail.com> <CAOesGMjofzC9pp1H9SXS693QR7JU9XjvVLVi6gBSGuqVNJ-rKA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120213211809.GI11077-e0URQFbLeQY2iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, "dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org" <dunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMjofzC9pp1H9SXS693QR7JU9XjvVLVi6gBSGuqVNJ-rKA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 14 February 2012 02:48 AM, Grant Likely wrote:
-> On Mon, Feb 13, 2012 at 11:59:47AM +0530, Laxman Dewangan wrote:
->> Adding details of open drain configuration of the gpio so that
->> client can set the pin as open drain at the time of gpio request.
+Am 13.02.2012 20:43, schrieb Olof Johansson:
+> On Mon, Feb 13, 2012 at 5:47 AM, Rob Herring<robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>  wrote:
+>> On 02/12/2012 02:21 PM, Simon Glass wrote:
 >>
->> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> On Sun, Feb 12, 2012 at 11:13 AM, Marc Dietrich<marvin24-Mmb7MZpHnFY@public.gmane.org>  wrote:
+>>>> Add device tree bindings information for rfkill gpio switches.
+>>>>
+>>>> Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>>> Cc: "John W. Linville"<linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+>>>> Cc: Johannes Berg<johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+>>>> Cc: Rhyland Klein<rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> Cc: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+>>>> Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+>>>> Signed-off-by: Marc Dietrich<marvin24-Mmb7MZpHnFY@public.gmane.org>
+>>>> ---
+>>>>   Documentation/devicetree/bindings/gpio/rfkill.txt |   38 +++++++++++++++++++++
+>>>>   1 files changed, 38 insertions(+), 0 deletions(-)
+>>>>   create mode 100644 Documentation/devicetree/bindings/gpio/rfkill.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/gpio/rfkill.txt b/Documentation/devicetree/bindings/gpio/rfkill.txt
+>>>> new file mode 100644
+>>>> index 0000000..22bf22a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/gpio/rfkill.txt
+>>>> @@ -0,0 +1,38 @@
+>>>> +RFKILL switches connected to GPIO lines
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : should be "rfkill-gpio".
+>>>> +
+>>>> +Each rfkill switch is represented as a sub-node of the rfkill-gpio device.
+>>>> +Each node has a label property which represents the name of the corresponding
+>>>> +rfkill device.
+>>>> +
+>>>> +RFKILL sub-node properties:
+>>>> +- label :  (optional) The label for this rfkill switch.  If omitted, the label is
+>>>> +  taken from the node name (excluding the unit address).
+>>>> +- reset-gpio, shutdown-gpio :  Should specify the rfkill gpios for reset and
+>>>> +  shutdown (see "Specifying GPIO information for devices" in
+>>> Should that be reset-gpios, shutdown-gpios? Even though you have only
+>>> one it seems that people put an 's' on the end.
+> Agreed.
 >
-> Linus mentioned that this should be part of pinctrl instead of the gpio API,
-> but I think there is an argument for making it part of the gpio API,
-> particularly since open-drain is pretty much a universal concept that all
-> gpio controllers can support (unlike driver strength) and as I said above, it
-> is already implicitly supported by gpiolib.
-
-I am not sure about other soc but taking Tegra as example, the gpio 
-controller is almost same for same series of soc. It does not very much 
-about different version of the socs. The pins, number of pins. pin 
-controls, pin is OD or not etc vary from variant of socs and so it is 
-much more depends on the particular soc rather than  the major family.
-Bringing pincontrol information in gpio driver will make the gpio driver 
-complex which need to take care of every variant of chips.
-
->    The difference with this
-> method is it would allow drivers like the gpio-i2c.c driver to set the
-> flag at gpio request time and then be able to always use gpio_set_value()
-> regardless of the pin mode.
+>>>> +  Documentation/devicetree/booting-without-of.txt).
+>>>> +- type : enumerated type of the gpio (see include/linux/rfkill.h).
+>>> It would be better I think if this were explicit here. If you have a
+>>> number, then what values does it take and what do they mean?
+> This should most likely be moved to a set of properties instad of an
+> enumerated type, I agree. And/or use a string to encode the type
+> simiar to how powerpc does some of the USB interfaces.
 >
-> However, I'm not thrilled about adding things to the already-horrible sysfs
-> abi.  Please drop that hunk entirely or put it into a separate patch so it
-> doesn't block the core functionality.
+>>>> +- clock : (optional) name of the clock name associated with the rfkill switch
+>>> Can this be a phandle instead of a string?
+>> This seems to be in the wrong place altogether. The gpio controller
+>> would have a clock, not particular gpio line.
+> And either way, this should conform to the standard clock binding, not
+> use something locally hacked up.
 >
+>>>> +  (see include/linux/rfkill-gpio.h)
+>>> IMO device tree bindings should be fully documented in this file,
+>>> rather than needing to look at a separate header. This is particularly
+>>> true if the binding is used in another project.
+>>>
+>> Correct. A binding should not be Linux specific. It should describe the h/w.
+>>
+>>>> +
+>>>> +Examples:
+>>>> +
+>>>> +rfkill-switches {
+>>>> +       compatible = "rfkill-gpio";
+>>>> +
+>>>> +       wifi {
+>>>> +               label = "wifi";
+>>>> +               reset-gpio =<&gpio 25 0>; /* Active high */
+>>>> +               shutdown-gpio =<&gpio 85 0>; /* Active high */
+>>>> +               type =<1>;
+>>>> +       };
+>>>> +
+>>>> +       bt {
+>>>> +               label = "bluetooth";
+>>>> +               reset-gpio =<&gpio 17 0>; /* Active high */
+>>>> +               shutdown-gpio =<&gpio 35 0>; /* Active high */
+>>>> +               type =<1>;
+>>>> +       };
+>> Why wouldn't the gpio lines just be part of the bt and wifi device nodes
+>> themselves? The DT is supposed to describe h/w connections.
+> The thing is, that "rfkill" isn't a _device_, and Marc is trying to
+> describe it as one. It's really just a software abstraction of a
+> collection of power supplies and/or GPIO lines that are used to power
+> up/down specific peripherals.
 
-I will split the change in two parts one for core driver and other for 
-the sysfs interface if all changes are fine here.
+Oh, this gets more complicated than I wanted. First I only translated 
+the *existing* platform_data to devicetree format. I understand that 
+devicetree needs some more careful thoughts. Let me shortly describe my 
+hw setup and lets see how it can me mapped.
 
-> Have you though about support for lines that are pulled low instead of
-> high?  Those aren't as common, but it is conceivable that some
-> hardware would need it.
-I think open drain pin should not be pulled low otherwise it will not be 
-possible to make the pin as HIGH with the assumption that the OD pin 
-should never be driven to HIGH
+> I know that the USB modem, for example, is probed through autoprobing
+> the USB bus. So there's no device to associate it with, per se. But
+> the USB slot that the modem is connected to, which is also the
+> connector that the GPIO controls the power supplies and reset line to,
+> are connected directly to one of the USB host controllers, right? So
+> maybe describing it there is a better option.
 
-But if it is there in any case then it should be handle differently at  
-client level without letting the gpio driver that it is open-drain.
+The wifi module (some models also include an additional bluetooth part) 
+is plugged into a mini-pci-e like slot. This has pins for usb (the 
+module uses usb), dap, sdio, uart, and some other pins which also 
+include the gpio lines for rfkill. The other gpio end is directly 
+connected to the tegra soc.
+
+So there is no usb slot and a standard usb slot also does not contain 
+any gpio lines (just 2 power and 2 data lines). The usb controller also 
+sits in the tegra soc (well, more or less because it is the ulpi port 
+connected to SMC3315 and later a SMC2512 4-port usb hub). So gpio and 
+usb take a totally different path. IMHO, it makes no sense to add a gpio 
+to the usb controller, but see below.
+
+> That still leaves the issue of actually having something to bind it
+> against. As I already said, rfkill isn't a device, so crafting one
+> just because linux wants one is the wrong way to go about. Maybe using
+> /chosen to refer to the device nodes for the GPIO lines under USB
+> instead, and have rfkill look for those and create a device if they're
+> found is a better way to go about it.
+To me it looks more like how the LEDs are implemented but with a 
+"linux,rfkill_type" property. To me this looks saner than adding a gpio 
+to an usb controller, even if there if no physical rfkill device. This 
+still leaves the problem of what to do with the clock (it is not used by 
+any machine AFAIK).
+
+The main problem here is that usb devices have no device tree entries 
+(only the host controllers). Perhaps it is possible to a fake usb device 
+as a workaround? This has the advantage that it exists physically, but 
+the resources are not taken from the device tree. Instead all other non 
+standard properties (gpios, clocks) are.
+
+Marc
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
