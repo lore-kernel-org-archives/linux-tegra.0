@@ -1,46 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain configuration
-Date: Wed, 15 Feb 2012 23:25:41 +0100
-Message-ID: <CACRpkdZzcN5oi0ejeTQn3BNJ_w6XHsBQ_RoQMvpf8Lt2bOARAg@mail.gmail.com>
-References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
-	<1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
-	<20120213211809.GI11077@ponder.secretlab.ca>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 00/10] Add tegra30 support for secondary cores
+Date: Thu, 16 Feb 2012 00:25:51 +0200
+Message-ID: <20120215222551.GN16501@tbergstrom-lnx.Nvidia.com>
+References: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF178FACB954@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20120213211809.GI11077@ponder.secretlab.ca>
-Sender: linux-doc-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: dunlap@xenotime.net, lrg@ti.com, broonie@opensource.wolfsonmicro.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178FACB954-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 13, 2012 at 10:18 PM, Grant Likely
-<grant.likely@secretlab.ca> wrote:
+On Wed, Feb 15, 2012 at 10:27:43PM +0100, Stephen Warren wrote:
+> Peter De Schrijver wrote at Thursday, February 09, 2012 4:48 PM:
+> > This patchset introduces support for secondary cores on tegra30. It also
+> > introduces some functions for the flowcontroller and adds basic support for
+> > tegra30 powerdomains.
+> 
+> The code looks fine to me. I do notice the following when running
+> "shutdown -h now":
+> 
+> [   27.762124] SMP: failed to stop secondary CPUs
+> 
+> So, this patch series makes the secondary cores boot OK, but not shut
+> down it appears. Is that expected? It's probably something we can fix
+> with a following on patch rather than re-spinning this series though?
+> 
 
-> Linus mentioned that this should be part of pinctrl instead of the gpio API,
-> but I think there is an argument for making it part of the gpio API,
-> particularly since open-drain is pretty much a universal concept that all
-> gpio controllers can support (unlike driver strength)
+This seems to be a bug indeed. I will look at it next week when I'm back in
+finland.
 
-Actually pinctrl is engineered to be used as back-end for gpiolib
-so thinking about it I'm pretty happy with this arrangement, the gpiolib
-driver can very well call down to pinctrl to have the actual setting
-done if needed. So it's no big deal.
+Cheers,
 
-It is also a case for making some of the pin config business
-generic, which I have failed at in the past.
-
-> Have you though about support for lines that are pulled low instead of
-> high?  Those aren't as common, but it is conceivable that some
-> hardware would need it.
-
-So if the idea is (if I get it correctly) that this thing is an input
-sometimes and open drain/collector output sometimes, then
-open source/emitter for the inverse situation is an equally valid
-case right? In that case I think it'd be best to add both.
-
-The COH901 driver for U300 supports open source/emitter
-BTW.
-
-Yours,
-Linus Walleij
+Peter.
