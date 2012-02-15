@@ -1,284 +1,82 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] ARM: tegra: Define Tegra20 CAR binding
-Date: Wed, 15 Feb 2012 11:14:27 -0700
-Message-ID: <1329329667-26725-1-git-send-email-swarren@nvidia.com>
+Subject: RE: [PATCH 1/2] i2c: tegra: Remove unnecessary clk_get
+Date: Wed, 15 Feb 2012 10:43:41 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF178FACB8BA@HQMAIL01.nvidia.com>
+References: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
+	<4F2D1400.5050907@nvidia.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF178E5D3162@HQMAIL01.nvidia.com>
+ <CAPnjgZ2r1+tSiiKg0rHH_atrLVqn6h+7ueMdtcmaRYtkdXiTRw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPnjgZ2r1+tSiiKg0rHH_atrLVqn6h+7ueMdtcmaRYtkdXiTRw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra20 CAR (Clock And Reset) Controller controls most aspects of
-most clocks within Tegra20. The device tree binding models this as a
-single monolithic clock provider, which exports ~130 clocks. This reduces
-the number of nodes needed in device tree to represent these clocks.
+Simon Glass wrote at Saturday, February 04, 2012 11:03 PM:
+> On Sat, Feb 4, 2012 at 9:51 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > Laxman Dewangan wrote at Saturday, February 04, 2012 4:18 AM
+> >> On Saturday 04 February 2012 05:40 AM, Stephen Warren wrote:
+> >> > From: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> >
+> >> > The clock table has just one entry for a given i2c controller.
+> >> > Hence, the second clk_get is not required in the driver.
+> >> >
+> >> > Originally by Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, but S-o-b is
+> >> > missing in our internal repo.
+> >> >
+> >> > [swarren: Reworded commit description, resolved merge issue when cherry-
+> >> > picking to mainline]
+> >> > Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > Ben, Wolfram. The two changes in this patch series are completely
+> > independent. The 2nd patch is what I really care about, and can be
+> > applied irrespective of the resolution of the discussion below.
+> >
+> >> The tegra i2c controller have two clock inputs i2c_div and i2c_fast_clk.
+> >
+> > Is this true on Tegra20 or just Tegra30? The Tegra20 TRM explicitly lists
+> > the clock domains the I2C controller users, and doesn't mention anything
+> > about this...
+> 
+> As I happened to be looking at this on Friday, it seems that Tegra20
+> supports the fast I2C also. I couldn't quite see how to select the
+> fast clock, but since I wasn't planning to support it I didn't mind.
+> From what I could tell, the slow clock can switch between four options
+> and the fast clock is fixed at 72MHz (based off PLLP), as below.
 
-This binding is only useful for Tegra20; the set of clocks that exists on
-Tegra30 is sufficiently different to merit its own binding.
+OK, I've found the location in the TRM that describes this additional
+clock input to a few modules. It's in the CAR (Clock And Reset) controller
+section in a couple places, e.g. Table 12 "PLL Clock Usage" and in a
+section "Special PLL clock usage by certain peripheral" (in version v01p
+at least).
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v3:
-* Re-order clock ID list so that IDs 0..95 match the CLK_OUT_ENB register
-  layout where possible. For register bits that affect multiple clocks,
-  assign those clocks IDs outside the range to make this clear.
-* Double-checked the documentation, and added a couple more cases where
-  a single CLK_OUT_ENB bit affects multiple clocks.
-* Split the binding example into separate SoC and board file sections.
-v2:
-* Remove clock-names, clock-output-names properties; Tegra will solely
-  use integer IDs for clocks in DT.
-* Fixed typo in compatible flag
-* Resolve FIXME re: multiple clocks with the same "reset ID"; give each
-  unique clock an ID, and ignore the reset bits, since this is purely a
-  clock binding. Code (e.g. U-Boot) that wants to use this to determine
-  CAR reset bit numbers would need a table to convert from the clock IDs
-  in this binding to the related reset bit number, if any. In general, I
-  think that's true, and the U-Boot code that handles "peripheral IDs"
-  should be reworked to handle "clocks", the peripheral clocks being a
-  subset of all clocks.
-* Define clock IDs for all the non-peripheral clocks too; inputs, PLLs,
-  etc.
-* Separate tegra-seaboard.dts usage example into a separate patch.
+So yes, let's not apply this one patch.
 
-This patch conceptually relies on Grant Likely's common clock binding patch
-series. However, since that seems pretty stable and people agree with it, I
-think we can check in this patch without waiting for Grant's.
----
- .../bindings/clock/nvidia,tegra20-car.txt          |  207 ++++++++++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |    6 +
- 2 files changed, 213 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+Simon, the upshot of this is that when you add the clocks property to
+the I2C nodes, you'll need to add both the regular variable I2C clock
+and this other clock to the list:
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
-new file mode 100644
-index 0000000..5c07fca
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
-@@ -0,0 +1,207 @@
-+NVIDIA Tegra20 Clock And Reset Controller
-+
-+This binding uses the common clock binding:
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
-+for muxing and gating Tegra's clocks, and setting their rates.
-+
-+Required properties :
-+- compatible : Should be "nvidia,tegra20-car"
-+- reg : Should contain CAR registers location and length
-+- clocks : Should contain phandle and clock specifiers for two clocks:
-+  the 32 KHz "32k_in", and the board-specific oscillator "osc".
-+- #clock-cells : Should be 1.
-+  In clock consumers, this cell represents the clock ID exposed by the CAR.
-+
-+  The first 96 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
-+  registers. These IDs often match those in the CAR's RST_DEVICES registers,
-+  but not in all cases. Some bits in CLK_OUT_ENB affect multiple clocks. In
-+  this case, those clocks are assigned IDs above 95 in order to highlight
-+  this issue. Implementations that interpret these clock IDs as bit values
-+  within the CLK_OUT_ENB or RST_DEVICES registers should be careful to
-+  explicitly handle these special cases.
-+
-+  The balance of the clocks controlled by the CAR are assigned IDs of 96 and
-+  above.
-+
-+  0	cpu
-+  1	unassigned
-+  2	unassigned
-+  3	ac97
-+  4	rtc
-+  5	tmr
-+  6	uart1
-+  7	unassigned	(register bit affects uart2 and vfir)
-+  8	gpio
-+  9	sdmmc2
-+  10	unassigned	(register bit affects spdif_in and spdif_out)
-+  11	i2s1
-+  12	i2c1
-+  13	ndflash
-+  14	sdmmc1
-+  15	sdmmc4
-+  16	twc
-+  17	pwm
-+  18	i2s2
-+  19	epp
-+  20	unassigned	(register bit affects vi and vi_sensor)
-+  21	2d
-+  22	usbd
-+  23	isp
-+  24	3d
-+  25	ide
-+  26	disp2
-+  27	disp1
-+  28	host1x
-+  29	vcp
-+  30	unassigned
-+  31	cache2
-+
-+  32	mem
-+  33	ahbdma
-+  34	apbdma
-+  35	unassigned
-+  36	kbc
-+  37	stat_mon
-+  38	pmc
-+  39	fuse
-+  40	kfuse
-+  41	sbc1
-+  42	snor
-+  43	spi1
-+  44	sbc2
-+  45	xio
-+  46	sbc3
-+  47	dvc
-+  48	dsi
-+  49	unassigned	(register bit affects tvo and cve)
-+  50	mipi
-+  51	hdmi
-+  52	csi
-+  53	tvdac
-+  54	i2c2
-+  55	uart3
-+  56	unassigned
-+  57	emc
-+  58	usb2
-+  59	usb3
-+  60	mpe
-+  61	vde
-+  62	bsea
-+  63	bsev
-+
-+  64	speedo
-+  65	uart4
-+  66	uart5
-+  67	i2c3
-+  68	sbc4
-+  69	sdmmc3
-+  70	pcie
-+  71	owr
-+  72	afi
-+  73	csite
-+  74	unassigned
-+  75	avpucq
-+  76	la
-+  77	unassigned
-+  78	unassigned
-+  79	unassigned
-+  80	unassigned
-+  81	unassigned
-+  82	unassigned
-+  83	unassigned
-+  84	irama
-+  85	iramb
-+  86	iramc
-+  87	iramd
-+  88	cram2
-+  89	audio_2x	a/k/a audio_2x_sync_clk
-+  90	clk_d
-+  91	unassigned
-+  92	sus
-+  93	cdev1
-+  94	cdev2
-+  95	unassigned
-+
-+  96	uart2
-+  97	vfir
-+  98	spdif_in
-+  99	spdif_out
-+  100	vi
-+  101	vi_sensor
-+  102	tvo
-+  103	cve
-+  104	osc
-+  105	clk_32k		a/k/a clk_s
-+  106	clk_m
-+  107	sclk
-+  108	cclk
-+  109	hclk
-+  110	pclk
-+  111	blink
-+  112	pll_a
-+  113	pll_a_out0
-+  114	pll_c
-+  115	pll_c_out1
-+  116	pll_d
-+  117	pll_d_out0
-+  118	pll_e
-+  119	pll_m
-+  120	pll_m_out1
-+  121	pll_p
-+  122	pll_p_out1
-+  123	pll_p_out2
-+  124	pll_p_out3
-+  125	pll_p_out4
-+  126	pll_s
-+  127	pll_u
-+  128	pll_x
-+  129	cop		a/k/a avp
-+  130	audio		a/k/a audio_sync_clk
-+
-+Example SoC include file:
-+
-+/ {
-+	tegra_car: clock@60006000 {
-+		compatible = "nvidia,tegra20-car";
-+		reg = <0x60006000 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	usb@c5004000 {
-+		clocks = <&tegra_car 58>; /* usb2 */
-+	};
-+};
-+
-+Example board file:
-+
-+/ {
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		osc: clock {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <12000000>;
-+		};
-+	};
-+
-+	i2c@7000d000 {
-+		pmic@34 {
-+			compatible = "ti,tps6586x";
-+			reg = <0x34>;
-+
-+			clk_32k: clock {
-+				compatible = "fixed-clock";
-+				#clock-cells = <0>;
-+				clock-frequency = <32768>;
-+			};
-+		};
-+	};
-+
-+	&tegra_car {
-+		clocks = <&clk_32k> <&osc>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index ec1f010..550da98 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -4,6 +4,12 @@
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&intc>;
- 
-+	tegra_car: clock@60006000 {
-+		compatible = "nvidia,tegra20-car";
-+		reg = <0x60006000 1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	pmc@7000f400 {
- 		compatible = "nvidia,tegra20-pmc";
- 		reg = <0x7000e400 0x400>;
+clocks = <&tegra_car 12> /* i2c1 */ <&tegra_car 124> /* pll_p_out3 */;
+
+I suggest listing the regular clock first for simplicity in U-Boot's
+parsing of the property (so the first clock is always the one with a
+bit in the CLK_ENB registers) and these additional clocks after, as I
+have above.
+
+This appears to apply to modules lfsr, dsi, csi, i2c1/2/3, uart1/2/3/4/5,
+but apparently not the DVC I2C controller according to the TRM. Laxman,
+can you confirm that the DVC I2C controller doesn't take a clock from
+pll_p_out3?
+
+P.S. this patch I posted is in our downstream 2.6.39 and 3.1 kernels.
+Given this thread, I assume it should be reverted there...
+
+Thanks.
+
 -- 
-1.7.0.4
+nvpublic
