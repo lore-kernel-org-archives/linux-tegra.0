@@ -1,32 +1,45 @@
-From: Danny Kukawka <danny.kukawka-2YacvwyR+KOzQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH] arch/arm/mach-tegra/board-dt-tegra20.c: included asm/hardware/gic.h twice
-Date: Thu, 16 Feb 2012 15:44:31 +0100
-Message-ID: <1329403471-32438-1-git-send-email-danny.kukawka@bisect.de>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v3 28/28] tegra: Enable generic board for Seaboard.
+Date: Thu, 16 Feb 2012 06:49:15 -0800
+Message-ID: <1329403755-6396-29-git-send-email-sjg@chromium.org>
+References: <1329403755-6396-1-git-send-email-sjg@chromium.org>
+Mime-Version: 1.0
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1329403755-6396-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Danny Kukawka <dkukawka-l3A5Bk7waGM@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Wolfgang Denk <wd-ynQEQJNshbs@public.gmane.org>, Albert ARIBAUD <albert.u.boot-LhW3hqR2+23R7s880joybQ@public.gmane.org>, Graeme Russ <graeme.russ-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-arch/arm/mach-tegra/board-dt-tegra20.c: included 'asm/hardware/gic.h'
-twice remove the duplicates.
+Enable CONFIG_SYS_GENERIC_BOARD for Tegra 2 Seaboard.
 
-Signed-off-by: Danny Kukawka <danny.kukawka-2YacvwyR+KOzQB+pC5nmwQ@public.gmane.org>
+Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-dt-tegra20.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+Changes in v2:
+- Add CONFIG_SYS_GENERIC_BOARD to allow board to select generic board
+- Add PowerPC support
+- Change generic board to an opt-in system on a per-board basic
+- Rebase to master
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 7a95e0b..2a0351b 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -37,7 +37,6 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
- #include <asm/setup.h>
--#include <asm/hardware/gic.h>
+Changes in v3:
+- Rebase on top of x86/master (which has not yet been pulled to master)
+- Rebase to master
+
+ include/configs/seaboard.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/include/configs/seaboard.h b/include/configs/seaboard.h
+index 261f952..11d9e8d 100644
+--- a/include/configs/seaboard.h
++++ b/include/configs/seaboard.h
+@@ -27,6 +27,8 @@
+ #include <asm/sizes.h>
+ #include "tegra2-common.h"
  
- #include <mach/iomap.h>
- #include <mach/irqs.h>
++#define CONFIG_SYS_GENERIC_BOARD
++
+ /* High-level configuration options */
+ #define TEGRA2_SYSMEM		"mem=384M@0M nvmem=128M@384M mem=512M@512M"
+ #define V_PROMPT		"Tegra2 (SeaBoard) # "
 -- 
-1.7.8.3
+1.7.7.3
