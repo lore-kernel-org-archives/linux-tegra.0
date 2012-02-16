@@ -1,38 +1,43 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v3 27/28] tegra: Mark board init files for ARMv4t
-Date: Thu, 16 Feb 2012 06:49:14 -0800
-Message-ID: <1329403755-6396-28-git-send-email-sjg@chromium.org>
-References: <1329403755-6396-1-git-send-email-sjg@chromium.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V1 2/3] Documentation: gpio: Add details of open-drain configuration
+Date: Thu, 16 Feb 2012 21:00:28 +0100
+Message-ID: <CACRpkdaFyxU-gq5ETnNc4LonTo98PbUs09CmvsPUqzyt0Mg2Cg@mail.gmail.com>
+References: <1329114588-15430-1-git-send-email-ldewangan@nvidia.com>
+	<1329114588-15430-3-git-send-email-ldewangan@nvidia.com>
+	<20120213211809.GI11077@ponder.secretlab.ca>
+	<CACRpkdZzcN5oi0ejeTQn3BNJ_w6XHsBQ_RoQMvpf8Lt2bOARAg@mail.gmail.com>
+	<4F3CBE3F.1090604@nvidia.com>
 Mime-Version: 1.0
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329403755-6396-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
-Cc: Wolfgang Denk <wd-ynQEQJNshbs@public.gmane.org>, Albert ARIBAUD <albert.u.boot-LhW3hqR2+23R7s880joybQ@public.gmane.org>, Graeme Russ <graeme.russ-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <4F3CBE3F.1090604@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, "dunlap@xenotime.net" <dunlap@xenotime.net>, "lrg@ti.com" <lrg@ti.com>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Since Tegra executes early code on an ARMv4T (but the rest on ARMv7)
-we must mark the new board init files for compilation with ARMv4t
-architecture.
+On Thu, Feb 16, 2012 at 9:28 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
+> Yes, I can add the open source also but like to be in incremental change.
+> Not together with open drain.
+> We can go with:
+> - open drain core driver support.
+> - open drain sysfs interface support
+> - open source core driver support
+> - open source sysfs interface.
+>
+> I have already changes for the first 2 which we can review/apply,
+> Meanwhile I will work on open source support.
+>
+> Does it look good?
 
- arch/arm/cpu/armv7/tegra2/config.mk |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Well as a patch concept it is OK but I have real bad feelings about
+patch  [2/4] and [4/4] adding sysfs.
 
-diff --git a/arch/arm/cpu/armv7/tegra2/config.mk b/arch/arm/cpu/armv7/tegra2/config.mk
-index 2303dba..4b43dde 100644
---- a/arch/arm/cpu/armv7/tegra2/config.mk
-+++ b/arch/arm/cpu/armv7/tegra2/config.mk
-@@ -28,6 +28,8 @@
- # file with compatible flags
- ifdef CONFIG_TEGRA2
- CFLAGS_arch/arm/lib/board.o += -march=armv4t
-+CFLAGS_common/board_f.o += -march=armv4t
-+CFLAGS_lib/initcall.o += -march=armv4t
- endif
- 
- USE_PRIVATE_LIBGCC = yes
--- 
-1.7.7.3
+What the GPIO subsystem really needs is to get rid of sysfs
+interfaces, have them deprecated and replaced with a
+per-gpiochip /dev/gpioN with ioctl()s or similar instead. The sysfs
+interface is just ... it won't scale.
+
+Yours,
+Linus Walleij
