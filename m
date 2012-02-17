@@ -1,27 +1,52 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 0/3] Open drain/open source support from gpio library
-Date: Fri, 17 Feb 2012 19:21:10 +0100
-Message-ID: <CACRpkdZTqS=BJ3x3ib8pByY6riT3nhuQuU4+Z9w4JanicBBiwA@mail.gmail.com>
-References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
-	<1329490582-22107-2-git-send-email-ldewangan@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: PCIe: Provide 3.3V supply voltage
+Date: Fri, 17 Feb 2012 20:16:05 +0100
+Message-ID: <20120217191605.GA11127@avionic-0098.adnet.avionic-design.de>
+References: <1329493468-7741-1-git-send-email-thierry.reding@avionic-design.de>
+ <20120217163931.GB961@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329490582-22107-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120217163931.GB961-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 17, 2012 at 3:56 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-> This patch is as per discussion on the patch
-> [PATCH V1] regulator: fixed: Support for open-drain gpio
-> where it was suggested to push the handling of open drain gpios
-> into the gpio libray.
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-For this patch set.
+* Mark Brown wrote:
+> On Fri, Feb 17, 2012 at 04:44:28PM +0100, Thierry Reding wrote:
+>=20
+> > +	err =3D regulator_set_voltage(regulator, 3300000, 3300000);
+> > +	if (err < 0)
+> > +		goto err_put;
+> > +
+>=20
+> This is a bit weird, why is this not just set by constraints?
 
-Yours,
-Linus Walleij
+I guess because I didn't know any better. I don't have access to the hardwa=
+re
+right now, so it'll have to wait until Monday. I'll follow up with a patch
+after I've verified that setting via constraints works.
+
+Thierry
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk8+p3UACgkQZ+BJyKLjJp8ZhwCgmbwQWck8m5c2FPAHdqX0d2X7
+yWsAn2EHzwRaqGE5wcF6SeQMgshn1AiV
+=nkmG
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
