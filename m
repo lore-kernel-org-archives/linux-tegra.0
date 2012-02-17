@@ -1,58 +1,46 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 1/3] Documentation: gpio: Add details of open-drain/source configuration
-Date: Fri, 17 Feb 2012 20:26:20 +0530
-Message-ID: <1329490582-22107-3-git-send-email-ldewangan@nvidia.com>
-References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, linus.walleij@stericsson.com, rdunlap@xenotime.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, ldewangan@nvidia.com
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH] ARM: tegra: PCIe: Provide 3.3V supply voltage
+Date: Fri, 17 Feb 2012 16:44:28 +0100
+Message-ID: <1329493468-7741-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding details of open drain(open collector) and open source
-(open emitter) configuration of the gpio so that client can
-set the pin as open drain at the time of gpio request.
+The PCIe reference clock needs a 3.3V supply voltage to work properly.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- Documentation/gpio.txt |   17 +++++++++++++++--
- 1 files changed, 15 insertions(+), 2 deletions(-)
+This patch is based on next-20120217. Note that PCIe works without this
+patch when the Linux kernel is booted with a combination of QuickBoot
+and U-Boot because either apparently sets LD0 to 3.3V. This is not the
+case when booting from mainline U-Boot, so it must be set explicitly.
 
-diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
-index 792faa3..f783e7f 100644
---- a/Documentation/gpio.txt
-+++ b/Documentation/gpio.txt
-@@ -302,6 +302,8 @@ where 'flags' is currently defined to specify the following properties:
+ arch/arm/mach-tegra/board-harmony-pcie.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
+index 33c4fed..d521cf4 100644
+--- a/arch/arm/mach-tegra/board-harmony-pcie.c
++++ b/arch/arm/mach-tegra/board-harmony-pcie.c
+@@ -45,6 +45,10 @@ static int __init harmony_pcie_init(void)
+ 	if (IS_ERR_OR_NULL(regulator))
+ 		goto err_reg;
  
- 	* GPIOF_INIT_LOW	- as output, set initial level to LOW
- 	* GPIOF_INIT_HIGH	- as output, set initial level to HIGH
-+	* GPIOF_OPEN_DRAIN	- gpio pin is open drain type.
-+	* GPIOF_OPEN_SOURCE	- gpio pin is open source type.
- 
- since GPIOF_INIT_* are only valid when configured as output, so group valid
- combinations as:
-@@ -310,8 +312,19 @@ combinations as:
- 	* GPIOF_OUT_INIT_LOW	- configured as output, initial level LOW
- 	* GPIOF_OUT_INIT_HIGH	- configured as output, initial level HIGH
- 
--In the future, these flags can be extended to support more properties such
--as open-drain status.
-+When setting the flag as GPIOF_OPEN_DRAIN then it will assume that pins is
-+open drain type. Such pins will not be driven to 1 in output mode. It is
-+require to connect pull-up on such pins. By enabling this flag, gpio lib will
-+make the direction to input when it is asked to set value of 1 in output mode
-+to make the pin HIGH. The pin is make to LOW by driving value 0 in output mode.
++	err = regulator_set_voltage(regulator, 3300000, 3300000);
++	if (err < 0)
++		goto err_put;
 +
-+When setting the flag as GPIOF_OPEN_SOURCE then it will assume that pins is
-+open source type. Such pins will not be driven to 0 in output mode. It is
-+require to connect pull-down on such pin. By enabling this flag, gpio lib will
-+make the direction to input when it is asked to set value of 0 in output mode
-+to make the pin LOW. The pin is make to HIGH by driving value 1 in output mode.
-+
-+In the future, these flags can be extended to support more properties.
+ 	regulator_enable(regulator);
  
- Further more, to ease the claim/release of multiple GPIOs, 'struct gpio' is
- introduced to encapsulate all three fields as:
+ 	err = tegra_pcie_init(true, true);
+@@ -55,6 +59,7 @@ static int __init harmony_pcie_init(void)
+ 
+ err_pcie:
+ 	regulator_disable(regulator);
++err_put:
+ 	regulator_put(regulator);
+ err_reg:
+ 	gpio_free(TEGRA_GPIO_EN_VDD_1V05_GPIO);
 -- 
-1.7.1.1
+1.7.9.1
