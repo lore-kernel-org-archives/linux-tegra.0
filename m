@@ -1,11 +1,13 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [PATCH V2 0/3] Open drain/open source support from gpio library
-Date: Fri, 17 Feb 2012 20:26:18 +0530
-Message-ID: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, linus.walleij@stericsson.com, rdunlap@xenotime.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, ldewangan@nvidia.com
+Date: Fri, 17 Feb 2012 20:26:19 +0530
+Message-ID: <1329490582-22107-2-git-send-email-ldewangan@nvidia.com>
+References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 This patch is as per discussion on the patch
@@ -34,4 +36,3 @@ Laxman Dewangan (3):
  drivers/gpio/gpiolib.c |   83 ++++++++++++++++++++++++++++++++++++++++++++++-
  include/linux/gpio.h   |    6 +++
  3 files changed, 102 insertions(+), 4 deletions(-)
-
