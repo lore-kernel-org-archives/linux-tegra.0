@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 3/3] gpio: gpiolib: Support for open source/emitter gpios
-Date: Fri, 17 Feb 2012 20:26:22 +0530
-Message-ID: <1329490582-22107-5-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V2 1/3] Documentation: gpio: Add details of open-drain/source configuration
+Date: Fri, 17 Feb 2012 20:26:20 +0530
+Message-ID: <1329490582-22107-3-git-send-email-ldewangan@nvidia.com>
 References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
@@ -10,128 +10,49 @@ To: broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, linus.wallei
 Cc: linux-tegra@vger.kernel.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Adding support for the open source gpio on which client
-can specify the open source property through GPIO flag
-GPIOF_OPEN_SOURCE at the time of gpio request.
-The open source pins are normally pulled low and it
-cannot be driven to output with value of 0 and so
-when client request for setting the pin to LOW, the
-gpio will be set to input direction to make pin in tristate
-and hence PULL-DOWN on pins will make the state to LOW.
-The open source pin can be driven to HIGH by setting output
-with value of 1.
+Adding details of open drain(open collector) and open source
+(open emitter) configuration of the gpio so that client can
+set the pin as open drain at the time of gpio request.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpiolib.c |   39 +++++++++++++++++++++++++++++++++++++++
- include/linux/gpio.h   |    3 +++
- 2 files changed, 42 insertions(+), 0 deletions(-)
+ Documentation/gpio.txt |   17 +++++++++++++++--
+ 1 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 9940777..3b089ef 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -59,6 +59,7 @@ struct gpio_desc {
- #define FLAG_TRIG_RISE	6	/* trigger on rising edge */
- #define FLAG_ACTIVE_LOW	7	/* sysfs value has active low */
- #define FLAG_OPEN_DRAIN	8	/* Gpio is open drain type */
-+#define FLAG_OPEN_SOURCE 9	/* Gpio is open source type */
+diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
+index 792faa3..f783e7f 100644
+--- a/Documentation/gpio.txt
++++ b/Documentation/gpio.txt
+@@ -302,6 +302,8 @@ where 'flags' is currently defined to specify the following properties:
  
- #define ID_SHIFT	16	/* add new flags before this one */
+ 	* GPIOF_INIT_LOW	- as output, set initial level to LOW
+ 	* GPIOF_INIT_HIGH	- as output, set initial level to HIGH
++	* GPIOF_OPEN_DRAIN	- gpio pin is open drain type.
++	* GPIOF_OPEN_SOURCE	- gpio pin is open source type.
  
-@@ -1263,6 +1264,7 @@ void gpio_free(unsigned gpio)
- 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 		clear_bit(FLAG_REQUESTED, &desc->flags);
- 		clear_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+		clear_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 	} else
- 		WARN_ON(extra_checks);
+ since GPIOF_INIT_* are only valid when configured as output, so group valid
+ combinations as:
+@@ -310,8 +312,19 @@ combinations as:
+ 	* GPIOF_OUT_INIT_LOW	- configured as output, initial level LOW
+ 	* GPIOF_OUT_INIT_HIGH	- configured as output, initial level HIGH
  
-@@ -1287,6 +1289,9 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (flags & GPIOF_OPEN_DRAIN)
- 		set_bit(FLAG_OPEN_DRAIN, &gpio_desc[gpio].flags);
- 
-+	if (flags & GPIOF_OPEN_SOURCE)
-+		set_bit(FLAG_OPEN_SOURCE, &gpio_desc[gpio].flags);
+-In the future, these flags can be extended to support more properties such
+-as open-drain status.
++When setting the flag as GPIOF_OPEN_DRAIN then it will assume that pins is
++open drain type. Such pins will not be driven to 1 in output mode. It is
++require to connect pull-up on such pins. By enabling this flag, gpio lib will
++make the direction to input when it is asked to set value of 1 in output mode
++to make the pin HIGH. The pin is make to LOW by driving value 0 in output mode.
 +
- 	if (flags & GPIOF_DIR_IN)
- 		err = gpio_direction_input(gpio);
- 	else
-@@ -1440,6 +1445,10 @@ int gpio_direction_output(unsigned gpio, int value)
- 	if (value && test_bit(FLAG_OPEN_DRAIN,  &desc->flags))
- 		return gpio_direction_input(gpio);
- 
-+	/* Open source pin should not be driven to 0 */
-+	if (!value && test_bit(FLAG_OPEN_SOURCE,  &desc->flags))
-+		return gpio_direction_input(gpio);
++When setting the flag as GPIOF_OPEN_SOURCE then it will assume that pins is
++open source type. Such pins will not be driven to 0 in output mode. It is
++require to connect pull-down on such pin. By enabling this flag, gpio lib will
++make the direction to input when it is asked to set value of 0 in output mode
++to make the pin LOW. The pin is make to HIGH by driving value 1 in output mode.
 +
- 	spin_lock_irqsave(&gpio_lock, flags);
++In the future, these flags can be extended to support more properties.
  
- 	if (!gpio_is_valid(gpio))
-@@ -1601,6 +1610,32 @@ static void _gpio_set_open_drain_value(unsigned gpio,
- 					__func__, gpio, err);
- }
- 
-+/*
-+ *  _gpio_set_open_source() - Set the open source gpio's value.
-+ * @gpio: Gpio whose state need to be set.
-+ * @chip: Gpio chip.
-+ * @value: Non-zero for setting it HIGH otherise it will set to LOW.
-+ */
-+static void _gpio_set_open_source_value(unsigned gpio,
-+			struct gpio_chip *chip, int value)
-+{
-+	int err = 0;
-+	if (value) {
-+		err = chip->direction_output(chip, gpio - chip->base, 1);
-+		if (!err)
-+			set_bit(FLAG_IS_OUT, &gpio_desc[gpio].flags);
-+	} else {
-+		err = chip->direction_input(chip, gpio - chip->base);
-+		if (!err)
-+			clear_bit(FLAG_IS_OUT, &gpio_desc[gpio].flags);
-+	}
-+	trace_gpio_direction(gpio, !value, err);
-+	if (err < 0)
-+		pr_err("%s: Error in set_value for open source gpio%d err %d\n",
-+					__func__, gpio, err);
-+}
-+
-+
- /**
-  * __gpio_set_value() - assign a gpio's value
-  * @gpio: gpio whose value will be assigned
-@@ -1619,6 +1654,8 @@ void __gpio_set_value(unsigned gpio, int value)
- 	trace_gpio_value(gpio, 0, value);
- 	if (test_bit(FLAG_OPEN_DRAIN,  &gpio_desc[gpio].flags))
- 		_gpio_set_open_drain_value(gpio, chip, value);
-+	else if (test_bit(FLAG_OPEN_SOURCE,  &gpio_desc[gpio].flags))
-+		_gpio_set_open_source_value(gpio, chip, value);
- 	else
- 		chip->set(chip, gpio - chip->base, value);
- }
-@@ -1689,6 +1726,8 @@ void gpio_set_value_cansleep(unsigned gpio, int value)
- 	trace_gpio_value(gpio, 0, value);
- 	if (test_bit(FLAG_OPEN_DRAIN,  &gpio_desc[gpio].flags))
- 		_gpio_set_open_drain_value(gpio, chip, value);
-+	else if (test_bit(FLAG_OPEN_SOURCE,  &gpio_desc[gpio].flags))
-+		_gpio_set_open_source_value(gpio, chip, value);
- 	else
- 		chip->set(chip, gpio - chip->base, value);
- }
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 66a5b2e..67851bb 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -17,6 +17,9 @@
- /* Gpio pin is open drain */
- #define GPIOF_OPEN_DRAIN	(1 << 2)
- 
-+/* Gpio pin is open source */
-+#define GPIOF_OPEN_SOURCE	(1 << 3)
-+
- /**
-  * struct gpio - a structure describing a GPIO with configuration
-  * @gpio:	the GPIO number
+ Further more, to ease the claim/release of multiple GPIOs, 'struct gpio' is
+ introduced to encapsulate all three fields as:
 -- 
 1.7.1.1
