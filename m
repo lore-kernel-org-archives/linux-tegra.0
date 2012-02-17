@@ -1,38 +1,142 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/3] Open drain/open source support from gpio library
-Date: Fri, 17 Feb 2012 20:26:19 +0530
-Message-ID: <1329490582-22107-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 2/3] gpio: gpiolib: Support for open drain/collector gpios
+Date: Fri, 17 Feb 2012 20:26:21 +0530
+Message-ID: <1329490582-22107-4-git-send-email-ldewangan@nvidia.com>
 References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, linus.walleij@stericsson.com, rdunlap@xenotime.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-This patch is as per discussion on the patch
-[PATCH V1] regulator: fixed: Support for open-drain gpio 
-where it was suggested to push the handling of open drain gpios
-into the gpio libray.
+Adding support for the open drain gpio on which client
+can specify the open drain property through GPIO flag
+GPIOF_OPEN_DRAIN at the time of gpio request.
+The open drain pins are normally pulled high and it
+cannot be driven to output with value of 1 and so
+when client request for setting the pin to HIGH, the
+gpio will be set to input direction to make pin in tristate
+and hence PULL-UP on pins will make the state to HIGH.
+The open drain pin can be driven to LOW by setting output
+with value of 0.
 
-This is series of patches  to add support of the open drain and open
-source gpios in standard gpio library.
-- Added GPIOF_OPEN_DRAIN flag so that client can request the
-  gpio with this flag. Handle open drain gpio configuration properly.
-- Added GPIOF_OPEN_SOURCE flag so that client can request the
-  gpio with this flag. Handle open source gpio configuration properly.
-- Gpio documentation changes to have support for open-drain.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/gpio/gpiolib.c |   44 ++++++++++++++++++++++++++++++++++++++++++--
+ include/linux/gpio.h   |    3 +++
+ 2 files changed, 45 insertions(+), 2 deletions(-)
 
-From the patch series of V1, it is discussed to
-- remove the sysfs interface supportsi for open drain.
-- Added open source support as a new change.
-
-Laxman Dewangan (3):
-  Documentation: gpio: Add details of open-drain/source configuration
-  gpio: gpiolib: Support for open drain/collector gpios
-  gpio: gpiolib: Support for open source/emitter gpios
-
- Documentation/gpio.txt |   17 +++++++++-
- drivers/gpio/gpiolib.c |   83 ++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/gpio.h   |    6 +++
- 3 files changed, 102 insertions(+), 4 deletions(-)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 17fdf4b..9940777 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -58,6 +58,7 @@ struct gpio_desc {
+ #define FLAG_TRIG_FALL	5	/* trigger on falling edge */
+ #define FLAG_TRIG_RISE	6	/* trigger on rising edge */
+ #define FLAG_ACTIVE_LOW	7	/* sysfs value has active low */
++#define FLAG_OPEN_DRAIN	8	/* Gpio is open drain type */
+ 
+ #define ID_SHIFT	16	/* add new flags before this one */
+ 
+@@ -1261,6 +1262,7 @@ void gpio_free(unsigned gpio)
+ 		module_put(desc->chip->owner);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
++		clear_bit(FLAG_OPEN_DRAIN, &desc->flags);
+ 	} else
+ 		WARN_ON(extra_checks);
+ 
+@@ -1282,6 +1284,9 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+ 	if (err)
+ 		return err;
+ 
++	if (flags & GPIOF_OPEN_DRAIN)
++		set_bit(FLAG_OPEN_DRAIN, &gpio_desc[gpio].flags);
++
+ 	if (flags & GPIOF_DIR_IN)
+ 		err = gpio_direction_input(gpio);
+ 	else
+@@ -1431,6 +1436,10 @@ int gpio_direction_output(unsigned gpio, int value)
+ 	struct gpio_desc	*desc = &gpio_desc[gpio];
+ 	int			status = -EINVAL;
+ 
++	/* Open drain pin should not be driven to 1 */
++	if (value && test_bit(FLAG_OPEN_DRAIN,  &desc->flags))
++		return gpio_direction_input(gpio);
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	if (!gpio_is_valid(gpio))
+@@ -1567,6 +1576,31 @@ int __gpio_get_value(unsigned gpio)
+ }
+ EXPORT_SYMBOL_GPL(__gpio_get_value);
+ 
++/*
++ *  _gpio_set_open_drain_value() - Set the open drain gpio's value.
++ * @gpio: Gpio whose state need to be set.
++ * @chip: Gpio chip.
++ * @value: Non-zero for setting it HIGH otherise it will set to LOW.
++ */
++static void _gpio_set_open_drain_value(unsigned gpio,
++			struct gpio_chip *chip, int value)
++{
++	int err = 0;
++	if (value) {
++		err = chip->direction_input(chip, gpio - chip->base);
++		if (!err)
++			clear_bit(FLAG_IS_OUT, &gpio_desc[gpio].flags);
++	} else {
++		err = chip->direction_output(chip, gpio - chip->base, 0);
++		if (!err)
++			set_bit(FLAG_IS_OUT, &gpio_desc[gpio].flags);
++	}
++	trace_gpio_direction(gpio, value, err);
++	if (err < 0)
++		pr_err("%s: Error in set_value for open drain gpio%d err %d\n",
++					__func__, gpio, err);
++}
++
+ /**
+  * __gpio_set_value() - assign a gpio's value
+  * @gpio: gpio whose value will be assigned
+@@ -1583,7 +1617,10 @@ void __gpio_set_value(unsigned gpio, int value)
+ 	chip = gpio_to_chip(gpio);
+ 	WARN_ON(chip->can_sleep);
+ 	trace_gpio_value(gpio, 0, value);
+-	chip->set(chip, gpio - chip->base, value);
++	if (test_bit(FLAG_OPEN_DRAIN,  &gpio_desc[gpio].flags))
++		_gpio_set_open_drain_value(gpio, chip, value);
++	else
++		chip->set(chip, gpio - chip->base, value);
+ }
+ EXPORT_SYMBOL_GPL(__gpio_set_value);
+ 
+@@ -1650,7 +1687,10 @@ void gpio_set_value_cansleep(unsigned gpio, int value)
+ 	might_sleep_if(extra_checks);
+ 	chip = gpio_to_chip(gpio);
+ 	trace_gpio_value(gpio, 0, value);
+-	chip->set(chip, gpio - chip->base, value);
++	if (test_bit(FLAG_OPEN_DRAIN,  &gpio_desc[gpio].flags))
++		_gpio_set_open_drain_value(gpio, chip, value);
++	else
++		chip->set(chip, gpio - chip->base, value);
+ }
+ EXPORT_SYMBOL_GPL(gpio_set_value_cansleep);
+ 
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index 38ac48b..66a5b2e 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -14,6 +14,9 @@
+ #define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
+ #define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
+ 
++/* Gpio pin is open drain */
++#define GPIOF_OPEN_DRAIN	(1 << 2)
++
+ /**
+  * struct gpio - a structure describing a GPIO with configuration
+  * @gpio:	the GPIO number
+-- 
+1.7.1.1
