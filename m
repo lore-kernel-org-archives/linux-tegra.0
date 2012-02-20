@@ -1,37 +1,65 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V2] mfd: tps65910: Add wakeup support
-Date: Sun, 19 Feb 2012 13:12:38 +0530
-Message-ID: <4F40A7EE.8060805@nvidia.com>
-References: <1327304775-12202-1-git-send-email-ldewangan@nvidia.com> <20120126105452.GB8041@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120126105452.GB8041@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, "jedu@slimlogic.co.uk" <jedu@slimlogic.co.uk>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>, "gg@slimlogic.co.uk" <gg@slimlogic.co.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH 1/2] Documentation/gpio.txt: Explain expected pinctrl interaction
+Date: Sun, 19 Feb 2012 23:27:42 -0700
+Message-ID: <1329719263-18971-1-git-send-email-swarren@nvidia.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Randy Dunlap <rdunlap@xenotime.net>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: Chris Ball <cjb@laptop.org>, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Samuel,
-Can you please review this patch? This is require in order of enabling 
-the wakeup from sub devices of this pmic device like  rtc/onkey.
+Update gpio.txt based on recent discussions regarding interaction with the
+pinctrl subsystem.
 
-Thanks,
-Laxman
+Previously, gpio_request() was described as explicitly not performing any
+required mux setup operations etc.
 
-On Thursday 26 January 2012 04:24 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Mon, Jan 23, 2012 at 01:16:15PM +0530, Laxman Dewangan wrote:
->> Implementing irq_set_wake() so that device should able
->> to wakeup the system through different interrupt provided
->> by this device like gpios, onkey, rtc etc.
-> Reviewed-by: Mark Brown<broonie@opensource.wolfsonmicro.com>
->
-> It will have the side effect of making all interrupts on the PMIC wake
-> if any of them does but I suspect this is actually going to be fine in
-> practice.
->
-> * Unknown Key
-> * 0x6E30FDDD
+Now, gpio_request() is explicitly as explicitly performing any required mux
+setup operations where possible. In the case it isn't, platform code is
+required to have set up any required muxing or other configuration prior to
+gpio_request() being called, in order to maintain the same semantics.
+
+This is achieved by gpiolib drivers calling e.g. pinctrl_request_gpio() in
+their .request() operation.
+
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ Documentation/gpio.txt |   22 +++++++++++++++++++---
+ 1 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
+index 792faa3..3c4a702 100644
+--- a/Documentation/gpio.txt
++++ b/Documentation/gpio.txt
+@@ -271,9 +271,25 @@ Some platforms may also use knowledge about what GPIOs are active for
+ power management, such as by powering down unused chip sectors and, more
+ easily, gating off unused clocks.
+ 
+-Note that requesting a GPIO does NOT cause it to be configured in any
+-way; it just marks that GPIO as in use.  Separate code must handle any
+-pin setup (e.g. controlling which pin the GPIO uses, pullup/pulldown).
++Requesting a GPIO should cause any pin multiplexing hardware to be programmed
++to route the GPIO signal to the appropriate pin. In some cases, this requires
++programming separate pin multiplexing hardware outside the GPIO controller.
++Equally, for GPIOs that use pins known to the pinctrl subsystem, that
++subsystem should be informed of their use. These requirements may be satisfied
++by having a gpiolib driver's .request() operation call pinctrl_request_gpio().
++Similarly, a gpiolib driver's .free() operation may call pinctrl_free_gpio().
++
++Some platforms allow some or all GPIO signals to be routed to different pins.
++Similarly, other aspects of the GPIO or pin may need to be configured, such as
++pullup/pulldown. Platform software should arrange that any such details are
++configured priored to gpio_request() being called for those GPIOs, such that
++GPIO users need not be aware of these details.
++
++gpiolib drivers may need to call additional pinctrl APIs to implement certain
++operations. This would be the case if e.g. GPIO input/output value is
++controlled by a GPIO HW module, whereas GPIO direction is controlled by a
++separate pin controller HW module. Functions pinctrl_gpio_direction_input()
++and pinctrl_gpio_direction_output() may be used to implement this.
+ 
+ Also note that it's your responsibility to have stopped using a GPIO
+ before you free it.
+-- 
+1.7.5.4
+
