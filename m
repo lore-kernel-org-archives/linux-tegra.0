@@ -1,29 +1,39 @@
-From: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH V2] mfd: tps65910: Add wakeup support
-Date: Mon, 20 Feb 2012 17:57:39 +0100
-Message-ID: <20120220165739.GD5387@sortiz-mobl>
-References: <1327304775-12202-1-git-send-email-ldewangan@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: PCIe device tree support
+Date: Mon, 20 Feb 2012 20:18:04 +0100
+Message-ID: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1327304775-12202-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: jedu-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, lrg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Laxman,
 
-On Mon, Jan 23, 2012 at 01:16:15PM +0530, Laxman Dewangan wrote:
-> Implementing irq_set_wake() so that device should able
-> to wakeup the system through different interrupt provided
-> by this device like gpios, onkey, rtc etc.
-Thanks, patch applied. And thanks to Mark for the review.
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cheers,
-Samuel.
+Hi,
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+I would like to add device tree support for the Tegra2 PCIe controller. From
+what I understand this will require the PCIe code to be rewritten as a proper
+platform driver in order to be able to instantiate it via the device tree. Is
+that correct?
+
+Thierry
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk9CnGwACgkQZ+BJyKLjJp/J8ACgquTqebfKddXRjv6LFKkE0F1Q
+7GMAnjNXcdyc/xN5MbmACA4Fyze43Y7O
+=hpmK
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
