@@ -1,47 +1,149 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: PCIe device tree support
-Date: Wed, 22 Feb 2012 08:01:55 -0800
-Message-ID: <CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
-References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com> <20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v3 03/10] of: Add PWM support.
+Date: Wed, 22 Feb 2012 16:15:11 +0000
+Message-ID: <201202221615.11605.arnd@arndb.de>
+References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de> <1329923841-32017-4-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120222082449.GA15157-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <1329923841-32017-4-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 22, 2012 at 12:24 AM, Thierry Reding
-<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> [Adding Jesse Barnes and the linux-pci mailing list to CC.]
->
-> * Stephen Warren wrote:
->> Thierry Reding wrote at Monday, February 20, 2012 12:18 PM:
->> > I would like to add device tree support for the Tegra2 PCIe controller. From
->> > what I understand this will require the PCIe code to be rewritten as a proper
->> > platform driver in order to be able to instantiate it via the device tree. Is
->> > that correct?
->>
->> That's probably the cleanest way, yes.
->>
->> Is there a drivers/ directory for PCI/PCIe host controllers? Moving the
->> code there might be nice if so, although IIRC when I asked Olof about
->> that a number of months back, he said quite a few host controllers were
->> in arch/...
->
-> Most PCI/PCIe host controller drivers seem to currently be in arch/. Is there
-> a specific reason for this? Would it be acceptable to put any new drivers
-> below drivers/pci/?
+On Wednesday 22 February 2012, Thierry Reding wrote:
+> This patch adds helpers to support device tree bindings for the generic
+> PWM API. Device tree binding documentation for PWM controllers is also
+> provided.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> 
+>  Documentation/devicetree/bindings/pwm/pwm.txt |   48 +++++++++
+>  drivers/of/Kconfig                            |    6 +
+>  drivers/of/Makefile                           |    1 +
+>  drivers/of/pwm.c                              |  130 +++++++++++++++++++++++++
+>  include/linux/of_pwm.h                        |   51 ++++++++++
+>  include/linux/pwm.h                           |   17 +++
 
-PCI host bridges aren't architected, so discovering them and their
-properties has historically been mostly architecture-specific.  ACPI
-is one exception (with a driver in drivers/acpi/pci_root.c) and it
-sounds like device tree might be a similar exception.  If you can make
-a non-arch-specific driver and put it somewhere other than arch/, I'm
-all in favor of that, especially if you can make it usable by other
-arches that use device tree.  Where to put it?  I dunno.  drivers/pci/
-sounds like a reasonable possibility.
+I think it would make more sense to stick the device tree specific parts
+into drivers/pwm/of.c instead of drivers/of/pwm.c, but it's not a strong
+preference on my part.
 
-Bjorn
+> @@ -0,0 +1,48 @@
+> +Specifying PWM information for devices
+> +======================================
+> +
+> +1) PWM user nodes
+> +-----------------
+> +
+> +PWM users should specify a list of PWM devices that they want to use
+> +with a property containing a 'pwm-list':
+> +
+> +	pwm-list ::= <single-pwm> [pwm-list]
+> +	single-pwm ::= <pwm-phandle> <pwm-specifier>
+> +	pwm-phandle : phandle to PWM controller node
+> +	pwm-specifier : array of #pwm-cells specifying the given PWM
+> +			(controller specific)
+> +
+> +PWM properties should be named "[<name>-]pwms". Exact meaning of each
+> +pwms property must be documented in the device tree binding for each
+> +device.
+> +
+> +The following example could be used to describe a PWM-based backlight
+> +device:
+> +
+> +	pwm: pwm {
+> +		#pwm-cells = <2>;
+> +	};
+> +
+> +	[...]
+> +
+> +	bl: backlight {
+> +		pwms = <&pwm 0 5000000>;
+> +	};
+> +
+> +pwm-specifier typically encodes the chip-relative PWM number and the PWM
+> +period in nanoseconds.
+
+I like these bindings, this looks very straightforward to use while also
+able to describe all possible cases.
+
+> +/**
+> + * of_node_to_pwmchip() - finds the PWM chip associated with a device node
+> + * @np: device node of the PWM chip
+> + *
+> + * Returns a pointer to the PWM chip associated with the specified device
+> + * node or NULL if the device node doesn't represent a PWM chip.
+> + */
+> +struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
+> +{
+> +	return pwmchip_find(np, of_pwmchip_is_match);
+> +}
+> +
+> +int of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args,
+> +			struct pwm_spec *spec)
+> +{
+> +	if (pc->of_pwm_n_cells < 2)
+> +		return -EINVAL;
+> +
+> +	if (args->args_count < pc->of_pwm_n_cells)
+> +		return -EINVAL;
+> +
+> +	if (args->args[0] >= pc->npwm)
+> +		return -EINVAL;
+> +
+> +	if (spec)
+> +		spec->period = args->args[1];
+> +
+> +	return args->args[0];
+> +}
+
+I'm not sure why these functions are global. They are clearly marked
+so in your header file, but it seems that these are an implementation
+detail that neither a pwm controller driver not a driver using one
+would need to use directly.
+
+> +/**
+> + * of_get_named_pwm() - get a PWM number and period to use with the PWM API
+> + * @np: device node to get the PWM from
+> + * @propname: property name containing PWM specifier(s)
+> + * @index: index of the PWM
+> + * @spec: a pointer to a struct pwm_spec to fill in
+> + *
+> + * Returns PWM number to use with the Linux generic PWM API or a negative
+> + * error code on failure. If @spec is not NULL the function fills in the
+> + * values parsed from the device tree.
+> + */
+> +int of_get_named_pwm(struct device_node *np, const char *propname,
+> +		     int index, struct pwm_spec *spec)
+> +{
+
+This interface does not feel right to me, in multiple ways:
+
+* I would expect to pass a struct device in, not a device_node.
+
+* Why not include the pwm_request() call in this and return the
+  pwm_device directly? You said that you want to get rid of the
+  pwm_id eventually, which is a good idea, but this interface still
+  forces one to use it.
+
+* It is not clear what a pwm_spec is used for, or why a device
+  driver would need to be bothered by this. Maybe it just needs
+  more explanation, but it seems to me that if you do the previous
+  change, the pwm_spec would not be needed either.
+
+> +EXPORT_SYMBOL(of_get_named_pwm);
+
+EXPORT_SYMBOL_GPL?
+
+> +static inline int of_get_named_pwm(struct device_node *np,
+> +                                  const char *propname, int index,
+> +                                  unsigned int *period_ns)
+> +{
+
+The function prototype does not match.
+
+	Arnd
