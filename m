@@ -1,72 +1,111 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 02/10] pwm: Allow chips to support multiple PWMs.
-Date: Thu, 23 Feb 2012 17:04:20 +0100
-Message-ID: <20120223160420.GA9899@avionic-0098.mockup.avionic-design.de>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <201202221634.45159.arnd@arndb.de>
- <20120223081235.GC8621@avionic-0098.mockup.avionic-design.de>
- <201202231407.12981.arnd@arndb.de>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: PCIe device tree support
+Date: Thu, 23 Feb 2012 08:16:58 -0800
+Message-ID: <20120223081658.42af61a3@jbarnes-desktop>
+References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com>
+	<20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
+	<CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
+	<20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201202231407.12981.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/O9WQZq4rUoZ44siT93zTBkC"; protocol="application/pgp-signature"
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Olof Johansson (olof@lixom.net)" <olof@lixom.net>, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/O9WQZq4rUoZ44siT93zTBkC
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-* Arnd Bergmann wrote:
-> On Thursday 23 February 2012, Thierry Reding wrote:
-> > > Is this only used for the device tree functions? If so, I would recom=
-mend
-> > > making it less generic and always search for a device node.
+On Thu, 23 Feb 2012 07:03:55 +0100
+Thierry Reding <thierry.reding@avionic-design.de> wrote:
+
+> * Bjorn Helgaas wrote:
+> > On Wed, Feb 22, 2012 at 12:24 AM, Thierry Reding
+> > <thierry.reding@avionic-design.de> wrote:
+> > > [Adding Jesse Barnes and the linux-pci mailing list to CC.]
+> > >
+> > > * Stephen Warren wrote:
+> > >> Thierry Reding wrote at Monday, February 20, 2012 12:18 PM:
+> > >> > I would like to add device tree support for the Tegra2 PCIe contro=
+ller. From
+> > >> > what I understand this will require the PCIe code to be rewritten =
+as a proper
+> > >> > platform driver in order to be able to instantiate it via the devi=
+ce tree. Is
+> > >> > that correct?
+> > >>
+> > >> That's probably the cleanest way, yes.
+> > >>
+> > >> Is there a drivers/ directory for PCI/PCIe host controllers? Moving =
+the
+> > >> code there might be nice if so, although IIRC when I asked Olof about
+> > >> that a number of months back, he said quite a few host controllers w=
+ere
+> > >> in arch/...
+> > >
+> > > Most PCI/PCIe host controller drivers seem to currently be in arch/. =
+Is there
+> > > a specific reason for this? Would it be acceptable to put any new dri=
+vers
+> > > below drivers/pci/?
 > >=20
-> > It is currently only used to look up a struct pwm_chip for a given stru=
-ct
-> > device_node, yes. But I can see other uses for this. For instance this =
-could
-> > be useful if we ever want to provide an alternative way of requesting a=
- PWM
-> > on a per-chip basis.
+> > PCI host bridges aren't architected, so discovering them and their
+> > properties has historically been mostly architecture-specific.  ACPI
+> > is one exception (with a driver in drivers/acpi/pci_root.c) and it
+> > sounds like device tree might be a similar exception.  If you can make
+> > a non-arch-specific driver and put it somewhere other than arch/, I'm
+> > all in favor of that, especially if you can make it usable by other
+> > arches that use device tree.  Where to put it?  I dunno.  drivers/pci/
+> > sounds like a reasonable possibility.
 >=20
-> Nah, just keep it simple for now. If we need it later, we can still
-> add something like this back, but for now it's just a source of
-> confusion and possible bugs.
-
-Will do.
-
-> > I was again basically looking at gpiolib for inspiration (maybe I shoul=
-d stop
-> > doing that :-). Maybe gpiolib should be reworked to use seq_file's iter=
-ator
-> > interface as well? Just in case anybody else turns to gpiolib for
-> > inspiration.
+> I don't think it would be possible to write a driver that works for all
+> device tree based boards or architectures. As you said the implementation=
+ is
+> very hardware specific and probably couldn't even be generalized among two
+> chipsets of the same architecture.
 >=20
-> Good idea. Would you be able to send a patch for that, too? I would guess
-> converting both at the same time would be easier for you than splitting
-> the work between two people.
+> However there has recently been a lot of work to move out arch-specific
+> drivers for PWM, GPIO and others out of arch/ and into respective directo=
+ries
+> below drivers/. The reason I asked was because I think the same could be =
+done
+> for PCI/PCIe.
 
-I'll take a shot at it. It may take some time, though.
+I think that makes sense for stuff that may be shared between arches,
+but host bridges are generally part of the core architecture of the
+system, so factoring them out would just be code shuffling without any
+real gain.
 
-Thierry
+But for shared code, drivers/pci is definitely the right place.
 
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature
+Thanks,
+Jesse
+
+--Sig_/O9WQZq4rUoZ44siT93zTBkC
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk9GY4QACgkQZ+BJyKLjJp93wQCeOUNp+dNGo7L9VFwMswNJj3oQ
-2ScAoLEDXaSCp5EDexf5XFFfilo4SwrC
-=WJrc
+iQIcBAEBAgAGBQJPRmZ6AAoJEIEoDkX4Qk9hzc0P/j8iuofmrwfHcJR+jDak0WfY
+4Or6xTbdzahh8owgcYrgefLPFq/VtIJ8cdhhEPC2JlQ2ybXVLgGZzgjIiSj/2jMi
+RR6is5QjRe64c025X0rEMe/bWPffrAzyxMFt8hguqlx2uG2AiLW5adGMfuhpIFEg
+4w1b0+jGDuKJvU2Q1E/Pvbzq19oa9Gxyu1YE0cGUfN3OQjeit9d0yJsr+XuL5WBx
+tI6tRu7BrGUPq69nz7enU698LBA2RJ66gS1eJAO5lMqt1RwXyAk4oX20eMofDb9F
+EjmwCTkdR6OnR34zBs0IhvR4TVtnrBYRqaHiPkUn6xq3rh6mOaYBlO2TMxUtJmSa
+BzuEPz0Up9X+QpMd8pJWU8ZwU1U1bxlxXLAtfNZkm81qKIJnHAEw0BoZW3U7e2YP
+MYywHGKYXd0b/rKPrdq7Kiuva2Pg1SBZW1ilBUA1Cu5lbSRo4HsV9f7h8HpGDJ8m
+385ihYwq8W2zP52l3akag9hWFaXFGYfmlvGUruZ0z3CCkOtpy3ojLuD84YUMdU/u
+mMm90EfmlZhQVUKH/Ln3CzcWBfBtcVGP433UHKpiTZHz+jihj/AGbLBwEq1wVscu
+XDd2Mxpn03wleSNsOG7dXjHjqRrkzleum2aSt4sXqjk7wjsSQ3aFOKVTjw2PpEMT
+VaTbGJf/udb3Au0LcwZe
+=T44v
 -----END PGP SIGNATURE-----
 
---zhXaljGHf11kAtnf--
+--Sig_/O9WQZq4rUoZ44siT93zTBkC--
