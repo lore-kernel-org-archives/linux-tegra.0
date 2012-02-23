@@ -1,14 +1,14 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 03/10] of: Add PWM support.
-Date: Thu, 23 Feb 2012 08:55:37 +0100
-Message-ID: <20120223075537.GB8621@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v3 02/10] pwm: Allow chips to support multiple PWMs.
+Date: Thu, 23 Feb 2012 09:12:35 +0100
+Message-ID: <20120223081235.GC8621@avionic-0098.mockup.avionic-design.de>
 References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-4-git-send-email-thierry.reding@avionic-design.de>
- <201202221615.11605.arnd@arndb.de>
+ <1329923841-32017-3-git-send-email-thierry.reding@avionic-design.de>
+ <201202221634.45159.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6371645564739251824=="
+Content-Type: multipart/mixed; boundary="===============2201354784055314282=="
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201202221615.11605.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <201202221634.45159.arnd-r2nGTMty4D4@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
@@ -23,194 +23,125 @@ Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6371645564739251824==
+--===============2201354784055314282==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="R3G7APHDIzY6R/pk"
+	protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
 Content-Disposition: inline
 
 
---R3G7APHDIzY6R/pk
+--JWEK1jqKZ6MHAcjA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 * Arnd Bergmann wrote:
 > On Wednesday 22 February 2012, Thierry Reding wrote:
-> > This patch adds helpers to support device tree bindings for the generic
-> > PWM API. Device tree binding documentation for PWM controllers is also
-> > provided.
-> >=20
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> >=20
-> >  Documentation/devicetree/bindings/pwm/pwm.txt |   48 +++++++++
-> >  drivers/of/Kconfig                            |    6 +
-> >  drivers/of/Makefile                           |    1 +
-> >  drivers/of/pwm.c                              |  130 +++++++++++++++++=
-++++++++
-> >  include/linux/of_pwm.h                        |   51 ++++++++++
-> >  include/linux/pwm.h                           |   17 +++
 >=20
-> I think it would make more sense to stick the device tree specific parts
-> into drivers/pwm/of.c instead of drivers/of/pwm.c, but it's not a strong
-> preference on my part.
-
-I was just following what everybody else seemed to be doing. drivers/of/
-already has support code for GPIO, IRQ, I2C, PCI and whatnot.
-
-[...]
-> > +/**
-> > + * of_node_to_pwmchip() - finds the PWM chip associated with a device =
-node
-> > + * @np: device node of the PWM chip
-> > + *
-> > + * Returns a pointer to the PWM chip associated with the specified dev=
-ice
-> > + * node or NULL if the device node doesn't represent a PWM chip.
-> > + */
-> > +struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
-> > +{
-> > +	return pwmchip_find(np, of_pwmchip_is_match);
-> > +}
-> > +
-> > +int of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_a=
-rgs *args,
-> > +			struct pwm_spec *spec)
-> > +{
-> > +	if (pc->of_pwm_n_cells < 2)
-> > +		return -EINVAL;
-> > +
-> > +	if (args->args_count < pc->of_pwm_n_cells)
-> > +		return -EINVAL;
-> > +
-> > +	if (args->args[0] >=3D pc->npwm)
-> > +		return -EINVAL;
-> > +
-> > +	if (spec)
-> > +		spec->period =3D args->args[1];
-> > +
-> > +	return args->args[0];
-> > +}
+> >  #include <linux/module.h>
+> > +#include <linux/of_pwm.h>
+> >  #include <linux/pwm.h>
 >=20
-> I'm not sure why these functions are global. They are clearly marked
-> so in your header file, but it seems that these are an implementation
-> detail that neither a pwm controller driver not a driver using one
-> would need to use directly.
+> You should probably reorder the patches for bisectability, or move the
+> of_* related changes out of this patch into patch 3. At the point
+> where patch 2 is applied, linux/of_pwm.h does not exist yet.
 
-Yes, I think both can be made static. of_pwm_simple_xlate() is supposed to =
-be
-the fallback when a chip doesn't explicitly specify one so it really isn't
-necessary to export it (for that to be useful it is missing an EXPORT_SYMBOL
-anyway).
+You're right. The correct thing would be to move the include into patch 3.
+I'll make sure to check for bisectability in the next series.
 
 > > +/**
-> > + * of_get_named_pwm() - get a PWM number and period to use with the PW=
-M API
-> > + * @np: device node to get the PWM from
-> > + * @propname: property name containing PWM specifier(s)
-> > + * @index: index of the PWM
-> > + * @spec: a pointer to a struct pwm_spec to fill in
-> > + *
-> > + * Returns PWM number to use with the Linux generic PWM API or a negat=
-ive
-> > + * error code on failure. If @spec is not NULL the function fills in t=
-he
-> > + * values parsed from the device tree.
+> > + * pwmchip_find() - iterator for locating a specific pwm_chip
+> > + * @data: data to pass to match function
+> > + * @match: callback function to check pwm_chip
 > > + */
-> > +int of_get_named_pwm(struct device_node *np, const char *propname,
-> > +		     int index, struct pwm_spec *spec)
+> > +struct pwm_chip *pwmchip_find(void *data, int (*match)(struct pwm_chip=
+ *chip,
+> > +						       void *data))
 > > +{
+> > +	struct pwm_chip *ret =3D NULL;
+> > +	struct pwm_chip *chip;
+> > +
+> > +	mutex_lock(&pwm_lock);
+> > +
+> > +	list_for_each_entry(chip, &pwm_chips, list) {
+> > +		if (match(chip, data)) {
+> > +			ret =3D chip;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	mutex_unlock(&pwm_lock);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(pwmchip_find);
 >=20
-> This interface does not feel right to me, in multiple ways:
->=20
-> * I would expect to pass a struct device in, not a device_node.
+> Is this only used for the device tree functions? If so, I would recommend
+> making it less generic and always search for a device node.
 
-I was following the GPIO DT support code here. The corresponding
-of_get_named_gpio_flags() takes a struct device_node. I guess that makes it
-more generic since you can potentially have a struct device_node without a
-corresponding struct device, right?
+It is currently only used to look up a struct pwm_chip for a given struct
+device_node, yes. But I can see other uses for this. For instance this could
+be useful if we ever want to provide an alternative way of requesting a PWM
+on a per-chip basis.
 
-> * Why not include the pwm_request() call in this and return the
->   pwm_device directly? You said that you want to get rid of the
->   pwm_id eventually, which is a good idea, but this interface still
->   forces one to use it.
-
-Okay, that sounds sensible. I propose to rename the function to something l=
-ike
-of_request_pwm(). It would of course need an additional parameter (name) to
-forward to pwm_request().
-
-> * It is not clear what a pwm_spec is used for, or why a device
->   driver would need to be bothered by this. Maybe it just needs
->   more explanation, but it seems to me that if you do the previous
->   change, the pwm_spec would not be needed either.
-
-pwm_spec is pretty much what the of_xlate() callback parses out of the data
-provided by the device tree. Currently, of_pwm_simple_xlate() only parses t=
-he
-period (in ns) but the idea was that if at some point in the future it was
-decided to provide more than the period via the device tree it could be
-extended without changing every call to of_get_named_pwm(). As I said, it a=
-lso
-plays quite nicely with the concept of the of_xlate() callback and sort of
-serves as interface between the lower layer that retrieves PWM parameters a=
-nd
-the upper layers that use it.
-
-Thinking about it, perhaps renaming it to pwm_params may be more descriptiv=
-e.
-Also to avoid breakage or confusion if fields get added it may be good to
-provide a bitmask of valid fields filled in by the of_xlate() callback.
-
-	enum {
-		PWM_PARAMS_PERIOD,
-		...
-	};
-
-	struct pwm_params {
-		unsigned long fields;
-		unsigned int period;
-	};
-
-Then again, maybe that's just over-engineering and directly returning via an
-unsigned int *period_ns parameter would be better?
-
-> > +EXPORT_SYMBOL(of_get_named_pwm);
->=20
-> EXPORT_SYMBOL_GPL?
-
-It was brought up at some point that it might be nice to allow non-GPL
-drivers to use the PWM framework as well. I don't remember any discussion
-resulting from the comment. Perhaps we should have that discussion now and
-decide whether or not we want to keep it GPL-only or not.
-
-> > +static inline int of_get_named_pwm(struct device_node *np,
-> > +                                  const char *propname, int index,
-> > +                                  unsigned int *period_ns)
+> > +static int pwm_show(struct seq_file *s, void *unused)
 > > +{
+> > +	const char *prefix =3D "";
+> > +	struct pwm_chip *chip;
+> > +
+> > +	list_for_each_entry(chip, &pwm_chips, list) {
+> > +		struct device *dev =3D chip->dev;
+> > +
+> > +		seq_printf(s, "%s%s/%s, %d PWM devices\n", prefix,
+> > +			   dev->bus ? dev->bus->name : "no-bus",
+> > +			   dev_name(dev), chip->npwm);
+> > +
+> > +		if (chip->ops->dbg_show)
+> > +			chip->ops->dbg_show(chip, s);
+> > +		else
+> > +			pwm_dbg_show(chip, s);
+> > +
+> > +		prefix =3D "\n";
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pwm_open(struct inode *inode, struct file *file)
+> > +{
+> > +	return single_open(file, pwm_show, NULL);
+> > +}
 >=20
-> The function prototype does not match.
+> When you have a seq_file with a (possibly long) list of entries, better
+> use seq_open instead of single_open and print each item in the
+> ->next() callback function.
 
-Yes, I must have forgotten to convert that when I changed that to struct
-pwm_spec described above. Quite frankly I'm not sure about what is the best
-alternative. Can anybody come up with more advantages or disadvantages for
-both variations? Or perhaps there is even a better solution.
+Yes, that should work better. I just noticed that pwm_show() is actually
+missing mutex_lock() and mutex_unlock() to protect against chip removal. Wi=
+th
+the iterator interface that should be easy to add.
+
+I was again basically looking at gpiolib for inspiration (maybe I should st=
+op
+doing that :-). Maybe gpiolib should be reworked to use seq_file's iterator
+interface as well? Just in case anybody else turns to gpiolib for
+inspiration.
 
 Thierry
 
---R3G7APHDIzY6R/pk
+--JWEK1jqKZ6MHAcjA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk9F8PkACgkQZ+BJyKLjJp9lUQCffCLhWIZ2ZpbsHpZh93yVAw4s
-N5EAn3ljoSvn6nYhHzbDT4M8/tte5WT8
-=OpyF
+iEYEARECAAYFAk9F9PMACgkQZ+BJyKLjJp8YCgCdGxQLa3HL2+sJM9jgMec9wDRU
+j4cAn1SMTxgBrCTEc0cTtingQwMmwnge
+=/sXw
 -----END PGP SIGNATURE-----
 
---R3G7APHDIzY6R/pk--
+--JWEK1jqKZ6MHAcjA--
 
---===============6371645564739251824==
+--===============2201354784055314282==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -221,4 +152,4 @@ devicetree-discuss mailing list
 devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 https://lists.ozlabs.org/listinfo/devicetree-discuss
 
---===============6371645564739251824==--
+--===============2201354784055314282==--
