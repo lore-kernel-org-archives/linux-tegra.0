@@ -1,45 +1,88 @@
-From: Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 06/10] pwm: Add NVIDIA Tegra SoC support
-Date: Thu, 23 Feb 2012 12:47:00 +1100
-Message-ID: <4F459A94.4030104@gmail.com>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de> <1329923841-32017-7-git-send-email-thierry.reding@avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: PCIe device tree support
+Date: Thu, 23 Feb 2012 07:03:55 +0100
+Message-ID: <20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
+References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com>
+ <20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
+ <CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329923841-32017-7-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 23/02/12 02:17, Thierry Reding wrote:
 
-> This commit adds a generic PWM framework driver for the PWFM controller
-> found on NVIDIA Tegra SoCs. The driver is based on code from the
-> Chromium kernel tree and was originally written by Gary King (NVIDIA)
-> and later modified by Simon Que (Chromium).
-> 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> ---
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-<snip>
+* Bjorn Helgaas wrote:
+> On Wed, Feb 22, 2012 at 12:24 AM, Thierry Reding
+> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> > [Adding Jesse Barnes and the linux-pci mailing list to CC.]
+> >
+> > * Stephen Warren wrote:
+> >> Thierry Reding wrote at Monday, February 20, 2012 12:18 PM:
+> >> > I would like to add device tree support for the Tegra2 PCIe controll=
+er. From
+> >> > what I understand this will require the PCIe code to be rewritten as=
+ a proper
+> >> > platform driver in order to be able to instantiate it via the device=
+ tree. Is
+> >> > that correct?
+> >>
+> >> That's probably the cleanest way, yes.
+> >>
+> >> Is there a drivers/ directory for PCI/PCIe host controllers? Moving the
+> >> code there might be nice if so, although IIRC when I asked Olof about
+> >> that a number of months back, he said quite a few host controllers were
+> >> in arch/...
+> >
+> > Most PCI/PCIe host controller drivers seem to currently be in arch/. Is=
+ there
+> > a specific reason for this? Would it be acceptable to put any new drive=
+rs
+> > below drivers/pci/?
+>=20
+> PCI host bridges aren't architected, so discovering them and their
+> properties has historically been mostly architecture-specific.  ACPI
+> is one exception (with a driver in drivers/acpi/pci_root.c) and it
+> sounds like device tree might be a similar exception.  If you can make
+> a non-arch-specific driver and put it somewhere other than arch/, I'm
+> all in favor of that, especially if you can make it usable by other
+> arches that use device tree.  Where to put it?  I dunno.  drivers/pci/
+> sounds like a reasonable possibility.
 
-> +
-> +	pwm->chip.dev = &pdev->dev;
-> +	pwm->chip.ops = &tegra_pwm_ops;
-> +	pwm->chip.base = -1;
-> +	pwm->chip.npwm = NUM_PWM;
+I don't think it would be possible to write a driver that works for all
+device tree based boards or architectures. As you said the implementation is
+very hardware specific and probably couldn't even be generalized among two
+chipsets of the same architecture.
 
-> +
-> +	ret = pwmchip_add(&pwm->chip);
+However there has recently been a lot of work to move out arch-specific
+drivers for PWM, GPIO and others out of arch/ and into respective directori=
+es
+below drivers/. The reason I asked was because I think the same could be do=
+ne
+for PCI/PCIe.
 
+Thierry
 
-If a driver fails to initialise the pwm_chip structure correctly it can
-cause problems in the pwm core. For example, if the dev field doesn't
-get set, then you will get an oops if you try to cat the pwm debugfs file.
+--C7zPtVaVf+AK4Oqc
+Content-Type: application/pgp-signature
 
-pwmchip_add should probably verify that the initialisation of the
-pwm_chip structure is sane to avoid problems like this.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-~Ryan
+iEYEARECAAYFAk9F1ssACgkQZ+BJyKLjJp/cdACggvsxcINrwjylNZd6lILAGhTB
+j0gAoJPv/UThttCMTSJYMj3KyUNU3Yqp
+=kmj+
+-----END PGP SIGNATURE-----
+
+--C7zPtVaVf+AK4Oqc--
