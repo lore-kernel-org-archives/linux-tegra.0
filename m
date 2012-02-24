@@ -1,91 +1,48 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v3 03/10] of: Add PWM support.
-Date: Fri, 24 Feb 2012 16:58:31 +0000
-Message-ID: <201202241658.32062.arnd@arndb.de>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de> <201202231403.01614.arnd@arndb.de> <20120224064749.GB18786@avionic-0098.mockup.avionic-design.de>
+From: Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: PCIe device tree support
+Date: Fri, 24 Feb 2012 22:46:06 +0530
+Message-ID: <CAHM4w1k1_Yp56tpfPqDxT1WHQWRB5xe_Zs-BEj+n5rVmuyAJiw@mail.gmail.com>
+References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com>
+	<20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
+	<CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
+	<20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
+	<CAErSpo7wSB-uCjV4YeA-fUOHPtugn4ASXScN3MndVybfkk8mOw@mail.gmail.com>
+	<20120224065921.GA28932@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120224064749.GB18786-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20120224065921.GA28932-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 24 February 2012, Thierry Reding wrote:
-> * Arnd Bergmann wrote:
-> > On Thursday 23 February 2012, Thierry Reding wrote:
-> > > * Arnd Bergmann wrote:
+I too had similar query.
+I have written a PCIe host driver for SPEAr platform (ARM Arch).
+This driver is registered on paltform bus.
+It is for Designware IP, so I believe that most of its part
+can be re-usaable for other person.
+ have kept common and SPEAr specific part separately.
+But,  I am not sure about its best location.
+I believe best would have been to keep in driver/pci/pcie/hosts/.
+But it uses pci_common_init function which is specific to ARM platform.
+So it limits option to arch/arm.
+But, if I keep it in arch/arm/mach-spear13xx/ , then it will limit others
+from using synopsys specific code.
 
-> [...]
-> > > > * Why not include the pwm_request() call in this and return the
-> > > >   pwm_device directly? You said that you want to get rid of the
-> > > >   pwm_id eventually, which is a good idea, but this interface still
-> > > >   forces one to use it.
-> > > 
-> > > Okay, that sounds sensible. I propose to rename the function to something like
-> > > of_request_pwm().
-> > 
-> > Sounds good.
+What do you suggest?
 
-On second thought, I would actually prefer starting the name with pwm_ and
-making it independent of device tree. There might be other ways how to
-find the pwm_device from a struct device in the future, but it should always
-be possible using a device together with a string and/or numeric identifier,
-much in the same way that we can get a resource from a platform_device.
+Regards
+Pratyush
 
-Ideally, there would be a common theme behind finding a memory region,
-irq, gpio pin, clock, regulator, dma-channel and pwm or anything else
-that requires a link between two device nodes.
 
-> > > It would of course need an additional parameter (name) to
-> > > forward to pwm_request().
-> > 
-> > Not necessarily, it could use the dev_name(device) or the name
-> > of the property, or a combination of the two.
-> 
-> The problem with that is that usually the device would be named something
-> generic like "pwm", while in case where the PWM is used for the backlight
-> it makes sense to label the PWM device "backlight".
-> 
-> Looking at debugfs and seeing an entry "backlight" is much more straight-
-> forward than "pwm.0". I mean "pwm.0" doesn't carry any useful information
-> really, does it?
-
-But the device name would be from the device using the pwm, not the
-pwm controller, so it should be something more helpful, no?
-
-> > > > > +EXPORT_SYMBOL(of_get_named_pwm);
-> > > > 
-> > > > EXPORT_SYMBOL_GPL?
-> > > 
-> > > It was brought up at some point that it might be nice to allow non-GPL
-> > > drivers to use the PWM framework as well. I don't remember any discussion
-> > > resulting from the comment. Perhaps we should have that discussion now and
-> > > decide whether or not we want to keep it GPL-only or not.
-> > 
-> > I would definitely use EXPORT_SYMBOL_GPL for all new code unless it
-> > replaces an earlier interface that was available as EXPORT_SYMBOL.
-> 
-> I just grepped the code and noticed this:
-> 
-> 	$ $ git grep -n 'EXPORT_SYMBOL.*(pwm_request)'
-> 	arch/arm/mach-vt8500/pwm.c:139:EXPORT_SYMBOL(pwm_request);
-> 	arch/arm/plat-mxc/pwm.c:183:EXPORT_SYMBOL(pwm_request);
-> 	arch/arm/plat-samsung/pwm.c:83:EXPORT_SYMBOL(pwm_request);
-> 	arch/unicore32/kernel/pwm.c:132:EXPORT_SYMBOL(pwm_request);
-> 	drivers/mfd/twl6030-pwm.c:156:EXPORT_SYMBOL(pwm_request);
-> 	drivers/misc/ab8500-pwm.c:108:EXPORT_SYMBOL(pwm_request);
-> 	drivers/pwm/core.c:262:EXPORT_SYMBOL_GPL(pwm_request);
-> 
-> It seems like the legacy PWM API used to be non-GPL. Should I switch it back?
-> Also does it make sense to have something like of_request_pwm() GPL when the
-> rest of the API isn't?
-
-I guess the choice is to make between you and Sascha. The implementation is
-new, so you could pick EXPORT_SYMBOL_GPL, but you could also try to
-keep to the current API.
-
-	Arnd
+On Fri, Feb 24, 2012 at 12:29 PM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> * Bjorn Helgaas wrote:
+>> I agree that if the code isn't shared at all, there's no point in
+>> putting it in a generic place like drivers/pci/.
+>
+> Alright, I'll keep the driver in arch/arm/mach-tegra/ then.
+>
+> Thierry
