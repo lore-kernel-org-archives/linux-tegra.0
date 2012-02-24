@@ -1,75 +1,58 @@
-From: Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>
-Subject: Re: PCIe device tree support
-Date: Fri, 24 Feb 2012 09:27:06 -0800
-Message-ID: <20120224092706.7e33aa9c@jbarnes-desktop>
-References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
-	<74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com>
-	<20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
-	<CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
-	<20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
-	<CAErSpo7wSB-uCjV4YeA-fUOHPtugn4ASXScN3MndVybfkk8mOw@mail.gmail.com>
-	<20120224065921.GA28932@avionic-0098.mockup.avionic-design.de>
-	<CAHM4w1k1_Yp56tpfPqDxT1WHQWRB5xe_Zs-BEj+n5rVmuyAJiw@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: What should the SDHCI regulator control?
+Date: Fri, 24 Feb 2012 14:49:43 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BD8BCDEE@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/0=enSNm_SVC5ZIPyz_6SiHr"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHM4w1k1_Yp56tpfPqDxT1WHQWRB5xe_Zs-BEj+n5rVmuyAJiw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org" <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Sig_/0=enSNm_SVC5ZIPyz_6SiHr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Chris,
 
-On Fri, 24 Feb 2012 22:46:06 +0530
-Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+A question about regulators for SD cards:
 
-> I too had similar query.
-> I have written a PCIe host driver for SPEAr platform (ARM Arch).
-> This driver is registered on paltform bus.
-> It is for Designware IP, so I believe that most of its part
-> can be re-usaable for other person.
->  have kept common and SPEAr specific part separately.
-> But,  I am not sure about its best location.
-> I believe best would have been to keep in driver/pci/pcie/hosts/.
-> But it uses pci_common_init function which is specific to ARM platform.
-> So it limits option to arch/arm.
-> But, if I keep it in arch/arm/mach-spear13xx/ , then it will limit others
-> from using synopsys specific code.
->=20
-> What do you suggest?
+We have a few boards, with some slightly different setups:
 
-Maybe arch/arm/pci until there are non-ARM users of the IP?  In fact,
-you may want to put off moving it to arch/arm/pci until you have
-someone to share it with.  Premature sharing is like premature
-optimization after all...
+Setup 1: (Harmony, Seaboard, Ventana, AC100)
 
---=20
-Jesse Barnes, Intel Open Source Technology Center
+Power to SD is fixed at 3.3V
 
---Sig_/0=enSNm_SVC5ZIPyz_6SiHr
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+There is a GPIO to enable power, which gates the SD connector's VDD pin
+and the pullups on DAT/CMD lines.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Setup 2 (Cardhu):
 
-iQIcBAEBAgAGBQJPR8hqAAoJEIEoDkX4Qk9hTrkP/iIuyuocVUwQ4GkGQ1gkhn5/
-F+VKDZj1mzWKteHFCfYRJ4tidNfDvA074rTkDNfTS0qcb67hoEuQxGWtUtrmoT4b
-m98dR45Jp743khocK4qmozAcIxysOz6OCBFXQoHHoYaEXnoyqvFyCjUH9rdnP5hU
-/zZ8GAGnHE2w2u/M2HPBrqEj1B5wyM98hVSuJMux3YYSA9F3fZDnm2L0eB0rPZ40
-Id+/IdaUF/cBQgQt7Lxsf5srWCn/xHS5iCB4y0aDuoCBa5R/oFDaYB2cN7rlfg9S
-ZYYPHd3fRNe5c2/NdajhiTTiMp18jHEFJAakbQpVtIMYYSzmAe/+N1B14qH5dJN3
-mKuYDlnBmh16fuGGBCTBk6/eF/lmyPFt2jM1rv+cIkk5xGILnGvxLztYhUkSyKLa
-hib9uy0Uk8HERmW0qkcZus88XkpG4KdS8aI/3TjUtYYxhwwu0id3qSIQzKaLsWFM
-SnLgE+g58wdf6aqKustVNQcCDby1cuEzDDMl5gqnX0eYS5IMakJBEjCiHYTf9NKy
-+wahk7q0lK+zuESJXv8IL/GqtWCHSidBde1VebUf3MI1JFzRAlb4BPNnHvTlT9rA
-do+ozaPY+o9EZCcK451Y+pDfeeLucFJd8Cr8UWqmN1tBz1ktFrZolK1hv/Nne98q
-rDmheVxrQpD9OBVIfTkn
-=eMkZ
------END PGP SIGNATURE-----
+There is a regulator in a PMU/PMIC which can supply a variable voltage,
+which is fed to the SoC's SD controller (presumably affects the IO pad
+voltage), and the pullups on the DAT/CMD lines.
 
---Sig_/0=enSNm_SVC5ZIPyz_6SiHr--
+There is a fixed 3.3V supply, with a GPIO to enable/disable it, which
+is fed only to the SD connector's VDD pin.
+
+Question 1: In case 2,
+
+Is the card always supposed to receive 3.3V here; is an SD card supposed
+to contain its own internal regulator to generate e.g. a 1.85V IO voltage
+rather than being supplied with the lower voltage?
+
+Question 2: In general,
+
+So, there's always a GPIO to gate power to the SD connector, but any
+variable voltage is not fed the the SD card itself, only the SoC. Also,
+the GPIO sometimes affects the CMD/DAT pullups, whereas sometimes they're
+affected by the variable regulator.
+
+Is the regulator returned by the regulator_get() call in sdhci_add_host()
+supposed to control the GPIO (or should the GPIO always be switched on?)
+or should it control the variable regulator that affects only the SoC,
+or both at once, or ...?
+
+Thanks.
+
+-- 
+nvpublic
