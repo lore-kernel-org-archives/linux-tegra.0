@@ -1,57 +1,46 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 06/10] pwm: Add NVIDIA Tegra SoC support
-Date: Fri, 24 Feb 2012 07:48:51 +0100
-Message-ID: <20120224064851.GC18786@avionic-0098.mockup.avionic-design.de>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-7-git-send-email-thierry.reding@avionic-design.de>
- <4F459A94.4030104@gmail.com>
- <20120223081459.GD8621@avionic-0098.mockup.avionic-design.de>
- <4F460616.3080400@gmail.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: PCIe device tree support
+Date: Fri, 24 Feb 2012 07:59:21 +0100
+Message-ID: <20120224065921.GA28932@avionic-0098.mockup.avionic-design.de>
+References: <20120220191804.GA14499@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BD8BC302@HQMAIL01.nvidia.com>
+ <20120222082449.GA15157@avionic-0098.adnet.avionic-design.de>
+ <CAErSpo4TfpGmx+HZ1ZnZwj3ZP_cQMCzkMT+6JK6ztYp2zWJcxw@mail.gmail.com>
+ <20120223060355.GA21091@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo7wSB-uCjV4YeA-fUOHPtugn4ASXScN3MndVybfkk8mOw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YD3LsXFS42OYHhNZ"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4F460616.3080400-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+In-Reply-To: <CAErSpo7wSB-uCjV4YeA-fUOHPtugn4ASXScN3MndVybfkk8mOw@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Warren <swarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Olof Johansson (olof@lixom.net)" <olof@lixom.net>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---YD3LsXFS42OYHhNZ
+--/9DWx/yDrRhgMJTb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-* Ryan Mallon wrote:
-> On 23/02/12 19:14, Thierry Reding wrote:
-> > * Ryan Mallon wrote:
-[...]
-> >> pwmchip_add should probably verify that the initialisation of the
-> >> pwm_chip structure is sane to avoid problems like this.
-> >=20
-> > Absolutely. What would be the best response to an invalid struct pwm_ch=
-ip? I
-> > suppose at least returning -EINVAL, perhaps complemented with WARN_ON?
->=20
-> Just returning -EINVAL should be okay. I don't think you need a WARN_ON,
-> since failing to register the hardware should be enough of a reason for
-> a user to report a problem.
+* Bjorn Helgaas wrote:
+> I agree that if the code isn't shared at all, there's no point in
+> putting it in a generic place like drivers/pci/.
 
-Okay, will do.
+Alright, I'll keep the driver in arch/arm/mach-tegra/ then.
 
 Thierry
 
---YD3LsXFS42OYHhNZ
+--/9DWx/yDrRhgMJTb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk9HMtMACgkQZ+BJyKLjJp8fOQCfTURskVcYobNBg5kQVdSzbjAx
-pWkAoIVoxAB2gku2evFjtz3EnneWDQTq
-=1lDS
+iEYEARECAAYFAk9HNUkACgkQZ+BJyKLjJp8dfACghzkzpY0Rxx/lKVHZF+b23Y0N
+LvwAnjFKIdGsPqvgLmPsHdGVvsbaYlJ4
+=y9xH
 -----END PGP SIGNATURE-----
 
---YD3LsXFS42OYHhNZ--
+--/9DWx/yDrRhgMJTb--
