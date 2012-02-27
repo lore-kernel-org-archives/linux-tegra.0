@@ -1,35 +1,52 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V2 0/3] Open drain/open source support from gpio library
-Date: Mon, 27 Feb 2012 18:15:55 +0530
-Message-ID: <4F4B7B03.3060600@nvidia.com>
-References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>	<1329490582-22107-2-git-send-email-ldewangan@nvidia.com> <CACRpkdZTqS=BJ3x3ib8pByY6riT3nhuQuU4+Z9w4JanicBBiwA@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V2 1/2] ARM: tegra: Add pinmux board file for Cardhu
+Date: Mon, 27 Feb 2012 09:14:06 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BD8BCF4A@HQMAIL01.nvidia.com>
+References: <1328138997-25665-1-git-send-email-swarren@nvidia.com>
+	<20120226215141.GA11189@quad.lixom.net>
+ <CAOesGMj4BHL6A1Ej4nQpTkjAY3Z=MKfncc5H8DFwh4TTvPixnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZTqS=BJ3x3ib8pByY6riT3nhuQuU4+Z9w4JanicBBiwA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "linus.walleij@stericsson.com" <linus.walleij@stericsson.com>, "rdunlap@xenotime.net" <rdunlap@xenotime.net>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMj4BHL6A1Ej4nQpTkjAY3Z=MKfncc5H8DFwh4TTvPixnw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Grant,
-Although it is not too old patch but can you please review and if it is 
-OK then apply ;)  ?
+Olof Johansson wrote at Sunday, February 26, 2012 3:14 PM:
+> On Sun, Feb 26, 2012 at 1:51 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> > On Wed, Feb 01, 2012 at 04:29:56PM -0700, Stephen Warren wrote:
+> >> For now, this just sets up the pinmux and GPIOs required for the SD
+> >> card slot.
+> >>
+> >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> ---
+> >> v2:
+> >> * Set PULL_UP for CMD and DATA pins on SD interface
+> >> * Add power GPIO for SDMMC1
+> >> * Add pinmux configuration for SDMMC4
+> >>
+> >> This will hopefully be replaced by the pinmux DT binding in the near
+> >> future, but until that happens, Tegra30 pinmux functionality needs to
+> >> be exposed somehow to unblock getting drivers tested on Tegra30.
+> >
+> > Thanks, applied to for-3.4/boards.
+> 
+> ...and I'm two for two on sending the apply email before I have
+> checked dependencies.
+> 
+> This doesn't build, so I dropped it again. Probably a missing
+> dependency on pinctrl changes but please revisit on top of just the
+> tegra code and let me know.
 
-Thanks,
-Laxman
+Yes, that's expected. I should have mentioned that this patch depends on
+changes in the new series that added the new Tegra pinctrl driver, but
+that hasn't been applied to the Tegra branches since I need to rework the
+Tegra board files for changes in the pinctrl API etc. I'll repost patches
+once all the pinctrl rework is finalized.
 
-
-On Friday 17 February 2012 11:51 PM, Linus Walleij wrote:
-> On Fri, Feb 17, 2012 at 3:56 PM, Laxman Dewangan<ldewangan@nvidia.com>  wrote:
->
->> This patch is as per discussion on the patch
->> [PATCH V1] regulator: fixed: Support for open-drain gpio
->> where it was suggested to push the handling of open drain gpios
->> into the gpio libray.
-> Acked-by: Linus Walleij<linus.walleij@linaro.org>
-> For this patch set.
->
-> Yours,
-> Linus Walleij
+-- 
+nvpublic
