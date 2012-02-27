@@ -1,48 +1,280 @@
 From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v6 18/20] tegra: usb: Add common USB defines for tegra2 boards
-Date: Mon, 27 Feb 2012 12:52:51 -0800
-Message-ID: <1330375973-10681-19-git-send-email-sjg@chromium.org>
+Subject: [PATCH v6 10/20] tegra: fdt: Add clock bindings
+Date: Mon, 27 Feb 2012 12:52:43 -0800
+Message-ID: <1330375973-10681-11-git-send-email-sjg@chromium.org>
 References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1330375973-10681-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
-Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Remy Bohmer <linux-SYUVB/VFmdasTnJN9+BGXg@public.gmane.org>
+Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-All Tegra2 boards should include tegra2-common. This adds the required
-USB config to that file.
+This adds a basic binding for the oscillator and peripheral clocks. The
+second cell is the clock number, defined as the bit number within the clock
+enable register if the peripheral clock.
+
+This uses the RFC clock bindings from Grant Likely so may change later:
+
+https://lkml.org/lkml/2011/12/12/498
+
+It is taken from Stephen Warren's patch here:
+
+http://patchwork.ozlabs.org/patch/141359/
 
 Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 ---
-Changes in v5:
-- Add CONFIG_EHCI_DCACHE which is needed for dcache operation
-- Drop unused CONFIG_USB_EHCI_DATA_ALIGN option
+Changes in v4:
+- Add clock bindings for Tegra2x
 
- include/configs/tegra2-common.h |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+Changes in v6:
+- Add clock bindings from Stephen Warren's latest patch
 
-diff --git a/include/configs/tegra2-common.h b/include/configs/tegra2-common.h
-index e6f385f..266d0e5 100644
---- a/include/configs/tegra2-common.h
-+++ b/include/configs/tegra2-common.h
-@@ -84,6 +84,16 @@
- #define CONFIG_SYS_BAUDRATE_TABLE	{4800, 9600, 19200, 38400, 57600,\
- 					115200}
+ arch/arm/dts/tegra20.dtsi                          |   16 ++
+ .../clock/nvidia,tegra20-car.txt                   |  207 ++++++++++++++++++++
+ 2 files changed, 223 insertions(+), 0 deletions(-)
+ create mode 100644 doc/device-tree-bindings/clock/nvidia,tegra20-car.txt
+
+diff --git a/arch/arm/dts/tegra20.dtsi b/arch/arm/dts/tegra20.dtsi
+index a9a98ea..2c46e11 100644
+--- a/arch/arm/dts/tegra20.dtsi
++++ b/arch/arm/dts/tegra20.dtsi
+@@ -4,6 +4,22 @@
+ 	compatible = "nvidia,tegra20";
+ 	interrupt-parent = <&intc>;
  
-+/*
-+ * This parameter affects a TXFILLTUNING field that controls how much data is
-+ * sent to the latency fifo before it is sent to the wire. Without this
-+ * parameter, the default (2) causes occasional Data Buffer Errors in OUT
-+ * packets depending on the buffer address and size.
-+ */
-+#define CONFIG_USB_EHCI_TXFIFO_THRESH	10
-+#define CONFIG_EHCI_IS_TDI
-+#define CONFIG_EHCI_DCACHE
++	tegra_car: clock@60006000 {
++		compatible = "nvidia,tegra20-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
 +
- /* include default commands */
- #include <config_cmd_default.h>
- 
++	clocks {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		osc: clock {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++		};
++	};
++
+ 	intc: interrupt-controller@50041000 {
+ 		compatible = "nvidia,tegra20-gic";
+ 		interrupt-controller;
+diff --git a/doc/device-tree-bindings/clock/nvidia,tegra20-car.txt b/doc/device-tree-bindings/clock/nvidia,tegra20-car.txt
+new file mode 100644
+index 0000000..5c07fca
+--- /dev/null
++++ b/doc/device-tree-bindings/clock/nvidia,tegra20-car.txt
+@@ -0,0 +1,207 @@
++NVIDIA Tegra20 Clock And Reset Controller
++
++This binding uses the common clock binding:
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
++for muxing and gating Tegra's clocks, and setting their rates.
++
++Required properties :
++- compatible : Should be "nvidia,tegra20-car"
++- reg : Should contain CAR registers location and length
++- clocks : Should contain phandle and clock specifiers for two clocks:
++  the 32 KHz "32k_in", and the board-specific oscillator "osc".
++- #clock-cells : Should be 1.
++  In clock consumers, this cell represents the clock ID exposed by the CAR.
++
++  The first 96 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
++  registers. These IDs often match those in the CAR's RST_DEVICES registers,
++  but not in all cases. Some bits in CLK_OUT_ENB affect multiple clocks. In
++  this case, those clocks are assigned IDs above 95 in order to highlight
++  this issue. Implementations that interpret these clock IDs as bit values
++  within the CLK_OUT_ENB or RST_DEVICES registers should be careful to
++  explicitly handle these special cases.
++
++  The balance of the clocks controlled by the CAR are assigned IDs of 96 and
++  above.
++
++  0	cpu
++  1	unassigned
++  2	unassigned
++  3	ac97
++  4	rtc
++  5	tmr
++  6	uart1
++  7	unassigned	(register bit affects uart2 and vfir)
++  8	gpio
++  9	sdmmc2
++  10	unassigned	(register bit affects spdif_in and spdif_out)
++  11	i2s1
++  12	i2c1
++  13	ndflash
++  14	sdmmc1
++  15	sdmmc4
++  16	twc
++  17	pwm
++  18	i2s2
++  19	epp
++  20	unassigned	(register bit affects vi and vi_sensor)
++  21	2d
++  22	usbd
++  23	isp
++  24	3d
++  25	ide
++  26	disp2
++  27	disp1
++  28	host1x
++  29	vcp
++  30	unassigned
++  31	cache2
++
++  32	mem
++  33	ahbdma
++  34	apbdma
++  35	unassigned
++  36	kbc
++  37	stat_mon
++  38	pmc
++  39	fuse
++  40	kfuse
++  41	sbc1
++  42	snor
++  43	spi1
++  44	sbc2
++  45	xio
++  46	sbc3
++  47	dvc
++  48	dsi
++  49	unassigned	(register bit affects tvo and cve)
++  50	mipi
++  51	hdmi
++  52	csi
++  53	tvdac
++  54	i2c2
++  55	uart3
++  56	unassigned
++  57	emc
++  58	usb2
++  59	usb3
++  60	mpe
++  61	vde
++  62	bsea
++  63	bsev
++
++  64	speedo
++  65	uart4
++  66	uart5
++  67	i2c3
++  68	sbc4
++  69	sdmmc3
++  70	pcie
++  71	owr
++  72	afi
++  73	csite
++  74	unassigned
++  75	avpucq
++  76	la
++  77	unassigned
++  78	unassigned
++  79	unassigned
++  80	unassigned
++  81	unassigned
++  82	unassigned
++  83	unassigned
++  84	irama
++  85	iramb
++  86	iramc
++  87	iramd
++  88	cram2
++  89	audio_2x	a/k/a audio_2x_sync_clk
++  90	clk_d
++  91	unassigned
++  92	sus
++  93	cdev1
++  94	cdev2
++  95	unassigned
++
++  96	uart2
++  97	vfir
++  98	spdif_in
++  99	spdif_out
++  100	vi
++  101	vi_sensor
++  102	tvo
++  103	cve
++  104	osc
++  105	clk_32k		a/k/a clk_s
++  106	clk_m
++  107	sclk
++  108	cclk
++  109	hclk
++  110	pclk
++  111	blink
++  112	pll_a
++  113	pll_a_out0
++  114	pll_c
++  115	pll_c_out1
++  116	pll_d
++  117	pll_d_out0
++  118	pll_e
++  119	pll_m
++  120	pll_m_out1
++  121	pll_p
++  122	pll_p_out1
++  123	pll_p_out2
++  124	pll_p_out3
++  125	pll_p_out4
++  126	pll_s
++  127	pll_u
++  128	pll_x
++  129	cop		a/k/a avp
++  130	audio		a/k/a audio_sync_clk
++
++Example SoC include file:
++
++/ {
++	tegra_car: clock@60006000 {
++		compatible = "nvidia,tegra20-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	usb@c5004000 {
++		clocks = <&tegra_car 58>; /* usb2 */
++	};
++};
++
++Example board file:
++
++/ {
++	clocks {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		osc: clock {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <12000000>;
++		};
++	};
++
++	i2c@7000d000 {
++		pmic@34 {
++			compatible = "ti,tps6586x";
++			reg = <0x34>;
++
++			clk_32k: clock {
++				compatible = "fixed-clock";
++				#clock-cells = <0>;
++				clock-frequency = <32768>;
++			};
++		};
++	};
++
++	&tegra_car {
++		clocks = <&clk_32k> <&osc>;
++	};
++};
 -- 
 1.7.7.3
