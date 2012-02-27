@@ -1,56 +1,54 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: [PATCH v6 20/20] tegra: fdt: Enable FDT support for
-	Seaboard
-Date: Mon, 27 Feb 2012 12:52:53 -0800
-Message-ID: <1330375973-10681-21-git-send-email-sjg@chromium.org>
-References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: uncompress.h: Don't depend on kernel headers
+Date: Mon, 27 Feb 2012 14:27:19 -0700
+Message-ID: <1330378039-21030-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <1330375973-10681-1-git-send-email-sjg@chromium.org>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: U-Boot Mailing List <u-boot@lists.denx.de>
-Cc: Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This switches Seaboard over to use FDT for run-time config instead of
-CONFIG options. USB is the only user at present.
+This fixes the following compile error:
 
-Signed-off-by: Simon Glass <sjg@chromium.org>
+  CC      arch/arm/boot/compressed/misc.o
+In file included from arch/arm/boot/compressed/misc.c:28:0:
+arch/arm/mach-tegra/include/mach/uncompress.h: In function 'arch_decomp_setup':
+arch/arm/mach-tegra/include/mach/uncompress.h:125:2: error: implicit declaration of function 'BUILD_BUG_ON_ZERO' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+
+This is due to use of the ARRAY_SIZE() macro. Typically, this would be
+solved by including <linux/bug.h>, but the compressor code isn't part of
+the kernel, and so should not include kernel headers. Instead, define
+the few macros the code uses directly, and in a way that doesn't depend
+on <linux/bug.h>.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v3:
-- Drop Tegra USB alignment patch as we will deal with this another way
+ arch/arm/mach-tegra/include/mach/uncompress.h |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-Changes in v6:
-- Drop fdt alignment patch as we will handle this after generic reloc
-
- include/configs/seaboard.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/include/configs/seaboard.h b/include/configs/seaboard.h
-index b6d9f7a..1dc775a 100644
---- a/include/configs/seaboard.h
-+++ b/include/configs/seaboard.h
-@@ -27,6 +27,11 @@
- #include <asm/sizes.h>
- #include "tegra2-common.h"
+diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
+index b066ba0..5a440f3 100644
+--- a/arch/arm/mach-tegra/include/mach/uncompress.h
++++ b/arch/arm/mach-tegra/include/mach/uncompress.h
+@@ -25,13 +25,15 @@
+ #ifndef __MACH_TEGRA_UNCOMPRESS_H
+ #define __MACH_TEGRA_UNCOMPRESS_H
  
-+/* Enable fdt support for Seaboard. Flash the image in u-boot-dtb.bin */
-+#define CONFIG_DEFAULT_DEVICE_TREE	tegra2-seaboard
-+#define CONFIG_OF_CONTROL
-+#define CONFIG_OF_SEPARATE
+-#include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/serial_reg.h>
+ 
+ #include <mach/iomap.h>
+ #include <mach/irammap.h>
+ 
++#define BIT(x) (1 << (x))
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 +
- /* High-level configuration options */
- #define TEGRA2_SYSMEM		"mem=384M@0M nvmem=128M@384M mem=512M@512M"
- #define V_PROMPT		"Tegra2 (SeaBoard) # "
+ #define DEBUG_UART_SHIFT 2
+ 
+ volatile u8 *uart;
 -- 
-1.7.7.3
+1.7.0.4
