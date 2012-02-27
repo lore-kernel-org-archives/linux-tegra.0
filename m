@@ -1,8 +1,8 @@
 From: Simon Glass <sjg@chromium.org>
-Subject: [PATCH v6 05/20] tegra: fdt: Add Tegra2x device tree file
-	from kernel
-Date: Mon, 27 Feb 2012 12:52:38 -0800
-Message-ID: <1330375973-10681-6-git-send-email-sjg@chromium.org>
+Subject: [PATCH v6 15/20] tegra: fdt: Add function to return
+	peripheral/clock ID
+Date: Mon, 27 Feb 2012 12:52:48 -0800
+Message-ID: <1330375973-10681-16-git-send-email-sjg@chromium.org>
 References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,205 +22,88 @@ To: U-Boot Mailing List <u-boot@lists.denx.de>
 Cc: Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This was taken from commit b48c54e2 at:
-git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
-
-config.mk is updated to provide this file to boards through the
-built-in mechanism:
-
-/include/ ARCH_CPU_DTS
+A common requirement is to find the clock ID for a peripheral. This is the
+second cell of the 'clocks' property (the first being the phandle itself).
 
 Signed-off-by: Simon Glass <sjg@chromium.org>
 ---
+Changes in v4:
+- Add fdtdec function to return peripheral ID
 
- arch/arm/cpu/armv7/tegra2/config.mk |    2 +
- arch/arm/dts/tegra20.dtsi           |  168 +++++++++++++++++++++++++++++++++++
- 2 files changed, 170 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/dts/tegra20.dtsi
+Changes in v6:
+- Move peripheral decode function into Tegra's clock.c
 
-diff --git a/arch/arm/cpu/armv7/tegra2/config.mk b/arch/arm/cpu/armv7/tegra2/config.mk
-index 2303dba..fe9ef5b 100644
---- a/arch/arm/cpu/armv7/tegra2/config.mk
-+++ b/arch/arm/cpu/armv7/tegra2/config.mk
-@@ -31,3 +31,5 @@ CFLAGS_arch/arm/lib/board.o += -march=armv4t
- endif
+ arch/arm/cpu/armv7/tegra2/clock.c        |   19 +++++++++++++++++++
+ arch/arm/include/asm/arch-tegra2/clock.h |   13 +++++++++++++
+ 2 files changed, 32 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/cpu/armv7/tegra2/clock.c b/arch/arm/cpu/armv7/tegra2/clock.c
+index 11d2346..ffbfc28 100644
+--- a/arch/arm/cpu/armv7/tegra2/clock.c
++++ b/arch/arm/cpu/armv7/tegra2/clock.c
+@@ -28,6 +28,7 @@
+ #include <asm/arch/tegra2.h>
+ #include <common.h>
+ #include <div64.h>
++#include <fdtdec.h>
  
- USE_PRIVATE_LIBGCC = yes
+ /*
+  * This is our record of the current clock rate of each clock. We don't
+@@ -918,6 +919,24 @@ void clock_ll_start_uart(enum periph_id periph_id)
+ 	reset_set_enable(periph_id, 0);
+ }
+ 
 +
-+CONFIG_ARCH_DEVICE_TREE := tegra20
-diff --git a/arch/arm/dts/tegra20.dtsi b/arch/arm/dts/tegra20.dtsi
-new file mode 100644
-index 0000000..a9a98ea
---- /dev/null
-+++ b/arch/arm/dts/tegra20.dtsi
-@@ -0,0 +1,168 @@
-+/include/ "skeleton.dtsi"
++int clock_decode_periph_id(const void *blob, int node)
++{
++	enum periph_id id;
++	int err, valid;
++	u32 cell[2];
 +
-+/ {
-+	compatible = "nvidia,tegra20";
-+	interrupt-parent = <&intc>;
++	err = fdtdec_get_int_array(blob, node, "clocks", cell,
++				   ARRAY_SIZE(cell));
++	if (err)
++		return -1;
++	id = cell[1];
 +
-+	intc: interrupt-controller@50041000 {
-+		compatible = "nvidia,tegra20-gic";
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		reg = < 0x50041000 0x1000 >,
-+		      < 0x50040100 0x0100 >;
-+	};
++	valid = clock_periph_id_isvalid(id);
++	assert(valid);
++	return valid ? id : PERIPH_ID_NONE;
++}
 +
-+	i2c@7000c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2c";
-+		reg = <0x7000C000 0x100>;
-+		interrupts = < 70 >;
-+	};
+ int clock_verify(void)
+ {
+ 	struct clk_pll *pll = get_pll(CLOCK_ID_PERIPH);
+diff --git a/arch/arm/include/asm/arch-tegra2/clock.h b/arch/arm/include/asm/arch-tegra2/clock.h
+index 080ef18..6b12c76 100644
+--- a/arch/arm/include/asm/arch-tegra2/clock.h
++++ b/arch/arm/include/asm/arch-tegra2/clock.h
+@@ -177,6 +177,7 @@ enum periph_id {
+ 	PERIPH_ID_CRAM2,
+ 
+ 	PERIPH_ID_COUNT,
++	PERIPH_ID_NONE = -1,
+ };
+ 
+ /* Converts a clock number to a clock register: 0=L, 1=H, 2=U */
+@@ -355,6 +356,18 @@ unsigned clock_get_rate(enum clock_id clkid);
+  */
+ void clock_ll_start_uart(enum periph_id periph_id);
+ 
++/**
++ * Decode a peripheral ID from a device tree node.
++ *
++ * This works by looking up the peripheral's 'clocks' node and reading out
++ * the second cell, which is the clock number / peripheral ID.
++ *
++ * @param blob		FDT blob to use
++ * @param node		Node to look at
++ * @return peripheral ID, or PERIPH_ID_NONE if none
++ */
++enum periph_id clock_decode_periph_id(const void *blob, int node);
 +
-+	i2c@7000c400 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2c";
-+		reg = <0x7000C400 0x100>;
-+		interrupts = < 116 >;
-+	};
-+
-+	i2c@7000c500 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2c";
-+		reg = <0x7000C500 0x100>;
-+		interrupts = < 124 >;
-+	};
-+
-+	i2c@7000d000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2c";
-+		reg = <0x7000D000 0x200>;
-+		interrupts = < 85 >;
-+	};
-+
-+	i2s@70002800 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2s";
-+		reg = <0x70002800 0x200>;
-+		interrupts = < 45 >;
-+		dma-channel = < 2 >;
-+	};
-+
-+	i2s@70002a00 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-i2s";
-+		reg = <0x70002a00 0x200>;
-+		interrupts = < 35 >;
-+		dma-channel = < 1 >;
-+	};
-+
-+	das@70000c00 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "nvidia,tegra20-das";
-+		reg = <0x70000c00 0x80>;
-+	};
-+
-+	gpio: gpio@6000d000 {
-+		compatible = "nvidia,tegra20-gpio";
-+		reg = < 0x6000d000 0x1000 >;
-+		interrupts = < 64 65 66 67 87 119 121 >;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+	};
-+
-+	pinmux: pinmux@70000000 {
-+		compatible = "nvidia,tegra20-pinmux";
-+		reg = < 0x70000014 0x10    /* Tri-state registers */
-+			0x70000080 0x20    /* Mux registers */
-+			0x700000a0 0x14    /* Pull-up/down registers */
-+			0x70000868 0xa8 >; /* Pad control registers */
-+	};
-+
-+	serial@70006000 {
-+		compatible = "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 68 >;
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = < 69 >;
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 78 >;
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 122 >;
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = < 123 >;
-+	};
-+
-+	sdhci@c8000000 {
-+		compatible = "nvidia,tegra20-sdhci";
-+		reg = <0xc8000000 0x200>;
-+		interrupts = < 46 >;
-+	};
-+
-+	sdhci@c8000200 {
-+		compatible = "nvidia,tegra20-sdhci";
-+		reg = <0xc8000200 0x200>;
-+		interrupts = < 47 >;
-+	};
-+
-+	sdhci@c8000400 {
-+		compatible = "nvidia,tegra20-sdhci";
-+		reg = <0xc8000400 0x200>;
-+		interrupts = < 51 >;
-+	};
-+
-+	sdhci@c8000600 {
-+		compatible = "nvidia,tegra20-sdhci";
-+		reg = <0xc8000600 0x200>;
-+		interrupts = < 63 >;
-+	};
-+
-+	usb@c5000000 {
-+		compatible = "nvidia,tegra20-ehci", "usb-ehci";
-+		reg = <0xc5000000 0x4000>;
-+		interrupts = < 52 >;
-+		phy_type = "utmi";
-+	};
-+
-+	usb@c5004000 {
-+		compatible = "nvidia,tegra20-ehci", "usb-ehci";
-+		reg = <0xc5004000 0x4000>;
-+		interrupts = < 53 >;
-+		phy_type = "ulpi";
-+	};
-+
-+	usb@c5008000 {
-+		compatible = "nvidia,tegra20-ehci", "usb-ehci";
-+		reg = <0xc5008000 0x4000>;
-+		interrupts = < 129 >;
-+		phy_type = "utmi";
-+	};
-+
-+};
+ /*
+  * Checks that clocks are valid and prints a warning if not
+  *
 -- 
 1.7.7.3
