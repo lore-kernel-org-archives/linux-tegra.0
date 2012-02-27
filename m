@@ -1,8 +1,8 @@
 From: Simon Glass <sjg@chromium.org>
-Subject: [PATCH v6 15/20] tegra: fdt: Add function to return
-	peripheral/clock ID
-Date: Mon, 27 Feb 2012 12:52:48 -0800
-Message-ID: <1330375973-10681-16-git-send-email-sjg@chromium.org>
+Subject: [PATCH v6 20/20] tegra: fdt: Enable FDT support for
+	Seaboard
+Date: Mon, 27 Feb 2012 12:52:53 -0800
+Message-ID: <1330375973-10681-21-git-send-email-sjg@chromium.org>
 References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,88 +22,35 @@ To: U-Boot Mailing List <u-boot@lists.denx.de>
 Cc: Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-A common requirement is to find the clock ID for a peripheral. This is the
-second cell of the 'clocks' property (the first being the phandle itself).
+This switches Seaboard over to use FDT for run-time config instead of
+CONFIG options. USB is the only user at present.
 
 Signed-off-by: Simon Glass <sjg@chromium.org>
 ---
-Changes in v4:
-- Add fdtdec function to return peripheral ID
+Changes in v3:
+- Drop Tegra USB alignment patch as we will deal with this another way
 
 Changes in v6:
-- Move peripheral decode function into Tegra's clock.c
+- Drop fdt alignment patch as we will handle this after generic reloc
 
- arch/arm/cpu/armv7/tegra2/clock.c        |   19 +++++++++++++++++++
- arch/arm/include/asm/arch-tegra2/clock.h |   13 +++++++++++++
- 2 files changed, 32 insertions(+), 0 deletions(-)
+ include/configs/seaboard.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/cpu/armv7/tegra2/clock.c b/arch/arm/cpu/armv7/tegra2/clock.c
-index 11d2346..ffbfc28 100644
---- a/arch/arm/cpu/armv7/tegra2/clock.c
-+++ b/arch/arm/cpu/armv7/tegra2/clock.c
-@@ -28,6 +28,7 @@
- #include <asm/arch/tegra2.h>
- #include <common.h>
- #include <div64.h>
-+#include <fdtdec.h>
+diff --git a/include/configs/seaboard.h b/include/configs/seaboard.h
+index b6d9f7a..1dc775a 100644
+--- a/include/configs/seaboard.h
++++ b/include/configs/seaboard.h
+@@ -27,6 +27,11 @@
+ #include <asm/sizes.h>
+ #include "tegra2-common.h"
  
- /*
-  * This is our record of the current clock rate of each clock. We don't
-@@ -918,6 +919,24 @@ void clock_ll_start_uart(enum periph_id periph_id)
- 	reset_set_enable(periph_id, 0);
- }
- 
++/* Enable fdt support for Seaboard. Flash the image in u-boot-dtb.bin */
++#define CONFIG_DEFAULT_DEVICE_TREE	tegra2-seaboard
++#define CONFIG_OF_CONTROL
++#define CONFIG_OF_SEPARATE
 +
-+int clock_decode_periph_id(const void *blob, int node)
-+{
-+	enum periph_id id;
-+	int err, valid;
-+	u32 cell[2];
-+
-+	err = fdtdec_get_int_array(blob, node, "clocks", cell,
-+				   ARRAY_SIZE(cell));
-+	if (err)
-+		return -1;
-+	id = cell[1];
-+
-+	valid = clock_periph_id_isvalid(id);
-+	assert(valid);
-+	return valid ? id : PERIPH_ID_NONE;
-+}
-+
- int clock_verify(void)
- {
- 	struct clk_pll *pll = get_pll(CLOCK_ID_PERIPH);
-diff --git a/arch/arm/include/asm/arch-tegra2/clock.h b/arch/arm/include/asm/arch-tegra2/clock.h
-index 080ef18..6b12c76 100644
---- a/arch/arm/include/asm/arch-tegra2/clock.h
-+++ b/arch/arm/include/asm/arch-tegra2/clock.h
-@@ -177,6 +177,7 @@ enum periph_id {
- 	PERIPH_ID_CRAM2,
- 
- 	PERIPH_ID_COUNT,
-+	PERIPH_ID_NONE = -1,
- };
- 
- /* Converts a clock number to a clock register: 0=L, 1=H, 2=U */
-@@ -355,6 +356,18 @@ unsigned clock_get_rate(enum clock_id clkid);
-  */
- void clock_ll_start_uart(enum periph_id periph_id);
- 
-+/**
-+ * Decode a peripheral ID from a device tree node.
-+ *
-+ * This works by looking up the peripheral's 'clocks' node and reading out
-+ * the second cell, which is the clock number / peripheral ID.
-+ *
-+ * @param blob		FDT blob to use
-+ * @param node		Node to look at
-+ * @return peripheral ID, or PERIPH_ID_NONE if none
-+ */
-+enum periph_id clock_decode_periph_id(const void *blob, int node);
-+
- /*
-  * Checks that clocks are valid and prints a warning if not
-  *
+ /* High-level configuration options */
+ #define TEGRA2_SYSMEM		"mem=384M@0M nvmem=128M@384M mem=512M@512M"
+ #define V_PROMPT		"Tegra2 (SeaBoard) # "
 -- 
 1.7.7.3
