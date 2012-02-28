@@ -1,112 +1,68 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: Re: [PATCH v6 15/20] tegra: fdt: Add function to return
- peripheral/clock ID
-Date: Tue, 28 Feb 2012 10:51:25 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DC8@HQMAIL01.nvidia.com>
-References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
-	<1330375973-10681-16-git-send-email-sjg@chromium.org>
-	<4F4C149E.3070505@nvidia.com>
-	<CAPnjgZ24vhy7NKj_Dt_dzn0qJ8=rj4nF04WSsY8u9MorAanzVA@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB4@HQMAIL01.nvidia.com>
-	<CAPnjgZ2+6k0Ww30vrc_Qb0AnKWVfq0BaCK85HXpzTD0q67smjQ@mail.gmail.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v3 04/10] arm/tegra: Fix PWM clock programming
+Date: Tue, 28 Feb 2012 13:01:14 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E52@HQMAIL01.nvidia.com>
+References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
+ <1329923841-32017-5-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <CAPnjgZ2+6k0Ww30vrc_Qb0AnKWVfq0BaCK85HXpzTD0q67smjQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1329923841-32017-5-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Simon Glass <sjg@chromium.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, U-Boot Mailing List <u-boot@lists.denx.de>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <TWarren@nvidia.com>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Simon Glass wrote at Tuesday, February 28, 2012 11:44 AM:
-> On Tue, Feb 28, 2012 at 10:37 AM, Stephen Warren <swarren@nvidia.com> wro=
-te:
-> > Simon Glass wrote at Tuesday, February 28, 2012 10:46 AM:
-> >> On Mon, Feb 27, 2012 at 3:41 PM, Stephen Warren <swarren@nvidia.com> w=
-rote:
-> >> > On 02/27/2012 01:52 PM, Simon Glass wrote:
-> >> >> A common requirement is to find the clock ID for a peripheral. This=
- is the
-> >> >> second cell of the 'clocks' property (the first being the phandle i=
-tself).
-> >> >
-> >> >> +int clock_decode_periph_id(const void *blob, int node)
-> >> >
-> >> >> + =A0 =A0 valid =3D clock_periph_id_isvalid(id);
-> >> >
-> >> > clock_periph_id_isvalid() is not the correct function to use here; t=
-he
-> >> > code should be checking for invalid IDs in the CAR binding, not inva=
-lid
-> >> > IDs in the HW periph ID definition. They're different.
-> >> >
-> >> > Just to be explicit, the function you need here would be:
-> >> >
-> >> > int clkid_to_periphid(int clkid)
-> >> > {
-> >> > =A0 =A0if (clk_id > 95)
-> >> > =A0 =A0 =A0 =A0return -1;
-> >> > =A0 =A0switch (clk_id) {
-> >> > =A0 =A0case 1:
-> >> > =A0 =A0case 2:
-> >> > =A0 =A0case 7:
-> >> > =A0 =A0case 10:
-> >> > =A0 =A0case 20:
-> >> > =A0 =A0case 30:
-> >> > =A0 =A0case 35:
-> >> > =A0 =A0case 49:
-> >> > =A0 =A0case 56:
-> >> > =A0 =A0case 74:
-> >> > =A0 =A0case 77:
-> >> > =A0 =A0case 78:
-> >> > =A0 =A0case 79:
-> >> > =A0 =A0case 80:
-> >> > =A0 =A0case 81:
-> >> > =A0 =A0case 82:
-> >> > =A0 =A0case 83:
-> >> > =A0 =A0case 91:
-> >> > =A0 =A0case 95:
-> >> > =A0 =A0 =A0 =A0return -1;
-> >> > =A0 =A0default:
-> >> > =A0 =A0 =A0 =A0return clkid;
-> >> > =A0 =A0}
-> >> > }
-> >>
-> >> Ick.
-> >>
-> >> Why is 7 in there,
-> >
-> > 7 affects both the UART2 and VFIR clocks/blocks.
-> >
-> >> and did you miss 76?
-> >
-> > No, that's the undocumented "la" clock.
-> >
-> >> Also U-Boot only goes up to 88
-> >> at present so should I change the first test to match?
-> >
-> > No, clocks 89, 90, 92, 93, and 94 are defined in the binding, which
-> > matches the CLK_OUT_ENB registers in the Tegra CAR HW (albeit not the
-> > CLK_RST registers, since there are some differences between the two).
-> =
+Thierry Reding wrote at Wednesday, February 22, 2012 8:17 AM:
+> PWM clock source registers in Tegra 2 have different clock source selection bit
+> fields than other registers.  PWM clock source bits in CLK_SOURCE_PWM_0 register
+> are located at bit field bit[30:28] while others are at bit field bit[31:30] in
+> their respective clock source register.
+> 
+> This patch updates the clock programming to correctly reflect that, by adding a
+> flag to indicate the alternate bit field format and checking for it when
+> selecting a clock source (parent clock).
 
-> For both of your comments, since they aren't used in U-Boot, wouldn't
-> it be more correct to flag these as errors also? We would have to
-> update at least the clock.h header to support them.
+tegra30_clocks.c needs this change too, although on Tegra30, it's bits
+29:28 for the PWM, and bits 31:30 for non-PWM.
 
-It's probably more correct to update the periph_id enum to define all
-the valid values, but either way is fine.
+> diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
 
--- =
++#define PERIPH_CLK_SOURCE_4BIT_MASK	(7<<28)
++#define PERIPH_CLK_SOURCE_4BIT_SHIFT	28
 
+Why is this (and the flag that enables it) called "4 bit"; the existing
+code supports a 2-bit mux field (4-values), whereas this new code supports
+a 3-bit field (potentially 8 values, but only 5 actually assigned).
+Can this be renamed something more accurate, especially since on Tegra30
+the difference is only the bit position of the field, not the number of
+bits in the field.
+
+> @@ -908,9 +910,16 @@ static void tegra2_periph_clk_init(struct clk *c)
+>  	u32 val = clk_readl(c->reg);
+>  	const struct clk_mux_sel *mux = NULL;
+>  	const struct clk_mux_sel *sel;
+> +	u32 shift;
+> +
+> +	if (c->flags & PERIPH_SOURCE_CLK_4BIT)
+> +		shift = PERIPH_CLK_SOURCE_4BIT_SHIFT;
+> +	else
+> +		shift = PERIPH_CLK_SOURCE_SHIFT;
+
+I think you should assign a "mask" variable here too...
+
+> +
+>  	if (c->flags & MUX) {
+>  		for (sel = c->inputs; sel->input != NULL; sel++) {
+> -			if (val >> PERIPH_CLK_SOURCE_SHIFT == sel->value)
+> +			if (val >> shift == sel->value)
+>  				mux = sel;
+
+Because in the new case, bit 31 isn't part of the field, so just
+shifting doesn't isolate the mux field. In practice, this probably isn't
+an issue since bit 31 is undefined, but better to be safe than sorry...
+
+-- 
 nvpublic
