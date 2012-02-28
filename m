@@ -1,7 +1,7 @@
 From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v7 11/20] tegra: fdt: Add clock bindings for Tegra2 Seaboard
-Date: Tue, 28 Feb 2012 10:07:49 -0800
-Message-ID: <1330452478-5039-12-git-send-email-sjg@chromium.org>
+Subject: [PATCH v7 15/20] tegra: fdt: Add function to return peripheral/clock ID
+Date: Tue, 28 Feb 2012 10:07:53 -0800
+Message-ID: <1330452478-5039-16-git-send-email-sjg@chromium.org>
 References: <1330452478-5039-10-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -11,59 +11,128 @@ To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
 Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the definition of the oscillator clock frequency and the 32KHz clock.
-The latter is provided by a PMIC on I2C which we don't actually use at
-present, but we expect this definition to be used in the kernel and want
-to keep our .dts the same.
+A common requirement is to find the clock ID for a peripheral. This is the
+second cell of the 'clocks' property (the first being the phandle itself).
 
 Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 ---
+Changes in v4:
+- Add fdtdec function to return peripheral ID
+
 Changes in v6:
-- Add new patch to bring in clock bindings to seaboard
+- Move peripheral decode function into Tegra's clock.c
 
 Changes in v7:
-- Add in i2c pmic information and 32KHz clock
+- Add belts and braces checking of device tree clock ID
 
- board/nvidia/dts/tegra2-seaboard.dts |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
+ arch/arm/cpu/armv7/tegra2/clock.c        |   56 ++++++++++++++++++++++++++++++
+ arch/arm/include/asm/arch-tegra2/clock.h |   13 +++++++
+ 2 files changed, 69 insertions(+), 0 deletions(-)
 
-diff --git a/board/nvidia/dts/tegra2-seaboard.dts b/board/nvidia/dts/tegra2-seaboard.dts
-index dde5d03..452679f 100644
---- a/board/nvidia/dts/tegra2-seaboard.dts
-+++ b/board/nvidia/dts/tegra2-seaboard.dts
-@@ -16,6 +16,33 @@
- 		reg = < 0x00000000 0x40000000 >;
- 	};
+diff --git a/arch/arm/cpu/armv7/tegra2/clock.c b/arch/arm/cpu/armv7/tegra2/clock.c
+index 11d2346..959322b 100644
+--- a/arch/arm/cpu/armv7/tegra2/clock.c
++++ b/arch/arm/cpu/armv7/tegra2/clock.c
+@@ -28,6 +28,7 @@
+ #include <asm/arch/tegra2.h>
+ #include <common.h>
+ #include <div64.h>
++#include <fdtdec.h>
  
-+	/* This is not used in U-Boot, but is expected to be in kernel .dts */
-+	i2c@7000d000 {
-+		pmic@34 {
-+			compatible = "ti,tps6586x";
-+			reg = <0x34>;
+ /*
+  * This is our record of the current clock rate of each clock. We don't
+@@ -918,6 +919,61 @@ void clock_ll_start_uart(enum periph_id periph_id)
+ 	reset_set_enable(periph_id, 0);
+ }
+ 
++/*
++ * Convert a device tree clock ID to our peripheral ID. They are mostly
++ * the same but we are very cautious so we check that a valid clock ID is
++ * provided.
++ *
++ * @param clk_id	Clock ID according to tegra2 device tree binding
++ * @return peripheral ID, or PERIPH_ID_NONE if the clock ID is invalid
++ */
++static enum periph_id clk_id_to_periph_id(int clk_id)
++{
++	if (clk_id > 95)
++		return PERIPH_ID_NONE;
 +
-+			clk_32k: clock {
-+				compatible = "fixed-clock";
-+				/*
-+				 * leave out for now due to CPP:
-+				 * #clock-cells = <0>;
-+				 */
-+				clock-frequency = <32768>;
-+			};
-+		};
-+	};
++	switch (clk_id) {
++	case 1:
++	case 2:
++	case 7:
++	case 10:
++	case 20:
++	case 30:
++	case 35:
++	case 49:
++	case 56:
++	case 74:
++	case 76:
++	case 77:
++	case 78:
++	case 79:
++	case 80:
++	case 81:
++	case 82:
++	case 83:
++	case 91:
++	case 95:
++		return PERIPH_ID_NONE;
++	default:
++		return clk_id;
++	}
++}
 +
-+	clocks {
-+		osc {
-+			clock-frequency = <12000000>;
-+		};
-+	};
++int clock_decode_periph_id(const void *blob, int node)
++{
++	enum periph_id id;
++	u32 cell[2];
++	int err;
 +
-+	clock@60006000 {
-+		clocks = <&clk_32k &osc>;
-+	};
++	err = fdtdec_get_int_array(blob, node, "clocks", cell,
++				   ARRAY_SIZE(cell));
++	if (err)
++		return -1;
++	id = clk_id_to_periph_id(cell[1]);
++	assert(clock_periph_id_isvalid(id));
++	return id;
++}
 +
- 	serial@70006300 {
- 		clock-frequency = < 216000000 >;
- 	};
+ int clock_verify(void)
+ {
+ 	struct clk_pll *pll = get_pll(CLOCK_ID_PERIPH);
+diff --git a/arch/arm/include/asm/arch-tegra2/clock.h b/arch/arm/include/asm/arch-tegra2/clock.h
+index 080ef18..6b12c76 100644
+--- a/arch/arm/include/asm/arch-tegra2/clock.h
++++ b/arch/arm/include/asm/arch-tegra2/clock.h
+@@ -177,6 +177,7 @@ enum periph_id {
+ 	PERIPH_ID_CRAM2,
+ 
+ 	PERIPH_ID_COUNT,
++	PERIPH_ID_NONE = -1,
+ };
+ 
+ /* Converts a clock number to a clock register: 0=L, 1=H, 2=U */
+@@ -355,6 +356,18 @@ unsigned clock_get_rate(enum clock_id clkid);
+  */
+ void clock_ll_start_uart(enum periph_id periph_id);
+ 
++/**
++ * Decode a peripheral ID from a device tree node.
++ *
++ * This works by looking up the peripheral's 'clocks' node and reading out
++ * the second cell, which is the clock number / peripheral ID.
++ *
++ * @param blob		FDT blob to use
++ * @param node		Node to look at
++ * @return peripheral ID, or PERIPH_ID_NONE if none
++ */
++enum periph_id clock_decode_periph_id(const void *blob, int node);
++
+ /*
+  * Checks that clocks are valid and prints a warning if not
+  *
 -- 
 1.7.7.3
