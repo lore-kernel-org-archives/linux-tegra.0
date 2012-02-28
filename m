@@ -1,62 +1,60 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 15/20] tegra: fdt: Add function to return peripheral/clock
- ID
-Date: Mon, 27 Feb 2012 16:41:18 -0700
-Message-ID: <4F4C149E.3070505@nvidia.com>
-References: <1330375973-10681-1-git-send-email-sjg@chromium.org> <1330375973-10681-16-git-send-email-sjg@chromium.org>
+Subject: [PATCH] ARM: tegra: match SoC name not board name in DT board files
+Date: Mon, 27 Feb 2012 18:26:16 -0700
+Message-ID: <1330392376-7884-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1330375973-10681-16-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/27/2012 01:52 PM, Simon Glass wrote:
-> A common requirement is to find the clock ID for a peripheral. This is the
-> second cell of the 'clocks' property (the first being the phandle itself).
+board-dt-tegra*.c should support any board using Tegra when booted using
+device tree. Instead of explicitly listing all the supported boards,
+which requires a kernel change for each new board, list the supported SoC
+model instead.
 
-> +int clock_decode_periph_id(const void *blob, int node)
+Note that the board files do currently have explicit support for setting
+up each board's pinmux. However, it's fairly likely that at least the
+basic devices on any new board will work just fine as set up by the boot-
+loader, and the pinmux data should be moving into device tree soon anyway.
 
-> +	valid = clock_periph_id_isvalid(id);
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c |    6 +-----
+ arch/arm/mach-tegra/board-dt-tegra30.c |    2 +-
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-clock_periph_id_isvalid() is not the correct function to use here; the
-code should be checking for invalid IDs in the CAR binding, not invalid
-IDs in the HW periph ID definition. They're different.
-
-Just to be explicit, the function you need here would be:
-
-int clkid_to_periphid(int clkid)
-{
-    if (clk_id > 95)
-        return -1;
-    switch (clk_id) {
-    case 1:
-    case 2:
-    case 7:
-    case 10:
-    case 20:
-    case 30:
-    case 35:
-    case 49:
-    case 56:
-    case 74:
-    case 77:
-    case 78:
-    case 79:
-    case 80:
-    case 81:
-    case 82:
-    case 83:
-    case 91:
-    case 95:
-        return -1;
-    default:
-        return clkid;
-    }
-}
-
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 6d1dd19..89adbb8 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -130,11 +130,7 @@ static void __init tegra_dt_init(void)
+ }
+ 
+ static const char *tegra20_dt_board_compat[] = {
+-	"compulab,trimslice",
+-	"nvidia,harmony",
+-	"compal,paz00",
+-	"nvidia,seaboard",
+-	"nvidia,ventana",
++	"nvidia,tegra20",
+ 	NULL
+ };
+ 
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index 1401cf3..fd04757 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -91,7 +91,7 @@ static void __init tegra30_dt_init(void)
+ }
+ 
+ static const char *tegra30_dt_board_compat[] = {
+-	"nvidia,cardhu",
++	"nvidia,tegra30",
+ 	NULL
+ };
+ 
 -- 
-nvpublic
+1.7.0.4
