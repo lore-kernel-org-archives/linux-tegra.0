@@ -1,46 +1,68 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v3 07/10] arm/tegra: Add PWFM controller device tree
- probing
-Date: Tue, 28 Feb 2012 13:20:25 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E67@HQMAIL01.nvidia.com>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-8-git-send-email-thierry.reding@avionic-design.de>
+From: Albert ARIBAUD <albert.u.boot-LhW3hqR2+23R7s880joybQ@public.gmane.org>
+Subject: Re: [U-Boot] [PATCH v6 11/20] tegra: fdt: Add clock bindings for
+ Tegra2 Seaboard
+Date: Tue, 28 Feb 2012 23:16:56 +0100
+Message-ID: <4F4D5258.7020901@aribaud.net>
+References: <1330375973-10681-1-git-send-email-sjg@chromium.org> <1330375973-10681-12-git-send-email-sjg@chromium.org> <4F4C11E9.1050907@nvidia.com> <CAPnjgZ0_xzn0tvETt3C=pjyRX-MXNA-JXy4fuAs9L8OdHuvLhg@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1D6A@HQMAIL01.nvidia.com> <CAPnjgZ1LsFeADVHRcS694EwJrz3V+ONdp9ds+bdAG5rNupQ_ag@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB0@HQMAIL01.nvidia.com> <CAPnjgZ3vsw2rH1CdiN_3xzvJr2pUTn_SY4jNEf-w26cRK=3gmQ@mail.gmail.com> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB8@HQMAIL01.nvidia.com> <CAPnjgZ0VGRSgb92u2UbNf+_HFF-EXhLZzC4XdYUvAjVKtz1XtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329923841-32017-8-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <CAPnjgZ0VGRSgb92u2UbNf+_HFF-EXhLZzC4XdYUvAjVKtz1XtQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Wednesday, February 22, 2012 8:17 AM:
-> Add auxdata to instantiate a device tree for the PWFM controller and
-> include a corresponding node in the device tree.
+Le 28/02/2012 19:46, Simon Glass a =E9crit :
+> Hi Stephen,
+>
+> On Tue, Feb 28, 2012 at 10:41 AM, Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =
+ wrote:
+>> Simon Glass wrote at Tuesday, February 28, 2012 11:37 AM:
+>>> On Tue, Feb 28, 2012 at 10:31 AM, Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org=
+>  wrote:
+>>>> Simon Glass wrote at Tuesday, February 28, 2012 10:38 AM:
+>>>> ...
+>>>>> I am going to add your binding, less the #clock-cells which U-Boo=
+t
+>>>>> currently can't support because it conflicts with the C preproces=
+sor
+>>>>> (at some point I may look at a patch to use sed or some other mea=
+ns of
+>>>>> avoiding this).
+>>>>
+>>>> Out of curiosity, why does the C preprocessor come into it? Is U-B=
+oot's
+>>>> build process running cpp on the .dts files or something? That's n=
+on-
+>>>> standard, although perhaps it could be a useful standard...
+>>>
+>>> Yes, but at the moment we only use it for '/include/ ARCH_CPU_DTS'.
+>>
+>> Uggh. That's going to make the device tree files look different betw=
+een
+>> the kernel and U-Boot:-( With # disallowed in particular, it's going=
+ to
+>> prevent U-Boot from /ever/ using the correct protocols for parsing t=
+he
+>> device tree. This seems like an extremely bad idea.
+>
+> Until we change it in U-Boot, you mean. We could move to sed or pre-
+> and post-process the file to remove and re-insert the #.
 
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+Rather, to convert # signs into something that the DTS cannot contain=20
+and the compiler can withstand (and it should be printable ASCII, too).=
+=20
+is '##' a good candidate?
 
-> +	pwm: pwm@7000a000 {
-> +		compatible = "nvidia,tegra20-pwm";
-> +		reg = <0x7000a000 0x100>;
-> +		#pwm-cells = <2>;
-> +	};
+If so, a forward conversion would e.g. map '/include/' to '#include' an=
+d=20
+any '#' to '##', and the reverse conversion would turn all '##' to '#'.
 
-The compatible value probably should list both Tegra30 and Tegra20, so
-we can know exactly which HW is present, just in case we need to turn
-on some bug-fix only for one of the variants:
+But something that simple is bound to be wrong in some way...
 
-    compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
-
-Could you also write binding documentation, in particular explaining
-what the two pwm-cells are specifically for Tegra:
-
-Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-
-(although perhaps that'd be part of the previous patch which implements
-the driver)
-
--- 
-nvpublic
+Amicalement,
+--=20
+Albert.
