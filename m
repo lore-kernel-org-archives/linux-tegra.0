@@ -1,14 +1,15 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v3 06/10] pwm: Add NVIDIA Tegra SoC support
-Date: Tue, 28 Feb 2012 13:14:35 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E63@HQMAIL01.nvidia.com>
+Subject: RE: [PATCH v3 07/10] arm/tegra: Add PWFM controller device tree
+ probing
+Date: Tue, 28 Feb 2012 13:20:25 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E67@HQMAIL01.nvidia.com>
 References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-7-git-send-email-thierry.reding@avionic-design.de>
+ <1329923841-32017-8-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1329923841-32017-7-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <1329923841-32017-8-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
@@ -16,34 +17,30 @@ Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-
 List-Id: linux-tegra@vger.kernel.org
 
 Thierry Reding wrote at Wednesday, February 22, 2012 8:17 AM:
-> This commit adds a generic PWM framework driver for the PWFM controller
-> found on NVIDIA Tegra SoCs. The driver is based on code from the
-> Chromium kernel tree and was originally written by Gary King (NVIDIA)
-> and later modified by Simon Que (Chromium).
+> Add auxdata to instantiate a device tree for the PWFM controller and
+> include a corresponding node in the device tree.
 
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
 
-> +static int tegra_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+> +	pwm: pwm@7000a000 {
+> +		compatible = "nvidia,tegra20-pwm";
+> +		reg = <0x7000a000 0x100>;
+> +		#pwm-cells = <2>;
+> +	};
 
-> +	/*
-> +	 * Convert from duty_ns / period_ns to a fixed number of duty
-> +	 * ticks per (1 << PWM_DUTY_WIDTH) cycles.
-> +	 */
-> +	c = duty_ns * ((1 << PWM_DUTY_WIDTH) - 1);
+The compatible value probably should list both Tegra30 and Tegra20, so
+we can know exactly which HW is present, just in case we need to turn
+on some bug-fix only for one of the variants:
 
-The driver in ChromeOS has the following extra line here:
+    compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
 
-    c += (period_ns / 2);
+Could you also write binding documentation, in particular explaining
+what the two pwm-cells are specifically for Tegra:
 
-and the following extra line in the comment above:
+Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
 
-    Also, make sure to round to the nearest integer during division.
-
-I don't know the HW well enough to know if that line should be present?
-
-Otherwise, this looks similar enough to the ChromeOS driver, so:
-
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+(although perhaps that'd be part of the previous patch which implements
+the driver)
 
 -- 
 nvpublic
