@@ -1,103 +1,45 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 00/10] Add tegra30 support for secondary cores
-Date: Wed, 29 Feb 2012 17:42:29 +0200
-Message-ID: <20120229154229.GL12917@tbergstrom-lnx.Nvidia.com>
-References: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF178FACB954@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
+ kernel_noload
+Date: Wed, 29 Feb 2012 08:58:49 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF206A@HQMAIL01.nvidia.com>
+References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
+ <20120229122942.GF3318@game.jcrosoft.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="QRj9sO5tAVLaXnSD"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178FACB954-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20120229122942.GF3318-RQcB7r2h9QmfDR2tN2SG5Ni2O/JbrIOy@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---QRj9sO5tAVLaXnSD
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Wed, Feb 15, 2012 at 10:27:43PM +0100, Stephen Warren wrote:
-> Peter De Schrijver wrote at Thursday, February 09, 2012 4:48 PM:
-> > This patchset introduces support for secondary cores on tegra30. It also
-> > introduces some functions for the flowcontroller and adds basic support for
-> > tegra30 powerdomains.
+Jean-Christophe PLAGNIOL-VILLARD wrote at Wednesday, February 29, 2012 5:30 AM:
+> On 17:03 Tue 28 Feb     , Stephen Warren wrote:
+> > uImage files typically encode a single absolute load and entry address.
+> > This is inconvenient when attempting to share that uImage across multiple
+> > SoCs with different physical RAM addresses. Recent versions of mkimage
+> > implement a "kernel_noload" image type which encodes no absolute load
+> > address, and a relative entry address. This works well for uImage-wrapped
+> > ARM zImages, since they are relocatable.
+> >
+> > This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
+> > "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
+> >
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > I assume I should put this into the ARM patch tracker if it's OK?
+>
+> Again a new option for uImage no why not just boot the zImage
 > 
-> The code looks fine to me. I do notice the following when running
-> "shutdown -h now":
-> 
-> [   27.762124] SMP: failed to stop secondary CPUs
-> 
-> So, this patch series makes the secondary cores boot OK, but not shut
-> down it appears. Is that expected? It's probably something we can fix
-> with a following on patch rather than re-spinning this series though?
-> 
+> in this case the uImage is useless
 
-I spent some more time looking at this. It appears that nr_online_cpus isn't
-always updated properly. I added an extra pr_warn() when the failure happens
-and I got:
+U-Boot doesn't support zImage at present.
 
-[   22.369815] Restarting system.
-[   23.506792] SMP: failed to stop secondary CPUs
-[   23.511535] running on CPU: 3, still online: 2, mask: 8
+A patch was posted to support it at least for ARM, but needed a little
+work before it could be committed.
 
-I also did some function tracing and all CPUs besides the one initiating the
-halt reach platform_cpu_kill() about 50us after sending the IPIs to stop them.
-The set_cpu_online() call in ipi_cpu_stop() should update nr_online_cpus, but
-somehow this doesn't always happen. Any insight on what might be going on?
-
-Instrumentation patch attached.
-
-Cheers,
-
-Peter.
-
-
---QRj9sO5tAVLaXnSD
-Content-Type: text/x-diff; charset="us-ascii"
-Content-Disposition: attachment;
-	filename="0001-ARM-debugging-smp_send_stop.patch"
-
-From d871feda574bd9f626f175be403cabd308ca18c0 Mon Sep 17 00:00:00 2001
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Wed, 29 Feb 2012 17:37:27 +0200
-Subject: [PATCH] ARM: debugging smp_send_stop
-X-NVConfidentiality: public
-
-Change-Id: Ia4f33b054f2eccf173a3d977686e1577e2146b92
----
- arch/arm/kernel/smp.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 3e43c5f..e0e5eea 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -570,6 +570,7 @@ void smp_send_reschedule(int cpu)
- void smp_send_stop(void)
- {
- 	unsigned long timeout;
-+	int cpu = smp_processor_id();
- 
- 	if (num_online_cpus() > 1) {
- 		cpumask_t mask = cpu_online_map;
-@@ -583,8 +584,12 @@ void smp_send_stop(void)
- 	while (num_online_cpus() > 1 && timeout--)
- 		udelay(1);
- 
--	if (num_online_cpus() > 1)
-+	if (num_online_cpus() > 1) {
-+		char cpu_mask[10];
- 		pr_warning("SMP: failed to stop secondary CPUs\n");
-+		cpumask_scnprintf(cpu_mask, sizeof(cpu_mask), cpu_online_mask);
-+		pr_warn("running on CPU: %d, still online: %d, mask: %s\n", cpu, num_online_cpus(), cpu_mask);
-+	}
- }
- 
- /*
 -- 
-1.7.7.rc0.72.g4b5ea.dirty
-
-
---QRj9sO5tAVLaXnSD--
+nvpublic
