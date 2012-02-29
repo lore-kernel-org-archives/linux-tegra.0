@@ -1,47 +1,45 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: Add zreladdr etc to Makefile.boot for Tegra30
-Date: Tue, 28 Feb 2012 17:03:24 -0700
-Message-ID: <1330473804-23348-2-git-send-email-swarren@nvidia.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
+ kernel_noload
+Date: Wed, 29 Feb 2012 13:29:42 +0100
+Message-ID: <20120229122942.GF3318@game.jcrosoft.org>
 References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1330473804-23348-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Nicolas Pitre <nico@fluxnic.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-These previously weren't present, because they're different for Tegra20
-and Tegra30, which forced one to specify LOADADDR= when building uImages
-for kernels with both Tegra20 and Tegra30 support enabled.
+On 17:03 Tue 28 Feb     , Stephen Warren wrote:
+> uImage files typically encode a single absolute load and entry address.
+> This is inconvenient when attempting to share that uImage across multiple
+> SoCs with different physical RAM addresses. Recent versions of mkimage
+> implement a "kernel_noload" image type which encodes no absolute load
+> address, and a relative entry address. This works well for uImage-wrapped
+> ARM zImages, since they are relocatable.
+> 
+> This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
+> "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
+> 
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> I assume I should put this into the ARM patch tracker if it's OK?
+Again a new option for uImage no why not just boot the zImage
 
-My expectation now is that everyone will turn on CONFIG_UIMAGE_NOLOAD and
-hence not be inconvenienced by having this information present.
+in this case the uImage is useless
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This somewhat depends on the previous patch or it'll be annoying to build
-multi-SoC Tegra kernels, so I guess it should get merged through the same
-tree.
-
- arch/arm/mach-tegra/Makefile.boot |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index 9a82094..b6101f8 100644
---- a/arch/arm/mach-tegra/Makefile.boot
-+++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -2,6 +2,10 @@ zreladdr-$(CONFIG_ARCH_TEGRA_2x_SOC)	+= 0x00008000
- params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
- initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
- 
-+zreladdr-$(CONFIG_ARCH_TEGRA_3x_SOC)	+= 0x80008000
-+params_phys-$(CONFIG_ARCH_TEGRA_3x_SOC)	:= 0x80000100
-+initrd_phys-$(CONFIG_ARCH_TEGRA_3x_SOC)	:= 0x80800000
-+
- dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
- dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
- dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
--- 
-1.7.0.4
+Best Regards,
+J.
