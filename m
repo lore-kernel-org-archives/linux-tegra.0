@@ -1,38 +1,39 @@
-From: Andre Renaud <andre-7Wk5F4Od5/oYd5yxfr4S2w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T kernel_noload
-Date: Thu, 01 Mar 2012 11:28:33 +1300
-Message-ID: <4F4EA691.9040406@bluewatersys.com>
-References: <20120229181430.GI3318@game.jcrosoft.org> <4F4E6F96.8080907@am.sony.com> <20120229191209.GN14173@pengutronix.de> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2122@HQMAIL01.nvidia.com> <20120229194409.GO14173@pengutronix.de> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2155@HQMAIL01.nvidia.com> <4F4E86A1.8010506@bluewatersys.com> <20120229201938.GB16999@n2100.arm.linux.org.uk> <4F4E89A8.4080909@bluewatersys.com> <20120229203958.GQ14173@pengutronix.de> <20120229204527.GD16999@n2100.arm.linux.org.uk> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF21A1@HQMAIL01.nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v3 00/10] Add tegra30 support for secondary cores
+Date: Wed, 29 Feb 2012 14:38:16 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF21F3@HQMAIL01.nvidia.com>
+References: <1328831277-21002-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF178FACB954@HQMAIL01.nvidia.com>
+ <20120229154229.GL12917@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF21A1-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20120229154229.GL12917-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tim Bird <tim.bird-mEdOJwZ7QcZBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/03/12 10:27, Stephen Warren wrote:
-> Russell King wrote at Wednesday, February 29, 2012 1:45 PM:
-> ...
->> So, really, comparing a standard uImage produced by the standard kernel
->> with gzipped Image is far from a fair comparison.  And that's actually
->> another argument for getting rid of the uImage target... it may make
->> people think a bit about what they're doing rather than accepting
->> whatever default location someone else chose for their kernel.
-> 
-> That seems like more of an argument for making the uImage target use
-> -T kernel_noload unconditionally, rather than removing the target.
-> Since doing so would solve the issue about the kernel picking a load
-> address.
-> 
-> That is, ignoring any arguments about breaking existing workflows at
-> least...
+Peter De Schrijver wrote at Wednesday, February 29, 2012 8:42 AM:
+> On Wed, Feb 15, 2012 at 10:27:43PM +0100, Stephen Warren wrote:
+> > Peter De Schrijver wrote at Thursday, February 09, 2012 4:48 PM:
+> > > This patchset introduces support for secondary cores on tegra30. It also
+> > > introduces some functions for the flowcontroller and adds basic support for
+> > > tegra30 powerdomains.
+> >
+> > The code looks fine to me. I do notice the following when running
+> > "shutdown -h now":
+> >
+> > [   27.762124] SMP: failed to stop secondary CPUs
 
-I think this is the case that I was seeing - the current behaviour of
-the uImage target, of using the zreladdr as the load/start addresses
-essentially guarantees the worst case relocation behaviour.
+I can't seem to reproduce this at all on next-20120229 anymore. What
+kind of repro frequency are you seeing, and does it get fixed if you
+update to that baseline?
 
-Regards,
-Andre
+(I tried 20 times with shutdown, and 15 of them I reverted all the CPU
+and cache errata in case they affected the issue at all)
+
+-- 
+nvpublic
