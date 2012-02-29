@@ -1,45 +1,39 @@
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
- kernel_noload
-Date: Wed, 29 Feb 2012 08:58:49 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF206A@HQMAIL01.nvidia.com>
-References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
- <20120229122942.GF3318@game.jcrosoft.org>
+Subject: RE: [PATCH v6 15/20] tegra: fdt: Add function to return
+ peripheral/clock ID
+Date: Wed, 29 Feb 2012 09:08:56 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2072@HQMAIL01.nvidia.com>
+References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
+	<1330375973-10681-16-git-send-email-sjg@chromium.org>
+	<4F4C149E.3070505@nvidia.com>
+	<CAPnjgZ24vhy7NKj_Dt_dzn0qJ8=rj4nF04WSsY8u9MorAanzVA@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB4@HQMAIL01.nvidia.com>
+	<CAPnjgZ2+6k0Ww30vrc_Qb0AnKWVfq0BaCK85HXpzTD0q67smjQ@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DC8@HQMAIL01.nvidia.com>
+ <CAPnjgZ2vwck_u1HVbpz=B4QjiCVoLeX6TcvwMi-o71Fqt_m3NQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120229122942.GF3318-RQcB7r2h9QmfDR2tN2SG5Ni2O/JbrIOy@public.gmane.org>
+In-Reply-To: <CAPnjgZ2vwck_u1HVbpz=B4QjiCVoLeX6TcvwMi-o71Fqt_m3NQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Jean-Christophe PLAGNIOL-VILLARD wrote at Wednesday, February 29, 2012 5:30 AM:
-> On 17:03 Tue 28 Feb     , Stephen Warren wrote:
-> > uImage files typically encode a single absolute load and entry address.
-> > This is inconvenient when attempting to share that uImage across multiple
-> > SoCs with different physical RAM addresses. Recent versions of mkimage
-> > implement a "kernel_noload" image type which encodes no absolute load
-> > address, and a relative entry address. This works well for uImage-wrapped
-> > ARM zImages, since they are relocatable.
-> >
-> > This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
-> > "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
-> >
-> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > I assume I should put this into the ARM patch tracker if it's OK?
->
-> Again a new option for uImage no why not just boot the zImage
-> 
-> in this case the uImage is useless
+Simon Glass wrote at Tuesday, February 28, 2012 4:50 PM:
+> On Tue, Feb 28, 2012 at 10:51 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > Simon Glass wrote at Tuesday, February 28, 2012 11:44 AM:
+> >> On Tue, Feb 28, 2012 at 10:37 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+...
+> >> >> and did you miss 76?
+> >> >
+> >> > No, that's the undocumented "la" clock.
+....
+> OK - BTW what does 'LA' stand for?
 
-U-Boot doesn't support zImage at present.
-
-A patch was posted to support it at least for ARM, but needed a little
-work before it could be committed.
+Sorry, I don't know; it's not documented. I just confirmed it exists.
 
 -- 
 nvpublic
