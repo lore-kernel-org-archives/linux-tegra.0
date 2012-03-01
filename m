@@ -1,102 +1,32 @@
-From: Alan Ott <alan@signal11.us>
-Subject: [PATCH 7/8] ARM: tegra: export usb phy symbols
-Date: Thu,  1 Mar 2012 14:26:49 -0500
-Message-ID: <1330630010-11241-8-git-send-email-alan@signal11.us>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 8/8] ARM: tegra: HACK: remove set_irq_flags() from driver
+Date: Thu, 1 Mar 2012 11:36:43 -0800
+Message-ID: <20120301193643.GA607@kroah.com>
 References: <1330630010-11241-1-git-send-email-alan@signal11.us>
+ <1330630010-11241-9-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1330630010-11241-1-git-send-email-alan@signal11.us>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1330630010-11241-9-git-send-email-alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Mar 01, 2012 at 02:26:50PM -0500, Alan Ott wrote:
+> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> 
+> The driver should not call set_irq_flags itself, and
+> cannot do this from a loadable module.
+> 
+> Remove the call for now, which might break the driver
+> but at least lets the kernel link again.
+> 
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 
-The ehci driver can be a module, so the functions provided
-by the tegra platform code used by ehci-tegra need to
-be exported.
+Um, I think you should test this out before submitting it anywhere :)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-tegra/usb_phy.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+As it is, I can't accept it.
 
-diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
-index 37576a7..3c45264 100644
---- a/arch/arm/mach-tegra/usb_phy.c
-+++ b/arch/arm/mach-tegra/usb_phy.c
-@@ -730,6 +730,7 @@ err0:
- 	kfree(phy);
- 	return ERR_PTR(err);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_open);
- 
- int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
- {
-@@ -738,6 +739,7 @@ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
- 	else
- 		return utmi_phy_power_on(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_power_on);
- 
- void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
- {
-@@ -746,18 +748,21 @@ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
- 	else
- 		utmi_phy_power_off(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_power_off);
- 
- void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_preresume(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
- 
- void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_postresume(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
- 
- void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 				 enum tegra_usb_phy_port_speed port_speed)
-@@ -765,24 +770,28 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_restore_start(phy, port_speed);
- }
-+EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
- 
- void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_restore_end(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
- 
- void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_clk_disable(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_disable);
- 
- void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_clk_enable(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_enable);
- 
- void tegra_usb_phy_close(struct tegra_usb_phy *phy)
- {
-@@ -794,3 +803,4 @@ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
- 	clk_put(phy->pll_u);
- 	kfree(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_close);
--- 
-1.7.0.4
+greg k-h
