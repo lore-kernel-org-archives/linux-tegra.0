@@ -1,119 +1,47 @@
-From: Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH v4 5/9] tegra: i2c: Add I2C driver
-Date: Thu, 1 Mar 2012 15:29:08 -0500
-Message-ID: <201203011529.11213.vapier@gentoo.org>
-References: <1330536689-9121-5-git-send-email-sjg@chromium.org> <1330536689-9121-6-git-send-email-sjg@chromium.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 8/8] ARM: tegra: HACK: remove set_irq_flags() from driver
+Date: Thu, 1 Mar 2012 12:29:43 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE86173C@HQMAIL01.nvidia.com>
+References: <1330630010-11241-1-git-send-email-alan@signal11.us>
+ <1330630010-11241-9-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2157465.YtJ4YFePuy";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1330536689-9121-6-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1330630010-11241-9-git-send-email-alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
+To: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---nextPart2157465.YtJ4YFePuy
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Alan Ott wrote at Thursday, March 01, 2012 12:27 PM:
+> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> 
+> The driver should not call set_irq_flags itself, and
 
-On Wednesday 29 February 2012 12:31:25 Simon Glass wrote:
-> --- /dev/null
-> +++ b/arch/arm/include/asm/arch-tegra2/tegra_i2c.h
->
-> +/* Convert i2c slave address to be put on bus  */
-> +#define I2C_ADDR_ON_BUS(chip)		(chip << 1)
+Probably true in this case.
 
-i'm not sure the desc here is correct ... it's at least a little bit=20
-misleading.  addresses are 7bits, and the 8th bit is for telling the device=
- to=20
-read/write.  since it only gets used in two places, might be better to inli=
-ne=20
-the bit shift there ?  hard to say.
+> cannot do this from a loadable module.
 
-> --- /dev/null
-> +++ b/drivers/i2c/tegra_i2c.c
->
-> + * Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+I hope that's not true; grep'ing the entire of drivers/ shows a bunch
+of drivers calling this function, and many look like they'd be reasonable
+as module.
 
-guess you need to -2012 that now ;)
+From what little I understand of this, any irq_chip is going to call
+that function after setting up any child/cascaded IRQs, and I assume
+that irq_chips can be in modules.
 
-> +#include <common.h>
-> +#include <asm/io.h>
-> +#include <asm/arch/clk_rst.h>
-> +#include <asm/arch/clock.h>
-> +#include <asm/arch/funcmux.h>
-> +#include <asm/arch/gpio.h>
-> +#include <asm/arch/pinmux.h>
-> +#include <asm/arch/tegra_i2c.h>
-> +#include <fdtdec.h>
+> Remove the call for now, which might break the driver
+> but at least lets the kernel link again.
 
-needs to include i2c.h to make sure your local defs stay inline with the=20
-prototypes everyone else is using.  also, asm/* generally should come last =
-(so=20
-after ftdec.h).
+The driver appears to work fine with this removed. At least, on Tegra20
+Harmony, I was able to modprobe ehci-hcd and then use the USB Ethernet
+controller for DHCP and SSH.
 
-> +static int send_recv_packets(
-> +	struct i2c_bus *i2c_bus,
-> +	struct i2c_trans_info *trans)
-> +{
-> +	struct i2c_control *control =3D i2c_bus->control;
-> +	u32 int_status;
-> +	u32 words;
-> +	u8 *dptr;
-> +	u32 local;
-> +	uchar last_bytes;
-> +	int error =3D 0;
-> +	int is_write =3D trans->flags & I2C_IS_WRITE;
-> +
-> +	/* clear status from previous transaction, XFER_COMPLETE, NOACK, etc. */
-> +	int_status =3D readl(&control->int_status);
-> +	writel(int_status, &control->int_status);
-> +
-> +	send_packet_headers(i2c_bus, trans, 1);
-> +
-> +	words =3D DIV_ROUND_UP(trans->num_bytes, 4);
-> +	last_bytes =3D trans->num_bytes & 3;
-> +	dptr =3D trans->buf;
-> +
-> +	while (words) {
-> +		if (is_write) {
-> +			/* deal with word alignment */
-> +			if ((unsigned)dptr & 3) {
-> +				memcpy(&local, dptr, sizeof(u32));
-> +				writel(local, &control->tx_fifo);
-> +				debug("pkt data sent (0x%x)\n", local);
-> +			} else {
-> +				writel(*(u32 *)dptr, &control->tx_fifo);
-> +				debug("pkt data sent (0x%x)\n", *(u32 *)dptr);
+So,
 
-generally inlining these types of bitsized casts are discouraged ...
-=2Dmike
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---nextPart2157465.YtJ4YFePuy
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
-
-iQIcBAABAgAGBQJPT9wWAAoJEEFjO5/oN/WBDecP/jcmc4aSQcYlzlgA+iunffqL
-49s5F6z2ZO9lWzkaIn7Qb6UbyD94Js7rdDuQPkV+6DRVx7udQ2u3QuHWr/f2QuP0
-r6EvkXUoKIS64ANz/FDxLGTM4fjkCgOCCMBmwtBQyg852fRm4OtOzHm2pB6UcZje
-nJiYlyMLpyXL+Qr1MOil0SynZHeqqcghUH6SzqyyExOmNC3AR6hS3Q+ZTXTZGfNN
-n74VAiU5jZV8i4zmenIrN9m3cPmqxQp6iXPaAgisPajpqHe8QXofZwGsImt7l2GR
-cm5ZRIox++eWniUp0dperiFpy9POjAlg5m5l0+4nHff5259GjU9H7C9myeNKZY3l
-cPtVgOozDfv5iLuwtyJmCNOCqGvfwCTQoa5WQXefUIRlDsv1wVQo8/TVNIwJBdOB
-xUDlI16hYoGKxLmXYQQmfk3KFrAAbRK8VFUDAbNqacQurAkjBLdlAwjzMu95lQR4
-tr9Q/gd6jc7HXDM3FCqB/5pr5B2HCtZ1SvNAEkAx99U6dEz4MQASCM1M8PIKQQaL
-c5LgCj2+aO3e+MA3kd9dgG4rABYZDqKGNELFNtCoYjpqTGO7Yk7uj0bcYvmbfipe
-7iQ4CGscufF3ixp+n/tjAhMkavldSRJUTlvnf8sEhwVNv8ksHQLRgdfONuQ9n0BB
-BWsiXhiwWUSprBiFGn5o
-=a1Im
------END PGP SIGNATURE-----
-
---nextPart2157465.YtJ4YFePuy--
+-- 
+nvpublic
