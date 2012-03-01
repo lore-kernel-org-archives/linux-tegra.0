@@ -1,40 +1,99 @@
-From: Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T kernel_noload
-Date: Thu, 01 Mar 2012 10:53:48 +1100
-Message-ID: <4F4EBA8C.1040408@gmail.com>
-References: <1330473804-23348-1-git-send-email-swarren@nvidia.com> <20120229122942.GF3318@game.jcrosoft.org> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF206A@HQMAIL01.nvidia.com> <20120229181430.GI3318@game.jcrosoft.org> <4F4E6F96.8080907@am.sony.com> <20120229191209.GN14173@pengutronix.de> <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2122@HQMAIL01.nvidia.com> <20120229194409.GO14173@pengutronix.de>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
+ kernel_noload
+Date: Thu, 1 Mar 2012 05:55:43 +0100
+Message-ID: <20120301045543.GL3318@game.jcrosoft.org>
+References: <20120229191209.GN14173@pengutronix.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2122@HQMAIL01.nvidia.com>
+ <20120229194409.GO14173@pengutronix.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2155@HQMAIL01.nvidia.com>
+ <4F4E86A1.8010506@bluewatersys.com>
+ <20120229201938.GB16999@n2100.arm.linux.org.uk>
+ <4F4E89A8.4080909@bluewatersys.com>
+ <20120229203958.GQ14173@pengutronix.de>
+ <20120229204527.GD16999@n2100.arm.linux.org.uk>
+ <20120229205901.GR14173@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120229194409.GO14173-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tim Bird <tim.bird-mEdOJwZ7QcZBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20120229205901.GR14173@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Stephen Warren <swarren@nvidia.com>, Nicolas Pitre <nico@fluxnic.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, Olof Johansson <olof@lixom.net>, Andre Renaud <andre@bluewatersys.com>, Tim Bird <tim.bird@am.sony.com>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/03/12 06:44, Uwe Kleine-K=F6nig wrote:
+On 21:59 Wed 29 Feb     , Uwe Kleine-K=F6nig wrote:
+> On Wed, Feb 29, 2012 at 08:45:27PM +0000, Russell King - ARM Linux wrote:
+> > On Wed, Feb 29, 2012 at 09:39:58PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > I'd bet your platform has cache support in the decompressor without
+> > > knowing which platform you use. I suggest commenting out
+> > > =
 
-> On Wed, Feb 29, 2012 at 11:17:41AM -0800, Stephen Warren wrote:
->> Uwe Kleine-K=F6nig wrote at Wednesday, February 29, 2012 12:12 PM:
->>> On Wed, Feb 29, 2012 at 10:33:58AM -0800, Tim Bird wrote:
->>>> On 02/29/2012 10:14 AM, Jean-Christophe PLAGNIOL-VILLARD wrote:
->>>>> On 08:58 Wed 29 Feb     , Stephen Warren wrote:
->>>>>> Jean-Christophe PLAGNIOL-VILLARD wrote at Wednesday, February 29=
-, 2012 5:30 AM:
->>>>>>> On 17:03 Tue 28 Feb     , Stephen Warren wrote:
+> > > 	bl	cache_on
+> > > =
 
-<snip>
+> > > in arch/arm/boot/compressed/head.S to see the difference.
+> > > =
 
->> The existing target works just fine today.
-> It depends what you want to achieve. If you want to make everything
-> maximally easy for everyone you can optimize the uImage target.
->=20
-> If you want to give incentive for U-Boot to improve, drop the target
-> today.=20
+> > > How do you build the uImage containing the zImage? If you use the
+> > > in-kernel uImage target booting that usually means:
+> > > =
+
+> > > 	- move the zImage to ZRELADDR
+> > > 	- jump into zImage
+> > > 	- decompress zImage to somewhere else
+> > > 	- move decompressed image to ZRELADDR
+> > > 	- jump to ZRELADDR
+> > > =
+
+> > > That is you have two relocations because the first location for sure
+> > > conflicts with the decompressed image.
+> > =
+
+> > Actually, we do this slightly differently nowadays.  Inside zImage:
+> > =
+
+> > 	- if zImage location conflicts, move the decompressed data
+> s/de//
+> =
+
+> > 	  and decompressor to another location
+> > 	- decompress zImage to ZRELADDR
+> > 	- jump to ZRELADDR
+> > =
+
+> > That reduces the size required for copying.  Of course, that copy can
+> > (as it's always been the case) be totally eliminated by ensuring that
+> > you load the zImage out of the way of the decompressed image.
+> > =
+
+> > So, really, comparing a standard uImage produced by the standard kernel
+> > with gzipped Image is far from a fair comparison.  And that's actually
+> > another argument for getting rid of the uImage target... it may make
+> > people think a bit about what they're doing rather than accepting
+> > whatever default location someone else chose for their kernel.
+> I'm all in favour to remove the uImage target because back in 2007 we
+> already had a similar discussion[1]. (Back then I still thought that
+> improving the uImage support would be a good idea.)
+> =
+
+> That said I think *in general* having support for U-Boot in the kernel
+> is fine because I think U-Boot is the bootloader used most. But if you
+> need some Kconfig settings or more than one Makefile target I think just
+> building an Image or zImage and doing the U-Boot wrapping without the
+> help of Linux' build system is preferable.
+Agreed at 200%
 
 
-This assumes that people will upgrade their bootloaders, which is not
-always possible or desirable.
-
-~Ryan
+Best Regards,
+J.
