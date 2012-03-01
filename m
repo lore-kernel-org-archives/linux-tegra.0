@@ -1,36 +1,166 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
- kernel_noload
-Date: Thu, 1 Mar 2012 09:01:04 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE861683@HQMAIL01.nvidia.com>
-References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
+From: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v7 15/20] tegra: fdt: Add function to return
+ peripheral/clock ID
+Date: Thu, 1 Mar 2012 10:21:07 -0800
+Message-ID: <5FBF8E85CA34454794F0F7ECBA79798F37971BB3B4@HQMAIL04.nvidia.com>
+References: <1330452478-5039-10-git-send-email-sjg@chromium.org>
+ <1330452478-5039-16-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1330473804-23348-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1330452478-5039-16-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren wrote at Tuesday, February 28, 2012 5:03 PM:
-> uImage files typically encode a single absolute load and entry address.
-> This is inconvenient when attempting to share that uImage across multiple
-> SoCs with different physical RAM addresses. Recent versions of mkimage
-> implement a "kernel_noload" image type which encodes no absolute load
-> address, and a relative entry address. This works well for uImage-wrapped
-> ARM zImages, since they are relocatable.
+Simon,
+
+> -----Original Message-----
+> From: Simon Glass [mailto:sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org]
+> Sent: Tuesday, February 28, 2012 11:08 AM
+> To: U-Boot Mailing List
+> Cc: Tom Warren; Stephen Warren; Simon Glass; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> Jerry Van Baren; Devicetree Discuss
+> Subject: [PATCH v7 15/20] tegra: fdt: Add function to return
+> peripheral/clock ID
 > 
-> This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
-> "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
+> A common requirement is to find the clock ID for a peripheral. This is the
+> second cell of the 'clocks' property (the first being the phandle itself).
+> 
+> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+> Changes in v4:
+> - Add fdtdec function to return peripheral ID
+> 
+> Changes in v6:
+> - Move peripheral decode function into Tegra's clock.c
+> 
+> Changes in v7:
+> - Add belts and braces checking of device tree clock ID
+> 
+>  arch/arm/cpu/armv7/tegra2/clock.c        |   56
+> ++++++++++++++++++++++++++++++
+>  arch/arm/include/asm/arch-tegra2/clock.h |   13 +++++++
+>  2 files changed, 69 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/cpu/armv7/tegra2/clock.c
+> b/arch/arm/cpu/armv7/tegra2/clock.c
+> index 11d2346..959322b 100644
+> --- a/arch/arm/cpu/armv7/tegra2/clock.c
+> +++ b/arch/arm/cpu/armv7/tegra2/clock.c
+> @@ -28,6 +28,7 @@
+>  #include <asm/arch/tegra2.h>
+>  #include <common.h>
+>  #include <div64.h>
+> +#include <fdtdec.h>
+> 
+>  /*
+>   * This is our record of the current clock rate of each clock. We don't @@
+> -918,6 +919,61 @@ void clock_ll_start_uart(enum periph_id periph_id)
+>  	reset_set_enable(periph_id, 0);
+>  }
+> 
+> +/*
+> + * Convert a device tree clock ID to our peripheral ID. They are mostly
+> + * the same but we are very cautious so we check that a valid clock ID
+> +is
+> + * provided.
+> + *
+> + * @param clk_id	Clock ID according to tegra2 device tree binding
+> + * @return peripheral ID, or PERIPH_ID_NONE if the clock ID is invalid
+> +*/ static enum periph_id clk_id_to_periph_id(int clk_id) {
+> +	if (clk_id > 95)
+> +		return PERIPH_ID_NONE;
+> +
+> +	switch (clk_id) {
+> +	case 1:
+> +	case 2:
+> +	case 7:
+> +	case 10:
+> +	case 20:
+> +	case 30:
+> +	case 35:
+> +	case 49:
+> +	case 56:
+> +	case 74:
+> +	case 76:
+> +	case 77:
+> +	case 78:
+> +	case 79:
+> +	case 80:
+> +	case 81:
+> +	case 82:
+> +	case 83:
+> +	case 91:
+> +	case 95:
+> +		return PERIPH_ID_NONE;
+> +	default:
+> +		return clk_id;
+> +	}
+> +}
+> +
+> +int clock_decode_periph_id(const void *blob, int node) {
+> +	enum periph_id id;
+> +	u32 cell[2];
+> +	int err;
+> +
+> +	err = fdtdec_get_int_array(blob, node, "clocks", cell,
+> +				   ARRAY_SIZE(cell));
 
-So Russell, are you NAKing this patch then?
+This call to fdtdec_get_int_array() breaks Harmony and Ventana builds, since they're not yet DT-enabled (CONFIG_OF_CONTROL isn't #defined).
 
-If so, I guess I'll just go and add more cruft to my copy-a-kernel-to-
-an-sd-card script. Which is a pity since every other person will have
-to do the same, but oh well.
+I'd fix this myself, but I'm not sure what the correct fix is to keep Harmony/Ventana building & booting.
 
+Please fix, test on all Tegra2 builds (MAKEALL -s tegra2) and resend. Thanks.
+
+Tom
+
+> +	if (err)
+> +		return -1;
+> +	id = clk_id_to_periph_id(cell[1]);
+> +	assert(clock_periph_id_isvalid(id));
+> +	return id;
+> +}
+> +
+>  int clock_verify(void)
+>  {
+>  	struct clk_pll *pll = get_pll(CLOCK_ID_PERIPH); diff --git
+> a/arch/arm/include/asm/arch-tegra2/clock.h b/arch/arm/include/asm/arch-
+> tegra2/clock.h
+> index 080ef18..6b12c76 100644
+> --- a/arch/arm/include/asm/arch-tegra2/clock.h
+> +++ b/arch/arm/include/asm/arch-tegra2/clock.h
+> @@ -177,6 +177,7 @@ enum periph_id {
+>  	PERIPH_ID_CRAM2,
+> 
+>  	PERIPH_ID_COUNT,
+> +	PERIPH_ID_NONE = -1,
+>  };
+> 
+>  /* Converts a clock number to a clock register: 0=L, 1=H, 2=U */ @@ -355,6
+> +356,18 @@ unsigned clock_get_rate(enum clock_id clkid);
+>   */
+>  void clock_ll_start_uart(enum periph_id periph_id);
+> 
+> +/**
+> + * Decode a peripheral ID from a device tree node.
+> + *
+> + * This works by looking up the peripheral's 'clocks' node and reading
+> +out
+> + * the second cell, which is the clock number / peripheral ID.
+> + *
+> + * @param blob		FDT blob to use
+> + * @param node		Node to look at
+> + * @return peripheral ID, or PERIPH_ID_NONE if none  */ enum periph_id
+> +clock_decode_periph_id(const void *blob, int node);
+> +
+>  /*
+>   * Checks that clocks are valid and prints a warning if not
+>   *
+> --
+> 1.7.7.3
 -- 
 nvpublic
