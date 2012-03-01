@@ -1,57 +1,61 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 6/8] ARM: tegra: USB_ULPI needs USB
-Date: Thu, 1 Mar 2012 12:36:58 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE861741@HQMAIL01.nvidia.com>
-References: <1330630010-11241-1-git-send-email-alan@signal11.us>
- <1330630010-11241-7-git-send-email-alan@signal11.us>
- <74CDBE0F657A3D45AFBB94109FB122FF17BE86172C@HQMAIL01.nvidia.com>
- <201203012025.53560.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 8/8] ARM: tegra: HACK: remove set_irq_flags() from driver
+Date: Thu, 1 Mar 2012 20:38:27 +0000
+Message-ID: <201203012038.28062.arnd@arndb.de>
+References: <1330630010-11241-1-git-send-email-alan@signal11.us> <1330630010-11241-9-git-send-email-alan@signal11.us> <74CDBE0F657A3D45AFBB94109FB122FF17BE86173C@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201203012025.53560.arnd-r2nGTMty4D4@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BE86173C@HQMAIL01.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Alan Ott <alan@signal11.us>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann wrote at Thursday, March 01, 2012 1:26 PM:
-> On Thursday 01 March 2012, Stephen Warren wrote:
-> > Alan Ott wrote at Thursday, March 01, 2012 12:27 PM:
-> > > From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> > >
-> > > The USB_ULPI driver is selected by tegra, but can only be
-> > > built if at least one of USB or USB_GADGET is enabled.
-> > > The kernel fails to link if both are off.
-> >
-> > > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> > ...
-> > > @@ -10,6 +10,7 @@ config ARCH_TEGRA_2x_SOC
-> > ...
-> > > +	select USB_GADGET if USB_SUPPORT && !USB
-> >
-> > I don't believe the Tegra USB driver supports gadget mode at present.
+On Thursday 01 March 2012, Stephen Warren wrote:
 > 
-> ok.
+> Alan Ott wrote at Thursday, March 01, 2012 12:27 PM:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > The driver should not call set_irq_flags itself, and
 > 
-> > Would the above be better written as:
-> >
-> >     select USB if USB_SUPPORT
+> Probably true in this case.
 > 
-> That does not look correct either. There is no reason why USB
-> can't be disabled with USB_SUPPORT enabled on other platforms.
+> > cannot do this from a loadable module.
 > 
-> Maybe it's better to change the 'select USB_ULPI if USB_SUPPORT'
-> into 'select USB_ULPI if USB' instead?
+> I hope that's not true; grep'ing the entire of drivers/ shows a bunch
+> of drivers calling this function, and many look like they'd be reasonable
+> as module.
 
-That sounds reasonable.
+The drivers that I can see using it are for the most part implementing
+irq controllers by themselves, which is different from merely using an
+interrupt.
 
-> Or maybe just don't select
-> USB_ULPI to start with and put it into the defconfig instead.
+There are three exceptions today:
 
-Perhaps USB_EHCI_TEGRA should depend on USB, and select USB_EHCI?
+arnd@klappe2:~/linux-arm$ git grep -l set_irq_flags  drivers/ | xargs grep -L irq_chip
+drivers/tty/serial/serial_ks8695.c
+drivers/tty/serial/sirfsoc_uart.c
+drivers/usb/host/ehci-tegra.c
 
--- 
-nvpublic
+> From what little I understand of this, any irq_chip is going to call
+> that function after setting up any child/cascaded IRQs, and I assume
+> that irq_chips can be in modules.
+
+But the function is not exported. I guess if we want to allow
+irq_chips in loadable modules, we could export it, but I don't see
+how it could ever have worked so far.
+ 
+> > Remove the call for now, which might break the driver
+> > but at least lets the kernel link again.
+> 
+> The driver appears to work fine with this removed. At least, on Tegra20
+> Harmony, I was able to modprobe ehci-hcd and then use the USB Ethernet
+> controller for DHCP and SSH.
+
+Ok, maybe it was the right fix after all then and it just needs a proper
+change description ;-)
+
+	Arnd
