@@ -1,47 +1,102 @@
 From: Alan Ott <alan@signal11.us>
-Subject: [PATCH 3/8] ARM: tegra: select CPU_FREQ_TABLE
-Date: Thu,  1 Mar 2012 14:26:45 -0500
-Message-ID: <1330630010-11241-4-git-send-email-alan@signal11.us>
+Subject: [PATCH 7/8] ARM: tegra: export usb phy symbols
+Date: Thu,  1 Mar 2012 14:26:49 -0500
+Message-ID: <1330630010-11241-8-git-send-email-alan@signal11.us>
 References: <1330630010-11241-1-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1330630010-11241-1-git-send-email-alan@signal11.us>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The tegra cpufreq implementation relies on the cpu_freq_table
-code, so make sure that this is always there when needed.
+The ehci driver can be a module, so the functions provided
+by the tegra platform code used by ehci-tegra need to
+be exported.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-tegra/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/usb_phy.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 373652d..b2a038e 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -10,6 +10,7 @@ config ARCH_TEGRA_2x_SOC
- 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
- 	select USB_ULPI if USB_SUPPORT
- 	select USB_ULPI_VIEWPORT if USB_SUPPORT
-+	select CPU_FREQ_TABLE if CPU_FREQ
- 	help
- 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
+index 37576a7..3c45264 100644
+--- a/arch/arm/mach-tegra/usb_phy.c
++++ b/arch/arm/mach-tegra/usb_phy.c
+@@ -730,6 +730,7 @@ err0:
+ 	kfree(phy);
+ 	return ERR_PTR(err);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_open);
+ 
+ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+ {
+@@ -738,6 +739,7 @@ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+ 	else
+ 		return utmi_phy_power_on(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_power_on);
+ 
+ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+ {
+@@ -746,18 +748,21 @@ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+ 	else
+ 		utmi_phy_power_off(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_power_off);
+ 
+ void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_preresume(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
+ 
+ void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_postresume(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
+ 
+ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
+ 				 enum tegra_usb_phy_port_speed port_speed)
+@@ -765,24 +770,28 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_restore_start(phy, port_speed);
+ }
++EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
+ 
+ void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_restore_end(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
+ 
+ void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_clk_disable(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_disable);
+ 
+ void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_clk_enable(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_enable);
+ 
+ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
+ {
+@@ -794,3 +803,4 @@ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
+ 	clk_put(phy->pll_u);
+ 	kfree(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_close);
 -- 
 1.7.0.4
