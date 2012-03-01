@@ -1,99 +1,47 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
- kernel_noload
-Date: Thu, 1 Mar 2012 05:55:43 +0100
-Message-ID: <20120301045543.GL3318@game.jcrosoft.org>
-References: <20120229191209.GN14173@pengutronix.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2122@HQMAIL01.nvidia.com>
- <20120229194409.GO14173@pengutronix.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BDDF2155@HQMAIL01.nvidia.com>
- <4F4E86A1.8010506@bluewatersys.com>
- <20120229201938.GB16999@n2100.arm.linux.org.uk>
- <4F4E89A8.4080909@bluewatersys.com>
- <20120229203958.GQ14173@pengutronix.de>
- <20120229204527.GD16999@n2100.arm.linux.org.uk>
- <20120229205901.GR14173@pengutronix.de>
+From: Heiko Schocher <hs@denx.de>
+Subject: Re: [PATCH v4 5/9] tegra: i2c: Add I2C driver
+Date: Thu, 01 Mar 2012 08:50:30 +0100
+Message-ID: <4F4F2A46.5020407@denx.de>
+References: <1330536689-9121-5-git-send-email-sjg@chromium.org>
+	<1330536689-9121-6-git-send-email-sjg@chromium.org>
+Reply-To: hs@denx.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20120229205901.GR14173@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Warren <swarren@nvidia.com>, Nicolas Pitre <nico@fluxnic.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, Olof Johansson <olof@lixom.net>, Andre Renaud <andre@bluewatersys.com>, Tim Bird <tim.bird@am.sony.com>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <u-boot-bounces@lists.denx.de>
+In-reply-to: <1330536689-9121-6-git-send-email-sjg@chromium.org>
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Sender: u-boot-bounces@lists.denx.de
+Errors-To: u-boot-bounces@lists.denx.de
+To: Simon Glass <sjg@chromium.org>
+Cc: linux-tegra@vger.kernel.org, U-Boot Mailing List <u-boot@lists.denx.de>, Tom Warren <twarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21:59 Wed 29 Feb     , Uwe Kleine-K=F6nig wrote:
-> On Wed, Feb 29, 2012 at 08:45:27PM +0000, Russell King - ARM Linux wrote:
-> > On Wed, Feb 29, 2012 at 09:39:58PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > I'd bet your platform has cache support in the decompressor without
-> > > knowing which platform you use. I suggest commenting out
-> > > =
+Hello Simon,
 
-> > > 	bl	cache_on
-> > > =
+Simon Glass wrote:
+> From: Yen Lin <yelin@nvidia.com>
+> 
+> Add basic i2c driver for Tegra2 with 8- and 16-bit address support.
+> The driver requires CONFIG_OF_CONTROL to obtain its configuration
+> from the device tree.
+> 
+> (Simon Glass: sjg@chromium.org modified for upstream)
+> 
+> Signed-off-by: Simon Glass <sjg@chromium.org>
 
-> > > in arch/arm/boot/compressed/head.S to see the difference.
-> > > =
+just for completeness (Acked your v2 patch) here again:
 
-> > > How do you build the uImage containing the zImage? If you use the
-> > > in-kernel uImage target booting that usually means:
-> > > =
+Acked-by: Heiko Schocher <hs@denx.de>
 
-> > > 	- move the zImage to ZRELADDR
-> > > 	- jump into zImage
-> > > 	- decompress zImage to somewhere else
-> > > 	- move decompressed image to ZRELADDR
-> > > 	- jump to ZRELADDR
-> > > =
-
-> > > That is you have two relocations because the first location for sure
-> > > conflicts with the decompressed image.
-> > =
-
-> > Actually, we do this slightly differently nowadays.  Inside zImage:
-> > =
-
-> > 	- if zImage location conflicts, move the decompressed data
-> s/de//
-> =
-
-> > 	  and decompressor to another location
-> > 	- decompress zImage to ZRELADDR
-> > 	- jump to ZRELADDR
-> > =
-
-> > That reduces the size required for copying.  Of course, that copy can
-> > (as it's always been the case) be totally eliminated by ensuring that
-> > you load the zImage out of the way of the decompressed image.
-> > =
-
-> > So, really, comparing a standard uImage produced by the standard kernel
-> > with gzipped Image is far from a fair comparison.  And that's actually
-> > another argument for getting rid of the uImage target... it may make
-> > people think a bit about what they're doing rather than accepting
-> > whatever default location someone else chose for their kernel.
-> I'm all in favour to remove the uImage target because back in 2007 we
-> already had a similar discussion[1]. (Back then I still thought that
-> improving the uImage support would be a good idea.)
-> =
-
-> That said I think *in general* having support for U-Boot in the kernel
-> is fine because I think U-Boot is the bootloader used most. But if you
-> need some Kconfig settings or more than one Makefile target I think just
-> building an Image or zImage and doing the U-Boot wrapping without the
-> help of Linux' build system is preferable.
-Agreed at 200%
-
-
-Best Regards,
-J.
+bye,
+Heiko
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
