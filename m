@@ -1,7 +1,7 @@
 From: Alan Ott <alan@signal11.us>
-Subject: [PATCH 1/8] ARM: tegra: export tegra_gpio_{en,dis}able
-Date: Thu,  1 Mar 2012 14:26:43 -0500
-Message-ID: <1330630010-11241-2-git-send-email-alan@signal11.us>
+Subject: [PATCH 4/8] ARM: tegra: build localtimer support only when needed
+Date: Thu,  1 Mar 2012 14:26:46 -0500
+Message-ID: <1330630010-11241-5-git-send-email-alan@signal11.us>
 References: <1330630010-11241-1-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,31 +23,28 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-These two functions are used in drivers that can be
-modules, so they need to be exported.
+It is possible to build a tegra kernel without localtimer
+support, so the tegra specific parts should only be built
+when that is indeed enabled.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpio/gpio-tegra.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/Makefile |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index bdc2937..96662cc 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -107,11 +107,13 @@ void tegra_gpio_enable(int gpio)
- {
- 	tegra_gpio_mask_write(GPIO_MSK_CNF(gpio), gpio, 1);
- }
-+EXPORT_SYMBOL_GPL(tegra_gpio_enable);
- 
- void tegra_gpio_disable(int gpio)
- {
- 	tegra_gpio_mask_write(GPIO_MSK_CNF(gpio), gpio, 0);
- }
-+EXPORT_SYMBOL_GPL(tegra_gpio_disable);
- 
- static void tegra_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index e120ff5..a956df8 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -13,7 +13,8 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-tegra20-tables.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pinmux-tegra30-tables.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
+-obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
++obj-$(CONFIG_SMP)                       += platsmp.o headsmp.o
++obj-$(CONFIG_LOCAL_TIMERS)		+= localtimer.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
 -- 
 1.7.0.4
