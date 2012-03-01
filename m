@@ -1,51 +1,119 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 6/8] ARM: tegra: USB_ULPI needs USB
-Date: Thu, 1 Mar 2012 20:25:53 +0000
-Message-ID: <201203012025.53560.arnd@arndb.de>
-References: <1330630010-11241-1-git-send-email-alan@signal11.us> <1330630010-11241-7-git-send-email-alan@signal11.us> <74CDBE0F657A3D45AFBB94109FB122FF17BE86172C@HQMAIL01.nvidia.com>
+From: Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
+Subject: Re: [U-Boot] [PATCH v4 5/9] tegra: i2c: Add I2C driver
+Date: Thu, 1 Mar 2012 15:29:08 -0500
+Message-ID: <201203011529.11213.vapier@gentoo.org>
+References: <1330536689-9121-5-git-send-email-sjg@chromium.org> <1330536689-9121-6-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: multipart/signed;
+  boundary="nextPart2157465.YtJ4YFePuy";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BE86172C@HQMAIL01.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Alan Ott <alan@signal11.us>, Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1330536689-9121-6-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 01 March 2012, Stephen Warren wrote:
-> Alan Ott wrote at Thursday, March 01, 2012 12:27 PM:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > The USB_ULPI driver is selected by tegra, but can only be
-> > built if at least one of USB or USB_GADGET is enabled.
-> > The kernel fails to link if both are off.
-> 
-> > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> ...
-> > @@ -10,6 +10,7 @@ config ARCH_TEGRA_2x_SOC
-> ...
-> > +	select USB_GADGET if USB_SUPPORT && !USB
-> 
-> I don't believe the Tegra USB driver supports gadget mode at present.
+--nextPart2157465.YtJ4YFePuy
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-ok.
+On Wednesday 29 February 2012 12:31:25 Simon Glass wrote:
+> --- /dev/null
+> +++ b/arch/arm/include/asm/arch-tegra2/tegra_i2c.h
+>
+> +/* Convert i2c slave address to be put on bus  */
+> +#define I2C_ADDR_ON_BUS(chip)		(chip << 1)
 
-> Would the above be better written as:
-> 
->     select USB if USB_SUPPORT
+i'm not sure the desc here is correct ... it's at least a little bit=20
+misleading.  addresses are 7bits, and the 8th bit is for telling the device=
+ to=20
+read/write.  since it only gets used in two places, might be better to inli=
+ne=20
+the bit shift there ?  hard to say.
 
-That does not look correct either. There is no reason why USB
-can't be disabled with USB_SUPPORT enabled on other platforms.
+> --- /dev/null
+> +++ b/drivers/i2c/tegra_i2c.c
+>
+> + * Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
 
-Maybe it's better to change the 'select USB_ULPI if USB_SUPPORT'
-into 'select USB_ULPI if USB' instead? Or maybe just don't select
-USB_ULPI to start with and put it into the defconfig instead.
+guess you need to -2012 that now ;)
 
-> And this is probably required for Tegra30 too not just Tegra20.
+> +#include <common.h>
+> +#include <asm/io.h>
+> +#include <asm/arch/clk_rst.h>
+> +#include <asm/arch/clock.h>
+> +#include <asm/arch/funcmux.h>
+> +#include <asm/arch/gpio.h>
+> +#include <asm/arch/pinmux.h>
+> +#include <asm/arch/tegra_i2c.h>
+> +#include <fdtdec.h>
 
-Right. Tegra30 was not there when I did these patches, so it's
-probably missing in other places, too.
+needs to include i2c.h to make sure your local defs stay inline with the=20
+prototypes everyone else is using.  also, asm/* generally should come last =
+(so=20
+after ftdec.h).
 
-	Arnd
+> +static int send_recv_packets(
+> +	struct i2c_bus *i2c_bus,
+> +	struct i2c_trans_info *trans)
+> +{
+> +	struct i2c_control *control =3D i2c_bus->control;
+> +	u32 int_status;
+> +	u32 words;
+> +	u8 *dptr;
+> +	u32 local;
+> +	uchar last_bytes;
+> +	int error =3D 0;
+> +	int is_write =3D trans->flags & I2C_IS_WRITE;
+> +
+> +	/* clear status from previous transaction, XFER_COMPLETE, NOACK, etc. */
+> +	int_status =3D readl(&control->int_status);
+> +	writel(int_status, &control->int_status);
+> +
+> +	send_packet_headers(i2c_bus, trans, 1);
+> +
+> +	words =3D DIV_ROUND_UP(trans->num_bytes, 4);
+> +	last_bytes =3D trans->num_bytes & 3;
+> +	dptr =3D trans->buf;
+> +
+> +	while (words) {
+> +		if (is_write) {
+> +			/* deal with word alignment */
+> +			if ((unsigned)dptr & 3) {
+> +				memcpy(&local, dptr, sizeof(u32));
+> +				writel(local, &control->tx_fifo);
+> +				debug("pkt data sent (0x%x)\n", local);
+> +			} else {
+> +				writel(*(u32 *)dptr, &control->tx_fifo);
+> +				debug("pkt data sent (0x%x)\n", *(u32 *)dptr);
+
+generally inlining these types of bitsized casts are discouraged ...
+=2Dmike
+
+--nextPart2157465.YtJ4YFePuy
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQIcBAABAgAGBQJPT9wWAAoJEEFjO5/oN/WBDecP/jcmc4aSQcYlzlgA+iunffqL
+49s5F6z2ZO9lWzkaIn7Qb6UbyD94Js7rdDuQPkV+6DRVx7udQ2u3QuHWr/f2QuP0
+r6EvkXUoKIS64ANz/FDxLGTM4fjkCgOCCMBmwtBQyg852fRm4OtOzHm2pB6UcZje
+nJiYlyMLpyXL+Qr1MOil0SynZHeqqcghUH6SzqyyExOmNC3AR6hS3Q+ZTXTZGfNN
+n74VAiU5jZV8i4zmenIrN9m3cPmqxQp6iXPaAgisPajpqHe8QXofZwGsImt7l2GR
+cm5ZRIox++eWniUp0dperiFpy9POjAlg5m5l0+4nHff5259GjU9H7C9myeNKZY3l
+cPtVgOozDfv5iLuwtyJmCNOCqGvfwCTQoa5WQXefUIRlDsv1wVQo8/TVNIwJBdOB
+xUDlI16hYoGKxLmXYQQmfk3KFrAAbRK8VFUDAbNqacQurAkjBLdlAwjzMu95lQR4
+tr9Q/gd6jc7HXDM3FCqB/5pr5B2HCtZ1SvNAEkAx99U6dEz4MQASCM1M8PIKQQaL
+c5LgCj2+aO3e+MA3kd9dgG4rABYZDqKGNELFNtCoYjpqTGO7Yk7uj0bcYvmbfipe
+7iQ4CGscufF3ixp+n/tjAhMkavldSRJUTlvnf8sEhwVNv8ksHQLRgdfONuQ9n0BB
+BWsiXhiwWUSprBiFGn5o
+=a1Im
+-----END PGP SIGNATURE-----
+
+--nextPart2157465.YtJ4YFePuy--
