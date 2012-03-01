@@ -1,39 +1,68 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 7/8] ARM: tegra: export usb phy symbols
-Date: Thu, 1 Mar 2012 12:14:37 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE861731@HQMAIL01.nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/8] ARM: Tegra: cleanup patches from Arnd Bergmann
+Date: Thu, 1 Mar 2012 20:19:04 +0000
+Message-ID: <201203012019.04316.arnd@arndb.de>
 References: <1330630010-11241-1-git-send-email-alan@signal11.us>
- <1330630010-11241-8-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1330630010-11241-8-git-send-email-alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1330630010-11241-1-git-send-email-alan@signal11.us>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Ott <alan@signal11.us>
+Cc: Russell King <linux@arm.linux.org.uk>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Alan Ott wrote at Thursday, March 01, 2012 12:27 PM:
-> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+On Thursday 01 March 2012, Alan Ott wrote:
+> I'm helping Arnd Bergmann get some of his cleanup patches upstream. This
+> set covers the Tegra.
 > 
-> The ehci driver can be a module, so the functions provided
-> by the tegra platform code used by ehci-tegra need to
-> be exported.
+> Thanks,
 > 
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Alan.
+> 
+> Arnd Bergmann (8):
+>   ARM: tegra: export tegra_gpio_{en,dis}able
+>   ARM: tegra: do not hide dma declarations
+>   ARM: tegra: select CPU_FREQ_TABLE
+>   ARM: tegra: build localtimer support only when needed
+>   ARM: tegra: work around tegra THUMB2_KERNEL bug
+>   ARM: tegra: USB_ULPI needs USB
+>   ARM: tegra: export usb phy symbols
+>   ARM: tegra: HACK: remove set_irq_flags() from driver
+> 
 
-I think this one need to add:
+Hi Alan,
 
-#include <linux/export.h>
+Thanks for getting this started!
 
-In the relevant place.
+As Greg already commented, there are some patches that you
+should probably drop. When you send out a series with the
+name of a subarchitecture, it's best to leave out the patches
+that only address device drivers. I had initially sorted these
+into the subarch series instead of the drivers series but that
+turned out to be a bad idea. Sorry I didn't remember about this
+detail when we first discussed the way forward on my patches.
 
--- 
-nvpublic
+Also, it's better if you have a slightly shorter Cc list and
+for each patch take only the people on Cc that are actually
+interested, rather than send the whole series to everyone
+that get_maintainer.pl lists for one of the patches. If the
+Cc list gets too long, that often means that the mails get
+dropped from the mailing lists, and people might ignore them
+when they don't understand why they were on Cc to start with.
+It does help to have everyone on Cc for the initial mail though.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You can add 'Cc:' tags in the individual patches to help you
+with that. This is another thing I never got around to for
+the patches I did not send out.
+
+Finally, when sending patches from someone else, you have
+to add your own Signed-off-by: line below the others (i.e. mine).
+Everyone who is handling the patch by sending it to someone
+else should have a Signed-off-by in the email until the
+point when it gets applied to a git tree that is pulled into
+the Linus' tree.
+
+	Arnd
