@@ -1,7 +1,7 @@
 From: Alan Ott <alan@signal11.us>
-Subject: [PATCH v3 3/5] ARM: tegra: build localtimer support only when needed
-Date: Fri,  2 Mar 2012 17:25:52 -0500
-Message-ID: <1330727152-11181-1-git-send-email-alan@signal11.us>
+Subject: [PATCH v3 5/5] ARM: tegra: export usb phy symbols
+Date: Fri,  2 Mar 2012 17:26:08 -0500
+Message-ID: <1330727168-11304-1-git-send-email-alan@signal11.us>
 References: <1330727075-10974-1-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -13,29 +13,99 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-It is possible to build a tegra kernel without localtimer
-support, so the tegra specific parts should only be built
-when that is indeed enabled.
+The ehci driver can be a module, so the functions provided
+by the tegra platform code used by ehci-tegra need to
+be exported.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Alan Ott <alan@signal11.us>
 ---
- arch/arm/mach-tegra/Makefile |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/usb_phy.c |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index e120ff5..829066f 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -13,7 +13,8 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-tegra20-tables.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pinmux-tegra30-tables.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
--obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
-+obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
-+obj-$(CONFIG_LOCAL_TIMERS)		+= localtimer.o
- obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
- obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
+index 37576a7..6091cf3 100644
+--- a/arch/arm/mach-tegra/usb_phy.c
++++ b/arch/arm/mach-tegra/usb_phy.c
+@@ -22,6 +22,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
++#include <linux/export.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+@@ -730,6 +731,7 @@ err0:
+ 	kfree(phy);
+ 	return ERR_PTR(err);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_open);
+ 
+ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+ {
+@@ -738,6 +740,7 @@ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+ 	else
+ 		return utmi_phy_power_on(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_power_on);
+ 
+ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+ {
+@@ -746,18 +749,21 @@ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+ 	else
+ 		utmi_phy_power_off(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_power_off);
+ 
+ void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_preresume(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
+ 
+ void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_postresume(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
+ 
+ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
+ 				 enum tegra_usb_phy_port_speed port_speed)
+@@ -765,24 +771,28 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_restore_start(phy, port_speed);
+ }
++EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
+ 
+ void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_restore_end(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
+ 
+ void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_clk_disable(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_disable);
+ 
+ void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy)
+ {
+ 	if (!phy_is_ulpi(phy))
+ 		utmi_phy_clk_enable(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_enable);
+ 
+ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
+ {
+@@ -794,3 +804,4 @@ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
+ 	clk_put(phy->pll_u);
+ 	kfree(phy);
+ }
++EXPORT_SYMBOL_GPL(tegra_usb_phy_close);
 -- 
 1.7.0.4
