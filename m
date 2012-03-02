@@ -1,38 +1,39 @@
-From: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
-Subject: [PATCH v2 0/6] ARM: Tegra: cleanup patches from Arnd Bergmann
-Date: Fri,  2 Mar 2012 15:58:04 -0500
-Message-ID: <1330721884-8495-1-git-send-email-alan@signal11.us>
+From: Alan Ott <alan@signal11.us>
+Subject: [PATCH v2 3/6] ARM: tegra: build localtimer support only when needed
+Date: Fri,  2 Mar 2012 15:58:32 -0500
+Message-ID: <1330721912-8694-1-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Alan Ott <alan@signal11.us>
 List-Id: linux-tegra@vger.kernel.org
 
-Sorry for the mess yesterday....
-This is V2 of Arnd's Patch series from yesterday. Hopefully this one will be
-smoother.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Changes:
-	* set_irq_flags() removal patch is out
-	* driver-only patch has been moved to another set
-	* Distribution list should be cleaner
-	* Added proper sign-off
-	* Select CPU_FREQ_TABLE for ARCH_TEGRA_3x_SOC as well
-	* Fixed spacing on the localtimer patch
-	* added linux/export.h to the export usb phy symbols patch
+It is possible to build a tegra kernel without localtimer
+support, so the tegra specific parts should only be built
+when that is indeed enabled.
 
-Arnd Bergmann (6):
-  ARM: tegra: do not hide dma declarations
-  ARM: tegra: select CPU_FREQ_TABLE
-  ARM: tegra: build localtimer support only when needed
-  ARM: tegra: work around tegra THUMB2_KERNEL bug
-  ARM: tegra: USB_ULPI needs USB
-  ARM: tegra: export usb phy symbols
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alan Ott <alan@signal11.us>
+---
+ arch/arm/mach-tegra/Makefile |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
- arch/arm/Kconfig                       |    1 +
- arch/arm/mach-tegra/Kconfig            |    3 +++
- arch/arm/mach-tegra/Makefile           |    3 ++-
- arch/arm/mach-tegra/include/mach/dma.h |    4 ----
- arch/arm/mach-tegra/usb_phy.c          |   11 +++++++++++
- 5 files changed, 17 insertions(+), 5 deletions(-)
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index e120ff5..829066f 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -13,7 +13,8 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= pinmux-tegra20-tables.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= pinmux-tegra30-tables.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
+-obj-$(CONFIG_SMP)                       += platsmp.o localtimer.o headsmp.o
++obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
++obj-$(CONFIG_LOCAL_TIMERS)		+= localtimer.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+-- 
+1.7.0.4
