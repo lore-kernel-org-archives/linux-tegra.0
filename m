@@ -1,111 +1,39 @@
-From: Alan Ott <alan@signal11.us>
-Subject: [PATCH v3 5/5] ARM: tegra: export usb phy symbols
-Date: Fri,  2 Mar 2012 17:26:08 -0500
-Message-ID: <1330727168-11304-1-git-send-email-alan@signal11.us>
-References: <1330727075-10974-1-git-send-email-alan@signal11.us>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v3 0/5] ARM: Tegra: cleanup patches from Arnd Bergmann
+Date: Fri, 2 Mar 2012 14:30:14 -0800
+Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE861AAB@HQMAIL01.nvidia.com>
+References: <1330721884-8495-1-git-send-email-alan@signal11.us>
+ <1330727075-10974-1-git-send-email-alan@signal11.us>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1330727075-10974-1-git-send-email-alan@signal11.us>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Alan Ott <alan@signal11.us>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1330727075-10974-1-git-send-email-alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Lucas De Marchi <lucas.demarchi-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Alan Ott wrote at Friday, March 02, 2012 3:25 PM:
+> Version 3 of the patch set.
+> 
+> Changes:
+> 	* change of logic (and commit message change) for
+> 	  "select USB_ULPI if USB is selected"
+> 	* dropped THUMB2 patch
+> 
+> Arnd Bergmann (5):
+>   ARM: tegra: do not hide dma declarations
+>   ARM: tegra: select CPU_FREQ_TABLE
+>   ARM: tegra: build localtimer support only when needed
+>   ARM: tegra: select USB_ULPI if USB is selected
+>   ARM: tegra: export usb phy symbols
 
-The ehci driver can be a module, so the functions provided
-by the tegra platform code used by ehci-tegra need to
-be exported.
+The series,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Alan Ott <alan@signal11.us>
----
- arch/arm/mach-tegra/usb_phy.c |   11 +++++++++++
- 1 files changed, 11 insertions(+), 0 deletions(-)
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
-index 37576a7..6091cf3 100644
---- a/arch/arm/mach-tegra/usb_phy.c
-+++ b/arch/arm/mach-tegra/usb_phy.c
-@@ -22,6 +22,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/gpio.h>
-@@ -730,6 +731,7 @@ err0:
- 	kfree(phy);
- 	return ERR_PTR(err);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_open);
- 
- int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
- {
-@@ -738,6 +740,7 @@ int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
- 	else
- 		return utmi_phy_power_on(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_power_on);
- 
- void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
- {
-@@ -746,18 +749,21 @@ void tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
- 	else
- 		utmi_phy_power_off(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_power_off);
- 
- void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_preresume(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
- 
- void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_postresume(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
- 
- void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 				 enum tegra_usb_phy_port_speed port_speed)
-@@ -765,24 +771,28 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_restore_start(phy, port_speed);
- }
-+EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
- 
- void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_restore_end(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
- 
- void tegra_usb_phy_clk_disable(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_clk_disable(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_disable);
- 
- void tegra_usb_phy_clk_enable(struct tegra_usb_phy *phy)
- {
- 	if (!phy_is_ulpi(phy))
- 		utmi_phy_clk_enable(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_clk_enable);
- 
- void tegra_usb_phy_close(struct tegra_usb_phy *phy)
- {
-@@ -794,3 +804,4 @@ void tegra_usb_phy_close(struct tegra_usb_phy *phy)
- 	clk_put(phy->pll_u);
- 	kfree(phy);
- }
-+EXPORT_SYMBOL_GPL(tegra_usb_phy_close);
+Thanks Arnd and Alan for cleaning Tegra up!
+
 -- 
-1.7.0.4
+nvpublic
