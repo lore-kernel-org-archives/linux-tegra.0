@@ -1,129 +1,78 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 04/10] arm/tegra: Fix PWM clock programming
-Date: Sat, 3 Mar 2012 23:47:51 +0100
-Message-ID: <20120303224751.GB6661@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v3 07/10] arm/tegra: Add PWFM controller device tree
+ probing
+Date: Sat, 3 Mar 2012 23:54:05 +0100
+Message-ID: <20120303225404.GC6661@avionic-0098.mockup.avionic-design.de>
 References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-5-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E52@HQMAIL01.nvidia.com>
+ <1329923841-32017-8-git-send-email-thierry.reding@avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E67@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4795719046094957232=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E52-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E67-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============4795719046094957232==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
-Content-Disposition: inline
-
-
---xXmbgvnjoT4axfJE
+--p2kqVDKq5asng8Dg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 * Stephen Warren wrote:
 > Thierry Reding wrote at Wednesday, February 22, 2012 8:17 AM:
-> > PWM clock source registers in Tegra 2 have different clock source selec=
-tion bit
-> > fields than other registers.  PWM clock source bits in CLK_SOURCE_PWM_0=
- register
-> > are located at bit field bit[30:28] while others are at bit field bit[3=
-1:30] in
-> > their respective clock source register.
-> >=20
-> > This patch updates the clock programming to correctly reflect that, by =
-adding a
-> > flag to indicate the alternate bit field format and checking for it when
-> > selecting a clock source (parent clock).
+> > Add auxdata to instantiate a device tree for the PWFM controller and
+> > include a corresponding node in the device tree.
 >=20
-> tegra30_clocks.c needs this change too, although on Tegra30, it's bits
-> 29:28 for the PWM, and bits 31:30 for non-PWM.
+> > diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30=
+=2Edtsi
+>=20
+> > +	pwm: pwm@7000a000 {
+> > +		compatible =3D "nvidia,tegra20-pwm";
+> > +		reg =3D <0x7000a000 0x100>;
+> > +		#pwm-cells =3D <2>;
+> > +	};
+>=20
+> The compatible value probably should list both Tegra30 and Tegra20, so
+> we can know exactly which HW is present, just in case we need to turn
+> on some bug-fix only for one of the variants:
+>=20
+>     compatible =3D "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
 
-Okay, I'll add code for Tegra30 in the next version. I won't be able to test
-that at all because I don't have any Tegra30 hardware.
+I'm confused. If I know exactly that the hardware is Tegra30 (which it
+definitely should be if I include tegra30.dtsi), then why list "tegra20-pwm"
+as compatible?
 
-> > diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/=
-tegra2_clocks.c
->=20
-> +#define PERIPH_CLK_SOURCE_4BIT_MASK	(7<<28)
-> +#define PERIPH_CLK_SOURCE_4BIT_SHIFT	28
->=20
-> Why is this (and the flag that enables it) called "4 bit"; the existing
-> code supports a 2-bit mux field (4-values), whereas this new code supports
-> a 3-bit field (potentially 8 values, but only 5 actually assigned).
-> Can this be renamed something more accurate, especially since on Tegra30
-> the difference is only the bit position of the field, not the number of
-> bits in the field.
+Or did you mean to list tegra30-pwm as compatible value in the PWM driver?
 
-This is taken directly from the Chromium tree, so I don't really know why
-that name was chosen. But since the PWM clock source register seems to be t=
-he
-only exception, how about calling the flag PWM_CLK and prefix the shift and
-mask with PWM_CLK_SOURCE_ instead?
+> Could you also write binding documentation, in particular explaining
+> what the two pwm-cells are specifically for Tegra:
+>=20
+> Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+>=20
+> (although perhaps that'd be part of the previous patch which implements
+> the driver)
 
-> > @@ -908,9 +910,16 @@ static void tegra2_periph_clk_init(struct clk *c)
-> >  	u32 val =3D clk_readl(c->reg);
-> >  	const struct clk_mux_sel *mux =3D NULL;
-> >  	const struct clk_mux_sel *sel;
-> > +	u32 shift;
-> > +
-> > +	if (c->flags & PERIPH_SOURCE_CLK_4BIT)
-> > +		shift =3D PERIPH_CLK_SOURCE_4BIT_SHIFT;
-> > +	else
-> > +		shift =3D PERIPH_CLK_SOURCE_SHIFT;
->=20
-> I think you should assign a "mask" variable here too...
->=20
-> > +
-> >  	if (c->flags & MUX) {
-> >  		for (sel =3D c->inputs; sel->input !=3D NULL; sel++) {
-> > -			if (val >> PERIPH_CLK_SOURCE_SHIFT =3D=3D sel->value)
-> > +			if (val >> shift =3D=3D sel->value)
-> >  				mux =3D sel;
->=20
-> Because in the new case, bit 31 isn't part of the field, so just
-> shifting doesn't isolate the mux field. In practice, this probably isn't
-> an issue since bit 31 is undefined, but better to be safe than sorry...
-
-Okay, I'll fix that as well.
+Actually for Tegra the values would be those documented in the generic
+binding because Tegra uses of_pwm_simple_xlate(). Does it still make sense =
+to
+add a Tegra-specific binding?
 
 Thierry
 
---xXmbgvnjoT4axfJE
+--p2kqVDKq5asng8Dg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk9Sn5cACgkQZ+BJyKLjJp+j/QCeJ9gx2sd/etpPggkDMY9kPeos
-nDgAnReCUHw7I7jTqpSaC4P67236KTzC
-=QXSa
+iEYEARECAAYFAk9SoQwACgkQZ+BJyKLjJp/kiQCfd0NYL53dTVgm77J/jF4zKZrx
+6EgAoIqGrvZOIFEX5RW1T6q7G3/bM6XK
+=x0wv
 -----END PGP SIGNATURE-----
 
---xXmbgvnjoT4axfJE--
-
---===============4795719046094957232==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============4795719046094957232==--
+--p2kqVDKq5asng8Dg--
