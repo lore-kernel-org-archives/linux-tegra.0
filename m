@@ -1,49 +1,44 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] ARM: dt: Explicitly configure all serial ports on Tegra
- Cardhu
-Date: Sun, 4 Mar 2012 10:47:53 -0800
-Message-ID: <20120304184753.GA32119@quad.lixom.net>
-References: <1328210659-16869-1-git-send-email-swarren@nvidia.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: tegra: Enable CPUIdle on Tegra20
+Date: Sun, 4 Mar 2012 10:51:55 -0800
+Message-ID: <20120304185155.GA363@quad.lixom.net>
+References: <1330014056-26125-1-git-send-email-pdeschrijver@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BD8BC9AB@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1328210659-16869-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BD8BC9AB@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: "Russell King - ARM Linux (linux@arm.linux.org.uk)" <linux@arm.linux.org.uk>, "Nicolas Pitre (nico@fluxnic.net)" <nico@fluxnic.net>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 02, 2012 at 12:24:19PM -0700, Stephen Warren wrote:
-> The ports are used as follows:
-> UART1/A: Routed to debug dongle
-> UART2/B: GPS
-> UART3/C: Bluetooth
-> UART4/D: Routed to debug dongle
-> UART5/E: Not connected
+On Thu, Feb 23, 2012 at 09:25:34AM -0800, Stephen Warren wrote:
+> Peter De Schrijver wrote at Thursday, February 23, 2012 9:21 AM:
+> > As the LP3 code also works for Tegra20, we can enable cpuidle for Tegra20.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > 
-> The debug dongle has jumpers to connect either UART1/A or UART4/D to
-> the DB-9 connector. UART1/A is typically used on Cardhu, and is the option
-> we assume here.
+> Acked-by: Stephen Warren <swarren@nvidia.com>
+> Tested-by: Stephen Warren <swarren@nvidia.com>
 > 
-> For now, only enable UART1/A, and explicitly disable all other ports.
+> Note that the commit which added this line appears to have been made in
+> Nicolas's idle branch, which was merged into Russell's for-armsoc branch.
+> This presumably impacts the path through which this fix should get merged.
 > 
-> The explicit disable prevents the message "of_serial 70006040.serial:
-> no clock-frequency property set" being printed during boot.
-> 
-> Enabling the other ports requires their clocks to be enabled, or accesses
-> to the registers will hang. At present, this requires adding entries into
-> board-dt-tegra30.c's tegra_dt_clk_init_table[]. Lets punt on that and wait
-> for the common clock bindings to set this all up, although that will also
-> requiring adding clock support to 8250.c.
-> 
-> While we're at it, fix board-dt-tegra30.c to enable the correct clock for
-> the debug UART. We got away with this before, because the bootloader already
-> enabled it.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> (hence leaving the patch below for Nicolas/Russell to see)
 
-Thanks, applied to for-3.4/t30-smp (since it depends on other changes there).
+Thanks, applied.
 
 
 -Olof
