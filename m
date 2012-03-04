@@ -1,7 +1,7 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL 2/6] ARM: tegra: device tree updates
-Date: Sun,  4 Mar 2012 12:13:58 -0800
-Message-ID: <1330892042-32065-3-git-send-email-olof@lixom.net>
+Subject: [GIT PULL 3/6] ARM: tegra: SoC updates
+Date: Sun,  4 Mar 2012 12:13:59 -0800
+Message-ID: <1330892042-32065-4-git-send-email-olof@lixom.net>
 References: <1330892042-32065-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -17,51 +17,50 @@ The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git tags/tegra-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git tags/tegra-soc
 
-for you to fetch changes up to 96d6714ca27acab087dcc8d75a7ec815abe3dde7:
+for you to fetch changes up to e186ad74c0941f5caeda28bde76dab903b342c1c:
 
-  ASoC: DT: Add digital microphone binding to PAZ00 board. (2012-03-04 10:42:16 -0800)
-
-----------------------------------------------------------------
-Device tree updates for tegra. Various development, including a handful of
-additions to the tegra30 device trees.
+  ARM: tegra: Demote EMC clock inconsistency BUG to WARN (2012-02-26 14:16:28 -0800)
 
 ----------------------------------------------------------------
-Leon Romanovsky (3):
-      ARM: dt: tegra: Enable device tree audio codec on PAZ00 board.
-      ARM: dt: tegra: Enable headset autodetection on PAZ00 board.
-      ASoC: DT: Add digital microphone binding to PAZ00 board.
+SoC new development for tegra SoCs, mostly tegra30 core support.
 
-Olof Johansson (2):
-      ARM: tegra: emc: device tree bindings
-      ARM: tegra: seaboard: add EMC table to device tree
+It also includes one stray bugfix that was misapplied (should have been
+in soc-drivers), but it went out to the stable branches before I noticed
+so I've left it in.
 
-Stephen Warren (10):
-      dt: tegra gpio: Flesh out binding documentation
-      ARM: dt: tegra30.dtsi: Reformat gpio's interrupts property
-      ARM: dt: tegra30.dtsi: Add extra GPIO interrupt
-      ARM: dt: tegra: Add Tegra APB DMA device tree binding
-      ARM: dt: tegra: Modify I2S nodes to match binding
-      ARM: dt: tegra: Add labels for I2S controllers
-      ARM: dt: tegra: Enable audio on WM8903 boards, disable others
-      ARM: dt: Add binding for Tegra PMC
-      ARM: dt: Add SD controller configuration to Tegra Cardhu
-      ARM: dt: Add ARM PMU to tegra*.dtsi
+----------------------------------------------------------------
+Peter De Schrijver (9):
+      ARM: tegra: add support for tegra30 interrupts
+      ARM: tegra: add support for new clock framework features
+      ARM: tegra: implement basic tegra30 clock framework
+      ARM: tegra: enable tegra30 clock framework
+      ARM: tegra: initialize basic system clocks
+      ARM: tegra: definitions for flow controller
+      ARM: tegra: assembler code for LP3
+      ARM: tegra: cpuidle driver for tegra
+      ARM: tegra: Avoid compiling cpuidle code when not configured
 
- .../devicetree/bindings/arm/tegra/emc.txt          |  100 ++++++++++++++++++++
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |   19 ++++
- .../devicetree/bindings/dma/tegra20-apbdma.txt     |   30 ++++++
- .../devicetree/bindings/gpio/gpio_nvidia.txt       |   18 ++++
- arch/arm/boot/dts/tegra-cardhu.dts                 |   18 ++++
- arch/arm/boot/dts/tegra-harmony.dts                |   45 +++++++--
- arch/arm/boot/dts/tegra-paz00.dts                  |   31 ++++++
- arch/arm/boot/dts/tegra-seaboard.dts               |   78 +++++++++++++++
- arch/arm/boot/dts/tegra-trimslice.dts              |   12 +++
- arch/arm/boot/dts/tegra-ventana.dts                |   42 ++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |   47 +++++++++-
- arch/arm/boot/dts/tegra30.dtsi                     |   59 +++++++++++-
- 12 files changed, 484 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/emc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
- create mode 100644 Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+Stephen Warren (1):
+      ARM: tegra: Demote EMC clock inconsistency BUG to WARN
+
+ arch/arm/mach-tegra/Makefile             |    3 +
+ arch/arm/mach-tegra/board-dt-tegra30.c   |   24 +-
+ arch/arm/mach-tegra/clock.c              |   22 +
+ arch/arm/mach-tegra/clock.h              |   15 +
+ arch/arm/mach-tegra/common.c             |    1 +
+ arch/arm/mach-tegra/cpuidle.c            |  107 +
+ arch/arm/mach-tegra/flowctrl.h           |   37 +
+ arch/arm/mach-tegra/include/mach/clk.h   |   10 +
+ arch/arm/mach-tegra/include/mach/iomap.h |    3 +
+ arch/arm/mach-tegra/include/mach/irqs.h  |    7 +-
+ arch/arm/mach-tegra/irq.c                |   20 +-
+ arch/arm/mach-tegra/sleep.S              |   91 +
+ arch/arm/mach-tegra/tegra2_clocks.c      |   30 +-
+ arch/arm/mach-tegra/tegra30_clocks.c     | 3099 ++++++++++++++++++++++++++++++
+ 14 files changed, 3456 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/cpuidle.c
+ create mode 100644 arch/arm/mach-tegra/flowctrl.h
+ create mode 100644 arch/arm/mach-tegra/sleep.S
+ create mode 100644 arch/arm/mach-tegra/tegra30_clocks.c
