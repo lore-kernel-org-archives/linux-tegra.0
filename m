@@ -1,32 +1,31 @@
-From: Alan Ott <alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
-Subject: Re: [PATCH v2 2/6] ARM: tegra: select CPU_FREQ_TABLE
-Date: Sun, 04 Mar 2012 14:47:31 -0500
-Message-ID: <4F53C6D3.2060404@signal11.us>
-References: <1330721908-8633-1-git-send-email-alan@signal11.us> <20120304183710.GB31064@quad.lixom.net>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [GIT PULL 0/6] Tegra branches for 3.4
+Date: Sun,  4 Mar 2012 12:13:56 -0800
+Message-ID: <1330892042-32065-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120304183710.GB31064-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/4/12 1:37 PM, Olof Johansson wrote:
-> On Fri, Mar 02, 2012 at 03:58:28PM -0500, Alan Ott wrote:
->> From: Arnd Bergmann<arnd-r2nGTMty4D4@public.gmane.org>
->>
->> The tegra cpufreq implementation relies on the cpu_freq_table
->> code, so make sure that this is always there when needed.
->>
->> Signed-off-by: Arnd Bergmann<arnd-r2nGTMty4D4@public.gmane.org>
->> Signed-off-by: Alan Ott<alan-yzvJWuRpmD1zbRFIqnYvSA@public.gmane.org>
->
-> This didn't apply cleanly to the tegra tree (what was it based on?), but
-> I fixed it up manually and applied to for-3.4/cleanups-and-fixes.
->
+Hi Arnd,
 
-These were based on mainline.
+Below are the 6 pull requests for Tegra platforms for 3.4. This is also
+likely my last merge request for tegra material (besides possibly some
+stray patches between now and the merge window), since I am handing off
+main maintainership to Stephen Warren for the next merge window.
 
-Alan.
+Each branch is documented in the tag (they are all tag pull requests), as
+well as in the emails below. Nothing too controversial.
+
+There are a handful of trivial merge conflicts between the branches,
+mostly to the Makefile due to context chances. I also had a local
+issue where git auto-resolved the merge of the T30 SMP branch into
+my for-next branch, and did NOT remove the mach/system.h include at
+arch/arm/mach-tegra/common.c. This results in a build break since it
+has been removed in rmk/for-armsoc. So just a heads up in case you see
+the same thing.
+
+
+-Olof
