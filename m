@@ -1,83 +1,53 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 06/10] pwm: Add NVIDIA Tegra SoC support
-Date: Mon, 5 Mar 2012 08:00:50 +0100
-Message-ID: <20120305070050.GA10914@avionic-0098.mockup.avionic-design.de>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-7-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E63@HQMAIL01.nvidia.com>
- <20120303224212.GA6661@avionic-0098.mockup.avionic-design.de>
- <20120305033935.GA32675@quad.lixom.net>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V2 0/3] Open drain/open source support from gpio library
+Date: Mon, 5 Mar 2012 07:50:14 -0700
+Message-ID: <20120305145014.GA27229@ponder.secretlab.ca>
+References: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7165318499589682856=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20120305033935.GA32675-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1329490582-22107-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: broonie@opensource.wolfsonmicro.com, linus.walleij@stericsson.com, rdunlap@xenotime.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Feb 17, 2012 at 08:26:18PM +0530, Laxman Dewangan wrote:
+> This patch is as per discussion on the patch
+> [PATCH V1] regulator: fixed: Support for open-drain gpio 
+> where it was suggested to push the handling of open drain gpios
+> into the gpio libray.
+> 
+> This is series of patches  to add support of the open drain and open
+> source gpios in standard gpio library.
+> - Added GPIOF_OPEN_DRAIN flag so that client can request the
+>   gpio with this flag. Handle open drain gpio configuration properly.
+> - Added GPIOF_OPEN_SOURCE flag so that client can request the
+>   gpio with this flag. Handle open source gpio configuration properly.
+> - Gpio documentation changes to have support for open-drain.
+> 
+> From the patch series of V1, it is discussed to
+> - remove the sysfs interface supportsi for open drain.
+> - Added open source support as a new change.
+> 
+> Laxman Dewangan (3):
+>   Documentation: gpio: Add details of open-drain/source configuration
+>   gpio: gpiolib: Support for open drain/collector gpios
+>   gpio: gpiolib: Support for open source/emitter gpios
 
---===============7165318499589682856==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
+Applied, thanks
 
+g.
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-* Olof Johansson wrote:
-> On Sat, Mar 03, 2012 at 11:42:12PM +0100, Thierry Reding wrote:
->=20
-> > Those probably weren't there yet when I prepared the first series. I'll=
- have
-> > another look will sync up with it after testing that it still works.
->=20
->=20
-> Yep, the patch in question is from Simon, and it's at:
->=20
-> http://git.chromium.org/gitweb/?p=3Dchromiumos/third_party/kernel.git;a=
-=3Dcommitdiff;h=3D7778c724bf3211c534f9bcef7b26afc6cb067a82
->=20
-> Essentially, the driver accidentally rounded down a backlight setting of
-> '1' which is how it was found.
-
-Thanks for the link, I'll squash it into this patch in the next version.
-
-Thierry
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAk9UZKIACgkQZ+BJyKLjJp91PQCeMlfqeT7LkI5VBS5pBs4pWnsE
-9ZgAmwU361LgXPRXRa277ci/mIRIAwKw
-=9wGu
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
-
---===============7165318499589682856==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============7165318499589682856==--
+> 
+>  Documentation/gpio.txt |   17 +++++++++-
+>  drivers/gpio/gpiolib.c |   83 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/gpio.h   |    6 +++
+>  3 files changed, 102 insertions(+), 4 deletions(-)
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
