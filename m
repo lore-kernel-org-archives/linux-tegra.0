@@ -1,67 +1,41 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v3 07/10] arm/tegra: Add PWFM controller device tree
- probing
-Date: Mon, 5 Mar 2012 10:39:22 -0800
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF17BE861C74@HQMAIL01.nvidia.com>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <1329923841-32017-8-git-send-email-thierry.reding@avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1E67@HQMAIL01.nvidia.com>
- <20120303225404.GC6661@avionic-0098.mockup.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BE861C46@HQMAIL01.nvidia.com>
- <20120305181555.GA22459@avionic-0098.adnet.avionic-design.de>
+From: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
+Subject: RE: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T kernel_noload
+Date: Mon, 05 Mar 2012 15:29:30 -0500 (EST)
+Message-ID: <alpine.LFD.2.02.1203051525490.31242@xanadu.home>
+References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BE861683@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120305181555.GA22459-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Content-Language: en-US
+In-reply-to: <74CDBE0F657A3D45AFBB94109FB122FF17BE861683-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding wrote at Monday, March 05, 2012 11:16 AM:
-> * Stephen Warren wrote:
-> > Thierry Reding wrote at Saturday, March 03, 2012 3:54 PM:
-...
-> > > > Could you also write binding documentation, in particular explaining
-> > > > what the two pwm-cells are specifically for Tegra:
-> > > >
-> > > > Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > > >
-> > > > (although perhaps that'd be part of the previous patch which implements
-> > > > the driver)
-> > >
-> > > Actually for Tegra the values would be those documented in the generic
-> > > binding because Tegra uses of_pwm_simple_xlate(). Does it still make sense to
-> > > add a Tegra-specific binding?
-> >
-> > There should still be a Tegra-specific binding. Without it, there's no
-> > definite way to know whether the "standard" properties actually apply,
-> > or someone simply forgot to document it.
+On Thu, 1 Mar 2012, Stephen Warren wrote:
+
+> Stephen Warren wrote at Tuesday, February 28, 2012 5:03 PM:
+> > uImage files typically encode a single absolute load and entry address.
+> > This is inconvenient when attempting to share that uImage across multiple
+> > SoCs with different physical RAM addresses. Recent versions of mkimage
+> > implement a "kernel_noload" image type which encodes no absolute load
+> > address, and a relative entry address. This works well for uImage-wrapped
+> > ARM zImages, since they are relocatable.
+> > 
+> > This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
+> > "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
 > 
-> Understood. I assume that both the Tegra20 and Tegra30 variants should have
-> explicit bindings then as well, right?
+> So Russell, are you NAKing this patch then?
+> 
+> If so, I guess I'll just go and add more cruft to my copy-a-kernel-to-
+> an-sd-card script. Which is a pity since every other person will have
+> to do the same, but oh well.
 
-To date, the bindings for the two chips have been similar enough we've
-only written a single bindings document that covers both. For the
-different compatible values, I've been assuming that's such a base part
-of standard DT usage that those differences didn't even require
-documenting in the individual bindings. For example, I've written e.g.:
+What about moving all the u-Boot bells and whistles to a generic 
+top-level Kconfig+Makefile to be shared with all architectures?  Really, 
+there is nothing very ARM specific here.
 
-Required properties:
-- compatible : "nvidia,tegra20-i2s"
 
-Or:
-
-Required properties:
-- compatible: Should be "nvidia,<chip>-apbdma"
-
-And assumed these would be expanded as appropriate by the DT author.
-
-Of course, if there were significant bindings differences (rather than
-HW differences that were largely transparent to bindings) then yes I'd
-expected separate nvidia,tegra20-foo.txt and nvidia,tegra30-foo.txt.
-
--- 
-nvpublic
+Nicolas
