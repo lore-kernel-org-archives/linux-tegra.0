@@ -1,71 +1,36 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: obtaining a regulator from a phandle
-Date: Mon, 5 Mar 2012 17:55:14 +0100
-Message-ID: <20120305165514.GA21298@avionic-0098.adnet.avionic-design.de>
-References: <20120305152157.GA12927@avionic-0098.adnet.avionic-design.de>
- <74CDBE0F657A3D45AFBB94109FB122FF17BE861C09@HQMAIL01.nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL 0/6] Tegra branches for 3.4
+Date: Mon, 5 Mar 2012 17:02:37 +0000
+Message-ID: <201203051702.38188.arnd@arndb.de>
+References: <1330892042-32065-1-git-send-email-olof@lixom.net> <CAOesGMgahK_wkM1PGb55D1gEzbYfJVQKO_XSqMPbw5wTP09Fag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BE861C09-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CAOesGMgahK_wkM1PGb55D1gEzbYfJVQKO_XSqMPbw5wTP09Fag-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Grant Likely <glikely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Sunday 04 March 2012, Olof Johansson wrote:
+> On Sun, Mar 4, 2012 at 12:13 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> > Hi Arnd,
+> >
+> > Below are the 6 pull requests for Tegra platforms for 3.4. This is also
+> > likely my last merge request for tegra material (besides possibly some
+> > stray patches between now and the merge window), since I am handing off
+> > main maintainership to Stephen Warren for the next merge window.
+> >
+> > Each branch is documented in the tag (they are all tag pull requests), as
+> > well as in the emails below. Nothing too controversial.
+> 
+> Oh, I did forget to mention one added dependency: The soc-drivers
+> branch has a dependency on Grant's irq_domain branch -- not for
+> merging but for building.
 
---wac7ysb48OaltWcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I saw that in the tag description. I had included it in the tegra/soc-drivers
+branch, but not in the next/drivers branch, which I did now.
 
-* Stephen Warren wrote:
-> Thierry Reding wrote at Monday, March 05, 2012 8:22 AM:
-> > I'm working on getting DT support for PCIe on Tegra working. The Tegra =
-PCIe
-> > controller needs a specific voltage supplied by a regulator on the boar=
-d that
-> > I use (Harmony-compatible), so what I did was add DT support for the PMU
-> > (tps6586x) to provide the corresponding regulator:
-> ...
-> > Within the device node of the PCIe controller, I reference the ldo0 reg=
-ulator
-> > like so:
-> >=20
-> > 	pcie@80000000 {
-> > 		pex-clk-supply =3D <&ldo0_reg>;
-> > 	};
-> >=20
-> > This all works well, except there seems to be no API to obtain a regula=
-tor
-> > from the DT phandle.
->=20
-> regulator_get(pcie_dev, "pex-clk") should work.
-
-Ah, I see. That would call regulator_dev_lookup(), which would call
-of_get_regulator() which will lookup the pex-clk-supply property. I
-will give that a shot.
-
-> Of course, the PCIe host on Tegra isn't yet a platform device, so would
-> have to be converted.
-
-I've already converted that. I was going to send the patch when I've tested
-that this works in a DT setup as well. So far I have only tested it on non-
-DT Harmony.
-
-Thierry
-
---wac7ysb48OaltWcw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAk9U7/IACgkQZ+BJyKLjJp8GbACeJm3xKHBKYAxCfHVb7mSk7ir+
-8OYAoJHKVJrMxX+/BwwfoS6Yeg2cy1jT
-=YBMB
------END PGP SIGNATURE-----
-
---wac7ysb48OaltWcw--
+	Arnd
