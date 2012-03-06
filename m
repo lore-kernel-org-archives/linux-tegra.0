@@ -1,56 +1,98 @@
-From: Dmitry Artamonow <mad_soft@inbox.ru>
-Subject: [PATCH/RFC 0/2] Couple of Tegra2 PCIe fixes(?)
-Date: Tue,  6 Mar 2012 12:45:41 +0400
-Message-ID: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
+From: Andi <andi.shyti-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH/RFC 2/2] arm/tegra: add timeout to PCIe PLL lock detection loop
+Date: Tue, 6 Mar 2012 10:38:12 +0100
+Message-ID: <CANndwHav6JcqNOuOXcD1dSNUmVYAV=MJ+y+ud6202q6Dh42Vgw@mail.gmail.com>
+References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
+	<1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Stephen Warren <swarren@nvidia.com>, Dmitry Artamonow <mad_soft@inbox.ru>, Thierry Reding <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, Mike Rapoport <mike@compulab.co.il>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1331023544-6439-3-git-send-email-mad_soft-aPYA7nAdAYY@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These are more of RFC, because I can't test if 1/2 is really fixes anything,
-and not sure how much 2/2 is needed - maybe error it fixes happens just in
-my setup (and also I'm not sure if 2 seconds is a good value for timeout,
-because I have no idea, how much time it takes for PLL to lock when everything)
-But anyway...
+Hi,
 
-While trying to make PCIe work on Harmony board, I've noticed
-that pinmux groups for PCIe related signals are tristated, which 
-looked suspicious. So I fixed that - that's the patch 1/2.
+On Tue, Mar 6, 2012 at 9:45 AM, Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org> wr=
+ote:
+> Tegra PCIe driver waits for PLL to lock using busy loop.
+> If PLL fails to lock for some reason, this leads to silent lockup
+> while booting (as PCIe code is not modular).
+>
+> Fix by adding timeout, so if PLL doesn't lock in a couple
+> of seconds, just PCIe driver fails and machine continues to boot.
+>
+> Signed-off-by: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
+> ---
+> =C2=A0arch/arm/mach-tegra/pcie.c | =C2=A0 14 +++++++++++---
+> =C2=A01 files changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
+> index 14b29ab..ffdfdd4 100644
+> --- a/arch/arm/mach-tegra/pcie.c
+> +++ b/arch/arm/mach-tegra/pcie.c
+> @@ -585,10 +585,10 @@ static void tegra_pcie_setup_translations(void)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0afi_writel(0, AFI_MSI_BAR_SZ);
+> =C2=A0}
+>
+> -static void tegra_pcie_enable_controller(void)
+> +static int tegra_pcie_enable_controller(void)
+> =C2=A0{
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0u32 val, reg;
+> - =C2=A0 =C2=A0 =C2=A0 int i;
+> + =C2=A0 =C2=A0 =C2=A0 int i, timeout;
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* Enable slot clock and pulse the reset s=
+ignals */
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0, reg =3D AFI_PEX0_CTRL; i < 2=
+; i++, reg +=3D 0x8) {
+> @@ -639,8 +639,14 @@ static void tegra_pcie_enable_controller(void)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0pads_writel(0xfa5cfa5c, 0xc8);
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* Wait for the PLL to lock */
+> + =C2=A0 =C2=A0 =C2=A0 timeout =3D 2000;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0do {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0val =3D pads_r=
+eadl(PADS_PLL_CTL);
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mdelay(1);
 
-Sadly, even with this fix and 3.3v regulator patch[1] applied, PCIe still
-doesn't work for me. Usually driver just loops infinitely in PLL lock
-waiting code (that was the reason for writing patch 2/2 in this
-mini-series). Couple of times I observed that after about 20-30 seconds of
-waiting it passed PLL lock test and continue further, but then it failed to
-detect a link with PCIe card. And I can't even reproduce this anymore.
+why are you using an mdelay? If you need to sleep 1ms just use
+usleep_range or similar
 
-Does anyone have working PCIe on Harmony? Can you please share the details
-of your setup - what bootloader are you using, which version of kernel,
-some additional patches maybe? Is there some secret tricks which are needed?
-I've tried several combinations of different kernels and bootloaders, but
-still can't find even a one which works.
+Andi
 
-[1] http://www.spinics.net/lists/linux-tegra/msg04148.html
-
-Dmitry Artamonow (2):
-  arm/tegra: fix harmony pinmux for PCIe
-  arm/tegra: add timeout to PCIe PLL lock detection loop
-
- arch/arm/mach-tegra/board-harmony-pinmux.c |    6 +++---
- arch/arm/mach-tegra/pcie.c                 |   14 +++++++++++---
- 2 files changed, 14 insertions(+), 6 deletions(-)
-
--- 
-1.7.5.1.300.gc565c
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (--timeout =3D=3D=
+ 0) {
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 pr_err("Tegra PCIe error: timeout waiting for PLL\n");
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 return -EBUSY;
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0} while (!(val & PADS_PLL_CTL_LOCKDET));
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* turn off IDDQ override */
+> @@ -921,7 +927,9 @@ int __init tegra_pcie_init(bool init_port0, bool =
+init_port1)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return err;
+>
+> - =C2=A0 =C2=A0 =C2=A0 tegra_pcie_enable_controller();
+> + =C2=A0 =C2=A0 =C2=A0 err =3D tegra_pcie_enable_controller();
+> + =C2=A0 =C2=A0 =C2=A0 if (err)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return err;
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* setup the AFI address translations */
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0tegra_pcie_setup_translations();
+> --
+> 1.7.5.1.300.gc565c
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
