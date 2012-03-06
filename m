@@ -1,60 +1,49 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 02/10] pwm: Allow chips to support multiple PWMs.
-Date: Tue, 6 Mar 2012 20:17:12 +0100
-Message-ID: <20120306191712.GB13882@avionic-0098.mockup.avionic-design.de>
-References: <1329923841-32017-1-git-send-email-thierry.reding@avionic-design.de>
- <20120223160420.GA9899@avionic-0098.mockup.avionic-design.de>
- <20120303193249.GA22021@avionic-0098.mockup.avionic-design.de>
- <201203061538.11709.arnd@arndb.de>
+From: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
+Subject: Re: [PATCH/RFC 2/2] arm/tegra: add timeout to PCIe PLL lock
+ detection loop
+Date: Wed, 7 Mar 2012 00:15:38 +0400
+Message-ID: <20120306201538.GA14350@rainbow>
+References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
+ <1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
+ <4F56424A.3020305@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SkvwRMAIpAhPCcCJ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <201203061538.11709.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <4F56424A.3020305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 09:58 Tue 06 Mar     , Stephen Warren wrote:
+> On 03/06/2012 01:45 AM, Dmitry Artamonow wrote:
+> > Tegra PCIe driver waits for PLL to lock using busy loop.
+> > If PLL fails to lock for some reason, this leads to silent lockup
+> > while booting (as PCIe code is not modular).
+> > 
+> > Fix by adding timeout, so if PLL doesn't lock in a couple
+> > of seconds, just PCIe driver fails and machine continues to boot.
+> > 
+> > Signed-off-by: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
+> 
+> That seems reasonable. So once the mdelay discussion is resolved,
+> 
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> 
+> Any idea why the PLL doesn't lock sometimes?
 
---SkvwRMAIpAhPCcCJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-* Arnd Bergmann wrote:
-> On Saturday 03 March 2012, Thierry Reding wrote:
-> > I turns out that this is not as easy to do as I thought. The problem is=
- that
-> > if I remove the pwmchip_find() from the core and move the lookup
-> > functionality into the OF support code I no longer have access to the l=
-ist of
-> > PWM chips. So I guess it will have to stay in to keep things encapsulat=
-ed
-> > properly.
->=20
-> Well, or you move everything into the one file. If you have the device tr=
-ee
-> support function in the same file as everything else, you no longer need
-> the additional complexity.
+Please dismiss this patch - I forgot to turn 'return' to 'return 0' at
+the end of the function, while converting it's type from void to int,
+and it causes driver to fail always now. I'll send updated version shortly.
 
-Okay, I think it makes the most sense to move all of the OF support code in=
-to
-drivers/pwm/core.c. That way we can also check off the discussion about the
-OF support code's location.
+Also I've managed to get another Harmony board today, and it doesn't have
+problems with PLL locking (PLL locks on it in about 2ms), so probably the
+issue I've seen is caused by some hardware fault on the first board,
+or is specific to some particular revision of the board and/or Tegra2 chip.
 
-Thierry
-
---SkvwRMAIpAhPCcCJ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAk9WYrgACgkQZ+BJyKLjJp/enwCeLBhld+aU9hGGV5PCT7+AarvV
-EMsAn38ZQmUaDA57+NH8sG3ooSQObsGA
-=1JTl
------END PGP SIGNATURE-----
-
---SkvwRMAIpAhPCcCJ--
+I'll do more testing tomorrow and re-spin the patches.
+-- 
+Best regards,
+Dmitry "MAD" Artamonow
