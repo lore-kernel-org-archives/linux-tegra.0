@@ -1,14 +1,15 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH/RFC 1/2] arm/tegra: fix harmony pinmux for PCIe
-Date: Tue, 06 Mar 2012 09:55:12 -0700
-Message-ID: <4F564170.7000209@wwwdotorg.org>
+Subject: Re: [PATCH/RFC 2/2] arm/tegra: add timeout to PCIe PLL lock detection
+ loop
+Date: Tue, 06 Mar 2012 09:58:50 -0700
+Message-ID: <4F56424A.3020305@wwwdotorg.org>
 References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
- <1331023544-6439-2-git-send-email-mad_soft@inbox.ru>
+ <1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1331023544-6439-2-git-send-email-mad_soft@inbox.ru>
+In-Reply-To: <1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,13 +24,17 @@ Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-
 List-Id: linux-tegra@vger.kernel.org
 
 On 03/06/2012 01:45 AM, Dmitry Artamonow wrote:
-> Commit 6e96aca397 (arm/tegra: Harmony PCIe: Don't touch pinmux)
-> removed runtime tri-state toggling for PCIe related pinmux groups,
-> but it seems that the fact that all of them are tri-state by default
-> has been overlooked. Change defaults for these groups to TEGRA_TRI_NORMAL.
+> Tegra PCIe driver waits for PLL to lock using busy loop.
+> If PLL fails to lock for some reason, this leads to silent lockup
+> while booting (as PCIe code is not modular).
+> 
+> Fix by adding timeout, so if PLL doesn't lock in a couple
+> of seconds, just PCIe driver fails and machine continues to boot.
 > 
 > Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
 
-Crap, why didn't I check that? Anyway,
+That seems reasonable. So once the mdelay discussion is resolved,
 
 Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+
+Any idea why the PLL doesn't lock sometimes?
