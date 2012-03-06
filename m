@@ -1,53 +1,61 @@
-From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 2/2] i2c: tegra: Remove unnecessary write to INT_STATUS
-Date: Tue, 6 Mar 2012 09:37:07 +0530
-Message-ID: <7A0BFCFE3DA5CD47B0FB7984326F201A136B88647E@BGMAIL01.nvidia.com>
-References: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
- <1328314217-16632-2-git-send-email-swarren@nvidia.com>
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Subject: [PATCH/RFC 1/2] arm/tegra: fix harmony pinmux for PCIe
+Date: Tue,  6 Mar 2012 12:45:42 +0400
+Message-ID: <1331023544-6439-2-git-send-email-mad_soft@inbox.ru>
+References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1328314217-16632-2-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: Stephen Warren <swarren@nvidia.com>, Dmitry Artamonow <mad_soft@inbox.ru>, Thierry Reding <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, Colin Cross <ccross@android.com>, Mike Rapoport <mike@compulab.co.il>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Commit 6e96aca397 (arm/tegra: Harmony PCIe: Don't touch pinmux)
+removed runtime tri-state toggling for PCIe related pinmux groups,
+but it seems that the fact that all of them are tri-state by default
+has been overlooked. Change defaults for these groups to TEGRA_TRI_NORMAL.
 
-
------Original Message-----
-From: Stephen Warren 
-Sent: Saturday, February 04, 2012 5:40 AM
-To: Ben Dooks; Wolfram Sang
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Alok Chauhan; Stephen Warren
-Subject: [PATCH 2/2] i2c: tegra: Remove unnecessary write to INT_STATUS
-
-From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-The write is not necessary and may cause the I2C controller to misbehave.
-With this fix, I2C on Tegra30 works (at least, running i2cdump repeatedly on the WM8903 on Cardhu's I2C5/DVC bus).
-
-Originally by Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, but S-o-b missing in our internal repo.
-
-[swarren: Reworded commit description]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Dmitry Artamonow <mad_soft@inbox.ru>
 ---
- drivers/i2c/busses/i2c-tegra.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/board-harmony-pinmux.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c index a546ede..edac27b 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -456,7 +456,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	int ret;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
--	i2c_writel(i2c_dev, 0xFF, I2C_INT_STATUS);
- 
- 	if (msg->len == 0)
- 		return -EINVAL;
---
-1.7.0.4
+diff --git a/arch/arm/mach-tegra/board-harmony-pinmux.c b/arch/arm/mach-tegra/board-harmony-pinmux.c
+index 465808c..1af85bccc 100644
+--- a/arch/arm/mach-tegra/board-harmony-pinmux.c
++++ b/arch/arm/mach-tegra/board-harmony-pinmux.c
+@@ -53,7 +53,7 @@ static struct tegra_pingroup_config harmony_pinmux[] = {
+ 	{TEGRA_PINGROUP_GME,   TEGRA_MUX_SDIO4,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_GPU,   TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_GPU7,  TEGRA_MUX_RTCK,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+-	{TEGRA_PINGROUP_GPV,   TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
++	{TEGRA_PINGROUP_GPV,   TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_HDINT, TEGRA_MUX_HDMI,          TEGRA_PUPD_PULL_UP,   TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_I2CP,  TEGRA_MUX_I2C,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_IRRX,  TEGRA_MUX_UARTA,         TEGRA_PUPD_PULL_UP,   TEGRA_TRI_TRISTATE},
+@@ -112,10 +112,10 @@ static struct tegra_pingroup_config harmony_pinmux[] = {
+ 	{TEGRA_PINGROUP_SDC,   TEGRA_MUX_PWM,           TEGRA_PUPD_PULL_UP,   TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_SDD,   TEGRA_MUX_PWM,           TEGRA_PUPD_PULL_UP,   TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_SDIO1, TEGRA_MUX_SDIO1,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+-	{TEGRA_PINGROUP_SLXA,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
++	{TEGRA_PINGROUP_SLXA,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_SLXC,  TEGRA_MUX_SPDIF,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_SLXD,  TEGRA_MUX_SPDIF,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+-	{TEGRA_PINGROUP_SLXK,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
++	{TEGRA_PINGROUP_SLXK,  TEGRA_MUX_PCIE,          TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+ 	{TEGRA_PINGROUP_SPDI,  TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_SPDO,  TEGRA_MUX_RSVD2,         TEGRA_PUPD_NORMAL,    TEGRA_TRI_TRISTATE},
+ 	{TEGRA_PINGROUP_SPIA,  TEGRA_MUX_GMI,           TEGRA_PUPD_NORMAL,    TEGRA_TRI_NORMAL},
+-- 
+1.7.5.1.300.gc565c
