@@ -1,43 +1,60 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: obtaining a regulator from a phandle
-Date: Tue, 06 Mar 2012 10:21:40 -0700
-Message-ID: <4F5647A4.2060205@wwwdotorg.org>
-References: <20120305152157.GA12927@avionic-0098.adnet.avionic-design.de> <74CDBE0F657A3D45AFBB94109FB122FF17BE861C09@HQMAIL01.nvidia.com> <20120305165514.GA21298@avionic-0098.adnet.avionic-design.de> <20120306113947.GA22769@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH/RFC 2/2] arm/tegra: add timeout to PCIe PLL lock
+ detection loop
+Date: Tue, 6 Mar 2012 20:09:12 +0100
+Message-ID: <20120306190912.GA13882@avionic-0098.mockup.avionic-design.de>
+References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
+ <1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
+ <4F56424A.3020305@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120306113947.GA22769-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F56424A.3020305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/06/2012 04:39 AM, Thierry Reding wrote:
-...
-> And this is precisely where things get ugly. Now there is a dependency
-> problem between the fixed regulator and the PMU which provides the GPIO. Both
-> the PMU and the fixed regulator are setup via subsys_initcall(), and the
-> regulator beats the PMU, resulting in the fixed regulator being unable to get
-> the GPIO because it hasn't been setup yet. So I remembered Grant's deferred
-> probing patch from yesterday and thought I'd try it out. This worked great,
-> and the fixed regulator was properly set up after all other devices had been
-> probed.
 
-It's great that worked out.
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The PCIe driver now also needs deferred probing until the fixed regulator is
-> present, which also works as expected. But then the problems start. Since now
-> we're so far into the boot process that all __init{,data} is gone, therefore
-> pci_common_init() is no longer present, resulting in an ugly crash.
-> 
-> So the only way I see out of this is patch up everything so that PCI
-> initialization can actually be done after init memory is freed. This would
-> have the added benefit that the driver could actually be built as a module.
-> 
-> Does anyone see another (easier) way out of this?
+* Stephen Warren wrote:
+> On 03/06/2012 01:45 AM, Dmitry Artamonow wrote:
+> > Tegra PCIe driver waits for PLL to lock using busy loop.
+> > If PLL fails to lock for some reason, this leads to silent lockup
+> > while booting (as PCIe code is not modular).
+> >=20
+> > Fix by adding timeout, so if PLL doesn't lock in a couple
+> > of seconds, just PCIe driver fails and machine continues to boot.
+> >=20
+> > Signed-off-by: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
+>=20
+> That seems reasonable. So once the mdelay discussion is resolved,
+>=20
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>=20
+> Any idea why the PLL doesn't lock sometimes?
 
-To me, that sounds like exactly how to solve it. You can probably mark
-the code __devinit rather than just removing all the decorations
-completely. You probably want to run this by the core ARM maintainers
-though; I CC'd Russell and the ARM mailing list for comment.
+I've seen this happen when the 1.05V regulator (GPIO#2 of the PMU on Harmon=
+y)
+isn't enabled.
+
+Thierry
+
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk9WYNgACgkQZ+BJyKLjJp+IHgCffb+elfVXEdHsy1qNudzI/8PG
+h8UAn2Jn/coRHAtmXh9YG+K4voKDQFar
+=6aCj
+-----END PGP SIGNATURE-----
+
+--9jxsPFA5p3P2qPhR--
