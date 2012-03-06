@@ -1,14 +1,11 @@
 From: Stephen Warren <swarren@nvidia.com>
-Subject: [PATCH V2 2/3] pinctrl: allow concurrent gpio and mux function
- ownership of pins
-Date: Mon, 5 Mar 2012 17:22:15 -0700
-Message-ID: <1330993336-9538-2-git-send-email-swarren@nvidia.com>
-References: <1330993336-9538-1-git-send-email-swarren@nvidia.com>
+Subject: [PATCH] MAINTAINERS: update my email address
+Date: Mon,  5 Mar 2012 17:58:36 -0700
+Message-ID: <1330995516-22160-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1330993336-9538-1-git-send-email-swarren@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,190 +15,35 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Linus Walleij <linus.walleij@stericsson.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
-Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Per recent updates to Documentation/gpio.txt, gpiolib drivers should
-inform pinctrl when a GPIO is requested. pinctrl then marks that pin as
-in-use for that GPIO function.
+From: Stephen Warren <swarren@wwwdotorg.org>
 
-When an SoC muxes pins in a group, it's quite possible for the group to
-contain e.g. 6 pins, but only 4 of them actually be needed by the HW
-module that's mux'd to them. In this case, the other 2 pins could be
-used as GPIOs. However, pinctrl marks all the pins within the group as
-in-use by the selected mux function. To allow the expected gpiolib
-interaction, separate the concepts of pin ownership into two parts: One
-for the mux function and one for GPIO usage. Finally, allow those two
-ownerships to exist in parallel.
+My nvidia.com address is hosted by MS Exchange Server and isn't suitable
+for receiving patches. Update my MAINTAINERS entry to something that is.
+Note: The old address continues to work, I just want to ensure that I
+receive patches at the new one where possible.
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren@wwwdotorg.org>
 ---
-v2: New patch.
----
- drivers/pinctrl/core.h   |   13 ++++----
- drivers/pinctrl/pinmux.c |   72 +++++++++++++++++++++++++++++++--------------
- 2 files changed, 56 insertions(+), 29 deletions(-)
+ MAINTAINERS |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
-index 5b3ff13..2d365a3 100644
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -118,15 +118,15 @@ struct pinctrl_setting {
-  * @name: a name for the pin, e.g. the name of the pin/pad/finger on a
-  *	datasheet or such
-  * @dynamic_name: if the name of this pin was dynamically allocated
-- * @usecount: If zero, the pin is not claimed, and @owner should be NULL.
-+ * @mux_usecount: If zero, the pin is not claimed, and @owner should be NULL.
-  *	If non-zero, this pin is claimed by @owner. This field is an integer
-  *	rather than a boolean, since pinctrl_get() might process multiple
-  *	mapping table entries that refer to, and hence claim, the same group
-  *	or pin, and each of these will increment the @usecount.
-- * @owner: The name of the entity owning the pin. Typically, this is the name
-- *	of the device that called pinctrl_get(). Alternatively, it may be the
-- *	name of the GPIO passed to pinctrl_request_gpio().
-+ * @mux_owner: The name of device that called pinctrl_get().
-  * @mux_setting: The most recent selected mux setting for this pin, if any.
-+ * @gpio_owner: If pinctrl_request_gpio() was called for this pin, this is
-+ *	the name of the GPIO that "owns" this pin.
-  */
- struct pin_desc {
- 	struct pinctrl_dev *pctldev;
-@@ -134,9 +134,10 @@ struct pin_desc {
- 	bool dynamic_name;
- 	/* These fields only added when supporting pinmux drivers */
- #ifdef CONFIG_PINMUX
--	unsigned usecount;
--	const char *owner;
-+	unsigned mux_usecount;
-+	const char *mux_owner;
- 	const struct pinctrl_setting_mux *mux_setting;
-+	const char *gpio_owner;
- #endif
- };
- 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 86e4017..4e62783 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -94,17 +94,28 @@ static int pin_request(struct pinctrl_dev *pctldev,
- 		goto out;
- 	}
- 
--	if (desc->usecount && strcmp(desc->owner, owner)) {
--		dev_err(pctldev->dev,
--			"pin already requested\n");
--		goto out;
--	}
-+	if (gpio_range) {
-+		/* There's no need to support multiple GPIO requests */
-+		if (desc->gpio_owner) {
-+			dev_err(pctldev->dev,
-+				"pin already requested\n");
-+			goto out;
-+		}
- 
--	desc->usecount++;
--	if (desc->usecount > 1)
--		return 0;
-+		desc->gpio_owner = owner;
-+	} else {
-+		if (desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
-+			dev_err(pctldev->dev,
-+				"pin already requested\n");
-+			goto out;
-+		}
- 
--	desc->owner = owner;
-+		desc->mux_usecount++;
-+		if (desc->mux_usecount > 1)
-+			return 0;
-+
-+		desc->mux_owner = owner;
-+	}
- 
- 	/* Let each pin increase references to this module */
- 	if (!try_module_get(pctldev->owner)) {
-@@ -135,9 +146,13 @@ static int pin_request(struct pinctrl_dev *pctldev,
- 
- out_free_pin:
- 	if (status) {
--		desc->usecount--;
--		if (!desc->usecount)
--			desc->owner = NULL;
-+		if (gpio_range) {
-+			desc->gpio_owner = NULL;
-+		} else {
-+			desc->mux_usecount--;
-+			if (!desc->mux_usecount)
-+				desc->mux_owner = NULL;
-+		}
- 	}
- out:
- 	if (status)
-@@ -172,9 +187,11 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
- 		return NULL;
- 	}
- 
--	desc->usecount--;
--	if (desc->usecount)
--		return NULL;
-+	if (!gpio_range) {
-+		desc->mux_usecount--;
-+		if (desc->mux_usecount)
-+			return NULL;
-+	}
- 
- 	/*
- 	 * If there is no kind of request function for the pin we just assume
-@@ -185,9 +202,15 @@ static const char *pin_free(struct pinctrl_dev *pctldev, int pin,
- 	else if (ops->free)
- 		ops->free(pctldev, pin);
- 
--	owner = desc->owner;
--	desc->owner = NULL;
--	desc->mux_setting = NULL;
-+	if (gpio_range) {
-+		owner = desc->gpio_owner;
-+		desc->gpio_owner = NULL;
-+	} else {
-+		owner = desc->mux_owner;
-+		desc->mux_owner = NULL;
-+		desc->mux_setting = NULL;
-+	}
-+
- 	module_put(pctldev->owner);
- 
- 	return owner;
-@@ -493,7 +516,7 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
- 	unsigned i, pin;
- 
- 	seq_puts(s, "Pinmux settings per pin\n");
--	seq_puts(s, "Format: pin (name): owner\n");
-+	seq_puts(s, "Format: pin (name): mux_owner gpio_owner hog?\n");
- 
- 	mutex_lock(&pinctrl_mutex);
- 
-@@ -508,13 +531,16 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
- 		if (desc == NULL)
- 			continue;
- 
--		if (desc->owner &&
--		    !strcmp(desc->owner, pinctrl_dev_get_name(pctldev)))
-+		if (desc->mux_owner &&
-+		    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
- 			is_hog = true;
- 
--		seq_printf(s, "pin %d (%s): %s%s", pin,
-+		seq_printf(s, "pin %d (%s): %s %s%s", pin,
- 			   desc->name ? desc->name : "unnamed",
--			   desc->owner ? desc->owner : "UNCLAIMED",
-+			   desc->mux_owner ? desc->mux_owner
-+				: "(MUX UNCLAIMED)",
-+			   desc->gpio_owner ? desc->gpio_owner
-+				: "(GPIO UNCLAIMED)",
- 			   is_hog ? " (HOG)" : "");
- 
- 		if (desc->mux_setting)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4e41d52..e1fb35d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6510,7 +6510,7 @@ F:	include/linux/if_team.h
+ TEGRA SUPPORT
+ M:	Colin Cross <ccross@android.com>
+ M:	Olof Johansson <olof@lixom.net>
+-M:	Stephen Warren <swarren@nvidia.com>
++M:	Stephen Warren <swarren@wwwdotorg.org>
+ L:	linux-tegra@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
+ S:	Supported
 -- 
 1.7.0.4
