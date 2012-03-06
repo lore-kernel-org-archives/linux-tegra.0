@@ -1,176 +1,75 @@
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: tegra: update defconfig
-Date: Mon, 5 Mar 2012 17:03:53 -0700
-Message-ID: <1330992233-8493-1-git-send-email-swarren@nvidia.com>
+From: Stephen Warren <swarren@nvidia.com>
+Subject: [PATCH V2 1/3] Documentation/gpio.txt: Explain expected pinctrl interaction
+Date: Mon, 5 Mar 2012 17:22:14 -0700
+Message-ID: <1330993336-9538-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Linus Walleij <linus.walleij@stericsson.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Refresh tegra_defconfig:
+Update gpio.txt based on recent discussions regarding interaction with the
+pinctrl subsystem.
 
-New options enabled:
-* PERF_EVENTS
-* Tegra EMC scaling
-* Support for all 4 CPUs on Tegra30
-* AUTO_ZRELADDR for unified Tegra20+Tegra30 images
-* CPU_FREQ/CPU_IDLE
-* BLK_DEV_SR
-* INPUT_EVDEV
-* Regulators, including fixed, GPIO, TPS6586x
-* Audio for Tegra+ALC5632 (for Paz00/Toshiba AC100)
-* NVEC (staging, for Paz00/Toshiba AC100)
-* IOMMU for Tegra20's GART and Tegra30's SMMU
-* TEGRA_AES
-* ext4, for trim support on SD/eMMC
+Previously, gpio_request() was described as explicitly not performing any
+required mux setup operations etc.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Now, gpio_request() is explicitly as explicitly performing any required mux
+setup operations where possible. In the case it isn't, platform code is
+required to have set up any required muxing or other configuration prior to
+gpio_request() being called, in order to maintain the same semantics.
+
+This is achieved by gpiolib drivers calling e.g. pinctrl_request_gpio() in
+their .request() operation.
+
+Cc: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-doc@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-v2: Added ext4 support per request from Olof
+v2: Modified to state that pin multiplexing should be performed within
+direction_input()/output() rather than request(), to address Russell King's
+need for glitchless transition between special function and GPIO usage of
+a pin. Various rewording and cleanup due to this.
+---
+ Documentation/gpio.txt |   23 ++++++++++++++++++++---
+ 1 files changed, 20 insertions(+), 3 deletions(-)
 
- arch/arm/configs/tegra_defconfig |   33 ++++++++++++++++++++++-----------
- 1 files changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fd5d304..351d670 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -11,11 +11,14 @@ CONFIG_RT_GROUP_SCHED=y
- CONFIG_BLK_DEV_INITRD=y
- # CONFIG_ELF_CORE is not set
- CONFIG_EMBEDDED=y
-+CONFIG_PERF_EVENTS=y
- CONFIG_SLAB=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
- CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_EFI_PARTITION=y
- # CONFIG_IOSCHED_DEADLINE is not set
- # CONFIG_IOSCHED_CFQ is not set
- CONFIG_ARCH_TEGRA=y
-@@ -27,18 +30,20 @@ CONFIG_MACH_PAZ00=y
- CONFIG_MACH_TRIMSLICE=y
- CONFIG_MACH_WARIO=y
- CONFIG_MACH_VENTANA=y
--CONFIG_TEGRA_DEBUG_UARTD=y
--CONFIG_ARM_ERRATA_742230=y
-+CONFIG_TEGRA_EMC_SCALING_ENABLE=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_SMP=y
--CONFIG_NR_CPUS=2
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- # CONFIG_OABI_COMPAT is not set
- CONFIG_HIGHMEM=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
-+CONFIG_AUTO_ZRELADDR=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_IDLE=y
- CONFIG_VFP=y
- CONFIG_NET=y
- CONFIG_PACKET=y
-@@ -68,7 +73,6 @@ CONFIG_IPV6_MULTIPLE_TABLES=y
- # CONFIG_FIRMWARE_IN_KERNEL is not set
- CONFIG_PROC_DEVICETREE=y
- CONFIG_BLK_DEV_LOOP=y
--CONFIG_MISC_DEVICES=y
- CONFIG_AD525X_DPOT=y
- CONFIG_AD525X_DPOT_I2C=y
- CONFIG_ICS932S401=y
-@@ -76,6 +80,7 @@ CONFIG_APDS9802ALS=y
- CONFIG_ISL29003=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
-+CONFIG_BLK_DEV_SR=y
- # CONFIG_SCSI_LOWLEVEL is not set
- CONFIG_NETDEVICES=y
- CONFIG_DUMMY=y
-@@ -85,8 +90,7 @@ CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
- # CONFIG_WLAN is not set
--# CONFIG_INPUT is not set
--# CONFIG_SERIO is not set
-+CONFIG_INPUT_EVDEV=y
- # CONFIG_VT is not set
- # CONFIG_LEGACY_PTYS is not set
- # CONFIG_DEVKMEM is not set
-@@ -96,13 +100,15 @@ CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C=y
- # CONFIG_I2C_COMPAT is not set
--# CONFIG_I2C_HELPER_AUTO is not set
- CONFIG_I2C_TEGRA=y
- CONFIG_SPI=y
- CONFIG_SPI_TEGRA=y
- CONFIG_SENSORS_LM90=y
- CONFIG_MFD_TPS6586X=y
- CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
-+CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_TPS6586X=y
- CONFIG_SOUND=y
- CONFIG_SND=y
-@@ -116,11 +122,13 @@ CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA_WM8903=y
- CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
-+CONFIG_SND_SOC_TEGRA_ALC5632=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TEGRA=y
- CONFIG_USB_STORAGE=y
- CONFIG_MMC=y
-+CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SDHCI_TEGRA=y
-@@ -130,6 +138,11 @@ CONFIG_STAGING=y
- CONFIG_IIO=y
- CONFIG_SENSORS_ISL29018=y
- CONFIG_SENSORS_AK8975=y
-+CONFIG_MFD_NVEC=y
-+CONFIG_KEYBOARD_NVEC=y
-+CONFIG_SERIO_NVEC_PS2=y
-+CONFIG_TEGRA_IOMMU_GART=y
-+CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT2_FS_XATTR=y
- CONFIG_EXT2_FS_POSIX_ACL=y
-@@ -138,13 +151,12 @@ CONFIG_EXT3_FS=y
- # CONFIG_EXT3_DEFAULTS_TO_ORDERED is not set
- CONFIG_EXT3_FS_POSIX_ACL=y
- CONFIG_EXT3_FS_SECURITY=y
-+CONFIG_EXT4_FS=y
- # CONFIG_DNOTIFY is not set
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
- CONFIG_NFS_FS=y
- CONFIG_ROOT_NFS=y
--CONFIG_PARTITION_ADVANCED=y
--CONFIG_EFI_PARTITION=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
-@@ -162,9 +174,8 @@ CONFIG_DEBUG_SG=y
- CONFIG_DEBUG_LL=y
- CONFIG_EARLY_PRINTK=y
- CONFIG_CRYPTO_ECB=y
--CONFIG_CRYPTO_AES=y
- CONFIG_CRYPTO_ARC4=y
- CONFIG_CRYPTO_TWOFISH=y
- # CONFIG_CRYPTO_ANSI_CPRNG is not set
-+CONFIG_CRYPTO_DEV_TEGRA_AES=y
- CONFIG_CRC_CCITT=y
--CONFIG_CRC16=y
+diff --git a/Documentation/gpio.txt b/Documentation/gpio.txt
+index 792faa3..e0f8799 100644
+--- a/Documentation/gpio.txt
++++ b/Documentation/gpio.txt
+@@ -271,9 +271,26 @@ Some platforms may also use knowledge about what GPIOs are active for
+ power management, such as by powering down unused chip sectors and, more
+ easily, gating off unused clocks.
+ 
+-Note that requesting a GPIO does NOT cause it to be configured in any
+-way; it just marks that GPIO as in use.  Separate code must handle any
+-pin setup (e.g. controlling which pin the GPIO uses, pullup/pulldown).
++For GPIOs that use pins known to the pinctrl subsystem, that subsystem should
++be informed of their use; a gpiolib driver's .request() operation may call
++pinctrl_request_gpio(), and a gpiolib driver's .free() operation may call
++pinctrl_free_gpio(). The pinctrl subsystem allows a pinctrl_request_gpio()
++to succeed concurrently with a pin or pingroup being "owned" by a device for
++pin multiplexing.
++
++Any programming of pin multiplexing hardware that is needed to route the
++GPIO signal to the appropriate pin should occur within a GPIO driver's
++.direction_input() or .direction_output() operations, and occur after any
++setup of an output GPIO's value. This allows a glitch-free migration from a
++pin's special function to GPIO. This is sometimes required when using a GPIO
++to implement a workaround on signals typically driven by a non-GPIO HW block.
++
++Some platforms allow some or all GPIO signals to be routed to different pins.
++Similarly, other aspects of the GPIO or pin may need to be configured, such as
++pullup/pulldown. Platform software should arrange that any such details are
++configured prior to gpio_request() being called for those GPIOs, e.g. using
++the pinctrl subsystem's mapping table, so that GPIO users need not be aware
++of these details.
+ 
+ Also note that it's your responsibility to have stopped using a GPIO
+ before you free it.
 -- 
 1.7.0.4
+
