@@ -1,48 +1,97 @@
-From: Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org>
-Subject: Re: [PATCH/RFC 2/2] arm/tegra: add timeout to PCIe PLL lock
- detection loop
-Date: Tue, 6 Mar 2012 15:19:51 +0400
-Message-ID: <20120306111951.GA8494@rainbow>
-References: <1331023544-6439-1-git-send-email-mad_soft@inbox.ru>
- <1331023544-6439-3-git-send-email-mad_soft@inbox.ru>
- <CANndwHav6JcqNOuOXcD1dSNUmVYAV=MJ+y+ud6202q6Dh42Vgw@mail.gmail.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: obtaining a regulator from a phandle
+Date: Tue, 6 Mar 2012 12:39:47 +0100
+Message-ID: <20120306113947.GA22769@avionic-0098.mockup.avionic-design.de>
+References: <20120305152157.GA12927@avionic-0098.adnet.avionic-design.de>
+ <74CDBE0F657A3D45AFBB94109FB122FF17BE861C09@HQMAIL01.nvidia.com>
+ <20120305165514.GA21298@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CANndwHav6JcqNOuOXcD1dSNUmVYAV=MJ+y+ud6202q6Dh42Vgw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20120305165514.GA21298-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andi <andi.shyti-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mike Rapoport <mike-UTxiZqZC01RS1MOuV/RT9w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10:38 Tue 06 Mar     , Andi wrote:
-> Hi,
+
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Thierry Reding wrote:
+> * Stephen Warren wrote:
+> > Thierry Reding wrote at Monday, March 05, 2012 8:22 AM:
+> > > This all works well, except there seems to be no API to obtain a regu=
+lator
+> > > from the DT phandle.
+> >=20
+> > regulator_get(pcie_dev, "pex-clk") should work.
 >=20
-> On Tue, Mar 6, 2012 at 9:45 AM, Dmitry Artamonow <mad_soft-aPYA7nAdAYY@public.gmane.org> =
-wrote:
-> > =A0 =A0 =A0 =A0/* Wait for the PLL to lock */
-> > + =A0 =A0 =A0 timeout =3D 2000;
-> > =A0 =A0 =A0 =A0do {
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D pads_readl(PADS_PLL_CTL);
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(1);
+> Ah, I see. That would call regulator_dev_lookup(), which would call
+> of_get_regulator() which will lookup the pex-clk-supply property. I
+> will give that a shot.
+
+regulator_get(&pdev->dev, "pex-clk") worked as expected.
+
+> > Of course, the PCIe host on Tegra isn't yet a platform device, so would
+> > have to be converted.
 >=20
-> why are you using an mdelay? If you need to sleep 1ms just use
-> usleep_range or similar
+> I've already converted that. I was going to send the patch when I've test=
+ed
+> that this works in a DT setup as well. So far I have only tested it on no=
+n-
+> DT Harmony.
 
-This driver uses mdelay(1) in other places, so I just used it for the s=
-ake
-of consistency. And as this code runs just one time on boot, there's no=
-t
-really much harm in doing delay with busy loop instead of sleeping.
+Adding DT support seems to be more complicated than I anticipated. Starting
+=66rom the platform driver that works on non-DT Harmony I added DT support =
+to
+the tps6586x driver in order to be able to use its regulators from the PCIe
+driver (also extended with DT support). That worked great.
 
-Anyway, I agree that sleeping is better than busy waiting in general, s=
-o
-I can respin this patch using usleep_range, or else prepare incremental
-patch on top of this, which will change all mdelay in driver to usleep_=
-range.
+However, the PCIe controller needs another (fixed) regulator as VDD supply.
+On Harmony (and the hardware that I use) this is GPIO#2 of the PMU (tps6586=
+x)
+so I added another regulator to the device tree which uses that GPIO and
+passed it to the PCIe device node (vdd-supply property).
 
---=20
-Best regards,
-Dmitry "MAD" Artamonow
+And this is precisely where things get ugly. Now there is a dependency
+problem between the fixed regulator and the PMU which provides the GPIO. Bo=
+th
+the PMU and the fixed regulator are setup via subsys_initcall(), and the
+regulator beats the PMU, resulting in the fixed regulator being unable to g=
+et
+the GPIO because it hasn't been setup yet. So I remembered Grant's deferred
+probing patch from yesterday and thought I'd try it out. This worked great,
+and the fixed regulator was properly set up after all other devices had been
+probed.
+
+The PCIe driver now also needs deferred probing until the fixed regulator is
+present, which also works as expected. But then the problems start. Since n=
+ow
+we're so far into the boot process that all __init{,data} is gone, therefore
+pci_common_init() is no longer present, resulting in an ugly crash.
+
+So the only way I see out of this is patch up everything so that PCI
+initialization can actually be done after init memory is freed. This would
+have the added benefit that the driver could actually be built as a module.
+
+Does anyone see another (easier) way out of this?
+
+Thierry
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk9V94MACgkQZ+BJyKLjJp9I1wCgijlukkvcMR5z/Dxl8G6Vorgx
+nIwAoJAJjWBp4Md3xZ88EdLR44MkCN8C
+=c1zn
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
