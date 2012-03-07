@@ -1,122 +1,107 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v4 5/9] tegra: i2c: Add I2C driver
-Date: Tue, 6 Mar 2012 20:48:50 -0800
-Message-ID: <CAPnjgZ1RfqyOOT8nOYvArzfeZgqYeix4H=Ugsj8D8fM0WLwKfg@mail.gmail.com>
-References: <1330536689-9121-5-git-send-email-sjg@chromium.org>
-	<1330536689-9121-6-git-send-email-sjg@chromium.org>
-	<201203011529.11213.vapier@gentoo.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <201203011529.11213.vapier@gentoo.org>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Mike Frysinger <vapier@gentoo.org>
-Cc: linux-tegra@vger.kernel.org, u-boot@lists.denx.de, Heiko Schocher <hs@denx.de>, Tom Warren <twarren@nvidia.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v5 4/9] tegra: fdt: i2c: Add extra I2C bindings for U-Boot
+Date: Tue,  6 Mar 2012 21:00:22 -0800
+Message-ID: <1331096428-6317-5-git-send-email-sjg@chromium.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike,
+Add U-Boot's peripheral clock information to the Tegra20 device tree file.
 
-On Thu, Mar 1, 2012 at 12:29 PM, Mike Frysinger <vapier@gentoo.org> wrote:
-> On Wednesday 29 February 2012 12:31:25 Simon Glass wrote:
->> --- /dev/null
->> +++ b/arch/arm/include/asm/arch-tegra2/tegra_i2c.h
->>
->> +/* Convert i2c slave address to be put on bus =A0*/
->> +#define I2C_ADDR_ON_BUS(chip) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(chip << 1)
->
-> i'm not sure the desc here is correct ... it's at least a little bit
-> misleading. =A0addresses are 7bits, and the 8th bit is for telling the de=
-vice to
-> read/write. =A0since it only gets used in two places, might be better to =
-inline
-> the bit shift there ? =A0hard to say.
+Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+Changes in v2:
+- Adjust definitions to fit new peripheral clock bindings
+- Change 'speed' to 'clock-frequency'
+- Remove u-boot,pinmux binding (sadly)
 
-Yes I agree with you, have changed it.
+Changes in v3:
+- Move speed setting from tegra20.dtsi to board .dts file
 
->
->> --- /dev/null
->> +++ b/drivers/i2c/tegra_i2c.c
->>
->> + * Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
->
-> guess you need to -2012 that now ;)
+Changes in v4:
+- Update to use new tegra2 clock and reset binding
 
-Changed; pray I don't have to change it again.
+Changes in v5:
+- Add clock binding file which lists our additions to the Linux binding
+- Add pll_p_out3 to clock binding definition
 
->
->> +#include <common.h>
->> +#include <asm/io.h>
->> +#include <asm/arch/clk_rst.h>
->> +#include <asm/arch/clock.h>
->> +#include <asm/arch/funcmux.h>
->> +#include <asm/arch/gpio.h>
->> +#include <asm/arch/pinmux.h>
->> +#include <asm/arch/tegra_i2c.h>
->> +#include <fdtdec.h>
->
-> needs to include i2c.h to make sure your local defs stay inline with the
-> prototypes everyone else is using. =A0also, asm/* generally should come l=
-ast (so
-> after ftdec.h).
+ arch/arm/dts/tegra20.dtsi                    |   10 +++++++++-
+ doc/device-tree-bindings/i2c/tegra20-i2c.txt |   23 +++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletions(-)
+ create mode 100644 doc/device-tree-bindings/i2c/tegra20-i2c.txt
 
-Done, which threw up an error in the i2c_init_board() signature. No
-error checking :-(
-
->
->> +static int send_recv_packets(
->> + =A0 =A0 struct i2c_bus *i2c_bus,
->> + =A0 =A0 struct i2c_trans_info *trans)
->> +{
->> + =A0 =A0 struct i2c_control *control =3D i2c_bus->control;
->> + =A0 =A0 u32 int_status;
->> + =A0 =A0 u32 words;
->> + =A0 =A0 u8 *dptr;
->> + =A0 =A0 u32 local;
->> + =A0 =A0 uchar last_bytes;
->> + =A0 =A0 int error =3D 0;
->> + =A0 =A0 int is_write =3D trans->flags & I2C_IS_WRITE;
->> +
->> + =A0 =A0 /* clear status from previous transaction, XFER_COMPLETE, NOAC=
-K, etc. */
->> + =A0 =A0 int_status =3D readl(&control->int_status);
->> + =A0 =A0 writel(int_status, &control->int_status);
->> +
->> + =A0 =A0 send_packet_headers(i2c_bus, trans, 1);
->> +
->> + =A0 =A0 words =3D DIV_ROUND_UP(trans->num_bytes, 4);
->> + =A0 =A0 last_bytes =3D trans->num_bytes & 3;
->> + =A0 =A0 dptr =3D trans->buf;
->> +
->> + =A0 =A0 while (words) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (is_write) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* deal with word alignment */
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((unsigned)dptr & 3) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 memcpy(&local,=
- dptr, sizeof(u32));
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(local, =
-&control->tx_fifo);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 debug("pkt dat=
-a sent (0x%x)\n", local);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(*(u32 *=
-)dptr, &control->tx_fifo);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 debug("pkt dat=
-a sent (0x%x)\n", *(u32 *)dptr);
->
-> generally inlining these types of bitsized casts are discouraged ...
-
-OK I have added a separate variable for this.
-
-Regards,
-Simon
-
-> -mike
+diff --git a/arch/arm/dts/tegra20.dtsi b/arch/arm/dts/tegra20.dtsi
+index d6bc9f1..d5ca02c 100644
+--- a/arch/arm/dts/tegra20.dtsi
++++ b/arch/arm/dts/tegra20.dtsi
+@@ -34,6 +34,8 @@
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000C000 0x100>;
+ 		interrupts = < 70 >;
++		/* PERIPH_ID_I2C1, PLL_P_OUT3 */
++		clocks = <&tegra_car 12>, <&tegra_car 124>;
+ 	};
+ 
+ 	i2c@7000c400 {
+@@ -42,6 +44,8 @@
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000C400 0x100>;
+ 		interrupts = < 116 >;
++		/* PERIPH_ID_I2C2, PLL_P_OUT3 */
++		clocks = <&tegra_car 54>, <&tegra_car 124>;
+ 	};
+ 
+ 	i2c@7000c500 {
+@@ -50,14 +54,18 @@
+ 		compatible = "nvidia,tegra20-i2c";
+ 		reg = <0x7000C500 0x100>;
+ 		interrupts = < 124 >;
++		/* PERIPH_ID_I2C3, PLL_P_OUT3 */
++		clocks = <&tegra_car 67>, <&tegra_car 124>;
+ 	};
+ 
+ 	i2c@7000d000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		compatible = "nvidia,tegra20-i2c";
++		compatible = "nvidia,tegra20-i2c-dvc";
+ 		reg = <0x7000D000 0x200>;
+ 		interrupts = < 85 >;
++		/* PERIPH_ID_DVC_I2C, PLL_P_OUT3 */
++		clocks = <&tegra_car 47>, <&tegra_car 124>;
+ 	};
+ 
+ 	i2s@70002800 {
+diff --git a/doc/device-tree-bindings/i2c/tegra20-i2c.txt b/doc/device-tree-bindings/i2c/tegra20-i2c.txt
+new file mode 100644
+index 0000000..d601c17
+--- /dev/null
++++ b/doc/device-tree-bindings/i2c/tegra20-i2c.txt
+@@ -0,0 +1,23 @@
++(Placeholder note while we locate the kernel Tegra20 bindings)
++
++Added in U-Boot:
++
++Required properties:
++ - clocks : Two clocks must be given, each as a phandle to the Tegra's
++            CAR node and the clock number as a parameter:
++     - the I2C clock to use for the peripheral
++     - the pll_p_out3 clock, which can be used for fast operation. This
++          does not change and is the same for all I2C nodes.
++
++Example:
++(TODO: merge with existing example):
++
++	i2c@7000c400 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "nvidia,tegra20-i2c";
++		reg = <0x7000C400 0x100>;
++		interrupts = < 116 >;
++		/* PERIPH_ID_I2C2, PLL_P_OUT3 */
++		clocks = <&tegra_car 54>, <&tegra_car 124>;
++	};
+-- 
+1.7.7.3
