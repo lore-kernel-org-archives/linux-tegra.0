@@ -1,59 +1,53 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V1] i2c: gpio: Use open drain support from gpio driver
-Date: Wed, 7 Mar 2012 19:17:13 +0000
-Message-ID: <20120307191713.GY3107@opensource.wolfsonmicro.com>
-References: <1331127494-6913-1-git-send-email-ldewangan@nvidia.com>
- <20120307173157.GT3107@opensource.wolfsonmicro.com>
- <20120307173922.GB1130@pengutronix.de>
- <20120307174443.GV3107@opensource.wolfsonmicro.com>
- <4F57A419.9090501@nvidia.com>
+Subject: Re: [PATCH V1] regulator: tps65910: Configure correct value for
+ VDDCTRL vout reg
+Date: Wed, 7 Mar 2012 19:30:23 +0000
+Message-ID: <20120307193023.GC3107@opensource.wolfsonmicro.com>
+References: <1331118545-26514-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="R9baxdNnpTjJ7oIU"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="nDtE8k2pYjsRXajv"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4F57A419.9090501-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1331118545-26514-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: lrg-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---R9baxdNnpTjJ7oIU
-Content-Type: text/plain; charset=us-ascii
+--nDtE8k2pYjsRXajv
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 07, 2012 at 11:38:25PM +0530, Laxman Dewangan wrote:
-> The open drain support is already available from next-20120306.
-> I was waiting for the change to be in tree before sending this patch.
-> Hope I am not missing anything here.
+On Wed, Mar 07, 2012 at 04:39:05PM +0530, Laxman Dewangan wrote:
+> As per datasheet, the voltage output is defined as
+> from SEL[6:0] =3D 3 to 64 (dec)
+> Vout=3D (SEL[6:0] =D7 12.5 mV + 562.5 mV)
 
-Nobody should be merging -next into their trees, it's rebuilt every day
-- you can only rely on things in Linus tree or things which have been
-explicitly cross merged into other trees.  Otherwise the individual tree
-won't build as it doesn't contain the patch you depend on which breaks
-bisection.
+Applied, thanks.
 
---R9baxdNnpTjJ7oIU
+--nDtE8k2pYjsRXajv
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPV7QzAAoJEBus8iNuMP3dWWcP/3M15e+6KI5UlaAPmqXVBjSZ
-vz274qOw9B2s89BneHFPJPOX4jVXmdcgDLqrJrmzyXyLuWfxSpjLc3TzQd8MCVr8
-NdgBpEsfLPlWsKgcX+3CfZyRUoEKG5Jm327IowWgo5ioGZe7ys6PccDfiK2aXY1D
-Eo5zYN1HNIeGRwEnsAJYELFFUeBN7EAY6Z+rnMN/Trxb4tpObnI6SbIfvyyDyHeo
-EiEN1QlN5eHg8IAWPmN9WAbuSOmJR7yV8ySugJDcrT6WKPa1YoJY1RnnpcI8iZY3
-9YJfGrurujsHRmG6OEJQ6FxA3IwrpH1WtdGhb4lnT9KNN8BJ8VCl0+EjYznVWzRv
-VGajH7G0YYcZJ+UcB/882aaRxMprGMmcANXb/pjeA5VfuplvydyB/+VG2kPKQ0zk
-kIRaaK8K0SfyJOW8x8j6mL007tBd8TqbVfPPe71zGX/0Na0Ok/uXUQfZlNQNeZsB
-aDwQZwRKteVvb9GiaVi0TfenErMckb5OWsaSYBoOCU/mk0QSsfuEcBs+jFkBj8jx
-giESiEXvTv21bjEac2x8CAY0/vgVimBKpfN4dcfGvyLrg+J21Ce6g/aN6UKIfrZW
-kWbD0UljFBvhqxdCW2suVinzHXst/y9DmlMqtM46V3f8DgyziK1hypcX8m5FVHgE
-3qoditlhcG69JHvwPaRa
-=m3ly
+iQIcBAEBAgAGBQJPV7c5AAoJEBus8iNuMP3dTYsQAJGhTczM5fCNZVROihrgoU7O
+7SmouS4RhEgkZIcutO78BkvGiRbU7w5bmWNUaTRthPcenNK++wQn3+GvWqCoLz4K
+dEWBn2/AZOF13FwaLZNZxqL73tbh9rCgI/sYIqiwwd1FZylSp6tIf2s2WAXq/mGU
+fJGzymdslcohjn4xMi3HEdYkFFRUT21HI5J25JvISpiI70JUVtXYALjb0bShgCVE
+YYjyt9jCmeoyma0LWS37vVnk6FnPWMgqBK4QE7HCOyPntnnmg9b+FMyjWFmRBbNt
+PdwlCkp5hunsE6df6Tm/PdJ4Mc6rJfWfk3E4zNw5zitm/uScn5snx+mTxK2tf5D9
+KSrUN7h+nMWsrnhU9k4VoATT3HZ+8g9k6K+39giFe2JJeBmJeMtGqRebmaFd9Jlw
+4k4e5q54LcOP1YKDgEM2hFxHAbWYQBsOCIE9i9tQxztMy8yjfMtmuWrk2Ug4/869
+dKEcbkTKoWAfs9VKYWo+QLgC0ppAAkF4um7HY1l1jGHqzJ3rN3ZHviZWtgtPNvC7
+avBXypKIKr9h9wyuebHCdJ6/fy38Rne8fIZCZmNhmzdhg7uLvmNs46l3Z/DoCwNL
+VmJhF2T1CFGPGbVzUp2J2NmcEcgDk7l2rS7TuXgSV0Ttu67duYYfKewmDd4hRSkV
+qJj3JQqGsKJlxxJbsmLv
+=hM0g
 -----END PGP SIGNATURE-----
 
---R9baxdNnpTjJ7oIU--
+--nDtE8k2pYjsRXajv--
