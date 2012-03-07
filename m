@@ -1,53 +1,57 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V1] regulator: tps65910: Configure correct value for
- VDDCTRL vout reg
-Date: Wed, 7 Mar 2012 19:30:23 +0000
-Message-ID: <20120307193023.GC3107@opensource.wolfsonmicro.com>
-References: <1331118545-26514-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 4/9] tegra: fdt: i2c: Add extra I2C bindings for U-Boot
+Date: Wed, 07 Mar 2012 13:35:09 -0700
+Message-ID: <4F57C67D.9030903@wwwdotorg.org>
+References: <1330536689-9121-5-git-send-email-sjg@chromium.org>	<4F4E88BC.4070106@nvidia.com>	<CAPnjgZ3fVwwvt6Cxr5RU0Bw=UkZ7Rq7fswfRYxpHBvhwrXCn3g@mail.gmail.com>	<4F4E8C48.1020408@nvidia.com> <CAPnjgZ0Xu-8cXWW=Z7mQd6UqNXT_RnRKAP-y3dvA4WtZtL1jKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nDtE8k2pYjsRXajv"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1331118545-26514-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAPnjgZ0Xu-8cXWW=Z7mQd6UqNXT_RnRKAP-y3dvA4WtZtL1jKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 03/06/2012 09:22 PM, Simon Glass wrote:
+> Hi Stephen,
+> 
+> On Wed, Feb 29, 2012 at 12:36 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 02/29/2012 01:32 PM, Simon Glass wrote:
+>>> Hi Stephen,
+>>>
+>>> On Wed, Feb 29, 2012 at 12:21 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> On 02/29/2012 10:31 AM, Simon Glass wrote:
+>>>>> Add U-Boot's peripheral clock information to the Tegra20 device tree file.
+>>>>
+>>>>> diff --git a/arch/arm/dts/tegra20.dtsi b/arch/arm/dts/tegra20.dtsi
+>>>>
+>>>>>               compatible = "nvidia,tegra20-i2c";
+>>>>>               reg = <0x7000C000 0x100>;
+>>>>>               interrupts = < 70 >;
+>>>>> +             clocks = <&tegra_car 12>;       /* PERIPH_ID_I2C1 */
+>>>>>       };
+>>>>
+>>>> The I2C modules all require 2 clocks; the one you've added in this patch
+>>>> and a second reference to pll_p_out3. Can you please list both of these
+>>>> here, and update the I2C binding to describe the set of clocks that it
+>>>> requires. Thanks.
+>>>
+>>> OK - do you have a pointer to the kernel commit please? I always seem
+>>> to have trouble tracking this stuff down.
+>>
+>> The clock stuff isn't in the kernel yet, so there's no commit to point
+>> to. The commit I asked you to create would update the bindings to define
+>> which clocks the I2C node needs, and would then go into U-Boot and the
+>> kernel.
+> 
+> Which binding should I update? I have had a look through Olof's trees at:
 
---nDtE8k2pYjsRXajv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oh, it looks like we don't have any binding documentation for the Tegra
+I2C controller at all yet.
 
-On Wed, Mar 07, 2012 at 04:39:05PM +0530, Laxman Dewangan wrote:
-> As per datasheet, the voltage output is defined as
-> from SEL[6:0] =3D 3 to 64 (dec)
-> Vout=3D (SEL[6:0] =D7 12.5 mV + 562.5 mV)
-
-Applied, thanks.
-
---nDtE8k2pYjsRXajv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPV7c5AAoJEBus8iNuMP3dTYsQAJGhTczM5fCNZVROihrgoU7O
-7SmouS4RhEgkZIcutO78BkvGiRbU7w5bmWNUaTRthPcenNK++wQn3+GvWqCoLz4K
-dEWBn2/AZOF13FwaLZNZxqL73tbh9rCgI/sYIqiwwd1FZylSp6tIf2s2WAXq/mGU
-fJGzymdslcohjn4xMi3HEdYkFFRUT21HI5J25JvISpiI70JUVtXYALjb0bShgCVE
-YYjyt9jCmeoyma0LWS37vVnk6FnPWMgqBK4QE7HCOyPntnnmg9b+FMyjWFmRBbNt
-PdwlCkp5hunsE6df6Tm/PdJ4Mc6rJfWfk3E4zNw5zitm/uScn5snx+mTxK2tf5D9
-KSrUN7h+nMWsrnhU9k4VoATT3HZ+8g9k6K+39giFe2JJeBmJeMtGqRebmaFd9Jlw
-4k4e5q54LcOP1YKDgEM2hFxHAbWYQBsOCIE9i9tQxztMy8yjfMtmuWrk2Ug4/869
-dKEcbkTKoWAfs9VKYWo+QLgC0ppAAkF4um7HY1l1jGHqzJ3rN3ZHviZWtgtPNvC7
-avBXypKIKr9h9wyuebHCdJ6/fy38Rne8fIZCZmNhmzdhg7uLvmNs46l3Z/DoCwNL
-VmJhF2T1CFGPGbVzUp2J2NmcEcgDk7l2rS7TuXgSV0Ttu67duYYfKewmDd4hRSkV
-qJj3JQqGsKJlxxJbsmLv
-=hM0g
------END PGP SIGNATURE-----
-
---nDtE8k2pYjsRXajv--
+So, there's nothing in the kernel to update. Sorry about that. If you
+want, you could submit a kernel patch to add such a binding, but since
+there isn't one already I won't hold you to it. I see you added a rough
+placeholder binding doc in the U-Boot tree in your updated U-Boot patch
+which is probably fine for now if you want.
