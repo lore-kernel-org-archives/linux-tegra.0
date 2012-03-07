@@ -1,48 +1,54 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v8 21/21] tegra: fdt: Enable FDT support for Ventana
-Date: Tue,  6 Mar 2012 19:10:33 -0800
-Message-ID: <1331089833-25262-22-git-send-email-sjg@chromium.org>
-References: <1331089833-25262-16-git-send-email-sjg@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1331089833-25262-16-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
-Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH 0/3] arm: tegra: dts: USB Updates for Tegra legacy mode /
+ OTG
+Date: Tue, 6 Mar 2012 19:16:43 -0800
+Message-ID: <CAPnjgZ1rXEGbi3m3HeWiUxG_TbmUug0C0QZgb7_9Eiz-xPMHwg@mail.gmail.com>
+References: <1328288172-8059-1-git-send-email-sjg@chromium.org>
+ <74CDBE0F657A3D45AFBB94109FB122FF178E5D2FF5@HQMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E5D2FF5@HQMAIL01.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++Olof
 
-This switches Ventana over to use FDT for run-time config instead of
-CONFIG options.
+Hi,
 
-At present Ventana does not have its own device tree file - it just uses
-the Seaboard one.
+On Fri, Feb 3, 2012 at 11:59 AM, Stephen Warren <swarren@nvidia.com> wrote:
+> Simon Glass wrote at riday, February 03, 2012 9:56 AM:
+>> This little series brings in some bindings that seem useful for U-Boot.
+>>
+>> I am working mostly in U-Boot, but since there is no shared .dts repo
+>> I was asked to commit these changes to the kernel. I do not propose to
+>> update the Linux USB drivers to match.
+>
+> I think the series looks reasonable, so:
+>
+> Acked-by: Stephen Warren <swarren@nvidia.com<>
+>
+> (I note that the kernel's USB driver for USB1 doesn't attempt to clear
+> legacy mode; I wonder how we're getting away with that. Perhaps it's
+> only been tested with a bootloader that's already cleared legacy mode)
+>
 
-Signed-off-by: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
-Changes in v8:
-- Add Tom's patch to enable FDT support on Ventana
+How does this series get picked up, please?
 
- include/configs/ventana.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+Regards,
+Simon
 
-diff --git a/include/configs/ventana.h b/include/configs/ventana.h
-index acc9b43..3e55fe5 100644
---- a/include/configs/ventana.h
-+++ b/include/configs/ventana.h
-@@ -27,6 +27,11 @@
- #include <asm/sizes.h>
- #include "tegra2-common.h"
- 
-+/* Enable fdt support for Ventana. Flash the image in u-boot-dtb.bin */
-+#define CONFIG_DEFAULT_DEVICE_TREE	tegra2-seaboard
-+#define CONFIG_OF_CONTROL
-+#define CONFIG_OF_SEPARATE
-+
- /* High-level configuration options */
- #define TEGRA2_SYSMEM		"mem=384M@0M nvmem=128M@384M mem=512M@512M"
- #define V_PROMPT		"Tegra2 (Ventana) # "
--- 
-1.7.7.3
+> --
+> nvpublic
+>
