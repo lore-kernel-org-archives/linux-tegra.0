@@ -1,51 +1,46 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] regulator: fixed: Support for open drain gpio pin
-Date: Wed, 7 Mar 2012 10:55:56 +0000
-Message-ID: <20120307105556.GB3107@opensource.wolfsonmicro.com>
-References: <1331116113-22565-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V1] regulator: tps65910: Configure correct value for VDDCTRL vout reg
+Date: Wed,  7 Mar 2012 16:39:05 +0530
+Message-ID: <1331118545-26514-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1331116113-22565-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: lrg-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewanagn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+As per datasheet, the voltage output is defined as
+from SEL[6:0] =3D 3 to 64 (dec)
+Vout=3D (SEL[6:0] =C3=97 12.5 mV + 562.5 mV)
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The list_voltage returns the vout as
+    600mV +  selector * 12.5mV
 
-On Wed, Mar 07, 2012 at 03:58:33PM +0530, Laxman Dewangan wrote:
-> Adding flag on fixed regulator board configuration structure
-> to specify whether gpio is open drain type or not.
+and so equivalent VSEL is selector + 3.
+Adding 3 on selector when configuring VSEL register for
+VDDCTRL output.
 
-This looks good, I'll apply it after the next merge window - it'll need
-to wait for the GPIO side of things to be merged up via Linus' tree.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/regulator/tps65910-regulator.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPVz6yAAoJEBus8iNuMP3d53kP/02uPjPgFVlxTaot3ZLWT/Kf
-+bKAbKKQPMyRmCdUsT0z+ES1BFIpKYTS0aHdg09GZv2XWOyqeXzWv9JQNUrzhERD
-6umAPGijhvaWk8fQpYr8+/E/+cuf+39zdMydy8vHt3jRYuAR2vwZ4AauCULtWN+1
-4LICkcUdSOE2V7n+LiVpC22TQfk9pSnspVSAgvDGk3fz3w/940JYw90WYm210RR5
-C2o8Uryby8ErUgHPQgA9lCdEVgvmdviBKAT4l6QqbmDCQEpV0kpuSFJu39IYyKrM
-KE91ekTX9H47oAA0gn6PLpleZ8LltupWdYFG3Okitg5ySS6kAu+VRIkvdEv013CD
-rg+GJUkNLT56ZTSzjr4rPTvpDpEgBynpB66jqohWBcKcURIVnSJ2OcKaZ4dWORme
-m+rktC9S1ufKl4PV6GA6Sc230ht29ogVnyBkUCvX/pyircw20s6e07uFLOrPWqXd
-Javj1j9hmyd5nNS3UlD9uR8aO+RYQLgFHXnFShv+bicr4AivM8f2X5Lu0Hx/asAP
-HgYkx/aOh59jlhwxKDAr9iaMcpWFtnEDVspqy9lzhB22x7XvkRmMk8NPnX1oNIJh
-MJRmipIqXZMslrP85/Jk7n8BKT/553ec5rBKGDjtuuTJDD2KHSmyD8kmZ/hs49/O
-ATIccpUtc05h72pg0f/4
-=O1Cc
------END PGP SIGNATURE-----
-
---IrhDeMKUP4DT/M7F--
+diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator=
+/tps65910-regulator.c
+index 15b5f1e..8de2835 100644
+--- a/drivers/regulator/tps65910-regulator.c
++++ b/drivers/regulator/tps65910-regulator.c
+@@ -715,7 +715,7 @@ static int tps65910_set_voltage_dcdc(struct regulat=
+or_dev *dev,
+ 		tps65910_reg_write(pmic, TPS65910_VDD2_OP, vsel);
+ 		break;
+ 	case TPS65911_REG_VDDCTRL:
+-		vsel =3D selector;
++		vsel =3D selector + 3;
+ 		tps65910_reg_write(pmic, TPS65911_VDDCTRL_OP, vsel);
+ 	}
+=20
+--=20
+1.7.1.1
