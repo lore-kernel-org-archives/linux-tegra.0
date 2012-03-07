@@ -1,84 +1,152 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH v6 11/20] tegra: fdt: Add clock bindings for
- Tegra2 Seaboard
-Date: Tue, 6 Mar 2012 18:48:14 -0800
-Message-ID: <CAPnjgZ1d-3uOhvtt89XnFuQGx9gV4y3hiSr202r2sW_VNSojSw@mail.gmail.com>
-References: <1330375973-10681-1-git-send-email-sjg@chromium.org>
-	<1330375973-10681-12-git-send-email-sjg@chromium.org>
-	<4F4C11E9.1050907@nvidia.com>
-	<CAPnjgZ0_xzn0tvETt3C=pjyRX-MXNA-JXy4fuAs9L8OdHuvLhg@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1D6A@HQMAIL01.nvidia.com>
-	<CAPnjgZ1LsFeADVHRcS694EwJrz3V+ONdp9ds+bdAG5rNupQ_ag@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB0@HQMAIL01.nvidia.com>
-	<CAPnjgZ3vsw2rH1CdiN_3xzvJr2pUTn_SY4jNEf-w26cRK=3gmQ@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DB8@HQMAIL01.nvidia.com>
-	<20120305204653.GA913@bill-the-cat>
+From: Simon Glass <sjg@chromium.org>
+Subject: [PATCH v8 15/21] tegra: fdt: Add function to return
+	peripheral/clock ID
+Date: Tue,  6 Mar 2012 19:10:27 -0800
+Message-ID: <1331089833-25262-16-git-send-email-sjg@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120305204653.GA913@bill-the-cat>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tom Rini <trini-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <u-boot-bounces@lists.denx.de>
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Sender: u-boot-bounces@lists.denx.de
+Errors-To: u-boot-bounces@lists.denx.de
+To: U-Boot Mailing List <u-boot@lists.denx.de>
+Cc: Stephen Warren <swarren@nvidia.com>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, Jerry Van Baren <vanbaren@cideas.com>, Tom Warren <twarren@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Tom,
+A common requirement is to find the clock ID for a peripheral. This is the
+second cell of the 'clocks' property (the first being the phandle itself).
 
-On Mon, Mar 5, 2012 at 12:46 PM, Tom Rini <trini-l0cyMroinI0@public.gmane.org> wrote:
-> On Tue, Feb 28, 2012 at 10:41:15AM -0800, Stephen Warren wrote:
->> Simon Glass wrote at Tuesday, February 28, 2012 11:37 AM:
->> > On Tue, Feb 28, 2012 at 10:31 AM, Stephen Warren <swarren@nvidia.c=
-om> wrote:
->> > > Simon Glass wrote at Tuesday, February 28, 2012 10:38 AM:
->> > > ...
->> > >> I am going to add your binding, less the #clock-cells which U-B=
-oot
->> > >> currently can't support because it conflicts with the C preproc=
-essor
->> > >> (at some point I may look at a patch to use sed or some other m=
-eans of
->> > >> avoiding this).
->> > >
->> > > Out of curiosity, why does the C preprocessor come into it? Is U=
--Boot's
->> > > build process running cpp on the .dts files or something? That's=
- non-
->> > > standard, although perhaps it could be a useful standard...
->> >
->> > Yes, but at the moment we only use it for '/include/ ARCH_CPU_DTS'=
-=2E
->>
->> Uggh. That's going to make the device tree files look different betw=
-een
->> the kernel and U-Boot:-( With # disallowed in particular, it's going=
- to
->> prevent U-Boot from /ever/ using the correct protocols for parsing t=
-he
->> device tree. This seems like an extremely bad idea.
->
-> Keeping my TI hat on, I think it'd be a bad idea to have dts stuff
-> divergent from the kernel. =A0Have you raised the problem you're tryi=
-ng to
-> solve to the general DT gurus? =A0My very high level hope is that som=
-eday
-> we can have them shared between kernel and u-boot (either directly or
-> something silly like a .dtss that spits out a kernel dts and a u-boot
-> dts). =A0Going with a manual sync from kernel form to u-boot form see=
-ms
-> like adding a burden on ourselves we might not have to.
+Signed-off-by: Simon Glass <sjg@chromium.org>
+---
+Changes in v4:
+- Add fdtdec function to return peripheral ID
 
-I agree, of course. I think the best solution may be to implement
-search paths in dtc. I sent a patch today so let's see what people
-think.
+Changes in v6:
+- Move peripheral decode function into Tegra's clock.c
 
-It is even worse when we copy the .dts and .dtsi files somewhere else
-(e.g. losing the original directory tree relationship by copying all
-into one directory).
+Changes in v7:
+- Add belts and braces checking of device tree clock ID
 
-Regards,
-Simon
+Changes in v8:
+- Only include clock_decode_periph_id() when CONFIG_OF_CONTROL defined
 
->
-> --
-> Tom
+ arch/arm/cpu/armv7/tegra2/clock.c        |   58 ++++++++++++++++++++++++++++++
+ arch/arm/include/asm/arch-tegra2/clock.h |   13 +++++++
+ 2 files changed, 71 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/cpu/armv7/tegra2/clock.c b/arch/arm/cpu/armv7/tegra2/clock.c
+index 11d2346..a94cf81 100644
+--- a/arch/arm/cpu/armv7/tegra2/clock.c
++++ b/arch/arm/cpu/armv7/tegra2/clock.c
+@@ -28,6 +28,7 @@
+ #include <asm/arch/tegra2.h>
+ #include <common.h>
+ #include <div64.h>
++#include <fdtdec.h>
+ 
+ /*
+  * This is our record of the current clock rate of each clock. We don't
+@@ -918,6 +919,63 @@ void clock_ll_start_uart(enum periph_id periph_id)
+ 	reset_set_enable(periph_id, 0);
+ }
+ 
++#ifdef CONFIG_OF_CONTROL
++/*
++ * Convert a device tree clock ID to our peripheral ID. They are mostly
++ * the same but we are very cautious so we check that a valid clock ID is
++ * provided.
++ *
++ * @param clk_id	Clock ID according to tegra2 device tree binding
++ * @return peripheral ID, or PERIPH_ID_NONE if the clock ID is invalid
++ */
++static enum periph_id clk_id_to_periph_id(int clk_id)
++{
++	if (clk_id > 95)
++		return PERIPH_ID_NONE;
++
++	switch (clk_id) {
++	case 1:
++	case 2:
++	case 7:
++	case 10:
++	case 20:
++	case 30:
++	case 35:
++	case 49:
++	case 56:
++	case 74:
++	case 76:
++	case 77:
++	case 78:
++	case 79:
++	case 80:
++	case 81:
++	case 82:
++	case 83:
++	case 91:
++	case 95:
++		return PERIPH_ID_NONE;
++	default:
++		return clk_id;
++	}
++}
++
++int clock_decode_periph_id(const void *blob, int node)
++{
++	enum periph_id id;
++	u32 cell[2];
++	int err;
++
++	err = fdtdec_get_int_array(blob, node, "clocks", cell,
++				   ARRAY_SIZE(cell));
++	if (err)
++		return -1;
++	id = clk_id_to_periph_id(cell[1]);
++	assert(clock_periph_id_isvalid(id));
++	return id;
++}
++#endif /* CONFIG_OF_CONTROL */
++
+ int clock_verify(void)
+ {
+ 	struct clk_pll *pll = get_pll(CLOCK_ID_PERIPH);
+diff --git a/arch/arm/include/asm/arch-tegra2/clock.h b/arch/arm/include/asm/arch-tegra2/clock.h
+index 080ef18..6b12c76 100644
+--- a/arch/arm/include/asm/arch-tegra2/clock.h
++++ b/arch/arm/include/asm/arch-tegra2/clock.h
+@@ -177,6 +177,7 @@ enum periph_id {
+ 	PERIPH_ID_CRAM2,
+ 
+ 	PERIPH_ID_COUNT,
++	PERIPH_ID_NONE = -1,
+ };
+ 
+ /* Converts a clock number to a clock register: 0=L, 1=H, 2=U */
+@@ -355,6 +356,18 @@ unsigned clock_get_rate(enum clock_id clkid);
+  */
+ void clock_ll_start_uart(enum periph_id periph_id);
+ 
++/**
++ * Decode a peripheral ID from a device tree node.
++ *
++ * This works by looking up the peripheral's 'clocks' node and reading out
++ * the second cell, which is the clock number / peripheral ID.
++ *
++ * @param blob		FDT blob to use
++ * @param node		Node to look at
++ * @return peripheral ID, or PERIPH_ID_NONE if none
++ */
++enum periph_id clock_decode_periph_id(const void *blob, int node);
++
+ /*
+  * Checks that clocks are valid and prints a warning if not
+  *
+-- 
+1.7.7.3
