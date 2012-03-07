@@ -1,32 +1,31 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RESEND PATCH 0/3] arm: tegra: dts: USB Updates for Tegra legacy
- mode / OTG
-Date: Wed, 07 Mar 2012 13:51:01 -0700
-Message-ID: <4F57CA35.50406@wwwdotorg.org>
-References: <1331096674-8324-1-git-send-email-sjg@chromium.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH] MAINTAINERS: update my email address
+Date: Wed, 7 Mar 2012 14:56:29 -0800
+Message-ID: <20120307225629.GA24934@quad.lixom.net>
+References: <1330995516-22160-1-git-send-email-swarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1331096674-8324-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1330995516-22160-1-git-send-email-swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/06/2012 10:04 PM, Simon Glass wrote:
-> This little series brings in some bindings that seem useful for U-Boot.
+On Mon, Mar 05, 2012 at 05:58:36PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 > 
-> I am working mostly in U-Boot, but since there is no shared .dts repo
-> I was asked to commit these changes to the kernel. I do not propose to
-> update the Linux USB drivers to match.
+> My nvidia.com address is hosted by MS Exchange Server and isn't suitable
+> for receiving patches. Update my MAINTAINERS entry to something that is.
+> Note: The old address continues to work, I just want to ensure that I
+> receive patches at the new one where possible.
 > 
-> 
-> Simon Glass (3):
->   arm: tegra: dts: Support host/device selection and legacy mode
->   arm: tegra: dts: Add legacy mode support to Tegra2x USB1 port
->   arm: tegra: dts: Mark USB1 as an OTG port on Seaboard
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
-I ack'd this before, but just in case it got lost: The series,
+Thanks, I reworded the subject line and applied directly to the arm-soc
+next/maintainers branch.
 
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+
+-Olof
