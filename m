@@ -1,54 +1,50 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH 0/3] arm: tegra: dts: USB Updates for Tegra legacy mode /
- OTG
-Date: Tue, 6 Mar 2012 19:16:43 -0800
-Message-ID: <CAPnjgZ1rXEGbi3m3HeWiUxG_TbmUug0C0QZgb7_9Eiz-xPMHwg@mail.gmail.com>
-References: <1328288172-8059-1-git-send-email-sjg@chromium.org>
- <74CDBE0F657A3D45AFBB94109FB122FF178E5D2FF5@HQMAIL01.nvidia.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v7 09/20] tegra: fdt: Add additional USB binding
+Date: Tue, 6 Mar 2012 19:19:21 -0800
+Message-ID: <CAPnjgZ1__o0tq3rKomf627xC+zAmVO6-F5K4+wtL-uXUJLH5PQ@mail.gmail.com>
+References: <1330452478-5039-10-git-send-email-sjg@chromium.org>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DBB@HQMAIL01.nvidia.com>
+	<CAPnjgZ2e6wNPt9SW_oNXWF+X5K7oPtaAVWOe6oQ7QJNzFWSucQ@mail.gmail.com>
+	<74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DC6@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF178E5D2FF5@HQMAIL01.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17BDDF1DC6-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-+Olof
+Hi Stephen,
 
-Hi,
-
-On Fri, Feb 3, 2012 at 11:59 AM, Stephen Warren <swarren@nvidia.com> wrote:
-> Simon Glass wrote at riday, February 03, 2012 9:56 AM:
->> This little series brings in some bindings that seem useful for U-Boot.
+On Tue, Feb 28, 2012 at 10:49 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Simon Glass wrote at Tuesday, February 28, 2012 11:49 AM:
+>> On Tue, Feb 28, 2012 at 10:42 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> > Simon Glass wrote at Tuesday, February 28, 2012 11:08 AM:
+>> >> This adds a property to indicate a port which can switch between host and device
+>> >> mode.
+>> >>
+>> >> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> >
+>> > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> >
+>> > (I can't recall; did this patch make it into the kernel too?)
 >>
->> I am working mostly in U-Boot, but since there is no shared .dts repo
->> I was asked to commit these changes to the kernel. I do not propose to
->> update the Linux USB drivers to match.
+>> Not that I know of.
 >
-> I think the series looks reasonable, so:
+> OK, it must have been another change that you pushed there.
 >
-> Acked-by: Stephen Warren <swarren@nvidia.com<>
->
-> (I note that the kernel's USB driver for USB1 doesn't attempt to clear
-> legacy mode; I wonder how we're getting away with that. Perhaps it's
-> only been tested with a bootloader that's already cleared legacy mode)
->
+> Please push this one to the kernel too, thanks.
 
-How does this series get picked up, please?
+OK, I sent a ping on that thread so let's see if we get a response.
+
+It could be that it has been committed somewhere but no one responded
+on the mailing list.
 
 Regards,
 Simon
 
+>
 > --
 > nvpublic
 >
