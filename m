@@ -1,31 +1,46 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1] i2c: gpio: Use open drain support from gpio driver
-Date: Wed, 7 Mar 2012 23:38:25 +0530
-Message-ID: <4F57A419.9090501@nvidia.com>
-References: <1331127494-6913-1-git-send-email-ldewangan@nvidia.com> <20120307173157.GT3107@opensource.wolfsonmicro.com> <20120307173922.GB1130@pengutronix.de> <20120307174443.GV3107@opensource.wolfsonmicro.com>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] i2c: tegra: Remove unnecessary write to INT_STATUS
+Date: Wed, 7 Mar 2012 19:16:54 +0100
+Message-ID: <20120307181654.GD1130@pengutronix.de>
+References: <1328314217-16632-1-git-send-email-swarren@nvidia.com>
+ <1328314217-16632-2-git-send-email-swarren@nvidia.com>
+ <7A0BFCFE3DA5CD47B0FB7984326F201A136B88647E@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AkbCVLjbJ9qUtAXD"
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120307174443.GV3107-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <7A0BFCFE3DA5CD47B0FB7984326F201A136B88647E-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The open drain support is already available from next-20120306.
-I was waiting for the change to be in tree before sending this patch.
-Hope I am not missing anything here.
 
+--AkbCVLjbJ9qUtAXD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 07 March 2012 11:14 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Mar 07, 2012 at 06:39:22PM +0100, Wolfram Sang wrote:
->> On Wed, Mar 07, 2012 at 05:31:57PM +0000, Mark Brown wrote:
->>> Reviwed-by: Mark Brown<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
->> Typo ;)
-> Not at all, it's a direct demonstration of the quick review I did!  :P
->
-> * Unknown Key
-> * 0x6E30FDDD
+On Tue, Mar 06, 2012 at 09:37:07AM +0530, Alok Chauhan wrote:
+> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks, I updated the patch.
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--AkbCVLjbJ9qUtAXD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk9XphYACgkQD27XaX1/VRte3QCfamrmIicR71y6s1ASYf+8Npxn
+i/QAoJct/J6+KSPgkGlZxF5OenhvYuLq
+=VZ68
+-----END PGP SIGNATURE-----
+
+--AkbCVLjbJ9qUtAXD--
