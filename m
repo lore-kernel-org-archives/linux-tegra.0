@@ -1,60 +1,91 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
-Date: Thu, 8 Mar 2012 16:45:03 +0100
-Message-ID: <20120308154502.GA4617@avionic-0098.mockup.avionic-design.de>
-References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
- <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de>
- <20120308150607.GP3638@opensource.wolfsonmicro.com>
- <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
- <20120308151756.GQ3638@opensource.wolfsonmicro.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Thu, 08 Mar 2012 09:30:48 -0700
+Message-ID: <4F58DEB8.9060103@wwwdotorg.org>
+References: <1324898081-10308-1-git-send-email-alokc@nvidia.com> <CAM=Q2cs+myCvph7OXvCDTG7y48oNTfRtjsDzQaKiEXzjdu3pzA@mail.gmail.com> <7A0BFCFE3DA5CD47B0FB7984326F201A13689D386F@BGMAIL01.nvidia.com> <7A0BFCFE3DA5CD47B0FB7984326F201A136B886672@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120308151756.GQ3638@opensource.wolfsonmicro.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7A0BFCFE3DA5CD47B0FB7984326F201A136B886672-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Dec 26, 2011 at 4:44 PM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> In NACK error condition, I2C controller violates clock-to-data setup 
+> time before stop. In Software, because of this reset of controller is 
+> happening before I2C controller could complete STOP condition.
+>
+> Added delay of 2 clock period before reset the controller in case of 
+> NACK error.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+(CC list cut down to people who were active in the original patch
+posting thread)
 
-* Mark Brown wrote:
-> On Thu, Mar 08, 2012 at 04:15:46PM +0100, Thierry Reding wrote:
-> > * Mark Brown wrote:
->=20
-> > > ...they all seem to be explicitly named in the device tree so presuma=
-bly
-> > > there's enough information in there for the driver to pick any set of
-> > > regulators in any order.  This would be much nicer to use.
->=20
-> > I don't like it much either. The only reason that requirement exists is
-> > because it makes the assignment of the regulator ID (as defined in the
-> > include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
-> > look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
->=20
-> > Then the only requirement would be that the names match.
->=20
-> Yes, that's going to be more code but much nicer for users.
+On 03/07/2012 11:29 PM, Alok Chauhan wrote:
+> Hi all,
+> 
+> If there are no more concern then can we merge this patch to i2c tegra driver? 
 
-Okay, I'll add that for the next round.
+Alok, a couple comments:
 
-Thierry
+1) The set of I2C maintainers has changed since you last posted this
+patch. You should resend the whole patch to make sure the new
+maintainers have a copy. I've CC'd Wolfram on this message, but you
+still need to repost since there's no way Wolfram can extract the patch
+from this email.
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature
+2) Wasn't there an outstanding question about the length of the delay
+here, and whether it negatively interfered with the TPM chips on some
+boards, since they always NACK the first transaction, which then needs
+to be retried quickly so the TPM doesn't go back to sleep? I don't
+recall you answering addressing that issue. There's no point reposting
+without addressing all the issues. Also, I'm not sure whether
+Shubhrajyot or Ben consider the answers you gave to their questions
+satisfactory or not.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+P.S. Top-posting makes for confusing emails.
 
-iEYEARECAAYFAk9Y0/4ACgkQZ+BJyKLjJp/XWACfSbtn+4tz2T6Ecd04OpaxGvGO
-7KgAoIkY9l7mkfZBVXw9wM5y8bPWcz6l
-=e97C
------END PGP SIGNATURE-----
+Thanks.
 
---jRHKVT23PllUwdXP--
+>> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> Instead of setting constant value for delay as was in previous patch, 
+>> now in the current modification delay will be calculated based on clock frequency of the bus.
+>>
+>>  drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
+>>  1 files changed, 8 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-tegra.c 
+>> b/drivers/i2c/busses/i2c-tegra.c index 6381604..62e197c 100644
+>> --- a/drivers/i2c/busses/i2c-tegra.c
+>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>> @@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct 
+>> tegra_i2c_dev *i2c_dev,
+>>        if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+>>                return 0;
+>>
+>> +       /*
+>> +        * In NACK error condition resetting of I2C controller happens
+>> +        * before STOP condition is properly completed by I2C 
+>> + controller,
+>> +        * so wait for 2 clock cycle to complete STOP condition.
+>> +        */
+> 
+>>>>> Why do you need to reset the controller in case of a NACK.
+>>>> This is required because of hardware limitations. Without reset we can't flus the internal hardware registers.
+> 
+> 
+>> +       if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+>> +               udelay(DIV_ROUND_UP(2 * 1000000, 
+>> + i2c_dev->bus_clk_rate));
+>> +
+>>        tegra_i2c_init(i2c_dev);
+>>        if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+>>                if (msg->flags & I2C_M_IGNORE_NAK)
+>> --
+>> 1.7.4.1
