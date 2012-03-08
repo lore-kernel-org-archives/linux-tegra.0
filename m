@@ -1,91 +1,62 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
-Date: Thu, 08 Mar 2012 09:30:48 -0700
-Message-ID: <4F58DEB8.9060103@wwwdotorg.org>
-References: <1324898081-10308-1-git-send-email-alokc@nvidia.com> <CAM=Q2cs+myCvph7OXvCDTG7y48oNTfRtjsDzQaKiEXzjdu3pzA@mail.gmail.com> <7A0BFCFE3DA5CD47B0FB7984326F201A13689D386F@BGMAIL01.nvidia.com> <7A0BFCFE3DA5CD47B0FB7984326F201A136B886672@BGMAIL01.nvidia.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 06/11] PCI: Keep pci_fixup_irqs() around after init
+Date: Thu, 8 Mar 2012 10:27:07 -0700
+Message-ID: <CAErSpo6hbWjteESST1+O2WzbtmZq6hC-pnUB4o3MAXWG-EgU+g@mail.gmail.com>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+ <1331218291-16119-7-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7A0BFCFE3DA5CD47B0FB7984326F201A136B886672-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <1331218291-16119-7-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 26, 2011 at 4:44 PM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Mar 8, 2012 at 7:51 AM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> ---
+> =A0drivers/pci/setup-irq.c | =A0 =A04 ++--
+> =A01 file changed, 2 insertions(+), 2 deletions(-)
 >
-> In NACK error condition, I2C controller violates clock-to-data setup 
-> time before stop. In Software, because of this reset of controller is 
-> happening before I2C controller could complete STOP condition.
+> diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
+> index eb219a1..270ae7b 100644
+> --- a/drivers/pci/setup-irq.c
+> +++ b/drivers/pci/setup-irq.c
+> @@ -18,7 +18,7 @@
+> =A0#include <linux/cache.h>
 >
-> Added delay of 2 clock period before reset the controller in case of 
-> NACK error.
+>
+> -static void __init
+> +static void
+> =A0pdev_fixup_irq(struct pci_dev *dev,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 u8 (*swizzle)(struct pci_dev *, u8 *),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 int (*map_irq)(const struct pci_dev *, u8=
+, u8))
+> @@ -54,7 +54,7 @@ pdev_fixup_irq(struct pci_dev *dev,
+> =A0 =A0 =A0 =A0pcibios_update_irq(dev, irq);
+> =A0}
+>
+> -void __init
+> +void
+> =A0pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 int (*map_irq)(const struct pci_dev *, u8=
+, u8))
+> =A0{
 
-(CC list cut down to people who were active in the original patch
-posting thread)
 
-On 03/07/2012 11:29 PM, Alok Chauhan wrote:
-> Hi all,
-> 
-> If there are no more concern then can we merge this patch to i2c tegra driver? 
+        struct pci_dev *dev =3D NULL;
+        for_each_pci_dev(dev)
+                pdev_fixup_irq(dev, swizzle, map_irq);
+}
 
-Alok, a couple comments:
+Hmm, your patch looks OK as far as it goes, but the implementation of
+pci_fixup_irqs() as a call-once-at-boot-time thing with a loop through
+all the PCI devices we've found so far looks completely broken with
+regard to hotplug.
 
-1) The set of I2C maintainers has changed since you last posted this
-patch. You should resend the whole patch to make sure the new
-maintainers have a copy. I've CC'd Wolfram on this message, but you
-still need to repost since there's no way Wolfram can extract the patch
-from this email.
+Who does the swizzle for devices hot-added after boot?
 
-2) Wasn't there an outstanding question about the length of the delay
-here, and whether it negatively interfered with the TPM chips on some
-boards, since they always NACK the first transaction, which then needs
-to be retried quickly so the TPM doesn't go back to sleep? I don't
-recall you answering addressing that issue. There's no point reposting
-without addressing all the issues. Also, I'm not sure whether
-Shubhrajyot or Ben consider the answers you gave to their questions
-satisfactory or not.
-
-P.S. Top-posting makes for confusing emails.
-
-Thanks.
-
->> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Instead of setting constant value for delay as was in previous patch, 
->> now in the current modification delay will be calculated based on clock frequency of the bus.
->>
->>  drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
->>  1 files changed, 8 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c 
->> b/drivers/i2c/busses/i2c-tegra.c index 6381604..62e197c 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct 
->> tegra_i2c_dev *i2c_dev,
->>        if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
->>                return 0;
->>
->> +       /*
->> +        * In NACK error condition resetting of I2C controller happens
->> +        * before STOP condition is properly completed by I2C 
->> + controller,
->> +        * so wait for 2 clock cycle to complete STOP condition.
->> +        */
-> 
->>>>> Why do you need to reset the controller in case of a NACK.
->>>> This is required because of hardware limitations. Without reset we can't flus the internal hardware registers.
-> 
-> 
->> +       if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
->> +               udelay(DIV_ROUND_UP(2 * 1000000, 
->> + i2c_dev->bus_clk_rate));
->> +
->>        tegra_i2c_init(i2c_dev);
->>        if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
->>                if (msg->flags & I2C_M_IGNORE_NAK)
->> --
->> 1.7.4.1
+Bjorn
