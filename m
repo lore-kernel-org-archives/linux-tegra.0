@@ -1,63 +1,96 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
-Date: Thu, 8 Mar 2012 15:17:56 +0000
-Message-ID: <20120308151756.GQ3638@opensource.wolfsonmicro.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 00/11] ARM: tegra: Add PCIe device tree support
+Date: Thu, 08 Mar 2012 09:22:05 -0600
+Message-ID: <4F58CE9D.3070605@gmail.com>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
- <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de>
- <20120308150607.GP3638@opensource.wolfsonmicro.com>
- <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9uazBBczf8QSjDPd"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1331218291-16119-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 03/08/2012 08:51 AM, Thierry Reding wrote:
+> This patch series adds support for device tree based probing of the PCIe
+> controller found on Tegra SoCs.
+> 
+> Patches 1 and 2 have already been posted by Grant and Mark respectively
+> but I've included them here for reference. Both patches are dependencies
+> for the subsequent patches.
+> 
+> Patches 3, 4 and 5 add support for obtaining the regulators required to
+> power the PCIe controller from the device tree. Patches 6 and 7 are
+> required to make some common PCI functions available after the init
+> phase because the deferred probing will postpone the probing of the PCIe
+> controller driver until that point.
+> 
+> Patches 8 and 9 make the PCIe controller code available as a driver and
+> add the corresponding platform devices to the boards that enable PCIe
+> (Harmony and TrimSlice). Patch 10 adds MSI support and patch 11 finally
+> adds a device tree binding with documentation.
+> 
+> The code in patch 10 (MSI support) is based on the Vibrante kernel and I
+> wasn't able to get a proper Signed-off-by or even copyright information.
+> Perhaps somebody at NVIDIA can find out?
+> 
+> Thierry
+> 
+> Grant Likely (1):
+>   drivercore: Add driver probe deferral mechanism
+> 
+> Mark Brown (1):
+>   regulator: Support driver probe deferral
+> 
+> Thierry Reding (9):
+>   regulator: fixed: Support driver probe deferral
+>   regulator: tps6586x: fix typo in debug message
+>   tps6586x: Add device-tree support
+>   PCI: Keep pci_fixup_irqs() around after init
+>   ARM: pci: Keep pci_common_init() around after init
+>   ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
+>   ARM: tegra: Rewrite PCIe support as a driver
+>   ARM: tegra: pcie: Add MSI support
+>   ARM: tegra: pcie: Add device tree support
+> 
+>  .../devicetree/bindings/pci/tegra-pcie.txt         |   23 +
+>  .../devicetree/bindings/regulator/tps6586x.txt     |   98 +++
+>  arch/arm/boot/dts/tegra20.dtsi                     |    8 +
+>  arch/arm/kernel/bios32.c                           |    4 +-
+>  arch/arm/mach-tegra/Kconfig                        |    1 +
+>  arch/arm/mach-tegra/board-harmony-pcie.c           |   38 +-
+>  arch/arm/mach-tegra/board-harmony.c                |    1 +
+>  arch/arm/mach-tegra/board-harmony.h                |    1 +
+>  arch/arm/mach-tegra/board-trimslice.c              |   16 +-
+>  arch/arm/mach-tegra/board.h                        |   11 +-
+>  arch/arm/mach-tegra/devices.c                      |   32 +
+>  arch/arm/mach-tegra/devices.h                      |    1 +
+>  arch/arm/mach-tegra/include/mach/iomap.h           |    6 +
+>  arch/arm/mach-tegra/include/mach/irqs.h            |    5 +-
+>  arch/arm/mach-tegra/pcie.c                         |  895 +++++++++++++++-----
+>  arch/arm/mach-tegra/pmc.c                          |   16 +
+>  arch/arm/mach-tegra/pmc.h                          |    1 +
+>  drivers/base/base.h                                |    1 +
+>  drivers/base/core.c                                |    2 +
+>  drivers/base/dd.c                                  |  138 ++-
+>  drivers/mfd/tps6586x.c                             |   66 ++
+>  drivers/pci/setup-irq.c                            |    4 +-
+>  drivers/regulator/core.c                           |    4 +-
+>  drivers/regulator/fixed.c                          |   14 +-
+>  drivers/regulator/tps6586x-regulator.c             |    4 +-
+>  include/linux/device.h                             |    5 +
+>  include/linux/errno.h                              |    1 +
+>  include/linux/mfd/tps6586x.h                       |    1 +
+>  28 files changed, 1136 insertions(+), 261 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/tegra-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/tps6586x.txt
 
---9uazBBczf8QSjDPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There is a whole bunch of PCI DT code sitting in the powerpc tree that
+probably needs to be moved to common location and used here.
 
-On Thu, Mar 08, 2012 at 04:15:46PM +0100, Thierry Reding wrote:
-> * Mark Brown wrote:
+This looks way too simple to be what's needed if I compare to PCI
+bindings in powerpc dts files.
 
-> > ...they all seem to be explicitly named in the device tree so presumably
-> > there's enough information in there for the driver to pick any set of
-> > regulators in any order.  This would be much nicer to use.
-
-> I don't like it much either. The only reason that requirement exists is
-> because it makes the assignment of the regulator ID (as defined in the
-> include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
-> look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
-
-> Then the only requirement would be that the names match.
-
-Yes, that's going to be more code but much nicer for users.
-
---9uazBBczf8QSjDPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPWM1kAAoJEBus8iNuMP3dkAQP/j16XjeHv35gulMrsB3ONTWp
-VY3yZBNVVvtMKdVrAvuiqGinegWy+nec+dkwXFHQXF6U5jbL4eAjdqjrvP1RJtTK
-XldaiqlseOfM+LBUN8aVN/IMDJ1+/nhDwA1cJDkL4vys1/unpP2/whhOKehsoNcU
-GtuTdsxYz7uqf92rOeXmPECgni6t3rU2CEl/6inFC3pjdx26ZST0bGtamFOjILlS
-6hPgxFPfu3sMGg36++zZoP91fj8jn9gA0QejT0MC4/LmssQAubhQyXR+IOcwzL7Z
-853uEMmpohJ0xdDUTNTboG0sSWrTP33thShR6JU/CXM4Poep8GmZOtysmnRJbuje
-aJSq4SY9LeA3Mt23AvXqMY2qo4MeQHGGeAcIWR+02x+3mOCy8GkrSG2MIcB4b5K8
-XCgUBG3y+sVj6u+gtYggDgcdSn7L3lkMN7XqZU+FYMXdJi2SP5pjshi908HTjLb7
-KFKdVS9Rvg4+rU24ez+czIk5ylU1ek9NPXyne59QLe/aIyScNLZkyTCTSCQOSRyX
-exCtTmVYCaeoppHxLv8xg8SAM/ZBHitHD8lngOCM8FNDhYvIcupLwCaf033axI84
-+dpsP5XcfBeYKjL13jWXttBA6uTwafW1/2SEETaT28Laa2xp4c1gdMCvSJo1WoXk
-ux2H6p/6pKifyfwEgIfr
-=WOhL
------END PGP SIGNATURE-----
-
---9uazBBczf8QSjDPd--
+Rob
