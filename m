@@ -1,96 +1,60 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [PATCH 00/11] ARM: tegra: Add PCIe device tree support
-Date: Thu, 08 Mar 2012 09:22:05 -0600
-Message-ID: <4F58CE9D.3070605@gmail.com>
+Date: Thu, 8 Mar 2012 16:43:59 +0100
+Message-ID: <20120308154359.GA544@avionic-0098.mockup.avionic-design.de>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+ <4F58CE9D.3070605@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1331218291-16119-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F58CE9D.3070605@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/08/2012 08:51 AM, Thierry Reding wrote:
-> This patch series adds support for device tree based probing of the PCIe
-> controller found on Tegra SoCs.
-> 
-> Patches 1 and 2 have already been posted by Grant and Mark respectively
-> but I've included them here for reference. Both patches are dependencies
-> for the subsequent patches.
-> 
-> Patches 3, 4 and 5 add support for obtaining the regulators required to
-> power the PCIe controller from the device tree. Patches 6 and 7 are
-> required to make some common PCI functions available after the init
-> phase because the deferred probing will postpone the probing of the PCIe
-> controller driver until that point.
-> 
-> Patches 8 and 9 make the PCIe controller code available as a driver and
-> add the corresponding platform devices to the boards that enable PCIe
-> (Harmony and TrimSlice). Patch 10 adds MSI support and patch 11 finally
-> adds a device tree binding with documentation.
-> 
-> The code in patch 10 (MSI support) is based on the Vibrante kernel and I
-> wasn't able to get a proper Signed-off-by or even copyright information.
-> Perhaps somebody at NVIDIA can find out?
-> 
-> Thierry
-> 
-> Grant Likely (1):
->   drivercore: Add driver probe deferral mechanism
-> 
-> Mark Brown (1):
->   regulator: Support driver probe deferral
-> 
-> Thierry Reding (9):
->   regulator: fixed: Support driver probe deferral
->   regulator: tps6586x: fix typo in debug message
->   tps6586x: Add device-tree support
->   PCI: Keep pci_fixup_irqs() around after init
->   ARM: pci: Keep pci_common_init() around after init
->   ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
->   ARM: tegra: Rewrite PCIe support as a driver
->   ARM: tegra: pcie: Add MSI support
->   ARM: tegra: pcie: Add device tree support
-> 
->  .../devicetree/bindings/pci/tegra-pcie.txt         |   23 +
->  .../devicetree/bindings/regulator/tps6586x.txt     |   98 +++
->  arch/arm/boot/dts/tegra20.dtsi                     |    8 +
->  arch/arm/kernel/bios32.c                           |    4 +-
->  arch/arm/mach-tegra/Kconfig                        |    1 +
->  arch/arm/mach-tegra/board-harmony-pcie.c           |   38 +-
->  arch/arm/mach-tegra/board-harmony.c                |    1 +
->  arch/arm/mach-tegra/board-harmony.h                |    1 +
->  arch/arm/mach-tegra/board-trimslice.c              |   16 +-
->  arch/arm/mach-tegra/board.h                        |   11 +-
->  arch/arm/mach-tegra/devices.c                      |   32 +
->  arch/arm/mach-tegra/devices.h                      |    1 +
->  arch/arm/mach-tegra/include/mach/iomap.h           |    6 +
->  arch/arm/mach-tegra/include/mach/irqs.h            |    5 +-
->  arch/arm/mach-tegra/pcie.c                         |  895 +++++++++++++++-----
->  arch/arm/mach-tegra/pmc.c                          |   16 +
->  arch/arm/mach-tegra/pmc.h                          |    1 +
->  drivers/base/base.h                                |    1 +
->  drivers/base/core.c                                |    2 +
->  drivers/base/dd.c                                  |  138 ++-
->  drivers/mfd/tps6586x.c                             |   66 ++
->  drivers/pci/setup-irq.c                            |    4 +-
->  drivers/regulator/core.c                           |    4 +-
->  drivers/regulator/fixed.c                          |   14 +-
->  drivers/regulator/tps6586x-regulator.c             |    4 +-
->  include/linux/device.h                             |    5 +
->  include/linux/errno.h                              |    1 +
->  include/linux/mfd/tps6586x.h                       |    1 +
->  28 files changed, 1136 insertions(+), 261 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/tegra-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/tps6586x.txt
 
-There is a whole bunch of PCI DT code sitting in the powerpc tree that
-probably needs to be moved to common location and used here.
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This looks way too simple to be what's needed if I compare to PCI
-bindings in powerpc dts files.
+* Rob Herring wrote:
+> There is a whole bunch of PCI DT code sitting in the powerpc tree that
+> probably needs to be moved to common location and used here.
+>=20
+> This looks way too simple to be what's needed if I compare to PCI
+> bindings in powerpc dts files.
 
-Rob
+My particular setup may be much simpler than the average PowerPC machine. T=
+he
+patchset is only what I need to get PCIe running on the platform, which has
+an FPGA connected to the Tegra via PCIe. For instance there is no legacy
+interrupt support (only MSI), so interrupt remapping is not required. I also
+know that OF nodes are not properly hooked up with the PCI devices yet, whi=
+ch
+I will need, among other things, to provide platform data for an SPI flash
+connected to an SPI master implemented within the FPGA. I also haven't look=
+ed
+at specifying the memory ranges via the device tree.
+
+So quite a lot may still be missing, but does that prevent any of this from
+being added to mainline? Things can be added on an as-needed basis, can't
+they?
+
+Thierry
+
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk9Y078ACgkQZ+BJyKLjJp9sGgCfTbY0+6cn/DT17IdqAu4BGFre
+5pEAn2EOzwyLrmdsqCYnvHfH+jgNwgWQ
+=oemR
+-----END PGP SIGNATURE-----
+
+--sdtB3X0nJg68CQEu--
