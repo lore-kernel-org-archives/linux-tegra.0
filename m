@@ -1,60 +1,60 @@
 From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 00/11] ARM: tegra: Add PCIe device tree support
-Date: Thu, 8 Mar 2012 16:43:59 +0100
-Message-ID: <20120308154359.GA544@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
+Date: Thu, 8 Mar 2012 16:45:03 +0100
+Message-ID: <20120308154502.GA4617@avionic-0098.mockup.avionic-design.de>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
- <4F58CE9D.3070605@gmail.com>
+ <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de>
+ <20120308150607.GP3638@opensource.wolfsonmicro.com>
+ <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
+ <20120308151756.GQ3638@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+	protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
 Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4F58CE9D.3070605@gmail.com>
+In-Reply-To: <20120308151756.GQ3638@opensource.wolfsonmicro.com>
 Sender: linux-pci-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
 
---sdtB3X0nJg68CQEu
+--jRHKVT23PllUwdXP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-* Rob Herring wrote:
-> There is a whole bunch of PCI DT code sitting in the powerpc tree that
-> probably needs to be moved to common location and used here.
+* Mark Brown wrote:
+> On Thu, Mar 08, 2012 at 04:15:46PM +0100, Thierry Reding wrote:
+> > * Mark Brown wrote:
 >=20
-> This looks way too simple to be what's needed if I compare to PCI
-> bindings in powerpc dts files.
+> > > ...they all seem to be explicitly named in the device tree so presuma=
+bly
+> > > there's enough information in there for the driver to pick any set of
+> > > regulators in any order.  This would be much nicer to use.
+>=20
+> > I don't like it much either. The only reason that requirement exists is
+> > because it makes the assignment of the regulator ID (as defined in the
+> > include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
+> > look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
+>=20
+> > Then the only requirement would be that the names match.
+>=20
+> Yes, that's going to be more code but much nicer for users.
 
-My particular setup may be much simpler than the average PowerPC machine. T=
-he
-patchset is only what I need to get PCIe running on the platform, which has
-an FPGA connected to the Tegra via PCIe. For instance there is no legacy
-interrupt support (only MSI), so interrupt remapping is not required. I also
-know that OF nodes are not properly hooked up with the PCI devices yet, whi=
-ch
-I will need, among other things, to provide platform data for an SPI flash
-connected to an SPI master implemented within the FPGA. I also haven't look=
-ed
-at specifying the memory ranges via the device tree.
-
-So quite a lot may still be missing, but does that prevent any of this from
-being added to mainline? Things can be added on an as-needed basis, can't
-they?
+Okay, I'll add that for the next round.
 
 Thierry
 
---sdtB3X0nJg68CQEu
+--jRHKVT23PllUwdXP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk9Y078ACgkQZ+BJyKLjJp9sGgCfTbY0+6cn/DT17IdqAu4BGFre
-5pEAn2EOzwyLrmdsqCYnvHfH+jgNwgWQ
-=oemR
+iEYEARECAAYFAk9Y0/4ACgkQZ+BJyKLjJp/XWACfSbtn+4tz2T6Ecd04OpaxGvGO
+7KgAoIkY9l7mkfZBVXw9wM5y8bPWcz6l
+=e97C
 -----END PGP SIGNATURE-----
 
---sdtB3X0nJg68CQEu--
+--jRHKVT23PllUwdXP--
