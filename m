@@ -1,88 +1,73 @@
-From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2] i2c: tegra: Add delay before reset the controller
-Date: Thu, 8 Mar 2012 11:59:23 +0530
-Message-ID: <7A0BFCFE3DA5CD47B0FB7984326F201A136B886672@BGMAIL01.nvidia.com>
-References: <1324898081-10308-1-git-send-email-alokc@nvidia.com>
- <CAM=Q2cs+myCvph7OXvCDTG7y48oNTfRtjsDzQaKiEXzjdu3pzA@mail.gmail.com>
- <7A0BFCFE3DA5CD47B0FB7984326F201A13689D386F@BGMAIL01.nvidia.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 4/9] tegra: fdt: i2c: Add extra I2C bindings for U-Boot
+Date: Wed, 7 Mar 2012 22:31:01 -0800
+Message-ID: <CAPnjgZ3AxtS8guUnbFnuFoD-Dqfvy0XKvPH+f84RyKmxin1Hhw@mail.gmail.com>
+References: <1331096428-6317-5-git-send-email-sjg@chromium.org>
+	<4F57C76D.6040004@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7A0BFCFE3DA5CD47B0FB7984326F201A13689D386F-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Content-Language: en-US
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org" <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, "dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F57C76D.6040004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jerry Van Baren <vanbaren-He//nVnquyzQT0dZR+AlfA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi all,
+Hi Stephen,
 
-If there are no more concern then can we merge this patch to i2c tegra =
-driver?=20
+On Wed, Mar 7, 2012 at 12:39 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>=
+ wrote:
+> On 03/06/2012 10:00 PM, Simon Glass wrote:
+>> Add U-Boot's peripheral clock information to the Tegra20 device tree=
+ file.
+>>
+>> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ...
+>> diff --git a/doc/device-tree-bindings/i2c/tegra20-i2c.txt b/doc/devi=
+ce-tree-bindings/i2c/tegra20-i2c.txt
+> ...
+>> +Required properties:
+>> + - clocks : Two clocks must be given, each as a phandle to the Tegr=
+a's
+>> + =A0 =A0 =A0 =A0 =A0 =A0CAR node and the clock number as a paramete=
+r:
+>
+> I'd rather rely on the common clock binding documentation for the for=
+mat
+> of the clock specifiers than duplicate the information here. True, th=
+at
+> document isn't in U-Boot (nor is it final). I.e.:
+>
+> =A0 =A0Two clocks must be specified:
+>
+> But I think this is fine for now (I might care more if submitting a d=
+oc
+> file for the kernel tree), so
+>
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
-Thanks
-Alok
+Thanks. Good to get this in.
 
-On Mon, Dec 26, 2011 at 4:44 PM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Regards,
+Simon
 >
-> In NACK error condition, I2C controller violates clock-to-data setup=20
-> time before stop. In Software, because of this reset of controller is=
-=20
-> happening before I2C controller could complete STOP condition.
->
-> Added delay of 2 clock period before reset the controller in case of=20
-> NACK error.
->
-> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Instead of setting constant value for delay as was in previous patch,=
-=20
-> now in the current modification delay will be calculated based on clo=
-ck frequency of the bus.
-> =A0drivers/i2c/busses/i2c-tegra.c | =A0 =A08 ++++++++
-> =A01 files changed, 8 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
-> b/drivers/i2c/busses/i2c-tegra.c index 6381604..62e197c 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -517,6 +517,14 @@ static int tegra_i2c_xfer_msg(struct=20
-> tegra_i2c_dev *i2c_dev,
-> =A0 =A0 =A0 =A0if (likely(i2c_dev->msg_err =3D=3D I2C_ERR_NONE))
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return 0;
->
-> + =A0 =A0 =A0 /*
-> + =A0 =A0 =A0 =A0* In NACK error condition resetting of I2C controlle=
-r happens
-> + =A0 =A0 =A0 =A0* before STOP condition is properly completed by I2C=
-=20
-> + controller,
-> + =A0 =A0 =A0 =A0* so wait for 2 clock cycle to complete STOP conditi=
-on.
-> + =A0 =A0 =A0 =A0*/
-
->>>>Why do you need to reset the controller in case of a NACK.
->>>This is required because of hardware limitations. Without reset we c=
-an't flus the internal hardware registers.
-
-
-> + =A0 =A0 =A0 if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 udelay(DIV_ROUND_UP(2 * 1000000,=20
-> + i2c_dev->bus_clk_rate));
-> +
-> =A0 =A0 =A0 =A0tegra_i2c_init(i2c_dev);
-> =A0 =A0 =A0 =A0if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (msg->flags & I2C_M_IGNORE_NAK)
-> --
-> 1.7.4.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-i2c"=20
-> in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org More majordomo=20
-> info at =A0http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-i2c" in=
- the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org More majordomo info=
- at  http://vger.kernel.org/majordomo-info.html
+>> + =A0 =A0 - the I2C clock to use for the peripheral
+>> + =A0 =A0 - the pll_p_out3 clock, which can be used for fast operati=
+on. This
+>> + =A0 =A0 =A0 =A0 =A0does not change and is the same for all I2C nod=
+es.
+>> +
+>> +Example:
+>> +(TODO: merge with existing example):
+>> +
+>> + =A0 =A0 i2c@7000c400 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "nvidia,tegra20-i2c";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x7000C400 0x100>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D < 116 >;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 /* PERIPH_ID_I2C2, PLL_P_OUT3 */
+>> + =A0 =A0 =A0 =A0 =A0 =A0 clocks =3D <&tegra_car 54>, <&tegra_car 12=
+4>;
+>> + =A0 =A0 };
