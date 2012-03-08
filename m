@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH 11/11] ARM: tegra: pcie: Add device tree support
-Date: Thu,  8 Mar 2012 15:51:31 +0100
-Message-ID: <1331218291-16119-12-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH 10/11] ARM: tegra: pcie: Add MSI support
+Date: Thu,  8 Mar 2012 15:51:30 +0100
+Message-ID: <1331218291-16119-11-git-send-email-thierry.reding@avionic-design.de>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1331218291-16119-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,246 +10,357 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This commit adds support for instantiating the Tegra PCIe controller
-from a device tree.
+This commit adds support for message signaled interrupts to the Tegra
+PCIe controller.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- .../devicetree/bindings/pci/tegra-pcie.txt         |   23 ++++
- arch/arm/boot/dts/tegra20.dtsi                     |    8 ++
- arch/arm/mach-tegra/pcie.c                         |  123 +++++++++++++++++++-
- 3 files changed, 151 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/tegra-pcie.txt
+This code is taken from the NVIDIA Vibrante kernel and therefore has no
+appropriate Signed-off-by from the original author. Maybe someone at
+NVIDIA can find out who wrote this code and maybe provide a proper
+Signed-off-by that I can add?
 
-diff --git a/Documentation/devicetree/bindings/pci/tegra-pcie.txt b/Documentation/devicetree/bindings/pci/tegra-pcie.txt
-new file mode 100644
-index 0000000..10bbc40
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/tegra-pcie.txt
-@@ -0,0 +1,23 @@
-+NVIDIA Tegra PCIe controller
-+
-+Required properties:
-+- compatible: "nvidia,tegra20-pcie"
-+- reg: physical base address and length of the controller's registers
-+- interrupts: the interrupt outputs of the controller
-+
-+Optional properties:
-+- pex-clk-supply: supply voltage for internal reference clock
-+- vdd-supply: power supply for controller (1.05V)
-+
-+Example:
-+
-+	pci@80000000 {
-+		compatible = "nvidia,tegra20-pcie",
-+		reg = <0x80000000 0x400000   /* PCIe AFI registers */
-+		       0x80400000 0x010000>; /* PCI I/O space */
-+		interrupts = < 0 98 0x04    /* controller interrupt */
-+		               0 99 0x04 >; /* MSI interrupt */
-+
-+		pex-clk-supply = <&ldo0_reg>;
-+		vdd-supply = <&pcie_reg>;
-+	};
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 108e894..9b4692e 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -161,6 +161,14 @@
- 		reg = <0x7000f400 0x200>;
- 	};
+ arch/arm/mach-tegra/Kconfig             |    1 +
+ arch/arm/mach-tegra/devices.c           |    7 +
+ arch/arm/mach-tegra/include/mach/irqs.h |    5 +-
+ arch/arm/mach-tegra/pcie.c              |  239 +++++++++++++++++++++++++++++++
+ 4 files changed, 251 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 1651119..7c596e6 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -48,6 +48,7 @@ config ARCH_TEGRA_3x_SOC
+ config TEGRA_PCI
+ 	bool "PCI Express support"
+ 	depends on ARCH_TEGRA_2x_SOC
++	select ARCH_SUPPORTS_MSI
+ 	select PCI
  
-+	pci@80000000 {
-+		compatible = "nvidia,tegra20-pcie";
-+		reg = <0x80000000 0x400000   /* PCIe AFI registers */
-+		       0x80400000 0x010000>; /* PCI I/O space */
-+		interrupts = < 0 98 0x04    /* controller interrupt */
-+		               0 99 0x04 >; /* MSI interrupt */
-+	};
+ comment "Tegra board type"
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index 09e24e1..195f165 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -721,6 +721,13 @@ static struct resource tegra_pcie_resources[] = {
+ 		.end = INT_PCIE_INTR,
+ 		.flags = IORESOURCE_IRQ,
+ 	},
++#ifdef CONFIG_PCI_MSI
++	[3] = {
++		.start = INT_PCIE_MSI,
++		.end = INT_PCIE_MSI,
++		.flags = IORESOURCE_IRQ,
++	},
++#endif
+ };
+ 
+ struct platform_device tegra_pcie_device = {
+diff --git a/arch/arm/mach-tegra/include/mach/irqs.h b/arch/arm/mach-tegra/include/mach/irqs.h
+index aad1a2c..02e84bc 100644
+--- a/arch/arm/mach-tegra/include/mach/irqs.h
++++ b/arch/arm/mach-tegra/include/mach/irqs.h
+@@ -172,7 +172,10 @@
+ /* Tegra30 has 8 banks of 32 GPIOs */
+ #define INT_GPIO_NR			(32 * 8)
+ 
+-#define TEGRA_NR_IRQS			(INT_GPIO_BASE + INT_GPIO_NR)
++#define INT_PCI_MSI_BASE		(INT_GPIO_BASE + INT_GPIO_NR)
++#define INT_PCI_MSI_NR			(32 * 8)
 +
- 	sdhci@c8000000 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000000 0x200>;
++#define TEGRA_NR_IRQS			(INT_PCI_MSI_BASE + INT_PCI_MSI_NR)
+ 
+ #define INT_BOARD_BASE			TEGRA_NR_IRQS
+ #define NR_BOARD_IRQS			32
 diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-index 85db9fb..829af6e 100644
+index 8b20bc5..85db9fb 100644
 --- a/arch/arm/mach-tegra/pcie.c
 +++ b/arch/arm/mach-tegra/pcie.c
-@@ -36,6 +36,8 @@
+@@ -31,11 +31,14 @@
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/irqdomain.h>
+ #include <linux/clk.h>
  #include <linux/delay.h>
  #include <linux/export.h>
- #include <linux/msi.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
++#include <linux/msi.h>
  
  #include <asm/sizes.h>
- #include <asm/mach/irq.h>
-@@ -240,6 +242,9 @@ struct tegra_pcie_info {
- 	struct irq_domain *msi_domain;
- 	struct mutex msi_lock;
- #endif
++#include <asm/mach/irq.h>
+ #include <asm/mach/pci.h>
+ 
+ #include <mach/iomap.h>
+@@ -81,6 +84,24 @@
+ #define AFI_MSI_FPCI_BAR_ST	0x64
+ #define AFI_MSI_AXI_BAR_ST	0x68
+ 
++#define AFI_MSI_VEC0		0x6c
++#define AFI_MSI_VEC1		0x70
++#define AFI_MSI_VEC2		0x74
++#define AFI_MSI_VEC3		0x78
++#define AFI_MSI_VEC4		0x7c
++#define AFI_MSI_VEC5		0x80
++#define AFI_MSI_VEC6		0x84
++#define AFI_MSI_VEC7		0x88
 +
-+	struct regulator *pex_clk_supply;
-+	struct regulator *vdd_supply;
++#define AFI_MSI_EN_VEC0		0x8c
++#define AFI_MSI_EN_VEC1		0x90
++#define AFI_MSI_EN_VEC2		0x94
++#define AFI_MSI_EN_VEC3		0x98
++#define AFI_MSI_EN_VEC4		0x9c
++#define AFI_MSI_EN_VEC5		0xa0
++#define AFI_MSI_EN_VEC6		0xa4
++#define AFI_MSI_EN_VEC7		0xa8
++
+ #define AFI_CONFIGURATION		0xac
+ #define  AFI_CONFIGURATION_EN_FPCI	(1 << 0)
+ 
+@@ -211,6 +232,14 @@ struct tegra_pcie_info {
+ 	struct clk		*afi_clk;
+ 	struct clk		*pcie_xclk;
+ 	struct clk		*pll_e;
++
++#ifdef CONFIG_PCI_MSI
++	int msi_irq;
++	struct irq_chip msi_chip;
++	DECLARE_BITMAP(msi_in_use, INT_PCI_MSI_NR);
++	struct irq_domain *msi_domain;
++	struct mutex msi_lock;
++#endif
  };
  
  static inline struct tegra_pcie_info *sys_to_pcie(struct pci_sys_data *sys)
-@@ -1170,15 +1175,110 @@ static int tegra_pcie_disable_msi(struct platform_device *pdev)
+@@ -939,6 +968,208 @@ static void __devinit tegra_pcie_add_port(struct tegra_pcie_info *pcie,
+ 	memset(pp->res, 0, sizeof(pp->res));
  }
- #endif
  
-+#ifdef CONFIG_OF
-+static int tegra_pcie_dt_init(struct platform_device *pdev)
++#ifdef CONFIG_PCI_MSI
++static int tegra_pcie_msi_alloc(struct tegra_pcie_info *pcie)
 +{
-+	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
-+	int err;
++	int msi;
 +
-+	if (!IS_ERR_OR_NULL(pcie->vdd_supply)) {
-+		err = regulator_enable(pcie->vdd_supply);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+				"failed to enable VDD regulator: %d\n", err);
-+			return err;
-+		}
-+	}
++	mutex_lock(&pcie->msi_lock);
 +
-+	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
-+		err = regulator_enable(pcie->pex_clk_supply);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+				"failed to enable pex-clk regulator: %d\n",
-+				err);
-+			return err;
-+		}
-+	}
++	msi = find_first_zero_bit(pcie->msi_in_use, INT_PCI_MSI_NR);
++	if (msi < INT_PCI_MSI_NR)
++		set_bit(msi, pcie->msi_in_use);
++	else
++		msi = -ENOSPC;
 +
-+	return 0;
++	mutex_unlock(&pcie->msi_lock);
++
++	return msi;
 +}
 +
-+static int tegra_pcie_dt_exit(struct platform_device *pdev)
++static void tegra_pcie_msi_free(struct tegra_pcie_info *pcie, unsigned long irq)
 +{
-+	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
-+	int err;
++	mutex_lock(&pcie->msi_lock);
 +
-+	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
-+		err = regulator_disable(pcie->pex_clk_supply);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+				"failed to disable pex-clk regulator: %d\n",
-+				err);
-+			return err;
-+		}
-+	}
++	if (!test_bit(irq, pcie->msi_in_use))
++		dev_err(pcie->dev, "trying to free unused MSI#%lu\n", irq);
++	else
++		clear_bit(irq, pcie->msi_in_use);
 +
-+	if (!IS_ERR_OR_NULL(pcie->vdd_supply)) {
-+		err = regulator_disable(pcie->vdd_supply);
-+		if (err < 0) {
-+			dev_err(&pdev->dev,
-+				"failed to disable VDD regulator: %d\n", err);
-+			return err;
-+		}
-+	}
-+
-+	return 0;
++	mutex_unlock(&pcie->msi_lock);
 +}
 +
-+static struct tegra_pcie_pdata *tegra_pcie_parse_dt(struct platform_device *pdev)
++static void tegra_pcie_msi_isr(unsigned int irq, struct irq_desc *desc)
 +{
-+	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
-+	struct device_node *node = pdev->dev.of_node;
-+	struct tegra_pcie_pdata *pdata;
++	struct tegra_pcie_info *pcie = irq_get_handler_data(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
 +	unsigned int i;
 +
-+	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return NULL;
++	chained_irq_enter(chip, desc);
 +
-+	pdata->init = tegra_pcie_dt_init;
-+	pdata->exit = tegra_pcie_dt_exit;
++	for (i = 0; i < 8; i++) {
++		unsigned long reg = afi_readl(pcie, AFI_MSI_VEC0 + i * 4);
 +
-+	if (of_find_property(node, "vdd-supply", NULL)) {
-+		pcie->vdd_supply = regulator_get(&pdev->dev, "vdd");
-+		if (IS_ERR_OR_NULL(pcie->vdd_supply))
-+			return ERR_PTR(-EPROBE_DEFER);
++		while (reg) {
++			unsigned int offset = find_first_bit(&reg, 32);
++			unsigned int index = i * 32 + offset;
++			unsigned int irq;
++
++			irq = irq_find_mapping(pcie->msi_domain, index);
++			if (irq) {
++				if (test_bit(index, pcie->msi_in_use))
++					generic_handle_irq(irq);
++				else
++					dev_info(pcie->dev, "unhandled MSI\n");
++			} else {
++				/*
++				 * that's weird who triggered this?
++				 * just clear it
++				 */
++				dev_info(pcie->dev, "unexpected MSI\n");
++			}
++
++			/* clear the interrupt */
++			afi_writel(pcie, 1 << offset, AFI_MSI_VEC0 + i * 4);
++			/* see if there's any more pending in this vector */
++			reg = afi_readl(pcie, AFI_MSI_VEC0 + i * 4);
++		}
 +	}
 +
-+	if (of_find_property(node, "pex-clk-supply", NULL)) {
-+		pcie->pex_clk_supply = regulator_get(&pdev->dev, "pex-clk");
-+		if (IS_ERR_OR_NULL(pcie->pex_clk_supply))
-+			return ERR_PTR(-EPROBE_DEFER);
-+	}
-+
-+	for (i = 0; i < TEGRA_PCIE_MAX_PORTS; i++)
-+		pdata->enable_ports[i] = true;
-+
-+	return pdata;
++	chained_irq_exit(chip, desc);
 +}
 +
-+static struct of_device_id tegra_pcie_of_match[] = {
-+	{ .compatible = "nvidia,tegra20-pcie", },
-+	{ },
-+};
-+#else
-+static struct tegra_pcie_pdata *tegra_pcie_parse_dt(struct platform_device *pdev)
++/* called by arch_setup_msi_irqs in drivers/pci/msi.c */
++int arch_setup_msi_irq(struct pci_dev *pdev, struct msi_desc *desc)
 +{
-+	return NULL;
++	struct tegra_pcie_info *pcie = sys_to_pcie(pdev->bus->sysdata);
++	struct msi_msg msg;
++	unsigned int irq;
++	int hwirq;
++
++	hwirq = tegra_pcie_msi_alloc(pcie);
++	if (hwirq < 0)
++		return hwirq;
++
++	irq = irq_find_mapping(pcie->msi_domain, hwirq);
++	if (!irq)
++		return -EINVAL;
++
++	irq_set_msi_desc(irq, desc);
++
++	msg.address_lo = afi_readl(pcie, AFI_MSI_AXI_BAR_ST);
++	/* 32 bit address only */
++	msg.address_hi = 0;
++	msg.data = hwirq;
++
++	write_msi_msg(irq, &msg);
++
++	return 0;
++}
++
++void arch_teardown_msi_irq(unsigned int irq)
++{
++	struct tegra_pcie_info *pcie = irq_get_chip_data(irq);
++	struct irq_data *d = irq_get_irq_data(irq);
++
++	tegra_pcie_msi_free(pcie, d->hwirq);
++}
++
++static int tegra_pcie_enable_msi(struct platform_device *pdev)
++{
++	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
++	volatile void *pages;
++	unsigned long base;
++	unsigned int msi;
++	int msi_base;
++	int err;
++	u32 reg;
++
++	mutex_init(&pcie->msi_lock);
++
++	msi_base = irq_alloc_descs(-1, 0, INT_PCI_MSI_NR, 0);
++	if (msi_base < 0) {
++		dev_err(&pdev->dev, "failed to allocate IRQs\n");
++		return msi_base;
++	}
++
++	pcie->msi_domain = irq_domain_add_legacy(pcie->dev->of_node,
++						 INT_PCI_MSI_NR, msi_base,
++						 0, &irq_domain_simple_ops,
++						 NULL);
++	if (!pcie->msi_domain) {
++		dev_err(&pdev->dev, "failed to create IRQ domain\n");
++		return -ENOMEM;
++	}
++
++	pcie->msi_chip.name = "PCIe-MSI";
++	pcie->msi_chip.irq_enable = unmask_msi_irq;
++	pcie->msi_chip.irq_disable = mask_msi_irq;
++	pcie->msi_chip.irq_mask = mask_msi_irq;
++	pcie->msi_chip.irq_unmask = unmask_msi_irq;
++
++	for (msi = 0; msi < INT_PCI_MSI_NR; msi++) {
++		unsigned int irq = irq_find_mapping(pcie->msi_domain, msi);
++
++		irq_set_chip_data(irq, pcie);
++		irq_set_chip_and_handler(irq, &pcie->msi_chip,
++					 handle_simple_irq);
++		set_irq_flags(irq, IRQF_VALID);
++	}
++
++	err = platform_get_irq(pdev, 1);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to get IRQ: %d\n", err);
++		return err;
++	}
++
++	pcie->msi_irq = err;
++
++	irq_set_chained_handler(pcie->msi_irq, tegra_pcie_msi_isr);
++	irq_set_handler_data(pcie->msi_irq, pcie);
++
++	/* setup AFI/FPCI range */
++	pages = (volatile void *)__get_free_pages(GFP_KERNEL, 3);
++	base = virt_to_phys(pages);
++
++	afi_writel(pcie, base, AFI_MSI_FPCI_BAR_ST);
++	afi_writel(pcie, base, AFI_MSI_AXI_BAR_ST);
++	/* this register is in 4K increments */
++	afi_writel(pcie, 1, AFI_MSI_BAR_SZ);
++
++	/* enable all MSI vectors */
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC0);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC1);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC2);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC3);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC4);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC5);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC6);
++	afi_writel(pcie, 0xffffffff, AFI_MSI_EN_VEC7);
++
++	/* and unmask the MSI interrupt */
++	reg = afi_readl(pcie, AFI_INTR_MASK);
++	reg |= AFI_INTR_MASK_MSI_MASK;
++	afi_writel(pcie, reg, AFI_INTR_MASK);
++
++	return 0;
++}
++
++static int tegra_pcie_disable_msi(struct platform_device *pdev)
++{
++	return 0;
++}
++#else
++static int tegra_pcie_enable_msi(struct platform_device *pdev)
++{
++	return 0;
++}
++
++static int tegra_pcie_disable_msi(struct platform_device *pdev)
++{
++	return 0;
 +}
 +#endif
 +
  static int __devinit tegra_pcie_probe(struct platform_device *pdev)
  {
  	struct tegra_pcie_pdata *pdata = pdev->dev.platform_data;
- 	struct tegra_pcie_info *pcie;
- 	int err;
+@@ -978,6 +1209,10 @@ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
+ 	/* setup the AFI address translations */
+ 	tegra_pcie_setup_translations(pcie);
  
--	if (!pdata->enable_ports[0] && !pdata->enable_ports[1])
--		return -ENODEV;
--
- 	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
-@@ -1186,6 +1286,18 @@ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pcie);
- 	pcie->dev = &pdev->dev;
- 
-+	if (!pdata && pdev->dev.of_node) {
-+		pdata = tegra_pcie_parse_dt(pdev);
-+		if (IS_ERR(pdata))
-+			return PTR_ERR(pdata);
-+	}
++	err = tegra_pcie_enable_msi(pdev);
++	if (err < 0)
++		dev_err(&pdev->dev, "failed to enable MSI support: %d\n", err);
 +
-+	if (!pdata)
-+		return -ENODEV;
-+
-+	if (!pdata->enable_ports[0] && !pdata->enable_ports[1])
-+		return -ENODEV;
-+
- 	pcibios_min_mem = 0;
+ 	if (pdata->enable_ports[0])
+ 		tegra_pcie_add_port(pcie, 0, RP0_OFFSET, AFI_PEX0_CTRL);
  
- 	err = tegra_pcie_get_resources(pdev);
-@@ -1232,6 +1344,7 @@ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
- 
- static int __devexit tegra_pcie_remove(struct platform_device *pdev)
- {
-+	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
+@@ -1000,6 +1235,10 @@ static int __devexit tegra_pcie_remove(struct platform_device *pdev)
  	struct tegra_pcie_pdata *pdata = pdev->dev.platform_data;
  	int err;
  
-@@ -1249,6 +1362,9 @@ static int __devexit tegra_pcie_remove(struct platform_device *pdev)
- 			return err;
- 	}
- 
-+	regulator_put(pcie->pex_clk_supply);
-+	regulator_put(pcie->vdd_supply);
++	err = tegra_pcie_disable_msi(pdev);
++	if (err < 0)
++		return err;
 +
- 	return 0;
- }
- 
-@@ -1256,6 +1372,7 @@ static struct platform_driver tegra_pcie_driver = {
- 	.driver = {
- 		.name = "tegra-pcie",
- 		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(tegra_pcie_of_match),
- 	},
- 	.probe = tegra_pcie_probe,
- 	.remove = __devexit_p(tegra_pcie_remove),
+ 	err = tegra_pcie_put_resources(pdev);
+ 	if (err < 0)
+ 		return err;
 -- 
 1.7.9.3
