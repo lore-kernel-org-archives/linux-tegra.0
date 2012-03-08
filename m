@@ -1,85 +1,255 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH 00/11] ARM: tegra: Add PCIe device tree support
-Date: Thu,  8 Mar 2012 15:51:20 +0100
-Message-ID: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH 11/11] ARM: tegra: pcie: Add device tree support
+Date: Thu,  8 Mar 2012 15:51:31 +0100
+Message-ID: <1331218291-16119-12-git-send-email-thierry.reding@avionic-design.de>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1331218291-16119-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series adds support for device tree based probing of the PCIe
-controller found on Tegra SoCs.
+This commit adds support for instantiating the Tegra PCIe controller
+from a device tree.
 
-Patches 1 and 2 have already been posted by Grant and Mark respectively
-but I've included them here for reference. Both patches are dependencies
-for the subsequent patches.
-
-Patches 3, 4 and 5 add support for obtaining the regulators required to
-power the PCIe controller from the device tree. Patches 6 and 7 are
-required to make some common PCI functions available after the init
-phase because the deferred probing will postpone the probing of the PCIe
-controller driver until that point.
-
-Patches 8 and 9 make the PCIe controller code available as a driver and
-add the corresponding platform devices to the boards that enable PCIe
-(Harmony and TrimSlice). Patch 10 adds MSI support and patch 11 finally
-adds a device tree binding with documentation.
-
-The code in patch 10 (MSI support) is based on the Vibrante kernel and I
-wasn't able to get a proper Signed-off-by or even copyright information.
-Perhaps somebody at NVIDIA can find out?
-
-Thierry
-
-Grant Likely (1):
-  drivercore: Add driver probe deferral mechanism
-
-Mark Brown (1):
-  regulator: Support driver probe deferral
-
-Thierry Reding (9):
-  regulator: fixed: Support driver probe deferral
-  regulator: tps6586x: fix typo in debug message
-  tps6586x: Add device-tree support
-  PCI: Keep pci_fixup_irqs() around after init
-  ARM: pci: Keep pci_common_init() around after init
-  ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
-  ARM: tegra: Rewrite PCIe support as a driver
-  ARM: tegra: pcie: Add MSI support
-  ARM: tegra: pcie: Add device tree support
-
- .../devicetree/bindings/pci/tegra-pcie.txt         |   23 +
- .../devicetree/bindings/regulator/tps6586x.txt     |   98 +++
- arch/arm/boot/dts/tegra20.dtsi                     |    8 +
- arch/arm/kernel/bios32.c                           |    4 +-
- arch/arm/mach-tegra/Kconfig                        |    1 +
- arch/arm/mach-tegra/board-harmony-pcie.c           |   38 +-
- arch/arm/mach-tegra/board-harmony.c                |    1 +
- arch/arm/mach-tegra/board-harmony.h                |    1 +
- arch/arm/mach-tegra/board-trimslice.c              |   16 +-
- arch/arm/mach-tegra/board.h                        |   11 +-
- arch/arm/mach-tegra/devices.c                      |   32 +
- arch/arm/mach-tegra/devices.h                      |    1 +
- arch/arm/mach-tegra/include/mach/iomap.h           |    6 +
- arch/arm/mach-tegra/include/mach/irqs.h            |    5 +-
- arch/arm/mach-tegra/pcie.c                         |  895 +++++++++++++++-----
- arch/arm/mach-tegra/pmc.c                          |   16 +
- arch/arm/mach-tegra/pmc.h                          |    1 +
- drivers/base/base.h                                |    1 +
- drivers/base/core.c                                |    2 +
- drivers/base/dd.c                                  |  138 ++-
- drivers/mfd/tps6586x.c                             |   66 ++
- drivers/pci/setup-irq.c                            |    4 +-
- drivers/regulator/core.c                           |    4 +-
- drivers/regulator/fixed.c                          |   14 +-
- drivers/regulator/tps6586x-regulator.c             |    4 +-
- include/linux/device.h                             |    5 +
- include/linux/errno.h                              |    1 +
- include/linux/mfd/tps6586x.h                       |    1 +
- 28 files changed, 1136 insertions(+), 261 deletions(-)
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+ .../devicetree/bindings/pci/tegra-pcie.txt         |   23 ++++
+ arch/arm/boot/dts/tegra20.dtsi                     |    8 ++
+ arch/arm/mach-tegra/pcie.c                         |  123 +++++++++++++++++++-
+ 3 files changed, 151 insertions(+), 3 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/pci/tegra-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/tps6586x.txt
 
+diff --git a/Documentation/devicetree/bindings/pci/tegra-pcie.txt b/Documentation/devicetree/bindings/pci/tegra-pcie.txt
+new file mode 100644
+index 0000000..10bbc40
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/tegra-pcie.txt
+@@ -0,0 +1,23 @@
++NVIDIA Tegra PCIe controller
++
++Required properties:
++- compatible: "nvidia,tegra20-pcie"
++- reg: physical base address and length of the controller's registers
++- interrupts: the interrupt outputs of the controller
++
++Optional properties:
++- pex-clk-supply: supply voltage for internal reference clock
++- vdd-supply: power supply for controller (1.05V)
++
++Example:
++
++	pci@80000000 {
++		compatible = "nvidia,tegra20-pcie",
++		reg = <0x80000000 0x400000   /* PCIe AFI registers */
++		       0x80400000 0x010000>; /* PCI I/O space */
++		interrupts = < 0 98 0x04    /* controller interrupt */
++		               0 99 0x04 >; /* MSI interrupt */
++
++		pex-clk-supply = <&ldo0_reg>;
++		vdd-supply = <&pcie_reg>;
++	};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 108e894..9b4692e 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -161,6 +161,14 @@
+ 		reg = <0x7000f400 0x200>;
+ 	};
+ 
++	pci@80000000 {
++		compatible = "nvidia,tegra20-pcie";
++		reg = <0x80000000 0x400000   /* PCIe AFI registers */
++		       0x80400000 0x010000>; /* PCI I/O space */
++		interrupts = < 0 98 0x04    /* controller interrupt */
++		               0 99 0x04 >; /* MSI interrupt */
++	};
++
+ 	sdhci@c8000000 {
+ 		compatible = "nvidia,tegra20-sdhci";
+ 		reg = <0xc8000000 0x200>;
+diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
+index 85db9fb..829af6e 100644
+--- a/arch/arm/mach-tegra/pcie.c
++++ b/arch/arm/mach-tegra/pcie.c
+@@ -36,6 +36,8 @@
+ #include <linux/delay.h>
+ #include <linux/export.h>
+ #include <linux/msi.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
+ 
+ #include <asm/sizes.h>
+ #include <asm/mach/irq.h>
+@@ -240,6 +242,9 @@ struct tegra_pcie_info {
+ 	struct irq_domain *msi_domain;
+ 	struct mutex msi_lock;
+ #endif
++
++	struct regulator *pex_clk_supply;
++	struct regulator *vdd_supply;
+ };
+ 
+ static inline struct tegra_pcie_info *sys_to_pcie(struct pci_sys_data *sys)
+@@ -1170,15 +1175,110 @@ static int tegra_pcie_disable_msi(struct platform_device *pdev)
+ }
+ #endif
+ 
++#ifdef CONFIG_OF
++static int tegra_pcie_dt_init(struct platform_device *pdev)
++{
++	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
++	int err;
++
++	if (!IS_ERR_OR_NULL(pcie->vdd_supply)) {
++		err = regulator_enable(pcie->vdd_supply);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to enable VDD regulator: %d\n", err);
++			return err;
++		}
++	}
++
++	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
++		err = regulator_enable(pcie->pex_clk_supply);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to enable pex-clk regulator: %d\n",
++				err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static int tegra_pcie_dt_exit(struct platform_device *pdev)
++{
++	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
++	int err;
++
++	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
++		err = regulator_disable(pcie->pex_clk_supply);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to disable pex-clk regulator: %d\n",
++				err);
++			return err;
++		}
++	}
++
++	if (!IS_ERR_OR_NULL(pcie->vdd_supply)) {
++		err = regulator_disable(pcie->vdd_supply);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to disable VDD regulator: %d\n", err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static struct tegra_pcie_pdata *tegra_pcie_parse_dt(struct platform_device *pdev)
++{
++	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
++	struct device_node *node = pdev->dev.of_node;
++	struct tegra_pcie_pdata *pdata;
++	unsigned int i;
++
++	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	pdata->init = tegra_pcie_dt_init;
++	pdata->exit = tegra_pcie_dt_exit;
++
++	if (of_find_property(node, "vdd-supply", NULL)) {
++		pcie->vdd_supply = regulator_get(&pdev->dev, "vdd");
++		if (IS_ERR_OR_NULL(pcie->vdd_supply))
++			return ERR_PTR(-EPROBE_DEFER);
++	}
++
++	if (of_find_property(node, "pex-clk-supply", NULL)) {
++		pcie->pex_clk_supply = regulator_get(&pdev->dev, "pex-clk");
++		if (IS_ERR_OR_NULL(pcie->pex_clk_supply))
++			return ERR_PTR(-EPROBE_DEFER);
++	}
++
++	for (i = 0; i < TEGRA_PCIE_MAX_PORTS; i++)
++		pdata->enable_ports[i] = true;
++
++	return pdata;
++}
++
++static struct of_device_id tegra_pcie_of_match[] = {
++	{ .compatible = "nvidia,tegra20-pcie", },
++	{ },
++};
++#else
++static struct tegra_pcie_pdata *tegra_pcie_parse_dt(struct platform_device *pdev)
++{
++	return NULL;
++}
++#endif
++
+ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_pcie_pdata *pdata = pdev->dev.platform_data;
+ 	struct tegra_pcie_info *pcie;
+ 	int err;
+ 
+-	if (!pdata->enable_ports[0] && !pdata->enable_ports[1])
+-		return -ENODEV;
+-
+ 	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+ 		return -ENOMEM;
+@@ -1186,6 +1286,18 @@ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pcie);
+ 	pcie->dev = &pdev->dev;
+ 
++	if (!pdata && pdev->dev.of_node) {
++		pdata = tegra_pcie_parse_dt(pdev);
++		if (IS_ERR(pdata))
++			return PTR_ERR(pdata);
++	}
++
++	if (!pdata)
++		return -ENODEV;
++
++	if (!pdata->enable_ports[0] && !pdata->enable_ports[1])
++		return -ENODEV;
++
+ 	pcibios_min_mem = 0;
+ 
+ 	err = tegra_pcie_get_resources(pdev);
+@@ -1232,6 +1344,7 @@ static int __devinit tegra_pcie_probe(struct platform_device *pdev)
+ 
+ static int __devexit tegra_pcie_remove(struct platform_device *pdev)
+ {
++	struct tegra_pcie_info *pcie = platform_get_drvdata(pdev);
+ 	struct tegra_pcie_pdata *pdata = pdev->dev.platform_data;
+ 	int err;
+ 
+@@ -1249,6 +1362,9 @@ static int __devexit tegra_pcie_remove(struct platform_device *pdev)
+ 			return err;
+ 	}
+ 
++	regulator_put(pcie->pex_clk_supply);
++	regulator_put(pcie->vdd_supply);
++
+ 	return 0;
+ }
+ 
+@@ -1256,6 +1372,7 @@ static struct platform_driver tegra_pcie_driver = {
+ 	.driver = {
+ 		.name = "tegra-pcie",
+ 		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(tegra_pcie_of_match),
+ 	},
+ 	.probe = tegra_pcie_probe,
+ 	.remove = __devexit_p(tegra_pcie_remove),
 -- 
 1.7.9.3
