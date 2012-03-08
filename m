@@ -1,70 +1,71 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
-Date: Thu, 8 Mar 2012 15:06:07 +0000
-Message-ID: <20120308150607.GP3638@opensource.wolfsonmicro.com>
+Date: Thu, 8 Mar 2012 16:15:46 +0100
+Message-ID: <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
  <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de>
+ <20120308150607.GP3638@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eBTWNsZZiigckDWV"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+In-Reply-To: <20120308150607.GP3638-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---eBTWNsZZiigckDWV
+--ibTvN161/egqYuK8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 08, 2012 at 03:51:25PM +0100, Thierry Reding wrote:
+* Mark Brown wrote:
+> On Thu, Mar 08, 2012 at 03:51:25PM +0100, Thierry Reding wrote:
+>=20
+> > +- gpio-controller: mark the device as a GPIO controller
+> > +- regulators: list of regulators provided by this controller, must be =
+in the
+> > +  following order:
+> > +    SM0, SM1, SM2, LDO0, LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7, LDO=
+8, LDO9
+>=20
+> This ordering requirement is fairly sad, if there are unused regulators
+> they still need to be listed even though...
+>=20
+> > +			sm0_reg: sm0 {
+> > +				regulator-min-microvolt =3D < 725000>;
+> > +				regulator-max-microvolt =3D <1500000>;
+> > +				regulator-boot-on;
+> > +				regulator-always-on;
+> > +			};
+> > +
+> > +			sm1_reg: sm1 {
+>=20
+> ...they all seem to be explicitly named in the device tree so presumably
+> there's enough information in there for the driver to pick any set of
+> regulators in any order.  This would be much nicer to use.
 
-> +- gpio-controller: mark the device as a GPIO controller
-> +- regulators: list of regulators provided by this controller, must be in the
-> +  following order:
-> +    SM0, SM1, SM2, LDO0, LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7, LDO8, LDO9
+I don't like it much either. The only reason that requirement exists is
+because it makes the assignment of the regulator ID (as defined in the
+include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
+look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
 
-This ordering requirement is fairly sad, if there are unused regulators
-they still need to be listed even though...
+Then the only requirement would be that the names match.
 
-> +			sm0_reg: sm0 {
-> +				regulator-min-microvolt = < 725000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
-> +
-> +			sm1_reg: sm1 {
+Thierry
 
-...they all seem to be explicitly named in the device tree so presumably
-there's enough information in there for the driver to pick any set of
-regulators in any order.  This would be much nicer to use.
-
-Otherwise this looks good.
-
---eBTWNsZZiigckDWV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPWMp6AAoJEBus8iNuMP3dHwoP/Rb4lgEnjRg/O8qzx0ReG0cR
-PxTWrDHrtdUOjLI8E75ZrqZZjlhWuiN5ZtmoPeua+5WK0GjItCEJCvMlJRgOl8Ij
-4G4m0ibMCOHWCy/aw60TfH25oPDMtXX/y5if97Rwm5whpggr/Eb2B6P5ujJJL79B
-Hkgk2sSeQIqJKV9DGrcTtewQXvJswqo8quG2biV+UTwZAtel1eWf4aX3ZYjic6d8
-lZM7TxF43A0E4EYoJPBRCBMsqIbcmVPQl+vRktz0DS0fN33jhrkcTeHWJBYPg5fy
-0fabjXDM6nGrPl7BP0H4VdLb57GZ1woCkxJ2zl+Ew4C2E3UKRipj1d5+sHhfP4A7
-E6xRRw2OUhdihI0gT3xyp+Aj+2L/JIvIvYbse8ORRTyp6+lsD6ONUgA2al1E2A+V
-cgpHOPxcVlc1qRktrs+FZ/mGzbceb/3BDJarX9ZCmoMfvmNKR9GgNNgQH5F0Dh3z
-is02SQXzl1F7dtVMnwqYbJtMg3PXCQX/ZM5DEeQ+GI1PtlzuPaHpKo8T0AAPYbLR
-PkmfGKz3jWUgTSJQy8odKr9Ay5Jj/ZPySVTsJbRAEGqwPw0DkPnmzORrOYc3q9Th
-5+7BRxdj6KMw9aU7flO/NQn5Kp4EeQmdtXV2QH/nmddJnVjEKyBqtqlEAZFAK0WC
-yZ0vh0h5B8IQwPcpfvxO
-=dfDH
+iEYEARECAAYFAk9YzSEACgkQZ+BJyKLjJp9GeQCcD3Z6QXhg+wzIrceicGsT9WQm
+2goAn2GRlFv1JP3R4lJoVr93UIaXkvmX
+=AneN
 -----END PGP SIGNATURE-----
 
---eBTWNsZZiigckDWV--
+--ibTvN161/egqYuK8--
