@@ -1,55 +1,54 @@
-From: Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH 1/2] tegra: Implement pre-console putc() for fdt warning
-Date: Thu, 8 Mar 2012 22:25:10 -0500
-Message-ID: <201203082225.12623.vapier@gentoo.org>
-References: <1331261577-21099-1-git-send-email-sjg@chromium.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1989592.YOi86NNF6Z";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
+Date: Thu, 08 Mar 2012 22:15:06 -0700
+Message-ID: <20120309051506.761B63E090F@localhost>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de> <20120308150607.GP3638@opensource.wolfsonmicro.com> <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1331261577-21099-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20120308151545.GA23934-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---nextPart1989592.YOi86NNF6Z
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+On Thu, 8 Mar 2012 16:15:46 +0100, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> * Mark Brown wrote:
+> > On Thu, Mar 08, 2012 at 03:51:25PM +0100, Thierry Reding wrote:
+> > 
+> > > +- gpio-controller: mark the device as a GPIO controller
+> > > +- regulators: list of regulators provided by this controller, must be in the
+> > > +  following order:
+> > > +    SM0, SM1, SM2, LDO0, LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7, LDO8, LDO9
+> > 
+> > This ordering requirement is fairly sad, if there are unused regulators
+> > they still need to be listed even though...
 
-On Thursday 08 March 2012 21:52:56 Simon Glass wrote:
-> --- a/arch/arm/cpu/armv7/tegra2/board.c
-> +++ b/arch/arm/cpu/armv7/tegra2/board.c
->
-> +static u32 uart_reg_addr[] = {
+It's worse than that; the DT provides absolutely no guarantees about the
+ordering of either child nodes or properties.
 
-const
--mike
+> > 
+> > > +			sm0_reg: sm0 {
+> > > +				regulator-min-microvolt = < 725000>;
+> > > +				regulator-max-microvolt = <1500000>;
+> > > +				regulator-boot-on;
+> > > +				regulator-always-on;
+> > > +			};
+> > > +
+> > > +			sm1_reg: sm1 {
+> > 
+> > ...they all seem to be explicitly named in the device tree so presumably
+> > there's enough information in there for the driver to pick any set of
+> > regulators in any order.  This would be much nicer to use.
+> 
+> I don't like it much either. The only reason that requirement exists is
+> because it makes the assignment of the regulator ID (as defined in the
+> include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
+> look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
+> 
+> Then the only requirement would be that the names match.
 
---nextPart1989592.YOi86NNF6Z
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+Yes, please look up id via name.  Alternately you can give each child node
+a 'reg' property and put #address-cells = <1>; #size-cells = <0>; in the
+parent (assuming the regulator number is a documented attribute of the
+hardware and not just a convenient linux construct).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
-
-iQIcBAABAgAGBQJPWXgYAAoJEEFjO5/oN/WBaGwP/idVJFa4+auW3DQCy3iyTjvR
-GDK7JE+Ky4YdIroNM5pf4jrnzBmv0gJeL8zIh/rSldG/qQKVrxhVvNNEXJH3CrZ2
-NBKWxJZtyEu4/3wI/02Xlthva8yYrqn6A33NfT/TSJBcfHflxANI/AOVJIyxyeLC
-mhShLTeRecpPdYd8bBXQGBS626+L03wfmzLrQBoRWZ71vf9jiHpTUcqqCsG3WHUl
-czp5qt1QJNXGMyDfSbPysqE+iGzEi0xW59PsSPKGkjJGwGMcumYQoEa1YPxjFKtT
-8I86SYElyMyRdANUw59BSDcam2GZ6Du9yWhrYW3Y+O3Z0mPMBTGJciumG3S42K6U
-ZCVyiZjypuHtK1koqq0zbZC3JsMBZ75Jul5xqEuv5aRnvcX1KdgS3Y9JG34tULkU
-+nxIF1bIdQQNTtl3bFt8S3E2RC/lTsy85JtddiiPwVWF/GbEbPPIGQMRzAvBbAwt
-ACZ5xqX7ycuvReQioks2mAZR79rH9YNPd5BZT0q+9XaZDcpN8EEHQbY+eTPC6DBn
-Dm6j9/EcV9kFba42BwKmGlmvlGcSMnLRduA4umUk4tVum4FvDsP1M0KJeygTxxgG
-pHCAARAPYy5LGpp8Riwb7pSkzV7wld2RfaCqX0fnzA9JVyX5jh8OmvQRq25lF5eO
-5SRgqR85OznQSalIePiH
-=5NUe
------END PGP SIGNATURE-----
-
---nextPart1989592.YOi86NNF6Z--
+g.
