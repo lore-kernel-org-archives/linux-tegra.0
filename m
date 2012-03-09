@@ -1,104 +1,55 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 1/2] tegra: Implement pre-console putc() for fdt warning
-Date: Thu,  8 Mar 2012 18:52:56 -0800
-Message-ID: <1331261577-21099-1-git-send-email-sjg@chromium.org>
+From: Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
+Subject: Re: [U-Boot] [PATCH 1/2] tegra: Implement pre-console putc() for fdt warning
+Date: Thu, 8 Mar 2012 22:25:10 -0500
+Message-ID: <201203082225.12623.vapier@gentoo.org>
+References: <1331261577-21099-1-git-send-email-sjg@chromium.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+  boundary="nextPart1989592.YOi86NNF6Z";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1331261577-21099-1-git-send-email-sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: U-Boot Mailing List <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
-Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When there is not device tree file available to U-Boot, we panic.
-Implement board_pre_console_putc() so that this panic will be displayed
-on the serial console.
+--nextPart1989592.YOi86NNF6Z
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- arch/arm/cpu/armv7/tegra2/board.c |   58 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 58 insertions(+), 0 deletions(-)
+On Thursday 08 March 2012 21:52:56 Simon Glass wrote:
+> --- a/arch/arm/cpu/armv7/tegra2/board.c
+> +++ b/arch/arm/cpu/armv7/tegra2/board.c
+>
+> +static u32 uart_reg_addr[] = {
 
-diff --git a/arch/arm/cpu/armv7/tegra2/board.c b/arch/arm/cpu/armv7/tegra2/board.c
-index 349d50e..4ca1e1f 100644
---- a/arch/arm/cpu/armv7/tegra2/board.c
-+++ b/arch/arm/cpu/armv7/tegra2/board.c
-@@ -23,9 +23,11 @@
- 
- #include <common.h>
- #include <asm/io.h>
-+#include <ns16550.h>
- #include "ap20.h"
- #include <asm/arch/clock.h>
- #include <asm/arch/funcmux.h>
-+#include <asm/arch/gpio.h>
- #include <asm/arch/sys_proto.h>
- #include <asm/arch/tegra2.h>
- #include <asm/arch/pmc.h>
-@@ -37,6 +39,7 @@ enum {
- 	UARTA	= 1 << 0,
- 	UARTB	= 1 << 1,
- 	UARTD	= 1 << 3,
-+	UART_ALL = 0xf,
- 	UART_COUNT = 4,
- };
- 
-@@ -149,3 +152,58 @@ void enable_caches(void)
- 	dcache_enable();
- }
- #endif
-+
-+
-+/*
-+ * Possible UART locations: we ignore UARTC at 0x70006200 and UARTE at
-+ * 0x70006400, since we don't have code to init them
-+ */
-+static u32 uart_reg_addr[] = {
-+	NV_PA_APB_UARTA_BASE,
-+	NV_PA_APB_UARTB_BASE,
-+	NV_PA_APB_UARTD_BASE,
-+	0
-+};
-+
-+#ifdef CONFIG_PRE_CONSOLE_PUTC
-+/*
-+ * This is called when we have no console. About the only reason that this
-+ * happen is if we don't have a valid fdt. So we don't know what kind of
-+ * Tegra board we are. We blindly try to print a message every which way we
-+ * know.
-+ */
-+void board_pre_console_putc(int ch)
-+{
-+	int uart_ids = UART_ALL;	/* turn it all on! */
-+	u32 *uart_addr;
-+	int clock_freq, multiplier, baudrate, divisor;
-+
-+	/* Try to enable all possible UARTs */
-+	setup_uarts(uart_ids);
-+
-+	/*
-+	 * Seaboard has a UART switch on PI3. We might be a Seaboard,
-+	 * so flip it!
-+	 */
-+#ifdef CONFIG_SPI_UART_SWITCH
-+	gpio_direction_output(GPIO_PI3, 0);
-+#endif
-+
-+	/*
-+	 * Now send the string out all the Tegra UARTs. We don't try all
-+	 * possible configurations, but this could be added if required.
-+	 */
-+	clock_freq = CONFIG_DEFAULT_NS16550_CLK;
-+	multiplier = CONFIG_DEFAULT_NS16550_MULT;
-+	baudrate = CONFIG_BAUDRATE;
-+	divisor = (clock_freq + (baudrate * (multiplier / 2))) /
-+			(multiplier * baudrate);
-+
-+	for (uart_addr = uart_reg_addr; *uart_addr; uart_addr++) {
-+		NS16550_init((NS16550_t)*uart_addr, divisor);
-+		NS16550_putc((NS16550_t)*uart_addr, ch);
-+		if (ch == '\n')
-+			NS16550_putc((NS16550_t)*uart_addr, '\r');
-+	}
-+}
-+#endif
--- 
-1.7.7.3
+const
+-mike
+
+--nextPart1989592.YOi86NNF6Z
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQIcBAABAgAGBQJPWXgYAAoJEEFjO5/oN/WBaGwP/idVJFa4+auW3DQCy3iyTjvR
+GDK7JE+Ky4YdIroNM5pf4jrnzBmv0gJeL8zIh/rSldG/qQKVrxhVvNNEXJH3CrZ2
+NBKWxJZtyEu4/3wI/02Xlthva8yYrqn6A33NfT/TSJBcfHflxANI/AOVJIyxyeLC
+mhShLTeRecpPdYd8bBXQGBS626+L03wfmzLrQBoRWZ71vf9jiHpTUcqqCsG3WHUl
+czp5qt1QJNXGMyDfSbPysqE+iGzEi0xW59PsSPKGkjJGwGMcumYQoEa1YPxjFKtT
+8I86SYElyMyRdANUw59BSDcam2GZ6Du9yWhrYW3Y+O3Z0mPMBTGJciumG3S42K6U
+ZCVyiZjypuHtK1koqq0zbZC3JsMBZ75Jul5xqEuv5aRnvcX1KdgS3Y9JG34tULkU
++nxIF1bIdQQNTtl3bFt8S3E2RC/lTsy85JtddiiPwVWF/GbEbPPIGQMRzAvBbAwt
+ACZ5xqX7ycuvReQioks2mAZR79rH9YNPd5BZT0q+9XaZDcpN8EEHQbY+eTPC6DBn
+Dm6j9/EcV9kFba42BwKmGlmvlGcSMnLRduA4umUk4tVum4FvDsP1M0KJeygTxxgG
+pHCAARAPYy5LGpp8Riwb7pSkzV7wld2RfaCqX0fnzA9JVyX5jh8OmvQRq25lF5eO
+5SRgqR85OznQSalIePiH
+=5NUe
+-----END PGP SIGNATURE-----
+
+--nextPart1989592.YOi86NNF6Z--
