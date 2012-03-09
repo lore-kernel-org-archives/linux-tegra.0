@@ -1,54 +1,51 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 05/11] tps6586x: Add device-tree support
-Date: Thu, 08 Mar 2012 22:15:06 -0700
-Message-ID: <20120309051506.761B63E090F@localhost>
-References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-6-git-send-email-thierry.reding@avionic-design.de> <20120308150607.GP3638@opensource.wolfsonmicro.com> <20120308151545.GA23934@avionic-0098.mockup.avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120308151545.GA23934-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 00/11] ARM: tegra: Add PCIe device tree support
+Date: Thu, 08 Mar 2012 21:54:23 -0700
+Message-ID: <20120309045423.F34F43E0903@localhost>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>, linux-tegra@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 8 Mar 2012 16:15:46 +0100, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> * Mark Brown wrote:
-> > On Thu, Mar 08, 2012 at 03:51:25PM +0100, Thierry Reding wrote:
-> > 
-> > > +- gpio-controller: mark the device as a GPIO controller
-> > > +- regulators: list of regulators provided by this controller, must be in the
-> > > +  following order:
-> > > +    SM0, SM1, SM2, LDO0, LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7, LDO8, LDO9
-> > 
-> > This ordering requirement is fairly sad, if there are unused regulators
-> > they still need to be listed even though...
-
-It's worse than that; the DT provides absolutely no guarantees about the
-ordering of either child nodes or properties.
-
-> > 
-> > > +			sm0_reg: sm0 {
-> > > +				regulator-min-microvolt = < 725000>;
-> > > +				regulator-max-microvolt = <1500000>;
-> > > +				regulator-boot-on;
-> > > +				regulator-always-on;
-> > > +			};
-> > > +
-> > > +			sm1_reg: sm1 {
-> > 
-> > ...they all seem to be explicitly named in the device tree so presumably
-> > there's enough information in there for the driver to pick any set of
-> > regulators in any order.  This would be much nicer to use.
+On Thu,  8 Mar 2012 15:51:20 +0100, Thierry Reding <thierry.reding@avionic-design.de> wrote:
+> This patch series adds support for device tree based probing of the PCIe
+> controller found on Tegra SoCs.
 > 
-> I don't like it much either. The only reason that requirement exists is
-> because it makes the assignment of the regulator ID (as defined in the
-> include/linux/mfd/tps6586x.h header) very trivial. Would it be better to
-> look up the ID based on the node name (sm0 --> TPS6586X_ID_SM_0, ...)?
+> Patches 1 and 2 have already been posted by Grant and Mark respectively
+> but I've included them here for reference. Both patches are dependencies
+> for the subsequent patches.
 > 
-> Then the only requirement would be that the names match.
+> Patches 3, 4 and 5 add support for obtaining the regulators required to
+> power the PCIe controller from the device tree. Patches 6 and 7 are
+> required to make some common PCI functions available after the init
+> phase because the deferred probing will postpone the probing of the PCIe
+> controller driver until that point.
+> 
+> Patches 8 and 9 make the PCIe controller code available as a driver and
+> add the corresponding platform devices to the boards that enable PCIe
+> (Harmony and TrimSlice). Patch 10 adds MSI support and patch 11 finally
+> adds a device tree binding with documentation.
+> 
+> The code in patch 10 (MSI support) is based on the Vibrante kernel and I
+> wasn't able to get a proper Signed-off-by or even copyright information.
+> Perhaps somebody at NVIDIA can find out?
+> 
+> Thierry
+> 
+> Grant Likely (1):
+>   drivercore: Add driver probe deferral mechanism
+> 
+> Mark Brown (1):
+>   regulator: Support driver probe deferral
 
-Yes, please look up id via name.  Alternately you can give each child node
-a 'reg' property and put #address-cells = <1>; #size-cells = <0>; in the
-parent (assuming the regulator number is a documented attribute of the
-hardware and not just a convenient linux construct).
+Greg has picked up the drivercore patch, so the regulator one can be queued
+up too now.
 
 g.
+
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
