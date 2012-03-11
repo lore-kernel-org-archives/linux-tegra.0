@@ -1,49 +1,54 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH 2/2] tegra: Enable pre-console putc() for Tegra
-	boards
-Date: Fri, 9 Mar 2012 10:24:41 -0800
-Message-ID: <CAPnjgZ2CnV8LjOJQx3Y-5fP=+xBPa7eAiikBNnJypDq7r1JLWg@mail.gmail.com>
-References: <1331261577-21099-1-git-send-email-sjg@chromium.org>
-	<1331261577-21099-2-git-send-email-sjg@chromium.org>
-	<4F5A3662.3040009@wwwdotorg.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 03/11] regulator: fixed: Support driver probe deferral
+Date: Sun, 11 Mar 2012 12:58:00 +0000
+Message-ID: <20120311125759.GH3233@opensource.wolfsonmicro.com>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
+ <1331218291-16119-4-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <u-boot-bounces@lists.denx.de>
-In-Reply-To: <4F5A3662.3040009@wwwdotorg.org>
-List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
-List-Archive: <http://lists.denx.de/pipermail/u-boot>
-List-Post: <mailto:u-boot@lists.denx.de>
-List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
-List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
-	<mailto:u-boot-request@lists.denx.de?subject=subscribe>
-Sender: u-boot-bounces@lists.denx.de
-Errors-To: u-boot-bounces@lists.denx.de
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, U-Boot Mailing List <u-boot@lists.denx.de>, Tom Warren <twarren@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Enx9fNJ0XV5HaWRu"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1331218291-16119-4-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
 
-On Fri, Mar 9, 2012 at 8:57 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 03/08/2012 07:52 PM, Simon Glass wrote:
->> This is used to display panic messages before the console is active.
->>
->> Signed-off-by: Simon Glass <sjg@chromium.org>
->
-> I applied both these patches on top of u-boot-tegra/master, built for
-> Ventana, and loaded/ran u-boot.bin, and don't see any useful serial
-> output; there's a bit of periodic binary spew. u-boot-dtb.bin works as
-> expected.
+--Enx9fNJ0XV5HaWRu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I don't have a ventana but I think Seaboard is equivalent. I will test
-on that and figure out what piece is missing.
+On Thu, Mar 08, 2012 at 03:51:23PM +0100, Thierry Reding wrote:
+> If the specified GPIO is not found, return -EPROBE_DEFER. This will
+> cause the driver to be probed again later when the required GPIO may
+> have become available.
 
->
-> So, these patches don't appear to solve the problem.
+Might be worth pushing this into gpiolib?  It seems like wanting to
+defer if a GPIO is not found will be the overwhelmingly common case
+given that the GPIO numbers need to be explicitly specified.
 
-They do in our tree, but I will take a look.
+--Enx9fNJ0XV5HaWRu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Regards,
-Simon
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPXKFQAAoJEBus8iNuMP3dz7AP/3Dk+fPk0N59gRitOBUApI78
+OjAmynj4JG0OeDs+5u0VsDOn7Xc8KlaXgTQ7T+q1PW98dM/frOoRdZ/g1/KoNCkE
+c0hEIcAzDVE3LrLhgGPBTGxYK5lGW9E/wJw0b3ARzS1bd28fNHqn9Be2gTafEIlx
+N7y4cR0Y0huUAw3UyJacism1L7jQsT1q5S7SfHmQpWP/Nf1DRWNWzvH54IHQFxKn
+PiFf19lZLr38s1GXL0ucUSnYB8thX1aNn8/Xnj4K9lipzMMFDmmEhS7DQakPvh8P
+DRYrh92THwczX+X9YSnAEr3Pmkr8hPbajK+vitnZUg+bosLYJdMaNOtOzBLZWoN8
+Qt/8/hs9AevUhIoAH+4AHDO2UmVy5UVabWdVfaJTYG9eujhbkehNGMIVb+cJZ/nG
+QPWNsUVXEyA8+BT3kUd4Rv7S5K5pmjqcwTE8M1NZEmeYVVHlNeBVpL/z7uNaYXhA
+Fo07eo+/sooprGNwoQyZsbb3g0Rmz/zzqLir9OWnuD9VsgSeqHzcyKpSEg/sYZDN
+oWbs6VshCZ6BLCRp3WkiHcDITabnhKityzyl9tpS65vnVSq5cRpKIuM6X3VSTl4R
+zSTbtXf8siIV/08sNKjDcVVXVuS0MqUoOZrk1b7v6kewRp2yw2nuab8TplQ2eBrx
+MYMuv8Siqqqdn55xx7Yf
+=f9Aw
+-----END PGP SIGNATURE-----
+
+--Enx9fNJ0XV5HaWRu--
