@@ -1,65 +1,61 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH 11/11] ARM: tegra: pcie: Add device tree support
-Date: Mon, 12 Mar 2012 15:28:58 +0100
-Message-ID: <20120312142857.GA6694@avionic-0098.mockup.avionic-design.de>
+Date: Mon, 12 Mar 2012 14:32:11 +0000
+Message-ID: <20120312143210.GJ3110@opensource.wolfsonmicro.com>
 References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
  <1331218291-16119-12-git-send-email-thierry.reding@avionic-design.de>
  <4F59253D.7070100@wwwdotorg.org>
  <20120312120610.GA14020@sirena.org.uk>
  <20120312141705.GA16395@avionic-0098.mockup.avionic-design.de>
  <20120312142340.GI3110@opensource.wolfsonmicro.com>
+ <20120312142857.GA6694@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+	protocol="application/pgp-signature"; boundary="OX7PPUk8qMPP4++R"
 Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120312142340.GI3110@opensource.wolfsonmicro.com>
+In-Reply-To: <20120312142857.GA6694@avionic-0098.mockup.avionic-design.de>
 Sender: linux-pci-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Thierry Reding <thierry.reding@avionic-design.de>
 Cc: Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lrg@ti.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---XsQoSWH+UP9D9v3l
+--OX7PPUk8qMPP4++R
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-* Mark Brown wrote:
-> On Mon, Mar 12, 2012 at 03:17:05PM +0100, Thierry Reding wrote:
->=20
-> > My understanding of the fixed regulator was that it was meant to be use=
-d for
-> > fixed voltage supplies that can still be enabled or disabled (for examp=
-le as
-> > supplied by a GPIO) but not regulators that are fix in the sense that t=
-hey
-> > cannot be enabled or disabled at all but are always on.
->=20
-> No, not at all.  It's for any random supply that doesn't have much
-> meaningful control - as you'll see from the code the GPIO is totally
-> optional if you look at the git history you'll see that the GPIO was
-> added some time after the driver was originally merged.
->=20
-> > Is that how it is supposed to work?
->=20
-> Yes.
+On Mon, Mar 12, 2012 at 03:28:58PM +0100, Thierry Reding wrote:
 
-In that case I'll mark the *-supply properties required. Would it be a good
-idea to mention this (or even give an example with fixed regulators) in the
-binding documentation or can I assume this to be common knowledge?
+> In that case I'll mark the *-supply properties required. Would it be a good
+> idea to mention this (or even give an example with fixed regulators) in the
+> binding documentation or can I assume this to be common knowledge?
 
-Thierry
+Probably the best thing here is to just reference the regulator binding
+documentation which mentions -supply properties (or should do) and then
+clarify that if need be.  No sense in putting things like this into the
+binding document for a specific driver, there's nothing driver specific.
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature
+--OX7PPUk8qMPP4++R
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk9eCCkACgkQZ+BJyKLjJp9I1ACgiMzqgAdYjfb+BL10fzPhkzop
-EqkAn3JIOG3z+7homikIN0PSCRHrOtnv
-=J/oZ
+iQIcBAEBAgAGBQJPXgi/AAoJEBus8iNuMP3dtrUP/jdURXjgr3P59n7MLL/cQxOS
+mwJKy5iOzNaTD8hx7zRXiw1HiJIudZhhpNJbF69EIcbm+7z8XPtvQKEA4Xy4inds
+5Coa2fuRnTN1c0py8XOqUaDvtzxkjnipbfS5AUuHU346cdQLaqhG9quTowwT1JeE
+rgJG+m9df9d5tywd2I9GTRDXNQpY5YxlBhi84lIG5diN4a9wjhRSY/xi/02RH0Na
+Ay0F0/2OPRIiEuEYH9k8bJPJsMW5Qt0jcIikTlaiDScX+Y5CK26HFAvd8X1tPSes
+2dwtVciIQ9bqFAGis6pOhPOJ5Ye48tmSmw7pSTHgj0PeY2ZwfA0xjbzoqpjlxdk6
+tUjNNWoM59Jt4wZ+pN5RmlOD7kQKm0YEI2ZwtZTDtqary5XNlCPr53k071iGia+5
+5zIH+p9HSw1q6pWcRkRmKle8LtkHpr2xn1R/S21o139u9DvsGwZQV+89ulhYGU3M
+8zRO1Q7CYP9t040REFaEEG6CLCfMMmG5fxQsjJJ3XFGopwbEdCkAGXcDLyCxef/d
+sa+gd8E45EUgd0hhZ7xZQduo5Gf59/fZ0o54V9KlUKqXxescKZuWUp+MZ2Sz5+Rc
+fxgxkZVb7pT9VJaRU6ZWBCeU+pBWUJQ6b0EnjO0t/yAN0FIdxtsFRxs7lalRuA22
+qsJDVoeXg1LA8t4E0b8f
+=6xXw
 -----END PGP SIGNATURE-----
 
---XsQoSWH+UP9D9v3l--
+--OX7PPUk8qMPP4++R--
