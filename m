@@ -1,80 +1,36 @@
-From: Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T kernel_noload
-Date: Mon, 12 Mar 2012 18:40:49 +0100
-Message-ID: <201203121840.49776.marek.vasut@gmail.com>
-References: <1330473804-23348-1-git-send-email-swarren@nvidia.com> <4F4E6F96.8080907@am.sony.com> <20120229185013.GJ3318@game.jcrosoft.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120229185013.GJ3318-RQcB7r2h9QmfDR2tN2SG5Ni2O/JbrIOy@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tim Bird <tim.bird-mEdOJwZ7QcZBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v2] ARM: tegra: export tegra_gpio_{en,dis}able
+Date: Mon, 12 Mar 2012 11:43:04 -0600
+Message-ID: <20120312174304.8286D3E07B0@localhost>
+References: <1330630010-11241-2-git-send-email-alan@signal11.us> <1330727544-11617-1-git-send-email-alan@signal11.us> <4F5A3726.8030505@signal11.us> <4F5A3965.5040300@wwwdotorg.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F5A3965.5040300@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Alan Ott <alan@signal11.us>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Jean-Christophe PLAGNIOL-VILLARD,
-
-> On 10:33 Wed 29 Feb     , Tim Bird wrote:
-> > On 02/29/2012 10:14 AM, Jean-Christophe PLAGNIOL-VILLARD wrote:
-> > > On 08:58 Wed 29 Feb     , Stephen Warren wrote:
-> > >> Jean-Christophe PLAGNIOL-VILLARD wrote at Wednesday, February 29, 2012 
-5:30 AM:
-> > >>> On 17:03 Tue 28 Feb     , Stephen Warren wrote:
-> > >>>> uImage files typically encode a single absolute load and entry
-> > >>>> address. This is inconvenient when attempting to share that uImage
-> > >>>> across multiple SoCs with different physical RAM addresses. Recent
-> > >>>> versions of mkimage implement a "kernel_noload" image type which
-> > >>>> encodes no absolute load address, and a relative entry address.
-> > >>>> This works well for uImage-wrapped ARM zImages, since they are
-> > >>>> relocatable.
-> > >>>> 
-> > >>>> This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
-> > >>>> "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
-> > >>>> 
-> > >>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >>>> ---
-> > >>>> I assume I should put this into the ARM patch tracker if it's OK?
-> > >>> 
-> > >>> Again a new option for uImage no why not just boot the zImage
-> > >>> 
-> > >>> in this case the uImage is useless
-> > >> 
-> > >> U-Boot doesn't support zImage at present.
-> > >> 
-> > >> A patch was posted to support it at least for ARM, but needed a little
-> > >> work before it could be committed.
-> > > 
-> > > Sorry I see no advantage to have the uImage build by the kernel anymore
-> > > as we have a relocatable zImage
-> > > 
-> > > I'll even drop its support
-> > 
-> > This seems at least premature, and possibly ill-advised in general.
-> > There are lots of U-Boot images out in the field, many of which that
-> > are rarely updated. A lot of workflow will be disrupted unnecessarily
-> > by a change like this.
-> > 
-> > Could you wait to drop uImage build support in the kernel until
-> > U-Boot supports zImage, and has worked it's way into the field
-> > for a few years?
+On Fri, 09 Mar 2012 10:09:57 -0700, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 03/09/2012 10:00 AM, Alan Ott wrote:
+> > On 03/02/2012 05:32 PM, Alan Ott wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> These two functions are used in drivers that can be
+> >> modules, so they need to be exported.
+> >>
+> >> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> >> Acked-by: Olof Johansson <olof@lixom.net>
+> ...
+> > Did this patch ever get picked up into someone's tree?
 > 
-> I'm fine to keep for now on but not to add new feature
-> 
-> Barebox (former U-Boot v2) support zImage for quite a while and
-> relocable one for too.
+> It looks like Grant ack'd it which implies the thought Olof was going to
+> take it through the Tegra tree perhaps? But Olof did the same, so is
+> probably waiting for Grant to take it...
 
-On the other hand, noone uses barebox and you should stop with this obvious 
-malice towards uboot please. I believe for most people it's easier to spend time 
-only on implementing their hardware support into U-Boot, not waste time 
-implementing basic components that are still missing in barebox.
+Applied, thx.
 
-Last but not least, the uImage contains additional checksum on the whole image, 
-which is useful on flash media.
+g.
 
-That said, I'm all for having uImage support in kernel and for adding this 
-NOLOAD option.
-
-Best regards,
-Marek Vasut
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
