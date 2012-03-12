@@ -1,61 +1,39 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 11/11] ARM: tegra: pcie: Add device tree support
-Date: Mon, 12 Mar 2012 14:32:11 +0000
-Message-ID: <20120312143210.GJ3110@opensource.wolfsonmicro.com>
-References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de>
- <1331218291-16119-12-git-send-email-thierry.reding@avionic-design.de>
- <4F59253D.7070100@wwwdotorg.org>
- <20120312120610.GA14020@sirena.org.uk>
- <20120312141705.GA16395@avionic-0098.mockup.avionic-design.de>
- <20120312142340.GI3110@opensource.wolfsonmicro.com>
- <20120312142857.GA6694@avionic-0098.mockup.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OX7PPUk8qMPP4++R"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120312142857.GA6694@avionic-0098.mockup.avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lrg@ti.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] Documentation/gpio.txt: Explain expected pinctrl interaction
+Date: Mon, 12 Mar 2012 10:32:12 -0600
+Message-ID: <20120312163212.70E283E07B0@localhost>
+References: <1329719263-18971-1-git-send-email-swarren@nvidia.com> <CACRpkdbPeVBv5VWefDvib5HmGF0K2gT79Mx7g-yviyQj33+Z-w@mail.gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdbPeVBv5VWefDvib5HmGF0K2gT79Mx7g-yviyQj33+Z-w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 21 Feb 2012 11:46:03 +0100, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Mon, Feb 20, 2012 at 7:27 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> 
+> > Update gpio.txt based on recent discussions regarding interaction with the
+> > pinctrl subsystem.
+> >
+> > Previously, gpio_request() was described as explicitly not performing any
+> > required mux setup operations etc.
+> >
+> > Now, gpio_request() is explicitly as explicitly performing any required mux
+> > setup operations where possible. In the case it isn't, platform code is
+> > required to have set up any required muxing or other configuration prior to
+> > gpio_request() being called, in order to maintain the same semantics.
+> >
+> > This is achieved by gpiolib drivers calling e.g. pinctrl_request_gpio() in
+> > their .request() operation.
+> >
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+> Grant can you take this one? I'd prefer for you to have a look at
+> it as well.
 
---OX7PPUk8qMPP4++R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've taken this one, but left the 2nd for Olof.
 
-On Mon, Mar 12, 2012 at 03:28:58PM +0100, Thierry Reding wrote:
-
-> In that case I'll mark the *-supply properties required. Would it be a good
-> idea to mention this (or even give an example with fixed regulators) in the
-> binding documentation or can I assume this to be common knowledge?
-
-Probably the best thing here is to just reference the regulator binding
-documentation which mentions -supply properties (or should do) and then
-clarify that if need be.  No sense in putting things like this into the
-binding document for a specific driver, there's nothing driver specific.
-
---OX7PPUk8qMPP4++R
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPXgi/AAoJEBus8iNuMP3dtrUP/jdURXjgr3P59n7MLL/cQxOS
-mwJKy5iOzNaTD8hx7zRXiw1HiJIudZhhpNJbF69EIcbm+7z8XPtvQKEA4Xy4inds
-5Coa2fuRnTN1c0py8XOqUaDvtzxkjnipbfS5AUuHU346cdQLaqhG9quTowwT1JeE
-rgJG+m9df9d5tywd2I9GTRDXNQpY5YxlBhi84lIG5diN4a9wjhRSY/xi/02RH0Na
-Ay0F0/2OPRIiEuEYH9k8bJPJsMW5Qt0jcIikTlaiDScX+Y5CK26HFAvd8X1tPSes
-2dwtVciIQ9bqFAGis6pOhPOJ5Ye48tmSmw7pSTHgj0PeY2ZwfA0xjbzoqpjlxdk6
-tUjNNWoM59Jt4wZ+pN5RmlOD7kQKm0YEI2ZwtZTDtqary5XNlCPr53k071iGia+5
-5zIH+p9HSw1q6pWcRkRmKle8LtkHpr2xn1R/S21o139u9DvsGwZQV+89ulhYGU3M
-8zRO1Q7CYP9t040REFaEEG6CLCfMMmG5fxQsjJJ3XFGopwbEdCkAGXcDLyCxef/d
-sa+gd8E45EUgd0hhZ7xZQduo5Gf59/fZ0o54V9KlUKqXxescKZuWUp+MZ2Sz5+Rc
-fxgxkZVb7pT9VJaRU6ZWBCeU+pBWUJQ6b0EnjO0t/yAN0FIdxtsFRxs7lalRuA22
-qsJDVoeXg1LA8t4E0b8f
-=6xXw
------END PGP SIGNATURE-----
-
---OX7PPUk8qMPP4++R--
+g.
