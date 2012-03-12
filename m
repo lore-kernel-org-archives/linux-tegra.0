@@ -1,91 +1,50 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Add Kconfig option to use mkimage -T
- kernel_noload
-Date: Mon, 12 Mar 2012 18:44:49 +0100
-Message-ID: <20120312174449.GG13869@game.jcrosoft.org>
-References: <1330473804-23348-1-git-send-email-swarren@nvidia.com>
- <4F4E6F96.8080907@am.sony.com>
- <20120229185013.GJ3318@game.jcrosoft.org>
- <201203121840.49776.marek.vasut@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] pinctrl: allow concurrent gpio and mux function
+ ownership of pins
+Date: Mon, 12 Mar 2012 12:24:35 -0600
+Message-ID: <4F5E3F63.5080506@wwwdotorg.org>
+References: <1330993336-9538-1-git-send-email-swarren@nvidia.com>	<1330993336-9538-2-git-send-email-swarren@nvidia.com> <CACRpkdYdSaNsrr34o2Cc4vS12ee9oY7FG0pxB92mefHZKwdEpA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201203121840.49776.marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CACRpkdYdSaNsrr34o2Cc4vS12ee9oY7FG0pxB92mefHZKwdEpA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tim Bird <tim.bird-mEdOJwZ7QcZBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 18:40 Mon 12 Mar     , Marek Vasut wrote:
-> Dear Jean-Christophe PLAGNIOL-VILLARD,
+On 03/06/2012 03:03 AM, Linus Walleij wrote:
+> On Tue, Mar 6, 2012 at 1:22 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > 
-> > On 10:33 Wed 29 Feb     , Tim Bird wrote:
-> > > On 02/29/2012 10:14 AM, Jean-Christophe PLAGNIOL-VILLARD wrote:
-> > > > On 08:58 Wed 29 Feb     , Stephen Warren wrote:
-> > > >> Jean-Christophe PLAGNIOL-VILLARD wrote at Wednesday, February 29, 2012 
-> 5:30 AM:
-> > > >>> On 17:03 Tue 28 Feb     , Stephen Warren wrote:
-> > > >>>> uImage files typically encode a single absolute load and entry
-> > > >>>> address. This is inconvenient when attempting to share that uImage
-> > > >>>> across multiple SoCs with different physical RAM addresses. Recent
-> > > >>>> versions of mkimage implement a "kernel_noload" image type which
-> > > >>>> encodes no absolute load address, and a relative entry address.
-> > > >>>> This works well for uImage-wrapped ARM zImages, since they are
-> > > >>>> relocatable.
-> > > >>>> 
-> > > >>>> This is enabled by commit b9b50e89d317c58becd0e2d7fac2e21e3a81dd0a
-> > > >>>> "image: Implement IH_TYPE_KERNEL_NOLOAD" in U-Boot.
-> > > >>>> 
-> > > >>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > >>>> ---
-> > > >>>> I assume I should put this into the ARM patch tracker if it's OK?
-> > > >>> 
-> > > >>> Again a new option for uImage no why not just boot the zImage
-> > > >>> 
-> > > >>> in this case the uImage is useless
-> > > >> 
-> > > >> U-Boot doesn't support zImage at present.
-> > > >> 
-> > > >> A patch was posted to support it at least for ARM, but needed a little
-> > > >> work before it could be committed.
-> > > > 
-> > > > Sorry I see no advantage to have the uImage build by the kernel anymore
-> > > > as we have a relocatable zImage
-> > > > 
-> > > > I'll even drop its support
-> > > 
-> > > This seems at least premature, and possibly ill-advised in general.
-> > > There are lots of U-Boot images out in the field, many of which that
-> > > are rarely updated. A lot of workflow will be disrupted unnecessarily
-> > > by a change like this.
-> > > 
-> > > Could you wait to drop uImage build support in the kernel until
-> > > U-Boot supports zImage, and has worked it's way into the field
-> > > for a few years?
-> > 
-> > I'm fine to keep for now on but not to add new feature
-> > 
-> > Barebox (former U-Boot v2) support zImage for quite a while and
-> > relocable one for too.
+>> Per recent updates to Documentation/gpio.txt, gpiolib drivers should
+>> inform pinctrl when a GPIO is requested. pinctrl then marks that pin as
+>> in-use for that GPIO function.
+>>
+>> When an SoC muxes pins in a group, it's quite possible for the group to
+>> contain e.g. 6 pins, but only 4 of them actually be needed by the HW
+>> module that's mux'd to them. In this case, the other 2 pins could be
+>> used as GPIOs. However, pinctrl marks all the pins within the group as
+>> in-use by the selected mux function. To allow the expected gpiolib
+>> interaction, separate the concepts of pin ownership into two parts: One
+>> for the mux function and one for GPIO usage. Finally, allow those two
+>> ownerships to exist in parallel.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> On the other hand, noone uses barebox and you should stop with this obvious 
-> malice towards uboot please. I believe for most people it's easier to spend time 
-> only on implementing their hardware support into U-Boot, not waste time 
-> implementing basic components that are still missing in barebox.
-Speak for yourself please
-> 
-> Last but not least, the uImage contains additional checksum on the whole image, 
-> which is useful on flash media.
->
-> That said, I'm all for having uImage support in kernel and for adding this 
-> NOLOAD option.
-I'm going to repeat myself, we work on kernel here NOT bootloader specific bla
-bla. The standard image for the kernel is zImage. After if you want to use
-your specifc bootloader stuff do it outside of the kernel.
+> Good, and 100% in accordance with earlier discussions.
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-My comment is the same for ANY bootloader. Do your specifc stuff at your place
-not HERE.
+Linus, now that Grant has ack'd and applied the documentation change
+behind this, could you take this one patch into the pinctrl tree. I
+assume it's 3.5 material. After the 3.4 merge window closes, I'll
+probably come back and ask for a stable pinctrl branch that I can use as
+the basis for a Tegra branch that'll contain patch 3 in this series.
 
-Best Regards,
-J.
+(Olof, I assume that's the right way to approach this; having Linus
+apply both patches 2/3 in this series to pinctrl is going to make life
+difficult in the Tegra tree, since my outstanding patches to convert
+Tegra to use pinctrl will touch many of the same files as patch 3 in
+this series, in conflicting or dependent ways.)
+
+Thanks.
