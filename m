@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v4 03/10] pwm: Add device tree support
-Date: Wed, 14 Mar 2012 16:56:26 +0100
-Message-ID: <1331740593-10807-4-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v4 08/10] pwm: Add Blackfin support
+Date: Wed, 14 Mar 2012 16:56:31 +0100
+Message-ID: <1331740593-10807-9-git-send-email-thierry.reding@avionic-design.de>
 References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1331740593-10807-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,340 +10,357 @@ To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds helpers to support device tree bindings for the generic
-PWM API. Device tree binding documentation for PWM controllers is also
-provided.
-
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
-Changes in v4:
-  - add OF-specific code removed from patch 2
-  - make of_node_to_pwmchip() and of_pwm_simple_xlate() static
-  - rename of_get_named_pwm() to of_pwm_request(), return a struct
-    pwm_device, get rid of the now unused spec parameter and use the
-    device_node.name field as the PWM's name
-  - return a requested struct pwm_device from pwm_chip.of_xlate and
-    drop the now unused spec parameter
-  - move OF support code into drivers/pwm/core.c
-  - used deferred probing if a PWM chip is not available yet
+Changes in v3:
+  - update PWM ops for changes in patch 2
 
-Changes in v2:
-  - add device tree binding documentation
-  - add of_xlate to parse controller-specific PWM-specifier
+ arch/blackfin/Kconfig         |   10 ---
+ arch/blackfin/kernel/Makefile |    1 -
+ arch/blackfin/kernel/pwm.c    |  100 -------------------------
+ drivers/pwm/Kconfig           |    9 +++
+ drivers/pwm/Makefile          |    1 +
+ drivers/pwm/pwm-bfin.c        |  164 +++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 174 insertions(+), 111 deletions(-)
+ delete mode 100644 arch/blackfin/kernel/pwm.c
+ create mode 100644 drivers/pwm/pwm-bfin.c
 
- Documentation/devicetree/bindings/pwm/pwm.txt |   48 ++++++++++
- drivers/of/Kconfig                            |    6 ++
- drivers/pwm/core.c                            |  127 +++++++++++++++++++++++++
- include/linux/of_pwm.h                        |   36 +++++++
- include/linux/pwm.h                           |    8 ++
- 5 files changed, 225 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm.txt
- create mode 100644 include/linux/of_pwm.h
-
-diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
-new file mode 100644
-index 0000000..9421fe7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/pwm.txt
-@@ -0,0 +1,48 @@
-+Specifying PWM information for devices
-+======================================
-+
-+1) PWM user nodes
-+-----------------
-+
-+PWM users should specify a list of PWM devices that they want to use
-+with a property containing a 'pwm-list':
-+
-+	pwm-list ::= <single-pwm> [pwm-list]
-+	single-pwm ::= <pwm-phandle> <pwm-specifier>
-+	pwm-phandle : phandle to PWM controller node
-+	pwm-specifier : array of #pwm-cells specifying the given PWM
-+			(controller specific)
-+
-+PWM properties should be named "[<name>-]pwms". Exact meaning of each
-+pwms property must be documented in the device tree binding for each
-+device.
-+
-+The following example could be used to describe a PWM-based backlight
-+device:
-+
-+	pwm: pwm {
-+		#pwm-cells = <2>;
-+	};
-+
-+	[...]
-+
-+	bl: backlight {
-+		pwms = <&pwm 0 5000000>;
-+	};
-+
-+pwm-specifier typically encodes the chip-relative PWM number and the PWM
-+period in nanoseconds.
-+
-+2) PWM controller nodes
-+-----------------------
-+
-+PWM controller nodes must specify the number of cells used for the
-+specifier using the '#pwm-cells' property.
-+
-+An example PWM controller might look like this:
-+
-+	pwm: pwm@7000a000 {
-+		compatible = "nvidia,tegra20-pwm";
-+		reg = <0x7000a000 0x100>;
-+		#pwm-cells = <2>;
-+	};
-diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index 6ea51dc..d47b8ee 100644
---- a/drivers/of/Kconfig
-+++ b/drivers/of/Kconfig
-@@ -57,6 +57,12 @@ config OF_GPIO
- 	help
- 	  OpenFirmware GPIO accessors
+diff --git a/arch/blackfin/Kconfig b/arch/blackfin/Kconfig
+index c1269a1..e08f39b 100644
+--- a/arch/blackfin/Kconfig
++++ b/arch/blackfin/Kconfig
+@@ -950,16 +950,6 @@ config BFIN_GPTIMERS
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called gptimers.
  
-+config OF_PWM
-+	def_bool y
-+	depends on PWM
+-config HAVE_PWM
+-	tristate "Enable PWM API support"
+-	depends on BFIN_GPTIMERS
+-	help
+-	  Enable support for the Pulse Width Modulation framework (as
+-	  found in linux/pwm.h).
+-
+-	  To compile this driver as a module, choose M here: the module
+-	  will be called pwm.
+-
+ choice
+ 	prompt "Uncached DMA region"
+ 	default DMA_UNCACHED_1M
+diff --git a/arch/blackfin/kernel/Makefile b/arch/blackfin/kernel/Makefile
+index 1f88edd..03f60a6 100644
+--- a/arch/blackfin/kernel/Makefile
++++ b/arch/blackfin/kernel/Makefile
+@@ -21,7 +21,6 @@ obj-$(CONFIG_FUNCTION_TRACER)        += ftrace-entry.o
+ obj-$(CONFIG_FUNCTION_GRAPH_TRACER)  += ftrace.o
+ CFLAGS_REMOVE_ftrace.o = -pg
+ 
+-obj-$(CONFIG_HAVE_PWM)               += pwm.o
+ obj-$(CONFIG_IPIPE)                  += ipipe.o
+ obj-$(CONFIG_BFIN_GPTIMERS)          += gptimers.o
+ obj-$(CONFIG_CPLB_INFO)              += cplbinfo.o
+diff --git a/arch/blackfin/kernel/pwm.c b/arch/blackfin/kernel/pwm.c
+deleted file mode 100644
+index 33f5942..0000000
+--- a/arch/blackfin/kernel/pwm.c
++++ /dev/null
+@@ -1,100 +0,0 @@
+-/*
+- * Blackfin Pulse Width Modulation (PWM) core
+- *
+- * Copyright (c) 2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2 or later.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/pwm.h>
+-#include <linux/slab.h>
+-
+-#include <asm/gptimers.h>
+-#include <asm/portmux.h>
+-
+-struct pwm_device {
+-	unsigned id;
+-	unsigned short pin;
+-};
+-
+-static const unsigned short pwm_to_gptimer_per[] = {
+-	P_TMR0, P_TMR1, P_TMR2, P_TMR3, P_TMR4, P_TMR5,
+-	P_TMR6, P_TMR7, P_TMR8, P_TMR9, P_TMR10, P_TMR11,
+-};
+-
+-struct pwm_device *pwm_request(int pwm_id, const char *label)
+-{
+-	struct pwm_device *pwm;
+-	int ret;
+-
+-	/* XXX: pwm_id really should be unsigned */
+-	if (pwm_id < 0)
+-		return NULL;
+-
+-	pwm = kzalloc(sizeof(*pwm), GFP_KERNEL);
+-	if (!pwm)
+-		return pwm;
+-
+-	pwm->id = pwm_id;
+-	if (pwm->id >= ARRAY_SIZE(pwm_to_gptimer_per))
+-		goto err;
+-
+-	pwm->pin = pwm_to_gptimer_per[pwm->id];
+-	ret = peripheral_request(pwm->pin, label);
+-	if (ret)
+-		goto err;
+-
+-	return pwm;
+- err:
+-	kfree(pwm);
+-	return NULL;
+-}
+-EXPORT_SYMBOL(pwm_request);
+-
+-void pwm_free(struct pwm_device *pwm)
+-{
+-	peripheral_free(pwm->pin);
+-	kfree(pwm);
+-}
+-EXPORT_SYMBOL(pwm_free);
+-
+-int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
+-{
+-	unsigned long period, duty;
+-	unsigned long long val;
+-
+-	if (duty_ns < 0 || duty_ns > period_ns)
+-		return -EINVAL;
+-
+-	val = (unsigned long long)get_sclk() * period_ns;
+-	do_div(val, NSEC_PER_SEC);
+-	period = val;
+-
+-	val = (unsigned long long)period * duty_ns;
+-	do_div(val, period_ns);
+-	duty = period - val;
+-
+-	if (duty >= period)
+-		duty = period - 1;
+-
+-	set_gptimer_config(pwm->id, TIMER_MODE_PWM | TIMER_PERIOD_CNT);
+-	set_gptimer_pwidth(pwm->id, duty);
+-	set_gptimer_period(pwm->id, period);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(pwm_config);
+-
+-int pwm_enable(struct pwm_device *pwm)
+-{
+-	enable_gptimer(pwm->id);
+-	return 0;
+-}
+-EXPORT_SYMBOL(pwm_enable);
+-
+-void pwm_disable(struct pwm_device *pwm)
+-{
+-	disable_gptimer(pwm->id);
+-}
+-EXPORT_SYMBOL(pwm_disable);
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index bda6f23..eb54042 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -9,6 +9,15 @@ menuconfig PWM
+ 
+ if PWM
+ 
++config PWM_BFIN
++	tristate "Blackfin PWM support"
++	depends on BFIN_GPTIMERS
 +	help
-+	  OpenFirmware PWM accessors
++	  Generic PWM framework driver for Blackfin.
 +
- config OF_I2C
- 	def_tristate I2C
- 	depends on I2C && !SPARC
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 74dd295..c600606 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -20,6 +20,7 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/of_pwm.h>
- #include <linux/pwm.h>
- #include <linux/radix-tree.h>
- #include <linux/list.h>
-@@ -121,6 +122,75 @@ static int pwm_device_request(struct pwm_device *pwm, const char *label)
- 	return 0;
- }
- 
-+#ifdef CONFIG_OF_PWM
-+static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
-+{
-+	struct pwm_chip *chip;
++	  To compile this driver as a module, choose M here: the module
++	  will be called pwm-bfin.
 +
-+	mutex_lock(&pwm_lock);
-+
-+	list_for_each_entry(chip, &pwm_chips, list)
-+		if (chip->dev && chip->dev->of_node == np) {
-+			mutex_unlock(&pwm_lock);
-+			return chip;
-+		}
-+
-+	mutex_unlock(&pwm_lock);
-+
-+	return ERR_PTR(-EPROBE_DEFER);
-+}
-+
-+static struct pwm_device *of_pwm_simple_xlate(struct pwm_chip *pc,
-+					      const struct of_phandle_args *args)
-+{
-+	struct pwm_device *pwm;
-+
-+	if (pc->of_pwm_n_cells < 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (args->args_count < pc->of_pwm_n_cells)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (args->args[0] >= pc->npwm)
-+		return ERR_PTR(-EINVAL);
-+
-+	pwm = pwm_request_from_device(pc->dev, args->args[0], NULL);
-+	if (IS_ERR(pwm))
-+		return ERR_PTR(-ENODEV);
-+
-+	pwm_set_period(pwm, args->args[1]);
-+
-+	return pwm;
-+}
-+
-+void of_pwmchip_add(struct pwm_chip *chip)
-+{
-+	if (!chip->dev || !chip->dev->of_node)
-+		return;
-+
-+	if (!chip->of_xlate) {
-+		chip->of_xlate = of_pwm_simple_xlate;
-+		chip->of_pwm_n_cells = 2;
-+	}
-+
-+	of_node_get(chip->dev->of_node);
-+}
-+
-+void of_pwmchip_remove(struct pwm_chip *chip)
-+{
-+	if (chip->dev && chip->dev->of_node)
-+		of_node_put(chip->dev->of_node);
-+}
-+#else
-+static inline void of_pwmchip_add(struct pwm_chip *pc)
-+{
-+}
-+
-+static inline void of_pwmchip_remove(struct pwm_chip *pc)
-+{
-+}
-+#endif /* CONFIG_OF_PWM */
-+
- /**
-  * pwm_set_chip_data - set private chip data for a PWM
-  * @pwm: PWM device
-@@ -184,6 +254,7 @@ int pwmchip_add(struct pwm_chip *chip)
- 
- 	INIT_LIST_HEAD(&chip->list);
- 	list_add(&chip->list, &pwm_chips);
-+	of_pwmchip_add(chip);
- 
- out:
- 	mutex_unlock(&pwm_lock);
-@@ -215,6 +286,7 @@ int pwmchip_remove(struct pwm_chip *chip)
- 	}
- 
- 	list_del_init(&chip->list);
-+	of_pwmchip_remove(chip);
- 	free_pwms(chip);
- 
- out:
-@@ -364,6 +436,61 @@ void pwm_disable(struct pwm_device *pwm)
- }
- EXPORT_SYMBOL_GPL(pwm_disable);
- 
-+#ifdef CONFIG_OF
-+/**
-+ * of_pwm_request() - request a PWM via the PWM framework
-+ * @np: device node to get the PWM from
-+ * @propname: property name containing PWM specifier(s)
-+ * @index: index of the PWM
-+ *
-+ * Returns the PWM device parsed from the phandle specified in the given
-+ * property of a device tree node or NULL on failure. Values parsed from
-+ * the device tree are stored in the returned PWM device object.
-+ */
-+struct pwm_device *of_pwm_request(struct device_node *np,
-+				  const char *propname, int index)
-+{
-+	struct pwm_device *pwm = NULL;
-+	struct of_phandle_args args;
-+	struct pwm_chip *pc;
-+	int err;
-+
-+	err = of_parse_phandle_with_args(np, propname, "#pwm-cells", index,
-+					 &args);
-+	if (err) {
-+		pr_debug("%s(): can't parse property \"%s\"\n", __func__,
-+			 propname);
-+		return ERR_PTR(err);
-+	}
-+
-+	pc = of_node_to_pwmchip(args.np);
-+	if (IS_ERR(pc)) {
-+		pr_debug("%s(): PWM chip not found\n", __func__);
-+		pwm = ERR_CAST(pc);
-+		goto put;
-+	}
-+
-+	if (args.args_count != pc->of_pwm_n_cells) {
-+		pr_debug("%s: wrong #pwm-cells for %s\n", np->full_name,
-+			 args.np->full_name);
-+		pwm = ERR_PTR(-EINVAL);
-+		goto put;
-+	}
-+
-+	pwm = pc->of_xlate(pc, &args);
-+	if (IS_ERR(pwm))
-+		goto put;
-+
-+	pwm->label = np->name;
-+
-+put:
-+	of_node_put(args.np);
-+
-+	return pwm;
-+}
-+EXPORT_SYMBOL(of_pwm_request);
-+#endif
-+
- #ifdef CONFIG_DEBUG_FS
- static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- {
-diff --git a/include/linux/of_pwm.h b/include/linux/of_pwm.h
+ config PWM_TEGRA
+ 	tristate "NVIDIA Tegra PWM support"
+ 	depends on ARCH_TEGRA
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 12300f5..251b8d2 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_PWM)		+= core.o
++obj-$(CONFIG_PWM_BFIN)		+= pwm-bfin.o
+ obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
+diff --git a/drivers/pwm/pwm-bfin.c b/drivers/pwm/pwm-bfin.c
 new file mode 100644
-index 0000000..a3a3da7
+index 0000000..a0c6bf9
 --- /dev/null
-+++ b/include/linux/of_pwm.h
-@@ -0,0 +1,36 @@
++++ b/drivers/pwm/pwm-bfin.c
+@@ -0,0 +1,164 @@
 +/*
-+ * OF helpers for the PWM API
++ * Blackfin Pulse Width Modulation (PWM) core
 + *
-+ * Copyright (c) 2011-2012 Avionic Design GmbH
++ * Copyright (c) 2011 Analog Devices Inc.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * Licensed under the GPL-2 or later.
 + */
 +
-+#ifndef __LINUX_OF_PWM_H
-+#define __LINUX_OF_PWM_H
-+
-+#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
 +#include <linux/pwm.h>
++#include <linux/slab.h>
 +
-+struct device_node;
++#include <asm/gptimers.h>
++#include <asm/portmux.h>
 +
-+#ifdef CONFIG_OF_PWM
++struct bfin_pwm_chip {
++	struct pwm_chip chip;
++};
 +
-+struct pwm_device *of_pwm_request(struct device_node *np,
-+				  const char *propname, int index);
++struct bfin_pwm {
++	unsigned short pin;
++};
 +
-+#else
++static const unsigned short pwm_to_gptimer_per[] = {
++	P_TMR0, P_TMR1, P_TMR2, P_TMR3, P_TMR4, P_TMR5,
++	P_TMR6, P_TMR7, P_TMR8, P_TMR9, P_TMR10, P_TMR11,
++};
 +
-+static inline struct pwm_device *of_pwm_request(struct device_node *np,
-+						const char *propname,
-+						int index);
++static int bfin_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
 +{
-+	return ERR_PTR(-ENOSYS);
++	struct bfin_pwm *priv;
++	int ret;
++
++	if (pwm->hwpwm >= ARRAY_SIZE(pwm_to_gptimer_per))
++		return -EINVAL;
++
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pin = pwm_to_gptimer_per[pwm->hwpwm];
++
++	ret = peripheral_request(priv->pin, NULL);
++	if (ret) {
++		kfree(priv);
++		return ret;
++	}
++
++	pwm_set_chip_data(pwm, priv);
++
++	return 0;
 +}
 +
-+#endif /* CONFIG_OF_PWM */
++static void bfin_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
 +
-+#endif /* __LINUX_OF_PWM_H */
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 7261911..7b42336 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -1,6 +1,8 @@
- #ifndef __LINUX_PWM_H
- #define __LINUX_PWM_H
- 
-+#include <linux/of.h>
++	if (priv) {
++		peripheral_free(priv->pin);
++		kfree(priv);
++	}
++}
 +
- struct pwm_device;
- 
- /*
-@@ -102,6 +104,12 @@ struct pwm_chip {
- 	unsigned int		npwm;
- 
- 	struct pwm_device	*pwms;
++static int bfin_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
++		int duty_ns, int period_ns)
++{
++	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
++	unsigned long period, duty;
++	unsigned long long val;
 +
-+#ifdef CONFIG_OF_PWM
-+	struct pwm_device *	(*of_xlate)(struct pwm_chip *pc,
-+					    const struct of_phandle_args *args);
-+	unsigned int		of_pwm_n_cells;
-+#endif
- };
- 
- int pwm_set_chip_data(struct pwm_device *pwm, void *data);
++	if (duty_ns < 0 || duty_ns > period_ns)
++		return -EINVAL;
++
++	val = (unsigned long long)get_sclk() * period_ns;
++	do_div(val, NSEC_PER_SEC);
++	period = val;
++
++	val = (unsigned long long)period * duty_ns;
++	do_div(val, period_ns);
++	duty = period - val;
++
++	if (duty >= period)
++		duty = period - 1;
++
++	set_gptimer_config(priv->pin, TIMER_MODE_PWM | TIMER_PERIOD_CNT);
++	set_gptimer_pwidth(priv->pin, duty);
++	set_gptimer_period(priv->pin, period);
++
++	return 0;
++}
++
++static int bfin_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
++
++	enable_gptimer(priv->pin);
++
++	return 0;
++}
++
++static void bfin_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
++
++	disable_gptimer(priv->pin);
++}
++
++static struct pwm_ops bfin_pwm_ops = {
++	.request = bfin_pwm_request,
++	.free = bfin_pwm_free,
++	.config = bfin_pwm_config,
++	.enable = bfin_pwm_enable,
++	.disable = bfin_pwm_disable,
++	.owner = THIS_MODULE,
++};
++
++static int bfin_pwm_probe(struct platform_device *pdev)
++{
++	struct bfin_pwm_chip *pwm;
++	int ret;
++
++	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
++	if (!pwm) {
++		dev_err(&pdev->dev, "failed to allocate memory\n");
++		return -ENOMEM;
++	}
++
++	platform_set_drvdata(pdev, pwm);
++
++	pwm->chip.dev = &pdev->dev;
++	pwm->chip.ops = &bfin_pwm_ops;
++	pwm->chip.base = -1;
++	pwm->chip.npwm = 12;
++
++	ret = pwmchip_add(&pwm->chip);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int __devexit bfin_pwm_remove(struct platform_device *pdev)
++{
++	struct bfin_pwm_chip *pwm = platform_get_drvdata(pdev);
++
++	pwmchip_remove(&pwm->chip);
++
++	return 0;
++}
++
++static struct platform_driver bfin_pwm_driver = {
++	.driver = {
++		.name = "bfin-pwm",
++	},
++	.probe = bfin_pwm_probe,
++	.remove = __devexit_p(bfin_pwm_remove),
++};
++
++module_platform_driver(bfin_pwm_driver);
++
++MODULE_LICENSE("GPL");
 -- 
 1.7.9.4
