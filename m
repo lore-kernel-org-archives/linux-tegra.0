@@ -1,59 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v4] Input: keyboard - add device tree bindings for simple
- key matrixes
-Date: Tue, 13 Mar 2012 21:42:05 -0700
-Message-ID: <20120314044205.GA3964@core.coreip.homeip.net>
-References: <1325484557-27695-1-git-send-email-olof@lixom.net>
- <1325626648-9425-1-git-send-email-olof@lixom.net>
- <74CDBE0F657A3D45AFBB94109FB122FF17761F11FF@HQMAIL01.nvidia.com>
+From: Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>
+Subject: Re: [linux-pm] [PATCH 0/3] coupled cpuidle state support
+Date: Wed, 14 Mar 2012 07:23:59 -0700
+Message-ID: <87mx7jjm68.fsf@ti.com>
+References: <1324426147-16735-1-git-send-email-ccross@android.com>
+	<4F1929E9.7070707@linaro.org> <8762e8kqi6.fsf@ti.com>
+	<CAMbhsRRZ+xt179RN32-+eBWngbRow=MpKV1XcLvG-sHGF6VOJA@mail.gmail.com>
+	<CAMbhsRRD2bdkcUZvScb-cF05e=R3h69bNVaTPFX4jBKBBOjuMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17761F11FF@HQMAIL01.nvidia.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Olof Johansson <olof@lixom.net>, Rob Herring <rob.herring@calxeda.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Rakesh Iyer <riyer@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "sjg@chromium.org" <sjg@chromium.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMbhsRRD2bdkcUZvScb-cF05e=R3h69bNVaTPFX4jBKBBOjuMg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+	(Colin Cross's message of "Tue, 13 Mar 2012 17:47:20 -0700")
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 03, 2012 at 02:37:44PM -0800, Stephen Warren wrote:
-> Olof Johansson wrote at Tuesday, January 03, 2012 2:37 PM:
-> > This adds a simple device tree binding for simple key matrix data and
-> > a helper to fill in the platform data.
-> > 
-> > The implementation is in a shared file outside if drivers/input/keyboard
-> > since some drivers in drivers/input/misc might be making use of it
-> > as well.
-> > 
-> > Changes since v3:
-> >  * Dropped compatible field in matrix-keymap.txt
-> >  * Dropped linux,fn-key
-> >  * Dropped linux,fn-keymap optional property but included guideline on
-> >    naming convention
-> >  * Now passing property name in to the helper function (or will assume
-> >    "linux,keymap" if passed NULL)
-> 
-> > diff --git a/drivers/input/of_keymap.c b/drivers/input/of_keymap.c
-> 
-> > +struct matrix_keymap_data *
-> > +matrix_keyboard_of_fill_keymap(struct device_node *np, char *propname)
-> > +{
-> ...
-> > +	kd = kmalloc(sizeof(*kd), GFP_KERNEL);
-> > +	if (!kd)
-> > +		return NULL;
-> 
-> Should that use kzalloc in case struct matrix_keymap_data grows some
-> new fields that people will assume are set to zero since the struct
-> would usually be in .data? Still, people should probably grep the code
-> when making such changes...
-> 
-> Otherwise,
-> 
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-> 
+Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> writes:
 
-Applied, thanks everyone.
+> On Tue, Mar 13, 2012 at 5:28 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wro=
+te:
+>> On Tue, Mar 13, 2012 at 4:52 PM, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org> wrote=
+:
 
--- 
-Dmitry
+[...]
+
+>>>
+>>> Checking the ready_count seemed like an easy way to do this, but di=
+d you
+>>> have any other mechanisms in mind for CPUs to communicate that they=
+'ve
+>>> exited/aborted?
+>>
+>> Why not set a flag from CPU1 when it exits the low power state, and
+>> have CPU0 spin on the powerdomain register or the flag? =C2=A0You ca=
+n then
+>> use the parallel barrier function to ensure both cpus have seen the
+>> flag and reset it to 0 before returning.
+>
+> I realized the parallel barrier helper was not included in the patch
+> set I posted, it will be in the next patch set. =20
+
+Do you have an ETA for the next patchset?  I'll be glad to give it a
+spin on OMAP4.
+
+> Short version, no caller to cpuidle_coupled_parallel_barrier will
+> return before all cpus in the coupled set have called it.  It allows
+> you to resynchronize the cpus after an abort to ensure they have all
+> seen the abort flag before clearing it and returning, leaving
+> everything in the correct state for the next idle attempt.
+
+OK, this sounds like it will work well for what I need.
+
+Kevin
