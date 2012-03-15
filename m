@@ -1,90 +1,160 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v4 09/10] pwm: Add PXA support
-Date: Thu, 15 Mar 2012 07:56:31 +0100
-Message-ID: <20120315065631.GB20502@avionic-0098.mockup.avionic-design.de>
-References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de>
- <1331740593-10807-10-git-send-email-thierry.reding@avionic-design.de>
- <4F61343A.80103@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v4 03/10] pwm: Add device tree support
+Date: Thu, 15 Mar 2012 08:40:42 +0000
+Message-ID: <201203150840.42659.arnd@arndb.de>
+References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de> <1331740593-10807-4-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F61343A.80103-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1331740593-10807-4-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 14 March 2012, Thierry Reding wrote:
+> This patch adds helpers to support device tree bindings for the generic
+> PWM API. Device tree binding documentation for PWM controllers is also
+> provided.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> ---
+> Changes in v4:
+>   - add OF-specific code removed from patch 2
+>   - make of_node_to_pwmchip() and of_pwm_simple_xlate() static
+>   - rename of_get_named_pwm() to of_pwm_request(), return a struct
+>     pwm_device, get rid of the now unused spec parameter and use the
+>     device_node.name field as the PWM's name
+>   - return a requested struct pwm_device from pwm_chip.of_xlate and
+>     drop the now unused spec parameter
+>   - move OF support code into drivers/pwm/core.c
+>   - used deferred probing if a PWM chip is not available yet
+> 
+> Changes in v2:
+>   - add device tree binding documentation
+>   - add of_xlate to parse controller-specific PWM-specifier
 
---tjCHc7DPkfUGtrlw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks very cool now, and much simpler!
 
-* Ryan Mallon wrote:
-> On 15/03/12 02:56, Thierry Reding wrote:
->=20
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > ---
-> > Changes in v3:
-> >   - update PWM ops for changes in patch 2
->=20
-> Couple of quick notes, mostly for future work.
->=20
-> > +	/* NOTE: the clock to PWM has to be enabled first
-> > +	 * before writing to the registers
-> > +	 */
-> > +	clk_enable(pc->clk);
->=20
->=20
-> Should be fixed to also call clk_prepare (and clk_unprepare after
-> clk_disable). Could be done in a follow up patch.
->=20
-> > +	__raw_writel(prescale, pc->mmio_base + offset + PWMCR);
-> > +	__raw_writel(dc, pc->mmio_base + offset + PWMDCR);
-> > +	__raw_writel(pv, pc->mmio_base + offset + PWMPCR);
->=20
->=20
-> Should we fix this driver to use readl/writel instead of the __raw
-> variants? The memory is properly ioremaped, and to my understanding the
-> __raw memory accessors should be avoided outside of core code. This
-> could be done in a follow up patch if you want to keep this patch as
-> mostly just a move of the code.
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 6ea51dc..d47b8ee 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -57,6 +57,12 @@ config OF_GPIO
+>  	help
+>  	  OpenFirmware GPIO accessors
+>  
+> +config OF_PWM
+> +	def_bool y
+> +	depends on PWM
+> +	help
+> +	  OpenFirmware PWM accessors
+> +
+>  config OF_I2C
+>  	def_tristate I2C
+>  	depends on I2C && !SPARC
 
-Actually I wasn't planning on keeping this patch at all. Sascha already has
-the existing PWM providers converted to his original framework and offered =
-to
-rebase them onto this series once the dust settles. I only used them as
-testbed to see how the driver interface works out for different hardware. B=
-ut
-I also think that if Sascha hasn't cleaned the driver up yet it should eith=
-er
-be done in his conversion patches or as follow ups.
+You might want to remove this one now and just use CONFIG_OF in the driver,
+unless there is  a reason to keep it here.
 
-Sascha: how do you plan on going forward with this? It seems like the driver
-interface is pretty much done now and I expect the next round to be the las=
-t,
-unless I forget to properly work through the TODO list again. If you are bu=
-sy
-with other stuff I can probably find some time to help with porting your
-converted drivers.
+> +#ifdef CONFIG_OF_PWM
+> +static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
+> +{
+> +	struct pwm_chip *chip;
+> +
+> +	mutex_lock(&pwm_lock);
+> +
+> +	list_for_each_entry(chip, &pwm_chips, list)
+> +		if (chip->dev && chip->dev->of_node == np) {
+> +			mutex_unlock(&pwm_lock);
+> +			return chip;
+> +		}
+> +
+> +	mutex_unlock(&pwm_lock);
+> +
+> +	return ERR_PTR(-EPROBE_DEFER);
+> +}
 
-I'm also wondering which tree this will go in through. Does it make sense to
-have an extra tree just for the PWM framework or can it go in via some other
-general purpose tree? Who do I need to prod?
+EPROBE_DEFER doesn't exist yet in my kernel, and I wonder if it's actually
+safe to be used this way, because it can result in arbitrary drivers using
+this to be put on the defered probe list. It certainly sounds like the
+right thing to do in the long run though.
 
-Thierry
+> +#else
+> +static inline void of_pwmchip_add(struct pwm_chip *pc)
+> +{
+> +}
+> +
+> +static inline void of_pwmchip_remove(struct pwm_chip *pc)
+> +{
+> +}
+> +#endif /* CONFIG_OF_PWM */
+> +
+>  /**
+>   * pwm_set_chip_data - set private chip data for a PWM
+>   * @pwm: PWM device
+> @@ -184,6 +254,7 @@ int pwmchip_add(struct pwm_chip *chip)
+>  
+>  	INIT_LIST_HEAD(&chip->list);
+>  	list_add(&chip->list, &pwm_chips);
+> +	of_pwmchip_add(chip);
+>  
+>  out:
+>  	mutex_unlock(&pwm_lock);
 
---tjCHc7DPkfUGtrlw
-Content-Type: application/pgp-signature
+You could express the same thing using 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+	if (IS_ENABLED(CONFIG_OF_PWM))
+		of_pwmchip_add(chip);
 
-iEYEARECAAYFAk9hkp8ACgkQZ+BJyKLjJp8bhQCfR49b6dKHYpFpbA4eDxZT5WZ0
-CZMAmgMC1Uok9b+nFcVkVh8APLV2Isr5
-=N+g2
------END PGP SIGNATURE-----
+The advantage of this is that you always get compile coverage for the
+entire file, but the function is automatically discarded by the
+compiler when the condition is false at compile time. That obviously
+doesn't work for exported functions.
 
---tjCHc7DPkfUGtrlw--
+> +#ifdef CONFIG_OF
+> +/**
+> + * of_pwm_request() - request a PWM via the PWM framework
+> + * @np: device node to get the PWM from
+> + * @propname: property name containing PWM specifier(s)
+> + * @index: index of the PWM
+> + *
+> + * Returns the PWM device parsed from the phandle specified in the given
+> + * property of a device tree node or NULL on failure. Values parsed from
+> + * the device tree are stored in the returned PWM device object.
+> + */
+> +struct pwm_device *of_pwm_request(struct device_node *np,
+> +				  const char *propname, int index)
+> +{
+> +	struct pwm_device *pwm = NULL;
+> +	struct of_phandle_args args;
+> +	struct pwm_chip *pc;
+> +	int err;
+> +
+> +	err = of_parse_phandle_with_args(np, propname, "#pwm-cells", index,
+> +					 &args);
+
+Wow, I just looked up what of_parse_phandle_with_args() does and that is
+extremely helpful indeed.
+
+>  /*
+> @@ -102,6 +104,12 @@ struct pwm_chip {
+>  	unsigned int		npwm;
+>  
+>  	struct pwm_device	*pwms;
+> +
+> +#ifdef CONFIG_OF_PWM
+> +	struct pwm_device *	(*of_xlate)(struct pwm_chip *pc,
+> +					    const struct of_phandle_args *args);
+> +	unsigned int		of_pwm_n_cells;
+> +#endif
+>  };
+>  
+>  int pwm_set_chip_data(struct pwm_device *pwm, void *data);
+
+If you use IS_ENABLED() as I suggested above, this #ifdef will have to go
+away, too, which is a very small size overhead.
+
+	Arnd
