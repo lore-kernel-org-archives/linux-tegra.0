@@ -1,229 +1,182 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 8/8] pinctrl: tegra: Add complete device tree support
-Date: Fri, 16 Mar 2012 14:54:29 -0600
-Message-ID: <1331931269-12262-8-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 3/8] dt: pinctrl: Document device tree binding
+Date: Fri, 16 Mar 2012 14:54:24 -0600
+Message-ID: <1331931269-12262-3-git-send-email-swarren@wwwdotorg.org>
 References: <1331931269-12262-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1331931269-12262-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
-Cc: Linus Walleij <linus.walleij@stericsson.com>, B29396@freescale.com, s.hauer@pengutronix.de, dongas86@gmail.com, shawn.guo@linaro.org, thomas.abraham@linaro.org, tony@atomide.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1331931269-12262-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Implement pinctrl_ops dt_node_to_map() and dt_free_map(). These allow
-complete specification of the desired pinmux configuration using device
-tree.
+The core pin controller bindings define:
+* The fact that pin controllers expose pin configurations as nodes in
+  device tree.
+* That the bindings for those pin configuration nodes is defined by the
+  individual pin controller drivers.
+* A standardized set of properties for client devices to define numbered
+  or named pin configuration states, each referring to some number of the
+  afore-mentioned pin configuration nodes.
+* That the bindings for the client devices determines the set of numbered
+  or named states that must exist.
 
-Signed-off-by: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Acked-by: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- drivers/pinctrl/pinctrl-tegra.c |  180 +++++++++++++++++++++++++++++++++++++++
- 1 files changed, 180 insertions(+), 0 deletions(-)
+v2: Fix a couple of grammar-os per Randy Dunlap. Add example of a client
+device that references no pin configuration nodes per Dong Aisheng.
+---
+ .../bindings/pinctrl/pinctrl-bindings.txt          |  128 ++++++++++++++++++++
+ 1 files changed, 128 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 9b32968..19ac661 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -23,9 +23,12 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/of_iter_prop.h>
-+#include <linux/pinctrl/machine.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/pinctrl/pinconf.h>
-+#include <linux/slab.h>
- 
- #include <mach/pinconf-tegra.h>
- 
-@@ -98,11 +101,188 @@ static void tegra_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
- 	seq_printf(s, " " DRIVER_NAME);
- }
- 
-+static int add_map(struct pinctrl_map **map, unsigned *num_maps)
-+{
-+	unsigned old_num = *num_maps;
-+	unsigned new_num = old_num + 1;
-+	struct pinctrl_map *new_map;
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+new file mode 100644
+index 0000000..c95ea82
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -0,0 +1,128 @@
++== Introduction ==
 +
-+	new_map = krealloc(*map, sizeof(*new_map) * new_num, GFP_KERNEL);
-+	if (!new_map)
-+		return -ENOMEM;
++Hardware modules that control pin multiplexing or configuration parameters
++such as pull-up/down, tri-state, drive-strength etc are designated as pin
++controllers. Each pin controller must be represented as a node in device tree,
++just like any other hardware module.
 +
-+	memset(new_map + old_num, 0, sizeof(*new_map));
++Hardware modules whose signals are affected by pin configuration are
++designated client devices. Again, each client device must be represented as a
++node in device tree, just like any other hardware module.
 +
-+	*map = new_map;
-+	*num_maps = new_num;
++For a client device to operate correctly, certain pin controllers must
++set up certain specific pin configurations. Some client devices need a
++single static pin configuration, e.g. set up during initialization. Others
++need to reconfigure pins at run-time, for example to tri-state pins when the
++device is inactive. Hence, each client device can define a set of named
++states. The number and names of those states is defined by the client device's
++own binding.
 +
-+	return 0;
-+}
++The common pinctrl bindings defined in this file provide an infrastructure
++for client device device tree nodes to map those state names to the pin
++configuration used by those states.
 +
-+static int add_map_mux(struct pinctrl_map **map, unsigned *num_maps,
-+		       const char *group, const char *function)
-+{
-+	unsigned i = *num_maps;
-+	int ret;
++Note that pin controllers themselves may also be client devices of themselves.
++For example, a pin controller may set up its own "active" state when the
++driver loads. This would allow representing a board's static pin configuration
++in a single place, rather than splitting it across multiple client device
++nodes. The decision to do this or not somewhat rests with the author of
++individual board device tree files, and any requirements imposed by the
++bindings for the individual client devices in use by that board, i.e. whether
++they require certain specific named states for dynamic pin configuration.
 +
-+	ret = add_map(map, num_maps);
-+	if (ret < 0)
-+		return ret;
++== Pinctrl client devices ==
 +
-+	(*map)[i].type = PIN_MAP_TYPE_MUX_GROUP;
-+	(*map)[i].data.mux.group = group;
-+	(*map)[i].data.mux.function = function;
++For each client device individually, every pin state is assigned an integer
++ID. These numbers start at 0, and are contiguous. For each state ID, a unique
++property exists to define the pin configuration. Each state may also be
++assigned a name. When names are used, another property exists to map from
++those names to the integer IDs.
 +
-+	return 0;
-+}
++Each client device's own binding determines the set of states the must be
++defined in its device tree node, and whether to define the set of state
++IDs that must be provided, or whether to define the set of state names that
++must be provided.
 +
-+static int add_map_configs(struct pinctrl_map **map, unsigned *num_maps,
-+			   const char *group, unsigned long *configs,
-+			   unsigned num_configs)
-+{
-+	unsigned i = *num_maps;
-+	unsigned long *dup_configs;
-+	int ret;
++Required properties:
++pinctrl-0:	List of phandles, each pointing at a pin configuration
++		node. These referenced pin configuration nodes must be child
++		nodes of the pin controller that they configure. Multiple
++		entries may exist in this list so that multiple pin
++		controllers may be configured, or so that a state may be built
++		from multiple nodes for a single pin controller, each
++		contributing part of the overall configuration. See the next
++		section of this document for details of the format of these
++		pin configuration nodes.
 +
-+	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
-+			      GFP_KERNEL);
-+	if (!dup_configs)
-+		return -ENOMEM;
++		In some cases, it may be useful to define a state, but for it
++		to be empty. This may be required when a common IP block is
++		used in an SoC either without a pin controller, or where the
++		pin controller does not affect the HW module in question. If
++		the binding for that IP block requires certain pin states to
++		exist, they must still be defined, but may be left empty.
 +
-+	ret = add_map(map, num_maps);
-+	if (ret < 0)
-+		return ret;
++Optional properties:
++pinctrl-1:	List of phandles, each pointing at a pin configuration
++		node within a pin controller.
++...
++pinctrl-n:	List of phandles, each pointing at a pin configuration
++		node within a pin controller.
++pinctrl-names:	The list of names to assign states. List entry 0 defines the
++		name for integer state ID 0, list entry 1 for state ID 1, and
++		so on.
 +
-+	(*map)[i].type = PIN_MAP_TYPE_CONFIGS_GROUP;
-+	(*map)[i].data.configs.group_or_pin = group;
-+	(*map)[i].data.configs.configs = dup_configs;
-+	(*map)[i].data.configs.num_configs = num_configs;
++For example:
 +
-+	return 0;
-+}
++	/* For a client device requiring named states */
++	device {
++		pinctrl-names = "active", "idle";
++		pinctrl-0 = <&state_0_node_a>;
++		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
++	};
 +
-+static int add_config(unsigned long **configs, unsigned *num_configs,
-+		      unsigned long config)
-+{
-+	unsigned old_num = *num_configs;
-+	unsigned new_num = old_num + 1;
-+	unsigned long *new_configs;
++	/* For the same device if using state IDs */
++	device {
++		pinctrl-0 = <&state_0_node_a>;
++		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
++	};
 +
-+	new_configs = krealloc(*configs, sizeof(*new_configs) * new_num,
-+			       GFP_KERNEL);
-+	if (!new_configs)
-+		return -ENOMEM;
++	/*
++	 * For an IP block whose binding supports pin configuration,
++	 * but in use on an SoC that doesn't have any pin control hardware
++	 */
++	device {
++		pinctrl-names = "active", "idle";
++		pinctrl-0 = <>;
++		pinctrl-1 = <>;
++	};
 +
-+	new_configs[old_num] = config;
++== Pin controller devices ==
 +
-+	*configs = new_configs;
-+	*num_configs = new_num;
++Pin controller devices should contain the pin configuration nodes that client
++devices reference.
 +
-+	return 0;
-+}
++For example:
 +
-+void tegra_pinctrl_dt_free_map(struct pinctrl_dev *pctldev,
-+			       struct pinctrl_map *map, unsigned num_maps)
-+{
-+	int i;
++	pincontroller {
++		... /* Standard DT properties for the device itself elided */
 +
-+	for (i = 0; i < num_maps; i++)
-+		if (map[i].type == PIN_MAP_TYPE_CONFIGS_GROUP)
-+			kfree(map[i].data.configs.configs);
-+
-+	kfree(map);
-+}
-+
-+static const struct cfg_param {
-+	const char *property;
-+	enum tegra_pinconf_param param;
-+} cfg_params[] = {
-+	{"nvidia,pull",			TEGRA_PINCONF_PARAM_PULL},
-+	{"nvidia,tristate",		TEGRA_PINCONF_PARAM_TRISTATE},
-+	{"nvidia,enable-input",		TEGRA_PINCONF_PARAM_ENABLE_INPUT},
-+	{"nvidia,open-drain",		TEGRA_PINCONF_PARAM_OPEN_DRAIN},
-+	{"nvidia,lock",			TEGRA_PINCONF_PARAM_LOCK},
-+	{"nvidia,io-reset",		TEGRA_PINCONF_PARAM_IORESET},
-+	{"nvidia,high-speed-mode",	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE},
-+	{"nvidia,schmitt",		TEGRA_PINCONF_PARAM_SCHMITT},
-+	{"nvidia,low-power-mode",	TEGRA_PINCONF_PARAM_LOW_POWER_MODE},
-+	{"nvidia,pull-down-strength",	TEGRA_PINCONF_PARAM_DRIVE_DOWN_STRENGTH},
-+	{"nvidia,pull-up-strength",	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH},
-+	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
-+	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
-+};
-+
-+int tegra_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
-+				 struct device_node *np_config,
-+				 struct pinctrl_map **map, unsigned *num_maps)
-+{
-+	struct device_node *np;
-+	struct of_iter_string_prop group;
-+	unsigned long config;
-+	unsigned long *configs = NULL;
-+	unsigned num_configs = 0;
-+	const char *function;
-+	u32 val;
-+	int ret, i;
-+
-+	*map = NULL;
-+	*num_maps = 0;
-+
-+	for_each_child_of_node(np_config, np) {
-+		ret = of_property_read_string(np, "nvidia,function", &function);
-+		if (ret < 0)
-+			function = NULL;
-+
-+		for (i = 0; i < ARRAY_SIZE(cfg_params); i++) {
-+			ret = of_property_read_u32(np, cfg_params[i].property,
-+						   &val);
-+			if (!ret) {
-+				config = TEGRA_PINCONF_PACK(
-+						cfg_params[i].param, val);
-+				ret = add_config(&configs, &num_configs,
-+						 config);
-+				if (ret < 0)
-+					goto error;
-+			}
-+		}
-+
-+		for_each_string_property_value(group, np, "nvidia,pins") {
-+			if (function) {
-+				ret = add_map_mux(map, num_maps, group.value,
-+						  function);
-+				if (ret < 0)
-+					goto error;
-+			}
-+
-+			if (num_configs) {
-+				ret = add_map_configs(map, num_maps,
-+					group.value, configs, num_configs);
-+				if (ret < 0)
-+					goto error;
-+			}
-+		}
-+
-+		kfree(configs);
-+		configs = NULL;
-+		num_configs = 0;
++		state_0_node_a {
++			...
++		};
++		state_1_node_a {
++			...
++		};
++		state_1_node_b {
++			...
++		};
 +	}
 +
-+	return 0;
++The contents of each of those pin configuration child nodes is defined
++entirely by the binding for the individual pin controller device. There
++exists no common standard for this content.
 +
-+error:
-+	kfree(configs);
-+	tegra_pinctrl_dt_free_map(pctldev, *map, *num_maps);
-+
-+	return ret;
-+}
-+
- static struct pinctrl_ops tegra_pinctrl_ops = {
- 	.list_groups = tegra_pinctrl_list_groups,
- 	.get_group_name = tegra_pinctrl_get_group_name,
- 	.get_group_pins = tegra_pinctrl_get_group_pins,
- 	.pin_dbg_show = tegra_pinctrl_pin_dbg_show,
-+	.dt_node_to_map = tegra_pinctrl_dt_node_to_map,
-+	.dt_free_map = tegra_pinctrl_dt_free_map,
- };
- 
- static int tegra_pinctrl_list_funcs(struct pinctrl_dev *pctldev,
++The pin configuration nodes need not be direct children of the pin controller
++device; they may be grandchildren, for example. Whether this is legal, and
++whether there is any interaction between the child and intermediate parent
++nodes, is again defined entirely by the binding for the individual pin
++controller device.
 -- 
 1.7.0.4
