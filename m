@@ -1,50 +1,47 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: [GIT PULL] A few more non-critical fixes for tegra
-Date: Sun, 18 Mar 2012 10:51:42 -0700
-Message-ID: <CAOesGMhELxtTnVMzADM01RhsPcGt7ciqLh-h0+xNwUg8MGCo1Q@mail.gmail.com>
+Subject: [GIT PULL] A few more dt patches for tegra
+Date: Sun, 18 Mar 2012 10:54:15 -0700
+Message-ID: <CAOesGMgrx3VK0Om8KoSMh8=7+EmW-P-ZqmXKLNDO6mw4g3yrFg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi Arnd,
 
-A few more patches have been added to the cleanup-and-fixes branch for
-tegra, see below. Please pull on top of current tegra/cleanups
-contents!
+I have a few more patches on top of the branch already pulled into
+tegra/dt in arm-soc. Please pull these ones on top of the existing
+contents.
 
+Thanks!
 
-Thanks,
 
 -Olof
 
+The following changes since commit 96d6714ca27acab087dcc8d75a7ec815abe3dde7:
 
-The following changes since commit f6a1ba67362fe78a1ec81c355ee638c70689b5d7:
-
-  ARM: tegra: Enable CPUIdle on Tegra20 (2012-03-04 11:17:17 -0800)
+  ASoC: DT: Add digital microphone binding to PAZ00 board. (2012-03-04
+10:42:16 -0800)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git
-for-3.4/cleanup-and-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-3.4/dt
 
-for you to fetch changes up to 279b658525abd06645938fb607860de42c4cf31e:
+for you to fetch changes up to 0a428036dfb28be3e5f0d671e3457509d1f4ea29:
 
-  ARM: tegra: select USB_ULPI if USB is selected (2012-03-18 10:34:32 -0700)
+  arm: tegra: dts: Mark USB1 as an OTG port on Seaboard (2012-03-07
+14:36:56 -0800)
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: tegra: select USB_ULPI if USB is selected
+Simon Glass (3):
+      arm: tegra: dts: Support host/device selection and legacy mode
+      arm: tegra: dts: Add legacy mode support to Tegra2x USB1 port
+      arm: tegra: dts: Mark USB1 as an OTG port on Seaboard
 
-Dmitry Artamonow (3):
-      arm/tegra: fix harmony pinmux for PCIe
-      arm/tegra: add timeout to PCIe PLL lock detection loop
-      arm/tegra: pcie: fix return value of function
-
- arch/arm/mach-tegra/Kconfig                |    4 ++--
- arch/arm/mach-tegra/board-harmony-pinmux.c |    6 +++---
- arch/arm/mach-tegra/pcie.c                 |   16 ++++++++++++----
- 3 files changed, 17 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/usb/tegra-usb.txt |   13 +++++++++++++
+ arch/arm/boot/dts/tegra-seaboard.dts                |    1 +
+ arch/arm/boot/dts/tegra20.dtsi                      |    1 +
+ 3 files changed, 15 insertions(+)
