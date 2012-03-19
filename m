@@ -1,47 +1,61 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra: tegra_gpio_config shouldn't be __init
-Date: Mon, 19 Mar 2012 21:49:55 +0000
-Message-ID: <20120319214955.378CB3E0A04@localhost>
-References: <1332178560-15658-1-git-send-email-swarren@wwwdotorg.org>
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/11] drivercore: Add driver probe deferral mechanism
+Date: Tue, 20 Mar 2012 00:12:56 +0100
+Message-ID: <4F67BD78.8070202@gmail.com>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-2-git-send-email-thierry.reding@avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1332178560-15658-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1331218291-16119-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 19 Mar 2012 11:36:00 -0600, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> This function is called from non-__init context, just like
-> tegra_gpio_enable()/disable(). Remove the __init annotation to avoid
-> section mismatch warnings during compile.
-> 
-> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-
-Applied, thanks.
-
-g.
-
+On 03/08/2012 03:51 PM, Thierry Reding wrote:
+> From: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+>
+> Allow drivers to report at probe time that they cannot get all the resources
+> required by the device, and should be retried at a later time.
+>
+> This should completely solve the problem of getting devices
+> initialized in the right order.  Right now this is mostly handled by
+> mucking about with initcall ordering which is a complete hack, and
+> doesn't even remotely handle the case where device drivers are in
+> modules.  This approach completely sidesteps the issues by allowing
+> driver registration to occur in any order, and any driver can request
+> to be retried after a few more other drivers get probed.
+>
+> v4: - Integrate Manjunath's addition of a separate workqueue
+>      - Change -EAGAIN to -EPROBE_DEFER for drivers to trigger deferral
+>      - Update comment blocks to reflect how the code really works
+> v3: - Hold off workqueue scheduling until late_initcall so that the bulk
+>        of driver probes are complete before we start retrying deferred devices.
+>      - Tested with simple use cases.  Still needs more testing though.
+>        Using it to get rid of the gpio early_initcall madness, or to replace
+>        the ASoC internal probe deferral code would be ideal.
+> v2: - added locking so it should no longer be utterly broken in that regard
+>      - remove device from deferred list at device_del time.
+>      - Still completely untested with any real use case, but has been
+>        boot tested.
+>
+> Signed-off-by: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> [Cc list stripped in order not to get on people's nerves]
 > ---
->  drivers/gpio/gpio-tegra.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 636be99..32de670 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -461,7 +461,7 @@ static int __init tegra_gpio_init(void)
->  }
->  postcore_initcall(tegra_gpio_init);
->  
-> -void __init tegra_gpio_config(struct tegra_gpio_table *table, int num)
-> +void tegra_gpio_config(struct tegra_gpio_table *table, int num)
->  {
->  	int i;
->  
-> -- 
-> 1.7.0.4
-> 
+>   drivers/base/base.h    |    1 +
+>   drivers/base/core.c    |    2 +
+>   drivers/base/dd.c      |  138 +++++++++++++++++++++++++++++++++++++++++++++++-
+>   include/linux/device.h |    5 ++
+>   include/linux/errno.h  |    1 +
+>   5 files changed, 146 insertions(+), 1 deletion(-)
 
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+Is this patch going to be included in v3.4 ? I can see it's in -next,
+but not sure where I could check if its really queued for v3.4.
+It would be nice to have it in v3.4, I've got already one more client
+of this deferred probe infrastructure.
+
+--
+
+Thanks,
+Sylwester
