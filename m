@@ -1,46 +1,94 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Include assembler.h in sleep.S to fix build
- break
-Date: Mon, 19 Mar 2012 13:10:25 -0500
-Message-ID: <4F677691.8020307@gmail.com>
-References: <1332176863-12537-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Fix device tree AUXDATA for USB/EHCI
+Date: Mon, 19 Mar 2012 14:09:52 -0600
+Message-ID: <1332187792-14651-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1332176863-12537-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/19/2012 12:07 PM, Stephen Warren wrote:
-> Commit 6f6f6a7 "ARM: create a common IOMEM definition" moved macro
-> IOMEM(), and requires users to include <asm/assembler.h>. Fix Tegra's
-> sleep.S to do so.
-> 
-> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Commit 4a53f4e "USB: ehci-tegra: add probing through device tree" added
+AUXDATA for Tegra's USB/EHCI controller. However, it pointed the platform
+data at a location containing the address of the intended platform data,
+rather than the platform data itself. This change fixes that.
 
-Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # 3.3
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c |    6 +++---
+ arch/arm/mach-tegra/devices.c          |    7 +++----
+ arch/arm/mach-tegra/devices.h          |    5 +++++
+ 3 files changed, 11 insertions(+), 7 deletions(-)
 
-> ---
-> v2: Fix linux/ vs. asm/ include ordering. Remove include of io.h too.
-> 
->  arch/arm/mach-tegra/sleep.S |    4 +++-
->  1 files changed, 3 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-> index 8f9fde1..5b20197 100644
-> --- a/arch/arm/mach-tegra/sleep.S
-> +++ b/arch/arm/mach-tegra/sleep.S
-> @@ -23,7 +23,9 @@
->   */
->  
->  #include <linux/linkage.h>
-> -#include <mach/io.h>
-> +
-> +#include <asm/assembler.h>
-> +
->  #include <mach/iomap.h>
->  
->  #include "flowctrl.h"
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index e20b419..0952494 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -68,11 +68,11 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra-i2s.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra-das", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB_BASE, "tegra-ehci.0",
+-		       &tegra_ehci1_device.dev.platform_data),
++		       &tegra_ehci1_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB2_BASE, "tegra-ehci.1",
+-		       &tegra_ehci2_device.dev.platform_data),
++		       &tegra_ehci2_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
+-		       &tegra_ehci3_device.dev.platform_data),
++		       &tegra_ehci3_pdata),
+ 	{}
+ };
+ 
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index 7a2a02d..5f6b867 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -23,7 +23,6 @@
+ #include <linux/fsl_devices.h>
+ #include <linux/serial_8250.h>
+ #include <linux/i2c-tegra.h>
+-#include <linux/platform_data/tegra_usb.h>
+ #include <asm/pmu.h>
+ #include <mach/irqs.h>
+ #include <mach/iomap.h>
+@@ -446,18 +445,18 @@ static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
+ 	.clk = "cdev2",
+ };
+ 
+-static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
++struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+ 	.operating_mode = TEGRA_USB_OTG,
+ 	.power_down_on_bus_suspend = 1,
+ };
+ 
+-static struct tegra_ehci_platform_data tegra_ehci2_pdata = {
++struct tegra_ehci_platform_data tegra_ehci2_pdata = {
+ 	.phy_config = &tegra_ehci2_ulpi_phy_config,
+ 	.operating_mode = TEGRA_USB_HOST,
+ 	.power_down_on_bus_suspend = 1,
+ };
+ 
+-static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
++struct tegra_ehci_platform_data tegra_ehci3_pdata = {
+ 	.operating_mode = TEGRA_USB_HOST,
+ 	.power_down_on_bus_suspend = 1,
+ };
+diff --git a/arch/arm/mach-tegra/devices.h b/arch/arm/mach-tegra/devices.h
+index 873ecb2..ec45567 100644
+--- a/arch/arm/mach-tegra/devices.h
++++ b/arch/arm/mach-tegra/devices.h
+@@ -20,6 +20,11 @@
+ #define __MACH_TEGRA_DEVICES_H
+ 
+ #include <linux/platform_device.h>
++#include <linux/platform_data/tegra_usb.h>
++
++extern struct tegra_ehci_platform_data tegra_ehci1_pdata;
++extern struct tegra_ehci_platform_data tegra_ehci2_pdata;
++extern struct tegra_ehci_platform_data tegra_ehci3_pdata;
+ 
+ extern struct platform_device tegra_gpio_device;
+ extern struct platform_device tegra_pinmux_device;
+-- 
+1.7.0.4
