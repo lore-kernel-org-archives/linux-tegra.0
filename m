@@ -1,81 +1,192 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v4 10/10] pwm-backlight: Add rudimentary device tree
- support
-Date: Tue, 20 Mar 2012 16:08:36 +0000
-Message-ID: <20120320160832.GL3445@opensource.wolfsonmicro.com>
-References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de>
- <1331740593-10807-11-git-send-email-thierry.reding@avionic-design.de>
- <4F67F2AF.3020404@wwwdotorg.org>
- <20120320083943.GA20249@avionic-0098.adnet.avionic-design.de>
- <4F68A1C8.5080608@wwwdotorg.org>
- <20120320154330.GA8651@avionic-0098.mockup.avionic-design.de>
- <4F68A899.3030009@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="S6vg04ofUPzW4qJg"
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/8] dt: add property iteration helpers
+Date: Tue, 20 Mar 2012 16:35:04 +0000
+Message-ID: <20120320163504.628033E2834@localhost>
+References: <1331931269-12262-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F68A899.3030009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1331931269-12262-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, B29396-KZfg59tc24xl57MIdRCFDg@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 16 Mar 2012 14:54:22 -0600, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> This patch adds macros for_each_u32_property_value and
+> for_each_string_property_value, which iterate over an array of values
+> within a device-tree property. Usage is for example:
+> 
+> struct of_iter_string_prop iter;
+> for_each_string_property_value(iter, np, "pins")
+>         printk("Got value %s\n", iter.value);
+> 
+> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
---S6vg04ofUPzW4qJg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Remind me about this one after the merge window.
 
-On Tue, Mar 20, 2012 at 09:56:09AM -0600, Stephen Warren wrote:
-> On 03/20/2012 09:43 AM, Thierry Reding wrote:
+That said, I'm not very happy about the state of dt property parsing
+because a lot of code needs to be written to do a very simple thing.
+I've got a prototype patch I'm working on which allows a parsing
+'spec' to be passed into an "of_parse()" function that batch-decodes a
+set of values and returns a single error code.  That should simplify a
+lot of things.  That function might be a better solution if I pull in
+parsing of multiple strings.
 
-> > What would be a good way to represent this in platform data?
+g.
 
-> I think most get subsystems have a get API that works for both DT and
-> non-DT, rather than using platform data:
+> ---
+>  include/linux/of_iter_prop.h |  139 ++++++++++++++++++++++++++++++++++++++++++
+>  1 files changed, 139 insertions(+), 0 deletions(-)
+>  create mode 100644 include/linux/of_iter_prop.h
+> 
+> diff --git a/include/linux/of_iter_prop.h b/include/linux/of_iter_prop.h
+> new file mode 100644
+> index 0000000..57e9e6a
+> --- /dev/null
+> +++ b/include/linux/of_iter_prop.h
+> @@ -0,0 +1,139 @@
+> +/*
+> + * Copyright (c) 2011-2012 NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * Iterate over properties that store arrays.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +#ifndef __OF_ITER_PROP_H__
+> +#define __OF_ITER_PROP_H__
+> +
+> +#include <linux/of.h>
+> +
+> +#ifdef CONFIG_OF
+> +struct of_iter_u32_prop {
+> +	const struct property *prop;
+> +	int len;
+> +	const __be32 *pvalue;
+> +	u32 value;
+> +};
+> +
+> +static inline void of_iter_u32_next(struct of_iter_u32_prop *iter)
+> +{
+> +	if (!iter->len)
+> +		return;
+> +
+> +	iter->len--;
+> +	if (iter->len)
+> +		iter->value = be32_to_cpup(iter->pvalue++);
+> +}
+> +
+> +static inline void of_iter_u32_init(struct of_iter_u32_prop *iter,
+> +				    const struct device_node *np,
+> +				    const char *name)
+> +{
+> +	iter->prop = of_find_property(np, name, &iter->len);
+> +	if (!iter->prop) {
+> +		iter->len = 0;
+> +		return;
+> +	}
+> +
+> +	iter->pvalue = iter->prop->value;
+> +	if (!iter->pvalue) {
+> +		iter->len = 0;
+> +		return;
+> +	}
+> +
+> +	iter->len /= sizeof(*iter->pvalue);
+> +
+> +	if (iter->len)
+> +		iter->value = be32_to_cpup(iter->pvalue++);
+> +}
+> +
+> +static inline bool of_iter_u32_test(struct of_iter_u32_prop *iter)
+> +{
+> +	return iter->len > 0;
+> +}
+> +
+> +#define for_each_u32_property_value(iter, np, prop_name) \
+> +	for (of_iter_u32_init(&iter, np, prop_name); \
+> +	     of_iter_u32_test(&iter); \
+> +	     of_iter_u32_next(&iter))
+> +
+> +struct of_iter_string_prop {
+> +	const struct property *prop;
+> +	int len;
+> +	const char *value;
+> +	const char *after;
+> +};
+> +
+> +static inline void of_iter_string_init(struct of_iter_string_prop *iter,
+> +				       const struct device_node *np,
+> +				       const char *name)
+> +{
+> +	iter->prop = of_find_property(np, name, &iter->len);
+> +	if (!iter->prop) {
+> +		iter->value = NULL;
+> +		return;
+> +	}
+> +
+> +	iter->value = iter->prop->value;
+> +	if (!iter->value)
+> +		return;
+> +
+> +	iter->after = iter->value + iter->len;
+> +}
+> +
+> +static inline bool of_iter_string_test(struct of_iter_string_prop *iter)
+> +{
+> +	if (!iter->value)
+> +		return false;
+> +
+> +	return iter->value < iter->after;
+> +}
+> +
+> +static inline void of_iter_string_next(struct of_iter_string_prop *iter)
+> +{
+> +	int len;
+> +
+> +	if (!iter->value)
+> +		return;
+> +
+> +	len = strnlen(iter->value, iter->len);
+> +	iter->len -= len + 1;
+> +	iter->value += len + 1;
+> +}
+> +
+> +#define for_each_string_property_value(iter, np, prop_name) \
+> +	for (of_iter_string_init(&iter, np, prop_name); \
+> +	     of_iter_string_test(&iter); \
+> +	     of_iter_string_next(&iter))
+> +
+> +#else
+> +struct of_iter_u32_prop {
+> +	u32 value;
+> +};
+> +
+> +#define for_each_u32_property_value(iter, np, prop_name) \
+> +	while (0)
+> +
+> +struct of_iter_string_prop {
+> +	const char *value;
+> +};
+> +
+> +#define for_each_string_property_value(iter, np, prop_name) \
+> +	while (0)
+> +
+> +#endif /* CONFIG_OF */
+> +
+> +#endif /* __OF_ITER_PROP_H__ */
+> -- 
+> 1.7.0.4
+> 
 
-Yes, please - having to have explict handling in drivers to select a
-mechanism to look up stuff in the subsystem would be very sad.
-
-> # works in DT right now IIRC:
-> regulator_get(dev, supply_name)
-
-Yes, that's totally transparent to the device.
-
-> For board files, this would rely on some table which mapped from the get
-> parameters to the returned object. IIRC, most of these tables are
-> indexed by (dev_name(dev), name) and probably return the dev_name() of
-> the providing device (or whatever internally makes sense to identify the
-> device) plus some subsystem-specific data (e.g. PWM index).
-
-That's how regulator and clk do it (I think pinctrl too, and IIO also
-does this though it's in staging) - the consumer works with the struct
-device and the name of the thing it's requesting and the things doing
-the mapping (boards, SoCs, whatever) map this onto the actual device
-with a lookup table which works in terms of dev_name() for the
-requesting device.  We use dev_name() because many buses don't make a
-struct device available until very late in system startup.
-
---S6vg04ofUPzW4qJg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPaKt5AAoJEBus8iNuMP3dQmsP/R4uyuzgsfFU8Zl7ewIY7Tt6
-NQudBshHZIup8kG7+/3gmBa0vacr8O4sFUi+4RupcKDAmMIhlrjx85LRvIj2lOuT
-BzaKB+dY3FWsNIOf1V80n+QuGsTVzc7wUwNn91pdc1T//AyqcrHLfLnTpE/oWnKX
-aNjBa3L7euhFlGS+j4SBeT+hPn4WPnkuVrFvqwu1jHbBsSGMSbre5qY1vYwwzPcY
-FFXKNK9HLjJvjxAGd4gWnVDRacGgu4SYv9OnRYiuRcXBPx1dFN7lBP7tRF/d5NCP
-GLsrxmqCsSQDkPEfLIIBVQ1Ij6Cd1IrqKHxXJLXr6DhnonG2blkWNR5ZvIWbdKFI
-ovaDBnDnaie89EViMhOBCCo+GBJvUGurDOvDlabpNZjDZuC7bZNXvZT42V67/LYz
-dUXw+ctNa8raoQkSu7CC7NkKJFkPH669TLXM3xN9wHvGRT9O2QV+QI13IVfXnBYW
-IPcrbR5IHMGay1FS+CCkUH164beOUHV1ArwJ4vk7H1ZYWmuWlkpu8vAZT0mLdgDN
-n2sTbTIlq+xjbxqZCpasTWmrrWSNlqzLiDitoE0RF2GOuh1y//QrUN+SenlSqFZj
-cCRuy9CmTRPUv6BUx3lLQGC+O2QJ2jHwfw3622ao2dAiKBxPHyy9svqK/jO0VLSY
-cxQ5gFyu4ZITvDzapLeU
-=zVGz
------END PGP SIGNATURE-----
-
---S6vg04ofUPzW4qJg--
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
