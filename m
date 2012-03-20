@@ -1,61 +1,32 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 01/11] drivercore: Add driver probe deferral mechanism
-Date: Tue, 20 Mar 2012 00:12:56 +0100
-Message-ID: <4F67BD78.8070202@gmail.com>
-References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-2-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 01/10] PWM: add pwm framework support
+Date: Mon, 19 Mar 2012 19:55:27 -0600
+Message-ID: <4F67E38F.6080300@wwwdotorg.org>
+References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de> <1331740593-10807-2-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1331218291-16119-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <1331740593-10807-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/08/2012 03:51 PM, Thierry Reding wrote:
-> From: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
->
-> Allow drivers to report at probe time that they cannot get all the resources
-> required by the device, and should be retried at a later time.
->
-> This should completely solve the problem of getting devices
-> initialized in the right order.  Right now this is mostly handled by
-> mucking about with initcall ordering which is a complete hack, and
-> doesn't even remotely handle the case where device drivers are in
-> modules.  This approach completely sidesteps the issues by allowing
-> driver registration to occur in any order, and any driver can request
-> to be retried after a few more other drivers get probed.
->
-> v4: - Integrate Manjunath's addition of a separate workqueue
->      - Change -EAGAIN to -EPROBE_DEFER for drivers to trigger deferral
->      - Update comment blocks to reflect how the code really works
-> v3: - Hold off workqueue scheduling until late_initcall so that the bulk
->        of driver probes are complete before we start retrying deferred devices.
->      - Tested with simple use cases.  Still needs more testing though.
->        Using it to get rid of the gpio early_initcall madness, or to replace
->        the ASoC internal probe deferral code would be ideal.
-> v2: - added locking so it should no longer be utterly broken in that regard
->      - remove device from deferred list at device_del time.
->      - Still completely untested with any real use case, but has been
->        boot tested.
->
-> Signed-off-by: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> [Cc list stripped in order not to get on people's nerves]
-> ---
->   drivers/base/base.h    |    1 +
->   drivers/base/core.c    |    2 +
->   drivers/base/dd.c      |  138 +++++++++++++++++++++++++++++++++++++++++++++++-
->   include/linux/device.h |    5 ++
->   include/linux/errno.h  |    1 +
->   5 files changed, 146 insertions(+), 1 deletion(-)
+On 03/14/2012 09:56 AM, Thierry Reding wrote:
+> From: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> 
+> This patch adds framework support for PWM (pulse width modulation) devices.
+...
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+...
+> +/**
+> + * pwmchip_add() - register a new pwm
+> + * @chip: the pwm
+> + *
+> + * register a new pwm. pwm->pwm_id must be initialized. if pwm_id < 0 then
+> + * a dynamically assigned id will be used, otherwise the id specified,
+> + */
 
-Is this patch going to be included in v3.4 ? I can see it's in -next,
-but not sure where I could check if its really queued for v3.4.
-It would be nice to have it in v3.4, I've got already one more client
-of this deferred probe infrastructure.
-
---
-
-Thanks,
-Sylwester
+I don't see anywhere in the code that implements "if pwm_id < 0 then a
+dynamically assigned id will be used".
