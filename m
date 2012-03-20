@@ -1,154 +1,58 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 1/6] dt: add property iteration helpers
-Date: Tue, 20 Mar 2012 15:03:10 -0500
-Message-ID: <4F68E27E.3000408@gmail.com>
-References: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/3] ASoC: tegra: fix comment indentation in ALC5632 machine
+Date: Tue, 20 Mar 2012 14:55:48 -0600
+Message-ID: <1332276950-9398-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1332265479-1260-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2012 12:44 PM, Stephen Warren wrote:
-> This patch adds macros of_property_for_each_u32() and
-> of_property_for_each_string(), which iterate over an array of values
-> within a device-tree property. Usage is for example:
-> 
-> struct property *prop;
-> const __be32 *p;
-> u32 u;
-> of_property_for_each_u32(np, "propname", prop, p, u)
-> 	printk("U32 value: %x\n", u);
-> 
-> struct property *prop;
-> const char *s;
-> of_property_for_each_string(np, "propname", prop, s)
-> 	printk("String value: %s\n", s);
-> 
-> Based on work by Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> ---
-> v2: Simplified the implementation per suggestion by Rob Herring.
-> ---
->  include/linux/of_iter_prop.h |  101 ++++++++++++++++++++++++++++++++++++++++++
->  1 files changed, 101 insertions(+), 0 deletions(-)
->  create mode 100644 include/linux/of_iter_prop.h
+Fix comment indentation to clear checkpatch errors in a later patch.
 
-I don't think this makes sense to be a new header as it's use is pretty
-much the same as other property functions. I would un-inline the helper
-functions to of/base.c and move the defines to of.h.
+Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+---
+This series is for 3.5, and based on a merge of next-20120320 plus ASoC's
+for-3.5 branch, plus a couple minor patches to get recent next- compiling
+for Tegra, that don't affect the context of this series. Applying all the
+patches to the ASoC tree should be fine; I don't anticpate any conflicts
+with the likely Tegra tree for 3.5.
 
-Rob
+ sound/soc/tegra/tegra_alc5632.c |   24 ++++++++++++------------
+ 1 files changed, 12 insertions(+), 12 deletions(-)
 
-> diff --git a/include/linux/of_iter_prop.h b/include/linux/of_iter_prop.h
-> new file mode 100644
-> index 0000000..e3df23c
-> --- /dev/null
-> +++ b/include/linux/of_iter_prop.h
-> @@ -0,0 +1,101 @@
-> +/*
-> + * Copyright (c) 2011-2012 NVIDIA CORPORATION. All rights reserved.
-> + *
-> + * Iterate over properties that store arrays.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +#ifndef __OF_ITER_PROP_H__
-> +#define __OF_ITER_PROP_H__
-> +
-> +#include <linux/of.h>
-> +
-> +#ifdef CONFIG_OF
-> +static inline const __be32 *of_prop_next_u32(struct property *prop,
-> +					     const __be32 *cur, u32 *pu)
-> +{
-> +	const void *curv = cur;
-> +
-> +	if (!prop)
-> +		return NULL;
-> +
-> +	if (!cur) {
-> +		curv = prop->value;
-> +		goto out_val;
-> +	}
-> +
-> +	curv += sizeof(*cur);
-> +	if (curv >= prop->value + prop->length)
-> +		return NULL;
-> +
-> +out_val:
-> +	*pu = be32_to_cpup(curv);
-> +	return curv;
-> +}
-> +
-> +/*
-> + * struct property *prop;
-> + * const __be32 *p;
-> + * u32 u;
-> + *
-> + * of_property_for_each_u32(np, "propname", prop, p, u)
-> + *         printk("U32 value: %x\n", u);
-> + */
-> +#define of_property_for_each_u32(np, propname, prop, p, u)	\
-> +	for (prop = of_find_property(np, propname, NULL),	\
-> +		p = of_prop_next_u32(prop, NULL, &u);		\
-> +		p;						\
-> +		p = of_prop_next_u32(prop, p, &u))
-> +
-> +static inline const char *of_prop_next_string(struct property *prop,
-> +					      const char *cur)
-> +{
-> +	const void *curv = cur;
-> +
-> +	if (!prop)
-> +		return NULL;
-> +
-> +	if (!cur)
-> +		return prop->value;
-> +
-> +	curv += strlen(cur) + 1;
-> +	if (curv >= prop->value + prop->length)
-> +		return NULL;
-> +
-> +	return curv;
-> +}
-> +
-> +/*
-> + * struct property *prop;
-> + * const char *s;
-> + *
-> + * of_property_for_each_string(np, "propname", prop, s)
-> + *         printk("String value: %s\n", s);
-> + */
-> +#define of_property_for_each_string(np, propname, prop, s)	\
-> +	for (prop = of_find_property(np, propname, NULL),	\
-> +		s = of_prop_next_string(prop, NULL);		\
-> +		s;						\
-> +		s = of_prop_next_string(prop, s))
-> +
-> +#else
-> +
-> +#define of_property_for_each_u32(np, propname, prop, p, u) \
-> +	while (0)
-> +
-> +#define of_property_for_each_string(np, propname, prop, s) \
-> +	while (0)
-> +
-> +#endif /* CONFIG_OF */
-> +
-> +#endif /* __OF_ITER_PROP_H__ */
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index e45ccd8..03ae095 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -1,16 +1,16 @@
+ /*
+-* tegra_alc5632.c  --  Toshiba AC100(PAZ00) machine ASoC driver
+-*
+-* Copyright (C) 2011 The AC100 Kernel Team <ac100-oU9gvf+ajcSyy5GWsZ7R2qxOck334EZe@public.gmane.org>
+-*
+-* Authors:  Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+-*           Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
+-*           Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+-*
+-* This program is free software; you can redistribute it and/or modify
+-* it under the terms of the GNU General Public License version 2 as
+-* published by the Free Software Foundation.
+-*/
++ * tegra_alc5632.c  --  Toshiba AC100(PAZ00) machine ASoC driver
++ *
++ * Copyright (C) 2011 The AC100 Kernel Team <ac100-oU9gvf+ajcSyy5GWsZ7R2qxOck334EZe@public.gmane.org>
++ *
++ * Authors:  Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
++ *           Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
++ *           Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
+ 
+ #include <asm/mach-types.h>
+ 
+-- 
+1.7.0.4
