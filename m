@@ -1,58 +1,61 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 01/11] drivercore: Add driver probe deferral mechanism
-Date: Tue, 20 Mar 2012 14:21:58 +0000
-Message-ID: <20120320142158.CCA213E2834@localhost>
-References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-2-git-send-email-thierry.reding@avionic-design.de> <4F67BD78.8070202@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 10/10] pwm-backlight: Add rudimentary device tree support
+Date: Tue, 20 Mar 2012 09:27:04 -0600
+Message-ID: <4F68A1C8.5080608@wwwdotorg.org>
+References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de> <1331740593-10807-11-git-send-email-thierry.reding@avionic-design.de> <4F67F2AF.3020404@wwwdotorg.org> <20120320083943.GA20249@avionic-0098.adnet.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F67BD78.8070202-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20120320083943.GA20249-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 20 Mar 2012 00:12:56 +0100, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 03/08/2012 03:51 PM, Thierry Reding wrote:
-> > From: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> >
-> > Allow drivers to report at probe time that they cannot get all the resources
-> > required by the device, and should be retried at a later time.
-> >
-> > This should completely solve the problem of getting devices
-> > initialized in the right order.  Right now this is mostly handled by
-> > mucking about with initcall ordering which is a complete hack, and
-> > doesn't even remotely handle the case where device drivers are in
-> > modules.  This approach completely sidesteps the issues by allowing
-> > driver registration to occur in any order, and any driver can request
-> > to be retried after a few more other drivers get probed.
-> >
-> > v4: - Integrate Manjunath's addition of a separate workqueue
-> >      - Change -EAGAIN to -EPROBE_DEFER for drivers to trigger deferral
-> >      - Update comment blocks to reflect how the code really works
-> > v3: - Hold off workqueue scheduling until late_initcall so that the bulk
-> >        of driver probes are complete before we start retrying deferred devices.
-> >      - Tested with simple use cases.  Still needs more testing though.
-> >        Using it to get rid of the gpio early_initcall madness, or to replace
-> >        the ASoC internal probe deferral code would be ideal.
-> > v2: - added locking so it should no longer be utterly broken in that regard
-> >      - remove device from deferred list at device_del time.
-> >      - Still completely untested with any real use case, but has been
-> >        boot tested.
-> >
-> > Signed-off-by: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> > [Cc list stripped in order not to get on people's nerves]
-> > ---
-> >   drivers/base/base.h    |    1 +
-> >   drivers/base/core.c    |    2 +
-> >   drivers/base/dd.c      |  138 +++++++++++++++++++++++++++++++++++++++++++++++-
-> >   include/linux/device.h |    5 ++
-> >   include/linux/errno.h  |    1 +
-> >   5 files changed, 146 insertions(+), 1 deletion(-)
+On 03/20/2012 02:39 AM, Thierry Reding wrote:
+> * Stephen Warren wrote:
+>> On 03/14/2012 09:56 AM, Thierry Reding wrote:
+>>> This commit adds very basic support for device tree probing. Currently,
+>>> only a PWM and a list of distinct brightness levels can be specified.
+>>> Enabling or disabling backlight power via GPIOs is not yet supported.
+>>>
+>>> A pointer to the exit() callback is stored in the driver data to keep it
+>>> around until the driver is unloaded.
+...
+>>>  static int pwm_backlight_probe(struct platform_device *pdev)
+>> ...
+>>> -	pb->pwm = pwm_request(data->pwm_id, "backlight");
+>>> -	if (IS_ERR(pb->pwm)) {
+>>> -		dev_err(&pdev->dev, "unable to request PWM for backlight\n");
+>>> -		ret = PTR_ERR(pb->pwm);
+>>> -		goto err_alloc;
+>>> -	} else
+>>> -		dev_dbg(&pdev->dev, "got pwm for backlight\n");
+>>> +	if (!pb->pwm) {
+>>> +		pb->pwm = pwm_request(data->pwm_id, "backlight");
+>>> +		if (IS_ERR(pb->pwm)) {
+>>> +			dev_err(&pdev->dev, "unable to request PWM for backlight\n");
+>>> +			ret = PTR_ERR(pb->pwm);
+>>> +			goto err_alloc;
+>>> +		} else
+>>> +			dev_dbg(&pdev->dev, "got pwm for backlight\n");
+>>> +	}
+>>
+>> Hmmm. It'd be more consistent if pwm_backlight_parse_dt() called
+>> something like of_pwm_get() instead of of_pwm_request(), so that this
+>> code could always call pwm_request() on the PWM and hence operate the
+>> same irrespective of DT vs non-DT. GPIOs work that way at least.
 > 
-> Is this patch going to be included in v3.4 ? I can see it's in -next,
-> but not sure where I could check if its really queued for v3.4.
-> It would be nice to have it in v3.4, I've got already one more client
-> of this deferred probe infrastructure.
+> That's actually what the initial patch had. Unfortunately that's pretty much
+> the opposite direction of where the PWM framework is headed because it would
+> involve getting a global index to request the PWM.
 
-Greg has sent it on to Linus for merging, so yes.
+Not necessarily; get() could return a controller+index pair, which could
+then be passed to request().
 
-g.
+> I think in the long run it
+> would be much better to get rid of pwm_request() altogether and unify by
+> having the non-DT case request the PWM device on a per-chip basis.
+
+That might also work.
