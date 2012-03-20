@@ -1,45 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/8] pinctrl: core device tree mapping table parsing support
-Date: Tue, 20 Mar 2012 13:21:16 +0100
-Message-ID: <CACRpkdaxVUCqm-2k0n+Mr_dB-RdxJ3=6TDb_GObTh5TD8ssqzw@mail.gmail.com>
-References: <1331931269-12262-1-git-send-email-swarren@wwwdotorg.org>
-	<1331931269-12262-5-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1331931269-12262-5-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Linus Walleij <linus.walleij@stericsson.com>, B29396@freescale.com, s.hauer@pengutronix.de, dongas86@gmail.com, shawn.guo@linaro.org, thomas.abraham@linaro.org, tony@atomide.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 01/11] drivercore: Add driver probe deferral mechanism
+Date: Tue, 20 Mar 2012 14:21:58 +0000
+Message-ID: <20120320142158.CCA213E2834@localhost>
+References: <1331218291-16119-1-git-send-email-thierry.reding@avionic-design.de> <1331218291-16119-2-git-send-email-thierry.reding@avionic-design.de> <4F67BD78.8070202@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F67BD78.8070202-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 16, 2012 at 9:54 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Tue, 20 Mar 2012 00:12:56 +0100, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 03/08/2012 03:51 PM, Thierry Reding wrote:
+> > From: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> >
+> > Allow drivers to report at probe time that they cannot get all the resources
+> > required by the device, and should be retried at a later time.
+> >
+> > This should completely solve the problem of getting devices
+> > initialized in the right order.  Right now this is mostly handled by
+> > mucking about with initcall ordering which is a complete hack, and
+> > doesn't even remotely handle the case where device drivers are in
+> > modules.  This approach completely sidesteps the issues by allowing
+> > driver registration to occur in any order, and any driver can request
+> > to be retried after a few more other drivers get probed.
+> >
+> > v4: - Integrate Manjunath's addition of a separate workqueue
+> >      - Change -EAGAIN to -EPROBE_DEFER for drivers to trigger deferral
+> >      - Update comment blocks to reflect how the code really works
+> > v3: - Hold off workqueue scheduling until late_initcall so that the bulk
+> >        of driver probes are complete before we start retrying deferred devices.
+> >      - Tested with simple use cases.  Still needs more testing though.
+> >        Using it to get rid of the gpio early_initcall madness, or to replace
+> >        the ASoC internal probe deferral code would be ideal.
+> > v2: - added locking so it should no longer be utterly broken in that regard
+> >      - remove device from deferred list at device_del time.
+> >      - Still completely untested with any real use case, but has been
+> >        boot tested.
+> >
+> > Signed-off-by: Grant Likely<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> > [Cc list stripped in order not to get on people's nerves]
+> > ---
+> >   drivers/base/base.h    |    1 +
+> >   drivers/base/core.c    |    2 +
+> >   drivers/base/dd.c      |  138 +++++++++++++++++++++++++++++++++++++++++++++++-
+> >   include/linux/device.h |    5 ++
+> >   include/linux/errno.h  |    1 +
+> >   5 files changed, 146 insertions(+), 1 deletion(-)
+> 
+> Is this patch going to be included in v3.4 ? I can see it's in -next,
+> but not sure where I could check if its really queued for v3.4.
+> It would be nice to have it in v3.4, I've got already one more client
+> of this deferred probe infrastructure.
 
-> During pinctrl_get(), if the client device has a device tree node, look
-> for the common pinctrl properties there. If found, parse the referenced
-> device tree nodes, with the help of the pinctrl drivers, and generate
-> mapping table entries from them.
->
-> During pinctrl_put(), free any results of device tree parsing.
->
-> Signed-off-by: Stephen Warren <swarren@wwwdotorg.org>
+Greg has sent it on to Linus for merging, so yes.
 
-Can we have it in a separate file like devicetree.[c|h] and
-some stubs in the .h file for platforms that does not select
-CONFIG_OF?
-
-This:
-
-+static int register_mappings(struct pinctrl_map const *maps, unsigned num_maps,
-+                            bool dup, bool locked)
-
-Instead of making this static, move the prototype to core.h and
-use that from devicetree.c.
-
-One rationale: the day after tomorrow we will have to get configs
-from ACPI, UEFI and what not.
-
-Apart from that I like the looks of this thing!
-
-Yours,
-Linus Walleij
+g.
