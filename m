@@ -1,144 +1,171 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 1/6] dt: add property iteration helpers
-Date: Tue, 20 Mar 2012 11:44:34 -0600
-Message-ID: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, B29396-KZfg59tc24xl57MIdRCFDg@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH V2 2/6] dt: pinctrl: Document device tree binding
+Date: Tue, 20 Mar 2012 11:44:35 -0600
+Message-ID: <1332265479-1260-2-git-send-email-swarren@wwwdotorg.org>
+References: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linus.walleij@stericsson.com, B29396@freescale.com, s.hauer@pengutronix.de, dongas86@gmail.com, shawn.guo@linaro.org, thomas.abraham@linaro.org, tony@atomide.com, sjg@chromium.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds macros of_property_for_each_u32() and
-of_property_for_each_string(), which iterate over an array of values
-within a device-tree property. Usage is for example:
+The core pin controller bindings define:
+* The fact that pin controllers expose pin configurations as nodes in
+  device tree.
+* That the bindings for those pin configuration nodes is defined by the
+  individual pin controller drivers.
+* A standardized set of properties for client devices to define numbered
+  or named pin configuration states, each referring to some number of the
+  afore-mentioned pin configuration nodes.
+* That the bindings for the client devices determines the set of numbered
+  or named states that must exist.
 
-struct property *prop;
-const __be32 *p;
-u32 u;
-of_property_for_each_u32(np, "propname", prop, p, u)
-	printk("U32 value: %x\n", u);
-
-struct property *prop;
-const char *s;
-of_property_for_each_string(np, "propname", prop, s)
-	printk("String value: %s\n", s);
-
-Based on work by Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@wwwdotorg.org>
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-v2: Simplified the implementation per suggestion by Rob Herring.
+v2: Fix a couple of grammar-os per Randy Dunlap. Add example of a client
+device that references no pin configuration nodes per Dong Aisheng.
 ---
- include/linux/of_iter_prop.h |  101 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 101 insertions(+), 0 deletions(-)
- create mode 100644 include/linux/of_iter_prop.h
+ .../bindings/pinctrl/pinctrl-bindings.txt          |  128 ++++++++++++++++++++
+ 1 files changed, 128 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-diff --git a/include/linux/of_iter_prop.h b/include/linux/of_iter_prop.h
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 new file mode 100644
-index 0000000..e3df23c
+index 0000000..c95ea82
 --- /dev/null
-+++ b/include/linux/of_iter_prop.h
-@@ -0,0 +1,101 @@
-+/*
-+ * Copyright (c) 2011-2012 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Iterate over properties that store arrays.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#ifndef __OF_ITER_PROP_H__
-+#define __OF_ITER_PROP_H__
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -0,0 +1,128 @@
++== Introduction ==
 +
-+#include <linux/of.h>
++Hardware modules that control pin multiplexing or configuration parameters
++such as pull-up/down, tri-state, drive-strength etc are designated as pin
++controllers. Each pin controller must be represented as a node in device tree,
++just like any other hardware module.
 +
-+#ifdef CONFIG_OF
-+static inline const __be32 *of_prop_next_u32(struct property *prop,
-+					     const __be32 *cur, u32 *pu)
-+{
-+	const void *curv = cur;
++Hardware modules whose signals are affected by pin configuration are
++designated client devices. Again, each client device must be represented as a
++node in device tree, just like any other hardware module.
 +
-+	if (!prop)
-+		return NULL;
++For a client device to operate correctly, certain pin controllers must
++set up certain specific pin configurations. Some client devices need a
++single static pin configuration, e.g. set up during initialization. Others
++need to reconfigure pins at run-time, for example to tri-state pins when the
++device is inactive. Hence, each client device can define a set of named
++states. The number and names of those states is defined by the client device's
++own binding.
 +
-+	if (!cur) {
-+		curv = prop->value;
-+		goto out_val;
++The common pinctrl bindings defined in this file provide an infrastructure
++for client device device tree nodes to map those state names to the pin
++configuration used by those states.
++
++Note that pin controllers themselves may also be client devices of themselves.
++For example, a pin controller may set up its own "active" state when the
++driver loads. This would allow representing a board's static pin configuration
++in a single place, rather than splitting it across multiple client device
++nodes. The decision to do this or not somewhat rests with the author of
++individual board device tree files, and any requirements imposed by the
++bindings for the individual client devices in use by that board, i.e. whether
++they require certain specific named states for dynamic pin configuration.
++
++== Pinctrl client devices ==
++
++For each client device individually, every pin state is assigned an integer
++ID. These numbers start at 0, and are contiguous. For each state ID, a unique
++property exists to define the pin configuration. Each state may also be
++assigned a name. When names are used, another property exists to map from
++those names to the integer IDs.
++
++Each client device's own binding determines the set of states the must be
++defined in its device tree node, and whether to define the set of state
++IDs that must be provided, or whether to define the set of state names that
++must be provided.
++
++Required properties:
++pinctrl-0:	List of phandles, each pointing at a pin configuration
++		node. These referenced pin configuration nodes must be child
++		nodes of the pin controller that they configure. Multiple
++		entries may exist in this list so that multiple pin
++		controllers may be configured, or so that a state may be built
++		from multiple nodes for a single pin controller, each
++		contributing part of the overall configuration. See the next
++		section of this document for details of the format of these
++		pin configuration nodes.
++
++		In some cases, it may be useful to define a state, but for it
++		to be empty. This may be required when a common IP block is
++		used in an SoC either without a pin controller, or where the
++		pin controller does not affect the HW module in question. If
++		the binding for that IP block requires certain pin states to
++		exist, they must still be defined, but may be left empty.
++
++Optional properties:
++pinctrl-1:	List of phandles, each pointing at a pin configuration
++		node within a pin controller.
++...
++pinctrl-n:	List of phandles, each pointing at a pin configuration
++		node within a pin controller.
++pinctrl-names:	The list of names to assign states. List entry 0 defines the
++		name for integer state ID 0, list entry 1 for state ID 1, and
++		so on.
++
++For example:
++
++	/* For a client device requiring named states */
++	device {
++		pinctrl-names = "active", "idle";
++		pinctrl-0 = <&state_0_node_a>;
++		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
++	};
++
++	/* For the same device if using state IDs */
++	device {
++		pinctrl-0 = <&state_0_node_a>;
++		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
++	};
++
++	/*
++	 * For an IP block whose binding supports pin configuration,
++	 * but in use on an SoC that doesn't have any pin control hardware
++	 */
++	device {
++		pinctrl-names = "active", "idle";
++		pinctrl-0 = <>;
++		pinctrl-1 = <>;
++	};
++
++== Pin controller devices ==
++
++Pin controller devices should contain the pin configuration nodes that client
++devices reference.
++
++For example:
++
++	pincontroller {
++		... /* Standard DT properties for the device itself elided */
++
++		state_0_node_a {
++			...
++		};
++		state_1_node_a {
++			...
++		};
++		state_1_node_b {
++			...
++		};
 +	}
 +
-+	curv += sizeof(*cur);
-+	if (curv >= prop->value + prop->length)
-+		return NULL;
++The contents of each of those pin configuration child nodes is defined
++entirely by the binding for the individual pin controller device. There
++exists no common standard for this content.
 +
-+out_val:
-+	*pu = be32_to_cpup(curv);
-+	return curv;
-+}
-+
-+/*
-+ * struct property *prop;
-+ * const __be32 *p;
-+ * u32 u;
-+ *
-+ * of_property_for_each_u32(np, "propname", prop, p, u)
-+ *         printk("U32 value: %x\n", u);
-+ */
-+#define of_property_for_each_u32(np, propname, prop, p, u)	\
-+	for (prop = of_find_property(np, propname, NULL),	\
-+		p = of_prop_next_u32(prop, NULL, &u);		\
-+		p;						\
-+		p = of_prop_next_u32(prop, p, &u))
-+
-+static inline const char *of_prop_next_string(struct property *prop,
-+					      const char *cur)
-+{
-+	const void *curv = cur;
-+
-+	if (!prop)
-+		return NULL;
-+
-+	if (!cur)
-+		return prop->value;
-+
-+	curv += strlen(cur) + 1;
-+	if (curv >= prop->value + prop->length)
-+		return NULL;
-+
-+	return curv;
-+}
-+
-+/*
-+ * struct property *prop;
-+ * const char *s;
-+ *
-+ * of_property_for_each_string(np, "propname", prop, s)
-+ *         printk("String value: %s\n", s);
-+ */
-+#define of_property_for_each_string(np, propname, prop, s)	\
-+	for (prop = of_find_property(np, propname, NULL),	\
-+		s = of_prop_next_string(prop, NULL);		\
-+		s;						\
-+		s = of_prop_next_string(prop, s))
-+
-+#else
-+
-+#define of_property_for_each_u32(np, propname, prop, p, u) \
-+	while (0)
-+
-+#define of_property_for_each_string(np, propname, prop, s) \
-+	while (0)
-+
-+#endif /* CONFIG_OF */
-+
-+#endif /* __OF_ITER_PROP_H__ */
++The pin configuration nodes need not be direct children of the pin controller
++device; they may be grandchildren, for example. Whether this is legal, and
++whether there is any interaction between the child and intermediate parent
++nodes, is again defined entirely by the binding for the individual pin
++controller device.
 -- 
 1.7.0.4
