@@ -1,90 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2 6/6] pinctrl: tegra: Add complete device tree support
-Date: Wed, 21 Mar 2012 10:07:27 -0600
-Message-ID: <4F69FCBF.3050708@wwwdotorg.org>
-References: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org> <1332265479-1260-6-git-send-email-swarren@wwwdotorg.org> <20120321093504.GA12118@shlinux2.ap.freescale.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Include assembler.h in sleep.S to fix build
+ break
+Date: Wed, 21 Mar 2012 10:15:49 -0600
+Message-ID: <4F69FEB5.2020901@wwwdotorg.org>
+References: <1332176863-12537-1-git-send-email-swarren@wwwdotorg.org> <4F677691.8020307@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120321093504.GA12118@shlinux2.ap.freescale.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dong Aisheng <aisheng.dong@freescale.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linus.walleij@stericsson.com" <linus.walleij@stericsson.com>, Dong Aisheng-B29396 <B29396@freescale.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "dongas86@gmail.com" <dongas86@gmail.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "tony@atomide.com" <tony@atomide.com>, "sjg@chromium.org" <sjg@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F677691.8020307-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2012 03:35 AM, Dong Aisheng wrote:
-> On Wed, Mar 21, 2012 at 01:44:39AM +0800, Stephen Warren wrote:
->> Implement pinctrl_ops dt_node_to_map() and dt_free_map(). These allow
->> complete specification of the desired pinmux configuration using device
->> tree.
+On 03/19/2012 12:10 PM, Rob Herring wrote:
+> On 03/19/2012 12:07 PM, Stephen Warren wrote:
+>> Commit 6f6f6a7 "ARM: create a common IOMEM definition" moved macro
+>> IOMEM(), and requires users to include <asm/assembler.h>. Fix Tegra's
+>> sleep.S to do so.
 >>
->> Signed-off-by: Stephen Warren <swarren@wwwdotorg.org>
->> ---
->> v2: Rebase on of_property_for_each_string() API changes.
->> ---
-> Nice code and a good example to people.
+>> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 > 
-> A small suggestion below:
->> +static int add_map_configs(struct pinctrl_map **map, unsigned *num_maps,
->> +			   const char *group, unsigned long *configs,
->> +			   unsigned num_configs)
->> +{
->> +	unsigned i = *num_maps;
->> +	unsigned long *dup_configs;
->> +	int ret;
->> +
->> +	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
->> +			      GFP_KERNEL);
->> +	if (!dup_configs)
->> +		return -ENOMEM;
->> +
->> +	ret = add_map(map, num_maps);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	(*map)[i].type = PIN_MAP_TYPE_CONFIGS_GROUP;
->
-> It still does not support PIN_MAP_TYPE_CONFIGS_PIN, right?
+> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 
-Yes.
+Arnd,
 
-This is mainly due to a pinctrl core limitation. The core only supports
-muxing on groups, so even though the Tegra30 HW supports muxing per pin,
-the driver must define a group for each pin. Given that, it's simplest
-just to do all the pin config on those same groups.
+Can you pick up this fix directly into arm-soc, or do you want me to
+generate a pull request for this kind of thing too?
 
-If/when the pinctrl core supports muxing per pin, we can take advantage
-of this within the Tegra pinctrl driver without affecting the binding at
-all.
+ARM: tegra: Include assembler.h in sleep.S to fix build break
+http://patchwork.ozlabs.org/patch/147587/
 
->> +	for_each_child_of_node(np_config, np) {
->> +		ret = of_property_read_string(np, "nvidia,function", &function);
->> +		if (ret < 0)
->> +			function = NULL;
->> +
->> +		for (i = 0; i < ARRAY_SIZE(cfg_params); i++) {
->> +			ret = of_property_read_u32(np, cfg_params[i].property,
->> +						   &val);
->> +			if (!ret) {
->> +				config = TEGRA_PINCONF_PACK(
->> +						cfg_params[i].param, val);
->> +				ret = add_config(&configs, &num_configs,
->> +						 config);
->> +				if (ret < 0)
->> +					goto error;
->> +			}
->> +		}
->> +
->> +		of_property_for_each_string(np, "nvidia,pins", prop, group) {
->
-> If we calculate out the strings count and allocate corresponding size array, we may not
-> need to keep krealloc the maps and configs array size for each entry.
-> And this may be a little higher efficient.
+The same goes for:
 
-That's true. However, it'd require the code to loop once to determine
-how many properties are present and how many entries there are in the
-pin list. Then, loop again to actually construct the mapping table
-array. This is all added complexity that doesn't affect correctness. I'd
-rather get the simple code going first, and then refine it later if
-there turns out to be a performance issue.
+ARM: tegra: Fix device tree AUXDATA for USB/EHCI
+http://patchwork.ozlabs.org/patch/147616/
+
+Thanks.
