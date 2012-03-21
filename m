@@ -1,58 +1,40 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] ASoC: tegra: register 'platform' from DAIs, get rid
- of pdev
-Date: Wed, 21 Mar 2012 00:36:46 +0000
-Message-ID: <20120321003644.GB8567@opensource.wolfsonmicro.com>
-References: <1332276950-9398-1-git-send-email-swarren@wwwdotorg.org>
- <1332276950-9398-2-git-send-email-swarren@wwwdotorg.org>
+From: Dong Aisheng <aisheng.dong-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: Re: [PATCH V2 2/6] dt: pinctrl: Document device tree binding
+Date: Wed, 21 Mar 2012 13:37:39 +0800
+Message-ID: <20120321053738.GD3191@shlinux2.ap.freescale.net>
+References: <1332265479-1260-1-git-send-email-swarren@wwwdotorg.org>
+ <1332265479-1260-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1332276950-9398-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1332265479-1260-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Dong Aisheng-B29396 <B29396-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org" <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Mar 21, 2012 at 01:44:35AM +0800, Stephen Warren wrote:
+> The core pin controller bindings define:
+> * The fact that pin controllers expose pin configurations as nodes in
+>   device tree.
+> * That the bindings for those pin configuration nodes is defined by the
+>   individual pin controller drivers.
+> * A standardized set of properties for client devices to define numbered
+>   or named pin configuration states, each referring to some number of the
+>   afore-mentioned pin configuration nodes.
+> * That the bindings for the client devices determines the set of numbered
+>   or named states that must exist.
+> 
+> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Acked-by: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+> v2: Fix a couple of grammar-os per Randy Dunlap. Add example of a client
+> device that references no pin configuration nodes per Dong Aisheng.
+> ---
+Acked-by: Dong Aisheng <dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
---oC1+HKm2/end4ao3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Mar 20, 2012 at 02:55:49PM -0600, Stephen Warren wrote:
-
-> This change removes the platform_device completely. Each Tegra DAI now
-> registers the ASoC 'platform' itself. Machine drivers are adjusted for
-> the new 'platform' name.
-
-Thanks for doing this, it's an excellent cleanup!  I've applied all
-three patches for 3.5, I'll probably split them out into a separate
-branch when 3.4-rc1 comes out and I stop rebasing just in case there's
-any merging issues (though as you said when we discussed the series
-earlier it really should be fine).
-
---oC1+HKm2/end4ao3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPaSKWAAoJEBus8iNuMP3dsXMP/3wnHoODJBhDtUheRueX2Kxl
-LHGtw3fPP0AJmn1tkGOk31m7mFu/qw9LNK1WM5MPDKGNLR8pfGRHQc21QxDvDIia
-UhPTHVwmTVqSOND4M7ycqJVROq2ScLdwCUwwnL6mLEUbR91zCoFKpZ5wp3oauoGG
-ObWDxWi7BoITfHbyrvvJ1UaKrQo0Q2Jz4U4Lle74MWxbfHXd5VSfFCPcpeFpaeAf
-JMacY9L7iJHccfZF7SFhlDZh6HRNYc+tG0W1kHbRieywIGjyMu16Ne/vBKYRE3XR
-gtbzRieenHxJyjVrliyE6JzaXdRlv0D59aIAVkTchI5NLM9g0dEzRaQ3Yj27p++8
-ZPQ56eJxFbG+6xD4Utl6BicqnaJxb98h6qe1RAHex2NwOHpFwI4cPd15nrcKlWqj
-QnQ/ztZF58wZ/xuU+i7248J9Ndghrg7EOAif0dK6fkZvrE9lODQq3D9Fj5syA1K+
-U8jbzFWqRYBEggvXlL0TN9iANjZWQV3sI8TNooOMOg3PDIpBh7JbjzXPmeh3kCvR
-rOedIVIdaHHjZQQmi7d2LvvJFjq5mcFz+9oqM123oqf8orvXWqhTapyIK8hjEybu
-SmNNsRvvivvdd3WSzLJxu46QhgbrxraBpKS7Z76poW9JSNNp8sk0TUbBH4Vq5ess
-POURneu0mDh3H0fnJw1D
-=sj2u
------END PGP SIGNATURE-----
-
---oC1+HKm2/end4ao3--
+Regards
+Dong Aisheng
