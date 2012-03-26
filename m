@@ -1,58 +1,34 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Include assembler.h in sleep.S to fix build
- break
-Date: Sun, 25 Mar 2012 20:50:44 -0500
-Message-ID: <4F6FCB74.7010706@gmail.com>
-References: <1332176863-12537-1-git-send-email-swarren@wwwdotorg.org> <4F677691.8020307@gmail.com> <4F69FEB5.2020901@wwwdotorg.org> <4F6A0999.9020104@gmail.com> <4F6A0A44.3010304@wwwdotorg.org> <4F6A0D99.2000309@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V4] pinctrl: core device tree mapping table parsing support
+Date: Mon, 26 Mar 2012 09:00:12 +0200
+Message-ID: <CACRpkdb1cp+A-b0hKUVyT_03hiLNTHm1qb=8xMUn-wk=UijO3g@mail.gmail.com>
+References: <1332520186-23476-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F6A0D99.2000309-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1332520186-23476-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, B29396-KZfg59tc24xl57MIdRCFDg@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen,
+On Fri, Mar 23, 2012 at 5:29 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-On 03/21/2012 12:19 PM, Rob Herring wrote:
-> On 03/21/2012 12:05 PM, Stephen Warren wrote:
->> On 03/21/2012 11:02 AM, Rob Herring wrote:
->>> On 03/21/2012 11:15 AM, Stephen Warren wrote:
->>>> On 03/19/2012 12:10 PM, Rob Herring wrote:
->>>>> On 03/19/2012 12:07 PM, Stephen Warren wrote:
->>>>>> Commit 6f6f6a7 "ARM: create a common IOMEM definition" moved macro
->>>>>> IOMEM(), and requires users to include <asm/assembler.h>. Fix Tegra's
->>>>>> sleep.S to do so.
->>>>>>
->>>>>> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>>>
->>>>> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
->>>>
->>>> Arnd,
->>>>
->>>> Can you pick up this fix directly into arm-soc, or do you want me to
->>>> generate a pull request for this kind of thing too?
->>>>
->>>> ARM: tegra: Include assembler.h in sleep.S to fix build break
->>>> http://patchwork.ozlabs.org/patch/147587/
->>>>
->>>> The same goes for:
->>>>
->>>> ARM: tegra: Fix device tree AUXDATA for USB/EHCI
->>>> http://patchwork.ozlabs.org/patch/147616/
->>>
->>> I can take it and send the pull request. I've got a couple of other
->>> fixes as well.
->>
->> That's just for the sleep.S change, right.
-> 
-> Ah, I missed the 2nd one. So it makes less sense now for me to take it.
-> I'm still happy to, but it doesn't really save you anything.
+> During pinctrl_get(), if the client device has a device tree node, look
+> for the common pinctrl properties there. If found, parse the referenced
+> device tree nodes, with the help of the pinctrl drivers, and generate
+> mapping table entries from them.
+>
+> During pinctrl_put(), free any results of device tree parsing.
+>
+> Signed-off-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
-After our irc discussion, I pulled this in and then realized this is a
-newly added file that's not in my tree. So you should send this fix to
-Arnd/Olof.
+I really like this patch, nice clean and right to the point.
 
-Rob
+Can I have some more ACKs on it?
+
+If no response in a day or two I'll apply it anyway just because
+I like it.
+
+Thanks Stephen,
+Linus Walleij
