@@ -1,16 +1,165 @@
-From: laurarey111-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org
-Subject: Hello
-Date: Tue, 27 Mar 2012 13:30:20 GMT
-Message-ID: <4f71c0ec.15c.1230.17328__36705.4706243382$1332902091$gmane$org@econetmobile.co.zw>
-Reply-To: laurarey111-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH v5 03/16] pwm: Add debugfs interface
+Date: Wed, 28 Mar 2012 16:33:45 +0200
+Message-ID: <1332945238-14897-4-git-send-email-thierry.reding@avionic-design.de>
+References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1332945238-14897-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello xxxxx,
- How are you doing over there? My name is Laura, Please let
-me know if i got the right address so we can open
-communication, here is my email address I am waiting for
-your confirmation with care Laura...
+This commit adds a debugfs interface that can be used to list the
+current internal state of the PWM devices registered with the PWM
+framework.
+
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+Changes in v5:
+- new patch splitting off debugfs interface implementation
+- use seq_file's iterator interface for debugfs support
+- add missing forward declaration of struct seq_file
+
+ drivers/pwm/core.c  |   90 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pwm.h |    6 ++++
+ 2 files changed, 96 insertions(+)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 46dcbe1..12a643d 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -27,6 +27,8 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/device.h>
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
+ 
+ #define MAX_PWMS 1024
+ 
+@@ -334,3 +336,91 @@ void pwm_disable(struct pwm_device *pwm)
+ 		pwm->chip->ops->disable(pwm->chip, pwm);
+ }
+ EXPORT_SYMBOL_GPL(pwm_disable);
++
++#ifdef CONFIG_DEBUG_FS
++static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
++{
++	unsigned int i;
++
++	for (i = 0; i < chip->npwm; i++) {
++		struct pwm_device *pwm = &chip->pwms[i];
++
++		seq_printf(s, " pwm-%-3d (%-20.20s):", i, pwm->label);
++
++		if (test_bit(PWMF_REQUESTED, &pwm->flags))
++			seq_printf(s, " requested");
++
++		if (test_bit(PWMF_ENABLED, &pwm->flags))
++			seq_printf(s, " enabled");
++
++		seq_printf(s, "\n");
++	}
++}
++
++static void *pwm_seq_start(struct seq_file *s, loff_t *pos)
++{
++	mutex_lock(&pwm_lock);
++	s->private = "";
++
++	return seq_list_start(&pwm_chips, *pos);
++}
++
++static void *pwm_seq_next(struct seq_file *s, void *v, loff_t *pos)
++{
++	s->private = "\n";
++
++	return seq_list_next(v, &pwm_chips, pos);
++}
++
++static void pwm_seq_stop(struct seq_file *s, void *v)
++{
++	mutex_unlock(&pwm_lock);
++}
++
++static int pwm_seq_show(struct seq_file *s, void *v)
++{
++	struct pwm_chip *chip = list_entry(v, struct pwm_chip, list);
++
++	seq_printf(s, "%s%s/%s, %d PWM device%s\n", (char *)s->private,
++		   chip->dev->bus ? chip->dev->bus->name : "no-bus",
++		   dev_name(chip->dev), chip->npwm,
++		   (chip->npwm != 1) ? "s" : "");
++
++	if (chip->ops->dbg_show)
++		chip->ops->dbg_show(chip, s);
++	else
++		pwm_dbg_show(chip, s);
++
++	return 0;
++}
++
++static const struct seq_operations pwm_seq_ops = {
++	.start = pwm_seq_start,
++	.next = pwm_seq_next,
++	.stop = pwm_seq_stop,
++	.show = pwm_seq_show,
++};
++
++static int pwm_seq_open(struct inode *inode, struct file *file)
++{
++	return seq_open(file, &pwm_seq_ops);
++}
++
++static const struct file_operations pwm_debugfs_ops = {
++	.owner = THIS_MODULE,
++	.open = pwm_seq_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = seq_release,
++};
++
++static int __init pwm_debugfs_init(void)
++{
++	debugfs_create_file("pwm", S_IFREG | S_IRUGO, NULL, NULL,
++			    &pwm_debugfs_ops);
++
++	return 0;
++}
++
++subsys_initcall(pwm_debugfs_init);
++#endif /* CONFIG_DEBUG_FS */
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 5710391..047cd53 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -2,6 +2,7 @@
+ #define __LINUX_PWM_H
+ 
+ struct pwm_device;
++struct seq_file;
+ 
+ /*
+  * pwm_request - request a PWM device
+@@ -65,6 +66,7 @@ static inline unsigned int pwm_get_period(struct pwm_device *pwm)
+  * @config: configure duty cycles and period length for this PWM
+  * @enable: enable PWM output toggling
+  * @disable: disable PWM output toggling
++ * @dbg_show: optional routine to show contents in debugfs
+  * @owner: helps prevent removal of modules exporting active PWMs
+  */
+ struct pwm_ops {
+@@ -79,6 +81,10 @@ struct pwm_ops {
+ 					  struct pwm_device *pwm);
+ 	void			(*disable)(struct pwm_chip *chip,
+ 					   struct pwm_device *pwm);
++#ifdef CONFIG_DEBUG_FS
++	void			(*dbg_show)(struct pwm_chip *chip,
++					    struct seq_file *s);
++#endif
+ 	struct module		*owner;
+ };
+ 
+-- 
+1.7.9.4
