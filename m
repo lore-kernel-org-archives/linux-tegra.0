@@ -1,107 +1,157 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v5 06/16] ARM: tegra: Fix PWM clock programming
-Date: Wed, 28 Mar 2012 16:33:48 +0200
-Message-ID: <1332945238-14897-7-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v5 09/16] pwm: tegra: Add device tree support
+Date: Wed, 28 Mar 2012 16:33:51 +0200
+Message-ID: <1332945238-14897-10-git-send-email-thierry.reding@avionic-design.de>
 References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1332945238-14897-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Add auxdata to instantiate the PWFM controller from a device tree,
+include the corresponding nodes in the dtsi files for Tegra 20 and
+Tegra 30 and add binding documentation.
 
-PWM clock source registers in Tegra 2 have different clock source selection bit
-fields than other registers.  PWM clock source bits in CLK_SOURCE_PWM_0 register
-are located at bit field bit[30:28] while others are at bit field bit[31:30] in
-their respective clock source register.
-
-This patch updates the clock programming to correctly reflect that, by adding a
-flag to indicate the alternate bit field format and checking for it when
-selecting a clock source (parent clock).
-
-Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Simon Que <sque-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 ---
+Changes in v5:
+- rename tegra-pwm.txt to nvidia,tegra20-pwm.txt
+
 Changes in v4:
-  - reuse PWM flag from Tegra 30 clock programming
-  - mask out bit 31 explicitly
+- add DT binding documentation
+- allow nvidia,tegra20-pwm as fallback for nvidia,tegra30-pwm
+- export OF device table (for module auto-loading)
 
- arch/arm/mach-tegra/tegra2_clocks.c |   32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
+Changes in v3:
+- add missing include for mach/iomap.h
 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 592a4ee..64735bd 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -69,6 +69,8 @@
+ .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt |   18 ++++++++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |    6 ++++++
+ arch/arm/boot/dts/tegra30.dtsi                     |    6 ++++++
+ arch/arm/mach-tegra/board-dt-tegra20.c             |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c             |    3 +++
+ drivers/pwm/pwm-tegra.c                            |   11 +++++++++++
+ 6 files changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+
+diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+new file mode 100644
+index 0000000..bbbeedb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+@@ -0,0 +1,18 @@
++Tegra SoC PWFM controller
++
++Required properties:
++- compatible: should be one of:
++  - "nvidia,tegra20-pwm"
++  - "nvidia,tegra30-pwm"
++- reg: physical base address and length of the controller's registers
++- #pwm-cells: On Tegra the number of cells used to specify a PWM is 2. The
++  first cell specifies the per-chip index of the PWM to use and the second
++  cell is the duty cycle in nanoseconds.
++
++Example:
++
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 108e894..55b28fd 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -154,6 +154,12 @@
+ 		interrupts = < 0 91 0x04 >;
+ 	};
  
- #define PERIPH_CLK_SOURCE_MASK		(3<<30)
- #define PERIPH_CLK_SOURCE_SHIFT		30
-+#define PERIPH_CLK_SOURCE_PWM_MASK	(7<<28)
-+#define PERIPH_CLK_SOURCE_PWM_SHIFT	28
- #define PERIPH_CLK_SOURCE_ENABLE	(1<<28)
- #define PERIPH_CLK_SOURCE_DIVU71_MASK	0xFF
- #define PERIPH_CLK_SOURCE_DIVU16_MASK	0xFFFF
-@@ -908,9 +910,20 @@ static void tegra2_periph_clk_init(struct clk *c)
- 	u32 val = clk_readl(c->reg);
- 	const struct clk_mux_sel *mux = NULL;
- 	const struct clk_mux_sel *sel;
-+	u32 shift;
-+	u32 mask;
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
 +
-+	if (c->flags & MUX_PWM) {
-+		shift = PERIPH_CLK_SOURCE_PWM_SHIFT;
-+		mask = PERIPH_CLK_SOURCE_PWM_MASK;
-+	} else {
-+		shift = PERIPH_CLK_SOURCE_SHIFT;
-+		mask = PERIPH_CLK_SOURCE_MASK;
-+	}
-+
- 	if (c->flags & MUX) {
- 		for (sel = c->inputs; sel->input != NULL; sel++) {
--			if (val >> PERIPH_CLK_SOURCE_SHIFT == sel->value)
-+			if ((val & mask) >> shift == sel->value)
- 				mux = sel;
- 		}
- 		BUG_ON(!mux);
-@@ -1023,12 +1036,23 @@ static int tegra2_periph_clk_set_parent(struct clk *c, struct clk *p)
- {
- 	u32 val;
- 	const struct clk_mux_sel *sel;
-+	u32 mask, shift;
-+
- 	pr_debug("%s: %s %s\n", __func__, c->name, p->name);
-+
-+	if (c->flags & MUX_PWM) {
-+		shift = PERIPH_CLK_SOURCE_PWM_SHIFT;
-+		mask = PERIPH_CLK_SOURCE_PWM_MASK;
-+	} else {
-+		shift = PERIPH_CLK_SOURCE_SHIFT;
-+		mask = PERIPH_CLK_SOURCE_MASK;
-+	}
-+
- 	for (sel = c->inputs; sel->input != NULL; sel++) {
- 		if (sel->input == p) {
- 			val = clk_readl(c->reg);
--			val &= ~PERIPH_CLK_SOURCE_MASK;
--			val |= (sel->value) << PERIPH_CLK_SOURCE_SHIFT;
-+			val &= ~mask;
-+			val |= (sel->value) << shift;
+ 	emc@7000f400 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 62a7b39..3fa5211 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -154,6 +154,12 @@
+ 		interrupts = < 0 91 0x04 >;
+ 	};
  
- 			if (c->refcnt)
- 				clk_enable(p);
-@@ -2146,7 +2170,7 @@ static struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("i2s2",	"tegra-i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("spdif_out",	"spdif_out",		NULL,	10,	0x108,	100000000, mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("spdif_in",	"spdif_in",		NULL,	10,	0x10c,	100000000, mux_pllp_pllc_pllm,		MUX | DIV_U71),
--	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71),
-+	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71 | MUX_PWM),
- 	PERIPH_CLK("spi",	"spi",			NULL,	43,	0x114,	40000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("xio",	"xio",			NULL,	45,	0x120,	150000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
- 	PERIPH_CLK("twc",	"twc",			NULL,	16,	0x12c,	150000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71),
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
++
+ 	sdhci@78000000 {
+ 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+ 		reg = <0x78000000 0x200>;
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index e20b419..2180954 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -73,6 +73,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 		       &tegra_ehci2_device.dev.platform_data),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
+ 		       &tegra_ehci3_device.dev.platform_data),
++	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+ 	{}
+ };
+ 
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index 5f7c03e..5e1180f 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -33,6 +33,8 @@
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+ 
++#include <mach/iomap.h>
++
+ #include "board.h"
+ #include "clock.h"
+ 
+@@ -51,6 +53,7 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C500, "tegra-i2c.2", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C700, "tegra-i2c.3", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000D000, "tegra-i2c.4", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra30-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+ 	{}
+ };
+ 
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 2219be1..981f28a 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -239,9 +239,20 @@ static int __devexit tegra_pwm_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_OF
++static struct of_device_id tegra_pwm_of_match[] = {
++	{ .compatible = "nvidia,tegra20-pwm" },
++	{ .compatible = "nvidia,tegra30-pwm" },
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
++#endif
++
+ static struct platform_driver tegra_pwm_driver = {
+ 	.driver = {
+ 		.name = "tegra-pwm",
++		.of_match_table = of_match_ptr(tegra_pwm_of_match),
+ 	},
+ 	.probe = tegra_pwm_probe,
+ 	.remove = __devexit_p(tegra_pwm_remove),
 -- 
 1.7.9.4
