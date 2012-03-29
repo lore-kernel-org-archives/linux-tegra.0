@@ -1,36 +1,67 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
 Subject: Re: New Tegra branch for linux-next
-Date: Thu, 29 Mar 2012 12:23:59 -0700
-Message-ID: <CAOesGMhWc_xwzSRnTHDbfhkMXS1qd_ztH32MxNCt40U8SETvkg@mail.gmail.com>
+Date: Fri, 30 Mar 2012 08:19:26 +1100
+Message-ID: <20120330081926.82702541e47b3d188ca8054f@canb.auug.org.au>
 References: <74CDBE0F657A3D45AFBB94109FB122FF17E43DC742@HQMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Mar_2012_08_19_26_+1100_.e3SXrc3b_0gXccI"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF17E43DC742-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Stephen Rothwell (sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org)" <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Olof Johansson (olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org)" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 29, 2012 at 12:13 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Stephen,
+--Signature=_Fri__30_Mar_2012_08_19_26_+1100_.e3SXrc3b_0gXccI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Stephen,
+
+On Thu, 29 Mar 2012 12:13:10 -0700 Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrot=
+e:
 >
 > Could you replace the existing Tegra branch in linux-next:
->
+>=20
 > git://git.kernel.org/pub/scm/linux/kernel/git/olof/tegra.git for-next
->
+>=20
 > with the following:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-next
->
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for=
+-next
+
+Done.
+
 > (it currently contains v3.3-rc6 until the merge window is over)
->
-> ... since I've taken over Tegra git maintainership.
 
-Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Just confirming that it now contains a single fix patch ...
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 
-:)
+--Signature=_Fri__30_Mar_2012_08_19_26_+1100_.e3SXrc3b_0gXccI
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
--Olof
+iQIcBAEBCAAGBQJPdNHeAAoJEECxmPOUX5FEc5MQAI327kShnEM8gzA97ANljosd
+/qRyhSpKDgFAKWl9DIVmJOdxT9UKy/0ZB2NEBD2mmqZfi4wHIJAWPkjocSSfpsS0
+TQObM/C6vl6fmxQOof0HVQGPyKGm2kJNDfpMxqAu90jA1iMtT2px3lOPMy2zBA/z
+V1co27Ix3GDvtxbFU9z3IvQypfNMow4zrvLy5LAz9gGnjPiU9ZBH7ie7QhbkZWNw
+ecnNareQZE9oKlc5gP+lGpapdYbrQcMH4AIq6fPDCLZbYtAKbHbqXmkIX+Ko05bh
+zKLvzUXRLT+Rg3wgqmg4b8NGEqCMppbxNVYrKgPNhCmS3kS3XM+rEgSPgKzzjEf0
+4CbxDd+s//KFONFlaMrwT60GOs4r8OQPhNFt7uq0tOyBJn5Jf3qsKZnblb9+rPZz
+IdVnv4D3ifU9FJX6gZ0LzBAEwYOE+x9uPfjP4WGrY8s7NO8nelf6BoIaRDX2dJfV
+wvwHm2WVpzVlfTG+QmoOGhJYlpZz3f5308AbHPTQ762bhueJm9LibXEOGnGtI0x3
+gaC8DrbCRdgtgTgXhEjsxOR4yD/xeru9WegXbu2sGjTCP665wssspe7rNIKro8KG
+dUk5qH9wd4vr2j98XyvbmNdBECevLYZpWDGfyS8jKhJa2vF0bKcCnGijpbbsMGSa
+wrqdMAZN6K0DEdn40paV
+=sGCS
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Mar_2012_08_19_26_+1100_.e3SXrc3b_0gXccI--
