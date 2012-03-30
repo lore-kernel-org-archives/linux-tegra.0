@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 5/5] ARM: dt: tegra cardhu: basic audio support
-Date: Fri, 30 Mar 2012 17:11:37 -0600
-Message-ID: <1333149097-17894-6-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 4/5] ARM: dt: tegra30.dtsi: Add audio-related nodes
+Date: Fri, 30 Mar 2012 17:11:36 -0600
+Message-ID: <1333149097-17894-5-git-send-email-swarren@wwwdotorg.org>
 References: <1333149097-17894-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1333149097-17894-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -12,96 +12,52 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add WM8903 codec nodes, and top-level sound complex node for basic
-analog audio over headset jack and internal speakers.
+Add nodes for the Tegra30 AHUB and I2S controllers.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra-cardhu.dts |   61 ++++++++++++++++++++++++++++++++++++
- 1 files changed, 61 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra30.dtsi |   32 ++++++++++++++++++++++++++++++++
+ 1 files changed, 32 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-index 0a9f34a..38a2b32 100644
---- a/arch/arm/boot/dts/tegra-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -51,6 +51,15 @@
- 				nvidia,pull = <2>;
- 				nvidia,tristate = <0>;
- 			};
-+			dap2_fs_pa2 {
-+				nvidia,pins =	"dap2_fs_pa2",
-+						"dap2_sclk_pa3",
-+						"dap2_din_pa4",
-+						"dap2_dout_pa5";
-+				nvidia,function = "i2s1";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
- 		};
- 	};
- 
-@@ -92,6 +101,20 @@
- 
- 	i2c@7000d000 {
- 		clock-frequency = <100000>;
-+
-+		wm8903: wm8903@1a {
-+			compatible = "wlf,wm8903";
-+			reg = <0x1a>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <179 0x04>; /* gpio PW3 */
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			micdet-cfg = <0>;
-+			micdet-delay = <100>;
-+			gpio-cfg = <0xffffffff 0xffffffff 0 0xffffffff 0xffffffff>;
-+		};
- 	};
- 
- 	sdhci@78000000 {
-@@ -111,4 +134,42 @@
- 	sdhci@78000400 {
- 		support-8bit;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 62a7b39..9956791 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -183,4 +183,36 @@
+ 		reg = < 0x70000868 0xd0     /* Pad control registers */
+ 			0x70003000 0x3e0 >; /* Mux registers */
  	};
 +
-+	i2s@70080300 {
-+		status = "disable";
++	ahub@70080000 {
++		compatible = "nvidia,tegra30-ahub";
++		reg = <0x70080000 0x80 0x70080200 0x100>;
++		interrupts = < 0 103 0x04 >;
++		nvidia,dma-request-selector = <&apbdma 1>;
 +	};
 +
-+	i2s@70080500 {
-+		status = "disable";
++	tegra_i2s0: i2s@70080300 {
++		compatible = "nvidia,tegra30-i2s";
++		reg = <0x70080300 0x100>;
 +	};
 +
-+	i2s@70080600 {
-+		status = "disable";
++	tegra_i2s1: i2s@70080400 {
++		compatible = "nvidia,tegra30-i2s";
++		reg = <0x70080400 0x100>;
 +	};
 +
-+	i2s@70080700 {
-+		status = "disable";
++	tegra_i2s2: i2s@70080500 {
++		compatible = "nvidia,tegra30-i2s";
++		reg = <0x70080500 0x100>;
 +	};
 +
-+	sound {
-+		compatible = "nvidia,tegra30-audio-wm8903-cardhu",
-+			     "nvidia,tegra30-audio-wm8903";
-+		nvidia,model = "NVIDIA Tegra Cardhu";
++	tegra_i2s3: i2s@70080600 {
++		compatible = "nvidia,tegra30-i2s";
++		reg = <0x70080600 0x100>;
++	};
 +
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HPOUTR",
-+			"Headphone Jack", "HPOUTL",
-+			"Int Spk", "ROP",
-+			"Int Spk", "RON",
-+			"Int Spk", "LOP",
-+			"Int Spk", "LON",
-+			"Mic Jack", "MICBIAS",
-+			"IN1L", "Mic Jack";
-+
-+		nvidia,i2s-controller = <&tegra_i2s1>;
-+		nvidia,audio-codec = <&wm8903>;
-+
-+		nvidia,spkr-en-gpios = <&wm8903 2 0>;
-+		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
++	tegra_i2s4: i2s@70080700 {
++		compatible = "nvidia,tegra30-i2s";
++		reg = <0x70080700 0x100>;
 +	};
  };
 -- 
