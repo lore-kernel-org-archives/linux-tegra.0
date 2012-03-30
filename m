@@ -1,97 +1,85 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 02/11] ARM: tegra: Remove VBUS_GPIO handling from board files
-Date: Fri, 30 Mar 2012 16:59:55 -0600
-Message-ID: <1333148404-17691-3-git-send-email-swarren@wwwdotorg.org>
-References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1333148404-17691-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 00/11] ARM: tegra: GPIO and pinmux-related changes
+Date: Fri, 30 Mar 2012 16:59:53 -0600
+Message-ID: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: linux-tegra@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-Instead of having board files manually request and initialize USB VBUS
-GPIOs, fill in the USB driver's platform data and have it do it.
+This series:
+* Updates the Tegra GPIO driver to interact with pinctrl per the recent
+  gpio.txt documentation changes. Consequently, there's no need for
+  tegra_gpio_enable() any more, and no need for board-pinmux.c to do
+  anything GPIO-related.
+* Switches to the new Tegra pinctrl driver, and deletes the old one.
+* Moves pinctrl configuration to the device tree when booted using DT, so
+  that board-dt-tegra*.c no longer depend on anything in board*.[ch].
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-seaboard.c  |   17 ++++-------------
- arch/arm/mach-tegra/board-trimslice.c |   15 +++++----------
- 2 files changed, 9 insertions(+), 23 deletions(-)
+Note to self: This series relies upon DT support in pinctrl, which
+should be merged in 3.5.
 
-diff --git a/arch/arm/mach-tegra/board-seaboard.c b/arch/arm/mach-tegra/board-seaboard.c
-index 0e2957f..e6642c6 100644
---- a/arch/arm/mach-tegra/board-seaboard.c
-+++ b/arch/arm/mach-tegra/board-seaboard.c
-@@ -24,6 +24,7 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- #include <linux/gpio_keys.h>
-+#include <linux/platform_data/tegra_usb.h>
- 
- #include <sound/wm8903.h>
- 
-@@ -185,20 +186,10 @@ static struct i2c_board_info __initdata wm8903_device = {
- 
- static int seaboard_ehci_init(void)
- {
--	int gpio_status;
-+	struct tegra_ehci_platform_data *pdata;
- 
--	gpio_status = gpio_request(TEGRA_GPIO_USB1, "VBUS_USB1");
--	if (gpio_status < 0) {
--		pr_err("VBUS_USB1 request GPIO FAILED\n");
--		WARN_ON(1);
--	}
--
--	gpio_status = gpio_direction_output(TEGRA_GPIO_USB1, 1);
--	if (gpio_status < 0) {
--		pr_err("VBUS_USB1 request GPIO DIRECTION FAILED\n");
--		WARN_ON(1);
--	}
--	gpio_set_value(TEGRA_GPIO_USB1, 1);
-+	pdata = tegra_ehci1_device.dev.platform_data;
-+	pdata->vbus_gpio = TEGRA_GPIO_USB1;
- 
- 	platform_device_register(&tegra_ehci1_device);
- 	platform_device_register(&tegra_ehci3_device);
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index ba2e047..7a21cf5 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -25,6 +25,7 @@
- #include <linux/io.h>
- #include <linux/i2c.h>
- #include <linux/gpio.h>
-+#include <linux/platform_data/tegra_usb.h>
- 
- #include <asm/hardware/gic.h>
- #include <asm/mach-types.h>
-@@ -110,19 +111,13 @@ static void trimslice_i2c_init(void)
- 
- static void trimslice_usb_init(void)
- {
--	int err;
-+	struct tegra_ehci_platform_data *pdata;
- 
--	platform_device_register(&tegra_ehci3_device);
-+	pdata = tegra_ehci1_device.dev.platform_data;
-+	pdata->vbus_gpio = TRIMSLICE_GPIO_USB1_MODE;
- 
-+	platform_device_register(&tegra_ehci3_device);
- 	platform_device_register(&tegra_ehci2_device);
--
--	err = gpio_request_one(TRIMSLICE_GPIO_USB1_MODE, GPIOF_OUT_INIT_HIGH,
--			       "usb1mode");
--	if (err) {
--		pr_err("TrimSlice: failed to obtain USB1 mode gpio: %d\n", err);
--		return;
--	}
--
- 	platform_device_register(&tegra_ehci1_device);
- }
- 
--- 
-1.7.0.4
+Stephen Warren (11):
+  usb: ehci-tegra: Add vbus_gpio to platform data
+  ARM: tegra: Remove VBUS_GPIO handling from board files
+  gpio: tegra: fix register address calculations for Tegra30
+  gpio: tegra: Iterate over the correct number of banks
+  gpio: tegra: configure pins during irq_set_type
+  ARM: tegra: seaboard: Don't gpio_request() ISL29018_IRQ
+  gpio: tegra: Hide tegra_gpio_enable/disable()
+  ARM: tegra: Switch to new pinctrl driver
+  ARM: tegra: Remove pre-pinctrl pinmux driver
+  ARM: dt: tegra cardhu: add pinmux to device tree
+  ARM: dt: tegra20: add pinmux to device tree
+
+ arch/arm/boot/dts/tegra-cardhu.dts                |   44 +
+ arch/arm/boot/dts/tegra-harmony.dts               |  224 +++++
+ arch/arm/boot/dts/tegra-paz00.dts                 |  220 +++++
+ arch/arm/boot/dts/tegra-seaboard.dts              |  243 +++++
+ arch/arm/boot/dts/tegra-trimslice.dts             |  230 +++++
+ arch/arm/boot/dts/tegra-ventana.dts               |  230 +++++
+ arch/arm/mach-tegra/Makefile                      |    3 -
+ arch/arm/mach-tegra/board-dt-tegra20.c            |   31 -
+ arch/arm/mach-tegra/board-harmony-pinmux.c        |  266 +++---
+ arch/arm/mach-tegra/board-paz00-pinmux.c          |  263 +++---
+ arch/arm/mach-tegra/board-pinmux.c                |  105 +--
+ arch/arm/mach-tegra/board-pinmux.h                |   38 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c       |  346 ++++----
+ arch/arm/mach-tegra/board-seaboard.c              |   21 +-
+ arch/arm/mach-tegra/board-trimslice-pinmux.c      |  264 +++---
+ arch/arm/mach-tegra/board-trimslice.c             |   15 +-
+ arch/arm/mach-tegra/devices.c                     |    3 +
+ arch/arm/mach-tegra/include/mach/gpio-tegra.h     |    9 -
+ arch/arm/mach-tegra/include/mach/pinmux-tegra20.h |  184 ----
+ arch/arm/mach-tegra/include/mach/pinmux-tegra30.h |  320 -------
+ arch/arm/mach-tegra/include/mach/pinmux.h         |  302 -------
+ arch/arm/mach-tegra/pinmux-tegra20-tables.c       |  244 -----
+ arch/arm/mach-tegra/pinmux-tegra30-tables.c       |  376 --------
+ arch/arm/mach-tegra/pinmux.c                      |  987 ---------------------
+ arch/arm/mach-tegra/usb_phy.c                     |    1 -
+ drivers/gpio/gpio-tegra.c                         |   98 ++-
+ drivers/mmc/host/sdhci-tegra.c                    |   24 +-
+ drivers/pinctrl/pinctrl-tegra.c                   |    6 +-
+ drivers/usb/host/ehci-tegra.c                     |   13 +-
+ include/linux/platform_data/tegra_usb.h           |    1 +
+ 30 files changed, 1887 insertions(+), 3224 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra20.h
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux-tegra30.h
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinmux.h
+ delete mode 100644 arch/arm/mach-tegra/pinmux-tegra20-tables.c
+ delete mode 100644 arch/arm/mach-tegra/pinmux-tegra30-tables.c
+ delete mode 100644 arch/arm/mach-tegra/pinmux.c
