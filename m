@@ -1,44 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/5] ARM: tegra: set up audio clocks for tegra30 dt
-Date: Fri, 30 Mar 2012 17:11:34 -0600
-Message-ID: <1333149097-17894-3-git-send-email-swarren@wwwdotorg.org>
-References: <1333149097-17894-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1333149097-17894-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 0/5] ARM: tegra: audio-related changes for
+	Tegra30
+Date: Fri, 30 Mar 2012 17:11:32 -0600
+Message-ID: <1333149097-17894-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lrg@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-Set up the audio clock tree for Tegra30 in an equivalent fashion to the
-existing setup for Tegra20.
+This is the arch/arm/mach-tegra changes that match the ASoC series I just
+posted.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt-tegra30.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+This depends on the previous GPIO/pinmux work that I posted. We should be
+able to apply this to the Tegra tree independently from the ASoC driver
+series.
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index 5f7c03e..3de21c0 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -57,6 +57,15 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	/* name		parent		rate		enabled */
- 	{ "uarta",	"pll_p",	408000000,	true },
-+	{ "pll_a",	"pll_p_out1",	564480000,	true },
-+	{ "pll_a_out0",	"pll_a",	11289600,	true },
-+	{ "extern1",	"pll_a_out0",	0,		true },
-+	{ "clk_out_1",	"extern1",	0,		true },
-+	{ "i2s0",	"pll_a_out0",	11289600,	false},
-+	{ "i2s1",	"pll_a_out0",	11289600,	false},
-+	{ "i2s2",	"pll_a_out0",	11289600,	false},
-+	{ "i2s3",	"pll_a_out0",	11289600,	false},
-+	{ "i2s4",	"pll_a_out0",	11289600,	false},
- 	{ NULL,		NULL,		0,		0},
- };
- 
--- 
-1.7.0.4
+Stephen Warren (5):
+  ARM: tegra: provide clock aliases for AHUB configlink
+  ARM: tegra: set up audio clocks for tegra30 dt
+  ARM: tegra: add AUXDATA required for audio
+  ARM: dt: tegra30.dtsi: Add audio-related nodes
+  ARM: dt: tegra cardhu: basic audio support
+
+ arch/arm/boot/dts/tegra-cardhu.dts     |   61 ++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi         |   32 +++++++++++++++++
+ arch/arm/mach-tegra/board-dt-tegra30.c |   15 ++++++++
+ arch/arm/mach-tegra/tegra30_clocks.c   |    9 +++++
+ 4 files changed, 117 insertions(+), 0 deletions(-)
