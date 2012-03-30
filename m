@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 14/17] ASoC: tegra: add tegra30-ahub driver
-Date: Fri, 30 Mar 2012 17:07:29 -0600
-Message-ID: <1333148852-17806-15-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 11/17] ASoC: tegra: complete Tegra->Tegra20 renaming
+Date: Fri, 30 Mar 2012 17:07:26 -0600
+Message-ID: <1333148852-17806-12-git-send-email-swarren@wwwdotorg.org>
 References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1333148852-17806-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -12,1142 +12,2331 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The AHUB (Audio Hub) is a mux/crossbar which links all audio-related
-devices except the HDA controller on Tegra30. The devices include the
-DMA FIFOs, DAM (Digital Audio Mixers), I2S controllers, and SPDIF
-controller. Audio data may be routed between these devices in various
-combinations as required by board design/application.
-
-Includes a squashed bugfix from Nikesh Oswal <noswal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Includes squashed bugfixes from Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Rename Tegra20-specific Kconfig variables, module filenames, all internal
+symbol names, clocks, and platform devices, to reflect the fact the DAS
+and I2S drivers are for a specific HW version.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/sound/tegra30-ahub.txt     |   18 +
- sound/soc/tegra/tegra30_ahub.c                     |  593 ++++++++++++++++++++
- sound/soc/tegra/tegra30_ahub.h                     |  489 ++++++++++++++++
- 3 files changed, 1100 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/tegra30-ahub.txt
- create mode 100644 sound/soc/tegra/tegra30_ahub.c
- create mode 100644 sound/soc/tegra/tegra30_ahub.h
+ arch/arm/mach-tegra/board-dt-tegra20.c |    6 +-
+ arch/arm/mach-tegra/devices.c          |    6 +-
+ arch/arm/mach-tegra/tegra2_clocks.c    |    4 +-
+ sound/soc/tegra/Kconfig                |   26 +-
+ sound/soc/tegra/Makefile               |    6 +-
+ sound/soc/tegra/tegra20_das.c          |  134 ++++++------
+ sound/soc/tegra/tegra20_das.h          |  124 +++++-----
+ sound/soc/tegra/tegra20_i2s.c          |  204 ++++++++--------
+ sound/soc/tegra/tegra20_i2s.h          |  246 ++++++++++----------
+ sound/soc/tegra/tegra20_spdif.c        |  140 ++++++------
+ sound/soc/tegra/tegra20_spdif.h        |  398 ++++++++++++++++----------------
+ sound/soc/tegra/tegra_wm8903.c         |    4 +-
+ sound/soc/tegra/trimslice.c            |    4 +-
+ 13 files changed, 651 insertions(+), 651 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/tegra30-ahub.txt b/Documentation/devicetree/bindings/sound/tegra30-ahub.txt
-new file mode 100644
-index 0000000..06cfabe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/tegra30-ahub.txt
-@@ -0,0 +1,18 @@
-+NVIDIA Tegra30 AHUB (Audio Hub)
-+
-+Required properties:
-+- compatible : "nvidia,tegra30-ahub"
-+- reg : Should contain the register physical address and length for each of
-+  the AHUB's APBIF registers and the AHUB's own registers.
-+- interrupts : Should contain AHUB interrupt
-+- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
-+  request selector for the first APBIF channel.
-+
-+Example:
-+
-+ahub@70080000 {
-+	compatible = "nvidia,tegra30-ahub";
-+	reg = <0x70080000 0x80 0x70080200 0x100>;
-+	interrupts = < 0 103 0x04 >;
-+	nvidia,dma-request-selector = <&apbdma 1>;
-+};
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-new file mode 100644
-index 0000000..067876f
---- /dev/null
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -0,0 +1,593 @@
-+/*
-+ * tegra30_ahub.c - Tegra30 AHUB driver
-+ *
-+ * Copyright (c) 2011,2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/seq_file.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <mach/clk.h>
-+#include <mach/dma.h>
-+#include <mach/iomap.h>
-+#include <sound/soc.h>
-+#include "tegra30_ahub.h"
-+
-+#define DRV_NAME "tegra30-ahub"
-+
-+static struct tegra30_ahub *ahub;
-+int probed = -EPROBE_DEFER;
-+
-+static inline void tegra30_apbif_write(u32 reg, u32 val)
-+{
-+	__raw_writel(val, ahub->apbif_regs + reg);
-+}
-+
-+static inline u32 tegra30_apbif_read(u32 reg)
-+{
-+	return __raw_readl(ahub->apbif_regs + reg);
-+}
-+
-+static inline void tegra30_audio_write(u32 reg, u32 val)
-+{
-+	__raw_writel(val, ahub->audio_regs + reg);
-+}
-+
-+static inline u32 tegra30_audio_read(u32 reg)
-+{
-+	return __raw_readl(ahub->audio_regs + reg);
-+}
-+
-+int tegra30_ahub_is_probed(void)
-+{
-+	return probed;
-+}
-+EXPORT_SYMBOL(tegra30_ahub_is_probed);
-+
-+/*
-+ * clk_apbif isn't required for a theoretical I2S<->I2S configuration where
-+ * no PCM data is read from or sent to memory. However, that's an unlikely
-+ * use-case, and not something the rest of the driver supports right now, so
-+ * we'll just treat the two clocks as one for now.
-+ *
-+ * These functions should not be a plain ref-count. Instead, each active stream
-+ * contributes some requirement to the minimum clock rate, so starting or
-+ * stopping streams should dynamically adjust the clock as required.  However,
-+ * this is not yet implemented.
-+ */
-+void tegra30_ahub_enable_clocks(void)
-+{
-+	clk_enable(ahub->clk_d_audio);
-+	clk_enable(ahub->clk_apbif);
-+}
-+EXPORT_SYMBOL(tegra30_ahub_enable_clocks);
-+
-+void tegra30_ahub_disable_clocks(void)
-+{
-+	clk_disable(ahub->clk_apbif);
-+	clk_disable(ahub->clk_d_audio);
-+}
-+EXPORT_SYMBOL(tegra30_ahub_disable_clocks);
-+
-+#ifdef CONFIG_DEBUG_FS
-+static inline u32 tegra30_ahub_read(u32 space, u32 reg)
-+{
-+	if (space == 0)
-+		return tegra30_apbif_read(reg);
-+	else
-+		return tegra30_audio_read(reg);
-+}
-+
-+static int tegra30_ahub_show(struct seq_file *s, void *unused)
-+{
-+#define REG(space, r) { space, r, 0,          1,         #r }
-+#define ARR(space, r) { space, r, r##_STRIDE, r##_COUNT, #r }
-+	static const struct {
-+		int space;
-+		u32 offset;
-+		u32 stride;
-+		u32 count;
-+		const char *name;
-+	} regs[] = {
-+		ARR(0, TEGRA30_AHUB_CHANNEL_CTRL),
-+		ARR(0, TEGRA30_AHUB_CHANNEL_CLEAR),
-+		ARR(0, TEGRA30_AHUB_CHANNEL_STATUS),
-+		ARR(0, TEGRA30_AHUB_CIF_TX_CTRL),
-+		ARR(0, TEGRA30_AHUB_CIF_RX_CTRL),
-+		REG(0, TEGRA30_AHUB_CONFIG_LINK_CTRL),
-+		REG(0, TEGRA30_AHUB_MISC_CTRL),
-+		REG(0, TEGRA30_AHUB_APBDMA_LIVE_STATUS),
-+		REG(0, TEGRA30_AHUB_I2S_LIVE_STATUS),
-+		ARR(0, TEGRA30_AHUB_DAM_LIVE_STATUS),
-+		REG(0, TEGRA30_AHUB_SPDIF_LIVE_STATUS),
-+		REG(0, TEGRA30_AHUB_I2S_INT_MASK),
-+		REG(0, TEGRA30_AHUB_DAM_INT_MASK),
-+		REG(0, TEGRA30_AHUB_SPDIF_INT_MASK),
-+		REG(0, TEGRA30_AHUB_APBIF_INT_MASK),
-+		REG(0, TEGRA30_AHUB_I2S_INT_STATUS),
-+		REG(0, TEGRA30_AHUB_DAM_INT_STATUS),
-+		REG(0, TEGRA30_AHUB_SPDIF_INT_STATUS),
-+		REG(0, TEGRA30_AHUB_APBIF_INT_STATUS),
-+		REG(0, TEGRA30_AHUB_I2S_INT_SOURCE),
-+		REG(0, TEGRA30_AHUB_DAM_INT_SOURCE),
-+		REG(0, TEGRA30_AHUB_SPDIF_INT_SOURCE),
-+		REG(0, TEGRA30_AHUB_APBIF_INT_SOURCE),
-+		REG(0, TEGRA30_AHUB_I2S_INT_SET),
-+		REG(0, TEGRA30_AHUB_DAM_INT_SET),
-+		REG(0, TEGRA30_AHUB_SPDIF_INT_SET),
-+		REG(0, TEGRA30_AHUB_APBIF_INT_SET),
-+		ARR(1, TEGRA30_AHUB_AUDIO_RX),
-+	};
-+#undef ARRG
-+#undef REG
-+
-+	int i, j;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	for (i = 0; i < ARRAY_SIZE(regs); i++) {
-+		if (regs[i].count > 1) {
-+			for (j = 0; j < regs[i].count; j++) {
-+				u32 reg = regs[i].offset + (j * regs[i].stride);
-+				u32 val = tegra30_ahub_read(regs[i].space, reg);
-+				seq_printf(s, "%s[%d] = %08x\n", regs[i].name,
-+					   j, val);
-+			}
-+		} else {
-+			u32 val = tegra30_ahub_read(regs[i].space,
-+						  regs[i].offset);
-+			seq_printf(s, "%s = %08x\n", regs[i].name, val);
-+		}
-+	}
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+
-+static int tegra30_ahub_debug_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, tegra30_ahub_show, inode->i_private);
-+}
-+
-+static const struct file_operations tegra30_ahub_debug_fops = {
-+	.open    = tegra30_ahub_debug_open,
-+	.read    = seq_read,
-+	.llseek  = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static void tegra30_ahub_debug_add(struct tegra30_ahub *ahub)
-+{
-+	ahub->debug = debugfs_create_file(DRV_NAME, S_IRUGO,
-+					  snd_soc_debugfs_root, ahub,
-+					  &tegra30_ahub_debug_fops);
-+}
-+
-+static void tegra30_ahub_debug_remove(struct tegra30_ahub *ahub)
-+{
-+	if (ahub->debug)
-+		debugfs_remove(ahub->debug);
-+}
-+#else
-+static inline void tegra30_ahub_debug_add(struct tegra30_ahub *ahub)
-+{
-+}
-+
-+static inline void tegra30_ahub_debug_remove(struct tegra30_ahub *ahub)
-+{
-+}
-+#endif
-+
-+int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
-+				  unsigned long *fiforeg,
-+				  unsigned long *reqsel)
-+{
-+	int channel;
-+	u32 reg, val;
-+
-+	channel = find_first_zero_bit(ahub->rx_usage,
-+				      TEGRA30_AHUB_CHANNEL_CTRL_COUNT);
-+	if (channel >= TEGRA30_AHUB_CHANNEL_CTRL_COUNT)
-+		return -EBUSY;
-+
-+	__set_bit(channel, ahub->rx_usage);
-+
-+	*rxcif = TEGRA30_AHUB_RXCIF_APBIF_RX0 + channel;
-+	*fiforeg = ahub->apbif_addr + TEGRA30_AHUB_CHANNEL_RXFIFO +
-+		   (channel * TEGRA30_AHUB_CHANNEL_RXFIFO_STRIDE);
-+	*reqsel = ahub->dma_sel + channel;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK |
-+		 TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK);
-+	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT) |
-+	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN |
-+	       TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16;
-+	tegra30_apbif_write(reg, val);
-+
-+	reg = TEGRA30_AHUB_CIF_RX_CTRL +
-+	      (channel * TEGRA30_AHUB_CIF_RX_CTRL_STRIDE);
-+	val = (0 << TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT) |
-+	      (1 << TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT) |
-+	      (1 << TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_SHIFT) |
-+	      TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_16 |
-+	      TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_16 |
-+	      TEGRA30_AUDIOCIF_CTRL_DIRECTION_RX;
-+	tegra30_apbif_write(reg, val);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_allocate_rx_fifo);
-+
-+int tegra30_ahub_enable_rx_fifo(enum tegra30_ahub_rxcif rxcif)
-+{
-+	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
-+	int reg, val;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_EN;
-+	tegra30_apbif_write(reg, val);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_enable_rx_fifo);
-+
-+int tegra30_ahub_disable_rx_fifo(enum tegra30_ahub_rxcif rxcif)
-+{
-+	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
-+	int reg, val;
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val &= ~TEGRA30_AHUB_CHANNEL_CTRL_RX_EN;
-+	tegra30_apbif_write(reg, val);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_disable_rx_fifo);
-+
-+int tegra30_ahub_free_rx_fifo(enum tegra30_ahub_rxcif rxcif)
-+{
-+	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
-+
-+	__clear_bit(channel, ahub->rx_usage);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_free_rx_fifo);
-+
-+int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
-+				  unsigned long *fiforeg,
-+				  unsigned long *reqsel)
-+{
-+	int channel;
-+	u32 reg, val;
-+
-+	channel = find_first_zero_bit(ahub->tx_usage,
-+				      TEGRA30_AHUB_CHANNEL_CTRL_COUNT);
-+	if (channel >= TEGRA30_AHUB_CHANNEL_CTRL_COUNT)
-+		return -EBUSY;
-+
-+	__set_bit(channel, ahub->tx_usage);
-+
-+	*txcif = TEGRA30_AHUB_TXCIF_APBIF_TX0 + channel;
-+	*fiforeg = ahub->apbif_addr + TEGRA30_AHUB_CHANNEL_TXFIFO +
-+		   (channel * TEGRA30_AHUB_CHANNEL_TXFIFO_STRIDE);
-+	*reqsel = ahub->dma_sel + channel;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val &= ~(TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK |
-+		 TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK);
-+	val |= (7 << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT) |
-+	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN |
-+	       TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16;
-+	tegra30_apbif_write(reg, val);
-+
-+	reg = TEGRA30_AHUB_CIF_TX_CTRL +
-+	      (channel * TEGRA30_AHUB_CIF_TX_CTRL_STRIDE);
-+	val = (0 << TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT) |
-+	      (1 << TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT) |
-+	      (1 << TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_SHIFT) |
-+	      TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_16 |
-+	      TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_16 |
-+	      TEGRA30_AUDIOCIF_CTRL_DIRECTION_TX;
-+	tegra30_apbif_write(reg, val);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_allocate_tx_fifo);
-+
-+int tegra30_ahub_enable_tx_fifo(enum tegra30_ahub_txcif txcif)
-+{
-+	int channel = txcif - TEGRA30_AHUB_TXCIF_APBIF_TX0;
-+	int reg, val;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_EN;
-+	tegra30_apbif_write(reg, val);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_enable_tx_fifo);
-+
-+int tegra30_ahub_disable_tx_fifo(enum tegra30_ahub_txcif txcif)
-+{
-+	int channel = txcif - TEGRA30_AHUB_TXCIF_APBIF_TX0;
-+	int reg, val;
-+
-+	reg = TEGRA30_AHUB_CHANNEL_CTRL +
-+	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
-+	val = tegra30_apbif_read(reg);
-+	val &= ~TEGRA30_AHUB_CHANNEL_CTRL_TX_EN;
-+	tegra30_apbif_write(reg, val);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_disable_tx_fifo);
-+
-+int tegra30_ahub_free_tx_fifo(enum tegra30_ahub_txcif txcif)
-+{
-+	int channel = txcif - TEGRA30_AHUB_TXCIF_APBIF_TX0;
-+
-+	__clear_bit(channel, ahub->tx_usage);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_free_tx_fifo);
-+
-+int tegra30_ahub_set_rx_cif_source(enum tegra30_ahub_rxcif rxcif,
-+				   enum tegra30_ahub_txcif txcif)
-+{
-+	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
-+	int reg;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_AUDIO_RX +
-+	      (channel * TEGRA30_AHUB_AUDIO_RX_STRIDE);
-+	tegra30_audio_write(reg, 1 << txcif);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_set_rx_cif_source);
-+
-+int tegra30_ahub_unset_rx_cif_source(enum tegra30_ahub_rxcif rxcif)
-+{
-+	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
-+	int reg;
-+
-+	tegra30_ahub_enable_clocks();
-+
-+	reg = TEGRA30_AHUB_AUDIO_RX +
-+	      (channel * TEGRA30_AHUB_AUDIO_RX_STRIDE);
-+	tegra30_audio_write(reg, 0);
-+
-+	tegra30_ahub_disable_clocks();
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(tegra30_ahub_unset_rx_cif_source);
-+
-+static const char * const configlink_clocks[] __devinitconst = {
-+	"i2s0",
-+	"i2s1",
-+	"i2s2",
-+	"i2s3",
-+	"i2s4",
-+	"dam0",
-+	"dam1",
-+	"dam2",
-+	"spdif_in",
-+};
-+
-+static int __devinit tegra30_ahub_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk;
-+	int i;
-+	struct resource *res0, *res1, *region;
-+	u32 of_dma[2];
-+	int ret = 0;
-+
-+	if (ahub)
-+		return -ENODEV;
-+
-+	/*
-+	 * The AHUB hosts a register bus: the "configlink". For this to
-+	 * operate correctly, all devices on this bus must be out of reset.
-+	 * Ensure that here. Drivers for devices on this bus call
-+	 * tegra30_ahub_is_probed() during both their own probe, and because
-+	 * those drivers call into numerous tegra30_ahub_*() functions which
-+	 * won't operate correctly until the AHUB probe() has completed.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(configlink_clocks); i++) {
-+		clk = clk_get_sys(NULL, configlink_clocks[i]);
-+		if (IS_ERR(clk)) {
-+			dev_err(&pdev->dev, "Can't get clock %s\n",
-+				configlink_clocks[i]);
-+			ret = PTR_ERR(clk);
-+			goto err;
-+		}
-+		tegra_periph_reset_deassert(clk);
-+		clk_put(clk);
-+	}
-+
-+	ahub = devm_kzalloc(&pdev->dev, sizeof(struct tegra30_ahub),
-+			    GFP_KERNEL);
-+	if (!ahub) {
-+		dev_err(&pdev->dev, "Can't allocate tegra30_ahub\n");
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+	ahub->dev = &pdev->dev;
-+
-+	ahub->clk_d_audio = clk_get(&pdev->dev, "d_audio");
-+	if (IS_ERR(ahub->clk_d_audio)) {
-+		dev_err(&pdev->dev, "Can't retrieve ahub d_audio clock\n");
-+		ret = PTR_ERR(ahub->clk_d_audio);
-+		goto err;
-+	}
-+
-+	ahub->clk_apbif = clk_get(&pdev->dev, "apbif");
-+	if (IS_ERR(ahub->clk_apbif)) {
-+		dev_err(&pdev->dev, "Can't retrieve ahub apbif clock\n");
-+		ret = PTR_ERR(ahub->clk_apbif);
-+		goto err_clk_put_d_audio;
-+	}
-+
-+	if (of_property_read_u32_array(pdev->dev.of_node,
-+				"nvidia,dma-request-selector",
-+				of_dma, 2) < 0) {
-+		dev_err(&pdev->dev,
-+			"Missing property nvidia,dma-request-selector\n");
-+		ret = -ENODEV;
-+		goto err_clk_put_d_audio;
-+	}
-+	ahub->dma_sel = of_dma[1];
-+
-+	res0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res0) {
-+		dev_err(&pdev->dev, "No memory 0 resource\n");
-+		ret = -ENODEV;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	region = devm_request_mem_region(&pdev->dev, res0->start,
-+					 resource_size(res0), DRV_NAME);
-+	if (!region) {
-+		dev_err(&pdev->dev, "Memory region 0 already claimed\n");
-+		ret = -EBUSY;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	ahub->apbif_regs = devm_ioremap(&pdev->dev, res0->start,
-+					resource_size(res0));
-+	if (!ahub->apbif_regs) {
-+		dev_err(&pdev->dev, "ioremap 0 failed\n");
-+		ret = -ENOMEM;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	ahub->apbif_addr = res0->start;
-+
-+	res1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (!res1) {
-+		dev_err(&pdev->dev, "No memory 1 resource\n");
-+		ret = -ENODEV;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	region = devm_request_mem_region(&pdev->dev, res1->start,
-+					 resource_size(res1), DRV_NAME);
-+	if (!region) {
-+		dev_err(&pdev->dev, "Memory region 1 already claimed\n");
-+		ret = -EBUSY;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	ahub->audio_regs = devm_ioremap(&pdev->dev, res1->start,
-+					resource_size(res1));
-+	if (!ahub->audio_regs) {
-+		dev_err(&pdev->dev, "ioremap 1 failed\n");
-+		ret = -ENOMEM;
-+		goto err_clk_put_apbif;
-+	}
-+
-+	tegra30_ahub_debug_add(ahub);
-+
-+	platform_set_drvdata(pdev, ahub);
-+
-+	probed = 0;
-+	return 0;
-+
-+err_clk_put_apbif:
-+	clk_put(ahub->clk_apbif);
-+err_clk_put_d_audio:
-+	clk_put(ahub->clk_d_audio);
-+	ahub = 0;
-+err:
-+	if (ret != -EPROBE_DEFER)
-+		probed = -ENODEV;
-+	return ret;
-+}
-+
-+static int __devexit tegra30_ahub_remove(struct platform_device *pdev)
-+{
-+	if (!ahub)
-+		return -ENODEV;
-+
-+	tegra30_ahub_debug_remove(ahub);
-+
-+	clk_put(ahub->clk_apbif);
-+	clk_put(ahub->clk_d_audio);
-+
-+	ahub = 0;
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra30_ahub_of_match[] __devinitconst = {
-+	{ .compatible = "nvidia,tegra30-ahub", },
-+	{},
-+};
-+
-+static struct platform_driver tegra30_ahub_driver = {
-+	.probe = tegra30_ahub_probe,
-+	.remove = __devexit_p(tegra30_ahub_remove),
-+	.driver = {
-+		.name = DRV_NAME,
-+		.owner = THIS_MODULE,
-+		.of_match_table = tegra30_ahub_of_match,
-+	},
-+};
-+module_platform_driver(tegra30_ahub_driver);
-+
-+MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_DESCRIPTION("Tegra30 AHUB driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/tegra/tegra30_ahub.h b/sound/soc/tegra/tegra30_ahub.h
-new file mode 100644
-index 0000000..4c23cd7
---- /dev/null
-+++ b/sound/soc/tegra/tegra30_ahub.h
-@@ -0,0 +1,489 @@
-+/*
-+ * tegra30_ahub.h - Definitions for Tegra30 AHUB driver
-+ *
-+ * Copyright (c) 2011,2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __TEGRA30_AHUB_H__
-+#define __TEGRA30_AHUB_H__
-+
-+/* Fields in *_CIF_RX/TX_CTRL; used by AHUB FIFOs, and all other audio modules */
-+
-+#define TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT	28
-+#define TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_MASK_US	0xf
-+#define TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_MASK	(TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_MASK_US << TEGRA30_AUDIOCIF_CTRL_FIFO_THRESHOLD_SHIFT)
-+
-+/* Channel count minus 1 */
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT	24
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_MASK_US	7
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_MASK	(TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_MASK_US << TEGRA30_AUDIOCIF_CTRL_AUDIO_CHANNELS_SHIFT)
-+
-+/* Channel count minus 1 */
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_SHIFT	16
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_MASK_US	7
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_MASK	(TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_MASK_US << TEGRA30_AUDIOCIF_CTRL_CLIENT_CHANNELS_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_BITS_4				0
-+#define TEGRA30_AUDIOCIF_BITS_8				1
-+#define TEGRA30_AUDIOCIF_BITS_12			2
-+#define TEGRA30_AUDIOCIF_BITS_16			3
-+#define TEGRA30_AUDIOCIF_BITS_20			4
-+#define TEGRA30_AUDIOCIF_BITS_24			5
-+#define TEGRA30_AUDIOCIF_BITS_28			6
-+#define TEGRA30_AUDIOCIF_BITS_32			7
-+
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT		12
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_MASK		(7                        << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_4		(TEGRA30_AUDIOCIF_BITS_4  << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_8		(TEGRA30_AUDIOCIF_BITS_8  << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_12		(TEGRA30_AUDIOCIF_BITS_12 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_16		(TEGRA30_AUDIOCIF_BITS_16 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_20		(TEGRA30_AUDIOCIF_BITS_20 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_24		(TEGRA30_AUDIOCIF_BITS_24 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_28		(TEGRA30_AUDIOCIF_BITS_28 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_32		(TEGRA30_AUDIOCIF_BITS_32 << TEGRA30_AUDIOCIF_CTRL_AUDIO_BITS_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT		8
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_MASK		(7                        << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_4		(TEGRA30_AUDIOCIF_BITS_4  << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_8		(TEGRA30_AUDIOCIF_BITS_8  << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_12		(TEGRA30_AUDIOCIF_BITS_12 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_16		(TEGRA30_AUDIOCIF_BITS_16 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_20		(TEGRA30_AUDIOCIF_BITS_20 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_24		(TEGRA30_AUDIOCIF_BITS_24 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_28		(TEGRA30_AUDIOCIF_BITS_28 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_32		(TEGRA30_AUDIOCIF_BITS_32 << TEGRA30_AUDIOCIF_CTRL_CLIENT_BITS_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_EXPAND_ZERO			0
-+#define TEGRA30_AUDIOCIF_EXPAND_ONE			1
-+#define TEGRA30_AUDIOCIF_EXPAND_LFSR			2
-+
-+#define TEGRA30_AUDIOCIF_CTRL_EXPAND_SHIFT		6
-+#define TEGRA30_AUDIOCIF_CTRL_EXPAND_MASK		(3                            << TEGRA30_AUDIOCIF_CTRL_EXPAND_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_EXPAND_ZERO		(TEGRA30_AUDIOCIF_EXPAND_ZERO << TEGRA30_AUDIOCIF_CTRL_EXPAND_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_EXPAND_ONE		(TEGRA30_AUDIOCIF_EXPAND_ONE  << TEGRA30_AUDIOCIF_CTRL_EXPAND_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_EXPAND_LFSR		(TEGRA30_AUDIOCIF_EXPAND_LFSR << TEGRA30_AUDIOCIF_CTRL_EXPAND_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_STEREO_CONV_CH0		0
-+#define TEGRA30_AUDIOCIF_STEREO_CONV_CH1		1
-+#define TEGRA30_AUDIOCIF_STEREO_CONV_AVG		2
-+
-+#define TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_SHIFT		4
-+#define TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_MASK		(3                                << TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_CH0		(TEGRA30_AUDIOCIF_STEREO_CONV_CH0 << TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_CH1		(TEGRA30_AUDIOCIF_STEREO_CONV_CH1 << TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_AVG		(TEGRA30_AUDIOCIF_STEREO_CONV_AVG << TEGRA30_AUDIOCIF_CTRL_STEREO_CONV_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_CTRL_REPLICATE			3
-+
-+#define TEGRA30_AUDIOCIF_DIRECTION_TX			0
-+#define TEGRA30_AUDIOCIF_DIRECTION_RX			1
-+
-+#define TEGRA30_AUDIOCIF_CTRL_DIRECTION_SHIFT		2
-+#define TEGRA30_AUDIOCIF_CTRL_DIRECTION_MASK		(1                             << TEGRA30_AUDIOCIF_CTRL_DIRECTION_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_DIRECTION_TX		(TEGRA30_AUDIOCIF_DIRECTION_TX << TEGRA30_AUDIOCIF_CTRL_DIRECTION_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_DIRECTION_RX		(TEGRA30_AUDIOCIF_DIRECTION_RX << TEGRA30_AUDIOCIF_CTRL_DIRECTION_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_TRUNCATE_ROUND			0
-+#define TEGRA30_AUDIOCIF_TRUNCATE_CHOP			1
-+
-+#define TEGRA30_AUDIOCIF_CTRL_TRUNCATE_SHIFT		1
-+#define TEGRA30_AUDIOCIF_CTRL_TRUNCATE_MASK		(1                               << TEGRA30_AUDIOCIF_CTRL_TRUNCATE_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_TRUNCATE_ROUND		(TEGRA30_AUDIOCIF_TRUNCATE_ROUND << TEGRA30_AUDIOCIF_CTRL_TRUNCATE_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_TRUNCATE_CHOP		(TEGRA30_AUDIOCIF_TRUNCATE_CHOP  << TEGRA30_AUDIOCIF_CTRL_TRUNCATE_SHIFT)
-+
-+#define TEGRA30_AUDIOCIF_MONO_CONV_ZERO			0
-+#define TEGRA30_AUDIOCIF_MONO_CONV_COPY			1
-+
-+#define TEGRA30_AUDIOCIF_CTRL_MONO_CONV_SHIFT		0
-+#define TEGRA30_AUDIOCIF_CTRL_MONO_CONV_MASK		(1                               << TEGRA30_AUDIOCIF_CTRL_MONO_CONV_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_MONO_CONV_ZERO		(TEGRA30_AUDIOCIF_MONO_CONV_ZERO << TEGRA30_AUDIOCIF_CTRL_MONO_CONV_SHIFT)
-+#define TEGRA30_AUDIOCIF_CTRL_MONO_CONV_COPY		(TEGRA30_AUDIOCIF_MONO_CONV_COPY << TEGRA30_AUDIOCIF_CTRL_MONO_CONV_SHIFT)
-+
-+/* Registers within TEGRA30_AUDIO_CLUSTER_BASE */
-+
-+/* TEGRA30_AHUB_CHANNEL_CTRL */
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL			0x0
-+#define TEGRA30_AHUB_CHANNEL_CTRL_STRIDE		0x20
-+#define TEGRA30_AHUB_CHANNEL_CTRL_COUNT			4
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_EN			(1 << 31)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_EN			(1 << 30)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_LOOPBACK		(1 << 29)
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT	16
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK_US	0xff
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK	(TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_MASK_US << TEGRA30_AHUB_CHANNEL_CTRL_TX_THRESHOLD_SHIFT)
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT	8
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK_US	0xff
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK	(TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_MASK_US << TEGRA30_AHUB_CHANNEL_CTRL_RX_THRESHOLD_SHIFT)
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_EN		(1 << 6)
-+
-+#define TEGRA30_PACK_8_4				2
-+#define TEGRA30_PACK_16					3
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_SHIFT		4
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK_US	3
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK		(TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_MASK_US << TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_8_4		(TEGRA30_PACK_8_4                          << TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_16		(TEGRA30_PACK_16                           << TEGRA30_AHUB_CHANNEL_CTRL_TX_PACK_SHIFT)
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_EN		(1 << 2)
-+
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_SHIFT		0
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK_US	3
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK		(TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_MASK_US << TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_8_4		(TEGRA30_PACK_8_4                          << TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_16		(TEGRA30_PACK_16                           << TEGRA30_AHUB_CHANNEL_CTRL_RX_PACK_SHIFT)
-+
-+/* TEGRA30_AHUB_CHANNEL_CLEAR */
-+
-+#define TEGRA30_AHUB_CHANNEL_CLEAR			0x4
-+#define TEGRA30_AHUB_CHANNEL_CLEAR_STRIDE		0x20
-+#define TEGRA30_AHUB_CHANNEL_CLEAR_COUNT		4
-+#define TEGRA30_AHUB_CHANNEL_CLEAR_TX_SOFT_RESET	(1 << 31)
-+#define TEGRA30_AHUB_CHANNEL_CLEAR_RX_SOFT_RESET	(1 << 30)
-+
-+/* TEGRA30_AHUB_CHANNEL_STATUS */
-+
-+#define TEGRA30_AHUB_CHANNEL_STATUS			0x8
-+#define TEGRA30_AHUB_CHANNEL_STATUS_STRIDE		0x20
-+#define TEGRA30_AHUB_CHANNEL_STATUS_COUNT		4
-+#define TEGRA30_AHUB_CHANNEL_STATUS_TX_FREE_SHIFT	24
-+#define TEGRA30_AHUB_CHANNEL_STATUS_TX_FREE_MASK_US	0xff
-+#define TEGRA30_AHUB_CHANNEL_STATUS_TX_FREE_MASK	(TEGRA30_AHUB_CHANNEL_STATUS_TX_FREE_MASK_US << TEGRA30_AHUB_CHANNEL_STATUS_TX_FREE_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_STATUS_RX_FREE_SHIFT	16
-+#define TEGRA30_AHUB_CHANNEL_STATUS_RX_FREE_MASK_US	0xff
-+#define TEGRA30_AHUB_CHANNEL_STATUS_RX_FREE_MASK	(TEGRA30_AHUB_CHANNEL_STATUS_RX_FREE_MASK_US << TEGRA30_AHUB_CHANNEL_STATUS_RX_FREE_SHIFT)
-+#define TEGRA30_AHUB_CHANNEL_STATUS_TX_TRIG		(1 << 1)
-+#define TEGRA30_AHUB_CHANNEL_STATUS_RX_TRIG		(1 << 0)
-+
-+/* TEGRA30_AHUB_CHANNEL_TXFIFO */
-+
-+#define TEGRA30_AHUB_CHANNEL_TXFIFO			0xc
-+#define TEGRA30_AHUB_CHANNEL_TXFIFO_STRIDE		0x20
-+#define TEGRA30_AHUB_CHANNEL_TXFIFO_COUNT		4
-+
-+/* TEGRA30_AHUB_CHANNEL_RXFIFO */
-+
-+#define TEGRA30_AHUB_CHANNEL_RXFIFO			0x10
-+#define TEGRA30_AHUB_CHANNEL_RXFIFO_STRIDE		0x20
-+#define TEGRA30_AHUB_CHANNEL_RXFIFO_COUNT		4
-+
-+/* TEGRA30_AHUB_CIF_TX_CTRL */
-+
-+#define TEGRA30_AHUB_CIF_TX_CTRL			0x14
-+#define TEGRA30_AHUB_CIF_TX_CTRL_STRIDE			0x20
-+#define TEGRA30_AHUB_CIF_TX_CTRL_COUNT			4
-+/* Uses field from TEGRA30_AUDIOCIF_CTRL_* */
-+
-+/* TEGRA30_AHUB_CIF_RX_CTRL */
-+
-+#define TEGRA30_AHUB_CIF_RX_CTRL			0x18
-+#define TEGRA30_AHUB_CIF_RX_CTRL_STRIDE			0x20
-+#define TEGRA30_AHUB_CIF_RX_CTRL_COUNT			4
-+/* Uses field from TEGRA30_AUDIOCIF_CTRL_* */
-+
-+/* TEGRA30_AHUB_CONFIG_LINK_CTRL */
-+
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL					0x80
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_MASTER_FIFO_FULL_CNT_SHIFT	28
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_MASTER_FIFO_FULL_CNT_MASK_US	0xf
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_MASTER_FIFO_FULL_CNT_MASK		(TEGRA30_AHUB_CONFIG_LINK_CTRL_MASTER_FIFO_FULL_CNT_MASK_US << TEGRA30_AHUB_CONFIG_LINK_CTRL_MASTER_FIFO_FULL_CNT_SHIFT)
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_TIMEOUT_CNT_SHIFT			16
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_TIMEOUT_CNT_MASK_US		0xfff
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_TIMEOUT_CNT_MASK			(TEGRA30_AHUB_CONFIG_LINK_CTRL_TIMEOUT_CNT_MASK_US << TEGRA30_AHUB_CONFIG_LINK_CTRL_TIMEOUT_CNT_SHIFT)
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_IDLE_CNT_SHIFT			4
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_IDLE_CNT_MASK_US			0xfff
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_IDLE_CNT_MASK			(TEGRA30_AHUB_CONFIG_LINK_CTRL_IDLE_CNT_MASK_US << TEGRA30_AHUB_CONFIG_LINK_CTRL_IDLE_CNT_SHIFT)
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_CG_EN				(1 << 2)
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_CLEAR_TIMEOUT_CNTR		(1 << 1)
-+#define TEGRA30_AHUB_CONFIG_LINK_CTRL_SOFT_RESET			(1 << 0)
-+
-+/* TEGRA30_AHUB_MISC_CTRL */
-+
-+#define TEGRA30_AHUB_MISC_CTRL				0x84
-+#define TEGRA30_AHUB_MISC_CTRL_AUDIO_ACTIVE		(1 << 31)
-+#define TEGRA30_AHUB_MISC_CTRL_AUDIO_CG_EN		(1 << 8)
-+#define TEGRA30_AHUB_MISC_CTRL_AUDIO_OBS_SEL_SHIFT	0
-+#define TEGRA30_AHUB_MISC_CTRL_AUDIO_OBS_SEL_MASK	(0x1f << TEGRA30_AHUB_MISC_CTRL_AUDIO_OBS_SEL_SHIFT)
-+
-+/* TEGRA30_AHUB_APBDMA_LIVE_STATUS */
-+
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS				0x88
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_RX_CIF_FIFO_FULL	(1 << 31)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_TX_CIF_FIFO_FULL	(1 << 30)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_RX_CIF_FIFO_FULL	(1 << 29)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_TX_CIF_FIFO_FULL	(1 << 28)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_RX_CIF_FIFO_FULL	(1 << 27)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_TX_CIF_FIFO_FULL	(1 << 26)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_RX_CIF_FIFO_FULL	(1 << 25)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_TX_CIF_FIFO_FULL	(1 << 24)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_RX_CIF_FIFO_EMPTY	(1 << 23)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_TX_CIF_FIFO_EMPTY	(1 << 22)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_RX_CIF_FIFO_EMPTY	(1 << 21)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_TX_CIF_FIFO_EMPTY	(1 << 20)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_RX_CIF_FIFO_EMPTY	(1 << 19)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_TX_CIF_FIFO_EMPTY	(1 << 18)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_RX_CIF_FIFO_EMPTY	(1 << 17)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_TX_CIF_FIFO_EMPTY	(1 << 16)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_RX_DMA_FIFO_FULL	(1 << 15)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_TX_DMA_FIFO_FULL	(1 << 14)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_RX_DMA_FIFO_FULL	(1 << 13)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_TX_DMA_FIFO_FULL	(1 << 12)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_RX_DMA_FIFO_FULL	(1 << 11)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_TX_DMA_FIFO_FULL	(1 << 10)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_RX_DMA_FIFO_FULL	(1 << 9)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_TX_DMA_FIFO_FULL	(1 << 8)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_RX_DMA_FIFO_EMPTY	(1 << 7)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH3_TX_DMA_FIFO_EMPTY	(1 << 6)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_RX_DMA_FIFO_EMPTY	(1 << 5)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH2_TX_DMA_FIFO_EMPTY	(1 << 4)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_RX_DMA_FIFO_EMPTY	(1 << 3)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH1_TX_DMA_FIFO_EMPTY	(1 << 2)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_RX_DMA_FIFO_EMPTY	(1 << 1)
-+#define TEGRA30_AHUB_APBDMA_LIVE_STATUS_CH0_TX_DMA_FIFO_EMPTY	(1 << 0)
-+
-+/* TEGRA30_AHUB_I2S_LIVE_STATUS */
-+
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS				0x8c
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_RX_FIFO_FULL		(1 << 29)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_TX_FIFO_FULL		(1 << 28)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_RX_FIFO_FULL		(1 << 27)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_TX_FIFO_FULL		(1 << 26)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_RX_FIFO_FULL		(1 << 25)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_TX_FIFO_FULL		(1 << 24)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_RX_FIFO_FULL		(1 << 23)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_TX_FIFO_FULL		(1 << 22)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_RX_FIFO_FULL		(1 << 21)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_TX_FIFO_FULL		(1 << 20)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_RX_FIFO_ENABLED	(1 << 19)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_TX_FIFO_ENABLED	(1 << 18)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_RX_FIFO_ENABLED	(1 << 17)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_TX_FIFO_ENABLED	(1 << 16)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_RX_FIFO_ENABLED	(1 << 15)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_TX_FIFO_ENABLED	(1 << 14)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_RX_FIFO_ENABLED	(1 << 13)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_TX_FIFO_ENABLED	(1 << 12)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_RX_FIFO_ENABLED	(1 << 11)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_TX_FIFO_ENABLED	(1 << 10)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_RX_FIFO_EMPTY		(1 << 9)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S4_TX_FIFO_EMPTY		(1 << 8)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_RX_FIFO_EMPTY		(1 << 7)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S3_TX_FIFO_EMPTY		(1 << 6)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_RX_FIFO_EMPTY		(1 << 5)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S2_TX_FIFO_EMPTY		(1 << 4)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_RX_FIFO_EMPTY		(1 << 3)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S1_TX_FIFO_EMPTY		(1 << 2)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_RX_FIFO_EMPTY		(1 << 1)
-+#define TEGRA30_AHUB_I2S_LIVE_STATUS_I2S0_TX_FIFO_EMPTY		(1 << 0)
-+
-+/* TEGRA30_AHUB_DAM0_LIVE_STATUS */
-+
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS				0x90
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_STRIDE			0x8
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_COUNT			3
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_TX_ENABLED			(1 << 26)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX1_ENABLED		(1 << 25)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX0_ENABLED		(1 << 24)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_TXFIFO_FULL		(1 << 15)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX1FIFO_FULL		(1 << 9)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX0FIFO_FULL		(1 << 8)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_TXFIFO_EMPTY		(1 << 7)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX1FIFO_EMPTY		(1 << 1)
-+#define TEGRA30_AHUB_DAM_LIVE_STATUS_RX0FIFO_EMPTY		(1 << 0)
-+
-+/* TEGRA30_AHUB_SPDIF_LIVE_STATUS */
-+
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS				0xa8
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_TX_ENABLED		(1 << 11)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_RX_ENABLED		(1 << 10)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_TX_ENABLED		(1 << 9)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_RX_ENABLED		(1 << 8)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_TXFIFO_FULL		(1 << 7)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_RXFIFO_FULL		(1 << 6)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_TXFIFO_FULL		(1 << 5)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_RXFIFO_FULL		(1 << 4)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_TXFIFO_EMPTY	(1 << 3)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_USER_RXFIFO_EMPTY	(1 << 2)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_TXFIFO_EMPTY	(1 << 1)
-+#define TEGRA30_AHUB_SPDIF_LIVE_STATUS_DATA_RXFIFO_EMPTY	(1 << 0)
-+
-+/* TEGRA30_AHUB_I2S_INT_MASK */
-+
-+#define TEGRA30_AHUB_I2S_INT_MASK				0xb0
-+
-+/* TEGRA30_AHUB_DAM_INT_MASK */
-+
-+#define TEGRA30_AHUB_DAM_INT_MASK				0xb4
-+
-+/* TEGRA30_AHUB_SPDIF_INT_MASK */
-+
-+#define TEGRA30_AHUB_SPDIF_INT_MASK				0xbc
-+
-+/* TEGRA30_AHUB_APBIF_INT_MASK */
-+
-+#define TEGRA30_AHUB_APBIF_INT_MASK				0xc0
-+
-+/* TEGRA30_AHUB_I2S_INT_STATUS */
-+
-+#define TEGRA30_AHUB_I2S_INT_STATUS				0xc8
-+
-+/* TEGRA30_AHUB_DAM_INT_STATUS */
-+
-+#define TEGRA30_AHUB_DAM_INT_STATUS				0xcc
-+
-+/* TEGRA30_AHUB_SPDIF_INT_STATUS */
-+
-+#define TEGRA30_AHUB_SPDIF_INT_STATUS				0xd4
-+
-+/* TEGRA30_AHUB_APBIF_INT_STATUS */
-+
-+#define TEGRA30_AHUB_APBIF_INT_STATUS				0xd8
-+
-+/* TEGRA30_AHUB_I2S_INT_SOURCE */
-+
-+#define TEGRA30_AHUB_I2S_INT_SOURCE				0xe0
-+
-+/* TEGRA30_AHUB_DAM_INT_SOURCE */
-+
-+#define TEGRA30_AHUB_DAM_INT_SOURCE				0xe4
-+
-+/* TEGRA30_AHUB_SPDIF_INT_SOURCE */
-+
-+#define TEGRA30_AHUB_SPDIF_INT_SOURCE				0xec
-+
-+/* TEGRA30_AHUB_APBIF_INT_SOURCE */
-+
-+#define TEGRA30_AHUB_APBIF_INT_SOURCE				0xf0
-+
-+/* TEGRA30_AHUB_I2S_INT_SET */
-+
-+#define TEGRA30_AHUB_I2S_INT_SET				0xf8
-+
-+/* TEGRA30_AHUB_DAM_INT_SET */
-+
-+#define TEGRA30_AHUB_DAM_INT_SET				0xfc
-+
-+/* TEGRA30_AHUB_SPDIF_INT_SET */
-+
-+#define TEGRA30_AHUB_SPDIF_INT_SET				0x100
-+
-+/* TEGRA30_AHUB_APBIF_INT_SET */
-+
-+#define TEGRA30_AHUB_APBIF_INT_SET				0x104
-+
-+/* Registers within TEGRA30_AHUB_BASE */
-+
-+#define TEGRA30_AHUB_AUDIO_RX					0x0
-+#define TEGRA30_AHUB_AUDIO_RX_STRIDE				0x4
-+#define TEGRA30_AHUB_AUDIO_RX_COUNT				17
-+/* This register repeats once for each entry in enum tegra30_ahub_rxcif */
-+/* The fields in this register are 1 bit per entry in tegra30_ahub_txcif */
-+
-+/*
-+ * Terminology:
-+ * AHUB: Audio Hub; a cross-bar switch between the audio devices: DMA FIFOs,
-+ *       I2S controllers, SPDIF controllers, and DAMs.
-+ * XBAR: The core cross-bar component of the AHUB.
-+ * CIF:  Client Interface; the HW module connecting an audio device to the
-+ *       XBAR.
-+ * DAM:  Digital Audio Mixer: A HW module that mixes multiple audio streams,
-+ *       possibly including sample-rate conversion.
-+ *
-+ * Each TX CIF transmits data into the XBAR. Each RX CIF can receive audio
-+ * transmitted by a particular TX CIF.
-+ *
-+ * This driver is currently very simplistic; many HW features are not
-+ * exposed; DAMs are not supported, only 16-bit stereo audio is supported,
-+ * etc.
-+ */
-+
-+enum tegra30_ahub_txcif {
-+	TEGRA30_AHUB_TXCIF_APBIF_TX0,
-+	TEGRA30_AHUB_TXCIF_APBIF_TX1,
-+	TEGRA30_AHUB_TXCIF_APBIF_TX2,
-+	TEGRA30_AHUB_TXCIF_APBIF_TX3,
-+	TEGRA30_AHUB_TXCIF_I2S0_TX0,
-+	TEGRA30_AHUB_TXCIF_I2S1_TX0,
-+	TEGRA30_AHUB_TXCIF_I2S2_TX0,
-+	TEGRA30_AHUB_TXCIF_I2S3_TX0,
-+	TEGRA30_AHUB_TXCIF_I2S4_TX0,
-+	TEGRA30_AHUB_TXCIF_DAM0_TX0,
-+	TEGRA30_AHUB_TXCIF_DAM1_TX0,
-+	TEGRA30_AHUB_TXCIF_DAM2_TX0,
-+	TEGRA30_AHUB_TXCIF_SPDIF_TX0,
-+	TEGRA30_AHUB_TXCIF_SPDIF_TX1,
-+};
-+
-+enum tegra30_ahub_rxcif {
-+	TEGRA30_AHUB_RXCIF_APBIF_RX0,
-+	TEGRA30_AHUB_RXCIF_APBIF_RX1,
-+	TEGRA30_AHUB_RXcIF_APBIF_RX2,
-+	TEGRA30_AHUB_RXCIF_APBIF_RX3,
-+	TEGRA30_AHUB_RXCIF_I2S0_RX0,
-+	TEGRA30_AHUB_RXCIF_I2S1_RX0,
-+	TEGRA30_AHUB_RXCIF_I2S2_RX0,
-+	TEGRA30_AHUB_RXCIF_I2S3_RX0,
-+	TEGRA30_AHUB_RXCIF_I2S4_RX0,
-+	TEGRA30_AHUB_RXCIF_DAM0_RX0,
-+	TEGRA30_AHUB_RXCIF_DAM0_RX1,
-+	TEGRA30_AHUB_RXCIF_DAM1_RX0,
-+	TEGRA30_AHUB_RXCIF_DAM2_RX1,
-+	TEGRA30_AHUB_RXCIF_DAM3_RX0,
-+	TEGRA30_AHUB_RXCIF_DAM3_RX1,
-+	TEGRA30_AHUB_RXCIF_SPDIF_RX0,
-+	TEGRA30_AHUB_RXCIF_SPDIF_RX1,
-+};
-+
-+extern int tegra30_ahub_is_probed(void);
-+
-+extern void tegra30_ahub_enable_clocks(void);
-+extern void tegra30_ahub_disable_clocks(void);
-+
-+extern int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
-+					 unsigned long *fiforeg,
-+					 unsigned long *reqsel);
-+extern int tegra30_ahub_enable_rx_fifo(enum tegra30_ahub_rxcif rxcif);
-+extern int tegra30_ahub_disable_rx_fifo(enum tegra30_ahub_rxcif rxcif);
-+extern int tegra30_ahub_free_rx_fifo(enum tegra30_ahub_rxcif rxcif);
-+
-+extern int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
-+					 unsigned long *fiforeg,
-+					 unsigned long *reqsel);
-+extern int tegra30_ahub_enable_tx_fifo(enum tegra30_ahub_txcif txcif);
-+extern int tegra30_ahub_disable_tx_fifo(enum tegra30_ahub_txcif txcif);
-+extern int tegra30_ahub_free_tx_fifo(enum tegra30_ahub_txcif txcif);
-+
-+extern int tegra30_ahub_set_rx_cif_source(enum tegra30_ahub_rxcif rxcif,
-+					  enum tegra30_ahub_txcif txcif);
-+extern int tegra30_ahub_unset_rx_cif_source(enum tegra30_ahub_rxcif rxcif);
-+
-+struct tegra30_ahub {
-+	struct device *dev;
-+	struct clk *clk_d_audio;
-+	struct clk *clk_apbif;
-+	int dma_sel;
-+	resource_size_t apbif_addr;
-+	void __iomem *apbif_regs;
-+	void __iomem *audio_regs;
-+	DECLARE_BITMAP(rx_usage, TEGRA30_AHUB_CHANNEL_CTRL_COUNT);
-+	DECLARE_BITMAP(tx_usage, TEGRA30_AHUB_CHANNEL_CTRL_COUNT);
-+	struct dentry *debug;
-+};
-+
-+#endif
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 5b9d5f4..455b215 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -56,9 +56,9 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C2_BASE, "tegra-i2c.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", TEGRA_I2C3_BASE, "tegra-i2c.2", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c-dvc", TEGRA_DVC_BASE, "tegra-i2c.3", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra-i2s.0", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra-i2s.1", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra-das", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra20-i2s.0", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra20-i2s.1", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra20-das", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB_BASE, "tegra-ehci.0",
+ 		       &tegra_ehci1_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB2_BASE, "tegra-ehci.1",
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index fcd872d..58e5803 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -674,14 +674,14 @@ static struct resource i2s_resource2[] = {
+ };
+ 
+ struct platform_device tegra_i2s_device1 = {
+-	.name		= "tegra-i2s",
++	.name		= "tegra20-i2s",
+ 	.id		= 0,
+ 	.resource	= i2s_resource1,
+ 	.num_resources	= ARRAY_SIZE(i2s_resource1),
+ };
+ 
+ struct platform_device tegra_i2s_device2 = {
+-	.name		= "tegra-i2s",
++	.name		= "tegra20-i2s",
+ 	.id		= 1,
+ 	.resource	= i2s_resource2,
+ 	.num_resources	= ARRAY_SIZE(i2s_resource2),
+@@ -696,7 +696,7 @@ static struct resource tegra_das_resources[] = {
+ };
+ 
+ struct platform_device tegra_das_device = {
+-	.name		= "tegra-das",
++	.name		= "tegra20-das",
+ 	.id		= -1,
+ 	.num_resources	= ARRAY_SIZE(tegra_das_resources),
+ 	.resource	= tegra_das_resources,
+diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+index 592a4ee..cf4999b 100644
+--- a/arch/arm/mach-tegra/tegra2_clocks.c
++++ b/arch/arm/mach-tegra/tegra2_clocks.c
+@@ -2142,8 +2142,8 @@ static struct clk tegra_list_clks[] = {
+ 	PERIPH_CLK("apbdma",	"tegra-dma",		NULL,	34,	0,	108000000, mux_pclk,			0),
+ 	PERIPH_CLK("rtc",	"rtc-tegra",		NULL,	4,	0,	32768,     mux_clk_32k,			PERIPH_NO_RESET),
+ 	PERIPH_CLK("timer",	"timer",		NULL,	5,	0,	26000000,  mux_clk_m,			0),
+-	PERIPH_CLK("i2s1",	"tegra-i2s.0",		NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+-	PERIPH_CLK("i2s2",	"tegra-i2s.1",		NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
++	PERIPH_CLK("i2s1",	"tegra20-i2s.0",	NULL,	11,	0x100,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
++	PERIPH_CLK("i2s2",	"tegra20-i2s.1",	NULL,	18,	0x104,	26000000,  mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("spdif_out",	"spdif_out",		NULL,	10,	0x108,	100000000, mux_pllaout0_audio2x_pllp_clkm,	MUX | DIV_U71),
+ 	PERIPH_CLK("spdif_in",	"spdif_in",		NULL,	10,	0x10c,	100000000, mux_pllp_pllc_pllm,		MUX | DIV_U71),
+ 	PERIPH_CLK("pwm",	"pwm",			NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_clkm_clk32,	MUX | DIV_U71),
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 3aec43d..63603d0 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -4,29 +4,29 @@ config SND_SOC_TEGRA
+ 	help
+ 	  Say Y or M here if you want support for SoC audio on Tegra.
+ 
+-config SND_SOC_TEGRA_DAS
+-	tristate "Tegra Digital Audio Switch driver"
++config SND_SOC_TEGRA20_DAS
++	tristate "Tegra20 Digital Audio Switch driver"
+ 	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
+ 	help
+-	  Say Y or M if you want to add support for the Tegra DAS module.
++	  Say Y or M if you want to add support for the Tegra20 DAS module.
+ 	  You will also need to select the individual machine drivers to
+ 	  support below.
+ 
+-config SND_SOC_TEGRA_I2S
+-	tristate "Tegra I2S driver"
++config SND_SOC_TEGRA20_I2S
++	tristate "Tegra20 I2S driver"
+ 	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
+-	select SND_SOC_TEGRA_DAS
++	select SND_SOC_TEGRA20_DAS
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to the
+-	  Tegra I2S interface. You will also need to select the individual
++	  Tegra20 I2S interface. You will also need to select the individual
+ 	  machine drivers to support below.
+ 
+-config SND_SOC_TEGRA_SPDIF
+-	tristate "Tegra SPDIF driver"
++config SND_SOC_TEGRA20_SPDIF
++	tristate "Tegra20 SPDIF driver"
+ 	depends on SND_SOC_TEGRA && ARCH_TEGRA_2x_SOC
+ 	default m
+ 	help
+-	  Say Y or M if you want to add support for the SPDIF interface.
++	  Say Y or M if you want to add support for the Tegra20 SPDIF interface.
+ 	  You will also need to select the individual machine drivers to support
+ 	  below.
+ 
+@@ -41,7 +41,7 @@ config SND_SOC_TEGRA_WM8903
+ 	tristate "SoC Audio support for Tegra boards using a WM8903 codec"
+ 	depends on SND_SOC_TEGRA && I2C
+ 	depends on MACH_HAS_SND_SOC_TEGRA_WM8903
+-	select SND_SOC_TEGRA_I2S if ARCH_TEGRA_2x_SOC
++	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+ 	select SND_SOC_WM8903
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on Tegra
+@@ -51,7 +51,7 @@ config SND_SOC_TEGRA_WM8903
+ config SND_SOC_TEGRA_TRIMSLICE
+ 	tristate "SoC Audio support for TrimSlice board"
+ 	depends on SND_SOC_TEGRA && MACH_TRIMSLICE && I2C
+-	select SND_SOC_TEGRA_I2S if ARCH_TEGRA_2x_SOC
++	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+ 	select SND_SOC_TLV320AIC23
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on the
+@@ -60,7 +60,7 @@ config SND_SOC_TEGRA_TRIMSLICE
+ config SND_SOC_TEGRA_ALC5632
+ 	tristate "SoC Audio support for Tegra boards using an ALC5632 codec"
+ 	depends on SND_SOC_TEGRA && I2C
+-	select SND_SOC_TEGRA_I2S if ARCH_TEGRA_2x_SOC
++	select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+ 	select SND_SOC_ALC5632
+ 	help
+ 	  Say Y or M here if you want to add support for SoC audio on the
+diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+index 4a33884..4726b90 100644
+--- a/sound/soc/tegra/Makefile
++++ b/sound/soc/tegra/Makefile
+@@ -7,9 +7,9 @@ snd-soc-tegra20-spdif-objs := tegra20_spdif.o
+ 
+ obj-$(CONFIG_SND_SOC_TEGRA) += snd-soc-tegra-pcm.o
+ obj-$(CONFIG_SND_SOC_TEGRA) += snd-soc-tegra-utils.o
+-obj-$(CONFIG_SND_SOC_TEGRA_DAS) += snd-soc-tegra20-das.o
+-obj-$(CONFIG_SND_SOC_TEGRA_I2S) += snd-soc-tegra20-i2s.o
+-obj-$(CONFIG_SND_SOC_TEGRA_SPDIF) += snd-soc-tegra20-spdif.o
++obj-$(CONFIG_SND_SOC_TEGRA20_DAS) += snd-soc-tegra20-das.o
++obj-$(CONFIG_SND_SOC_TEGRA20_I2S) += snd-soc-tegra20-i2s.o
++obj-$(CONFIG_SND_SOC_TEGRA20_SPDIF) += snd-soc-tegra20-spdif.o
+ 
+ # Tegra machine Support
+ snd-soc-tegra-wm8903-objs := tegra_wm8903.o
+diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
+index b5e3698..486d7b2 100644
+--- a/sound/soc/tegra/tegra20_das.c
++++ b/sound/soc/tegra/tegra20_das.c
+@@ -31,21 +31,21 @@
+ #include <sound/soc.h>
+ #include "tegra20_das.h"
+ 
+-#define DRV_NAME "tegra-das"
++#define DRV_NAME "tegra20-das"
+ 
+-static struct tegra_das *das;
++static struct tegra20_das *das;
+ 
+-static inline void tegra_das_write(u32 reg, u32 val)
++static inline void tegra20_das_write(u32 reg, u32 val)
+ {
+ 	__raw_writel(val, das->regs + reg);
+ }
+ 
+-static inline u32 tegra_das_read(u32 reg)
++static inline u32 tegra20_das_read(u32 reg)
+ {
+ 	return __raw_readl(das->regs + reg);
+ }
+ 
+-int tegra_das_connect_dap_to_dac(int dap, int dac)
++int tegra20_das_connect_dap_to_dac(int dap, int dac)
+ {
+ 	u32 addr;
+ 	u32 reg;
+@@ -53,18 +53,18 @@ int tegra_das_connect_dap_to_dac(int dap, int dac)
+ 	if (!das)
+ 		return -ENODEV;
+ 
+-	addr = TEGRA_DAS_DAP_CTRL_SEL +
+-		(dap * TEGRA_DAS_DAP_CTRL_SEL_STRIDE);
+-	reg = dac << TEGRA_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P;
++	addr = TEGRA20_DAS_DAP_CTRL_SEL +
++		(dap * TEGRA20_DAS_DAP_CTRL_SEL_STRIDE);
++	reg = dac << TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P;
+ 
+-	tegra_das_write(addr, reg);
++	tegra20_das_write(addr, reg);
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(tegra_das_connect_dap_to_dac);
++EXPORT_SYMBOL_GPL(tegra20_das_connect_dap_to_dac);
+ 
+-int tegra_das_connect_dap_to_dap(int dap, int otherdap, int master,
+-					int sdata1rx, int sdata2rx)
++int tegra20_das_connect_dap_to_dap(int dap, int otherdap, int master,
++				   int sdata1rx, int sdata2rx)
+ {
+ 	u32 addr;
+ 	u32 reg;
+@@ -72,20 +72,20 @@ int tegra_das_connect_dap_to_dap(int dap, int otherdap, int master,
+ 	if (!das)
+ 		return -ENODEV;
+ 
+-	addr = TEGRA_DAS_DAP_CTRL_SEL +
+-		(dap * TEGRA_DAS_DAP_CTRL_SEL_STRIDE);
+-	reg = otherdap << TEGRA_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P |
+-		!!sdata2rx << TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_P |
+-		!!sdata1rx << TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_P |
+-		!!master << TEGRA_DAS_DAP_CTRL_SEL_DAP_MS_SEL_P;
++	addr = TEGRA20_DAS_DAP_CTRL_SEL +
++		(dap * TEGRA20_DAS_DAP_CTRL_SEL_STRIDE);
++	reg = otherdap << TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P |
++		!!sdata2rx << TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_P |
++		!!sdata1rx << TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_P |
++		!!master << TEGRA20_DAS_DAP_CTRL_SEL_DAP_MS_SEL_P;
+ 
+-	tegra_das_write(addr, reg);
++	tegra20_das_write(addr, reg);
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(tegra_das_connect_dap_to_dap);
++EXPORT_SYMBOL_GPL(tegra20_das_connect_dap_to_dap);
+ 
+-int tegra_das_connect_dac_to_dap(int dac, int dap)
++int tegra20_das_connect_dac_to_dap(int dac, int dap)
+ {
+ 	u32 addr;
+ 	u32 reg;
+@@ -93,78 +93,78 @@ int tegra_das_connect_dac_to_dap(int dac, int dap)
+ 	if (!das)
+ 		return -ENODEV;
+ 
+-	addr = TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL +
+-		(dac * TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE);
+-	reg = dap << TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_P |
+-		dap << TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_P |
+-		dap << TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_P;
++	addr = TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL +
++		(dac * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE);
++	reg = dap << TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_P |
++		dap << TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_P |
++		dap << TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_P;
+ 
+-	tegra_das_write(addr, reg);
++	tegra20_das_write(addr, reg);
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(tegra_das_connect_dac_to_dap);
++EXPORT_SYMBOL_GPL(tegra20_das_connect_dac_to_dap);
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int tegra_das_show(struct seq_file *s, void *unused)
++static int tegra20_das_show(struct seq_file *s, void *unused)
+ {
+ 	int i;
+ 	u32 addr;
+ 	u32 reg;
+ 
+-	for (i = 0; i < TEGRA_DAS_DAP_CTRL_SEL_COUNT; i++) {
+-		addr = TEGRA_DAS_DAP_CTRL_SEL +
+-			(i * TEGRA_DAS_DAP_CTRL_SEL_STRIDE);
+-		reg = tegra_das_read(addr);
+-		seq_printf(s, "TEGRA_DAS_DAP_CTRL_SEL[%d] = %08x\n", i, reg);
++	for (i = 0; i < TEGRA20_DAS_DAP_CTRL_SEL_COUNT; i++) {
++		addr = TEGRA20_DAS_DAP_CTRL_SEL +
++			(i * TEGRA20_DAS_DAP_CTRL_SEL_STRIDE);
++		reg = tegra20_das_read(addr);
++		seq_printf(s, "TEGRA20_DAS_DAP_CTRL_SEL[%d] = %08x\n", i, reg);
+ 	}
+ 
+-	for (i = 0; i < TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_COUNT; i++) {
+-		addr = TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL +
+-			(i * TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE);
+-		reg = tegra_das_read(addr);
+-		seq_printf(s, "TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL[%d] = %08x\n",
+-				 i, reg);
++	for (i = 0; i < TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_COUNT; i++) {
++		addr = TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL +
++			(i * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE);
++		reg = tegra20_das_read(addr);
++		seq_printf(s, "TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL[%d] = %08x\n",
++			   i, reg);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static int tegra_das_debug_open(struct inode *inode, struct file *file)
++static int tegra20_das_debug_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, tegra_das_show, inode->i_private);
++	return single_open(file, tegra20_das_show, inode->i_private);
+ }
+ 
+-static const struct file_operations tegra_das_debug_fops = {
+-	.open    = tegra_das_debug_open,
++static const struct file_operations tegra20_das_debug_fops = {
++	.open    = tegra20_das_debug_open,
+ 	.read    = seq_read,
+ 	.llseek  = seq_lseek,
+ 	.release = single_release,
+ };
+ 
+-static void tegra_das_debug_add(struct tegra_das *das)
++static void tegra20_das_debug_add(struct tegra20_das *das)
+ {
+ 	das->debug = debugfs_create_file(DRV_NAME, S_IRUGO,
+ 					 snd_soc_debugfs_root, das,
+-					 &tegra_das_debug_fops);
++					 &tegra20_das_debug_fops);
+ }
+ 
+-static void tegra_das_debug_remove(struct tegra_das *das)
++static void tegra20_das_debug_remove(struct tegra20_das *das)
+ {
+ 	if (das->debug)
+ 		debugfs_remove(das->debug);
+ }
+ #else
+-static inline void tegra_das_debug_add(struct tegra_das *das)
++static inline void tegra20_das_debug_add(struct tegra20_das *das)
+ {
+ }
+ 
+-static inline void tegra_das_debug_remove(struct tegra_das *das)
++static inline void tegra20_das_debug_remove(struct tegra20_das *das)
+ {
+ }
+ #endif
+ 
+-static int __devinit tegra_das_probe(struct platform_device *pdev)
++static int __devinit tegra20_das_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res, *region;
+ 	int ret = 0;
+@@ -172,9 +172,9 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
+ 	if (das)
+ 		return -ENODEV;
+ 
+-	das = devm_kzalloc(&pdev->dev, sizeof(struct tegra_das), GFP_KERNEL);
++	das = devm_kzalloc(&pdev->dev, sizeof(struct tegra20_das), GFP_KERNEL);
+ 	if (!das) {
+-		dev_err(&pdev->dev, "Can't allocate tegra_das\n");
++		dev_err(&pdev->dev, "Can't allocate tegra20_das\n");
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+@@ -202,20 +202,20 @@ static int __devinit tegra_das_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	ret = tegra_das_connect_dap_to_dac(TEGRA_DAS_DAP_ID_1,
+-					   TEGRA_DAS_DAP_SEL_DAC1);
++	ret = tegra20_das_connect_dap_to_dac(TEGRA20_DAS_DAP_ID_1,
++					     TEGRA20_DAS_DAP_SEL_DAC1);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Can't set up DAS DAP connection\n");
+ 		goto err;
+ 	}
+-	ret = tegra_das_connect_dac_to_dap(TEGRA_DAS_DAC_ID_1,
+-					   TEGRA_DAS_DAC_SEL_DAP1);
++	ret = tegra20_das_connect_dac_to_dap(TEGRA20_DAS_DAC_ID_1,
++					     TEGRA20_DAS_DAC_SEL_DAP1);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Can't set up DAS DAC connection\n");
+ 		goto err;
+ 	}
+ 
+-	tegra_das_debug_add(das);
++	tegra20_das_debug_add(das);
+ 
+ 	platform_set_drvdata(pdev, das);
+ 
+@@ -226,36 +226,36 @@ err:
+ 	return ret;
+ }
+ 
+-static int __devexit tegra_das_remove(struct platform_device *pdev)
++static int __devexit tegra20_das_remove(struct platform_device *pdev)
+ {
+ 	if (!das)
+ 		return -ENODEV;
+ 
+-	tegra_das_debug_remove(das);
++	tegra20_das_debug_remove(das);
+ 
+ 	das = NULL;
+ 
+ 	return 0;
+ }
+ 
+-static const struct of_device_id tegra_das_of_match[] __devinitconst = {
++static const struct of_device_id tegra20_das_of_match[] __devinitconst = {
+ 	{ .compatible = "nvidia,tegra20-das", },
+ 	{},
+ };
+ 
+-static struct platform_driver tegra_das_driver = {
+-	.probe = tegra_das_probe,
+-	.remove = __devexit_p(tegra_das_remove),
++static struct platform_driver tegra20_das_driver = {
++	.probe = tegra20_das_probe,
++	.remove = __devexit_p(tegra20_das_remove),
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.owner = THIS_MODULE,
+-		.of_match_table = tegra_das_of_match,
++		.of_match_table = tegra20_das_of_match,
+ 	},
+ };
+-module_platform_driver(tegra_das_driver);
++module_platform_driver(tegra20_das_driver);
+ 
+ MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("Tegra DAS driver");
++MODULE_DESCRIPTION("Tegra20 DAS driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" DRV_NAME);
+-MODULE_DEVICE_TABLE(of, tegra_das_of_match);
++MODULE_DEVICE_TABLE(of, tegra20_das_of_match);
+diff --git a/sound/soc/tegra/tegra20_das.h b/sound/soc/tegra/tegra20_das.h
+index 896bf03..ade4fe0 100644
+--- a/sound/soc/tegra/tegra20_das.h
++++ b/sound/soc/tegra/tegra20_das.h
+@@ -2,7 +2,7 @@
+  * tegra20_das.h - Definitions for Tegra20 DAS driver
+  *
+  * Author: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+- * Copyright (C) 2010 - NVIDIA, Inc.
++ * Copyright (C) 2010,2012 - NVIDIA, Inc.
+  *
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License
+@@ -20,70 +20,70 @@
+  *
+  */
+ 
+-#ifndef __TEGRA_DAS_H__
+-#define __TEGRA_DAS_H__
++#ifndef __TEGRA20_DAS_H__
++#define __TEGRA20_DAS_H__
+ 
+-/* Register TEGRA_DAS_DAP_CTRL_SEL */
+-#define TEGRA_DAS_DAP_CTRL_SEL				0x00
+-#define TEGRA_DAS_DAP_CTRL_SEL_COUNT			5
+-#define TEGRA_DAS_DAP_CTRL_SEL_STRIDE			4
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_MS_SEL_P		31
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_MS_SEL_S		1
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_P	30
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_S	1
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_P	29
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_S	1
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P		0
+-#define TEGRA_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_S		5
++/* Register TEGRA20_DAS_DAP_CTRL_SEL */
++#define TEGRA20_DAS_DAP_CTRL_SEL			0x00
++#define TEGRA20_DAS_DAP_CTRL_SEL_COUNT			5
++#define TEGRA20_DAS_DAP_CTRL_SEL_STRIDE			4
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_MS_SEL_P		31
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_MS_SEL_S		1
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_P	30
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA1_TX_RX_S	1
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_P	29
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_SDATA2_TX_RX_S	1
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_P		0
++#define TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL_S		5
+ 
+-/* Values for field TEGRA_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL */
+-#define TEGRA_DAS_DAP_SEL_DAC1	0
+-#define TEGRA_DAS_DAP_SEL_DAC2	1
+-#define TEGRA_DAS_DAP_SEL_DAC3	2
+-#define TEGRA_DAS_DAP_SEL_DAP1	16
+-#define TEGRA_DAS_DAP_SEL_DAP2	17
+-#define TEGRA_DAS_DAP_SEL_DAP3	18
+-#define TEGRA_DAS_DAP_SEL_DAP4	19
+-#define TEGRA_DAS_DAP_SEL_DAP5	20
++/* Values for field TEGRA20_DAS_DAP_CTRL_SEL_DAP_CTRL_SEL */
++#define TEGRA20_DAS_DAP_SEL_DAC1	0
++#define TEGRA20_DAS_DAP_SEL_DAC2	1
++#define TEGRA20_DAS_DAP_SEL_DAC3	2
++#define TEGRA20_DAS_DAP_SEL_DAP1	16
++#define TEGRA20_DAS_DAP_SEL_DAP2	17
++#define TEGRA20_DAS_DAP_SEL_DAP3	18
++#define TEGRA20_DAS_DAP_SEL_DAP4	19
++#define TEGRA20_DAS_DAP_SEL_DAP5	20
+ 
+-/* Register TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL */
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL			0x40
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_COUNT			3
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE			4
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_P	28
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_S	4
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_P	24
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_S	4
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_P		0
+-#define TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_S		4
++/* Register TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL */
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL			0x40
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_COUNT		3
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE		4
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_P	28
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL_S	4
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_P	24
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL_S	4
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_P	0
++#define TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL_S	4
+ 
+ /*
+  * Values for:
+- * TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL
+- * TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL
+- * TEGRA_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL
++ * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA2_SEL
++ * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_SDATA1_SEL
++ * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_DAC_CLK_SEL
+  */
+-#define TEGRA_DAS_DAC_SEL_DAP1	0
+-#define TEGRA_DAS_DAC_SEL_DAP2	1
+-#define TEGRA_DAS_DAC_SEL_DAP3	2
+-#define TEGRA_DAS_DAC_SEL_DAP4	3
+-#define TEGRA_DAS_DAC_SEL_DAP5	4
++#define TEGRA20_DAS_DAC_SEL_DAP1	0
++#define TEGRA20_DAS_DAC_SEL_DAP2	1
++#define TEGRA20_DAS_DAC_SEL_DAP3	2
++#define TEGRA20_DAS_DAC_SEL_DAP4	3
++#define TEGRA20_DAS_DAC_SEL_DAP5	4
+ 
+ /*
+  * Names/IDs of the DACs/DAPs.
+  */
+ 
+-#define TEGRA_DAS_DAP_ID_1 0
+-#define TEGRA_DAS_DAP_ID_2 1
+-#define TEGRA_DAS_DAP_ID_3 2
+-#define TEGRA_DAS_DAP_ID_4 3
+-#define TEGRA_DAS_DAP_ID_5 4
++#define TEGRA20_DAS_DAP_ID_1 0
++#define TEGRA20_DAS_DAP_ID_2 1
++#define TEGRA20_DAS_DAP_ID_3 2
++#define TEGRA20_DAS_DAP_ID_4 3
++#define TEGRA20_DAS_DAP_ID_5 4
+ 
+-#define TEGRA_DAS_DAC_ID_1 0
+-#define TEGRA_DAS_DAC_ID_2 1
+-#define TEGRA_DAS_DAC_ID_3 2
++#define TEGRA20_DAS_DAC_ID_1 0
++#define TEGRA20_DAS_DAC_ID_2 1
++#define TEGRA20_DAS_DAC_ID_3 2
+ 
+-struct tegra_das {
++struct tegra20_das {
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 	struct dentry *debug;
+@@ -107,29 +107,29 @@ struct tegra_das {
+ 
+ /*
+  * Connect a DAP to to a DAC
+- * dap_id: DAP to connect: TEGRA_DAS_DAP_ID_*
+- * dac_sel: DAC to connect to: TEGRA_DAS_DAP_SEL_DAC*
++ * dap_id: DAP to connect: TEGRA20_DAS_DAP_ID_*
++ * dac_sel: DAC to connect to: TEGRA20_DAS_DAP_SEL_DAC*
+  */
+-extern int tegra_das_connect_dap_to_dac(int dap_id, int dac_sel);
++extern int tegra20_das_connect_dap_to_dac(int dap_id, int dac_sel);
+ 
+ /*
+  * Connect a DAP to to another DAP
+- * dap_id: DAP to connect: TEGRA_DAS_DAP_ID_*
+- * other_dap_sel: DAP to connect to: TEGRA_DAS_DAP_SEL_DAP*
++ * dap_id: DAP to connect: TEGRA20_DAS_DAP_ID_*
++ * other_dap_sel: DAP to connect to: TEGRA20_DAS_DAP_SEL_DAP*
+  * master: Is this DAP the master (1) or slave (0)
+  * sdata1rx: Is this DAP's SDATA1 pin RX (1) or TX (0)
+  * sdata2rx: Is this DAP's SDATA2 pin RX (1) or TX (0)
+  */
+-extern int tegra_das_connect_dap_to_dap(int dap_id, int other_dap_sel,
+-					int master, int sdata1rx,
+-					int sdata2rx);
++extern int tegra20_das_connect_dap_to_dap(int dap_id, int other_dap_sel,
++					  int master, int sdata1rx,
++					  int sdata2rx);
+ 
+ /*
+  * Connect a DAC's input to a DAP
+  * (DAC outputs are selected by the DAP)
+- * dac_id: DAC ID to connect: TEGRA_DAS_DAC_ID_*
+- * dap_sel: DAP to receive input from: TEGRA_DAS_DAC_SEL_DAP*
++ * dac_id: DAC ID to connect: TEGRA20_DAS_DAC_ID_*
++ * dap_sel: DAP to receive input from: TEGRA20_DAS_DAC_SEL_DAP*
+  */
+-extern int tegra_das_connect_dac_to_dap(int dac_id, int dap_sel);
++extern int tegra20_das_connect_dac_to_dap(int dac_id, int dap_sel);
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
+index fa71af2..2807ca3 100644
+--- a/sound/soc/tegra/tegra20_i2s.c
++++ b/sound/soc/tegra/tegra20_i2s.c
+@@ -45,44 +45,44 @@
+ 
+ #include "tegra20_i2s.h"
+ 
+-#define DRV_NAME "tegra-i2s"
++#define DRV_NAME "tegra20-i2s"
+ 
+-static inline void tegra_i2s_write(struct tegra_i2s *i2s, u32 reg, u32 val)
++static inline void tegra20_i2s_write(struct tegra20_i2s *i2s, u32 reg, u32 val)
+ {
+ 	__raw_writel(val, i2s->regs + reg);
+ }
+ 
+-static inline u32 tegra_i2s_read(struct tegra_i2s *i2s, u32 reg)
++static inline u32 tegra20_i2s_read(struct tegra20_i2s *i2s, u32 reg)
+ {
+ 	return __raw_readl(i2s->regs + reg);
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int tegra_i2s_show(struct seq_file *s, void *unused)
++static int tegra20_i2s_show(struct seq_file *s, void *unused)
+ {
+ #define REG(r) { r, #r }
+ 	static const struct {
+ 		int offset;
+ 		const char *name;
+ 	} regs[] = {
+-		REG(TEGRA_I2S_CTRL),
+-		REG(TEGRA_I2S_STATUS),
+-		REG(TEGRA_I2S_TIMING),
+-		REG(TEGRA_I2S_FIFO_SCR),
+-		REG(TEGRA_I2S_PCM_CTRL),
+-		REG(TEGRA_I2S_NW_CTRL),
+-		REG(TEGRA_I2S_TDM_CTRL),
+-		REG(TEGRA_I2S_TDM_TX_RX_CTRL),
++		REG(TEGRA20_I2S_CTRL),
++		REG(TEGRA20_I2S_STATUS),
++		REG(TEGRA20_I2S_TIMING),
++		REG(TEGRA20_I2S_FIFO_SCR),
++		REG(TEGRA20_I2S_PCM_CTRL),
++		REG(TEGRA20_I2S_NW_CTRL),
++		REG(TEGRA20_I2S_TDM_CTRL),
++		REG(TEGRA20_I2S_TDM_TX_RX_CTRL),
+ 	};
+ #undef REG
+ 
+-	struct tegra_i2s *i2s = s->private;
++	struct tegra20_i2s *i2s = s->private;
+ 	int i;
+ 
+ 	clk_enable(i2s->clk_i2s);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(regs); i++) {
+-		u32 val = tegra_i2s_read(i2s, regs[i].offset);
++		u32 val = tegra20_i2s_read(i2s, regs[i].offset);
+ 		seq_printf(s, "%s = %08x\n", regs[i].name, val);
+ 	}
+ 
+@@ -91,44 +91,44 @@ static int tegra_i2s_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int tegra_i2s_debug_open(struct inode *inode, struct file *file)
++static int tegra20_i2s_debug_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, tegra_i2s_show, inode->i_private);
++	return single_open(file, tegra20_i2s_show, inode->i_private);
+ }
+ 
+-static const struct file_operations tegra_i2s_debug_fops = {
+-	.open    = tegra_i2s_debug_open,
++static const struct file_operations tegra20_i2s_debug_fops = {
++	.open    = tegra20_i2s_debug_open,
+ 	.read    = seq_read,
+ 	.llseek  = seq_lseek,
+ 	.release = single_release,
+ };
+ 
+-static void tegra_i2s_debug_add(struct tegra_i2s *i2s)
++static void tegra20_i2s_debug_add(struct tegra20_i2s *i2s)
+ {
+ 	i2s->debug = debugfs_create_file(i2s->dai.name, S_IRUGO,
+ 					 snd_soc_debugfs_root, i2s,
+-					 &tegra_i2s_debug_fops);
++					 &tegra20_i2s_debug_fops);
+ }
+ 
+-static void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
++static void tegra20_i2s_debug_remove(struct tegra20_i2s *i2s)
+ {
+ 	if (i2s->debug)
+ 		debugfs_remove(i2s->debug);
+ }
+ #else
+-static inline void tegra_i2s_debug_add(struct tegra_i2s *i2s, int id)
++static inline void tegra20_i2s_debug_add(struct tegra20_i2s *i2s, int id)
+ {
+ }
+ 
+-static inline void tegra_i2s_debug_remove(struct tegra_i2s *i2s)
++static inline void tegra20_i2s_debug_remove(struct tegra20_i2s *i2s)
+ {
+ }
+ #endif
+ 
+-static int tegra_i2s_set_fmt(struct snd_soc_dai *dai,
++static int tegra20_i2s_set_fmt(struct snd_soc_dai *dai,
+ 				unsigned int fmt)
+ {
+-	struct tegra_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+ 	case SND_SOC_DAIFMT_NB_NF:
+@@ -137,10 +137,10 @@ static int tegra_i2s_set_fmt(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	i2s->reg_ctrl &= ~TEGRA_I2S_CTRL_MASTER_ENABLE;
++	i2s->reg_ctrl &= ~TEGRA20_I2S_CTRL_MASTER_ENABLE;
+ 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_MASTER_ENABLE;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_MASTER_ENABLE;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFM:
+ 		break;
+@@ -148,28 +148,28 @@ static int tegra_i2s_set_fmt(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	i2s->reg_ctrl &= ~(TEGRA_I2S_CTRL_BIT_FORMAT_MASK |
+-				TEGRA_I2S_CTRL_LRCK_MASK);
++	i2s->reg_ctrl &= ~(TEGRA20_I2S_CTRL_BIT_FORMAT_MASK |
++			   TEGRA20_I2S_CTRL_LRCK_MASK);
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_DSP_A:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_FORMAT_DSP;
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_LRCK_L_LOW;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_FORMAT_DSP;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_LRCK_L_LOW;
+ 		break;
+ 	case SND_SOC_DAIFMT_DSP_B:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_FORMAT_DSP;
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_LRCK_R_LOW;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_FORMAT_DSP;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_LRCK_R_LOW;
+ 		break;
+ 	case SND_SOC_DAIFMT_I2S:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_FORMAT_I2S;
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_LRCK_L_LOW;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_FORMAT_I2S;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_LRCK_L_LOW;
+ 		break;
+ 	case SND_SOC_DAIFMT_RIGHT_J:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_FORMAT_RJM;
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_LRCK_L_LOW;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_FORMAT_RJM;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_LRCK_L_LOW;
+ 		break;
+ 	case SND_SOC_DAIFMT_LEFT_J:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_FORMAT_LJM;
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_LRCK_L_LOW;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_FORMAT_LJM;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_LRCK_L_LOW;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -178,27 +178,27 @@ static int tegra_i2s_set_fmt(struct snd_soc_dai *dai,
+ 	return 0;
+ }
+ 
+-static int tegra_i2s_hw_params(struct snd_pcm_substream *substream,
+-				struct snd_pcm_hw_params *params,
+-				struct snd_soc_dai *dai)
++static int tegra20_i2s_hw_params(struct snd_pcm_substream *substream,
++				 struct snd_pcm_hw_params *params,
++				 struct snd_soc_dai *dai)
+ {
+ 	struct device *dev = substream->pcm->card->dev;
+-	struct tegra_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 	u32 reg;
+ 	int ret, sample_size, srate, i2sclock, bitcnt;
+ 
+-	i2s->reg_ctrl &= ~TEGRA_I2S_CTRL_BIT_SIZE_MASK;
++	i2s->reg_ctrl &= ~TEGRA20_I2S_CTRL_BIT_SIZE_MASK;
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_SIZE_16;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_SIZE_16;
+ 		sample_size = 16;
+ 		break;
+ 	case SNDRV_PCM_FORMAT_S24_LE:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_SIZE_24;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_SIZE_24;
+ 		sample_size = 24;
+ 		break;
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+-		i2s->reg_ctrl |= TEGRA_I2S_CTRL_BIT_SIZE_32;
++		i2s->reg_ctrl |= TEGRA20_I2S_CTRL_BIT_SIZE_32;
+ 		sample_size = 32;
+ 		break;
+ 	default:
+@@ -217,54 +217,54 @@ static int tegra_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	bitcnt = (i2sclock / (2 * srate)) - 1;
+-	if (bitcnt < 0 || bitcnt > TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US)
++	if (bitcnt < 0 || bitcnt > TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US)
+ 		return -EINVAL;
+-	reg = bitcnt << TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT;
++	reg = bitcnt << TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT;
+ 
+ 	if (i2sclock % (2 * srate))
+-		reg |= TEGRA_I2S_TIMING_NON_SYM_ENABLE;
++		reg |= TEGRA20_I2S_TIMING_NON_SYM_ENABLE;
+ 
+ 	clk_enable(i2s->clk_i2s);
+ 
+-	tegra_i2s_write(i2s, TEGRA_I2S_TIMING, reg);
++	tegra20_i2s_write(i2s, TEGRA20_I2S_TIMING, reg);
+ 
+-	tegra_i2s_write(i2s, TEGRA_I2S_FIFO_SCR,
+-		TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_FOUR_SLOTS |
+-		TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_FOUR_SLOTS);
++	tegra20_i2s_write(i2s, TEGRA20_I2S_FIFO_SCR,
++		TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_FOUR_SLOTS |
++		TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_FOUR_SLOTS);
+ 
+ 	clk_disable(i2s->clk_i2s);
+ 
+ 	return 0;
+ }
+ 
+-static void tegra_i2s_start_playback(struct tegra_i2s *i2s)
++static void tegra20_i2s_start_playback(struct tegra20_i2s *i2s)
+ {
+-	i2s->reg_ctrl |= TEGRA_I2S_CTRL_FIFO1_ENABLE;
+-	tegra_i2s_write(i2s, TEGRA_I2S_CTRL, i2s->reg_ctrl);
++	i2s->reg_ctrl |= TEGRA20_I2S_CTRL_FIFO1_ENABLE;
++	tegra20_i2s_write(i2s, TEGRA20_I2S_CTRL, i2s->reg_ctrl);
+ }
+ 
+-static void tegra_i2s_stop_playback(struct tegra_i2s *i2s)
++static void tegra20_i2s_stop_playback(struct tegra20_i2s *i2s)
+ {
+-	i2s->reg_ctrl &= ~TEGRA_I2S_CTRL_FIFO1_ENABLE;
+-	tegra_i2s_write(i2s, TEGRA_I2S_CTRL, i2s->reg_ctrl);
++	i2s->reg_ctrl &= ~TEGRA20_I2S_CTRL_FIFO1_ENABLE;
++	tegra20_i2s_write(i2s, TEGRA20_I2S_CTRL, i2s->reg_ctrl);
+ }
+ 
+-static void tegra_i2s_start_capture(struct tegra_i2s *i2s)
++static void tegra20_i2s_start_capture(struct tegra20_i2s *i2s)
+ {
+-	i2s->reg_ctrl |= TEGRA_I2S_CTRL_FIFO2_ENABLE;
+-	tegra_i2s_write(i2s, TEGRA_I2S_CTRL, i2s->reg_ctrl);
++	i2s->reg_ctrl |= TEGRA20_I2S_CTRL_FIFO2_ENABLE;
++	tegra20_i2s_write(i2s, TEGRA20_I2S_CTRL, i2s->reg_ctrl);
+ }
+ 
+-static void tegra_i2s_stop_capture(struct tegra_i2s *i2s)
++static void tegra20_i2s_stop_capture(struct tegra20_i2s *i2s)
+ {
+-	i2s->reg_ctrl &= ~TEGRA_I2S_CTRL_FIFO2_ENABLE;
+-	tegra_i2s_write(i2s, TEGRA_I2S_CTRL, i2s->reg_ctrl);
++	i2s->reg_ctrl &= ~TEGRA20_I2S_CTRL_FIFO2_ENABLE;
++	tegra20_i2s_write(i2s, TEGRA20_I2S_CTRL, i2s->reg_ctrl);
+ }
+ 
+-static int tegra_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+-				struct snd_soc_dai *dai)
++static int tegra20_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
++			       struct snd_soc_dai *dai)
+ {
+-	struct tegra_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+@@ -272,17 +272,17 @@ static int tegra_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 		clk_enable(i2s->clk_i2s);
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			tegra_i2s_start_playback(i2s);
++			tegra20_i2s_start_playback(i2s);
+ 		else
+-			tegra_i2s_start_capture(i2s);
++			tegra20_i2s_start_capture(i2s);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-			tegra_i2s_stop_playback(i2s);
++			tegra20_i2s_stop_playback(i2s);
+ 		else
+-			tegra_i2s_stop_capture(i2s);
++			tegra20_i2s_stop_capture(i2s);
+ 		clk_disable(i2s->clk_i2s);
+ 		break;
+ 	default:
+@@ -292,9 +292,9 @@ static int tegra_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	return 0;
+ }
+ 
+-static int tegra_i2s_probe(struct snd_soc_dai *dai)
++static int tegra20_i2s_probe(struct snd_soc_dai *dai)
+ {
+-	struct tegra_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 
+ 	dai->capture_dma_data = &i2s->capture_dma_data;
+ 	dai->playback_dma_data = &i2s->playback_dma_data;
+@@ -302,14 +302,14 @@ static int tegra_i2s_probe(struct snd_soc_dai *dai)
+ 	return 0;
+ }
+ 
+-static const struct snd_soc_dai_ops tegra_i2s_dai_ops = {
+-	.set_fmt	= tegra_i2s_set_fmt,
+-	.hw_params	= tegra_i2s_hw_params,
+-	.trigger	= tegra_i2s_trigger,
++static const struct snd_soc_dai_ops tegra20_i2s_dai_ops = {
++	.set_fmt	= tegra20_i2s_set_fmt,
++	.hw_params	= tegra20_i2s_hw_params,
++	.trigger	= tegra20_i2s_trigger,
+ };
+ 
+-static const struct snd_soc_dai_driver tegra_i2s_dai_template = {
+-	.probe = tegra_i2s_probe,
++static const struct snd_soc_dai_driver tegra20_i2s_dai_template = {
++	.probe = tegra20_i2s_probe,
+ 	.playback = {
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+@@ -322,27 +322,27 @@ static const struct snd_soc_dai_driver tegra_i2s_dai_template = {
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+-	.ops = &tegra_i2s_dai_ops,
++	.ops = &tegra20_i2s_dai_ops,
+ 	.symmetric_rates = 1,
+ };
+ 
+-static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
++static __devinit int tegra20_i2s_platform_probe(struct platform_device *pdev)
+ {
+-	struct tegra_i2s *i2s;
++	struct tegra20_i2s *i2s;
+ 	struct resource *mem, *memregion, *dmareq;
+ 	u32 of_dma[2];
+ 	u32 dma_ch;
+ 	int ret;
+ 
+-	i2s = devm_kzalloc(&pdev->dev, sizeof(struct tegra_i2s), GFP_KERNEL);
++	i2s = devm_kzalloc(&pdev->dev, sizeof(struct tegra20_i2s), GFP_KERNEL);
+ 	if (!i2s) {
+-		dev_err(&pdev->dev, "Can't allocate tegra_i2s\n");
++		dev_err(&pdev->dev, "Can't allocate tegra20_i2s\n");
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 	dev_set_drvdata(&pdev->dev, i2s);
+ 
+-	i2s->dai = tegra_i2s_dai_template;
++	i2s->dai = tegra20_i2s_dai_template;
+ 	i2s->dai.name = dev_name(&pdev->dev);
+ 
+ 	i2s->clk_i2s = clk_get(&pdev->dev, NULL);
+@@ -388,17 +388,17 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+ 		goto err_clk_put;
+ 	}
+ 
+-	i2s->capture_dma_data.addr = mem->start + TEGRA_I2S_FIFO2;
++	i2s->capture_dma_data.addr = mem->start + TEGRA20_I2S_FIFO2;
+ 	i2s->capture_dma_data.wrap = 4;
+ 	i2s->capture_dma_data.width = 32;
+ 	i2s->capture_dma_data.req_sel = dma_ch;
+ 
+-	i2s->playback_dma_data.addr = mem->start + TEGRA_I2S_FIFO1;
++	i2s->playback_dma_data.addr = mem->start + TEGRA20_I2S_FIFO1;
+ 	i2s->playback_dma_data.wrap = 4;
+ 	i2s->playback_dma_data.width = 32;
+ 	i2s->playback_dma_data.req_sel = dma_ch;
+ 
+-	i2s->reg_ctrl = TEGRA_I2S_CTRL_FIFO_FORMAT_PACKED;
++	i2s->reg_ctrl = TEGRA20_I2S_CTRL_FIFO_FORMAT_PACKED;
+ 
+ 	ret = snd_soc_register_dai(&pdev->dev, &i2s->dai);
+ 	if (ret) {
+@@ -413,7 +413,7 @@ static __devinit int tegra_i2s_platform_probe(struct platform_device *pdev)
+ 		goto err_unregister_dai;
+ 	}
+ 
+-	tegra_i2s_debug_add(i2s);
++	tegra20_i2s_debug_add(i2s);
+ 
+ 	return 0;
+ 
+@@ -425,38 +425,38 @@ err:
+ 	return ret;
+ }
+ 
+-static int __devexit tegra_i2s_platform_remove(struct platform_device *pdev)
++static int __devexit tegra20_i2s_platform_remove(struct platform_device *pdev)
+ {
+-	struct tegra_i2s *i2s = dev_get_drvdata(&pdev->dev);
++	struct tegra20_i2s *i2s = dev_get_drvdata(&pdev->dev);
+ 
+ 	tegra_pcm_platform_unregister(&pdev->dev);
+ 	snd_soc_unregister_dai(&pdev->dev);
+ 
+-	tegra_i2s_debug_remove(i2s);
++	tegra20_i2s_debug_remove(i2s);
+ 
+ 	clk_put(i2s->clk_i2s);
+ 
+ 	return 0;
+ }
+ 
+-static const struct of_device_id tegra_i2s_of_match[] __devinitconst = {
++static const struct of_device_id tegra20_i2s_of_match[] __devinitconst = {
+ 	{ .compatible = "nvidia,tegra20-i2s", },
+ 	{},
+ };
+ 
+-static struct platform_driver tegra_i2s_driver = {
++static struct platform_driver tegra20_i2s_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.owner = THIS_MODULE,
+-		.of_match_table = tegra_i2s_of_match,
++		.of_match_table = tegra20_i2s_of_match,
+ 	},
+-	.probe = tegra_i2s_platform_probe,
+-	.remove = __devexit_p(tegra_i2s_platform_remove),
++	.probe = tegra20_i2s_platform_probe,
++	.remove = __devexit_p(tegra20_i2s_platform_remove),
+ };
+-module_platform_driver(tegra_i2s_driver);
++module_platform_driver(tegra20_i2s_driver);
+ 
+ MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("Tegra I2S ASoC driver");
++MODULE_DESCRIPTION("Tegra20 I2S ASoC driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" DRV_NAME);
+-MODULE_DEVICE_TABLE(of, tegra_i2s_of_match);
++MODULE_DEVICE_TABLE(of, tegra20_i2s_of_match);
+diff --git a/sound/soc/tegra/tegra20_i2s.h b/sound/soc/tegra/tegra20_i2s.h
+index 56f1e0f..86ab327 100644
+--- a/sound/soc/tegra/tegra20_i2s.h
++++ b/sound/soc/tegra/tegra20_i2s.h
+@@ -2,7 +2,7 @@
+  * tegra20_i2s.h - Definitions for Tegra20 I2S driver
+  *
+  * Author: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+- * Copyright (C) 2010 - NVIDIA, Inc.
++ * Copyright (C) 2010,2012 - NVIDIA, Inc.
+  *
+  * Based on code copyright/by:
+  *
+@@ -28,131 +28,131 @@
+  *
+  */
+ 
+-#ifndef __TEGRA_I2S_H__
+-#define __TEGRA_I2S_H__
++#ifndef __TEGRA20_I2S_H__
++#define __TEGRA20_I2S_H__
+ 
+ #include "tegra_pcm.h"
+ 
+-/* Register offsets from TEGRA_I2S1_BASE and TEGRA_I2S2_BASE */
+-
+-#define TEGRA_I2S_CTRL					0x00
+-#define TEGRA_I2S_STATUS				0x04
+-#define TEGRA_I2S_TIMING				0x08
+-#define TEGRA_I2S_FIFO_SCR				0x0c
+-#define TEGRA_I2S_PCM_CTRL				0x10
+-#define TEGRA_I2S_NW_CTRL				0x14
+-#define TEGRA_I2S_TDM_CTRL				0x20
+-#define TEGRA_I2S_TDM_TX_RX_CTRL			0x24
+-#define TEGRA_I2S_FIFO1					0x40
+-#define TEGRA_I2S_FIFO2					0x80
+-
+-/* Fields in TEGRA_I2S_CTRL */
+-
+-#define TEGRA_I2S_CTRL_FIFO2_TX_ENABLE			(1 << 30)
+-#define TEGRA_I2S_CTRL_FIFO1_ENABLE			(1 << 29)
+-#define TEGRA_I2S_CTRL_FIFO2_ENABLE			(1 << 28)
+-#define TEGRA_I2S_CTRL_FIFO1_RX_ENABLE			(1 << 27)
+-#define TEGRA_I2S_CTRL_FIFO_LPBK_ENABLE			(1 << 26)
+-#define TEGRA_I2S_CTRL_MASTER_ENABLE			(1 << 25)
+-
+-#define TEGRA_I2S_LRCK_LEFT_LOW				0
+-#define TEGRA_I2S_LRCK_RIGHT_LOW			1
+-
+-#define TEGRA_I2S_CTRL_LRCK_SHIFT			24
+-#define TEGRA_I2S_CTRL_LRCK_MASK			(1                        << TEGRA_I2S_CTRL_LRCK_SHIFT)
+-#define TEGRA_I2S_CTRL_LRCK_L_LOW			(TEGRA_I2S_LRCK_LEFT_LOW  << TEGRA_I2S_CTRL_LRCK_SHIFT)
+-#define TEGRA_I2S_CTRL_LRCK_R_LOW			(TEGRA_I2S_LRCK_RIGHT_LOW << TEGRA_I2S_CTRL_LRCK_SHIFT)
+-
+-#define TEGRA_I2S_BIT_FORMAT_I2S			0
+-#define TEGRA_I2S_BIT_FORMAT_RJM			1
+-#define TEGRA_I2S_BIT_FORMAT_LJM			2
+-#define TEGRA_I2S_BIT_FORMAT_DSP			3
+-
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT			10
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_MASK			(3                        << TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_I2S			(TEGRA_I2S_BIT_FORMAT_I2S << TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_RJM			(TEGRA_I2S_BIT_FORMAT_RJM << TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_LJM			(TEGRA_I2S_BIT_FORMAT_LJM << TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_FORMAT_DSP			(TEGRA_I2S_BIT_FORMAT_DSP << TEGRA_I2S_CTRL_BIT_FORMAT_SHIFT)
+-
+-#define TEGRA_I2S_BIT_SIZE_16				0
+-#define TEGRA_I2S_BIT_SIZE_20				1
+-#define TEGRA_I2S_BIT_SIZE_24				2
+-#define TEGRA_I2S_BIT_SIZE_32				3
+-
+-#define TEGRA_I2S_CTRL_BIT_SIZE_SHIFT			8
+-#define TEGRA_I2S_CTRL_BIT_SIZE_MASK			(3                     << TEGRA_I2S_CTRL_BIT_SIZE_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_SIZE_16			(TEGRA_I2S_BIT_SIZE_16 << TEGRA_I2S_CTRL_BIT_SIZE_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_SIZE_20			(TEGRA_I2S_BIT_SIZE_20 << TEGRA_I2S_CTRL_BIT_SIZE_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_SIZE_24			(TEGRA_I2S_BIT_SIZE_24 << TEGRA_I2S_CTRL_BIT_SIZE_SHIFT)
+-#define TEGRA_I2S_CTRL_BIT_SIZE_32			(TEGRA_I2S_BIT_SIZE_32 << TEGRA_I2S_CTRL_BIT_SIZE_SHIFT)
+-
+-#define TEGRA_I2S_FIFO_16_LSB				0
+-#define TEGRA_I2S_FIFO_20_LSB				1
+-#define TEGRA_I2S_FIFO_24_LSB				2
+-#define TEGRA_I2S_FIFO_32				3
+-#define TEGRA_I2S_FIFO_PACKED				7
+-
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT		4
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_MASK			(7                     << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_16_LSB		(TEGRA_I2S_FIFO_16_LSB << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_20_LSB		(TEGRA_I2S_FIFO_20_LSB << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_24_LSB		(TEGRA_I2S_FIFO_24_LSB << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_32			(TEGRA_I2S_FIFO_32     << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-#define TEGRA_I2S_CTRL_FIFO_FORMAT_PACKED		(TEGRA_I2S_FIFO_PACKED << TEGRA_I2S_CTRL_FIFO_FORMAT_SHIFT)
+-
+-#define TEGRA_I2S_CTRL_IE_FIFO1_ERR			(1 << 3)
+-#define TEGRA_I2S_CTRL_IE_FIFO2_ERR			(1 << 2)
+-#define TEGRA_I2S_CTRL_QE_FIFO1				(1 << 1)
+-#define TEGRA_I2S_CTRL_QE_FIFO2				(1 << 0)
+-
+-/* Fields in TEGRA_I2S_STATUS */
+-
+-#define TEGRA_I2S_STATUS_FIFO1_RDY			(1 << 31)
+-#define TEGRA_I2S_STATUS_FIFO2_RDY			(1 << 30)
+-#define TEGRA_I2S_STATUS_FIFO1_BSY			(1 << 29)
+-#define TEGRA_I2S_STATUS_FIFO2_BSY			(1 << 28)
+-#define TEGRA_I2S_STATUS_FIFO1_ERR			(1 << 3)
+-#define TEGRA_I2S_STATUS_FIFO2_ERR			(1 << 2)
+-#define TEGRA_I2S_STATUS_QS_FIFO1			(1 << 1)
+-#define TEGRA_I2S_STATUS_QS_FIFO2			(1 << 0)
+-
+-/* Fields in TEGRA_I2S_TIMING */
+-
+-#define TEGRA_I2S_TIMING_NON_SYM_ENABLE			(1 << 12)
+-#define TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
+-#define TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
+-#define TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_MASK		(TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
+-
+-/* Fields in TEGRA_I2S_FIFO_SCR */
+-
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_FULL_EMPTY_COUNT_SHIFT	24
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_FULL_EMPTY_COUNT_SHIFT	16
+-#define TEGRA_I2S_FIFO_SCR_FIFO_FULL_EMPTY_COUNT_MASK	0x3f
+-
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_CLR			(1 << 12)
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_CLR			(1 << 8)
+-
+-#define TEGRA_I2S_FIFO_ATN_LVL_ONE_SLOT			0
+-#define TEGRA_I2S_FIFO_ATN_LVL_FOUR_SLOTS		1
+-#define TEGRA_I2S_FIFO_ATN_LVL_EIGHT_SLOTS		2
+-#define TEGRA_I2S_FIFO_ATN_LVL_TWELVE_SLOTS		3
+-
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT		4
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_MASK		(3 << TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_ONE_SLOT	(TEGRA_I2S_FIFO_ATN_LVL_ONE_SLOT     << TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_FOUR_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_FOUR_SLOTS   << TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_EIGHT_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_EIGHT_SLOTS  << TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_TWELVE_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
+-
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT		0
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_MASK		(3 << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_ONE_SLOT	(TEGRA_I2S_FIFO_ATN_LVL_ONE_SLOT     << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_FOUR_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_FOUR_SLOTS   << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_EIGHT_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_EIGHT_SLOTS  << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+-#define TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_TWELVE_SLOTS	(TEGRA_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
+-
+-struct tegra_i2s {
++/* Register offsets from TEGRA20_I2S1_BASE and TEGRA20_I2S2_BASE */
++
++#define TEGRA20_I2S_CTRL				0x00
++#define TEGRA20_I2S_STATUS				0x04
++#define TEGRA20_I2S_TIMING				0x08
++#define TEGRA20_I2S_FIFO_SCR				0x0c
++#define TEGRA20_I2S_PCM_CTRL				0x10
++#define TEGRA20_I2S_NW_CTRL				0x14
++#define TEGRA20_I2S_TDM_CTRL				0x20
++#define TEGRA20_I2S_TDM_TX_RX_CTRL			0x24
++#define TEGRA20_I2S_FIFO1				0x40
++#define TEGRA20_I2S_FIFO2				0x80
++
++/* Fields in TEGRA20_I2S_CTRL */
++
++#define TEGRA20_I2S_CTRL_FIFO2_TX_ENABLE		(1 << 30)
++#define TEGRA20_I2S_CTRL_FIFO1_ENABLE			(1 << 29)
++#define TEGRA20_I2S_CTRL_FIFO2_ENABLE			(1 << 28)
++#define TEGRA20_I2S_CTRL_FIFO1_RX_ENABLE		(1 << 27)
++#define TEGRA20_I2S_CTRL_FIFO_LPBK_ENABLE		(1 << 26)
++#define TEGRA20_I2S_CTRL_MASTER_ENABLE			(1 << 25)
++
++#define TEGRA20_I2S_LRCK_LEFT_LOW				0
++#define TEGRA20_I2S_LRCK_RIGHT_LOW			1
++
++#define TEGRA20_I2S_CTRL_LRCK_SHIFT			24
++#define TEGRA20_I2S_CTRL_LRCK_MASK			(1                          << TEGRA20_I2S_CTRL_LRCK_SHIFT)
++#define TEGRA20_I2S_CTRL_LRCK_L_LOW			(TEGRA20_I2S_LRCK_LEFT_LOW  << TEGRA20_I2S_CTRL_LRCK_SHIFT)
++#define TEGRA20_I2S_CTRL_LRCK_R_LOW			(TEGRA20_I2S_LRCK_RIGHT_LOW << TEGRA20_I2S_CTRL_LRCK_SHIFT)
++
++#define TEGRA20_I2S_BIT_FORMAT_I2S			0
++#define TEGRA20_I2S_BIT_FORMAT_RJM			1
++#define TEGRA20_I2S_BIT_FORMAT_LJM			2
++#define TEGRA20_I2S_BIT_FORMAT_DSP			3
++
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT		10
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_MASK		(3                          << TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_I2S			(TEGRA20_I2S_BIT_FORMAT_I2S << TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_RJM			(TEGRA20_I2S_BIT_FORMAT_RJM << TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_LJM			(TEGRA20_I2S_BIT_FORMAT_LJM << TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_FORMAT_DSP			(TEGRA20_I2S_BIT_FORMAT_DSP << TEGRA20_I2S_CTRL_BIT_FORMAT_SHIFT)
++
++#define TEGRA20_I2S_BIT_SIZE_16				0
++#define TEGRA20_I2S_BIT_SIZE_20				1
++#define TEGRA20_I2S_BIT_SIZE_24				2
++#define TEGRA20_I2S_BIT_SIZE_32				3
++
++#define TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT			8
++#define TEGRA20_I2S_CTRL_BIT_SIZE_MASK			(3                       << TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_SIZE_16			(TEGRA20_I2S_BIT_SIZE_16 << TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_SIZE_20			(TEGRA20_I2S_BIT_SIZE_20 << TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_SIZE_24			(TEGRA20_I2S_BIT_SIZE_24 << TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT)
++#define TEGRA20_I2S_CTRL_BIT_SIZE_32			(TEGRA20_I2S_BIT_SIZE_32 << TEGRA20_I2S_CTRL_BIT_SIZE_SHIFT)
++
++#define TEGRA20_I2S_FIFO_16_LSB				0
++#define TEGRA20_I2S_FIFO_20_LSB				1
++#define TEGRA20_I2S_FIFO_24_LSB				2
++#define TEGRA20_I2S_FIFO_32				3
++#define TEGRA20_I2S_FIFO_PACKED				7
++
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT		4
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_MASK		(7                       << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_16_LSB		(TEGRA20_I2S_FIFO_16_LSB << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_20_LSB		(TEGRA20_I2S_FIFO_20_LSB << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_24_LSB		(TEGRA20_I2S_FIFO_24_LSB << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_32			(TEGRA20_I2S_FIFO_32     << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++#define TEGRA20_I2S_CTRL_FIFO_FORMAT_PACKED		(TEGRA20_I2S_FIFO_PACKED << TEGRA20_I2S_CTRL_FIFO_FORMAT_SHIFT)
++
++#define TEGRA20_I2S_CTRL_IE_FIFO1_ERR			(1 << 3)
++#define TEGRA20_I2S_CTRL_IE_FIFO2_ERR			(1 << 2)
++#define TEGRA20_I2S_CTRL_QE_FIFO1			(1 << 1)
++#define TEGRA20_I2S_CTRL_QE_FIFO2			(1 << 0)
++
++/* Fields in TEGRA20_I2S_STATUS */
++
++#define TEGRA20_I2S_STATUS_FIFO1_RDY			(1 << 31)
++#define TEGRA20_I2S_STATUS_FIFO2_RDY			(1 << 30)
++#define TEGRA20_I2S_STATUS_FIFO1_BSY			(1 << 29)
++#define TEGRA20_I2S_STATUS_FIFO2_BSY			(1 << 28)
++#define TEGRA20_I2S_STATUS_FIFO1_ERR			(1 << 3)
++#define TEGRA20_I2S_STATUS_FIFO2_ERR			(1 << 2)
++#define TEGRA20_I2S_STATUS_QS_FIFO1			(1 << 1)
++#define TEGRA20_I2S_STATUS_QS_FIFO2			(1 << 0)
++
++/* Fields in TEGRA20_I2S_TIMING */
++
++#define TEGRA20_I2S_TIMING_NON_SYM_ENABLE		(1 << 12)
++#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
++#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
++#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK	(TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
++
++/* Fields in TEGRA20_I2S_FIFO_SCR */
++
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_FULL_EMPTY_COUNT_SHIFT	24
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_FULL_EMPTY_COUNT_SHIFT	16
++#define TEGRA20_I2S_FIFO_SCR_FIFO_FULL_EMPTY_COUNT_MASK		0x3f
++
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_CLR			(1 << 12)
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_CLR			(1 << 8)
++
++#define TEGRA20_I2S_FIFO_ATN_LVL_ONE_SLOT		0
++#define TEGRA20_I2S_FIFO_ATN_LVL_FOUR_SLOTS		1
++#define TEGRA20_I2S_FIFO_ATN_LVL_EIGHT_SLOTS		2
++#define TEGRA20_I2S_FIFO_ATN_LVL_TWELVE_SLOTS		3
++
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT	4
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_MASK		(3 << TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_ONE_SLOT	(TEGRA20_I2S_FIFO_ATN_LVL_ONE_SLOT     << TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_FOUR_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_FOUR_SLOTS   << TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_EIGHT_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_EIGHT_SLOTS  << TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_TWELVE_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA20_I2S_FIFO_SCR_FIFO2_ATN_LVL_SHIFT)
++
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT	0
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_MASK		(3 << TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_ONE_SLOT	(TEGRA20_I2S_FIFO_ATN_LVL_ONE_SLOT     << TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_FOUR_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_FOUR_SLOTS   << TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_EIGHT_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_EIGHT_SLOTS  << TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
++#define TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_TWELVE_SLOTS	(TEGRA20_I2S_FIFO_ATN_LVL_TWELVE_SLOTS << TEGRA20_I2S_FIFO_SCR_FIFO1_ATN_LVL_SHIFT)
++
++struct tegra20_i2s {
+ 	struct snd_soc_dai_driver dai;
+ 	struct clk *clk_i2s;
+ 	struct tegra_pcm_dma_params capture_dma_data;
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index 6b1bbe4..8522cdf 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -36,53 +36,53 @@
+ 
+ #include "tegra20_spdif.h"
+ 
+-#define DRV_NAME "tegra-spdif"
++#define DRV_NAME "tegra20-spdif"
+ 
+-static inline void tegra_spdif_write(struct tegra_spdif *spdif, u32 reg,
++static inline void tegra20_spdif_write(struct tegra20_spdif *spdif, u32 reg,
+ 					u32 val)
+ {
+ 	__raw_writel(val, spdif->regs + reg);
+ }
+ 
+-static inline u32 tegra_spdif_read(struct tegra_spdif *spdif, u32 reg)
++static inline u32 tegra20_spdif_read(struct tegra20_spdif *spdif, u32 reg)
+ {
+ 	return __raw_readl(spdif->regs + reg);
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static int tegra_spdif_show(struct seq_file *s, void *unused)
++static int tegra20_spdif_show(struct seq_file *s, void *unused)
+ {
+ #define REG(r) { r, #r }
+ 	static const struct {
+ 		int offset;
+ 		const char *name;
+ 	} regs[] = {
+-		REG(TEGRA_SPDIF_CTRL),
+-		REG(TEGRA_SPDIF_STATUS),
+-		REG(TEGRA_SPDIF_STROBE_CTRL),
+-		REG(TEGRA_SPDIF_DATA_FIFO_CSR),
+-		REG(TEGRA_SPDIF_CH_STA_RX_A),
+-		REG(TEGRA_SPDIF_CH_STA_RX_B),
+-		REG(TEGRA_SPDIF_CH_STA_RX_C),
+-		REG(TEGRA_SPDIF_CH_STA_RX_D),
+-		REG(TEGRA_SPDIF_CH_STA_RX_E),
+-		REG(TEGRA_SPDIF_CH_STA_RX_F),
+-		REG(TEGRA_SPDIF_CH_STA_TX_A),
+-		REG(TEGRA_SPDIF_CH_STA_TX_B),
+-		REG(TEGRA_SPDIF_CH_STA_TX_C),
+-		REG(TEGRA_SPDIF_CH_STA_TX_D),
+-		REG(TEGRA_SPDIF_CH_STA_TX_E),
+-		REG(TEGRA_SPDIF_CH_STA_TX_F),
++		REG(TEGRA20_SPDIF_CTRL),
++		REG(TEGRA20_SPDIF_STATUS),
++		REG(TEGRA20_SPDIF_STROBE_CTRL),
++		REG(TEGRA20_SPDIF_DATA_FIFO_CSR),
++		REG(TEGRA20_SPDIF_CH_STA_RX_A),
++		REG(TEGRA20_SPDIF_CH_STA_RX_B),
++		REG(TEGRA20_SPDIF_CH_STA_RX_C),
++		REG(TEGRA20_SPDIF_CH_STA_RX_D),
++		REG(TEGRA20_SPDIF_CH_STA_RX_E),
++		REG(TEGRA20_SPDIF_CH_STA_RX_F),
++		REG(TEGRA20_SPDIF_CH_STA_TX_A),
++		REG(TEGRA20_SPDIF_CH_STA_TX_B),
++		REG(TEGRA20_SPDIF_CH_STA_TX_C),
++		REG(TEGRA20_SPDIF_CH_STA_TX_D),
++		REG(TEGRA20_SPDIF_CH_STA_TX_E),
++		REG(TEGRA20_SPDIF_CH_STA_TX_F),
+ 	};
+ #undef REG
+ 
+-	struct tegra_spdif *spdif = s->private;
++	struct tegra20_spdif *spdif = s->private;
+ 	int i;
+ 
+ 	clk_enable(spdif->clk_spdif_out);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(regs); i++) {
+-		u32 val = tegra_spdif_read(spdif, regs[i].offset);
++		u32 val = tegra20_spdif_read(spdif, regs[i].offset);
+ 		seq_printf(s, "%s = %08x\n", regs[i].name, val);
+ 	}
+ 
+@@ -91,54 +91,54 @@ static int tegra_spdif_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ 
+-static int tegra_spdif_debug_open(struct inode *inode, struct file *file)
++static int tegra20_spdif_debug_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, tegra_spdif_show, inode->i_private);
++	return single_open(file, tegra20_spdif_show, inode->i_private);
+ }
+ 
+-static const struct file_operations tegra_spdif_debug_fops = {
+-	.open    = tegra_spdif_debug_open,
++static const struct file_operations tegra20_spdif_debug_fops = {
++	.open    = tegra20_spdif_debug_open,
+ 	.read    = seq_read,
+ 	.llseek  = seq_lseek,
+ 	.release = single_release,
+ };
+ 
+-static void tegra_spdif_debug_add(struct tegra_spdif *spdif)
++static void tegra20_spdif_debug_add(struct tegra20_spdif *spdif)
+ {
+ 	spdif->debug = debugfs_create_file(DRV_NAME, S_IRUGO,
+ 						snd_soc_debugfs_root, spdif,
+-						&tegra_spdif_debug_fops);
++						&tegra20_spdif_debug_fops);
+ }
+ 
+-static void tegra_spdif_debug_remove(struct tegra_spdif *spdif)
++static void tegra20_spdif_debug_remove(struct tegra20_spdif *spdif)
+ {
+ 	if (spdif->debug)
+ 		debugfs_remove(spdif->debug);
+ }
+ #else
+-static inline void tegra_spdif_debug_add(struct tegra_spdif *spdif)
++static inline void tegra20_spdif_debug_add(struct tegra20_spdif *spdif)
+ {
+ }
+ 
+-static inline void tegra_spdif_debug_remove(struct tegra_spdif *spdif)
++static inline void tegra20_spdif_debug_remove(struct tegra20_spdif *spdif)
+ {
+ }
+ #endif
+ 
+-static int tegra_spdif_hw_params(struct snd_pcm_substream *substream,
++static int tegra20_spdif_hw_params(struct snd_pcm_substream *substream,
+ 				struct snd_pcm_hw_params *params,
+ 				struct snd_soc_dai *dai)
+ {
+ 	struct device *dev = substream->pcm->card->dev;
+-	struct tegra_spdif *spdif = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_spdif *spdif = snd_soc_dai_get_drvdata(dai);
+ 	int ret, spdifclock;
+ 
+-	spdif->reg_ctrl &= ~TEGRA_SPDIF_CTRL_PACK;
+-	spdif->reg_ctrl &= ~TEGRA_SPDIF_CTRL_BIT_MODE_MASK;
++	spdif->reg_ctrl &= ~TEGRA20_SPDIF_CTRL_PACK;
++	spdif->reg_ctrl &= ~TEGRA20_SPDIF_CTRL_BIT_MODE_MASK;
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+-		spdif->reg_ctrl |= TEGRA_SPDIF_CTRL_PACK;
+-		spdif->reg_ctrl |= TEGRA_SPDIF_CTRL_BIT_MODE_16BIT;
++		spdif->reg_ctrl |= TEGRA20_SPDIF_CTRL_PACK;
++		spdif->reg_ctrl |= TEGRA20_SPDIF_CTRL_BIT_MODE_16BIT;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -179,34 +179,34 @@ static int tegra_spdif_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static void tegra_spdif_start_playback(struct tegra_spdif *spdif)
++static void tegra20_spdif_start_playback(struct tegra20_spdif *spdif)
+ {
+-	spdif->reg_ctrl |= TEGRA_SPDIF_CTRL_TX_EN;
+-	tegra_spdif_write(spdif, TEGRA_SPDIF_CTRL, spdif->reg_ctrl);
++	spdif->reg_ctrl |= TEGRA20_SPDIF_CTRL_TX_EN;
++	tegra20_spdif_write(spdif, TEGRA20_SPDIF_CTRL, spdif->reg_ctrl);
+ }
+ 
+-static void tegra_spdif_stop_playback(struct tegra_spdif *spdif)
++static void tegra20_spdif_stop_playback(struct tegra20_spdif *spdif)
+ {
+-	spdif->reg_ctrl &= ~TEGRA_SPDIF_CTRL_TX_EN;
+-	tegra_spdif_write(spdif, TEGRA_SPDIF_CTRL, spdif->reg_ctrl);
++	spdif->reg_ctrl &= ~TEGRA20_SPDIF_CTRL_TX_EN;
++	tegra20_spdif_write(spdif, TEGRA20_SPDIF_CTRL, spdif->reg_ctrl);
+ }
+ 
+-static int tegra_spdif_trigger(struct snd_pcm_substream *substream, int cmd,
++static int tegra20_spdif_trigger(struct snd_pcm_substream *substream, int cmd,
+ 				struct snd_soc_dai *dai)
+ {
+-	struct tegra_spdif *spdif = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_spdif *spdif = snd_soc_dai_get_drvdata(dai);
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 		clk_enable(spdif->clk_spdif_out);
+-		tegra_spdif_start_playback(spdif);
++		tegra20_spdif_start_playback(spdif);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+-		tegra_spdif_stop_playback(spdif);
++		tegra20_spdif_stop_playback(spdif);
+ 		clk_disable(spdif->clk_spdif_out);
+ 		break;
+ 	default:
+@@ -216,9 +216,9 @@ static int tegra_spdif_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	return 0;
+ }
+ 
+-static int tegra_spdif_probe(struct snd_soc_dai *dai)
++static int tegra20_spdif_probe(struct snd_soc_dai *dai)
+ {
+-	struct tegra_spdif *spdif = snd_soc_dai_get_drvdata(dai);
++	struct tegra20_spdif *spdif = snd_soc_dai_get_drvdata(dai);
+ 
+ 	dai->capture_dma_data = NULL;
+ 	dai->playback_dma_data = &spdif->playback_dma_data;
+@@ -226,14 +226,14 @@ static int tegra_spdif_probe(struct snd_soc_dai *dai)
+ 	return 0;
+ }
+ 
+-static const struct snd_soc_dai_ops tegra_spdif_dai_ops = {
+-	.hw_params	= tegra_spdif_hw_params,
+-	.trigger	= tegra_spdif_trigger,
++static const struct snd_soc_dai_ops tegra20_spdif_dai_ops = {
++	.hw_params	= tegra20_spdif_hw_params,
++	.trigger	= tegra20_spdif_trigger,
+ };
+ 
+-static struct snd_soc_dai_driver tegra_spdif_dai = {
++static struct snd_soc_dai_driver tegra20_spdif_dai = {
+ 	.name = DRV_NAME,
+-	.probe = tegra_spdif_probe,
++	.probe = tegra20_spdif_probe,
+ 	.playback = {
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+@@ -241,18 +241,18 @@ static struct snd_soc_dai_driver tegra_spdif_dai = {
+ 				SNDRV_PCM_RATE_48000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+-	.ops = &tegra_spdif_dai_ops,
++	.ops = &tegra20_spdif_dai_ops,
+ };
+ 
+-static __devinit int tegra_spdif_platform_probe(struct platform_device *pdev)
++static __devinit int tegra20_spdif_platform_probe(struct platform_device *pdev)
+ {
+-	struct tegra_spdif *spdif;
++	struct tegra20_spdif *spdif;
+ 	struct resource *mem, *memregion, *dmareq;
+ 	int ret;
+ 
+-	spdif = kzalloc(sizeof(struct tegra_spdif), GFP_KERNEL);
++	spdif = kzalloc(sizeof(struct tegra20_spdif), GFP_KERNEL);
+ 	if (!spdif) {
+-		dev_err(&pdev->dev, "Can't allocate tegra_spdif\n");
++		dev_err(&pdev->dev, "Can't allocate tegra20_spdif\n");
+ 		ret = -ENOMEM;
+ 		goto exit;
+ 	}
+@@ -294,12 +294,12 @@ static __devinit int tegra_spdif_platform_probe(struct platform_device *pdev)
+ 		goto err_release;
+ 	}
+ 
+-	spdif->playback_dma_data.addr = mem->start + TEGRA_SPDIF_DATA_OUT;
++	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
+ 	spdif->playback_dma_data.wrap = 4;
+ 	spdif->playback_dma_data.width = 32;
+ 	spdif->playback_dma_data.req_sel = dmareq->start;
+ 
+-	ret = snd_soc_register_dai(&pdev->dev, &tegra_spdif_dai);
++	ret = snd_soc_register_dai(&pdev->dev, &tegra20_spdif_dai);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
+ 		ret = -ENOMEM;
+@@ -312,7 +312,7 @@ static __devinit int tegra_spdif_platform_probe(struct platform_device *pdev)
+ 		goto err_unregister_dai;
+ 	}
+ 
+-	tegra_spdif_debug_add(spdif);
++	tegra20_spdif_debug_add(spdif);
+ 
+ 	return 0;
+ 
+@@ -330,15 +330,15 @@ exit:
+ 	return ret;
+ }
+ 
+-static int __devexit tegra_spdif_platform_remove(struct platform_device *pdev)
++static int __devexit tegra20_spdif_platform_remove(struct platform_device *pdev)
+ {
+-	struct tegra_spdif *spdif = dev_get_drvdata(&pdev->dev);
++	struct tegra20_spdif *spdif = dev_get_drvdata(&pdev->dev);
+ 	struct resource *res;
+ 
+ 	tegra_pcm_platform_unregister(&pdev->dev);
+ 	snd_soc_unregister_dai(&pdev->dev);
+ 
+-	tegra_spdif_debug_remove(spdif);
++	tegra20_spdif_debug_remove(spdif);
+ 
+ 	iounmap(spdif->regs);
+ 
+@@ -352,18 +352,18 @@ static int __devexit tegra_spdif_platform_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct platform_driver tegra_spdif_driver = {
++static struct platform_driver tegra20_spdif_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.owner = THIS_MODULE,
+ 	},
+-	.probe = tegra_spdif_platform_probe,
+-	.remove = __devexit_p(tegra_spdif_platform_remove),
++	.probe = tegra20_spdif_platform_probe,
++	.remove = __devexit_p(tegra20_spdif_platform_remove),
+ };
+ 
+-module_platform_driver(tegra_spdif_driver);
++module_platform_driver(tegra20_spdif_driver);
+ 
+ MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("Tegra SPDIF ASoC driver");
++MODULE_DESCRIPTION("Tegra20 SPDIF ASoC driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/sound/soc/tegra/tegra20_spdif.h b/sound/soc/tegra/tegra20_spdif.h
+index 001f9dc..823af4c 100644
+--- a/sound/soc/tegra/tegra20_spdif.h
++++ b/sound/soc/tegra/tegra20_spdif.h
+@@ -23,83 +23,83 @@
+  *
+  */
+ 
+-#ifndef __TEGRA_SPDIF_H__
+-#define __TEGRA_SPDIF_H__
++#ifndef __TEGRA20_SPDIF_H__
++#define __TEGRA20_SPDIF_H__
+ 
+ #include "tegra_pcm.h"
+ 
+-/* Offsets from TEGRA_SPDIF_BASE */
+-
+-#define TEGRA_SPDIF_CTRL					0x0
+-#define TEGRA_SPDIF_STATUS					0x4
+-#define TEGRA_SPDIF_STROBE_CTRL					0x8
+-#define TEGRA_SPDIF_DATA_FIFO_CSR				0x0C
+-#define TEGRA_SPDIF_DATA_OUT					0x40
+-#define TEGRA_SPDIF_DATA_IN					0x80
+-#define TEGRA_SPDIF_CH_STA_RX_A					0x100
+-#define TEGRA_SPDIF_CH_STA_RX_B					0x104
+-#define TEGRA_SPDIF_CH_STA_RX_C					0x108
+-#define TEGRA_SPDIF_CH_STA_RX_D					0x10C
+-#define TEGRA_SPDIF_CH_STA_RX_E					0x110
+-#define TEGRA_SPDIF_CH_STA_RX_F					0x114
+-#define TEGRA_SPDIF_CH_STA_TX_A					0x140
+-#define TEGRA_SPDIF_CH_STA_TX_B					0x144
+-#define TEGRA_SPDIF_CH_STA_TX_C					0x148
+-#define TEGRA_SPDIF_CH_STA_TX_D					0x14C
+-#define TEGRA_SPDIF_CH_STA_TX_E					0x150
+-#define TEGRA_SPDIF_CH_STA_TX_F					0x154
+-#define TEGRA_SPDIF_USR_STA_RX_A				0x180
+-#define TEGRA_SPDIF_USR_DAT_TX_A				0x1C0
+-
+-/* Fields in TEGRA_SPDIF_CTRL */
++/* Offsets from TEGRA20_SPDIF_BASE */
++
++#define TEGRA20_SPDIF_CTRL					0x0
++#define TEGRA20_SPDIF_STATUS					0x4
++#define TEGRA20_SPDIF_STROBE_CTRL				0x8
++#define TEGRA20_SPDIF_DATA_FIFO_CSR				0x0C
++#define TEGRA20_SPDIF_DATA_OUT					0x40
++#define TEGRA20_SPDIF_DATA_IN					0x80
++#define TEGRA20_SPDIF_CH_STA_RX_A				0x100
++#define TEGRA20_SPDIF_CH_STA_RX_B				0x104
++#define TEGRA20_SPDIF_CH_STA_RX_C				0x108
++#define TEGRA20_SPDIF_CH_STA_RX_D				0x10C
++#define TEGRA20_SPDIF_CH_STA_RX_E				0x110
++#define TEGRA20_SPDIF_CH_STA_RX_F				0x114
++#define TEGRA20_SPDIF_CH_STA_TX_A				0x140
++#define TEGRA20_SPDIF_CH_STA_TX_B				0x144
++#define TEGRA20_SPDIF_CH_STA_TX_C				0x148
++#define TEGRA20_SPDIF_CH_STA_TX_D				0x14C
++#define TEGRA20_SPDIF_CH_STA_TX_E				0x150
++#define TEGRA20_SPDIF_CH_STA_TX_F				0x154
++#define TEGRA20_SPDIF_USR_STA_RX_A				0x180
++#define TEGRA20_SPDIF_USR_DAT_TX_A				0x1C0
++
++/* Fields in TEGRA20_SPDIF_CTRL */
+ 
+ /* Start capturing from 0=right, 1=left channel */
+-#define TEGRA_SPDIF_CTRL_CAP_LC					(1 << 30)
++#define TEGRA20_SPDIF_CTRL_CAP_LC				(1 << 30)
+ 
+ /* SPDIF receiver(RX) enable */
+-#define TEGRA_SPDIF_CTRL_RX_EN					(1 << 29)
++#define TEGRA20_SPDIF_CTRL_RX_EN				(1 << 29)
+ 
+ /* SPDIF Transmitter(TX) enable */
+-#define TEGRA_SPDIF_CTRL_TX_EN					(1 << 28)
++#define TEGRA20_SPDIF_CTRL_TX_EN				(1 << 28)
+ 
+ /* Transmit Channel status */
+-#define TEGRA_SPDIF_CTRL_TC_EN					(1 << 27)
++#define TEGRA20_SPDIF_CTRL_TC_EN				(1 << 27)
+ 
+ /* Transmit user Data */
+-#define TEGRA_SPDIF_CTRL_TU_EN					(1 << 26)
++#define TEGRA20_SPDIF_CTRL_TU_EN				(1 << 26)
+ 
+ /* Interrupt on transmit error */
+-#define TEGRA_SPDIF_CTRL_IE_TXE					(1 << 25)
++#define TEGRA20_SPDIF_CTRL_IE_TXE				(1 << 25)
+ 
+ /* Interrupt on receive error */
+-#define TEGRA_SPDIF_CTRL_IE_RXE					(1 << 24)
++#define TEGRA20_SPDIF_CTRL_IE_RXE				(1 << 24)
+ 
+ /* Interrupt on invalid preamble */
+-#define TEGRA_SPDIF_CTRL_IE_P					(1 << 23)
++#define TEGRA20_SPDIF_CTRL_IE_P					(1 << 23)
+ 
+ /* Interrupt on "B" preamble */
+-#define TEGRA_SPDIF_CTRL_IE_B					(1 << 22)
++#define TEGRA20_SPDIF_CTRL_IE_B					(1 << 22)
+ 
+ /* Interrupt when block of channel status received */
+-#define TEGRA_SPDIF_CTRL_IE_C					(1 << 21)
++#define TEGRA20_SPDIF_CTRL_IE_C					(1 << 21)
+ 
+ /* Interrupt when a valid information unit (IU) is received */
+-#define TEGRA_SPDIF_CTRL_IE_U					(1 << 20)
++#define TEGRA20_SPDIF_CTRL_IE_U					(1 << 20)
+ 
+ /* Interrupt when RX user FIFO attention level is reached */
+-#define TEGRA_SPDIF_CTRL_QE_RU					(1 << 19)
++#define TEGRA20_SPDIF_CTRL_QE_RU				(1 << 19)
+ 
+ /* Interrupt when TX user FIFO attention level is reached */
+-#define TEGRA_SPDIF_CTRL_QE_TU					(1 << 18)
++#define TEGRA20_SPDIF_CTRL_QE_TU				(1 << 18)
+ 
+ /* Interrupt when RX data FIFO attention level is reached */
+-#define TEGRA_SPDIF_CTRL_QE_RX					(1 << 17)
++#define TEGRA20_SPDIF_CTRL_QE_RX				(1 << 17)
+ 
+ /* Interrupt when TX data FIFO attention level is reached */
+-#define TEGRA_SPDIF_CTRL_QE_TX					(1 << 16)
++#define TEGRA20_SPDIF_CTRL_QE_TX				(1 << 16)
+ 
+ /* Loopback test mode enable */
+-#define TEGRA_SPDIF_CTRL_LBK_EN					(1 << 15)
++#define TEGRA20_SPDIF_CTRL_LBK_EN				(1 << 15)
+ 
+ /*
+  * Pack data mode:
+@@ -107,7 +107,7 @@
+  *     interface data bit size).
+  * 1 = Packeted left/right channel data into a single word.
+  */
+-#define TEGRA_SPDIF_CTRL_PACK					(1 << 14)
++#define TEGRA20_SPDIF_CTRL_PACK					(1 << 14)
+ 
+ /*
+  * 00 = 16bit data
+@@ -115,19 +115,19 @@
+  * 10 = 24bit data
+  * 11 = raw data
+  */
+-#define TEGRA_SPDIF_BIT_MODE_16BIT				0
+-#define TEGRA_SPDIF_BIT_MODE_20BIT				1
+-#define TEGRA_SPDIF_BIT_MODE_24BIT				2
+-#define TEGRA_SPDIF_BIT_MODE_RAW				3
++#define TEGRA20_SPDIF_BIT_MODE_16BIT				0
++#define TEGRA20_SPDIF_BIT_MODE_20BIT				1
++#define TEGRA20_SPDIF_BIT_MODE_24BIT				2
++#define TEGRA20_SPDIF_BIT_MODE_RAW				3
+ 
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT				12
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_MASK				(3                          << TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT)
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_16BIT				(TEGRA_SPDIF_BIT_MODE_16BIT << TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT)
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_20BIT				(TEGRA_SPDIF_BIT_MODE_20BIT << TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT)
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_24BIT				(TEGRA_SPDIF_BIT_MODE_24BIT << TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT)
+-#define TEGRA_SPDIF_CTRL_BIT_MODE_RAW				(TEGRA_SPDIF_BIT_MODE_RAW   << TEGRA_SPDIF_CTRL_BIT_MODE_SHIFT)
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT			12
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_MASK			(3                            << TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT)
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_16BIT			(TEGRA20_SPDIF_BIT_MODE_16BIT << TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT)
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_20BIT			(TEGRA20_SPDIF_BIT_MODE_20BIT << TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT)
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_24BIT			(TEGRA20_SPDIF_BIT_MODE_24BIT << TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT)
++#define TEGRA20_SPDIF_CTRL_BIT_MODE_RAW				(TEGRA20_SPDIF_BIT_MODE_RAW   << TEGRA20_SPDIF_CTRL_BIT_MODE_SHIFT)
+ 
+-/* Fields in TEGRA_SPDIF_STATUS */
++/* Fields in TEGRA20_SPDIF_STATUS */
+ 
+ /*
+  * Note: IS_P, IS_B, IS_C, and IS_U are sticky bits. Software must
+@@ -142,7 +142,7 @@
+  * (a) the end of a frame is reached after RX_EN is deeasserted, or
+  * (b) the SPDIF data stream becomes inactive.
+  */
+-#define TEGRA_SPDIF_STATUS_RX_BSY				(1 << 29)
++#define TEGRA20_SPDIF_STATUS_RX_BSY				(1 << 29)
+ 
+ /*
+  * Transmitter(TX) shifter is busy transmitting data.
+@@ -150,7 +150,7 @@
+  * This bit is deasserted when the end of a frame is reached after
+  * TX_EN is deasserted.
+  */
+-#define TEGRA_SPDIF_STATUS_TX_BSY				(1 << 28)
++#define TEGRA20_SPDIF_STATUS_TX_BSY				(1 << 28)
+ 
+ /*
+  * TX is busy shifting out channel status.
+@@ -160,7 +160,7 @@
+  * (a) the end of a frame is reached after TX_EN is deasserted, or
+  * (b) CH_STA_TX_F register is loaded into the internal shifter.
+  */
+-#define TEGRA_SPDIF_STATUS_TC_BSY				(1 << 27)
++#define TEGRA20_SPDIF_STATUS_TC_BSY				(1 << 27)
+ 
+ /*
+  * TX User data FIFO busy.
+@@ -169,173 +169,173 @@
+  * (a) the end of a frame is reached after TX_EN is deasserted, or
+  * (b) there's no data left in the TX user FIFO.
+  */
+-#define TEGRA_SPDIF_STATUS_TU_BSY				(1 << 26)
++#define TEGRA20_SPDIF_STATUS_TU_BSY				(1 << 26)
+ 
+ /* TX FIFO Underrun error status */
+-#define TEGRA_SPDIF_STATUS_TX_ERR				(1 << 25)
++#define TEGRA20_SPDIF_STATUS_TX_ERR				(1 << 25)
+ 
+ /* RX FIFO Overrun error status */
+-#define TEGRA_SPDIF_STATUS_RX_ERR				(1 << 24)
++#define TEGRA20_SPDIF_STATUS_RX_ERR				(1 << 24)
+ 
+ /* Preamble status: 0=Preamble OK, 1=bad/missing preamble */
+-#define TEGRA_SPDIF_STATUS_IS_P					(1 << 23)
++#define TEGRA20_SPDIF_STATUS_IS_P				(1 << 23)
+ 
+ /* B-preamble detection status: 0=not detected, 1=B-preamble detected */
+-#define TEGRA_SPDIF_STATUS_IS_B					(1 << 22)
++#define TEGRA20_SPDIF_STATUS_IS_B				(1 << 22)
+ 
+ /*
+  * RX channel block data receive status:
+  * 0=entire block not recieved yet.
+  * 1=received entire block of channel status,
+  */
+-#define TEGRA_SPDIF_STATUS_IS_C					(1 << 21)
++#define TEGRA20_SPDIF_STATUS_IS_C				(1 << 21)
+ 
+ /* RX User Data Valid flag:  1=valid IU detected, 0 = no IU detected. */
+-#define TEGRA_SPDIF_STATUS_IS_U					(1 << 20)
++#define TEGRA20_SPDIF_STATUS_IS_U				(1 << 20)
+ 
+ /*
+  * RX User FIFO Status:
+  * 1=attention level reached, 0=attention level not reached.
+  */
+-#define TEGRA_SPDIF_STATUS_QS_RU				(1 << 19)
++#define TEGRA20_SPDIF_STATUS_QS_RU				(1 << 19)
+ 
+ /*
+  * TX User FIFO Status:
+  * 1=attention level reached, 0=attention level not reached.
+  */
+-#define TEGRA_SPDIF_STATUS_QS_TU				(1 << 18)
++#define TEGRA20_SPDIF_STATUS_QS_TU				(1 << 18)
+ 
+ /*
+  * RX Data FIFO Status:
+  * 1=attention level reached, 0=attention level not reached.
+  */
+-#define TEGRA_SPDIF_STATUS_QS_RX				(1 << 17)
++#define TEGRA20_SPDIF_STATUS_QS_RX				(1 << 17)
+ 
+ /*
+  * TX Data FIFO Status:
+  * 1=attention level reached, 0=attention level not reached.
+  */
+-#define TEGRA_SPDIF_STATUS_QS_TX				(1 << 16)
++#define TEGRA20_SPDIF_STATUS_QS_TX				(1 << 16)
+ 
+-/* Fields in TEGRA_SPDIF_STROBE_CTRL */
++/* Fields in TEGRA20_SPDIF_STROBE_CTRL */
+ 
+ /*
+  * Indicates the approximate number of detected SPDIFIN clocks within a
+  * bi-phase period.
+  */
+-#define TEGRA_SPDIF_STROBE_CTRL_PERIOD_SHIFT			16
+-#define TEGRA_SPDIF_STROBE_CTRL_PERIOD_MASK			(0xff << TEGRA_SPDIF_STROBE_CTRL_PERIOD_SHIFT)
++#define TEGRA20_SPDIF_STROBE_CTRL_PERIOD_SHIFT			16
++#define TEGRA20_SPDIF_STROBE_CTRL_PERIOD_MASK			(0xff << TEGRA20_SPDIF_STROBE_CTRL_PERIOD_SHIFT)
+ 
+ /* Data strobe mode: 0=Auto-locked 1=Manual locked */
+-#define TEGRA_SPDIF_STROBE_CTRL_STROBE				(1 << 15)
++#define TEGRA20_SPDIF_STROBE_CTRL_STROBE			(1 << 15)
+ 
+ /*
+  * Manual data strobe time within the bi-phase clock period (in terms of
+  * the number of over-sampling clocks).
+  */
+-#define TEGRA_SPDIF_STROBE_CTRL_DATA_STROBES_SHIFT		8
+-#define TEGRA_SPDIF_STROBE_CTRL_DATA_STROBES_MASK		(0x1f << TEGRA_SPDIF_STROBE_CTRL_DATA_STROBES_SHIFT)
++#define TEGRA20_SPDIF_STROBE_CTRL_DATA_STROBES_SHIFT		8
++#define TEGRA20_SPDIF_STROBE_CTRL_DATA_STROBES_MASK		(0x1f << TEGRA20_SPDIF_STROBE_CTRL_DATA_STROBES_SHIFT)
+ 
+ /*
+  * Manual SPDIFIN bi-phase clock period (in terms of the number of
+  * over-sampling clocks).
+  */
+-#define TEGRA_SPDIF_STROBE_CTRL_CLOCK_PERIOD_SHIFT		0
+-#define TEGRA_SPDIF_STROBE_CTRL_CLOCK_PERIOD_MASK		(0x3f << TEGRA_SPDIF_STROBE_CTRL_CLOCK_PERIOD_SHIFT)
++#define TEGRA20_SPDIF_STROBE_CTRL_CLOCK_PERIOD_SHIFT		0
++#define TEGRA20_SPDIF_STROBE_CTRL_CLOCK_PERIOD_MASK		(0x3f << TEGRA20_SPDIF_STROBE_CTRL_CLOCK_PERIOD_SHIFT)
+ 
+ /* Fields in SPDIF_DATA_FIFO_CSR */
+ 
+ /* Clear Receiver User FIFO (RX USR.FIFO) */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_CLR			(1 << 31)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_CLR			(1 << 31)
+ 
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT			0
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS			1
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS			2
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS			3
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT			0
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS			1
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS		2
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS			3
+ 
+ /* RU FIFO attention level */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT		29
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_MASK		\
+-		(0x3                                    << TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU1_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT    << TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU2_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS   << TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU3_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS << TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU4_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS  << TEGRA_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT		29
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_MASK		\
++		(0x3                                      << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU1_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT    << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU2_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS   << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU3_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_RU4_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS  << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_ATN_LVL_SHIFT)
+ 
+ /* Number of RX USR.FIFO levels with valid data. */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_SHIFT		24
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_MASK		(0x1f << TEGRA_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_SHIFT		24
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_MASK		(0x1f << TEGRA20_SPDIF_DATA_FIFO_CSR_RU_FULL_COUNT_SHIFT)
+ 
+ /* Clear Transmitter User FIFO (TX USR.FIFO) */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_CLR			(1 << 23)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_CLR			(1 << 23)
+ 
+ /* TU FIFO attention level */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT		21
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_MASK		\
+-		(0x3                                   << TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU1_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT    << TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU2_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS   << TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU3_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS << TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU4_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS  << TEGRA_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT		21
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_MASK		\
++		(0x3                                      << TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU1_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_ONE_SLOT    << TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU2_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_TWO_SLOTS   << TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU3_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_THREE_SLOTS << TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_TU4_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_U_FOUR_SLOTS  << TEGRA20_SPDIF_DATA_FIFO_CSR_TU_ATN_LVL_SHIFT)
+ 
+ /* Number of TX USR.FIFO levels that could be filled. */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_SHIFT		16
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_MASK		(0x1f << SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_SHIFT	16
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_MASK		(0x1f << SPDIF_DATA_FIFO_CSR_TU_EMPTY_COUNT_SHIFT)
+ 
+ /* Clear Receiver Data FIFO (RX DATA.FIFO) */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_CLR			(1 << 15)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_CLR			(1 << 15)
+ 
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT			0
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS			1
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS			2
+-#define TEGRA_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS			3
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT			0
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS			1
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS		2
++#define TEGRA20_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS		3
+ 
+ /* RU FIFO attention level */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT		13
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_MASK		\
+-		(0x3                                     << TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU1_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT     << TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU4_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS   << TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU8_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS  << TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU12_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS << TEGRA_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT		13
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_MASK		\
++		(0x3                                       << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU1_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT     << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU4_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS   << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU8_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS  << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_RU12_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_ATN_LVL_SHIFT)
+ 
+ /* Number of RX DATA.FIFO levels with valid data. */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_SHIFT		8
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_MASK		(0x1f << TEGRA_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_SHIFT		8
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_MASK		(0x1f << TEGRA20_SPDIF_DATA_FIFO_CSR_RX_FULL_COUNT_SHIFT)
+ 
+ /* Clear Transmitter Data FIFO (TX DATA.FIFO) */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_CLR			(1 << 7)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_CLR			(1 << 7)
+ 
+ /* TU FIFO attention level */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT		5
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_MASK		\
+-		(0x3                                     << TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU1_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT     << TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU4_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS   << TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU8_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS  << TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU12_WORD_FULL	\
+-		(TEGRA_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS << TEGRA_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT		5
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_MASK		\
++		(0x3                                       << TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU1_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_ONE_SLOT     << TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU4_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_FOUR_SLOTS   << TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU8_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_EIGHT_SLOTS  << TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU12_WORD_FULL	\
++		(TEGRA20_SPDIF_FIFO_ATN_LVL_D_TWELVE_SLOTS << TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_SHIFT)
+ 
+ /* Number of TX DATA.FIFO levels that could be filled. */
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_SHIFT		0
+-#define TEGRA_SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_MASK		(0x1f << SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_SHIFT)
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_SHIFT	0
++#define TEGRA20_SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_MASK		(0x1f << SPDIF_DATA_FIFO_CSR_TX_EMPTY_COUNT_SHIFT)
+ 
+-/* Fields in TEGRA_SPDIF_DATA_OUT */
++/* Fields in TEGRA20_SPDIF_DATA_OUT */
+ 
+ /*
+  * This register has 5 different formats:
+@@ -346,36 +346,36 @@
+  * 16-bit packed (BIT_MODE=00, PACK=1)
+  */
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_SHIFT			0
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_MASK			(0xffff << TEGRA_SPDIF_DATA_OUT_DATA_16_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_SHIFT			0
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_MASK			(0xffff << TEGRA20_SPDIF_DATA_OUT_DATA_16_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_20_SHIFT			0
+-#define TEGRA_SPDIF_DATA_OUT_DATA_20_MASK			(0xfffff << TEGRA_SPDIF_DATA_OUT_DATA_20_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_20_SHIFT			0
++#define TEGRA20_SPDIF_DATA_OUT_DATA_20_MASK			(0xfffff << TEGRA20_SPDIF_DATA_OUT_DATA_20_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_24_SHIFT			0
+-#define TEGRA_SPDIF_DATA_OUT_DATA_24_MASK			(0xffffff << TEGRA_SPDIF_DATA_OUT_DATA_24_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_24_SHIFT			0
++#define TEGRA20_SPDIF_DATA_OUT_DATA_24_MASK			(0xffffff << TEGRA20_SPDIF_DATA_OUT_DATA_24_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_P				(1 << 31)
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_C				(1 << 30)
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_U				(1 << 29)
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_V				(1 << 28)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_P			(1 << 31)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_C			(1 << 30)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_U			(1 << 29)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_V			(1 << 28)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_DATA_SHIFT		8
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_DATA_MASK			(0xfffff << TEGRA_SPDIF_DATA_OUT_DATA_RAW_DATA_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_DATA_SHIFT		8
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_DATA_MASK		(0xfffff << TEGRA20_SPDIF_DATA_OUT_DATA_RAW_DATA_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_AUX_SHIFT			4
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_AUX_MASK			(0xf << TEGRA_SPDIF_DATA_OUT_DATA_RAW_AUX_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_AUX_SHIFT		4
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_AUX_MASK		(0xf << TEGRA20_SPDIF_DATA_OUT_DATA_RAW_AUX_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_SHIFT		0
+-#define TEGRA_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_MASK		(0xf << TEGRA_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_SHIFT		0
++#define TEGRA20_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_MASK		(0xf << TEGRA20_SPDIF_DATA_OUT_DATA_RAW_PREAMBLE_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_SHIFT		16
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_MASK		(0xffff << TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_SHIFT	16
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_MASK	(0xffff << TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_RIGHT_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_SHIFT		0
+-#define TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_MASK		(0xffff << TEGRA_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_SHIFT)
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_SHIFT	0
++#define TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_MASK		(0xffff << TEGRA20_SPDIF_DATA_OUT_DATA_16_PACKED_LEFT_SHIFT)
+ 
+-/* Fields in TEGRA_SPDIF_DATA_IN */
++/* Fields in TEGRA20_SPDIF_DATA_IN */
+ 
+ /*
+  * This register has 5 different formats:
+@@ -388,44 +388,44 @@
+  * Bits 31:24 are common to all modes except 16-bit packed
+  */
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_P				(1 << 31)
+-#define TEGRA_SPDIF_DATA_IN_DATA_C				(1 << 30)
+-#define TEGRA_SPDIF_DATA_IN_DATA_U				(1 << 29)
+-#define TEGRA_SPDIF_DATA_IN_DATA_V				(1 << 28)
++#define TEGRA20_SPDIF_DATA_IN_DATA_P				(1 << 31)
++#define TEGRA20_SPDIF_DATA_IN_DATA_C				(1 << 30)
++#define TEGRA20_SPDIF_DATA_IN_DATA_U				(1 << 29)
++#define TEGRA20_SPDIF_DATA_IN_DATA_V				(1 << 28)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_PREAMBLE_SHIFT			24
+-#define TEGRA_SPDIF_DATA_IN_DATA_PREAMBLE_MASK			(0xf << TEGRA_SPDIF_DATA_IN_DATA_PREAMBLE_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_PREAMBLE_SHIFT		24
++#define TEGRA20_SPDIF_DATA_IN_DATA_PREAMBLE_MASK		(0xf << TEGRA20_SPDIF_DATA_IN_DATA_PREAMBLE_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_SHIFT			0
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_MASK			(0xffff << TEGRA_SPDIF_DATA_IN_DATA_16_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_SHIFT			0
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_MASK			(0xffff << TEGRA20_SPDIF_DATA_IN_DATA_16_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_20_SHIFT			0
+-#define TEGRA_SPDIF_DATA_IN_DATA_20_MASK			(0xfffff << TEGRA_SPDIF_DATA_IN_DATA_20_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_20_SHIFT			0
++#define TEGRA20_SPDIF_DATA_IN_DATA_20_MASK			(0xfffff << TEGRA20_SPDIF_DATA_IN_DATA_20_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_24_SHIFT			0
+-#define TEGRA_SPDIF_DATA_IN_DATA_24_MASK			(0xffffff << TEGRA_SPDIF_DATA_IN_DATA_24_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_24_SHIFT			0
++#define TEGRA20_SPDIF_DATA_IN_DATA_24_MASK			(0xffffff << TEGRA20_SPDIF_DATA_IN_DATA_24_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_DATA_SHIFT			8
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_DATA_MASK			(0xfffff << TEGRA_SPDIF_DATA_IN_DATA_RAW_DATA_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_DATA_SHIFT		8
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_DATA_MASK		(0xfffff << TEGRA20_SPDIF_DATA_IN_DATA_RAW_DATA_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_AUX_SHIFT			4
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_AUX_MASK			(0xf << TEGRA_SPDIF_DATA_IN_DATA_RAW_AUX_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_AUX_SHIFT		4
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_AUX_MASK			(0xf << TEGRA20_SPDIF_DATA_IN_DATA_RAW_AUX_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_SHIFT		0
+-#define TEGRA_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_MASK		(0xf << TEGRA_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_SHIFT		0
++#define TEGRA20_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_MASK		(0xf << TEGRA20_SPDIF_DATA_IN_DATA_RAW_PREAMBLE_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_SHIFT		16
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_MASK		(0xffff << TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_SHIFT	16
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_MASK		(0xffff << TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_RIGHT_SHIFT)
+ 
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_SHIFT		0
+-#define TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_MASK		(0xffff << TEGRA_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_SHIFT)
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_SHIFT		0
++#define TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_MASK		(0xffff << TEGRA20_SPDIF_DATA_IN_DATA_16_PACKED_LEFT_SHIFT)
+ 
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_A */
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_B */
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_C */
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_D */
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_E */
+-/* Fields in TEGRA_SPDIF_CH_STA_RX_F */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_A */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_B */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_C */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_D */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_E */
++/* Fields in TEGRA20_SPDIF_CH_STA_RX_F */
+ 
+ /*
+  * The 6-word receive channel data page buffer holds a block (192 frames) of
+@@ -433,12 +433,12 @@
+  * bit, and from CH_STA_RX_A to CH_STA_RX_F then back to CH_STA_RX_A.
+  */
+ 
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_A */
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_B */
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_C */
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_D */
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_E */
+-/* Fields in TEGRA_SPDIF_CH_STA_TX_F */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_A */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_B */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_C */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_D */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_E */
++/* Fields in TEGRA20_SPDIF_CH_STA_TX_F */
+ 
+ /*
+  * The 6-word transmit channel data page buffer holds a block (192 frames) of
+@@ -446,21 +446,21 @@
+  * bit, and from CH_STA_TX_A to CH_STA_TX_F then back to CH_STA_TX_A.
+  */
+ 
+-/* Fields in TEGRA_SPDIF_USR_STA_RX_A */
++/* Fields in TEGRA20_SPDIF_USR_STA_RX_A */
+ 
+ /*
+  * This 4-word deep FIFO receives user FIFO field information. The order of
+  * receive is from LSB to MSB bit.
+  */
+ 
+-/* Fields in TEGRA_SPDIF_USR_DAT_TX_A */
++/* Fields in TEGRA20_SPDIF_USR_DAT_TX_A */
+ 
+ /*
+  * This 4-word deep FIFO transmits user FIFO field information. The order of
+  * transmission is from LSB to MSB bit.
+  */
+ 
+-struct tegra_spdif {
++struct tegra20_spdif {
+ 	struct clk *clk_spdif_out;
+ 	struct tegra_pcm_dma_params capture_dma_data;
+ 	struct tegra_pcm_dma_params playback_dma_data;
+diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+index 2f9e9ff..0b0df49 100644
+--- a/sound/soc/tegra/tegra_wm8903.c
++++ b/sound/soc/tegra/tegra_wm8903.c
+@@ -350,8 +350,8 @@ static struct snd_soc_dai_link tegra_wm8903_dai = {
+ 	.name = "WM8903",
+ 	.stream_name = "WM8903 PCM",
+ 	.codec_name = "wm8903.0-001a",
+-	.platform_name = "tegra-i2s.0",
+-	.cpu_dai_name = "tegra-i2s.0",
++	.platform_name = "tegra20-i2s.0",
++	.cpu_dai_name = "tegra20-i2s.0",
+ 	.codec_dai_name = "wm8903-hifi",
+ 	.init = tegra_wm8903_init,
+ 	.ops = &tegra_wm8903_ops,
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index 8884667..0fd115e 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -116,8 +116,8 @@ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
+ 	.name = "TLV320AIC23",
+ 	.stream_name = "AIC23",
+ 	.codec_name = "tlv320aic23-codec.2-001a",
+-	.platform_name = "tegra-i2s.0",
+-	.cpu_dai_name = "tegra-i2s.0",
++	.platform_name = "tegra20-i2s.0",
++	.cpu_dai_name = "tegra20-i2s.0",
+ 	.codec_dai_name = "tlv320aic23-hifi",
+ 	.ops = &trimslice_asoc_ops,
+ };
 -- 
 1.7.0.4
