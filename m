@@ -1,61 +1,134 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 07/17] ASoC: tegra: introduce separate Kconfig variable for DAS driver
-Date: Fri, 30 Mar 2012 17:07:22 -0600
-Message-ID: <1333148852-17806-8-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 01/17] ASoC: tegra: remove open-coded clk
+	reference counting
+Date: Fri, 30 Mar 2012 17:07:16 -0600
+Message-ID: <1333148852-17806-2-git-send-email-swarren@wwwdotorg.org>
 References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1333148852-17806-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-This is mainly for symmetry with a future Tegra30 driver, where the
-equivalent of the DAS (the AHUB) is useful separately from the I2S driver.
+clk_enable/disable() already reference count the enable calls, so there's
+no need for the callers to do the same.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- sound/soc/tegra/Kconfig  |    9 +++++++++
- sound/soc/tegra/Makefile |    2 +-
- 2 files changed, 10 insertions(+), 1 deletions(-)
+ sound/soc/tegra/tegra_i2s.c   |   14 ++++----------
+ sound/soc/tegra/tegra_i2s.h   |    1 -
+ sound/soc/tegra/tegra_spdif.c |    8 ++------
+ sound/soc/tegra/tegra_spdif.h |    1 -
+ 4 files changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index e42ca2e..87fb90d 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -4,9 +4,18 @@ config SND_SOC_TEGRA
- 	help
- 	  Say Y or M here if you want support for SoC audio on Tegra.
+diff --git a/sound/soc/tegra/tegra_i2s.c b/sound/soc/tegra/tegra_i2s.c
+index 546e29b..0a874fb 100644
+--- a/sound/soc/tegra/tegra_i2s.c
++++ b/sound/soc/tegra/tegra_i2s.c
+@@ -220,8 +220,7 @@ static int tegra_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	if (i2sclock % (2 * srate))
+ 		reg |= TEGRA_I2S_TIMING_NON_SYM_ENABLE;
  
-+config SND_SOC_TEGRA_DAS
-+	tristate "Tegra Digital Audio Switch driver"
-+	depends on SND_SOC_TEGRA
-+	help
-+	  Say Y or M if you want to add support for the Tegra DAS module.
-+	  You will also need to select the individual machine drivers to
-+	  support below.
-+
- config SND_SOC_TEGRA_I2S
- 	tristate "Tegra I2S driver"
- 	depends on SND_SOC_TEGRA
-+	select SND_SOC_TEGRA_DAS
- 	help
- 	  Say Y or M if you want to add support for codecs attached to the
- 	  Tegra I2S interface. You will also need to select the individual
-diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
-index 8e584b8..6d5d81e 100644
---- a/sound/soc/tegra/Makefile
-+++ b/sound/soc/tegra/Makefile
-@@ -6,7 +6,7 @@ snd-soc-tegra-spdif-objs := tegra_spdif.o
- snd-soc-tegra-utils-objs += tegra_asoc_utils.o
+-	if (!i2s->clk_refs)
+-		clk_enable(i2s->clk_i2s);
++	clk_enable(i2s->clk_i2s);
  
- obj-$(CONFIG_SND_SOC_TEGRA) += snd-soc-tegra-utils.o
--obj-$(CONFIG_SND_SOC_TEGRA) += snd-soc-tegra-das.o
-+obj-$(CONFIG_SND_SOC_TEGRA_DAS) += snd-soc-tegra-das.o
- obj-$(CONFIG_SND_SOC_TEGRA) += snd-soc-tegra-pcm.o
- obj-$(CONFIG_SND_SOC_TEGRA_I2S) += snd-soc-tegra-i2s.o
- obj-$(CONFIG_SND_SOC_TEGRA_SPDIF) += snd-soc-tegra-spdif.o
+ 	tegra_i2s_write(i2s, TEGRA_I2S_TIMING, reg);
+ 
+@@ -229,8 +228,7 @@ static int tegra_i2s_hw_params(struct snd_pcm_substream *substream,
+ 		TEGRA_I2S_FIFO_SCR_FIFO2_ATN_LVL_FOUR_SLOTS |
+ 		TEGRA_I2S_FIFO_SCR_FIFO1_ATN_LVL_FOUR_SLOTS);
+ 
+-	if (!i2s->clk_refs)
+-		clk_disable(i2s->clk_i2s);
++	clk_disable(i2s->clk_i2s);
+ 
+ 	return 0;
+ }
+@@ -268,9 +266,7 @@ static int tegra_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+-		if (!i2s->clk_refs)
+-			clk_enable(i2s->clk_i2s);
+-		i2s->clk_refs++;
++		clk_enable(i2s->clk_i2s);
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 			tegra_i2s_start_playback(i2s);
+ 		else
+@@ -283,9 +279,7 @@ static int tegra_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 			tegra_i2s_stop_playback(i2s);
+ 		else
+ 			tegra_i2s_stop_capture(i2s);
+-		i2s->clk_refs--;
+-		if (!i2s->clk_refs)
+-			clk_disable(i2s->clk_i2s);
++		clk_disable(i2s->clk_i2s);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/sound/soc/tegra/tegra_i2s.h b/sound/soc/tegra/tegra_i2s.h
+index 15ce1e2..c08e019 100644
+--- a/sound/soc/tegra/tegra_i2s.h
++++ b/sound/soc/tegra/tegra_i2s.h
+@@ -155,7 +155,6 @@
+ struct tegra_i2s {
+ 	struct snd_soc_dai_driver dai;
+ 	struct clk *clk_i2s;
+-	int clk_refs;
+ 	struct tegra_pcm_dma_params capture_dma_data;
+ 	struct tegra_pcm_dma_params playback_dma_data;
+ 	void __iomem *regs;
+diff --git a/sound/soc/tegra/tegra_spdif.c b/sound/soc/tegra/tegra_spdif.c
+index cd836cb..3426633 100644
+--- a/sound/soc/tegra/tegra_spdif.c
++++ b/sound/soc/tegra/tegra_spdif.c
+@@ -196,18 +196,14 @@ static int tegra_spdif_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+-		if (!spdif->clk_refs)
+-			clk_enable(spdif->clk_spdif_out);
+-		spdif->clk_refs++;
++		clk_enable(spdif->clk_spdif_out);
+ 		tegra_spdif_start_playback(spdif);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 		tegra_spdif_stop_playback(spdif);
+-		spdif->clk_refs--;
+-		if (!spdif->clk_refs)
+-			clk_disable(spdif->clk_spdif_out);
++		clk_disable(spdif->clk_spdif_out);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/sound/soc/tegra/tegra_spdif.h b/sound/soc/tegra/tegra_spdif.h
+index 2e03db4..f5fc712 100644
+--- a/sound/soc/tegra/tegra_spdif.h
++++ b/sound/soc/tegra/tegra_spdif.h
+@@ -462,7 +462,6 @@
+ 
+ struct tegra_spdif {
+ 	struct clk *clk_spdif_out;
+-	int clk_refs;
+ 	struct tegra_pcm_dma_params capture_dma_data;
+ 	struct tegra_pcm_dma_params playback_dma_data;
+ 	void __iomem *regs;
 -- 
 1.7.0.4
