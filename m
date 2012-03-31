@@ -1,54 +1,85 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 03/17] ASoC: tegra: remove unnecessary includes
-Date: Sat, 31 Mar 2012 20:44:56 +0100
-Message-ID: <20120331194456.GF5012@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 04/17] ASoC: tegra: add description to a
+ couple Kconfig options
+Date: Sat, 31 Mar 2012 20:48:48 +0100
+Message-ID: <20120331194848.GG5012@opensource.wolfsonmicro.com>
 References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
- <1333148852-17806-4-git-send-email-swarren@wwwdotorg.org>
+	<1333148852-17806-5-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1333148852-17806-4-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============6133807306007052592=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1333148852-17806-5-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lrg@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---pyE8wggRBhVBcj8z
+--===============6133807306007052592==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="p7qwJlK53pWzbayA"
+Content-Disposition: inline
+
+
+--p7qwJlK53pWzbayA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 30, 2012 at 05:07:18PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Mar 30, 2012 at 05:07:19PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 >=20
-> These include aren't needed, and some of the files are about to be
-> renamed.
+> Even though these options are typically only selected by other options,
+> it's still useful to give them a brief description.
 
-Applied, thanks.
+Why do you find these short descriptions useful?  They'll cause Kconfig
+to prompt for them and...
 
---pyE8wggRBhVBcj8z
+> -	tristate
+> +	tristate "Tegra I2S driver"
+>  	depends on SND_SOC_TEGRA
+>  	help
+>  	  Say Y or M if you want to add support for codecs attached to the
+
+=2E..there's already a description in the long text anyway?
+
+--p7qwJlK53pWzbayA
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPd16rAAoJEBus8iNuMP3dS4sP/j2yPKOkQbu5xNgMv8ws1Ugf
-3F+nZs6kun3KLK21kcRBwI+N66ya01R8Arv442q9SRhoi828qUehlxitBdfVFf4l
-UjQfiHLLQ35WYV9kvLa0oKwDnwYJmrVJ+DXFgxFB37CYzHmg5M4X1G16bFQJ3bma
-EerydqTRIgrvE4gjB8cdFQe0rSL/jCzkumGnJiiEE3vIqXTnzyvJCu1prUv07LZI
-/Sz6VTc9bPn2CvcqYMZ68jWwitZCqir5oxKAlXnML4BY1x8PGimkzwLJZYMET/LU
-vzuVr/AaxEHsx1ydS2z6jmGq40RSuIE9su0iMW0bjX+m5rvAoNoSqVlVcTGyXAgm
-eLcOQ57rkJPYm8pB2e84q+uzAkt+v5bPnte7QKOIRRBcOjGIYKGQHgNHBvTT5j0c
-KeyqJJZiZh8MjLdGaNm3G4knBLLxB/5YaivFZapTp6mUzdkk4jJoRFomCYxW1P9W
-EVb8dKFTql2M6y/oXGTMczNVKjgAz4b2i5dDxXTDFyR5FKPw69tmNlj6l9v4uNAH
-H0+Kggz9qIOWhrUPbx8AIzAIIEo8vulGmm/bwEtir/g/f8g1GPvCTfxVuFq8wiOR
-7ZehZlQj6WldV8OkGGU1KHQrwHcIYJCDd9OMHqbtxFuqZB1hqJewZOm4+ziDbt+J
-46F2zopZb3hXrbZ+3ppF
-=tx0w
+iQIcBAEBAgAGBQJPd1+LAAoJEBus8iNuMP3dbNQP/jlloRgjBuPtfa9wHG9LaWhy
+Dl0TamS0TBTiAVQ/2CRsF6+eHoW0xDUocxJhU9w3ZGKItnRzkFlqYBWSZjLkpZk9
+v9GCHPQ1XEg12plkmv27iDKHSP46FTLqb6YANSUqtqhpG7gQDdbOqBTyIF6Th5aD
+B771h4nOMaqArWfqWN6ATIqo5mSjwXLXjYhUEfXKRwCtyK/Kf+JCxcaUX8h7VN5z
+Gypb1WU2eRQnj0V0kPGfoD1vKvokELG9CuP7VmGyozqvOGdKEFVDw0xfyNqpPyzU
+EYVV9mb9hKv/D5r9n39eK8+eyL5r5I88T5STPueLAIEYdppOKO35sEBEiwP16ZRp
+pC7hHQ5so3PK6dCfuuGnWszYvJO79xi8mN+T5GdsNtalAs43hI1APFwUA7DJE8dz
+5v8avreEGEC4yrEI1v4pZFasLsTueDO4uKP1+Evh70WrHuQZBZnSt8qCG2X80RM8
+gFzR5khJYt1gIPfgiF8/xtqIOkUkcLAz1Ib9JvZoH17BVmK2gFp+A3RJI+lZT52A
+14RXDnu80TwbxaEVTY54ThoH1xe2Ofno2Qum7sxFOulUz/BFK93hr2udRnD62hbh
+NCAHCTm+FjjBIzLaiSsef2QwvufnbpKVVDb/C9sba07HJDQyryQH3TXWZ7pSmkh9
+IBp0o9yhd9EWhADrYR+t
+=/n7g
 -----END PGP SIGNATURE-----
 
---pyE8wggRBhVBcj8z--
+--p7qwJlK53pWzbayA--
+
+--===============6133807306007052592==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6133807306007052592==--
