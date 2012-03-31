@@ -1,54 +1,54 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 00/17] ASoC: tegra: Add Tegra30 support
-Date: Sat, 31 Mar 2012 20:44:29 +0100
-Message-ID: <20120331194429.GE5012@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 03/17] ASoC: tegra: remove unnecessary includes
+Date: Sat, 31 Mar 2012 20:44:56 +0100
+Message-ID: <20120331194456.GF5012@opensource.wolfsonmicro.com>
 References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
+ <1333148852-17806-4-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="maH1Gajj2nflutpK"
+	protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1333148852-17806-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1333148852-17806-4-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---maH1Gajj2nflutpK
+--pyE8wggRBhVBcj8z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 30, 2012 at 05:07:15PM -0600, Stephen Warren wrote:
+On Fri, Mar 30, 2012 at 05:07:18PM -0600, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> This series adds basic support for 16-bit stereo on Tegra30. This will
-> be enabled for the Cardhu board in a separate series to arch/arm/mach-teg=
-ra.
+> These include aren't needed, and some of the files are about to be
+> renamed.
 
 Applied, thanks.
 
---maH1Gajj2nflutpK
+--pyE8wggRBhVBcj8z
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPd16VAAoJEBus8iNuMP3dgVwQAIchNZs9+3AwFVmufci8Wzyw
-Y/M8JTQ+Cn21vfsOT/AoC6RErKbfL2X/0baTn74S7xhXqrPR7uIRw8kvaCU8LWhV
-WUDagWFt3SHOkUnabX0YNGb7gBEnTn0Qp+bJgRfN3zpFYHLRBi+CbBpfVuRilWK/
-nYYsRodYkfK977UVwGQYoTW2ljwdpOgO7xrEsVozChSS/RK3daoT9H+M4NblniKy
-NYFhnV7lZWydugJUZXBF4kdLp7AV74uDND8tg698heBLGIea96xmShRUbxbavE84
-Q4LYsWCnOP/ZJyPor6SZP58v/vqFREbq2wkxOcyB7piM9U78PC5yZiiZzlZLv45j
-SnZuStIXv2GZbaK1GwHeJB4QlLgBlkYMALveTEr4iSd4VtqZmTuyqYHOfGy2lGji
-MXYzBRnp5aCvcClNufie5tUtjkNehhDc6OU6fCv1tzI3mJ6Yrqj7Jjzpni/MDPOo
-/atOirWr1/SAdVvxTCI9xlXYCqx0ihUIsP22xY1Kc+ScFYPurbF8QTsXn9Pbm+j4
-KKYaFvTvDdKo3ljlukY6KXd1jJYoMzswJLBGzh9Kh073O+/QMhg48BaqnJ6/Hjdz
-ZEKPH3jcsERMpCgvQmoZSivL8vze+G7eL6RnC0Fjd41uDYqYrjOn3CAy2fBXNUN8
-IHcZxu4V7XvjweFuJfjt
-=oDiV
+iQIcBAEBAgAGBQJPd16rAAoJEBus8iNuMP3dS4sP/j2yPKOkQbu5xNgMv8ws1Ugf
+3F+nZs6kun3KLK21kcRBwI+N66ya01R8Arv442q9SRhoi828qUehlxitBdfVFf4l
+UjQfiHLLQ35WYV9kvLa0oKwDnwYJmrVJ+DXFgxFB37CYzHmg5M4X1G16bFQJ3bma
+EerydqTRIgrvE4gjB8cdFQe0rSL/jCzkumGnJiiEE3vIqXTnzyvJCu1prUv07LZI
+/Sz6VTc9bPn2CvcqYMZ68jWwitZCqir5oxKAlXnML4BY1x8PGimkzwLJZYMET/LU
+vzuVr/AaxEHsx1ydS2z6jmGq40RSuIE9su0iMW0bjX+m5rvAoNoSqVlVcTGyXAgm
+eLcOQ57rkJPYm8pB2e84q+uzAkt+v5bPnte7QKOIRRBcOjGIYKGQHgNHBvTT5j0c
+KeyqJJZiZh8MjLdGaNm3G4knBLLxB/5YaivFZapTp6mUzdkk4jJoRFomCYxW1P9W
+EVb8dKFTql2M6y/oXGTMczNVKjgAz4b2i5dDxXTDFyR5FKPw69tmNlj6l9v4uNAH
+H0+Kggz9qIOWhrUPbx8AIzAIIEo8vulGmm/bwEtir/g/f8g1GPvCTfxVuFq8wiOR
+7ZehZlQj6WldV8OkGGU1KHQrwHcIYJCDd9OMHqbtxFuqZB1hqJewZOm4+ziDbt+J
+46F2zopZb3hXrbZ+3ppF
+=tx0w
 -----END PGP SIGNATURE-----
 
---maH1Gajj2nflutpK--
+--pyE8wggRBhVBcj8z--
