@@ -1,71 +1,58 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 15/17] ASoC: tegra: add tegra30-i2s driver
-Date: Sat, 31 Mar 2012 20:17:10 -0600
-Message-ID: <4F77BAA6.7060304@wwwdotorg.org>
-References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
-	<1333148852-17806-16-git-send-email-swarren@wwwdotorg.org>
-	<20120331213401.GP5012@opensource.wolfsonmicro.com>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 07/11] gpio: tegra: Hide tegra_gpio_enable/disable()
+Date: Sun, 01 Apr 2012 00:32:32 -0400
+Message-ID: <87mx6wkr6n.fsf@laptop.org>
+References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
+	<1333148404-17691-8-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20120331213401.GP5012@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lrg@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1333148404-17691-8-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+	(Stephen Warren's message of "Fri, 30 Mar 2012 17:00:00 -0600")
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/31/2012 03:34 PM, Mark Brown wrote:
-> On Fri, Mar 30, 2012 at 05:07:30PM -0600, Stephen Warren wrote:
-> 
->> +#ifdef CONFIG_DEBUG_FS
->> +static int tegra30_i2s_show(struct seq_file *s, void *unused)
->> +{
-> 
-> Abstraction please - this is open coded in several of your drivers.
+Hi Stephen,
 
-There's very little code here; unifying it would require passing the
-clock enable/disable and register read functions to any common code,
-which would end up making everything rather more complex. Sometimes
-there are multiple register read functions for different chunks of the
-address space. I guess if we did have regmap for MMIO, these debugfs
-files would pretty much come for free. Is that what you're looking for here?
+On Fri, Mar 30 2012, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Recent pinctrl discussions concluded that gpiolib APIs should in fact do
+> whatever is required to mux a GPIO onto pins, by calling pinctrl APIs if
+> required. This change implements this for the Tegra GPIO driver, and removes
+> calls to the Tegra-specific APIs from drivers and board files.
+>
+> Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+> Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: Adjusted per changes to latest version of Documentation/gpio.txt.
+> Fixed tegra_board_pinmux_bus_notify() to still check the device name,
+> so it waits for the pinmux device to be registered, not just /any/ device.
+> ---
+>  arch/arm/mach-tegra/board-dt-tegra20.c        |    1 -
+>  arch/arm/mach-tegra/board-harmony-pinmux.c    |   17 -----------
+>  arch/arm/mach-tegra/board-paz00-pinmux.c      |   14 ---------
+>  arch/arm/mach-tegra/board-pinmux.c            |   33 +++--------------------
+>  arch/arm/mach-tegra/board-pinmux.h            |    5 ---
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c   |   32 ----------------------
+>  arch/arm/mach-tegra/board-seaboard.c          |    1 -
+>  arch/arm/mach-tegra/board-trimslice-pinmux.c  |   12 --------
+>  arch/arm/mach-tegra/include/mach/gpio-tegra.h |    9 ------
+>  arch/arm/mach-tegra/usb_phy.c                 |    1 -
+>  drivers/gpio/gpio-tegra.c                     |   36 ++++++++++++------------
 
->> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
->> +		ret = tegra30_ahub_allocate_tx_fifo(&i2s->txcif,
->> +					&i2s->playback_dma_data.addr,
->> +					&i2s->playback_dma_data.req_sel);
->> +		i2s->playback_dma_data.wrap = 4;
->> +		i2s->playback_dma_data.width = 32;
->> +		tegra30_ahub_set_rx_cif_source(
->> +				TEGRA30_AHUB_RXCIF_I2S0_RX0 + i2s->cif_id,
->> +				i2s->txcif);
-> 
-> So.  This is all fairly straightforward, simple and non-invasive for
-> CPU<->I2S streams but obviously it's locking out any loopbacks within
-> the AHUB which is a bit sad.
+For this hunk:
 
-Yes, I certainly foresee the way the DAIs interact with AHUB changing
-when adding more advanced features, such as if representing AHUB as a CODEC.
+>  drivers/mmc/host/sdhci-tegra.c                |   24 +++-------------
 
-Our downstream kernels do have some code that sets up loopbacks between
-I2S modules, and it's all derived from these patches as a starting
-point. The downstream solution probably isn't upstreamable though; it
-wasn't written with upstream approaches in mind:-(
+Acked-by: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
 
-> Looking at this it seems like all that's required is to propagate stream
-> events back up the chain and do the routing, there doesn't seem to be
-> much other interaction between the AHUB and the interfaces?
+Thanks,
 
-I suspect that's pretty much what representing AHUB as a CODEC would
-turn into, or very similar anyway. Is it OK to get the basic
-functionality in first and then refactor this, or would you prefer going
-straight to the complete solution?
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
