@@ -1,22 +1,20 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH 07/11] gpio: tegra: Hide tegra_gpio_enable/disable()
-Date: Sun, 01 Apr 2012 00:32:32 -0400
-Message-ID: <87mx6wkr6n.fsf@laptop.org>
+Date: Sun, 1 Apr 2012 11:54:34 +0200
+Message-ID: <CACRpkdaVc3WJE3fo=hp1-om2kd=KLvGWNCbtSjhd0vWa7G-+rQ@mail.gmail.com>
 References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
 	<1333148404-17691-8-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1333148404-17691-8-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-	(Stephen Warren's message of "Fri, 30 Mar 2012 17:00:00 -0600")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+On Sat, Mar 31, 2012 at 1:00 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-On Fri, Mar 30 2012, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
 > Recent pinctrl discussions concluded that gpiolib APIs should in fact do
@@ -27,32 +25,10 @@ On Fri, Mar 30 2012, Stephen Warren wrote:
 > Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
 > Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2: Adjusted per changes to latest version of Documentation/gpio.txt.
-> Fixed tegra_board_pinmux_bus_notify() to still check the device name,
-> so it waits for the pinmux device to be registered, not just /any/ device.
-> ---
->  arch/arm/mach-tegra/board-dt-tegra20.c        |    1 -
->  arch/arm/mach-tegra/board-harmony-pinmux.c    |   17 -----------
->  arch/arm/mach-tegra/board-paz00-pinmux.c      |   14 ---------
->  arch/arm/mach-tegra/board-pinmux.c            |   33 +++--------------------
->  arch/arm/mach-tegra/board-pinmux.h            |    5 ---
->  arch/arm/mach-tegra/board-seaboard-pinmux.c   |   32 ----------------------
->  arch/arm/mach-tegra/board-seaboard.c          |    1 -
->  arch/arm/mach-tegra/board-trimslice-pinmux.c  |   12 --------
->  arch/arm/mach-tegra/include/mach/gpio-tegra.h |    9 ------
->  arch/arm/mach-tegra/usb_phy.c                 |    1 -
->  drivers/gpio/gpio-tegra.c                     |   36 ++++++++++++------------
 
-For this hunk:
+Good stuff. Tegra is starting to look like a role model thanks to your
+efforts Stephen.
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
->  drivers/mmc/host/sdhci-tegra.c                |   24 +++-------------
-
-Acked-by: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+Yours,
+Linus Walleij
