@@ -1,84 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 13/17] ASoC: tegra: set a sensible initial
-	clock rate
-Date: Sun, 1 Apr 2012 11:36:29 +0100
-Message-ID: <20120401103629.GF3153@opensource.wolfsonmicro.com>
-References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org>
-	<1333148852-17806-14-git-send-email-swarren@wwwdotorg.org>
-	<20120331201754.GM5012@opensource.wolfsonmicro.com>
-	<4F77B856.2050708@wwwdotorg.org>
+From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 04/16] pwm: Add table-based lookup for static mappings
+Date: Sun, 1 Apr 2012 23:20:46 +0800
+Message-ID: <20120401152042.GE2395@S2101-09.ap.freescale.net>
+References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
+ <1332945238-14897-5-git-send-email-thierry.reding@avionic-design.de>
+ <20120329220342.GK4153@opensource.wolfsonmicro.com>
+ <20120330050641.GA21823@avionic-0098.mockup.avionic-design.de>
+ <20120330101800.GD21950@opensource.wolfsonmicro.com>
+ <20120330103840.GB961@avionic-0098.mockup.avionic-design.de>
+ <20120331143021.GA18382@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7723810822637106746=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <4F77B856.2050708@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lrg@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120331143021.GA18382-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Sat, Mar 31, 2012 at 04:30:21PM +0200, Thierry Reding wrote:
+...
+> The best solution that I could come up with is to not pass the index into the
+> of_pwm_request() function but rather forward the consumer name as passed into
+> pwm_get(). The of_pwm_request() could use the "pwm-names" property to do a
+> reverse lookup of the index and request that. One good thing about that would
+> be that I no longer need to export the of_pwm_request() function.
 
---===============7723810822637106746==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/aVve/J9H4Wl5yVO"
-Content-Disposition: inline
+I never understand why of_pwm_request() needs to be exported anyway.
+pwm_get() should be the only interface to pwm new/DT users, IMO.
 
+> The "bad"
+> thing is that it'll make the "pwm-names" property mandatory if more than a
+> single PWM is requested.
+> 
+You do not have to make it mandatory, but anyone requesting any pwm
+other than the first on in "pwms" list should fail.
 
---/aVve/J9H4Wl5yVO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Does that sound reasonable?
+> 
+The above is exactly what clock DT does, so it sounds reasonable to me.
 
-On Sat, Mar 31, 2012 at 08:07:18PM -0600, Stephen Warren wrote:
-> On 03/31/2012 02:17 PM, Mark Brown wrote:
+And I would expect the next version can just turn the second parameter
+of pwm_get() into the one that will be used to identify the pwm device
+rather than adding one more parameter.  Then we have pwm API well
+aligned with clk and regulator.
 
-> > Applied, though 48kHz is a somewhat surprising choice for the default
-> > CPU audio rate - the overwhelming majority of audio played winds up
-> > being 44.1kHz.  Still, it's just going to get changed as required.
-
-> I may as well change this to be consistent with the Tegra-side patch. I
-> note you said "applied", but I don't actually see it in your kernel.org
-> repo.
-
-It was there, probably forgot to push it out last night.  But I just
-dropped it since you're about to replace it and I just rebased onto
--rc1.
-
---/aVve/J9H4Wl5yVO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPeC+cAAoJEBus8iNuMP3dz8kP+gMSv5gw/PEcsOIUMVd65kH+
-3EEFOIp1r5pHy5fz8fBPPf3S3nP22KS0xD936eJiuM8meQzsz2scJNi4Iwl/XDw+
-ysjK2udmrtIPI6PpMAT1XTV4Q41l8RAWuqcu1/+cF3adsKWmVYwWsebi2BHkdcTu
-OywC5WQ7jv+pRm1zKzymwRAkc7Ln9BQ/nDg5vDorZgOZQfdrkTB4+eJsjRbT421c
-yAzMRPfs85VwsyELymCJdO0/gzMy9cpEQtYRfCB49kGMc0p15HGun9s6A4KUkz2C
-4mT8ucMfP1vdN7p7suRygsz3HO1Xo5iNVTbxgmQUuA/duIbhcHqMXEFdCo+qpuwp
-8TW6cty9hGF0pTBq1EunRS+2fdNMXCpRkq5FAq6ivjRX9m1Dm0nJnhLeZ6povRw6
-GgVgxBzUp7Febtn5qWJ3cxoBgsetIcxa2mRlNwr3DgFCrhr/94nqdeVt86NyyceD
-aDGo5fTvWossqcVjh/R/+EFN2sRqnD43V+iSCIP6WIaxuY+sKCMcK4y3sx8eq38k
-NwA+HkB7k5vo2lcelpSBrv/kyr5vs5YfeALhm6Z123eKUKbbf+fcsV5ETjZmpVSA
-xuzPt48j9RYzrhMKcN/u0VTe9clNprd+Id+1sZoIaLuddSWrhIHtXj/wa7LbjqFQ
-MFFPbA5bGa67NFcTjfzt
-=rt+V
------END PGP SIGNATURE-----
-
---/aVve/J9H4Wl5yVO--
-
---===============7723810822637106746==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7723810822637106746==--
+-- 
+Regards,
+Shawn
