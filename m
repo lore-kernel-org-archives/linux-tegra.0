@@ -1,63 +1,50 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v5 04/16] pwm: Add table-based lookup for static mappings
-Date: Mon, 2 Apr 2012 06:50:39 +0200
-Message-ID: <20120402045039.GA22916@avionic-0098.mockup.avionic-design.de>
-References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
- <1332945238-14897-5-git-send-email-thierry.reding@avionic-design.de>
- <20120329220342.GK4153@opensource.wolfsonmicro.com>
- <20120330050641.GA21823@avionic-0098.mockup.avionic-design.de>
- <20120330101800.GD21950@opensource.wolfsonmicro.com>
- <20120330103840.GB961@avionic-0098.mockup.avionic-design.de>
- <20120331143021.GA18382@avionic-0098.mockup.avionic-design.de>
- <20120401152042.GE2395@S2101-09.ap.freescale.net>
- <20120402004730.GA910@S2101-09.ap.freescale.net>
+From: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Mon, 2 Apr 2012 11:23:02 +0530
+Message-ID: <1333345982-16595-1-git-send-email-alokc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20120402004730.GA910-rvtDTF3kK1ictlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Cc: alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+NACK interrupt generated before I2C controller generates
+the STOP condition on bus. In Software, because of this
+reset of controller is happening before I2C controller could
+complete STOP condition. So wait for some time before resetting
+the controller so that STOP condition has delivered properly on bus.
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Added delay of 2 clock period before reset the
+controller in case of NACK error.
 
-* Shawn Guo wrote:
-> On Sun, Apr 01, 2012 at 11:20:46PM +0800, Shawn Guo wrote:
-> > On Sat, Mar 31, 2012 at 04:30:21PM +0200, Thierry Reding wrote:
-> ...
-> > > The "bad"
-> > > thing is that it'll make the "pwm-names" property mandatory if more t=
-han a
-> > > single PWM is requested.
-> > >=20
-> > You do not have to make it mandatory, but anyone requesting any pwm
-> > other than the first on in "pwms" list should fail.
-> >=20
-> I should have put it this way.  If a client device does not have
-> "pwm-names" property in its node, it should fail when requesting pwm
-> with a name.  And if no name is given, the first pwm device in the
-> "pwms" list could just be returned.
+Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Added the more descriptive commit message about issue in case
+of NACK error condition. Changed the comment in code also
 
-Yes, that's how I understood it. =3D)
+ drivers/i2c/busses/i2c-tegra.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-Thierry
-
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEYEARECAAYFAk95MB8ACgkQZ+BJyKLjJp9L/QCfWTZV5uUQb3Dd/8bgqfqL8fFE
-2U4AnjbsOL8UBEBwHbuTDpdF8kUZC0Yn
-=qMJV
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e978635..dfb850a8 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -516,6 +516,14 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
++	/*
++	 * NACK interrupt generated before I2C controller generates the STOP
++	 * condition on bus. So wait for some time before reset the controller
++	 * so that STOP condition has delivered properly on bus.
++	 */
++	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
++		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+-- 
+1.7.4.1
