@@ -1,62 +1,70 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v5 09/16] pwm: tegra: Add device tree support
-Date: Mon, 2 Apr 2012 10:37:49 +0200
-Message-ID: <20120402083749.GA6576@avionic-0098.adnet.avionic-design.de>
-References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
- <1332945238-14897-10-git-send-email-thierry.reding@avionic-design.de>
- <4F7602CD.2010808@wwwdotorg.org>
+From: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Mon, 2 Apr 2012 15:49:16 +0530
+Message-ID: <CAM=Q2cuN+qAjDsBNp5Sq_Xs9KGcOQJ+PwjSVW-F0QczxMpWZRQ@mail.gmail.com>
+References: <1333345982-16595-1-git-send-email-alokc@nvidia.com>
+	<7A0BFCFE3DA5CD47B0FB7984326F201A136BDCC35E@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F7602CD.2010808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7A0BFCFE3DA5CD47B0FB7984326F201A136BDCC35E-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Alok,
+=46ew / doubts /questions.
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-* Stephen Warren wrote:
-> On 03/28/2012 08:33 AM, Thierry Reding wrote:
-> > Add auxdata to instantiate the PWFM controller from a device tree,
-> > include the corresponding nodes in the dtsi files for Tegra 20 and
-> > Tegra 30 and add binding documentation.
-> >=20
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> ...
-> > +#ifdef CONFIG_OF
-> > +static struct of_device_id tegra_pwm_of_match[] =3D {
-> > +	{ .compatible =3D "nvidia,tegra20-pwm" },
-> > +	{ .compatible =3D "nvidia,tegra30-pwm" },
->=20
-> Could you swap those two lines, so that tegra30-pwm matches first. It
-> makes no difference at present, but might in the future if the driver
-> actually has to differentiate the two SoCs.
+On Mon, Apr 2, 2012 at 11:29 AM, Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Stephen,
+>
+> I've updated the commit message and comment in the code as per your s=
+uggestion. Tegra I2C controller doesn't have idle bit so delay is requi=
+red before reset the controller in case of NACK error. =A0This delay is=
+ calculated purely based on clock period of that particular i2c bus and=
+ not passed as hardcoded value. I2C SCL clock-stretching won't affect t=
+his calculated delay.
 
-I thought the matching order was determined by the compatible property in t=
-he
-device tree, not the OF match table of the driver.
+Why is it clock cycle dependent?
 
-Thierry
+Is it possible to poll if the stop is sent by controller ?
 
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature
+>
+> Thanks
+> Alok
+>
+>
+> -----Original Message-----
+> From: Alok Chauhan [mailto:alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org]
+> Sent: Monday, April 02, 2012 11:23 AM
+> To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org; ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; w=
+=2Esang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org; Stephen Warren; olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org; bones@secretlab=
+=2Eca; omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; Laxman Dewangan; =
+linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; dgreid@chromium=
+=2Eorg
+> Cc: Alok Chauhan; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: [PATCH v2] i2c: tegra: Add delay before reset the controller
+>
+> NACK interrupt generated before I2C controller generates the STOP con=
+dition on bus. In Software, because of this reset of controller is happ=
+ening before I2C controller could complete STOP condition. So wait for =
+some time before resetting the controller so that STOP condition has de=
+livered properly on bus.
+>
+> Added delay of 2 clock period
+How did you calculate the 2 clock cycles?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
 
-iEYEARECAAYFAk95ZV0ACgkQZ+BJyKLjJp/n6ACcC+nf0skcU25IvJvxZYNSPIF+
-mpoAoK4XUCdXUReq+2JqLjhrTlEKlq1a
-=GyhS
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+before reset the controller in case of NACK error.
+>
+> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Added the more descriptive commit message about issue in case of NACK=
+ error condition. Changed the comment in code also
+>
+> =A0drivers/i2c/busses/i2c-tegra.c | =A0 =A08 ++++++++
+> =A01 files changed, 8 insertions(+), 0 deletions(-)
+>
