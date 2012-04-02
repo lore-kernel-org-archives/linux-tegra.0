@@ -1,53 +1,28 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 12/17] ASoC: tegra: utils: add support for Tegra30 devices
-Date: Mon, 02 Apr 2012 11:44:36 -0600
-Message-ID: <4F79E584.7080904@wwwdotorg.org>
-References: <1333148852-17806-1-git-send-email-swarren@wwwdotorg.org> <1333148852-17806-13-git-send-email-swarren@wwwdotorg.org> <20120331202015.GN5012@opensource.wolfsonmicro.com> <4F77B5F8.8080205@wwwdotorg.org> <20120401102814.GC3153@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
+Date: Mon, 02 Apr 2012 13:58:56 -0600
+Message-ID: <4F7A0500.3060305@wwwdotorg.org>
+References: <1333345982-16595-1-git-send-email-alokc@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120401102814.GC3153-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <1333345982-16595-1-git-send-email-alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/01/2012 04:28 AM, Mark Brown wrote:
-> On Sat, Mar 31, 2012 at 07:57:12PM -0600, Stephen Warren wrote:
->> On 03/31/2012 02:20 PM, Mark Brown wrote:
->>> On Fri, Mar 30, 2012 at 05:07:27PM -0600, Stephen Warren wrote:
+On 04/01/2012 11:53 PM, Alok Chauhan wrote:
+> NACK interrupt generated before I2C controller generates
+> the STOP condition on bus. In Software, because of this
+> reset of controller is happening before I2C controller could
+> complete STOP condition. So wait for some time before resetting
+> the controller so that STOP condition has delivered properly on bus.
 > 
->>>> -	ret = tegra_asoc_utils_init(&alc5632->util_data, &pdev->dev);
->>>> + ret = tegra_asoc_utils_init(&alc5632->util_data, + 
->>>> TEGRA_ASOC_UTILS_SOC_TEGRA20, &pdev->dev);
+> Added delay of 2 clock period before reset the
+> controller in case of NACK error.
 > 
->>> Would it not be more sensible to do cpu_is_() calls in the utils 
->>> code rather than have the board say?  It'd possibly also end up 
->>> looking nicer in the code and may mean the compiler can figure out 
->>> not to include cases that can't be taken in the current build.
-> 
->> We had floated the idea of adding cpu_is_*() (Well, soc_is_*()) macros
->> for Tegra in the past, and received the message that was a bad idea;
->> things should instead be driven by compatible flag values or similar.
-> 
-> Or look at the binding, or something.  Having the machine drivers need
-> to translate the bindings into these defines just feels clunky.
+> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I guess the utility code can just call of_machine_is_compatible() during
-probe, and so not require the machine driver to pass the value in. That
-doesn't feel /too/ gross, and avoids having to export any new soc_is()
-or similar APIs for Tegra.
-
-Does that seem reasonable to you?
-
-In the longer run, I suspect the clock naming differences that are keyed
-off this flag to be handled by clock properties in DT, but that relies
-on common clock bindings being in place first. I'm not sure if it makes
-sense to put the PLL rate information into the DT too, or not.
-
->> See http://www.spinics.net/lists/linux-tegra/msg02250.html. That said,
->> I see many cpu_is_*() calls in arch/arm, so perhaps we should revisit
->> this.
-> 
-> Many of those might get some pushback in this day and age.
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
