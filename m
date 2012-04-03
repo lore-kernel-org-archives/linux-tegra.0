@@ -1,44 +1,72 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Linux 3.4-rc1
-Date: Tue, 3 Apr 2012 08:29:54 +0200
-Message-ID: <20120403.092954.1292069011296905405.hdoyu@nvidia.com>
-References: <CA+55aFy4aFGRLUrF+rYN3dskTepBtC+=x3B3bc_rzf1OaN_5pw@mail.gmail.com><CAH9JG2Wha0+6BwGW0APtEX2KACyR1+9fdKpJkM+iOU1m8N6d4w@mail.gmail.com><CA+55aFw1ZG9R2MzgXmi0YE64t+xH95QnVuJB55sQ6xgDbnzkyQ@mail.gmail.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH v5 09/16] pwm: tegra: Add device tree support
+Date: Tue, 3 Apr 2012 19:55:11 +0200
+Message-ID: <20120403175511.GA26399@avionic-0098.mockup.avionic-design.de>
+References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
+ <1332945238-14897-10-git-send-email-thierry.reding@avionic-design.de>
+ <4F7602CD.2010808@wwwdotorg.org>
+ <20120402083749.GA6576@avionic-0098.adnet.avionic-design.de>
+ <4F79C8D4.2000306@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+55aFw1ZG9R2MzgXmi0YE64t+xH95QnVuJB55sQ6xgDbnzkyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F79C8D4.2000306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: "kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org" <konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-=46rom: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Subject: Re: Linux 3.4-rc1
-Date: Tue, 3 Apr 2012 05:57:26 +0200
-Message-ID:=20
- <CA+55aFw1ZG9R2MzgXmi0YE64t+xH95QnVuJB55sQ6xgDbnzkyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 
-> On Mon, Apr 2, 2012 at 7:57 PM, Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> =
-wrote:
-> > On Sun, Apr 1, 2012 at 8:58 AM, Linus Torvalds
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Stephen Warren wrote:
+> On 04/02/2012 02:37 AM, Thierry Reding wrote:
+> > * Stephen Warren wrote:
+> >> On 03/28/2012 08:33 AM, Thierry Reding wrote:
+> >>> Add auxdata to instantiate the PWFM controller from a device tree,
+> >>> include the corresponding nodes in the dtsi files for Tegra 20 and
+> >>> Tegra 30 and add binding documentation.
+> >>>
+> >>> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> >>> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 > >>
-> >> =A0- DMA-mapping framework. The tree now has a few more acks from
-> >> people, and it's largely in the same situation as HSI is: I'll
-> >> probably pull, but I really wanted the users who are impacted to
-> >> actually talk to me about it.
-> >
-> > Now Marek and Nvidia persons are used it for DMA mapping based IOMM=
-U.
-> >
-> > Are there other person who help to merge it?
-> > (+CC related persons).
+> >>> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> >> ...
+> >>> +#ifdef CONFIG_OF
+> >>> +static struct of_device_id tegra_pwm_of_match[] =3D {
+> >>> +	{ .compatible =3D "nvidia,tegra20-pwm" },
+> >>> +	{ .compatible =3D "nvidia,tegra30-pwm" },
+> >>
+> >> Could you swap those two lines, so that tegra30-pwm matches first. It
+> >> makes no difference at present, but might in the future if the driver
+> >> actually has to differentiate the two SoCs.
+> >=20
+> > I thought the matching order was determined by the compatible property =
+in the
+> > device tree, not the OF match table of the driver.
 >=20
-> I want the people who want it to contact me and talk about what they
-> do with it. So far, I haven't seen anything.
+> At least logically, yes. However, of_match_device() appears to iterate
+> over each match table entry, checking whether it matches any string in
+> the compatible flag. Perhaps this could be considered a bug?
 
-Nvidia ARM SoC Tegra3 has IOMMU(SMMU), and most of its peripheral
-devices can be clients of IOMMU. Their IOMMU'abiblity can be
-configured. With DMA-mapping API, we wouldn't have to change any of
-device driver code with\without IOMMU, but those 'dma_addr_t' could be
-physical address or device virtual address trasparently.
+It certainly is counter-intuitive. Maybe Grant or Rob can comment?
+
+Thierry
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAk97OX8ACgkQZ+BJyKLjJp8KDgCfQQ9h7SY7/KZnt+qYy/SQUH06
+ZJYAnjsGRvplXoQ8ob05I0E/g1fxeF4j
+=agFX
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
