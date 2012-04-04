@@ -1,40 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 04/11] gpio: tegra: Iterate over the correct number of
- banks
-Date: Wed, 04 Apr 2012 12:41:54 -0600
-Message-ID: <4F7C95F2.2050808@wwwdotorg.org>
-References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org> <1333148404-17691-5-git-send-email-swarren@wwwdotorg.org> <20120404175829.GD29919@quad.lixom.net>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 08/11] ARM: tegra: Switch to new pinctrl driver
+Date: Wed, 4 Apr 2012 11:49:49 -0700
+Message-ID: <20120404184949.GA30926@quad.lixom.net>
+References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
+ <1333148404-17691-9-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120404175829.GD29919-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1333148404-17691-9-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2012 11:58 AM, Olof Johansson wrote:
-> On Fri, Mar 30, 2012 at 04:59:57PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> When Tegra30 support was added to the Tegra GPIO driver, a few places
->> which iterated over all banks were not converted to use the variable
->> tegra_gpio_bank_count rather than hard-coding the bank count. Fix this.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Mar 30, 2012 at 05:00:01PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> * Rename old pinmux and new pinctrl platform driver and DT match table
+>   entries, so the new driver gets instantiated.
+> * Re-write board-pinmux.c, so that it uses pinctrl APIs to configura the
+>   pinmux.
+> * Re-write board-*-pinmux.c so that the pinmux configuration tables are
+>   in pinctrl format.
 > 
-> Should this be fixed in 3.4 as well? Given the need for some of the other
-> patches in this series I suppose gpio isn't really working on tegra30 there
-> though, so it's not technically a regression...
+> Ventana's pin mux table needed some edits on top of the basic format
+> conversion, since some mux options that were previously marked as
+> reserved are now valid in the new pinctrl driver. Attempting to use the
+> old reserved names will result in a failure. Specifically, groups lpw0,
+> lpw2, lsc1, lsck, and lsda were changed from function rsvd4 to displaya,
+> and group pta was changed from function rsvd2 to hdmi.
+> 
+> All boards' pin mux tables needed some edits on top of the based format
+> conversion, since function i2c was split into i2c1 (first general I2C
+> controller) and i2cp (power I2C controller) to better align function
+> definitions with HW blocks.
+> 
+> Due to the split of mux tables into pure mux and pull/tristate tables,
+> many entries in the separate Seaboard/Ventana tables could be merged
+> into the common table, since the entries differed only in the portion
+> in one of the tables, not both.
+> 
+> Most pin groups allow configuration of mux, tri-state, and pull. However,
+> some don't allow pull configuration, which is instead configured by new
+> groups that only allow pull configuration. This is a reflection of the
+> true HW capabilities, which weren't fully represented by the old pinmux
+> driver. This required adding new pull table entries for those new groups,
+> and setting many other entries' pull configuration to
+> TEGRA_PINCONFIG_DONT_SET.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It's probably not a bad idea, even if we don't expect many users; the
-code may as well be correct. I assume since 3.4 is still in the rc
-stage, I would send an explicit pull request to arm-soc for that rather
-than just Cc: stable.
+This is falling into place quite nicely!
 
-I wonder if "gpio: tegra: fix register address calculations for Tegra30"
-shouldn't be applied (after addressing your comments) for 3.4 too? It
-might be a little large of a change?
+Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+
+
+-Olof
