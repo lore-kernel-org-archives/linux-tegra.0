@@ -1,58 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 03/11] gpio: tegra: fix register address calculations
- for Tegra30
-Date: Wed, 04 Apr 2012 12:53:07 -0600
-Message-ID: <4F7C9893.1030704@wwwdotorg.org>
-References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org> <1333148404-17691-4-git-send-email-swarren@wwwdotorg.org> <20120404175722.GC29919@quad.lixom.net>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 03/11] gpio: tegra: fix register address calculations for
+ Tegra30
+Date: Wed, 4 Apr 2012 11:57:42 -0700
+Message-ID: <20120404185742.GA10603@quad.lixom.net>
+References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
+ <1333148404-17691-4-git-send-email-swarren@wwwdotorg.org>
+ <20120404175722.GC29919@quad.lixom.net>
+ <4F7C9893.1030704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120404175722.GC29919-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F7C9893.1030704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2012 11:57 AM, Olof Johansson wrote:
-> On Fri, Mar 30, 2012 at 04:59:56PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Tegra20 and Tegra30 share the same register layout within registers, but
->> the addresses of the registers is a little different. Fix the driver to
->> cope with this.
->>
->> @@ -333,6 +336,26 @@ static struct irq_chip tegra_gpio_irq_chip = {
->>  #endif
->>  };
->>  
->> +struct tegra_gpio_soc_config {
->> +	u32 bank_stride;
->> +	u32 upper_offset;
->> +};
->> +
->> +static struct tegra_gpio_soc_config tegra20_gpio_config = {
->> +	.bank_stride = 0x80,
->> +	.upper_offset = 0x800,
->> +};
->> +
->> +static struct tegra_gpio_soc_config tegra30_gpio_config = {
->> +	.bank_stride = 0x100,
->> +	.upper_offset = 0x80,
->> +};
+On Wed, Apr 04, 2012 at 12:53:07PM -0600, Stephen Warren wrote:
+> On 04/04/2012 11:57 AM, Olof Johansson wrote:
+> > On Fri, Mar 30, 2012 at 04:59:56PM -0600, Stephen Warren wrote:
+> >> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>
+> >> Tegra20 and Tegra30 share the same register layout within registers, but
+> >> the addresses of the registers is a little different. Fix the driver to
+> >> cope with this.
+> >>
+> >> @@ -333,6 +336,26 @@ static struct irq_chip tegra_gpio_irq_chip = {
+> >>  #endif
+> >>  };
+> >>  
+> >> +struct tegra_gpio_soc_config {
+> >> +	u32 bank_stride;
+> >> +	u32 upper_offset;
+> >> +};
+> >> +
+> >> +static struct tegra_gpio_soc_config tegra20_gpio_config = {
+> >> +	.bank_stride = 0x80,
+> >> +	.upper_offset = 0x800,
+> >> +};
+> >> +
+> >> +static struct tegra_gpio_soc_config tegra30_gpio_config = {
+> >> +	.bank_stride = 0x100,
+> >> +	.upper_offset = 0x80,
+> >> +};
+> > 
+> > Hmm. I wonder if this would be better to just describe in the device tree
+> > bindings for the gpio controller? Perhaps split the reg property in a higher
+> > and lower to take care of the offset, and add a nvidia,bank-stride=<x>
+> > property?
 > 
-> Hmm. I wonder if this would be better to just describe in the device tree
-> bindings for the gpio controller? Perhaps split the reg property in a higher
-> and lower to take care of the offset, and add a nvidia,bank-stride=<x>
-> property?
+> Splitting the reg property in two wouldn't really work. Notice that on
+> Tegra20, bank_stride is less than upper_offset whereas on Tegra30,
+> bank_stride is larger than upper_offset, so the issue is that in one
+> case the registers are interleaved and in the other in separate chunks.
+> 
+> I guess we could put those values into DT, but they only vary per SoC
+> not per board, so there didn't seem much need.
+> 
+> I believe the Tegra30 register layout is applicable to future chips if
+> it matters.
 
-Splitting the reg property in two wouldn't really work. Notice that on
-Tegra20, bank_stride is less than upper_offset whereas on Tegra30,
-bank_stride is larger than upper_offset, so the issue is that in one
-case the registers are interleaved and in the other in separate chunks.
+Ok, that's sufficient for me right now then.
 
-I guess we could put those values into DT, but they only vary per SoC
-not per board, so there didn't seem much need.
 
-I believe the Tegra30 register layout is applicable to future chips if
-it matters.
+-Olof
