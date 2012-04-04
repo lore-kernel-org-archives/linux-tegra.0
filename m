@@ -1,35 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v4 07/10] pwm: tegra: Add device tree support
-Date: Wed, 04 Apr 2012 12:33:14 -0600
-Message-ID: <4F7C93EA.2010105@wwwdotorg.org>
-References: <1331740593-10807-1-git-send-email-thierry.reding@avionic-design.de> <1331740593-10807-8-git-send-email-thierry.reding@avionic-design.de> <4F67EE9A.6080101@wwwdotorg.org> <20120404070432.GF7264@S2101-09.ap.freescale.net>
+Subject: Re: [PATCH 04/11] gpio: tegra: Iterate over the correct number of
+ banks
+Date: Wed, 04 Apr 2012 12:41:54 -0600
+Message-ID: <4F7C95F2.2050808@wwwdotorg.org>
+References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org> <1333148404-17691-5-git-send-email-swarren@wwwdotorg.org> <20120404175829.GD29919@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120404070432.GF7264-rvtDTF3kK1ictlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
+In-Reply-To: <20120404175829.GD29919-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2012 01:04 AM, Shawn Guo wrote:
-> On Mon, Mar 19, 2012 at 08:42:34PM -0600, Stephen Warren wrote:
->> On 03/14/2012 09:56 AM, Thierry Reding wrote:
->>> Add auxdata to instantiate the PWFM controller from a device tree,
->>> include the corresponding nodes in the dtsi files for Tegra 20 and
->>> Tegra 30 and add binding documentation.
->>>
->>> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+On 04/04/2012 11:58 AM, Olof Johansson wrote:
+> On Fri, Mar 30, 2012 at 04:59:57PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>
->>> +++ b/Documentation/devicetree/bindings/pwm/tegra-pwm.txt
+>> When Tegra30 support was added to the Tegra GPIO driver, a few places
+>> which iterated over all banks were not converted to use the variable
+>> tegra_gpio_bank_count rather than hard-coding the bank count. Fix this.
 >>
->> Can this please be named nvidia,tegra20-pwm.txt so that if we need
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Is it necessary to have even the vendor prefix in the file name?  The
-> file will look exceptional among all these binding documents under
-> Documentation/devicetree/bindings.
+> Acked-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> 
+> Should this be fixed in 3.4 as well? Given the need for some of the other
+> patches in this series I suppose gpio isn't really working on tegra30 there
+> though, so it's not technically a regression...
 
-It would look exceptional now, but I've had it in the back of my mind to
-suggest renaming all the binding docs in line with their full compatible
-value. Then, it'd just look consistent ;-P.
+It's probably not a bad idea, even if we don't expect many users; the
+code may as well be correct. I assume since 3.4 is still in the rc
+stage, I would send an explicit pull request to arm-soc for that rather
+than just Cc: stable.
+
+I wonder if "gpio: tegra: fix register address calculations for Tegra30"
+shouldn't be applied (after addressing your comments) for 3.4 too? It
+might be a little large of a change?
