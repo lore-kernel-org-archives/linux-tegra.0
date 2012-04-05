@@ -1,29 +1,32 @@
-From: Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [RFC PATCH] cpuidle: allow per cpu latencies
-Date: Thu, 05 Apr 2012 06:37:13 -0700
-Message-ID: <4F7DA009.4010802@linux.intel.com>
-References: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL] Tegra fixes for v3.4-rc2
+Date: Thu, 5 Apr 2012 10:42:14 -0700
+Message-ID: <CAOesGMh8ocwwQQKAwCHsCsbvPMhtk+AiZJNnQM8NFjJ6LdMvsA@mail.gmail.com>
+References: <4F7CA12F.10708@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F7CA12F.10708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/5/2012 2:53 AM, Peter De Schrijver wrote:
-> This patch doesn't update all cpuidle device registrations. I will do that
+On Wed, Apr 4, 2012 at 12:29 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>=
+ wrote:
+> The following changes since commit dd775ae2549217d3ae09363e3edb305d0f=
+a19928:
+> =A0Linus Torvalds (1):
+> =A0 =A0 =A0 =A0Linux 3.4-rc1
+>
+> are available in the git repository at:
+>
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.=
+git
+> for-3.4/fixes-for-rc2
 
-question is if you want to do per cpu latencies, or if you want to have
-both types of C state in one big table, and have each of the tegra cpyu
-types pick half of them...
+Thanks, pulled.
+
+
+-Olof
