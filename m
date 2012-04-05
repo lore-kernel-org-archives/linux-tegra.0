@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [RFC PATCH] cpuidle: allow per cpu latencies
-Date: Thu,  5 Apr 2012 12:53:28 +0300
-Message-ID: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
+Date: Thu,  5 Apr 2012 13:44:10 +0300
+Message-ID: <1333622662-22106-1-git-send-email-pdeschrijver@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
