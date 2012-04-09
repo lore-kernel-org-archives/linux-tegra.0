@@ -1,83 +1,56 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH v5 09/16] pwm: tegra: Add device tree support
-Date: Fri, 06 Apr 2012 18:44:34 -0700
-Message-ID: <20120407014434.D28983E23CD@localhost>
-References: <1332945238-14897-1-git-send-email-thierry.reding@avionic-design.de>
- <1332945238-14897-10-git-send-email-thierry.reding@avionic-design.de>
- <4F7602CD.2010808@wwwdotorg.org>
- <20120402083749.GA6576@avionic-0098.adnet.avionic-design.de>
- <4F79C8D4.2000306@wwwdotorg.org>
- <20120403175511.GA26399@avionic-0098.mockup.avionic-design.de>
- <20120403234249.E292E3E03F3@localhost>
- <20120404050054.GA30807@avionic-0098.adnet.avionic-design.de>
- <4F7C93A4.5000906@wwwdotorg.org>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 07/11] gpio: tegra: Hide tegra_gpio_enable/disable()
+Date: Sun, 08 Apr 2012 21:09:08 -0400
+Message-ID: <87mx6l1zkb.fsf@laptop.org>
+References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
+	<1333148404-17691-8-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4F7C93A4.5000906@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Mitch Bradley <wmb@firmworks.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Mike Frysinger <vapier@gentoo.org>, Ryan Mallon <rmallon@gmail.com>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, Colin Cross <ccross@android.com>, Rob Herring <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, Lars-Peter Clausen <lars@metafoo.de>, Richard Purdie <rpurdie@rpsys.net>, Bernhard Walle <walle@corscience.de>, Matthias Kaehlcke <matthias@kaehlcke.net>, linux-tegra@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org, Kurt Van Dijck <kurt.van.dijck@eia.be>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1333148404-17691-8-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+	(Stephen Warren's message of "Fri, 30 Mar 2012 17:00:00 -0600")
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 04 Apr 2012 12:32:04 -0600, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 04/03/2012 11:00 PM, Thierry Reding wrote:
-> > * Grant Likely wrote:
-> >> On Tue, 3 Apr 2012 19:55:11 +0200, Thierry Reding <thierry.reding@avionic-design.de> wrote:
-> >>> * Stephen Warren wrote:
-> >>>> On 04/02/2012 02:37 AM, Thierry Reding wrote:
-> >>>>> * Stephen Warren wrote:
-> >>>>>> On 03/28/2012 08:33 AM, Thierry Reding wrote:
-> >>>>>>> Add auxdata to instantiate the PWFM controller from a device tree,
-> >>>>>>> include the corresponding nodes in the dtsi files for Tegra 20 and
-> >>>>>>> Tegra 30 and add binding documentation.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
-> >>>>>>> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-> >>>>>>
-> >>>>>>> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> >>>>>> ...
-> >>>>>>> +#ifdef CONFIG_OF
-> >>>>>>> +static struct of_device_id tegra_pwm_of_match[] = {
-> >>>>>>> +	{ .compatible = "nvidia,tegra20-pwm" },
-> >>>>>>> +	{ .compatible = "nvidia,tegra30-pwm" },
-> >>>>>>
-> >>>>>> Could you swap those two lines, so that tegra30-pwm matches first. It
-> >>>>>> makes no difference at present, but might in the future if the driver
-> >>>>>> actually has to differentiate the two SoCs.
-> >>>>>
-> >>>>> I thought the matching order was determined by the compatible property in the
-> >>>>> device tree, not the OF match table of the driver.
-> >>>>
-> >>>> At least logically, yes. However, of_match_device() appears to iterate
-> >>>> over each match table entry, checking whether it matches any string in
-> >>>> the compatible flag. Perhaps this could be considered a bug?
-> >>>
-> >>> It certainly is counter-intuitive. Maybe Grant or Rob can comment?
-> >>
-> >> Yes, it is a bug.  The order of of_device_id should be entirely
-> >> irrelevant, and the order in the DT compatible property should
-> >> determine which match entry is returned.
-> > 
-> > I've had a look at the code and it looks like a fix will not be entirely
-> > trivial. I think moving out the compatible check out of the while loop in
-> > of_match_node() and separately iterate over all strings in the compatible
-> > property would be the easiest. That will also prioritize the compatible
-> > match over matches by name and type but I think that's exactly what we
-> > want. From a quick look it certainly seems like the large majority of
-> > drivers match by compatible anyway.
-> > 
-> > Do you want me to prepare a patch or can you take care of it?
+Hi,
 
-yes please.
+On Fri, Mar 30 2012, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Recent pinctrl discussions concluded that gpiolib APIs should in fact do
+> whatever is required to mux a GPIO onto pins, by calling pinctrl APIs if
+> required. This change implements this for the Tegra GPIO driver, and removes
+> calls to the Tegra-specific APIs from drivers and board files.
+>
+> Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+> Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: Adjusted per changes to latest version of Documentation/gpio.txt.
+> Fixed tegra_board_pinmux_bus_notify() to still check the device name,
+> so it waits for the pinmux device to be registered, not just /any/ device.
+> ---
+>  arch/arm/mach-tegra/board-dt-tegra20.c        |    1 -
+>  arch/arm/mach-tegra/board-harmony-pinmux.c    |   17 -----------
+>  arch/arm/mach-tegra/board-paz00-pinmux.c      |   14 ---------
+>  arch/arm/mach-tegra/board-pinmux.c            |   33 +++--------------------
+>  arch/arm/mach-tegra/board-pinmux.h            |    5 ---
+>  arch/arm/mach-tegra/board-seaboard-pinmux.c   |   32 ----------------------
+>  arch/arm/mach-tegra/board-seaboard.c          |    1 -
+>  arch/arm/mach-tegra/board-trimslice-pinmux.c  |   12 --------
+>  arch/arm/mach-tegra/include/mach/gpio-tegra.h |    9 ------
+>  arch/arm/mach-tegra/usb_phy.c                 |    1 -
+>  drivers/gpio/gpio-tegra.c                     |   36 ++++++++++++------------
+>  drivers/mmc/host/sdhci-tegra.c                |   24 +++-------------
+>  12 files changed, 27 insertions(+), 158 deletions(-)
 
-g.
+For the MMC change:
+
+Acked-by: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
