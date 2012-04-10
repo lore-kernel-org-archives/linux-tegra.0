@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v6 10/17] pwm: Move Blackfin PWM driver to PWM framework
-Date: Tue, 10 Apr 2012 17:06:33 +0200
-Message-ID: <1334070400-25013-11-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v6 09/17] pwm: tegra: Add device tree support
+Date: Tue, 10 Apr 2012 17:06:32 +0200
+Message-ID: <1334070400-25013-10-git-send-email-thierry.reding@avionic-design.de>
 References: <1334070400-25013-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1334070400-25013-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,271 +10,148 @@ To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This commit moves the Blackfin PWM driver to the drivers/pwm sub-
-directory and converts it to register with the new PWM framework.
+Add auxdata to instantiate the PWFM controller from a device tree,
+include the corresponding nodes in the dtsi files for Tegra 20 and
+Tegra 30 and add binding documentation.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 ---
- arch/blackfin/Kconfig                              |   10 --
- arch/blackfin/kernel/Makefile                      |    1 -
- drivers/pwm/Kconfig                                |    9 ++
- drivers/pwm/Makefile                               |    1 +
- .../kernel/pwm.c => drivers/pwm/pwm-bfin.c         |  138 ++++++++++++++------
- 5 files changed, 111 insertions(+), 48 deletions(-)
- rename arch/blackfin/kernel/pwm.c => drivers/pwm/pwm-bfin.c (26%)
+Changes in v5:
+- rename tegra-pwm.txt to nvidia,tegra20-pwm.txt
 
-diff --git a/arch/blackfin/Kconfig b/arch/blackfin/Kconfig
-index 373a690..128357e 100644
---- a/arch/blackfin/Kconfig
-+++ b/arch/blackfin/Kconfig
-@@ -950,16 +950,6 @@ config BFIN_GPTIMERS
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called gptimers.
- 
--config HAVE_PWM
--	tristate "Enable PWM API support"
--	depends on BFIN_GPTIMERS
--	help
--	  Enable support for the Pulse Width Modulation framework (as
--	  found in linux/pwm.h).
--
--	  To compile this driver as a module, choose M here: the module
--	  will be called pwm.
--
- choice
- 	prompt "Uncached DMA region"
- 	default DMA_UNCACHED_1M
-diff --git a/arch/blackfin/kernel/Makefile b/arch/blackfin/kernel/Makefile
-index 9a0d6d7..00fef32 100644
---- a/arch/blackfin/kernel/Makefile
-+++ b/arch/blackfin/kernel/Makefile
-@@ -21,7 +21,6 @@ obj-$(CONFIG_FUNCTION_TRACER)        += ftrace-entry.o
- obj-$(CONFIG_FUNCTION_GRAPH_TRACER)  += ftrace.o
- CFLAGS_REMOVE_ftrace.o = -pg
- 
--obj-$(CONFIG_HAVE_PWM)               += pwm.o
- obj-$(CONFIG_IPIPE)                  += ipipe.o
- obj-$(CONFIG_BFIN_GPTIMERS)          += gptimers.o
- obj-$(CONFIG_CPLB_INFO)              += cplbinfo.o
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index bda6f23..eb54042 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -9,6 +9,15 @@ menuconfig PWM
- 
- if PWM
- 
-+config PWM_BFIN
-+	tristate "Blackfin PWM support"
-+	depends on BFIN_GPTIMERS
-+	help
-+	  Generic PWM framework driver for Blackfin.
+Changes in v4:
+- add DT binding documentation
+- allow nvidia,tegra20-pwm as fallback for nvidia,tegra30-pwm
+- export OF device table (for module auto-loading)
+
+Changes in v3:
+- add missing include for mach/iomap.h
+
+ .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt |   18 ++++++++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |    6 ++++++
+ arch/arm/boot/dts/tegra30.dtsi                     |    6 ++++++
+ arch/arm/mach-tegra/board-dt-tegra20.c             |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c             |    3 +++
+ drivers/pwm/pwm-tegra.c                            |   11 +++++++++++
+ 6 files changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+
+diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+new file mode 100644
+index 0000000..bbbeedb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+@@ -0,0 +1,18 @@
++Tegra SoC PWFM controller
 +
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-bfin.
++Required properties:
++- compatible: should be one of:
++  - "nvidia,tegra20-pwm"
++  - "nvidia,tegra30-pwm"
++- reg: physical base address and length of the controller's registers
++- #pwm-cells: On Tegra the number of cells used to specify a PWM is 2. The
++  first cell specifies the per-chip index of the PWM to use and the second
++  cell is the duty cycle in nanoseconds.
 +
- config PWM_TEGRA
- 	tristate "NVIDIA Tegra PWM support"
- 	depends on ARCH_TEGRA
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 12300f5..251b8d2 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_PWM)		+= core.o
-+obj-$(CONFIG_PWM_BFIN)		+= pwm-bfin.o
- obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
-diff --git a/arch/blackfin/kernel/pwm.c b/drivers/pwm/pwm-bfin.c
-similarity index 26%
-rename from arch/blackfin/kernel/pwm.c
-rename to drivers/pwm/pwm-bfin.c
-index 33f5942..a0c6bf9 100644
---- a/arch/blackfin/kernel/pwm.c
-+++ b/drivers/pwm/pwm-bfin.c
-@@ -7,14 +7,18 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/platform_device.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
- 
- #include <asm/gptimers.h>
- #include <asm/portmux.h>
- 
--struct pwm_device {
--	unsigned id;
-+struct bfin_pwm_chip {
-+	struct pwm_chip chip;
-+};
++Example:
 +
-+struct bfin_pwm {
- 	unsigned short pin;
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 108e894..55b28fd 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -154,6 +154,12 @@
+ 		interrupts = < 0 91 0x04 >;
+ 	};
+ 
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
++
+ 	emc@7000f400 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 62a7b39..3fa5211 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -154,6 +154,12 @@
+ 		interrupts = < 0 91 0x04 >;
+ 	};
+ 
++	pwm: pwm@7000a000 {
++		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x100>;
++		#pwm-cells = <2>;
++	};
++
+ 	sdhci@78000000 {
+ 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+ 		reg = <0x78000000 0x200>;
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 0952494..87bdce5 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -73,6 +73,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 		       &tegra_ehci2_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
+ 		       &tegra_ehci3_pdata),
++	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+ 	{}
  };
  
-@@ -23,44 +27,45 @@ static const unsigned short pwm_to_gptimer_per[] = {
- 	P_TMR6, P_TMR7, P_TMR8, P_TMR9, P_TMR10, P_TMR11,
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index 5f7c03e..5e1180f 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -33,6 +33,8 @@
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+ 
++#include <mach/iomap.h>
++
+ #include "board.h"
+ #include "clock.h"
+ 
+@@ -51,6 +53,7 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C500, "tegra-i2c.2", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C700, "tegra-i2c.3", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000D000, "tegra-i2c.4", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra30-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+ 	{}
  };
  
--struct pwm_device *pwm_request(int pwm_id, const char *label)
-+static int bfin_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	struct pwm_device *pwm;
-+	struct bfin_pwm *priv;
- 	int ret;
- 
--	/* XXX: pwm_id really should be unsigned */
--	if (pwm_id < 0)
--		return NULL;
-+	if (pwm->hwpwm >= ARRAY_SIZE(pwm_to_gptimer_per))
-+		return -EINVAL;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
- 
--	pwm = kzalloc(sizeof(*pwm), GFP_KERNEL);
--	if (!pwm)
--		return pwm;
-+	priv->pin = pwm_to_gptimer_per[pwm->hwpwm];
- 
--	pwm->id = pwm_id;
--	if (pwm->id >= ARRAY_SIZE(pwm_to_gptimer_per))
--		goto err;
-+	ret = peripheral_request(priv->pin, NULL);
-+	if (ret) {
-+		kfree(priv);
-+		return ret;
-+	}
- 
--	pwm->pin = pwm_to_gptimer_per[pwm->id];
--	ret = peripheral_request(pwm->pin, label);
--	if (ret)
--		goto err;
-+	pwm_set_chip_data(pwm, priv);
- 
--	return pwm;
-- err:
--	kfree(pwm);
--	return NULL;
-+	return 0;
- }
--EXPORT_SYMBOL(pwm_request);
- 
--void pwm_free(struct pwm_device *pwm)
-+static void bfin_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	peripheral_free(pwm->pin);
--	kfree(pwm);
-+	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
-+
-+	if (priv) {
-+		peripheral_free(priv->pin);
-+		kfree(priv);
-+	}
- }
--EXPORT_SYMBOL(pwm_free);
- 
--int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
-+static int bfin_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
-+		int duty_ns, int period_ns)
- {
-+	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
- 	unsigned long period, duty;
- 	unsigned long long val;
- 
-@@ -78,23 +83,82 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
- 	if (duty >= period)
- 		duty = period - 1;
- 
--	set_gptimer_config(pwm->id, TIMER_MODE_PWM | TIMER_PERIOD_CNT);
--	set_gptimer_pwidth(pwm->id, duty);
--	set_gptimer_period(pwm->id, period);
-+	set_gptimer_config(priv->pin, TIMER_MODE_PWM | TIMER_PERIOD_CNT);
-+	set_gptimer_pwidth(priv->pin, duty);
-+	set_gptimer_period(priv->pin, period);
- 
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 0950142..472b74e 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -239,9 +239,20 @@ static int __devexit tegra_pwm_remove(struct platform_device *pdev)
  	return 0;
  }
--EXPORT_SYMBOL(pwm_config);
  
--int pwm_enable(struct pwm_device *pwm)
-+static int bfin_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	enable_gptimer(pwm->id);
-+	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
-+
-+	enable_gptimer(priv->pin);
-+
- 	return 0;
- }
--EXPORT_SYMBOL(pwm_enable);
- 
--void pwm_disable(struct pwm_device *pwm)
-+static void bfin_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	disable_gptimer(pwm->id);
-+	struct bfin_pwm *priv = pwm_get_chip_data(pwm);
-+
-+	disable_gptimer(priv->pin);
- }
--EXPORT_SYMBOL(pwm_disable);
-+
-+static struct pwm_ops bfin_pwm_ops = {
-+	.request = bfin_pwm_request,
-+	.free = bfin_pwm_free,
-+	.config = bfin_pwm_config,
-+	.enable = bfin_pwm_enable,
-+	.disable = bfin_pwm_disable,
-+	.owner = THIS_MODULE,
++#ifdef CONFIG_OF
++static struct of_device_id tegra_pwm_of_match[] = {
++	{ .compatible = "nvidia,tegra20-pwm" },
++	{ .compatible = "nvidia,tegra30-pwm" },
++	{ }
 +};
 +
-+static int bfin_pwm_probe(struct platform_device *pdev)
-+{
-+	struct bfin_pwm_chip *pwm;
-+	int ret;
++MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
++#endif
 +
-+	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
-+	if (!pwm) {
-+		dev_err(&pdev->dev, "failed to allocate memory\n");
-+		return -ENOMEM;
-+	}
-+
-+	platform_set_drvdata(pdev, pwm);
-+
-+	pwm->chip.dev = &pdev->dev;
-+	pwm->chip.ops = &bfin_pwm_ops;
-+	pwm->chip.base = -1;
-+	pwm->chip.npwm = 12;
-+
-+	ret = pwmchip_add(&pwm->chip);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __devexit bfin_pwm_remove(struct platform_device *pdev)
-+{
-+	struct bfin_pwm_chip *pwm = platform_get_drvdata(pdev);
-+
-+	pwmchip_remove(&pwm->chip);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver bfin_pwm_driver = {
-+	.driver = {
-+		.name = "bfin-pwm",
-+	},
-+	.probe = bfin_pwm_probe,
-+	.remove = __devexit_p(bfin_pwm_remove),
-+};
-+
-+module_platform_driver(bfin_pwm_driver);
-+
-+MODULE_LICENSE("GPL");
+ static struct platform_driver tegra_pwm_driver = {
+ 	.driver = {
+ 		.name = "tegra-pwm",
++		.of_match_table = of_match_ptr(tegra_pwm_of_match),
+ 	},
+ 	.probe = tegra_pwm_probe,
+ 	.remove = __devexit_p(tegra_pwm_remove),
 -- 
 1.7.9.6
