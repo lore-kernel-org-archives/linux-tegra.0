@@ -1,56 +1,82 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 07/11] gpio: tegra: Hide tegra_gpio_enable/disable()
-Date: Sun, 08 Apr 2012 21:09:08 -0400
-Message-ID: <87mx6l1zkb.fsf@laptop.org>
-References: <1333148404-17691-1-git-send-email-swarren@wwwdotorg.org>
-	<1333148404-17691-8-git-send-email-swarren@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH] cpuidle: allow per cpu latencies
+Date: Tue, 10 Apr 2012 13:28:57 +0300
+Message-ID: <20120410102857.GA22721@tbergstrom-lnx.Nvidia.com>
+References: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
+ <4F7DA009.4010802@linux.intel.com>
+ <CAMQu2gzwe0F3qcaTqASEPUASdG1SjpUxrBrSp-RrYLgy3W24OQ@mail.gmail.com>
+ <4F7F0D52.8080305@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1333148404-17691-8-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-	(Stephen Warren's message of "Fri, 30 Mar 2012 17:00:00 -0600")
+Content-Disposition: inline
+In-Reply-To: <4F7F0D52.8080305-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Shilimkar, Santosh" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Trinabh Gupta <g.trinabh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Fri, Apr 06, 2012 at 05:35:46PM +0200, Daniel Lezcano wrote:
+> On 04/06/2012 12:32 PM, Shilimkar, Santosh wrote:
+> > Peter,
+> >
+> > On Thu, Apr 5, 2012 at 7:07 PM, Arjan van de Ven<arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>  wrote:
+> >> On 4/5/2012 2:53 AM, Peter De Schrijver wrote:
+> >>> This patch doesn't update all cpuidle device registrations. I will do that
+> >>
+> >> question is if you want to do per cpu latencies, or if you want to have
+> >> both types of C state in one big table, and have each of the tegra cpyu
+> >> types pick half of them...
+> >>
+> >>
+> > Indeed !! That should work.
+> > I thought the C-states are always per CPU based and during the
+> > cpuidle registration you can register C-state accordingly based on the
+> > specific CPU types with different latencies if needed.
+> >
+> > Am I missing something ?
+> 
+> That was the case before the cpuidle_state were moved from the 
+> cpuidle_device to the cpuidle_driver structure [1].
+> 
+> That had the benefit of using a single latencies array instead of 
+> multiple copy of the same array, which was the case until today.
+> 
+> I looked at the white paper for the tegra3 and understand this is no 
+> longer true because of the 4-plus-1 architecture [2].
+> 
 
-On Fri, Mar 30 2012, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Recent pinctrl discussions concluded that gpiolib APIs should in fact do
-> whatever is required to mux a GPIO onto pins, by calling pinctrl APIs if
-> required. This change implements this for the Tegra GPIO driver, and removes
-> calls to the Tegra-specific APIs from drivers and board files.
->
-> Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-> Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2: Adjusted per changes to latest version of Documentation/gpio.txt.
-> Fixed tegra_board_pinmux_bus_notify() to still check the device name,
-> so it waits for the pinmux device to be registered, not just /any/ device.
-> ---
->  arch/arm/mach-tegra/board-dt-tegra20.c        |    1 -
->  arch/arm/mach-tegra/board-harmony-pinmux.c    |   17 -----------
->  arch/arm/mach-tegra/board-paz00-pinmux.c      |   14 ---------
->  arch/arm/mach-tegra/board-pinmux.c            |   33 +++--------------------
->  arch/arm/mach-tegra/board-pinmux.h            |    5 ---
->  arch/arm/mach-tegra/board-seaboard-pinmux.c   |   32 ----------------------
->  arch/arm/mach-tegra/board-seaboard.c          |    1 -
->  arch/arm/mach-tegra/board-trimslice-pinmux.c  |   12 --------
->  arch/arm/mach-tegra/include/mach/gpio-tegra.h |    9 ------
->  arch/arm/mach-tegra/usb_phy.c                 |    1 -
->  drivers/gpio/gpio-tegra.c                     |   36 ++++++++++++------------
->  drivers/mmc/host/sdhci-tegra.c                |   24 +++-------------
->  12 files changed, 27 insertions(+), 158 deletions(-)
+The reason is not so much 4-plus-1, but in 4 CPU mode, only CPUs 1 - 3 can
+be powergated individually. To turn off CPU0, the external regulator for
+the entire cluster is turned off. This means latencies for CPU0 are different
+from the other CPUs.
 
-For the MMC change:
+> With the increasing number of SoCs, we have a lot of new cpuidle drivers 
+> and each time we modify something in the cpuidle core, that impacts all 
+> the cpuidle drivers.
+> 
+> My feeling is we are going back and forth when patching the cpuidle core 
+> and may be it is time to define a clear semantic before patching again 
+> the cpuidle, no ?
+> 
+> What could nice is to have:
+> 
+>   * in case of the same latencies for all cpus, use a single array
+> 
+>   * in case of different latencies, group the same latencies into a 
+> single array (I assume this is the case for 4-plus-1, right ?)
+> 
+> May be we can move the cpuidle_state to a per_cpu pointer like 
+> cpuidle_devices in cpuidle.c and then add:
+> 
+> register_latencies(struct cpuidle_latencies l, int cpu);
+> 
+> If we have the same latencies for all the cpus, then we can register the 
+> same array, which is only a pointer.
 
-Acked-by: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Maybe we also want to make the 'disabled' flag per CPU then or provide some
+other way the number of C states can be different per CPU?
 
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+Cheers,
+
+Peter.
