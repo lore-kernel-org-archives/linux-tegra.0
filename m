@@ -1,36 +1,46 @@
-From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 16/17] pwm-backlight: Add rudimentary device tree
- support
-Date: Wed, 11 Apr 2012 21:28:14 +0800
-Message-ID: <20120411132810.GD2445@S2101-09.ap.freescale.net>
-References: <1334070400-25013-1-git-send-email-thierry.reding@avionic-design.de>
- <1334070400-25013-17-git-send-email-thierry.reding@avionic-design.de>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
+Date: Wed, 11 Apr 2012 15:35:12 +0200
+Message-ID: <20120411133512.GL4296@phenom.ffwll.local>
+References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de>
+ <1334146230-1795-5-git-send-email-thierry.reding@avionic-design.de>
+ <20120411124810.GK4296@phenom.ffwll.local>
+ <20120411132326.GD27337@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1334070400-25013-17-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+In-Reply-To: <20120411132326.GD27337-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 10, 2012 at 05:06:39PM +0200, Thierry Reding wrote:
-> This commit adds very basic support for device tree probing. Currently,
-> only a PWM and a list of distinct brightness levels can be specified.
-> Enabling or disabling backlight power via GPIOs is not yet supported.
+On Wed, Apr 11, 2012 at 03:23:26PM +0200, Thierry Reding wrote:
+> * Daniel Vetter wrote:
+> > On Wed, Apr 11, 2012 at 02:10:30PM +0200, Thierry Reding wrote:
+> > > This commit adds a very basic DRM driver for NVIDIA Tegra SoCs. It
+> > > currently has rudimentary GEM support and can run a console on the
+> > > framebuffer as well as X using the xf86-video-modesetting driver.
+> > > Only the RGB output is supported. Quite a lot of things still need
+> > > to be worked out and there is a lot of room for cleanup.
+> > 
+> > Indeed, after a quick look there are tons of functions that are just stubs
+> > ;-) One thing I wonder though is why you directly use the iommu api and
+> > not wrap it up into dma_map? Is arm infrastructure just not there yet or
+> > do you plan to tightly integrate the tegra drm with the iommu (e.g. for
+> > process space switching or similarly funky stuff)?
 > 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> I'm not sure I know what you are referring to. Looking for all users of
+> iommu_map() doesn't turn up anything related to dma_map. Can you point me in
+> the right direction?
 
-Reviewed-by: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-[Tested on mach-mxs]
+Well, you use the iommu api to map/unmap memory into the iommu for tegra,
+whereas usually device drivers just use the dma api to do that. The usual
+interface is dma_map_sg/dma_unmap_sg, but there are quite a few variants
+around. I'm just wondering why this you've choosen this.
+-Daniel
+-- 
+Daniel Vetter
+Mail: daniel-/w4YWyX8dFk@public.gmane.org
+Mobile: +41 (0)79 365 57 48
