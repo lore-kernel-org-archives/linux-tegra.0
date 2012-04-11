@@ -1,185 +1,376 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
-Date: Wed, 11 Apr 2012 12:12:14 -0600
-Message-ID: <4F85C97E.50203@wwwdotorg.org>
-References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de>
-	<1334146230-1795-5-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1334146230-1795-5-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra: refactor probe handling
+Date: Wed, 11 Apr 2012 13:00:39 -0600
+Message-ID: <1334170839-10396-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/11/2012 06:10 AM, Thierry Reding wrote:
-> This commit adds a very basic DRM driver for NVIDIA Tegra SoCs. It
-> currently has rudimentary GEM support and can run a console on the
-> framebuffer as well as X using the xf86-video-modesetting driver.
-> Only the RGB output is supported. Quite a lot of things still need
-> to be worked out and there is a lot of room for cleanup.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I'll let Jon Mayo comment on the actual driver implementation, since
-he's a lot more familiar with Tegra's display hardware. However, I have
-some general comments below.
+Rather than having a single tegra-pinctrl driver that determines whether
+it's running on Tegra20 or Tegra30, instead have separate drivers for
+each that call into utility functions to implement the majority of the
+driver. This change is based on review feedback of the SPEAr pinctrl
+driver, which had originally copied to Tegra driver structure.
 
->  .../devicetree/bindings/gpu/drm/tegra.txt          |   24 +
->  arch/arm/mach-tegra/board-dt-tegra20.c             |    3 +
->  arch/arm/mach-tegra/tegra2_clocks.c                |    8 +-
->  drivers/gpu/drm/Kconfig                            |    2 +
->  drivers/gpu/drm/Makefile                           |    1 +
->  drivers/gpu/drm/tegra/Kconfig                      |   10 +
->  drivers/gpu/drm/tegra/Makefile                     |    5 +
->  drivers/gpu/drm/tegra/tegra_drv.c                  | 2241 ++++++++++++++++++++
->  drivers/gpu/drm/tegra/tegra_drv.h                  |  184 ++
->  include/drm/tegra_drm.h                            |   44 +
+This requires that the two drivers have unique names. Update a couple
+spots in arch/arm/mach-tegra for the name change.
 
-Splitting this patch into two, between arch/arm and drivers/gpu would be
-a good idea.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Linus, It'll be easiest for me to merge this through the Tegra tree, since
+the arch/arm changes depend on the patches there that switch to using the
+pinctrl driver. If you could ack this, it'd be great. Thanks.
 
-> diff --git a/Documentation/devicetree/bindings/gpu/drm/tegra.txt b/Documentation/devicetree/bindings/gpu/drm/tegra.txt
+ arch/arm/mach-tegra/board-pinmux.h |    2 +-
+ arch/arm/mach-tegra/devices.c      |    2 +-
+ drivers/pinctrl/pinctrl-tegra.c    |   80 +++++------------------------------
+ drivers/pinctrl/pinctrl-tegra.h    |   23 +---------
+ drivers/pinctrl/pinctrl-tegra20.c  |   40 ++++++++++++++++-
+ drivers/pinctrl/pinctrl-tegra30.c  |   40 ++++++++++++++++-
+ 6 files changed, 91 insertions(+), 96 deletions(-)
 
-> +	drm@54200000 {
-> +		compatible = "nvidia,tegra20-drm";
-
-This doesn't seem right; there isn't a "DRM" hardware module on Tegra,
-since "DRM" is a Linux/software-specific term.
-
-I'd at least expect to see this compatible flag be renamed to something
-more like "nvidia,tegra20-dc" (dc==display controller).
-
-Since Tegra has two display controller modules (I believe identical?),
-and numerous other independent(?) blocks, I'd expect to see multiple
-nodes in device tree, one per hardware block, such that each block gets
-its own device and driver. That said, I'm not familiar enough with
-Tegra's display and graphics HW to know if this makes sense. Jon, what's
-your take here? The clock change below, and in particular the original
-code there that we use downstream, lends weight to my argument.
-
-> +		reg = < 0x54200000 0x00040000    /* display A */
-> +		        0x54240000 0x00040000    /* display B */
-> +		        0x58000000 0x02000000 >; /* GART aperture */
-> +		interrupts = < 0 73 0x04    /* display A */
-> +		               0 74 0x04 >; /* display B */
-> +
-> +		lvds {
-> +			type = "rgb";
-
-These sub-nodes probably want a "compatible" property rather than a
-"type" property.
-
-> +			size = <345 194>;
-> +
-> +			default-mode {
-> +				pixel-clock = <61715000>;
-> +				vertical-refresh = <50>;
-> +				resolution = <1366 768>;
-> +				bits-per-pixel = <16>;
-> +				horizontal-timings = <4 136 2 36>;
-> +				vertical-timings = <2 4 21 10>;
-> +			};
-> +		};
-
-I imagine that quite a bit of thought needs to be put into the output
-part of the binding in order to:
-
-* Model the outputs/connectors separately from display controllers.
-* Make sure that the basic infra-structure for representing an output is
-general enough to be extensible to all the kinds of outputs we support,
-not just the LVDS output.
-* We were wondering about putting an EDID into the DT to represent the
-display modes, so that all outputs had EDIDs rather than "real" monitors
-having EDIDs, and fixed internal displays having some other
-representation of capabilities.
-
-I'm hoping that Jon will drive this.
-
-> diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-
-> -	PERIPH_CLK("disp1",	"tegradc.0",		NULL,	27,	0x138,	600000000, mux_pllp_plld_pllc_clkm,	MUX), /* scales with voltage and process_id */
-> -	PERIPH_CLK("disp2",	"tegradc.1",		NULL,	26,	0x13c,	600000000, mux_pllp_plld_pllc_clkm,	MUX), /* scales with voltage and process_id */
-> +	PERIPH_CLK("disp1",	"tegra-drm",		NULL,	27,	0x138,	600000000, mux_pllp_plld_pllc_clkm,	MUX), /* scales with voltage and process_id */
-> +	PERIPH_CLK("disp2",	"tegra-drm",		NULL,	26,	0x13c,	600000000, mux_pllp_plld_pllc_clkm,	MUX), /* scales with voltage and process_id */
-
-This doesn't seem right, and couples back to my assertion above that the
-two display controller modules probably deserve separate device objects,
-named e.g. tegradc.*.
-
-> diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-> new file mode 100644
-> index 0000000..f3382c9
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tegra/Kconfig
-> @@ -0,0 +1,10 @@
-> +config DRM_TEGRA
-> +	tristate "NVIDIA Tegra"
-> +	depends on DRM && ARCH_TEGRA
-
-Jon, do you think we'll end up eventually having a unified
-Tegra20/Tegra30 DRM driver, or separate top-level DRM drivers?
-
-In other words, should this depend on ARCH_TEGRA_2x_SOC rather than
-ARCH_TEGRA?
-
-> diff --git a/drivers/gpu/drm/tegra/tegra_drv.c b/drivers/gpu/drm/tegra/tegra_drv.c
-
-> +#define DRIVER_NAME "tegra"
-> +#define DRIVER_DESC "NVIDIA Tegra graphics"
-
-Similarly, I wonder if these should be "tegra20" and "NVIDIA Tegra20
-graphics", or not?
-
-> +static int tegra_drm_parse_dt_mode(struct device *dev,
-...
-> +	err = of_property_read_u32(node, "pixel-clock", &value);
-> +	if (err < 0)
-> +		return err;
-
-Is it useful to call dev_err() when the DT is present but can't be
-parsed, to give some clue what the problem is?
-
-> +static int tegra_drm_parse_dt(struct platform_device *pdev)
-> +{
-...
-> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> +	if (!pdata)
-> +		return -ENOMEM;
-...
-> +	dev->platform_data = pdata;
-
-I don't think you should assign to dev->platform_data. If you do, then I
-think the following could happen:
-
-* During first probe, the assignment above happens
-* Module is removed, hence device removed, hence dev->platform_data
-freed, but not zero'd out
-* Module is re-inserted, finds that dev->platform_data!=NULL and
-proceeds to use it.
-
-Instead, the active platform data should probably be stored in a
-tegra_drm struct that's stored in the dev's private data.
-tegra_drm_probe() might then look more like:
-
-struct tegra_drm *tdev;
-
-tdev = devm_kzalloc();
-tdev->pdata = pdev->dev.platform_data;
-if (!tdev->pdata)
-    tdev->pdata = tegra_drm_parse_dt();
-if (!tdev->pdata)
-    return -EINVAL;
-
-dev_set_drvdata(dev, tdev);
-
-This is safe, since probe() will never assume that dev_get_drvdata()
-might contain something valid before probe() sets it.
+diff --git a/arch/arm/mach-tegra/board-pinmux.h b/arch/arm/mach-tegra/board-pinmux.h
+index 45b5ad8..c5f3f33 100644
+--- a/arch/arm/mach-tegra/board-pinmux.h
++++ b/arch/arm/mach-tegra/board-pinmux.h
+@@ -19,7 +19,7 @@
+ 
+ #include <mach/pinconf-tegra.h>
+ 
+-#define PINMUX_DEV "tegra-pinmux"
++#define PINMUX_DEV "tegra20-pinctrl"
+ 
+ #define TEGRA_MAP_MUX(_group_, _function_) \
+ 	PIN_MAP_MUX_GROUP_HOG_DEFAULT(PINMUX_DEV, _group_, _function_)
+diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+index 58e5803..2d8dfa2 100644
+--- a/arch/arm/mach-tegra/devices.c
++++ b/arch/arm/mach-tegra/devices.c
+@@ -110,7 +110,7 @@ static struct resource pinmux_resource[] = {
+ };
+ 
+ struct platform_device tegra_pinmux_device = {
+-	.name		= "tegra-pinmux",
++	.name		= "tegra20-pinctrl",
+ 	.id		= -1,
+ 	.resource	= pinmux_resource,
+ 	.num_resources	= ARRAY_SIZE(pinmux_resource),
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index f6eba9c..3ac8ad3 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -1,7 +1,7 @@
+ /*
+  * Driver for the NVIDIA Tegra pinmux
+  *
+- * Copyright (c) 2011, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2011-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Derived from code:
+  * Copyright (C) 2010 Google, Inc.
+@@ -22,7 +22,8 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
+ #include <linux/pinctrl/machine.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+@@ -31,10 +32,9 @@
+ 
+ #include <mach/pinconf-tegra.h>
+ 
++#include "core.h"
+ #include "pinctrl-tegra.h"
+ 
+-#define DRIVER_NAME "tegra-pinmux"
+-
+ struct tegra_pmx {
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctl;
+@@ -87,7 +87,7 @@ static void tegra_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 				       struct seq_file *s,
+ 				       unsigned offset)
+ {
+-	seq_printf(s, " " DRIVER_NAME);
++	seq_printf(s, " %s", dev_name(pctldev->dev));
+ }
+ 
+ static int reserve_map(struct pinctrl_map **map, unsigned *reserved_maps,
+@@ -589,60 +589,29 @@ static struct pinctrl_gpio_range tegra_pinctrl_gpio_range = {
+ };
+ 
+ static struct pinctrl_desc tegra_pinctrl_desc = {
+-	.name = DRIVER_NAME,
+ 	.pctlops = &tegra_pinctrl_ops,
+ 	.pmxops = &tegra_pinmux_ops,
+ 	.confops = &tegra_pinconf_ops,
+ 	.owner = THIS_MODULE,
+ };
+ 
+-static struct of_device_id tegra_pinctrl_of_match[] __devinitdata = {
+-#ifdef CONFIG_PINCTRL_TEGRA20
+-	{
+-		.compatible = "nvidia,tegra20-pinmux",
+-		.data = tegra20_pinctrl_init,
+-	},
+-#endif
+-#ifdef CONFIG_PINCTRL_TEGRA30
+-	{
+-		.compatible = "nvidia,tegra30-pinmux",
+-		.data = tegra30_pinctrl_init,
+-	},
+-#endif
+-	{},
+-};
+-
+-static int __devinit tegra_pinctrl_probe(struct platform_device *pdev)
++int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
++			const struct tegra_pinctrl_soc_data *soc_data)
+ {
+-	const struct of_device_id *match;
+-	tegra_pinctrl_soc_initf initf = NULL;
+ 	struct tegra_pmx *pmx;
+ 	struct resource *res;
+ 	int i;
+ 
+-	match = of_match_device(tegra_pinctrl_of_match, &pdev->dev);
+-	if (match)
+-		initf = (tegra_pinctrl_soc_initf)match->data;
+-#ifdef CONFIG_PINCTRL_TEGRA20
+-	if (!initf)
+-		initf = tegra20_pinctrl_init;
+-#endif
+-	if (!initf) {
+-		dev_err(&pdev->dev,
+-			"Could not determine SoC-specific init func\n");
+-		return -EINVAL;
+-	}
+-
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx) {
+ 		dev_err(&pdev->dev, "Can't alloc tegra_pmx\n");
+ 		return -ENOMEM;
+ 	}
+ 	pmx->dev = &pdev->dev;
+-
+-	(*initf)(&pmx->soc);
++	pmx->soc = soc_data;
+ 
+ 	tegra_pinctrl_gpio_range.npins = pmx->soc->ngpios;
++	tegra_pinctrl_desc.name = dev_name(&pdev->dev);
+ 	tegra_pinctrl_desc.pins = pmx->soc->pins;
+ 	tegra_pinctrl_desc.npins = pmx->soc->npins;
+ 
+@@ -697,8 +666,9 @@ static int __devinit tegra_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(tegra_pinctrl_probe);
+ 
+-static int __devexit tegra_pinctrl_remove(struct platform_device *pdev)
++int __devexit tegra_pinctrl_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
+ 
+@@ -707,30 +677,4 @@ static int __devexit tegra_pinctrl_remove(struct platform_device *pdev)
+ 
+ 	return 0;
+ }
+-
+-static struct platform_driver tegra_pinctrl_driver = {
+-	.driver = {
+-		.name = DRIVER_NAME,
+-		.owner = THIS_MODULE,
+-		.of_match_table = tegra_pinctrl_of_match,
+-	},
+-	.probe = tegra_pinctrl_probe,
+-	.remove = __devexit_p(tegra_pinctrl_remove),
+-};
+-
+-static int __init tegra_pinctrl_init(void)
+-{
+-	return platform_driver_register(&tegra_pinctrl_driver);
+-}
+-arch_initcall(tegra_pinctrl_init);
+-
+-static void __exit tegra_pinctrl_exit(void)
+-{
+-	platform_driver_unregister(&tegra_pinctrl_driver);
+-}
+-module_exit(tegra_pinctrl_exit);
+-
+-MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra pinctrl driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_DEVICE_TABLE(of, tegra_pinctrl_of_match);
++EXPORT_SYMBOL_GPL(tegra_pinctrl_remove);
+diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+index 782c795..705c007 100644
+--- a/drivers/pinctrl/pinctrl-tegra.h
++++ b/drivers/pinctrl/pinctrl-tegra.h
+@@ -139,25 +139,8 @@ struct tegra_pinctrl_soc_data {
+ 	unsigned ngroups;
+ };
+ 
+-/**
+- * tegra_pinctrl_soc_initf() - Retrieve pin controller details for a SoC.
+- * @soc_data:	This pointer must be updated to point at a struct containing
+- *		details of the SoC.
+- */
+-typedef void (*tegra_pinctrl_soc_initf)(
+-			const struct tegra_pinctrl_soc_data **soc_data);
+-
+-/**
+- * tegra20_pinctrl_init() - Retrieve pin controller details for Tegra20
+- * @soc_data:	This pointer will be updated to point at a struct containing
+- *		details of Tegra20's pin controller.
+- */
+-void tegra20_pinctrl_init(const struct tegra_pinctrl_soc_data **soc_data);
+-/**
+- * tegra30_pinctrl_init() - Retrieve pin controller details for Tegra20
+- * @soc_data:	This pointer will be updated to point at a struct containing
+- *		details of Tegra30's pin controller.
+- */
+-void tegra30_pinctrl_init(const struct tegra_pinctrl_soc_data **soc_data);
++int tegra_pinctrl_probe(struct platform_device *pdev,
++			const struct tegra_pinctrl_soc_data *soc_data);
++int tegra_pinctrl_remove(struct platform_device *pdev);
+ 
+ #endif
+diff --git a/drivers/pinctrl/pinctrl-tegra20.c b/drivers/pinctrl/pinctrl-tegra20.c
+index f69ff96..a74f9a5 100644
+--- a/drivers/pinctrl/pinctrl-tegra20.c
++++ b/drivers/pinctrl/pinctrl-tegra20.c
+@@ -1,7 +1,7 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra20 pinmux
+  *
+- * Copyright (c) 2011, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2011-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Derived from code:
+  * Copyright (C) 2010 Google, Inc.
+@@ -17,6 +17,8 @@
+  * more details.
+  */
+ 
++#include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+@@ -2854,7 +2856,39 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
+ 	.ngroups = ARRAY_SIZE(tegra20_groups),
+ };
+ 
+-void __devinit tegra20_pinctrl_init(const struct tegra_pinctrl_soc_data **soc)
++static int __devinit tegra20_pinctrl_probe(struct platform_device *pdev)
+ {
+-	*soc = &tegra20_pinctrl;
++	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
+ }
++
++static struct of_device_id tegra20_pinctrl_of_match[] __devinitdata = {
++	{ .compatible = "nvidia,tegra20-pinmux", },
++	{ },
++};
++
++static struct platform_driver tegra20_pinctrl_driver = {
++	.driver = {
++		.name = "tegra20-pinctrl",
++		.owner = THIS_MODULE,
++		.of_match_table = tegra20_pinctrl_of_match,
++	},
++	.probe = tegra20_pinctrl_probe,
++	.remove = __devexit_p(tegra_pinctrl_remove),
++};
++
++static int __init tegra20_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra20_pinctrl_driver);
++}
++arch_initcall(tegra20_pinctrl_init);
++
++static void __exit tegra20_pinctrl_exit(void)
++{
++	platform_driver_unregister(&tegra20_pinctrl_driver);
++}
++module_exit(tegra20_pinctrl_exit);
++
++MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_DESCRIPTION("NVIDIA Tegra20 pinctrl driver");
++MODULE_LICENSE("GPL v2");
++MODULE_DEVICE_TABLE(of, tegra20_pinctrl_of_match);
+diff --git a/drivers/pinctrl/pinctrl-tegra30.c b/drivers/pinctrl/pinctrl-tegra30.c
+index 4d7571d..0386fdf 100644
+--- a/drivers/pinctrl/pinctrl-tegra30.c
++++ b/drivers/pinctrl/pinctrl-tegra30.c
+@@ -1,7 +1,7 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra30 pinmux
+  *
+- * Copyright (c) 2011, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2011-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+@@ -13,6 +13,8 @@
+  * more details.
+  */
+ 
++#include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+@@ -3720,7 +3722,39 @@ static const struct tegra_pinctrl_soc_data tegra30_pinctrl = {
+ 	.ngroups = ARRAY_SIZE(tegra30_groups),
+ };
+ 
+-void __devinit tegra30_pinctrl_init(const struct tegra_pinctrl_soc_data **soc)
++static int __devinit tegra30_pinctrl_probe(struct platform_device *pdev)
+ {
+-	*soc = &tegra30_pinctrl;
++	return tegra_pinctrl_probe(pdev, &tegra30_pinctrl);
+ }
++
++static struct of_device_id tegra30_pinctrl_of_match[] __devinitdata = {
++	{ .compatible = "nvidia,tegra30-pinmux", },
++	{ },
++};
++
++static struct platform_driver tegra30_pinctrl_driver = {
++	.driver = {
++		.name = "tegra30-pinctrl",
++		.owner = THIS_MODULE,
++		.of_match_table = tegra30_pinctrl_of_match,
++	},
++	.probe = tegra30_pinctrl_probe,
++	.remove = __devexit_p(tegra_pinctrl_remove),
++};
++
++static int __init tegra30_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra30_pinctrl_driver);
++}
++arch_initcall(tegra30_pinctrl_init);
++
++static void __exit tegra30_pinctrl_exit(void)
++{
++	platform_driver_unregister(&tegra30_pinctrl_driver);
++}
++module_exit(tegra30_pinctrl_exit);
++
++MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_DESCRIPTION("NVIDIA Tegra30 pinctrl driver");
++MODULE_LICENSE("GPL v2");
++MODULE_DEVICE_TABLE(of, tegra30_pinctrl_of_match);
+-- 
+1.7.0.4
