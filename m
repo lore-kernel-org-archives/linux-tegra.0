@@ -1,88 +1,59 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 2/4] iommu: tegra/gart: Add device tree support
-Date: Thu, 12 Apr 2012 08:51:09 +0200
-Message-ID: <20120412065108.GC4162@avionic-0098.adnet.avionic-design.de>
-References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de>
-	<1334146230-1795-3-git-send-email-thierry.reding@avionic-design.de>
-	<4F85BD9D.7050409@wwwdotorg.org>
+Subject: Re: [PATCH v6 17/17] pwm: Take over maintainership of the PWM
+ subsystem
+Date: Thu, 12 Apr 2012 09:22:06 +0200
+Message-ID: <20120412072206.GB18252@avionic-0098.mockup.avionic-design.de>
+References: <1334070400-25013-1-git-send-email-thierry.reding@avionic-design.de>
+ <1334070400-25013-18-git-send-email-thierry.reding@avionic-design.de>
+ <201204101951.44198.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2201259864538729482=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4F85BD9D.7050409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201204101951.44198.arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2201259864538729482==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aT9PWwzfKXlsBJM1"
-Content-Disposition: inline
-
-
---aT9PWwzfKXlsBJM1
+--2B/JsCI69OhZNC5r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-* Stephen Warren wrote:
-> On 04/11/2012 06:10 AM, Thierry Reding wrote:
-> > This commit adds device tree support for the GART hardware available on
-> > NVIDIA Tegra 20 SoCs.
+* Arnd Bergmann wrote:
+> On Tuesday 10 April 2012, Thierry Reding wrote:
+> > I'm taking over the maintainership of the PWM subsystem. This commit
+> > also adds the URLs to the gitorious project and repository as well as
+> > any missing files related to the PWM subsystem.
 > >=20
 > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 > > ---
-> >  arch/arm/boot/dts/tegra20.dtsi         |    6 ++++++
-> >  arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
-> >  drivers/iommu/tegra-gart.c             |   10 ++++++++++
-> >  3 files changed, 17 insertions(+)
+> > Note: I guess this patch in particular could use some Acked-by, maybe f=
+rom
+> > Arnd and Sascha so that people will know this happens with their blessi=
+ng.
 >=20
-> I think I'd prefer at least the tegra20.dtsi change split out into a
-> separate patch so I can queue it in a "dt" topic branch in the Tegra repo.
->=20
-> It might be a good idea to split this into two on an arch/arm vs.
-> drivers/iommu boundary. Looking at Olof's branches for 3.4, that split
-> is what happened there.
->=20
-> Finally, there should be a binding documentation file in
-> Documentation/devicetree/bindings in order to specify the number of reg
-> property entries needed, and their meaning, since there's more than 1
-> (even though you did comment it nicely in the .dtsi file)
+> Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 
-Okay, I'll do that.
+As far as I can tell the series is in pretty good shape. I've integrated
+Shawn's latest comments and I think we could get this into 3.5. Does it make
+sense to take the PWM tree through Linux next before having it pulled into
+mainline during the next merge window?
 
 Thierry
 
---aT9PWwzfKXlsBJM1
+--2B/JsCI69OhZNC5r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iEYEARECAAYFAk+Ge1wACgkQZ+BJyKLjJp/vYQCgmzAQyon0uJtVYVi1aTW1Ju9z
-4e8An3lnj6kmSzAELvSRO/7ryOIGuSQQ
-=5sDW
+iEUEARECAAYFAk+Ggp4ACgkQZ+BJyKLjJp9PFgCY06UvsJEX+0XjcOEG6q8wlSUe
+EgCfcJx4RYKAzY4xT6BX6ld0fdcTMCA=
+=mfFM
 -----END PGP SIGNATURE-----
 
---aT9PWwzfKXlsBJM1--
-
---===============2201259864538729482==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-iommu mailing list
-iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-https://lists.linuxfoundation.org/mailman/listinfo/iommu
---===============2201259864538729482==--
+--2B/JsCI69OhZNC5r--
