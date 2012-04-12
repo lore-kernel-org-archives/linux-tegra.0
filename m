@@ -1,51 +1,41 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: Changes to power management in ehci-tegra
-Date: Thu, 12 Apr 2012 14:45:57 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1204121437300.1496-100000@iolanthe.rowland.org>
-References: <4F871E58.8020108@wwwdotorg.org>
+From: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
+Date: Thu, 12 Apr 2012 11:56:01 -0700
+Message-ID: <4F872541.3050200@nvidia.com>
+References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de> <1334146230-1795-5-git-send-email-thierry.reding@avionic-design.de> <20120411124810.GK4296@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F871E58.8020108-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120411124810.GK4296-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 12 Apr 2012, Stephen Warren wrote:
 
-> On 04/12/2012 12:07 PM, Alan Stern wrote:
-> > Benoit or anyone else:
-> > 
-> > Right now the ehci-tegra driver powers down the EHCI controller during 
-> > bus suspend, if the appropriate parameter is set.  This is not the 
-> > right thing to do, and it will break under some newly added changes to 
-> > the USB core.
-> > 
-> > Instead, the driver should leave the controller powered up during bus 
-> > suspend, and power it down during controller suspend.  Below is a patch 
-> > that attempts to do this.
-> > 
-> > I have no way to test this patch; I haven't even compiled it.  Please 
-> > see if it works okay, or if it needs to be fixed at all.
-> 
-> I can test this. How would I trigger the bus conditions this patch
-> affects? Note that we don't have system suspend on Tegra yet.
+On 04/11/2012 05:48 AM, Daniel Vetter wrote:
+> On Wed, Apr 11, 2012 at 02:10:30PM +0200, Thierry Reding wrote:
+>> This commit adds a very basic DRM driver for NVIDIA Tegra SoCs. It
+>> currently has rudimentary GEM support and can run a console on the
+>> framebuffer as well as X using the xf86-video-modesetting driver.
+>> Only the RGB output is supported. Quite a lot of things still need
+>> to be worked out and there is a lot of room for cleanup.
+>
+> Indeed, after a quick look there are tons of functions that are just stubs
+> ;-) One thing I wonder though is why you directly use the iommu api and
+> not wrap it up into dma_map? Is arm infrastructure just not there yet or
+> do you plan to tightly integrate the tegra drm with the iommu (e.g. for
+> process space switching or similarly funky stuff)?
+>
+> Yours, Daniel
 
-If you do:
+An abstraction to access iommu is preferable since Tegra2 and Tegra3 are 
+quite a bit different when it comes to iommu.
 
-	echo auto >/sys/devices/.../power/control
+But so far I'm pretty pleased with the driver Thierry has done. I'm 
+hoping we can start using this as a base instead of the fb based driver 
+that never made it upstream. (even if I have had a bit of a debate about 
+GEM v. TTM v. ION v. ...)
 
-(where the ... gets filled in with the path to the EHCI controller),
-then the controller should automatically get powered down whenever the
-bus does.  The bus will get powered down whenever no USB devices are
-plugged in (or the only attached USB devices are things like hubs that
-will themselves get suspended) after a 2-second delay.
-
-This is intended to be equivalent to enabling the
-power_down_on_bus_suspend flag in the tegra_ehci_platform_data 
-structure.  That
-is, tegra_ehci_probe checks that flag and sets the PM control to auto
-if the flag is enabled.
-
-Alan Stern
+- Jon
