@@ -1,179 +1,78 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] pinctrl: tegra: debugfs enhancements
-Date: Wed, 11 Apr 2012 16:47:19 -0600
-Message-ID: <1334184439-16428-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
+Date: Thu, 12 Apr 2012 09:18:16 +0200
+Message-ID: <20120412071816.GA18252@avionic-0098.mockup.avionic-design.de>
+References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de>
+ <20120411133512.GL4296@phenom.ffwll.local>
+ <20120411141108.GI27337@avionic-0098.adnet.avionic-design.de>
+ <201204111518.41968.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201204111518.41968.arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
 
-* Only provide debugfs-relates ops when CONFIG_DEBUG_FS is enabled.
-* Implement pin_config_group_dbg_show op.
-* Implement pin_config_config_dbg_show op.
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-Linus, this too would be best to take through the Tegra tree. It depends
-on the other two patches I just posted, but to satisfy that, I'll just
-base my branch off of pinctrl once you've applied those branches and its
-stable.
+* Arnd Bergmann wrote:
+> On Wednesday 11 April 2012, Thierry Reding wrote:
+> > Daniel Vetter wrote:
+> > > Well, you use the iommu api to map/unmap memory into the iommu for te=
+gra,
+> > > whereas usually device drivers just use the dma api to do that. The u=
+sual
+> > > interface is dma_map_sg/dma_unmap_sg, but there are quite a few varia=
+nts
+> > > around. I'm just wondering why this you've choosen this.
+> >=20
+> > I don't think this works on ARM. Maybe I'm not seeing the whole picture=
+ but
+> > judging by a quick look through the kernel tree there aren't any users =
+that
+> > map DMA memory through an IOMMU.
+>=20
+> dma_map_sg is certainly the right interface to use, and Marek Szyprowski =
+has
+> patches to make that work on ARM, hopefully going into v3.5, so you could
+> use those.
 
- drivers/pinctrl/pinctrl-tegra.c |   75 +++++++++++++++++++++++++++++++++++---
- 1 files changed, 69 insertions(+), 6 deletions(-)
+I've looked at Marek's patches but I don't think they'll work for Tegra 2 or
+Tegra 3. The corresponding iommu_map() functions only set one PTE, regardle=
+ss
+of the number of bytes passed to them. However, the Tegra TRM indicates that
+mapping needs to be done on a per-page basis so contiguous regions cannot be
+combined. I suppose the IOMMU driver would have to be fixed to program more
+than a single page in that case.
 
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 3ac8ad3..df52d75 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -83,12 +83,14 @@ static int tegra_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
- static void tegra_pinctrl_pin_dbg_show(struct pinctrl_dev *pctldev,
- 				       struct seq_file *s,
- 				       unsigned offset)
- {
- 	seq_printf(s, " %s", dev_name(pctldev->dev));
- }
-+#endif
- 
- static int reserve_map(struct pinctrl_map **map, unsigned *reserved_maps,
- 		       unsigned *num_maps, unsigned reserve)
-@@ -295,7 +297,9 @@ static struct pinctrl_ops tegra_pinctrl_ops = {
- 	.get_groups_count = tegra_pinctrl_get_groups_count,
- 	.get_group_name = tegra_pinctrl_get_group_name,
- 	.get_group_pins = tegra_pinctrl_get_group_pins,
-+#ifdef CONFIG_DEBUG_FS
- 	.pin_dbg_show = tegra_pinctrl_pin_dbg_show,
-+#endif
- 	.dt_node_to_map = tegra_pinctrl_dt_node_to_map,
- 	.dt_free_map = tegra_pinctrl_dt_free_map,
- };
-@@ -385,6 +389,7 @@ static struct pinmux_ops tegra_pinmux_ops = {
- static int tegra_pinconf_reg(struct tegra_pmx *pmx,
- 			     const struct tegra_pingroup *g,
- 			     enum tegra_pinconf_param param,
-+			     bool report_err,
- 			     s8 *bank, s16 *reg, s8 *bit, s8 *width)
- {
- 	switch (param) {
-@@ -472,9 +477,10 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
- 	}
- 
- 	if (*reg < 0) {
--		dev_err(pmx->dev,
--			"Config param %04x not supported on group %s\n",
--			param, g->name);
-+		if (report_err)
-+			dev_err(pmx->dev,
-+				"Config param %04x not supported on group %s\n",
-+				param, g->name);
- 		return -ENOTSUPP;
- 	}
- 
-@@ -507,7 +513,8 @@ static int tegra_pinconf_group_get(struct pinctrl_dev *pctldev,
- 
- 	g = &pmx->soc->groups[group];
- 
--	ret = tegra_pinconf_reg(pmx, g, param, &bank, &reg, &bit, &width);
-+	ret = tegra_pinconf_reg(pmx, g, param, true, &bank, &reg, &bit,
-+				&width);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -534,7 +541,8 @@ static int tegra_pinconf_group_set(struct pinctrl_dev *pctldev,
- 
- 	g = &pmx->soc->groups[group];
- 
--	ret = tegra_pinconf_reg(pmx, g, param, &bank, &reg, &bit, &width);
-+	ret = tegra_pinconf_reg(pmx, g, param, true, &bank, &reg, &bit,
-+				&width);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -563,23 +571,78 @@ static int tegra_pinconf_group_set(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
- static void tegra_pinconf_dbg_show(struct pinctrl_dev *pctldev,
- 				   struct seq_file *s, unsigned offset)
- {
- }
- 
-+static const char *strip_prefix(const char *s)
-+{
-+	const char *comma = strchr(s, ',');
-+	if (!comma)
-+		return s;
-+
-+	return comma + 1;
-+}
-+
- static void tegra_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
--					 struct seq_file *s, unsigned selector)
-+					 struct seq_file *s, unsigned group)
-+{
-+	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
-+	const struct tegra_pingroup *g;
-+	int i, ret;
-+	s8 bank, bit, width;
-+	s16 reg;
-+	u32 val;
-+
-+	g = &pmx->soc->groups[group];
-+
-+	for (i = 0; i < ARRAY_SIZE(cfg_params); i++) {
-+		ret = tegra_pinconf_reg(pmx, g, cfg_params[i].param, false,
-+					&bank, &reg, &bit, &width);
-+		if (ret < 0)
-+			continue;
-+
-+		val = pmx_readl(pmx, bank, reg);
-+		val >>= bit;
-+		val &= (1 << width) - 1;
-+
-+		seq_printf(s, "\n\t%s=%u",
-+			   strip_prefix(cfg_params[i].property), val);
-+	}
-+}
-+
-+static void tegra_pinconf_config_dbg_show(struct pinctrl_dev *pctldev,
-+					  struct seq_file *s,
-+					  unsigned long config)
- {
-+	enum tegra_pinconf_param param = TEGRA_PINCONF_UNPACK_PARAM(config);
-+	u16 arg = TEGRA_PINCONF_UNPACK_ARG(config);
-+	const char *pname = "unknown";
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(cfg_params); i++) {
-+		if (cfg_params[i].param == param) {
-+			pname = cfg_params[i].property;
-+			break;
-+		}
-+	}
-+
-+	seq_printf(s, "%s=%d", strip_prefix(pname), arg);
- }
-+#endif
- 
- struct pinconf_ops tegra_pinconf_ops = {
- 	.pin_config_get = tegra_pinconf_get,
- 	.pin_config_set = tegra_pinconf_set,
- 	.pin_config_group_get = tegra_pinconf_group_get,
- 	.pin_config_group_set = tegra_pinconf_group_set,
-+#ifdef CONFIG_DEBUG_FS
- 	.pin_config_dbg_show = tegra_pinconf_dbg_show,
- 	.pin_config_group_dbg_show = tegra_pinconf_group_dbg_show,
-+	.pin_config_config_dbg_show = tegra_pinconf_config_dbg_show,
-+#endif
- };
- 
- static struct pinctrl_gpio_range tegra_pinctrl_gpio_range = {
--- 
-1.7.0.4
+Also this doesn't yet solve the vmap() problem that is needed for the kernel
+virtual mapping. I did try using dma_alloc_writecombine(), but that only
+works for chunks of 2 MB or smaller, unless I use init_consistent_dma_size()
+during board setup, which isn't provided for in a DT setup. I couldn't find
+a better alternative, but I admit I'm not very familiar with all the VM API=
+s.
+Do you have any suggestions on how to solve this? Otherwise I'll try and dig
+in some more.
+
+Thierry
+
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAk+GgbgACgkQZ+BJyKLjJp8bzgCghcjjm0gZyWbH01Tiamc317cM
+//4AnjcfTol8KZPD7iZ/G2VorcX+A1Az
+=Tjoh
+-----END PGP SIGNATURE-----
+
+--AhhlLboLdkugWU4S--
