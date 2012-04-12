@@ -1,32 +1,50 @@
 From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
-Date: Thu, 12 Apr 2012 11:18:19 +0000
-Message-ID: <201204121118.19685.arnd@arndb.de>
-References: <1334146230-1795-1-git-send-email-thierry.reding@avionic-design.de> <20120412071816.GA18252@avionic-0098.mockup.avionic-design.de> <025f01cd1887$da56b6e0$8f0424a0$%szyprowski@samsung.com>
+Subject: Re: [PATCH v6 17/17] pwm: Take over maintainership of the PWM
+ subsystem
+Date: Thu, 12 Apr 2012 11:34:24 +0000
+Message-ID: <201204121134.24892.arnd@arndb.de>
+References: <1334070400-25013-1-git-send-email-thierry.reding@avionic-design.de>
+ <201204101951.44198.arnd@arndb.de>
+ <20120412072206.GB18252@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <025f01cd1887$da56b6e0$8f0424a0$%szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Daniel Vetter' <daniel-/w4YWyX8dFk@public.gmane.org>, 'Joerg Roedel' <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, 'Jon Mayo' <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, 'Colin Cross' <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Hiroshi Doyu' <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20120412072206.GB18252-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 12 April 2012, Marek Szyprowski wrote:
-> Scatter lists were initially designed for the disk based block io operations, 
-> hence the presence of the in-page offsets and lengths for each chunk. For 
-> multimedia use cases providing an array of struct pages and asking dma-mapping 
-> to map them into contiguous memory is probably all we need. I wonder if 
-> introducing such new calls is a good idea. Anrd, what do think? It will 
-> definitely simplify the drivers and improve the code understanding. On the 
-> other hand it requires a significant amount of work in the dma-mapping 
-> framework for all architectures, but that's not a big issue for me.
+On Thursday 12 April 2012, Thierry Reding wrote:
+>   * Arnd Bergmann wrote:
+> > On Tuesday 10 April 2012, Thierry Reding wrote:
+> > > I'm taking over the maintainership of the PWM subsystem. This commit
+> > > also adds the URLs to the gitorious project and repository as well as
+> > > any missing files related to the PWM subsystem.
+> > > 
+> > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> > > ---
+> > > Note: I guess this patch in particular could use some Acked-by, maybe from
+> > > Arnd and Sascha so that people will know this happens with their blessing.
+> > 
+> > Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> 
+> As far as I can tell the series is in pretty good shape. I've integrated
+> Shawn's latest comments and I think we could get this into 3.5. Does it make
+> sense to take the PWM tree through Linux next before having it pulled into
+> mainline during the next merge window?
 
-My feeling is that it's too much like the existing _sg version, so I wouldn't
-add yet another variant. While having a simple page array is definitely
-simpler and potentially faster, I think the API is already too complex
-and we need to be very careful with new additions.
+Yes, that's the way to go. Just ask Stephen Rothwell to include it right
+away if you are sufficiently happy with the contents and believe that they
+don't break stuff.
 
 	Arnd
