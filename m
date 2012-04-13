@@ -1,42 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: tegra: debugfs enhancements
-Date: Fri, 13 Apr 2012 14:46:58 +0200
-Message-ID: <CACRpkdYiWTNQ7hVM4NczyemxOcHWNcK639-yoh2iWc-5_WQB2Q@mail.gmail.com>
-References: <1334184439-16428-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1334184439-16428-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH 2/3] iommu: tegra/gart: Add device tree support
+Date: Fri, 13 Apr 2012 15:08:08 +0200
+Message-ID: <1334322489-837-2-git-send-email-thierry.reding@avionic-design.de>
+References: <1334322489-837-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1334322489-837-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 12, 2012 at 12:47 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+This commit adds device tree support for the GART hardware available on
+NVIDIA Tegra 20 SoCs.
 
-> From: Stephen Warren <swarren@nvidia.com>
->
-> * Only provide debugfs-relates ops when CONFIG_DEBUG_FS is enabled.
-> * Implement pin_config_group_dbg_show op.
-> * Implement pin_config_config_dbg_show op.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Linus, this too would be best to take through the Tegra tree. It depends
-> on the other two patches I just posted, but to satisfy that, I'll just
-> base my branch off of pinctrl once you've applied those branches and its
-> stable.
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+ .../devicetree/bindings/iommu/nvidia,tegra20-gart.txt    |   14 ++++++++++++++
+ drivers/iommu/tegra-gart.c                               |   11 +++++++++++
+ 2 files changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
 
-OK that means you need that other patch adding the debug callback to
-be in some stable branch so you can pull it into the Tegra
-tree I guess?
-
-Can we conclude base stabilization from this and say that the series
-of patches upto debugfs enhancements v2 (with the kerneldoc fix)
-is the stable merge base, and I'll push some tag for that.
-
-And once that settles:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+new file mode 100644
+index 0000000..2d87b91
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+@@ -0,0 +1,14 @@
++NVIDIA Tegra 20 GART
++
++Required properties:
++- compatible: "nvidia,tegra20-gart"
++- reg: Two pairs of cells specifying the physical address and size of
++  the memory controller registers and the GART aperture respectively.
++
++Example:
++
++	gart: gart@7000f000 {
++		compatible = "nvidia,tegra20-gart";
++		reg = < 0x7000f000 0x00000100    /* controller registers */
++		        0x58000000 0x02000000 >; /* GART aperture */
++	};
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index f6bc1e6..40533bb 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -29,6 +29,7 @@
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/iommu.h>
++#include <linux/of.h>
+ 
+ #include <asm/cacheflush.h>
+ 
+@@ -422,6 +423,14 @@ const struct dev_pm_ops tegra_gart_pm_ops = {
+ 	.resume		= tegra_gart_resume,
+ };
+ 
++#ifdef CONFIG_OF
++static struct of_device_id tegra_gart_of_match[] __devinitdata = {
++	{ .compatible = "nvidia,tegra20-gart", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_gart_of_match);
++#endif
++
+ static struct platform_driver tegra_gart_driver = {
+ 	.probe		= tegra_gart_probe,
+ 	.remove		= tegra_gart_remove,
+@@ -429,6 +438,7 @@ static struct platform_driver tegra_gart_driver = {
+ 		.owner	= THIS_MODULE,
+ 		.name	= "tegra-gart",
+ 		.pm	= &tegra_gart_pm_ops,
++		.of_match_table = of_match_ptr(tegra_gart_of_match),
+ 	},
+ };
+ 
+@@ -448,4 +458,5 @@ module_exit(tegra_gart_exit);
+ 
+ MODULE_DESCRIPTION("IOMMU API for GART in Tegra20");
+ MODULE_AUTHOR("Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_ALIAS("platform:tegra-gart");
+ MODULE_LICENSE("GPL v2");
+-- 
+1.7.10
