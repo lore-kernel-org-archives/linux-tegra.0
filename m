@@ -1,35 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dt: tegra20: Add GART device
-Date: Fri, 13 Apr 2012 13:39:18 -0600
-Message-ID: <4F8880E6.5070301@wwwdotorg.org>
-References: <1334322489-837-1-git-send-email-thierry.reding@avionic-design.de>
-	<1334322489-837-3-git-send-email-thierry.reding@avionic-design.de>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: Changes to power management in ehci-tegra
+Date: Fri, 13 Apr 2012 15:46:04 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1204131541190.1146-100000@iolanthe.rowland.org>
+References: <4F8875BE.5010202@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1334322489-837-3-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F8875BE.5010202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/13/2012 07:08 AM, Thierry Reding wrote:
-> This commit adds the device node required to probe NVIDIA Tegra 20 GART
-> hardware from the device tree.
+On Fri, 13 Apr 2012, Stephen Warren wrote:
 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+> > If you do:
+> > 
+> > 	echo auto >/sys/devices/.../power/control
+> > 
+> > (where the ... gets filled in with the path to the EHCI controller),
+> > then the controller should automatically get powered down whenever the
+> > bus does.  The bus will get powered down whenever no USB devices are
+> > plugged in (or the only attached USB devices are things like hubs that
+> > will themselves get suspended) after a 2-second delay.
+> 
+> One small issue with the patch: There are two copies of
+> tegra_ehci_resume(). I assume the second should be renamed
+> tegra_ehci_runtime_resume().
 
-> +	OF_DEV_AUXDATA("nvidia,tegra20-gart", TEGRA_MC_BASE, "tegra-gart", NULL),
+Whoops!  You're right, of course.  I'll update my patch.
 
-That's only needed if lookup tables (e.g. for clocks) require that the
-device have a specific name. I don't believe the GART is mentioned in
-any such lookup tables, so I think you can drop that change.
+> I've tested the patch, and can unplug a USB device, wait 10 seconds,
+> then plug it back in, and everything works as expected.
+> 
+> However, I don't notice /sys/devices/.../power/runtime_status ever
+> saying anything other than active, and I can't cat autosuspend_delay_ms,
+> so I assume I'm still not triggering the path you want me to test. I do
+> have PM_RUNTIME turned on. Any ideas? Do I need some patch to the USB
+> core to enable this? I tested on next-20120413 plus a few local patches.
+
+autosuspend_delay_ms isn't relevant here; the controller should be 
+suspended with no delay as soon as the root hub suspends.  No other 
+patches should be needed; it sounds like you're doing everything right.
+
+If you enable CONFIG_PM_ADVANCED_DEBUG along with CONFIG_PM_RUNTIME, 
+what do all the other power/runtime_* files show?
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
