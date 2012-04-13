@@ -1,8 +1,8 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V2 3/4] ASoC: convert Tegra20 SPDIF driver to
+Subject: [PATCH V2 4/4] ASoC: convert Tegra20 DAS driver to
 	regmap
-Date: Fri, 13 Apr 2012 11:23:38 -0600
-Message-ID: <1334337819-23665-3-git-send-email-swarren@wwwdotorg.org>
+Date: Fri, 13 Apr 2012 11:23:39 -0600
+Message-ID: <1334337819-23665-4-git-send-email-swarren@wwwdotorg.org>
 References: <1334337819-23665-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -26,273 +26,192 @@ From: Stephen Warren <swarren@nvidia.com>
 
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-v2: Split into separate patch
+v2: Split into separate patch. Simplified tegra20_das_wr_rd_reg().
 ---
- sound/soc/tegra/tegra20_spdif.c |  177 ++++++++++++++++++++-------------------
- sound/soc/tegra/tegra20_spdif.h |    3 +-
- 2 files changed, 92 insertions(+), 88 deletions(-)
+ sound/soc/tegra/tegra20_das.c |   99 +++++++++++++++--------------------------
+ sound/soc/tegra/tegra20_das.h |    3 +-
+ 2 files changed, 37 insertions(+), 65 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index 94c5764..f9b5741 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -21,13 +21,12 @@
+diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
+index 812696d..bf99296 100644
+--- a/sound/soc/tegra/tegra20_das.c
++++ b/sound/soc/tegra/tegra20_das.c
+@@ -20,12 +20,11 @@
+  *
   */
  
- #include <linux/clk.h>
 -#include <linux/debugfs.h>
  #include <linux/device.h>
  #include <linux/io.h>
  #include <linux/module.h>
  #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
 -#include <linux/seq_file.h>
 +#include <linux/regmap.h>
  #include <linux/slab.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
-@@ -41,12 +40,14 @@
- static inline void tegra20_spdif_write(struct tegra20_spdif *spdif, u32 reg,
- 					u32 val)
+ #include <sound/soc.h>
+ #include "tegra20_das.h"
+@@ -36,12 +35,14 @@ static struct tegra20_das *das;
+ 
+ static inline void tegra20_das_write(u32 reg, u32 val)
  {
--	__raw_writel(val, spdif->regs + reg);
-+	regmap_write(spdif->regmap, reg, val);
+-	__raw_writel(val, das->regs + reg);
++	regmap_write(das->regmap, reg, val);
  }
  
- static inline u32 tegra20_spdif_read(struct tegra20_spdif *spdif, u32 reg)
+ static inline u32 tegra20_das_read(u32 reg)
  {
--	return __raw_readl(spdif->regs + reg);
+-	return __raw_readl(das->regs + reg);
 +	u32 val;
-+	regmap_read(spdif->regmap, reg, &val);
++	regmap_read(das->regmap, reg, &val);
 +	return val;
  }
  
- static int tegra20_spdif_runtime_suspend(struct device *dev)
-@@ -72,82 +73,6 @@ static int tegra20_spdif_runtime_resume(struct device *dev)
- 	return 0;
+ int tegra20_das_connect_dap_to_dac(int dap, int dac)
+@@ -104,68 +105,36 @@ int tegra20_das_connect_dac_to_dap(int dac, int dap)
  }
+ EXPORT_SYMBOL_GPL(tegra20_das_connect_dac_to_dap);
  
 -#ifdef CONFIG_DEBUG_FS
--static int tegra20_spdif_show(struct seq_file *s, void *unused)
+-static int tegra20_das_show(struct seq_file *s, void *unused)
 -{
--#define REG(r) { r, #r }
--	static const struct {
--		int offset;
--		const char *name;
--	} regs[] = {
--		REG(TEGRA20_SPDIF_CTRL),
--		REG(TEGRA20_SPDIF_STATUS),
--		REG(TEGRA20_SPDIF_STROBE_CTRL),
--		REG(TEGRA20_SPDIF_DATA_FIFO_CSR),
--		REG(TEGRA20_SPDIF_CH_STA_RX_A),
--		REG(TEGRA20_SPDIF_CH_STA_RX_B),
--		REG(TEGRA20_SPDIF_CH_STA_RX_C),
--		REG(TEGRA20_SPDIF_CH_STA_RX_D),
--		REG(TEGRA20_SPDIF_CH_STA_RX_E),
--		REG(TEGRA20_SPDIF_CH_STA_RX_F),
--		REG(TEGRA20_SPDIF_CH_STA_TX_A),
--		REG(TEGRA20_SPDIF_CH_STA_TX_B),
--		REG(TEGRA20_SPDIF_CH_STA_TX_C),
--		REG(TEGRA20_SPDIF_CH_STA_TX_D),
--		REG(TEGRA20_SPDIF_CH_STA_TX_E),
--		REG(TEGRA20_SPDIF_CH_STA_TX_F),
--	};
--#undef REG
--
--	struct tegra20_spdif *spdif = s->private;
 -	int i;
+-	u32 addr;
+-	u32 reg;
 -
--	clk_enable(spdif->clk_spdif_out);
--
--	for (i = 0; i < ARRAY_SIZE(regs); i++) {
--		u32 val = tegra20_spdif_read(spdif, regs[i].offset);
--		seq_printf(s, "%s = %08x\n", regs[i].name, val);
+-	for (i = 0; i < TEGRA20_DAS_DAP_CTRL_SEL_COUNT; i++) {
+-		addr = TEGRA20_DAS_DAP_CTRL_SEL +
+-			(i * TEGRA20_DAS_DAP_CTRL_SEL_STRIDE);
+-		reg = tegra20_das_read(addr);
+-		seq_printf(s, "TEGRA20_DAS_DAP_CTRL_SEL[%d] = %08x\n", i, reg);
 -	}
 -
--	clk_disable(spdif->clk_spdif_out);
--
+-	for (i = 0; i < TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_COUNT; i++) {
+-		addr = TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL +
+-			(i * TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL_STRIDE);
+-		reg = tegra20_das_read(addr);
+-		seq_printf(s, "TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL[%d] = %08x\n",
+-			   i, reg);
+-	}
++#define LAST_REG(name) \
++	(TEGRA20_DAS_##name + \
++	 (TEGRA20_DAS_##name##_STRIDE * (TEGRA20_DAS_##name##_COUNT - 1)))
+ 
 -	return 0;
 -}
 -
--static int tegra20_spdif_debug_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, tegra20_spdif_show, inode->i_private);
--}
--
--static const struct file_operations tegra20_spdif_debug_fops = {
--	.open    = tegra20_spdif_debug_open,
+-static int tegra20_das_debug_open(struct inode *inode, struct file *file)
++static bool tegra20_das_wr_rd_reg(struct device *dev, unsigned int reg)
+ {
+-	return single_open(file, tegra20_das_show, inode->i_private);
++	if ((reg >= TEGRA20_DAS_DAP_CTRL_SEL) &&
++	    (reg <= LAST_REG(DAP_CTRL_SEL)))
++		return true;
++	if ((reg >= TEGRA20_DAS_DAC_INPUT_DATA_CLK_SEL) &&
++	    (reg <= LAST_REG(DAC_INPUT_DATA_CLK_SEL)))
++		return true;
++
++	return false;
+ }
+ 
+-static const struct file_operations tegra20_das_debug_fops = {
+-	.open    = tegra20_das_debug_open,
 -	.read    = seq_read,
 -	.llseek  = seq_lseek,
 -	.release = single_release,
--};
--
--static void tegra20_spdif_debug_add(struct tegra20_spdif *spdif)
++static const struct regmap_config tegra20_das_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = LAST_REG(DAC_INPUT_DATA_CLK_SEL),
++	.writeable_reg = tegra20_das_wr_rd_reg,
++	.readable_reg = tegra20_das_wr_rd_reg,
++	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+-static void tegra20_das_debug_add(struct tegra20_das *das)
 -{
--	spdif->debug = debugfs_create_file(DRV_NAME, S_IRUGO,
--						snd_soc_debugfs_root, spdif,
--						&tegra20_spdif_debug_fops);
+-	das->debug = debugfs_create_file(DRV_NAME, S_IRUGO,
+-					 snd_soc_debugfs_root, das,
+-					 &tegra20_das_debug_fops);
 -}
 -
--static void tegra20_spdif_debug_remove(struct tegra20_spdif *spdif)
+-static void tegra20_das_debug_remove(struct tegra20_das *das)
 -{
--	if (spdif->debug)
--		debugfs_remove(spdif->debug);
+-	if (das->debug)
+-		debugfs_remove(das->debug);
 -}
 -#else
--static inline void tegra20_spdif_debug_add(struct tegra20_spdif *spdif)
+-static inline void tegra20_das_debug_add(struct tegra20_das *das)
 -{
 -}
 -
--static inline void tegra20_spdif_debug_remove(struct tegra20_spdif *spdif)
+-static inline void tegra20_das_debug_remove(struct tegra20_das *das)
 -{
 -}
 -#endif
 -
- static int tegra20_spdif_hw_params(struct snd_pcm_substream *substream,
- 				struct snd_pcm_hw_params *params,
- 				struct snd_soc_dai *dai)
-@@ -265,10 +190,86 @@ static struct snd_soc_dai_driver tegra20_spdif_dai = {
- 	.ops = &tegra20_spdif_dai_ops,
- };
- 
-+static bool tegra20_spdif_wr_rd_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case TEGRA20_SPDIF_CTRL:
-+	case TEGRA20_SPDIF_STATUS:
-+	case TEGRA20_SPDIF_STROBE_CTRL:
-+	case TEGRA20_SPDIF_DATA_FIFO_CSR:
-+	case TEGRA20_SPDIF_DATA_OUT:
-+	case TEGRA20_SPDIF_DATA_IN:
-+	case TEGRA20_SPDIF_CH_STA_RX_A:
-+	case TEGRA20_SPDIF_CH_STA_RX_B:
-+	case TEGRA20_SPDIF_CH_STA_RX_C:
-+	case TEGRA20_SPDIF_CH_STA_RX_D:
-+	case TEGRA20_SPDIF_CH_STA_RX_E:
-+	case TEGRA20_SPDIF_CH_STA_RX_F:
-+	case TEGRA20_SPDIF_CH_STA_TX_A:
-+	case TEGRA20_SPDIF_CH_STA_TX_B:
-+	case TEGRA20_SPDIF_CH_STA_TX_C:
-+	case TEGRA20_SPDIF_CH_STA_TX_D:
-+	case TEGRA20_SPDIF_CH_STA_TX_E:
-+	case TEGRA20_SPDIF_CH_STA_TX_F:
-+	case TEGRA20_SPDIF_USR_STA_RX_A:
-+	case TEGRA20_SPDIF_USR_DAT_TX_A:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static bool tegra20_spdif_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case TEGRA20_SPDIF_STATUS:
-+	case TEGRA20_SPDIF_DATA_FIFO_CSR:
-+	case TEGRA20_SPDIF_DATA_OUT:
-+	case TEGRA20_SPDIF_DATA_IN:
-+	case TEGRA20_SPDIF_CH_STA_RX_A:
-+	case TEGRA20_SPDIF_CH_STA_RX_B:
-+	case TEGRA20_SPDIF_CH_STA_RX_C:
-+	case TEGRA20_SPDIF_CH_STA_RX_D:
-+	case TEGRA20_SPDIF_CH_STA_RX_E:
-+	case TEGRA20_SPDIF_CH_STA_RX_F:
-+	case TEGRA20_SPDIF_USR_STA_RX_A:
-+	case TEGRA20_SPDIF_USR_DAT_TX_A:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static bool tegra20_spdif_precious_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case TEGRA20_SPDIF_DATA_OUT:
-+	case TEGRA20_SPDIF_DATA_IN:
-+	case TEGRA20_SPDIF_USR_STA_RX_A:
-+	case TEGRA20_SPDIF_USR_DAT_TX_A:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static const struct regmap_config tegra20_spdif_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = TEGRA20_SPDIF_USR_DAT_TX_A,
-+	.writeable_reg = tegra20_spdif_wr_rd_reg,
-+	.readable_reg = tegra20_spdif_wr_rd_reg,
-+	.volatile_reg = tegra20_spdif_volatile_reg,
-+	.precious_reg = tegra20_spdif_precious_reg,
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
- static __devinit int tegra20_spdif_platform_probe(struct platform_device *pdev)
+ static int __devinit tegra20_das_probe(struct platform_device *pdev)
  {
- 	struct tegra20_spdif *spdif;
- 	struct resource *mem, *memregion, *dmareq;
+ 	struct resource *res, *region;
 +	void __iomem *regs;
- 	int ret;
+ 	int ret = 0;
  
- 	spdif = devm_kzalloc(&pdev->dev, sizeof(struct tegra20_spdif),
-@@ -309,13 +310,21 @@ static __devinit int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 		goto err_clk_put;
+ 	if (das)
+@@ -194,13 +163,21 @@ static int __devinit tegra20_das_probe(struct platform_device *pdev)
+ 		goto err;
  	}
  
--	spdif->regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
--	if (!spdif->regs) {
-+	regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+-	das->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+-	if (!das->regs) {
++	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
 +	if (!regs) {
  		dev_err(&pdev->dev, "ioremap failed\n");
  		ret = -ENOMEM;
- 		goto err_clk_put;
+ 		goto err;
  	}
  
-+	spdif->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
-+					    &tegra20_spdif_regmap_config);
-+	if (IS_ERR(spdif->regmap)) {
++	das->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
++					    &tegra20_das_regmap_config);
++	if (IS_ERR(das->regmap)) {
 +		dev_err(&pdev->dev, "regmap init failed\n");
-+		ret = PTR_ERR(spdif->regmap);
-+		goto err_clk_put;
++		ret = PTR_ERR(das->regmap);
++		goto err;
 +	}
 +
- 	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
- 	spdif->playback_dma_data.wrap = 4;
- 	spdif->playback_dma_data.width = 32;
-@@ -341,8 +350,6 @@ static __devinit int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 		goto err_unregister_dai;
+ 	ret = tegra20_das_connect_dap_to_dac(TEGRA20_DAS_DAP_ID_1,
+ 					     TEGRA20_DAS_DAP_SEL_DAC1);
+ 	if (ret) {
+@@ -214,8 +191,6 @@ static int __devinit tegra20_das_probe(struct platform_device *pdev)
+ 		goto err;
  	}
  
--	tegra20_spdif_debug_add(spdif);
+-	tegra20_das_debug_add(das);
 -
- 	return 0;
- 
- err_unregister_dai:
-@@ -369,8 +376,6 @@ static int __devexit tegra20_spdif_platform_remove(struct platform_device *pdev)
- 	tegra_pcm_platform_unregister(&pdev->dev);
- 	snd_soc_unregister_dai(&pdev->dev);
- 
--	tegra20_spdif_debug_remove(spdif);
--
- 	clk_put(spdif->clk_spdif_out);
+ 	platform_set_drvdata(pdev, das);
  
  	return 0;
-diff --git a/sound/soc/tegra/tegra20_spdif.h b/sound/soc/tegra/tegra20_spdif.h
-index 823af4c..ed75652 100644
---- a/sound/soc/tegra/tegra20_spdif.h
-+++ b/sound/soc/tegra/tegra20_spdif.h
-@@ -464,8 +464,7 @@ struct tegra20_spdif {
- 	struct clk *clk_spdif_out;
- 	struct tegra_pcm_dma_params capture_dma_data;
- 	struct tegra_pcm_dma_params playback_dma_data;
+@@ -230,8 +205,6 @@ static int __devexit tegra20_das_remove(struct platform_device *pdev)
+ 	if (!das)
+ 		return -ENODEV;
+ 
+-	tegra20_das_debug_remove(das);
+-
+ 	das = NULL;
+ 
+ 	return 0;
+diff --git a/sound/soc/tegra/tegra20_das.h b/sound/soc/tegra/tegra20_das.h
+index ade4fe0..be217f3 100644
+--- a/sound/soc/tegra/tegra20_das.h
++++ b/sound/soc/tegra/tegra20_das.h
+@@ -85,8 +85,7 @@
+ 
+ struct tegra20_das {
+ 	struct device *dev;
 -	void __iomem *regs;
 -	struct dentry *debug;
 +	struct regmap *regmap;
- 	u32 reg_ctrl;
  };
  
+ /*
 -- 
 1.7.0.4
