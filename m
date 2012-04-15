@@ -1,55 +1,60 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dt: tegra20: Add GART device
-Date: Sat, 14 Apr 2012 10:30:59 +0200
-Message-ID: <20120414083059.GB12281@avionic-0098.mockup.avionic-design.de>
-References: <1334322489-837-1-git-send-email-thierry.reding@avionic-design.de>
- <1334322489-837-3-git-send-email-thierry.reding@avionic-design.de>
- <4F8880E6.5070301@wwwdotorg.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: tegra: Add pllc clock init table
+Date: Sat, 14 Apr 2012 17:33:03 -0700
+Message-ID: <20120415003303.GA10967@quad.lixom.net>
+References: <1334356926-4275-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4F8880E6.5070301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1334356926-4275-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Apr 13, 2012 at 04:42:02PM -0600, Stephen Warren wrote:
+> From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> (cherry picked from commit 54f28b336f2ba3da93a459d22e32944823960d08
+> in the chromeos-2.6.38 kernel)
+> 
+> swarren adds:
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The above 4 lines make no sense for upstream, so you can just say "from the
+Chrome OS 2.6.38 tree" or similar.
 
-* Stephen Warren wrote:
-> On 04/13/2012 07:08 AM, Thierry Reding wrote:
-> > This commit adds the device node required to probe NVIDIA Tegra 20 GART
-> > hardware from the device tree.
->=20
-> > diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-teg=
-ra/board-dt-tegra20.c
->=20
-> > +	OF_DEV_AUXDATA("nvidia,tegra20-gart", TEGRA_MC_BASE, "tegra-gart", NU=
-LL),
->=20
-> That's only needed if lookup tables (e.g. for clocks) require that the
-> device have a specific name. I don't believe the GART is mentioned in
-> any such lookup tables, so I think you can drop that change.
-
-I'll remove that hunk.
-
-Thierry
-
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEYEARECAAYFAk+JNcMACgkQZ+BJyKLjJp9k/ACeMrpovTOOuYWoxWhsRjoNM84N
-fqwAoJ+nybOHztIdz/Gc6h3ZITbFg2wB
-=rkUD
------END PGP SIGNATURE-----
-
---NDin8bjvE/0mNLFQ--
+> pll_c will be used as a clock source. Fill in tegra_pll_c_freq_table[]
+> so that it's possible to explicitly initialize the PLL.
+> 
+> NVIDIA's downstream nv-3.1 kernel and the ChromeOS kernel have different
+> pll_c tables. nv-3.1 contains entries for 522MHz and 598MHz output,
+> whereas the ChromeOS kernel contains entries for 600MHz output. I chose
+> to upstream the ChromeOS values for now, since the 600MHz rate appears
+> to match the default rate of this PLL when the HW boots.
+> 
+> Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/tegra2_clocks.c |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
+> index cf4999b..0bf0f2d 100644
+> --- a/arch/arm/mach-tegra/tegra2_clocks.c
+> +++ b/arch/arm/mach-tegra/tegra2_clocks.c
+> @@ -1486,6 +1486,10 @@ static struct clk tegra_clk_m = {
+>  };
+>  
+>  static struct clk_pll_freq_table tegra_pll_c_freq_table[] = {
+> +	{ 12000000, 600000000, 600, 12, 1, 8 },
+> +	{ 13000000, 600000000, 600, 13, 1, 8 },
+> +	{ 19200000, 600000000, 500, 16, 1, 6 },
+> +	{ 26000000, 600000000, 600, 26, 1, 8 },
+>  	{ 0, 0, 0, 0, 0, 0 },
+>  };
+>  
+> -- 
+> 1.7.0.4
+> 
