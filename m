@@ -1,20 +1,139 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] iommu: tegra/gart: use correct gart_device
-Date: Mon, 16 Apr 2012 10:07:57 -0600
-Message-ID: <4F8C43DD.30000@wwwdotorg.org>
-References: <1334322489-837-1-git-send-email-thierry.reding@avionic-design.de> <20120416115902.GX2428@amd.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: dt: tegra: pinmux changes for USB ULPI
+Date: Mon, 16 Apr 2012 10:53:04 -0600
+Message-ID: <1334595184-12252-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120416115902.GX2428-5C7GfCeVMHo@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vandana Salve <vsalve-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/16/2012 05:59 AM, Joerg Roedel wrote:
-> Applied patches 1 and 2. Should I also queue up patch 3 after the
-> objections have been fixed? The patch doesn't touch drivers/iommu...
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I expect I'd take that through the Tegra tree to minimize conflicts.
+Ensure that the USB ULPI signals are not tri-stated, and have no pull-
+up or pull-down.
+
+Ensure that the pingroup hosting the USB ULPI reset signal (GPIO PV0 or
+PV1 depending on the board, so UAC) is not tri-stated, and has no pull-
+up or pull-down.
+
+This change appears larger than it is due to the grouping and sorting of
+the pin configuration data.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-harmony.dts   |   20 ++++++++++----------
+ arch/arm/boot/dts/tegra-paz00.dts     |   14 +++++---------
+ arch/arm/boot/dts/tegra-trimslice.dts |   18 +++++++++---------
+ 3 files changed, 24 insertions(+), 28 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 59bf1cf..6857cec 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -167,28 +167,28 @@
+ 			};
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
+-					"cdev1", "dap1", "dtb", "gma", "gmb",
+-					"gmc", "gmd", "gme", "gpu7", "gpv",
+-					"i2cp", "pta", "rm", "slxa", "slxk",
+-					"spia", "spib";
++					"cdev1", "cdev2", "dap1", "dtb", "gma",
++					"gmb", "gmc", "gmd", "gme", "gpu7",
++					"gpv", "i2cp", "pta", "rm", "slxa",
++					"slxk", "spia", "spib", "uac";
+ 				nvidia,pull = <0>;
+ 				nvidia,tristate = <0>;
+ 			};
+-			conf_cdev2 {
+-				nvidia,pins = "cdev2", "csus", "spid", "spif";
+-				nvidia,pull = <1>;
+-				nvidia,tristate = <1>;
+-			};
+ 			conf_ck32 {
+ 				nvidia,pins = "ck32", "ddrc", "pmca", "pmcb",
+ 					"pmcc", "pmcd", "pmce", "xm2c", "xm2d";
+ 				nvidia,pull = <0>;
+ 			};
++			conf_csus {
++				nvidia,pins = "csus", "spid", "spif";
++				nvidia,pull = <1>;
++				nvidia,tristate = <1>;
++			};
+ 			conf_crtp {
+ 				nvidia,pins = "crtp", "dap2", "dap3", "dap4",
+ 					"dtc", "dte", "dtf", "gpu", "sdio1",
+ 					"slxc", "slxd", "spdi", "spdo", "spig",
+-					"uac", "uda";
++					"uda";
+ 				nvidia,pull = <0>;
+ 				nvidia,tristate = <1>;
+ 			};
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+index fad92f2..34a9177 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -159,18 +159,14 @@
+ 			};
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atb", "atc", "atd", "ate",
+-					"cdev1", "dap1", "dap2", "dtf", "gma",
+-					"gmb", "gmc", "gmd", "gme", "gpu",
+-					"gpu7", "gpv", "i2cp", "pta", "rm",
+-					"sdio1", "slxk", "spdo", "uac", "uda";
++					"cdev1", "cdev2", "dap1", "dap2", "dtf",
++					"gma", "gmb", "gmc", "gmd", "gme",
++					"gpu", "gpu7", "gpv", "i2cp", "pta",
++					"rm", "sdio1", "slxk", "spdo", "uac",
++					"uda";
+ 				nvidia,pull = <0>;
+ 				nvidia,tristate = <0>;
+ 			};
+-			conf_cdev2 {
+-				nvidia,pins = "cdev2";
+-				nvidia,pull = <1>;
+-				nvidia,tristate = <0>;
+-			};
+ 			conf_ck32 {
+ 				nvidia,pins = "ck32", "ddrc", "pmca", "pmcb",
+ 					"pmcc", "pmcd", "pmce", "xm2c", "xm2d";
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
+index 71b73aa..e4fcf9a 100644
+--- a/arch/arm/boot/dts/tegra-trimslice.dts
++++ b/arch/arm/boot/dts/tegra-trimslice.dts
+@@ -182,23 +182,23 @@
+ 				nvidia,tristate = <1>;
+ 			};
+ 			conf_atb {
+-				nvidia,pins = "atb", "cdev1", "dap1", "gma",
+-					"gmc", "gmd", "gpu", "gpu7", "gpv",
+-					"sdio1", "slxa", "slxk", "uac";
++				nvidia,pins = "atb", "cdev1", "cdev2", "dap1",
++					"gma", "gmc", "gmd", "gpu", "gpu7",
++					"gpv", "sdio1", "slxa", "slxk", "uac";
+ 				nvidia,pull = <0>;
+ 				nvidia,tristate = <0>;
+ 			};
+-			conf_cdev2 {
+-				nvidia,pins = "cdev2", "csus", "spia", "spib",
+-					"spid", "spif";
+-				nvidia,pull = <1>;
+-				nvidia,tristate = <1>;
+-			};
+ 			conf_ck32 {
+ 				nvidia,pins = "ck32", "ddrc", "pmca", "pmcb",
+ 					"pmcc", "pmcd", "pmce", "xm2c", "xm2d";
+ 				nvidia,pull = <0>;
+ 			};
++			conf_csus {
++				nvidia,pins = "csus", "spia", "spib",
++					"spid", "spif";
++				nvidia,pull = <1>;
++				nvidia,tristate = <1>;
++			};
+ 			conf_ddc {
+ 				nvidia,pins = "ddc", "dtf", "rm", "sdc", "sdd";
+ 				nvidia,pull = <2>;
+-- 
+1.7.0.4
