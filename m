@@ -1,59 +1,47 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] arm/dts: Tegra30: Add device tree support for SMMU
-Date: Mon, 16 Apr 2012 12:10:59 +0200
-Message-ID: <20120416.131059.331282986467061278.hdoyu@nvidia.com>
-References: <20120413.132205.1766846402066131036.hdoyu@nvidia.com><4F887F9B.700@wwwdotorg.org>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Print device name correctly
+Date: Mon, 16 Apr 2012 12:53:39 +0200
+Message-ID: <20120416105339.GW2428@amd.com>
+References: <20120413.131830.1607474737155362155.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F887F9B.700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120413.131830.1607474737155362155.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] arm/dts: Tegra30: Add device tree support for SMMU
-Date: Fri, 13 Apr 2012 21:33:47 +0200
-Message-ID: <4F887F9B.700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-
-> On 04/13/2012 04:22 AM, Hiroshi Doyu wrote:
-> > From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Add device tree support for Tegra30 IOMMU(SMMU).
+On Fri, Apr 13, 2012 at 12:18:30PM +0200, Hiroshi Doyu wrote:
+> From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/tegra30-smmu.txt
+> Print an attached device name correctly.
 > 
-> I personally like the documentation to be named after the full
-> compatible value, so nvidia,tegra30-smmu.txt.
-
-OK
-
-> > @@ -0,0 +1,19 @@
-> > +NVIDIA Tegra 30 IOMMU H/W, SMMU (System Memory Management Unit)
-> > +
-> > +Required properties:
-> > +- compatible : "nvidia,tegra30-smmu"
-> > +- reg : Should contain MC registers location and length
-> > +- reg : Should contain AHB Arbitration registers and length
-> > +- reg : Should contain virtual address space range
+> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/iommu/tegra-smmu.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> This looks like 3 properties with the same name. It seems common to
-> write something more like:
-> 
-> reg : Should contain the register address and length for each fo the MC
-> and AHB arbitration registers.
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index f4d859f..bf33c03 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -734,7 +734,7 @@ static int smmu_iommu_attach_dev(struct iommu_domain *domain,
+>  		pr_info("Reserve \"page zero\" for AVP vectors using a common dummy\n");
+>  	}
+>  
+> -	dev_dbg(smmu->dev, "%s is attached\n", dev_name(c->dev));
+> +	dev_dbg(smmu->dev, "%s is attached\n", dev_name(dev));
+>  	return 0;
+>  
+>  err_client:
 
-OK, this looks better.
+Applied, thanks.
 
-> But why does the SMMU driver expect to control the AHB arbitration
-> registers? They seem unrelated to the SMMU.
+-- 
+AMD Operating System Research Center
 
-It's necessary to inform AHB that SMMU is ready to use. There's a
-dedicated bit for SMMU in this AHB arbitration register.
-
-> As I said in my previous email, I think the VA space size should be a
-> separate property.
-
-OK, I'll update.
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
