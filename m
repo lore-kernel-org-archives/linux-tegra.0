@@ -1,98 +1,68 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 4/4] drm: Add NVIDIA Tegra support
-Date: Mon, 16 Apr 2012 21:03:20 +0200
-Message-ID: <20120416190320.GA21233@avionic-0098.mockup.avionic-design.de>
-References: <20120412065038.GB4162@avionic-0098.adnet.avionic-design.de>
-	<4F86F97C.8010508@wwwdotorg.org>
-	<20120412174429.GB10042@avionic-0098.adnet.avionic-design.de>
-	<4F8753A0.6040907@wwwdotorg.org>
-	<20120413091457.GB617@avionic-0098.mockup.avionic-design.de>
-	<4F887C54.6030306@wwwdotorg.org>
-	<20120415083905.GA15207@avionic-0098.mockup.avionic-design.de>
-	<4F8C423B.8050609@wwwdotorg.org>
-	<20120416184819.GA21043@avionic-0098.mockup.avionic-design.de>
-	<4F8C6B80.4000001@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Changes to power management in ehci-tegra
+Date: Mon, 16 Apr 2012 14:37:17 -0600
+Message-ID: <4F8C82FD.2030600@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1204131640120.1166-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4139920670172405334=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4F8C6B80.4000001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1204131640120.1166-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/13/2012 03:00 PM, Alan Stern wrote:
+> On Fri, 13 Apr 2012, Stephen Warren wrote:
+> 
+>> On 04/13/2012 01:46 PM, Alan Stern wrote:
+>>> On Fri, 13 Apr 2012, Stephen Warren wrote:
+>>>> I've tested the patch, and can unplug a USB device, wait 10 seconds,
+>>>> then plug it back in, and everything works as expected.
+>>>>
+>>>> However, I don't notice /sys/devices/.../power/runtime_status ever
+>>>> saying anything other than active, and I can't cat autosuspend_delay_ms,
+>>>> so I assume I'm still not triggering the path you want me to test. I do
+>>>> have PM_RUNTIME turned on. Any ideas? Do I need some patch to the USB
+>>>> core to enable this? I tested on next-20120413 plus a few local patches.
+>>>
+>>> autosuspend_delay_ms isn't relevant here; the controller should be 
+>>> suspended with no delay as soon as the root hub suspends.  No other 
+>>> patches should be needed; it sounds like you're doing everything right.
+>>>
+>>> If you enable CONFIG_PM_ADVANCED_DEBUG along with CONFIG_PM_RUNTIME, 
+>>> what do all the other power/runtime_* files show?
+>>
+>> The EHCI controller's active_kids count stays at 1 all the time. I
+>> assume that's the root USB hub device. Looking in its power/ directory,
+>> I see that even when nothing is plugged in, runtime_status==enabled,
+>> even with no active_kids or runtime_usage:
+> 
+> That does indeed sound like a bug.
+> 
+>> [  242.611209] usb 3-1: USB disconnect, device number 4
+>> root@ilyich:/sys/devices/tegra-ehci.2/usb3/power# cat async
+>> enabled
+>> root@ilyich:/sys/devices/tegra-ehci.2/usb3/power# cat autosuspend_delay_ms
+>> 0
+> 
+> Odd...  This should contain 2000.  Maybe some userspace program has 
+> changed it?  Either value would be okay, however.
+> 
+> You could try writing 2000 to this file, then plugging in a device and 
+> unplugging it.  The root hub should then suspend 2 seconds after you 
+> unplug the device.
 
---===============4139920670172405334==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Content-Disposition: inline
+There's no difference if I write 2000 to this file.
 
+I've tried turning on dynamic debug for the entire of USB. None of those
+fire, which I believe implies there aren't any attempted suspends of the
+Tegra EHCI controller that fail. I also added a few extra printks to the
+Tegra EHCI controller's suspend/resume functions which don't fire.
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is this anything to do with it:
 
-* Stephen Warren wrote:
-> On 04/16/2012 12:48 PM, Thierry Reding wrote:
-> > * Stephen Warren wrote:
-> ...
-> >>> Has there been any discussion as to how EDID data would best be repre=
-sented
-> >>> in DT? Should it just be a binary blob or rather some textual represe=
-ntation?
-> >>
-> >> I think a binary blob makes sense - that's the exact same format it'd
-> >> have if read over the DDC I2C bus.
-> >=20
-> > DTC has /incbin/ for that. Is arch/arm/boot/dts still the correct place=
- for
-> > EDID blobs? I could add tegra-medcom.edid if that's okay.
->=20
-> As far as I know, yes.
->=20
-> Perhaps we'll want to start putting stuff in SoC-specific
-> sub-directories given the number of files we'll end up with here
-> (irrespective of EDID etc.), but I haven't seen any move towards that yet.
+./ehci-hub.c:615:	/* FIXME autosuspend idle root hubs */
 
-Yes, especially as more machines are moving to DT that directory will soon
-become quite cluttered. I suppose a tegra subdirectory wouldn't hurt.
-
-I've been looking about for tools to generate EDID data but didn't find
-anything useful. Does anyone know of any tool that's more convenient than
-manually filling a struct edid and writing that to a file?
-
-Thierry
-
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEYEARECAAYFAk+MbPgACgkQZ+BJyKLjJp8bSwCfZfFtClerdzHb5xiRKoXBoWUI
-olsAoKiTay5jX1NXv57vyDGh9/4RUEIE
-=sXK8
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
-
---===============4139920670172405334==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-iommu mailing list
-iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-https://lists.linuxfoundation.org/mailman/listinfo/iommu
---===============4139920670172405334==--
+I'm at a loss how to do anything more useful here.
