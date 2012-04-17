@@ -1,65 +1,137 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: Changes to power management in ehci-tegra
-Date: Tue, 17 Apr 2012 10:56:44 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1204171050380.1364-100000@iolanthe.rowland.org>
-References: <4F8C82FD.2030600@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F8C82FD.2030600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] ARM: dt: tegra: seaboard: instantiate pinctrl-based I2C bus mux
+Date: Tue, 17 Apr 2012 12:50:54 -0600
+Message-ID: <1334688655-8509-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 16 Apr 2012, Stephen Warren wrote:
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> >> The EHCI controller's active_kids count stays at 1 all the time. I
-> >> assume that's the root USB hub device. Looking in its power/ directory,
-> >> I see that even when nothing is plugged in, runtime_status==enabled,
-> >> even with no active_kids or runtime_usage:
-> > 
-> > That does indeed sound like a bug.
-> > 
-> >> [  242.611209] usb 3-1: USB disconnect, device number 4
-> >> root@ilyich:/sys/devices/tegra-ehci.2/usb3/power# cat async
-> >> enabled
-> >> root@ilyich:/sys/devices/tegra-ehci.2/usb3/power# cat autosuspend_delay_ms
-> >> 0
-> > 
-> > Odd...  This should contain 2000.  Maybe some userspace program has 
-> > changed it?  Either value would be okay, however.
-> > 
-> > You could try writing 2000 to this file, then plugging in a device and 
-> > unplugging it.  The root hub should then suspend 2 seconds after you 
-> > unplug the device.
-> 
-> There's no difference if I write 2000 to this file.
-> 
-> I've tried turning on dynamic debug for the entire of USB. None of those
-> fire, which I believe implies there aren't any attempted suspends of the
-> Tegra EHCI controller that fail. I also added a few extra printks to the
-> Tegra EHCI controller's suspend/resume functions which don't fire.
-> 
-> Is this anything to do with it:
-> 
-> ./ehci-hub.c:615:	/* FIXME autosuspend idle root hubs */
+Tegra's I2C2 controller can be routed to either the PTA or DDC pin group
+on Seaboard. Define the pinctrl state nodes required to allow runtime
+control of this routing. Instantiate a pinctrl-i2cmux I2C bus mux that
+uses these pinctrl states.
 
-No, that's a very old, fossil comment.  It should have been removed 
-years ago.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Ben, Wolfram, I'll take this one patch through the Tegra tree at an
+appropriate time. I'm including it here to give a good example.
+---
+ arch/arm/boot/dts/tegra-seaboard.dts |   57 +++++++++++++++++++++++++++++-----
+ 1 files changed, 49 insertions(+), 8 deletions(-)
 
-> I'm at a loss how to do anything more useful here.
-
-We need to find out why the root hub isn't suspending.  Can you do some 
-debugging in drivers/usb/core/driver.c?  The routines to check are 
-autosuspend_check(), usb_runtime_idle(), and usb_runtime_suspend().
-
-In particular, if autosuspend_check() doesn't return 0, what is the 
-reason?  And if it does, what does the usb_suspend_both() call return?
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index ed0a2f5..e1025e2 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -65,11 +65,6 @@
+ 				nvidia,pins = "dap4";
+ 				nvidia,function = "dap4";
+ 			};
+-			ddc {
+-				nvidia,pins = "ddc", "owc", "spdi", "spdo",
+-					"uac";
+-				nvidia,function = "rsvd2";
+-			};
+ 			dta {
+ 				nvidia,pins = "dta", "dtb", "dtc", "dtd", "dte";
+ 				nvidia,function = "vi";
+@@ -100,7 +95,7 @@
+ 			};
+ 			hdint {
+ 				nvidia,pins = "hdint", "lpw0", "lpw2", "lsc1",
+-					"lsck", "lsda", "pta";
++					"lsck", "lsda";
+ 				nvidia,function = "hdmi";
+ 			};
+ 			i2cp {
+@@ -130,6 +125,10 @@
+ 					"lspi", "lvp1", "lvs";
+ 				nvidia,function = "displaya";
+ 			};
++			owc {
++				nvidia,pins = "owc", "spdi", "spdo", "uac";
++				nvidia,function = "rsvd2";
++			};
+ 			pmc {
+ 				nvidia,pins = "pmc";
+ 				nvidia,function = "pwr_on";
+@@ -173,7 +172,7 @@
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atb", "atc", "atd",
+ 					"cdev1", "cdev2", "dap1", "dap2",
+-					"dap4", "dtf", "gma", "gmc", "gmd",
++					"dap4", "ddc", "dtf", "gma", "gmc", "gmd",
+ 					"gme", "gpu", "gpu7", "i2cp", "irrx",
+ 					"irtx", "pta", "rm", "sdc", "sdd",
+ 					"slxd", "slxk", "spdi", "spdo", "uac",
+@@ -182,7 +181,7 @@
+ 				nvidia,tristate = <0>;
+ 			};
+ 			conf_ate {
+-				nvidia,pins = "ate", "csus", "dap3", "ddc",
++				nvidia,pins = "ate", "csus", "dap3",
+ 					"gpv", "owc", "slxc", "spib", "spid",
+ 					"spie";
+ 				nvidia,pull = <0>;
+@@ -252,6 +251,28 @@
+ 				nvidia,slew-rate-falling = <3>;
+ 			};
+ 		};
++
++		state_i2cmux_ddc: pinmux_i2cmux_ddc {
++			ddc {
++				nvidia,pins = "ddc";
++				nvidia,function = "i2c2";
++			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "rsvd4";
++			};
++		};
++
++		state_i2cmux_pta: pinmux_i2cmux_pta {
++			ddc {
++				nvidia,pins = "ddc";
++				nvidia,function = "rsvd4";
++			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "i2c2";
++			};
++		};
+ 	};
+ 
+ 	i2c@7000c000 {
+@@ -276,6 +297,26 @@
+ 		clock-frequency = <400000>;
+ 	};
+ 
++	i2cmux {
++		compatible = "pinctrl-i2cmux";
++
++		i2c-parent = <&{/i2c@7000c400}>;
++
++		pinctrl-names = "ddc", "pta";
++		pinctrl-0 = <&state_i2cmux_ddc>;
++		pinctrl-1 = <&state_i2cmux_pta>;
++
++		i2c-bus-ddc {
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		i2c-bus-pta {
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++	};
++
+ 	i2c@7000c500 {
+ 		clock-frequency = <400000>;
+ 	};
+-- 
+1.7.0.4
