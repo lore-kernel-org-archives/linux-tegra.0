@@ -1,27 +1,113 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] USB: ehci-tegra: don't call set_irq_flags(IRQF_VALID)
-Date: Wed, 18 Apr 2012 15:09:30 -0600
-Message-ID: <4F8F2D8A.8000205@wwwdotorg.org>
-References: <1334781820-27105-1-git-send-email-swarren@wwwdotorg.org> <20120418210150.GA31756@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] USB: EHCI: remove PORT_RWC_BITS when clearing USB_PORT_FEAT_ENABLE
+Date: Wed, 18 Apr 2012 15:32:46 -0600
+Message-ID: <1334784766-14016-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120418210150.GA31756-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/18/2012 03:01 PM, Greg KH wrote:
-> On Wed, Apr 18, 2012 at 02:43:40PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This call is not needed; the IRQ controller should (and does) set up
->> interrupts correctly. set_irq_flags() isn't exported to modules, to
->> this also fixes compilation of ehci-tegra.c as a module.
-> 
-> So this is needed for the 3.4-final release, right?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes. I haven't tested it anywhere than next-20120416, but I believe it
-is applicable and should work anywhere the patch applies.
+In the ClearPortFeature/USB_PORT_FEAT_ENABLE case, ehci_hub_control()
+would read from status_reg, clear PORT_PE, and write the result back to
+status_reg. This would clear any bits in PORT_RWC_BITS that were set in
+the registers. Fix this by masking these bits off before the write.
+
+Since this masking is common across all ClearPortFeature cases, move it
+into a single early location to avoid duplicating it.
+
+Remove the same bugfix from ehci-tegra.c's tegra_ehci_hub_control(), now
+that this case is correctly handled by the core.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/host/ehci-hub.c   |   17 +++++++----------
+ drivers/usb/host/ehci-tegra.c |   13 +------------
+ 2 files changed, 8 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-hub.c b/drivers/usb/host/ehci-hub.c
+index 38fe076..3ff35b9 100644
+--- a/drivers/usb/host/ehci-hub.c
++++ b/drivers/usb/host/ehci-hub.c
+@@ -699,6 +699,7 @@ static int ehci_hub_control (
+ 			goto error;
+ 		wIndex--;
+ 		temp = ehci_readl(ehci, status_reg);
++		temp &= ~PORT_RWC_BITS;
+ 
+ 		/*
+ 		 * Even if OWNER is set, so the port is owned by the
+@@ -712,8 +713,7 @@ static int ehci_hub_control (
+ 			ehci_writel(ehci, temp & ~PORT_PE, status_reg);
+ 			break;
+ 		case USB_PORT_FEAT_C_ENABLE:
+-			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_PEC,
+-					status_reg);
++			ehci_writel(ehci, temp | PORT_PEC, status_reg);
+ 			break;
+ 		case USB_PORT_FEAT_SUSPEND:
+ 			if (temp & PORT_RESET)
+@@ -742,7 +742,7 @@ static int ehci_hub_control (
+ 				spin_lock_irqsave(&ehci->lock, flags);
+ 			}
+ 			/* resume signaling for 20 msec */
+-			temp &= ~(PORT_RWC_BITS | PORT_WAKE_BITS);
++			temp &= ~PORT_WAKE_BITS;
+ 			ehci_writel(ehci, temp | PORT_RESUME, status_reg);
+ 			ehci->reset_done[wIndex] = jiffies
+ 					+ msecs_to_jiffies(20);
+@@ -752,9 +752,8 @@ static int ehci_hub_control (
+ 			break;
+ 		case USB_PORT_FEAT_POWER:
+ 			if (HCS_PPC (ehci->hcs_params))
+-				ehci_writel(ehci,
+-					  temp & ~(PORT_RWC_BITS | PORT_POWER),
+-					  status_reg);
++				ehci_writel(ehci, temp & ~PORT_POWER,
++						status_reg);
+ 			break;
+ 		case USB_PORT_FEAT_C_CONNECTION:
+ 			if (ehci->has_lpm) {
+@@ -762,12 +761,10 @@ static int ehci_hub_control (
+ 				temp &= ~PORT_LPM;
+ 				temp &= ~PORT_DEV_ADDR;
+ 			}
+-			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_CSC,
+-					status_reg);
++			ehci_writel(ehci, temp | PORT_CSC, status_reg);
+ 			break;
+ 		case USB_PORT_FEAT_C_OVER_CURRENT:
+-			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_OCC,
+-					status_reg);
++			ehci_writel(ehci, temp | PORT_OCC, status_reg);
+ 			break;
+ 		case USB_PORT_FEAT_C_RESET:
+ 			/* GetPortStatus clears reset */
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 10bb3ea..0300137 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -148,18 +148,7 @@ static int tegra_ehci_hub_control(
+ 
+ 	spin_lock_irqsave(&ehci->lock, flags);
+ 
+-	/*
+-	 * In ehci_hub_control() for USB_PORT_FEAT_ENABLE clears the other bits
+-	 * that are write on clear, by writing back the register read value, so
+-	 * USB_PORT_FEAT_ENABLE is handled by masking the set on clear bits
+-	 */
+-	if (typeReq == ClearPortFeature && wValue == USB_PORT_FEAT_ENABLE) {
+-		temp = ehci_readl(ehci, status_reg) & ~PORT_RWC_BITS;
+-		ehci_writel(ehci, temp & ~PORT_PE, status_reg);
+-		goto done;
+-	}
+-
+-	else if (typeReq == GetPortStatus) {
++	if (typeReq == GetPortStatus) {
+ 		temp = ehci_readl(ehci, status_reg);
+ 		if (tegra->port_resuming && !(temp & PORT_SUSPEND)) {
+ 			/* Resume completed, re-enable disconnect detection */
+-- 
+1.7.0.4
