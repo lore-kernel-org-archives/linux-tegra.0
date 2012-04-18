@@ -1,162 +1,43 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 2/4] regulator: tps65910: Add device tree bindings
-Date: Tue, 17 Apr 2012 18:00:27 -0700
-Message-ID: <1334710829-22777-3-git-send-email-rklein@nvidia.com>
-References: <1334710829-22777-1-git-send-email-rklein@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] arm/dts: Tegra30: Add device tree support for SMMU
+Date: Wed, 18 Apr 2012 08:10:17 +0300
+Message-ID: <20120418081017.d3c630c6f7d09cd4ed039854@nvidia.com>
+References: <20120413.132205.1766846402066131036.hdoyu@nvidia.com>
+	<4F887F9B.700@wwwdotorg.org>
+	<20120416.131059.331282986467061278.hdoyu@nvidia.com>
+	<4F8C43AA.7090107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1334710829-22777-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Samuel Ortiz <sameo@linux.intel.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F8C43AA.7090107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device tree bindings for TI's tps65910 pmic.
+On Mon, 16 Apr 2012 18:07:06 +0200
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- Documentation/devicetree/bindings/mfd/tps65910.txt |  132 ++++++++++++++++++++
- 1 files changed, 132 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/tps65910.txt
+> On 04/16/2012 04:10 AM, Hiroshi Doyu wrote:
+> > Stephen Warren wrote at Fri, 13 Apr 2012 21:33:47 +0200:
+> >> On 04/13/2012 04:22 AM, Hiroshi Doyu wrote:
+> >>> Add device tree support for Tegra30 IOMMU(SMMU).
+> ...
+> >> But why does the SMMU driver expect to control the AHB arbitration
+> >> registers? They seem unrelated to the SMMU.
+> > 
+> > It's necessary to inform AHB that SMMU is ready to use. There's a
+> > dedicated bit for SMMU in this AHB arbitration register.
+> 
+> Shouldn't there be a dedicated driver for the AHB arbitration registers
+> that the SMMU driver calls into to achieve this? IIRC, the AHB
+> arbitration registers support much more than the SMMU enable, and if we
+> ever need to touch those other features, going to the SMMU driver to do
+> so probably wouldn't make sense.
 
-diff --git a/Documentation/devicetree/bindings/mfd/tps65910.txt b/Documentation/devicetree/bindings/mfd/tps65910.txt
-new file mode 100644
-index 0000000..4a9f1aa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/tps65910.txt
-@@ -0,0 +1,132 @@
-+TPS65910 Power Management Integrated Circuit
-+
-+Required properties:
-+- compatible: "ti,tps65910" or "ti,tps65911"
-+- reg: I2C slave address
-+- interrupts: the interrupt outputs of the controller
-+- #gpio-cells: number of cells to describe a GPIO, this should be 2.
-+  The first cell is the GPIO number.
-+  The second cell is used to specify additional options <unused>.
-+- gpio-controller: mark the device as a GPIO controller
-+- #interrupt-cells: the number of cells to describe an IRQ, this should be 2.
-+  The first cell is the IRQ number.
-+  The second cell is the flags, encoded as the trigger masks from
-+  Documentation/devicetree/bindings/interrupts.txt
-+- regulators: This is the list of child nodes that specify the regulator
-+  initialization data for defined regulators. Not all regulators for the given
-+  device need to be present. The definition for each of these nodes is defined
-+  using the standard binding for regulators found at
-+  Documentation/devicetree/bindings/regulator/regulator.txt.
-+
-+  The valid names for regulators are:
-+  tps65910: vrtc, vio, vdd1, vdd2, vdd3, vdig1, vdig2, vpll, vdac, vaux1,
-+            vaux2, vaux33, vmmc
-+  tps65911: vrtc, vio, vdd1, vdd3, vddctrl, ldo1, ldo2, ldo3, ldo4, ldo5,
-+            ldo6, ldo7, ldo8
-+
-+Optional properties:
-+- ti,vmbch-threshold: (tps65911) main battery charged threshold
-+  comparator. (see VMBCH_VSEL in TPS65910 datasheet)
-+- ti,vmbch2-threshold: (tps65911) main battery discharged threshold
-+  comparator. (see VMBCH_VSEL in TPS65910 datasheet)
-+- ti,regulator-ext-sleep-control: enable external sleep
-+  control through external inputs [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)]
-+  There should be 13 entries here, one for each regulators for the chip.
-+- ti,en-gpio-sleep: enable sleep control for gpios
-+  There should be 9 entries here, one for each gpio.
-+
-+Example:
-+
-+	pmu: tps65910@d2 {
-+		compatible = "ti,tps65910";
-+		reg = <0xd2>;
-+		interrupt-parent = <&intc>;
-+		interrupts = < 0 118 0x04 >;
-+
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+
-+		ti,vmbch-threshold = 0;
-+		ti,vmbch2-threshold = 0;
-+		ti,regulator-ext-sleep-control = <0
-+						0
-+						0x4   /* input EN3 */
-+						0
-+						0x1   /* input EN1 */
-+						0
-+						0
-+						0
-+						0
-+						0
-+						0
-+						0x1   /* input EN1 */
-+						0x1>; /* input EN1 */
-+
-+		ti,en-gpio-sleep = <0 0 1 0 0 0 0 0 0>;
-+
-+		regulators {
-+			vdd1_reg: vdd1 {
-+				regulator-min-microvolt = < 600000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+			vdd2_reg: vdd2 {
-+				regulator-min-microvolt = < 600000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+			vddctrl_reg: vddctrl {
-+				regulator-min-microvolt = < 600000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+			vio_reg: vio {
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+			ldo1_reg: ldo1 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+			ldo2_reg: ldo2 {
-+				regulator-min-microvolt = <1050000>;
-+				regulator-max-microvolt = <1050000>;
-+			};
-+			ldo3_reg: ldo3 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+			ldo4_reg: ldo4 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+			ldo5_reg: ldo5 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+			ldo6_reg: ldo6 {
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+			ldo7_reg: ldo7 {
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+			ldo8_reg: ldo8 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+		};
-+	};
--- 
-1.7.0.4
+Agree. Sounds like the way to go.
+
+We haven't upstreamed AHB driver yet. So is it ok to remove AHB entry
+from SMMU dt and add AHB function call when upstreaming AHB driver?
+I'll work on that.
