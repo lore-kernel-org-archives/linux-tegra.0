@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: Changes to power management in ehci-tegra
-Date: Wed, 18 Apr 2012 12:24:54 -0600
-Message-ID: <4F8F06F6.2040503@wwwdotorg.org>
+Date: Wed, 18 Apr 2012 13:31:50 -0600
+Message-ID: <4F8F16A6.9040801@wwwdotorg.org>
 References: <Pine.LNX.4.44L0.1204181102250.1548-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -16,18 +16,9 @@ List-Id: linux-tegra@vger.kernel.org
 On 04/18/2012 09:22 AM, Alan Stern wrote:
 > On Tue, 17 Apr 2012, Stephen Warren wrote:
 ...
->> After than, I can set tegra-ehci.2/usb3/power/control=auto, and see the
->> root hub (tegra-ehci.2/usb3/power) suspending/resuming as devices are
->> unplugged/plugged.
->>
->> I just can't have tegra-ehci.2/power/control=auto while nothing is
->> plugged in, or the cycle starts again.
-> 
 > In other words, if both the root hub and the controller are powered 
 > down, then neither one wakes up when a device is plugged in?
-
-Yes.
-
+> 
 >> I assume this a bug in the Tegra EHCI driver's suspend implementation?
 > 
 > Actually it sounds like a bug in the controller's wakeup mechanism.  
@@ -37,29 +28,21 @@ Yes.
 > wakeups.  But I wasn't looking very carefully, because I don't know how
 > the Tegra platform works.  A quick search through the patch now seems
 > to show that wakeups never get enabled at all!
-> 
-> How well does the existing driver work if you enable the 
-> power_down_on_bus_suspend flag in the platform data?  
 
-power_down_on_bus_suspend is always enabled for the Tegra EHCI controllers.
+I looked at our downstream ehci-tegra.c, and there's a lot more code
+there for suspend/resume, wakeup, and a bunch of other stuff. Given
+that, I'm not too surprised that the upstream driver isn't resuming from
+suspend as expected.
 
-The existing driver works fine (with or without USB_SUSPEND=y and
-PM_RUNTIME=y), although doesn't ever runtime-suspended, so I guess this
-is just hiding the problem:
+I think we can still apply your patch if you want, but we additionally
+need to make CONFIG_USB_EHCI_TEGRA depend on !CONFIG_USB_SUSPEND, which
+will ensure nobody gets surprised by this fails-to-resume issue. Does
+that seem reasonable? I don't think this will have any user-impact,
+since (a) the controllers weren't suspending before this patch, and (b)
+neither CONFIG_USB_SUSPEND nor CONFIG_PM_RUNTIME were enabled in
+tegra_defconfig (although in 3.5 we'll enable CONFIG_PM_RUNTIME).
 
-/sys/devices/tegra-ehci.2# cat {,usb3/}power/{control,runtime_status}
-auto
-unsupported
-auto
-active
-
-(I see the same with or without anything plugged in)
-
-By the way, how broken is the current tegra_ehci_hub_control()? I see
-that it mostly duplicates ehci_hub_control() for a few cases, but has
-diverged a little since, e.g. the set_bit()/clear_bit() calls are using
-"wIndex - 1" instead of "wIndex" etc. Also, I wonder if the logic in the
-ClearPortFeature/USB_PORT_FEAT_ENABLE case might be worth moving into
-ehci-hub.c, if it's generally applicable? I did try removing that
-function and making the driver use ehci_hub_control() instead, but that
-didn't solve the resume issue.
+Those responsible for ehci-tegra.c in our downstream kernels are
+supposed to be working on a plan to upstream the missing parts. When
+that comes to fruition, we should be able to remove that Kconfig
+restriction. I'm afraid I don't have an ETA for when that will be though.
