@@ -1,45 +1,65 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] arm/dts: Tegra30: Add device tree support for SMMU
-Date: Wed, 18 Apr 2012 11:31:12 -0600
-Message-ID: <4F8EFA60.2040400@wwwdotorg.org>
-References: <20120413.132205.1766846402066131036.hdoyu@nvidia.com>	<4F887F9B.700@wwwdotorg.org>	<20120416.131059.331282986467061278.hdoyu@nvidia.com>	<4F8C43AA.7090107@wwwdotorg.org> <20120418081017.d3c630c6f7d09cd4ed039854@nvidia.com>
+Subject: Re: Changes to power management in ehci-tegra
+Date: Wed, 18 Apr 2012 12:24:54 -0600
+Message-ID: <4F8F06F6.2040503@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1204181102250.1548-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120418081017.d3c630c6f7d09cd4ed039854-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1204181102250.1548-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/17/2012 11:10 PM, Hiroshi Doyu wrote:
-> On Mon, 16 Apr 2012 18:07:06 +0200
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> 
->> On 04/16/2012 04:10 AM, Hiroshi Doyu wrote:
->>> Stephen Warren wrote at Fri, 13 Apr 2012 21:33:47 +0200:
->>>> On 04/13/2012 04:22 AM, Hiroshi Doyu wrote:
->>>>> Add device tree support for Tegra30 IOMMU(SMMU).
->> ...
->>>> But why does the SMMU driver expect to control the AHB arbitration
->>>> registers? They seem unrelated to the SMMU.
->>>
->>> It's necessary to inform AHB that SMMU is ready to use. There's a
->>> dedicated bit for SMMU in this AHB arbitration register.
+On 04/18/2012 09:22 AM, Alan Stern wrote:
+> On Tue, 17 Apr 2012, Stephen Warren wrote:
+...
+>> After than, I can set tegra-ehci.2/usb3/power/control=auto, and see the
+>> root hub (tegra-ehci.2/usb3/power) suspending/resuming as devices are
+>> unplugged/plugged.
 >>
->> Shouldn't there be a dedicated driver for the AHB arbitration registers
->> that the SMMU driver calls into to achieve this? IIRC, the AHB
->> arbitration registers support much more than the SMMU enable, and if we
->> ever need to touch those other features, going to the SMMU driver to do
->> so probably wouldn't make sense.
+>> I just can't have tegra-ehci.2/power/control=auto while nothing is
+>> plugged in, or the cycle starts again.
 > 
-> Agree. Sounds like the way to go.
-> 
-> We haven't upstreamed AHB driver yet. So is it ok to remove AHB entry
-> from SMMU dt and add AHB function call when upstreaming AHB driver?
-> I'll work on that.
+> In other words, if both the root hub and the controller are powered 
+> down, then neither one wakes up when a device is plugged in?
 
-I think that seems reasonable for now, yes. I assume you mean
-implementing e.g. arch/arm/mach-tegra/tegra30-ahb.c, similar to how,
-say, the fuse APIs work.
+Yes.
+
+>> I assume this a bug in the Tegra EHCI driver's suspend implementation?
+> 
+> Actually it sounds like a bug in the controller's wakeup mechanism.  
+> Maybe a hardware bug, maybe a software bug.
+> 
+> While looking through the code, I didn't notice anything about enabling
+> wakeups.  But I wasn't looking very carefully, because I don't know how
+> the Tegra platform works.  A quick search through the patch now seems
+> to show that wakeups never get enabled at all!
+> 
+> How well does the existing driver work if you enable the 
+> power_down_on_bus_suspend flag in the platform data?  
+
+power_down_on_bus_suspend is always enabled for the Tegra EHCI controllers.
+
+The existing driver works fine (with or without USB_SUSPEND=y and
+PM_RUNTIME=y), although doesn't ever runtime-suspended, so I guess this
+is just hiding the problem:
+
+/sys/devices/tegra-ehci.2# cat {,usb3/}power/{control,runtime_status}
+auto
+unsupported
+auto
+active
+
+(I see the same with or without anything plugged in)
+
+By the way, how broken is the current tegra_ehci_hub_control()? I see
+that it mostly duplicates ehci_hub_control() for a few cases, but has
+diverged a little since, e.g. the set_bit()/clear_bit() calls are using
+"wIndex - 1" instead of "wIndex" etc. Also, I wonder if the logic in the
+ClearPortFeature/USB_PORT_FEAT_ENABLE case might be worth moving into
+ehci-hub.c, if it's generally applicable? I did try removing that
+function and making the driver use ehci_hub_control() instead, but that
+didn't solve the resume issue.
