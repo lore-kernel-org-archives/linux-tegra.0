@@ -1,56 +1,72 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
-Date: Wed, 18 Apr 2012 16:27:58 +0200
-Message-ID: <20120418142758.GE19220@pengutronix.de>
-References: <1333345982-16595-1-git-send-email-alokc@nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: Changes to power management in ehci-tegra
+Date: Wed, 18 Apr 2012 11:22:26 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1204181102250.1548-100000@iolanthe.rowland.org>
+References: <4F8DFC8C.5010001@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="imjhCm/Pyz7Rq5F2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1333345982-16595-1-git-send-email-alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F8DFC8C.5010001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 17 Apr 2012, Stephen Warren wrote:
 
---imjhCm/Pyz7Rq5F2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Aha, there's a CONFIG_USB_SUSPEND which I didn't have enabled. Now I see
+> the controller suspending.
 
-On Mon, Apr 02, 2012 at 11:23:02AM +0530, Alok Chauhan wrote:
-> NACK interrupt generated before I2C controller generates
-> the STOP condition on bus. In Software, because of this
-> reset of controller is happening before I2C controller could
-> complete STOP condition. So wait for some time before resetting
-> the controller so that STOP condition has delivered properly on bus.
->=20
-> Added delay of 2 clock period before reset the
-> controller in case of NACK error.
->=20
-> Signed-off-by: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Good job.  I should have thought of that...
 
-Applied with Stephen's ACK and slightly reworded comment and commit msg.
+> However, the controller suspends immediately the system boots even if
+> there's a device already connected, and never resumes if there wasn't
+> connected at boot, but one is plugged in later.
 
-Wondering a bit that you want it for 3.5, not for 3.4. Looks like a
-bugfix to me.
+The general idea is that when usb_add_hcd() registers the root hub, the
+hub driver prevents the root hub from autosuspending until it has a
+chance to scan the ports with plugged-in devices.  And naturally, the
+controller won't suspend while the root hub is running.  So maybe the
+root hub doesn't see the connected devices?
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+You can find out by collecting a usbmon trace for bus 0, starting
+before you load the ehci-hcd module.
 
---imjhCm/Pyz7Rq5F2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> In this state, I must set tegra-ehci.2/usb3/power/control=on to get
+> anything to work. Forcing just the controller on
+> (tegra-ehci.2/power/control=on) doesn't fix this.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Yeah, powering up the controller doesn't necessarily cause the root hub
+to be powered up too.  Of course, if power_down_on_bus_suspend isn't
+enabled then the controller's power/control is supposed to be set to
+"on" by default.
 
-iEYEARECAAYFAk+Oz24ACgkQD27XaX1/VRsa7QCggv2aNwPXDAt16LauuUs/fLwY
-6okAoI7x3/3McmF0Y4fUHzEUDh1SG86r
-=1vge
------END PGP SIGNATURE-----
+> After than, I can set tegra-ehci.2/usb3/power/control=auto, and see the
+> root hub (tegra-ehci.2/usb3/power) suspending/resuming as devices are
+> unplugged/plugged.
+> 
+> I just can't have tegra-ehci.2/power/control=auto while nothing is
+> plugged in, or the cycle starts again.
 
---imjhCm/Pyz7Rq5F2--
+In other words, if both the root hub and the controller are powered 
+down, then neither one wakes up when a device is plugged in?
+
+> I assume this a bug in the Tegra EHCI driver's suspend implementation?
+
+Actually it sounds like a bug in the controller's wakeup mechanism.  
+Maybe a hardware bug, maybe a software bug.
+
+While looking through the code, I didn't notice anything about enabling
+wakeups.  But I wasn't looking very carefully, because I don't know how
+the Tegra platform works.  A quick search through the patch now seems
+to show that wakeups never get enabled at all!
+
+How well does the existing driver work if you enable the 
+power_down_on_bus_suspend flag in the platform data?  
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
