@@ -1,52 +1,68 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: tegra: Add delay before reset the controller
-Date: Wed, 18 Apr 2012 22:20:37 +0200
-Message-ID: <20120418202037.GA32444@pengutronix.de>
-References: <1333345982-16595-1-git-send-email-alokc@nvidia.com>
- <20120418142758.GE19220@pengutronix.de>
- <4F8F1DBD.8000009@wwwdotorg.org>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: Changes to power management in ehci-tegra
+Date: Wed, 18 Apr 2012 16:40:39 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1204181626450.1149-100000@iolanthe.rowland.org>
+References: <4F8F06F6.2040503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F8F1DBD.8000009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F8F06F6.2040503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alok Chauhan <alokc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, bones-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 18 Apr 2012, Stephen Warren wrote:
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > How well does the existing driver work if you enable the 
+> > power_down_on_bus_suspend flag in the platform data?  
+> 
+> power_down_on_bus_suspend is always enabled for the Tegra EHCI controllers.
+> 
+> The existing driver works fine (with or without USB_SUSPEND=y and
+> PM_RUNTIME=y), although doesn't ever runtime-suspended, so I guess this
+> is just hiding the problem:
+> 
+> /sys/devices/tegra-ehci.2# cat {,usb3/}power/{control,runtime_status}
+> auto
+> unsupported
+> auto
+> active
+> 
+> (I see the same with or without anything plugged in)
 
+That's not meaningful in this situation.  With the existing driver, the
+controller will get powered down whenever the root hub suspends -- that
+is, when tegra_ehci_bus_suspend() calls tegra_usb_suspend() which calls
+tegra_ehci_power_down().  This should happen whenever no devices are
+plugged in (assuming CONFIG_USB_SUSPEND is enabled).  This mechanism
+for powering down the controller doesn't use runtime PM, but it will
+operate anyway.
 
-> > Applied with Stephen's ACK and slightly reworded comment and commit msg.
-> >=20
-> > Wondering a bit that you want it for 3.5, not for 3.4. Looks like a
-> > bugfix to me.
->=20
-> Yes, applying this to 3.4 would make sense. When I said "for 3.5"
-> earlier, I meant I'd like it to at least get into 3.5 not later.
+The questions are: If you unplug everything under the existing driver,
+what does usb3/power/runtime_status show?  When you plug in a new
+device, is it detected (presumably it is)?  And finally, how does the 
+controller detect the new device while it is powered down?
 
-Done, thanks for clarifying.
+> By the way, how broken is the current tegra_ehci_hub_control()? I see
+> that it mostly duplicates ehci_hub_control() for a few cases, but has
+> diverged a little since, e.g. the set_bit()/clear_bit() calls are using
+> "wIndex - 1" instead of "wIndex" etc.
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+That's just a minor optimization.  ehci_hub_control() decrements wIndex
+near the start of certain cases, to avoid all those "- 1"  things later
+on.
 
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I haven't tried to do a detailed check of all the code in
+tegra_ehci_hub_control().
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+> Also, I wonder if the logic in the
+> ClearPortFeature/USB_PORT_FEAT_ENABLE case might be worth moving into
+> ehci-hub.c, if it's generally applicable? I did try removing that
+> function and making the driver use ehci_hub_control() instead, but that
+> didn't solve the resume issue.
 
-iEYEARECAAYFAk+PIhUACgkQD27XaX1/VRvUFQCfUaLzzZvLpqp2vD4w4NktXG3/
-KH4AoMxEDPPUrybbZIFpKgxfmpIph/9n
-=kkAs
------END PGP SIGNATURE-----
+Yes, that does look like a bug in ehci_hub_control().  Feel free to 
+submit a patch moving the Tegra code over.
 
---9jxsPFA5p3P2qPhR--
+Alan Stern
