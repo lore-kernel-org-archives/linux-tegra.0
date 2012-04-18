@@ -1,44 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Changes to power management in ehci-tegra
-Date: Tue, 17 Apr 2012 17:28:12 -0600
-Message-ID: <4F8DFC8C.5010001@wwwdotorg.org>
-References: <Pine.LNX.4.44L0.1204171050380.1364-100000@iolanthe.rowland.org>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] Update TPS65910 to boot using devicetree
+Date: Tue, 17 Apr 2012 18:00:25 -0700
+Message-ID: <1334710829-22777-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1204171050380.1364-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/17/2012 08:56 AM, Alan Stern wrote:
-> On Mon, 16 Apr 2012, Stephen Warren wrote:
-> 
->>>> The EHCI controller's active_kids count stays at 1 all the time. I
->>>> assume that's the root USB hub device. Looking in its power/ directory,
->>>> I see that even when nothing is plugged in, runtime_status==enabled,
->>>> even with no active_kids or runtime_usage:
->>>
->>> That does indeed sound like a bug.
+This patch set updates the tps65910 driver to boot using devicetree.
 
-Aha, there's a CONFIG_USB_SUSPEND which I didn't have enabled. Now I see
-the controller suspending.
+One thing that is unfavorable is the addition of the use_dt_for_init_data
+flag. I added this as I wanted to split the parsing of the of nodes between
+the tps65910-regulator code and the main tps65910 code. This split was to
+maintain the list of regulator names solely inside the tps65910-regulator
+code as it already was.
 
-However, the controller suspends immediately the system boots even if
-there's a device already connected, and never resumes if there wasn't
-connected at boot, but one is plugged in later.
+Rhyland Klein (4):
+  regulator: tps65910: update type for regmap
+  regulator: tps65910: Add device tree bindings
+  mfd: tps65910: Add device-tree support
+  ARM: Tegra: Add support for TPS65910 PMIC
 
-In this state, I must set tegra-ehci.2/usb3/power/control=on to get
-anything to work. Forcing just the controller on
-(tegra-ehci.2/power/control=on) doesn't fix this.
-
-After than, I can set tegra-ehci.2/usb3/power/control=auto, and see the
-root hub (tegra-ehci.2/usb3/power) suspending/resuming as devices are
-unplugged/plugged.
-
-I just can't have tegra-ehci.2/power/control=auto while nothing is
-plugged in, or the cycle starts again.
-
-I assume this a bug in the Tegra EHCI driver's suspend implementation?
+ Documentation/devicetree/bindings/mfd/tps65910.txt |  132 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra-cardhu.dts                 |   92 ++++++++++++++
+ drivers/gpio/gpio-tps65910.c                       |   39 ++++++-
+ drivers/mfd/tps65910-irq.c                         |   21 +++-
+ drivers/mfd/tps65910.c                             |   78 ++++++++++++-
+ drivers/regulator/tps65910-regulator.c             |   86 +++++++++++++-
+ include/linux/mfd/tps65910.h                       |    3 +-
+ 7 files changed, 439 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/tps65910.txt
