@@ -1,35 +1,47 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Changes to power management in ehci-tegra
-Date: Thu, 19 Apr 2012 18:25:15 +0900
-Message-ID: <4F8FD9FB.3090909@nvidia.com>
-References: <Pine.LNX.4.44L0.1204181640550.1149-100000@iolanthe.rowland.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH] cpuidle: allow per cpu latencies
+Date: Thu, 19 Apr 2012 13:23:57 +0300
+Message-ID: <20120419102357.GJ514@tbergstrom-lnx.Nvidia.com>
+References: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
+ <4F7DA009.4010802@linux.intel.com>
+ <CAMQu2gzwe0F3qcaTqASEPUASdG1SjpUxrBrSp-RrYLgy3W24OQ@mail.gmail.com>
+ <4F7F0D52.8080305@linaro.org>
+ <20120410102857.GA22721@tbergstrom-lnx.Nvidia.com>
+ <20120416153456.GB514@tbergstrom-lnx.Nvidia.com>
+ <4F8FD773.5030500@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1204181640550.1149-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F8FD773.5030500-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Shilimkar, Santosh" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Trinabh Gupta <g.trinabh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Rob Lee <rob.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ricardo Salveti <ricardo.salveti-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/19/2012 05:47 AM, Alan Stern wrote:
->> Those responsible for ehci-tegra.c in our downstream kernels are
->> supposed to be working on a plan to upstream the missing parts. When
->> that comes to fruition, we should be able to remove that Kconfig
->> restriction. I'm afraid I don't have an ETA for when that will be though.
->
-> Is this patch compatible with the downstream driver?  It would be a
-> shame to mess up a bunch of other work.
+On Thu, Apr 19, 2012 at 11:14:27AM +0200, Daniel Lezcano wrote:
+> On 04/16/2012 05:34 PM, Peter De Schrijver wrote:
+> >>
+> >> Maybe we also want to make the 'disabled' flag per CPU then or provide some
+> >> other way the number of C states can be different per CPU?
+> >
+> > What do you think about this? Do we also want to make the disabled flag per
+> > CPU? Or how should we deal with a different number of C states per CPU?
+> 
+> Hi Peter,
+> 
+> yes, that could makes sense. But in most of the architecture, this is 
+> not needed, so duplicating the state's array and latencies is unneeded 
+> memory consumption.
+> 
+> Maybe we can look for a COW approach, similar to what is done for the 
+> nsproxy structure, no ?
+> 
 
-Downstream driver is dramatically out-of-sync with respect to upstream, 
-and we don't know when we will be able to catch up, so if your patch 
-improves things there is no reason not to go ahead. AFAIK nothing 
-equivalent to what you implemented has been done on our side (i.e. we 
-are still powering down during bus suspend), so this is welcome.
+That could be easily solved by just having a pointer to the state table in the
+per CPU datastructure I think?
 
-Alex.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Cheers,
+
+Peter.
