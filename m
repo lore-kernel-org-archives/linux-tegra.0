@@ -1,42 +1,99 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/4] mfd: tps65910: Add device-tree support
-Date: Thu, 19 Apr 2012 09:35:49 -0600
-Message-ID: <4F9030D5.2050601@wwwdotorg.org>
-References: <1334710829-22777-1-git-send-email-rklein@nvidia.com> <1334710829-22777-4-git-send-email-rklein@nvidia.com> <20120418090133.GC3021@opensource.wolfsonmicro.com> <1334777758.32315.37.camel@rklein-linux> <20120419125041.GH3046@opensource.wolfsonmicro.com>
+From: Andrey Smirnov <andrey.smirnov-MC3rjLPHZ0ivD/XHwUtZZ+TW4wlIGRCZ@public.gmane.org>
+Subject: [RFC] tegra_pcm DMA buffers allocation
+Date: Thu, 19 Apr 2012 09:00:53 -0700
+Message-ID: <1334851253.13681.49.camel@marvin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120419125041.GH3046-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/19/2012 06:50 AM, Mark Brown wrote:
-> On Wed, Apr 18, 2012 at 12:35:58PM -0700, Rhyland Klein wrote:
->> On Wed, 2012-04-18 at 02:01 -0700, Mark Brown wrote:
-> 
->>> This is a really odd idiom - normally the pattern for device tree
->>> support is to just go and try to use the device tree data if it's there
->>> and there's no need for any flag to say if it should be used.
-> 
->> I agree its odd. My concern was that the idiom is that is pdata assigned
->> from board files should override dt data. At this point, we don't know
->> where the tps65910->board_data is coming from, dt or board files.
->> Arbitrarily using dt breaks that idiom. We could do a check like this if
->> you prefer:
-> 
-> No, just prefer the DT - what you're proposing is exactly the opposite
-> idiom to what all the other DT drivers do so we'd need to go round
-> changing the policy globally at which point we probably want to start
-> having helpers for this.
+Hello,
 
-That's not right - the idea is that pdata should override device tree so
-that if there's a platform where the DT is known to contain incorrect
-data, then some early platform code can add pdata to the device to fix
-the problem, and that will be used in preference to the DT data.
+I'm working with a Harmony-based custom Tegra2 board and I'm writing a
+driver for a sound capturing I2S device. At this point, for all intents
+and purposes the code I use is almost indistinguishable from the similar
+code for WM8782(digital microphone) which means that the the structure
+describing the DAI has only .capture data and .playback field is left
+untouched. This set up, using the tegra-l4t-r15-alpha kernel* results in
+the crash because of NULL pointer dereference in
+tegra_pcm_preallocate_dma_buffer().
 
-At least, that's the last I heard Grant say on the subject, and that's
-how I've been writing all the Tegra-related drivers, and I've seen
-others do the same for other platforms.
+My humble investigation leads me to the following conclusions:
+The way I see this code works(correct me if I missed something) is the
+following:
+
+soc_probe_dai_link() -> soc_new_pcm() -> snd_pcm_new() ->
+snd_pcm_new_stream()
+
+And the decision to allocate a stream is based on the codec_dai's
+playback/capture channel count by this piece of code from soc_new_pcm:  
+
+if (codec_dai->driver->playback.channels_min)
+	playback = 1;
+if (codec_dai->driver->capture.channels_min)
+	capture = 1;
+
+Tegra's DMA buffers allocation on the other hand is guided by the amount
+of playback capture channels on the cpu_dai as the following excerpt
+from tegrap_pcm_new() shows:
+
+struct snd_soc_dai *dai = rtd->cpu_dai;
+.
+.
+.
+if (dai->driver->playback.channels_min) {
+	ret = tegra_pcm_preallocate_dma_buffer(pcm,
+					SNDRV_PCM_STREAM_PLAYBACK);
+	if (ret)
+		goto err;
+}
+
+if (dai->driver->capture.channels_min) {
+	ret = tegra_pcm_preallocate_dma_buffer(pcm,
+					SNDRV_PCM_STREAM_CAPTURE);
+	if (ret)
+		goto err_free_play;
+}
+
+And wile not positive(unfortunately I didn't have the tenacity required
+to actually trace the exact cause of the crash) I'm rather confident
+that this is the reason I experience the problem described above, since 
+working it around the following way:
+
+if (rtd->codec_dai->driver->playback.channels_min &&
+dai->driver->playback.channels_min) {
+	ret = tegra_pcm_preallocate_dma_buffer(pcm,
+					SNDRV_PCM_STREAM_PLAYBACK);
+	if (ret)
+		goto err;
+}
+
+if (rtd->codec_dai->driver->playback.channels_min &&
+dai->driver->capture.channels_min) {
+	ret = tegra_pcm_preallocate_dma_buffer(pcm,
+					SNDRV_PCM_STREAM_CAPTURE);
+	if (ret)
+		goto err_free_play;
+}
+
+at least allowed the machine to start. Do I miss some additional setup
+bit required for this use-case? If not then, what would be the best way
+to solve this problem? Declare a fake playback stream in the driver and
+ignore it, since there is no physical connection to the corresponding
+pins of the T20?
+
+
+Thank you for you answers, and I apologize if any of my conclusions are
+based on faulty premises an therefore are just noise.
+
+Andrey Smirnov
+
+______________
+* I know that the code base is different from
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+for-next but from what I can tell the code corresponding to the issue at
+ahnd is pretty similar.
