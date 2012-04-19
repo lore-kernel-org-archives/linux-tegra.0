@@ -1,29 +1,47 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dt: tegra_ventana: als and proximity sensor
- isl29018 support
-Date: Thu, 19 Apr 2012 14:42:41 +0530
-Message-ID: <4F8FD709.60308@nvidia.com>
-References: <1334645155-13799-1-git-send-email-ldewangan@nvidia.com> <1334645155-13799-4-git-send-email-ldewangan@nvidia.com> <4F8DF01D.9040900@wwwdotorg.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC PATCH] cpuidle: allow per cpu latencies
+Date: Thu, 19 Apr 2012 11:14:27 +0200
+Message-ID: <4F8FD773.5030500@linaro.org>
+References: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
+ <4F7DA009.4010802@linux.intel.com>
+ <CAMQu2gzwe0F3qcaTqASEPUASdG1SjpUxrBrSp-RrYLgy3W24OQ@mail.gmail.com>
+ <4F7F0D52.8080305@linaro.org>
+ <20120410102857.GA22721@tbergstrom-lnx.Nvidia.com>
+ <20120416153456.GB514@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F8DF01D.9040900-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20120416153456.GB514@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, Olof Johansson <olof@lixom.net>, "Shilimkar, Santosh" <santosh.shilimkar@ti.com>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Lee <rob.lee@linaro.org>, Arjan van de Ven <arjan@linux.intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ricardo Salveti <ricardo.salveti@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 18 April 2012 04:05 AM, Stephen Warren wrote:
-> On 04/17/2012 12:45 AM, Laxman Dewangan wrote:
->> Add the device info for ALS and proximity sensor isl29018.
->
-> a) Perhaps the vendor prefix should be "isil" not "isl". Olof, can you
-> please comment here?
->
-
-Any comments on this? I think "isil" is good as it is the symbol in 
-nasdaq also: Intersil Corporation (ISIL).
-If no objection than I can send my next version of patch ;)
-
-Adding LinusW, Mark and Grant if they have any comment here.
+T24gMDQvMTYvMjAxMiAwNTozNCBQTSwgUGV0ZXIgRGUgU2NocmlqdmVyIHdyb3RlOgo+Pgo+PiBN
+YXliZSB3ZSBhbHNvIHdhbnQgdG8gbWFrZSB0aGUgJ2Rpc2FibGVkJyBmbGFnIHBlciBDUFUgdGhl
+biBvciBwcm92aWRlIHNvbWUKPj4gb3RoZXIgd2F5IHRoZSBudW1iZXIgb2YgQyBzdGF0ZXMgY2Fu
+IGJlIGRpZmZlcmVudCBwZXIgQ1BVPwo+Cj4gV2hhdCBkbyB5b3UgdGhpbmsgYWJvdXQgdGhpcz8g
+RG8gd2UgYWxzbyB3YW50IHRvIG1ha2UgdGhlIGRpc2FibGVkIGZsYWcgcGVyCj4gQ1BVPyBPciBo
+b3cgc2hvdWxkIHdlIGRlYWwgd2l0aCBhIGRpZmZlcmVudCBudW1iZXIgb2YgQyBzdGF0ZXMgcGVy
+IENQVT8KCkhpIFBldGVyLAoKeWVzLCB0aGF0IGNvdWxkIG1ha2VzIHNlbnNlLiBCdXQgaW4gbW9z
+dCBvZiB0aGUgYXJjaGl0ZWN0dXJlLCB0aGlzIGlzIApub3QgbmVlZGVkLCBzbyBkdXBsaWNhdGlu
+ZyB0aGUgc3RhdGUncyBhcnJheSBhbmQgbGF0ZW5jaWVzIGlzIHVubmVlZGVkIAptZW1vcnkgY29u
+c3VtcHRpb24uCgpNYXliZSB3ZSBjYW4gbG9vayBmb3IgYSBDT1cgYXBwcm9hY2gsIHNpbWlsYXIg
+dG8gd2hhdCBpcyBkb25lIGZvciB0aGUgCm5zcHJveHkgc3RydWN0dXJlLCBubyA/CgoKCi0tIAog
+IDxodHRwOi8vd3d3LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0
+d2FyZSBmb3IgQVJNIFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8aHR0cDovL3d3dy5mYWNlYm9vay5j
+b20vcGFnZXMvTGluYXJvPiBGYWNlYm9vayB8CjxodHRwOi8vdHdpdHRlci5jb20vIyEvbGluYXJv
+b3JnPiBUd2l0dGVyIHwKPGh0dHA6Ly93d3cubGluYXJvLm9yZy9saW5hcm8tYmxvZy8+IEJsb2cK
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
