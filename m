@@ -1,75 +1,122 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/4] regulator: tps65910: update type for regmap
-Date: Thu, 19 Apr 2012 13:54:43 +0100
-Message-ID: <20120419125443.GI3046@opensource.wolfsonmicro.com>
-References: <1334710829-22777-1-git-send-email-rklein@nvidia.com>
- <1334710829-22777-2-git-send-email-rklein@nvidia.com>
- <20120418092547.GE3021@opensource.wolfsonmicro.com>
- <1334779402.32315.63.camel@rklein-linux>
- <1334780371.32315.66.camel@rklein-linux>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH] USB: EHCI: remove PORT_RWC_BITS when clearing
+ USB_PORT_FEAT_ENABLE
+Date: Thu, 19 Apr 2012 09:47:59 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1204190946530.2070-100000@iolanthe.rowland.org>
+References: <1334784766-14016-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Li7ckgedzMh1NgdW"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1334780371.32315.66.camel@rklein-linux>
+In-Reply-To: <1334784766-14016-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 18 Apr 2012, Stephen Warren wrote:
 
---Li7ckgedzMh1NgdW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> In the ClearPortFeature/USB_PORT_FEAT_ENABLE case, ehci_hub_control()
+> would read from status_reg, clear PORT_PE, and write the result back to
+> status_reg. This would clear any bits in PORT_RWC_BITS that were set in
+> the registers. Fix this by masking these bits off before the write.
+> 
+> Since this masking is common across all ClearPortFeature cases, move it
+> into a single early location to avoid duplicating it.
+> 
+> Remove the same bugfix from ehci-tegra.c's tegra_ehci_hub_control(), now
+> that this case is correctly handled by the core.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Wed, Apr 18, 2012 at 01:19:31PM -0700, Rhyland Klein wrote:
-> On Wed, 2012-04-18 at 13:03 -0700, Rhyland Klein wrote:
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 
-> > Which interface are you saying is broken? The regmap interface or the
-> > one internal to the tps65910 code?=20
-
-This driver is broken.
-
-> > So to be clear... Your recommendation is to change the tps65910 code to
-> > remove the common read/write callbacks and to use regmap directly in
-> > each component, and then when using regmap, do use the regmap raw
-> > functions instead of the bulkread/write?
-
-> Looking at the code, I would think it makes more sense use regmap_read
-> which enforces types since the tps65910 code only ever seems to use
-> regmap to access a single register at a time. Do you agree?
-
-Yes, for single register I/O the drivers should just be using the
-per-register APIs regmap has if they're using regmap directly.  Having
-wrappers for this in the header would be fine also, the things that are
-really problematic about the current code are the void * usage and the
-fact that individual drivers are writing register read/write functions.
-
-If the driver wasn't using void * this bug would've been caught by the
-compiler.
-
---Li7ckgedzMh1NgdW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPkAsMAAoJEBus8iNuMP3dVEwP/1X+vJVv+E0gjzLKX2vjZrPU
-wDMlK32CjnlUFK+sh6o3SXvYT/BV9MSQ6JwKdkudGqV1Vr2uhzY0ES/ut5gaRejJ
-vlNwG6V3g0rwTvjbF/Yscv4VpdeFSoLc4daoETFa5X7iBNe8cIYaWl4gU++QsOPx
-tp36Ergw/OxAX4g2k5FjqsdZjULtXrPj5K777mtR8wGCKm5P3aGIkxT2jG3wqoxd
-PbA3rCnwFJa2cOQtQM+m6uX/bDFVAkBQaYEiBFGVCEHSIVZuidm6cF260+6wBdEv
-FlKhiGsgVUme8nowgBygg+LJTBiQD2IPmGABngqugw13QpTxQJtINtjeYkg1+9+S
-NkUxrhdKm2RhI97PlPLG0eIWsBJsfxSuCjNfj9INYZdDmwNfwwrWSw6cYePCIN2J
-xLea8XC/Kv/JzZuJjAKMOem87jeIbWYNxyfYnUM5lxt43R4xuo2sgJI3e5Q1UGy3
-lGdutqAo/igLnF0nq3Gt4cQr/zLrnVM+g5rUuFc70ognL15aDnaUOqS23NOOnf90
-5XSobgUefS9lc3NNT7Herplho8Tj92zkZGflMkw24W754SxKDyQxalJBbHAVPdG6
-QWC8BsAc2i9Q7/M6mVR7oV7gvRmZwJZABTIh+QRJ9gauFQOkTsTVw1B09xTVS5PU
-Am8j2QqWWiDR9N6+IJce
-=srMh
------END PGP SIGNATURE-----
-
---Li7ckgedzMh1NgdW--
+> ---
+>  drivers/usb/host/ehci-hub.c   |   17 +++++++----------
+>  drivers/usb/host/ehci-tegra.c |   13 +------------
+>  2 files changed, 8 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-hub.c b/drivers/usb/host/ehci-hub.c
+> index 38fe076..3ff35b9 100644
+> --- a/drivers/usb/host/ehci-hub.c
+> +++ b/drivers/usb/host/ehci-hub.c
+> @@ -699,6 +699,7 @@ static int ehci_hub_control (
+>  			goto error;
+>  		wIndex--;
+>  		temp = ehci_readl(ehci, status_reg);
+> +		temp &= ~PORT_RWC_BITS;
+>  
+>  		/*
+>  		 * Even if OWNER is set, so the port is owned by the
+> @@ -712,8 +713,7 @@ static int ehci_hub_control (
+>  			ehci_writel(ehci, temp & ~PORT_PE, status_reg);
+>  			break;
+>  		case USB_PORT_FEAT_C_ENABLE:
+> -			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_PEC,
+> -					status_reg);
+> +			ehci_writel(ehci, temp | PORT_PEC, status_reg);
+>  			break;
+>  		case USB_PORT_FEAT_SUSPEND:
+>  			if (temp & PORT_RESET)
+> @@ -742,7 +742,7 @@ static int ehci_hub_control (
+>  				spin_lock_irqsave(&ehci->lock, flags);
+>  			}
+>  			/* resume signaling for 20 msec */
+> -			temp &= ~(PORT_RWC_BITS | PORT_WAKE_BITS);
+> +			temp &= ~PORT_WAKE_BITS;
+>  			ehci_writel(ehci, temp | PORT_RESUME, status_reg);
+>  			ehci->reset_done[wIndex] = jiffies
+>  					+ msecs_to_jiffies(20);
+> @@ -752,9 +752,8 @@ static int ehci_hub_control (
+>  			break;
+>  		case USB_PORT_FEAT_POWER:
+>  			if (HCS_PPC (ehci->hcs_params))
+> -				ehci_writel(ehci,
+> -					  temp & ~(PORT_RWC_BITS | PORT_POWER),
+> -					  status_reg);
+> +				ehci_writel(ehci, temp & ~PORT_POWER,
+> +						status_reg);
+>  			break;
+>  		case USB_PORT_FEAT_C_CONNECTION:
+>  			if (ehci->has_lpm) {
+> @@ -762,12 +761,10 @@ static int ehci_hub_control (
+>  				temp &= ~PORT_LPM;
+>  				temp &= ~PORT_DEV_ADDR;
+>  			}
+> -			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_CSC,
+> -					status_reg);
+> +			ehci_writel(ehci, temp | PORT_CSC, status_reg);
+>  			break;
+>  		case USB_PORT_FEAT_C_OVER_CURRENT:
+> -			ehci_writel(ehci, (temp & ~PORT_RWC_BITS) | PORT_OCC,
+> -					status_reg);
+> +			ehci_writel(ehci, temp | PORT_OCC, status_reg);
+>  			break;
+>  		case USB_PORT_FEAT_C_RESET:
+>  			/* GetPortStatus clears reset */
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index 10bb3ea..0300137 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -148,18 +148,7 @@ static int tegra_ehci_hub_control(
+>  
+>  	spin_lock_irqsave(&ehci->lock, flags);
+>  
+> -	/*
+> -	 * In ehci_hub_control() for USB_PORT_FEAT_ENABLE clears the other bits
+> -	 * that are write on clear, by writing back the register read value, so
+> -	 * USB_PORT_FEAT_ENABLE is handled by masking the set on clear bits
+> -	 */
+> -	if (typeReq == ClearPortFeature && wValue == USB_PORT_FEAT_ENABLE) {
+> -		temp = ehci_readl(ehci, status_reg) & ~PORT_RWC_BITS;
+> -		ehci_writel(ehci, temp & ~PORT_PE, status_reg);
+> -		goto done;
+> -	}
+> -
+> -	else if (typeReq == GetPortStatus) {
+> +	if (typeReq == GetPortStatus) {
+>  		temp = ehci_readl(ehci, status_reg);
+>  		if (tegra->port_resuming && !(temp & PORT_SUSPEND)) {
+>  			/* Resume completed, re-enable disconnect detection */
+> 
