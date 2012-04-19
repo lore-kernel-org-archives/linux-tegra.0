@@ -1,30 +1,29 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Changes to power management in ehci-tegra
-Date: Wed, 18 Apr 2012 15:45:44 -0600
-Message-ID: <4F8F3608.5030005@wwwdotorg.org>
-References: <Pine.LNX.4.44L0.1204181640550.1149-100000@iolanthe.rowland.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra_ventana: als and proximity sensor
+ isl29018 support
+Date: Thu, 19 Apr 2012 14:42:41 +0530
+Message-ID: <4F8FD709.60308@nvidia.com>
+References: <1334645155-13799-1-git-send-email-ldewangan@nvidia.com> <1334645155-13799-4-git-send-email-ldewangan@nvidia.com> <4F8DF01D.9040900@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1204181640550.1149-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Benoit Goby <benoit-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F8DF01D.9040900-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/18/2012 02:47 PM, Alan Stern wrote:
-...
-> Are you sure the controllers aren't getting suspending under the 
-> current driver?  It seems like they ought to be -- otherwise there 
-> would be no point in defining power_down_on_bus_suspend.
+On Wednesday 18 April 2012 04:05 AM, Stephen Warren wrote:
+> On 04/17/2012 12:45 AM, Laxman Dewangan wrote:
+>> Add the device info for ALS and proximity sensor isl29018.
+>
+> a) Perhaps the vendor prefix should be "isil" not "isl". Olof, can you
+> please comment here?
+>
 
-Ah. The ports are getting suspended (when nothing is plugged in), and
-tegra_ehci_bus_suspend() is returning 0. However, as soon as any port is
-suspended, it resumes immediately. I guess that's why plugging something
-in works even after the controller is suspended; it keeps waking up and
-is essentially polling for any plugged-in device.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Any comments on this? I think "isil" is good as it is the symbol in 
+nasdaq also: Intersil Corporation (ISIL).
+If no objection than I can send my next version of patch ;)
+
+Adding LinusW, Mark and Grant if they have any comment here.
