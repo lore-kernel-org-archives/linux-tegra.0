@@ -1,47 +1,66 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH] cpuidle: allow per cpu latencies
-Date: Thu, 19 Apr 2012 13:23:57 +0300
-Message-ID: <20120419102357.GJ514@tbergstrom-lnx.Nvidia.com>
-References: <1333619620-21201-1-git-send-email-pdeschrijver@nvidia.com>
- <4F7DA009.4010802@linux.intel.com>
- <CAMQu2gzwe0F3qcaTqASEPUASdG1SjpUxrBrSp-RrYLgy3W24OQ@mail.gmail.com>
- <4F7F0D52.8080305@linaro.org>
- <20120410102857.GA22721@tbergstrom-lnx.Nvidia.com>
- <20120416153456.GB514@tbergstrom-lnx.Nvidia.com>
- <4F8FD773.5030500@linaro.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] dt: Add general DMA window parser
+Date: Thu, 19 Apr 2012 15:19:20 +0300
+Message-ID: <20120419151920.68ab735a5b9eb8fb938b4d11@nvidia.com>
+References: <201204180731.54064.arnd@arndb.de>
+	<20120418.121824.1894043789811063795.hdoyu@nvidia.com>
+	<20120418092613.GA8632@avionic-0098.mockup.avionic-design.de>
+	<20120418.131907.2172387798112620167.hdoyu@nvidia.com>
+	<4F8EF99E.3050709@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F8FD773.5030500-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Shilimkar, Santosh" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Trinabh Gupta <g.trinabh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arjan van de Ven <arjan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Rob Lee <rob.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ricardo Salveti <ricardo.salveti-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4F8EF99E.3050709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 19, 2012 at 11:14:27AM +0200, Daniel Lezcano wrote:
-> On 04/16/2012 05:34 PM, Peter De Schrijver wrote:
-> >>
-> >> Maybe we also want to make the 'disabled' flag per CPU then or provide some
-> >> other way the number of C states can be different per CPU?
-> >
-> > What do you think about this? Do we also want to make the disabled flag per
-> > CPU? Or how should we deal with a different number of C states per CPU?
-> 
-> Hi Peter,
-> 
-> yes, that could makes sense. But in most of the architecture, this is 
-> not needed, so duplicating the state's array and latencies is unneeded 
-> memory consumption.
-> 
-> Maybe we can look for a COW approach, similar to what is done for the 
-> nsproxy structure, no ?
-> 
+On Wed, 18 Apr 2012 19:27:58 +0200
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 
-That could be easily solved by just having a pointer to the state table in the
-per CPU datastructure I think?
+> On 04/18/2012 04:19 AM, Hiroshi Doyu wrote:
+> 
+> > Subject: [PATCH 1/1] dt: Add general DMA window parser
+> > 
+> > This code was stolen from:
+> > 	"arch/microblaze/kernel/prom_parse.c"
+> > 	"arch/powerpc/kernel/prom_parse.c"
+> > 
+> > Once "ibm," prefix is removed from dts file. This generic one could
+> > replace the originals.
 
+It seems that the "ibm," prefix is not used in .dts files, but it
+comes from the PAPR compliant firmware and cannot be changed.
 
-Cheers,
+The easiest solution would be to make the function understand both
+variants.
 
-Peter.
+> > +extern void of_parse_dma_window(struct device_node *dn,
+> > +		       const void *dma_window_prop, unsigned long *busno,
+> > +			       unsigned long *phys, unsigned long *size);
+> 
+> At least some other of_*() parsing functions take the property name
+> rather than the property pointer, and also take an index into the
+> property in order to support multiple entries in it. See for example
+> of_parse_phandle and of_get_named_gpio_flags. Should this new API be
+> similar? E.g.:
+> 
+> extern void of_parse_dma_window(struct device_node *np,
+> 			const char *propname, int index,
+> 			unsigned long *busno,
+> 			unsigned long *phys, unsigned long *size);
+
+At least, I can add the code checking the return value of this
+function, which won't change the existing code.
+
+Does anyone know the format of "ibm,dma-window"?
