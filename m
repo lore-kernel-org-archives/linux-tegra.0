@@ -1,55 +1,65 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] dt: Add general DMA window parser
-Date: Thu, 19 Apr 2012 15:32:48 +0300
-Message-ID: <20120419153248.d8654d1533a33dc935eccea9@nvidia.com>
-References: <201204180731.54064.arnd@arndb.de>
-	<20120418.121824.1894043789811063795.hdoyu@nvidia.com>
-	<20120418092613.GA8632@avionic-0098.mockup.avionic-design.de>
-	<20120418.131907.2172387798112620167.hdoyu@nvidia.com>
-	<4F8EF99E.3050709@wwwdotorg.org>
-	<20120418193945.GA17960@avionic-0098.mockup.avionic-design.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/4] mfd: tps65910: Add device-tree support
+Date: Thu, 19 Apr 2012 13:50:41 +0100
+Message-ID: <20120419125041.GH3046@opensource.wolfsonmicro.com>
+References: <1334710829-22777-1-git-send-email-rklein@nvidia.com>
+ <1334710829-22777-4-git-send-email-rklein@nvidia.com>
+ <20120418090133.GC3021@opensource.wolfsonmicro.com>
+ <1334777758.32315.37.camel@rklein-linux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120418193945.GA17960-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKijDXBCEH69PxaN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1334777758.32315.37.camel@rklein-linux>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Liam Girdwood <lrg@ti.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Samuel Ortiz <sameo@linux.intel.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 18 Apr 2012 21:39:45 +0200
-Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
 
-> * PGP Signed by an unknown key
-> 
-> * Stephen Warren wrote:
-> > On 04/18/2012 04:19 AM, Hiroshi Doyu wrote:
-> > 
-> > > Subject: [PATCH 1/1] dt: Add general DMA window parser
-> > > 
-> > > This code was stolen from:
-> > > 	"arch/microblaze/kernel/prom_parse.c"
-> > > 	"arch/powerpc/kernel/prom_parse.c"
-> > > 
-> > > Once "ibm," prefix is removed from dts file. This generic one could
-> > > replace the originals.
-> > 
-> > > +extern void of_parse_dma_window(struct device_node *dn,
-> > > +		       const void *dma_window_prop, unsigned long *busno,
-> > > +			       unsigned long *phys, unsigned long *size);
-> > 
-> > At least some other of_*() parsing functions take the property name
-> > rather than the property pointer, and also take an index into the
-> > property in order to support multiple entries in it. See for example
-> > of_parse_phandle and of_get_named_gpio_flags. Should this new API be
-> > similar? E.g.:
-> > 
-> > extern void of_parse_dma_window(struct device_node *np,
-> > 			const char *propname, int index,
-> > 			unsigned long *busno,
-> > 			unsigned long *phys, unsigned long *size);
-> 
-> In that case the function should return int for proper error handling.
+--gKijDXBCEH69PxaN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Good point. I'll.
+On Wed, Apr 18, 2012 at 12:35:58PM -0700, Rhyland Klein wrote:
+> On Wed, 2012-04-18 at 02:01 -0700, Mark Brown wrote:
+
+> > This is a really odd idiom - normally the pattern for device tree
+> > support is to just go and try to use the device tree data if it's there
+> > and there's no need for any flag to say if it should be used.
+
+> I agree its odd. My concern was that the idiom is that is pdata assigned
+> from board files should override dt data. At this point, we don't know
+> where the tps65910->board_data is coming from, dt or board files.
+> Arbitrarily using dt breaks that idiom. We could do a check like this if
+> you prefer:
+
+No, just prefer the DT - what you're proposing is exactly the opposite
+idiom to what all the other DT drivers do so we'd need to go round
+changing the policy globally at which point we probably want to start
+having helpers for this.
+
+--gKijDXBCEH69PxaN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPkAobAAoJEBus8iNuMP3d0G8P/1ZuDSlYEuJ/Q6btReoR12ax
+Gzqe8XbLjiifIRKNHdO1Ozo3tw6wcvijajygtop4RXyj11Syp6hW4n/l5/thewDl
+Pnnm14qyr6HgNHNNcE2XNbB47ze/YeQXa+4E5q7UkjdnOQOWzlW90GxA3OXz+Sxx
+hFUJxiplGFV8RvXTdr1qU61a1bqD31dTTG+S6foSCSypAmAoFDEvphmL4KvHAZ3R
+GZeMgoV4AF5NhshR+2ECKyxcWlrCCdpX9VBbzLiCLqi5IZHoZY0FeBne2NuhpzyP
+E31pFIa7k+I4E2+Knt0TJprepZocTYLSK5B7klZML5Ro+1KOQXGAKP4YtEk9pbjM
+0M2ADOCwNHf8MsJWL9wfUkRP+TerWrO+Hq8f72HqZTIGJxlnsi+3vYdBGGdjO/wT
+nyWiePobKP4twUjeK4++WCtsCj2nmuzZ5kIwRFw51h137MM7TTmmSb1n0kKgIO94
+dPN4KLatXqw9eJoelstTMxJvRPHechn5vHvmvXK+9gifE6zCeJfUYhwMEinkgtQR
+CJLwFuPS6WyzuhK4vdejhH6Q8LaWBlYyhaKvniFOAWa3JlDtnMol2sakSCjBf+Vi
+7M0Yhn3aJ1gtaWTe6vG3D52xwkZTI6IVOWuIY4Q7oPOeHnMQpbvoqhff4vFn/TYe
+J6Kd5fqYCZf/hFpYFMTT
+=Npj9
+-----END PGP SIGNATURE-----
+
+--gKijDXBCEH69PxaN--
