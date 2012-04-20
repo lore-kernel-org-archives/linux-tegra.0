@@ -1,265 +1,469 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1] dmaengine: tegra: add dma driver
-Date: Fri, 20 Apr 2012 17:46:47 +0530
-Message-ID: <4F9153AF.7020901@nvidia.com>
-References: <1334912896-4614-1-git-send-email-ldewangan@nvidia.com> <1334920487.31825.98.camel@vkoul-udesk3>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC PATCH v2] cpuidle: allow per cpu latencies
+Date: Fri, 20 Apr 2012 15:45:19 +0300
+Message-ID: <1334925932-12656-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1334920487.31825.98.camel@vkoul-udesk3>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Kevin Hilman <khilman@ti.com>, Len Brown <len.brown@intel.com>, Trinabh Gupta <g.trinabh@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-pm@vger.kernel.org, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Arjan van de Ven <arjan@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks Vinod for quick review.
+On some systems (eg Tegra30) latencies for a given C state are not equal for
+all CPUs. Therefore we introduce a new per CPU structure which contains
+those parameters.
 
-On Friday 20 April 2012 04:44 PM, Vinod Koul wrote:
-> On Fri, 2012-04-20 at 14:38 +0530, Laxman Dewangan wrote:
-> + * dma_transfer_mode: Different dma transfer mode.
->> + * DMA_MODE_ONCE: Dma transfer the configured buffer once and at the end of
->> + *           transfer, dma  stops automatically and generates interrupt
->> + *           if enabled. SW need to reprogram dma for next transfer.
->> + * DMA_MODE_CYCLE: Dma keeps transferring the same buffer again and again
->> + *           until dma stopped explicitly by SW or another buffer configured.
->> + *           After transfer completes, dma again starts transfer from
->> + *           beginning of buffer without sw intervention. If any new
->> + *           address/size is configured during buffer transfer then
->> + *           dma start transfer with new configuration otherwise it
->> + *           will keep transferring with old configuration. It also
->> + *           generates the interrupt after buffer transfer completes.
-> why do you need to define this? use the cyclic api to convey this
+--
 
-This is not the public definition, only used in dma_driver locally. The 
-tegra dma support the cyclic mode in two ways;
-Cyclic single interrupt mode on which it generates interrupt once full 
-buffer transfer completes and hw keep transferring the data from start 
-of buffer without sw intervention.
-Cyclic double interrupt mode on which it generates interrupt two times, 
-once after half buffer and second after full buffer. The hw keep 
-transferring buffer in cyclic manner.
+This patch doesn't update all cpuidle device registrations. I will do that
+in a next version after agreement on the exact data structure to be
+introduced.
 
-I am using these mode based on how cyclic parameter is passed from client.
-If period_len is half of buffer len the using cyclic double interrupt 
-mode and hence configure dma once for two interrupt.
-For other cases, I am using the cyclic single interrupt mode.
+Changes in v2:
 
+* separated state latecny registration from device registration
 
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ arch/arm/mach-tegra/cpuidle.c      |   21 +++++++++++-----
+ drivers/cpuidle/cpuidle.c          |   44 +++++++++++++++++++++++++++++++----
+ drivers/cpuidle/driver.c           |   25 --------------------
+ drivers/cpuidle/governors/ladder.c |   21 +++++++++-------
+ drivers/cpuidle/governors/menu.c   |    7 +++--
+ drivers/cpuidle/sysfs.c            |   34 ++++++++++++++++++---------
+ include/linux/cpuidle.h            |   20 +++++++++------
+ 7 files changed, 104 insertions(+), 68 deletions(-)
 
->> + * DMA_MODE_CYCLE_HALF_NOTIFY: In this mode dma keeps transferring the buffer
->> + *           into two folds. This is kind of ping-pong buffer where both
->> + *           buffer size should be same. Dma completes the one buffer,
->> + *           generates interrupt and keep transferring the next buffer
->> + *           whose address start just next to first buffer. At the end of
->> + *           second buffer transfer, dma again generates interrupt and
->> + *           keep transferring of the data from starting of first buffer.
->> + *           If sw wants to change the address/size of the buffer then
->> + *           it needs to change only when dma transferring the second
->> + *           half of buffer. In dma configuration, it only need to
->> + *           configure starting of first buffer and size of first buffer.
->> + *           Dma hw assumes that striating address of second buffer is just
->> + *           next to end of first buffer and size is same as the first
->> + *           buffer.
-> isnt this a specifc example of cylci and frankly why should dmaengine
-> care about this. This one of the configurations you are passing for a
-> cyclic dma operation
-
-No special configuration is passed. Just based on buf_len and 
-period_len, the mode get selected.
-
->> + */
->> +enum dma_transfer_mode {
->> +     DMA_MODE_NONE,
->> +     DMA_MODE_ONCE,
->> +     DMA_MODE_CYCLE,
->> +     DMA_MODE_CYCLE_HALF_NOTIFY,
->> +};
->> +
->> +/* List of memory allocated for that channel */
->> +struct tegra_dma_chan_mem_alloc {
->> +     struct list_head        node;
->> +};
-> this seems questionable too...
-
-When we allocate the channel, initially allocate some descriptors with 
-some initial count. If client has more request and if it is found out of 
-descriptor then we reallocate the some more descriptors. All these 
-allocations are dynamically and when Chanel got released, it frees all 
-allocations.
-This structure is to maintain the list of memory pointers which are 
-allocated.
-
-here I am allocating chunk of descriptor in one shot, not one by one. If 
-I allocate descriptor one by one then I will not need this structure. 
-tried to optimize the malloc call here.
-
-
->> + * The client's request for data transfer can be broken into multiple
->> + * sub-transfer as per requestor details and hw support.
-> typo                      ^^^^^^^^^
-
-Will fix this.
-
->> + * tegra_dma_desc: Tegra dma descriptors which manages the client requests.
->> + * This de scripts keep track of transfer status, callbacks, transfer and
-> again     ^^^^
-Will fix this, thanks for pointing. My spell check did not found it.
-
-
->> +
->> +static dma_cookie_t tegra_dma_tx_submit(struct dma_async_tx_descriptor *tx);
->> +
->> +static int allocate_tegra_desc(struct tegra_dma_channel *tdc,
->> +             int ndma_desc, int nsg_req)
-> what does the last arg mean?
-
-This is number of transfer request. So if client call the prep_slave or 
-prep_dma_cyclic with multiple segment/period len then this structure 
-will contain the details of sub transfer per segment/period_len.
-And it allocate one main dma_descriptor which have the transfer 
-descriptor. So one dma_desc which is allocated one per call will contain 
-list of such transfer requests.
-
->> +     INIT_LIST_HEAD(&sg_req_list);
->> +
->> +     /* Calculate total require size of memory and then allocate */
->> +     dma_desc_size = sizeof(struct tegra_dma_desc) * ndma_desc;
->> +     sg_req_size = sizeof(struct tegra_dma_sg_req) * nsg_req;
->> +     chan_mem_size = sizeof(struct tegra_dma_chan_mem_alloc);
->> +     total_size = chan_mem_size + dma_desc_size + sg_req_size;
-> why cant you simply allocate three structs you need?
-
-So allocation is done for number of dma desc and number of request 
-structure and the structure which keeps track for allocated pointers.
-Here I am calculating total allocation size and then allocating once in 
-place of allocating them in loop.
-
->> +static int tegra_dma_slave_config(struct dma_chan *dc,
->> +             struct dma_slave_config *sconfig)
->> +{
->> +     struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
->> +
->> +     if (!list_empty(&tdc->pending_sg_req)) {
->> +             dev_err(tdc2dev(tdc),
->> +                  "dma requests are pending, cannot take new configuration");
->> +             return -EBUSY;
->> +     }
->> +
->> +     /* Slave specific configuration is must for channel configuration */
->> +     if (!dc->private) {
-> private is deprecated, pls dont use that
-
-OK,  I saw this in the linux-next and hence I used it. So is there any 
-way to send the client specific data to the dma driver.
-I will remove this.
-
-
->> +
->> +     apb_seq = APB_SEQ_WRAP_WORD_1;
->> +
->> +     switch (direction) {
->> +     case DMA_MEM_TO_DEV:
->> +             apb_ptr = tdc->dma_sconfig.dst_addr;
->> +             apb_seq |= get_bus_width(tdc->dma_sconfig.dst_addr_width);
->> +             csr |= CSR_DIR;
->> +             break;
->> +
->> +     case DMA_DEV_TO_MEM:
->> +             apb_ptr = tdc->dma_sconfig.src_addr;
->> +             apb_seq |= get_bus_width(tdc->dma_sconfig.src_addr_width);
->> +             break;
-> you dont support DMA_MEM_TO_DEV?
->
-
-Supported, first case ;-)
-But MEM_TO_MEM is not supported by this dma controller.
-
->
->> +     if (!period_len)
->> +             period_len = buf_len;
-> i am not sure about this assignment here. Why should period length be
-> ZERO?
->
-
-Just in case, if some client send it to ZERO then  setting it to buf_len 
-in place of returning error.
-
-
->> +
->> +     if (buf_len % period_len) {
->> +             dev_err(tdc2dev(tdc),
->> +                "buf_len %d should be multiple of period_len %d\n",
->> +                     buf_len, period_len);
->> +             return NULL;
->> +     }
-> I am assuming you are also putting this as a constraint in sound driver.
->
-
-Yaah, I think sound driver make sure that the buf_len should be integer 
-multiple period_len. Not supporting if it is not  to reduce the complexity.
-
->> +
->> +     half_buffer_notify = (buf_len == (2 * period_len)) ? true : false;
->> +     len = (half_buffer_notify) ? buf_len / 2 : period_len;
->> +     if ((len&  3) || (buf_addr&  3) ||
->> +                     (len>  tdc->tdma->chip_data.max_dma_count)) {
->> +             dev_err(tdc2dev(tdc),
->> +                     "Dma length/memory address is not correct\n");
-> not supported would be apt
-
-Fine. I will do it.
-
->> +#ifndef LINUX_TEGRA_DMA_H
->> +#define LINUX_TEGRA_DMA_H
->> +
->> +/*
->> + * tegra_dma_burst_size: Burst size of dma.
->> + * @TEGRA_DMA_AUTO: Based on transfer size, select the burst size.
->> + *       If it is multple of 32 bytes then burst size will be 32 bytes else
->> + *       If it is multiple of 16 bytes then burst size will be 16 bytes else
->> + *       If it is multiple of 4 bytes then burst size will be 4 bytes.
->> + * @TEGRA_DMA_BURST_1: Burst size is 1 word/4 bytes.
->> + * @TEGRA_DMA_BURST_4: Burst size is 4 word/16 bytes.
->> + * @TEGRA_DMA_BURST_8: Burst size is 8 words/32 bytes.
->> + */
->> +enum tegra_dma_burst_size {
->> +     TEGRA_DMA_AUTO,
->> +     TEGRA_DMA_BURST_1,
->> +     TEGRA_DMA_BURST_4,
->> +     TEGRA_DMA_BURST_8,
->> +};
-> why should this be global, clinet should pass them as defined in
-> dmaengine.h
-
-The dma_slave_config on the dmaengine have the member as src_maxburst 
-and I understand that this is for maximum burst only.
-and so passing the actual burst size, I defined new enums.  Also wanted 
-to have the auto mode where I can select the BURST size based on the 
-request length.
-if some encoding and understanding is maintain between client and dma 
-driver then I can get rid of this:
-like src_maxburst = 0 is for the selection of burst size based on req 
-len otherwise use non-zero value of src_maxburst.
-
-
-
->> + * @dma_dev: required DMA master client device.
->> + * @dm_req_id: Peripheral dma requestor ID.
->> + */
->> +struct tegra_dma_slave {
->> +     struct device                   *client_dev;
->> +     enum tegra_dma_requestor        dma_req_id;
->> +     enum tegra_dma_burst_size       burst_size;
-> pls remove
-
-if above is OK then I can remove this.
-
->> +};
->> +
->> +#endif /* LINUX_TEGRA_DMA_H */
-> Please also update the driver to use the cookie helpers in
-> drivers/dma/dmaengine.h
->
-
-I have already used cookie helper.
+diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
+index d83a8c0..84e3674 100644
+--- a/arch/arm/mach-tegra/cpuidle.c
++++ b/arch/arm/mach-tegra/cpuidle.c
+@@ -37,20 +37,26 @@ static int tegra_idle_enter_lp3(struct cpuidle_device *dev,
+ struct cpuidle_driver tegra_idle_driver = {
+ 	.name = "tegra_idle",
+ 	.owner = THIS_MODULE,
++	.power_specified = 1,
+ 	.state_count = 1,
+ 	.states = {
+ 		[0] = {
+-			.enter			= tegra_idle_enter_lp3,
+-			.exit_latency		= 10,
+-			.target_residency	= 10,
+-			.power_usage		= 600,
+-			.flags			= CPUIDLE_FLAG_TIME_VALID,
+-			.name			= "LP3",
+-			.desc			= "CPU flow-controlled",
++			.enter	= tegra_idle_enter_lp3,
++			.name	= "LP3",
++			.desc	= "CPU flow-controlled",
+ 		},
+ 	},
+ };
+ 
++struct cpuidle_state_parameters tegra_idle_parameters[] = {
++	[0] = {
++		.exit_latency		= 10,
++		.target_residency	= 10,
++		.power_usage		= 600,
++		.flags			= CPUIDLE_FLAG_TIME_VALID,
++	},
++};
++
+ static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
+ 
+ static int tegra_idle_enter_lp3(struct cpuidle_device *dev,
+@@ -101,6 +107,7 @@ static int __init tegra_cpuidle_init(void)
+ 				cpu);
+ 			return ret;
+ 		}
++		cpuidle_register_stateinfo(dev, tegra_idle_parameters);
+ 	}
+ 	return 0;
+ }
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 588b44a..32e3a1b 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -90,8 +90,9 @@ int cpuidle_play_dead(void)
+ 	for (i = CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++) {
+ 		struct cpuidle_state *s = &drv->states[i];
+ 
+-		if (s->power_usage < power_usage && s->enter_dead) {
+-			power_usage = s->power_usage;
++		if (dev->state_parameters[i].power_usage < power_usage
++				&& s->enter_dead) {
++			power_usage = dev->state_parameters[i].power_usage;
+ 			dead_state = i;
+ 		}
+ 	}
+@@ -402,9 +403,6 @@ int cpuidle_register_device(struct cpuidle_device *dev)
+ 		return ret;
+ 	}
+ 
+-	cpuidle_enable_device(dev);
+-	cpuidle_install_idle_handler();
+-
+ 	mutex_unlock(&cpuidle_lock);
+ 
+ 	return 0;
+@@ -441,6 +439,42 @@ void cpuidle_unregister_device(struct cpuidle_device *dev)
+ 
+ EXPORT_SYMBOL_GPL(cpuidle_unregister_device);
+ 
++void cpuidle_register_stateinfo(struct cpuidle_device *dev,
++				struct cpuidle_state_parameters *info)
++{
++	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
++	int i;
++
++	mutex_lock(&cpuidle_lock);
++
++	dev->state_parameters = info;
++
++	/*
++	 * cpuidle driver should set the drv->power_specified bit
++	 * before registering if the driver provides
++	 * power_usage numbers.
++	 *
++	 * If power_specified is not set,
++	 * we fill in power_usage with decreasing values as the
++	 * cpuidle code has an implicit assumption that state Cn
++	 * uses less power than C(n-1).
++	 *
++	 * With CONFIG_ARCH_HAS_CPU_RELAX, C0 is already assigned
++	 * an power value of -1.  So we use -2, -3, etc, for other
++	 * c-states.
++	 */
++	if (!cpuidle_driver->power_specified) {
++		for (i = CPUIDLE_DRIVER_STATE_START;
++				i < cpuidle_driver->state_count; i++)
++			dev->state_parameters[i].power_usage = -1 - i;
++	}
++
++	cpuidle_enable_device(dev);
++	cpuidle_install_idle_handler();
++
++	mutex_unlock(&cpuidle_lock);
++}
++
+ #ifdef CONFIG_SMP
+ 
+ static void smp_callback(void *v)
+diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
+index 40cd3f3..d81c6db 100644
+--- a/drivers/cpuidle/driver.c
++++ b/drivers/cpuidle/driver.c
+@@ -17,30 +17,6 @@
+ static struct cpuidle_driver *cpuidle_curr_driver;
+ DEFINE_SPINLOCK(cpuidle_driver_lock);
+ 
+-static void __cpuidle_register_driver(struct cpuidle_driver *drv)
+-{
+-	int i;
+-	/*
+-	 * cpuidle driver should set the drv->power_specified bit
+-	 * before registering if the driver provides
+-	 * power_usage numbers.
+-	 *
+-	 * If power_specified is not set,
+-	 * we fill in power_usage with decreasing values as the
+-	 * cpuidle code has an implicit assumption that state Cn
+-	 * uses less power than C(n-1).
+-	 *
+-	 * With CONFIG_ARCH_HAS_CPU_RELAX, C0 is already assigned
+-	 * an power value of -1.  So we use -2, -3, etc, for other
+-	 * c-states.
+-	 */
+-	if (!drv->power_specified) {
+-		for (i = CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++)
+-			drv->states[i].power_usage = -1 - i;
+-	}
+-}
+-
+-
+ /**
+  * cpuidle_register_driver - registers a driver
+  * @drv: the driver
+@@ -58,7 +34,6 @@ int cpuidle_register_driver(struct cpuidle_driver *drv)
+ 		spin_unlock(&cpuidle_driver_lock);
+ 		return -EBUSY;
+ 	}
+-	__cpuidle_register_driver(drv);
+ 	cpuidle_curr_driver = drv;
+ 	spin_unlock(&cpuidle_driver_lock);
+ 
+diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
+index b6a09ea..2e7ea8c 100644
+--- a/drivers/cpuidle/governors/ladder.c
++++ b/drivers/cpuidle/governors/ladder.c
+@@ -79,9 +79,9 @@ static int ladder_select_state(struct cpuidle_driver *drv,
+ 
+ 	last_state = &ldev->states[last_idx];
+ 
+-	if (drv->states[last_idx].flags & CPUIDLE_FLAG_TIME_VALID) {
++	if (dev->state_parameters[last_idx].flags & CPUIDLE_FLAG_TIME_VALID) {
+ 		last_residency = cpuidle_get_last_residency(dev) - \
+-					 drv->states[last_idx].exit_latency;
++				 dev->state_parameters[last_idx].exit_latency;
+ 	}
+ 	else
+ 		last_residency = last_state->threshold.promotion_time + 1;
+@@ -89,7 +89,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
+ 	/* consider promotion */
+ 	if (last_idx < drv->state_count - 1 &&
+ 	    last_residency > last_state->threshold.promotion_time &&
+-	    drv->states[last_idx + 1].exit_latency <= latency_req) {
++	    dev->state_parameters[last_idx + 1].exit_latency <= latency_req) {
+ 		last_state->stats.promotion_count++;
+ 		last_state->stats.demotion_count = 0;
+ 		if (last_state->stats.promotion_count >= last_state->threshold.promotion_count) {
+@@ -100,11 +100,12 @@ static int ladder_select_state(struct cpuidle_driver *drv,
+ 
+ 	/* consider demotion */
+ 	if (last_idx > CPUIDLE_DRIVER_STATE_START &&
+-	    drv->states[last_idx].exit_latency > latency_req) {
++	    dev->state_parameters[last_idx].exit_latency > latency_req) {
+ 		int i;
+ 
+ 		for (i = last_idx - 1; i > CPUIDLE_DRIVER_STATE_START; i--) {
+-			if (drv->states[i].exit_latency <= latency_req)
++			if (dev->state_parameters[i].exit_latency <=
++					latency_req)
+ 				break;
+ 		}
+ 		ladder_do_selection(ldev, last_idx, i);
+@@ -136,12 +137,12 @@ static int ladder_enable_device(struct cpuidle_driver *drv,
+ 	int i;
+ 	struct ladder_device *ldev = &per_cpu(ladder_devices, dev->cpu);
+ 	struct ladder_device_state *lstate;
+-	struct cpuidle_state *state;
++	struct cpuidle_state_parameters *state_parameters;
+ 
+ 	ldev->last_state_idx = CPUIDLE_DRIVER_STATE_START;
+ 
+ 	for (i = 0; i < drv->state_count; i++) {
+-		state = &drv->states[i];
++		state_parameters = &dev->state_parameters[i];
+ 		lstate = &ldev->states[i];
+ 
+ 		lstate->stats.promotion_count = 0;
+@@ -151,9 +152,11 @@ static int ladder_enable_device(struct cpuidle_driver *drv,
+ 		lstate->threshold.demotion_count = DEMOTION_COUNT;
+ 
+ 		if (i < drv->state_count - 1)
+-			lstate->threshold.promotion_time = state->exit_latency;
++			lstate->threshold.promotion_time =
++				state_parameters->exit_latency;
+ 		if (i > 0)
+-			lstate->threshold.demotion_time = state->exit_latency;
++			lstate->threshold.demotion_time =
++				state_parameters->exit_latency;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 0633575..e9bbc20 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -281,7 +281,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	 * unless the timer is happening really really soon.
+ 	 */
+ 	if (data->expected_us > 5 &&
+-		drv->states[CPUIDLE_DRIVER_STATE_START].disable == 0)
++		dev->state_parameters[CPUIDLE_DRIVER_STATE_START].disable == 0)
+ 		data->last_state_idx = CPUIDLE_DRIVER_STATE_START;
+ 
+ 	/*
+@@ -289,7 +289,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	 * our constraints.
+ 	 */
+ 	for (i = CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++) {
+-		struct cpuidle_state *s = &drv->states[i];
++		struct cpuidle_state_parameters *s = &dev->state_parameters[i];
+ 
+ 		if (s->disable)
+ 			continue;
+@@ -336,7 +336,8 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 	struct menu_device *data = &__get_cpu_var(menu_devices);
+ 	int last_idx = data->last_state_idx;
+ 	unsigned int last_idle_us = cpuidle_get_last_residency(dev);
+-	struct cpuidle_state *target = &drv->states[last_idx];
++	struct cpuidle_state_parameters *target =
++			&dev->state_parameters[last_idx];
+ 	unsigned int measured_us;
+ 	u64 new_factor;
+ 
+diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
+index 88032b4..7b17413 100644
+--- a/drivers/cpuidle/sysfs.c
++++ b/drivers/cpuidle/sysfs.c
+@@ -215,9 +215,10 @@ static struct kobj_type ktype_cpuidle = {
+ 
+ struct cpuidle_state_attr {
+ 	struct attribute attr;
+-	ssize_t (*show)(struct cpuidle_state *, \
+-					struct cpuidle_state_usage *, char *);
+-	ssize_t (*store)(struct cpuidle_state *, const char *, size_t);
++	ssize_t (*show)(struct cpuidle_state *, struct cpuidle_state_usage *,
++				struct cpuidle_state_parameters *, char *);
++	ssize_t (*store)(struct cpuidle_state_parameters *, const char *,
++				size_t);
+ };
+ 
+ #define define_one_state_ro(_name, show) \
+@@ -228,13 +229,15 @@ static struct cpuidle_state_attr attr_##_name = __ATTR(_name, 0644, show, store)
+ 
+ #define define_show_state_function(_name) \
+ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+-			 struct cpuidle_state_usage *state_usage, char *buf) \
++			 struct cpuidle_state_usage *state_usage, \
++			 struct cpuidle_state_parameters *state_parameters, \
++			 char *buf) \
+ { \
+-	return sprintf(buf, "%u\n", state->_name);\
++	return sprintf(buf, "%u\n", state_parameters->_name);\
+ }
+ 
+ #define define_store_state_function(_name) \
+-static ssize_t store_state_##_name(struct cpuidle_state *state, \
++static ssize_t store_state_##_name(struct cpuidle_state_parameters *state, \
+ 		const char *buf, size_t size) \
+ { \
+ 	long value; \
+@@ -253,14 +256,18 @@ static ssize_t store_state_##_name(struct cpuidle_state *state, \
+ 
+ #define define_show_state_ull_function(_name) \
+ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+-			struct cpuidle_state_usage *state_usage, char *buf) \
++			struct cpuidle_state_usage *state_usage, \
++			struct cpuidle_state_parameters *state_parameters, \
++			char *buf) \
+ { \
+ 	return sprintf(buf, "%llu\n", state_usage->_name);\
+ }
+ 
+ #define define_show_state_str_function(_name) \
+ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+-			struct cpuidle_state_usage *state_usage, char *buf) \
++			struct cpuidle_state_usage *state_usage, \
++			struct cpuidle_state_parameters *state_parameters, \
++			char *buf) \
+ { \
+ 	if (state->_name[0] == '\0')\
+ 		return sprintf(buf, "<null>\n");\
+@@ -298,6 +305,7 @@ static struct attribute *cpuidle_state_default_attrs[] = {
+ #define kobj_to_state_obj(k) container_of(k, struct cpuidle_state_kobj, kobj)
+ #define kobj_to_state(k) (kobj_to_state_obj(k)->state)
+ #define kobj_to_state_usage(k) (kobj_to_state_obj(k)->state_usage)
++#define kobj_to_state_parameters(k) (kobj_to_state_obj(k)->state_parameters)
+ #define attr_to_stateattr(a) container_of(a, struct cpuidle_state_attr, attr)
+ static ssize_t cpuidle_state_show(struct kobject * kobj,
+ 	struct attribute * attr ,char * buf)
+@@ -305,10 +313,12 @@ static ssize_t cpuidle_state_show(struct kobject * kobj,
+ 	int ret = -EIO;
+ 	struct cpuidle_state *state = kobj_to_state(kobj);
+ 	struct cpuidle_state_usage *state_usage = kobj_to_state_usage(kobj);
++	struct cpuidle_state_parameters *state_parameters =
++				kobj_to_state_parameters(kobj);
+ 	struct cpuidle_state_attr * cattr = attr_to_stateattr(attr);
+ 
+ 	if (cattr->show)
+-		ret = cattr->show(state, state_usage, buf);
++		ret = cattr->show(state, state_usage, state_parameters, buf);
+ 
+ 	return ret;
+ }
+@@ -317,11 +327,12 @@ static ssize_t cpuidle_state_store(struct kobject *kobj,
+ 	struct attribute *attr, const char *buf, size_t size)
+ {
+ 	int ret = -EIO;
+-	struct cpuidle_state *state = kobj_to_state(kobj);
++	struct cpuidle_state_parameters *state_parameters =
++				kobj_to_state_parameters(kobj);
+ 	struct cpuidle_state_attr *cattr = attr_to_stateattr(attr);
+ 
+ 	if (cattr->store)
+-		ret = cattr->store(state, buf, size);
++		ret = cattr->store(state_parameters, buf, size);
+ 
+ 	return ret;
+ }
+@@ -369,6 +380,7 @@ int cpuidle_add_state_sysfs(struct cpuidle_device *device)
+ 			goto error_state;
+ 		kobj->state = &drv->states[i];
+ 		kobj->state_usage = &device->states_usage[i];
++		kobj->state_parameters = &device->state_parameters[i];
+ 		init_completion(&kobj->kobj_unregister);
+ 
+ 		ret = kobject_init_and_add(&kobj->kobj, &ktype_state_cpuidle, &device->kobj,
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 6c26a3d..13f6532 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -42,12 +42,6 @@ struct cpuidle_state {
+ 	char		name[CPUIDLE_NAME_LEN];
+ 	char		desc[CPUIDLE_DESC_LEN];
+ 
+-	unsigned int	flags;
+-	unsigned int	exit_latency; /* in US */
+-	int		power_usage; /* in mW */
+-	unsigned int	target_residency; /* in US */
+-	unsigned int    disable;
+-
+ 	int (*enter)	(struct cpuidle_device *dev,
+ 			struct cpuidle_driver *drv,
+ 			int index);
+@@ -55,6 +49,14 @@ struct cpuidle_state {
+ 	int (*enter_dead) (struct cpuidle_device *dev, int index);
+ };
+ 
++struct cpuidle_state_parameters {
++	unsigned int	flags;
++	unsigned int	exit_latency; /* in US */
++	int		power_usage; /* in mW */
++	unsigned int	target_residency; /* in US */
++	unsigned int    disable;
++};
++
+ /* Idle State Flags */
+ #define CPUIDLE_FLAG_TIME_VALID	(0x01) /* is residency time measurable? */
+ 
+@@ -83,6 +85,7 @@ cpuidle_set_statedata(struct cpuidle_state_usage *st_usage, void *data)
+ struct cpuidle_state_kobj {
+ 	struct cpuidle_state *state;
+ 	struct cpuidle_state_usage *state_usage;
++	struct cpuidle_state_parameters *state_parameters;
+ 	struct completion kobj_unregister;
+ 	struct kobject kobj;
+ };
+@@ -96,7 +99,7 @@ struct cpuidle_device {
+ 	int			state_count;
+ 	struct cpuidle_state_usage	states_usage[CPUIDLE_STATE_MAX];
+ 	struct cpuidle_state_kobj *kobjs[CPUIDLE_STATE_MAX];
+-
++	struct cpuidle_state_parameters *state_parameters;
+ 	struct list_head 	device_list;
+ 	struct kobject		kobj;
+ 	struct completion	kobj_unregister;
+@@ -140,7 +143,8 @@ struct cpuidle_driver *cpuidle_get_driver(void);
+ extern void cpuidle_unregister_driver(struct cpuidle_driver *drv);
+ extern int cpuidle_register_device(struct cpuidle_device *dev);
+ extern void cpuidle_unregister_device(struct cpuidle_device *dev);
+-
++extern void cpuidle_register_stateinfo(struct cpuidle_device *dev,
++				struct cpuidle_state_parameters *info);
+ extern void cpuidle_pause_and_lock(void);
+ extern void cpuidle_resume_and_unlock(void);
+ extern int cpuidle_enable_device(struct cpuidle_device *dev);
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
