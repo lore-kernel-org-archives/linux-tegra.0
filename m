@@ -1,143 +1,165 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] iommu/tegra: smmu: Refrain from accessing to AHB registers
-Date: Mon, 23 Apr 2012 14:37:23 +0300
-Message-ID: <1335181043-15348-3-git-send-email-hdoyu@nvidia.com>
-References: <1335181043-15348-1-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/1] dt: Add general DMA window parser
+Date: Mon, 23 Apr 2012 13:53:52 +0200
+Message-ID: <20120423.145352.1868450546332033138.hdoyu@nvidia.com>
+References: <20120418.131907.2172387798112620167.hdoyu@nvidia.com><4F8EF99E.3050709@wwwdotorg.org><20120419151920.68ab735a5b9eb8fb938b4d11@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1335181043-15348-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120419151920.68ab735a5b9eb8fb938b4d11-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
-ready, instead of directly aceessing AHB registers.
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+This code was based on:
+	"arch/microblaze/kernel/prom_parse.c"
+	"arch/powerpc/kernel/prom_parse.c"
+
+"ibm," prefix could be supported with some modification.
 
 Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/iommu/tegra-smmu.c |   40 ++++++++--------------------------------
- 1 files changed, 8 insertions(+), 32 deletions(-)
+v2:
+- Add several error checks. (Thierry Reding)
+- Use property name given to func. (Stephen Warren)
+- Support multiple entries. (Stephen Warren)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index ecd6790..de9fafe 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -36,6 +36,7 @@
+---
+ drivers/of/Kconfig         |    4 ++
+ drivers/of/Makefile        |    1 +
+ drivers/of/of_dma.c        |   67 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of_address.h |   13 ++++++++
+ 4 files changed, 85 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index dfba3e6..3b0298b 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -83,4 +83,8 @@ config OF_MTD
+ 	depends on MTD
+ 	def_bool y
  
- #include <mach/iomap.h>
- #include <mach/smmu.h>
-+#include <mach/tegra-ahb.h>
++config OF_DMA
++	depends on HAS_DMA
++	def_bool y
++
+ endmenu # OF
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index e027f44..711ff5b 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
+ obj-$(CONFIG_OF_PCI)	+= of_pci.o
+ obj-$(CONFIG_OF_PCI_IRQ)  += of_pci_irq.o
+ obj-$(CONFIG_OF_MTD)	+= of_mtd.o
++obj-$(CONFIG_OF_DMA)	+= of_dma.o
+diff --git a/drivers/of/of_dma.c b/drivers/of/of_dma.c
+new file mode 100644
+index 0000000..80bd7aa
+--- /dev/null
++++ b/drivers/of/of_dma.c
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Based on:
++ *	"arch/microblaze/kernel/prom_parse.c"
++ *	"arch/powerpc/kernel/prom_parse.c"
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/export.h>
++#include <linux/of_address.h>
++
++int of_parse_dma_window(struct device_node *dn,
++			const char *propname, int index,
++			unsigned long *busno,
++			dma_addr_t *addr, size_t *size)
++{
++	const __be32 *dma_window, *end;
++	int bytes, cur_index = 0;
++
++	if (!dn || !propname || !addr || !size)
++		return -EINVAL;
++
++	dma_window = of_get_property(dn, propname, &bytes);
++	if (!dma_window)
++		return -ENODEV;
++	end = dma_window + bytes / sizeof(*dma_window);
++
++	while (dma_window < end) {
++		u32 cells;
++		const void *prop;
++
++		/* busno is always one cell */
++		if (busno)
++			*busno = be32_to_cpup(dma_window++);
++
++		prop = of_get_property(dn, "#dma-address-cells", NULL);
++		if (!prop)
++			prop = of_get_property(dn, "#address-cells", NULL);
++
++		cells = prop ? be32_to_cpup(prop) : of_n_addr_cells(dn);
++		if (!cells)
++			return -EINVAL;
++		*addr = of_read_number(dma_window, cells);
++		dma_window += cells;
++
++		prop = of_get_property(dn, "#dma-size-cells", NULL);
++		cells = prop ? be32_to_cpup(prop) : of_n_size_cells(dn);
++		if (!cells)
++			return -EINVAL;
++		*size = of_read_number(dma_window, cells);
++		dma_window += cells;
++
++		if (cur_index++ == index)
++			break;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(of_parse_dma_window);
+diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+index 01b925a..1138cd3 100644
+--- a/include/linux/of_address.h
++++ b/include/linux/of_address.h
+@@ -21,6 +21,11 @@ extern void __iomem *of_iomap(struct device_node *device, int index);
+ extern const u32 *of_get_address(struct device_node *dev, int index,
+ 			   u64 *size, unsigned int *flags);
  
- /* bitmap of the page sizes currently supported */
- #define SMMU_IOMMU_PGSIZES	(SZ_4K)
-@@ -111,11 +112,6 @@
- 
- #define SMMU_PDE_NEXT_SHIFT		28
- 
--/* AHB Arbiter Registers */
--#define AHB_XBAR_CTRL				0xe0
--#define AHB_XBAR_CTRL_SMMU_INIT_DONE_DONE	1
--#define AHB_XBAR_CTRL_SMMU_INIT_DONE_SHIFT	17
--
- #define SMMU_NUM_ASIDS				4
- #define SMMU_TLB_FLUSH_VA_SECTION__MASK		0xffc00000
- #define SMMU_TLB_FLUSH_VA_SECTION__SHIFT	12 /* right shift */
-@@ -235,7 +231,7 @@ struct smmu_as {
-  * Per SMMU device - IOMMU device
-  */
- struct smmu_device {
--	void __iomem	*regs, *regs_ahbarb;
-+	void __iomem	*regs;
- 	unsigned long	iovmm_base;	/* remappable base address */
- 	unsigned long	page_count;	/* total remappable size */
- 	spinlock_t	lock;
-@@ -257,7 +253,7 @@ struct smmu_device {
- static struct smmu_device *smmu_handle; /* unique for a system */
- 
- /*
-- *	SMMU/AHB register accessors
-+ *	SMMU register accessors
-  */
- static inline u32 smmu_read(struct smmu_device *smmu, size_t offs)
++extern int of_parse_dma_window(struct device_node *dev,
++			       const char *propname, int index,
++			       unsigned long *busno,
++			       dma_addr_t *phys, size_t *size);
++
+ #ifndef pci_address_to_pio
+ static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
+ #define pci_address_to_pio pci_address_to_pio
+@@ -48,6 +53,14 @@ static inline const u32 *of_get_address(struct device_node *dev, int index,
  {
-@@ -268,15 +264,6 @@ static inline void smmu_write(struct smmu_device *smmu, u32 val, size_t offs)
- 	writel(val, smmu->regs + offs);
+ 	return NULL;
  }
++
++extern int of_parse_dma_window(struct device_node *dev,
++			       const char *propname, int index,
++			       unsigned long *busno,
++			       dma_addr_t *phys, size_t *size)
++{
++	return 0;
++}
+ #endif /* CONFIG_OF_ADDRESS */
  
--static inline u32 ahb_read(struct smmu_device *smmu, size_t offs)
--{
--	return readl(smmu->regs_ahbarb + offs);
--}
--static inline void ahb_write(struct smmu_device *smmu, u32 val, size_t offs)
--{
--	writel(val, smmu->regs_ahbarb + offs);
--}
--
- #define VA_PAGE_TO_PA(va, page)	\
- 	(page_to_phys(page) + ((unsigned long)(va) & ~PAGE_MASK))
  
-@@ -397,11 +384,7 @@ static void smmu_setup_regs(struct smmu_device *smmu)
- 	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_PTC_CONFIG);
- 
- 	smmu_flush_regs(smmu, 1);
--
--	val = ahb_read(smmu, AHB_XBAR_CTRL);
--	val |= AHB_XBAR_CTRL_SMMU_INIT_DONE_DONE <<
--		AHB_XBAR_CTRL_SMMU_INIT_DONE_SHIFT;
--	ahb_write(smmu, val, AHB_XBAR_CTRL);
-+	tegra_ahb_enable_smmu();
- }
- 
- static void flush_ptc_and_tlb(struct smmu_device *smmu,
-@@ -883,7 +866,7 @@ static int tegra_smmu_resume(struct device *dev)
- static int tegra_smmu_probe(struct platform_device *pdev)
- {
- 	struct smmu_device *smmu;
--	struct resource *regs, *regs2, *window;
-+	struct resource *regs, *window;
- 	struct device *dev = &pdev->dev;
- 	int i, err = 0;
- 
-@@ -893,9 +876,8 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	BUILD_BUG_ON(PAGE_SHIFT != SMMU_PAGE_SHIFT);
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	regs2 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	window = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	if (!regs || !regs2 || !window) {
-+	window = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (!regs || !window) {
- 		dev_err(dev, "No SMMU resources\n");
- 		return -ENODEV;
- 	}
-@@ -911,9 +893,7 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	smmu->iovmm_base = (unsigned long)window->start;
- 	smmu->page_count = resource_size(window) >> SMMU_PAGE_SHIFT;
- 	smmu->regs = devm_ioremap(dev, regs->start, resource_size(regs));
--	smmu->regs_ahbarb = devm_ioremap(dev, regs2->start,
--					 resource_size(regs2));
--	if (!smmu->regs || !smmu->regs_ahbarb) {
-+	if (!smmu->regs) {
- 		dev_err(dev, "failed to remap SMMU registers\n");
- 		err = -ENXIO;
- 		goto fail;
-@@ -960,8 +940,6 @@ fail:
- 		__free_page(smmu->avp_vector_page);
- 	if (smmu->regs)
- 		devm_iounmap(dev, smmu->regs);
--	if (smmu->regs_ahbarb)
--		devm_iounmap(dev, smmu->regs_ahbarb);
- 	if (smmu && smmu->as) {
- 		for (i = 0; i < smmu->num_as; i++) {
- 			if (smmu->as[i].pdir_page) {
-@@ -993,8 +971,6 @@ static int tegra_smmu_remove(struct platform_device *pdev)
- 		__free_page(smmu->avp_vector_page);
- 	if (smmu->regs)
- 		devm_iounmap(dev, smmu->regs);
--	if (smmu->regs_ahbarb)
--		devm_iounmap(dev, smmu->regs_ahbarb);
- 	devm_kfree(dev, smmu);
- 	smmu_handle = NULL;
- 	return 0;
 -- 
 1.7.5.4
