@@ -1,44 +1,56 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: Add AHB driver
-Date: Mon, 23 Apr 2012 12:00:13 -0600
-Message-ID: <4F9598AD.2030308@wwwdotorg.org>
-References: <1335181043-15348-1-git-send-email-hdoyu@nvidia.com> <201204231233.09423.arnd@arndb.de>
+Subject: Re: [PATCH v2 1/1] dt: Add general DMA window parser
+Date: Mon, 23 Apr 2012 12:16:40 -0600
+Message-ID: <4F959C88.3090805@wwwdotorg.org>
+References: <20120418.131907.2172387798112620167.hdoyu@nvidia.com><4F8EF99E.3050709@wwwdotorg.org><20120419151920.68ab735a5b9eb8fb938b4d11@nvidia.com> <20120423.145352.1868450546332033138.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201204231233.09423.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <20120423.145352.1868450546332033138.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/23/2012 06:33 AM, Arnd Bergmann wrote:
-> On Monday 23 April 2012, Hiroshi DOYU wrote:
->> The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
->> High-performance Bus (AHB) architecture.
-...
->> @@ -122,6 +123,7 @@ void __init tegra20_init_early(void)
->>  	tegra_init_cache(0x331, 0x441);
->>  	tegra_pmc_init();
->>  	tegra_powergate_init();
->> +	tegra_ahb_gizmo_init();
->>  }
->>  #endif
->>  #ifdef CONFIG_ARCH_TEGRA_3x_SOC
->> @@ -132,5 +134,6 @@ void __init tegra30_init_early(void)
->>  	tegra_init_cache(0x441, 0x551);
->>  	tegra_pmc_init();
->>  	tegra_powergate_init();
->> +	tegra_ahb_gizmo_init();
->>  }
->>  #endif
+On 04/23/2012 05:53 AM, Hiroshi Doyu wrote:
+> From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Does it really have to be "early", rather than an initcall? Why?
+> This code was based on:
+> 	"arch/microblaze/kernel/prom_parse.c"
+> 	"arch/powerpc/kernel/prom_parse.c"
+> 
+> "ibm," prefix could be supported with some modification.
 
-I don't know whether it has to be early, but if this driver isn't going
-to be instantiated from device tree, I'd prefer it to be initialized by
-an explicit function call from the boards or common code rather than an
-initcall. It seems a lot easier to keep track of all the initialization
-by doing it explicitly. That said, it's quite possible this API couuld
-be called from say init_machine instead of init_early though.
+That'd probably be a good idea. If it isn't supported, then this code
+can't be used as a replacement for the PPC and Microblaze code.
+
+> +int of_parse_dma_window(struct device_node *dn,
+> +			const char *propname, int index,
+> +			unsigned long *busno,
+> +			dma_addr_t *addr, size_t *size)
+> +{
+> +	const __be32 *dma_window, *end;
+> +	int bytes, cur_index = 0;
+> +
+> +	if (!dn || !propname || !addr || !size)
+> +		return -EINVAL;
+
+Instead of erroring out if (!propname), perhaps:
+
+if (!propname)
+    propname = "dma-window";
+
+so that only drivers using bindings before this common binding was
+defined actually need to write out the property name?
+
+> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+...
+> +extern int of_parse_dma_window(struct device_node *dev,
+> +			       const char *propname, int index,
+> +			       unsigned long *busno,
+> +			       dma_addr_t *phys, size_t *size);
+
+This function has the same name as the PPC and Microblaze code it's
+based on. Is that going to cause compile and link errors due to
+duplicate symbol definitions?
