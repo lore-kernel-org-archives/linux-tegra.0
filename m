@@ -1,36 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/3] iommu/tegra: smmu: Add device tree support for SMMU
-Date: Mon, 23 Apr 2012 12:27:28 -0600
-Message-ID: <4F959F10.9010908@wwwdotorg.org>
-References: <1335182340-17237-1-git-send-email-hdoyu@nvidia.com> <1335182340-17237-2-git-send-email-hdoyu@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: Add AHB driver
+Date: Mon, 23 Apr 2012 18:32:15 +0000
+Message-ID: <201204231832.16268.arnd@arndb.de>
+References: <1335181043-15348-1-git-send-email-hdoyu@nvidia.com> <201204231233.09423.arnd@arndb.de> <4F9598AD.2030308@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1335182340-17237-2-git-send-email-hdoyu@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Hiroshi DOYU <hdoyu@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Joerg Roedel <joerg.roedel@amd.com>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F9598AD.2030308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/23/2012 05:58 AM, Hiroshi DOYU wrote:
-> Add device tree support for Tegra30 IOMMU(SMMU).
+On Monday 23 April 2012, Stephen Warren wrote:
+> I don't know whether it has to be early, but if this driver isn't going
+> to be instantiated from device tree, I'd prefer it to be initialized by
+> an explicit function call from the boards or common code rather than an
+> initcall. It seems a lot easier to keep track of all the initialization
+> by doing it explicitly. That said, it's quite possible this API couuld
+> be called from say init_machine instead of init_early though.
 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+Having it called from init_machine sounds ok, as long as it still
+scans the device tree for the addresses rather than hardcoding.
 
-> +	err = of_parse_dma_window(dev->of_node, "dma-window", 0, NULL,
-> +				  &base, &size);
-
-This patch also depends on "dt: Add general DMA window parser" that you
-sent earlier.
-
-> +	asids = be32_to_cpup(of_get_property(dev->of_node, "asids", NULL));
-> +	if (!asids)
-> +		return -ENODEV;
-
-What if of_get_property() fails?
-
-BTW, does the # ASIDs vary? I wonder if it's worth representing it in
-the device tree or not. If this driver has a chance of working
-unmodified on some future chip just by updating this DT property without
-any code changes, then it seems reasonable to have it in DT.
+	Arnd
