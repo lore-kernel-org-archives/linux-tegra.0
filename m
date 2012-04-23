@@ -1,85 +1,32 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 3/4] ARM: dt: tegra: enable als and proximity sensor
-Date: Mon, 23 Apr 2012 17:41:36 +0530
-Message-ID: <1335183097-21104-5-git-send-email-ldewangan@nvidia.com>
-References: <1335183097-21104-1-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1335183097-21104-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, rob.herring@calxeda.com, rob@landley.net, linux@arm.linux.org.uk, jic23@cam.ac.uk, gregkh@linuxfoundation.org, swarren@nvidia.com, olof@lixom.net, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1] dmaengine: tegra: add dma driver
+Date: Mon, 23 Apr 2012 17:47:03 +0530
+Message-ID: <4F95483F.5020005@nvidia.com>
+References: <1334912896-4614-1-git-send-email-ldewangan@nvidia.com>	 <1334920487.31825.98.camel@vkoul-udesk3>  <4F9153AF.7020901@nvidia.com> <1335170491.31825.104.camel@vkoul-udesk3>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1335170491.31825.104.camel@vkoul-udesk3>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: rmk <rmk-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the device info for ALS and proximity sensor for tegra
-boards cardhu, ventana and seabridge.
+Hi Russell,
+On Monday 23 April 2012 02:11 PM, Vinod Koul wrote:
+> On Fri, 2012-04-20 at 17:46 +0530, Laxman Dewangan wrote:
+>> Thanks Vinod for quick review.
+> Since I was on vacation, I hadn't noticed Russell has already sent the
+> patches for omap dma support.
+> http://permalink.gmane.org/gmane.linux.ports.arm.omap/75034
+>
+> It would be nice if both the efforts are coordinated.
+>
+> Btw I like the virtual channel support introduced by Russell
+>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-Changes from V1:
-- remove labels.
-- added interrupt numbers.
-
- arch/arm/boot/dts/tegra-cardhu.dts   |    8 ++++++++
- arch/arm/boot/dts/tegra-seaboard.dts |    8 ++++++++
- arch/arm/boot/dts/tegra-ventana.dts  |    8 ++++++++
- 3 files changed, 24 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-index ab8d901..facb950 100644
---- a/arch/arm/boot/dts/tegra-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -93,6 +93,14 @@
- 
- 	i2c@7000c500 {
- 		clock-frequency = <100000>;
-+
-+		/* ALS and Proximity sensor */
-+		isl29028@44 {
-+			compatible = "isil,isl29028";
-+			reg = <0x44>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <88 0x04>; /*gpio PL0 */
-+		};
- 	};
- 
- 	i2c@7000c700 {
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index ed0a2f5..a114183 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -270,6 +270,14 @@
- 			micdet-delay = <100>;
- 			gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
- 		};
-+
-+		/* ALS and proximity sensor */
-+		isl29018@44 {
-+			compatible = "isil,isl29018";
-+			reg = <0x44>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = < 202 0x04 >; /* GPIO PZ02 */
-+		};
- 	};
- 
- 	i2c@7000c400 {
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-index bd074cf..6ea41df 100644
---- a/arch/arm/boot/dts/tegra-ventana.dts
-+++ b/arch/arm/boot/dts/tegra-ventana.dts
-@@ -256,6 +256,14 @@
- 			micdet-delay = <100>;
- 			gpio-cfg = < 0xffffffff 0xffffffff 0 0xffffffff 0xffffffff >;
- 		};
-+
-+		/* ALS and proximity sensor */
-+		isl29018@44 {
-+			compatible = "isil,isl29018";
-+			reg = <0x44>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <202 0x04>; /*gpio PZ02 */
-+		};
- 	};
- 
- 	i2c@7000c400 {
--- 
-1.7.1.1
+Can you please point me the virtual channel related change? I am not 
+able to locate this like search for function vchan_* ().
+My driver is also on same line but not used vchan_* and also having 
+support for cyclic transfer.
