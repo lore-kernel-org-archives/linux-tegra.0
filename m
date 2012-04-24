@@ -1,37 +1,26 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix pclk rate
-Date: Tue, 24 Apr 2012 11:50:18 -0600
-Message-ID: <1335289818-21812-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/3] arm/dts: Tegra30: Add device tree support for SMMU
+Date: Tue, 24 Apr 2012 13:34:50 -0600
+Message-ID: <4F97005A.2010305@wwwdotorg.org>
+References: <1335182340-17237-1-git-send-email-hdoyu@nvidia.com> <1335182340-17237-3-git-send-email-hdoyu@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1335182340-17237-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 04/23/2012 05:58 AM, Hiroshi DOYU wrote:
+> Add device tree support for Tegra30 IOMMU(SMMU).
 
-Commit 40f9cf0 "ARM: tegra: reparent sclk to pll_c_out1" changed the
-rate of hclk. Since pclk is derived from that, and only has integer
-dividers, the pclk rate needs to change in the same fashion, from 54MHz
-to 60MHz.
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/common.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> +	smmu: smmu@7000f000 {
+...
+> +		interrupts = <0 13 0x40>;
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 654a457..2d80566 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -87,7 +87,7 @@ static __initdata struct tegra_clk_init_table tegra20_clk_init_table[] = {
- 	{ "pll_c_out1",	"pll_c",	120000000,	true },
- 	{ "sclk",	"pll_c_out1",	120000000,	true },
- 	{ "hclk",	"sclk",		120000000,	true },
--	{ "pclk",	"hclk",		54000000,	true },
-+	{ "pclk",	"hclk",		60000000,	true },
- 	{ "csite",	NULL,		0,		true },
- 	{ "emc",	NULL,		0,		true },
- 	{ "cpu",	NULL,		0,		true },
--- 
-1.7.0.4
+This interrupt is on the 3rd IRQ controller (or GIC bank) so should be
+(2*32)+13, i.e. 75 not 13.
