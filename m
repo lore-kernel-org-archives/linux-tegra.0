@@ -1,44 +1,48 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V2 2/4] staging: iio: light: of: Fix vendor prefix of
- isl29018/isl29028
-Date: Tue, 24 Apr 2012 11:43:39 +0530
-Message-ID: <4F964493.7060605@nvidia.com>
-References: <1335183097-21104-1-git-send-email-ldewangan@nvidia.com> <1335183097-21104-4-git-send-email-ldewangan@nvidia.com> <4F958E9F.8070402@wwwdotorg.org> <20120423172829.GA2666@kroah.com> <4F9594DB.5070308@wwwdotorg.org> <20120423174912.GA3214@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra_ventana: als and proximity sensor
+	isl29018 support
+Date: Tue, 24 Apr 2012 09:42:35 +0200
+Message-ID: <CACRpkdY5_F91oxzTScoBehABDHZBgZy1HkDK1okUq2uTLHh=Mg@mail.gmail.com>
+References: <1334645155-13799-1-git-send-email-ldewangan@nvidia.com>
+	<1334645155-13799-4-git-send-email-ldewangan@nvidia.com>
+	<4F8DF01D.9040900@wwwdotorg.org> <4F8FD709.60308@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20120423174912.GA3214@kroah.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "jic23@cam.ac.uk" <jic23@cam.ac.uk>, Stephen Warren <swarren@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <4F8FD709.60308@nvidia.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: devel-bounces@linuxdriverproject.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 23 April 2012 11:19 PM, Greg KH wrote:
-> On Mon, Apr 23, 2012 at 11:43:55AM -0600, Stephen Warren wrote:
->> On 04/23/2012 11:28 AM, Greg KH wrote:
->>> On Mon, Apr 23, 2012 at 11:17:19AM -0600, Stephen Warren wrote:
->>>> On 04/23/2012 06:11 AM, Laxman Dewangan wrote:
->>>>> ISL29018/ISL29028 is from Intersil Corporation and making the
->>>>> vendor prefix for this part as "isil" for OF compatibity.
->>>>>
->>>>> Signed-off-by: Laxman Dewangan<ldewangan@nvidia.com>
->>>> I assume this patch will go through the staging tree. Let me know if you
->>>> want me to take it through the Tegra tree.
->>> Please take it through the Tegra tree, it is probably easier overall
->>> that way:
->>> 	Acked-by: Greg Kroah-Hartman<gregkh@linuxfoundation.org>
->> Sorry, looking harder, this patch touches a file that's added in the
->> current staging tree, so I can't take this patch.
+On Thu, Apr 19, 2012 at 11:12 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Wednesday 18 April 2012 04:05 AM, Stephen Warren wrote:
 >>
->> There aren't any dependencies between this patch and the others due to
->> the way I2C probing works (the OF vendor prefix ends up getting
->> ignored), so I think merging it into staging should be simple.
-> Ok, I'll do that, Laxman, can you resend it to me?
+>> On 04/17/2012 12:45 AM, Laxman Dewangan wrote:
+>>>
+>>> Add the device info for ALS and proximity sensor isl29018.
+>>
+>>
+>> a) Perhaps the vendor prefix should be "isil" not "isl". Olof, can you
+>> please comment here?
+>>
 >
+> Any comments on this? I think "isil" is good as it is the symbol in nasdaq
+> also: Intersil Corporation (ISIL).
+> If no objection than I can send my next version of patch ;)
+>
+> Adding LinusW, Mark and Grant if they have any comment here.
 
-Resend  the patch. Removed the 2/4 in subject to remove dependency as it 
-can go independently.
+Like most of the kernel people I don't care much about that as long
+as the string is unique ... your pick is likely the best.
 
-Thanks,
-Laxman
+Linus Walleij
