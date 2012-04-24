@@ -1,39 +1,45 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: Initialize pll_p_out1
-Date: Tue, 24 Apr 2012 11:26:39 +0300
-Message-ID: <20120424082639.GW514@tbergstrom-lnx.Nvidia.com>
-References: <1335169910-29403-1-git-send-email-pdeschrijver@nvidia.com>
- <4F9583DA.2090107@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 2/3] iommu/tegra: smmu: Add device tree support for SMMU
+Date: Tue, 24 Apr 2012 10:59:48 +0200
+Message-ID: <20120424.115948.399395507020458456.hdoyu@nvidia.com>
+References: <1335182340-17237-1-git-send-email-hdoyu@nvidia.com><1335182340-17237-2-git-send-email-hdoyu@nvidia.com><4F959F10.9010908@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4F9583DA.2090107@wwwdotorg.org>
+In-Reply-To: <4F959F10.9010908@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 23, 2012 at 06:31:22PM +0200, Stephen Warren wrote:
-> On 04/23/2012 02:31 AM, Peter De Schrijver wrote:
-> > pll_a uses pll_p_out1 as its parent. Therefore this clock needs to be
-> > initialized to make sure pll_a has a known input clock. Failure to do so
-> > will cause the system to crash early in the bootup.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Thanks, applied.
-> 
-> > --
-> > 
-> > Changes in v2:
-> 
-> 
-> BTW, that "--" needs to be "---" if you don't intend the changelog to
-> end up in git when I apply the patch.
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/3] iommu/tegra: smmu: Add device tree support for SMMU
+Date: Mon, 23 Apr 2012 20:27:28 +0200
+Message-ID: <4F959F10.9010908@wwwdotorg.org>
 
-Ok :) I should have just removed this as v1 has never been posted here...
+> On 04/23/2012 05:58 AM, Hiroshi DOYU wrote:
+> > Add device tree support for Tegra30 IOMMU(SMMU).
+> 
+> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> 
+> > +	err = of_parse_dma_window(dev->of_node, "dma-window", 0, NULL,
+> > +				  &base, &size);
+> 
+> This patch also depends on "dt: Add general DMA window parser" that you
+> sent earlier.
+> 
+> > +	asids = be32_to_cpup(of_get_property(dev->of_node, "asids", NULL));
+> > +	if (!asids)
+> > +		return -ENODEV;
+> 
+> What if of_get_property() fails?
 
-Cheers,
+Ok, need to be checked. I'll fix.
 
-Peter.
+> BTW, does the # ASIDs vary? I wonder if it's worth representing it in
+> the device tree or not. If this driver has a chance of working
+> unmodified on some future chip just by updating this DT property without
+> any code changes, then it seems reasonable to have it in DT.
+
+Yes, ASID should be passed from DT.
