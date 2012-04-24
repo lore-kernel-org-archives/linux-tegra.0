@@ -1,156 +1,78 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 1/1] dt: Add general DMA window parser
-Date: Tue, 24 Apr 2012 15:20:04 +0300
-Message-ID: <1335270004-15652-1-git-send-email-hdoyu@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 2/3] ARM: tegra: Add SMMU enabler in AHB
+Date: Tue, 24 Apr 2012 15:32:52 +0300
+Message-ID: <20120424123248.GG8444@arwen.pp.htv.fi>
+References: <1335269116-9578-1-git-send-email-hdoyu@nvidia.com>
+ <1335269116-9578-2-git-send-email-hdoyu@nvidia.com>
+Reply-To: balbi@ti.com
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J3rqiH0DIeiRD2zz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1335269116-9578-2-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi DOYU <hdoyu@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Jamie Iles <jamie@jamieiles.com>, Rob Herring <rob.herring@calxeda.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This code was based on:
-	"arch/microblaze/kernel/prom_parse.c"
-	"arch/powerpc/kernel/prom_parse.c"
 
-"ibm," prefix could be supported with some modification.
+--J3rqiH0DIeiRD2zz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- drivers/of/Kconfig         |    4 ++
- drivers/of/Makefile        |    1 +
- drivers/of/of_dma.c        |   70 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_address.h |   13 ++++++++
- 4 files changed, 88 insertions(+), 0 deletions(-)
+Hi,
 
-diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index dfba3e6..3b0298b 100644
---- a/drivers/of/Kconfig
-+++ b/drivers/of/Kconfig
-@@ -83,4 +83,8 @@ config OF_MTD
- 	depends on MTD
- 	def_bool y
- 
-+config OF_DMA
-+	depends on HAS_DMA
-+	def_bool y
-+
- endmenu # OF
-diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-index e027f44..711ff5b 100644
---- a/drivers/of/Makefile
-+++ b/drivers/of/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
- obj-$(CONFIG_OF_PCI)	+= of_pci.o
- obj-$(CONFIG_OF_PCI_IRQ)  += of_pci_irq.o
- obj-$(CONFIG_OF_MTD)	+= of_mtd.o
-+obj-$(CONFIG_OF_DMA)	+= of_dma.o
-diff --git a/drivers/of/of_dma.c b/drivers/of/of_dma.c
-new file mode 100644
-index 0000000..4869e29
---- /dev/null
-+++ b/drivers/of/of_dma.c
-@@ -0,0 +1,70 @@
-+/*
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Based on:
-+ *	"arch/microblaze/kernel/prom_parse.c"
-+ *	"arch/powerpc/kernel/prom_parse.c"
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/of_address.h>
-+
-+int of_get_dma_window(struct device_node *dn,
-+			const char *propname, int index,
-+			unsigned long *busno,
-+			dma_addr_t *addr, size_t *size)
-+{
-+	const __be32 *dma_window, *end;
-+	int bytes, cur_index = 0;
-+
-+	if (!dn || !addr || !size)
-+		return -EINVAL;
-+
-+	if (!propname)
-+		propname = "dma-window";
-+
-+	dma_window = of_get_property(dn, propname, &bytes);
-+	if (!dma_window)
-+		return -ENODEV;
-+	end = dma_window + bytes / sizeof(*dma_window);
-+
-+	while (dma_window < end) {
-+		u32 cells;
-+		const void *prop;
-+
-+		/* busno is always one cell */
-+		if (busno)
-+			*busno = be32_to_cpup(dma_window++);
-+
-+		prop = of_get_property(dn, "#dma-address-cells", NULL);
-+		if (!prop)
-+			prop = of_get_property(dn, "#address-cells", NULL);
-+
-+		cells = prop ? be32_to_cpup(prop) : of_n_addr_cells(dn);
-+		if (!cells)
-+			return -EINVAL;
-+		*addr = of_read_number(dma_window, cells);
-+		dma_window += cells;
-+
-+		prop = of_get_property(dn, "#dma-size-cells", NULL);
-+		cells = prop ? be32_to_cpup(prop) : of_n_size_cells(dn);
-+		if (!cells)
-+			return -EINVAL;
-+		*size = of_read_number(dma_window, cells);
-+		dma_window += cells;
-+
-+		if (cur_index++ == index)
-+			break;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL(of_parse_dma_window);
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index 01b925a..9d9da9d 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -21,6 +21,11 @@ extern void __iomem *of_iomap(struct device_node *device, int index);
- extern const u32 *of_get_address(struct device_node *dev, int index,
- 			   u64 *size, unsigned int *flags);
- 
-+extern int of_get_dma_window(struct device_node *dev,
-+			       const char *propname, int index,
-+			       unsigned long *busno,
-+			       dma_addr_t *phys, size_t *size);
-+
- #ifndef pci_address_to_pio
- static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
- #define pci_address_to_pio pci_address_to_pio
-@@ -48,6 +53,14 @@ static inline const u32 *of_get_address(struct device_node *dev, int index,
- {
- 	return NULL;
- }
-+
-+extern int of_get_dma_window(struct device_node *dev,
-+			       const char *propname, int index,
-+			       unsigned long *busno,
-+			       dma_addr_t *phys, size_t *size)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_OF_ADDRESS */
- 
- 
--- 
-1.7.5.4
+On Tue, Apr 24, 2012 at 03:05:15PM +0300, Hiroshi DOYU wrote:
+> @@ -95,6 +98,21 @@ static inline void gizmo_writel(unsigned long value, u=
+nsigned long offset)
+>  	writel(value, tegra_ahb->regs + offset);
+>  }
+> =20
+> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> +
+> +void tegra_ahb_enable_smmu(void)
+> +{
+> +	unsigned long val;
+> +
+> +	val =3D gizmo_readl(AHB_ARBITRATION_XBAR_CTRL);
+> +	val |=3D AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE_DONE <<
+> +		AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE_SHIFT;
+> +	gizmo_writel(val, AHB_ARBITRATION_XBAR_CTRL);
+> +}
+> +EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+
+ok, so this is the only place where you need that global pointer. Who
+would call this ? Can you do runtime detection of the SoC and enable
+SMMU based on that ?
+
+I mean, will this function always be called for TEGRA 3 SoCs or is there
+another condition to that ?
+
+--=20
+balbi
+
+--J3rqiH0DIeiRD2zz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPlp1wAAoJEIaOsuA1yqREm7QP/2hqstAY6K8zz6WsdgQkB9/r
+HIAUlH7WKJ7LVHGC1fAIBa1A4okL3fS9bebTCGp9cfertmUM3KGY/7MV4mJM+vKP
+YdoebyEz+ENXYHgt9KSNOErPuKKCJaU58/g8Zz0Q0iHCtsz8/zUvWSSCBZepIADL
+MLz7pgpxAwsOVJmV7OpmGHFb9SBRpLSj1rrckH5N1PtLpbH3phw4uqNbPSQH2Sw1
+SNL40zAXpENHx1EPmjk08giZ2G5AsMVyRfJCZBYI4XS8/bBoIlvK76/Xvj/u2E3a
+ft/KS45ZYxMr4KbfhVygnqBc+bNOBkm7a12u9siCznjHg9FpxA8bZLkC2Lo7dmxw
+gcRD6XdqqFdmBZ8fRNWvXdHQAH3eyMjpxfmG+kc2HzZZUynxCm9VnOZj9/n/u5TF
+9Dwt76P84EVjwAt7UFaAEAoarFPbNwQZ1AXEKd1CYRQtHzesg1HrcEsGdyfA5HjV
+vZBjCxfOXLBG1QYwxvadoSMAiaV3erTDyNVQLuYXmmzUgRZ0Qe7pK8A/Wvqq+610
+Bt9IoSbV4/DC2yFgoTiXRlbHSON1ENnaAimObEx0OwTqp+EolnT0cBsEJWaREe5K
+a/QfcHNhVutN5vXdZRn9hZtxmsvvRArVCeUlkT6pKfuxCLvttPHrzhYk1ADzdWrI
+wKDq2Ib/7OumQP9YwjsC
+=8Pes
+-----END PGP SIGNATURE-----
+
+--J3rqiH0DIeiRD2zz--
