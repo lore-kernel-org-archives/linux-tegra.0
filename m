@@ -1,86 +1,89 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] ARM: tegra: Add AHB driver
-Date: Wed, 25 Apr 2012 10:46:41 +0300
-Message-ID: <20120425074639.GB3423@arwen.pp.htv.fi>
-References: <1335269116-9578-1-git-send-email-hdoyu@nvidia.com>
- <20120424195645.GB3628@n2100.arm.linux.org.uk>
- <20120425083747.466f5c98330af8964d980b8c@nvidia.com>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1] dmaengine: tegra: add dma driver
+Date: Wed, 25 Apr 2012 14:31:27 +0530
+Message-ID: <4F97BD67.1050300@nvidia.com>
+References: <1334912896-4614-1-git-send-email-ldewangan@nvidia.com> <1334920487.31825.98.camel@vkoul-udesk3> <4F9153AF.7020901@nvidia.com> <1335170491.31825.104.camel@vkoul-udesk3> <4F95483F.5020005@nvidia.com> <20120423130659.GA22186@n2100.arm.linux.org.uk> <4F95567E.3090605@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MfFXiAuoTsnnDAfZ"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20120425083747.466f5c98330af8964d980b8c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4F95567E.3090605-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Vinod,
 
---MfFXiAuoTsnnDAfZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday 23 April 2012 06:47 PM, Laxman Dewangan wrote:
+> On Monday 23 April 2012 06:36 PM, Russell King - ARM Linux wrote:
+>> On Mon, Apr 23, 2012 at 05:47:03PM +0530, Laxman Dewangan wrote:
+>>> Hi Russell,
+>>> On Monday 23 April 2012 02:11 PM, Vinod Koul wrote:
+>>>> On Fri, 2012-04-20 at 17:46 +0530, Laxman Dewangan wrote:
+>>>>> Thanks Vinod for quick review.
+>>>> Since I was on vacation, I hadn't noticed Russell has already sent the
+>>>> patches for omap dma support.
+>>>> http://permalink.gmane.org/gmane.linux.ports.arm.omap/75034
+>>>>
+>>>> It would be nice if both the efforts are coordinated.
+>>>>
+>>>> Btw I like the virtual channel support introduced by Russell
+>>>>
+>>> Can you please point me the virtual channel related change? I am not
+>>> able to locate this like search for function vchan_* ().
+>>> My driver is also on same line but not used vchan_* and also having
+>>> support for cyclic transfer.
+>> It's only been posted in RFC form on linux-arm-kernel and linux-omap
+>> lists.  The specific patch is:
+>>
+>> http://lists.arm.linux.org.uk/lurker/message/20120418.101116.082b350f.en.html
+>>
+>> I wouldn't call it perfected yet, but usable.  It doesn't have any
+>> knowledge about cyclic transfers either.
+> For simple dma, it is straight to use the virt_chan and it reduce lots
+> of code from tegra_dma as most of it moved to the virt_dma.
+>
+> Some points which I am looking are:
+> 1. Extending this for cyclic support:
+> In cyclic mode, we need to call callback after period_len but do not
+> want to free descriptors. So either I need to add flag on the desctiptor
+> to no delet and so when vc->desc_free(vd); is called from callback, it
+> will not delete the descriptor.
+>
+> 2. With very prep call, we are allocating descriptor. Is it is possible
+> to allocate some desc in advance and then keep using them. The
+> complexity is that if we allocate the desc in advance, we need to
+> allocate the desc and sq_req list and maintain the two different lists
+> as we dont know the sg_len in advance.
+>
+> 3. vchan_cookie_complete()  is not possible in the cyclic mode as we
+> dont want to call dma_cookie_complete() but just want to do following
+> two thing:
+>
+> list_add_tail(&vd->node,&vc->desc_completed);
+> tasklet_schedule(&vc->task);
+>
+> if we extend this function to bypass dma_cookie_complete(&vd->tx); or
+> rather than calling this api, directly call the above apis.
+>
 
-On Wed, Apr 25, 2012 at 08:37:47AM +0300, Hiroshi Doyu wrote:
-> On Tue, 24 Apr 2012 21:56:45 +0200
-> Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
->=20
-> > On Tue, Apr 24, 2012 at 03:05:14PM +0300, Hiroshi DOYU wrote:
-> > > The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> > > High-performance Bus (AHB) architecture.
-> > >=20
-> > > The AHB Arbiter controls AHB bus master arbitration. This effectively
-> > > forms a second level of arbitration for access to the memory
-> > > controller through the AHB Slave Memory device. The AHB pre-fetch
-> > > logic can be configured to enhance performance for devices doing
-> > > sequential access. Each AHB master is assigned to either the high or
-> > > low priority bin. Both Tegra20/30 have this AHB bus.
-> > >=20
-> > > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-> > > Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> > > ---
-> > > Update:
-> > > - Use platform_device to get info from dt dynamically.(Felipe/Arnd)
-> > > ---
-> > >  arch/arm/mach-tegra/Makefile    |    1 +
-> > >  arch/arm/mach-tegra/tegra-ahb.c |  285 +++++++++++++++++++++++++++++=
-++++++++++
-> > >  2 files changed, 286 insertions(+), 0 deletions(-)
-> >=20
-> > 1. I thought we weren't going to have any more drivers under
-> >    arch/arm
->=20
-> Can this driver be located under "drivers/misc"? Or is there any better p=
-lace?
 
-maybe drivers/platform/arm/ ??
+I had a  communication with Russell on another change thread and 
+understand that some more work need to be done in virt_chan to support 
+cyclic one.
 
---=20
-balbi
+I want to have the cyclic dma support in my driver so I want to go on 
+following steps:
+1. I will post the patch for tegra dma which will not use the virt_dma 
+so that my driver will be independent of Russel's change.
+2. Once the tegra dma is part of tree, I can move all my dma client to 
+use the dmaengine based driver and remove old style dma.
+3. Till that time Russell's will have already virt_dma support for 
+cyclic one and so I will change tegra_dma.c to use virt_dma.
 
---MfFXiAuoTsnnDAfZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Let me know your opinion so that I can plan my patch/change accordingly.
 
-iQIcBAEBAgAGBQJPl6vfAAoJEIaOsuA1yqRE1o8P/jyrVuTWZkuqqMAI/mbLL6xo
-u17mdNfmPC/wqtvbzljhdafLB9PHW0W8To4NZcXT1ojNPyMdsYeEc2zwhMDXJrj3
-8cQNfI3omaPAfYrz3pdWvDpnkhWN1VPT9nM+MqcIWyVcCgYRCjMiDH5P7mWH0aIa
-QCCrRuMfoSeV3GuSYDiTgeYNZgvOQwjw1pCOwF4lbCGSoT4FndulWUzC1Z2xN9/7
-m3D/st8kY40hbp32viQwxPPUDQM2kJjfUCijs+RRyMPkFAVySWHUgAtbmDgS7V4p
-E30ExEV5qkdzplbphtjRnkV5CnaTdl+4uFJxXuEEiB92Prirt+17xKsjMkL/MMes
-uaMTNkZr4nMgvBGDtcjPWDpBzdMesWRzTz+QcKwZBP/hNy2AxYgTBNosDLw5JKeD
-tfXZ58Hr42CpsRMsM2uZkBSmC+hcxFJ55JgEuWLAppOfKH1SryR9r6xZgnz7tlNC
-K9HkEofj+ruz2q4uE5pHOd8X1DixGOdL0XPBdK3WIzwWc15rH8YOGI5RgJTNx6bG
-VgS/M23qRCd5Ky17VZssbc0DXFc5desbKM9W0SIg9P3cM/K7oL8N0XpxlvV3rNx0
-kr5QE+GPFHds8wUzAz7fxI7WWRfna++Emp/GBCDlrDUDCY0+EstNKFnAXBgiPypm
-Tp2eVknArhrpJ8KQLkCq
-=758m
------END PGP SIGNATURE-----
-
---MfFXiAuoTsnnDAfZ--
+Thanks,
+Laxman
