@@ -1,91 +1,51 @@
-From: Hiroshi DOYU <hdoyu@nvidia.com>
-Subject: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
-Date: Wed, 25 Apr 2012 14:07:37 +0300
-Message-ID: <1335352072-4001-2-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv3 4/4] ARM: dt: tegra: Add device tree support for AHB
+Date: Wed, 25 Apr 2012 14:07:39 +0300
+Message-ID: <1335352072-4001-4-git-send-email-hdoyu@nvidia.com>
 References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Hiroshi DOYU <hdoyu@nvidia.com>, Felipe Balbi <balbi@ti.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Jamie Iles <jamie@jamieiles.com>, Rob Herring <rob.herring@calxeda.com>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1335352072-4001-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add extern func, "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
-ready.
+Add AHB entry for tegra20/30.
 
-Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
-Cc: Felipe Balbi <balbi@ti.com>
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/include/mach/tegra-ahb.h |   19 +++++++++++++++++++
- drivers/platform/arm/tegra-ahb.c             |   24 ++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi |    5 +++++
+ arch/arm/boot/dts/tegra30.dtsi |    5 +++++
+ 2 files changed, 10 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/include/mach/tegra-ahb.h b/arch/arm/mach-tegra/include/mach/tegra-ahb.h
-new file mode 100644
-index 0000000..296688c
---- /dev/null
-+++ b/arch/arm/mach-tegra/include/mach/tegra-ahb.h
-@@ -0,0 +1,19 @@
-+/*
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 52cab08..54e9640 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -212,5 +212,10 @@
+ 		reg = < 0x7000f000 0x00000100    /* controller registers */
+ 		        0x58000000 0x02000000 >; /* GART aperture */
+ 	};
 +
-+#ifndef __MACH_TEGRA_AHB_H__
-+#define __MACH_TEGRA_AHB_H__
-+
-+extern int tegra_ahb_enable_smmu(void);
-+
-+#endif	/* __MACH_TEGRA_AHB_H__ */
-diff --git a/drivers/platform/arm/tegra-ahb.c b/drivers/platform/arm/tegra-ahb.c
-index dcad2ec..7ad9dfd 100644
---- a/drivers/platform/arm/tegra-ahb.c
-+++ b/drivers/platform/arm/tegra-ahb.c
-@@ -78,6 +78,10 @@
++	ahb: ahb@6000c004 {
++		compatible = "nvidia,tegra30-ahb", "nvidia,tegra20-ahb";
++		reg = <0x6000c004 0x10c>; /* AHB Arbitration + Gizmo Controller */
++	};
+ };
  
- #define AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID	0xf8
- 
-+#define AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE BIT(17)
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 15200a9..24120cf 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -224,4 +224,9 @@
+ 			nvidia,ahub-cif-ids = <8 8>;
+ 		};
+ 	};
 +
-+static struct platform_driver tegra_ahb_driver;
-+
- static u32 tegra_ahb_gizmo[] = {
- 	AHB_ARBITRATION_DISABLE,
- 	AHB_ARBITRATION_PRIORITY_CTRL,
-@@ -126,6 +130,26 @@ static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 offset)
- 	writel(value, ahb->regs + offset);
- }
- 
-+#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-+static int __tegra_ahb_enable_smmu(struct device *dev, void *data)
-+{
-+	u32 val;
-+	struct tegra_ahb *ahb = dev_get_drvdata(dev);
-+
-+	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
-+	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
-+	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
-+	return 0;
-+}
-+
-+int tegra_ahb_enable_smmu(void)
-+{
-+	return driver_for_each_device(&tegra_ahb_driver.driver, NULL, NULL,
-+				      __tegra_ahb_enable_smmu);
-+}
-+EXPORT_SYMBOL(tegra_ahb_enable_smmu);
-+#endif
-+
- static int tegra_ahb_suspend(struct device *dev)
- {
- 	int i;
++	ahb: ahb@6000c004 {
++		compatible = "nvidia,tegra30-ahb", "nvidia,tegra20-ahb";
++		reg = <0x6000c004 0x14c>; /* AHB Arbitration + Gizmo Controller */
++	};
+ };
 -- 
 1.7.5.4
