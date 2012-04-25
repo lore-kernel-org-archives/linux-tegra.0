@@ -1,34 +1,43 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [RFC v2 1/5] iommu: Include linux/types.h
-Date: Wed, 25 Apr 2012 11:44:58 +0200
-Message-ID: <1335347102-14905-2-git-send-email-thierry.reding@avionic-design.de>
-References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1335347102-14905-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH V1] dmaengine: tegra: add dma driver
+Date: Wed, 25 Apr 2012 15:13:48 +0530
+Message-ID: <1335347028.31825.122.camel@vkoul-udesk3>
+References: <1334912896-4614-1-git-send-email-ldewangan@nvidia.com>
+	 <1334920487.31825.98.camel@vkoul-udesk3> <4F9153AF.7020901@nvidia.com>
+	 <1335170491.31825.104.camel@vkoul-udesk3> <4F95483F.5020005@nvidia.com>
+	 <20120423130659.GA22186@n2100.arm.linux.org.uk>
+	 <4F95567E.3090605@nvidia.com>  <4F97BD67.1050300@nvidia.com>
+	 <1335346425.31825.118.camel@vkoul-udesk3>  <4F97C709.2060807@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F97C709.2060807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The linux/iommu.h header uses types defined in linux/types.h but doesn't
-include it.
+On Wed, 2012-04-25 at 15:12 +0530, Laxman Dewangan wrote:
+> On Wednesday 25 April 2012 03:03 PM, Vinod Koul wrote:
+> > On Wed, 2012-04-25 at 14:31 +0530, Laxman Dewangan wrote:
+> >> I had a  communication with Russell on another change thread and
+> >> understand that some more work need to be done in virt_chan to support
+> >> cyclic one.
+> >>
+> >> I want to have the cyclic dma support in my driver so I want to go on
+> >> following steps:
+> >> 1. I will post the patch for tegra dma which will not use the virt_dma
+> >> so that my driver will be independent of Russel's change.
+> > which driver? A new driver for cyclic support only or on top of
+> > Russell's changes?
+> 
+> I am referring the Nvidia Tegra's APB dma driver. This will be 
+> completely new driver based on dmaengine. We have old dma driver under 
+> mach-tegra/dma.c which has tegra specific apis. Want to move this driver 
+> to generic dmaengine based api.
+Okay, lets review the new patchset then :-)
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- include/linux/iommu.h |    1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index d937580..2b2fcdb 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -20,6 +20,7 @@
- #define __LINUX_IOMMU_H
- 
- #include <linux/errno.h>
-+#include <linux/types.h>
- 
- #define IOMMU_READ	(1)
- #define IOMMU_WRITE	(2)
 -- 
-1.7.10
+~Vinod
