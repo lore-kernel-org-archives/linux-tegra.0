@@ -1,58 +1,23 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add AHB driver
-Date: Wed, 25 Apr 2012 15:01:28 +0200
-Message-ID: <20120425.160128.1314575000242024123.hdoyu@nvidia.com>
-References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com><20120425112519.GB3564@arwen.pp.htv.fi>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC v2 3/5] i2c: Add of_i2c_get_adapter() function
+Date: Wed, 25 Apr 2012 09:36:41 -0600
+Message-ID: <4F981A09.2020304@wwwdotorg.org>
+References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de> <1335347102-14905-4-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120425112519.GB3564-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+In-Reply-To: <1335347102-14905-4-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add AHB driver
-Date: Wed, 25 Apr 2012 13:25:20 +0200
-Message-ID: <20120425112519.GB3564-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+On 04/25/2012 03:45 AM, Thierry Reding wrote:
+> This function resolves an OF device node to an I2C adapter registered
+> with the I2C core.
 
-> * PGP Signed by an unknown key
-> 
-> On Wed, Apr 25, 2012 at 02:07:36PM +0300, Hiroshi DOYU wrote:
-> > The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> > High-performance Bus (AHB) architecture.
-> >
-> > The AHB Arbiter controls AHB bus master arbitration. This effectively
-> > forms a second level of arbitration for access to the memory
-> > controller through the AHB Slave Memory device. The AHB pre-fetch
-> > logic can be configured to enhance performance for devices doing
-> > sequential access. Each AHB master is assigned to either the high or
-> > low priority bin. Both Tegra20/30 have this AHB bus.
-> >
-> > Some of configuration param could be passed from DT too.
-> >
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-> > Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> > ---
-> > v4:
-> > Fixed the comments from Felipe/Russell.
-> > This is now located under drivers/platform/arm.
-> > v3:
-> > Use platform_device to get info from dt dynamically.(Felipe/Arnd)
-> >
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Just one thing, you seem to have missed Russell's comment about this
-> driver being generic. You still add a TEGRA_AHB driver,
+I think this is doing the same thing as a patch I posted recently:
+http://www.spinics.net/lists/linux-i2c/msg07808.html
 
-For generalization, there seems to be many parts in this driver
-depending on SoC implementation, and I'm not so sure how much S/W
-compatibility can be kept from H/W spec. Is there any other similar
-SoC AHB driver in kernel?
-
-> also, you don't need <mach/iomap.h>. Apart from those, you can add:
-
-Ok, I'll fix and add your Reviewed-by:. Thank you for your review.
+What's the advantage of one way over the other?
