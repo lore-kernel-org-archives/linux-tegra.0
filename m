@@ -1,79 +1,85 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH V1] dmaengine: tegra: add dma driver
-Date: Wed, 25 Apr 2012 11:35:55 +0100
-Message-ID: <20120425103555.GS24211@n2100.arm.linux.org.uk>
-References: <1334912896-4614-1-git-send-email-ldewangan@nvidia.com> <1334920487.31825.98.camel@vkoul-udesk3> <4F9153AF.7020901@nvidia.com> <1335170491.31825.104.camel@vkoul-udesk3> <4F95483F.5020005@nvidia.com> <20120423130659.GA22186@n2100.arm.linux.org.uk> <4F95567E.3090605@nvidia.com> <4F97BD67.1050300@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC v2 2/5] tps6586x: Add device tree support
+Date: Wed, 25 Apr 2012 12:41:47 +0200
+Message-ID: <20120425104147.GB5085@avionic-0098.mockup.avionic-design.de>
+References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de>
+	<1335347102-14905-3-git-send-email-thierry.reding@avionic-design.de>
+	<20120425101031.GH3195@opensource.wolfsonmicro.com>
+	<20120425101429.GA5085@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4F97BD67.1050300-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============3185086989945513395=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20120425101429.GA5085-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 25, 2012 at 02:31:27PM +0530, Laxman Dewangan wrote:
-> Hi Vinod,
->
-> On Monday 23 April 2012 06:47 PM, Laxman Dewangan wrote:
->> On Monday 23 April 2012 06:36 PM, Russell King - ARM Linux wrote:
->>> On Mon, Apr 23, 2012 at 05:47:03PM +0530, Laxman Dewangan wrote:
->>>> Hi Russell,
->>>> On Monday 23 April 2012 02:11 PM, Vinod Koul wrote:
->>>>> On Fri, 2012-04-20 at 17:46 +0530, Laxman Dewangan wrote:
->>>>>> Thanks Vinod for quick review.
->>>>> Since I was on vacation, I hadn't noticed Russell has already sent the
->>>>> patches for omap dma support.
->>>>> http://permalink.gmane.org/gmane.linux.ports.arm.omap/75034
->>>>>
->>>>> It would be nice if both the efforts are coordinated.
->>>>>
->>>>> Btw I like the virtual channel support introduced by Russell
->>>>>
->>>> Can you please point me the virtual channel related change? I am not
->>>> able to locate this like search for function vchan_* ().
->>>> My driver is also on same line but not used vchan_* and also having
->>>> support for cyclic transfer.
->>> It's only been posted in RFC form on linux-arm-kernel and linux-omap
->>> lists.  The specific patch is:
->>>
->>> http://lists.arm.linux.org.uk/lurker/message/20120418.101116.082b350f.en.html
->>>
->>> I wouldn't call it perfected yet, but usable.  It doesn't have any
->>> knowledge about cyclic transfers either.
->> For simple dma, it is straight to use the virt_chan and it reduce lots
->> of code from tegra_dma as most of it moved to the virt_dma.
->>
->> Some points which I am looking are:
->> 1. Extending this for cyclic support:
->> In cyclic mode, we need to call callback after period_len but do not
->> want to free descriptors. So either I need to add flag on the desctiptor
->> to no delet and so when vc->desc_free(vd); is called from callback, it
->> will not delete the descriptor.
->>
->> 2. With very prep call, we are allocating descriptor. Is it is possible
->> to allocate some desc in advance and then keep using them. The
->> complexity is that if we allocate the desc in advance, we need to
->> allocate the desc and sq_req list and maintain the two different lists
->> as we dont know the sg_len in advance.
->>
->> 3. vchan_cookie_complete()  is not possible in the cyclic mode as we
->> dont want to call dma_cookie_complete() but just want to do following
->> two thing:
->>
->> list_add_tail(&vd->node,&vc->desc_completed);
->> tasklet_schedule(&vc->task);
->>
->> if we extend this function to bypass dma_cookie_complete(&vd->tx); or
->> rather than calling this api, directly call the above apis.
->>
->
->
-> I had a  communication with Russell on another change thread and  
-> understand that some more work need to be done in virt_chan to support  
-> cyclic one.
 
-Yes, and I said I would get to it in due course - I need to add support
-so that the OMAP ASoC support can be moved over to DMA engine, and that's
-one of the next few drivers I will be looking at.
+--===============3185086989945513395==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Disposition: inline
+
+
+--v9Ux+11Zm5mwPlX6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Thierry Reding wrote:
+> * Mark Brown wrote:
+> > On Wed, Apr 25, 2012 at 11:44:59AM +0200, Thierry Reding wrote:
+> > > This commit adds device tree support for the TPS6586x regulator.
+> > >=20
+> > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> >=20
+> > This looks basically good from a quick scan through but the pattern of
+> > looking up regulator nodes by name is very common so should be factored
+> > out - I made a similar comment in response to a recent patch from
+> > Rhyland Klein and earlier today he posted a patch "regulator: add
+> > generic of node parsing for regulators" which does just that.  Can you
+> > please redo this on top of his code?  I'll probably apply it later
+> > today, though I didn't properly read the code yet.
+>=20
+> I'll take a look.
+
+After taking a closer look I don't think Rhyland's patch is very useful for
+this driver. I need to lookup the platform ID by regulator name anyway so
+using the new code is actually more work and requires a second table that
+lists the regulator names only.
+
+Thierry
+
+--v9Ux+11Zm5mwPlX6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAk+X1OsACgkQZ+BJyKLjJp+lywCgrfrEEWPNFfCrjEjaDMtkhIKZ
+YYMAn01U23i3etJzrKeugsO4j/ymzuVK
+=d5pB
+-----END PGP SIGNATURE-----
+
+--v9Ux+11Zm5mwPlX6--
+
+--===============3185086989945513395==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+iommu mailing list
+iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+https://lists.linuxfoundation.org/mailman/listinfo/iommu
+--===============3185086989945513395==--
