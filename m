@@ -1,47 +1,42 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
-Date: Wed, 25 Apr 2012 09:51:50 -0600
-Message-ID: <4F981D96.3000401@wwwdotorg.org>
-References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com> <1335352072-4001-2-git-send-email-hdoyu@nvidia.com> <20120425112950.GC3564@arwen.pp.htv.fi>
+Subject: Re: [PATCH v2 1/3] ARM: tegra: Add AHB driver
+Date: Wed, 25 Apr 2012 09:59:40 -0600
+Message-ID: <4F981F6C.2050807@wwwdotorg.org>
+References: <1335269116-9578-1-git-send-email-hdoyu@nvidia.com> <20120425083747.466f5c98330af8964d980b8c@nvidia.com> <20120425074639.GB3423@arwen.pp.htv.fi> <201204251215.22889.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120425112950.GC3564-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+In-Reply-To: <201204251215.22889.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/25/2012 05:29 AM, Felipe Balbi wrote:
-> Hi,
+On 04/25/2012 06:15 AM, Arnd Bergmann wrote:
+> On Wednesday 25 April 2012, Felipe Balbi wrote:
+...
+>>> Can this driver be located under "drivers/misc"? Or is there any better place?
+>>
+>> maybe drivers/platform/arm/ ??
 > 
-> On Wed, Apr 25, 2012 at 02:07:37PM +0300, Hiroshi DOYU wrote:
->> Add extern func, "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
->> ready.
-
->> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
->> +static int __tegra_ahb_enable_smmu(struct device *dev, void *data)
->> +{
->> +	u32 val;
->> +	struct tegra_ahb *ahb = dev_get_drvdata(dev);
->> +
->> +	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
->> +	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
->> +	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
->> +	return 0;
->> +}
->> +
->> +int tegra_ahb_enable_smmu(void)
->> +{
->> +	return driver_for_each_device(&tegra_ahb_driver.driver, NULL, NULL,
->> +				      __tegra_ahb_enable_smmu);
->> +}
->> +EXPORT_SYMBOL(tegra_ahb_enable_smmu);
->> +#endif
+> I really wouldn't want to add that directory: It has the risk of letting
+> people add random crap there that may or may not be related to ARM (the
+> company) and/or ARM (the architecture).
 > 
-> this is still not correct. If you will always call this whenever you run
-> on tegra 3, why do you even expose this function ?
+> I think it could go into drivers/amba/ along with the primecell bus driver.
+> The two drivers are for two different aspects of the AMBA spec and don't
+> actually depend on one another as far as I can tell, but it's at least
+> a fitting name, and it doesn't depend on the ARM architecture, which is
+> important because the driver could be used on other architectures that
+> are connected to an AHB bus.
 
-I think the issue is that this function should only be called after the
-SMMU driver has initialized the SMMU, and it's ready to be activated.
+Hiroshi, is this driver for something (registers/features) that AMBA
+actually specifies? AHB might be part of AMBA (I'm not familiar enough
+to know), but I don't think this aspect of Tegra's AHB bus is part of
+any core AHB/AMBA specification, rather than being some Tegra-specific
+control over the bus (given that the registers and bits correspond to
+Tegra-specific devices on the bus).
+
+I'm not really convinced that low-level platform-specific drivers like
+this shouldn't be in the arch/arm/mach-* directories.
