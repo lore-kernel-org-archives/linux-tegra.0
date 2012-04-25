@@ -1,53 +1,41 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: Tegra for-next branch status check
-Date: Wed, 25 Apr 2012 11:21:22 -0700
-Message-ID: <CAOesGMgLDwYJBt7sn2Vg-95dZjyUDbyEhgtVeOGGJ2Kbb4Moag@mail.gmail.com>
-References: <4F95C7C9.30205@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] USB: ehci-tegra: remove PORT_RWC_BITS when setting USB_PORT_FEAT_ENABLE
+Date: Wed, 25 Apr 2012 12:31:10 -0600
+Message-ID: <1335378670-26860-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F95C7C9.30205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Mon, Apr 23, 2012 at 2:21 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> Arnd, Olof,
->
-> Could I please ask you to take a quick look at Tegra's git repo:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
->
-> ... and double-check the construction of all the for-3.5 branches. I've
-> tended to mostly put stuff in topic branches rather than separating
-> things into the perhaps more typical soc/drivers/dt branches. Is this
-> scheme going to work out OK?
->
-> Note a couple dependencies in there:
->
-> for-3.5/gpio-pinmux-dependency is a copy of pinctrl's "base" tag.
->
-> for-3.5/gpio-pinmux depends on for-3.5/gpio-pinmux-dependency
->
-> for-3.5/tegra30-audio and for-3.5/usb-ulpi both depend on
-> for-3.5/gpio-pinmux.
->
-> Thanks for any feedback.
+In the SetPortFeature/USB_PORT_FEAT_ENABLE case, ehci_hub_control()
+would read from status_reg, modify the value, and write the result back to
+status_reg. This would clear any bits in PORT_RWC_BITS that were set in
+the register. Fix this by masking these bits off before the write.
 
-Looks good. Keeping the changes per topic like that works well,
-especially in cases where the cross-dependencies don't get too heavy
-(and they are not at this time). Even though we will aggregate them to
-fewer branches in arm-soc, getting them sent up as shorter topic
-branches is great.
+This is logically the same change as 6d5f89c "USB: EHCI: remove
+PORT_RWC_BITS when clearing USB_PORT_FEAT_ENABLE", but applied to the
+Tegra driver rather than the USB core.
 
-If you wanted to separate things out a bit more between soc and board
-changes, you could split off some of the top commits from the topic
-branches to a secondary board branch. But given that most of tegra now
-is just two DT boards, there's no real need to keep those few commits
-separated out.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/host/ehci-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-
--Olof
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 5baf8a2..a6e9b2c 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -164,7 +164,7 @@ static int tegra_ehci_hub_control(
+ 			goto done;
+ 		}
+ 
+-		temp &= ~PORT_WKCONN_E;
++		temp &= ~(PORT_RWC_BITS | PORT_WKCONN_E);
+ 		temp |= PORT_WKDISC_E | PORT_WKOC_E;
+ 		ehci_writel(ehci, temp | PORT_SUSPEND, status_reg);
+ 
+-- 
+1.7.0.4
