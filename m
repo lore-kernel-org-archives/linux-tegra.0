@@ -1,455 +1,152 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add AHB driver
-Date: Wed, 25 Apr 2012 14:25:20 +0300
-Message-ID: <20120425112519.GB3564@arwen.pp.htv.fi>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
+Date: Wed, 25 Apr 2012 14:29:50 +0300
+Message-ID: <20120425112950.GC3564@arwen.pp.htv.fi>
 References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
-Reply-To: balbi@ti.com
+ <1335352072-4001-2-git-send-email-hdoyu@nvidia.com>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9135330400634724417=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Hiroshi DOYU <hdoyu@nvidia.com>
-Cc: swarren@nvidia.com, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1335352072-4001-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============9135330400634724417==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
-Content-Disposition: inline
-
-
---CdrF4e02JqNVZeln
+--adJ1OR3c6QgCpb/j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 25, 2012 at 02:07:36PM +0300, Hiroshi DOYU wrote:
-> The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> High-performance Bus (AHB) architecture.
+Hi,
+
+On Wed, Apr 25, 2012 at 02:07:37PM +0300, Hiroshi DOYU wrote:
+> Add extern func, "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
+> ready.
 >=20
-> The AHB Arbiter controls AHB bus master arbitration. This effectively
-> forms a second level of arbitration for access to the memory
-> controller through the AHB Slave Memory device. The AHB pre-fetch
-> logic can be configured to enhance performance for devices doing
-> sequential access. Each AHB master is assigned to either the high or
-> low priority bin. Both Tegra20/30 have this AHB bus.
->=20
-> Some of configuration param could be passed from DT too.
->=20
-> Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
-> Cc: Felipe Balbi <balbi@ti.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 > ---
-> v4:
-> Fixed the comments from Felipe/Russell.
-> This is now located under drivers/platform/arm.
-> v3:
-> Use platform_device to get info from dt dynamically.(Felipe/Arnd)
+>  arch/arm/mach-tegra/include/mach/tegra-ahb.h |   19 +++++++++++++++++++
+>  drivers/platform/arm/tegra-ahb.c             |   24 ++++++++++++++++++++=
+++++
+>  2 files changed, 43 insertions(+), 0 deletions(-)
 >=20
-> Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
-
-Just one thing, you seem to have missed Russell's comment about this
-driver being generic. You still add a TEGRA_AHB driver, also, you don't
-need <mach/iomap.h>. Apart from those, you can add:
-
-Reviewed-by: Felipe Balbi <balbi@ti.com>
-
-> ---
->  drivers/platform/Kconfig         |    5 +
->  drivers/platform/Makefile        |    1 +
->  drivers/platform/arm/Kconfig     |    8 +
->  drivers/platform/arm/Makefile    |    5 +
->  drivers/platform/arm/tegra-ahb.c |  278 ++++++++++++++++++++++++++++++++=
-++++++
->  5 files changed, 297 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
-> index 8390dca..8b96a77 100644
-> --- a/drivers/platform/Kconfig
-> +++ b/drivers/platform/Kconfig
-> @@ -1,3 +1,8 @@
->  if X86
->  source "drivers/platform/x86/Kconfig"
->  endif
-> +
-> +if ARM
-> +source "drivers/platform/arm/Kconfig"
-> +endif
-> +
-> diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
-> index 782953a..7a2b16f 100644
-> --- a/drivers/platform/Makefile
-> +++ b/drivers/platform/Makefile
-> @@ -3,3 +3,4 @@
->  #
-> =20
->  obj-$(CONFIG_X86)		+=3D x86/
-> +obj-$(CONFIG_ARM)		+=3D arm/
-> diff --git a/drivers/platform/arm/Kconfig b/drivers/platform/arm/Kconfig
+> diff --git a/arch/arm/mach-tegra/include/mach/tegra-ahb.h b/arch/arm/mach=
+-tegra/include/mach/tegra-ahb.h
 > new file mode 100644
-> index 0000000..0af31db
+> index 0000000..296688c
 > --- /dev/null
-> +++ b/drivers/platform/arm/Kconfig
-> @@ -0,0 +1,8 @@
-> +config TEGRA_AHB
-> +	bool "Enable AHB driver for NVIDIA Tegra SoCs"
-> +	depends on ARCH_TEGRA
-> +	default y
-> +	help
-> +	  Adds AHB configuration functionality for NVIDIA Tegra SoCs,
-> +	  which controls AHB bus master arbitration and some
-> +	  perfomance parameters(priority, prefech size).
-> diff --git a/drivers/platform/arm/Makefile b/drivers/platform/arm/Makefile
-> new file mode 100644
-> index 0000000..3535f56
-> --- /dev/null
-> +++ b/drivers/platform/arm/Makefile
-> @@ -0,0 +1,5 @@
-> +#
-> +# Makefile for linux/drivers/platform/arm
-> +# ARM Platform-Specific Drivers
-> +#
-> +obj-$(CONFIG_TEGRA_AHB)		+=3D tegra-ahb.o
-> diff --git a/drivers/platform/arm/tegra-ahb.c b/drivers/platform/arm/tegr=
-a-ahb.c
-> new file mode 100644
-> index 0000000..dcad2ec
-> --- /dev/null
-> +++ b/drivers/platform/arm/tegra-ahb.c
-> @@ -0,0 +1,278 @@
+> +++ b/arch/arm/mach-tegra/include/mach/tegra-ahb.h
+> @@ -0,0 +1,19 @@
 > +/*
 > + * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (C) 2011 Google, Inc.
 > + *
-> + * Author:
-> + *	Jay Cheng <jacheng@nvidia.com>
-> + *	James Wylder <james.wylder@motorola.com>
-> + *	Benoit Goby <benoit@android.com>
-> + *	Colin Cross <ccross@android.com>
-> + *	Hiroshi DOYU <hdoyu@nvidia.com>
+> + * This program is free software; you can redistribute it and/or modify =
+it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
 > + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for
+> + * more details.
 > + */
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
+> +#ifndef __MACH_TEGRA_AHB_H__
+> +#define __MACH_TEGRA_AHB_H__
 > +
-> +#include <mach/iomap.h>
-
-why do you need mach/iomap.h ?
-
-> +#define DRV_NAME "tegra-ahb"
+> +extern int tegra_ahb_enable_smmu(void);
 > +
-> +#define AHB_ARBITRATION_DISABLE		0x00
-> +#define AHB_ARBITRATION_PRIORITY_CTRL	0x04
-> +#define   AHB_PRIORITY_WEIGHT(x)	(((x) & 0x7) << 29)
-> +#define   PRIORITY_SELECT_USB BIT(6)
-> +#define   PRIORITY_SELECT_USB2 BIT(18)
-> +#define   PRIORITY_SELECT_USB3 BIT(17)
+> +#endif	/* __MACH_TEGRA_AHB_H__ */
+> diff --git a/drivers/platform/arm/tegra-ahb.c b/drivers/platform/arm/tegr=
+a-ahb.c
+> index dcad2ec..7ad9dfd 100644
+> --- a/drivers/platform/arm/tegra-ahb.c
+> +++ b/drivers/platform/arm/tegra-ahb.c
+> @@ -78,6 +78,10 @@
+> =20
+>  #define AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID	0xf8
+> =20
+> +#define AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE BIT(17)
 > +
-> +#define AHB_GIZMO_AHB_MEM		0x0c
-> +#define   ENB_FAST_REARBITRATE BIT(2)
-> +#define   DONT_SPLIT_AHB_WR     BIT(7)
+> +static struct platform_driver tegra_ahb_driver;
 > +
-> +#define AHB_GIZMO_APB_DMA		0x10
-> +#define AHB_GIZMO_IDE			0x18
-> +#define AHB_GIZMO_USB			0x1c
-> +#define AHB_GIZMO_AHB_XBAR_BRIDGE	0x20
-> +#define AHB_GIZMO_CPU_AHB_BRIDGE	0x24
-> +#define AHB_GIZMO_COP_AHB_BRIDGE	0x28
-> +#define AHB_GIZMO_XBAR_APB_CTLR		0x2c
-> +#define AHB_GIZMO_VCP_AHB_BRIDGE	0x30
-> +#define AHB_GIZMO_NAND			0x3c
-> +#define AHB_GIZMO_SDMMC4		0x44
-> +#define AHB_GIZMO_XIO			0x48
-> +#define AHB_GIZMO_BSEV			0x60
-> +#define AHB_GIZMO_BSEA			0x70
-> +#define AHB_GIZMO_NOR			0x74
-> +#define AHB_GIZMO_USB2			0x78
-> +#define AHB_GIZMO_USB3			0x7c
-> +#define   IMMEDIATE	BIT(18)
-> +
-> +#define AHB_GIZMO_SDMMC1		0x80
-> +#define AHB_GIZMO_SDMMC2		0x84
-> +#define AHB_GIZMO_SDMMC3		0x88
-> +#define AHB_MEM_PREFETCH_CFG_X		0xd8
-> +#define AHB_ARBITRATION_XBAR_CTRL	0xdc
-> +#define AHB_MEM_PREFETCH_CFG3		0xe0
-> +#define AHB_MEM_PREFETCH_CFG4		0xe4
-> +#define AHB_MEM_PREFETCH_CFG1		0xec
-> +#define AHB_MEM_PREFETCH_CFG2		0xf0
-> +#define   PREFETCH_ENB	BIT(31)
-> +#define   MST_ID(x)	(((x) & 0x1f) << 26)
-> +#define   AHBDMA_MST_ID	MST_ID(5)
-> +#define   USB_MST_ID	MST_ID(6)
-> +#define   USB2_MST_ID	MST_ID(18)
-> +#define   USB3_MST_ID	MST_ID(17)
-> +#define   ADDR_BNDRY(x)	(((x) & 0xf) << 21)
-> +#define   INACTIVITY_TIMEOUT(x)	(((x) & 0xffff) << 0)
-> +
-> +#define AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID	0xf8
-> +
-> +static u32 tegra_ahb_gizmo[] =3D {
-> +	AHB_ARBITRATION_DISABLE,
-> +	AHB_ARBITRATION_PRIORITY_CTRL,
-> +	AHB_GIZMO_AHB_MEM,
-> +	AHB_GIZMO_APB_DMA,
-> +	AHB_GIZMO_IDE,
-> +	AHB_GIZMO_USB,
-> +	AHB_GIZMO_AHB_XBAR_BRIDGE,
-> +	AHB_GIZMO_CPU_AHB_BRIDGE,
-> +	AHB_GIZMO_COP_AHB_BRIDGE,
-> +	AHB_GIZMO_XBAR_APB_CTLR,
-> +	AHB_GIZMO_VCP_AHB_BRIDGE,
-> +	AHB_GIZMO_NAND,
-> +	AHB_GIZMO_SDMMC4,
-> +	AHB_GIZMO_XIO,
-> +	AHB_GIZMO_BSEV,
-> +	AHB_GIZMO_BSEA,
-> +	AHB_GIZMO_NOR,
-> +	AHB_GIZMO_USB2,
-> +	AHB_GIZMO_USB3,
-> +	AHB_GIZMO_SDMMC1,
-> +	AHB_GIZMO_SDMMC2,
-> +	AHB_GIZMO_SDMMC3,
-> +	AHB_MEM_PREFETCH_CFG_X,
-> +	AHB_ARBITRATION_XBAR_CTRL,
-> +	AHB_MEM_PREFETCH_CFG3,
-> +	AHB_MEM_PREFETCH_CFG4,
-> +	AHB_MEM_PREFETCH_CFG1,
-> +	AHB_MEM_PREFETCH_CFG2,
-> +	AHB_ARBITRATION_AHB_MEM_WRQUE_MST_ID,
-> +};
-> +
-> +struct tegra_ahb {
-> +	void __iomem	*regs;
-> +	void		*ctx;
-> +	struct device	*dev;
-> +};
-> +
-> +static inline u32 gizmo_readl(struct tegra_ahb *ahb, u32 offset)
-> +{
-> +	return readl(ahb->regs + offset);
-> +}
-> +
-> +static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 of=
-fset)
-> +{
-> +	writel(value, ahb->regs + offset);
-> +}
-> +
-> +static int tegra_ahb_suspend(struct device *dev)
-> +{
-> +	int i;
-> +	struct tegra_ahb *ahb =3D dev_get_drvdata(dev);
-> +	u32 *p =3D ahb->ctx;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(tegra_ahb_gizmo); i++)
-> +		p[i] =3D gizmo_readl(ahb, tegra_ahb_gizmo[i]);
-> +	return 0;
-> +}
-> +
-> +static int tegra_ahb_resume(struct device *dev)
-> +{
-> +	int i;
-> +	struct tegra_ahb *ahb =3D dev_get_drvdata(dev);
-> +	u32 *p =3D ahb->ctx;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(tegra_ahb_gizmo); i++)
-> +		gizmo_writel(ahb, p[i], tegra_ahb_gizmo[i]);
-> +	return 0;
-> +}
-> +
-> +static UNIVERSAL_DEV_PM_OPS(tegra_ahb_pm,
-> +			    tegra_ahb_suspend,
-> +			    tegra_ahb_resume, NULL);
-> +
-> +static void tegra_ahb_gizmo_init(struct tegra_ahb *ahb)
+>  static u32 tegra_ahb_gizmo[] =3D {
+>  	AHB_ARBITRATION_DISABLE,
+>  	AHB_ARBITRATION_PRIORITY_CTRL,
+> @@ -126,6 +130,26 @@ static inline void gizmo_writel(struct tegra_ahb *ah=
+b, u32 value, u32 offset)
+>  	writel(value, ahb->regs + offset);
+>  }
+> =20
+> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> +static int __tegra_ahb_enable_smmu(struct device *dev, void *data)
 > +{
 > +	u32 val;
+> +	struct tegra_ahb *ahb =3D dev_get_drvdata(dev);
 > +
-> +	val =3D gizmo_readl(ahb, AHB_GIZMO_AHB_MEM);
-> +	val |=3D ENB_FAST_REARBITRATE | IMMEDIATE | DONT_SPLIT_AHB_WR;
-> +	gizmo_writel(ahb, val, AHB_GIZMO_AHB_MEM);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_GIZMO_USB);
-> +	val |=3D IMMEDIATE;
-> +	gizmo_writel(ahb, val, AHB_GIZMO_USB);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_GIZMO_USB2);
-> +	val |=3D IMMEDIATE;
-> +	gizmo_writel(ahb, val, AHB_GIZMO_USB2);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_GIZMO_USB3);
-> +	val |=3D IMMEDIATE;
-> +	gizmo_writel(ahb, val, AHB_GIZMO_USB3);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_ARBITRATION_PRIORITY_CTRL);
-> +	val |=3D PRIORITY_SELECT_USB |
-> +		PRIORITY_SELECT_USB2 |
-> +		PRIORITY_SELECT_USB3 |
-> +		AHB_PRIORITY_WEIGHT(7);
-> +	gizmo_writel(ahb, val, AHB_ARBITRATION_PRIORITY_CTRL);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_MEM_PREFETCH_CFG1);
-> +	val &=3D ~MST_ID(~0);
-> +	val |=3D PREFETCH_ENB |
-> +		AHBDMA_MST_ID |
-> +		ADDR_BNDRY(0xc) |
-> +		INACTIVITY_TIMEOUT(0x1000);
-> +	gizmo_writel(ahb, val, AHB_MEM_PREFETCH_CFG1);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_MEM_PREFETCH_CFG2);
-> +	val &=3D ~MST_ID(~0);
-> +	val |=3D PREFETCH_ENB |
-> +		USB_MST_ID |
-> +		ADDR_BNDRY(0xc) |
-> +		INACTIVITY_TIMEOUT(0x1000);
-> +	gizmo_writel(ahb, val, AHB_MEM_PREFETCH_CFG2);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_MEM_PREFETCH_CFG3);
-> +	val &=3D ~MST_ID(~0);
-> +	val |=3D PREFETCH_ENB |
-> +		USB3_MST_ID |
-> +		ADDR_BNDRY(0xc) |
-> +		INACTIVITY_TIMEOUT(0x1000);
-> +	gizmo_writel(ahb, val, AHB_MEM_PREFETCH_CFG3);
-> +
-> +	val =3D gizmo_readl(ahb, AHB_MEM_PREFETCH_CFG4);
-> +	val &=3D ~MST_ID(~0);
-> +	val |=3D PREFETCH_ENB |
-> +		USB2_MST_ID |
-> +		ADDR_BNDRY(0xc) |
-> +		INACTIVITY_TIMEOUT(0x1000);
-> +	gizmo_writel(ahb, val, AHB_MEM_PREFETCH_CFG4);
-> +}
-> +
-> +static int __devinit tegra_ahb_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +	struct tegra_ahb *ahb;
-> +	size_t bytes;
-> +
-> +	bytes =3D sizeof(*ahb) + sizeof(u32) * ARRAY_SIZE(tegra_ahb_gizmo);
-> +	ahb =3D devm_kzalloc(&pdev->dev, bytes, GFP_KERNEL);
-> +	if (!ahb)
-> +		return -ENOMEM;
-> +	ahb->ctx =3D ahb + 1;
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENODEV;
-> +	ahb->regs =3D devm_request_and_ioremap(&pdev->dev, res);
-> +	if (!ahb->regs)
-> +		return -EBUSY;
-> +
-> +	ahb->dev =3D &pdev->dev;
-> +	platform_set_drvdata(pdev, ahb);
-> +	tegra_ahb_gizmo_init(ahb);
+> +	val =3D gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+> +	val |=3D AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+> +	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
 > +	return 0;
 > +}
 > +
-> +static int __devexit tegra_ahb_remove(struct platform_device *pdev)
+> +int tegra_ahb_enable_smmu(void)
 > +{
-> +	platform_set_drvdata(pdev, NULL);
-> +	return 0;
+> +	return driver_for_each_device(&tegra_ahb_driver.driver, NULL, NULL,
+> +				      __tegra_ahb_enable_smmu);
 > +}
-> +
-> +static const struct of_device_id tegra_ahb_of_match[] __devinitconst =3D=
- {
-> +	{ .compatible =3D "nvidia,tegra30-ahb", },
-> +	{ .compatible =3D "nvidia,tegra20-ahb", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver tegra_ahb_driver =3D {
-> +	.probe =3D tegra_ahb_probe,
-> +	.remove =3D __devexit_p(tegra_ahb_remove),
-> +	.driver =3D {
-> +		.name =3D DRV_NAME,
-> +		.owner =3D THIS_MODULE,
-> +		.of_match_table =3D tegra_ahb_of_match,
-> +		.pm =3D &tegra_ahb_pm,
-> +	},
-> +};
-> +
-> +static int __init tegra_ahb_init(void)
-> +{
-> +	return platform_driver_register(&tegra_ahb_driver);
-> +}
-> +postcore_initcall(tegra_ahb_init);
-> +
-> +static void __exit tegra_ahb_exit(void)
-> +{
-> +	platform_driver_unregister(&tegra_ahb_driver);
-> +}
-> +module_exit(tegra_ahb_exit);
-> +
-> +MODULE_AUTHOR("Hiroshi DOYU <hdoyu@nvidia.com>");
-> +MODULE_DESCRIPTION("Tegra AHB driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:" DRV_NAME);
-> --=20
-> 1.7.5.4
->=20
+> +EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+> +#endif
+
+this is still not correct. If you will always call this whenever you run
+on tegra 3, why do you even expose this function ? You can use your
+compatible flag to do runtime detection of where you're running and call
+this accordingly. Something like:
+
+static const struct of_device_id tegra_ahb_match_table[] =3D {
+{
+	.compatible =3D "nvidia,tegra2",
+}, {
+	.compatible =3D "nvidia,tegra3",
+	.data	=3D AHB_HAS_SMMU,
+},
+{  }
+};
+
+or something similar, then on probe, you can capture your id and check
+if that bit is true, if it is just call tegra_ahb_enable_smmu(), you
+really don't need all this trickery with driver_for_each_device().
 
 --=20
 balbi
 
---CdrF4e02JqNVZeln
+--adJ1OR3c6QgCpb/j
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPl98fAAoJEIaOsuA1yqRE9xMQAImGOA8WTQT1t3Q2jYF4wYkw
-PTBsy6rwitnznqh2AmyS1beXmtuYzGJ0mYpx1Xpn4ssMoq8ISI1IyhpLLyqb6yzz
-4BXi26yJuGLTi5IJuAne7nkkZPtx0lmfAXS/sOTqqv0hSkb05HpixZYviOgPMvRI
-pgkRArK+duFtYQuixYQnIk4oaCsblwSa/P5HwGcER5KgCRwaOenKUi6hiWsKpkeQ
-K15VJA52aNJaFbEdVBJ3bL8GUwQLieTEz9kB652Jr3waGIxEuGBCD87OmYhvRmbd
-IC0JijpopmUlKE0PT5Ulesw7FUZ5mSiGpa/tM+SC8O3ZyMuNoKnRorM+wpaSnGE1
-F/iBo2naY/Dzyace0PpqP6mjBbmSsiGWaQTCCcZB4tAtGWdDHO02GPmyxI7rXtfz
-80n33kMTIUJE5CBp8Gp4iWyWVLwlc61PydaYx3jZHpTUsRcTPimsymQdEJYLx1pk
-KjV/V93CAh5bsdE47RBp/hbrrupD5lobpp6wHKctaoiRcL2FAbfXUTDzYVCCwgSK
-p1Opj2Jm2y1WEuPhkhNd8qcDS+soFnLQ4ObpXCOv3puVSZM1B4Ftt9PGq9YJ1TeB
-3fEad+4kcdq6Ga02RWHrJ3MT00RC/IbBSvUFoyzsoGYDP9cqUbJ1abK7osURAUGt
-i/Iw9W2N2MS5P6rSkPwL
-=lwnY
+iQIcBAEBAgAGBQJPl+AtAAoJEIaOsuA1yqRErHEP/39gDiSIw/E1keYngd+Zpq5M
+yQAYc3f/at1O2HSGzo10nt2JDnq/xEd+VleWLLpQTwKykNVtAzcgBMJXilOm+3/g
+9Eq+VQ/b+TetWOXfhKhIjKCcFQGKPyWnFd0hSCCk1UAKyzhSlnF+ndxYkrqs2elF
+x/x49aer2E+/x/ZFqZJjmFD2vNz2HH0Dbf39SauKNqPW5EXVhSLMlJu95dtiXqx1
+aGeQehaOlbXaLwMjeNaEiJG125//AxjUYLy7P5tqxEIsAcEkBgVQQogFyhOxv5b0
+2sckQJKmf2LmIfevbhzBTT5CsbHIL8paO3JWalLSNzJQlUTqus86rS4Bxm5k+F0g
+6ZqnDzruU9daP9qjV/y8BJHE+09D2ymWLbshjWX0hko9bV8uKWoVfhbGmcLZsg24
+ySG+9IVrC6AoFFARyyZOH7xD6Rv/wqEBtBkSN+qCniSEe59p4TtOyWGgVup3aRzp
+dLZRgXfhZQGP5Jjt3Bp2+qXaiWJfmaMi787DmJ6qqmQ14sSS0pLCg9g5gDdpgI/4
+r32Ws+IbQCp5MJt1p9AZLML5Fkl+A4SF53VO5VmCpKUz0nNdE/ldQ+YpwLMDW399
+WPKtldkmlCX7mba8PAB4e4pKq6ODGVgus2yqfapYxeMhyNl0M7W1iLMCCEjxU+iu
+nLlSYRqga7iHUk5YUF/z
+=knMd
 -----END PGP SIGNATURE-----
 
---CdrF4e02JqNVZeln--
-
-
---===============9135330400634724417==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============9135330400634724417==--
+--adJ1OR3c6QgCpb/j--
