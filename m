@@ -1,71 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/3] ARM: tegra: Add AHB driver
-Date: Wed, 25 Apr 2012 12:15:22 +0000
-Message-ID: <201204251215.22889.arnd@arndb.de>
-References: <1335269116-9578-1-git-send-email-hdoyu@nvidia.com>
- <20120425083747.466f5c98330af8964d980b8c@nvidia.com>
- <20120425074639.GB3423@arwen.pp.htv.fi>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC v2 0/5] Add NVIDIA Tegra DRM support
+Date: Wed, 25 Apr 2012 14:27:22 +0200
+Message-ID: <20120425122722.GA24502@avionic-0098.adnet.avionic-design.de>
+References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20120425074639.GB3423@arwen.pp.htv.fi>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: balbi@ti.com
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1335347102-14905-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 25 April 2012, Felipe Balbi wrote:
->   On Wed, Apr 25, 2012 at 08:37:47AM +0300, Hiroshi Doyu wrote:
-> > On Tue, 24 Apr 2012 21:56:45 +0200
-> > Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> > 
-> > > On Tue, Apr 24, 2012 at 03:05:14PM +0300, Hiroshi DOYU wrote:
-> > > > The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> > > > High-performance Bus (AHB) architecture.
-> > > > 
-> > > > The AHB Arbiter controls AHB bus master arbitration. This effectively
-> > > > forms a second level of arbitration for access to the memory
-> > > > controller through the AHB Slave Memory device. The AHB pre-fetch
-> > > > logic can be configured to enhance performance for devices doing
-> > > > sequential access. Each AHB master is assigned to either the high or
-> > > > low priority bin. Both Tegra20/30 have this AHB bus.
-> > > > 
-> > > > Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
-> > > > Cc: Felipe Balbi <balbi@ti.com>
-> > > > Cc: Arnd Bergmann <arnd@arndb.de>
-> > > > ---
-> > > > Update:
-> > > > - Use platform_device to get info from dt dynamically.(Felipe/Arnd)
-> > > > ---
-> > > >  arch/arm/mach-tegra/Makefile    |    1 +
-> > > >  arch/arm/mach-tegra/tegra-ahb.c |  285 +++++++++++++++++++++++++++++++++++++++
-> > > >  2 files changed, 286 insertions(+), 0 deletions(-)
-> > > 
-> > > 1. I thought we weren't going to have any more drivers under
-> > >    arch/arm
-> > 
-> > Can this driver be located under "drivers/misc"? Or is there any better place?
-> 
-> maybe drivers/platform/arm/ ??
 
-I really wouldn't want to add that directory: It has the risk of letting
-people add random crap there that may or may not be related to ARM (the
-company) and/or ARM (the architecture).
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think it could go into drivers/amba/ along with the primecell bus driver.
-The two drivers are for two different aspects of the AMBA spec and don't
-actually depend on one another as far as I can tell, but it's at least
-a fitting name, and it doesn't depend on the ARM architecture, which is
-important because the driver could be used on other architectures that
-are connected to an AHB bus.
+* Thierry Reding wrote:
+> This series adds a basic DRM driver for NVIDIA Tegra 2 processors. It
+> currently only supports the RGB output and I've successfully tested it
+> against the fbcon kernel module and the xf86-video-modesetting driver.
+> The code uses the Tegra's IOMMU/GART to remap non-contiguous memory.
+> This means that currently video memory is limited to 32 MB, the size of
+> the GART aperture.
+>=20
+> Changes in v2:
+> - split into several smaller source files
+> - represent individual devices in DT
+> - add drivers for individual devices
+> - EDID probing support via "ddc" property
+> - EDID support in DT using binary blobs
+> - basic (non-working) HDMI support
+> - support for carveout memory in DT
+>=20
+> A lot of the above are really just stub implementations. Most notably
+> HDMI support is pretty much a copy of what NVIDIA has in their
+> downstream kernels, though I wasn't able to make it work except for the
+> EDID probing (I probably missed some pieces). Carveout memory also isn't
+> used right now.
+>=20
+> Still this should now be in a state where other people (like Jon and
+> Terje from NVIDIA) and Lucas can start contributing. This series is
+> based on next-20120424.
 
-	Arnd
+I also just finished uploading this series to gitorious:
+
+	https://gitorious.org/thierryreding/linux/commits/tegra/drm/next
+
+Thierry
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAk+X7aoACgkQZ+BJyKLjJp9ZkACggwHSSACQpOGKMLpMrBhbdhlD
+lN8AoIWdzcPrUZA8nBHqCsgeUB+vpkna
+=bbbA
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
