@@ -1,24 +1,95 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 4/4] ARM: dt: tegra: Add device tree support for AHB
-Date: Thu, 26 Apr 2012 14:01:36 -0600
-Message-ID: <4F99A9A0.1030304@wwwdotorg.org>
-References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com> <1335352072-4001-4-git-send-email-hdoyu@nvidia.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
+Date: Thu, 26 Apr 2012 23:26:14 +0300
+Message-ID: <20120426202610.GA30690@arwen.pp.htv.fi>
+References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
+ <1335352072-4001-2-git-send-email-hdoyu@nvidia.com>
+ <4F99A821.2040406@wwwdotorg.org>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1335352072-4001-4-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F99A821.2040406@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Hiroshi DOYU <hdoyu@nvidia.com>, swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Felipe Balbi <balbi@ti.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, Jamie Iles <jamie@jamieiles.com>, Rob Herring <rob.herring@calxeda.com>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/25/2012 05:07 AM, Hiroshi DOYU wrote:
-> Add AHB entry for tegra20/30.
 
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	ahb: ahb@6000c004 {
-> +		compatible = "nvidia,tegra30-ahb", "nvidia,tegra20-ahb";
+Hi,
 
-This should only be tegra20-ahb in the Tegra20 file.
+On Thu, Apr 26, 2012 at 01:55:13PM -0600, Stephen Warren wrote:
+> On 04/25/2012 05:07 AM, Hiroshi DOYU wrote:
+> > Add extern func, "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
+> > ready.
+>=20
+> > +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> > +static int __tegra_ahb_enable_smmu(struct device *dev, void *data)
+> ...
+> > +int tegra_ahb_enable_smmu(void)
+> > +{
+> > +	return driver_for_each_device(&tegra_ahb_driver.driver, NULL, NULL,
+> > +				      __tegra_ahb_enable_smmu);
+> > +}
+> > +EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+> > +#endif
+>=20
+> That looks like a neat solution to avoid having a global device object.
+
+except that it won't work always. If you happen to have two AHB bridges,
+each using a separate smmu but only one smmu is ready, this will set
+SMMU_INIT_DONE on both bridges.
+
+> However, if that driver_for_each_device finds no devices, the function
+> still succeeds. That doesn't seem right, and doesn't allow e.g. the SMMU
+> to defer its probe until the AHB driver has completed.
+>=20
+> Perhaps add a local int variable to tegra_ahb_enable_smmu(), pass the
+> address to __tegra_ahb_enable_smmu, and have it increment the int. Then,
+> after calling driver_for_each_device,:
+>=20
+> if (!ahb_device_count)
+>     return -EPROBE_DEFER
+> if (WARN_ON(ahb_device_count !=3D 1))
+>     return -EINVAL;
+> return 0;
+
+that would look, well, weird. Why don't you just different initcall
+leves for this ? Maybe smmu goes into postcore_initcall() and tegra_ahb
+goes into postcore_initcall_sync() ?? then you know that SMMU will be
+ready by the time you call tegra_ahb probe. Well, unless smmu's probe
+fail, but then again, IIUC it won't work anyway...
+
+--=20
+balbi
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPma9iAAoJEIaOsuA1yqREG8IP/icfZHUq52y6dg7okc0f0FmQ
+lHKlp7pa4UL6fr8YG4UFI8m+az/CZ0uMb+P9vliXl/NNigTsuMnrcM+xXzWw86wb
+oLRx+8ShsU7PId0DsOVrpjEeeIdszn30KQTcngkLdNaX7I7fm99wfCPAUn7aSBuY
+qPffLzhm3yHMp8NE4eC559qjCfrp4rGiRBGVQWUMkN2hlGzNS1j7fiujT90aEeVM
+0EIzB58qOX/UZIK2lszbo4x5qlWvQ+i4d/mB/ArypNJnnRVZUcoZc+mFe+R6tDz9
+tWlWmxmlMLUDd1gMK6Tsr2JDrhcEQ5P1ER6stNmuVOQxeuoaEHDp63XUCYBalTMK
+9jcE1ZiZ4gl5jZYrqIeRHj1XoTTZ5hxZxtQCHe1J5+LMA+S/2ImqGJvVutthjFFG
+oIHAmsHrYYttAAJdLIQ/5pjqCArio+mGXCkK8+bpUfN5kq4N53P4FgLcYf71szUa
+9v5eYrGqCyptreVl16OssC+2B/LotUUZlGHnx0rTkwU8kdIGPSk9ytApP/baoFjB
+e8IGHXMx0a3sAwclFlGyBI3YB+CznDRReNKrcqjg4Hm58bGK2psu+7tcPbDC20SZ
+2GvJWSVlfeWjLniKd9Anng47osxu50whSnCtu1eOF04vMTX91AIY2QCkf4vfvSO8
+qlJbEZQvO6LN9gle+gdh
+=v3Kf
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
