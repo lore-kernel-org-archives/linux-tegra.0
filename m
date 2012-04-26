@@ -1,33 +1,52 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/4] ARM: dt: tegra: enable als and proximity sensor
-Date: Thu, 26 Apr 2012 23:09:15 +0530
-Message-ID: <4F998843.9080108@nvidia.com>
-References: <1335183097-21104-1-git-send-email-ldewangan@nvidia.com> <1335183097-21104-5-git-send-email-ldewangan@nvidia.com> <4F958E42.6030506@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F958E42.6030506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org" <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org" <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 2/4] ARM: dt: tegra seaboard: configure I2C2 pinmux
+Date: Thu, 26 Apr 2012 11:52:49 -0600
+Message-ID: <1335462771-21791-2-git-send-email-swarren@wwwdotorg.org>
+References: <1335462771-21791-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1335462771-21791-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 23 April 2012 10:45 PM, Stephen Warren wrote:
-> On 04/23/2012 06:11 AM, Laxman Dewangan wrote:
->> Add the device info for ALS and proximity sensor for tegra
->> boards cardhu, ventana and seabridge.
->>
->> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Thanks, applied.
->
-> I made the following minor changes: s/PZ02/PZ2/ in .dts files,
-> s/seabridge/seaboard/ in commit description
->
-> I note that the proximity detection doesn't appear to work on my Cardhu,
-> although the light sensor works. Is that expected? Both work on Seaboard
-> and Ventana.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes, there is problem in cardhu about component mounting for ir led. 
-This is fixed on other version of reference  board.
-So on cardhu, proximity sensing always return 0xFF.
+The I2C2 controller can be routed to either pingroup DDC or PTA. Seaboard
+actually uses this as an I2C bus mux, and devices are connected to both
+pingroups. This change statically assigns the I2C2 controller to pingroup
+PTA, so that on-board devices can be accessed. The DDC pingroup is used
+for EDID/DDC accesses which are not yet required, given the absence of
+any Tegra graphics support. I2C muxing will be supported later.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-seaboard.dts |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index 96516fb..19db40a 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -100,7 +100,7 @@
+ 			};
+ 			hdint {
+ 				nvidia,pins = "hdint", "lpw0", "lpw2", "lsc1",
+-					"lsck", "lsda", "pta";
++					"lsck", "lsda";
+ 				nvidia,function = "hdmi";
+ 			};
+ 			i2cp {
+@@ -134,6 +134,10 @@
+ 				nvidia,pins = "pmc";
+ 				nvidia,function = "pwr_on";
+ 			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "i2c2";
++			};
+ 			rm {
+ 				nvidia,pins = "rm";
+ 				nvidia,function = "i2c1";
+-- 
+1.7.0.4
