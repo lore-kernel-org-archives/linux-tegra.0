@@ -1,25 +1,31 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v2 1/3] ARM: tegra: Add AHB driver
-Date: Thu, 26 Apr 2012 08:49:44 +0300
-Message-ID: <20120426084944.21e7aa1c3944c906742967a2@nvidia.com>
+Date: Thu, 26 Apr 2012 11:14:09 +0300
+Message-ID: <20120426081409.GI514@tbergstrom-lnx.Nvidia.com>
 References: <1335269116-9578-1-git-send-email-hdoyu@nvidia.com>
-	<20120425083747.466f5c98330af8964d980b8c@nvidia.com>
-	<20120425074639.GB3423@arwen.pp.htv.fi>
-	<201204251215.22889.arnd@arndb.de>
-	<4F981F6C.2050807@wwwdotorg.org>
+ <20120425083747.466f5c98330af8964d980b8c@nvidia.com>
+ <20120425074639.GB3423@arwen.pp.htv.fi>
+ <201204251215.22889.arnd@arndb.de> <4F981F6C.2050807@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
 In-Reply-To: <4F981F6C.2050807-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 25 Apr 2012 17:59:40 +0200
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-
+On Wed, Apr 25, 2012 at 05:59:40PM +0200, Stephen Warren wrote:
 > On 04/25/2012 06:15 AM, Arnd Bergmann wrote:
 > > On Wednesday 25 April 2012, Felipe Balbi wrote:
 > ...
@@ -44,20 +50,13 @@ Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 > any core AHB/AMBA specification, rather than being some Tegra-specific
 > control over the bus (given that the registers and bits correspond to
 > Tegra-specific devices on the bus).
+> 
 
-Agree.
+The HW controlled by this 'driver' is roughly: the AHB arbiter, glue logic
+between IP blocks and the AHB bus and AHB memory controller slave. All of
+these are tegra specific AFAIK. So I don't see much point in a generic
+driver.
 
-Taking a look at AHB spec, this tegra-ahb part is a bit beyond that
-spec from S/W POV. If there's other similiar AHB drivers from othere
-SoC, we may be able to generalize them, but at the moment, it's hard
-to imagine how much/little part is common for similar AHB drivers,
-like registers/bit definitions. Most of the part may depends on
-SoC/Tegra.
+Cheers,
 
-> I'm not really convinced that low-level platform-specific drivers like
-> this shouldn't be in the arch/arm/mach-* directories.
-
-So I think that keeping this kind of drivers under
-"arch/arm/mach-*" or "drivers/amba" as 'tegra'-ahb.c name. If similier
-drivers comes, then, what about thinking the generalization again?
-Either way would be ok for me.
+Peter.
