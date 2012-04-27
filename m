@@ -1,54 +1,127 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add AHB driver
-Date: Fri, 27 Apr 2012 08:40:15 +0300
-Message-ID: <20120427084015.cb7c8e00c7d9a4cd01faa5ae@nvidia.com>
-References: <1335352072-4001-1-git-send-email-hdoyu@nvidia.com>
-	<4F99A740.3080407@wwwdotorg.org>
-	<20120426215903.GH24211@n2100.arm.linux.org.uk>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
+Date: Fri, 27 Apr 2012 08:48:26 +0200
+Message-ID: <20120427.094826.1181797260264746303.hdoyu@nvidia.com>
+References: <20120426202610.GA30690@arwen.pp.htv.fi><4F99B0F8.4040308@wwwdotorg.org><20120426203847.GC30690@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120426215903.GH24211-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120426203847.GC30690@arwen.pp.htv.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "balbi@ti.com" <balbi@ti.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "tony@atomide.com" <tony@atomide.com>, "hsweeten@visionengravers.com" <hsweeten@visionengravers.com>, "jamie@jamieiles.com" <jamie@jamieiles.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 26 Apr 2012 23:59:03 +0200
-Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
+Date: Thu, 26 Apr 2012 22:38:48 +0200
+Message-ID: <20120426203847.GC30690@arwen.pp.htv.fi>
 
-> On Thu, Apr 26, 2012 at 01:51:28PM -0600, Stephen Warren wrote:
-> > On 04/25/2012 05:07 AM, Hiroshi DOYU wrote:
-> > > The AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> > > High-performance Bus (AHB) architecture.
+> * PGP Signed by an unknown key
+> 
+> Hi,
+> 
+> On Thu, Apr 26, 2012 at 02:32:56PM -0600, Stephen Warren wrote:
+> > On 04/26/2012 02:26 PM, Felipe Balbi wrote:
+> > > Hi,
 > > > 
-> > > The AHB Arbiter controls AHB bus master arbitration. This effectively
-> > > forms a second level of arbitration for access to the memory
-> > > controller through the AHB Slave Memory device. The AHB pre-fetch
-> > > logic can be configured to enhance performance for devices doing
-> > > sequential access. Each AHB master is assigned to either the high or
-> > > low priority bin. Both Tegra20/30 have this AHB bus.
+> > > On Thu, Apr 26, 2012 at 01:55:13PM -0600, Stephen Warren wrote:
+> > >> On 04/25/2012 05:07 AM, Hiroshi DOYU wrote:
+> > >>> Add extern func, "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
+> > >>> ready.
+> > >>
+> > >>> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> > >>> +static int __tegra_ahb_enable_smmu(struct device *dev, void *data)
+> > >> ...
+> > >>> +int tegra_ahb_enable_smmu(void)
+> > >>> +{
+> > >>> +	return driver_for_each_device(&tegra_ahb_driver.driver, NULL, NULL,
+> > >>> +				      __tegra_ahb_enable_smmu);
+> > >>> +}
+> > >>> +EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+> > >>> +#endif
+> > >>
+> > >> That looks like a neat solution to avoid having a global device object.
 > > > 
-> > > Some of configuration param could be passed from DT too.
+> > > except that it won't work always. If you happen to have two AHB bridges,
+> > > each using a separate smmu but only one smmu is ready, this will set
+> > > SMMU_INIT_DONE on both bridges.
 > > 
-> > I think this code looks reasonable. I'd like to see an ack from Russell,
-> > Arnd, and Olof on the final location of the files though.
+> > There is only 1.
 > 
-> Well, the big question which needs answering is whether this AHB software
-> interface is something specific to Tegra or whether it really is something
-> generic.  There's been some hints in the previous thread that it's
-> specific to Tegra, so it may not after all make sense for it to be a
-> generic driver.
+> that's why there's a "if you happen to have" statement. If you stick to
+> this "there is only 1" argument, why do you even make this into a
+> platform driver ? Just stick the entire code hidden on the
+> machine_init() code. Drivers a supposed to be able to instantiated
+> multiple times and always work, this method won't work if tegra99999
+> ends up with two AHB bridges/SMMUs
 > 
-> However, we _have_ decided "no more drivers under arch/arm".  So I really
-> don't want to see "struct xxx_driver" appearing in any code under that
-> subdirectory or one of its decendents.  I don't have much more to say
-> about location than that.
+> > >> However, if that driver_for_each_device finds no devices, the function
+> > >> still succeeds. That doesn't seem right, and doesn't allow e.g. the SMMU
+> > >> to defer its probe until the AHB driver has completed.
+> > >>
+> > >> Perhaps add a local int variable to tegra_ahb_enable_smmu(), pass the
+> > >> address to __tegra_ahb_enable_smmu, and have it increment the int. Then,
+> > >> after calling driver_for_each_device,:
+> > >>
+> > >> if (!ahb_device_count)
+> > >>     return -EPROBE_DEFER
+> > >> if (WARN_ON(ahb_device_count != 1))
+> > >>     return -EINVAL;
+> > >> return 0;
+> > > 
+> > > that would look, well, weird. Why don't you just different initcall
+> > > leves for this ? Maybe smmu goes into postcore_initcall() and tegra_ahb
+> > > goes into postcore_initcall_sync() ?? then you know that SMMU will be
+> > > ready by the time you call tegra_ahb probe. Well, unless smmu's probe
+> > > fail, but then again, IIUC it won't work anyway...
+> > 
+> > Uggh. I'd rather all these devices just got instantiated from device
+> > tree and relied on deferred probe to manage any ordering, rather than
+> > playing complex games with multiple initcall levels (and in the end
+> > probably having to invent more and more initcall levels to correctly
+> > represent all the dependencies).
+> 
+> then do that... it'll be better than current trickery with
+> driver_for_each_device() and my initcall trickery ;-)
 
-What about having this driver under "drivers/amba"?
+Then, what about something like the following?
 
-If other similiar drivers are coming up, it's easy to find rather than
-having this arch/arm/mach-*. There may be some possibility of
-generalization later, then. Also it meets the requirement of no
-"struct xxxx_driver" under arch/arm. Arnd?
+ static int tegra_ahb_match_by_smmu(struct device *dev, void *data)
+ {
+ 	struct tegra_ahb *ahb = dev_get_drvdata(dev);
+ 	struct device_node *dn = data;
+ 
+ 	return (ahb->dev->of_node == dn) ? 1 : 0
+ }
+ 
+ int tegra_ahb_enable_smmu(struct device_node *ahb)
+ {
+ 	struct device *dev;
+ 	u32 val;
+ 
+ 	dev = driver_find_device(&tegra_ahb_driver.driver, NULL, ahb,
+ 				 tegra_ahb_match_by_smmu);
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+ 	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
+ 	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
+ 	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(tegra_ahb_enable_smmu);
+
+	Modified arch/arm/boot/dts/tegra30.dtsi
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 655bc47..28f9138 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -242,5 +242,6 @@
+ 	smmu {
+ 		compatible = "nvidia,tegra30-smmu";
+ 		mc = <&mc>;
++		ahb = <&ahb>;
+ 	};
+ };
