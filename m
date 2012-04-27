@@ -1,36 +1,65 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra trimslice: enable SDHCI1 controller
-Date: Fri, 27 Apr 2012 13:46:16 -0600
-Message-ID: <1335555976-15130-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Tegra board file deprecation schedule
+Date: Fri, 27 Apr 2012 15:24:12 -0600
+Message-ID: <4F9B0E7C.1060408@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Eventually, Tegra support will become device tree only in the mainline
+kernel; arch/arm/mach-tegra/board* will be deleted.
 
-This is the micro-SD card slot.
+I propose the following policy towards this goal: I'd like to maintain
+the board files until the relevant device tree file has the same level
+of functionality. Once that is achieved, and a Linus kernel is release
+with full support for the board via device tree, the board files can be
+deleted from the next kernel release.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra-trimslice.dts |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
+Does anyone have any issues with this?
 
-diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
-index 0c1a54c..ead9365 100644
---- a/arch/arm/boot/dts/tegra-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra-trimslice.dts
-@@ -296,10 +296,6 @@
- 		status = "disable";
- 	};
- 
--	sdhci@c8000000 {
--		status = "disable";
--	};
--
- 	sdhci@c8000200 {
- 		status = "disable";
- 	};
--- 
-1.7.0.4
+The device tree conversion status is:
+
+Cardhu/Ventana:
+
+None; already device tree only
+
+Seaboard:
+
+Kaen and Wario board variants are not explicitly supported via device
+tree. However, the differences are almost entirely minor (at least as
+far as the current features supported in board-seaboard*), so anyone
+wishing to use those board variants could easily create their own device
+tree files. I plan to ignore Kaen/Wario and delete board-seaboard* in
+3.6 unless someone objects.
+
+Harmony:
+
+Missing support for TPS6586x regulator, and PCI-Express controller.
+Thierry is working on this. I hope this support will be ready to be
+merged for 3.6, and hence board-harmony* can be deleted in 3.7.
+
+TrimSlice:
+
+Missing RTC and Micro-SD slot support. I've sent patches for this, which
+will be merged today.
+
+Missing audio support. I sent patches for this today. I hope they'll be
+merged for 3.5.
+
+Missing PCI-Express support; status above.
+
+I hope board-trimslice* can be deleted in 3.7.
+
+Paz00/Toshiba AC100:
+
+Missing rfkill button support. Defining a good binding for this might
+prove challenging. Marc Dietrich started work on this a while back. I
+pinged him to see if he intends to continue this work.
+
+This is probably the long-pole for completely removing board files,
+unless we ignore the rfkill feature and delete the board files anyway.
