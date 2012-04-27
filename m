@@ -1,67 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCHv3 2/4] ARM: tegra: Add SMMU enabler in AHB
-Date: Fri, 27 Apr 2012 09:49:00 -0600
-Message-ID: <4F9ABFEC.3090107@wwwdotorg.org>
-References: <20120426202610.GA30690@arwen.pp.htv.fi><4F99B0F8.4040308@wwwdotorg.org><20120426203847.GC30690@arwen.pp.htv.fi> <20120427.094826.1181797260264746303.hdoyu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120427.094826.1181797260264746303.hdoyu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "balbi@ti.com" <balbi@ti.com>, Stephen Warren <swarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "tony@atomide.com" <tony@atomide.com>, "hsweeten@visionengravers.com" <hsweeten@visionengravers.com>, "jamie@jamieiles.com" <jamie@jamieiles.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] ARM: dt: tegra trimslice: add RTC I2C device
+Date: Fri, 27 Apr 2012 11:50:34 -0600
+Message-ID: <1335549035-22286-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/27/2012 12:48 AM, Hiroshi Doyu wrote:
-...
-> Then, what about something like the following?
-> 
->  static int tegra_ahb_match_by_smmu(struct device *dev, void *data)
->  {
->  	struct tegra_ahb *ahb = dev_get_drvdata(dev);
->  	struct device_node *dn = data;
->  
->  	return (ahb->dev->of_node == dn) ? 1 : 0
->  }
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I imagine that function and the driver_find_device() call that uses it
-will be pretty common. It may make sense as a drivers/of utility
-function, although perhaps we can wait until later to refactor it, once
-we actually have multiple pieces of code that do this same thing.
+According to the device's datasheet, it can support an interrupt too.
+However, the existing board file doesn't specify an interrupt, and I
+don't have the schematics, so I can't add an interrupts property. The
+current Linux driver doesn't support anyway.
 
->  int tegra_ahb_enable_smmu(struct device_node *ahb)
->  {
->  	struct device *dev;
->  	u32 val;
->  
->  	dev = driver_find_device(&tegra_ahb_driver.driver, NULL, ahb,
->  				 tegra_ahb_match_by_smmu);
->  	if (!dev)
->  		return -ENODEV;
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-trimslice.dts |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Yes, -EPROBE_DEFER here as you mentioned in your followup email.
-
->  
->  	val = gizmo_readl(ahb, AHB_ARBITRATION_XBAR_CTRL);
->  	val |= AHB_ARBITRATION_XBAR_CTRL_SMMU_INIT_DONE;
->  	gizmo_writel(ahb, val, AHB_ARBITRATION_XBAR_CTRL);
->  	return 0;
->  }
->  EXPORT_SYMBOL(tegra_ahb_enable_smmu);
-> 
-> 	Modified arch/arm/boot/dts/tegra30.dtsi
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 655bc47..28f9138 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -242,5 +242,6 @@
->  	smmu {
->  		compatible = "nvidia,tegra30-smmu";
->  		mc = <&mc>;
-> +		ahb = <&ahb>;
->  	};
->  };
-
-Yes, that's probably the best (even only) way to connect the two drivers
-precisely.
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
+index e4fcf9a..23ffa9e 100644
+--- a/arch/arm/boot/dts/tegra-trimslice.dts
++++ b/arch/arm/boot/dts/tegra-trimslice.dts
+@@ -250,6 +250,11 @@
+ 
+ 	i2c@7000c500 {
+ 		clock-frequency = <400000>;
++
++		rtc@56 {
++			compatible = "emmicro,em3027";
++			reg = <0x56>;
++		};
+ 	};
+ 
+ 	i2c@7000d000 {
+-- 
+1.7.0.4
