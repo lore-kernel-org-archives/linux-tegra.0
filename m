@@ -1,34 +1,29 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: Tegra board file deprecation schedule
-Date: Sat, 28 Apr 2012 23:26:21 +0200
-Message-ID: <1335648381.13148.4.camel@antimon>
-References: <4F9B0E7C.1060408@wwwdotorg.org>
+Date: Sat, 28 Apr 2012 22:34:56 +0100
+Message-ID: <20120428213456.GD27792@n2100.arm.linux.org.uk>
+References: <4F9B0E7C.1060408@wwwdotorg.org> <CAOesGMh3NY4cQERSQY-p0QsMtcCXyhkdGSGnnrckcz8-DPjbBw@mail.gmail.com> <6014194.Op4vnW6Cge@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F9B0E7C.1060408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <6014194.Op4vnW6Cge@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 27.04.2012, 15:24 -0600 schrieb Stephen Warren:
-> Eventually, Tegra support will become device tree only in the mainline
-> kernel; arch/arm/mach-tegra/board* will be deleted.
-> 
-> I propose the following policy towards this goal: I'd like to maintain
-> the board files until the relevant device tree file has the same level
-> of functionality. Once that is achieved, and a Linus kernel is release
-> with full support for the board via device tree, the board files can be
-> deleted from the next kernel release.
-> 
-> Does anyone have any issues with this?
+On Sat, Apr 28, 2012 at 06:09:32PM +0200, Marc Dietrich wrote:
+> Another (maybe a bit off-topic) thing that puzzels me is the how to assign
+> the clock to the nvec.
 
-Do we have any way to describe the clocks in the device tree? I'm
-planning to add support for the Toradex Colibri T20 processor module,
-which uses a 13MHz external OSC, so the generic clock init in the
-current dt code definitely won't work for this board.
+What's the nvec?
 
-Thanks,
-Lucas
+> The device needs the clock (tegra-i2c.2) but there is no sane way to get
+> it. I was thinking to add an device name alias (nvec = tegra-i2c.2) to
+> the board file so I can use clk_get(&pdev->dev, NULL) instead of 
+> clk_get_sys which seems to be unwanted.
+
+clk_get() is preferred in drivers which have struct device's to get them.
+And if you know the device name, then I see no problem with the aliasing
+approach.
