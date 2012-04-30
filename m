@@ -1,36 +1,55 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: Tegra board file deprecation schedule
-Date: Mon, 30 Apr 2012 18:51:56 +0200
-Message-ID: <6157937.A8jHT3QHt6@ax5200p>
-References: <4F9B0E7C.1060408@wwwdotorg.org> <2573129.rORKuOVVxu@fb07-iapwap2> <4F9EB68A.3080309@wwwdotorg.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra: add device tree support for TrimSlice
+Date: Mon, 30 Apr 2012 23:48:21 +0100
+Message-ID: <20120430224821.GB27450@opensource.wolfsonmicro.com>
+References: <1335555259-9263-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F9EB68A.3080309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1335555259-9263-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 30 April 2012 09:58:02 Stephen Warren wrote:
-> On 04/30/2012 02:58 AM, Marc Dietrich wrote:
-> > Am Sonntag, 29. April 2012, 13:16:38 schrieb Stephen Warren:
-> ...
-> 
-> >> The correct approach here is to remove all the I2C logic from the NVEC
-> >> driver and add I2C slave support to the real I2C driver. Then, NVEC
-> >> becomes just a protocol driver for the slave transactions. Then, there
-> >> is no clock to deal with.
-> > 
-> > you are absolutely right, but there is no i2c slave controller driver in
-> > mainline yet and I don't want to submit the one nvidia already wrote [1].
-> > Maybe you can ask around if someone is willing to do this.
-> 
-> Someone has been assigned to work on this, but other priorities are in
-> the way. Unfortunately, I don't have any realistic ETA I can give right now.
 
-oh, that's nice. The nvec driver is also far from perfect, so we have some 
-more time to cleanup the rest.
+--V0207lvV8h4k8FAm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Marc
+On Fri, Apr 27, 2012 at 01:34:19PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> This binding doesn't include the nvidia,model or nvidia,audio-routing
+> properties the other Tegra audio DT bindings have, because this binding
+> is targetted at a single machine, rather than for any machine using the
+> tlv320aic23 codec.
+
+Applied, thanks.
+
+--V0207lvV8h4k8FAm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPnxauAAoJEBus8iNuMP3drg4P/Awh74ZwrF7CTalTNOvomVV0
+MXJeI/OaQLLfuvwgwBgxwXmlDcx2IMfdJHqEG0WVFN+oDjcE/OtBqylQc7RwhJCL
+NoSw9bgmfEqRiDfF8AOG3m4cSzZ5GseyLO4M3l72ipKFym0/n8CbJN0zRM3VdfOE
+b2GZZnNxg/d/L7zU0+qKPSysptc9FFZ36gqdnQQMnRUuPfOUKMLDDczR41WSxXls
+jGD4U8wpN+5gH0MOV6d3DZiUfNqYzpSMlbuRoRdlvULSpGtLH2OEIaw4juygBLXq
+iDQ9aVI9VTGuJJbyRZBbdZRmk3Qrweork0q1WnNyXZydAhqR9MU9e0MYlVeZC7/j
+MXuIroh7plkf7fJg93AczvgSBj4IgtQOBPzfpNYRUuSUXjrX8F5MsWI9yZKRGZi2
+cVgk8oq4QQmrOZwyOcsC6mcNs+WkQAp8xe67FHNo/EwkkZiLxAeErbHl/chIAQTS
+ve8rcX40IZZa4p6ngKY2gp/0Agtdw4kqZRgVMqjT/CTVOpaD5OAxl9ZUOI9IP3fL
+jjUI0QEM84iGEobigaCVT2tzAnpKm1+8LwfBHdLelc7arVWfstzYYJ2U7DPZfRED
+fEtWWGWPe4RpmoEmzWbjEP8zNKlGy+WjI/ZV9w9sn1dY+HqFYoKnBS1A4NDM1aSE
+Rfx4At0DAzeBl3fKfSsx
+=vJsE
+-----END PGP SIGNATURE-----
+
+--V0207lvV8h4k8FAm--
