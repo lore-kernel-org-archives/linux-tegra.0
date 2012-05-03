@@ -1,44 +1,31 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCHv3 3/4] iommu/tegra: smmu: Refrain from accessing to AHB
-Date: Thu, 03 May 2012 11:58:30 -0600
-Message-ID: <4FA2C746.5080000@wwwdotorg.org>
-References: <1336061147-10245-1-git-send-email-hdoyu@nvidia.com> <1336061147-10245-3-git-send-email-hdoyu@nvidia.com> <4FA2C4E9.2080509@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv3 1/4] ARM: tegra: Add Tegra AHB driver
+Date: Thu, 03 May 2012 11:59:33 -0600
+Message-ID: <4FA2C785.2080703@wwwdotorg.org>
+References: <1336061147-10245-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FA2C4E9.2080509@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroshi DOYU <hdoyu@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joerg Roedel <joerg.roedel@amd.com>, Thierry Reding <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1336061147-10245-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/03/2012 11:48 AM, Stephen Warren wrote:
-> On 05/03/2012 10:05 AM, Hiroshi DOYU wrote:
->> Use "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
->> ready, instead of directly aceessing AHB registers.
-
-Oh, that should be "accessing".
-
->> @@ -911,14 +899,16 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+On 05/03/2012 10:05 AM, Hiroshi DOYU wrote:
+> Tegra AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
+> High-performance Bus (AHB) architecture.
 > 
->> +	smmu->ahb = of_parse_phandle(pdev->dev.of_node, "ahb", 0);
+> The AHB Arbiter controls AHB bus master arbitration. This effectively
+> forms a second level of arbitration for access to the memory
+> controller through the AHB Slave Memory device. The AHB pre-fetch
+> logic can be configured to enhance performance for devices doing
+> sequential access. Each AHB master is assigned to either the high or
+> low priority bin. Both Tegra20/30 have this AHB bus.
 > 
-> Hmm, "ahb" should probably be "nvidia,ahb".
-> 
-> I see that neither this patch nor the next patch include binding
-> documentation that describe this property. Can you please add documentation.
+> Some of configuration param could be passed from DT too.
 
-Oh, the next patch is just adding the entry to the .dtsi file for the
-AHB, so no surprise it doesn't add a binding document for the SMMU!
-
-I see that with this patch, the driver still expects the DMA window to
-be represented as a reg property (IORESOURCE_MEM), so if we add a
-binding document to this patch it won't be very consistent either:-( And
-then, there's the issue of whether the SMMU should be it's own device or
-a child of some MC device, since there's non-SMMU functionality in these
-registers too. This makes all the SMMU rework need a little more thought.
-
-So, I propose dropping this patch from this series, since this series is
-all about adding the AHB driver. We should move this patch to a series
-relating to the SMMU driver.
+This patch should add
+Documentation/devicetree/bindings/arm/tegra/tegra20-ahb.txt to describe
+the DT binding.
