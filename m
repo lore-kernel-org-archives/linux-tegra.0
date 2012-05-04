@@ -1,63 +1,60 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add Tegra AHB driver
-Date: Fri, 4 May 2012 08:17:36 +0200
-Message-ID: <20120504.091736.839941449020176796.hdoyu@nvidia.com>
-References: <1336061147-10245-1-git-send-email-hdoyu@nvidia.com><4FA2C34F.5060406@wwwdotorg.org>
+Subject: Re: [PATCHv3 3/4] iommu/tegra: smmu: Refrain from accessing to AHB
+Date: Fri, 4 May 2012 08:33:58 +0200
+Message-ID: <20120504.093358.2098007825524274078.hdoyu@nvidia.com>
+References: <1336061147-10245-1-git-send-email-hdoyu@nvidia.com><1336061147-10245-3-git-send-email-hdoyu@nvidia.com><4FA2C4E9.2080509@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FA2C34F.5060406-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <4FA2C4E9.2080509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org" <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, "myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 1/4] ARM: tegra: Add Tegra AHB driver
-Date: Thu, 3 May 2012 19:41:35 +0200
-Message-ID: <4FA2C34F.5060406-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv3 3/4] iommu/tegra: smmu: Refrain from accessing to AHB
+Date: Thu, 3 May 2012 19:48:25 +0200
+Message-ID: <4FA2C4E9.2080509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
 > On 05/03/2012 10:05 AM, Hiroshi DOYU wrote:
-> > Tegra AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
-> > High-performance Bus (AHB) architecture.
-> > 
-> > The AHB Arbiter controls AHB bus master arbitration. This effectively
-> > forms a second level of arbitration for access to the memory
-> > controller through the AHB Slave Memory device. The AHB pre-fetch
-> > logic can be configured to enhance performance for devices doing
-> > sequential access. Each AHB master is assigned to either the high or
-> > low priority bin. Both Tegra20/30 have this AHB bus.
-> > 
-> > Some of configuration param could be passed from DT too.
+> > Use "tegra_ahb_enable_smmu()" to inform AHB that SMMU is
+> > ready, instead of directly aceessing AHB registers.
 > 
-> > diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-> > +static u32 tegra_ahb_gizmo[] = {
+> You need to make the Kconfig option for the SMMU either depend on or
+> select the TEGRA_AHB option. If you don't, then if someone disables the
+> AHB driver, the SMMU driver may still build, yet fail to link since the
+> AHB API it calls doesn't exist.
 > 
-> const?
+> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> 
+> > @@ -398,10 +388,8 @@ static void smmu_setup_regs(struct smmu_device *smmu)
+> >  
+> >  	smmu_flush_regs(smmu, 1);
+> >  
+> > -	val = ahb_read(smmu, AHB_XBAR_CTRL);
+> > -	val |= AHB_XBAR_CTRL_SMMU_INIT_DONE_DONE <<
+> > -		AHB_XBAR_CTRL_SMMU_INIT_DONE_SHIFT;
+> > -	ahb_write(smmu, val, AHB_XBAR_CTRL);
+> > +	err = tegra_ahb_enable_smmu(smmu->ahb);
+> > +	return err;
+> 
+> You can just "return tegra_ahb_..." here.
+> 
+> > @@ -911,14 +899,16 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+> 
+> > +	smmu->ahb = of_parse_phandle(pdev->dev.of_node, "ahb", 0);
+> 
+> Hmm, "ahb" should probably be "nvidia,ahb".
 
-Yes.
+Does this mean the following in dts?
 
-> > +static int __init tegra_ahb_module_init(void)
-> > +{
-> > +	return platform_driver_register(&tegra_ahb_driver);
-> > +}
-> > +postcore_initcall(tegra_ahb_module_init);
-> 
-> Can this be a module_init() instead of postcore_initcall()?
+	ahb: ahb@6000c004 {
+		compatible = "nvidia,tegra30-ahb";
+		reg = <0x6000c004 0x14c>; /* AHB Arbitration + Gizmo Controller */
+	};
 
-Since this driver configures prefetch size from AHB client devices,
-it's better to make this driver available before other AHB client
-drivers get ready. So "postcore_initcall()" seems to make sense if
-there's no other better initcall.
-
-> > +
-> > +static void __exit tegra_ahb_module_exit(void)
-> > +{
-> > +	platform_driver_unregister(&tegra_ahb_driver);
-> > +}
-> > +module_exit(tegra_ahb_module_exit);
-> 
-> If so, all of the previous two quoted chunks can be replaced with just:
-> 
-> module_platform_driver(tegra_ahb_module_init);
+	smmu: smmu@7000f000 {
+		nvidia,ahb = &ahb;
+	};      ^^^^^^^^^^
