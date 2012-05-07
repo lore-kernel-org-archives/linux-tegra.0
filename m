@@ -1,72 +1,62 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC v2 5/5] drm: Add NVIDIA Tegra support
-Date: Mon, 07 May 2012 10:27:59 -0600
-Message-ID: <4FA7F80F.5090002@wwwdotorg.org>
-References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de>
-	<1335347102-14905-6-git-send-email-thierry.reding@avionic-design.de>
-	<4FA78CBD.5010606@nvidia.com>
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCHv5 1/3] ARM: tegra: Add Tegra AHB driver
+Date: Mon, 7 May 2012 11:36:11 -0700
+Message-ID: <20120507183611.GA725@kroah.com>
+References: <201205070859.29174.arnd@arndb.de>
+ <20120507.122333.2024326166703361049.hdoyu@nvidia.com>
+ <201205071024.48958.arnd@arndb.de>
+ <20120507.143647.508182574757518311.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4FA78CBD.5010606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120507.143647.508182574757518311.hdoyu@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "balbi@ti.com" <balbi@ti.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "ohad@wizery.com" <ohad@wizery.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/07/2012 02:50 AM, Terje Bergstr=F6m wrote:
-> On 25.04.2012 12:45, Thierry Reding wrote:
-> =
+On Mon, May 07, 2012 at 01:36:47PM +0200, Hiroshi Doyu wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> Subject: Re: [PATCHv5 1/3] ARM: tegra: Add Tegra AHB driver
+> Date: Mon, 7 May 2012 12:24:48 +0200
+> Message-ID: <201205071024.48958.arnd@arndb.de>
+> 
+> > On Monday 07 May 2012, Hiroshi Doyu wrote:
+> > > Tegra doesn't enable ARM_AMBA and Tegra doesn't use the following
+> > > "drivers/amba/bus.c" right now. I needed to make this directory
+> > > available to ones without ARM_AMBA enabled.
+> > 
+> > Ah, right. I looked at arch/arm/Kconfig earlier to see if
+> > tegra enabled ARM_AMBA but was accidentally looking
+> > at ARCH_INtegraTOR when grepping for TEGRA ;-)
+> > 
+> > Your proposed solution sounds good then.
+> 
+> Thank you for reviewing patches & ACK. Attached the update one here,
+> instead of sending a while series again.
+> 
+> >From 16cc2b0fab00c33cd24bb5c43c45a4cda646ad42 Mon Sep 17 00:00:00 2001
+> From: Hiroshi DOYU <hdoyu@nvidia.com>
+> Date: Wed, 18 Apr 2012 11:41:56 +0300
+> Subject: [PATCHv5 1/3] ARM: tegra: Add Tegra AHB driver
+> 
+> Tegra AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
+> High-performance Bus (AHB) architecture.
+> 
+> The AHB Arbiter controls AHB bus master arbitration. This effectively
+> forms a second level of arbitration for access to the memory
+> controller through the AHB Slave Memory device. The AHB pre-fetch
+> logic can be configured to enhance performance for devices doing
+> sequential access. Each AHB master is assigned to either the high or
+> low priority bin. Both Tegra20/30 have this AHB bus.
+> 
+> Some of configuration params could be passed from DT too if needed.
+> 
+> Change-Id: I184e0e1ce033e76881353a4bb99234e2850e99c2
 
->> +/ {
->> +       ...
->> +
->> +       /* host1x */
->> +       host1x: host1x@50000000 {
->> +               compatible =3D "nvidia,tegra20-host1x";
->> +               reg =3D <0x50000000 0x00024000>;
->> +               interrupts =3D <0 64 0x04   /* cop syncpt */
->> +                             0 65 0x04   /* mpcore syncpt */
->> +                             0 66 0x04   /* cop general */
->> +                             0 67 0x04>; /* mpcore general */
->> +       };
->> +
->> +       /* video-encoding/decoding */
->> +       mpe@54040000 {
->> +               reg =3D <0x54040000 0x00040000>;
->> +               interrupts =3D <0 68 0x04>;
->> +       };
->> +
-> =
+What nonsense is this?  Please never put that in a patch you want
+accepted upstream, as it makes no sense and we just have to edit it out
+by hand, making us grumpy...
 
-> (...)
-> =
-
-> Hi Thierry,
-> =
-
-> I have still lots of questions regarding how device trees work. I'm now
-> just trying to match the device tree structure with hardware - let me
-> know if that goes wrong.
-> =
-
-> There's a hierarchy in the hardware, which should be represented in the
-> device trees. All of the hardware are client modules for host1x - with
-> the exception of host1x obviously. CPU has two methods for accessing the
-> hardware: clients' register aperture and host1x channels. Both of these
-> operate via host1x hardware.
-> =
-
-> We should define host1x bus in the device tree, and move all nodes
-> except host1x under that bus.
-
-I think the host1x node /is/ that bus.
+greg k-h
