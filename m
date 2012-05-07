@@ -1,170 +1,72 @@
-From: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Mon, 7 May 2012 09:12:47 -0700
-Message-ID: <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
- <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC v2 5/5] drm: Add NVIDIA Tegra support
+Date: Mon, 07 May 2012 10:27:59 -0600
+Message-ID: <4FA7F80F.5090002@wwwdotorg.org>
+References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de>
+	<1335347102-14905-6-git-send-email-thierry.reding@avionic-design.de>
+	<4FA78CBD.5010606@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FA7ECAA.1040104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4FA78CBD.5010606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 7, 2012 at 8:39 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> =
-wrote:
-> On 05/06/2012 06:03 PM, Mike Turquette wrote:
->> On 20120503-19:13, Peter De Schrijver wrote:
->>> Hi,
->>>
->>> I started looking into what would be needed to move our tegra30 clo=
-ck code
->>> to the common clock framework. The tegra30 clocktree is rather flat=
-=2E Basically
->>> there are a bunch of sources (13 PLLs, external audio clocks, osc a=
-nd 32Khz)
->>> and peripheral clocks which have a mux (with 4 or more inputs), a d=
-ivider and
->>> a gate. So almost every peripheral clock can have multiple parents.
->>>
->>> Some questions:
->>>
->>> 1) should these peripheral clocks be modelled as 3 different clocks
->>> =A0 =A0(mux -> divider -> gate) or would it be better to make a new=
- clock type for
->>> =A0 =A0this?
->>>
->>
->> That is really for you to decide. =A0If the semantics of the existin=
-g mux,
->> divider and gate in drivers/clk/clk-*.c work well for you then I thi=
-nk
->> the answer is "yes". =A0There is infrastructure for register-access
->> locking in those common types which might help your complex clocks.
->>
->> Thanks to the parent rate propagation stuff in clk_set_rate it shoul=
-d be
->> possible for your drivers to only be aware of the gate and call
->> clk_set_rate on only that clock, which propagates up to the divider =
-and,
->> if necessary, again propagates up to the mux.
->>
->> I encourage you to try that first. =A0But if you find the semantics =
-of
->> those basic clock types aren't cutting it for you then you must crea=
-te a
->> type which is platform-specific.
->
-> A lot of these mux/divider/gate clocks go out to peripherals, whose
-> drivers want to call both clk_set_rate() and clk_en/disable() on the =
-clock.
->
-> There's only 1 clock reaching the peripheral in HW, so the driver sho=
-uld
-> only call clk_get() once, and similarly the DT should only provide a
-> single clock to the driver.
->
+On 05/07/2012 02:50 AM, Terje Bergstr=F6m wrote:
+> On 25.04.2012 12:45, Thierry Reding wrote:
+> =
 
-Sounds good so far.
+>> +/ {
+>> +       ...
+>> +
+>> +       /* host1x */
+>> +       host1x: host1x@50000000 {
+>> +               compatible =3D "nvidia,tegra20-host1x";
+>> +               reg =3D <0x50000000 0x00024000>;
+>> +               interrupts =3D <0 64 0x04   /* cop syncpt */
+>> +                             0 65 0x04   /* mpcore syncpt */
+>> +                             0 66 0x04   /* cop general */
+>> +                             0 67 0x04>; /* mpcore general */
+>> +       };
+>> +
+>> +       /* video-encoding/decoding */
+>> +       mpe@54040000 {
+>> +               reg =3D <0x54040000 0x00040000>;
+>> +               interrupts =3D <0 68 0x04>;
+>> +       };
+>> +
+> =
 
-> Given the mux->divider->gate clock construction, that clock would
-> presumably be the gate object. clk_en/disable() clearly work there, b=
-ut
-> is clk_set_rate() intended to propagate up the chain until it can be
-> satisfied, i.e. does the gate clock object's set_rate() op simply cal=
-l
-> the parent's set_rate() op?
->
+> (...)
+> =
 
-Only if you set the CLK_SET_RATE_PARENT flag on the children.  Take
-the following example sub-tree:
+> Hi Thierry,
+> =
 
-mux
- |
-div
- |
-gate
+> I have still lots of questions regarding how device trees work. I'm now
+> just trying to match the device tree structure with hardware - let me
+> know if that goes wrong.
+> =
 
-If gate does NOT have CLK_SET_RATE_PARENT set in struct clk->flags
-then clk_set_rate will do nothing (since it does not implement a
-=2Eset_rate callback).  If the flag is set then the framework will kick
-the rate request up to the parent, 'div'.  Div implements a .set_rate
-callback and may or may not set the CLK_SET_RATE_PARENT flag.  Having
-a .set_rate implemenation does preclude one from propagating the rate
-change up the tree, so it is possible to adjust the divider to a new
-rate AND still kick the rate change request up to the parent, 'mux'.
-In your case 'mux' should probably not set CLK_SET_RATE_PARENT and the
-propagation will end there.  'mux' might implement a re-parenting
-operation as part of it's .set_rate implementation.
+> There's a hierarchy in the hardware, which should be represented in the
+> device trees. All of the hardware are client modules for host1x - with
+> the exception of host1x obviously. CPU has two methods for accessing the
+> hardware: clients' register aperture and host1x channels. Both of these
+> operate via host1x hardware.
+> =
 
-This is covered fairly well in Documentation/clk.txt
+> We should define host1x bus in the device tree, and move all nodes
+> except host1x under that bus.
 
-> If the order were instead mux->gate->divider, would it be correct for
-> enable/disable to propagate from the divider to the gate?
->
-
-Correct.  Order doesn't matter.  Even in the absence of a
-=2Eprepare/.enable callback the framework will still propagate these
-changes as part of typical use-counting rules.
-
->>> 2) how to define the default parent? in many cases the hw reset val=
-ue isn't
->>> =A0 =A0a very sensible choice, so the kernel probably needs to set =
-a parent of
->>> =A0 =A0many of them if we don't want to rely on bootloader configur=
-ation.
->>
->> The only related thing handled at the framework level is _discovery_=
- of
->> the parent during clock registration/initialization. =A0If you don't=
- trust
->> the bootloader and want to set things up as soon as possible (a wise
->> move) then I suggest you do so from your platform clock code at the =
-same
->> time that you register your clocks with the framework. =A0Something =
-like:
->>
->> =A0 =A0 =A0 struct clk *c;
->> =A0 =A0 =A0 c =3D clk_register(...);
->> =A0 =A0 =A0 if (IS_ERR(c))
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 omg_fail();
->> =A0 =A0 =A0 clk_set_parent(c, b);
->>
->> Where 'b' is a parent of 'c'. =A0Register your clock tree top-down a=
-nd you
->> can re-parent as you go.
->
-> I'm hoping we can represent this in device tree somehow, so that
-> individual boards can set the clock tree up differently depending on
-> their needs (e.g. Tegra20 doesn't have quite enough PLLs, so sometime=
-s a
-> particular PLL will be used to generate the 2nd display's pixel clock=
-,
-> whereas on other boards it may be used for some peripherals). So, we'=
-d
-> like to describe this in DT.
->
-> It seems like it'd be pretty common to want the kernel to fully
-> initialize the clock tree, and to do this from device tree, so perhap=
-s
-> this might evolve into a common (part of) a cross-SoC clock binding, =
-or
-> some kind of utility function that parsed a clock-tree-init-table fro=
-m DT?
-
-As long as the configuration of your clocks can be expressed by the
-existing clk api, e.g. clk_prepare / clk_enable / clk_set_rate /
-clk_set_parent, then I think it would be easy to define a format
-whereby the clock is configured immediately after being registered.
-Essentially it would do what I outline in my original email above, but
-the configuration could be encoded into DT.
-
-Any platform-specific clock configuration (bits that aren't obviously
-expressed by the clk.h api) will be harder to configure through
-generic DT bindings.
-
-Regards,
-Mike
+I think the host1x node /is/ that bus.
