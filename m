@@ -1,66 +1,57 @@
-From: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Sun, 6 May 2012 17:03:29 -0700
-Message-ID: <20120507000329.GB14559@gmail.com>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv3 1/4] ARM: tegra: Add Tegra AHB driver
+Date: Mon, 7 May 2012 09:06:19 +0300
+Message-ID: <20120507090619.90932b9f67a4b672abeb887f@nvidia.com>
+References: <1336061147-10245-1-git-send-email-hdoyu@nvidia.com>
+	<4FA2C34F.5060406@wwwdotorg.org>
+	<20120504.091736.839941449020176796.hdoyu@nvidia.com>
+	<4FA40878.7070709@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20120503161311.GG20304-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <4FA40878.7070709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org" <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, "myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20120503-19:13, Peter De Schrijver wrote:
-> Hi,
+On Fri, 4 May 2012 18:48:56 +0200
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+
+> On 05/04/2012 12:17 AM, Hiroshi Doyu wrote:
+> > Stephen Warren wrote at Thu, 3 May 2012 19:41:35 +0200:
+> >> On 05/03/2012 10:05 AM, Hiroshi DOYU wrote:
+> >>> Tegra AHB Bus conforms to the AMBA Specification (Rev 2.0) Advanced
+> >>> High-performance Bus (AHB) architecture.
+> ...
+> >>> +static int __init tegra_ahb_module_init(void)
+> >>> +{
+> >>> +	return platform_driver_register(&tegra_ahb_driver);
+> >>> +}
+> >>> +postcore_initcall(tegra_ahb_module_init);
+> >>
+> >> Can this be a module_init() instead of postcore_initcall()?
+> > 
+> > Since this driver configures prefetch size from AHB client devices,
+> > it's better to make this driver available before other AHB client
+> > drivers get ready. So "postcore_initcall()" seems to make sense if
+> > there's no other better initcall.
 > 
-> I started looking into what would be needed to move our tegra30 clock code
-> to the common clock framework. The tegra30 clocktree is rather flat. Basically
-> there are a bunch of sources (13 PLLs, external audio clocks, osc and 32Khz)
-> and peripheral clocks which have a mux (with 4 or more inputs), a divider and
-> a gate. So almost every peripheral clock can have multiple parents.
+> I believe this only affects when the driver is registered and has no
+> influence over when the device itself is probed.
 > 
-> Some questions:
+> When booting with board files rather than DT, it was possible to
+> register drivers and platform devices early using various initcalls to
+> control the order. However, with DT, I believe all the devices are
+> instantiated from DT at the same time (well, one by one in whatever
+> order as the DT is parsed), so the time when the driver is registered
+> isn't relevant.
 > 
-> 1) should these peripheral clocks be modelled as 3 different clocks
->    (mux -> divider -> gate) or would it be better to make a new clock type for
->    this?
-> 
+> So, if the other AHB devices really need this AHB driver to initialize
+> first, you'd better move all the AHB devices inside the AHB node in DT,
+> so that the AHB driver can influence when the children get probed.
+> Still, I'd suggest leaving that to a later patch, since everything
+> clearly works fine right now without this driver even existing.
 
-That is really for you to decide.  If the semantics of the existing mux,
-divider and gate in drivers/clk/clk-*.c work well for you then I think
-the answer is "yes".  There is infrastructure for register-access
-locking in those common types which might help your complex clocks.
-
-Thanks to the parent rate propagation stuff in clk_set_rate it should be
-possible for your drivers to only be aware of the gate and call
-clk_set_rate on only that clock, which propagates up to the divider and,
-if necessary, again propagates up to the mux.
-
-I encourage you to try that first.  But if you find the semantics of
-those basic clock types aren't cutting it for you then you must create a
-type which is platform-specific.
-
-> 2) how to define the default parent? in many cases the hw reset value isn't
->    a very sensible choice, so the kernel probably needs to set a parent of
->    many of them if we don't want to rely on bootloader configuration.
-
-The only related thing handled at the framework level is _discovery_ of
-the parent during clock registration/initialization.  If you don't trust
-the bootloader and want to set things up as soon as possible (a wise
-move) then I suggest you do so from your platform clock code at the same
-time that you register your clocks with the framework.  Something like:
-
-	struct clk *c;
-	c = clk_register(...);
-	if (IS_ERR(c))
-		omg_fail();
-	clk_set_parent(c, b);
-
-Where 'b' is a parent of 'c'.  Register your clock tree top-down and you
-can re-parent as you go.
-
-Regards,
-Mike
+Ok, I'll use module_platform_driver(tegra_ahb_driver). These order would be revisited.
