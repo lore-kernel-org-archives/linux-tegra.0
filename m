@@ -1,92 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Mon, 07 May 2012 09:39:22 -0600
-Message-ID: <4FA7ECAA.1040104@wwwdotorg.org>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com> <20120507000329.GB14559@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCHv5 1/3] ARM: tegra: Add Tegra AHB driver
+Date: Mon, 07 May 2012 09:47:17 -0600
+Message-ID: <4FA7EE85.7030503@wwwdotorg.org>
+References: <201205070859.29174.arnd@arndb.de><20120507.122333.2024326166703361049.hdoyu@nvidia.com><201205071024.48958.arnd@arndb.de> <20120507.143647.508182574757518311.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120507000329.GB14559-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120507.143647.508182574757518311.hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "balbi@ti.com" <balbi@ti.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "ohad@wizery.com" <ohad@wizery.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>lin
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/06/2012 06:03 PM, Mike Turquette wrote:
-> On 20120503-19:13, Peter De Schrijver wrote:
->> Hi,
+On 05/07/2012 05:36 AM, Hiroshi Doyu wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> Subject: Re: [PATCHv5 1/3] ARM: tegra: Add Tegra AHB driver
+> Date: Mon, 7 May 2012 12:24:48 +0200
+> Message-ID: <201205071024.48958.arnd@arndb.de>
+> 
+>> On Monday 07 May 2012, Hiroshi Doyu wrote:
+>>> Tegra doesn't enable ARM_AMBA and Tegra doesn't use the following
+>>> "drivers/amba/bus.c" right now. I needed to make this directory
+>>> available to ones without ARM_AMBA enabled.
 >>
->> I started looking into what would be needed to move our tegra30 clock code
->> to the common clock framework. The tegra30 clocktree is rather flat. Basically
->> there are a bunch of sources (13 PLLs, external audio clocks, osc and 32Khz)
->> and peripheral clocks which have a mux (with 4 or more inputs), a divider and
->> a gate. So almost every peripheral clock can have multiple parents.
+>> Ah, right. I looked at arch/arm/Kconfig earlier to see if
+>> tegra enabled ARM_AMBA but was accidentally looking
+>> at ARCH_INtegraTOR when grepping for TEGRA ;-)
 >>
->> Some questions:
->>
->> 1) should these peripheral clocks be modelled as 3 different clocks
->>    (mux -> divider -> gate) or would it be better to make a new clock type for
->>    this?
->>
+>> Your proposed solution sounds good then.
 > 
-> That is really for you to decide.  If the semantics of the existing mux,
-> divider and gate in drivers/clk/clk-*.c work well for you then I think
-> the answer is "yes".  There is infrastructure for register-access
-> locking in those common types which might help your complex clocks.
-> 
-> Thanks to the parent rate propagation stuff in clk_set_rate it should be
-> possible for your drivers to only be aware of the gate and call
-> clk_set_rate on only that clock, which propagates up to the divider and,
-> if necessary, again propagates up to the mux.
-> 
-> I encourage you to try that first.  But if you find the semantics of
-> those basic clock types aren't cutting it for you then you must create a
-> type which is platform-specific.
+> Thank you for reviewing patches & ACK. Attached the update one here,
+> instead of sending a while series again.
 
-A lot of these mux/divider/gate clocks go out to peripherals, whose
-drivers want to call both clk_set_rate() and clk_en/disable() on the clock.
-
-There's only 1 clock reaching the peripheral in HW, so the driver should
-only call clk_get() once, and similarly the DT should only provide a
-single clock to the driver.
-
-Given the mux->divider->gate clock construction, that clock would
-presumably be the gate object. clk_en/disable() clearly work there, but
-is clk_set_rate() intended to propagate up the chain until it can be
-satisfied, i.e. does the gate clock object's set_rate() op simply call
-the parent's set_rate() op?
-
-If the order were instead mux->gate->divider, would it be correct for
-enable/disable to propagate from the divider to the gate?
-
->> 2) how to define the default parent? in many cases the hw reset value isn't
->>    a very sensible choice, so the kernel probably needs to set a parent of
->>    many of them if we don't want to rely on bootloader configuration.
-> 
-> The only related thing handled at the framework level is _discovery_ of
-> the parent during clock registration/initialization.  If you don't trust
-> the bootloader and want to set things up as soon as possible (a wise
-> move) then I suggest you do so from your platform clock code at the same
-> time that you register your clocks with the framework.  Something like:
-> 
-> 	struct clk *c;
-> 	c = clk_register(...);
-> 	if (IS_ERR(c))
-> 		omg_fail();
-> 	clk_set_parent(c, b);
-> 
-> Where 'b' is a parent of 'c'.  Register your clock tree top-down and you
-> can re-parent as you go.
-
-I'm hoping we can represent this in device tree somehow, so that
-individual boards can set the clock tree up differently depending on
-their needs (e.g. Tegra20 doesn't have quite enough PLLs, so sometimes a
-particular PLL will be used to generate the 2nd display's pixel clock,
-whereas on other boards it may be used for some peripherals). So, we'd
-like to describe this in DT.
-
-It seems like it'd be pretty common to want the kernel to fully
-initialize the clock tree, and to do this from device tree, so perhaps
-this might evolve into a common (part of) a cross-SoC clock binding, or
-some kind of utility function that parsed a clock-tree-init-table from DT?
+Russell, assuming you're OK with this update patch, is it OK if I take
+the whole series through the Tegra tree?
