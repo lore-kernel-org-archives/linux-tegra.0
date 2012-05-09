@@ -1,52 +1,61 @@
-From: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Tue, 8 May 2012 23:21:00 -0700
-Message-ID: <CAJOA=zPtTTLc9GyPj_xnS6+J-+79mKjKhPgubmiH6Hq9B=tg1Q@mail.gmail.com>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
- <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org>
- <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
- <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com>
- <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com>
- <4FA9BD41.2090701@codeaurora.org> <d460deebb832d7f62b4298c78ad2b791.squirrel@www.codeaurora.org>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: [PATCH V2 1/2] dma: dmaengine: add slave req id in slave_config
+Date: Wed, 09 May 2012 14:19:18 +0530
+Message-ID: <1336553358.1540.169.camel@vkoul-udesk3>
+References: <1336030889-32269-1-git-send-email-ldewangan@nvidia.com>
+	 <1336030889-32269-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d460deebb832d7f62b4298c78ad2b791.squirrel-mMfbam+mt9083fI46fginR2eb7JE58TQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1336030889-32269-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: dan.j.williams@intel.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20120508-19:20, skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org wrote:
-> > While set rate is in progress, both the parents might need to stay
-> > enabled for a short duration. So, in my internal set rate, I need to
-> > check if my clock is prepared/enabled and call prepare/enable on the
-> > "old parent", call __clk_reparent (which will reduce the ref count for
-> > the old parents and increase it for the new parents), finish the
-> > reparent in HW and then unprepare/disable the old parent if I have
-> > prepared/enabled them earlier.
-> >
+On Thu, 2012-05-03 at 13:11 +0530, Laxman Dewangan wrote:
+> The dma controller like Nvidia's Tegra Dma controller
+> supports the different slave requestor id from different slave.
+> This need to be configure in dma controller to handle the request
+> properly.
+> 
+> Adding the slave-id in the slave configuration so that information
+> can be passed from client when configuring for slave.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> 
+> This change is require to get rid of tegra_dma header to pass the
+> slave requestor id.
+> 
+>  include/linux/dmaengine.h |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> index 1082698..b0b275f 100644
+> --- a/include/linux/dmaengine.h
+> +++ b/include/linux/dmaengine.h
+> @@ -338,6 +338,9 @@ enum dma_slave_buswidth {
+>   * @device_fc: Flow Controller Settings. Only valid for slave channels. Fill
+>   * with 'true' if peripheral should be flow controller. Direction will be
+>   * selected at Runtime.
+> + * @slave_id: Slave requester id. Only valid for slave channels. The dma
+> + * slave peripheral will have unique id as dma requester which need to be
+> + * pass as slave config.
+>   *
+>   * This struct is passed in as configuration data to a DMA engine
+>   * in order to set up a certain channel for DMA transport at runtime.
+> @@ -365,6 +368,7 @@ struct dma_slave_config {
+>  	u32 src_maxburst;
+>  	u32 dst_maxburst;
+>  	bool device_fc;
+> +	int slave_id;
+This wont be negative, so perhaps an unsigned value?
+>  };
+>  
+>  static inline const char *dma_chan_name(struct dma_chan *chan)
 
-The .set_rate implemenation for OMAP's PLLs has the same requirement and
-this is handled by nested calls to __clk_prepare and clk_enable.  Please
-refer the omap3_noncore_dpll_set_rate definition:
 
-http://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=blob;f=arch/arm/mach-omap2/dpll3xxx.c;h=63e92e2d4bb80ea702572b919c17b0ac9f93cc0e;hb=clk-next-omap#l425
-
-> > It might be beneficial to provide something like a
-> > __clk_reparent_start(new_parent, *scratch_pointer) and
-> > __clk_reparent_finish(*scratch_pointer) if it will be useful for more
-> > than just MSM. Based on this email, I would guess that Tegra would want
-> > something similar too.
->
-> Thinking more about this, I think this is how any clk op that might change
-> the parent should operate. I will try to write up an RFC patch for this
-> and send it out soon. I'm in a hurry, so will explain more in the RFC
-> patch or in a later email.
-
-I'm interested to see your patch, as I might not be fully understanding
-your requirements.  Is there any reason why making nested calls to
-__clk_prepare and clk_enable from your .set_rate callback isn't enough?
-
-Thanks,
-Mike
+-- 
+~Vinod
