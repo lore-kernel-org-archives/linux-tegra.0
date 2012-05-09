@@ -1,79 +1,52 @@
-From: skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+From: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>
 Subject: Re: moving Tegra30 to the common clock framework
-Date: Tue, 8 May 2012 19:20:26 -0700 (PDT)
-Message-ID: <d460deebb832d7f62b4298c78ad2b791.squirrel@www.codeaurora.org>
+Date: Tue, 8 May 2012 23:21:00 -0700
+Message-ID: <CAJOA=zPtTTLc9GyPj_xnS6+J-+79mKjKhPgubmiH6Hq9B=tg1Q@mail.gmail.com>
 References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
-    <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org>
-    <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
-    <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com>
-    <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com>
-    <4FA9BD41.2090701@codeaurora.org>
+ <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org>
+ <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
+ <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com>
+ <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com>
+ <4FA9BD41.2090701@codeaurora.org> <d460deebb832d7f62b4298c78ad2b791.squirrel@www.codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FA9BD41.2090701-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <d460deebb832d7f62b4298c78ad2b791.squirrel-mMfbam+mt9083fI46fginR2eb7JE58TQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>, zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> On 05/08/2012 10:15 AM, Turquette, Mike wrote:
->> On Mon, May 7, 2012 at 10:07 PM, zhoujie wu<zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>  wrote:
->>> Hi Mike,
->>> Could you please explain more details about how to implement a
->>> re-parenting operation as part of it's .set_rate implementation?
->>
->> Sure.
->>
->>> As far as I know, we can not call clk_set_parent in .set_rate function
->>> directly, since clk_set_rate and clk_set_parent are using the same
->>> prepare_lock.
->>
->> That is correct.
->>
->>> Any other interface can be used to implement it?
->>
->> You have two options available to you.
->>
->> 1) __clk_reparent can be used from your .set_rate callback today to
->> reflect changes made to the tree topology.  OMAP uses this in our PLL
->> .set_rate implementation: depending on the re-lock frequency the PLL
->> may switch parents dynamically.  __clk_reparent does the
->> framework-level cleanup needed for this (that function is also used
->> when populating the clock tree with new clock nodes).
->>
->> 2) __clk_set_parent could be made non-static if you needed this (I've
->> been meaning to talk to Saravana about this since I think MSM needs
->> something like this).
->
-> Thanks!
->
-> I don't think I need (2). But I don't think I can use (1) as is either.
-> I can use (1) with some additional code in my set rate op.
->
-> While set rate is in progress, both the parents might need to stay
-> enabled for a short duration. So, in my internal set rate, I need to
-> check if my clock is prepared/enabled and call prepare/enable on the
-> "old parent", call __clk_reparent (which will reduce the ref count for
-> the old parents and increase it for the new parents), finish the
-> reparent in HW and then unprepare/disable the old parent if I have
-> prepared/enabled them earlier.
->
-> It might be beneficial to provide something like a
-> __clk_reparent_start(new_parent, *scratch_pointer) and
-> __clk_reparent_finish(*scratch_pointer) if it will be useful for more
-> than just MSM. Based on this email, I would guess that Tegra would want
-> something similar too.
+On 20120508-19:20, skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org wrote:
+> > While set rate is in progress, both the parents might need to stay
+> > enabled for a short duration. So, in my internal set rate, I need to
+> > check if my clock is prepared/enabled and call prepare/enable on the
+> > "old parent", call __clk_reparent (which will reduce the ref count for
+> > the old parents and increase it for the new parents), finish the
+> > reparent in HW and then unprepare/disable the old parent if I have
+> > prepared/enabled them earlier.
+> >
 
-Thinking more about this, I think this is how any clk op that might change
-the parent should operate. I will try to write up an RFC patch for this
-and send it out soon. I'm in a hurry, so will explain more in the RFC
-patch or in a later email.
+The .set_rate implemenation for OMAP's PLLs has the same requirement and
+this is handled by nested calls to __clk_prepare and clk_enable.  Please
+refer the omap3_noncore_dpll_set_rate definition:
+
+http://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=blob;f=arch/arm/mach-omap2/dpll3xxx.c;h=63e92e2d4bb80ea702572b919c17b0ac9f93cc0e;hb=clk-next-omap#l425
+
+> > It might be beneficial to provide something like a
+> > __clk_reparent_start(new_parent, *scratch_pointer) and
+> > __clk_reparent_finish(*scratch_pointer) if it will be useful for more
+> > than just MSM. Based on this email, I would guess that Tegra would want
+> > something similar too.
+>
+> Thinking more about this, I think this is how any clk op that might change
+> the parent should operate. I will try to write up an RFC patch for this
+> and send it out soon. I'm in a hurry, so will explain more in the RFC
+> patch or in a later email.
+
+I'm interested to see your patch, as I might not be fully understanding
+your requirements.  Is there any reason why making nested calls to
+__clk_prepare and clk_enable from your .set_rate callback isn't enough?
 
 Thanks,
-Saravana
-
---
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+Mike
