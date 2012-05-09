@@ -1,77 +1,218 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Wed, 9 May 2012 13:36:07 +0300
-Message-ID: <20120509103606.GY20304@tbergstrom-lnx.Nvidia.com>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
- <20120507000329.GB14559@gmail.com>
- <4FA7ECAA.1040104@wwwdotorg.org>
- <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
- <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com>
- <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com>
- <4FA9BD41.2090701@codeaurora.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/2] dmaengine: tegra: add dma driver
+Date: Wed, 9 May 2012 16:31:55 +0530
+Message-ID: <4FAA4EA3.70001@nvidia.com>
+References: <1336030889-32269-1-git-send-email-ldewangan@nvidia.com>	 <1336030889-32269-3-git-send-email-ldewangan@nvidia.com> <1336558444.1540.243.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FA9BD41.2090701-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <1336558444.1540.243.camel@vkoul-udesk3>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>, zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 09, 2012 at 02:41:37AM +0200, Saravana Kannan wrote:
-> On 05/08/2012 10:15 AM, Turquette, Mike wrote:
-> > On Mon, May 7, 2012 at 10:07 PM, zhoujie wu<zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>  wrote:
-> >> Hi Mike,
-> >> Could you please explain more details about how to implement a
-> >> re-parenting operation as part of it's .set_rate implementation?
-> >
-> > Sure.
-> >
-> >> As far as I know, we can not call clk_set_parent in .set_rate function
-> >> directly, since clk_set_rate and clk_set_parent are using the same
-> >> prepare_lock.
-> >
-> > That is correct.
-> >
-> >> Any other interface can be used to implement it?
-> >
-> > You have two options available to you.
-> >
-> > 1) __clk_reparent can be used from your .set_rate callback today to
-> > reflect changes made to the tree topology.  OMAP uses this in our PLL
-> > .set_rate implementation: depending on the re-lock frequency the PLL
-> > may switch parents dynamically.  __clk_reparent does the
-> > framework-level cleanup needed for this (that function is also used
-> > when populating the clock tree with new clock nodes).
-> >
-> > 2) __clk_set_parent could be made non-static if you needed this (I've
-> > been meaning to talk to Saravana about this since I think MSM needs
-> > something like this).
-> 
-> Thanks!
-> 
-> I don't think I need (2). But I don't think I can use (1) as is either. 
-> I can use (1) with some additional code in my set rate op.
-> 
-> While set rate is in progress, both the parents might need to stay 
-> enabled for a short duration. So, in my internal set rate, I need to 
-> check if my clock is prepared/enabled and call prepare/enable on the 
-> "old parent", call __clk_reparent (which will reduce the ref count for 
-> the old parents and increase it for the new parents), finish the 
-> reparent in HW and then unprepare/disable the old parent if I have 
-> prepared/enabled them earlier.
-> 
-> It might be beneficial to provide something like a 
-> __clk_reparent_start(new_parent, *scratch_pointer) and 
-> __clk_reparent_finish(*scratch_pointer) if it will be useful for more 
-> than just MSM. Based on this email, I would guess that Tegra would want 
-> something similar too.
-> 
+Thanks Vinod for reviewing code.
+I am removing the code from this thread which  is not require. Only 
+keeping code surrounding our discussion.
 
-We also need to reparent clocks using a pll if we want to change the PLLs rate
-while the users are active.
+On Wednesday 09 May 2012 03:44 PM, Vinod Koul wrote:
+> On Thu, 2012-05-03 at 13:11 +0530, Laxman Dewangan wrote:
+>> + * Initial number of descriptors to allocate for each channel during
+>> + * allocation. More descriptors will be allocated dynamically if
+>> + * client needs it.
+>> + */
+>> +#define DMA_NR_DESCS_PER_CHANNEL     4
+>> +#define DMA_NR_REQ_PER_DESC          8
+> all of these should be namespaced.
+> APB and AHB are fairly generic names.
+Fine, then I will go as APB_DMA_NR_DESC_xxx and APB_DMA_NR_REQ_xxx
 
-Cheers,
+>> +
+>> +enum dma_transfer_mode {
+>> +     DMA_MODE_NONE,
+>> +     DMA_MODE_ONCE,
+>> +     DMA_MODE_CYCLE,
+>> +     DMA_MODE_CYCLE_HALF_NOTIFY,
+>> +};
+> I dont understand why you would need to keep track of these?
+> You get a request for DMA. You have properties of transfer. You prepare
+> you descriptors and then submit.
+> Why would you need to create above modes and remember them?
+I am allowing multiple desc requests in dma through prep_slave and 
+prep_cyclic. So when dma channel does not have any request then it can 
+set its mode as NONE.
+Once the desc is requested the mode is set based on request. This mode 
+will not get change until all dma request done and if new request come 
+to dma channel, it checks that it should not conflict with older mode. 
+The engine is configured in these mode and will change only when all 
+transfer completed.
+>> +struct tegra_dma_desc {
+>> +     struct dma_async_tx_descriptor  txd;
+>> +     int                             bytes_requested;
+>> +     int                             bytes_transferred;
+>> +     enum dma_status                 dma_status;
+>> +     struct list_head                node;
+>> +     struct list_head                tx_list;
+>> +     struct list_head                cb_node;
+>> +     bool                            ack_reqd;
+>> +     bool                            cb_due;
+> what are these two for, seems redundant to me
 
-Peter.
+I am reusing the desc once the transfer completed from that desc, not 
+freeing it memory.
+The ack_reqd tells that client need to ack that desc so that it can be 
+reused. So this flag tells that client need to ack that desc.
+This is to track the flag DMA_CTRL_ACK which is passed by client in 
+prep_slave_xxx.
+
+cb_due is having different purpose. then ack. Once dma transfer 
+completes, it schedules the tasklet and set the cb_due as callback 
+pending. Before tasklet get schedule, if again transfer completes and 
+re-enter into isr then it wil check that desc callback is pending or not 
+and based on that it queued it on the callback list.
+
+>> +static int allocate_tegra_desc(struct tegra_dma_channel *tdc,
+>> +             int ndma_desc, int nsg_req)
+> pls follow single convention for naming in driver eithe xxx_tegra_yyy or
+> tegra_xxx_yyy... BUT not both!
+Sure, i will do it.
+
+>> +     /* Initialize DMA descriptors */
+>> +     for (i = 0; i<  ndma_desc; ++i) {
+>> +             dma_desc = kzalloc(sizeof(struct tegra_dma_desc), GFP_ATOMIC);
+> kernel convention is kzalloc(sizeof(*dma_desc),....
+yes I will do it, I missed this cleanup.
+>> +
+>> +
+>> +     /* Check from free list desc */
+>> +     if (!list_empty(&tdc->free_dma_desc)) {
+>> +             dma_desc = list_first_entry(&tdc->free_dma_desc,
+>> +                                     typeof(*dma_desc), node);
+>> +             list_del(&dma_desc->node);
+>> +             goto end;
+>> +     }
+> sorry I dont like this jumping and returning for two lines of code.
+> Makes much sense to return from here.
+Then goto will be replace as
+spin_unlock_irqrestore()
+return.
+and all three places.
+I will do if it is OK,
+
+>> +static void tegra_dma_desc_done_locked(struct tegra_dma_channel *tdc,
+>> +             struct tegra_dma_desc *dma_desc)
+>> +{
+>> +     if (dma_desc->ack_reqd)
+>> +             list_add_tail(&dma_desc->node,&tdc->wait_ack_dma_desc);
+> what does ack_reqd mean?
+Client need to ack this desc before reusing it.
+
+> Do you ahve unlocked version of this function, name suggests so...
+Did not require the locked version of function. Will remove the locked 
+and add in comment.
+
+>> +     else
+>> +             list_add_tail(&dma_desc->node,&tdc->free_dma_desc);
+>> +}
+>> +
+>> +static struct tegra_dma_sg_req *tegra_dma_sg_req_get(
+>> +             struct tegra_dma_channel *tdc)
+> in this and other functions, you have used goto to unlock and return.
+> Rather than that why don't you simplify code by calling these while
+> holding lock
+
+We are allocating memory also and that's why it is there.
+But I can make it because I am callocating memory as GFP_ATOMIC.
+However if the function call dma_async_tx_descriptor_init() can happen 
+in atomic context i.e. calling spin_lock_init() call.
+
+>> +                     }
+>> +                     dma_cookie_complete(&dma_desc->txd);
+> does this make sense. You are marking an aborted descriptor as complete.
+If I dont call the the complete cookie of that channel will not get 
+updated and on query, it will return as PROGRESS.
+I need to update the dma channel completed cookie.
+
+>> +     if (list_empty(&tdc->pending_sg_req)) {
+>> +             dev_err(tdc2dev(tdc),
+>> +                     "%s(): Dma is running without any req list\n",
+>> +                     __func__);
+> this is just waste of real estate and very ugly. Move them to 1/2 lines.
+
+Let me see if I can save something here.
+
+>> +             tegra_dma_stop(tdc);
+>> +             return false;
+>> +     }
+>> +
+>> +     /*
+>> +      * Check that head req on list should be in flight.
+>> +      * If it is not in flight then abort transfer as
+>> +      * transfer looping can not continue.
+>> +      */
+>> +     hsgreq = list_first_entry(&tdc->pending_sg_req, typeof(*hsgreq), node);
+>> +     if (!hsgreq->configured) {
+>> +             tegra_dma_stop(tdc);
+>> +             dev_err(tdc2dev(tdc),
+>> +                     "Error in dma transfer loop, aborting dma\n");
+>> +             tegra_dma_abort_all(tdc);
+>> +             return false;
+>> +     }
+>> +
+>> +     /* Configure next request in single buffer mode */
+>> +     if (!to_terminate&&  (tdc->dma_mode == DMA_MODE_CYCLE))
+>> +             tdc_configure_next_head_desc(tdc);
+>> +     return true;
+>> +}
+>> +
+>> +static void tegra_dma_tasklet(unsigned long data)
+>> +{
+>> +     struct tegra_dma_channel *tdc = (struct tegra_dma_channel *)data;
+>> +     unsigned long flags;
+>> +     dma_async_tx_callback callback = NULL;
+>> +     void *callback_param = NULL;
+>> +     struct tegra_dma_desc *dma_desc;
+>> +     struct list_head cb_dma_desc_list;
+>> +
+>> +     INIT_LIST_HEAD(&cb_dma_desc_list);
+>> +     spin_lock_irqsave(&tdc->lock, flags);
+>> +     if (list_empty(&tdc->cb_desc)) {
+>> +             spin_unlock_irqrestore(&tdc->lock, flags);
+>> +             return;
+>> +     }
+>> +     list_splice_init(&tdc->cb_desc,&cb_dma_desc_list);
+>> +     spin_unlock_irqrestore(&tdc->lock, flags);
+>> +
+>> +     while (!list_empty(&cb_dma_desc_list)) {
+>> +             dma_desc  = list_first_entry(&cb_dma_desc_list,
+>> +                             typeof(*dma_desc), cb_node);
+>> +             list_del(&dma_desc->cb_node);
+>> +
+>> +             callback = dma_desc->txd.callback;
+>> +             callback_param = dma_desc->txd.callback_param;
+>> +             dma_desc->cb_due = false;
+>> +             if (callback)
+>> +                     callback(callback_param);
+> You should mark the descriptor as complete before calling callback.
+> Also tasklet is supposed to move the next pending descriptor to the
+> engine, I dont see that happening here?
+It is there. I am calling dma_cookie_complete from 
+handle_once_dma_done() which get called from ISR.
+In cyclic mode, I am not calling dma_cookie_complete() until it is 
+aborted (for update the complete cookie) but cyclic/non-cyclic case I am 
+calling callback.
+
+>> +     /* Call callbacks if was pending before aborting requests */
+>> +     while (!list_empty(&cb_dma_desc_list)) {
+>> +             dma_desc  = list_first_entry(&cb_dma_desc_list,
+>> +                             typeof(*dma_desc), cb_node);
+>> +             list_del(&dma_desc->cb_node);
+>> +             callback = dma_desc->txd.callback;
+>> +             callback_param = dma_desc->txd.callback_param;
+> again, callback would be called from tasklet, so why would it need to be
+> called from here , and why would this be pending.
+What happen if some callbacks are pending as tasklet does not get 
+scheduled and meantime, the dma terminated (specially in multi-core system)?
+Should we ignore all callbacks in this case?
