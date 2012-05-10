@@ -1,113 +1,129 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [RFC 1/1] Driver Core: don't oops with unregistered driver in
- driver_find_device()
-Date: Thu, 10 May 2012 15:28:30 -0700
-Message-ID: <20120510222830.GA23084@kroah.com>
-References: <1336635302-29260-1-git-send-email-hdoyu@nvidia.com>
- <20120510141130.GA20373@kroah.com>
- <4FABE5D3.9040706@wwwdotorg.org>
- <20120510181611.GA16908@kroah.com>
- <4FAC1E70.8030907@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FAC1E70.8030907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V2 2/4] regulator: tps62360: add dt support
+Date: Thu, 10 May 2012 16:32:34 -0600
+Message-ID: <20120510223234.687863E04A6@localhost>
+References: <1336682979-11810-1-git-send-email-ldewangan@nvidia.com> <1336682979-11810-3-git-send-email-ldewangan@nvidia.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1336682979-11810-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: rob.herring@calxeda.com, linux@arm.linux.org.uk, lrg@ti.com, broonie@opensource.wolfsonmicro.com, swarren@nvidia.com, olof@lixom.net
+Cc: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 10, 2012 at 02:00:48PM -0600, Stephen Warren wrote:
-> On 05/10/2012 12:16 PM, Greg Kroah-Hartman wrote:
-> > On Thu, May 10, 2012 at 09:59:15AM -0600, Stephen Warren wrote:
-> >> On 05/10/2012 08:11 AM, Greg Kroah-Hartman wrote:
-> >>> On Thu, May 10, 2012 at 10:35:02AM +0300, Hiroshi DOYU wrote:
-> >>>> driver_find_device() can be called with an unregistered driver.
-> >>>
-> >>> Who does that?  Where in the kernel?  Why would you try to do that?
-> >>>
-> >>>> Need to check driver_private to see if it's populated or not,
-> >>>> especially under deferrable probe.
-> >>>
-> >>> Hm, I don't know if this will really catch a driver that was registered
-> >>> and then was unregistered, right?  It seems like moving the real problem
-> >>> somewhere else, why not fix the original issue instead?
-> >>>
-> >>>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>> ---
-> >>>> In [PATCHv5 2/3] ARM: tegra: Add SMMU enabler in AHB:
-> >>>>   http://article.gmane.org/gmane.linux.ports.tegra/4658
-> >>>>
-> >>>> "tegra_ahb_driver" may not be populated when it's called.
-> >>>
-> >>> It can?  I don't see that in that patch.
-> >>
-> >> I think this is what's happening:
-> >>
-> >> The Tegra SMMU driver is registered using subsys_initcall().
-> >>
-> >> The Tegra AHB driver is registered using module_platform_driver, so
-> >> module_init().
-> >>
-> >> The device objects for both are registered at basically the same time
-> >> during the machine's initialization call, which I think happens before
-> >> both or some of the above two calls.
-> >>
-> >> So, SMMU ends up getting probed before the AHB driver has even been
-> >> registered.
-> > 
-> > What do those two drivers have to do with each other?
+On Fri, 11 May 2012 02:19:37 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> Add dt support for the pmu device tps62360 and
+> Add binding documentation with example.
+> With this patch driver will support both device-tree and
+> non-device tree registration.
 > 
-> The AHB HW module contains a bit to say "enable the SMMU". This bit
-> cannot be turned on until certain initialization has been performed by
-> the SMMU driver.
-> 
-> So, SMMU's probe performs the initialization, then attempts to contact
-> the AHB driver to ask it to enable the SMMU.
-> 
-> >> That's why in patch Hiroshi linked, in tegra_ahb_enable_smmu(), the AHB
-> >> driver hasn't (or may not have) been registered, so driver_find_device()
-> >> can experience the issue this patch attempts to solve.
-> > 
-> > It sounds like you have a locking or ordering problem somewhere in this
-> > platform, and it needs to be resolved there.  Odds are, this tiny check
-> > is the least of your worries, right?
-> > 
-> > Who is doing the driver_find_device() call in the first place?  The
-> > driver core?  Or something else?
-> 
-> SMMU's probe calls tegra_ahb_enable_smmu().
-> 
-> tegra_ahb_enable_smmu() needs to find the AHB's struct device so that it
-> can find get the driver data associated with it, which contains the
-> ioremap'd registers amongst other things.
-> 
-> In order to find the correct device, tegra_ahb_enable_smmu() is passed
-> the device tree node of the appropriate AHB that controls the SMMU.
-> 
-> The two drivers use deferred probe to ensure that their relative probe
-> order doesn't matter. If AHB is probed first, then
-> tegra_ahb_enable_smmu()'s driver_find_device() succeeds, and the AHB
-> register is programmed to enable the SMMU. If the SMMU is probed first,
-> then tegra_ahb_enable_smmu() returns -EPROBE_DEFER to hold off the SMMU
-> from completing its probe. I believe this is exactly the kind of thing
-> -EPROBE_DEFER was intended for.
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> Changes from V1:
+> Fixed possible build error in non devicetree.
 
-Ok, thanks for explaining it better, that would have been nice to have
-in the original patch submission :)
+Minor comments below...
 
-This fix, is it needed for 3.4, or just 3.5?
+> 
+>  .../bindings/regulator/tps62360-regulator.txt      |   45 ++++++++++++
+>  drivers/regulator/tps62360-regulator.c             |   74 +++++++++++++++++++-
+>  2 files changed, 118 insertions(+), 1 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/tps62360-regulator.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/tps62360-regulator.txt b/Documentation/devicetree/bindings/regulator/tps62360-regulator.txt
+> new file mode 100644
+> index 0000000..e337cd6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/tps62360-regulator.txt
+> @@ -0,0 +1,45 @@
+> +TPS62360 Voltage regulators
+> +
+> +Required properties:
+> +- compatible: Must be one of the following.
+> +	"ti,tps62360"
+> +	"ti,tps62361",
+> +	"ti,tps62362",
+> +	"ti,tps62363",
+> +- reg: I2C slave address
+> +
+> +Optional properties:
+> +- ti,enable-force-pwm: Enable fore PWM mode. This is boolean value.
+typo ----------------------------^^^^
 
-I kind of don't like relying on ->p as a check to see if things are set
-up properly, I wonder if we could use the kobject state_initalized field
-instead somehow, or maybe state_in_sysfs?  Oh wait, that's in ->p as
-well.  Ok, I guess this is as good as it can get.
+> +- ti,enable-vout-discharge: Enable output discharge. This is boolean value.
+> +- ti,enable-pull-down: Enable pull down. This is boolean value.
+> +- ti,vsel0-gpio: GPIO for controlling VSEL0 line.
+> +  If this property is missing, then assume that there is no GPIO
+> +  for vsel0 control.
+> +- ti,vsel1-gpio: Gpio for controlling VSEL1 line.
+> +  If this property is missing, then assume that there is no GPIO
+> +  for vsel1 control.
+> +- ti,vsel0-state-high: Inital state of vsel0 input is high.
+> +  If this property is missing, then assume the state as low (0).
+> +- ti,vsel1-state-high: Inital state of vsel1 input is high.
+> +  If this property is missing, then assume the state as low (0).
+> +
+> +Any property defined as part of the core regulator binding, defined in
+> +regulator.txt, can also be used.
+> +
+> +Example:
+> +
+> +	abc: tps62360 {
+> +		compatible = "ti,tps62361";
+> +		reg =  <0x60>;
+> +		regulator-name = "tps62361-vout";
+> +		regulator-min-microvolt = <500000>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-boot-on
+> +		ti,vsel0-gpio = <&gpio1 16 0>;
+> +		ti,vsel1-gpio = <&gpio1 17 0>;
+> +		ti,vsel0-state-high;
+> +		ti,vsel1-state-high;
+> +		ti,enable-pull-down;
+> +		ti,enable-force-pwm;
+> +		ti,enable-vout-discharge;
+> +	};
+> diff --git a/drivers/regulator/tps62360-regulator.c b/drivers/regulator/tps62360-regulator.c
+> index 3506900..9985303 100644
+> --- a/drivers/regulator/tps62360-regulator.c
+> +++ b/drivers/regulator/tps62360-regulator.c
+> @@ -26,6 +26,10 @@
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/regulator/of_regulator.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/driver.h>
+>  #include <linux/regulator/machine.h>
+> @@ -297,6 +301,58 @@ static const struct regmap_config tps62360_regmap_config = {
+>  	.cache_type		= REGCACHE_RBTREE,
+>  };
+>  
+> +static struct tps62360_regulator_platform_data *
+> +	of_get_tps62360_platform_data(struct device *dev)
+> +{
+> +	struct tps62360_regulator_platform_data *pdata;
+> +	struct device_node *np = dev->of_node;
+> +
+> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata) {
+> +		dev_err(dev, "Memory alloc failed for platform data\n");
+> +		return NULL;
+> +	}
+> +
+> +	pdata->reg_init_data = of_get_regulator_init_data(dev, dev->of_node);
+> +	if (!pdata->reg_init_data) {
+> +		dev_err(dev, "Not able to get OF regulator init data\n");
+> +		return NULL;
+> +	}
+> +
+> +	pdata->vsel0_gpio = of_get_named_gpio(np, "vsel0-gpio", 0);
+> +	pdata->vsel1_gpio = of_get_named_gpio(np, "vsel1_gpio", 0);
+typo --------------------------------------------------^^^
 
-Can someone resend this to me, with the information above in the
-changelog comment, and I'll be glad to apply it?  Again, I need to know
-if this is needed for 3.4 or it can wait for 3.5?
+Otherwise looks good to me.
 
-thanks,
+g.
 
-greg k-h
