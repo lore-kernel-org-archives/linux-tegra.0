@@ -1,41 +1,66 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] ARM: dt: tegra30.dtsi: Add Memory Controller(MC) nodes
-Date: Thu, 10 May 2012 10:42:33 +0300
-Message-ID: <1336635764-30597-4-git-send-email-hdoyu@nvidia.com>
-References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 1/4] regulator: tps62360: make init_data of platform data to pointer.
+Date: Thu, 10 May 2012 15:17:53 +0530
+Message-ID: <1336643276-16796-2-git-send-email-ldewangan@nvidia.com>
+References: <1336643276-16796-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1336635764-30597-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1336643276-16796-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux@arm.linux.org.uk, lrg@ti.com, broonie@opensource.wolfsonmicro.com, swarren@nvidia.com, olof@lixom.net
+Cc: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Tegra MC(Memory Controller) nodes for tegra30.dtsi.
+Convert platform data member regulator_init_data to pointer type.
+This will avoid the copy of entire regualator init data into
+platform data member when adding dt support and it can be achieve
+by simple assignment:
+pdata->init_data = of_get_regulator_init_data(dev, dev->of_node);
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+Currently there is zero user of this regulator and hence making
+this change in header file. This will make the dt support simple.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 9d650fb..167ccbc 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -229,4 +229,13 @@
- 		compatible = "nvidia,tegra30-ahb";
- 		reg = <0x6000c004 0x14c>; /* AHB Arbitration + Gizmo Controller */
- 	};
-+
-+	mc {
-+		compatible = "nvidia,tegra30-mc";
-+		reg = <0x7000f000 0x010
-+		       0x7000f03c 0x1b4
-+		       0x7000f200 0x028
-+		       0x7000f284 0x17c>;
-+		interrupts = <0 77 0x04>;
-+	};
- };
+ drivers/regulator/tps62360-regulator.c |    2 +-
+ include/linux/regulator/tps62360.h     |    4 +---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/tps62360-regulator.c b/drivers/regulator/tps62360-regulator.c
+index 97fd98b..3506900 100644
+--- a/drivers/regulator/tps62360-regulator.c
++++ b/drivers/regulator/tps62360-regulator.c
+@@ -408,7 +408,7 @@ static int __devinit tps62360_probe(struct i2c_client *client,
+ 	}
+ 
+ 	config.dev = &client->dev;
+-	config.init_data = &pdata->reg_init_data;
++	config.init_data = pdata->reg_init_data;
+ 	config.driver_data = tps;
+ 
+ 	/* Register the regulators */
+diff --git a/include/linux/regulator/tps62360.h b/include/linux/regulator/tps62360.h
+index 6a5c1b2..5e11d50 100644
+--- a/include/linux/regulator/tps62360.h
++++ b/include/linux/regulator/tps62360.h
+@@ -26,8 +26,6 @@
+ #ifndef __LINUX_REGULATOR_TPS62360_H
+ #define __LINUX_REGULATOR_TPS62360_H
+ 
+-#include <linux/regulator/machine.h>
+-
+ /*
+  * struct tps62360_regulator_platform_data - tps62360 regulator platform data.
+  *
+@@ -44,7 +42,7 @@
+  * @vsel1_def_state: Default state of vsel1. 1 if it is high else 0.
+  */
+ struct tps62360_regulator_platform_data {
+-	struct regulator_init_data reg_init_data;
++	struct regulator_init_data *reg_init_data;
+ 	bool en_force_pwm;
+ 	bool en_discharge;
+ 	bool en_internal_pulldn;
 -- 
-1.7.5.4
+1.7.1.1
