@@ -1,69 +1,30 @@
 From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [RFC 1/1] Driver Core: don't oops with unregistered driver in
- driver_find_device()
-Date: Thu, 10 May 2012 11:16:11 -0700
-Message-ID: <20120510181611.GA16908@kroah.com>
-References: <1336635302-29260-1-git-send-email-hdoyu@nvidia.com>
- <20120510141130.GA20373@kroah.com>
- <4FABE5D3.9040706@wwwdotorg.org>
+Subject: Re: [PATCH 1/4] ARM: tegra20: Add Tegra Memory Controller(MC) driver
+Date: Thu, 10 May 2012 11:18:15 -0700
+Message-ID: <20120510181815.GA17018@kroah.com>
+References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+ <4FABF9AB.6020902@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FABE5D3.9040706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <4FABF9AB.6020902-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Benoit Cousson <b-cousson-l0cyMroinI0@public.gmane.org>, Aneesh V <aneesh-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 10, 2012 at 09:59:15AM -0600, Stephen Warren wrote:
-> On 05/10/2012 08:11 AM, Greg Kroah-Hartman wrote:
-> > On Thu, May 10, 2012 at 10:35:02AM +0300, Hiroshi DOYU wrote:
-> >> driver_find_device() can be called with an unregistered driver.
-> > 
-> > Who does that?  Where in the kernel?  Why would you try to do that?
-> > 
-> >> Need to check driver_private to see if it's populated or not,
-> >> especially under deferrable probe.
-> > 
-> > Hm, I don't know if this will really catch a driver that was registered
-> > and then was unregistered, right?  It seems like moving the real problem
-> > somewhere else, why not fix the original issue instead?
-> > 
-> >> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >> In [PATCHv5 2/3] ARM: tegra: Add SMMU enabler in AHB:
-> >>   http://article.gmane.org/gmane.linux.ports.tegra/4658
-> >>
-> >> "tegra_ahb_driver" may not be populated when it's called.
-> > 
-> > It can?  I don't see that in that patch.
+On Thu, May 10, 2012 at 11:23:55AM -0600, Stephen Warren wrote:
+> On 05/10/2012 01:42 AM, Hiroshi DOYU wrote:
+> > Tegra Memory Controller(MC) driver for Tegra20
+> > Added to support MC General interrupts, mainly for IOMMU(GART).
 > 
-> I think this is what's happening:
-> 
-> The Tegra SMMU driver is registered using subsys_initcall().
-> 
-> The Tegra AHB driver is registered using module_platform_driver, so
-> module_init().
-> 
-> The device objects for both are registered at basically the same time
-> during the machine's initialization call, which I think happens before
-> both or some of the above two calls.
-> 
-> So, SMMU ends up getting probed before the AHB driver has even been
-> registered.
+> Greg, you appear to have been commiting all of drivers/memory. I assume
+> you'll take patches 1 and 3 in this series, and I will take 2 and 4
+> through the Tegra tree? I can take them all through the Tegra tree if
+> you want.
 
-What do those two drivers have to do with each other?
-
-> That's why in patch Hiroshi linked, in tegra_ahb_enable_smmu(), the AHB
-> driver hasn't (or may not have) been registered, so driver_find_device()
-> can experience the issue this patch attempts to solve.
-
-It sounds like you have a locking or ordering problem somewhere in this
-platform, and it needs to be resolved there.  Odds are, this tiny check
-is the least of your worries, right?
-
-Who is doing the driver_find_device() call in the first place?  The
-driver core?  Or something else?
+I think you will get a conflict if you take the memory ones in your
+tree, so I will take those two, thanks.
 
 greg k-h
