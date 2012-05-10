@@ -1,30 +1,25 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra20: Add Tegra Memory Controller(MC) driver
-Date: Thu, 10 May 2012 11:18:15 -0700
-Message-ID: <20120510181815.GA17018@kroah.com>
-References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
- <4FABF9AB.6020902@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 0/4] regulator: tps62360: support dts and enable for tegra-cardhu
+Date: Thu, 10 May 2012 12:59:12 -0600
+Message-ID: <4FAC1000.9070605@wwwdotorg.org>
+References: <1336643276-16796-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FABF9AB.6020902-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1336643276-16796-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Benoit Cousson <b-cousson-l0cyMroinI0@public.gmane.org>, Aneesh V <aneesh-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 10, 2012 at 11:23:55AM -0600, Stephen Warren wrote:
-> On 05/10/2012 01:42 AM, Hiroshi DOYU wrote:
-> > Tegra Memory Controller(MC) driver for Tegra20
-> > Added to support MC General interrupts, mainly for IOMMU(GART).
-> 
-> Greg, you appear to have been commiting all of drivers/memory. I assume
-> you'll take patches 1 and 3 in this series, and I will take 2 and 4
-> through the Tegra tree? I can take them all through the Tegra tree if
-> you want.
+On 05/10/2012 03:47 AM, Laxman Dewangan wrote:
+> Add support for dt on regulator device tps62360. Also  enable this regulator for Nvidia's
+> Tegra platform - cardhu.
+> This series:
+> - Make the regulator_init_data as pointer type from platform data.
+> - enable config variable in tegra defconfig
+> - add entry for tps62360 in dts file of tegra-cardhu.
 
-I think you will get a conflict if you take the memory ones in your
-tree, so I will take those two, thanks.
-
-greg k-h
+The series looks fine to me. I assume patches 1 & 2 will go through the
+regulator tree and I'll take patches 3 & 4 through the Tegra tree.
