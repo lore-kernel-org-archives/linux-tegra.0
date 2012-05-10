@@ -1,65 +1,52 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 1/4] regulator: tps62360: make init_data of platform data to pointer.
-Date: Fri, 11 May 2012 02:19:36 +0530
-Message-ID: <1336682979-11810-2-git-send-email-ldewangan@nvidia.com>
-References: <1336682979-11810-1-git-send-email-ldewangan@nvidia.com>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: tegra30: Add Tegra Memory Controller(MC) driver
+Date: Thu, 10 May 2012 14:46:04 -0700
+Message-ID: <20120510214604.GA3525@kroah.com>
+References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+ <1336635764-30597-3-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1336682979-11810-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux@arm.linux.org.uk, lrg@ti.com, broonie@opensource.wolfsonmicro.com, swarren@nvidia.com, olof@lixom.net
-Cc: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1336635764-30597-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Benoit Cousson <b-cousson-l0cyMroinI0@public.gmane.org>, Aneesh V <aneesh-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Convert platform data member regulator_init_data to pointer type.
-This will avoid the copy of entire regualator init data into
-platform data member when adding dt support and it can be achieve
-by simple assignment:
-pdata->init_data = of_get_regulator_init_data(dev, dev->of_node);
+On Thu, May 10, 2012 at 10:42:32AM +0300, Hiroshi DOYU wrote:
+> Tegra Memory Controller(MC) driver for Tegra30
+> Added to support MC General interrupts, mainly for IOMMU(SMMU).
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-No change from V1.
+I'll apply this, but:
 
- drivers/regulator/tps62360-regulator.c |    2 +-
- include/linux/regulator/tps62360.h     |    4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> +static inline u32 mc_readl(struct tegra30_mc *mc, u32 offs)
+> +{
+> +	if (offs < 0x10)
+> +		return readl(mc->regs[0] + offs);
+> +	BUG_ON(offs < 0x3c);
+> +	if (offs < 0x1f0)
+> +		return readl(mc->regs[1] + offs - 0x3c);
+> +	BUG_ON(offs < 0x200);
+> +	if (offs < 0x228)
+> +		return readl(mc->regs[2] + offs - 0x200);
+> +	BUG_ON(offs < 0x284);
+> +	if (offs < 0x400)
+> +		return readl(mc->regs[3] + offs - 0x284);
+> +	BUG();
+> +}
 
-diff --git a/drivers/regulator/tps62360-regulator.c b/drivers/regulator/tps62360-regulator.c
-index 97fd98b..3506900 100644
---- a/drivers/regulator/tps62360-regulator.c
-+++ b/drivers/regulator/tps62360-regulator.c
-@@ -408,7 +408,7 @@ static int __devinit tps62360_probe(struct i2c_client *client,
- 	}
- 
- 	config.dev = &client->dev;
--	config.init_data = &pdata->reg_init_data;
-+	config.init_data = pdata->reg_init_data;
- 	config.driver_data = tps;
- 
- 	/* Register the regulators */
-diff --git a/include/linux/regulator/tps62360.h b/include/linux/regulator/tps62360.h
-index 6a5c1b2..5e11d50 100644
---- a/include/linux/regulator/tps62360.h
-+++ b/include/linux/regulator/tps62360.h
-@@ -26,8 +26,6 @@
- #ifndef __LINUX_REGULATOR_TPS62360_H
- #define __LINUX_REGULATOR_TPS62360_H
- 
--#include <linux/regulator/machine.h>
--
- /*
-  * struct tps62360_regulator_platform_data - tps62360 regulator platform data.
-  *
-@@ -44,7 +42,7 @@
-  * @vsel1_def_state: Default state of vsel1. 1 if it is high else 0.
-  */
- struct tps62360_regulator_platform_data {
--	struct regulator_init_data reg_init_data;
-+	struct regulator_init_data *reg_init_data;
- 	bool en_force_pwm;
- 	bool en_discharge;
- 	bool en_internal_pulldn;
--- 
-1.7.1.1
+That's a lot of BUG* calls.  Same thing with the 1/4 patch in this
+series.
+
+We really should not have a BUG call in any driver, as you just stopped
+the whole system.  I can understand this being there for debugging when
+you create the code originally, but as these are things no one should
+ever be able to hit now, you should remove them, right?
+
+Care to write a follow-on patch removing all of these BUG_ON and BUG
+calls in this and the drivers/memory/tegra20-mc.c driver?
+
+thanks,
+
+greg k-h
