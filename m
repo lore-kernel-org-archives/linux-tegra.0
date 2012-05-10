@@ -1,42 +1,41 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL] ARM: tegra: cleanup branch
-Date: Thu, 10 May 2012 00:14:58 -0700
-Message-ID: <CAOesGMgqkFTn_adCxKwYFgBdwdxivdsxdMtXA_hiVtjZXkjgog@mail.gmail.com>
-References: <4FA962CF.1030809@wwwdotorg.org>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC 1/1] Driver Core: don't oops with unregistered driver in driver_find_device()
+Date: Thu, 10 May 2012 10:35:02 +0300
+Message-ID: <1336635302-29260-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FA962CF.1030809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen,
+driver_find_device() can be called with an unregistered driver. Need
+to check driver_private to see if it's populated or not, especially
+under deferrable probe.
 
-On Tue, May 8, 2012 at 11:15 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>=
- wrote:
-> A couple of small cleanups for Tegra, independent from anything else:
->
-> The following changes since commit 0034102808e0dbbf3a2394b82b1bb40b57=
-78de9e:
-> =A0Linus Torvalds (1):
-> =A0 =A0 =A0 =A0Linux 3.4-rc2
->
-> are available in the git repository at:
->
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.=
-git
-> for-3.5/cleanup
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+In [PATCHv5 2/3] ARM: tegra: Add SMMU enabler in AHB:
+  http://article.gmane.org/gmane.linux.ports.tegra/4658
 
-Pulled all 8 requests.
+"tegra_ahb_driver" may not be populated when it's called.
+---
+ drivers/base/driver.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-By the way, feel free add a \ at the end of the wrapped URL/branch to
-make cut and paste of it into a shell window a little easier.
-
-
-Thanks,
-
-
--Olof
+diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+index 3ec3896..207c27d 100644
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -80,7 +80,7 @@ struct device *driver_find_device(struct device_driver *drv,
+ 	struct klist_iter i;
+ 	struct device *dev;
+ 
+-	if (!drv)
++	if (!drv || !drv->p)
+ 		return NULL;
+ 
+ 	klist_iter_init_node(&drv->p->klist_devices, &i,
+-- 
+1.7.5.4
