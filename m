@@ -1,48 +1,26 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/4] ARM: tegra20: Add Tegra Memory Controller(MC) driver
-Date: Thu, 10 May 2012 11:23:55 -0600
-Message-ID: <4FABF9AB.6020902@wwwdotorg.org>
-References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/2] iommu/tegra: gart: Fix register offset correctly
+Date: Thu, 10 May 2012 11:28:28 -0600
+Message-ID: <4FABFABC.60407@wwwdotorg.org>
+References: <1336635940-31068-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+In-Reply-To: <1336635940-31068-1-git-send-email-hdoyu@nvidia.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Hiroshi DOYU <hdoyu@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Benoit Cousson <b-cousson@ti.com>, Aneesh V <aneesh@ti.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Hiroshi DOYU <hdoyu@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Thierry Reding <thierry.reding@avionic-design.de>, Joerg Roedel <joerg.roedel@amd.com>, Bharat Nihalani <bnihalani@nvidia.com>, Vandana Salve <vsalve@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/10/2012 01:42 AM, Hiroshi DOYU wrote:
-> Tegra Memory Controller(MC) driver for Tegra20
-> Added to support MC General interrupts, mainly for IOMMU(GART).
+On 05/10/2012 01:45 AM, Hiroshi DOYU wrote:
+> DT passes the exact GART register ranges without any overlapping with
+> MC register ranges. GART register offset needs to be adjusted by one
+> passed by DT correctly.
+> 
+> Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
 
-Greg, you appear to have been commiting all of drivers/memory. I assume
-you'll take patches 1 and 3 in this series, and I will take 2 and 4
-through the Tegra tree? I can take them all through the Tegra tree if
-you want. Taking the .dts patches through your tree might cause
-conflicts in 3.6, since I anticipate some DT-wide cleanup in 3.6.
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
 
-Hiroshi, one question below (same for patch 3)
-
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-
-> @@ -20,6 +20,8 @@ config ARCH_TEGRA_2x_SOC
->  	select PL310_ERRATA_727915 if CACHE_L2X0
->  	select PL310_ERRATA_769419 if CACHE_L2X0
->  	select CPU_FREQ_TABLE if CPU_FREQ
-> +	select MEMORY
-> +	select TEGRA20_MC
-
-Does ARCH_TEGRA_2x_SOC /have/ to select these?
-
-I'd be inclined to drop the change to mach-tegra/Kconfig. As rationale,
-the code works fine without the driver right now. You'd need to make
-config TEGRA*_MC user-visible/selectable though.
-
-You could replace this change with a patch to tegra_defconfig which
-enables MEMORY and TEGRA*_MC, or perhaps make config TEGRA20_MC default y.
-
-What are people's thoughts here?
-
-Aside from this, the series looks fine to me.
+Joerg, I assume you'll take this patch through the iommu tree and I'll
+take patch 2 through the Tegra tree?
