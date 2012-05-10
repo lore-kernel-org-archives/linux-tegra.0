@@ -1,115 +1,27 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 1/1] Driver Core: don't oops with unregistered driver in
- driver_find_device()
-Date: Thu, 10 May 2012 16:34:40 -0600
-Message-ID: <4FAC4280.4000100@wwwdotorg.org>
-References: <1336635302-29260-1-git-send-email-hdoyu@nvidia.com> <20120510141130.GA20373@kroah.com> <4FABE5D3.9040706@wwwdotorg.org> <20120510181611.GA16908@kroah.com> <4FAC1E70.8030907@wwwdotorg.org> <20120510222830.GA23084@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
+Date: Thu, 10 May 2012 16:38:27 -0600
+Message-ID: <20120510223828.091203E04A6@localhost>
+References: <1336636221-31575-1-git-send-email-hdoyu@nvidia.com> <1336636221-31575-2-git-send-email-hdoyu@nvidia.com> <4FAC2041.7030405@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120510222830.GA23084-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <4FAC2041.7030405-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/10/2012 04:28 PM, Greg Kroah-Hartman wrote:
-> On Thu, May 10, 2012 at 02:00:48PM -0600, Stephen Warren wrote:
->> On 05/10/2012 12:16 PM, Greg Kroah-Hartman wrote:
->>> On Thu, May 10, 2012 at 09:59:15AM -0600, Stephen Warren wrote:
->>>> On 05/10/2012 08:11 AM, Greg Kroah-Hartman wrote:
->>>>> On Thu, May 10, 2012 at 10:35:02AM +0300, Hiroshi DOYU wrote:
->>>>>> driver_find_device() can be called with an unregistered driver.
->>>>>
->>>>> Who does that?  Where in the kernel?  Why would you try to do that?
->>>>>
->>>>>> Need to check driver_private to see if it's populated or not,
->>>>>> especially under deferrable probe.
->>>>>
->>>>> Hm, I don't know if this will really catch a driver that was registered
->>>>> and then was unregistered, right?  It seems like moving the real problem
->>>>> somewhere else, why not fix the original issue instead?
->>>>>
->>>>>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>> ---
->>>>>> In [PATCHv5 2/3] ARM: tegra: Add SMMU enabler in AHB:
->>>>>>   http://article.gmane.org/gmane.linux.ports.tegra/4658
->>>>>>
->>>>>> "tegra_ahb_driver" may not be populated when it's called.
->>>>>
->>>>> It can?  I don't see that in that patch.
->>>>
->>>> I think this is what's happening:
->>>>
->>>> The Tegra SMMU driver is registered using subsys_initcall().
->>>>
->>>> The Tegra AHB driver is registered using module_platform_driver, so
->>>> module_init().
->>>>
->>>> The device objects for both are registered at basically the same time
->>>> during the machine's initialization call, which I think happens before
->>>> both or some of the above two calls.
->>>>
->>>> So, SMMU ends up getting probed before the AHB driver has even been
->>>> registered.
->>>
->>> What do those two drivers have to do with each other?
->>
->> The AHB HW module contains a bit to say "enable the SMMU". This bit
->> cannot be turned on until certain initialization has been performed by
->> the SMMU driver.
->>
->> So, SMMU's probe performs the initialization, then attempts to contact
->> the AHB driver to ask it to enable the SMMU.
->>
->>>> That's why in patch Hiroshi linked, in tegra_ahb_enable_smmu(), the AHB
->>>> driver hasn't (or may not have) been registered, so driver_find_device()
->>>> can experience the issue this patch attempts to solve.
->>>
->>> It sounds like you have a locking or ordering problem somewhere in this
->>> platform, and it needs to be resolved there.  Odds are, this tiny check
->>> is the least of your worries, right?
->>>
->>> Who is doing the driver_find_device() call in the first place?  The
->>> driver core?  Or something else?
->>
->> SMMU's probe calls tegra_ahb_enable_smmu().
->>
->> tegra_ahb_enable_smmu() needs to find the AHB's struct device so that it
->> can find get the driver data associated with it, which contains the
->> ioremap'd registers amongst other things.
->>
->> In order to find the correct device, tegra_ahb_enable_smmu() is passed
->> the device tree node of the appropriate AHB that controls the SMMU.
->>
->> The two drivers use deferred probe to ensure that their relative probe
->> order doesn't matter. If AHB is probed first, then
->> tegra_ahb_enable_smmu()'s driver_find_device() succeeds, and the AHB
->> register is programmed to enable the SMMU. If the SMMU is probed first,
->> then tegra_ahb_enable_smmu() returns -EPROBE_DEFER to hold off the SMMU
->> from completing its probe. I believe this is exactly the kind of thing
->> -EPROBE_DEFER was intended for.
+On Thu, 10 May 2012 14:08:33 -0600, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 05/10/2012 01:50 AM, Hiroshi DOYU wrote:
+> > The necessary info is expected to pass from DT.
+> > 
+> > For more precise resource reservation, there shouldn't be any
+> > overlapping of register range between SMMU and MC. SMMU register
+> > offset needs to be calculated correctly, based on its register bank.
+> > 
+> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Ok, thanks for explaining it better, that would have been nice to have
-> in the original patch submission :)
-> 
-> This fix, is it needed for 3.4, or just 3.5?
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
-The SMMU driver that needs this will be added in 3.6 (so putting this
-patch in 3.5 would be good to simplify dependencies). It's not needed in
-3.4.
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-> I kind of don't like relying on ->p as a check to see if things are set
-> up properly, I wonder if we could use the kobject state_initalized field
-> instead somehow, or maybe state_in_sysfs?  Oh wait, that's in ->p as
-> well.  Ok, I guess this is as good as it can get.
-
-In the case you mentioned of the driver getting unregistered, can the
-unregister code clear ->p?
-
-> Can someone resend this to me, with the information above in the
-> changelog comment, and I'll be glad to apply it?  Again, I need to know
-> if this is needed for 3.4 or it can wait for 3.5?
-
-I'll let Hiroshi do that.
+g.
