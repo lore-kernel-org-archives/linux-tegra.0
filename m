@@ -1,44 +1,60 @@
-From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
-Date: Fri, 11 May 2012 11:46:25 +0200
-Message-ID: <20120511094625.GA11750@amd.com>
-References: <1336636221-31575-1-git-send-email-hdoyu@nvidia.com>
- <1336636221-31575-2-git-send-email-hdoyu@nvidia.com>
- <4FAC2041.7030405@wwwdotorg.org>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [v2 1/2] ARM: tegra20: MC: Remove unnecessary BUG*()
+Date: Fri, 11 May 2012 13:04:44 +0300
+Message-ID: <1336730689-27092-1-git-send-email-hdoyu@nvidia.com>
+References: <1336717334-23276-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FAC2041.7030405-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1336717334-23276-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 10, 2012 at 02:08:33PM -0600, Stephen Warren wrote:
-> On 05/10/2012 01:50 AM, Hiroshi DOYU wrote:
-> > The necessary info is expected to pass from DT.
-> > 
-> > For more precise resource reservation, there shouldn't be any
-> > overlapping of register range between SMMU and MC. SMMU register
-> > offset needs to be calculated correctly, based on its register bank.
-> > 
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> 
-> I expect patch 1 will go through the IOMMU tree, and I'll take patch 2
-> through the Tegra tree.
+Accessing interleaved MC register offsets/ranges are verified. BUG*()s
+in accessors can be removed.
 
-Any reason for splitting it up? The patches touch mostly drivers/iommu.
-So to avoid conflicts its probably the best to apply them together.
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/memory/tegra20-mc.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-
-	Joerg
-
+diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
+index c0bfffa..2a437e9 100644
+--- a/drivers/memory/tegra20-mc.c
++++ b/drivers/memory/tegra20-mc.c
+@@ -53,12 +53,14 @@ struct tegra20_mc {
+ 
+ static inline u32 mc_readl(struct tegra20_mc *mc, u32 offs)
+ {
++	u32 val = 0;
++
+ 	if (offs < 0x24)
+-		return readl(mc->regs[0] + offs);
+-	BUG_ON(offs < 0x3c);
++		val = readl(mc->regs[0] + offs);
+ 	if (offs < 0x400)
+-		return readl(mc->regs[1] + offs - 0x3c);
+-	BUG();
++		val = readl(mc->regs[1] + offs - 0x3c);
++
++	return val;
+ }
+ 
+ static inline void mc_writel(struct tegra20_mc *mc, u32 val, u32 offs)
+@@ -67,12 +69,10 @@ static inline void mc_writel(struct tegra20_mc *mc, u32 val, u32 offs)
+ 		writel(val, mc->regs[0] + offs);
+ 		return;
+ 	}
+-	BUG_ON(offs < 0x3c);
+ 	if (offs < 0x400) {
+ 		writel(val, mc->regs[1] + offs - 0x3c);
+ 		return;
+ 	}
+-	BUG();
+ }
+ 
+ static const char * const tegra20_mc_client[] = {
 -- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+1.7.5.4
