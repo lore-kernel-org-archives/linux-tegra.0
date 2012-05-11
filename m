@@ -1,55 +1,58 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V3 1/4] regulator: tps62360: make init_data of platform
- data to pointer.
-Date: Fri, 11 May 2012 16:09:09 +0100
-Message-ID: <20120511150908.GJ3960@opensource.wolfsonmicro.com>
-References: <1336718325-8372-1-git-send-email-ldewangan@nvidia.com>
- <1336718325-8372-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 2/4] regulator: tps62360: add dt support
+Date: Fri, 11 May 2012 21:05:01 +0530
+Message-ID: <4FAD31A5.7090006@nvidia.com>
+References: <1336718325-8372-1-git-send-email-ldewangan@nvidia.com> <1336718325-8372-3-git-send-email-ldewangan@nvidia.com> <20120511145833.GG3960@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="W13SgbpmD6bhZUTM"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1336718325-8372-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux@arm.linux.org.uk, lrg@ti.com, swarren@nvidia.com, olof@lixom.net, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120511145833.GG3960-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Friday 11 May 2012 08:28 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Fri, May 11, 2012 at 12:08:43PM +0530, Laxman Dewangan wrote:
+>
+> This looks good overall but I do have a few things with the binding.
+>
+>> +Optional properties:
+>> +- ti,enable-force-pwm: Enable force PWM mode. This is boolean value.
+> Hrm, this is fairly generic - it's REGULATOR_MODE_ACTIVE.  But I'm a bit
+> unsure about how generic exposing it is in bindings since it's often
+> dynamic in the running system, we've really not got any mainline
+> examples of something setting a mode.  With modern regulators the mode
+> detection stuff in the hardware is generally good enough that there's no
+> benefit from doing this, it's suprising to actually see systems that
+> benefit.
+>
 
---W13SgbpmD6bhZUTM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yaah, I think this flag can map directly to REGULATOR_MODE_FAST. If I 
+understand PWM mode properly then this is used when high current load is 
+require or fast switching on  load current is require. By enabling force 
+PWM enable, hw will not switch to PFM mode based on load current.
 
-On Fri, May 11, 2012 at 12:08:42PM +0530, Laxman Dewangan wrote:
-> Convert platform data member regulator_init_data to pointer type.
-> This will avoid the copy of entire regualator init data into
-> platform data member when adding dt support and it can be achieve
-> by simple assignment:
-> pdata->init_data = of_get_regulator_init_data(dev, dev->of_node);
+I think if we map the regulator mode to FAST as the force PWM enable and 
+NORMAL as force PWM =0 then it will be generic.
+Client can pass the initial mode when they fill constraint at the time 
+of registration and it can also give the opportunity to change mode by 
+calling regulator_set_mode().
+If this is fine then I can create patch for removing this flag from 
+platform data and add set_mode/get_mode function.
 
-Applied, thanks.
+>> +- ti,enable-vout-discharge: Enable output discharge. This is boolean value.
+> This I think we should definitely add a framework feature for this and
+> make into a generic property, it's a very standard feature and more
+> normally set unconditionally.
+>
 
---W13SgbpmD6bhZUTM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPrSuOAAoJEBus8iNuMP3dYGQP/AhY7sgQoJ+xqtrcIam98jPl
-BbwRakm3ymbWyimAsZlTGeFnI6uILRmOA6VJQu83p/PZuEshRy4Ro4osLU/20QIJ
-kai28N3XFqAm+nBGn4vz6dDVC4ehK8bfnqUpnY+rAIGl12q4/uft19apT1CSVSdP
-dUcwu2qP5/lewvA8EK9UTTcU/jz7uY2+LK23us2fiTx6Mf4yv1xN3CEJgbaww+rN
-o3LEn1G8XOAktH97zRyXrcoimnuX8reN4HAQjHS4k5IvxZnK8dgkt5lIhBAtHVeH
-OUf2EXHTujyKIvuR3ZmCgjDKNFAa7aC3BdqK8v7vUg2k0GnW9Y474t066d+F04YF
-vSc94DGKz0w7/OCy1Ussvi8xh8D2N2dHLvXt29eYv6pus1UPBjITtdLtb89as6KF
-Ltuncytzl6yvxpZBQtMoNgG/FBQUMAzLV0jLxlig/GeG2Xjtytri1NgScEHoNShC
-vIWUPrg3ZZPnwMXXaLd7fiVlJDOJ6a87XGZSDLrOxpu2Ef4pz3MHPnzlqvFFmpyN
-PZRZxfNlisHhiL74QpwQ1httWW2DnSsK9LH0c4XA2sOv0gUrxeHnL1mXW2yBY2lO
-v7cOKuOcwj8rIPqHkTIICOmfM5zLtyHioogp2HJszKs8IM9rh704gXGhfskvvt33
-tTURC8nsiU5B9VnzOObT
-=Xzmp
------END PGP SIGNATURE-----
-
---W13SgbpmD6bhZUTM--
+I think this is not require to enable always otherwise there may be 
+power dissipation from this path always, just when we off the rail 
+(disable rail or when go to shutdown so that the voltage output can go 
+down faster).
+Should we add "unsigned en_discharge:1" in regulator init data but did 
+not get how core driver can use this flag specially when shutdown?
