@@ -1,126 +1,158 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [RFC 1/1] Driver Core: don't oops with unregistered driver in
- driver_find_device()
-Date: Thu, 10 May 2012 15:45:58 -0700
-Message-ID: <20120510224558.GA31803@kroah.com>
-References: <1336635302-29260-1-git-send-email-hdoyu@nvidia.com>
- <20120510141130.GA20373@kroah.com>
- <4FABE5D3.9040706@wwwdotorg.org>
- <20120510181611.GA16908@kroah.com>
- <4FAC1E70.8030907@wwwdotorg.org>
- <20120510222830.GA23084@kroah.com>
- <4FAC4280.4000100@wwwdotorg.org>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] dt: Add general DMA window parser
+Date: Fri, 11 May 2012 08:07:53 +0300
+Message-ID: <1336712873-32244-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FAC4280.4000100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 10, 2012 at 04:34:40PM -0600, Stephen Warren wrote:
-> On 05/10/2012 04:28 PM, Greg Kroah-Hartman wrote:
-> > On Thu, May 10, 2012 at 02:00:48PM -0600, Stephen Warren wrote:
-> >> On 05/10/2012 12:16 PM, Greg Kroah-Hartman wrote:
-> >>> On Thu, May 10, 2012 at 09:59:15AM -0600, Stephen Warren wrote:
-> >>>> On 05/10/2012 08:11 AM, Greg Kroah-Hartman wrote:
-> >>>>> On Thu, May 10, 2012 at 10:35:02AM +0300, Hiroshi DOYU wrote:
-> >>>>>> driver_find_device() can be called with an unregistered driver.
-> >>>>>
-> >>>>> Who does that?  Where in the kernel?  Why would you try to do that?
-> >>>>>
-> >>>>>> Need to check driver_private to see if it's populated or not,
-> >>>>>> especially under deferrable probe.
-> >>>>>
-> >>>>> Hm, I don't know if this will really catch a driver that was registered
-> >>>>> and then was unregistered, right?  It seems like moving the real problem
-> >>>>> somewhere else, why not fix the original issue instead?
-> >>>>>
-> >>>>>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>>>> ---
-> >>>>>> In [PATCHv5 2/3] ARM: tegra: Add SMMU enabler in AHB:
-> >>>>>>   http://article.gmane.org/gmane.linux.ports.tegra/4658
-> >>>>>>
-> >>>>>> "tegra_ahb_driver" may not be populated when it's called.
-> >>>>>
-> >>>>> It can?  I don't see that in that patch.
-> >>>>
-> >>>> I think this is what's happening:
-> >>>>
-> >>>> The Tegra SMMU driver is registered using subsys_initcall().
-> >>>>
-> >>>> The Tegra AHB driver is registered using module_platform_driver, so
-> >>>> module_init().
-> >>>>
-> >>>> The device objects for both are registered at basically the same time
-> >>>> during the machine's initialization call, which I think happens before
-> >>>> both or some of the above two calls.
-> >>>>
-> >>>> So, SMMU ends up getting probed before the AHB driver has even been
-> >>>> registered.
-> >>>
-> >>> What do those two drivers have to do with each other?
-> >>
-> >> The AHB HW module contains a bit to say "enable the SMMU". This bit
-> >> cannot be turned on until certain initialization has been performed by
-> >> the SMMU driver.
-> >>
-> >> So, SMMU's probe performs the initialization, then attempts to contact
-> >> the AHB driver to ask it to enable the SMMU.
-> >>
-> >>>> That's why in patch Hiroshi linked, in tegra_ahb_enable_smmu(), the AHB
-> >>>> driver hasn't (or may not have) been registered, so driver_find_device()
-> >>>> can experience the issue this patch attempts to solve.
-> >>>
-> >>> It sounds like you have a locking or ordering problem somewhere in this
-> >>> platform, and it needs to be resolved there.  Odds are, this tiny check
-> >>> is the least of your worries, right?
-> >>>
-> >>> Who is doing the driver_find_device() call in the first place?  The
-> >>> driver core?  Or something else?
-> >>
-> >> SMMU's probe calls tegra_ahb_enable_smmu().
-> >>
-> >> tegra_ahb_enable_smmu() needs to find the AHB's struct device so that it
-> >> can find get the driver data associated with it, which contains the
-> >> ioremap'd registers amongst other things.
-> >>
-> >> In order to find the correct device, tegra_ahb_enable_smmu() is passed
-> >> the device tree node of the appropriate AHB that controls the SMMU.
-> >>
-> >> The two drivers use deferred probe to ensure that their relative probe
-> >> order doesn't matter. If AHB is probed first, then
-> >> tegra_ahb_enable_smmu()'s driver_find_device() succeeds, and the AHB
-> >> register is programmed to enable the SMMU. If the SMMU is probed first,
-> >> then tegra_ahb_enable_smmu() returns -EPROBE_DEFER to hold off the SMMU
-> >> from completing its probe. I believe this is exactly the kind of thing
-> >> -EPROBE_DEFER was intended for.
-> > 
-> > Ok, thanks for explaining it better, that would have been nice to have
-> > in the original patch submission :)
-> > 
-> > This fix, is it needed for 3.4, or just 3.5?
-> 
-> The SMMU driver that needs this will be added in 3.6 (so putting this
-> patch in 3.5 would be good to simplify dependencies). It's not needed in
-> 3.4.
+This code was based on:
+	"arch/microblaze/kernel/prom_parse.c"
+	"arch/powerpc/kernel/prom_parse.c"
 
-Ok, good to know.
+"ibm," prefix could be supported with some modification.
 
-> > I kind of don't like relying on ->p as a check to see if things are set
-> > up properly, I wonder if we could use the kobject state_initalized field
-> > instead somehow, or maybe state_in_sysfs?  Oh wait, that's in ->p as
-> > well.  Ok, I guess this is as good as it can get.
-> 
-> In the case you mentioned of the driver getting unregistered, can the
-> unregister code clear ->p?
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+ drivers/of/Kconfig         |    4 ++
+ drivers/of/Makefile        |    1 +
+ drivers/of/of_dma.c        |   70 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of_address.h |   13 ++++++++
+ 4 files changed, 88 insertions(+), 0 deletions(-)
 
-I do not know.  Try it in the bus_remove_driver() call after the
-kobject_put() line, that might do it, but it might cause problems, I
-can't remember at the moment.  It would need a lot of testing
-
-thanks,
-
-greg k-h
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index dfba3e6..3b0298b 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -83,4 +83,8 @@ config OF_MTD
+ 	depends on MTD
+ 	def_bool y
+ 
++config OF_DMA
++	depends on HAS_DMA
++	def_bool y
++
+ endmenu # OF
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index e027f44..711ff5b 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
+ obj-$(CONFIG_OF_PCI)	+= of_pci.o
+ obj-$(CONFIG_OF_PCI_IRQ)  += of_pci_irq.o
+ obj-$(CONFIG_OF_MTD)	+= of_mtd.o
++obj-$(CONFIG_OF_DMA)	+= of_dma.o
+diff --git a/drivers/of/of_dma.c b/drivers/of/of_dma.c
+new file mode 100644
+index 0000000..a89fe61
+--- /dev/null
++++ b/drivers/of/of_dma.c
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Based on:
++ *	"arch/microblaze/kernel/prom_parse.c"
++ *	"arch/powerpc/kernel/prom_parse.c"
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/export.h>
++#include <linux/of_address.h>
++
++int of_get_dma_window(struct device_node *dn,
++			const char *propname, int index,
++			unsigned long *busno,
++			dma_addr_t *addr, size_t *size)
++{
++	const __be32 *dma_window, *end;
++	int bytes, cur_index = 0;
++
++	if (!dn || !addr || !size)
++		return -EINVAL;
++
++	if (!propname)
++		propname = "dma-window";
++
++	dma_window = of_get_property(dn, propname, &bytes);
++	if (!dma_window)
++		return -ENODEV;
++	end = dma_window + bytes / sizeof(*dma_window);
++
++	while (dma_window < end) {
++		u32 cells;
++		const void *prop;
++
++		/* busno is always one cell */
++		if (busno)
++			*busno = be32_to_cpup(dma_window++);
++
++		prop = of_get_property(dn, "#dma-address-cells", NULL);
++		if (!prop)
++			prop = of_get_property(dn, "#address-cells", NULL);
++
++		cells = prop ? be32_to_cpup(prop) : of_n_addr_cells(dn);
++		if (!cells)
++			return -EINVAL;
++		*addr = of_read_number(dma_window, cells);
++		dma_window += cells;
++
++		prop = of_get_property(dn, "#dma-size-cells", NULL);
++		cells = prop ? be32_to_cpup(prop) : of_n_size_cells(dn);
++		if (!cells)
++			return -EINVAL;
++		*size = of_read_number(dma_window, cells);
++		dma_window += cells;
++
++		if (cur_index++ == index)
++			break;
++	}
++	return 0;
++}
++EXPORT_SYMBOL(of_get_dma_window);
+diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+index 01b925a..9d9da9d 100644
+--- a/include/linux/of_address.h
++++ b/include/linux/of_address.h
+@@ -21,6 +21,11 @@ extern void __iomem *of_iomap(struct device_node *device, int index);
+ extern const u32 *of_get_address(struct device_node *dev, int index,
+ 			   u64 *size, unsigned int *flags);
+ 
++extern int of_get_dma_window(struct device_node *dev,
++			       const char *propname, int index,
++			       unsigned long *busno,
++			       dma_addr_t *phys, size_t *size);
++
+ #ifndef pci_address_to_pio
+ static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
+ #define pci_address_to_pio pci_address_to_pio
+@@ -48,6 +53,14 @@ static inline const u32 *of_get_address(struct device_node *dev, int index,
+ {
+ 	return NULL;
+ }
++
++extern int of_get_dma_window(struct device_node *dev,
++			       const char *propname, int index,
++			       unsigned long *busno,
++			       dma_addr_t *phys, size_t *size)
++{
++	return 0;
++}
+ #endif /* CONFIG_OF_ADDRESS */
+ 
+ 
+-- 
+1.7.5.4
