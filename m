@@ -1,38 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
-Date: Fri, 11 May 2012 12:04:57 -0600
-Message-ID: <4FAD54C9.6040904@wwwdotorg.org>
-References: <1336636221-31575-1-git-send-email-hdoyu@nvidia.com> <1336636221-31575-2-git-send-email-hdoyu@nvidia.com> <4FAC2041.7030405@wwwdotorg.org> <20120511094625.GA11750@amd.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V3 2/4] regulator: tps62360: add dt support
+Date: Fri, 11 May 2012 21:36:20 +0100
+Message-ID: <20120511203619.GC29835@opensource.wolfsonmicro.com>
+References: <1336718325-8372-1-git-send-email-ldewangan@nvidia.com>
+ <1336718325-8372-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120511094625.GA11750-5C7GfCeVMHo@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ctP54qlpMx3WjD+/"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1336718325-8372-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux@arm.linux.org.uk, lrg@ti.com, swarren@nvidia.com, olof@lixom.net, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/11/2012 03:46 AM, Joerg Roedel wrote:
-> On Thu, May 10, 2012 at 02:08:33PM -0600, Stephen Warren wrote:
->> On 05/10/2012 01:50 AM, Hiroshi DOYU wrote:
->>> The necessary info is expected to pass from DT.
->>>
->>> For more precise resource reservation, there shouldn't be any
->>> overlapping of register range between SMMU and MC. SMMU register
->>> offset needs to be calculated correctly, based on its register bank.
->>>
->>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>
->> I expect patch 1 will go through the IOMMU tree, and I'll take patch 2
->> through the Tegra tree.
-> 
-> Any reason for splitting it up? The patches touch mostly drivers/iommu.
-> So to avoid conflicts its probably the best to apply them together.
 
-Patch 1 is the driver that touches drivers/iommu and related
-documentation, whereas patch 2 touches the device tree file in
-arch/arm/boot/dts. Either of the patches would get conflicts if they
-were merged into the "other" tree.
+--ctP54qlpMx3WjD+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, May 11, 2012 at 12:08:43PM +0530, Laxman Dewangan wrote:
+> Add dt support for the pmu device tps62360 and
+> Add binding documentation with example.
+> With this patch driver will support both device-tree and
+> non-device tree registration.
+
+Oh, sorry - I meant to say that I went ahead and applied this.  Ideally
+the active discharge thing will get factored out quickly though.
+
+--ctP54qlpMx3WjD+/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPrXg6AAoJEBus8iNuMP3dyHsP/AgtZUk+LjHHIbPdLjrCB/dX
+u10Xi4RSFSP7sgKVR/A7WuifEfXfzmykJDVkRGnKsWvfsNc/QKr5ZTZWcccGmCaI
+hZimnp95b3KReT8y6vj2nQbXprnxb561Yu9wNuEFv5BCOih1oNZfO272JFqqtaXV
+uBlxVySimxwnJFt9zvxqoZ5htIL6WohxXXbG8NfnU/5hH0g1zopIx7thV/k3rS8Z
+SeQXAKqPIWn81cPVp7Lm5rKtpJXaYmIE3Zg/QUG7xk/rtMClP/D932d4yPY8kbff
+dOCWjuds1RpnfAftXFLJx9AgRcvG4ruKIImvfF9V8r82GQICLra54gYiH5Cwfvq5
+tEnoNhD3d/l7KTc6vZMKvVyuT6iL9K+bfVmTK+4y7T8W6s1Mb5jtlcx6wF3kXdla
+uO1POwCEavqtNnec0mVcqZxPgQAtyYKi0l9FmwNYNJYKvgN+dSsZy96ZW7UCHwNz
+L18fbuDsLYesTCLBnA/JQS8dJ4oDsXIP2JuHoI1QdpaZH9k5kYezGf6JDAU0+2fh
+BkQ9EhIHU/iJG13n3LoOcN78tS0jMXGz8QpwNsc4G86AR1sQRhrqt/SiNRpDYuCP
+WWlyElLYE8kMTiebivTNF6nVhVqe5tnDYsXLFOGiENLB2FCl9vLc9xbzX4CYvMUw
+85ygqBYtBE+1jnIEhFpu
+=tC4w
+-----END PGP SIGNATURE-----
+
+--ctP54qlpMx3WjD+/--
