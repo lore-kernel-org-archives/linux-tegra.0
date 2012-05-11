@@ -1,79 +1,35 @@
-From: Hiroshi DOYU <hdoyu@nvidia.com>
-Subject: [v2 2/2] ARM: tegra30: MC: Remove unnecessary BUG*()
-Date: Fri, 11 May 2012 13:04:45 +0300
-Message-ID: <1336730689-27092-2-git-send-email-hdoyu@nvidia.com>
-References: <1336717334-23276-2-git-send-email-hdoyu@nvidia.com>
- <1336730689-27092-1-git-send-email-hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V2 2/2] dmaengine: tegra: add dma driver
+Date: Fri, 11 May 2012 16:28:36 +0530
+Message-ID: <4FACF0DC.3050209@nvidia.com>
+References: <1336030889-32269-1-git-send-email-ldewangan@nvidia.com>	 <1336030889-32269-3-git-send-email-ldewangan@nvidia.com>	 <1336558444.1540.243.camel@vkoul-udesk3>  <4FAA4EA3.70001@nvidia.com>	 <1336620844.1540.269.camel@vkoul-udesk3>  <4FAB4C7D.7030406@nvidia.com> <1336725713.15424.1856.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1336730689-27092-1-git-send-email-hdoyu@nvidia.com>
+In-Reply-To: <1336725713.15424.1856.camel@vkoul-udesk3>
 Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, Hiroshi DOYU <hdoyu@nvidia.com>, linux-kernel@vger.kernel.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Accessing interleaved MC register offsets/ranges are verified. BUG*()s
-in accessors can be removed.
+On Friday 11 May 2012 02:11 PM, Vinod Koul wrote:
+> On Thu, 2012-05-10 at 10:35 +0530, Laxman Dewangan wrote:
+>
+>> But when we update the chan->completed_cookie for aborted cookie?
+>> Otherwise I will get the DMA_IN_PROGRSS when I call dma_cookie_status()
+>> but actually it is aborted.
+> no in .device_tx_status, you should check if the descriptor is aborted
+> or not and rteurn error for aborted descriptor.
+>
+OK, I will not call this function.
+Also I am dropping the ONCE_NOTIFY_HALF and will add later if require. I 
+realize that patch patch should be simple and sufficient so that  other 
+driver development/upstream can be unblock. Later on we can add feature 
+based on necessary.
 
-Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
----
- drivers/memory/tegra30-mc.c |   20 ++++++++------------
- 1 files changed, 8 insertions(+), 12 deletions(-)
+I am sending the new patch with considering all your feedback.
+Thanks again for review.
 
-diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
-index c982125..ec9fc78 100644
---- a/drivers/memory/tegra30-mc.c
-+++ b/drivers/memory/tegra30-mc.c
-@@ -91,18 +91,18 @@ struct tegra30_mc {
- 
- static inline u32 mc_readl(struct tegra30_mc *mc, u32 offs)
- {
-+	u32 val = 0;
-+
- 	if (offs < 0x10)
--		return readl(mc->regs[0] + offs);
--	BUG_ON(offs < 0x3c);
-+		val = readl(mc->regs[0] + offs);
- 	if (offs < 0x1f0)
--		return readl(mc->regs[1] + offs - 0x3c);
--	BUG_ON(offs < 0x200);
-+		val = readl(mc->regs[1] + offs - 0x3c);
- 	if (offs < 0x228)
--		return readl(mc->regs[2] + offs - 0x200);
--	BUG_ON(offs < 0x284);
-+		val = readl(mc->regs[2] + offs - 0x200);
- 	if (offs < 0x400)
--		return readl(mc->regs[3] + offs - 0x284);
--	BUG();
-+		val = readl(mc->regs[3] + offs - 0x284);
-+
-+	return val;
- }
- 
- static inline void mc_writel(struct tegra30_mc *mc, u32 val, u32 offs)
-@@ -111,22 +111,18 @@ static inline void mc_writel(struct tegra30_mc *mc, u32 val, u32 offs)
- 		writel(val, mc->regs[0] + offs);
- 		return;
- 	}
--	BUG_ON(offs < 0x3c);
- 	if (offs < 0x1f0) {
- 		writel(val, mc->regs[1] + offs - 0x3c);
- 		return;
- 	}
--	BUG_ON(offs < 0x200);
- 	if (offs < 0x228) {
- 		writel(val, mc->regs[2] + offs - 0x200);
- 		return;
- 	}
--	BUG_ON(offs < 0x284);
- 	if (offs < 0x400) {
- 		writel(val, mc->regs[3] + offs - 0x284);
- 		return;
- 	}
--	BUG();
- }
- 
- static const char * const tegra30_mc_client[] = {
--- 
-1.7.5.4
+Thanks,
+Laxman
