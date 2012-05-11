@@ -1,158 +1,58 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] dt: Add general DMA window parser
-Date: Fri, 11 May 2012 08:07:53 +0300
-Message-ID: <1336712873-32244-1-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 3/4] ARM: tegra30: Add Tegra Memory Controller(MC) driver
+Date: Fri, 11 May 2012 08:16:55 +0200
+Message-ID: <20120511.091655.1764445721704382888.hdoyu@nvidia.com>
+References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com><1336635764-30597-3-git-send-email-hdoyu@nvidia.com><20120510214604.GA3525@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20120510214604.GA3525@kroah.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "b-cousson@ti.com" <b-cousson@ti.com>, "aneesh@ti.com" <aneesh@ti.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This code was based on:
-	"arch/microblaze/kernel/prom_parse.c"
-	"arch/powerpc/kernel/prom_parse.c"
+Hi Greg,
 
-"ibm," prefix could be supported with some modification.
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 3/4] ARM: tegra30: Add Tegra Memory Controller(MC) driver
+Date: Thu, 10 May 2012 23:46:04 +0200
+Message-ID: <20120510214604.GA3525@kroah.com>
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- drivers/of/Kconfig         |    4 ++
- drivers/of/Makefile        |    1 +
- drivers/of/of_dma.c        |   70 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_address.h |   13 ++++++++
- 4 files changed, 88 insertions(+), 0 deletions(-)
+> On Thu, May 10, 2012 at 10:42:32AM +0300, Hiroshi DOYU wrote:
+> > Tegra Memory Controller(MC) driver for Tegra30
+> > Added to support MC General interrupts, mainly for IOMMU(SMMU).
+> 
+> I'll apply this, but:
 
-diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index dfba3e6..3b0298b 100644
---- a/drivers/of/Kconfig
-+++ b/drivers/of/Kconfig
-@@ -83,4 +83,8 @@ config OF_MTD
- 	depends on MTD
- 	def_bool y
- 
-+config OF_DMA
-+	depends on HAS_DMA
-+	def_bool y
-+
- endmenu # OF
-diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-index e027f44..711ff5b 100644
---- a/drivers/of/Makefile
-+++ b/drivers/of/Makefile
-@@ -11,3 +11,4 @@ obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
- obj-$(CONFIG_OF_PCI)	+= of_pci.o
- obj-$(CONFIG_OF_PCI_IRQ)  += of_pci_irq.o
- obj-$(CONFIG_OF_MTD)	+= of_mtd.o
-+obj-$(CONFIG_OF_DMA)	+= of_dma.o
-diff --git a/drivers/of/of_dma.c b/drivers/of/of_dma.c
-new file mode 100644
-index 0000000..a89fe61
---- /dev/null
-+++ b/drivers/of/of_dma.c
-@@ -0,0 +1,70 @@
-+/*
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Based on:
-+ *	"arch/microblaze/kernel/prom_parse.c"
-+ *	"arch/powerpc/kernel/prom_parse.c"
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/of_address.h>
-+
-+int of_get_dma_window(struct device_node *dn,
-+			const char *propname, int index,
-+			unsigned long *busno,
-+			dma_addr_t *addr, size_t *size)
-+{
-+	const __be32 *dma_window, *end;
-+	int bytes, cur_index = 0;
-+
-+	if (!dn || !addr || !size)
-+		return -EINVAL;
-+
-+	if (!propname)
-+		propname = "dma-window";
-+
-+	dma_window = of_get_property(dn, propname, &bytes);
-+	if (!dma_window)
-+		return -ENODEV;
-+	end = dma_window + bytes / sizeof(*dma_window);
-+
-+	while (dma_window < end) {
-+		u32 cells;
-+		const void *prop;
-+
-+		/* busno is always one cell */
-+		if (busno)
-+			*busno = be32_to_cpup(dma_window++);
-+
-+		prop = of_get_property(dn, "#dma-address-cells", NULL);
-+		if (!prop)
-+			prop = of_get_property(dn, "#address-cells", NULL);
-+
-+		cells = prop ? be32_to_cpup(prop) : of_n_addr_cells(dn);
-+		if (!cells)
-+			return -EINVAL;
-+		*addr = of_read_number(dma_window, cells);
-+		dma_window += cells;
-+
-+		prop = of_get_property(dn, "#dma-size-cells", NULL);
-+		cells = prop ? be32_to_cpup(prop) : of_n_size_cells(dn);
-+		if (!cells)
-+			return -EINVAL;
-+		*size = of_read_number(dma_window, cells);
-+		dma_window += cells;
-+
-+		if (cur_index++ == index)
-+			break;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL(of_get_dma_window);
-diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-index 01b925a..9d9da9d 100644
---- a/include/linux/of_address.h
-+++ b/include/linux/of_address.h
-@@ -21,6 +21,11 @@ extern void __iomem *of_iomap(struct device_node *device, int index);
- extern const u32 *of_get_address(struct device_node *dev, int index,
- 			   u64 *size, unsigned int *flags);
- 
-+extern int of_get_dma_window(struct device_node *dev,
-+			       const char *propname, int index,
-+			       unsigned long *busno,
-+			       dma_addr_t *phys, size_t *size);
-+
- #ifndef pci_address_to_pio
- static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
- #define pci_address_to_pio pci_address_to_pio
-@@ -48,6 +53,14 @@ static inline const u32 *of_get_address(struct device_node *dev, int index,
- {
- 	return NULL;
- }
-+
-+extern int of_get_dma_window(struct device_node *dev,
-+			       const char *propname, int index,
-+			       unsigned long *busno,
-+			       dma_addr_t *phys, size_t *size)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_OF_ADDRESS */
- 
- 
--- 
-1.7.5.4
+Thanks.
+
+> > +static inline u32 mc_readl(struct tegra30_mc *mc, u32 offs)
+> > +{
+> > +	if (offs < 0x10)
+> > +		return readl(mc->regs[0] + offs);
+> > +	BUG_ON(offs < 0x3c);
+> > +	if (offs < 0x1f0)
+> > +		return readl(mc->regs[1] + offs - 0x3c);
+> > +	BUG_ON(offs < 0x200);
+> > +	if (offs < 0x228)
+> > +		return readl(mc->regs[2] + offs - 0x200);
+> > +	BUG_ON(offs < 0x284);
+> > +	if (offs < 0x400)
+> > +		return readl(mc->regs[3] + offs - 0x284);
+> > +	BUG();
+> > +}
+> 
+> That's a lot of BUG* calls.  Same thing with the 1/4 patch in this
+> series.
+> 
+> We really should not have a BUG call in any driver, as you just stopped
+> the whole system.  I can understand this being there for debugging when
+> you create the code originally, but as these are things no one should
+> ever be able to hit now, you should remove them, right?
+> 
+> Care to write a follow-on patch removing all of these BUG_ON and BUG
+> calls in this and the drivers/memory/tegra20-mc.c driver?
+
+Ok, they are replying to this email.
