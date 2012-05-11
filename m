@@ -1,40 +1,62 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 0/4] regulator: tps62360: support dts and enable for tegra-cardhu
-Date: Fri, 11 May 2012 12:08:41 +0530
-Message-ID: <1336718325-8372-1-git-send-email-ldewangan@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/4] ARM: tegra20: Add Tegra Memory Controller(MC)
+ driver
+Date: Fri, 11 May 2012 09:50:12 +0300
+Message-ID: <20120511095012.57f737d1b0d2536e0d367a9b@nvidia.com>
+References: <1336635764-30597-1-git-send-email-hdoyu@nvidia.com>
+	<4FABF9AB.6020902@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <4FABF9AB.6020902@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Benoit Cousson <b-cousson@ti.com>, Aneesh V <aneesh@ti.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for dt on regulator device tps62360. Also  enable this regulator for Nvidia's
-Tegra platform - cardhu.
-This series:
-- Make the regulator_init_data as pointer type from platform data.
-- enable config variable in tegra defconfig
-- add entry for tps62360 in dts file of tegra-cardhu.
+Hi Greg, Stephen,
 
-Changes from V1:
-	Patch 1 did not compile when not defining CONFIG_OF. Fixed it.
+On Thu, 10 May 2012 19:23:55 +0200
+Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-Changes from V2:
-	Taken care of Grant's review comments.
+> On 05/10/2012 01:42 AM, Hiroshi DOYU wrote:
+> > Tegra Memory Controller(MC) driver for Tegra20
+> > Added to support MC General interrupts, mainly for IOMMU(GART).
+> 
+> Greg, you appear to have been commiting all of drivers/memory. I assume
+> you'll take patches 1 and 3 in this series, and I will take 2 and 4
+> through the Tegra tree? I can take them all through the Tegra tree if
+> you want. Taking the .dts patches through your tree might cause
+> conflicts in 3.6, since I anticipate some DT-wide cleanup in 3.6.
+> 
+> Hiroshi, one question below (same for patch 3)
+> 
+> > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+> 
+> > @@ -20,6 +20,8 @@ config ARCH_TEGRA_2x_SOC
+> >  	select PL310_ERRATA_727915 if CACHE_L2X0
+> >  	select PL310_ERRATA_769419 if CACHE_L2X0
+> >  	select CPU_FREQ_TABLE if CPU_FREQ
+> > +	select MEMORY
+> > +	select TEGRA20_MC
+> 
+> Does ARCH_TEGRA_2x_SOC /have/ to select these?
+> 
+> I'd be inclined to drop the change to mach-tegra/Kconfig. As rationale,
+> the code works fine without the driver right now. You'd need to make
+> config TEGRA*_MC user-visible/selectable though.
+> 
+> You could replace this change with a patch to tegra_defconfig which
+> enables MEMORY and TEGRA*_MC, or perhaps make config TEGRA20_MC default y.
 
-Laxman Dewangan (4):
-  regulator: tps62360: make init_data of platform data to pointer.
-	Make the regulator init data as pointer type in platform.
-  regulator: tps62360: add dt support
-	Ad dt support.
-  ARM: tegra: config: enable REGULATOR_TPS62360
-  ARM: dt: tegra: cardhu: register core regulator tps62360
+I'm sending the fixup patches, following this mail, since Greg has
+already put the original patches in queue. I think that the following
+fixup patches could be squashed into the original ones. The fixup
+patches are:
 
- .../bindings/regulator/tps62360-regulator.txt      |   45 ++++++++++++
- arch/arm/boot/dts/tegra-cardhu.dts                 |   14 ++++
- arch/arm/configs/tegra_defconfig                   |    1 +
- drivers/regulator/tps62360-regulator.c             |   74 +++++++++++++++++++-
- include/linux/regulator/tps62360.h                 |    4 +-
- 5 files changed, 133 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/tps62360-regulator.txt
+  [PATCH 1/3] ARM: tegra20: Make MC optional in Kconfig
+  [PATCH 2/3] ARM: tegra30: Make MC optional in Kconfig
+  [PATCH 3/3] ARM: tegra: Make TEGRA{20,30}_MC selectable in defconfig
+
+Let me know if it's better to resend the complete patches again.
