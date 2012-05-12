@@ -1,136 +1,70 @@
-From: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: moving Tegra30 to the common clock framework
-Date: Fri, 11 May 2012 19:58:50 -0700
-Message-ID: <4FADD1EA.8090606@codeaurora.org>
-References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com> <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org> <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com> <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com> <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com> <4FA9BD41.2090701@codeaurora.org> <20120509103606.GY20304@tbergstrom-lnx.Nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC 1/1] driver core: Add dev_*_ratelimited() family
+Date: Sat, 12 May 2012 12:52:27 +0200
+Message-ID: <20120512.135227.1196366807162247040.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120509103606.GY20304-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>, zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/09/2012 03:36 AM, Peter De Schrijver wrote:
-> On Wed, May 09, 2012 at 02:41:37AM +0200, Saravana Kannan wrote:
->> On 05/08/2012 10:15 AM, Turquette, Mike wrote:
->>> On Mon, May 7, 2012 at 10:07 PM, zhoujie wu<zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>   wrote:
->>>> Hi Mike,
->>>> Could you please explain more details about how to implement a
->>>> re-parenting operation as part of it's .set_rate implementation?
->>>
->>> Sure.
->>>
->>>> As far as I know, we can not call clk_set_parent in .set_rate function
->>>> directly, since clk_set_rate and clk_set_parent are using the same
->>>> prepare_lock.
->>>
->>> That is correct.
->>>
->>>> Any other interface can be used to implement it?
->>>
->>> You have two options available to you.
->>>
->>> 1) __clk_reparent can be used from your .set_rate callback today to
->>> reflect changes made to the tree topology.  OMAP uses this in our PLL
->>> .set_rate implementation: depending on the re-lock frequency the PLL
->>> may switch parents dynamically.  __clk_reparent does the
->>> framework-level cleanup needed for this (that function is also used
->>> when populating the clock tree with new clock nodes).
->>>
->>> 2) __clk_set_parent could be made non-static if you needed this (I've
->>> been meaning to talk to Saravana about this since I think MSM needs
->>> something like this).
->>
->> Thanks!
->>
->> I don't think I need (2). But I don't think I can use (1) as is either.
->> I can use (1) with some additional code in my set rate op.
->>
->> While set rate is in progress, both the parents might need to stay
->> enabled for a short duration. So, in my internal set rate, I need to
->> check if my clock is prepared/enabled and call prepare/enable on the
->> "old parent", call __clk_reparent (which will reduce the ref count for
->> the old parents and increase it for the new parents), finish the
->> reparent in HW and then unprepare/disable the old parent if I have
->> prepared/enabled them earlier.
->>
->> It might be beneficial to provide something like a
->> __clk_reparent_start(new_parent, *scratch_pointer) and
->> __clk_reparent_finish(*scratch_pointer) if it will be useful for more
->> than just MSM. Based on this email, I would guess that Tegra would want
->> something similar too.
->>
->
-> We also need to reparent clocks using a pll if we want to change the PLLs rate
-> while the users are active.
+Hi,
 
-Peter,
-
-Is this reparent permanent (as in, stays reparented when you return from 
-clk_set_rate()) or is it a reparenting for just a short duration inside 
-the set_rate ops?
-
-If it's the latter, I don't think you would need any helper code in 
-clock framework other than the already existing __clk_prepare() and 
-clk_enable(). Just turn on the temp parent, reparent to it, do whatever 
-you need to do, and go back to your original parent.
-
-If it's the former (permanent reparent), can I assume that the 
-CLK_SET_RATE_PARENT flag won't be set for this clock? Otherwise, it's 
-going to be quite yucky/convoluted. I'm not sure how well a reparent 
-would work with the code in common clock framwework that walks up the 
-parents to propagate the rate change to them. I wouldn't say that it's 
-wrong to only want to propagate the rate for certain rates and for 
-certain parents, but I will have to stare at the common clock code for a 
-while.
-
-Mike,
-
-I was looking at the code to make the changes and I noticed this snippet 
-(reformatted for email) in clk_change_rate():
-
-        if (clk->ops->set_rate)
-                 clk->ops->set_rate(clk->hw, clk->new_rate,
-					clk->parent->rate);
+An unclosed "if" statement in the MACRO seems a bit risky, but I don't
+have any better/simple solution for this, ATM. Is there any alternative?
 
 
-         if (clk->ops->recalc_rate)
-                 clk->rate = clk->ops->recalc_rate(clk->hw,
-                                 clk->parent->rate);
-         else
-                 clk->rate = clk->parent->rate;
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I'm a bit confused. I thought recalc_rates was optional. But if I don't 
-implement it, the clocks rate will get set to parent's rate? Or is that 
-a bug in the code?
+Add dev_*_ratelimited() family, dev_* version of pr_*_ratelimited().
 
-Also, if the clock's rate was just set with set_rate, why do we need to 
-recalc the rate by reading hardware? I'm a bit confused. Can you please 
-clarify what's going on here?
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/linux/device.h |   22 ++++++++++++++++++++++
+ 1 files changed, 22 insertions(+), 0 deletions(-)
 
-Would you mind adding more comments inside clk_calc_new_rates() and 
-clk_change_rate() trying to explain what cases you are trying to account 
-for?
-
-Also, in clk_calc_new_rates(),
-
-         if (!clk->ops->round_rate) {
-                 top = clk_calc_new_rates(clk->parent, rate);
-                 new_rate = clk->parent->new_rate;
-
-                 goto out;
-         }
-
-Is the code assuming that if there is no round rate ops that that clock 
-node is only a gating clock (as in, can't change frequency the input 
-freq)? Just trying to understand the assumptions made in the code.
-
-Thanks,
-Saravana
-
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8b9d03a..9d976df 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -23,6 +23,7 @@
+ #include <linux/mutex.h>
+ #include <linux/pm.h>
+ #include <linux/atomic.h>
++#include <linux/ratelimit.h>
+ #include <asm/device.h>
+ 
+ struct device;
+@@ -937,6 +938,27 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 
+ #endif
+ 
++#define IF_DEV_RATELIMITED						\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	if (__ratelimit(&_rs))
++
++#define dev_emerg_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_EMERG, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_alert_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_ALERT, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_crit_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_CRIT, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_err_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_ERR, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_warn_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_WARNING, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_notice_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_NOTICE, dev, fmt, ##__VA_ARGS__); } while (0)
++#define dev_info_ratelimited(dev, fmt, ...)				\
++	do { IF_DEV_RATELIMITED dev_printk(KERN_INFO, dev, fmt, ##__VA_ARGS__); } while (0)
++
+ /*
+  * Stupid hackaround for existing uses of non-printk uses dev_info
+  *
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.5.4
