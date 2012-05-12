@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra cardhu: fix typo in SDHCI node name
-Date: Fri, 11 May 2012 18:12:49 -0600
-Message-ID: <1336781569-27422-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 0/9] ARM: dt: tegra: cleanup pass
+Date: Fri, 11 May 2012 18:37:52 -0600
+Message-ID: <1336783081-16978-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
@@ -10,27 +10,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Cardhu's eMMC controller is on sdhci@78000600, not sdhci@78000400.
-Fix the typo. This roughly doubles the IO performance, since the
-support-8bit property actually takes effect.
+I've been wanting to clean up the Tegra .dts files for a little while.
+Here's a set of changes to do so. Hopefully they don't seem to much
+like churn.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra-cardhu.dts |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I was thinking of putting them into a for-3.6/cleanup branch, but I
+suppose I could put them into 3.5 at the end too. I'd need to base this
+series on the result of merging Tegra's for-3.5/dt and
+for-3.5/tegra30-audio branches. Olof, what are your thoughts here?
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-index facb950..f23da40 100644
---- a/arch/arm/boot/dts/tegra-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -139,7 +139,7 @@
- 		status = "disable";
- 	};
- 
--	sdhci@78000400 {
-+	sdhci@78000600 {
- 		support-8bit;
- 	};
- 
--- 
-1.7.0.4
+I've tested them on Cardhu so far, but still need to test all the other
+boards to make sure I didn't introduce some typo.
+
+Stephen Warren (9):
+  ARM: dt: tegra: whitespace cleanup
+  ARM: dt: tegra: remove unnecessary unit addresses
+  ARM: dt: tegra: gpio comment cleanup
+  ARM: dt: tegra: format regs properties consistently
+  ARM: dt: tegra: consistenly use lower-case for hex constants
+  ARM: dt: tegra: remove duplicate device_type property
+  ARM: dt: tegra: sort nodes based on bus order
+  ARM: dt: tegra: consistent basic property ordering
+  ARM: dt: tegra: invert status=disable vs status=okay
+
+ arch/arm/boot/dts/tegra-cardhu.dts    |   62 ++-----
+ arch/arm/boot/dts/tegra-harmony.dts   |  100 +++++------
+ arch/arm/boot/dts/tegra-paz00.dts     |  112 ++++++-------
+ arch/arm/boot/dts/tegra-seaboard.dts  |  176 +++++++++----------
+ arch/arm/boot/dts/tegra-trimslice.dts |   71 ++++-----
+ arch/arm/boot/dts/tegra-ventana.dts   |   90 +++++------
+ arch/arm/boot/dts/tegra20.dtsi        |  277 ++++++++++++++++--------------
+ arch/arm/boot/dts/tegra30.dtsi        |  304 ++++++++++++++++++---------------
+ 8 files changed, 577 insertions(+), 615 deletions(-)
