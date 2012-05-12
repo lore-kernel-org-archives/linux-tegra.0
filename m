@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 0/9] ARM: dt: tegra: cleanup pass
-Date: Fri, 11 May 2012 18:37:52 -0600
-Message-ID: <1336783081-16978-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 3/9] ARM: dt: tegra: gpio comment cleanup
+Date: Fri, 11 May 2012 18:37:55 -0600
+Message-ID: <1336783081-16978-4-git-send-email-swarren@wwwdotorg.org>
+References: <1336783081-16978-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1336783081-16978-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,35 +12,65 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've been wanting to clean up the Tegra .dts files for a little while.
-Here's a set of changes to do so. Hopefully they don't seem to much
-like churn.
+Ensure that all Tegraa GPIO specifiers contain a comment indicating which
+GPIO name the number refers to.
 
-I was thinking of putting them into a for-3.6/cleanup branch, but I
-suppose I could put them into 3.5 at the end too. I'd need to base this
-series on the result of merging Tegra's for-3.5/dt and
-for-3.5/tegra30-audio branches. Olof, what are your thoughts here?
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-paz00.dts     |    4 ++--
+ arch/arm/boot/dts/tegra-trimslice.dts |    4 ++--
+ arch/arm/boot/dts/tegra-ventana.dts   |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-I've tested them on Cardhu so far, but still need to test all the other
-boards to make sure I didn't introduce some typo.
-
-Stephen Warren (9):
-  ARM: dt: tegra: whitespace cleanup
-  ARM: dt: tegra: remove unnecessary unit addresses
-  ARM: dt: tegra: gpio comment cleanup
-  ARM: dt: tegra: format regs properties consistently
-  ARM: dt: tegra: consistenly use lower-case for hex constants
-  ARM: dt: tegra: remove duplicate device_type property
-  ARM: dt: tegra: sort nodes based on bus order
-  ARM: dt: tegra: consistent basic property ordering
-  ARM: dt: tegra: invert status=disable vs status=okay
-
- arch/arm/boot/dts/tegra-cardhu.dts    |   62 ++-----
- arch/arm/boot/dts/tegra-harmony.dts   |  100 +++++------
- arch/arm/boot/dts/tegra-paz00.dts     |  112 ++++++-------
- arch/arm/boot/dts/tegra-seaboard.dts  |  176 +++++++++----------
- arch/arm/boot/dts/tegra-trimslice.dts |   71 ++++-----
- arch/arm/boot/dts/tegra-ventana.dts   |   90 +++++------
- arch/arm/boot/dts/tegra20.dtsi        |  277 ++++++++++++++++--------------
- arch/arm/boot/dts/tegra30.dtsi        |  304 ++++++++++++++++++---------------
- 8 files changed, 577 insertions(+), 615 deletions(-)
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+index 4983ef1..03b2e65 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -252,7 +252,7 @@
+ 		reg = <0x7000C500 0x100>;
+ 		interrupts = <0 92 0x04>;
+ 		clock-frequency = <80000>;
+-		request-gpios = <&gpio 170 0>;
++		request-gpios = <&gpio 170 0>; /* gpio PV2 */
+ 		slave-addr = <138>;
+ 	};
+ 
+@@ -343,7 +343,7 @@
+ 
+ 		wifi {
+ 			label = "wifi-led";
+-			gpios = <&gpio 24 0>;
++			gpios = <&gpio 24 0>; /* gpio PD0 */
+ 			linux,default-trigger = "rfkill0";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
+index 4436b42..eebcf50 100644
+--- a/arch/arm/boot/dts/tegra-trimslice.dts
++++ b/arch/arm/boot/dts/tegra-trimslice.dts
+@@ -305,8 +305,8 @@
+ 	};
+ 
+ 	sdhci@c8000600 {
+-		cd-gpios = <&gpio 121 0>;
+-		wp-gpios = <&gpio 122 0>;
++		cd-gpios = <&gpio 121 0>; /* gpio PP1 */
++		wp-gpios = <&gpio 122 0>; /* gpio PP2 */
+ 	};
+ 
+ 	usb@c5004000 {
+diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
+index 0c8d30d..e64318d 100644
+--- a/arch/arm/boot/dts/tegra-ventana.dts
++++ b/arch/arm/boot/dts/tegra-ventana.dts
+@@ -302,7 +302,7 @@
+ 
+ 		nvidia,spkr-en-gpios = <&wm8903 2 0>;
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+-		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
++		nvidia,int-mic-en-gpios = <&gpio 184 0>; /* gpio PX0 */
+ 		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
+ 	};
+ 
+-- 
+1.7.0.4
