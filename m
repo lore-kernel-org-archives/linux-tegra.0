@@ -1,889 +1,136 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 9/9] ARM: dt: tegra: invert status=disable vs status=okay
-Date: Fri, 11 May 2012 18:38:01 -0600
-Message-ID: <1336783081-16978-10-git-send-email-swarren@wwwdotorg.org>
-References: <1336783081-16978-1-git-send-email-swarren@wwwdotorg.org>
+From: Saravana Kannan <skannan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: moving Tegra30 to the common clock framework
+Date: Fri, 11 May 2012 19:58:50 -0700
+Message-ID: <4FADD1EA.8090606@codeaurora.org>
+References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com> <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org> <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com> <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com> <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com> <4FA9BD41.2090701@codeaurora.org> <20120509103606.GY20304@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1336783081-16978-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120509103606.GY20304-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>, zhoujie wu <zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/09/2012 03:36 AM, Peter De Schrijver wrote:
+> On Wed, May 09, 2012 at 02:41:37AM +0200, Saravana Kannan wrote:
+>> On 05/08/2012 10:15 AM, Turquette, Mike wrote:
+>>> On Mon, May 7, 2012 at 10:07 PM, zhoujie wu<zhoujiewu-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>   wrote:
+>>>> Hi Mike,
+>>>> Could you please explain more details about how to implement a
+>>>> re-parenting operation as part of it's .set_rate implementation?
+>>>
+>>> Sure.
+>>>
+>>>> As far as I know, we can not call clk_set_parent in .set_rate function
+>>>> directly, since clk_set_rate and clk_set_parent are using the same
+>>>> prepare_lock.
+>>>
+>>> That is correct.
+>>>
+>>>> Any other interface can be used to implement it?
+>>>
+>>> You have two options available to you.
+>>>
+>>> 1) __clk_reparent can be used from your .set_rate callback today to
+>>> reflect changes made to the tree topology.  OMAP uses this in our PLL
+>>> .set_rate implementation: depending on the re-lock frequency the PLL
+>>> may switch parents dynamically.  __clk_reparent does the
+>>> framework-level cleanup needed for this (that function is also used
+>>> when populating the clock tree with new clock nodes).
+>>>
+>>> 2) __clk_set_parent could be made non-static if you needed this (I've
+>>> been meaning to talk to Saravana about this since I think MSM needs
+>>> something like this).
+>>
+>> Thanks!
+>>
+>> I don't think I need (2). But I don't think I can use (1) as is either.
+>> I can use (1) with some additional code in my set rate op.
+>>
+>> While set rate is in progress, both the parents might need to stay
+>> enabled for a short duration. So, in my internal set rate, I need to
+>> check if my clock is prepared/enabled and call prepare/enable on the
+>> "old parent", call __clk_reparent (which will reduce the ref count for
+>> the old parents and increase it for the new parents), finish the
+>> reparent in HW and then unprepare/disable the old parent if I have
+>> prepared/enabled them earlier.
+>>
+>> It might be beneficial to provide something like a
+>> __clk_reparent_start(new_parent, *scratch_pointer) and
+>> __clk_reparent_finish(*scratch_pointer) if it will be useful for more
+>> than just MSM. Based on this email, I would guess that Tegra would want
+>> something similar too.
+>>
+>
+> We also need to reparent clocks using a pll if we want to change the PLLs rate
+> while the users are active.
 
-In tegra*.dtsi, set status="disable" for all HW modules that the board
-design may choose not to use. Update all boards to specifically enable
-any of those modules that are useful by setting status="okay".
+Peter,
 
-This makes board files say which features they do use, rather than which
-they don't, which feels more logical. It also makes the .dts files
-slightly smaller, at least for existing content.
+Is this reparent permanent (as in, stays reparented when you return from 
+clk_set_rate()) or is it a reparenting for just a short duration inside 
+the set_rate ops?
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra-cardhu.dts    |   48 +++++++--------------------------
- arch/arm/boot/dts/tegra-harmony.dts   |   40 +++++++++++----------------
- arch/arm/boot/dts/tegra-paz00.dts     |   44 ++++++++++++------------------
- arch/arm/boot/dts/tegra-seaboard.dts  |   37 +++++++++----------------
- arch/arm/boot/dts/tegra-trimslice.dts |   37 +++++++++----------------
- arch/arm/boot/dts/tegra-ventana.dts   |   40 +++++++++++----------------
- arch/arm/boot/dts/tegra20.dtsi        |   18 ++++++++++++
- arch/arm/boot/dts/tegra30.dtsi        |   19 +++++++++++++
- 8 files changed, 123 insertions(+), 160 deletions(-)
+If it's the latter, I don't think you would need any helper code in 
+clock framework other than the already existing __clk_prepare() and 
+clk_enable(). Just turn on the temp parent, reparent to it, do whatever 
+you need to do, and go back to your original parent.
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-index 3b5cd7b..e14bb45 100644
---- a/arch/arm/boot/dts/tegra-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -64,34 +64,22 @@
- 	};
- 
- 	serial@70006000 {
-+		status = "okay";
- 		clock-frequency = <408000000>;
- 	};
- 
--	serial@70006040 {
--		status = "disable";
--	};
--
--	serial@70006200 {
--		status = "disable";
--	};
--
--	serial@70006300 {
--		status = "disable";
--	};
--
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 	};
- 
- 	i2c@7000c500 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 
- 		/* ALS and Proximity sensor */
-@@ -104,10 +92,12 @@
- 	};
- 
- 	i2c@7000c700 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 	};
- 
- 	i2c@7000d000 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 
- 		wm8903: wm8903@1a {
-@@ -139,38 +129,20 @@
- 	};
- 
- 	ahub {
--		i2s@70080300 {
--			status = "disable";
--		};
--
--		i2s@70080500 {
--			status = "disable";
--		};
--
--		i2s@70080600 {
--			status = "disable";
--		};
--
--		i2s@70080700 {
--			status = "disable";
-+		i2s@70080400 {
-+			status = "okay";
- 		};
- 	};
- 
- 	sdhci@78000000 {
-+		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
- 		wp-gpios = <&gpio 155 0>; /* gpio PT3 */
- 		power-gpios = <&gpio 31 0>; /* gpio PD7 */
- 	};
- 
--	sdhci@78000200 {
--		status = "disable";
--	};
--
--	sdhci@78000400 {
--		status = "disable";
--	};
--
- 	sdhci@78000600 {
-+		status = "okay";
- 		support-8bit;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
-index f18385d..6bcdad3 100644
---- a/arch/arm/boot/dts/tegra-harmony.dts
-+++ b/arch/arm/boot/dts/tegra-harmony.dts
-@@ -234,31 +234,17 @@
- 		};
- 	};
- 
--	i2s@70002a00 {
--		status = "disable";
--	};
--
--	serial@70006000 {
--		status = "disable";
--	};
--
--	serial@70006040 {
--		status = "disable";
--	};
--
--	serial@70006200 {
--		status = "disable";
-+	i2s@70002800 {
-+		status = "okay";
- 	};
- 
- 	serial@70006300 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		wm8903: wm8903@1a {
-@@ -277,14 +263,17 @@
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000c500 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000d000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
-@@ -292,25 +281,28 @@
- 		nvidia,invert-interrupt;
- 	};
- 
-+	usb@c5000000 {
-+		status = "okay";
-+	};
-+
- 	usb@c5004000 {
-+		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
- 	};
- 
--	sdhci@c8000000 {
--		status = "disable";
-+	usb@c5008000 {
-+		status = "okay";
- 	};
- 
- 	sdhci@c8000200 {
-+		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 155 0>; /* gpio PT3 */
- 	};
- 
--	sdhci@c8000400 {
--		status = "disable";
--	};
--
- 	sdhci@c8000600 {
-+		status = "okay";
- 		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
- 		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
-diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
-index 6539e89..cb366f0 100644
---- a/arch/arm/boot/dts/tegra-paz00.dts
-+++ b/arch/arm/boot/dts/tegra-paz00.dts
-@@ -226,31 +226,22 @@
- 		};
- 	};
- 
--	i2s@70002a00 {
--		status = "disable";
-+	i2s@70002800 {
-+		status = "okay";
- 	};
- 
- 	serial@70006000 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006040 {
--		status = "disable";
--	};
--
- 	serial@70006200 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006300 {
--		status = "disable";
--	};
--
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		alc5632: alc5632@1e {
-@@ -262,13 +253,10 @@
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
--	i2c@7000c500 {
--		status = "disable";
--	};
--
- 	nvec {
- 		compatible = "nvidia,nvec";
- 		reg = <0x7000c500 0x100>;
-@@ -281,6 +269,7 @@
- 	};
- 
- 	i2c@7000d000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		adt7461@4c {
-@@ -289,25 +278,28 @@
- 		};
- 	};
- 
-+	usb@c5000000 {
-+		status = "okay";
-+	};
-+
- 	usb@c5004000 {
-+		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio 168 0>; /* gpio PV0 */
- 	};
- 
-+	usb@c5008000 {
-+		status = "okay";
-+	};
-+
- 	sdhci@c8000000 {
-+		status = "okay";
- 		cd-gpios = <&gpio 173 0>; /* gpio PV5 */
- 		wp-gpios = <&gpio 57 0>;  /* gpio PH1 */
- 		power-gpios = <&gpio 169 0>; /* gpio PV1 */
- 	};
- 
--	sdhci@c8000200 {
--		status = "disable";
--	};
--
--	sdhci@c8000400 {
--		status = "disable";
--	};
--
- 	sdhci@c8000600 {
-+		status = "okay";
- 		support-8bit;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
-index 88f3b8e..21b586e 100644
---- a/arch/arm/boot/dts/tegra-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra-seaboard.dts
-@@ -257,31 +257,17 @@
- 		};
- 	};
- 
--	i2s@70002a00 {
--		status = "disable";
--	};
--
--	serial@70006000 {
--		status = "disable";
--	};
--
--	serial@70006040 {
--		status = "disable";
--	};
--
--	serial@70006200 {
--		status = "disable";
-+	i2s@70002800 {
-+		status = "okay";
- 	};
- 
- 	serial@70006300 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		wm8903: wm8903@1a {
-@@ -315,6 +301,7 @@
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <100000>;
- 
- 		smart-battery@b {
-@@ -326,10 +313,12 @@
- 	};
- 
- 	i2c@7000c500 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000d000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		temperature-sensor@4c {
-@@ -384,29 +373,29 @@
- 	};
- 
- 	usb@c5000000 {
-+		status = "okay";
- 		nvidia,vbus-gpio = <&gpio 24 0>; /* PD0 */
- 		dr_mode = "otg";
- 	};
- 
- 	usb@c5004000 {
-+		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
- 	};
- 
--	sdhci@c8000000 {
--		status = "disable";
--	};
--
--	sdhci@c8000200 {
--		status = "disable";
-+	usb@c5008000 {
-+		status = "okay";
- 	};
- 
- 	sdhci@c8000400 {
-+		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 	};
- 
- 	sdhci@c8000600 {
-+		status = "okay";
- 		support-8bit;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra-trimslice.dts
-index 1dea6cc..6fc52af 100644
---- a/arch/arm/boot/dts/tegra-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra-trimslice.dts
-@@ -240,39 +240,27 @@
- 		};
- 	};
- 
--	i2s@70002a00 {
--		status = "disable";
-+	i2s@70002800 {
-+		status = "okay";
- 	};
- 
- 	serial@70006000 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006040 {
--		status = "disable";
--	};
--
--	serial@70006200 {
--		status = "disable";
--	};
--
--	serial@70006300 {
--		status = "disable";
--	};
--
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000c500 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		codec: codec@1a {
-@@ -286,23 +274,24 @@
- 		};
- 	};
- 
--	i2c@7000d000 {
--		status = "disable";
-+	usb@c5000000 {
-+		status = "okay";
- 	};
- 
- 	usb@c5004000 {
- 		nvidia,phy-reset-gpio = <&gpio 168 0>; /* gpio PV0 */
- 	};
- 
--	sdhci@c8000200 {
--		status = "disable";
-+	usb@c5008000 {
-+		status = "okay";
- 	};
- 
--	sdhci@c8000400 {
--		status = "disable";
-+	sdhci@c8000000 {
-+		status = "okay";
- 	};
- 
- 	sdhci@c8000600 {
-+		status = "okay";
- 		cd-gpios = <&gpio 121 0>; /* gpio PP1 */
- 		wp-gpios = <&gpio 122 0>; /* gpio PP2 */
- 	};
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
-index 6de4c10..15d8fdb 100644
---- a/arch/arm/boot/dts/tegra-ventana.dts
-+++ b/arch/arm/boot/dts/tegra-ventana.dts
-@@ -240,31 +240,17 @@
- 		};
- 	};
- 
--	i2s@70002a00 {
--		status = "disable";
--	};
--
--	serial@70006000 {
--		status = "disable";
--	};
--
--	serial@70006040 {
--		status = "disable";
--	};
--
--	serial@70006200 {
--		status = "disable";
-+	i2s@70002800 {
-+		status = "okay";
- 	};
- 
- 	serial@70006300 {
-+		status = "okay";
- 		clock-frequency = <216000000>;
- 	};
- 
--	serial@70006400 {
--		status = "disable";
--	};
--
- 	i2c@7000c000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 
- 		wm8903: wm8903@1a {
-@@ -291,36 +277,42 @@
- 	};
- 
- 	i2c@7000c400 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000c500 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
- 	i2c@7000d000 {
-+		status = "okay";
- 		clock-frequency = <400000>;
- 	};
- 
--	usb@c5004000 {
--		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-+	usb@c5000000 {
-+		status = "okay";
- 	};
- 
--	sdhci@c8000000 {
--		status = "disable";
-+	usb@c5004000 {
-+		status = "okay";
-+		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
- 	};
- 
--	sdhci@c8000200 {
--		status = "disable";
-+	usb@c5008000 {
-+		status = "okay";
- 	};
- 
- 	sdhci@c8000400 {
-+		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 	};
- 
- 	sdhci@c8000600 {
-+		status = "okay";
- 		support-8bit;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index df34def..c417d67 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -72,6 +72,7 @@
- 		reg = <0x70002800 0x200>;
- 		interrupts = <0 13 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 2>;
-+		status = "disable";
- 	};
- 
- 	tegra_i2s2: i2s@70002a00 {
-@@ -79,6 +80,7 @@
- 		reg = <0x70002a00 0x200>;
- 		interrupts = <0 3 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 1>;
-+		status = "disable";
- 	};
- 
- 	serial@70006000 {
-@@ -86,6 +88,7 @@
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006040 {
-@@ -93,6 +96,7 @@
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006200 {
-@@ -100,6 +104,7 @@
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006300 {
-@@ -107,6 +112,7 @@
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006400 {
-@@ -114,6 +120,7 @@
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 91 0x04>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c000 {
-@@ -122,6 +129,7 @@
- 		interrupts = <0 38 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c400 {
-@@ -130,6 +138,7 @@
- 		interrupts = <0 84 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c500 {
-@@ -138,6 +147,7 @@
- 		interrupts = <0 92 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000d000 {
-@@ -146,6 +156,7 @@
- 		interrupts = <0 53 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	pmc {
-@@ -179,6 +190,7 @@
- 		interrupts = <0 20 0x04>;
- 		phy_type = "utmi";
- 		nvidia,has-legacy-mode;
-+		status = "disable";
- 	};
- 
- 	usb@c5004000 {
-@@ -186,6 +198,7 @@
- 		reg = <0xc5004000 0x4000>;
- 		interrupts = <0 21 0x04>;
- 		phy_type = "ulpi";
-+		status = "disable";
- 	};
- 
- 	usb@c5008000 {
-@@ -193,30 +206,35 @@
- 		reg = <0xc5008000 0x4000>;
- 		interrupts = <0 97 0x04>;
- 		phy_type = "utmi";
-+		status = "disable";
- 	};
- 
- 	sdhci@c8000000 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000000 0x200>;
- 		interrupts = <0 14 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@c8000200 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000200 0x200>;
- 		interrupts = <0 15 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@c8000400 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000400 0x200>;
- 		interrupts = <0 19 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@c8000600 {
- 		compatible = "nvidia,tegra20-sdhci";
- 		reg = <0xc8000600 0x200>;
- 		interrupts = <0 31 0x04>;
-+		status = "disable";
- 	};
- 
- 	pmu {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 5a1c85f..2dcc09e 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -82,6 +82,7 @@
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006040 {
-@@ -89,6 +90,7 @@
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006200 {
-@@ -96,6 +98,7 @@
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006300 {
-@@ -103,6 +106,7 @@
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		status = "disable";
- 	};
- 
- 	serial@70006400 {
-@@ -110,6 +114,7 @@
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 91 0x04>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c000 {
-@@ -118,6 +123,7 @@
- 		interrupts = <0 38 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c400 {
-@@ -126,6 +132,7 @@
- 		interrupts = <0 84 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c500 {
-@@ -134,6 +141,7 @@
- 		interrupts = <0 92 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000c700 {
-@@ -142,6 +150,7 @@
- 		interrupts = <0 120 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	i2c@7000d000 {
-@@ -150,6 +159,7 @@
- 		interrupts = <0 53 0x04>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disable";
- 	};
- 
- 	pmc {
-@@ -191,30 +201,35 @@
- 			compatible = "nvidia,tegra30-i2s";
- 			reg = <0x70080300 0x100>;
- 			nvidia,ahub-cif-ids = <4 4>;
-+			status = "disable";
- 		};
- 
- 		tegra_i2s1: i2s@70080400 {
- 			compatible = "nvidia,tegra30-i2s";
- 			reg = <0x70080400 0x100>;
- 			nvidia,ahub-cif-ids = <5 5>;
-+			status = "disable";
- 		};
- 
- 		tegra_i2s2: i2s@70080500 {
- 			compatible = "nvidia,tegra30-i2s";
- 			reg = <0x70080500 0x100>;
- 			nvidia,ahub-cif-ids = <6 6>;
-+			status = "disable";
- 		};
- 
- 		tegra_i2s3: i2s@70080600 {
- 			compatible = "nvidia,tegra30-i2s";
- 			reg = <0x70080600 0x100>;
- 			nvidia,ahub-cif-ids = <7 7>;
-+			status = "disable";
- 		};
- 
- 		tegra_i2s4: i2s@70080700 {
- 			compatible = "nvidia,tegra30-i2s";
- 			reg = <0x70080700 0x100>;
- 			nvidia,ahub-cif-ids = <8 8>;
-+			status = "disable";
- 		};
- 	};
- 
-@@ -222,24 +237,28 @@
- 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
- 		reg = <0x78000000 0x200>;
- 		interrupts = <0 14 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@78000200 {
- 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
- 		reg = <0x78000200 0x200>;
- 		interrupts = <0 15 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@78000400 {
- 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
- 		reg = <0x78000400 0x200>;
- 		interrupts = <0 19 0x04>;
-+		status = "disable";
- 	};
- 
- 	sdhci@78000600 {
- 		compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
- 		reg = <0x78000600 0x200>;
- 		interrupts = <0 31 0x04>;
-+		status = "disable";
- 	};
- 
- 	pmu {
+If it's the former (permanent reparent), can I assume that the 
+CLK_SET_RATE_PARENT flag won't be set for this clock? Otherwise, it's 
+going to be quite yucky/convoluted. I'm not sure how well a reparent 
+would work with the code in common clock framwework that walks up the 
+parents to propagate the rate change to them. I wouldn't say that it's 
+wrong to only want to propagate the rate for certain rates and for 
+certain parents, but I will have to stare at the common clock code for a 
+while.
+
+Mike,
+
+I was looking at the code to make the changes and I noticed this snippet 
+(reformatted for email) in clk_change_rate():
+
+        if (clk->ops->set_rate)
+                 clk->ops->set_rate(clk->hw, clk->new_rate,
+					clk->parent->rate);
+
+
+         if (clk->ops->recalc_rate)
+                 clk->rate = clk->ops->recalc_rate(clk->hw,
+                                 clk->parent->rate);
+         else
+                 clk->rate = clk->parent->rate;
+
+I'm a bit confused. I thought recalc_rates was optional. But if I don't 
+implement it, the clocks rate will get set to parent's rate? Or is that 
+a bug in the code?
+
+Also, if the clock's rate was just set with set_rate, why do we need to 
+recalc the rate by reading hardware? I'm a bit confused. Can you please 
+clarify what's going on here?
+
+Would you mind adding more comments inside clk_calc_new_rates() and 
+clk_change_rate() trying to explain what cases you are trying to account 
+for?
+
+Also, in clk_calc_new_rates(),
+
+         if (!clk->ops->round_rate) {
+                 top = clk_calc_new_rates(clk->parent, rate);
+                 new_rate = clk->parent->new_rate;
+
+                 goto out;
+         }
+
+Is the code assuming that if there is no round rate ops that that clock 
+node is only a gating clock (as in, can't change frequency the input 
+freq)? Just trying to understand the assumptions made in the code.
+
+Thanks,
+Saravana
+
 -- 
-1.7.0.4
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
