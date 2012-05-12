@@ -1,31 +1,48 @@
-From: Bernd Petrovitsch <bernd-JY8rjfDgnXcb9sJ47jD7nuTv7YV0F9Eg@public.gmane.org>
+From: Joe Perches <joe@perches.com>
 Subject: Re: [RFC 1/1] driver core: Add dev_*_ratelimited() family
-Date: Sat, 12 May 2012 13:32:03 +0200
-Message-ID: <1336822324.14918.9.camel@thorin>
+Date: Sat, 12 May 2012 08:31:35 -0700
+Message-ID: <1336836695.17605.12.camel@joe2Laptop>
 References: <20120512.135227.1196366807162247040.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120512.135227.1196366807162247040.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120512.135227.1196366807162247040.hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi!
-
-On Sam, 2012-05-12 at 12:52 +0200, Hiroshi Doyu wrote:
-[...]
+On Sat, 2012-05-12 at 12:52 +0200, Hiroshi Doyu wrote:
+> Hi,
+> 
 > An unclosed "if" statement in the MACRO seems a bit risky, but I don't
 > have any better/simple solution for this, ATM. Is there any alternative?
 
-No, the "do { ... } while (0)" is actually the only one and widely used
-- not only in the Linux kernel.
+maybe something like:
 
-[....]
+#define dev_ratelimited_level(dev, level, fmt, ...)
+do {
+	static DEFINE_RATELIMIT_STATE(_rs,				\
+				      DEFAULT_RATELIMIT_INTERVAL,	\
+				      DEFAULT_RATELIMIT_BURST);		\
+	if (__ratelimit(&_rs))						\
+		dev_##level(fmt, ##__VA_ARGS__);			\
+} while (0)
 
-	Bernd
--- 
-Bernd Petrovitsch                  Email : bernd-JY8rjfDgnXcb9sJ47jD7nuTv7YV0F9Eg@public.gmane.org
-                     LUGA : http://www.luga.at
+#define dev_emerg_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, emerg, fmt, ##__VA_ARGS__)
+#define dev_alert_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, alert, fmt, ##__VA_ARGS__)
+#define dev_crit_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, crit, fmt, ##__VA_ARGS__)
+#define dev_err_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, err, fmt, ##__VA_ARGS__)
+#define dev_warn_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, warn, fmt, ##__VA_ARGS__)
+#define dev_notice_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, notice, fmt, ##__VA_ARGS__)
+#define dev_info_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, info, fmt, ##__VA_ARGS__)
+#define dev_dbg_ratelimited(dev, fmt, ...)				\
+	dev_ratelimited_level(dev, dbg, fmt, ##__VA_ARGS__)
