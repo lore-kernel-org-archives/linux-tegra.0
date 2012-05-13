@@ -1,31 +1,111 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Stable I2C branch needed as a dependency for Tegra change
-Date: Sat, 12 May 2012 22:21:59 -0600
-Message-ID: <4FAF36E7.1070104@wwwdotorg.org>
-References: <4FA31297.8000904@wwwdotorg.org> <20120512184515.GC28973@pengutronix.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: moving Tegra30 to the common clock framework
+Date: Sat, 12 May 2012 22:31:42 -0600
+Message-ID: <4FAF392E.7050205@wwwdotorg.org>
+References: <20120503161311.GG20304@tbergstrom-lnx.Nvidia.com>
+ <20120507000329.GB14559@gmail.com> <4FA7ECAA.1040104@wwwdotorg.org>
+ <CAJOA=zNKDFPOQ9-0EuEy=dtq=g-CKFBq94enTuoB7wVPskbkMg@mail.gmail.com>
+ <CAAXpJNsJiT7s87p6jS5bdi-83n4bwSaagdSK0w3SbrVz+k+O0g@mail.gmail.com>
+ <CAJOA=zP4iEZ+CFfCjT1rgU6shOt_PUf2BRB76NEQCoUPZJ9hVg@mail.gmail.com>
+ <4FA9BD41.2090701@codeaurora.org>
+ <20120509103606.GY20304@tbergstrom-lnx.Nvidia.com>
+ <4FADD1EA.8090606@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120512184515.GC28973-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4FADD1EA.8090606@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: "paul@pwsan.com" <paul@pwsan.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, zhoujie wu <zhoujiewu@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "Turquette, Mike" <mturquette@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/12/2012 12:45 PM, Wolfram Sang wrote:
-> Hi,
+On 05/11/2012 08:58 PM, Saravana Kannan wrote:
+> On 05/09/2012 03:36 AM, Peter De Schrijver wrote:
+>> On Wed, May 09, 2012 at 02:41:37AM +0200, Saravana Kannan wrote:
+>>> On 05/08/2012 10:15 AM, Turquette, Mike wrote:
+>>>> On Mon, May 7, 2012 at 10:07 PM, zhoujie wu<zhoujiewu@gmail.com>  
+>>>> wrote:
+>>>>> Hi Mike,
+>>>>> Could you please explain more details about how to implement a
+>>>>> re-parenting operation as part of it's .set_rate implementation?
+>>>>
+>>>> Sure.
+>>>>
+>>>>> As far as I know, we can not call clk_set_parent in .set_rate function
+>>>>> directly, since clk_set_rate and clk_set_parent are using the same
+>>>>> prepare_lock.
+>>>>
+>>>> That is correct.
+>>>>
+>>>>> Any other interface can be used to implement it?
+>>>>
+>>>> You have two options available to you.
+>>>>
+>>>> 1) __clk_reparent can be used from your .set_rate callback today to
+>>>> reflect changes made to the tree topology.  OMAP uses this in our PLL
+>>>> .set_rate implementation: depending on the re-lock frequency the PLL
+>>>> may switch parents dynamically.  __clk_reparent does the
+>>>> framework-level cleanup needed for this (that function is also used
+>>>> when populating the clock tree with new clock nodes).
+>>>>
+>>>> 2) __clk_set_parent could be made non-static if you needed this (I've
+>>>> been meaning to talk to Saravana about this since I think MSM needs
+>>>> something like this).
+>>>
+>>> Thanks!
+>>>
+>>> I don't think I need (2). But I don't think I can use (1) as is either.
+>>> I can use (1) with some additional code in my set rate op.
+>>>
+>>> While set rate is in progress, both the parents might need to stay
+>>> enabled for a short duration. So, in my internal set rate, I need to
+>>> check if my clock is prepared/enabled and call prepare/enable on the
+>>> "old parent", call __clk_reparent (which will reduce the ref count for
+>>> the old parents and increase it for the new parents), finish the
+>>> reparent in HW and then unprepare/disable the old parent if I have
+>>> prepared/enabled them earlier.
+>>>
+>>> It might be beneficial to provide something like a
+>>> __clk_reparent_start(new_parent, *scratch_pointer) and
+>>> __clk_reparent_finish(*scratch_pointer) if it will be useful for more
+>>> than just MSM. Based on this email, I would guess that Tegra would want
+>>> something similar too.
+>>>
+>>
+>> We also need to reparent clocks using a pll if we want to change the
+>> PLLs rate
+>> while the users are active.
 > 
->> Is your i2c-embedded/for-next branch stable (i.e. that commit
->> will not be rebased between now and when you send a pull request
->> for 3.5), so I can use it as a baseline for a Tegra branch? If
->> not, could you let me know when it is stable, so I can create the
->> Tegra branch as that time.
+> Peter,
 > 
-> Because of my holidays coming along, I'd think my for-next branch
-> is done now (except for additions maybe). Yet, when and how to
-> rewind the branch and/or offering a stable base in general is
-> another thing I need to scratch my head about afterwards.
+> Is this reparent permanent (as in, stays reparented when you return from
+> clk_set_rate()) or is it a reparenting for just a short duration inside
+> the set_rate ops?
 
-No worries then; I'll hold the dependent patch until 3.6; that way
-there won't be any specific dependencies.
+I've seen both cases, and indeed the case sometimes depends on the
+target rate of the clock.
+
+For example, when the CPU clock changes, we basically do the following
+within set_rate:
+
+* Set CPU clock parent to some "backup" PLL
+* Change the CPU PLL to the desired rate
+* Set CPU clock parent to the CPU PLL
+
+However, the lowest CPU clock rate we support is actually the rate that
+the backup PLL runs at, so if we're targeting that rate, the CPU clock
+set_rate /just/ does:
+
+* Set CPU clock parent to some "backup" PLL
+
+and leaves it there, until a different CPU clock rate is requested, at
+which time the CPU clock will be re-parented back to the CPU PLL.
