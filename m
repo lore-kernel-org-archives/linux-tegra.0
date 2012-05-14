@@ -1,44 +1,67 @@
 From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/1] printk: Make it compile with !CONFIG_PRINTK
-Date: Mon, 14 May 2012 09:46:27 -0700
-Message-ID: <1337013987.29436.16.camel@joe2Laptop>
-References: <1337012284-18680-1-git-send-email-hdoyu@nvidia.com>
-	 <CAPXgP11SJQWkfAOidv2nFXAAWxOmjeBpd_uZSCgjX+7+qSH9nQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/4] printk: Move to separate directory for easier modification
+Date: Mon, 14 May 2012 09:54:30 -0700
+Message-ID: <76bd4533a88ae2ebf584887d51bf306591d0c01a.1337013604.git.joe@perches.com>
+References: <1337013987.29436.16.camel@joe2Laptop>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPXgP11SJQWkfAOidv2nFXAAWxOmjeBpd_uZSCgjX+7+qSH9nQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1337013987.29436.16.camel@joe2Laptop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kay Sievers <kay-tD+1rO4QERM@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter Zijlstra <a.p.zijlstra-/NLkJaSkS4VmR6Xm/wNWPw@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kay Sievers <kay-tD+1rO4QERM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter Zijlstra <a.p.zijlstra-/NLkJaSkS4VmR6Xm/wNWPw@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2012-05-14 at 18:20 +0200, Kay Sievers wrote:
-> On Mon, May 14, 2012 at 6:18 PM, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Add missing prepend_timestamp() dummy.
-> 
-> That was fixed already last week:
-> http://git.kernel.org/?p=linux/kernel/git/gregkh/driver-core.git;a=commitdiff;h=1fce677971e29ceaa7c569741fa9c685a7b1052a
+Make it easier to break up printk into bite-sized chunks.
 
-Yup, but in my opinion, this particular fix shouldn't be
-necessary because the CONFIG_PRINTK bits should have better
-code separation.
+Signed-off-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+---
+ kernel/Makefile              |    3 ++-
+ kernel/printk/Makefile       |    1 +
+ kernel/{ => printk}/printk.c |    2 --
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+ create mode 100644 kernel/printk/Makefile
+ rename kernel/{ => printk}/printk.c (99%)
 
-None of the code that calls prepend_timestamp should
-actually be compiled in when !CONFIG_PRINTK.
-
-The same is true for unnecessary uses like the existing
-per-cpu:
-
-static DEFINE_PER_CPU(int, printk_pending);
-static DEFINE_PER_CPU(char [PRINTK_BUF_SIZE], printk_sched_buf);
+diff --git a/kernel/Makefile b/kernel/Makefile
+index cb41b95..1ea2933 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the linux kernel.
+ #
  
-After this patchset is accepted into mainline, I'll revive
-the modularization and move of kernel/printk.c and associated
-files into -> kernel/printk/* patch I did awhile ago.
-
-I'll follow-on to this message with the original patches
-just as an fyi/rfc.
-
-cheers, Joe
+-obj-y     = fork.o exec_domain.o panic.o printk.o \
++obj-y     = fork.o exec_domain.o panic.o \
+ 	    cpu.o exit.o itimer.o time.o softirq.o resource.o \
+ 	    sysctl.o sysctl_binary.o capability.o ptrace.o timer.o user.o \
+ 	    signal.o sys.o kmod.o workqueue.o pid.o \
+@@ -24,6 +24,7 @@ endif
+ 
+ obj-y += sched/
+ obj-y += power/
++obj-y += printk/
+ 
+ obj-$(CONFIG_FREEZER) += freezer.o
+ obj-$(CONFIG_PROFILING) += profile.o
+diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
+new file mode 100644
+index 0000000..6bae497
+--- /dev/null
++++ b/kernel/printk/Makefile
+@@ -0,0 +1 @@
++obj-y				+= printk.o
+diff --git a/kernel/printk.c b/kernel/printk/printk.c
+similarity index 99%
+rename from kernel/printk.c
+rename to kernel/printk/printk.c
+index b663c2c..d98c094 100644
+--- a/kernel/printk.c
++++ b/kernel/printk/printk.c
+@@ -1,6 +1,4 @@
+ /*
+- *  linux/kernel/printk.c
+- *
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+  *
+  * Modified to make sys_syslog() more flexible: added commands to
+-- 
+1.7.8.111.gad25c.dirty
