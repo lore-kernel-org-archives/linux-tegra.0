@@ -1,71 +1,40 @@
-From: Hiroshi DOYU <hdoyu@nvidia.com>
-Subject: [v2 1/1] memory: tegra{20,30}-mc: Use dev_err_ratelimited()
-Date: Mon, 14 May 2012 13:07:03 +0300
-Message-ID: <1336990031-15567-1-git-send-email-hdoyu@nvidia.com>
-References: <1336981680-15297-2-git-send-email-hdoyu@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Fix flow controller accesses
+Date: Mon, 14 May 2012 13:27:09 +0300
+Message-ID: <1336991229-18859-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1336981680-15297-2-git-send-email-hdoyu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: hdoyu@nvidia.com
-Cc: linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Introduce a new dev_*_ratelimited() instead of pr_*_ratelimited() for
-better info to print.
+flowctrl_write_cpu_csr uses the cpu halt offsets and vice versa. This patch
+fixes this bug.
 
-Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
+Reported-by: Dan Willemsen <dwillemsen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/memory/tegra20-mc.c |    5 +++--
- drivers/memory/tegra30-mc.c |    5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/mach-tegra/flowctrl.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
-index 2a437e9..a38d9d3 100644
---- a/drivers/memory/tegra20-mc.c
-+++ b/drivers/memory/tegra20-mc.c
-@@ -161,7 +161,8 @@ static void tegra20_mc_decode(struct tegra20_mc *mc, int n)
+diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
+index fef66a7..f07488e 100644
+--- a/arch/arm/mach-tegra/flowctrl.c
++++ b/arch/arm/mach-tegra/flowctrl.c
+@@ -53,10 +53,10 @@ static void flowctrl_update(u8 offset, u32 value)
  
- 	idx = n - MC_INT_ERR_SHIFT;
- 	if ((idx < 0) || (idx >= ARRAY_SIZE(reg))) {
--		pr_err_ratelimited("Unknown interrupt status %08lx\n", BIT(n));
-+		dev_err_ratelimited(mc->dev, "Unknown interrupt status %08lx\n",
-+				    BIT(n));
- 		return;
- 	}
+ void flowctrl_write_cpu_csr(unsigned int cpuid, u32 value)
+ {
+-	return flowctrl_update(flowctrl_offset_halt_cpu[cpuid], value);
++	return flowctrl_update(flowctrl_offset_cpu_csr[cpuid], value);
+ }
  
-@@ -172,7 +173,7 @@ static void tegra20_mc_decode(struct tegra20_mc *mc, int n)
- 
- 	addr = mc_readl(mc, reg[idx].offset + sizeof(u32));
- 
--	pr_err_ratelimited("%s (0x%08x): 0x%08x %s (%s %s)\n",
-+	dev_err_ratelimited(mc->dev, "%s (0x%08x): 0x%08x %s (%s %s)\n",
- 			   reg[idx].message, req, addr, client,
- 			   (req & BIT(reg[idx].write_bit)) ? "write" : "read",
- 			   (reg[idx].offset == MC_SECURITY_VIOLATION_STATUS) ?
-diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
-index ec9fc78..cb639b1 100644
---- a/drivers/memory/tegra30-mc.c
-+++ b/drivers/memory/tegra30-mc.c
-@@ -220,7 +220,8 @@ static void tegra30_mc_decode(struct tegra30_mc *mc, int n)
- 
- 	idx = n - MC_INT_ERR_SHIFT;
- 	if ((idx < 0) || (idx >= ARRAY_SIZE(mc_int_err)) || (idx == 1)) {
--		pr_err_ratelimited("Unknown interrupt status %08lx\n", BIT(n));
-+		dev_err_ratelimited(mc->dev, "Unknown interrupt status %08lx\n",
-+				    BIT(n));
- 		return;
- 	}
- 
-@@ -243,7 +244,7 @@ static void tegra30_mc_decode(struct tegra30_mc *mc, int n)
- 
- 	addr = readl(mc + MC_ERR_ADR);
- 
--	pr_err_ratelimited("%s (0x%08x): 0x%08x %s (%s %s %s %s)\n",
-+	dev_err_ratelimited(mc->dev, "%s (0x%08x): 0x%08x %s (%s %s %s %s)\n",
- 			   mc_int_err[idx], err, addr, client,
- 			   (err & MC_ERR_SECURITY) ? "secure" : "non-secure",
- 			   (err & MC_ERR_RW) ? "write" : "read",
+ void flowctrl_write_cpu_halt(unsigned int cpuid, u32 value)
+ {
+-	return flowctrl_update(flowctrl_offset_cpu_csr[cpuid], value);
++	return flowctrl_update(flowctrl_offset_halt_cpu[cpuid], value);
+ }
 -- 
-1.7.5.4
+1.7.7.rc0.72.g4b5ea.dirty
