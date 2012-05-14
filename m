@@ -1,43 +1,68 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 1/1] memory: tegra{20,30}-mc: Use dev_err_ratelimited()
-Date: Mon, 14 May 2012 20:57:07 +0200
-Message-ID: <20120514.215707.1844280772142880591.hdoyu@nvidia.com>
-References: <1336981680-15297-2-git-send-email-hdoyu@nvidia.com><1336990031-15567-1-git-send-email-hdoyu@nvidia.com><4FB14FDE.2080409@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [GIT PULL] ARM: tegra: dt2 branch
+Date: Mon, 14 May 2012 13:04:13 -0600
+Message-ID: <4FB1572D.90500@wwwdotorg.org>
+References: <1337016017-30537-1-git-send-email-swarren@wwwdotorg.org> <201205141854.34331.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FB14FDE.2080409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <201205141854.34331.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stepehn,
-
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Mon, 14 May 2012 20:33:02 +0200:
-
-> On 05/14/2012 04:07 AM, Hiroshi DOYU wrote:
-> > Introduce a new dev_*_ratelimited() instead of pr_*_ratelimited() for
-> > better info to print.
-> > 
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/14/2012 12:54 PM, Arnd Bergmann wrote:
+> On Monday 14 May 2012, Stephen Warren wrote:
+>> This is some late device tree additions and cleanup for Tegra.
 > 
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Hi Stephen,
 > 
-> But note that this relies on the following patch or a variant of it:
+> The log you sent there does not match what I got. These are the changes I got
+> from pulling your tree:
 > 
-> http://patchwork.ozlabs.org/patch/158899/
-> 
-> which isn't anywhere yet.
-> 
-> (A variant of that patch was patch 1/2 the first time this patch was
-> posted, but v2 of this patch was posted separately without mentioning
-> the dependency)
+>       ARM: dt: tegra: invert status=disable vs status=okay
+>       ARM: dt: tegra: consistent basic property ordering
+>       ARM: dt: tegra: sort nodes based on bus order
+>       ARM: dt: tegra: remove duplicate device_type property
+>       ARM: dt: tegra: consistenly use lower-case for hex constants
+>       ARM: dt: tegra: format regs properties consistently
+>       ARM: dt: tegra: gpio comment cleanup
+>       ARM: dt: tegra: remove unnecessary unit addresses
+>       ARM: dt: tegra: whitespace cleanup
+>       ARM: dt: tegra cardhu: fix typo in SDHCI node name
+>       ARM: dt: tegra: cardhu: register core regulator tps62361
+>       ARM: dt: tegra30.dtsi: Add SMMU node
+>       ARM: dt: tegra20.dtsi: Add GART node
+>       ARM: dt: tegra30.dtsi: Add Memory Controller(MC) nodes
+>       ARM: dt: tegra20.dtsi: Add Memory Controller(MC) nodes
+>       ARM: dt: tegra: Add device tree support for AHB
 
-Greg has put the dependee patch in:
+Those look good. I assume the problem is in the diffstat not the log...
 
-http://git.kernel.org/?p=linux/kernel/git/gregkh/driver-core.git;a=commit;h=6ca045930338485a8cdef117e74372aa1678009d
+>  arch/arm/boot/dts/tegra-cardhu.dts    |   77 +++++++-----------
+>  arch/arm/boot/dts/tegra-harmony.dts   |  100 +++++++++++------------
+>  arch/arm/boot/dts/tegra-paz00.dts     |  112 ++++++++++++-------------
+>  arch/arm/boot/dts/tegra-seaboard.dts  |  176 +++++++++++++++++++---------------------
+>  arch/arm/boot/dts/tegra-trimslice.dts |   71 +++++++---------
+>  arch/arm/boot/dts/tegra-ventana.dts   |   90 ++++++++++-----------
+>  arch/arm/boot/dts/tegra20.dtsi        |  275 +++++++++++++++++++++++++++++++++++---------------------------
+>  arch/arm/boot/dts/tegra30.dtsi        |  292 ++++++++++++++++++++++++++++++++++++++----------------------------
+>  8 files changed, 605 insertions(+), 588 deletions(-)
+> 
+> I can't see anything wrong with your commits but please check again that it all makes
+> sense and let me know if I should really pull this version.
 
-Anyway, I should have described the above dependency in commit note in
-the patch, sorry for confusion.
+I think that looks OK. I probably just generated the diffstat backwards.
+
+I ran:
+
+git diff -M --stat=75 --summary $TIP_SHA..$BASE_SHA
+
+Perhaps I should have run:
+
+git diff -M --stat=75 --summary $BASE_SHA..$TIP_SHA
+
+where BASE_SHA is the merge the branch was based on, and TIP_SHA is the
+latest commit in the branch.
