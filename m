@@ -1,71 +1,54 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] driver core: Add dev_*_ratelimited() family
-Date: Mon, 14 May 2012 10:47:57 +0300
-Message-ID: <1336981680-15297-1-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi DOYU <hdoyu@nvidia.com>
+Subject: [PATCH 2/2] memory: tegra{20,30}-mc: Use dev_err_ratelimited()
+Date: Mon, 14 May 2012 10:47:58 +0300
+Message-ID: <1336981680-15297-2-git-send-email-hdoyu@nvidia.com>
 References: <20120514.104512.775373956832728793.hdoyu@nvidia.com>
+ <1336981680-15297-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120514.104512.775373956832728793.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1336981680-15297-1-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: hdoyu@nvidia.com
+Cc: joe@perches.com, linux-tegra@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add dev_*_ratelimited() family, dev_* version of pr_*_ratelimited().
+Introduce a new dev_*_ratelimited() instead of pr_*_ratelimited() for
+better info to print.
 
-Using Joe Perches's proposal/implementation.
-
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
 ---
- include/linux/device.h |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
+ drivers/memory/tegra20-mc.c |    3 ++-
+ drivers/memory/tegra30-mc.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8b9d03a..d3aafdb 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -23,6 +23,7 @@
- #include <linux/mutex.h>
- #include <linux/pm.h>
- #include <linux/atomic.h>
-+#include <linux/ratelimit.h>
- #include <asm/device.h>
+diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
+index 21a735e..d525322 100644
+--- a/drivers/memory/tegra20-mc.c
++++ b/drivers/memory/tegra20-mc.c
+@@ -161,7 +161,8 @@ static void tegra20_mc_decode(struct tegra20_mc *mc, int n)
  
- struct device;
-@@ -937,6 +938,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 	idx = n - MC_INT_ERR_SHIFT;
+ 	if ((idx < 0) || (idx >= ARRAY_SIZE(reg))) {
+-		pr_err_ratelimited("Unknown interrupt status %08lx\n", BIT(n));
++		dev_err_ratelimited(mc->dev, "Unknown interrupt status %08lx\n",
++				    BIT(n));
+ 		return;
+ 	}
  
- #endif
+diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
+index c391c4e..fad6bb5 100644
+--- a/drivers/memory/tegra30-mc.c
++++ b/drivers/memory/tegra30-mc.c
+@@ -220,7 +220,8 @@ static void tegra30_mc_decode(struct tegra30_mc *mc, int n)
  
-+#define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
-+do {									\
-+	static DEFINE_RATELIMIT_STATE(_rs,				\
-+				      DEFAULT_RATELIMIT_INTERVAL,	\
-+				      DEFAULT_RATELIMIT_BURST);		\
-+	if (__ratelimit(&_rs))						\
-+		dev_level(dev, fmt, ##__VA_ARGS__);			\
-+} while (0)
-+
-+#define dev_emerg_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_emerg, dev, fmt, ##__VA_ARGS__)
-+#define dev_alert_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_alert, dev, fmt, ##__VA_ARGS__)
-+#define dev_crit_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_crit, dev, fmt, ##__VA_ARGS__)
-+#define dev_err_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_err, dev, fmt, ##__VA_ARGS__)
-+#define dev_warn_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_warn, dev, fmt, ##__VA_ARGS__)
-+#define dev_notice_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
-+#define dev_info_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
-+#define dev_dbg_ratelimited(dev, fmt, ...)				\
-+	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
-+
- /*
-  * Stupid hackaround for existing uses of non-printk uses dev_info
-  *
+ 	idx = n - MC_INT_ERR_SHIFT;
+ 	if ((idx < 0) || (idx >= ARRAY_SIZE(mc_int_err)) || (idx == 1)) {
+-		pr_err_ratelimited("Unknown interrupt status %08lx\n", BIT(n));
++		dev_err_ratelimited(mc->dev, "Unknown interrupt status %08lx\n",
++				    BIT(n));
+ 		return;
+ 	}
+ 
 -- 
 1.7.5.4
