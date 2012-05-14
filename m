@@ -1,47 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ASoC: don't flip master of DT-instantiated DAI links
-Date: Mon, 14 May 2012 14:47:22 -0600
-Message-ID: <1337028442-5603-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [GIT PULL] ARM: tegra: dt2 branch
+Date: Mon, 14 May 2012 14:54:11 -0600
+Message-ID: <4FB170F3.8080107@wwwdotorg.org>
+References: <1337016017-30537-1-git-send-email-swarren@wwwdotorg.org> <201205141854.34331.arnd@arndb.de> <4FB1572D.90500@wwwdotorg.org> <201205142037.08752.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201205142037.08752.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/14/2012 02:37 PM, Arnd Bergmann wrote:
+> On Monday 14 May 2012, Stephen Warren wrote:
+>> On 05/14/2012 12:54 PM, Arnd Bergmann wrote:
+> 
+>>>
+>>> I can't see anything wrong with your commits but please check again that it all makes
+>>> sense and let me know if I should really pull this version.
+>>
+>> I think that looks OK. I probably just generated the diffstat backwards.
+> 
+> Ok, thanks for the confirmation.
+> 
+> I've pulled it into next/dt2 now. In order to merge this with the drivers/mmc branch
+> that contains the common mmc binding, I used the complex resolution below, adding
+> bus-width properties to both the dtsi and the dts files.
 
-Commit 4924082 "ASoC: core: Flip master for CODECs in the CPU slot of a
-CODEC<->CODEC link" added code that was conditional on there being no
-PCM/DMA driver for the link. However, it failed to cover the case where
-the link was instantiated from device tree, and hence was specified by
-DT node rather than name.
+Yeah, sorry about those conflicts. Thanks for fixing them up.
 
-This prevents the following error on Toshiba AC100:
-aplay: pcm_write:1603: write error: Input/output error
+The changes to tegra-*.dts look fine.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I tested this fix on AC100 (ALC5632), Harmony (WM8903), and TrimSlice
-(TLV320AIC23). I'm not sure why the issue only affected AC100. Perhaps
-the other codecs support being the I2S master but the ALC5632 driver
-doesn't?
----
- sound/soc/soc-core.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+I wonder if the changes to tegra-*.dtsi shouldn't just be dropped? I'd
+personally err on the side of requiring board files to add this
+property, rather than having things accidentally work because the .dtsi
+file included a default.
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 2783d2b..b37ee80 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1612,7 +1612,8 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
- 		}
- 
- 		/* If this is a regular CPU link there will be a platform */
--		if (dai_fmt && dai_link->platform_name) {
-+		if (dai_fmt &&
-+		    (dai_link->platform_name || dai_link->platform_of_node)) {
- 			ret = snd_soc_dai_set_fmt(card->rtd[i].cpu_dai,
- 						  dai_fmt);
- 			if (ret != 0 && ret != -ENOTSUPP)
--- 
-1.7.0.4
+BTW, I assume that in 3.6, I should plan to remove the support-8bit
+properties and associated Tegra SDHCI driver code that handles them, and
+rely on the SDHCI core handling this from now on?
