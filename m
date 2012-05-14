@@ -1,40 +1,105 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [v2 1/1] memory: tegra{20,30}-mc: Use dev_err_ratelimited()
-Date: Mon, 14 May 2012 12:09:25 -0700
-Message-ID: <20120514190925.GA4001@kroah.com>
-References: <1336981680-15297-2-git-send-email-hdoyu@nvidia.com>
- <1336990031-15567-1-git-send-email-hdoyu@nvidia.com>
- <4FB14FDE.2080409@wwwdotorg.org>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] iommu/tegra: smmu: Simplify allocation at once
+Date: Mon, 14 May 2012 22:16:10 +0300
+Message-ID: <1337022975-23999-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FB14FDE.2080409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 14, 2012 at 12:33:02PM -0600, Stephen Warren wrote:
-> On 05/14/2012 04:07 AM, Hiroshi DOYU wrote:
-> > Introduce a new dev_*_ratelimited() instead of pr_*_ratelimited() for
-> > better info to print.
-> > 
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> 
-> But note that this relies on the following patch or a variant of it:
-> 
-> http://patchwork.ozlabs.org/patch/158899/
-> 
-> which isn't anywhere yet.
-> 
-> (A variant of that patch was patch 1/2 the first time this patch was
-> posted, but v2 of this patch was posted separately without mentioning
-> the dependency)
+To simplify the code, alloc necessary data at once.
 
-It was part of this thread, which I don't think you were copied on for
-some reason.  Anyway, I applied it earlier today, thanks.
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch requires:
 
-greg k-h
+    [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
+        http://marc.info/?l=linux-tegra&m=133663641107327&w=2
+
+Also the above patch requires:
+
+    [PATCH 1/1] dt: Add general DMA window parser
+        http://marc.info/?l=linux-tegra&m=133671302703840&w=2
+---
+ drivers/iommu/tegra-smmu.c |   29 +++++++++--------------------
+ 1 files changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index dbaba77..e4acd44 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -241,8 +241,6 @@ struct smmu_device {
+ 	spinlock_t	lock;
+ 	char		*name;
+ 	struct device	*dev;
+-	int		num_as;
+-	struct smmu_as	*as;		/* Run-time allocated array */
+ 	struct page *avp_vector_page;	/* dummy page shared by all AS's */
+ 
+ 	/*
+@@ -254,6 +252,9 @@ struct smmu_device {
+ 	unsigned long asid_security;
+ 
+ 	struct device_node *ahb;
++
++	int		num_as;
++	struct smmu_as	as[0];		/* Run-time allocated array */
+ };
+ 
+ static struct smmu_device *smmu_handle; /* unique for a system */
+@@ -902,15 +903,18 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	int i, asids, err = 0;
+ 	dma_addr_t base;
+-	size_t size;
+-	const void *prop;
++	size_t bytes, size;
+ 
+ 	if (smmu_handle)
+ 		return -EIO;
+ 
+ 	BUILD_BUG_ON(PAGE_SHIFT != SMMU_PAGE_SHIFT);
+ 
+-	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
++	if (of_property_read_u32(dev->of_node, "nvidia,#asids", &asids))
++		return -ENODEV;
++
++	bytes = sizeof(*smmu) + asids * sizeof(*smmu->as);
++	smmu = devm_kzalloc(dev, bytes, GFP_KERNEL);
+ 	if (!smmu) {
+ 		dev_err(dev, "failed to allocate smmu_device\n");
+ 		return -ENOMEM;
+@@ -939,13 +943,6 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	if (!size)
+ 		return -EINVAL;
+ 
+-	prop = of_get_property(dev->of_node, "nvidia,#asids", NULL);
+-	if (!prop)
+-		return -ENODEV;
+-	asids = be32_to_cpup(prop);
+-	if (!asids)
+-		return -ENODEV;
+-
+ 	smmu->ahb = of_parse_phandle(dev->of_node, "nvidia,ahb", 0);
+ 	if (!smmu->ahb)
+ 		return -ENODEV;
+@@ -960,14 +957,6 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	smmu->translation_enable_2 = ~0;
+ 	smmu->asid_security = 0;
+ 
+-	smmu->as = devm_kzalloc(dev,
+-			sizeof(smmu->as[0]) * smmu->num_as, GFP_KERNEL);
+-	if (!smmu->as) {
+-		dev_err(dev, "failed to allocate smmu_as\n");
+-		err = -ENOMEM;
+-		goto fail;
+-	}
+-
+ 	for (i = 0; i < smmu->num_as; i++) {
+ 		struct smmu_as *as = &smmu->as[i];
+ 
+-- 
+1.7.5.4
