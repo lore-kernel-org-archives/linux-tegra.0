@@ -1,95 +1,48 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] iommu/tegra: smmu: Remove unnecessary cleanups with
-	devm_*()
-Date: Mon, 14 May 2012 22:16:11 +0300
-Message-ID: <1337022975-23999-2-git-send-email-hdoyu@nvidia.com>
-References: <1337022975-23999-1-git-send-email-hdoyu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1337022975-23999-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [GIT PULL] ARM: tegra: for-3.5/ahb branch
+Date: Mon, 14 May 2012 13:46:34 -0600
+Message-ID: <1337024794-25269-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove unnecessary cleanup procedures with devm_*() functions.
+This branch adds the Tegra AHB driver.
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c |   37 ++++++-------------------------------
- 1 files changed, 6 insertions(+), 31 deletions(-)
+I meant to send this with the other two pull requests this morning, but
+forgot:-(
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index e4acd44..9d0cc33 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -972,51 +972,26 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	spin_lock_init(&smmu->lock);
- 	err = smmu_setup_regs(smmu);
- 	if (err)
--		goto fail;
-+		return err;
- 	platform_set_drvdata(pdev, smmu);
- 
- 	smmu->avp_vector_page = alloc_page(GFP_KERNEL);
- 	if (!smmu->avp_vector_page)
--		goto fail;
-+		return -ENOMEM;
- 
- 	smmu_handle = smmu;
- 	return 0;
--
--fail:
--	if (smmu->avp_vector_page)
--		__free_page(smmu->avp_vector_page);
--	if (smmu && smmu->as) {
--		for (i = 0; i < smmu->num_as; i++) {
--			if (smmu->as[i].pdir_page) {
--				ClearPageReserved(smmu->as[i].pdir_page);
--				__free_page(smmu->as[i].pdir_page);
--			}
--		}
--		devm_kfree(dev, smmu->as);
--	}
--	devm_kfree(dev, smmu);
--	return err;
- }
- 
- static int tegra_smmu_remove(struct platform_device *pdev)
- {
- 	struct smmu_device *smmu = platform_get_drvdata(pdev);
--	struct device *dev = smmu->dev;
-+	int i;
- 
- 	smmu_write(smmu, SMMU_CONFIG_DISABLE, SMMU_CONFIG);
--	platform_set_drvdata(pdev, NULL);
--	if (smmu->as) {
--		int i;
--
--		for (i = 0; i < smmu->num_as; i++)
--			free_pdir(&smmu->as[i]);
--		devm_kfree(dev, smmu->as);
--	}
--	if (smmu->avp_vector_page)
--		__free_page(smmu->avp_vector_page);
--	if (smmu->regs)
--		devm_iounmap(dev, smmu->regs);
--	devm_kfree(dev, smmu);
-+	for (i = 0; i < smmu->num_as; i++)
-+		free_pdir(&smmu->as[i]);
-+	__free_page(smmu->avp_vector_page);
- 	smmu_handle = NULL;
- 	return 0;
- }
--- 
-1.7.5.4
+This is the last pull request I intend to send for 3.5, except for any
+bugs that crop up.
+
+----------------------------------------------------------------
+
+The following changes since commit e816b57a337ea3b755de72bec38c10c864f23015:
+
+  Linux 3.4-rc3
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.5/ahb
+
+for you to fetch changes up to 89c788bab1f0374ae05aef7560066442ceb55384:
+
+  ARM: tegra: Add SMMU enabler in AHB
+
+----------------------------------------------------------------
+
+Hiroshi DOYU (2):
+      ARM: tegra: Add Tegra AHB driver
+      ARM: tegra: Add SMMU enabler in AHB
+
+ .../bindings/arm/tegra/nvidia,tegra20-ahb.txt      |   11 +
+ arch/arm/mach-tegra/Kconfig                        |    8 +
+ arch/arm/mach-tegra/include/mach/tegra-ahb.h       |   19 +
+ drivers/Makefile                                   |    2 +-
+ drivers/amba/Makefile                              |    4 +-
+ drivers/amba/tegra-ahb.c                           |  293 +++++++++++++++
+ 6 files changed, 334 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-ahb.txt
+ create mode 100644 arch/arm/mach-tegra/include/mach/tegra-ahb.h
+ create mode 100644 drivers/amba/tegra-ahb.c
