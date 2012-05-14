@@ -1,45 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL] ARM: tegra: dt2 branch
-Date: Mon, 14 May 2012 11:20:16 -0600
-Message-ID: <1337016017-30537-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL] ARM: tegra: defconfig2 branch
+Date: Mon, 14 May 2012 11:20:17 -0600
+Message-ID: <1337016017-30537-2-git-send-email-swarren@wwwdotorg.org>
+References: <1337016017-30537-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1337016017-30537-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is some late device tree additions and cleanup for Tegra.
+A late tegra_defconfig change to add a regulator for Cardhu.
 
-This branch is based on the merge of the following branches from the
-Tegra repo, which are all already pulled into arm-soc:
-
-for-3.5/tegra30-audio
-for-3.5/usb-ulpi
-for-3.5/dt
-... which are all based on for-3.5/gpio-pinmux
+This is based on the for-3.5/defconfig branch in the Tegra repo, which
+is already merged into arm-soc.
 
 ----------------------------------------------------------------
 
-The following changes since commit 4b7e870590f65f4e8bb3cdb7f382e1a9dd17dad5:
+The following changes since commit c6b556a53970c262571b2cf60661a33ddeb1a651:
 
-  Merge branch 'for-3.5/dt' into for-3.5/dt2-new
+  ARM: tegra: update defconfig
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.5/dt2
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.5/defconfig2
 
-for you to fetch changes up to 2a5fdc9adde8476751b63a795e3d66ae2ee3979d:
+for you to fetch changes up to 06d96e1e6dbdcc88d20b21cc54ee8388c074f47f:
 
-  ARM: dt: tegra: invert status=disable vs status=okay
+  ARM: tegra: update defconfig
 
 ----------------------------------------------------------------
 
- arch/arm/boot/dts/tegra-cardhu.dts    |   77 +++++---
- arch/arm/boot/dts/tegra-harmony.dts   |  100 +++++-----
- arch/arm/boot/dts/tegra-paz00.dts     |  112 ++++++-----
- arch/arm/boot/dts/tegra-seaboard.dts  |  176 +++++++++--------
- arch/arm/boot/dts/tegra-trimslice.dts |   71 ++++---
- arch/arm/boot/dts/tegra-ventana.dts   |   90 +++++----
- arch/arm/boot/dts/tegra20.dtsi        |  275 ++++++++++++---------------
- arch/arm/boot/dts/tegra30.dtsi        |  292 ++++++++++++----------------
- 8 files changed, 588 insertions(+), 605 deletions(-)
+ arch/arm/configs/tegra_defconfig |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
