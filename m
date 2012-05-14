@@ -1,38 +1,82 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
-Date: Mon, 14 May 2012 11:41:24 -0600
-Message-ID: <4FB143C4.6030502@wwwdotorg.org>
-References: <1336636221-31575-1-git-send-email-hdoyu@nvidia.com> <1336636221-31575-2-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] iommu/tegra: gart: Remove unnecessary cleanup with devm_*()
+Date: Mon, 14 May 2012 21:12:02 +0300
+Message-ID: <1337019127-6863-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1336636221-31575-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vandana Salve <vsalve-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/10/2012 01:50 AM, Hiroshi DOYU wrote:
-> The necessary info is expected to pass from DT.
-> 
-> For more precise resource reservation, there shouldn't be any
-> overlapping of register range between SMMU and MC. SMMU register
-> offset needs to be calculated correctly, based on its register bank.
-> 
-> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This patch requires the following ones, sent earlier:
-> 
-> DMA window:
-> http://article.gmane.org/gmane.linux.ports.tegra/4603
+Remove unnecessary cleanup procedures with devm_*().
 
-This patch has been merged even though the patch above isn't present in
-the kernel anywhere, let alone in the history of the iommu tree. This
-breaks compilation in linux-next.
+Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/iommu/tegra-gart.c |   22 +++-------------------
+ 1 files changed, 3 insertions(+), 19 deletions(-)
 
-> AHB:
-> http://article.gmane.org/gmane.linux.ports.tegra/4657
-
-This patch is in linux-next, but also is not in the history of the iommu
-tree, so will break bisection of the iommu tree for Tegra.
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 0c0a377..33a23b6 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -345,7 +345,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	struct gart_device *gart;
+ 	struct resource *res, *res_remap;
+ 	void __iomem *gart_regs;
+-	int err;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	if (gart_handle)
+@@ -370,8 +369,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	gart_regs = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!gart_regs) {
+ 		dev_err(dev, "failed to remap GART registers\n");
+-		err = -ENXIO;
+-		goto fail;
++		return -ENXIO;
+ 	}
+ 
+ 	gart->dev = &pdev->dev;
+@@ -385,8 +383,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	gart->savedata = vmalloc(sizeof(u32) * gart->page_count);
+ 	if (!gart->savedata) {
+ 		dev_err(dev, "failed to allocate context save area\n");
+-		err = -ENOMEM;
+-		goto fail;
++		return -ENOMEM;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, gart);
+@@ -394,27 +391,14 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 
+ 	gart_handle = gart;
+ 	return 0;
+-
+-fail:
+-	if (gart_regs)
+-		devm_iounmap(dev, gart_regs);
+-	if (gart && gart->savedata)
+-		vfree(gart->savedata);
+-	devm_kfree(dev, gart);
+-	return err;
+ }
+ 
+ static int tegra_gart_remove(struct platform_device *pdev)
+ {
+ 	struct gart_device *gart = platform_get_drvdata(pdev);
+-	struct device *dev = gart->dev;
+ 
+ 	writel(0, gart->regs + GART_CONFIG);
+-	if (gart->savedata)
+-		vfree(gart->savedata);
+-	if (gart->regs)
+-		devm_iounmap(dev, gart->regs);
+-	devm_kfree(dev, gart);
++	vfree(gart->savedata);
+ 	gart_handle = NULL;
+ 	return 0;
+ }
+-- 
+1.7.5.4
