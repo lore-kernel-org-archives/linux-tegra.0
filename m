@@ -1,37 +1,55 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [GIT PULL] ARM: tegra: dt2 branch
-Date: Tue, 15 May 2012 10:15:43 -0600
-Message-ID: <4FB2812F.1010500@wwwdotorg.org>
-References: <1337016017-30537-1-git-send-email-swarren@wwwdotorg.org> <201205142037.08752.arnd@arndb.de> <4FB170F3.8080107@wwwdotorg.org> <201205151143.26008.arnd@arndb.de>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Simplify allocation at once
+Date: Tue, 15 May 2012 20:47:58 +0200
+Message-ID: <20120515.214758.1198702094241248784.hdoyu@nvidia.com>
+References: <4FB19677.4040702@wwwdotorg.org><20120515.112649.411607744957826949.hdoyu@nvidia.com><4FB27FA9.20106@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201205151143.26008.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <4FB27FA9.20106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/15/2012 05:43 AM, Arnd Bergmann wrote:
-> On Monday 14 May 2012, Stephen Warren wrote:
->> I wonder if the changes to tegra-*.dtsi shouldn't just be dropped? I'd
->> personally err on the side of requiring board files to add this
->> property, rather than having things accidentally work because the .dtsi
->> file included a default.
-> 
-> I ended up redoing the merge because I found an embarrasing typo in my patch
-> and now dropped the property for the dtsi files.
-> 
->> BTW, I assume that in 3.6, I should plan to remove the support-8bit
->> properties and associated Tegra SDHCI driver code that handles them, and
->> rely on the SDHCI core handling this from now on?
-> 
-> I think we can't drop it from the driver because of existing powerpc machines
-> providing the property, but it would be ok if you drop it from your .dts
-> files.
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 15 May 2012 18:09:13 +0200:
 
-support-8bit is parsed by the Tegra driver only, and only appears in
-tegra-*.dts across all arch/*/boot.dts. I assume you were talking about
-some other property, although I can't tell which from a very quick look
-at arch/powerpc/boot/dts/*.
+> On 05/15/2012 02:26 AM, Hiroshi Doyu wrote:
+> > Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 15 May 2012 01:34:15 +0200:
+> > 
+> >> On 05/14/2012 01:16 PM, Hiroshi DOYU wrote:
+> >>> To simplify the code, alloc necessary data at once.
+> >>>
+> >>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>> ---
+> >>> This patch requires:
+> >>>
+> >>>     [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
+> >>>         http://marc.info/?l=linux-tegra&m=133663641107327&w=2
+> >>>
+> >>> Also the above patch requires:
+> >>>
+> >>>     [PATCH 1/1] dt: Add general DMA window parser
+> >>>         http://marc.info/?l=linux-tegra&m=133671302703840&w=2
+> >>
+> >> I know I've been harping on about dependencies, but you typically only
+> >> need to mention them if the dependencies are not already checked into
+> >> the branch you expect this patch to be checked into.
+> >>
+> >>> -	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
+> >>> +	if (of_property_read_u32(dev->of_node, "nvidia,#asids", &asids))
+> >>> +		return -ENODEV;
+> >>
+> >> I believe you need to change the asids variable from int to u32 to avoid
+> >> a warning here.
+> > 
+> > There's no warning but it's allowed because of "-Wno-pointer-sign". It
+> 
+> That's odd. I'm sure I have seen this warning recently when calling this
+> API, but you're right, I'm not able to trigger that warning right now,
+> so this is fine.
+
+Then, either [PATCH v1] or [PATCH v2] would be ok, but v2 may be a bit
+better because it's exacltly compatible with that function prototype,
+of_property_read_u32(...u32 *).
