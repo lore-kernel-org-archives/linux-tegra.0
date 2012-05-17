@@ -1,22 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: dt: tegra{20,30}.dtsi: Rename "mc" to "memory-controller"
-Date: Thu, 17 May 2012 10:34:25 -0600
-Message-ID: <4FB52891.5090505@wwwdotorg.org>
-References: <CAOesGMhw5hJSF96FBuENnwx2=ACyAYwX6uny9zQeTsimcebF8A@mail.gmail.com> <1337233667-23770-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/2] iommu/tegra: smmu: Add device tree support for SMMU
+Date: Thu, 17 May 2012 10:48:39 -0600
+Message-ID: <4FB52BE7.8080908@wwwdotorg.org>
+References: <1336636221-31575-1-git-send-email-hdoyu@nvidia.com> <1336636221-31575-2-git-send-email-hdoyu@nvidia.com> <4FB143C4.6030502@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1337233667-23770-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4FB143C4.6030502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16/2012 11:47 PM, Hiroshi DOYU wrote:
-> Use a more plain english name.
+On 05/14/2012 11:41 AM, Stephen Warren wrote:
+> On 05/10/2012 01:50 AM, Hiroshi DOYU wrote:
+>> The necessary info is expected to pass from DT.
+>>
+>> For more precise resource reservation, there shouldn't be any
+>> overlapping of register range between SMMU and MC. SMMU register
+>> offset needs to be calculated correctly, based on its register bank.
+>>
+>> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> This patch requires the following ones, sent earlier:
+>>
+>> DMA window:
+>> http://article.gmane.org/gmane.linux.ports.tegra/4603
 > 
-> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> This patch has been merged even though the patch above isn't present in
+> the kernel anywhere, let alone in the history of the iommu tree. This
+> breaks compilation in linux-next.
+> 
+>> AHB:
+>> http://article.gmane.org/gmane.linux.ports.tegra/4657
+> 
+> This patch is in linux-next, but also is not in the history of the iommu
+> tree, so will break bisection of the iommu tree for Tegra.
 
-Thanks. This series looks good. I'll apply it in Tegra's for-3.6 when I
-start that.
+Joerg,
+
+Can this patch please be dropped or reverted? It's still breaking
+tegra_defconfig in next-20120517 since the dependencies I mentioned
+above aren't satisfied. At this stage, it seems unlikely that the DMA
+window parsing change is going to make it into 3.5, so this isn't just a
+temporary issue.
+
+Thanks.
