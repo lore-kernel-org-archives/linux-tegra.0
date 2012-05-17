@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 1/3] ARM: tegra: trimslice: enable PCIe when booting from device tree
-Date: Thu, 17 May 2012 15:21:12 -0600
-Message-ID: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V2 3/3] ARM: tegra: paz00: enable WiFi rfkill when booting from device tree
+Date: Thu, 17 May 2012 15:21:14 -0600
+Message-ID: <1337289674-18581-3-git-send-email-swarren@wwwdotorg.org>
+References: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1337289674-18581-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,79 +12,90 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-There currently aren't bindings for the Tegra PCIe controller. Work on
-this is in progress, but not yet complete. Manually initialize PCIe when
+There currently aren't bindings for a WiFi rfkill button, and defining
+a good binding is non-trivial. Manually register this "device" when
 booting from device tree, in order to bring DT support to the same
 feature level as board files, which will in turn allow board files to be
 deprecated.
 
-PCIe hosts the wired Ethernet controller on TrimSlice.
-
-To support this, add infra-structure to board-dt-tegra20.c for board-
-specific initialization code. Once device tree support for the relevant
-features is in place, this code will be removed.
-
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2: Use .init_late hook in DT_MACHINE_START instead of an explicit late
-initcall.
----
- arch/arm/mach-tegra/board-dt-tegra20.c |   36 +++++++++++++++++++++++++++++++-
- 1 files changed, 35 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/board-dt-tegra20.c |   10 ++++++++++
+ arch/arm/mach-tegra/board-paz00.c      |    7 ++++++-
+ arch/arm/mach-tegra/board.h            |    2 ++
+ 3 files changed, 18 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index eb7249d..9537f20 100644
+index 7771386..8b4e6e1 100644
 --- a/arch/arm/mach-tegra/board-dt-tegra20.c
 +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -98,6 +98,40 @@ static void __init tegra_dt_init(void)
- 				tegra20_auxdata_lookup, NULL);
+@@ -126,6 +126,13 @@ static void __init harmony_init(void)
  }
+ #endif
  
-+#ifdef CONFIG_MACH_TRIMSLICE
-+static void __init trimslice_init(void)
++#ifdef CONFIG_MACH_PAZ00
++static void __init paz00_init(void)
 +{
-+	int ret;
-+
-+	ret = tegra_pcie_init(true, true);
-+	if (ret)
-+		pr_err("tegra_pci_init() failed: %d\n", ret);
++	tegra_paz00_wifikill_init();
 +}
 +#endif
 +
-+static struct {
-+	char *machine;
-+	void (*init)(void);
-+} board_init_funcs[] = {
-+#ifdef CONFIG_MACH_TRIMSLICE
-+	{ "compulab,trimslice", trimslice_init },
+ static struct {
+ 	char *machine;
+ 	void (*init)(void);
+@@ -136,6 +143,9 @@ static struct {
+ #ifdef CONFIG_MACH_HARMONY
+ 	{ "nvidia,harmony", harmony_init },
+ #endif
++#ifdef CONFIG_MACH_PAZ00
++	{ "compal,paz00", paz00_init },
 +#endif
-+};
-+
-+static void __init tegra_dt_init_late(void)
+ };
+ 
+ static void __init tegra_dt_init_late(void)
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index bbc1907..4b64af5 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -148,7 +148,6 @@ static struct platform_device *paz00_devices[] __initdata = {
+ 	&debug_uart,
+ 	&tegra_sdhci_device4,
+ 	&tegra_sdhci_device1,
+-	&wifi_rfkill_device,
+ 	&leds_gpio,
+ 	&gpio_keys_device,
+ };
+@@ -201,6 +200,11 @@ static struct tegra_sdhci_platform_data sdhci_pdata4 = {
+ 	.is_8bit	= 1,
+ };
+ 
++void __init tegra_paz00_wifikill_init(void)
 +{
-+	int i;
-+
-+	tegra_init_late();
-+
-+	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
-+		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
-+			board_init_funcs[i].init();
-+			break;
-+		}
-+	}
++	platform_device_register(&wifi_rfkill_device);
 +}
 +
- static const char *tegra20_dt_board_compat[] = {
- 	"nvidia,tegra20",
- 	NULL
-@@ -110,7 +144,7 @@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegra20 (Flattened Device Tree)")
- 	.handle_irq	= gic_handle_irq,
- 	.timer		= &tegra_timer,
- 	.init_machine	= tegra_dt_init,
--	.init_late	= tegra_init_late,
-+	.init_late	= tegra_dt_init_late,
- 	.restart	= tegra_assert_system_reset,
- 	.dt_compat	= tegra20_dt_board_compat,
- MACHINE_END
+ static void __init tegra_paz00_init(void)
+ {
+ 	tegra_clk_init_from_table(paz00_clk_init_table);
+@@ -211,6 +215,7 @@ static void __init tegra_paz00_init(void)
+ 	tegra_sdhci_device4.dev.platform_data = &sdhci_pdata4;
+ 
+ 	platform_add_devices(paz00_devices, ARRAY_SIZE(paz00_devices));
++	tegra_paz00_wifikill_init();
+ 
+ 	paz00_i2c_init();
+ 	paz00_usb_init();
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 097e0e1..f88e514 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -53,5 +53,7 @@ int __init harmony_pcie_init(void);
+ static inline int harmony_pcie_init(void) { return 0; }
+ #endif
+ 
++void __init tegra_paz00_wifikill_init(void);
++
+ extern struct sys_timer tegra_timer;
+ #endif
 -- 
 1.7.0.4
