@@ -1,179 +1,170 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 2/2] dma: tegra: add dmaengine based dma driver
-Date: Thu, 17 May 2012 14:54:20 -0600
-Message-ID: <4FB5657C.1010902@wwwdotorg.org>
-References: <1336734044-14275-1-git-send-email-ldewangan@nvidia.com> <1336734044-14275-3-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V2 2/3] ARM: tegra: harmony: init regulators, PCIe when booting from DT
+Date: Thu, 17 May 2012 15:21:13 -0600
+Message-ID: <1337289674-18581-2-git-send-email-swarren@wwwdotorg.org>
+References: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1336734044-14275-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1337289674-18581-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/11/2012 05:00 AM, Laxman Dewangan wrote:
-> Adding dmaengine based NVIDIA's Tegra APB DMA driver.
-> This driver support the slave mode of data transfer from
-> peripheral to memory and vice versa.
-> The driver supports for the cyclic and non-cyclic mode
-> of data transfer.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+There currently aren't bindings for the Tegra PCIe controller. Work on
+this is in progress, but not yet complete. Manually initialize PCIe when
+booting from device tree, in order to bring DT support to the same
+feature level as board files, which will in turn allow board files to be
+deprecated.
 
-> +config TEGRA_DMA
+PCIe on Harmony requires various regulators to be registered and enabled
+before initializing the PCIe controller. Note that since the I2C
+controllers are instantiated from DT, we must use i2c_new_device() to
+register the PMU rather than i2c_register_board_info().
 
-Could we name this TEGRA20_APB_DMA
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c    |   20 ++++++++++++++++++++
+ arch/arm/mach-tegra/board-harmony-pcie.c  |   15 ++++++++++-----
+ arch/arm/mach-tegra/board-harmony-power.c |   25 ++++++++++++++++++++++++-
+ arch/arm/mach-tegra/board.h               |    7 +++++++
+ 4 files changed, 61 insertions(+), 6 deletions(-)
 
-Rational being: Include the version number so that if there's ever a
-newer version that requires a new driver, we won't have to rename this.
-Also, there is an AHB DMA engine too, even if it's quite unlikely we'll
-ever write a driver for it.
-
-> +	  Support for the NVIDIA Tegra DMA controller driver. The DMA
-                                      ^
-
-Similarly, probably best to insert the word "APB" here.
-
-> diff --git a/drivers/dma/tegra_dma.c b/drivers/dma/tegra_dma.c
-
-Can we name this tegra20-apb-dma.c for similar reasons?
-
-> +#define GEN_ENABLE			BIT(31)
-...
-> +#define CSR_ENB				BIT(31)
-> +#define CSR_IE_EOC			BIT(30)
-> +#define CSR_HOLD			BIT(29)
-...
-
-It looks like there are still quite a few macros that aren't namespaced
-(prefixed with TEGRA_APBDMA). I don't care too much about this since
-they're inside this one file, but I think this is something Vinod wanted
-you to fix?
-
-> +struct tegra_dma_channel {
-...
-> +	/* Different lists for managing the requests */
-> +	struct list_head	free_sg_req;
-> +	struct list_head	pending_sg_req;
-> +	struct list_head	free_dma_desc;
-> +	struct list_head	wait_ack_dma_desc;
-> +	struct list_head	cb_desc;
-...
-> +static int tegra_dma_allocate_desc(struct tegra_dma_channel *tdc,
-> +		int ndma_desc, int nsg_req)
-
-The queue management here seems a lot more complex than other drivers I
-briefly looked at, which don't (a) allocate multiple descriptors at once
-or (b) maintain a pool of free descriptors. I guess if this all works
-it's fine, but it sure makes it harder for me to understand the driver
-and review it. I'd personally love to have seen a much simpler driver
-and then add these optimizations later if they prove worthwhile.
-
-(As an aside, it seems like if this descriptor management logic is
-worthwhile, it should be part of the dmaengine core, not individual drivers)
-
-> +static irqreturn_t tegra_dma_isr(int irq, void *dev_id)
-...
-> +	if (status & STATUS_ISE_EOC) {
-> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_STATUS, status);
-> +		if (!list_empty(&tdc->cb_desc)) {
-
-Given that the tasklet is just running the completion callbacks, is this
-condition really an error? Can't you just add some more entries onto the
-tail of the list of callbacks for the tasklet?
-
-> +			dev_err(tdc2dev(tdc),
-> +				"Int before tasklet handled, Stopping DMA\n");
-> +			tegra_dma_stop(tdc);
-> +			tdc->isr_handler(tdc, true);
-> +			tegra_dma_abort_all(tdc);
-> +			/* Schedule tasklet to make callback */
-> +			tasklet_schedule(&tdc->tasklet);
-> +			goto end;
-> +		}
-> +		tdc->isr_handler(tdc, false);
-> +		tasklet_schedule(&tdc->tasklet);
-> +	} else {
-> +		dev_info(tdc2dev(tdc),
-> +			"Interrupt already handled status 0x%08lx\n", status);
-
-Shouldn't this cause IRQ_NONE to be returned?
-
-> +	}
-> +
-> +end:
-> +	spin_unlock_irqrestore(&tdc->lock, flags);
-> +	return IRQ_HANDLED;
-> +}
-
-> +static void tegra_dma_terminate_all(struct dma_chan *dc)
-> +{
-
-> +	if (!tdc->busy)
-> +		goto skip_dma_stop;
-> +
-> +	/* Pause DMA before checking the queue status */
-> +	tegra_dma_pause(tdc, true);
-> +
-> +	status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-> +	if (status & STATUS_ISE_EOC) {
-> +		dev_dbg(tdc2dev(tdc), "%s():handling isr\n", __func__);
-> +		tdc->isr_handler(tdc, true);
-> +		status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
-> +	}
-
-In the termination case, do we really need to run the isr handler?
-Presumably since the DMA is being aborted, the caller doesn't really
-care about getting the absolute latest up-to-date information, so the
-fact that something completed within the last
-EGRA_APBDMA_BURST_COMPLETE_TIME micro-seconds isn't something it's worth
-determining?
-
-> +static int __devinit tegra_dma_probe(struct platform_device *pdev)
-
-> +	tdma->dma_clk = clk_get(&pdev->dev, NULL);
-
-Since this won't be applied until 3.6, I think you can use
-devm_clk_get() here.
-
-> +static int tegra_dma_suspend_noirq(struct device *dev)
-
-Why do we need to implement the _noirq variants for system
-suspend/resume? In the mainline kernel, the existence of deferred probe
-most likely means we don't need to use _noirq any more.
-
-> +static struct platform_driver tegra_dmac_driver = {
-> +	.driver = {
-> +		.name	= "tegra30-apbdma",
-
-Probably better be tegra20-apbdma, since that's the first chip this
-driver supports.
-
-> +static int __init tegra_dmac_init(void)
-> +{
-> +	return platform_driver_register(&tegra_dmac_driver);
-> +}
-> +arch_initcall_sync(tegra_dmac_init);
-
-Can we make this a module_init() instead of an arch_initcall?
-
-> +static void __exit tegra_dmac_exit(void)
-> +{
-> +	platform_driver_unregister(&tegra_dmac_driver);
-> +}
-> +module_exit(tegra_dmac_exit);
-
-If so, the above 11 lines can be replaced with:
-
-module_platform_driver(tegra_dmac_driver);
-
-Overall, I haven't reviewed the driver's interaction with dmaengine too
-much since I'm not familiar with dmaengine. I think Vinod has been
-covering those aspects fine. However, I did try to follow the DMA HW
-programming, and I think it does avoid the problems we were trying to
-solve in the existing APB DMA driver, perhaps mainly because dmaengine
-doesn't expose quite as many functions to client code.
-
-So overall, aside from the comments above, this looks good.
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 9537f20..7771386 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -109,6 +109,23 @@ static void __init trimslice_init(void)
+ }
+ #endif
+ 
++#ifdef CONFIG_MACH_HARMONY
++static void __init harmony_init(void)
++{
++	int ret;
++
++	ret = harmony_regulator_init();
++	if (ret) {
++		pr_err("harmony_regulator_init() failed: %d\n", ret);
++		return;
++	}
++
++	ret = harmony_pcie_init();
++	if (ret)
++		pr_err("harmony_pcie_init() failed: %d\n", ret);
++}
++#endif
++
+ static struct {
+ 	char *machine;
+ 	void (*init)(void);
+@@ -116,6 +133,9 @@ static struct {
+ #ifdef CONFIG_MACH_TRIMSLICE
+ 	{ "compulab,trimslice", trimslice_init },
+ #endif
++#ifdef CONFIG_MACH_HARMONY
++	{ "nvidia,harmony", harmony_init },
++#endif
+ };
+ 
+ static void __init tegra_dt_init_late(void)
+diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
+index 33c4fed..e8c3fda 100644
+--- a/arch/arm/mach-tegra/board-harmony-pcie.c
++++ b/arch/arm/mach-tegra/board-harmony-pcie.c
+@@ -27,14 +27,11 @@
+ 
+ #ifdef CONFIG_TEGRA_PCI
+ 
+-static int __init harmony_pcie_init(void)
++int __init harmony_pcie_init(void)
+ {
+ 	struct regulator *regulator = NULL;
+ 	int err;
+ 
+-	if (!machine_is_harmony())
+-		return 0;
+-
+ 	err = gpio_request(TEGRA_GPIO_EN_VDD_1V05_GPIO, "EN_VDD_1V05");
+ 	if (err)
+ 		return err;
+@@ -62,7 +59,15 @@ err_reg:
+ 	return err;
+ }
+ 
++static int __init harmony_pcie_initcall(void)
++{
++	if (!machine_is_harmony())
++		return 0;
++
++	return harmony_pcie_init();
++}
++
+ /* PCI should be initialized after I2C, mfd and regulators */
+-subsys_initcall_sync(harmony_pcie_init);
++subsys_initcall_sync(harmony_pcie_initcall);
+ 
+ #endif
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+index 82f3230..44dcb2e 100644
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ b/arch/arm/mach-tegra/board-harmony-power.c
+@@ -20,6 +20,10 @@
+ #include <linux/gpio.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/mfd/tps6586x.h>
++#include <linux/of.h>
++#include <linux/of_i2c.h>
++
++#include <asm/mach-types.h>
+ 
+ #include <mach/irqs.h>
+ 
+@@ -110,7 +114,26 @@ static struct i2c_board_info __initdata harmony_regulators[] = {
+ 
+ int __init harmony_regulator_init(void)
+ {
+-	i2c_register_board_info(3, harmony_regulators, 1);
++	if (machine_is_harmony()) {
++		i2c_register_board_info(3, harmony_regulators, 1);
++	} else { /* Harmony, booted using device tree */
++		struct device_node *np;
++		struct i2c_adapter *adapter;
++
++		np = of_find_node_by_path("/i2c@7000d000");
++		if (np == NULL) {
++			pr_err("Could not find device_node for DVC I2C\n");
++			return -ENODEV;
++		}
++
++		adapter = of_find_i2c_adapter_by_node(np);
++		if (!adapter) {
++			pr_err("Could not find i2c_adapter for DVC I2C\n");
++			return -ENODEV;
++		}
++
++		i2c_new_device(adapter, harmony_regulators);
++	}
+ 
+ 	return 0;
+ }
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 6501496..097e0e1 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -46,5 +46,12 @@ int __init tegra_powergate_debugfs_init(void);
+ static inline int tegra_powergate_debugfs_init(void) { return 0; }
+ #endif
+ 
++int __init harmony_regulator_init(void);
++#ifdef CONFIG_TEGRA_PCI
++int __init harmony_pcie_init(void);
++#else
++static inline int harmony_pcie_init(void) { return 0; }
++#endif
++
+ extern struct sys_timer tegra_timer;
+ #endif
+-- 
+1.7.0.4
