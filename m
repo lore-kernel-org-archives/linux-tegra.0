@@ -1,103 +1,107 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] dt: name all Tegra binding docs consistently
-Date: Mon, 21 May 2012 16:11:40 -0600
-Message-ID: <1337638300-29155-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/2] ARM: dt: tegra: remove legacy support-8bit property
+Date: Mon, 21 May 2012 16:51:00 -0600
+Message-ID: <1337640660-13273-2-git-send-email-swarren@wwwdotorg.org>
+References: <1337640660-13273-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1337640660-13273-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Rename all Tegra binding documentation according to the first or
-primary compatible value they describe. This provides a clear naming
-scheme for the files, and prevents any naming conflicts should future
-SoC versions require their own binding.
+The driver supports the new bus-width property, so remove the legacy
+support-8bit property.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-I can take this through the Tegra tree if you want.
+ arch/arm/boot/dts/tegra-cardhu.dts   |    1 -
+ arch/arm/boot/dts/tegra-harmony.dts  |    1 -
+ arch/arm/boot/dts/tegra-paz00.dts    |    1 -
+ arch/arm/boot/dts/tegra-seaboard.dts |    1 -
+ arch/arm/boot/dts/tegra-ventana.dts  |    1 -
+ arch/arm/boot/dts/tegra-whistler.dts |    2 --
+ 6 files changed, 0 insertions(+), 7 deletions(-)
 
- .../arm/tegra/{emc.txt => nvidia,tegra20-emc.txt}  |    0
- .../{gpio_nvidia.txt => nvidia,tegra20-gpio.txt}   |    0
- .../{tegra-kbc.txt => nvidia,tegra20-kbc.txt}      |    0
- .../{nvidia-sdhci.txt => nvidia,tegra20-sdhci.txt} |    0
- .../nvec/{nvec_nvidia.txt => nvidia,nvec.txt}      |    0
- ...-alc5632.txt => nvidia,tegra-audio-alc5632.txt} |    0
- ...mslice.txt => nvidia,tegra-audio-trimslice.txt} |    0
- ...io-wm8753.txt => nvidia,tegra-audio-wm8753.txt} |    0
- ...io-wm8903.txt => nvidia,tegra-audio-wm8903.txt} |    0
- .../{tegra20-das.txt => nvidia,tegra20-das.txt}    |    0
- .../{tegra20-i2s.txt => nvidia,tegra20-i2s.txt}    |    0
- .../spi/{spi_nvidia.txt => nvidia,tegra20-spi.txt} |    0
- .../usb/{tegra-usb.txt => nvidia,tegra20-ehci.txt} |    0
- 13 files changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/arm/tegra/{emc.txt => nvidia,tegra20-emc.txt} (100%)
- rename Documentation/devicetree/bindings/gpio/{gpio_nvidia.txt => nvidia,tegra20-gpio.txt} (100%)
- rename Documentation/devicetree/bindings/input/{tegra-kbc.txt => nvidia,tegra20-kbc.txt} (100%)
- rename Documentation/devicetree/bindings/mmc/{nvidia-sdhci.txt => nvidia,tegra20-sdhci.txt} (100%)
- rename Documentation/devicetree/bindings/nvec/{nvec_nvidia.txt => nvidia,nvec.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra-audio-alc5632.txt => nvidia,tegra-audio-alc5632.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra-audio-trimslice.txt => nvidia,tegra-audio-trimslice.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra-audio-wm8753.txt => nvidia,tegra-audio-wm8753.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra-audio-wm8903.txt => nvidia,tegra-audio-wm8903.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra20-das.txt => nvidia,tegra20-das.txt} (100%)
- rename Documentation/devicetree/bindings/sound/{tegra20-i2s.txt => nvidia,tegra20-i2s.txt} (100%)
- rename Documentation/devicetree/bindings/spi/{spi_nvidia.txt => nvidia,tegra20-spi.txt} (100%)
- rename Documentation/devicetree/bindings/usb/{tegra-usb.txt => nvidia,tegra20-ehci.txt} (100%)
-
-diff --git a/Documentation/devicetree/bindings/arm/tegra/emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/emc.txt
-rename to Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-diff --git a/Documentation/devicetree/bindings/gpio/gpio_nvidia.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/gpio/gpio_nvidia.txt
-rename to Documentation/devicetree/bindings/gpio/nvidia,tegra20-gpio.txt
-diff --git a/Documentation/devicetree/bindings/input/tegra-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/input/tegra-kbc.txt
-rename to Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-diff --git a/Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/mmc/nvidia-sdhci.txt
-rename to Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-diff --git a/Documentation/devicetree/bindings/nvec/nvec_nvidia.txt b/Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/nvec/nvec_nvidia.txt
-rename to Documentation/devicetree/bindings/nvec/nvidia,nvec.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra-audio-alc5632.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra-audio-alc5632.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-trimslice.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra-audio-trimslice.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra-audio-trimslice.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-wm8753.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra-audio-wm8753.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8753.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra-audio-wm8903.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8903.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra20-das.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-das.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra20-das.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra20-das.txt
-diff --git a/Documentation/devicetree/bindings/sound/tegra20-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/sound/tegra20-i2s.txt
-rename to Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-diff --git a/Documentation/devicetree/bindings/spi/spi_nvidia.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/spi/spi_nvidia.txt
-rename to Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt
-diff --git a/Documentation/devicetree/bindings/usb/tegra-usb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/usb/tegra-usb.txt
-rename to Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+index 36321bc..c169bce 100644
+--- a/arch/arm/boot/dts/tegra-cardhu.dts
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -144,7 +144,6 @@
+ 
+ 	sdhci@78000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 7de7013..f146dbf 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -307,7 +307,6 @@
+ 		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
+ 		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
+ 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+index bfeb117..684a9e1 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -301,7 +301,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index 1ea26c2..07030bf 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -450,7 +450,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
+index 445343b..be90544 100644
+--- a/arch/arm/boot/dts/tegra-ventana.dts
++++ b/arch/arm/boot/dts/tegra-ventana.dts
+@@ -314,7 +314,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-whistler.dts b/arch/arm/boot/dts/tegra-whistler.dts
+index 2548648..6916310 100644
+--- a/arch/arm/boot/dts/tegra-whistler.dts
++++ b/arch/arm/boot/dts/tegra-whistler.dts
+@@ -276,13 +276,11 @@
+ 	sdhci@c8000400 {
+ 		status = "okay";
+ 		wp-gpios = <&gpio 173 0>; /* gpio PV5 */
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
 -- 
 1.7.0.4
