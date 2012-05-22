@@ -1,10 +1,8 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 4/5] ASoC: tegra+wm8903: Use devm_gpio_request_one
-Date: Tue, 22 May 2012 16:08:55 -0600
-Message-ID: <1337724536-12349-4-git-send-email-swarren@wwwdotorg.org>
-References: <1337724536-12349-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 1/2] ASoC: tegra+alc5632: move all GPIO setup into probe
+Date: Tue, 22 May 2012 16:09:51 -0600
+Message-ID: <1337724592-12434-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1337724536-12349-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,111 +10,60 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-By using this function, the driver no longer needs to explicitly free
-the GPIOs. Hence, we can also remove the flags we use to track whether
-we allocated these GPIOs.
+Now that deferred probe exists, we can parse device tree and request
+GPIOs from probe(), rather than deferring this to the DAI link's init().
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra_wm8903.c |   42 +++++++++------------------------------
- 1 files changed, 10 insertions(+), 32 deletions(-)
+ sound/soc/tegra/tegra_alc5632.c |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index c38f09e..d78556a 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -50,10 +50,6 @@
- 
- #define DRV_NAME "tegra-snd-wm8903"
- 
--#define GPIO_SPKR_EN    BIT(0)
--#define GPIO_HP_MUTE    BIT(1)
--#define GPIO_INT_MIC_EN BIT(2)
--#define GPIO_EXT_MIC_EN BIT(3)
- #define GPIO_HP_DET     BIT(4)
- 
- struct tegra_wm8903 {
-@@ -401,49 +397,41 @@ static __devinit int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 	}
- 
- 	if (gpio_is_valid(pdata->gpio_spkr_en)) {
--		ret = gpio_request(pdata->gpio_spkr_en, "spkr_en");
-+		ret = devm_gpio_request_one(&pdev->dev, pdata->gpio_spkr_en,
-+					    GPIOF_OUT_INIT_LOW, "spkr_en");
- 		if (ret) {
- 			dev_err(card->dev, "cannot get spkr_en gpio\n");
- 			return ret;
- 		}
--		machine->gpio_requested |= GPIO_SPKR_EN;
--
--		gpio_direction_output(pdata->gpio_spkr_en, 0);
- 	}
- 
- 	if (gpio_is_valid(pdata->gpio_hp_mute)) {
--		ret = gpio_request(pdata->gpio_hp_mute, "hp_mute");
-+		ret = devm_gpio_request_one(&pdev->dev, pdata->gpio_hp_mute,
-+					    GPIOF_OUT_INIT_HIGH, "hp_mute");
- 		if (ret) {
- 			dev_err(card->dev, "cannot get hp_mute gpio\n");
- 			return ret;
- 		}
--		machine->gpio_requested |= GPIO_HP_MUTE;
--
--		gpio_direction_output(pdata->gpio_hp_mute, 1);
- 	}
- 
- 	if (gpio_is_valid(pdata->gpio_int_mic_en)) {
--		ret = gpio_request(pdata->gpio_int_mic_en, "int_mic_en");
-+		/* Disable int mic; enable signal is active-high */
-+		ret = devm_gpio_request_one(&pdev->dev, pdata->gpio_int_mic_en,
-+					    GPIOF_OUT_INIT_LOW, "int_mic_en");
- 		if (ret) {
- 			dev_err(card->dev, "cannot get int_mic_en gpio\n");
- 			return ret;
- 		}
--		machine->gpio_requested |= GPIO_INT_MIC_EN;
--
--		/* Disable int mic; enable signal is active-high */
--		gpio_direction_output(pdata->gpio_int_mic_en, 0);
- 	}
- 
- 	if (gpio_is_valid(pdata->gpio_ext_mic_en)) {
--		ret = gpio_request(pdata->gpio_ext_mic_en, "ext_mic_en");
-+		/* Enable ext mic; enable signal is active-low */
-+		ret = devm_gpio_request_one(&pdev->dev, pdata->gpio_ext_mic_en,
-+					    GPIOF_OUT_INIT_LOW, "ext_mic_en");
- 		if (ret) {
- 			dev_err(card->dev, "cannot get ext_mic_en gpio\n");
- 			return ret;
- 		}
--		machine->gpio_requested |= GPIO_EXT_MIC_EN;
--
--		/* Enable ext mic; enable signal is active-low */
--		gpio_direction_output(pdata->gpio_ext_mic_en, 0);
- 	}
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
-@@ -469,21 +457,11 @@ static int __devexit tegra_wm8903_driver_remove(struct platform_device *pdev)
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index 32de700..facf6f0 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -1,5 +1,5 @@
+ /*
+- * tegra_alc5632.c  --  Toshiba AC100(PAZ00) machine ASoC driver
++* tegra_alc5632.c  --  Toshiba AC100(PAZ00) machine ASoC driver
+  *
+  * Copyright (C) 2011 The AC100 Kernel Team <ac100-oU9gvf+ajcSyy5GWsZ7R2qxOck334EZe@public.gmane.org>
+  * Copyright (C) 2012 - NVIDIA, Inc.
+@@ -110,7 +110,6 @@ static int tegra_alc5632_asoc_init(struct snd_soc_pcm_runtime *rtd)
  {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
--	struct tegra_wm8903_platform_data *pdata = &machine->pdata;
+ 	struct snd_soc_codec *codec = rtd->codec;
+ 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+-	struct device_node *np = codec->card->dev->of_node;
+ 	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(codec->card);
  
- 	if (machine->gpio_requested & GPIO_HP_DET)
- 		snd_soc_jack_free_gpios(&tegra_wm8903_hp_jack,
- 					1,
- 					&tegra_wm8903_hp_jack_gpio);
--	if (machine->gpio_requested & GPIO_EXT_MIC_EN)
--		gpio_free(pdata->gpio_ext_mic_en);
--	if (machine->gpio_requested & GPIO_INT_MIC_EN)
--		gpio_free(pdata->gpio_int_mic_en);
--	if (machine->gpio_requested & GPIO_HP_MUTE)
--		gpio_free(pdata->gpio_hp_mute);
--	if (machine->gpio_requested & GPIO_SPKR_EN)
--		gpio_free(pdata->gpio_spkr_en);
--	machine->gpio_requested = 0;
+ 	snd_soc_jack_new(codec, "Headset Jack", SND_JACK_HEADSET,
+@@ -119,8 +118,6 @@ static int tegra_alc5632_asoc_init(struct snd_soc_pcm_runtime *rtd)
+ 			ARRAY_SIZE(tegra_alc5632_hs_jack_pins),
+ 			tegra_alc5632_hs_jack_pins);
  
- 	snd_soc_unregister_card(card);
+-	machine->gpio_hp_det = of_get_named_gpio(np, "nvidia,hp-det-gpios", 0);
+-
+ 	if (gpio_is_valid(machine->gpio_hp_det)) {
+ 		tegra_alc5632_hp_jack_gpio.gpio = machine->gpio_hp_det;
+ 		snd_soc_jack_add_gpios(&tegra_alc5632_hs_jack,
+@@ -159,6 +156,7 @@ static struct snd_soc_card snd_soc_tegra_alc5632 = {
  
+ static __devinit int tegra_alc5632_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	struct snd_soc_card *card = &snd_soc_tegra_alc5632;
+ 	struct tegra_alc5632 *alc5632;
+ 	int ret;
+@@ -181,6 +179,10 @@ static __devinit int tegra_alc5632_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
++	alc5632->gpio_hp_det = of_get_named_gpio(np, "nvidia,hp-det-gpios", 0);
++	if (alc5632->gpio_hp_det == -ENODEV)
++		return -EPROBE_DEFER;
++
+ 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
+ 	if (ret)
+ 		goto err;
 -- 
 1.7.0.4
