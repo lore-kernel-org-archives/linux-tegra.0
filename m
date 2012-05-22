@@ -1,47 +1,131 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] ARM: tegra: config: enable TPS65910 drivers
-Date: Tue, 22 May 2012 18:35:16 +0530
-Message-ID: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 2/2] ARM: dt: tegra: cardhu: register core regulator tps65911
+Date: Tue, 22 May 2012 18:35:17 +0530
+Message-ID: <1337691917-15040-2-git-send-email-ldewangan@nvidia.com>
+References: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@nvidia.com, olof@lixom.net, linux@arm.linux.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable TPS65910 mfd, gpio and regulator drivers.
-This is the PMIC module for Tegra30 based cardhu
-platform.
+Add device info for the PMIC device tps65911 in tegra-cardhu
+dts file. This device supports the multiple regulator rails,
+gpio, interrupts.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- arch/arm/configs/tegra_defconfig |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 1198dd6..26ad2b4 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -106,16 +106,19 @@ CONFIG_I2C=y
- CONFIG_I2C_TEGRA=y
- CONFIG_SPI=y
- CONFIG_SPI_TEGRA=y
-+CONFIG_GPIO_TPS65910=y
- CONFIG_POWER_SUPPLY=y
- CONFIG_BATTERY_SBS=y
- CONFIG_SENSORS_LM90=y
- CONFIG_MFD_TPS6586X=y
-+CONFIG_MFD_TPS65910=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_TPS62360=y
- CONFIG_REGULATOR_TPS6586X=y
-+CONFIG_REGULATOR_TPS65910=y
- CONFIG_SOUND=y
- CONFIG_SND=y
- # CONFIG_SND_SUPPORT_OLD_API is not set
+ arch/arm/boot/dts/tegra-cardhu.dts |   94 ++++++++++++++++++++++++++++++++++++
+ 1 files changed, 94 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+index 36321bc..093dde8 100644
+--- a/arch/arm/boot/dts/tegra-cardhu.dts
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -126,6 +126,100 @@
+ 			ti,vsel0-state-high;
+ 			ti,vsel1-state-high;
+ 		};
++
++		tps65911: tps65911@2d {
++			compatible = "ti,tps65911";
++			reg = <0x2d>;
++
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			regulators {
++				vdd1_reg: vdd1 {
++					regulator-name = "vdd1";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				vdd2_reg: vdd2 {
++					regulator-name = "vdd2";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-boot-on;
++					regulator-always-on;
++				};
++
++				vddctrl_reg: vddctrl {
++					regulator-name = "vddctrl";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				vio_reg: vio {
++					regulator-name = "vio";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo1_reg: ldo1 {
++					regulator-name = "ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo2_reg: ldo2 {
++					regulator-name = "ldo2";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++				};
++
++				ldo3_reg: ldo3 {
++					regulator-name = "ldo3";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo4_reg: ldo4 {
++					regulator-name = "ldo4";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: ldo5 {
++					regulator-name = "ldo5";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo6_reg: ldo6 {
++					regulator-name = "ldo6";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++				};
++
++				ldo7_reg: ldo7 {
++					regulator-name = "ldo7";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo8_reg: ldo8 {
++					regulator-name = "ldo8";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++			};
++		};
+ 	};
+ 
+ 	ahub {
 -- 
 1.7.1.1
