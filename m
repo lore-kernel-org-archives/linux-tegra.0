@@ -1,131 +1,61 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 2/2] ARM: dt: tegra: cardhu: register core regulator tps65911
-Date: Tue, 22 May 2012 18:35:17 +0530
-Message-ID: <1337691917-15040-2-git-send-email-ldewangan@nvidia.com>
-References: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 1/3] ARM: tegra: trimslice: enable PCIe when booting
+ from device tree
+Date: Tue, 22 May 2012 10:18:25 -0600
+Message-ID: <4FBBBC51.1080800@wwwdotorg.org>
+References: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org> <4FBB67A0.9010606@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@nvidia.com, olof@lixom.net, linux@arm.linux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4FBB67A0.9010606-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add device info for the PMIC device tps65911 in tegra-cardhu
-dts file. This device supports the multiple regulator rails,
-gpio, interrupts.
+On 05/22/2012 04:17 AM, Ben Dooks wrote:
+> On 17/05/12 22:21, Stephen Warren wrote:
+>> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> There currently aren't bindings for the Tegra PCIe controller. Work on
+>> this is in progress, but not yet complete. Manually initialize PCIe when
+>> booting from device tree, in order to bring DT support to the same
+>> feature level as board files, which will in turn allow board files to be
+>> deprecated.
+>>
+>> PCIe hosts the wired Ethernet controller on TrimSlice.
+>>
+>> To support this, add infra-structure to board-dt-tegra20.c for board-
+>> specific initialization code. Once device tree support for the relevant
+>> features is in place, this code will be removed.
+>>
+>> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
+>> +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
 
- arch/arm/boot/dts/tegra-cardhu.dts |   94 ++++++++++++++++++++++++++++++++++++
- 1 files changed, 94 insertions(+), 0 deletions(-)
+>> +#ifdef CONFIG_MACH_TRIMSLICE
+>> +static void __init trimslice_init(void)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = tegra_pcie_init(true, true);
+>> +    if (ret)
+>> +        pr_err("tegra_pci_init() failed: %d\n", ret);
+>> +}
+>> +#endif
+> 
+> Given the size of some of these functions, is it worth even
+> bothering with an #ifdef around them, especially as they are
+> marked init.
 
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
-index 36321bc..093dde8 100644
---- a/arch/arm/boot/dts/tegra-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra-cardhu.dts
-@@ -126,6 +126,100 @@
- 			ti,vsel0-state-high;
- 			ti,vsel1-state-high;
- 		};
-+
-+		tps65911: tps65911@2d {
-+			compatible = "ti,tps65911";
-+			reg = <0x2d>;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			regulators {
-+				vdd1_reg: vdd1 {
-+					regulator-name = "vdd1";
-+					regulator-min-microvolt = < 600000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				vdd2_reg: vdd2 {
-+					regulator-name = "vdd2";
-+					regulator-min-microvolt = < 600000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-boot-on;
-+					regulator-always-on;
-+				};
-+
-+				vddctrl_reg: vddctrl {
-+					regulator-name = "vddctrl";
-+					regulator-min-microvolt = < 600000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				vio_reg: vio {
-+					regulator-name = "vio";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				ldo1_reg: ldo1 {
-+					regulator-name = "ldo1";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo2_reg: ldo2 {
-+					regulator-name = "ldo2";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+				};
-+
-+				ldo3_reg: ldo3 {
-+					regulator-name = "ldo3";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo4_reg: ldo4 {
-+					regulator-name = "ldo4";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo5_reg: ldo5 {
-+					regulator-name = "ldo5";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldo6_reg: ldo6 {
-+					regulator-name = "ldo6";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				ldo7_reg: ldo7 {
-+					regulator-name = "ldo7";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				ldo8_reg: ldo8 {
-+					regulator-name = "ldo8";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
- 	};
- 
- 	ahub {
--- 
-1.7.1.1
+The TrimSlice init function doesn't pull in anything beyond the raw
+driver itself, but the Harmony and Paz00 functions do. I made everything
+ifdef'd for consistency.
+
+> How about having some sort of standard pcie binding for the pcie
+> part?
+
+Thierry Redding is working on a standardized binding and converting the
+driver to a platform driver. As soon as that's complete and checked in,
+we can remove some of these custom init functions.
