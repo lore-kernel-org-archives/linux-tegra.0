@@ -1,58 +1,76 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: simplify Kconfig dependencies
-Date: Tue, 22 May 2012 11:02:48 +0100
-Message-ID: <20120522100248.GF21999@opensource.wolfsonmicro.com>
-References: <1337635343-16613-1-git-send-email-swarren@wwwdotorg.org>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH V2 1/3] ARM: tegra: trimslice: enable PCIe when booting
+ from device tree
+Date: Tue, 22 May 2012 11:17:04 +0100
+Message-ID: <4FBB67A0.9010606@codethink.co.uk>
+References: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JSkcQAAxhB1h8DcT"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1337635343-16613-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1337289674-18581-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 17/05/12 22:21, Stephen Warren wrote:
+> From: Stephen Warren<swarren@nvidia.com>
+>
+> There currently aren't bindings for the Tegra PCIe controller. Work on
+> this is in progress, but not yet complete. Manually initialize PCIe when
+> booting from device tree, in order to bring DT support to the same
+> feature level as board files, which will in turn allow board files to be
+> deprecated.
+>
+> PCIe hosts the wired Ethernet controller on TrimSlice.
+>
+> To support this, add infra-structure to board-dt-tegra20.c for board-
+> specific initialization code. Once device tree support for the relevant
+> features is in place, this code will be removed.
+>
+> Signed-off-by: Stephen Warren<swarren@nvidia.com>
+> ---
+> v2: Use .init_late hook in DT_MACHINE_START instead of an explicit late
+> initcall.
+> ---
+>   arch/arm/mach-tegra/board-dt-tegra20.c |   36 +++++++++++++++++++++++++++++++-
+>   1 files changed, 35 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+> index eb7249d..9537f20 100644
+> --- a/arch/arm/mach-tegra/board-dt-tegra20.c
+> +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+> @@ -98,6 +98,40 @@ static void __init tegra_dt_init(void)
+>   				tegra20_auxdata_lookup, NULL);
+>   }
+>
+> +#ifdef CONFIG_MACH_TRIMSLICE
+> +static void __init trimslice_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = tegra_pcie_init(true, true);
+> +	if (ret)
+> +		pr_err("tegra_pci_init() failed: %d\n", ret);
+> +}
+> +#endif
 
---JSkcQAAxhB1h8DcT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Given the size of some of these functions, is it worth even
+bothering with an #ifdef around them, especially as they are
+marked init.
 
-On Mon, May 21, 2012 at 03:22:23PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> The Tegra ASoC machine drivers only depend on Tegra architecture support
-> to compile, not specific board support. Remove Kconfig dependencies on
-> any particular board. This is required since Kconfig options for boards
-> are going away given the migration to device tree.
+How about having some sort of standard pcie binding for the pcie
+part?
 
-Please merge this as part of the Tegra tree as it's going to conflict
-with the removal of the machine Kconfig entries anyway.
-
-Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-
---JSkcQAAxhB1h8DcT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPu2Q/AAoJEBus8iNuMP3dT2oP/1ihrUUtCtu8RFSvZv5M8K5E
-IP1ttnyqLdUoFZpBgJ2b7XdQPetaHaUC2VQV8O5fSC7EfHnJtmPdboGREPnwESWr
-Mmah8o3aesGSbIjWl4OlIB0Ww5jSBhjJ3cvEt4JHK53LQxoIlb7trIwwcemg9v+1
-3kwiNsQUk5Vu/w9jqvhGf2vJREwCh/Pd8JB1glDW/94kURxKeQIPDkaNSnhZz8hL
-XqJPtiwHnaBYTluLPcndE23V29Gr2gi8RIFqFyka8zfNoTjhagTwtoOPFUXWiGUq
-24ef4T+2it72fBrvHAaVPhApiOTHpoxJDOfpBxW9BRUgoJA0F3jnH2KLsGWRPSvD
-bDz7wPrtMoVAmWMIH0A2tGiIik0RUKA2ss1+/BvIQ5KxDg+xUx9fjNRF0tTPpdOy
-osXM9CxONoV1xvb/3YN0zTNoyx/23QfKjsq8eVGCLSMvWkG7ZVe+s7IpguPCGGW1
-cUj6r/x+y9o4myW3cy9X3sIcy6AQWQtbT0ExnXIcRt6YvyeocHEZX8y0HYDl2ZEI
-Lwr7xTtYc9rSlrW1dJbJZq/okuxmZWIOagLsAD58iRm6TkSkQ8lHjn0q6IXOBO61
-aFFzpSFpXIVPVkrC7ntSNCSrmiB5xHHQEbLEGEMjbXhtgqft+6PDoNb5zR+MzSH5
-tOPwffTLH39E3ac/MTXJ
-=zas8
------END PGP SIGNATURE-----
-
---JSkcQAAxhB1h8DcT--
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
