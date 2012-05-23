@@ -1,33 +1,133 @@
-From: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Subject: Re: [PATCH 1/2] ASoC: tegra+alc5632: move all GPIO setup into probe
-Date: Wed, 23 May 2012 09:00:11 +0300
-Message-ID: <CALq1K=KZfp48oVHMD7A5RK==-CKet0yOmu-kkPS4XW-R0+noTw@mail.gmail.com>
-References: <1337724592-12434-1-git-send-email-swarren@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 2/2] ARM: dt: tegra: cardhu: register core regulator tps65911
+Date: Wed, 23 May 2012 11:42:54 +0530
+Message-ID: <1337753574-32699-2-git-send-email-ldewangan@nvidia.com>
+References: <1337753574-32699-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1337724592-12434-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1337753574-32699-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 23, 2012 at 1:09 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>=
- wrote:
->
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Now that deferred probe exists, we can parse device tree and request
-> GPIOs from probe(), rather than deferring this to the DAI link's init=
-().
->
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-Thanks.
+Add device info for the PMIC device tps65911 in tegra-cardhu
+dts file. This device supports the multiple regulator rails,
+gpio, interrupts.
 
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes from V1:
+Change the label name ax <name>_reg to reg_<name> as per suggestions.
 
+ arch/arm/boot/dts/tegra-cardhu.dts |   94 ++++++++++++++++++++++++++++++++++++
+ 1 files changed, 94 insertions(+), 0 deletions(-)
 
---
-Leon Romanovsky | Independent Linux Consultant
-=C2=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0www.leon.nu=C2=A0| leon-2ukJVAZIZ/Y@public.gmane.org
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+index 36321bc..426281c 100644
+--- a/arch/arm/boot/dts/tegra-cardhu.dts
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -126,6 +126,100 @@
+ 			ti,vsel0-state-high;
+ 			ti,vsel1-state-high;
+ 		};
++
++		tps65911: tps65911@2d {
++			compatible = "ti,tps65911";
++			reg = <0x2d>;
++
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			regulators {
++				reg_vdd1: vdd1 {
++					regulator-name = "vdd1";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				reg_vdd2: vdd2 {
++					regulator-name = "vdd2";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-boot-on;
++					regulator-always-on;
++				};
++
++				reg_vddctrl: vddctrl {
++					regulator-name = "vddctrl";
++					regulator-min-microvolt = < 600000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				reg_vio: vio {
++					regulator-name = "vio";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				reg_ldo1: ldo1 {
++					regulator-name = "ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				reg_ldo2: ldo2 {
++					regulator-name = "ldo2";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++				};
++
++				reg_ldo3: ldo3 {
++					regulator-name = "ldo3";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				reg_ldo4: ldo4 {
++					regulator-name = "ldo4";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				reg_ldo5: ldo5 {
++					regulator-name = "ldo5";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				reg_ldo6: ldo6 {
++					regulator-name = "ldo6";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++				};
++
++				reg_ldo7: ldo7 {
++					regulator-name = "ldo7";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				reg_ldo8: ldo8 {
++					regulator-name = "ldo8";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++			};
++		};
+ 	};
+ 
+ 	ahub {
+-- 
+1.7.1.1
