@@ -1,7 +1,7 @@
 From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH 2/9] i2c: tegra: Add clk_prepare/clk_unprepare
-Date: Fri, 1 Jun 2012 14:42:41 +0530
-Message-ID: <1338541968-7961-3-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH 4/9] USB: ehci-tegra: add clk_prepare/clk_unprepare
+Date: Fri, 1 Jun 2012 14:42:43 +0530
+Message-ID: <1338541968-7961-5-git-send-email-pgaikwad@nvidia.com>
 References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,67 +9,89 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, ben-linux@fluff.org, w.sang@pengutronix.de, ldewangan@nvidia.com, linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
 
-This patch should go through Tegra tree since other patches to port tegra
+This patch should go through Tegra tree since other patches to port Tegra
 to generic clock framework are dependent on it. Posting here to get ack from
 the maintainers.
 
 Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/usb/host/ehci-tegra.c |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 8b2e555..3da7ee3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -341,7 +341,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	u32 val;
- 	int err = 0;
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 6854823..ab8a3bf 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -46,8 +46,8 @@ static void tegra_ehci_power_up(struct usb_hcd *hcd)
+ {
+ 	struct tegra_ehci_hcd *tegra = dev_get_drvdata(hcd->self.controller);
  
--	clk_enable(i2c_dev->clk);
-+	clk_prepare_enable(i2c_dev->clk);
+-	clk_enable(tegra->emc_clk);
+-	clk_enable(tegra->clk);
++	clk_prepare_enable(tegra->emc_clk);
++	clk_prepare_enable(tegra->clk);
+ 	tegra_usb_phy_power_on(tegra->phy);
+ 	tegra->host_resumed = 1;
+ }
+@@ -58,8 +58,8 @@ static void tegra_ehci_power_down(struct usb_hcd *hcd)
  
- 	tegra_periph_reset_assert(i2c_dev->clk);
- 	udelay(2);
-@@ -372,7 +372,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (tegra_i2c_flush_fifos(i2c_dev))
- 		err = -ETIMEDOUT;
- 
--	clk_disable(i2c_dev->clk);
-+	clk_disable_unprepare(i2c_dev->clk);
- 
- 	if (i2c_dev->irq_disabled) {
- 		i2c_dev->irq_disabled = 0;
-@@ -546,14 +546,14 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	if (i2c_dev->is_suspended)
- 		return -EBUSY;
- 
--	clk_enable(i2c_dev->clk);
-+	clk_prepare_enable(i2c_dev->clk);
- 	for (i = 0; i < num; i++) {
- 		int stop = (i == (num - 1)) ? 1  : 0;
- 		ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], stop);
- 		if (ret)
- 			break;
- 	}
--	clk_disable(i2c_dev->clk);
-+	clk_disable_unprepare(i2c_dev->clk);
- 	return ret ?: i;
+ 	tegra->host_resumed = 0;
+ 	tegra_usb_phy_power_off(tegra->phy);
+-	clk_disable(tegra->clk);
+-	clk_disable(tegra->emc_clk);
++	clk_disable_unprepare(tegra->clk);
++	clk_disable_unprepare(tegra->emc_clk);
  }
  
-@@ -666,7 +666,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 		goto err_free;
+ static int tegra_ehci_internal_port_reset(
+@@ -671,7 +671,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		goto fail_clk;
  	}
  
--	clk_enable(i2c_dev->i2c_clk);
-+	clk_prepare_enable(i2c_dev->i2c_clk);
+-	err = clk_enable(tegra->clk);
++	err = clk_prepare_enable(tegra->clk);
+ 	if (err)
+ 		goto fail_clken;
  
- 	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
- 	i2c_dev->adapter.owner = THIS_MODULE;
+@@ -682,7 +682,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		goto fail_emc_clk;
+ 	}
+ 
+-	clk_enable(tegra->emc_clk);
++	clk_prepare_enable(tegra->emc_clk);
+ 	clk_set_rate(tegra->emc_clk, 400000000);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -782,10 +782,10 @@ fail:
+ fail_phy:
+ 	iounmap(hcd->regs);
+ fail_io:
+-	clk_disable(tegra->emc_clk);
++	clk_disable_unprepare(tegra->emc_clk);
+ 	clk_put(tegra->emc_clk);
+ fail_emc_clk:
+-	clk_disable(tegra->clk);
++	clk_disable_unprepare(tegra->clk);
+ fail_clken:
+ 	clk_put(tegra->clk);
+ fail_clk:
+@@ -820,10 +820,10 @@ static int tegra_ehci_remove(struct platform_device *pdev)
+ 	tegra_usb_phy_close(tegra->phy);
+ 	iounmap(hcd->regs);
+ 
+-	clk_disable(tegra->clk);
++	clk_disable_unprepare(tegra->clk);
+ 	clk_put(tegra->clk);
+ 
+-	clk_disable(tegra->emc_clk);
++	clk_disable_unprepare(tegra->emc_clk);
+ 	clk_put(tegra->emc_clk);
+ 
+ 	kfree(tegra);
 -- 
 1.7.4.1
