@@ -1,15 +1,15 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/9] Input: tegra-kbc - add clk_prepare/clk_unprepare
-Date: Fri, 1 Jun 2012 14:42:44 +0530
-Message-ID: <1338541968-7961-6-git-send-email-pgaikwad@nvidia.com>
+From: Prashant Gaikwad <pgaikwad@nvidia.com>
+Subject: [PATCH 3/9] mmc: tegra: add clk_prepare/clk_unprepare
+Date: Fri, 1 Jun 2012 14:42:42 +0530
+Message-ID: <1338541968-7961-4-git-send-email-pgaikwad@nvidia.com>
 References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, paul.gortmaker@windriver.com, shawn.guo@linaro.org, linux-mmc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
@@ -18,32 +18,41 @@ This patch should go through Tegra tree since other patches to port tegra
 to generic clock framework are dependent on it. Posting here to get ack from
 the maintainers.
 
-Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 ---
- drivers/input/keyboard/tegra-kbc.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index 4ffe64d..2c1c9ed 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -492,7 +492,7 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
- 	unsigned int debounce_cnt;
- 	u32 val = 0;
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index b38d8a7..2789656 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -334,7 +334,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
+ 		rc = PTR_ERR(clk);
+ 		goto err_clk_get;
+ 	}
+-	clk_enable(clk);
++	clk_prepare_enable(clk);
+ 	pltfm_host->clk = clk;
  
--	clk_enable(kbc->clk);
-+	clk_prepare_enable(kbc->clk);
+ 	host->mmc->pm_caps = plat->pm_flags;
+@@ -349,7 +349,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	/* Reset the KBC controller to clear all previous status.*/
- 	tegra_periph_reset_assert(kbc->clk);
-@@ -556,7 +556,7 @@ static void tegra_kbc_stop(struct tegra_kbc *kbc)
- 	disable_irq(kbc->irq);
- 	del_timer_sync(&kbc->timer);
+ err_add_host:
+-	clk_disable(pltfm_host->clk);
++	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_put(pltfm_host->clk);
+ err_clk_get:
+ 	if (gpio_is_valid(plat->wp_gpio))
+@@ -390,7 +390,7 @@ static int __devexit sdhci_tegra_remove(struct platform_device *pdev)
+ 	if (gpio_is_valid(plat->power_gpio))
+ 		gpio_free(plat->power_gpio);
  
--	clk_disable(kbc->clk);
-+	clk_disable_unprepare(kbc->clk);
- }
+-	clk_disable(pltfm_host->clk);
++	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_put(pltfm_host->clk);
  
- static int tegra_kbc_open(struct input_dev *dev)
+ 	sdhci_pltfm_free(pdev);
 -- 
 1.7.4.1
