@@ -1,24 +1,15 @@
 From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH 7/9] staging: nvec: add clk_prepare/clk_unprepare
-Date: Fri, 1 Jun 2012 14:42:46 +0530
-Message-ID: <1338541968-7961-8-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH 8/9] ASoC: tegra: add clk_prepare/clk_unprepare
+Date: Fri, 1 Jun 2012 14:42:47 +0530
+Message-ID: <1338541968-7961-9-git-send-email-pgaikwad@nvidia.com>
 References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: devel-bounces@linuxdriverproject.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: devel@driverdev.osuosl.org, Prashant Gaikwad <pgaikwad@nvidia.com>, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, olof@lixom.net, ac100@lists.launchpad.net
+Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
@@ -29,47 +20,148 @@ the maintainers.
 
 Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 ---
- drivers/staging/nvec/nvec.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/tegra/tegra20_i2s.c      |    4 ++--
+ sound/soc/tegra/tegra20_spdif.c    |    4 ++--
+ sound/soc/tegra/tegra30_ahub.c     |    8 ++++----
+ sound/soc/tegra/tegra30_i2s.c      |    4 ++--
+ sound/soc/tegra/tegra_asoc_utils.c |   12 ++++++------
+ 5 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 3c60088..9356886 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -675,7 +675,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
+index 0c7af63..1647dbf 100644
+--- a/sound/soc/tegra/tegra20_i2s.c
++++ b/sound/soc/tegra/tegra20_i2s.c
+@@ -62,7 +62,7 @@ static int tegra20_i2s_runtime_suspend(struct device *dev)
  {
- 	u32 val;
+ 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
  
--	clk_enable(nvec->i2c_clk);
-+	clk_prepare_enable(nvec->i2c_clk);
+-	clk_disable(i2s->clk_i2s);
++	clk_disable_unprepare(i2s->clk_i2s);
  
- 	tegra_periph_reset_assert(nvec->i2c_clk);
- 	udelay(2);
-@@ -695,14 +695,14 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
- 
- 	enable_irq(nvec->irq);
- 
--	clk_disable(nvec->i2c_clk);
-+	clk_disable_unprepare(nvec->i2c_clk);
+ 	return 0;
  }
+@@ -72,7 +72,7 @@ static int tegra20_i2s_runtime_resume(struct device *dev)
+ 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
+ 	int ret;
  
- static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+-	ret = clk_enable(i2s->clk_i2s);
++	ret = clk_prepare_enable(i2s->clk_i2s);
+ 	if (ret) {
+ 		dev_err(dev, "clk_enable failed: %d\n", ret);
+ 		return ret;
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index f9b5741..2262e4f 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -54,7 +54,7 @@ static int tegra20_spdif_runtime_suspend(struct device *dev)
  {
- 	disable_irq(nvec->irq);
- 	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
--	clk_disable(nvec->i2c_clk);
-+	clk_disable_unprepare(nvec->i2c_clk);
+ 	struct tegra20_spdif *spdif = dev_get_drvdata(dev);
+ 
+-	clk_disable(spdif->clk_spdif_out);
++	clk_disable_unprepare(spdif->clk_spdif_out);
+ 
+ 	return 0;
  }
+@@ -64,7 +64,7 @@ static int tegra20_spdif_runtime_resume(struct device *dev)
+ 	struct tegra20_spdif *spdif = dev_get_drvdata(dev);
+ 	int ret;
  
- static void nvec_power_off(void)
-@@ -812,7 +812,7 @@ static int __devinit tegra_nvec_probe(struct platform_device *pdev)
+-	ret = clk_enable(spdif->clk_spdif_out);
++	ret = clk_prepare_enable(spdif->clk_spdif_out);
+ 	if (ret) {
+ 		dev_err(dev, "clk_enable failed: %d\n", ret);
+ 		return ret;
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index 57cd419..1efb822 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -56,8 +56,8 @@ static int tegra30_ahub_runtime_suspend(struct device *dev)
+ 	regcache_cache_only(ahub->regmap_apbif, true);
+ 	regcache_cache_only(ahub->regmap_ahub, true);
  
- 	tegra_init_i2c_slave(nvec);
+-	clk_disable(ahub->clk_apbif);
+-	clk_disable(ahub->clk_d_audio);
++	clk_disable_unprepare(ahub->clk_apbif);
++	clk_disable_unprepare(ahub->clk_d_audio);
  
--	clk_enable(i2c_clk);
-+	clk_prepare_enable(i2c_clk);
+ 	return 0;
+ }
+@@ -77,12 +77,12 @@ static int tegra30_ahub_runtime_resume(struct device *dev)
+ {
+ 	int ret;
  
+-	ret = clk_enable(ahub->clk_d_audio);
++	ret = clk_prepare_enable(ahub->clk_d_audio);
+ 	if (ret) {
+ 		dev_err(dev, "clk_enable d_audio failed: %d\n", ret);
+ 		return ret;
+ 	}
+-	ret = clk_enable(ahub->clk_apbif);
++	ret = clk_prepare_enable(ahub->clk_apbif);
+ 	if (ret) {
+ 		dev_err(dev, "clk_enable apbif failed: %d\n", ret);
+ 		clk_disable(ahub->clk_d_audio);
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index 8596032..d308faa 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -62,7 +62,7 @@ static int tegra30_i2s_runtime_suspend(struct device *dev)
  
- 	/* enable event reporting */
+ 	regcache_cache_only(i2s->regmap, true);
+ 
+-	clk_disable(i2s->clk_i2s);
++	clk_disable_unprepare(i2s->clk_i2s);
+ 
+ 	return 0;
+ }
+@@ -72,7 +72,7 @@ static int tegra30_i2s_runtime_resume(struct device *dev)
+ 	struct tegra30_i2s *i2s = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	ret = clk_enable(i2s->clk_i2s);
++	ret = clk_prepare_enable(i2s->clk_i2s);
+ 	if (ret) {
+ 		dev_err(dev, "clk_enable failed: %d\n", ret);
+ 		return ret;
+diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+index 9515ce5..6872c77 100644
+--- a/sound/soc/tegra/tegra_asoc_utils.c
++++ b/sound/soc/tegra/tegra_asoc_utils.c
+@@ -69,9 +69,9 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_baseclock = 0;
+ 	data->set_mclk = 0;
+ 
+-	clk_disable(data->clk_cdev1);
+-	clk_disable(data->clk_pll_a_out0);
+-	clk_disable(data->clk_pll_a);
++	clk_disable_unprepare(data->clk_cdev1);
++	clk_disable_unprepare(data->clk_pll_a_out0);
++	clk_disable_unprepare(data->clk_pll_a);
+ 
+ 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
+ 	if (err) {
+@@ -87,19 +87,19 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_enable(data->clk_pll_a);
++	err = clk_prepare_enable(data->clk_pll_a);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = clk_enable(data->clk_pll_a_out0);
++	err = clk_prepare_enable(data->clk_pll_a_out0);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = clk_enable(data->clk_cdev1);
++	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+ 		return err;
 -- 
 1.7.4.1
