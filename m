@@ -1,73 +1,97 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 7/9] staging: nvec: add clk_prepare/clk_unprepare
-Date: Fri, 01 Jun 2012 19:31:08 +0200
-Message-ID: <1505860.QOgf9duN2r@ax5200p>
-References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com> <1338541968-7961-8-git-send-email-pgaikwad@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: dt: tegra: cardhu: register core regulator tps65911
+Date: Fri, 01 Jun 2012 13:23:24 -0600
+Message-ID: <4FC916AC.4060804@wwwdotorg.org>
+References: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com> <1337691917-15040-2-git-send-email-ldewangan@nvidia.com> <4FBBC192.7030900@wwwdotorg.org> <4FBBC830.2060802@nvidia.com> <4FBBCA8F.3050903@wwwdotorg.org> <4FBBD33C.8020802@nvidia.com> <4FBBDA97.6000006@wwwdotorg.org> <4FBBDE06.5080806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1338541968-7961-8-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4FBBDE06.5080806-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 01 June 2012 14:42:46 Prashant Gaikwad wrote:
-> Use clk_prepare/clk_unprepare as required by the generic clk framework.
+On 05/22/2012 12:42 PM, Laxman Dewangan wrote:
+> On Tuesday 22 May 2012 11:57 PM, Stephen Warren wrote:
+>> On 05/22/2012 11:56 AM, Laxman Dewangan wrote:
+>>> On Tuesday 22 May 2012 10:49 PM, Stephen Warren wrote:
+>>>> On 05/22/2012 11:09 AM, Laxman Dewangan wrote:
+>>>>> On Tuesday 22 May 2012 10:10 PM, Stephen Warren wrote:
+>>>>>> On 05/22/2012 07:05 AM, Laxman Dewangan wrote:
+>>>>>>> Add device info for the PMIC device tps65911 in tegra-cardhu
+>>>>>>> dts file. This device supports the multiple regulator rails,
+>>>>>>> gpio, interrupts.
+>> ...
+>>>>>> Nitpicky, but the labels might be more logical as reg_vdd1 rather
+>>>>>> than
+>>>>>> vdd1_reg, but not a big deal.
+>>>>>>
+>>>>>> So, please replace the line above with:
+>>>>>>
+>>>>>>       reg_vdd1: regulator@0 {
+>>>>>>           reg =<0>;
+>>>>> Why do we really require the reg at all?
+>>>>> I dont think any usage of doing this.
+>> Oh, perhaps you meant the reg property not "reg_" in the label name?
+>>
+>> It is required because the parent node has #address-cells and
+>> #size-cells and because the node name itself has a unit address ("@nnn").
+>>
 > 
-> This patch should go through Tegra tree since other patches to port Tegra
-> to generic clock framework are dependent on it. Posting here to get ack from
-> the maintainers.
+> But we can not put
+>     reg_vdd1:regulator@0 {
+>         ::::::::::::::
+>     }
 > 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> due to their dt binding with their node names.
 
-tested and ...
+I spoke to Olof about this on IRC, and he also tended to agree that the
+regulator node names should not be used directly.
 
-Acked-By: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+However, Mark warned that changing this would be a bit painful because
+there are already users of the existing scheme. It looks like that's
+only tps65910 (which we haven't started using yet), db8500, and ab8500,
+so probably not that big a deal.
 
-> ---
->  drivers/staging/nvec/nvec.c |    8 ++++----
->  1 files changed, 4 insertions(+), 4 deletions(-)
+We could probably amend of_regulator_match() to work in a
+backwards-compatible fashion; to look for some name property in each
+child node first, and then fall back to using the node name if that
+resulted in no matches. That would allow db8500/ab8500 to be converted
+at leisure.
+
+We could either augment struct of_regulator_match with an integer ID
+field for each regulator (which would perhaps make it slightly painful
+to write the nodes and keep the IDs matched up), or add a new property
+to each regulator provider node e.g. regulator-id which contained the
+name that the regulator driver knows the regulator as (which would match
+struct of_regulator_match.name), since the existing regulator-name
+property is used for semantically different purposes.
+
+That would result in:
+
+> tps65911: tps65911@2d {
+> 	compatible = "ti,tps65911";
+> 	reg = <0x2d>;
 > 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 3c60088..9356886 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -675,7 +675,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
-> {
->  	u32 val;
+> 	#gpio-cells = <2>;
+> 	gpio-controller;
 > 
-> -	clk_enable(nvec->i2c_clk);
-> +	clk_prepare_enable(nvec->i2c_clk);
+> 	regulators {
+> 		#address-cells = <1>;
+> 		#size-cells = <0>;
 > 
->  	tegra_periph_reset_assert(nvec->i2c_clk);
->  	udelay(2);
-> @@ -695,14 +695,14 @@ static void tegra_init_i2c_slave(struct nvec_chip
-> *nvec)
+> 		vdd1_reg: regulator@0 {
+> 			reg = <0>;
+> 			regulator-id = "vdd1"; /* Internal name */
+> 			regulator-name = "vdd_1v2_gen"; /* Signal on schematic */
+...
+> 		};
 > 
->  	enable_irq(nvec->irq);
-> 
-> -	clk_disable(nvec->i2c_clk);
-> +	clk_disable_unprepare(nvec->i2c_clk);
->  }
-> 
->  static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
->  {
->  	disable_irq(nvec->irq);
->  	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
-> -	clk_disable(nvec->i2c_clk);
-> +	clk_disable_unprepare(nvec->i2c_clk);
->  }
-> 
->  static void nvec_power_off(void)
-> @@ -812,7 +812,7 @@ static int __devinit tegra_nvec_probe(struct
-> platform_device *pdev)
-> 
->  	tegra_init_i2c_slave(nvec);
-> 
-> -	clk_enable(i2c_clk);
-> +	clk_prepare_enable(i2c_clk);
-> 
-> 
->  	/* enable event reporting */
+> 		vdd2_reg: regulator@1 {
+> 			reg = <1>;
+> 			regulator-id = "vdd2";
+> 			regulator-name = "vdd_1v5_gen";
+...
