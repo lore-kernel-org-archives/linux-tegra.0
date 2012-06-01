@@ -1,50 +1,49 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH 0/9] Add clk_prepare/clk_unprepare
-Date: Fri, 1 Jun 2012 14:42:39 +0530
-Message-ID: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 5/9] Input: tegra-kbc - add clk_prepare/clk_unprepare
+Date: Fri, 1 Jun 2012 14:42:44 +0530
+Message-ID: <1338541968-7961-6-git-send-email-pgaikwad@nvidia.com>
+References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set adds use of clk_prepare/clk_unprepare as
-required by generic clock framework.
+Use clk_prepare/clk_unprepare as required by the generic clk framework.
 
-Tested on Ventana and Cardhu.
+This patch should go through Tegra tree since other patches to port tegra
+to generic clock framework are dependent on it. Posting here to get ack from
+the maintainers.
 
-Prashant Gaikwad (9):
-  ARM: tegra: add clk_prepare/clk_unprepare
-  i2c: tegra: Add clk_prepare/clk_unprepare
-  mmc: tegra: add clk_prepare/clk_unprepare
-  USB: ehci-tegra: add clk_prepare/clk_unprepare
-  Input: tegra-kbc - add clk_prepare/clk_unprepare
-  spi/tegra: add clk_prepare/clk_unprepare
-  staging: nvec: add clk_prepare/clk_unprepare
-  ASoC: tegra: add clk_prepare/clk_unprepare
-  crypto: add clk_prepare/clk_unprepare
-
- arch/arm/mach-tegra/cpu-tegra.c    |    6 +++---
- arch/arm/mach-tegra/dma.c          |    2 +-
- arch/arm/mach-tegra/pcie.c         |    6 +++---
- arch/arm/mach-tegra/powergate.c    |    4 ++--
- arch/arm/mach-tegra/timer.c        |    4 ++--
- arch/arm/mach-tegra/usb_phy.c      |   16 ++++++++--------
- drivers/crypto/tegra-aes.c         |   12 ++++++------
- drivers/i2c/busses/i2c-tegra.c     |   10 +++++-----
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
  drivers/input/keyboard/tegra-kbc.c |    4 ++--
- drivers/mmc/host/sdhci-tegra.c     |    6 +++---
- drivers/spi/spi-tegra.c            |    4 ++--
- drivers/staging/nvec/nvec.c        |    8 ++++----
- drivers/usb/host/ehci-tegra.c      |   20 ++++++++++----------
- sound/soc/tegra/tegra20_i2s.c      |    4 ++--
- sound/soc/tegra/tegra20_spdif.c    |    4 ++--
- sound/soc/tegra/tegra30_ahub.c     |    8 ++++----
- sound/soc/tegra/tegra30_i2s.c      |    4 ++--
- sound/soc/tegra/tegra_asoc_utils.c |   12 ++++++------
- 18 files changed, 67 insertions(+), 67 deletions(-)
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 4ffe64d..2c1c9ed 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -492,7 +492,7 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
+ 	unsigned int debounce_cnt;
+ 	u32 val = 0;
+ 
+-	clk_enable(kbc->clk);
++	clk_prepare_enable(kbc->clk);
+ 
+ 	/* Reset the KBC controller to clear all previous status.*/
+ 	tegra_periph_reset_assert(kbc->clk);
+@@ -556,7 +556,7 @@ static void tegra_kbc_stop(struct tegra_kbc *kbc)
+ 	disable_irq(kbc->irq);
+ 	del_timer_sync(&kbc->timer);
+ 
+-	clk_disable(kbc->clk);
++	clk_disable_unprepare(kbc->clk);
+ }
+ 
+ static int tegra_kbc_open(struct input_dev *dev)
 -- 
 1.7.4.1
