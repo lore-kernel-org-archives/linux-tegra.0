@@ -1,7 +1,7 @@
 From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH 3/9] mmc: tegra: add clk_prepare/clk_unprepare
-Date: Fri, 1 Jun 2012 14:42:42 +0530
-Message-ID: <1338541968-7961-4-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH 2/9] i2c: tegra: Add clk_prepare/clk_unprepare
+Date: Fri, 1 Jun 2012 14:42:41 +0530
+Message-ID: <1338541968-7961-3-git-send-email-pgaikwad@nvidia.com>
 References: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,7 +9,7 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1338541968-7961-1-git-send-email-pgaikwad@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, paul.gortmaker@windriver.com, shawn.guo@linaro.org, linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, olof@lixom.net, Prashant Gaikwad <pgaikwad@nvidia.com>, ben-linux@fluff.org, w.sang@pengutronix.de, ldewangan@nvidia.com, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
@@ -20,39 +20,56 @@ the maintainers.
 
 Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 ---
- drivers/mmc/host/sdhci-tegra.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index b38d8a7..2789656 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -334,7 +334,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
- 		rc = PTR_ERR(clk);
- 		goto err_clk_get;
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 8b2e555..3da7ee3 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -341,7 +341,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
+ 	int err = 0;
+ 
+-	clk_enable(i2c_dev->clk);
++	clk_prepare_enable(i2c_dev->clk);
+ 
+ 	tegra_periph_reset_assert(i2c_dev->clk);
+ 	udelay(2);
+@@ -372,7 +372,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	if (tegra_i2c_flush_fifos(i2c_dev))
+ 		err = -ETIMEDOUT;
+ 
+-	clk_disable(i2c_dev->clk);
++	clk_disable_unprepare(i2c_dev->clk);
+ 
+ 	if (i2c_dev->irq_disabled) {
+ 		i2c_dev->irq_disabled = 0;
+@@ -546,14 +546,14 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	if (i2c_dev->is_suspended)
+ 		return -EBUSY;
+ 
+-	clk_enable(i2c_dev->clk);
++	clk_prepare_enable(i2c_dev->clk);
+ 	for (i = 0; i < num; i++) {
+ 		int stop = (i == (num - 1)) ? 1  : 0;
+ 		ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], stop);
+ 		if (ret)
+ 			break;
  	}
--	clk_enable(clk);
-+	clk_prepare_enable(clk);
- 	pltfm_host->clk = clk;
+-	clk_disable(i2c_dev->clk);
++	clk_disable_unprepare(i2c_dev->clk);
+ 	return ret ?: i;
+ }
  
- 	host->mmc->pm_caps = plat->pm_flags;
-@@ -349,7 +349,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
- 	return 0;
+@@ -666,7 +666,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 		goto err_free;
+ 	}
  
- err_add_host:
--	clk_disable(pltfm_host->clk);
-+	clk_disable_unprepare(pltfm_host->clk);
- 	clk_put(pltfm_host->clk);
- err_clk_get:
- 	if (gpio_is_valid(plat->wp_gpio))
-@@ -390,7 +390,7 @@ static int __devexit sdhci_tegra_remove(struct platform_device *pdev)
- 	if (gpio_is_valid(plat->power_gpio))
- 		gpio_free(plat->power_gpio);
+-	clk_enable(i2c_dev->i2c_clk);
++	clk_prepare_enable(i2c_dev->i2c_clk);
  
--	clk_disable(pltfm_host->clk);
-+	clk_disable_unprepare(pltfm_host->clk);
- 	clk_put(pltfm_host->clk);
- 
- 	sdhci_pltfm_free(pdev);
+ 	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
+ 	i2c_dev->adapter.owner = THIS_MODULE;
 -- 
 1.7.4.1
