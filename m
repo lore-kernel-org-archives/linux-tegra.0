@@ -1,30 +1,53 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: tegra: simplify Kconfig dependencies
-Date: Mon, 04 Jun 2012 11:58:32 -0600
-Message-ID: <4FCCF748.8000901@wwwdotorg.org>
-References: <1337635343-16613-1-git-send-email-swarren@wwwdotorg.org> <20120522100248.GF21999@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: defconfig updates
+Date: Mon,  4 Jun 2012 12:03:38 -0600
+Message-ID: <1338833018-18408-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120522100248.GF21999-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/22/2012 04:02 AM, Mark Brown wrote:
-> On Mon, May 21, 2012 at 03:22:23PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The Tegra ASoC machine drivers only depend on Tegra architecture support
->> to compile, not specific board support. Remove Kconfig dependencies on
->> any particular board. This is required since Kconfig options for boards
->> are going away given the migration to device tree.
-> 
-> Please merge this as part of the Tegra tree as it's going to conflict
-> with the removal of the machine Kconfig entries anyway.
-> 
-> Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied for 3.6.
+Enable:
+* SND_SOC_TEGRA_WM8753 (new feature)
+
+Remove some deleted options:
+* MACH_KAEN
+* MACH_VENTANA
+* MACH_WARIO
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I'll be applying this immediately for 3.6.
+
+ arch/arm/configs/tegra_defconfig |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 1198dd6..019a43e 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -25,11 +25,8 @@ CONFIG_ARCH_TEGRA=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_MACH_HARMONY=y
+-CONFIG_MACH_KAEN=y
+ CONFIG_MACH_PAZ00=y
+ CONFIG_MACH_TRIMSLICE=y
+-CONFIG_MACH_WARIO=y
+-CONFIG_MACH_VENTANA=y
+ CONFIG_TEGRA_EMC_SCALING_ENABLE=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+@@ -126,6 +123,7 @@ CONFIG_SND=y
+ # CONFIG_SND_USB is not set
+ CONFIG_SND_SOC=y
+ CONFIG_SND_SOC_TEGRA=y
++CONFIG_SND_SOC_TEGRA_WM8753=y
+ CONFIG_SND_SOC_TEGRA_WM8903=y
+ CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
+ CONFIG_SND_SOC_TEGRA_ALC5632=y
+-- 
+1.7.0.4
