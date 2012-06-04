@@ -1,25 +1,107 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: dt: tegra{20,30}.dtsi: Rename "mc" to "memory-controller"
-Date: Mon, 04 Jun 2012 12:20:44 -0600
-Message-ID: <4FCCFC7C.5080006@wwwdotorg.org>
-References: <CAOesGMhw5hJSF96FBuENnwx2=ACyAYwX6uny9zQeTsimcebF8A@mail.gmail.com> <1337233667-23770-1-git-send-email-hdoyu@nvidia.com> <4FCCF02A.7060704@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH REPOST 2/2] ARM: dt: tegra: remove legacy support-8bit property
+Date: Mon,  4 Jun 2012 12:32:35 -0600
+Message-ID: <1338834755-6900-2-git-send-email-swarren@wwwdotorg.org>
+References: <1338834755-6900-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FCCF02A.7060704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1338834755-6900-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2012 11:28 AM, Stephen Warren wrote:
-> On 05/16/2012 11:47 PM, Hiroshi DOYU wrote:
->> Use a more plain english name.
-> 
-> Applied the series for 3.6, with a minor fixup to revert the addition of
-> the redundant unit address on the Tegra30 memory-controller node, since
-> there's only 1 node of that name there for now.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-... and another fixup to rename the emc node in tegra-seaboard.dts as
-well as tegra20.dtsi.
+The driver supports the new bus-width property, so remove the legacy
+support-8bit property.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra-cardhu.dts   |    1 -
+ arch/arm/boot/dts/tegra-harmony.dts  |    1 -
+ arch/arm/boot/dts/tegra-paz00.dts    |    1 -
+ arch/arm/boot/dts/tegra-seaboard.dts |    1 -
+ arch/arm/boot/dts/tegra-ventana.dts  |    1 -
+ arch/arm/boot/dts/tegra-whistler.dts |    2 --
+ 6 files changed, 0 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra-cardhu.dts
+index 36321bc..c169bce 100644
+--- a/arch/arm/boot/dts/tegra-cardhu.dts
++++ b/arch/arm/boot/dts/tegra-cardhu.dts
+@@ -144,7 +144,6 @@
+ 
+ 	sdhci@78000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+index 7de7013..f146dbf 100644
+--- a/arch/arm/boot/dts/tegra-harmony.dts
++++ b/arch/arm/boot/dts/tegra-harmony.dts
+@@ -307,7 +307,6 @@
+ 		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
+ 		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
+ 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra-paz00.dts
+index bfeb117..684a9e1 100644
+--- a/arch/arm/boot/dts/tegra-paz00.dts
++++ b/arch/arm/boot/dts/tegra-paz00.dts
+@@ -301,7 +301,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra-seaboard.dts
+index 89cb7f2..2fc0f05 100644
+--- a/arch/arm/boot/dts/tegra-seaboard.dts
++++ b/arch/arm/boot/dts/tegra-seaboard.dts
+@@ -397,7 +397,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra-ventana.dts
+index 445343b..be90544 100644
+--- a/arch/arm/boot/dts/tegra-ventana.dts
++++ b/arch/arm/boot/dts/tegra-ventana.dts
+@@ -314,7 +314,6 @@
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra-whistler.dts b/arch/arm/boot/dts/tegra-whistler.dts
+index 2548648..6916310 100644
+--- a/arch/arm/boot/dts/tegra-whistler.dts
++++ b/arch/arm/boot/dts/tegra-whistler.dts
+@@ -276,13 +276,11 @@
+ 	sdhci@c8000400 {
+ 		status = "okay";
+ 		wp-gpios = <&gpio 173 0>; /* gpio PV5 */
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+ 	sdhci@c8000600 {
+ 		status = "okay";
+-		support-8bit;
+ 		bus-width = <8>;
+ 	};
+ 
+-- 
+1.7.0.4
