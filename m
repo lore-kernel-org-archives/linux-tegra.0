@@ -1,53 +1,21 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: defconfig updates
-Date: Mon,  4 Jun 2012 12:03:38 -0600
-Message-ID: <1338833018-18408-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 1/2] ARM: tegra: config: enable TPS65910 drivers
+Date: Mon, 04 Jun 2012 12:06:34 -0600
+Message-ID: <4FCCF92A.9040407@wwwdotorg.org>
+References: <1337753574-32699-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1337753574-32699-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/23/2012 12:12 AM, Laxman Dewangan wrote:
+> Enable TPS65910 mfd, gpio and regulator drivers.
+> This is the PMIC module for Tegra30 based cardhu
+> platform.
 
-Enable:
-* SND_SOC_TEGRA_WM8753 (new feature)
-
-Remove some deleted options:
-* MACH_KAEN
-* MACH_VENTANA
-* MACH_WARIO
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I'll be applying this immediately for 3.6.
-
- arch/arm/configs/tegra_defconfig |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 1198dd6..019a43e 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,11 +25,8 @@ CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_MACH_HARMONY=y
--CONFIG_MACH_KAEN=y
- CONFIG_MACH_PAZ00=y
- CONFIG_MACH_TRIMSLICE=y
--CONFIG_MACH_WARIO=y
--CONFIG_MACH_VENTANA=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-@@ -126,6 +123,7 @@ CONFIG_SND=y
- # CONFIG_SND_USB is not set
- CONFIG_SND_SOC=y
- CONFIG_SND_SOC_TEGRA=y
-+CONFIG_SND_SOC_TEGRA_WM8753=y
- CONFIG_SND_SOC_TEGRA_WM8903=y
- CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
- CONFIG_SND_SOC_TEGRA_ALC5632=y
--- 
-1.7.0.4
+I've applied just this one patch for 3.6.
