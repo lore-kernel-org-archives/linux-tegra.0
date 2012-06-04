@@ -1,21 +1,22 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: dt: tegra{20,30}.dtsi: Rename "mc" to "memory-controller"
-Date: Mon, 04 Jun 2012 11:28:10 -0600
-Message-ID: <4FCCF02A.7060704@wwwdotorg.org>
-References: <CAOesGMhw5hJSF96FBuENnwx2=ACyAYwX6uny9zQeTsimcebF8A@mail.gmail.com> <1337233667-23770-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH] dt: name all Tegra binding docs consistently
+Date: Mon, 04 Jun 2012 11:30:17 -0600
+Message-ID: <4FCCF0A9.2040104@wwwdotorg.org>
+References: <1337638300-29155-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1337233667-23770-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1337638300-29155-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16/2012 11:47 PM, Hiroshi DOYU wrote:
-> Use a more plain english name.
+On 05/21/2012 04:11 PM, Stephen Warren wrote:
+> Rename all Tegra binding documentation according to the first or
+> primary compatible value they describe. This provides a clear naming
+> scheme for the files, and prevents any naming conflicts should future
+> SoC versions require their own binding.
 
-Applied the series for 3.6, with a minor fixup to revert the addition of
-the redundant unit address on the Tegra30 memory-controller node, since
-there's only 1 node of that name there for now.
+Applied for 3.6.
