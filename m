@@ -1,15 +1,23 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 2/9] i2c: tegra: Add clk_prepare/clk_unprepare
-Date: Tue, 5 Jun 2012 09:59:36 +0530
-Message-ID: <1338870583-8704-3-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH v3 6/9] spi/tegra: add clk_prepare/clk_unprepare
+Date: Tue, 5 Jun 2012 09:59:40 +0530
+Message-ID: <1338870583-8704-7-git-send-email-pgaikwad@nvidia.com>
 References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 In-Reply-To: <1338870583-8704-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
@@ -19,60 +27,42 @@ Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.or
 Please ignore previous versions. Updated commit message and
 maintainers properly in this version. No other change.
 
-This patch should go through Tegra tree since other patches to port tegra
+This patch should go through Tegra tree since other patches to port Tegra
 to generic clock framework are dependent on it. Posting here to get ack from
 the maintainers.
 
- drivers/i2c/busses/i2c-tegra.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/spi/spi-tegra.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 8b2e555..3da7ee3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -341,7 +341,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	u32 val;
- 	int err = 0;
+diff --git a/drivers/spi/spi-tegra.c b/drivers/spi/spi-tegra.c
+index ae6d78a..7f99ff3 100644
+--- a/drivers/spi/spi-tegra.c
++++ b/drivers/spi/spi-tegra.c
+@@ -261,7 +261,7 @@ static void spi_tegra_start_transfer(struct spi_device *spi,
+ 		clk_set_rate(tspi->clk, speed);
  
--	clk_enable(i2c_dev->clk);
-+	clk_prepare_enable(i2c_dev->clk);
+ 	if (tspi->cur_speed == 0)
+-		clk_enable(tspi->clk);
++		clk_prepare_enable(tspi->clk);
  
- 	tegra_periph_reset_assert(i2c_dev->clk);
- 	udelay(2);
-@@ -372,7 +372,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (tegra_i2c_flush_fifos(i2c_dev))
- 		err = -ETIMEDOUT;
+ 	tspi->cur_speed = speed;
  
--	clk_disable(i2c_dev->clk);
-+	clk_disable_unprepare(i2c_dev->clk);
- 
- 	if (i2c_dev->irq_disabled) {
- 		i2c_dev->irq_disabled = 0;
-@@ -546,14 +546,14 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	if (i2c_dev->is_suspended)
- 		return -EBUSY;
- 
--	clk_enable(i2c_dev->clk);
-+	clk_prepare_enable(i2c_dev->clk);
- 	for (i = 0; i < num; i++) {
- 		int stop = (i == (num - 1)) ? 1  : 0;
- 		ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], stop);
- 		if (ret)
- 			break;
+@@ -373,7 +373,7 @@ static void tegra_spi_rx_dma_complete(struct tegra_dma_req *req)
+ 			spi = m->state;
+ 			spi_tegra_start_message(spi, m);
+ 		} else {
+-			clk_disable(tspi->clk);
++			clk_disable_unprepare(tspi->clk);
+ 			tspi->cur_speed = 0;
+ 		}
  	}
--	clk_disable(i2c_dev->clk);
-+	clk_disable_unprepare(i2c_dev->clk);
- 	return ret ?: i;
- }
- 
-@@ -666,7 +666,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 		goto err_free;
- 	}
- 
--	clk_enable(i2c_dev->i2c_clk);
-+	clk_prepare_enable(i2c_dev->i2c_clk);
- 
- 	i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
- 	i2c_dev->adapter.owner = THIS_MODULE;
 -- 
 1.7.4.1
+
+
+------------------------------------------------------------------------------
+Live Security Virtual Conference
+Exclusive live event will cover all the ways today's security and 
+threat landscape has changed and how IT managers can respond. Discussions 
+will include endpoint security, mobile security and the latest in malware 
+threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
