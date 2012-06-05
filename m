@@ -1,7 +1,7 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 8/9] ASoC: tegra: add clk_prepare/clk_unprepare
-Date: Tue, 5 Jun 2012 09:59:42 +0530
-Message-ID: <1338870583-8704-9-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH v3 5/9] Input: tegra-kbc - add clk_prepare/clk_unprepare
+Date: Tue, 5 Jun 2012 09:59:39 +0530
+Message-ID: <1338870583-8704-6-git-send-email-pgaikwad@nvidia.com>
 References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,7 +9,7 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1338870583-8704-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 Use clk_prepare/clk_unprepare as required by the generic clk framework.
@@ -19,152 +19,34 @@ Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.or
 Please ignore previous versions. Updated commit message and
 maintainers properly in this version. No other change.
 
-This patch should go through Tegra tree since other patches to port Tegra
+This patch should go through Tegra tree since other patches to port tegra
 to generic clock framework are dependent on it. Posting here to get ack from
 the maintainers.
 
- sound/soc/tegra/tegra20_i2s.c      |    4 ++--
- sound/soc/tegra/tegra20_spdif.c    |    4 ++--
- sound/soc/tegra/tegra30_ahub.c     |    8 ++++----
- sound/soc/tegra/tegra30_i2s.c      |    4 ++--
- sound/soc/tegra/tegra_asoc_utils.c |   12 ++++++------
- 5 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/input/keyboard/tegra-kbc.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
-index 0c7af63..1647dbf 100644
---- a/sound/soc/tegra/tegra20_i2s.c
-+++ b/sound/soc/tegra/tegra20_i2s.c
-@@ -62,7 +62,7 @@ static int tegra20_i2s_runtime_suspend(struct device *dev)
- {
- 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 4ffe64d..2c1c9ed 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -492,7 +492,7 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
+ 	unsigned int debounce_cnt;
+ 	u32 val = 0;
  
--	clk_disable(i2s->clk_i2s);
-+	clk_disable_unprepare(i2s->clk_i2s);
+-	clk_enable(kbc->clk);
++	clk_prepare_enable(kbc->clk);
  
- 	return 0;
+ 	/* Reset the KBC controller to clear all previous status.*/
+ 	tegra_periph_reset_assert(kbc->clk);
+@@ -556,7 +556,7 @@ static void tegra_kbc_stop(struct tegra_kbc *kbc)
+ 	disable_irq(kbc->irq);
+ 	del_timer_sync(&kbc->timer);
+ 
+-	clk_disable(kbc->clk);
++	clk_disable_unprepare(kbc->clk);
  }
-@@ -72,7 +72,7 @@ static int tegra20_i2s_runtime_resume(struct device *dev)
- 	struct tegra20_i2s *i2s = dev_get_drvdata(dev);
- 	int ret;
  
--	ret = clk_enable(i2s->clk_i2s);
-+	ret = clk_prepare_enable(i2s->clk_i2s);
- 	if (ret) {
- 		dev_err(dev, "clk_enable failed: %d\n", ret);
- 		return ret;
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index f9b5741..2262e4f 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -54,7 +54,7 @@ static int tegra20_spdif_runtime_suspend(struct device *dev)
- {
- 	struct tegra20_spdif *spdif = dev_get_drvdata(dev);
- 
--	clk_disable(spdif->clk_spdif_out);
-+	clk_disable_unprepare(spdif->clk_spdif_out);
- 
- 	return 0;
- }
-@@ -64,7 +64,7 @@ static int tegra20_spdif_runtime_resume(struct device *dev)
- 	struct tegra20_spdif *spdif = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = clk_enable(spdif->clk_spdif_out);
-+	ret = clk_prepare_enable(spdif->clk_spdif_out);
- 	if (ret) {
- 		dev_err(dev, "clk_enable failed: %d\n", ret);
- 		return ret;
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 57cd419..1efb822 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -56,8 +56,8 @@ static int tegra30_ahub_runtime_suspend(struct device *dev)
- 	regcache_cache_only(ahub->regmap_apbif, true);
- 	regcache_cache_only(ahub->regmap_ahub, true);
- 
--	clk_disable(ahub->clk_apbif);
--	clk_disable(ahub->clk_d_audio);
-+	clk_disable_unprepare(ahub->clk_apbif);
-+	clk_disable_unprepare(ahub->clk_d_audio);
- 
- 	return 0;
- }
-@@ -77,12 +77,12 @@ static int tegra30_ahub_runtime_resume(struct device *dev)
- {
- 	int ret;
- 
--	ret = clk_enable(ahub->clk_d_audio);
-+	ret = clk_prepare_enable(ahub->clk_d_audio);
- 	if (ret) {
- 		dev_err(dev, "clk_enable d_audio failed: %d\n", ret);
- 		return ret;
- 	}
--	ret = clk_enable(ahub->clk_apbif);
-+	ret = clk_prepare_enable(ahub->clk_apbif);
- 	if (ret) {
- 		dev_err(dev, "clk_enable apbif failed: %d\n", ret);
- 		clk_disable(ahub->clk_d_audio);
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 8596032..d308faa 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -62,7 +62,7 @@ static int tegra30_i2s_runtime_suspend(struct device *dev)
- 
- 	regcache_cache_only(i2s->regmap, true);
- 
--	clk_disable(i2s->clk_i2s);
-+	clk_disable_unprepare(i2s->clk_i2s);
- 
- 	return 0;
- }
-@@ -72,7 +72,7 @@ static int tegra30_i2s_runtime_resume(struct device *dev)
- 	struct tegra30_i2s *i2s = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = clk_enable(i2s->clk_i2s);
-+	ret = clk_prepare_enable(i2s->clk_i2s);
- 	if (ret) {
- 		dev_err(dev, "clk_enable failed: %d\n", ret);
- 		return ret;
-diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-index 9515ce5..6872c77 100644
---- a/sound/soc/tegra/tegra_asoc_utils.c
-+++ b/sound/soc/tegra/tegra_asoc_utils.c
-@@ -69,9 +69,9 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
- 	data->set_baseclock = 0;
- 	data->set_mclk = 0;
- 
--	clk_disable(data->clk_cdev1);
--	clk_disable(data->clk_pll_a_out0);
--	clk_disable(data->clk_pll_a);
-+	clk_disable_unprepare(data->clk_cdev1);
-+	clk_disable_unprepare(data->clk_pll_a_out0);
-+	clk_disable_unprepare(data->clk_pll_a);
- 
- 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
- 	if (err) {
-@@ -87,19 +87,19 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
- 
- 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
- 
--	err = clk_enable(data->clk_pll_a);
-+	err = clk_prepare_enable(data->clk_pll_a);
- 	if (err) {
- 		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
- 		return err;
- 	}
- 
--	err = clk_enable(data->clk_pll_a_out0);
-+	err = clk_prepare_enable(data->clk_pll_a_out0);
- 	if (err) {
- 		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
- 		return err;
- 	}
- 
--	err = clk_enable(data->clk_cdev1);
-+	err = clk_prepare_enable(data->clk_cdev1);
- 	if (err) {
- 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
- 		return err;
+ static int tegra_kbc_open(struct input_dev *dev)
 -- 
 1.7.4.1
