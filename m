@@ -1,68 +1,37 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/4] i2c: tegra: make sure register writes completes
-Date: Tue, 5 Jun 2012 18:39:57 +0530
-Message-ID: <1338901800-23968-2-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 0/4] i2c: tegra: Bug fixes, cleanups and M_NOSTART support
+Date: Tue, 05 Jun 2012 10:14:48 -0600
+Message-ID: <4FCE3078.1030008@wwwdotorg.org>
 References: <1338901800-23968-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1338901800-23968-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: khali@linux-fr.org, w.sang@pengutronix.de, ben-linux@fluff.org, swarren@wwwdotorg.org, olof@lixom.net
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1338901800-23968-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra PPSB (an peripheral bus) queues writes transactions.
-In order to guarantee that writes have completed before a
-certain time, a read transaction to a register on the same
-bus must be executed.
-This is necessary in situations such as when clearing an
-interrupt status or enable, so that when returning from an
-interrupt handler, the HW has already de-asserted its
-interrupt status output, which will avoid spurious interrupts.
+On 06/05/2012 07:09 AM, Laxman Dewangan wrote:
+> This patch series having the:
+> - Handling of late register write due to Tegra PPSB design.
+> - support for I2C_M_NOSTART
+> - Use devm_* for all allocation.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
+The series,
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 8b2e555..fa92396 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -430,6 +430,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-+	/*
-+	 * Register write get queued in the PPSB bus and write can
-+	 * happen later. Read back register to make sure that register
-+	 * write is completed.
-+	 */
-+	i2c_readl(i2c_dev, I2C_INT_STATUS);
-+
- 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
- 		BUG_ON(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
-@@ -444,6 +451,9 @@ err:
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-+	/* Read back register to make sure that register writes completed */
-+	i2c_readl(i2c_dev, I2C_INT_STATUS);
-+
- 	complete(&i2c_dev->msg_complete);
- 	return IRQ_HANDLED;
- }
-@@ -505,6 +515,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	ret = wait_for_completion_timeout(&i2c_dev->msg_complete, TEGRA_I2C_TIMEOUT);
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
-+	/* Read back register to make sure that register writes completed */
-+	i2c_readl(i2c_dev, I2C_INT_MASK);
-+
- 	if (WARN_ON(ret == 0)) {
- 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
- 
--- 
-1.7.1.1
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+
+Note that patch 4 touches context adjacent to Prashant's "i2c: tegra:
+Add clk_prepare/clk_unprepare" patch, which I hope to take through the
+Tegra tree since it's a requirement for the Tegra common clock
+conversion. I don't think this will cause any significant conflict, but
+perhaps it's worth resolving it explicitly.
+
+Wolfram, perhaps we should put these 4 patches and Prashan'ts into their
+own topic branch so that you can merge it into the I2C tree, and I can
+merge it into the Tegra tree too? Or, I can take everything through
+Tegra if you want, and ack it.
+
+Laxman, do you expect any more I2C-related changes this kernel cycle?
