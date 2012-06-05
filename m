@@ -1,53 +1,61 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 0/9] Add clk_prepare/clk_unprepare
-Date: Tue, 5 Jun 2012 09:59:34 +0530
-Message-ID: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH v3 3/9] mmc: tegra: add clk_prepare/clk_unprepare
+Date: Tue, 5 Jun 2012 09:59:37 +0530
+Message-ID: <1338870583-8704-4-git-send-email-pgaikwad@nvidia.com>
+References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1338870583-8704-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set adds use of clk_prepare/clk_unprepare as
-required by generic clock framework.
+Use clk_prepare/clk_unprepare as required by the generic clk framework.
 
-Tested on Ventana and Cardhu.
-
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 Please ignore previous versions. Updated commit message and
 maintainers properly in this version. No other change.
 
-Prashant Gaikwad (9):
-  ARM: tegra: add clk_prepare/clk_unprepare
-  i2c: tegra: Add clk_prepare/clk_unprepare
-  mmc: tegra: add clk_prepare/clk_unprepare
-  USB: ehci-tegra: add clk_prepare/clk_unprepare
-  Input: tegra-kbc - add clk_prepare/clk_unprepare
-  spi/tegra: add clk_prepare/clk_unprepare
-  staging: nvec: add clk_prepare/clk_unprepare
-  ASoC: tegra: add clk_prepare/clk_unprepare
-  crypto: add clk_prepare/clk_unprepare
+This patch should go through Tegra tree since other patches to port tegra
+to generic clock framework are dependent on it. Posting here to get ack from
+the maintainers.
 
- arch/arm/mach-tegra/cpu-tegra.c    |    6 +++---
- arch/arm/mach-tegra/dma.c          |    2 +-
- arch/arm/mach-tegra/pcie.c         |    6 +++---
- arch/arm/mach-tegra/powergate.c    |    4 ++--
- arch/arm/mach-tegra/timer.c        |    4 ++--
- arch/arm/mach-tegra/usb_phy.c      |   16 ++++++++--------
- drivers/crypto/tegra-aes.c         |   12 ++++++------
- drivers/i2c/busses/i2c-tegra.c     |   10 +++++-----
- drivers/input/keyboard/tegra-kbc.c |    4 ++--
- drivers/mmc/host/sdhci-tegra.c     |    6 +++---
- drivers/spi/spi-tegra.c            |    4 ++--
- drivers/staging/nvec/nvec.c        |    8 ++++----
- drivers/usb/host/ehci-tegra.c      |   20 ++++++++++----------
- sound/soc/tegra/tegra20_i2s.c      |    4 ++--
- sound/soc/tegra/tegra20_spdif.c    |    4 ++--
- sound/soc/tegra/tegra30_ahub.c     |    8 ++++----
- sound/soc/tegra/tegra30_i2s.c      |    4 ++--
- sound/soc/tegra/tegra_asoc_utils.c |   12 ++++++------
- 18 files changed, 67 insertions(+), 67 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index b38d8a7..2789656 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -334,7 +334,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
+ 		rc = PTR_ERR(clk);
+ 		goto err_clk_get;
+ 	}
+-	clk_enable(clk);
++	clk_prepare_enable(clk);
+ 	pltfm_host->clk = clk;
+ 
+ 	host->mmc->pm_caps = plat->pm_flags;
+@@ -349,7 +349,7 @@ static int __devinit sdhci_tegra_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_add_host:
+-	clk_disable(pltfm_host->clk);
++	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_put(pltfm_host->clk);
+ err_clk_get:
+ 	if (gpio_is_valid(plat->wp_gpio))
+@@ -390,7 +390,7 @@ static int __devexit sdhci_tegra_remove(struct platform_device *pdev)
+ 	if (gpio_is_valid(plat->power_gpio))
+ 		gpio_free(plat->power_gpio);
+ 
+-	clk_disable(pltfm_host->clk);
++	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_put(pltfm_host->clk);
+ 
+ 	sdhci_pltfm_free(pdev);
 -- 
 1.7.4.1
