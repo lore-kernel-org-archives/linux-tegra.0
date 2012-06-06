@@ -1,39 +1,41 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH REPOST 1/2] mmc: tegra: use bus-width property instead
- of support-8bit
-Date: Wed, 06 Jun 2012 11:34:48 -0600
-Message-ID: <4FCF94B8.6000400@wwwdotorg.org>
-References: <1338834755-6900-1-git-send-email-swarren@wwwdotorg.org> <20120606135647.GA3423@void.printf.net>
+Subject: Re: [PATCH V5 2/2] dma: tegra: add dmaengine based dma driver
+Date: Wed, 06 Jun 2012 11:47:17 -0600
+Message-ID: <4FCF97A5.5040008@wwwdotorg.org>
+References: <1338960327-31453-1-git-send-email-ldewangan@nvidia.com> <1338960327-31453-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20120606135647.GA3423@void.printf.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Colin Cross <ccross@android.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1338960327-31453-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, vinod.koul@intel.com
+Cc: dan.j.williams@intel.com, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, olof@lixom.net, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/06/2012 07:56 AM, Chris Ball wrote:
-> On Mon, Jun 04, 2012 at 12:32:34PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Update the driver to parse the new unified bus-width property introduced
->> in commit 7f21779 "mmc: dt: Consolidate DT bindings", instead of the legacy
->> support-8bit property.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->> Chris, It's probably easiest conflict-wise if I take this through the Tegra
->> tree. (Note: When I posted this series before, I said there shouldn't be any
->> conflicts if you take them through the MMC tree. That's probably still true,
->> but unforseen future conflicts seem more likely in the .dts files in the
->> second patch than sdhci-tegra.c in this patch, so the Tegra tree may make
->> more sense). Since the second patch depends on the first, it's easiest if
->> these go in through the same tree. Does this sound OK?
-> 
-> Yes, makes sense -- taking this via the Tegra tree is fine:
-> 
-> Acked-by: Chris Ball <cjb@laptop.org>
+On 06/05/2012 11:25 PM, Laxman Dewangan wrote:
+> Add dmaengine based NVIDIA's Tegra APB DMA driver.
+> This driver support the slave mode of data transfer from
+> peripheral to memory and vice versa.
+> The driver supports for the cyclic and non-cyclic mode
+> of data transfer.
 
-Thanks. I have applied the series.
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+
+Laxman, what are you plans for enabling this and replacing the existing
+non-dmaengine APB DMA driver? We will need to convert:
+
+* The fuse WAR stuff in arch/arm/mach-tegra
+* The ASoC driver in sound/soc/tegra
+
+This will require some thought and dependency management between the
+various subsystems.
+
+Vinod,
+
+It may be best to apply this series along in a topic branch that you
+merge into the dmaengine branch, and I can pull into Tegra if/when I
+need. Or, if you ack it, I can take it all through the Tegra tree if you
+want. That wouldn't allow patch 1 to be use by others though.
+
+Thanks.
