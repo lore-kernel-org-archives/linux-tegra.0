@@ -1,65 +1,82 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 2/2] dma: tegra: add dmaengine based dma driver
-Date: Wed, 6 Jun 2012 23:22:27 +0530
-Message-ID: <4FCF98DB.5050000@nvidia.com>
-References: <1338960327-31453-1-git-send-email-ldewangan@nvidia.com> <1338960327-31453-2-git-send-email-ldewangan@nvidia.com> <4FCF97A5.5040008@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [RFC PATCH 3/3] ASoC: tegra: add .stream_name to CPU DAIs
+Date: Wed,  6 Jun 2012 17:15:07 -0600
+Message-ID: <1339024507-5096-3-git-send-email-swarren@wwwdotorg.org>
+References: <1339024507-5096-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FCF97A5.5040008-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1339024507-5096-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 06 June 2012 11:17 PM, Stephen Warren wrote:
-> On 06/05/2012 11:25 PM, Laxman Dewangan wrote:
->> Add dmaengine based NVIDIA's Tegra APB DMA driver.
->> This driver support the slave mode of data transfer from
->> peripheral to memory and vice versa.
->> The driver supports for the cyclic and non-cyclic mode
->> of data transfer.
-> Acked-by: Stephen Warren<swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->
-> Laxman, what are you plans for enabling this and replacing the existing
-> non-dmaengine APB DMA driver? We will need to convert:
->
-> * The fuse WAR stuff in arch/arm/mach-tegra
-> * The ASoC driver in sound/soc/tegra
->
-> This will require some thought and dependency management between the
-> various subsystems.
-Currently following drive using the non-dmanegine apb dma driver:
-fuse
-SPI
-ASoc.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I want to first have this dma driver in the tree and then I will have 
-the series of patches to use this dmaengine dma driver and delete the 
-old apb dma driver.
+This is certainly required if the I2S and SPDIF controllers are converted
+to be CODECs, and is probably good practice irrespective.
 
-So just waiting for this driver to be in.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I'm not sure if this is technically correct. It's certainly not required
+for the drivers to work correctly when they aren't CODECs, but doesn't
+appear to harm anything.
 
+Mark, Liam - what are your thoughts on this?
 
-> Vinod,
->
-> It may be best to apply this series along in a topic branch that you
-> merge into the dmaengine branch, and I can pull into Tegra if/when I
-> need. Or, if you ack it, I can take it all through the Tegra tree if you
-> want. That wouldn't allow patch 1 to be use by others though.
->
+ sound/soc/tegra/tegra20_i2s.c   |    2 ++
+ sound/soc/tegra/tegra20_spdif.c |    1 +
+ sound/soc/tegra/tegra30_i2s.c   |    2 ++
+ 3 files changed, 5 insertions(+), 0 deletions(-)
 
-I like this series to be taken by Vinod. And then pull the change in to 
-Tegra tree for further dependency change.
-Reason is:
-- If there is any dmaengine driver change/enhancement, then tegra dma 
-driver will also be inline.
-- Taking on tegra tree help to implement the clock framework which is 
-going on.
-- Also fuse related changes will be in tegra tree.
-- Asoc and SPI can be also taken in the tegra tree or may be their 
-corresponding tree based on how much other changes are there,
--Deletion of old driver is in Tegra tree.
-
-> Thanks.
+diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
+index d67c684..c5fc6b1 100644
+--- a/sound/soc/tegra/tegra20_i2s.c
++++ b/sound/soc/tegra/tegra20_i2s.c
+@@ -259,12 +259,14 @@ static const struct snd_soc_dai_ops tegra20_i2s_dai_ops = {
+ static const struct snd_soc_dai_driver tegra20_i2s_dai_template = {
+ 	.probe = tegra20_i2s_probe,
+ 	.playback = {
++		.stream_name = "Playback",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.capture = {
++		.stream_name = "Capture",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index 014eb74..5c33c61 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -172,6 +172,7 @@ static struct snd_soc_dai_driver tegra20_spdif_dai = {
+ 	.name = DRV_NAME,
+ 	.probe = tegra20_spdif_probe,
+ 	.playback = {
++		.stream_name = "Playback",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index 7a84e93..b68e27a 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -319,12 +319,14 @@ static struct snd_soc_dai_ops tegra30_i2s_dai_ops = {
+ static const struct snd_soc_dai_driver tegra30_i2s_dai_template = {
+ 	.probe = tegra30_i2s_probe,
+ 	.playback = {
++		.stream_name = "Playback",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.capture = {
++		.stream_name = "Capture",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+ 		.rates = SNDRV_PCM_RATE_8000_96000,
+-- 
+1.7.0.4
