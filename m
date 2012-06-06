@@ -1,43 +1,54 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/4] i2c: tegra: Bug fixes, cleanups and M_NOSTART support
-Date: Tue, 5 Jun 2012 22:37:36 +0530
-Message-ID: <4FCE3CD8.8060502@nvidia.com>
-References: <1338901800-23968-1-git-send-email-ldewangan@nvidia.com> <4FCE3078.1030008@wwwdotorg.org>
+Subject: [PATCH V5 1/2] dma: dmaengine: add slave req id in slave_config
+Date: Wed, 6 Jun 2012 10:55:26 +0530
+Message-ID: <1338960327-31453-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FCE3078.1030008-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 05 June 2012 09:44 PM, Stephen Warren wrote:
-> On 06/05/2012 07:09 AM, Laxman Dewangan wrote:
->> This patch series having the:
->> - Handling of late register write due to Tegra PPSB design.
->> - support for I2C_M_NOSTART
->> - Use devm_* for all allocation.
-> The series,
->
-> Acked-by: Stephen Warren<swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->
-> Note that patch 4 touches context adjacent to Prashant's "i2c: tegra:
-> Add clk_prepare/clk_unprepare" patch, which I hope to take through the
-> Tegra tree since it's a requirement for the Tegra common clock
-> conversion. I don't think this will cause any significant conflict, but
-> perhaps it's worth resolving it explicitly.
->
-> Wolfram, perhaps we should put these 4 patches and Prashan'ts into their
-> own topic branch so that you can merge it into the I2C tree, and I can
-> merge it into the Tegra tree too? Or, I can take everything through
-> Tegra if you want, and ack it.
->
-> Laxman, do you expect any more I2C-related changes this kernel cycle?
-I have two more changes in plan:
--I2c controller require two clock source and the fixes towards that. 
-This can go on Tegra tree as changes are require in 
-mach-tegra/tegra30_clock.c, tegra20_clock.c files also.
+The DMA controller like Nvidia's Tegra Dma controller
+supports the different slave requestor id from different slave.
+This need to be configure in dma controller to handle the request
+properly.
 
-- Run time PM support but can be done later.
+Adding the slave-id in the slave configuration so that information
+can be passed from client when configuring for slave.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes from V2: 
+- Make slave_id as unsigned.
+
+No Changes from V3 and V4. 
+
+ include/linux/dmaengine.h |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 56377df..ccec62f 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -338,6 +338,9 @@ enum dma_slave_buswidth {
+  * @device_fc: Flow Controller Settings. Only valid for slave channels. Fill
+  * with 'true' if peripheral should be flow controller. Direction will be
+  * selected at Runtime.
++ * @slave_id: Slave requester id. Only valid for slave channels. The dma
++ * slave peripheral will have unique id as dma requester which need to be
++ * pass as slave config.
+  *
+  * This struct is passed in as configuration data to a DMA engine
+  * in order to set up a certain channel for DMA transport at runtime.
+@@ -365,6 +368,7 @@ struct dma_slave_config {
+ 	u32 src_maxburst;
+ 	u32 dst_maxburst;
+ 	bool device_fc;
++	unsigned int slave_id;
+ };
+ 
+ static inline const char *dma_chan_name(struct dma_chan *chan)
+-- 
+1.7.1.1
