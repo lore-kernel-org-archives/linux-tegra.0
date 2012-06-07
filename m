@@ -1,55 +1,63 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/3] ASoC: tegra: use DAI's not card's dev for dev_err
-Date: Fri, 8 Jun 2012 07:03:39 +0800
-Message-ID: <20120607230338.GJ14525@opensource.wolfsonmicro.com>
+Subject: Re: [RFC PATCH 3/3] ASoC: tegra: add .stream_name to CPU DAIs
+Date: Fri, 8 Jun 2012 07:01:40 +0800
+Message-ID: <20120607230139.GI14525@opensource.wolfsonmicro.com>
 References: <1339024507-5096-1-git-send-email-swarren@wwwdotorg.org>
+ <1339024507-5096-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ed/6oDxOLijJh8b0"
+	protocol="application/pgp-signature"; boundary="Encpt1P6Mxii2VuT"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1339024507-5096-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1339024507-5096-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ed/6oDxOLijJh8b0
+--Encpt1P6Mxii2VuT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 06, 2012 at 05:15:05PM -0600, Stephen Warren wrote:
+On Wed, Jun 06, 2012 at 05:15:07PM -0600, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> This is the actual device of the I2S or SPDIF controller reporting the
-> problem. If a future change converts these controllers to be CODECs, then
-> there may be no pcm associated with the substream, so this change avoids
-> a crash.
+> This is certainly required if the I2S and SPDIF controllers are converted
+> to be CODECs, and is probably good practice irrespective.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> I'm not sure if this is technically correct. It's certainly not required
+> for the drivers to work correctly when they aren't CODECs, but doesn't
+> appear to harm anything.
+>=20
+> Mark, Liam - what are your thoughts on this?
 
-Applied, thanks.
+It's just generally best practice to provide a name for all streams, it
+can be used for diagnostics if nothing else.
 
---ed/6oDxOLijJh8b0
+--Encpt1P6Mxii2VuT
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP0TNDAAoJEBus8iNuMP3dWR4QAJtJN9290ut/ReGnz8/ooOko
-AgA2Q0MwmX8PeuqVprJ3XYl3bVTGtutWsIBDPsTqoAoZ+Wy3tgT0YD+vQiQ/RfxR
-E5JnC3fMGmxYBVJo33cCdVcx1KWL5qLUDdNMwyIDVVCJQNslSOj8OunRN4qTwBiu
-maTfBGu4kJmDNnpeRVEgL2jQfAtJ2Gu5klGjbmR0Lwp47qZULoUJ5Nu8H/DeBsIJ
-jEARzGVCX0V8PCE15RuwiIfFivyOYaPaDY206WpkM2YsRS69PSFD0IZl8nWHCkM9
-bH0/tIYlQgf5gHsXwhOvONZktCYpc1SF6576RC+JMxQFJVB8/FWOXzeFQJLUuwzK
-8XvI6Xs85qhEUZ3tGsVZrqKshwmJxlPDpARh+biatZGGaq5HqtzTcEJ3aQ6NJInV
-4mnVQ03zHBGu7Qye43dPDnFXGAoZayyrxgKhfIJecxhJlY+Gk/FXIb2N3fA9fAIo
-beKFC5ZUdNQ6KhYXUTToEDGDw08WHfo5T+5u9WRqzH/gekruq4Y6mnaN48fIT5tJ
-sK2pTQ1O0WKh+ZP4wruNj30x9xg6zRbgmyyBvTAgehCL67gvRf2/aFRsV+SGtjp7
-WQQpG81JjXsjN2fBwHnMWgUnfBal5mUngHYieyUPRRwh8MgyELgYNOEGgzFGuTQR
-MDffD/IZ7UQVAPm1Savv
-=1vtr
+iQIcBAEBAgAGBQJP0TLNAAoJEBus8iNuMP3dRQkP/3+Uzq3JjsSylpQ4+JbAf2pu
+33DBPRC5sTxLyKUUFDo3boW5JrKF/NaydrDMaIhqit/VuiG/pYELShQVtyZmVrpG
+DpNr7y9htra1buSOzuytayU2XcwyuCpvePHQl9u7xNBGrxvT107oDbjY7xrxgF0c
+ISkkyyiL4At/u9l1jGgJekbT+U4eMwcRwbBCoXeYC/Yk1IQr6Pc2YM1eRe4IQo9k
+9cwxYteNYiZmZxHIotZa2Pod5BpKySkqY0lh5Z5w2YvWTWOQXP+++2qSENyeh9xa
+BGhXtP7TRcpsPryhg2kH+NeOjJgYQHRKYxrwwsjzLkHen095dBtc+uOcVUYQG8eg
+tupBRuoYT0dRqOeE3YREwAVIPkg5otQod6u8unCxYBaUh8ZFLC3w4JyN5DC4avfM
+P2V1c/NzCHeSKPOjVHbbiXGa9yTLJCUcKxKpl3x29DIRa/+Z1n3yNd9AXBBqdwAD
+xytCzqTY6qVMQrnMGTmXcdn5RoMXXQ5OwkfEGDjGLKLBLQec50MURbKxpkbxuLPW
+ZWQcB1pOcd8KPYA3jU44wm6gojgjHpnM5snQw1Ck+Zsady7u2vczMwFyb+E7cc1X
+sCpxOJb3ed4CvujKeMLWBf0AkAR03+p9weHj61sXzSK2bX8Cklhc2decQMvuH568
+HeMgVhKrTI0P631HPzzT
+=rLKO
 -----END PGP SIGNATURE-----
 
---ed/6oDxOLijJh8b0--
+--Encpt1P6Mxii2VuT--
