@@ -1,55 +1,77 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: dt: tegra: cardhu: register core regulator tps65911
-Date: Sat, 9 Jun 2012 00:52:03 +0530
-Message-ID: <4FD250DB.2090207@nvidia.com>
-References: <1337691917-15040-1-git-send-email-ldewangan@nvidia.com> <1337691917-15040-2-git-send-email-ldewangan@nvidia.com> <4FBBC192.7030900@wwwdotorg.org> <4FBBC830.2060802@nvidia.com> <4FBBCA8F.3050903@wwwdotorg.org> <4FBBD33C.8020802@nvidia.com> <4FBBDA97.6000006@wwwdotorg.org> <4FBBDE06.5080806@nvidia.com> <4FC916AC.4060804@wwwdotorg.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH v3 7/9] staging: nvec: add clk_prepare/clk_unprepare
+Date: Fri, 08 Jun 2012 21:48:12 +0200
+Message-ID: <4214308.tKJXbx0ZCv@ax5200p>
+References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com> <1338870583-8704-8-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FC916AC.4060804-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1338870583-8704-8-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 02 June 2012 12:53 AM, Stephen Warren wrote:
->
-> We could either augment struct of_regulator_match with an integer ID
-> field for each regulator (which would perhaps make it slightly painful
-> to write the nodes and keep the IDs matched up), or add a new property
-> to each regulator provider node e.g. regulator-id which contained the
-> name that the regulator driver knows the regulator as (which would match
-> struct of_regulator_match.name), since the existing regulator-name
-> property is used for semantically different purposes.
->
-> That would result in:
->
->> tps65911: tps65911@2d {
->> 	compatible = "ti,tps65911";
->> 	reg =<0x2d>;
->>
->> 	#gpio-cells =<2>;
->> 	gpio-controller;
->>
->> 	regulators {
->> 		#address-cells =<1>;
->> 		#size-cells =<0>;
->>
->> 		vdd1_reg: regulator@0 {
->> 			reg =<0>;
->> 			regulator-id = "vdd1"; /* Internal name */
->> 			regulator-name = "vdd_1v2_gen"; /* Signal on schematic */
-> ...
->> 		};
->>
->> 		vdd2_reg: regulator@1 {
->> 			reg =<1>;
->> 			regulator-id = "vdd2";
->> 			regulator-name = "vdd_1v5_gen";
-> ...
+On Tuesday 05 June 2012 09:59:41 Prashant Gaikwad wrote:
+> Use clk_prepare/clk_unprepare as required by the generic clk framework.
+> 
+> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+I think I gave an ack already on the first (or second version), which was 
+identical. Nevertheless, here is one more.
 
-So is it fine to go on the above binding?
-In this case we need to find the match_regulator based on regulator-id 
-rather than by name.
+Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+
+> ---
+> Please ignore previous versions. Updated commit message and
+> maintainers properly in this version. No other change.
+> 
+> This patch should go through Tegra tree since other patches to port Tegra
+> to generic clock framework are dependent on it. Posting here to get ack from
+> the maintainers.
+> 
+>  drivers/staging/nvec/nvec.c |    8 ++++----
+>  1 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 3c60088..9356886 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -675,7 +675,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+> {
+>  	u32 val;
+> 
+> -	clk_enable(nvec->i2c_clk);
+> +	clk_prepare_enable(nvec->i2c_clk);
+> 
+>  	tegra_periph_reset_assert(nvec->i2c_clk);
+>  	udelay(2);
+> @@ -695,14 +695,14 @@ static void tegra_init_i2c_slave(struct nvec_chip
+> *nvec)
+> 
+>  	enable_irq(nvec->irq);
+> 
+> -	clk_disable(nvec->i2c_clk);
+> +	clk_disable_unprepare(nvec->i2c_clk);
+>  }
+> 
+>  static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+>  {
+>  	disable_irq(nvec->irq);
+>  	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+> -	clk_disable(nvec->i2c_clk);
+> +	clk_disable_unprepare(nvec->i2c_clk);
+>  }
+> 
+>  static void nvec_power_off(void)
+> @@ -812,7 +812,7 @@ static int __devinit tegra_nvec_probe(struct
+> platform_device *pdev)
+> 
+>  	tegra_init_i2c_slave(nvec);
+> 
+> -	clk_enable(i2c_clk);
+> +	clk_prepare_enable(i2c_clk);
+> 
+> 
+>  	/* enable event reporting */
