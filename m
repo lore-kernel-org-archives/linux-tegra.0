@@ -1,33 +1,85 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 09/10] ARM: tegra: harmony: Initialize PCIe from DT
-Date: Mon, 11 Jun 2012 15:41:46 -0600
-Message-ID: <4FD6661A.1060407@wwwdotorg.org>
-References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de> <1339427118-32263-10-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: dt: tegra: rename board files to match SoC
+Date: Mon, 11 Jun 2012 16:44:35 -0600
+Message-ID: <1339454675-927-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1339427118-32263-10-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/11/2012 09:05 AM, Thierry Reding wrote:
-> With the device tree support in place, probe the PCIe controller from
-> the device tree and remove the corresponding workaround in the board
-> file.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra-harmony.dts
+Most ARM ${board}.dts files are already named ${soc}-${board}.dts. This
+change modifies the Tegra board files to be named the same way for
+consistency.
 
-> +	pci_vdd_reg: fixedregulator@0 {
+Once a related change is made in U-Boot, this will cause both U-Boot and
+the kernel to use the same names for the .dts files and SoC identifiers,
+thus allowing U-Boot's recently added "soc" and "board" environment
+variables to be used to construct the name of Tegra .dtb files, and hence
+allow board-generic U-Boot bootcmd scripts to be written.
 
-I think that'd usually just be "regulator@0".
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../dts/{tegra-harmony.dts => tegra20-harmony.dts} |    0
+ .../dts/{tegra-paz00.dts => tegra20-paz00.dts}     |    0
+ .../{tegra-seaboard.dts => tegra20-seaboard.dts}   |    0
+ .../{tegra-trimslice.dts => tegra20-trimslice.dts} |    0
+ .../dts/{tegra-ventana.dts => tegra20-ventana.dts} |    0
+ .../dts/{tegra-cardhu.dts => tegra30-cardhu.dts}   |    0
+ arch/arm/mach-tegra/Makefile.boot                  |   12 ++++++------
+ 7 files changed, 6 insertions(+), 6 deletions(-)
+ rename arch/arm/boot/dts/{tegra-harmony.dts => tegra20-harmony.dts} (100%)
+ rename arch/arm/boot/dts/{tegra-paz00.dts => tegra20-paz00.dts} (100%)
+ rename arch/arm/boot/dts/{tegra-seaboard.dts => tegra20-seaboard.dts} (100%)
+ rename arch/arm/boot/dts/{tegra-trimslice.dts => tegra20-trimslice.dts} (100%)
+ rename arch/arm/boot/dts/{tegra-ventana.dts => tegra20-ventana.dts} (100%)
+ rename arch/arm/boot/dts/{tegra-cardhu.dts => tegra30-cardhu.dts} (100%)
 
-If you need the "@0" part to differentiate between multiple regulators,
-the node needs a reg property too:
-
-	reg = <0 0>;
-
-although then I wonder about putting the regulator under the root node,
-since the address wouldn't really make sense...
+diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-harmony.dts
+rename to arch/arm/boot/dts/tegra20-harmony.dts
+diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-paz00.dts
+rename to arch/arm/boot/dts/tegra20-paz00.dts
+diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-seaboard.dts
+rename to arch/arm/boot/dts/tegra20-seaboard.dts
+diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-trimslice.dts
+rename to arch/arm/boot/dts/tegra20-trimslice.dts
+diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-ventana.dts
+rename to arch/arm/boot/dts/tegra20-ventana.dts
+diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra30-cardhu.dts
+similarity index 100%
+rename from arch/arm/boot/dts/tegra-cardhu.dts
+rename to arch/arm/boot/dts/tegra30-cardhu.dts
+diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+index 9a82094..8040345 100644
+--- a/arch/arm/mach-tegra/Makefile.boot
++++ b/arch/arm/mach-tegra/Makefile.boot
+@@ -2,9 +2,9 @@ zreladdr-$(CONFIG_ARCH_TEGRA_2x_SOC)	+= 0x00008000
+ params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
+ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+ 
+-dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
+-dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
+-dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
+-dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
+-dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
+-dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra-cardhu.dtb
++dtb-$(CONFIG_MACH_HARMONY) += tegra20-harmony.dtb
++dtb-$(CONFIG_MACH_PAZ00) += tegra20-paz00.dtb
++dtb-$(CONFIG_MACH_SEABOARD) += tegra20-seaboard.dtb
++dtb-$(CONFIG_MACH_TRIMSLICE) += tegra20-trimslice.dtb
++dtb-$(CONFIG_MACH_VENTANA) += tegra20-ventana.dtb
++dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra30-cardhu.dtb
+-- 
+1.7.0.4
