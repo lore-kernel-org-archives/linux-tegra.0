@@ -1,69 +1,21 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] ASoC: tegra+wm8903: turn of mic detect when
-	card is removed
-Date: Mon, 11 Jun 2012 11:27:19 -0600
-Message-ID: <1339435640-20171-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Add clk_prepare/clk_unprepare
+Date: Mon, 11 Jun 2012 12:04:01 -0600
+Message-ID: <4FD63311.6060308@wwwdotorg.org>
+References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1338870583-8704-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+On 06/04/2012 10:29 PM, Prashant Gaikwad wrote:
+> This patch set adds use of clk_prepare/clk_unprepare as
+> required by generic clock framework.
 
-If mic detect is left enabled and the WM8903 detects a status change,
-the WM8903 driver will make a callback against the free()d jack, which
-will cause a crash.
-
-This problem can be triggered by fully initializing an audio card, then
-removing and re-inserting the machine driver module.
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
- sound/soc/tegra/tegra_wm8903.c |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index 08b5fef..0c5bb33 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -213,6 +213,17 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
- 
-+static int tegra_wm8903_remove(struct snd_soc_card *card)
-+{
-+	struct snd_soc_pcm_runtime *rtd = &(card->rtd[0]);
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	struct snd_soc_codec *codec = codec_dai->codec;
-+
-+	wm8903_mic_detect(codec, NULL, 0, 0);
-+
-+	return 0;
-+}
-+
- static struct snd_soc_dai_link tegra_wm8903_dai = {
- 	.name = "WM8903",
- 	.stream_name = "WM8903 PCM",
-@@ -233,6 +244,8 @@ static struct snd_soc_card snd_soc_tegra_wm8903 = {
- 	.dai_link = &tegra_wm8903_dai,
- 	.num_links = 1,
- 
-+	.remove = tegra_wm8903_remove,
-+
- 	.controls = tegra_wm8903_controls,
- 	.num_controls = ARRAY_SIZE(tegra_wm8903_controls),
- 	.dapm_widgets = tegra_wm8903_dapm_widgets,
--- 
-1.7.0.4
+In anticipation of not receiving any NAKs, I have applied the series to
+Tegra's for-next.
