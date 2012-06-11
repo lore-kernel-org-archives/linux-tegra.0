@@ -1,56 +1,102 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: enable I2C mux in defconfig
-Date: Mon, 11 Jun 2012 12:28:29 -0600
-Message-ID: <1339439309-12994-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 05/10] ARM: tegra: Rewrite PCIe support as a driver
+Date: Mon, 11 Jun 2012 15:09:44 -0600
+Message-ID: <4FD65E98.4070200@wwwdotorg.org>
+References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de> <1339427118-32263-6-git-send-email-thierry.reding@avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1339427118-32263-6-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 06/11/2012 09:05 AM, Thierry Reding wrote:
+> This commit adds a platform device driver for the PCIe controller on
+> Tegra SOCs. Current users of the old code (TrimSlice and Harmony) are
+> converted and now initialize and register a corresponding platform
+> device.
 
-Add the following, to enable the pinctrl-based I2C mux on Seaboard:
-* CONFIG_I2C_MUX
-* CONFIG_I2C_MUX_PINCTRL
+> diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
 
-Some timer options were moved due to unrelated Kconfig changes.
+> +static struct resource tegra_pcie_resources[] = {
+> +	[0] = {
+> +		.start = TEGRA_PCIE_BASE,
+> +		.end = TEGRA_PCIE_BASE + TEGRA_PCIE_SIZE - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start = TEGRA_PCIE_MMIO_BASE,
+> +		.end = TEGRA_PCIE_MMIO_BASE + TEGRA_PCIE_MMIO_SIZE - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +	[2] = {
+> +		.start = INT_PCIE_INTR,
+> +		.end = INT_PCIE_INTR,
+> +		.flags = IORESOURCE_IRQ,
+> +	},
+> +};
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I'll squash this into the existing defconfig update patch.
+I'm not sure those resources either cover all the necessary regions, nor
+are as fine-grained as they should be ...
 
- arch/arm/configs/tegra_defconfig |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+In particular, in pcie.c, I see separate afi_writel() and pads_writel()
+implying those are separate regions.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 42fdcf7..4be9c1e 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -1,4 +1,6 @@
- CONFIG_EXPERIMENTAL=y
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_CGROUPS=y
-@@ -28,8 +30,6 @@ CONFIG_MACH_HARMONY=y
- CONFIG_MACH_PAZ00=y
- CONFIG_MACH_TRIMSLICE=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
--CONFIG_NO_HZ=y
--CONFIG_HIGH_RES_TIMERS=y
- CONFIG_SMP=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
-@@ -100,6 +100,8 @@ CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C=y
- # CONFIG_I2C_COMPAT is not set
-+CONFIG_I2C_MUX=y
-+CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_TEGRA=y
- CONFIG_SPI=y
- CONFIG_SPI_TEGRA=y
--- 
-1.7.0.4
+Also, I see the following hard-code specific addresses, and are still
+used by the driver after conversion:
+
+> #define MEM_BASE_0              (TEGRA_PCIE_BASE + SZ_256M)
+> #define MEM_SIZE_0              SZ_128M
+> #define MEM_BASE_1              (MEM_BASE_0 + MEM_SIZE_0)
+> #define MEM_SIZE_1              SZ_128M
+> #define PREFETCH_MEM_BASE_0     (MEM_BASE_1 + MEM_SIZE_1)
+> #define PREFETCH_MEM_SIZE_0     SZ_128M
+> #define PREFETCH_MEM_BASE_1     (PREFETCH_MEM_BASE_0 + PREFETCH_MEM_SIZE_0)
+> #define PREFETCH_MEM_SIZE_1     SZ_128M
+
+Also, there's a comment describing the register layout in terms of a
+number of separate regions:
+
+> /*
+>  * Tegra2 defines 1GB in the AXI address map for PCIe.
+>  *
+>  * That address space is split into different regions, with sizes and
+>  * offsets as follows:
+>  *
+>  * 0x80000000 - 0x80003fff - PCI controller registers
+>  * 0x80004000 - 0x80103fff - PCI configuration space
+>  * 0x80104000 - 0x80203fff - PCI extended configuration space
+>  * 0x80203fff - 0x803fffff - unused
+>  * 0x80400000 - 0x8040ffff - downstream IO
+>  * 0x80410000 - 0x8fffffff - unused
+>  * 0x90000000 - 0x9fffffff - non-prefetchable memory
+>  * 0xa0000000 - 0xbfffffff - prefetchable memory
+>  */
+
+(the latter 2 regions at least being also split in half for each of the
+2 host ports)
+
+Shouldn't each of these regions be a separate entry in the platform
+device resources.
+
+This perhaps isn't that relevant for Tegra20 alone, but Tegra30 supports
+3 host ports instead of 2 (hence I presume alters the internal layout of
+the 1G chunk of physical memory space allocated to PCIe), and moves the
+PCIe area from 2G..3G to 0G..1G (so invalidates the hard-coded
+*_MEM_BASE_* above).
+
+That said, I'm not sure whether Tegra20's and Tegra30's PCIe controllers
+are similar enough to make a shared driver worthwhile/possible.
+(Although our downstream Android driver appears to handle both with a
+very small number of ifdefs). If they are similar, then I think my
+comments above should be addressed. If they are not similar, then I
+think you can just have a single 1G memory region in the resources, and
+split it up internally, rather than needing separate resources for
+different parts of the address space.
+
+While we can easily fix this kind of driver internals so this doesn't
+seem like a big deal, this kind of change would impact the device tree
+binding, so it seems that we need to sort it out before DT conversion.
