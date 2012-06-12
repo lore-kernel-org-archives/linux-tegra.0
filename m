@@ -1,54 +1,66 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v2 05/10] ARM: tegra: Rewrite PCIe support as a driver
-Date: Tue, 12 Jun 2012 09:24:44 +0200
-Message-ID: <20120612072444.GA8577@avionic-0098.mockup.avionic-design.de>
-References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de>
- <1339427118-32263-6-git-send-email-thierry.reding@avionic-design.de>
- <4FD65E98.4070200@wwwdotorg.org>
- <20120612064124.GF4040@avionic-0098.adnet.avionic-design.de>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v3 5/9] Input: tegra-kbc - add clk_prepare/clk_unprepare
+Date: Tue, 12 Jun 2012 00:30:06 -0700
+Message-ID: <20120612073006.GB9766@core.coreip.homeip.net>
+References: <1338870583-8704-1-git-send-email-pgaikwad@nvidia.com>
+ <1338870583-8704-6-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120612064124.GF4040@avionic-0098.adnet.avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+In-Reply-To: <1338870583-8704-6-git-send-email-pgaikwad@nvidia.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, swarren@wwwdotorg.org, linux@arm.linux.org.uk, olof@lixom.net, ccross@android.com, linux-input@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jun 05, 2012 at 09:59:39AM +0530, Prashant Gaikwad wrote:
+> Use clk_prepare/clk_unprepare as required by the generic clk framework.
+> 
+> Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Dmitry Torokhov <dtor@mail.ru>
 
-* Thierry Reding wrote:
-> AFAICT the even partitioning of the non-prefetchable and prefetchable
-> memory regions is arbitrary and it could potentially be useful to make
-> it configurable via the DT.
+> ---
+> Please ignore previous versions. Updated commit message and
+> maintainers properly in this version. No other change.
+> 
+> This patch should go through Tegra tree since other patches to port tegra
+> to generic clock framework are dependent on it. Posting here to get ack from
+> the maintainers.
+> 
+>  drivers/input/keyboard/tegra-kbc.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> index 4ffe64d..2c1c9ed 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -492,7 +492,7 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
+>  	unsigned int debounce_cnt;
+>  	u32 val = 0;
+>  
+> -	clk_enable(kbc->clk);
+> +	clk_prepare_enable(kbc->clk);
+>  
+>  	/* Reset the KBC controller to clear all previous status.*/
+>  	tegra_periph_reset_assert(kbc->clk);
+> @@ -556,7 +556,7 @@ static void tegra_kbc_stop(struct tegra_kbc *kbc)
+>  	disable_irq(kbc->irq);
+>  	del_timer_sync(&kbc->timer);
+>  
+> -	clk_disable(kbc->clk);
+> +	clk_disable_unprepare(kbc->clk);
+>  }
+>  
+>  static int tegra_kbc_open(struct input_dev *dev)
+> -- 
+> 1.7.4.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-So it turns out that this isn't true. But apart from the comments in the
-driver I couldn't find any reference to how the prefetch and non-prefetch
-ranges are partitioned. Judging by the code for Tegra2 this is evenly
-partitioned among ports 0 and 1 but it would be interesting to know this is
-done on Tegra3. Is there any way you can find out?
-
-It'd also be nice if some better documentation for the PCIe controller could
-be made available. The Tegra2 TRM doesn't contain any of the AFI or PADS
-registers and while the Tegra3 TRM documents more registers, their offsets
-are completely missing.
-
-Thierry
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEUEARECAAYFAk/W7rwACgkQZ+BJyKLjJp85+QCgmN07XBNfzBalb+sQaSasq/jt
-7h0AmNrMJIwLUYh+l6BAWLPvMxOVeNg=
-=iyKb
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
+-- 
+Dmitry
