@@ -1,58 +1,83 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra+wm8903: turn of mic detect when card is
- removed
-Date: Tue, 12 Jun 2012 11:42:55 +0800
-Message-ID: <20120612034254.GA4258@opensource.wolfsonmicro.com>
-References: <1339435640-20171-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH v2 05/10] ARM: tegra: Rewrite PCIe support as a driver
+Date: Tue, 12 Jun 2012 06:59:37 +0200
+Message-ID: <20120612045937.GA3669@avionic-0098.mockup.avionic-design.de>
+References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de>
+ <1339427118-32263-6-git-send-email-thierry.reding@avionic-design.de>
+ <4FD6617C.4090805@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1339435640-20171-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <4FD6617C.4090805-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---gKMricLos+KVdGMg
+--45Z9DzgjV8m4Oswq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 11, 2012 at 11:27:19AM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+* Stephen Warren wrote:
+> On 06/11/2012 09:05 AM, Thierry Reding wrote:
+> > This commit adds a platform device driver for the PCIe controller on
+> > Tegra SOCs. Current users of the old code (TrimSlice and Harmony) are
+> > converted and now initialize and register a corresponding platform
+> > device.
 >=20
-> If mic detect is left enabled and the WM8903 detects a status change,
-> the WM8903 driver will make a callback against the free()d jack, which
-> will cause a crash.
+> > -static int tegra_pcie_clocks_get(void)
+> > +static int tegra_pcie_clocks_get(struct tegra_pcie_info *pcie)
+> >  {
+> >  	int err;
+> > =20
+> > -	tegra_pcie.pex_clk =3D clk_get(NULL, "pex");
+> > -	if (IS_ERR(tegra_pcie.pex_clk))
+> > -		return PTR_ERR(tegra_pcie.pex_clk);
+> > +	pcie->pex_clk =3D clk_get(NULL, "pex");
+> > +	if (IS_ERR(pcie->pex_clk))
+> > +		return PTR_ERR(pcie->pex_clk);
 >=20
-> This problem can be triggered by fully initializing an audio card, then
-> removing and re-inserting the machine driver module.
+> While we're changing this, can we convert this to devm_clk_get(), and ...
 
-Applied, thanks.
+Will do.
 
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> > -	tegra_pcie.regs =3D ioremap_nocache(TEGRA_PCIE_BASE, PCIE_IOMAP_SZ);
+> > -	if (tegra_pcie.regs =3D=3D NULL) {
+> > -		pr_err("PCIE: Failed to map PCI/AFI registers\n");
+> > +	regs =3D request_mem_region(regs->start, resource_size(regs), "PCI/AF=
+I");
+> > +	if (regs =3D=3D NULL) {
+> > +		dev_err(&pdev->dev, "failed to request PCI/AFI region: %d\n", err);
+> > +		goto err_req_reg;
+> > +	}
+> > +
+> > +	pcie->regs =3D ioremap_nocache(regs->start, resource_size(regs));
+> > +	if (pcie->regs =3D=3D NULL) {
+> > +		dev_err(&pdev->dev, "failed to map PCI/AFI registers\n");
+> >  		err =3D -ENOMEM;
+> >  		goto err_map_reg;
+> >  	}
+>=20
+> ... that to devm_request_and_ioremap(). That would allow a bunch of the
+> cleanup code to be deleted rather than just modified.
+
+Yes, I'll fix that up as well.
+
+Thierry
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP1rp6AAoJEBus8iNuMP3ddgAP/jWkINLupOl4WFzW/kj7DnME
-1vv/FGCfTp1tm7Nu/ANgSDvGNrs6HCHoGdeelGe67Ng9Eyc335ZZB9Y0XjaRPJgj
-TkD74fgkBOOnLB+ZyvOM0n0p0fEdxskyGCYGYycR0NhCabGIggfOq36Mk5pQv9q8
-xIPPfTc1Eeun9oCwzK+ZLj7KElKq3khEg/dg5kkTBCm/+pt2ryRsVQfGYGX78Yyt
-t0lQihYvCeCpf6p+k9KLVnGRCsQr1gsGh9Z+x+d4u1xvjTSnGHxOssTjFTfZjxEO
-9l/BYUgTrI082GweLlMGBH7G5AJsSC2jXcclzx+5F+uOjqJDD3wi/TMjI2u0vcYs
-Zc2zmITVFEIYsAS5b6Uwb8+7lAs+fDcQXqiSd6NBsYdelRoMzZ1M9FubU0GXMu8o
-MGHXoXVIljL/PQJoG6aphCruYzl6ewmMr2079hYbpht8FSkwWi52L+bjXVfRsz+q
-bsITBXdGOi+rYTHSEFs9gorcOwEVR1XyUITtkY8Vy6152Ux4F7lgMQAf1WS7ZNs6
-yzARd3eWDUsFNVQSd6XauszaZq9GwZBDahlRU8WjG7qjmwKzOY2BVkaBjFo6ulqp
-GxPb8MOeTvIZcndHSjEBqmibwkwe2En90vw445XjYHV6XIk6NJ7+TFbfkiKV1SE8
-I5Ha9G3BKLBh378xmZrj
-=WrBN
+iEYEARECAAYFAk/WzLkACgkQZ+BJyKLjJp9LsgCgkd2RUHoQ3x28GMcYJKhFCGW9
+ULQAn119Zd8JXGN/WKk/ayq06qrwl3w3
+=IU8W
 -----END PGP SIGNATURE-----
 
---gKMricLos+KVdGMg--
+--45Z9DzgjV8m4Oswq--
