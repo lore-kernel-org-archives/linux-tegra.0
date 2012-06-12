@@ -1,85 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra: rename board files to match SoC
-Date: Mon, 11 Jun 2012 16:44:35 -0600
-Message-ID: <1339454675-927-1-git-send-email-swarren@wwwdotorg.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra+wm8903: turn of mic detect when card is
+ removed
+Date: Tue, 12 Jun 2012 11:42:55 +0800
+Message-ID: <20120612034254.GA4258@opensource.wolfsonmicro.com>
+References: <1339435640-20171-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1339435640-20171-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Most ARM ${board}.dts files are already named ${soc}-${board}.dts. This
-change modifies the Tegra board files to be named the same way for
-consistency.
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Once a related change is made in U-Boot, this will cause both U-Boot and
-the kernel to use the same names for the .dts files and SoC identifiers,
-thus allowing U-Boot's recently added "soc" and "board" environment
-variables to be used to construct the name of Tegra .dtb files, and hence
-allow board-generic U-Boot bootcmd scripts to be written.
+On Mon, Jun 11, 2012 at 11:27:19AM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> If mic detect is left enabled and the WM8903 detects a status change,
+> the WM8903 driver will make a callback against the free()d jack, which
+> will cause a crash.
+>=20
+> This problem can be triggered by fully initializing an audio card, then
+> removing and re-inserting the machine driver module.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../dts/{tegra-harmony.dts => tegra20-harmony.dts} |    0
- .../dts/{tegra-paz00.dts => tegra20-paz00.dts}     |    0
- .../{tegra-seaboard.dts => tegra20-seaboard.dts}   |    0
- .../{tegra-trimslice.dts => tegra20-trimslice.dts} |    0
- .../dts/{tegra-ventana.dts => tegra20-ventana.dts} |    0
- .../dts/{tegra-cardhu.dts => tegra30-cardhu.dts}   |    0
- arch/arm/mach-tegra/Makefile.boot                  |   12 ++++++------
- 7 files changed, 6 insertions(+), 6 deletions(-)
- rename arch/arm/boot/dts/{tegra-harmony.dts => tegra20-harmony.dts} (100%)
- rename arch/arm/boot/dts/{tegra-paz00.dts => tegra20-paz00.dts} (100%)
- rename arch/arm/boot/dts/{tegra-seaboard.dts => tegra20-seaboard.dts} (100%)
- rename arch/arm/boot/dts/{tegra-trimslice.dts => tegra20-trimslice.dts} (100%)
- rename arch/arm/boot/dts/{tegra-ventana.dts => tegra20-ventana.dts} (100%)
- rename arch/arm/boot/dts/{tegra-cardhu.dts => tegra30-cardhu.dts} (100%)
+Applied, thanks.
 
-diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-harmony.dts
-rename to arch/arm/boot/dts/tegra20-harmony.dts
-diff --git a/arch/arm/boot/dts/tegra-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-paz00.dts
-rename to arch/arm/boot/dts/tegra20-paz00.dts
-diff --git a/arch/arm/boot/dts/tegra-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-seaboard.dts
-rename to arch/arm/boot/dts/tegra20-seaboard.dts
-diff --git a/arch/arm/boot/dts/tegra-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-trimslice.dts
-rename to arch/arm/boot/dts/tegra20-trimslice.dts
-diff --git a/arch/arm/boot/dts/tegra-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-ventana.dts
-rename to arch/arm/boot/dts/tegra20-ventana.dts
-diff --git a/arch/arm/boot/dts/tegra-cardhu.dts b/arch/arm/boot/dts/tegra30-cardhu.dts
-similarity index 100%
-rename from arch/arm/boot/dts/tegra-cardhu.dts
-rename to arch/arm/boot/dts/tegra30-cardhu.dts
-diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index 9a82094..8040345 100644
---- a/arch/arm/mach-tegra/Makefile.boot
-+++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -2,9 +2,9 @@ zreladdr-$(CONFIG_ARCH_TEGRA_2x_SOC)	+= 0x00008000
- params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
- initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
- 
--dtb-$(CONFIG_MACH_HARMONY) += tegra-harmony.dtb
--dtb-$(CONFIG_MACH_PAZ00) += tegra-paz00.dtb
--dtb-$(CONFIG_MACH_SEABOARD) += tegra-seaboard.dtb
--dtb-$(CONFIG_MACH_TRIMSLICE) += tegra-trimslice.dtb
--dtb-$(CONFIG_MACH_VENTANA) += tegra-ventana.dtb
--dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra-cardhu.dtb
-+dtb-$(CONFIG_MACH_HARMONY) += tegra20-harmony.dtb
-+dtb-$(CONFIG_MACH_PAZ00) += tegra20-paz00.dtb
-+dtb-$(CONFIG_MACH_SEABOARD) += tegra20-seaboard.dtb
-+dtb-$(CONFIG_MACH_TRIMSLICE) += tegra20-trimslice.dtb
-+dtb-$(CONFIG_MACH_VENTANA) += tegra20-ventana.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra30-cardhu.dtb
--- 
-1.7.0.4
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP1rp6AAoJEBus8iNuMP3ddgAP/jWkINLupOl4WFzW/kj7DnME
+1vv/FGCfTp1tm7Nu/ANgSDvGNrs6HCHoGdeelGe67Ng9Eyc335ZZB9Y0XjaRPJgj
+TkD74fgkBOOnLB+ZyvOM0n0p0fEdxskyGCYGYycR0NhCabGIggfOq36Mk5pQv9q8
+xIPPfTc1Eeun9oCwzK+ZLj7KElKq3khEg/dg5kkTBCm/+pt2ryRsVQfGYGX78Yyt
+t0lQihYvCeCpf6p+k9KLVnGRCsQr1gsGh9Z+x+d4u1xvjTSnGHxOssTjFTfZjxEO
+9l/BYUgTrI082GweLlMGBH7G5AJsSC2jXcclzx+5F+uOjqJDD3wi/TMjI2u0vcYs
+Zc2zmITVFEIYsAS5b6Uwb8+7lAs+fDcQXqiSd6NBsYdelRoMzZ1M9FubU0GXMu8o
+MGHXoXVIljL/PQJoG6aphCruYzl6ewmMr2079hYbpht8FSkwWi52L+bjXVfRsz+q
+bsITBXdGOi+rYTHSEFs9gorcOwEVR1XyUITtkY8Vy6152Ux4F7lgMQAf1WS7ZNs6
+yzARd3eWDUsFNVQSd6XauszaZq9GwZBDahlRU8WjG7qjmwKzOY2BVkaBjFo6ulqp
+GxPb8MOeTvIZcndHSjEBqmibwkwe2En90vw445XjYHV6XIk6NJ7+TFbfkiKV1SE8
+I5Ha9G3BKLBh378xmZrj
+=WrBN
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
