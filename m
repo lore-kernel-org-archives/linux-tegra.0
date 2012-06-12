@@ -1,84 +1,122 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 08/10] ARM: tegra: harmony: Initialize regulators from
- DT
-Date: Tue, 12 Jun 2012 08:13:31 +0200
-Message-ID: <20120612061330.GD4040@avionic-0098.adnet.avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
+Date: Tue, 12 Jun 2012 08:21:24 +0200
+Message-ID: <20120612062124.GE4040@avionic-0098.adnet.avionic-design.de>
 References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de>
- <1339427118-32263-9-git-send-email-thierry.reding@avionic-design.de>
- <4FD664F8.4030800@wwwdotorg.org>
+ <1339427118-32263-8-git-send-email-thierry.reding@avionic-design.de>
+ <4FD66410.7090001@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="osDK9TLjxFScVI/L"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="X3gaHHMYHkYqP6yf"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4FD664F8.4030800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+In-Reply-To: <4FD66410.7090001@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
 
---osDK9TLjxFScVI/L
+--X3gaHHMYHkYqP6yf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 * Stephen Warren wrote:
 > On 06/11/2012 09:05 AM, Thierry Reding wrote:
-> > Device tree support for the TPS6586x PMU used on Harmony has recently
-> > been added. This commit adds the required device tree nodes to probe the
-> > PMU from the device tree.
+> > This commit adds support for instantiating the Tegra PCIe controller
+> > from a device tree.
 >=20
-> > diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/te=
-gra-harmony.dts
+> > +++ b/Documentation/devicetree/bindings/pci/tegra-pcie.txt
 >=20
-> > +		tps6586x@34 {
-> > +			compatible =3D "ti,tps6586x";
-> > +			reg =3D <0x34>;
-> > +			interrupts =3D <0 88 0x4>;
-> > +
-> > +			#gpio-cells =3D <2>;
-> > +			gpio-controller;
-> > +
-> > +			regulators {
->=20
-> Per the TPS65911 discussion on regulator bindings, this node should have:
->=20
-> 	#address-cells =3D <1>;
-> 	#size-cells =3D <0>;
->=20
-> > +				sm0 {
->=20
-> Each of these nodes should be named regulator@0, regulator@1, etc.
->=20
-> Within each of these nodes, you need a matching reg property.
->=20
-> 	reg =3D <0>;
->=20
-> and something to identify which regulator within the chip this node
-> configurations, although I don't think we've reached a final decision on
-> the property name.
->=20
-> See the the following for details:
->=20
-> http://www.spinics.net/lists/linux-tegra/msg05577.html
+> Can we please name this nvidia,tegra20-pcie.txt to match the naming of
+> all the other Tegra bindings.
 
-Okay, I'll monitor that discussion and see what you end up with. I guess I'=
+Yes, will do.
+
+> > +Required properties:
+> > +- compatible: "nvidia,tegra20-pcie"
+> > +- reg: physical base address and length of the controller's registers
+>=20
+> Since there's more than one range now, that should specify how many
+> entries are required and what they represent.
+
+Okay.
+
+> > +Optional properties:
+> > +- pex-clk-supply: supply voltage for internal reference clock
+> > +- vdd-supply: power supply for controller (1.05V)
+>=20
+> Those shouldn't be optional. If the board has no regulator, the board's
+> .dts should provide a fixed always-on regulator that those properties
+> can refer to, so that the driver can always get() those regulators.
+
+That'll add more dummy regulators and I don't think sprinkling them across
+the DTS is going to work very well. Maybe collecting them under a top-level
+"regulators" node is a good option. If you have a better alternative, I'm a=
 ll
-have to update the tps6586x binding when that decision has been reached and
-add a patch to this series.
+open for it.
+
+> > diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20=
+=2Edtsi
+>=20
+> > +	pci {
+> ...
+> > +		status =3D "disable";
+>=20
+> That should be "disabled"; sorry for providing a bad example.
+
+Yes.
+
+> > diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
+>=20
+> > +static struct tegra_pcie_pdata *tegra_pcie_parse_dt(struct platform_de=
+vice *pdev)
+>=20
+> > +	if (of_find_property(node, "vdd-supply", NULL)) {
+>=20
+> As mentioned above, that if statement should be removed, since the
+> regulators shouldn't be optional.
+
+Okay.
+
+> > +		pcie->vdd_supply =3D regulator_get(&pdev->dev, "vdd");
+>=20
+> Those could be devm_regulator_get(). Then tegra_pcie_remove() wouldn't
+> have to put() them.
+
+Okay.
+
+> > +	for (i =3D 0; i < TEGRA_PCIE_MAX_PORTS; i++)
+> > +		pdata->enable_ports[i] =3D true;
+>=20
+> Shouldn't the DT indicate which ports are used? I assume there's some
+> reason that the existing driver allows that to be configured, rather
+> than always enabling all ports. At least, enumeration time wasted on
+> non-existent ports springs to mind, and perhaps attempting to enable
+> port 1 when port 0 is x4 and using all the lanes would cause errors in
+> port 0?
+
+Yes, that's been on my mind as well. I'm not sure about the best binding for
+this. Perhaps something like:
+
+	pci {
+		enable-ports =3D <0 1 2>;
+	};
+
+Would do?
 
 Thierry
 
---osDK9TLjxFScVI/L
+--X3gaHHMYHkYqP6yf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iEYEARECAAYFAk/W3goACgkQZ+BJyKLjJp/HvwCbBUNIsXdbmLGFH7H2zuK4qkzG
-dIsAnjD0wUQ+UFgasmRNUJIzYEDVdNRt
-=EmeK
+iEYEARECAAYFAk/W3+QACgkQZ+BJyKLjJp/lJgCdEL9Oz47vQx/a7Yu3Iq+n6YwY
+Wi4AnjyLPOwjuvEoX7c8iLR38yC4XZgB
+=/1jY
 -----END PGP SIGNATURE-----
 
---osDK9TLjxFScVI/L--
+--X3gaHHMYHkYqP6yf--
