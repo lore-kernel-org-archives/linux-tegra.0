@@ -1,163 +1,53 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 4/4] i2c: tegra: make all resource allocation through devm_*
-Date: Tue, 12 Jun 2012 16:07:31 +0530
-Message-ID: <1339497451-26260-5-git-send-email-ldewangan@nvidia.com>
-References: <1339497451-26260-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 09/10] ARM: tegra: harmony: Initialize PCIe from DT
+Date: Tue, 12 Jun 2012 09:38:44 -0600
+Message-ID: <4FD76284.5000506@wwwdotorg.org>
+References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de> <1339427118-32263-10-git-send-email-thierry.reding@avionic-design.de> <4FD6661A.1060407@wwwdotorg.org> <20120612054811.GB4040@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1339497451-26260-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: khali@linux-fr.org, w.sang@pengutronix.de, ben-linux@fluff.org, swarren@wwwdotorg.org, olof@lixom.net
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120612054811.GB4040-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the devm_* for the memory region allocation, interrupt request,
-clock handler request.
-By doing this, it does not require to explicitly free it and hence
-saving some code.
+On 06/11/2012 11:48 PM, Thierry Reding wrote:
+> * Stephen Warren wrote:
+>> On 06/11/2012 09:05 AM, Thierry Reding wrote:
+>>> With the device tree support in place, probe the PCIe
+>>> controller from the device tree and remove the corresponding
+>>> workaround in the board file.
+>> 
+>>> diff --git a/arch/arm/boot/dts/tegra-harmony.dts
+>>> b/arch/arm/boot/dts/tegra-harmony.dts
+>> 
+>>> +	pci_vdd_reg: fixedregulator@0 {
+>> 
+>> I think that'd usually just be "regulator@0".
+>> 
+>> If you need the "@0" part to differentiate between multiple
+>> regulators, the node needs a reg property too:
+>> 
+>> reg = <0 0>;
+>> 
+>> although then I wonder about putting the regulator under the root
+>> node, since the address wouldn't really make sense...
+> 
+> Perhaps we should add a new "regulators" node under the root node
+> to collect this kind of regulators that don't fit anywhere else.
+> Looking at the code, something like this should work:
+> 
+> / { ...
+> 
+> regulators { compatible = "simple-bus"; #address-cells = <1>; 
+> #size-cells = <0>;
+> 
+> pci_vdd_reg: regulator@0 { reg = <0>; }; }; };
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-This is rebased of earlier similar patch and sending as
-part of this series.
-No change from V1.
+That seems like a good idea, and there's certainly precedent for doing
+exactly that in other ARM .dts files already.
 
- drivers/i2c/busses/i2c-tegra.c |   62 +++++++++++-----------------------------
- 1 files changed, 17 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b093b66..2ace6ac 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -610,7 +610,6 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 	struct tegra_i2c_dev *i2c_dev;
- 	struct tegra_i2c_platform_data *pdata = pdev->dev.platform_data;
- 	struct resource *res;
--	struct resource *iomem;
- 	struct clk *clk;
- 	struct clk *i2c_clk;
- 	const unsigned int *prop;
-@@ -623,50 +622,41 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "no mem resource\n");
- 		return -EINVAL;
- 	}
--	iomem = request_mem_region(res->start, resource_size(res), pdev->name);
--	if (!iomem) {
--		dev_err(&pdev->dev, "I2C region already claimed\n");
--		return -EBUSY;
--	}
- 
--	base = ioremap(iomem->start, resource_size(iomem));
-+	base = devm_request_and_ioremap(&pdev->dev, res);
- 	if (!base) {
--		dev_err(&pdev->dev, "Cannot ioremap I2C region\n");
--		return -ENOMEM;
-+		dev_err(&pdev->dev, "Cannot request/ioremap I2C registers\n");
-+		return -EADDRNOTAVAIL;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "no irq resource\n");
--		ret = -EINVAL;
--		goto err_iounmap;
-+		return -EINVAL;
- 	}
- 	irq = res->start;
- 
--	clk = clk_get(&pdev->dev, NULL);
-+	clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "missing controller clock");
--		ret = PTR_ERR(clk);
--		goto err_release_region;
-+		return PTR_ERR(clk);
- 	}
- 
--	i2c_clk = clk_get(&pdev->dev, "i2c");
-+	i2c_clk = devm_clk_get(&pdev->dev, "i2c");
- 	if (IS_ERR(i2c_clk)) {
- 		dev_err(&pdev->dev, "missing bus clock");
--		ret = PTR_ERR(i2c_clk);
--		goto err_clk_put;
-+		return PTR_ERR(i2c_clk);
- 	}
- 
--	i2c_dev = kzalloc(sizeof(struct tegra_i2c_dev), GFP_KERNEL);
-+	i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*i2c_dev), GFP_KERNEL);
- 	if (!i2c_dev) {
--		ret = -ENOMEM;
--		goto err_i2c_clk_put;
-+		dev_err(&pdev->dev, "Could not allocate struct tegra_i2c_dev");
-+		return -ENOMEM;
- 	}
- 
- 	i2c_dev->base = base;
- 	i2c_dev->clk = clk;
- 	i2c_dev->i2c_clk = i2c_clk;
--	i2c_dev->iomem = iomem;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
-@@ -695,13 +685,14 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 	ret = tegra_i2c_init(i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller");
--		goto err_free;
-+		return ret;
- 	}
- 
--	ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
-+	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
-+			tegra_i2c_isr, 0, pdev->name, i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
--		goto err_free;
-+		return ret;
- 	}
- 
- 	clk_prepare_enable(i2c_dev->i2c_clk);
-@@ -719,38 +710,19 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
- 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to add I2C adapter\n");
--		goto err_free_irq;
-+		clk_disable(i2c_dev->i2c_clk);
-+		return ret;
- 	}
- 
- 	of_i2c_register_devices(&i2c_dev->adapter);
- 
- 	return 0;
--err_free_irq:
--	free_irq(i2c_dev->irq, i2c_dev);
--err_free:
--	kfree(i2c_dev);
--err_i2c_clk_put:
--	clk_put(i2c_clk);
--err_clk_put:
--	clk_put(clk);
--err_release_region:
--	release_mem_region(iomem->start, resource_size(iomem));
--err_iounmap:
--	iounmap(base);
--	return ret;
- }
- 
- static int __devexit tegra_i2c_remove(struct platform_device *pdev)
- {
- 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
- 	i2c_del_adapter(&i2c_dev->adapter);
--	free_irq(i2c_dev->irq, i2c_dev);
--	clk_put(i2c_dev->i2c_clk);
--	clk_put(i2c_dev->clk);
--	release_mem_region(i2c_dev->iomem->start,
--		resource_size(i2c_dev->iomem));
--	iounmap(i2c_dev->base);
--	kfree(i2c_dev);
- 	return 0;
- }
- 
--- 
-1.7.1.1
+To maintain .dts alphabetical sorting of non-addressed nodes, this new
+node should slot in just before the sound node, near the end of the file.
