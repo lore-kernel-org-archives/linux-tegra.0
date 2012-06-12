@@ -1,91 +1,58 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 05/10] ARM: tegra: Rewrite PCIe support as a driver
-Date: Tue, 12 Jun 2012 10:00:26 -0600
-Message-ID: <4FD7679A.2080800@wwwdotorg.org>
-References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de> <1339427118-32263-6-git-send-email-thierry.reding@avionic-design.de> <4FD65E98.4070200@wwwdotorg.org> <20120612064124.GF4040@avionic-0098.adnet.avionic-design.de> <20120612072444.GA8577@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH 0/4] i2c: tegra: Bug fixes, cleanups and M_NOSTART support
+Date: Tue, 12 Jun 2012 10:05:47 -0600
+Message-ID: <4FD768DB.3070403@wwwdotorg.org>
+References: <1338901800-23968-1-git-send-email-ldewangan@nvidia.com> <4FCE3078.1030008@wwwdotorg.org> <4FCE3CD8.8060502@nvidia.com> <20120612085040.GC9230@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120612072444.GA8577-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20120612085040.GC9230-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/12/2012 01:24 AM, Thierry Reding wrote:
-> * Thierry Reding wrote:
->> AFAICT the even partitioning of the non-prefetchable and 
->> prefetchable memory regions is arbitrary and it could
->> potentially be useful to make it configurable via the DT.
+On 06/12/2012 02:50 AM, Wolfram Sang wrote:
+> On Tue, Jun 05, 2012 at 10:37:36PM +0530, Laxman Dewangan wrote:
+>> On Tuesday 05 June 2012 09:44 PM, Stephen Warren wrote:
+>>> On 06/05/2012 07:09 AM, Laxman Dewangan wrote:
+>>>> This patch series having the: - Handling of late register
+>>>> write due to Tegra PPSB design. - support for I2C_M_NOSTART -
+>>>> Use devm_* for all allocation.
+>>> The series,
+>>> 
+>>> Acked-by: Stephen Warren<swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>>> 
+>>> Note that patch 4 touches context adjacent to Prashant's "i2c:
+>>> tegra: Add clk_prepare/clk_unprepare" patch, which I hope to
+>>> take through the Tegra tree since it's a requirement for the
+>>> Tegra common clock conversion. I don't think this will cause
+>>> any significant conflict, but perhaps it's worth resolving it
+>>> explicitly.
 > 
-> So it turns out that this isn't true. But apart from the comments 
-> in the driver I couldn't find any reference to how the prefetch
-> and non-prefetch ranges are partitioned. Judging by the code for
-> Tegra2 this is evenly partitioned among ports 0 and 1 but it would
-> be interesting to know this is done on Tegra3. Is there any way
-> you can find out?
+> Is it really a requirement? Just wondering if it will cause
+> problems, if Prashant's patch goes in via I2C after arm-soc has
+> been merged. I am fine with simply acking the patch, though.
+
+AIUI, the clk_prepare patch is certainly a requirement for Tegra's
+conversion to common clock; I believe that a clk_enable() without a
+preceding clk_prepare() will fail since it's an invalid call sequence.
+I'm not 100% sure yet, but I hope Prashant will post patches to
+convert Tegra to common clock in time for 3.6, so having all the
+driver clk_prepare in a branch prior to the common clock conversion is
+required.
+
+>>> Wolfram, perhaps we should put these 4 patches and Prashan'ts
+>>> into their own topic branch so that you can merge it into the
+>>> I2C tree, and I can merge it into the Tegra tree too? Or, I can
+>>> take everything through Tegra if you want, and ack it.
 > 
-> It'd also be nice if some better documentation for the PCIe 
-> controller could be made available. The Tegra2 TRM doesn't contain 
-> any of the AFI or PADS registers and while the Tegra3 TRM
-> documents more registers, their offsets are completely missing.
+> Laxman's patches should really go via I2C, I think. Can't we just
+> fix the conflict in arm-soc?
 
-I've filed a bug to request better documentation.
-
-Looking at our downstream driver, the quoted comment below implies
-that the address space layout is pretty arbitrary and programmable at
-least for Tegra30. The code in function
-tegra_pcie_setup_translations() appears to support this (and is
-executed for both Tegra20 and Tegra30, even though the comment for
-Tegra20 doesn't mention any programmability).
-
-Tegra20:
-
-> /*
->  * Tegra2 defines 1GB in the AXI address map for PCIe.
->  *
->  * That address space is split into different regions, with sizes and
->  * offsets as follows:
->  *
->  * 0x80000000 - 0x80003fff - PCI controller registers
->  * 0x80004000 - 0x80103fff - PCI configuration space
->  * 0x80104000 - 0x80203fff - PCI extended configuration space
->  * 0x80203fff - 0x803fffff - unused
->  * 0x80400000 - 0x8040ffff - downstream IO
->  * 0x80410000 - 0x8fffffff - unused
->  * 0x90000000 - 0x9fffffff - non-prefetchable memory
->  * 0xa0000000 - 0xbfffffff - prefetchable memory
->  */
-
-(I guess by "is split", it means the driver sets it up that way, not
-that the HW is fixed that way)
-
-Tegra30:
-
-> /*
->  * AXI address map for the PCIe aperture , defines 1GB in the AXI
->  *  address map for PCIe.
->  *
->  *  That address space is split into different regions, with sizes and
->  *  offsets as follows. Exepct for the Register space, SW is free to slice the
->  *  regions as it chooces.
->  *
->  *  The split below seems to work fine for now.
->  *
->  *  0x0000_0000 to 0x00ff_ffff - Register space          16MB.
->  *  0x0100_0000 to 0x01ff_ffff - Config space            16MB.
->  *  0x0200_0000 to 0x02ff_ffff - Extended config space   16MB.
->  *  0x0300_0000 to 0x03ff_ffff - Downstream IO space
->  *   ... Will be filled with other BARS like MSI/upstream IO etc.
->  *  0x1000_0000 to 0x1fff_ffff - non-prefetchable memory aperture
->  *  0x2000_0000 to 0x3fff_ffff - Prefetchable memory aperture
->  *
->  *  Config and Extended config sizes are choosen to support
->  *  maximum of 256 devices,
->  *  which is good enough for all the current use cases.
->  *
->  */
-
-From
-http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=blob;f=arch/arm/mach-tegra/pcie.c;h=b98d4892b5ee46120a9777a969e820a0b5cbb68a;hb=android-tegra-nv-3.1
+Yes, Laxman's changes should be able to go through I2C without a
+problem. We can try this out without any cross-merged topic branches
+and try resolving in arm-soc for now. If there turns out to be an
+issue, we can always rebase the Tegra and/or I2C for-next branches to
+fix it up.
