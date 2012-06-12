@@ -1,66 +1,77 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 06/10] ARM: tegra: pcie: Add MSI support
-Date: Tue, 12 Jun 2012 07:41:31 +0200
-Message-ID: <20120612054131.GA4040@avionic-0098.adnet.avionic-design.de>
+Subject: Re: [PATCH v2 09/10] ARM: tegra: harmony: Initialize PCIe from DT
+Date: Tue, 12 Jun 2012 07:48:11 +0200
+Message-ID: <20120612054811.GB4040@avionic-0098.adnet.avionic-design.de>
 References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de>
- <1339427118-32263-7-git-send-email-thierry.reding@avionic-design.de>
- <4FD660F9.7030807@wwwdotorg.org>
- <20120612050713.GB3669@avionic-0098.mockup.avionic-design.de>
- <4FD6D4C6.2080201@wwwdotorg.org>
+ <1339427118-32263-10-git-send-email-thierry.reding@avionic-design.de>
+ <4FD6661A.1060407@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+	protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FD6D4C6.2080201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <4FD6661A.1060407-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---7JfCtLOvnd9MIVvH
+--QKdGvSO+nmPlgiQ/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 * Stephen Warren wrote:
-> On 06/11/2012 11:07 PM, Thierry Reding wrote:
-> > * Stephen Warren wrote:
-> >> On 06/11/2012 09:05 AM, Thierry Reding wrote:
-> >>> This commit adds support for message signaled interrupts to the
-> >>> Tegra PCIe controller. Based on code by Krishna Kishore
-> >>> <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
-> ...
-> >> Why allocate pcie->msi separately; why not include the fields
-> >> directly into struct tegra_pcie_info *pcie?
-> ...
-> > Second, and more importantly, this will keep the size of struct=20
-> > tegra_pcie_info smaller if PCI_MSI is not selected because there is
-> > just one unused pointer instead of five unused fields.
+> On 06/11/2012 09:05 AM, Thierry Reding wrote:
+> > With the device tree support in place, probe the PCIe controller from
+> > the device tree and remove the corresponding workaround in the board
+> > file.
 >=20
-> Well, you can always ifdef out the structure fields too, right?
+> > diff --git a/arch/arm/boot/dts/tegra-harmony.dts b/arch/arm/boot/dts/te=
+gra-harmony.dts
+>=20
+> > +	pci_vdd_reg: fixedregulator@0 {
+>=20
+> I think that'd usually just be "regulator@0".
+>=20
+> If you need the "@0" part to differentiate between multiple regulators,
+> the node needs a reg property too:
+>=20
+> 	reg =3D <0 0>;
+>=20
+> although then I wonder about putting the regulator under the root node,
+> since the address wouldn't really make sense...
 
-Not if you use the IS_ENABLED() macro. It's supposed to increase compile
-coverage for a trade-off in memory usage because like in this case some
-fields may be unused.
+Perhaps we should add a new "regulators" node under the root node to collect
+this kind of regulators that don't fit anywhere else. Looking at the code,
+something like this should work:
 
-I find this very convenient because it prevents situations where build
-errors don't show up until somebody uses the code in an unusual
-configuration. For developers this makes it really easy because they don't
-have to test every possible permutation of configuration options.
+	/ {
+		...
+
+		regulators {
+			compatible =3D "simple-bus";
+			#address-cells =3D <1>;
+			#size-cells =3D <0>;
+
+			pci_vdd_reg: regulator@0 {
+				reg =3D <0>;
+			};
+		};
+	};
 
 Thierry
 
---7JfCtLOvnd9MIVvH
+--QKdGvSO+nmPlgiQ/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iEYEARECAAYFAk/W1osACgkQZ+BJyKLjJp+fMQCeKraIbJ59jPXjIRfBrQRzJUaH
-EDwAn1b4QFBcDFBZQNTaDokBi6/S2N+L
-=ohNf
+iEYEARECAAYFAk/W2BsACgkQZ+BJyKLjJp86AgCgsn2q8bEqIs31iBgl+n/BtA6C
+Yw4AnRO5T0MrQ5q5xZyWCjnDgfZGsuyb
+=JgXL
 -----END PGP SIGNATURE-----
 
---7JfCtLOvnd9MIVvH--
+--QKdGvSO+nmPlgiQ/--
