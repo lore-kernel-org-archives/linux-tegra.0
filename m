@@ -1,40 +1,48 @@
 From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH] arm: tegra: build powergate unconditionally
-Date: Wed, 13 Jun 2012 15:55:47 +0200
-Message-ID: <1339595767-9140-1-git-send-email-w.sang@pengutronix.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Subject: Re: [PATCH v3 0/4]  i2c: tegra: Bug fixes, cleanups and M_NOSTART
+ support
+Date: Wed, 13 Jun 2012 16:05:10 +0200
+Message-ID: <20120613140510.GA11438@pengutronix.de>
+References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1339582359-7911-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-powergate functions are needed for tegra30 as well (see common.c), so
-build it always. Fixes:
 
-arch/arm/mach-tegra/built-in.o: In function `tegra30_init_early':
-apbio.c:(.init.text+0x78): undefined reference to `tegra_powergate_init'
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(using "allnoconfig" with tegra30 enabled)
+On Wed, Jun 13, 2012 at 03:42:35PM +0530, Laxman Dewangan wrote:
+> This patch series having the:
+> - Handling of late register write due to Tegra PPSB design.
+> - support for I2C_M_NOSTART
+> - Use devm_* for all allocation.
 
-Signed-off-by: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. 1/4 applied to for-current, rest to for-next.
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 2eb4445..35253fd 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -8,9 +8,9 @@ obj-y                                   += timer.o
- obj-y					+= fuse.o
- obj-y					+= pmc.o
- obj-y					+= flowctrl.o
-+obj-y					+= powergate.o
- obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
- obj-$(CONFIG_CPU_IDLE)			+= sleep.o
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= powergate.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
--- 
-1.7.10
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk/YnhYACgkQD27XaX1/VRu5XQCcDCPoNmRqn8yNGCkWao/Fjq31
+lxcAn1IizXi25yAKlJw1Nk2ZJC1cfruq
+=aBHw
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
