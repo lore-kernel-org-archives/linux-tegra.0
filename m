@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 1/4] i2c: tegra: make sure register writes completes
-Date: Wed, 13 Jun 2012 15:42:36 +0530
-Message-ID: <1339582359-7911-2-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V3 3/4] i2c: tegra: support for I2C_M_NOSTART functionality
+Date: Wed, 13 Jun 2012 15:42:38 +0530
+Message-ID: <1339582359-7911-4-git-send-email-ldewangan@nvidia.com>
 References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,98 @@ To: khali@linux-fr.org, w.sang@pengutronix.de, ben-linux@fluff.org, swarren@wwwd
 Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra PPSB (an peripheral bus) queues writes transactions.
-In order to guarantee that writes have completed before a
-certain time, a read transaction to a register on the same
-bus must be executed.
-This is necessary in situations such as when clearing an
-interrupt status or enable, so that when returning from an
-interrupt handler, the HW has already de-asserted its
-interrupt status output, which will avoid spurious interrupts.
+Adding support for functionality I2C_M_NOSTART.
+When multiple message transfer request made through i2c
+and if any message is flagged with I2C_M_NOSTART then
+it will not send the start/repeat-start and address of
+that message i.e. sends data directly.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
-Changes from V1:
-- Using the readback for mask/unmask of irq also.
+This is rebased of earlier patch on same support.
+At this time using the new flag I2C_FUNC_NOSTART.
+
+Changes form V1:
+- Rebased on linux-next.
 
 Changes from V2:
-- Read back is done whenever write happen in i2c register other than TX FIFO.
+- Rebased based on Wolfram's tree.
 
- drivers/i2c/busses/i2c-tegra.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+
+ drivers/i2c/busses/i2c-tegra.c |   31 ++++++++++++++++++++++++++-----
+ 1 files changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 8b2e555..785f7f7 100644
+index 68433ae..c4593a2 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -165,6 +165,10 @@ static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
- 	unsigned long reg)
- {
- 	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+
-+	/* Read back register to make sure that register writes completed */
-+	if (reg != I2C_TX_FIFO)
-+		readl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
+@@ -97,8 +97,21 @@
+ #define I2C_HEADER_10BIT_ADDR			(1<<18)
+ #define I2C_HEADER_IE_ENABLE			(1<<17)
+ #define I2C_HEADER_REPEAT_START			(1<<16)
++#define I2C_HEADER_CONTINUE_XFER		(1<<15)
+ #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
++/*
++ * msg_end_type: The bus control which need to be send at end of transfer.
++ * @MSG_END_STOP: Send stop pulse at end of transfer.
++ * @MSG_END_REPEAT_START: Send repeat start at end of transfer.
++ * @MSG_END_CONTINUE: The following on message is coming and so do not send
++ *		stop or repeat start.
++ */
++enum msg_end_type {
++	MSG_END_STOP,
++	MSG_END_REPEAT_START,
++	MSG_END_CONTINUE,
++};
+ 
+ /**
+  * struct tegra_i2c_dev	- per device i2c context
+@@ -453,7 +466,7 @@ err:
  }
  
- static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned long reg)
+ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+-	struct i2c_msg *msg, int stop)
++	struct i2c_msg *msg, enum msg_end_type end_state)
+ {
+ 	u32 packet_header;
+ 	u32 int_mask;
+@@ -480,7 +493,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
+ 
+ 	packet_header = I2C_HEADER_IE_ENABLE;
+-	if (!stop)
++	if (end_state == MSG_END_CONTINUE)
++		packet_header |= I2C_HEADER_CONTINUE_XFER;
++	else if (end_state == MSG_END_REPEAT_START)
+ 		packet_header |= I2C_HEADER_REPEAT_START;
+ 	if (msg->flags & I2C_M_TEN) {
+ 		packet_header |= msg->addr;
+@@ -552,8 +567,14 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 
+ 	clk_enable(i2c_dev->clk);
+ 	for (i = 0; i < num; i++) {
+-		int stop = (i == (num - 1)) ? 1  : 0;
+-		ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], stop);
++		enum msg_end_type end_type = MSG_END_STOP;
++		if (i < (num - 1)) {
++			if (msgs[i + 1].flags & I2C_M_NOSTART)
++				end_type = MSG_END_CONTINUE;
++			else
++				end_type = MSG_END_REPEAT_START;
++		}
++		ret = tegra_i2c_xfer_msg(i2c_dev, &msgs[i], end_type);
+ 		if (ret)
+ 			break;
+ 	}
+@@ -564,7 +585,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ static u32 tegra_i2c_func(struct i2c_adapter *adap)
+ {
+ 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
+-		I2C_FUNC_PROTOCOL_MANGLING;
++		I2C_FUNC_PROTOCOL_MANGLING | I2C_FUNC_NOSTART;
+ }
+ 
+ static const struct i2c_algorithm tegra_i2c_algo = {
 -- 
 1.7.1.1
