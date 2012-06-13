@@ -1,32 +1,168 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 0/4]  i2c: tegra: Bug fixes, cleanups and M_NOSTART support
-Date: Wed, 13 Jun 2012 15:42:35 +0530
-Message-ID: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 4/4] i2c: tegra: make all resource allocation through devm_*
+Date: Wed, 13 Jun 2012 15:42:39 +0530
+Message-ID: <1339582359-7911-5-git-send-email-ldewangan@nvidia.com>
+References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org, w.sang@pengutronix.de, ben-linux@fluff.org, swarren@wwwdotorg.org, olof@lixom.net
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series having the:
-- Handling of late register write due to Tegra PPSB design.
-- support for I2C_M_NOSTART
-- Use devm_* for all allocation.
+Use the devm_* for the memory region allocation, interrupt request,
+clock handler request.
+By doing this, it does not require to explicitly free it and hence
+saving some code.
 
-Changes from V1:
-- Using the readback for mask/unmask of irq also.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+This is rebased of earlier similar patch and sending as
+part of this series.
+
+Changes form V1:
+- Rebased on linux-next.
 
 Changes from V2:
-- Read back is done whenever write happen in i2c register other than TX FIFO.
+- Rebased based on Wolfram's tree.
 
+ drivers/i2c/busses/i2c-tegra.c |   62 +++++++++++-----------------------------
+ 1 files changed, 17 insertions(+), 45 deletions(-)
 
-Laxman Dewangan (4):
-  i2c: tegra: make sure register writes completes
-  i2c: tegra: add PROTOCOL_MANGLING as supported functionality.
-  i2c: tegra: support for I2C_M_NOSTART functionality
-  i2c: tegra: make all resource allocation through devm_*
-
- drivers/i2c/busses/i2c-tegra.c |  110 ++++++++++++++++++++++------------------
- 1 files changed, 60 insertions(+), 50 deletions(-)
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c4593a2..9f4e22c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -598,7 +598,6 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 	struct tegra_i2c_dev *i2c_dev;
+ 	struct tegra_i2c_platform_data *pdata = pdev->dev.platform_data;
+ 	struct resource *res;
+-	struct resource *iomem;
+ 	struct clk *clk;
+ 	struct clk *i2c_clk;
+ 	const unsigned int *prop;
+@@ -611,50 +610,41 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "no mem resource\n");
+ 		return -EINVAL;
+ 	}
+-	iomem = request_mem_region(res->start, resource_size(res), pdev->name);
+-	if (!iomem) {
+-		dev_err(&pdev->dev, "I2C region already claimed\n");
+-		return -EBUSY;
+-	}
+ 
+-	base = ioremap(iomem->start, resource_size(iomem));
++	base = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!base) {
+-		dev_err(&pdev->dev, "Cannot ioremap I2C region\n");
+-		return -ENOMEM;
++		dev_err(&pdev->dev, "Cannot request/ioremap I2C registers\n");
++		return -EADDRNOTAVAIL;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "no irq resource\n");
+-		ret = -EINVAL;
+-		goto err_iounmap;
++		return -EINVAL;
+ 	}
+ 	irq = res->start;
+ 
+-	clk = clk_get(&pdev->dev, NULL);
++	clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "missing controller clock");
+-		ret = PTR_ERR(clk);
+-		goto err_release_region;
++		return PTR_ERR(clk);
+ 	}
+ 
+-	i2c_clk = clk_get(&pdev->dev, "i2c");
++	i2c_clk = devm_clk_get(&pdev->dev, "i2c");
+ 	if (IS_ERR(i2c_clk)) {
+ 		dev_err(&pdev->dev, "missing bus clock");
+-		ret = PTR_ERR(i2c_clk);
+-		goto err_clk_put;
++		return PTR_ERR(i2c_clk);
+ 	}
+ 
+-	i2c_dev = kzalloc(sizeof(struct tegra_i2c_dev), GFP_KERNEL);
++	i2c_dev = devm_kzalloc(&pdev->dev, sizeof(*i2c_dev), GFP_KERNEL);
+ 	if (!i2c_dev) {
+-		ret = -ENOMEM;
+-		goto err_i2c_clk_put;
++		dev_err(&pdev->dev, "Could not allocate struct tegra_i2c_dev");
++		return -ENOMEM;
+ 	}
+ 
+ 	i2c_dev->base = base;
+ 	i2c_dev->clk = clk;
+ 	i2c_dev->i2c_clk = i2c_clk;
+-	i2c_dev->iomem = iomem;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+@@ -683,13 +673,14 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 	ret = tegra_i2c_init(i2c_dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize i2c controller");
+-		goto err_free;
++		return ret;
+ 	}
+ 
+-	ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
++	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
++			tegra_i2c_isr, 0, pdev->name, i2c_dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
+-		goto err_free;
++		return ret;
+ 	}
+ 
+ 	clk_enable(i2c_dev->i2c_clk);
+@@ -707,38 +698,19 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to add I2C adapter\n");
+-		goto err_free_irq;
++		clk_disable(i2c_dev->i2c_clk);
++		return ret;
+ 	}
+ 
+ 	of_i2c_register_devices(&i2c_dev->adapter);
+ 
+ 	return 0;
+-err_free_irq:
+-	free_irq(i2c_dev->irq, i2c_dev);
+-err_free:
+-	kfree(i2c_dev);
+-err_i2c_clk_put:
+-	clk_put(i2c_clk);
+-err_clk_put:
+-	clk_put(clk);
+-err_release_region:
+-	release_mem_region(iomem->start, resource_size(iomem));
+-err_iounmap:
+-	iounmap(base);
+-	return ret;
+ }
+ 
+ static int __devexit tegra_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
+ 	i2c_del_adapter(&i2c_dev->adapter);
+-	free_irq(i2c_dev->irq, i2c_dev);
+-	clk_put(i2c_dev->i2c_clk);
+-	clk_put(i2c_dev->clk);
+-	release_mem_region(i2c_dev->iomem->start,
+-		resource_size(i2c_dev->iomem));
+-	iounmap(i2c_dev->base);
+-	kfree(i2c_dev);
+ 	return 0;
+ }
+ 
+-- 
+1.7.1.1
