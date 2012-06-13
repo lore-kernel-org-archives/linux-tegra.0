@@ -1,116 +1,176 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Wed, 13 Jun 2012 07:54:37 +0200
-Message-ID: <20120613055437.GB31001@avionic-0098.mockup.avionic-design.de>
+Date: Wed, 13 Jun 2012 08:34:22 +0200
+Message-ID: <20120613063422.GC31001@avionic-0098.mockup.avionic-design.de>
 References: <1339427118-32263-1-git-send-email-thierry.reding@avionic-design.de>
  <1339427118-32263-8-git-send-email-thierry.reding@avionic-design.de>
  <4FD66410.7090001@wwwdotorg.org>
  <20120612062124.GE4040@avionic-0098.adnet.avionic-design.de>
  <4FD763C5.3090500@wwwdotorg.org>
  <20120612172041.GA28010@avionic-0098.adnet.avionic-design.de>
- <4FD7943E.60302@firmworks.com>
- <4FD79CAE.9090006@wwwdotorg.org>
- <4FD79DE8.90603@firmworks.com>
+ <4FD7A36B.9090409@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+	protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FD79DE8.90603-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
+In-Reply-To: <4FD7A36B.9090409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---7ZAtKRhVyVSsbBD2
+--z4+8/lEcDcG5Ke9S
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-* Mitch Bradley wrote:
-> On 6/12/2012 9:46 AM, Stephen Warren wrote:
-> >On 06/12/2012 01:10 PM, Mitch Bradley wrote:
-> >>On 6/12/2012 7:20 AM, Thierry Reding wrote:
-> >...
-> >>>I came up with the following alternative:
-> >>>
-> >>>	pci {
-> >>>		compatible =3D "nvidia,tegra20-pcie";
-> >>>		reg =3D<0x80003000 0x00000800   /* PADS registers */
-> >>>		       0x80003800 0x00000200   /* AFI registers */
-> >>>		       0x80004000 0x00100000   /* configuration space */
-> >>>		       0x80104000 0x00100000   /* extended configuration space */
-> >>>		       0x80400000 0x00010000   /* downstream I/O */
-> >>>		       0x90000000 0x10000000   /* non-prefetchable memory */
-> >>>		       0xa0000000 0x10000000>; /* prefetchable memory */
-> >>>		interrupts =3D<0 98 0x04   /* controller interrupt */
-> >>>		              0 99 0x04>; /* MSI interrupt */
-> >>>		status =3D "disabled";
-> >>>
-> >>>		ranges =3D<0x80000000 0x80000000 0x00002000   /* 2 root ports */
-> >>>			  0x80004000 0x80004000 0x00100000   /* configuration space */
-> >>>			  0x80104000 0x80104000 0x00100000   /* extended configuration spac=
-e */
-> >>>			  0x80400000 0x80400000 0x00010000   /* downstream I/O */
-> >>>			  0x90000000 0x90000000 0x10000000   /* non-prefetchable memory */
-> >>>			  0xa0000000 0xa0000000 0x10000000>; /* prefetchable memory */
-> >>>
-> >>>		#address-cells =3D<1>;
-> >>>		#size-cells =3D<1>;
-> >>>
-> >>>		port@80000000 {
-> >>>			reg =3D<0x80000000 0x00001000>;
-> >>>			status =3D "disabled";
-> >>>		};
-> >>>
-> >>>		port@80001000 {
-> >>>			reg =3D<0x80001000 0x00001000>;
-> >>>			status =3D "disabled";
-> >>>		};
-> >>>	};
-> >>>
-> >>>The "ranges" property can probably be cleaned up a bit, but the most
-> >>>interesting part is the port@ children, which can simply be enabled in=
- board
-> >>>DTS files by setting the status property to "okay". I find that somewh=
-at more
-> >>>intuitive to the variant with an "enable-ports" property.
-> >>>
-> >>>What do you think of this?
-> >>
-> >>The problem is that children of a PCI-ish bus have specific expectations
-> >>about the parent address format - the standard 3-address-cell PCI
-> >>addressing.  So making a PCI bus node - even if it is PCIe - with 1
-> >>address cell is a problem.
-> >
-> >Couldn't you put the #address-cells=3D<3>  underneath each port node, and
-> >put any PCIe devices there rather than under the main PCIe controller
-> >node? I'm not sure how the interrupt mapping table etc. would work in
-> >that case, but that seems to solve the addressing issue.
+* Stephen Warren wrote:
+> On 06/12/2012 11:20 AM, Thierry Reding wrote:
+> ...
+> > I came up with the following alternative:
+> >=20
+> > 	pci {
+> > 		compatible =3D "nvidia,tegra20-pcie";
+> > 		reg =3D <0x80003000 0x00000800   /* PADS registers */
+> > 		       0x80003800 0x00000200   /* AFI registers */
+> > 		       0x80004000 0x00100000   /* configuration space */
+> > 		       0x80104000 0x00100000   /* extended configuration space */
+> > 		       0x80400000 0x00010000   /* downstream I/O */
+> > 		       0x90000000 0x10000000   /* non-prefetchable memory */
+> > 		       0xa0000000 0x10000000>; /* prefetchable memory */
+> > 		interrupts =3D <0 98 0x04   /* controller interrupt */
+> > 		              0 99 0x04>; /* MSI interrupt */
+> > 		status =3D "disabled";
+> >=20
+> > 		ranges =3D <0x80000000 0x80000000 0x00002000   /* 2 root ports */
+> > 			  0x80004000 0x80004000 0x00100000   /* configuration space */
+> > 			  0x80104000 0x80104000 0x00100000   /* extended configuration space=
+ */
+> > 			  0x80400000 0x80400000 0x00010000   /* downstream I/O */
+> > 			  0x90000000 0x90000000 0x10000000   /* non-prefetchable memory */
+> > 			  0xa0000000 0xa0000000 0x10000000>; /* prefetchable memory */
+> >=20
+> > 		#address-cells =3D <1>;
+> > 		#size-cells =3D <1>;
+> >=20
+> > 		port@80000000 {
+> > 			reg =3D <0x80000000 0x00001000>;
+> > 			status =3D "disabled";
+> > 		};
+> >=20
+> > 		port@80001000 {
+> > 			reg =3D <0x80001000 0x00001000>;
+> > 			status =3D "disabled";
+> > 		};
+> > 	};
+> >=20
+> > The "ranges" property can probably be cleaned up a bit, but the most
+> > interesting part is the port@ children, which can simply be enabled in =
+board
+> > DTS files by setting the status property to "okay". I find that somewha=
+t more
+> > intuitive to the variant with an "enable-ports" property.
+> >=20
+> > What do you think of this?
 >=20
-> Yes, that would work just fine, and in fact would be preferable, if
-> a "root port" is essentially an independent PCI bus.  The parent of
-> those root ports should not be named "pci", though, as it is not in
-> itself a PCI bus.  It could be called "pcis".
+> As a general concept, this kind of design seems OK to me.
+>=20
+> The "port" child nodes I think should be named "pci@..." given Mitch's
+> comments, I think.
+>=20
+> The port nodes probably need two entries in reg, given the following in
+> our downstream driver:
+>=20
+> >         int rp_offset =3D 0;
+> >         int ctrl_offset =3D AFI_PEX0_CTRL;
+> ...
+> >         for (port =3D 0; port < MAX_PCIE_SUPPORTED_PORTS; port++) {
+> >                 ctrl_offset +=3D (port * 8);
+> >                 rp_offset =3D (rp_offset + 0x1000) * port;
+> >                 if (tegra_pcie.plat_data->port_status[port])
+> >                         tegra_pcie_add_port(port, rp_offset, ctrl_offse=
+t);
+> >         }
+>=20
+> (which actually looks likely to be horribly buggy for port>1 and only
+> accidentally correct for port=3D=3D1, but anyway...)
 
-Yes, on Tegra each of the ports provides a separate PCI bus. How about nami=
-ng
-the parent "pcie-controller"? IMO that reflects the nature of the device
-better, whereas "pcis" would seem more like a "virtual" node for collecting
-similar children.
+Yeah, I currently have code that gets the port index and the reset register
+offset (ctrl_offset above) from the port address. It feels rather hackish,
+though.
+
+> But instead, I'd be tempted to make the top-level node say:
+>=20
+> 	#address-cells =3D <1>;
+> 	#size-cells =3D <0>;
+>=20
+> ... so that the child nodes' reg is just the port ID. The parent node
+> can calculate the addresses/offsets of the per-port registers within the
+> PCIe controller's register space based on the ID using code roughly like
+> what I quoted above:
+>=20
+> 	pci@0 {
+> 		reg =3D <0>;
+> 		status =3D "disabled";
+> 	};
+>=20
+> 	pci@1 {
+> 		reg =3D <0>;
+> 		status =3D "disabled";
+> 	};
+>=20
+> That would save having to put 2 entries in the reg, and perhaps remove
+> the need for any ranges property.
+>=20
+> I think you also need a property to specify the exact port layout; the
+> Tegra20 controller supports:
+>=20
+> 1 x4 port
+> 2 x2 ports (you can choose to use only 1 of these I assume)
+>=20
+> So just because only 1 of the ports is enabled, doesn't imply it's x4;
+> it could still be x2.
+>=20
+> Tegra30 has more options.
+
+Both the upstream and downstream drivers currently hard-code this to dual a=
+nd
+411 (I assume that means 1x4, 2x1?) configurations for Tegra20 and Tegra30
+respectively. Unfortunately the register AFI_PCIE_CONFIG isn't documented on
+Tegra20 at all and for Tegra30 lists only the valid configurations (see
+28.4.1.5 PCIe CONFIG) but not the corresponding encodings.
+
+Maybe a good name for the new property would be "num-lanes". I also wonder =
+if
+this property would be better off in the parent node, which would make it
+easier to check for valid configurations. Otherwise the code would have to
+collect the settings of all the ports and check if the combination is valid.
+Then again, having num-lanes in the parent with one cell for each controller
+isn't very nice if each controller can be individually disabled.
+
+One other thing: in addition to the device tree binding, this will all have=
+ to
+be represented in the platform data as well to support the legacy board
+definitions currently in the tree. But instead of adding all of these chang=
+es
+to the patch that converts the code to a driver, I'm thinking it might be
+better to split these additions off into one or more separate patches. Do y=
+ou
+have any objections?
 
 Thierry
 
---7ZAtKRhVyVSsbBD2
+--z4+8/lEcDcG5Ke9S
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iEYEARECAAYFAk/YKx0ACgkQZ+BJyKLjJp/JYwCgpXG48eCe74WLWujfZGQSnQ4K
-Gl8AnRbUqD8u/XLAwS0V+lIkcN2gbIG9
-=pqcY
+iEYEARECAAYFAk/YNG4ACgkQZ+BJyKLjJp/CTACeOqvpFDgcIv5ngk3kKDHk59uR
+/rUAn1asCjK2yW4mnNRJhKvkM4NU6jJh
+=J+yo
 -----END PGP SIGNATURE-----
 
---7ZAtKRhVyVSsbBD2--
+--z4+8/lEcDcG5Ke9S--
