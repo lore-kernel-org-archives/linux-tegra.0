@@ -1,88 +1,122 @@
-From: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Tue, 12 Jun 2012 22:36:55 -1000
-Message-ID: <4FD85127.8050301@firmworks.com>
-References: <4FD66410.7090001@wwwdotorg.org> <20120612062124.GE4040@avionic-0098.adnet.avionic-design.de> <4FD763C5.3090500@wwwdotorg.org> <20120612172041.GA28010@avionic-0098.adnet.avionic-design.de> <4FD7A36B.9090409@wwwdotorg.org> <4FD7B085.1020006@firmworks.com> <20120613064519.GD31001@avionic-0098.mockup.avionic-design.de> <4FD84133.4060401@firmworks.com> <20120613075232.GA6139@avionic-0098.mockup.avionic-design.de> <4FD849CF.4030009@firmworks.com> <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de>
+Date: Wed, 13 Jun 2012 10:42:06 +0200
+Message-ID: <20120613084206.GA9607@avionic-0098.mockup.avionic-design.de>
+References: <4FD763C5.3090500@wwwdotorg.org>
+ <20120612172041.GA28010@avionic-0098.adnet.avionic-design.de>
+ <4FD7A36B.9090409@wwwdotorg.org>
+ <4FD7B085.1020006@firmworks.com>
+ <20120613064519.GD31001@avionic-0098.mockup.avionic-design.de>
+ <4FD84133.4060401@firmworks.com>
+ <20120613075232.GA6139@avionic-0098.mockup.avionic-design.de>
+ <4FD849CF.4030009@firmworks.com>
+ <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de>
+ <4FD85127.8050301@firmworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120613081910.GB6528-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4FD85127.8050301@firmworks.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Mitch Bradley <wmb@firmworks.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/12/2012 10:19 PM, Thierry Reding wrote:
-> On Tue, Jun 12, 2012 at 10:05:35PM -1000, Mitch Bradley wrote:
->> On 6/12/2012 9:52 PM, Thierry Reding wrote:
->>> I think the configuration spaces and downstream I/O ranges need to be in the
->>> pcie-controller's reg property because they are remapped and used by the
->>> controller driver, not by the individual ports.
->>>
->>> That's probably not really necessary but rather a result of how the driver
->>> was written. Perhaps the driver should handle them differently instead,
->>> listing the regions in the ranges property of the parent and listing the
->>> corresponding partitions in the ranges properties of the pci child nodes.
->>>
->>> Like in the following, where the ranges property of the ports partition the
->>> ranges passed from the parent evenly:
->>>
->>> 	pcie-controller {
->>> 		compatible = "nvidia,tegra20-pcie";
->>> 		reg =<0x80003000 0x00000800   /* PADS registers */
->>> 		       0x80003800 0x00000200>; /* AFI registers */
->>> 		interrupts =<0 98 0x04   /* controller interrupt */
->>> 			      0 99 0x04>; /* MSI interrupt */
->>> 		status = "disabled";
->>>
->>> 		ranges =<0x80000000 0x80000000 0x00002000   /* 2 root ports */
->>> 			  0x80004000 0x80004000 0x00100000   /* configuration space */
->>> 			  0x80104000 0x80100000 0x00100000   /* extended configuration space */
->>> 			  0x80400000 0x80400000 0x00010000   /* downstream I/O */
->>> 			  0x90000000 0x90000000 0x10000000   /* non-prefetchable memory */
->>> 			  0xa0000000 0xa0000000 0x10000000>; /* prefetchable memory */
->>>
->>> 		#address-cells =<1>;
->>> 		#size-cells =<1>;
->>>
->>> 		pci@80000000 {
->>> 			reg =<0x80000000 0x00001000>;
->>> 			status = "disabled";
->>>
->>> 			#address-cells =<3>;
->>> 			#size-cells =<2>;
->>>
->>> 			ranges =<0x80400000 0x80400000 0x00008000   /* I/O */
->>> 				  0x90000000 0x90000000 0x08000000   /* non-prefetchable memory */
->>> 				  0xa0000000 0xa0000000 0x08000000>; /* prefetchable memory */
->>
->> You are on the right track here, but the format of the child-address
->> portion of the above ranges property is incorrect.  Since the child
->> address space is the PCI address space, the child-address portion
->> needs to be 3 cells.  It's not a linear address but rather a triple.
->> The first cell identifies the address type (config, I/O, memory..)
->> and the second and third cells are offsets within that subspace.
->> The second and third cells will typically be 0.  The PCI binding has
->> details.
 
-Also, the size field in ranges is specified according to the child 
-address space, so there must be 2 size cells in the ranges at this 
-level.  Each ranges entry at this level is:
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-<child_address_space, child_address_high, child_address_low, 
-parent_address, child_size_high, child_size_low>
+On Tue, Jun 12, 2012 at 10:36:55PM -1000, Mitch Bradley wrote:
+> On 6/12/2012 10:19 PM, Thierry Reding wrote:
+> >On Tue, Jun 12, 2012 at 10:05:35PM -1000, Mitch Bradley wrote:
+> >>On 6/12/2012 9:52 PM, Thierry Reding wrote:
+> >>>I think the configuration spaces and downstream I/O ranges need to be =
+in the
+> >>>pcie-controller's reg property because they are remapped and used by t=
+he
+> >>>controller driver, not by the individual ports.
+> >>>
+> >>>That's probably not really necessary but rather a result of how the dr=
+iver
+> >>>was written. Perhaps the driver should handle them differently instead,
+> >>>listing the regions in the ranges property of the parent and listing t=
+he
+> >>>corresponding partitions in the ranges properties of the pci child nod=
+es.
+> >>>
+> >>>Like in the following, where the ranges property of the ports partitio=
+n the
+> >>>ranges passed from the parent evenly:
+> >>>
+> >>>	pcie-controller {
+> >>>		compatible =3D "nvidia,tegra20-pcie";
+> >>>		reg =3D<0x80003000 0x00000800   /* PADS registers */
+> >>>		       0x80003800 0x00000200>; /* AFI registers */
+> >>>		interrupts =3D<0 98 0x04   /* controller interrupt */
+> >>>			      0 99 0x04>; /* MSI interrupt */
+> >>>		status =3D "disabled";
+> >>>
+> >>>		ranges =3D<0x80000000 0x80000000 0x00002000   /* 2 root ports */
+> >>>			  0x80004000 0x80004000 0x00100000   /* configuration space */
+> >>>			  0x80104000 0x80100000 0x00100000   /* extended configuration spac=
+e */
+> >>>			  0x80400000 0x80400000 0x00010000   /* downstream I/O */
+> >>>			  0x90000000 0x90000000 0x10000000   /* non-prefetchable memory */
+> >>>			  0xa0000000 0xa0000000 0x10000000>; /* prefetchable memory */
+> >>>
+> >>>		#address-cells =3D<1>;
+> >>>		#size-cells =3D<1>;
+> >>>
+> >>>		pci@80000000 {
+> >>>			reg =3D<0x80000000 0x00001000>;
+> >>>			status =3D "disabled";
+> >>>
+> >>>			#address-cells =3D<3>;
+> >>>			#size-cells =3D<2>;
+> >>>
+> >>>			ranges =3D<0x80400000 0x80400000 0x00008000   /* I/O */
+> >>>				  0x90000000 0x90000000 0x08000000   /* non-prefetchable memory */
+> >>>				  0xa0000000 0xa0000000 0x08000000>; /* prefetchable memory */
+> >>
+> >>You are on the right track here, but the format of the child-address
+> >>portion of the above ranges property is incorrect.  Since the child
+> >>address space is the PCI address space, the child-address portion
+> >>needs to be 3 cells.  It's not a linear address but rather a triple.
+> >>The first cell identifies the address type (config, I/O, memory..)
+> >>and the second and third cells are offsets within that subspace.
+> >>The second and third cells will typically be 0.  The PCI binding has
+> >>details.
+>=20
+> Also, the size field in ranges is specified according to the child
+> address space, so there must be 2 size cells in the ranges at this
+> level.  Each ranges entry at this level is:
+>=20
+> <child_address_space, child_address_high, child_address_low,
+> parent_address, child_size_high, child_size_low>
+>=20
+> The above should be:
+>=20
+> 			ranges =3D<0x81000000 0 0  0x80400000  0 0x00008000   /* I/O */
+> 				 0x82000000 0 0  0x90000000  0 0x08000000   /* non-prefetchable memor=
+y */
+> 				 0xc2000000 0 0  0xa0000000  0 0x08000000>; /* prefetchable memory */
 
-The above should be:
+Okay, I think I'm beginning to understand. Thanks.
 
-			ranges =<0x81000000 0 0  0x80400000  0 0x00008000   /* I/O */
-				 0x82000000 0 0  0x90000000  0 0x08000000   /* non-prefetchable memory */
-				 0xc2000000 0 0  0xa0000000  0 0x08000000>; /* prefetchable memory */
+Thierry
 
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature
 
->>
->
-> Okay, I'll need to read up some more.
->
-> Thanks,
-> Thierry
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAk/YUl4ACgkQZ+BJyKLjJp8eagCfabQxPZ4R6G6lxx8YtNjDkkul
+apQAoKMutp2++vsN0qDgr86gYeEWg0PG
+=MedJ
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
