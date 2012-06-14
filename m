@@ -1,38 +1,87 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 1/4] i2c: tegra: make sure register writes completes
-Date: Thu, 14 Jun 2012 18:05:56 +0530
-Message-ID: <4FD9DAAC.5000709@nvidia.com>
-References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com> <1339582359-7911-2-git-send-email-ldewangan@nvidia.com> <4FD8B7FC.3060708@wwwdotorg.org>
+From: "Hebbar, Gururaja" <gururaja.hebbar-l0cyMroinI0@public.gmane.org>
+Subject: RE: [PATCH v6 00/17] Add PWM framework and device tree support
+Date: Thu, 14 Jun 2012 12:47:13 +0000
+Message-ID: <1BAFE6F6C881BF42822005164F1491C33EA21A9F@DBDE01.ent.ti.com>
+References: <1334070400-25013-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FD8B7FC.3060708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1334070400-25013-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Cc: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, "Philip, Avinash" <avinashphilip-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 13 June 2012 09:25 PM, Stephen Warren wrote:
-> On 06/13/2012 04:12 AM, Laxman Dewangan wrote:
-> @@ -165,6 +165,10 @@ static void i2c_writel(struct tegra_i2c_dev 
-> *i2c_dev, u32 val,
->>   	unsigned long reg)
->>   {
->>   	writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
->> +
->> +	/* Read back register to make sure that register writes completed */
->> +	if (reg != I2C_TX_FIFO)
->> +		readl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-> I guess that's fine, but it sure does seem rather heavy-weight. Don't
-> you only need to do the readback if you just wrote to the IRQ status or
-> mask registers, rather than if you wrote to /any/ register other than
-> the FIFO?
+On Tue, Apr 10, 2012 at 20:36:23, Thierry Reding wrote:
+> This patch series adds very rudimentary device-tree support for PWM
+> devices. With all of these patches applied (plus one board-specific
+> patch that is not included), I'm able to control the backlight on the
+> device I'm working on using the sysfs interface provided by the pwm-bl
+> driver and the backlight class.
+> 
+> This series is based on Sascha Hauer's series of patches[0] to add a
+> generic PWM framework. The first patch in this series is taken from
+> Sascha's branch, while the second patch enables each PWM chip to provide
+> multiple PWM devices (the Blackfin and PXA drivers have been ported to
+> the framework for reference). Currently a global namespace is still
+> provided to keep backwards-compatibility with the legacy PWM API. In
+> order to achieve this, the number of global PWM devices is limited to
+> 1024. However, patch 2 introduces per-chip indexing of PWM devices in
+> the core and patch 4 adds an API to request a PWM device using a lookup
+> table registered by board setup code. They are supposed to eventually
+> replace pwm_request() and allow to get rid of the global namespace. The
+> device tree support code does not use the global namespace.
+> 
+..snip..
+..snip..
 
-That's what my second patch but based on your earlier review comment, I 
-did for every register.
+> 
+> The whole series is based on the linux-next tree from 20120405. I think
+> I've addressed all of the concerns raised in the first five versions. I
+> have also pushed this version of the series to the PWM subsystem
+> repository[1].
+> 
+> Thierry
+> 
+> [0]: http://git.pengutronix.de/?p=imx/linux-2.6.git;a=shortlog;h=refs/heads/pwmlib
+> [1]: http://gitorious.org/linux-pwm/linux-pwm/trees/pwm-v6
+> 
+> Sascha Hauer (4):
+>   pwm: Add PWM framework support
+>   ARM i.MX: Move i.MX pwm driver to pwm framework
+>   ARM Samsung: Move s3c pwm driver to pwm framework
+>   ARM vt8500: Move vt8500 pwm driver to pwm framework
+> 
+> Shawn Guo (1):
+>   pwm: add pwm-mxs support
+> 
+> Simon Que (1):
+>   ARM: tegra: Fix PWM clock programming
+> 
+> Thierry Reding (11):
+>   pwm: Allow chips to support multiple PWMs
+>   pwm: Add debugfs interface
+>   pwm: Add table-based lookup for static mappings
+>   pwm: Add device tree support
+>   ARM: tegra: Provide clock for only one PWM controller
+>   pwm: Add NVIDIA Tegra SoC support
+>   pwm: tegra: Add device tree support
+>   pwm: Move Blackfin PWM driver to PWM framework
+>   pwm: Move PXA PWM driver to PWM framework
+>   pwm-backlight: Add rudimentary device tree support
+>   pwm: Take over maintainership of the PWM subsystem
+> 
 
-I think it will not matter much as we dont write all register with every 
-transaction, only during initialization.
-Then for each transfer we write manly on Tx fifo and interrupt 
-mask/status register and hence not too much overweight.
+I am planning to add PWM support in Linux for TI AM335x SOC. 
+I am taking your new PWM framework as reference.
+
+I see a lot of ack's for the patches. I see that you are maintaining these patches in a separate repo.
+However, I couldn't find any of these 
+patches in the mainline kernel (including recent 3.5-rc2). 
+Do you have any plans for pushing this again to mainline kernel. 
+
+
+Regards, 
+Gururaja
