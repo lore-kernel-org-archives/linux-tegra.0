@@ -1,42 +1,51 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Subject: Re: [PATCH V3 1/4] i2c: tegra: make sure register writes completes
-Date: Thu, 14 Jun 2012 09:57:48 -0600
-Message-ID: <4FDA09FC.1010307@wwwdotorg.org>
-References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com> <1339582359-7911-2-git-send-email-ldewangan@nvidia.com> <4FD8B7FC.3060708@wwwdotorg.org> <4FD9DAAC.5000709@nvidia.com>
+Date: Thu, 14 Jun 2012 18:07:58 +0200
+Message-ID: <20120614160758.GD14419@pengutronix.de>
+References: <1339582359-7911-1-git-send-email-ldewangan@nvidia.com>
+ <1339582359-7911-2-git-send-email-ldewangan@nvidia.com>
+ <4FD8B7FC.3060708@wwwdotorg.org>
+ <4FD9DAAC.5000709@nvidia.com>
+ <4FDA09FC.1010307@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FD9DAAC.5000709@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "khali@linux-fr.org" <khali@linux-fr.org>, "w.sang@pengutronix.de" <w.sang@pengutronix.de>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "olof@lixom.net" <olof@lixom.net>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="C+ts3FVlLX8+P6JN"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4FDA09FC.1010307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/14/2012 06:35 AM, Laxman Dewangan wrote:
-> On Wednesday 13 June 2012 09:25 PM, Stephen Warren wrote:
->> On 06/13/2012 04:12 AM, Laxman Dewangan wrote:
->> @@ -165,6 +165,10 @@ static void i2c_writel(struct tegra_i2c_dev
->> *i2c_dev, u32 val,
->>>       unsigned long reg)
->>>   {
->>>       writel(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
->>> +
->>> +    /* Read back register to make sure that register writes
->>> completed */
->>> +    if (reg != I2C_TX_FIFO)
->>> +        readl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
->> I guess that's fine, but it sure does seem rather heavy-weight. Don't
->> you only need to do the readback if you just wrote to the IRQ status or
->> mask registers, rather than if you wrote to /any/ register other than
->> the FIFO?
-> 
-> That's what my second patch but based on your earlier review comment, I
-> did for every register.
 
-Well, just for the record, in that comment you refer to, I was talking
-about the location in the code where the readback should be implemented,
-not the set of registers that the readback should happen for. But, it
-probably doesn't impact performance. It'd be more self-documenting if
-this readback was limited to the specific registers where it was needed
-though.
+--C+ts3FVlLX8+P6JN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> probably doesn't impact performance. It'd be more self-documenting if
+> this readback was limited to the specific registers where it was needed
+> though.
+
+I'd think this is easier to maintain in case code gets
+rewritten/shuffled around.
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--C+ts3FVlLX8+P6JN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk/aDF4ACgkQD27XaX1/VRuSwACfX57hbCpT7GodrAIdUbIuFfIc
+CMcAnRVfF4Qc6PoJLlvor0/OIW8MAsl6
+=mpfj
+-----END PGP SIGNATURE-----
+
+--C+ts3FVlLX8+P6JN--
