@@ -1,64 +1,91 @@
-From: Alex Shi <alex.shi@intel.com>
-Subject: Re: [PATCH v8 8/8] x86/tlb: do flush_tlb_kernel_range by 'invlpg'
-Date: Thu, 14 Jun 2012 10:10:25 +0800
-Message-ID: <4FD94811.9060806@intel.com>
-References: <1339492005-20241-1-git-send-email-alex.shi@intel.com> <1339492005-20241-9-git-send-email-alex.shi@intel.com> <20120613145656.GB32604@tassilo.jf.intel.com> <4FD939F2.3090605@intel.com> <4FD93DC7.8020501@intel.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: RE: Where to power on the wifi device before loading the driver.
+Date: Thu, 14 Jun 2012 12:17:26 +0800
+Message-ID: <6B4D417B830BC44B8026029FD256F7F1C377BFFE89@HKMAIL01.nvidia.com>
+References: <6B4D417B830BC44B8026029FD256F7F1C377BFFE88@HKMAIL01.nvidia.com>
+ <4FD8CED9.6030901@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FD93DC7.8020501@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Kleen <ak@linux.intel.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, arnd@arndb.de, rostedt@goodmis.org, fweisbec@gmail.com, jeremy@goop.org, seto.hidetoshi@jp.fujitsu.com, borislav.petkov@amd.com, tony.luck@intel.com, luto@mit.edu, riel@redhat.com, avi@redhat.com, len.brown@intel.com, tj@kernel.org, akpm@linux-foundation.org, cl@gentwo.org, jbeulich@suse.com, eric.dumazet@gmail.com, akinobu.mita@gmail.com, cpw@sgi.com, penberg@kernel.org, steiner@sgi.com, viro@zeniv.linux.org.uk, kamezawa.hiroyu@jp.fujitsu.com, aarcange@redhat.com, rientjes@google.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <4FD8CED9.6030901@broadcom.com>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Franky Lin' <frankyl@broadcom.com>
+Cc: Stephen Warren <swarren@nvidia.com>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "'linux-mmc@vger.kernel.org'" <linux-mmc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mursalin Akon <makon@nvidia.com>, Rakesh Kumar <krakesh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/14/2012 09:26 AM, Alex Shi wrote:
+Hi, Franky
 
-> On 06/14/2012 09:10 AM, Alex Shi wrote:
-> 
->> On 06/13/2012 10:56 PM, Andi Kleen wrote:
+On Thu, Jun 14, 2012 at 01:33:13, Franky Lin wrote:
+>Hi Wei,
+>
+>On 06/13/2012 03:40 AM, Wei Ni wrote:
+>> In the brcmfmac init routine, it call sdio_register_driver() to=20
+>> register driver, if the wifi device is powered on, then the mmc
+>> driver will enumerate it, and call the probe callback routine.
 >>
->>> On Tue, Jun 12, 2012 at 05:06:45PM +0800, Alex Shi wrote:
->>>> This patch do flush_tlb_kernel_range by 'invlpg'. The performance pay
->>>> and gain was analysed in my patch (x86/flush_tlb: try flush_tlb_single
->>>> one by one in flush_tlb_range). Now we move this logical into kernel
->>>> part. The pay is multiple 'invlpg' execution cost, that is same. but
->>>>  the gain(cost reducing of TLB entries refilling) is absolutely
->>>> increased.
->>>
->>> The subtle point is whether INVLPG flushes global pages or not.
->>> After some digging I found a sentence in the SDM that says it does.
->>> So it may be safe.
+>> On the Cardhu, the wifi's power is controlled by two gpios=20
+>> (power-gpio and reset-gpio), the default state is power-off.
+>> So we need to power on it before calling sdio_register_driver(),
+>> if not, the mmc driver can't enumerate it, and will not call
+>> the probe routine.
+>> This power on sequence is:
+>> set power-gpio to 1 ;
+>> mdelay(100) ;
+>> set reset-gpio to 1 ;
+>> mdelay(200);
 >>
->>
->> Many thanks for your time!
->>
->>>
->>> What does it improve?
->>
->>
->> I have not specific benchmark for this. partly due to the gain theory
->> was proved since it is same as previous user process's page table flush.
->>
->> The user of tlb kernel flush in kernel is vmalloc. and Android binder
->> IPC subsystem is using it(drivers/staging/android/binder.c)
->>
->> I am wondering if it can help Andriod on this?
->> So, add cc to android-kernel@googlegroups.com
-> 
-> 
-> Sorry, Andriod reject posting without register, so cc to
-> linux-omap@vger.kernel.org and linux-tegra@vger.kernel.org instead.
+>> My question is where to power on the wifi. We may have three places=20
+>> to power on it:
+>> 1. power on it in the brcmfmac driver before calling
+>> sdio_register_driver(). But I think this power sequence is special f=
+or=20
+>> tegra30 cardhu, it's not good to add it in the generic wifi driver,=20
+>> because different board may use the different way to power on the wi=
+fi.
+>> 2. power on it in the mmc driver. In our tegra SD driver, it has=20
+>> power-gpios property, which allow the slot to be powered. But this p=
+ower is=20
+>> for mmc slot, could we add this wifi power sequence in the tegra SD =
+driver?
+>> 3. hard-coded into DT. Set these gpios in the DT, something like=20
+>> pinmux settings, but in this way, it's not good to put the mdelay() =
+value
+>> in the DT.
+>
+>We introduced oob interrupt support in 3.5 [1]. We are using a virtual=
+=20
+>platform device to retrieve board specific oob interrupt GPIO setting.
+>You should be able to implement the power control in this way as well.
+>Brcmfmac gets the GPIOs through platform device interface, powers up=20
+>the chip and triggers a card detection. Then 4329 should be enumerated=
+=20
+>by MMC stack. The reason we didn't implement this is the card detectio=
+n.
+>Some design doesn't have hardware card detection since the WiFi chip i=
+s=20
+>already on board. And the current MMC stack doesn't have virtual card=20
+>detection interface.
+
+Wei: Yes, in OOB mode, it's easy to add a device node in the DT, to pas=
+s
+the gpio property to brcmfmac driver. But the NO-OOB mode doesn=92t use=
+ the
+virtual platform device, so we can't pass the gpio to driver. We need t=
+o find
+a way to support these two mode both.
+Could we use the virtual platform device both for OOB and NO-OOB mode? =
+so that
+we can implement power control in these two mode, and we can add a flag=
+s to
+control if need to power on or not.
+BTW, does that power on sequence is generally for 4329?
+
+>
+>Franky
+>
+>[1]: http://www.spinics.net/lists/linux-wireless/msg89335.html
 
 
-Ops, forget the architecture different again
-This will help x86 android, not arm system. Forget above 2 mailing lists. :(
 
-> 
->>
->>> -Andi
->>
->>
-> 
-> 
