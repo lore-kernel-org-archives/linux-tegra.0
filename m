@@ -1,158 +1,58 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Fri, 15 Jun 2012 08:12:36 +0200
-Message-ID: <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de>
-References: <20120613064519.GD31001@avionic-0098.mockup.avionic-design.de>
- <4FD84133.4060401@firmworks.com>
- <20120613075232.GA6139@avionic-0098.mockup.avionic-design.de>
- <4FD849CF.4030009@firmworks.com>
- <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de>
- <4FD85127.8050301@firmworks.com>
- <20120614091905.GA9081@avionic-0098.mockup.avionic-design.de>
- <4FDA2DDA.1030704@wwwdotorg.org>
- <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de>
- <4FDA40A0.4030206@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: Where to power on the wifi device before loading the driver.
+Date: Fri, 15 Jun 2012 09:49:10 -0600
+Message-ID: <4FDB5976.20809@wwwdotorg.org>
+References: <6B4D417B830BC44B8026029FD256F7F1C377BFFE88@HKMAIL01.nvidia.com> <4FD90352.9090606@wwwdotorg.org> <20120614063120.GA20167@avionic-0098.mockup.avionic-design.de> <20120614121234.GC3913@opensource.wolfsonmicro.com> <4FDA092E.10301@wwwdotorg.org> <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FDA40A0.4030206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, "'frankyl@broadcom.com'" <frankyl@broadcom.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mursalin Akon <makon@nvidia.com>, "'linux-mmc@vger.kernel.org'" <linux-mmc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rakesh Kumar <krakesh@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/15/2012 12:09 AM, Wei Ni wrote:
+> On Thu, Jun 14, 2012 at 23:54:22, Stephen Warren wrote:
+>>>>> The core of the issue is that:
+>>>
+>>>>> * Tegra30 support is via device tree. * We have an SDIO bus, and 
+>>>>> the WiFi device attached to that bus is enumerable. * Since the 
+>>>>> WiFi device is enumerable, no node exists in the DT to represent 
+>>>>> it. * However, the driver for the WiFi device needs certain 
+>>>>> information, such as the reset GPIO ID and perhaps power GPIO.
+>>>
+>>>> PCI devices are also enumerable and yet they can be matched up with 
+>>>> nodes in the device tree. Perhaps something similar could be added 
+>>>> for the SDIO bus?
+>>>
+>>> This seems to make the most sense - pushing this through the 
+>>> regulator API is just a bodge.
+>>
+>> Yes, that seems reasonable.
+>>
+>> Presumably the power GPIO should be a fixed regulator though, since it 
+>> is a power control not just a plain old GPIO? That said, the current driver apparently deals with this as a GPIO already.
+>>
+>> The reset GPIO can separately/directly controlled by the WiFi driver though.
+> 
+> I talked with Franky, this power sequence is generally for 4329, so it mean this sequence can be put into the wifi driver.
+> We can use the virtual platform device both for OOB and non OOB.
+> I will send out patches later.
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can you please expand on what a "virtual platform device" is; device
+tree typically represents real hardware rather than anything "virtual".
 
-On Thu, Jun 14, 2012 at 01:50:56PM -0600, Stephen Warren wrote:
-> On 06/14/2012 01:29 PM, Thierry Reding wrote:
-> > On Thu, Jun 14, 2012 at 12:30:50PM -0600, Stephen Warren wrote:
-> >> On 06/14/2012 03:19 AM, Thierry Reding wrote:
-> ...
-> >>> #address-cells =3D <1>; #size-cells =3D <1>;
-> >>>=20
-> >>> pci@80000000 {
-> >>=20
-> >> I'm still not convinced that using the address of the port's
-> >> registers is the correct way to represent each port. The port
-> >> index seems much more useful.
-> >>=20
-> >> The main reason here is that there are a lot of registers that
-> >> contain fields for each port - far more than the combination of
-> >> this node's reg and ctrl-offset (which I assume is an address
-> >> offset for just one example of this issue) properties can
-> >> describe. The bit position and bit stride of these fields isn't
-> >> necessarily the same in each register. Do we want a property like
-> >> ctrl-offset for every single type of field in every single shared
-> >> register that describes the location of the relevant data, or
-> >> just a single "port ID" bit that can be applied to anything?
-> >>=20
-> >> (Perhaps this isn't so obvious looking at the TRM since it
-> >> doesn't document all registers, and I'm also looking at the
-> >> Tegra30 documentation too, which might be more exposed to this -
-> >> I haven't correlated all the documentation sources to be sure
-> >> though)
-> >=20
-> > I agree that maybe adding properties for each bit position or
-> > register offset may not work out too well. But I think it still
-> > makes sense to use the base address of the port's registers (see
-> > below). We could of course add some code to determine the index
-> > from the base address at initialization time and reuse the index
-> > where appropriate.
->=20
-> To me, working back from address to ID then using the ID to calculate
-> some other addresses seems far more icky than just calculating all the
-> addresses based off of one ID. But, I suppose this doesn't make a huge
-> practical difference.
+Now if this means adding a child node under the SDIO controller to
+represent the attached device, and storing any settings required by that
+device in that child node, that's probably a reasonable basic approach.
 
-This really depends on the device vs. no device decision below. If we can
-make it work without needing an extra device for it, then using the index
-is certainly better. However, if we instantiate devices from the DT, then
-we have the address anyway and adding the index as a property would be
-redundant and error prone (what happens if somebody sets the index of the
-port at address 0x80000000 to 2?).
-
-> >>> compatible =3D "nvidia,tegra20-pcie-port"; reg =3D <0x80000000=20
-> >>> 0x00001000>; status =3D "disabled";
-> >>>=20
-> >>> #address-cells =3D <3>; #size-cells =3D <2>;
-> >>>=20
-> >>> ranges =3D <0x81000000 0 0 0x80400000 0 0x00008000   /* I/O */=20
-> >>> 0x82000000 0 0 0x90000000 0 0x08000000   /* non-prefetchable
-> >>> memory */ 0xc2000000 0 0 0xa0000000 0 0x08000000>; /*
-> >>> prefetchable memory */
-> >>=20
-> >> The values here appear identical for both ports. Surely they
-> >> should describe just the parts of the overall address space that
-> >> have been assigned/delegated to the individual port/bridge?
-> >=20
-> > They're not identical. Port 0 gets the first half and port 1 gets
-> > the second half of the ranges specified in the parent.
->=20
-> Oh right, I missed some 8s and 0s that looked the same!
->=20
-> >>> While looking into some more code, trying to figure out how to
-> >>> hook this all up with the device tree I ran into a problem. I
-> >>> need to actually create a 'struct device' for each of the
-> >>> ports, so I added the "simple-bus" to the pcie-controller's
-> >>> "compatible" property. Furthermore, each PCI root port now
-> >>> becomes a platform_device, which are supported by a new
-> >>> tegra-pcie-port driver. I'm not sure if "port" is very common
-> >>> in PCI speek, so something like tegra-pcie-bridge (compatible =3D
-> >>> "nvidia,tegra20-pcie-bridge") may be more appropriate?
-> >>=20
-> >> What is it that drives the need for each port to be a 'struct
-> >> device'? The current driver supports 2 host ports, yet there's
-> >> only a single struct device for it. Does the DT code assume a 1:1
-> >> mapping between struct device and DT node that represents the
-> >> child bus? If so, perhaps it'd be better to rework that code to
-> >> accept a DT node as a parameter and call it multiple times,
-> >> rather than accept a struct device as a parameter and hence need
-> >> multiple devices?
-> >=20
-> > It's not so much the DT code, but rather the PCI core and
-> > ultimately the device model that requires it. Each port is
-> > basically a PCI host bridge that provides a root PCI bus and the
-> > device model is used to represent the hierachy of the busses.
-> > Providing just the DT node isn't going to be enough.
->=20
-> But the existing driver works without /any/ devices, let alone one per
-> port.
-
-That doesn't necessarily mean it is correct. The representation of the
-device tree (as in the Linux kernel device tree) isn't quite accurate
-because you're missing the link of the host bridge to the parent PCIe
-controller. It also means that the representation of the kernel device
-tree doesn't match the DT representation.
-
-Additionally, if you look at how PCI busses and devices are matched to
-their respective DT nodes, the code in drivers/pci/of.c provides a
-default implementation of pcibios_get_phb_of_node(), which matches the
-struct pci_bus up with the device_node of the parent device.
-
-If we keep the current implementation that passes NULL as parent to the
-pci_scan_root_bus() function, then we'll have to provide a custom
-implementation of pcibios_get_phb_of_node() which has to go through
-similar hoops as the x86 version (see arch/x86/kernel/devicetree.c).
-That of course will not contribute to improving the current state of
-fragmentation in the PCI subsystem.
-
-Thierry
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEYEARECAAYFAk/a0lQACgkQZ+BJyKLjJp+dFwCfcrTbO1rz4WRtTNZXO/XSyRmt
-k44AoLGHZyx+ockeQvWHi9Ow15sOo/Ue
-=X1Yq
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+BTW, which GPIO is the power GPIO; is it WF_EN on the schematic? That
+seems reasonable to represent as a GPIO rather than a regulator since it
+connects directly into the WiFi device as a GPIO, and its use within the
+WiFi device can indeed be governed purely internally to the WiFi
+driver/HW. However, if this is some GPIO that controls the power to e.g.
+VBAT3V3_IN_WF, VDDIO_WF, or other power supply to the WiFi card, then
+it'd be better represented as a regulator, since the control point is
+outside the WiFi device.
