@@ -1,90 +1,57 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] iommu/tegra: gart: Reserve iomem resource
-Date: Mon, 18 Jun 2012 13:37:36 +0300
-Message-ID: <20120618133736.8d23c4e70b34b1de8cb71f6f@nvidia.com>
-References: <1337019127-6863-1-git-send-email-hdoyu@nvidia.com>
-	<1337019127-6863-2-git-send-email-hdoyu@nvidia.com>
-	<20120521141152.GA21513@avionic-0098.mockup.avionic-design.de>
-	<4FBA702A.1010203@wwwdotorg.org> <1337619935.1621.13.camel@tellur>
-	<4FBA77E2.4000409@wwwdotorg.org>
-	<20120521173124.GB11824@avionic-0098.mockup.avionic-design.de>
-	<1337621908.1621.16.camel@tellur>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Where to power on the wifi device before loading the driver.
+Date: Mon, 18 Jun 2012 09:01:45 -0600
+Message-ID: <4FDF42D9.2050305@wwwdotorg.org>
+References: <6B4D417B830BC44B8026029FD256F7F1C377BFFE88@HKMAIL01.nvidia.com> <4FD90352.9090606@wwwdotorg.org> <20120614063120.GA20167@avionic-0098.mockup.avionic-design.de> <20120614121234.GC3913@opensource.wolfsonmicro.com> <4FDA092E.10301@wwwdotorg.org> <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com> <4FDB5976.20809@wwwdotorg.org> <6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com> <96C9D994977DD0439FB6D3FE3B13DD907DE14CB4DF@BGMAIL01.nvidia.com> <96C9D994977DD0439FB6D3FE3B13DD907DE14CB4E8@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1337621908.1621.16.camel@tellur>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, joerg.roedel-5C7GfCeVMHo@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bharat Nihalani <bnihalani-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vandana Salve <vsalve-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <96C9D994977DD0439FB6D3FE3B13DD907DE14CB4E8-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "'frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org'" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mursalin Akon <makon-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "'linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "'linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lucas,
-
-On Mon, 21 May 2012 19:38:28 +0200
-Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
-
-> Am Montag, den 21.05.2012, 19:31 +0200 schrieb Thierry Reding:
-> > * Stephen Warren wrote:
-> > > On 05/21/2012 11:05 AM, Lucas Stach wrote:
-> > > > Am Montag, den 21.05.2012, 10:41 -0600 schrieb Stephen Warren:
-> > > >> On 05/21/2012 08:11 AM, Thierry Reding wrote:
-> > > >>> * Hiroshi DOYU wrote:
-> > > >>>> GART Register/Aperture range should be reserved.
-> > > >> ...
-> > > >>>> diff --git a/drivers/iommu/tegra-gart.c
-> > > >>>> b/drivers/iommu/tegra-gart.c
-> > > >> ...
-> > > >>>> +	if (!devm_request_mem_region(dev, res_remap->start, +
-> > > >>>> resource_size(res_remap), dev_name(dev))) { +		dev_err(dev,
-> > > >>>> "failed to reserve GART aperture\n"); +		return -EBUSY; +	} +
-> > > >>>
-> > > >>> I'm not so sure that this is a good idea. If the GART driver
-> > > >>> requests the GART aperture, then users of the GART aperture (e.g.
-> > > >>> the DRM driver) will no longer be able to use it.
-> > > >>
-> > > >> Presumably the DRM driver would be obtaining access to parts of the
-> > > >> GART aperture through the GART driver, rather than just grabbing the
-> > > >> IO region and using it for itself?
-> > > > 
-> > > > With a TTM-like memory manager the DRM driver will take over the address
-> > > > space management of the GART aperture. The GART driver is only used to
-> > > > set up the mappings in the IOMMU. The DRM driver is the one that sets
-> > > > up/tears down the CPU mappings on demand, so the aperture should be
-> > > > claimed in the DRM driver.
-> > > 
-> > > Even if the DRM driver is managing the aperture, I still think the GART
-> > > driver should claim it. The physical address of the aperture is a
-> > > property of the GART, so only the GART's resources (and DT node) should
-> > > contain a representation of where that aperture is. The DRM driver
-> > > should call into the GART driver to find out where the aperture is, and
-> > > hence GART is able to claim it without conflict.
+On 06/18/2012 02:03 AM, Laxman Dewangan wrote:
+> Rakesh Kumar wrote at Monday, June 18, 2012 1:11 PM:
+> > Stephen Warren wrote:
+> >> Now if this means adding a child node under the SDIO controller
+> >> to represent the attached device, and storing any settings
+> >> required by that device in that child node, that's probably a
+> >> reasonable basic approach.
+> >>
+> >> BTW, which GPIO is the power GPIO; is it WF_EN on the schematic?
+> >> That seems reasonable to represent as a GPIO rather than a
+> >> regulator since it connects directly into the WiFi device as a
+> >> GPIO, and its use within the WiFi device can indeed be governed
+> >> purely internally to the WiFi driver/HW. However, if this is some
+> >> GPIO that controls the power to e.g. VBAT3V3_IN_WF, VDDIO_WF, or
+> >> other power supply to the WiFi card, then it'd be better
+> >> represented as a regulator, since the control point is outside the
+> >> WiFi device.
 > > 
-> > That could be difficult to do. There isn't any API to allow this. I guess if
-> > something like that is added it should probably go into the IOMMU framework.
-> 
-> Ah, yes. There already was a plan to add properties for this to the
-> IOMMU API. So I'm ok with the GART driver claiming the resources.
+> > Tegra uses two GPIO (WF_EN and WF_RST) to power on and reset bcm4329
+> > card. In case of bcm4329, these two lines are shorted. Tegra does
+> > not control VBAT3V3_IN_WF, VDDIO_WF, or other power supply to the
+> > WiFi card based on these GPIO. Uses of these GPIO are internal to
+> > WiFi HW.  It is reasonable to represent as a GPU rather than
+> > regulator.
+>
+> If it is for power then it has to go via regulator. It does not make
+> sense to directly control the gpio inside the wifi driver.
 
-I think that DRM driver should be independent of GART, one specific
-implementation of IOMMU H/W, but it should be a normal client of DMA
-BUF(or DMABUF API?), which asks info via IOMMU API if necessary.
+As far as the board goes, WF_EN is just a GPIO signal to the WiFi card;
+it doesn't gate power to the card. If it gates power inside the card,
+that's an internal implementation detail of the card, and something I'd
+be fine with the driver knowing directly, and hence I'm OK with
+representing this as a GPIO rather than a regulator - that's what it is
+externally to the WiFi device.
 
-For new IOMMU API, I guess that the following would be the one we need here.
-
-[PATCH 0/5] IOMMU: Make IOMMU-API ready for GART-like hardware
-  https://lkml.org/lkml/2012/1/19/170
-
-> I will try to push the needed API changes forward in the next few
-> days.
-
-Have you had any chance to post the above succeeding patch? I couldn't
-find.
+(BTW everyone, many of the emails in this thread are awfully formatted -
+top-posted and not word-wrapped. It's very hard to read them... I tried
+to reformat everything and fix it in this email)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
