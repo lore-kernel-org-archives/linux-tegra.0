@@ -1,101 +1,44 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Tue, 19 Jun 2012 10:40:39 -0600
-Message-ID: <4FE0AB87.9030007@wwwdotorg.org>
-References: <4FD84133.4060401@firmworks.com> <20120613075232.GA6139@avionic-0098.mockup.avionic-design.de> <4FD849CF.4030009@firmworks.com> <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de> <4FD85127.8050301@firmworks.com> <20120614091905.GA9081@avionic-0098.mockup.avionic-design.de> <4FDA2DDA.1030704@wwwdotorg.org> <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de> <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH] ARM: tegra: apbio access using dma for tegra20 only
+Date: Tue, 19 Jun 2012 11:01:21 -0600
+Message-ID: <4FE0B061.6070302@wwwdotorg.org>
+References: <1340085974-9623-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120619133001.GB24138-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <1340085974-9623-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/19/2012 07:30 AM, Thierry Reding wrote:
-> On Fri, Jun 15, 2012 at 08:12:36AM +0200, Thierry Reding wrote:
->> On Thu, Jun 14, 2012 at 01:50:56PM -0600, Stephen Warren wrote:
-...
->>> To me, working back from address to ID then using the ID to calculate
->>> some other addresses seems far more icky than just calculating all the
->>> addresses based off of one ID. But, I suppose this doesn't make a huge
->>> practical difference.
->>
->> This really depends on the device vs. no device decision below. If we can
->> make it work without needing an extra device for it, then using the index
->> is certainly better. However, if we instantiate devices from the DT, then
->> we have the address anyway and adding the index as a property would be
->> redundant and error prone (what happens if somebody sets the index of the
->> port at address 0x80000000 to 2?).
+On 06/19/2012 12:06 AM, Laxman Dewangan wrote:
+> The Tegra20 HW issue with accessing APBIO registers (such
+> as fuse registers) directly from the CPU concurrently with
+> APB DMA accesses has been fixed in Tegra30 and later chips.
 > 
-> An additional problem with this is that we'd have to add the following
-> to the pcie-controller node:
-> 
-> 	#address-cells = <1>;
-> 	#size-cells = <0>;
-> 
-> This will conflict with the "ranges" property, because suddenly we can
-> no longer map the regions properly. Maybe Mitch can comment on whether
-> this is possible or not?
-> 
-> To make it clearer what I'm talking about, here's the DT snippet again
-> (with the compatible property removed from the pci@ nodes because they
-> are no longer probed by a driver, the "simple-bus" removed from the
-> pcie-controller node's compatible property removed and its #address-
-> and #size-cells properties adjusted as described above).
-> 
-> 	pcie-controller {
-> 		compatible = "nvidia,tegra20-pcie";
-> 		reg = <0x80003000 0x00000800   /* PADS registers */
-> 		       0x80003800 0x00000200   /* AFI registers */
-> 		       0x80004000 0x00100000   /* configuration space */
-> 		       0x80104000 0x00100000>; /* extended configuration space */
-> 		interrupts = <0 98 0x04   /* controller interrupt */
-> 			      0 99 0x04>; /* MSI interrupt */
-> 		status = "disabled";
-> 
-> 		ranges = <0x80000000 0x80000000 0x00002000   /* 2 root ports */
-> 			  0x80400000 0x80400000 0x00010000   /* downstream I/O */
-> 			  0x90000000 0x90000000 0x10000000   /* non-prefetchable memory */
-> 			  0xa0000000 0xa0000000 0x10000000>; /* prefetchable memory */
-> 
-> 		#address-cells = <1>;
-> 		#size-cells = <0>;
-> 
-> 		pci@0 {
-> 			reg = <2>;
-> 			status = "disabled";
-> 
-> 			#address-cells = <3>;
-> 			#size-cells = <2>;
-> 
-> 			ranges = <0x81000000 0 0 0x80400000 0 0x00008000   /* I/O */
-> 				  0x82000000 0 0 0x90000000 0 0x08000000   /* non-prefetchable memory */
-> 				  0xc2000000 0 0 0xa0000000 0 0x08000000>; /* prefetchable memory */
-> 
-> 			nvidia,ctrl-offset = <0x110>;
-> 			nvidia,num-lanes = <2>;
-> 		};
-> 
-> 		pci@1 {
-> 			reg = <1>;
-> 			status = "disabled";
-> 
-> 			#address-cells = <3>;
-> 			#size-cells = <2>;
-> 
-> 			ranges = <0x81000000 0 0 0x80408000 0 0x00008000   /* I/O */
-> 				  0x82000000 0 0 0x98000000 0 0x08000000   /* non-prefetchable memory */
-> 				  0xc2000000 0 0 0xa8000000 0 0x08000000>; /* prefetchable memory */
-> 
-> 			nvidia,ctrl-offset = <0x118>;
-> 			nvidia,num-lanes = <2>;
-> 		};
-> 	};
-> 
-> AIUI none of the ranges properties are valid anymore, because the bus
-> represented by pcie-controller no longer reflects the truth, namely that
-> it translates the CPU address space to the PCI address space.
+> Access these registers directly from the CPU on Tegra30
+> and later, and apply the workaround only for Tegra20.
 
-Yes, I imagine that's a show-stopper for this approach.
+> +void tegra_apb_io_init(void)
+> +{
+> +	/* Need to use dma only when it is Tegra20 based platform */
+> +	if (of_machine_is_compatible("nvidia,tegra20")) {
+
+That tests only works when the system is booted using device tree. Can
+you change this to:
+
+if (of_machine_is_compatible("nvidia,tegra20") ||
+    !of_have_populated_dt()) {
+
+... and make sure you get the expected result when booting using a board
+file (e.g. Harmony). Thanks.
+
+> +		apbio_read = tegra_apb_readl_using_dma;
+> +		apbio_write = tegra_apb_writel_using_dma;
+> +	} else {
+> +		apbio_read = tegra_apb_readl_direct;
+> +		apbio_write = tegra_apb_writel_direct;
+> +	}
+> +}
