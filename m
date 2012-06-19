@@ -1,80 +1,219 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: RE: Where to power on the wifi device before loading the driver.
-Date: Tue, 19 Jun 2012 12:25:58 +0800
-Message-ID: <6B4D417B830BC44B8026029FD256F7F1C6EE2DD622@HKMAIL01.nvidia.com>
-References: <6B4D417B830BC44B8026029FD256F7F1C377BFFE88@HKMAIL01.nvidia.com>
- <4FD90352.9090606@wwwdotorg.org>
- <20120614063120.GA20167@avionic-0098.mockup.avionic-design.de>
- <20120614121234.GC3913@opensource.wolfsonmicro.com>
- <4FDA092E.10301@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
- <4FDB5976.20809@wwwdotorg.org>,<6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com>
- <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: apbio access using dma for tegra20 only
+Date: Tue, 19 Jun 2012 11:36:14 +0530
+Message-ID: <1340085974-9623-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
-Content-Language: en-US
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Philip Rakity' <prakity@marvell.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, Rakesh Kumar <krakesh@nvidia.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, "'frankyl@broadcom.com'" <frankyl@broadcom.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mursalin Akon <makon@nvidia.com>, "'linux-mmc@vger.kernel.org'" <linux-mmc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "'linux-wireless@vger.kernel.org'" <linux-wireless@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 19, 2012 at 09:23:35, Philip Rakity wrote:
->Why can't you use the regulator notify to get called back on power or 
->voltage change options to plumb in the manipulation of the gpio. I can 
->imagine you might need to add a notify call in core.c if you need to 
->assert the gpio before power is applied
+The Tegra20 HW issue with accessing APBIO registers (such
+as fuse registers) directly from the CPU concurrently with
+APB DMA accesses has been fixed in Tegra30 and later chips.
 
-Yes, we can use the regulator notify, but the Tegra30 support is via device tree, I think there have no special board file to run the call back.
+Access these registers directly from the CPU on Tegra30
+and later, and apply the workaround only for Tegra20.
 
->
->
->________________________________________
->From: linux-mmc-owner@vger.kernel.org [linux-mmc-owner@vger.kernel.org] 
->On Behalf Of Wei Ni [wni@nvidia.com]
->Sent: Sunday, June 17, 2012 11:20 PM
->To: 'Stephen Warren'; Rakesh Kumar
->Cc: Mark Brown; 'frankyl@broadcom.com'; Thierry Reding; Mursalin Akon; 
->'linux-mmc@vger.kernel.org'; devicetree-discuss@lists.ozlabs.org; 
->'linux-wireless@vger.kernel.org'; linux-tegra@vger.kernel.org; 
->linux-arm-kernel@lists.infradead.org
->Subject: RE: Where to power on the wifi device before loading the driver.
->
->On Fri, Jun 15, 2012 at 23:49:10, Stephen Warren wrote:
->>> I talked with Franky, this power sequence is generally for 4329, so 
->>> it mean this sequence can be put into the wifi driver.
->>> We can use the virtual platform device both for OOB and non OOB.
->>> I will send out patches later.
->>
->>Can you please expand on what a "virtual platform device" is; device 
->>tree typically represents real
->hardware rather than anything "virtual".
->
->The "virtual platform device" is created before the real wifi device, 
->so that it can pass the gpios to the driver, and power up the device before calling sdio_register_driver.
->But as Franky said, this power sequence is only generally for 4329, not 
->for the USB dongle chips. So it's not a good idea to add this "power up" in brcmfmac.
->
->>
->>Now if this means adding a child node under the SDIO controller to 
->>represent the attached device, and
->storing any settings required by that device in that child node, that's 
->probably a reasonable basic approach.
->>
->>BTW, which GPIO is the power GPIO; is it WF_EN on the schematic? That 
->>seems reasonable to represent
->as a GPIO rather than a regulator since it connects directly into the 
->WiFi device as a GPIO, and its use within the WiFi device can indeed be 
->governed purely internally to the WiFi driver/HW. However, if this is some GPIO that controls the power to e.g.
->>VBAT3V3_IN_WF, VDDIO_WF, or other power supply to the WiFi card, then 
->>it'd be better represented as a
->regulator, since the control point is outside the WiFi device.
->
->I think Rakesh may can answer this.
->
->Wei.
->---
->nvpublic
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/Makefile |    3 +-
+ arch/arm/mach-tegra/apbio.c  |   58 ++++++++++++++++++++++++++++++++++++++---
+ arch/arm/mach-tegra/apbio.h  |   19 +-------------
+ arch/arm/mach-tegra/common.c |    3 ++
+ 4 files changed, 59 insertions(+), 24 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 508d816..c3d7303 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -9,6 +9,7 @@ obj-y					+= fuse.o
+ obj-y					+= pmc.o
+ obj-y					+= flowctrl.o
+ obj-y					+= powergate.o
++obj-y					+= apbio.o
+ obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
+ obj-$(CONFIG_CPU_IDLE)			+= sleep.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra2_clocks.o
+@@ -17,7 +18,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
+ obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
+ obj-$(CONFIG_SMP)                       += reset.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+-obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o apbio.o
++obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+= dma.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+ obj-$(CONFIG_USB_SUPPORT)		+= usb_phy.o
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index e75451e..13abaa3 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -15,6 +15,10 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/io.h>
++#include <mach/iomap.h>
++#include <linux/of.h>
++
++#ifdef CONFIG_TEGRA_SYSTEM_DMA
+ #include <linux/dma-mapping.h>
+ #include <linux/spinlock.h>
+ #include <linux/completion.h>
+@@ -22,7 +26,6 @@
+ #include <linux/mutex.h>
+ 
+ #include <mach/dma.h>
+-#include <mach/iomap.h>
+ 
+ #include "apbio.h"
+ 
+@@ -33,6 +36,9 @@ static u32 *tegra_apb_bb;
+ static dma_addr_t tegra_apb_bb_phys;
+ static DECLARE_COMPLETION(tegra_apb_wait);
+ 
++static u32 tegra_apb_readl_direct(unsigned long offset);
++static void tegra_apb_writel_direct(u32 value, unsigned long offset);
++
+ bool tegra_apb_init(void)
+ {
+ 	struct tegra_dma_channel *ch;
+@@ -72,13 +78,13 @@ static void apb_dma_complete(struct tegra_dma_req *req)
+ 	complete(&tegra_apb_wait);
+ }
+ 
+-u32 tegra_apb_readl(unsigned long offset)
++static u32 tegra_apb_readl_using_dma(unsigned long offset)
+ {
+ 	struct tegra_dma_req req;
+ 	int ret;
+ 
+ 	if (!tegra_apb_dma && !tegra_apb_init())
+-		return readl(IO_TO_VIRT(offset));
++		return tegra_apb_readl_direct(offset);
+ 
+ 	mutex_lock(&tegra_apb_dma_lock);
+ 	req.complete = apb_dma_complete;
+@@ -108,13 +114,13 @@ u32 tegra_apb_readl(unsigned long offset)
+ 	return *((u32 *)tegra_apb_bb);
+ }
+ 
+-void tegra_apb_writel(u32 value, unsigned long offset)
++static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
+ {
+ 	struct tegra_dma_req req;
+ 	int ret;
+ 
+ 	if (!tegra_apb_dma && !tegra_apb_init()) {
+-		writel(value, IO_TO_VIRT(offset));
++		tegra_apb_writel_direct(value, offset);
+ 		return;
+ 	}
+ 
+@@ -143,3 +149,45 @@ void tegra_apb_writel(u32 value, unsigned long offset)
+ 
+ 	mutex_unlock(&tegra_apb_dma_lock);
+ }
++#else
++#define tegra_apb_readl_using_dma tegra_apb_readl_direct
++#define tegra_apb_writel_using_dma tegra_apb_writel_direct
++#endif
++
++typedef u32 (*apbio_read_fptr)(unsigned long offset);
++typedef void (*apbio_write_fptr)(u32 value, unsigned long offset);
++
++static apbio_read_fptr apbio_read;
++static apbio_write_fptr apbio_write;
++
++static u32 tegra_apb_readl_direct(unsigned long offset)
++{
++	return readl(IO_TO_VIRT(offset));
++}
++
++static void tegra_apb_writel_direct(u32 value, unsigned long offset)
++{
++	writel(value, IO_TO_VIRT(offset));
++}
++
++void tegra_apb_io_init(void)
++{
++	/* Need to use dma only when it is Tegra20 based platform */
++	if (of_machine_is_compatible("nvidia,tegra20")) {
++		apbio_read = tegra_apb_readl_using_dma;
++		apbio_write = tegra_apb_writel_using_dma;
++	} else {
++		apbio_read = tegra_apb_readl_direct;
++		apbio_write = tegra_apb_writel_direct;
++	}
++}
++
++u32 tegra_apb_readl(unsigned long offset)
++{
++	return apbio_read(offset);
++}
++
++void tegra_apb_writel(u32 value, unsigned long offset)
++{
++	apbio_write(value, offset);
++}
+diff --git a/arch/arm/mach-tegra/apbio.h b/arch/arm/mach-tegra/apbio.h
+index 8b49e8c..f05d71c 100644
+--- a/arch/arm/mach-tegra/apbio.h
++++ b/arch/arm/mach-tegra/apbio.h
+@@ -16,24 +16,7 @@
+ #ifndef __MACH_TEGRA_APBIO_H
+ #define __MACH_TEGRA_APBIO_H
+ 
+-#ifdef CONFIG_TEGRA_SYSTEM_DMA
+-
++void tegra_apb_io_init(void);
+ u32 tegra_apb_readl(unsigned long offset);
+ void tegra_apb_writel(u32 value, unsigned long offset);
+-
+-#else
+-#include <asm/io.h>
+-#include <mach/io.h>
+-
+-static inline u32 tegra_apb_readl(unsigned long offset)
+-{
+-        return readl(IO_TO_VIRT(offset));
+-}
+-
+-static inline void tegra_apb_writel(u32 value, unsigned long offset)
+-{
+-        writel(value, IO_TO_VIRT(offset));
+-}
+-#endif
+-
+ #endif
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 204a5c8..96fef6b 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -33,6 +33,7 @@
+ #include "clock.h"
+ #include "fuse.h"
+ #include "pmc.h"
++#include "apbio.h"
+ 
+ /*
+  * Storage for debug-macro.S's state.
+@@ -127,6 +128,7 @@ static void __init tegra_init_cache(u32 tag_latency, u32 data_latency)
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ void __init tegra20_init_early(void)
+ {
++	tegra_apb_io_init();
+ 	tegra_init_fuse();
+ 	tegra2_init_clocks();
+ 	tegra_clk_init_from_table(tegra20_clk_init_table);
+@@ -138,6 +140,7 @@ void __init tegra20_init_early(void)
+ #ifdef CONFIG_ARCH_TEGRA_3x_SOC
+ void __init tegra30_init_early(void)
+ {
++	tegra_apb_io_init();
+ 	tegra_init_fuse();
+ 	tegra30_init_clocks();
+ 	tegra_clk_init_from_table(tegra30_clk_init_table);
+-- 
+1.7.1.1
