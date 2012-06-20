@@ -1,26 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: tegra: apbio access using dma for tegra20 only
-Date: Wed, 20 Jun 2012 12:44:13 -0600
-Message-ID: <4FE219FD.4070307@wwwdotorg.org>
-References: <1340195794-26571-1-git-send-email-ldewangan@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
+Date: Wed, 20 Jun 2012 19:57:38 +0000
+Message-ID: <201206201957.39343.arnd@arndb.de>
+References: <4FD84133.4060401@firmworks.com> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de> <4FE0EFBB.6090206@firmworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340195794-26571-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <4FE0EFBB.6090206@firmworks.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Mitch Bradley <wmb@firmworks.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/20/2012 06:36 AM, Laxman Dewangan wrote:
-> The Tegra20 HW issue with accessing APBIO registers (such
-> as fuse registers) directly from the CPU concurrently with
-> APB DMA accesses has been fixed in Tegra30 and later chips.
-> 
-> Access these registers directly from the CPU on Tegra30
-> and later, and apply the workaround only for Tegra20.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tuesday 19 June 2012, Mitch Bradley wrote:
 
-Thanks, applied.
+> Version A - 3 address cells:  In this version, the intermediate address 
+> space has 3 cells:  port#, address type, offset.  Address type is
+>    0 : root port
+>    1 : config space
+>    2 : extended config space
+>    3 : I/O
+>    4 : non-prefetchable memory
+>    5 : prefetchable memory.
+> 
+> The third cell "offset" is necessary so that the size field has a number 
+> space that can include it.
+
+I agree with Stephen that this is a clever way to encode all the address spaces,
+very nice!
+
+> Version B - 2 address cells:  In this first version, the intermediate
+> address space has 2 cells:  port#, offset.  The address type (I/O, mem,
+> etc) is the high digit of in the offset:
+>     Offset 0....... : Root port
+>     Offset 1....... : config
+>     Offset 2....... : extended config
+>     Offset 3....... : I/O
+>     Offset 4....... : non-prefetchable memory
+>     Offset 5....... : prefetchable memory.
+
+This is similar to how the PCI binding works internally, but I find that
+a bit confusing as well, so given those two choices, I'd prefer the first
+one.
+   
+> Version C - 2 address cells, 0 size cells (!) : In this version we hide the size component in 
+> the intermediate space.  I don't know if that will actually work, but my guess is that it
+> probably would.  The intermediate address space is like version A with the omission of the
+> offset field.  The intermediate address just specifies the port number and the address type.
+
+My guess is that it doesn't work with the current Linux code that transforms
+the addresses. I've just recently seen the code complain about any platform
+device whose parent has #size-cells=0.
+
+	Arnd
