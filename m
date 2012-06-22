@@ -1,40 +1,39 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] dma: tegra: do not set transfer desc flag to DMA_CTRL_ACK in cyclic mode
-Date: Fri, 22 Jun 2012 17:12:44 +0530
-Message-ID: <1340365364-16276-2-git-send-email-ldewangan@nvidia.com>
-References: <1340365364-16276-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 1/2] dma: tegra: set DMA_CYCLIC capability
+Date: Fri, 22 Jun 2012 17:12:43 +0530
+Message-ID: <1340365364-16276-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340365364-16276-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: vinod.koul@intel.com, dan.j.williams@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The sound dmaengine pcm driver uses the dma in cyclic mode and
-it does not ack the transfer descriptor  after transfer stops.
-This may lead to hold that desc in chip's dma driver and does
-not allow to reuse/free that descriptors. Hence not enabling
-flag DMA_CTRL_ACK when dma runs in cyclic mode.
+Tegra's APB DMA driver support the cyclic mode of data
+transfer and hence setting the DMA_CYCLIC caps for dma
+channels.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This is require when generic sound dmaengine pcm driver
+request for dma channel with CYCLIC capability.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/dma/tegra20-apb-dma.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index b4bd50c..2e4c187 100644
+index 134ea7c..b4bd50c 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1093,7 +1093,7 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		mem += len;
- 	}
- 	sg_req->last_sg = true;
--	dma_desc->txd.flags = DMA_CTRL_ACK;
-+	dma_desc->txd.flags = 0;
+@@ -1306,6 +1306,8 @@ static int __devinit tegra_dma_probe(struct platform_device *pdev)
  
- 	/*
- 	 * Make sure that mode should not be conflicting with currently
+ 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
++	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
++
+ 	tdma->dma_dev.dev = &pdev->dev;
+ 	tdma->dma_dev.device_alloc_chan_resources =
+ 					tegra_dma_alloc_chan_resources;
 -- 
 1.7.1.1
