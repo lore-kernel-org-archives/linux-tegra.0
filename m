@@ -1,27 +1,39 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Fri, 22 Jun 2012 11:28:15 -0600
-Message-ID: <4FE4AB2F.8090402@wwwdotorg.org>
-References: <4FD85127.8050301@firmworks.com> <20120614091905.GA9081@avionic-0098.mockup.avionic-design.de> <4FDA2DDA.1030704@wwwdotorg.org> <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de> <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de> <4FE0EFBB.6090206@firmworks.com> <20120621064722.GA1122@avionic-0098.mockup.avionic-design.de> <CAErSpo6Bpfqm-0yGiBOXEhF4kD3PTDYvWVr0babLZ4GkBLXJiA@mail.gmail.com> <20120622110038.GA15212@avionic-0098.mockup.avionic-design.de> <4FE4A4B3.9010200@wwwdotorg.org>
+Date: Fri, 22 Jun 2012 21:08:34 +0000
+Message-ID: <201206222108.35094.arnd@arndb.de>
+References: <4FDA2DDA.1030704@wwwdotorg.org> <201206221653.31817.arnd@arndb.de> <CAErSpo5dj99iHW0WNEABPR1OO2yS=BwNezOivu6_7Go8sKyjsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <4FE4A4B3.9010200@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Mitch Bradley <wmb@firmworks.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAErSpo5dj99iHW0WNEABPR1OO2yS=BwNezOivu6_7Go8sKyjsQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/22/2012 11:00 AM, Stephen Warren wrote:
-> On 06/22/2012 05:00 AM, Thierry Reding wrote:
-> ...
->> Stephen: can you try to find out whether the Tegra PCIe controller 
->> indeed implements ECAM, or if this scheme is actually just a
->> proprietary variant?
+On Friday 22 June 2012, Bjorn Helgaas wrote:
 > 
-> Sure. I have added this request to the bug I filed requesting more
-> complete PCIe host documentation.
+> On Fri, Jun 22, 2012 at 10:53 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> > On Friday 22 June 2012, Bjorn Helgaas wrote:
+> >> The requirement (if there is one) isn't anything related to PC-ness.
+> >> I just don't understand how things can actually work if two host
+> >> bridges both claim the same bus number.  If we do a config read to
+> >> that bus, both bridges should claim it and turn it into config cycles
+> >> on their respective root buses, and we should get two responses.  I
+> >> would expect the second response to cause an "unexpected response"
+> >> machine check or similar.
+> >
+> > But each PCI domain has its own config space, so if you do a config
+> > read for one bus, it's always relative to the domain.
+> 
+> Oh, I see!  I totally missed the fact that each host bridge was in its
+> own domain.  If each has its own domain, then the bus number aperture
+> can certainly be [bus 00-ff] and there's no problem.
 
-I've received unofficial confirmation that we do indeed implement a
-non-standard/non-ECAM mapping, and what's in our driver matches our HW.
+Right. On my side, it took me a while to figure out that you can
+actually have multiple root ports in one domain ;-)
+
+	Arnd
