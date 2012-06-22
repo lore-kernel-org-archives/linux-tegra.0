@@ -1,38 +1,75 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Fri, 22 Jun 2012 10:20:00 -0600
-Message-ID: <4FE49B30.8040806@wwwdotorg.org>
-References: <4FD849CF.4030009@firmworks.com> <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de> <4FD85127.8050301@firmworks.com> <20120614091905.GA9081@avionic-0098.mockup.avionic-design.de> <4FDA2DDA.1030704@wwwdotorg.org> <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de> <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de> <4FE0EFBB.6090206@firmworks.com> <20120621064722.GA1122@avionic-0098.mockup.avionic-design.de>
+Date: Fri, 22 Jun 2012 16:40:17 +0000
+Message-ID: <201206221640.18014.arnd@arndb.de>
+References: <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de>
+ <201206221348.39346.arnd@arndb.de>
+ <20120622140210.GA32097@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120621064722.GA1122-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20120622140210.GA32097-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/21/2012 12:47 AM, Thierry Reding wrote:
-...
-> Everybody seems to be happy with this approach, so I'll give it a
-> shot. There is one thing I'm still unsure about, though. What if
-> somebody uses the above scheme and maps the registers to the wrong
-> port. The same goes for the nvidia,ctrl-offset property. It needs
-> to match the register offset because they are directly related. I
-> suppose we could leave that property away and look up the register
-> via the port index (which, as Stephen already said, we'll have to
-> do in other places anyway, unless we list all bit positions in the
-> DT).
+On Friday 22 June 2012, Thierry Reding wrote:
+> Actually this is from of_translate_address(). The calling sequence looks
+> like this:
 > 
-> Can we safely ignore such issues and assume the device tree to
-> always be right? Should we just not care if somebody uses it
-> wrongly?
+>         of_address_to_resource()
+>           __of_address_to_resource()
+>             of_translate_address()
+>               __of_translate_address()
+>                 of_translate_one()
+>                   of_bus_default_map()
+>                     of_read_number()
 
-I think that's pretty much the same thing as plain putting the wrong
-reg property into any node - the value is wrong, so it doesn't work.
-There's not too much you can do about it.
+Ok, I see.
 
-I'd be happy to remove the nvidia,ctrl-offset property to avoid the
-need to specify basically the same information multiple times though;
-nothing wrong with making it easier to write the correct DT content.
+This looks like a problem in of_bus_default_map, which expects to
+see only 64 bit addresses at most. of_bus_pci_map by comparison
+handles the pci addresses with three cells.
+
+If I read this correctly, this fix is to make sure we compare the
+upper cells of the address in of_bus_default_map:
+
+static u64 of_bus_default_map(u32 *addr, const __be32 *range,
+                int na, int ns, int pna)
+{
+        u64 cp, s, da;
+
+        cp = of_read_number(range, na);
+        s  = of_read_number(range + na + pna, ns);
+        da = of_read_number(addr, na);
+
+        pr_debug("OF: default map, cp=%llx, s=%llx, da=%llx\n",
+                 (unsigned long long)cp, (unsigned long long)s,
+                 (unsigned long long)da);
+
+        if (da < cp || da >= (cp + s))
+                return OF_BAD_ADDR;
+        return da - cp;
+}
+
+How about adding code like:
+
+	if ((na > 2) && memcmp(range, addr, na * 4) != 0)
+		return OF_BAD_ADDR;
+
+This won't handle entries with #size-cells>2 or those that
+span a 64-bit boundary, but I think it will work for all
+relevant cases.
+
+	Arnd
