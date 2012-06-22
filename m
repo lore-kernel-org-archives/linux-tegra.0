@@ -1,75 +1,89 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Fri, 22 Jun 2012 16:40:17 +0000
-Message-ID: <201206221640.18014.arnd@arndb.de>
-References: <20120613081910.GB6528@avionic-0098.mockup.avionic-design.de>
- <201206221348.39346.arnd@arndb.de>
- <20120622140210.GA32097@avionic-0098.mockup.avionic-design.de>
+Date: Fri, 22 Jun 2012 10:49:42 -0600
+Message-ID: <CAErSpo56=S2oQ0usYfH28T0178SQUBD=5jqmcKWCT6M5WUQF6g@mail.gmail.com>
+References: <4FDA2DDA.1030704@wwwdotorg.org> <CAErSpo6vHn3p96o7DSdL28cjapk2UnQ4ZVJ1oH6ksxbqD=Hh-g@mail.gmail.com>
+ <20120622124311.GA21606@avionic-0098.mockup.avionic-design.de> <201206221303.21985.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20120622140210.GA32097-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201206221303.21985.arnd-r2nGTMty4D4@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jesse Barnes <jbarnes-Y1mF5jBUw70BENJcbMCuUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 22 June 2012, Thierry Reding wrote:
-> Actually this is from of_translate_address(). The calling sequence looks
-> like this:
-> 
->         of_address_to_resource()
->           __of_address_to_resource()
->             of_translate_address()
->               __of_translate_address()
->                 of_translate_one()
->                   of_bus_default_map()
->                     of_read_number()
+On Fri, Jun 22, 2012 at 7:03 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Friday 22 June 2012, Thierry Reding wrote:
+>> On Fri, Jun 22, 2012 at 05:46:52AM -0600, Bjorn Helgaas wrote:
+>> > On Fri, Jun 22, 2012 at 5:00 AM, Thierry Reding
+>> > <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>> > >> Is the bus number aperture included somewhere? =A0How do we kno=
+w what
+>> > >> bus numbers are available for allocation under each bridge?
+>> > >
+>> > > Not yet. I don't think DT imposes a bus number allocation on PCI
+>> > > bridges. However the matching of DT nodes to PCI bridges is done=
+ based
+>> > > on the bus number. For that you provide a bus-ranges property wh=
+ich
+>> > > defines the bus aperture of the given PCI bridge. The DT matchin=
+g code
+>> > > compares the first cell of this property with the primary bus nu=
+mber of
+>> > > the bridge.
+>> >
+>> > I don't fully understand this, but I can tell you that things don'=
+t
+>> > work very well if we don't know the aperture. =A0We can make
+>> > assumptions, like the root bus is 00, and then enumerate everythin=
+g
+>> > reachable from there. =A0But then all we know is the largest bus n=
+umber
+>> > actually reachable from bus 00, which is usually smaller then the =
+end
+>> > of the aperture. =A0We don't know how many unused bus numbers ther=
+e are
+>> > in the aperture, so we can't safely allocate any for hot-added
+>> > devices.
+>
+> I believe the assumption today is that all bus numbers are ok on each
+> root port, which is usually the case. There was something about a Pow=
+er
+> Mac that faked a single PCI bus number space across both an AGP and
+> a PCIe domain in pmac_pci_fixup_u4_of_node(), but I think that is the
+> exception.
+>
+> Is there any requirement to use a bus aperture on non-PC hardware?
 
-Ok, I see.
+The requirement (if there is one) isn't anything related to PC-ness.
+I just don't understand how things can actually work if two host
+bridges both claim the same bus number.  If we do a config read to
+that bus, both bridges should claim it and turn it into config cycles
+on their respective root buses, and we should get two responses.  I
+would expect the second response to cause an "unexpected response"
+machine check or similar.
 
-This looks like a problem in of_bus_default_map, which expects to
-see only 64 bit addresses at most. of_bus_pci_map by comparison
-handles the pci addresses with three cells.
+Beyond that, Yinghai's recent "busn-alloc" work (now in my -next
+branch) tracks bus number assignments using a struct resource tree,
+and that obviously won't work with overlaps.  Here's one of the
+relevant commits:
+http://git.kernel.org/?p=3Dlinux/kernel/git/helgaas/pci.git;a=3Dcommitd=
+iff;h=3D5cc62c202211096ec26309722ec27455d52c8726
 
-If I read this correctly, this fix is to make sure we compare the
-upper cells of the address in of_bus_default_map:
-
-static u64 of_bus_default_map(u32 *addr, const __be32 *range,
-                int na, int ns, int pna)
-{
-        u64 cp, s, da;
-
-        cp = of_read_number(range, na);
-        s  = of_read_number(range + na + pna, ns);
-        da = of_read_number(addr, na);
-
-        pr_debug("OF: default map, cp=%llx, s=%llx, da=%llx\n",
-                 (unsigned long long)cp, (unsigned long long)s,
-                 (unsigned long long)da);
-
-        if (da < cp || da >= (cp + s))
-                return OF_BAD_ADDR;
-        return da - cp;
-}
-
-How about adding code like:
-
-	if ((na > 2) && memcmp(range, addr, na * 4) != 0)
-		return OF_BAD_ADDR;
-
-This won't handle entries with #size-cells>2 or those that
-span a 64-bit boundary, but I think it will work for all
-relevant cases.
-
-	Arnd
+>> I think DT support for PCI is lacking in a lot of areas. PowerPC see=
+ms
+>> to be the only architecture actively setting up busses according to =
+the
+>> bus-range property specified in the DT. All other architectures seem=
+ to
+>> not pre-allocate bus apertures and go with the default instead. From
+>> what you say that means hot-plugging is out. Although I don't think =
+the
+>> Tegra PCIe controller even supports hot-plugging.
+>
+> If the default is allowing any bus numbers, and that matches the
+> hardware capabilities, I think hot-plugging would work.
+>
+> =A0 =A0 =A0 =A0Arnd
