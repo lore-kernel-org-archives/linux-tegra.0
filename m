@@ -1,42 +1,53 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Sat, 23 Jun 2012 15:35:40 -0600
-Message-ID: <CAErSpo4UNaRea6F2xtZv++P3deS9h9rZdHeVRyaX_hFm7Gbxfg@mail.gmail.com>
-References: <4FD85127.8050301@firmworks.com> <20120614091905.GA9081@avionic-0098.mockup.avionic-design.de>
- <4FDA2DDA.1030704@wwwdotorg.org> <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de>
- <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de>
- <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de>
- <4FE0EFBB.6090206@firmworks.com> <20120621064722.GA1122@avionic-0098.mockup.avionic-design.de>
- <CAErSpo6Bpfqm-0yGiBOXEhF4kD3PTDYvWVr0babLZ4GkBLXJiA@mail.gmail.com>
- <20120622110038.GA15212@avionic-0098.mockup.avionic-design.de>
- <4FE4A4B3.9010200@wwwdotorg.org> <4FE4AB2F.8090402@wwwdotorg.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
+Date: Sun, 24 Jun 2012 12:03:06 +0100
+Message-ID: <20120624110306.GA16455@sirena.org.uk>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
+ <1340406842-27135-3-git-send-email-swarren@wwwdotorg.org>
+ <1963397.cqAXgGafFs@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <4FE4AB2F.8090402@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Mitch Bradley <wmb@firmworks.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1963397.cqAXgGafFs@ax5200p>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 22, 2012 at 11:28 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 06/22/2012 11:00 AM, Stephen Warren wrote:
->> On 06/22/2012 05:00 AM, Thierry Reding wrote:
->> ...
->>> Stephen: can you try to find out whether the Tegra PCIe controller
->>> indeed implements ECAM, or if this scheme is actually just a
->>> proprietary variant?
->>
->> Sure. I have added this request to the bug I filed requesting more
->> complete PCIe host documentation.
->
-> I've received unofficial confirmation that we do indeed implement a
-> non-standard/non-ECAM mapping, and what's in our driver matches our HW.
+On Sat, Jun 23, 2012 at 06:35:01PM +0200, Marc Dietrich wrote:
 
-Interesting.  A generic ECAM/MMCONFIG solution might still be worth
-thinking about.  We could easily have a hook to encapsulate the
-address mapping function, while still sharing the resource management
-(request_region(), etc).  Not any kind of requirement for the current
-patch series, of course, just possible future work.
+> > The regulator configurations were all taken from the AC100 kernel used by
+> > the Ubuntu port, specifically:
 
-Bjorn
+These generally all look pretty broken...
+
+> > +				regulator@0 {
+> > +					reg = <0>;
+> > +					regulator-compatible = "sm0";
+> > +					regulator-name = "+1.2vs_sm0";
+> > +					regulator-min-microvolt = < 725000>;
+> > +					regulator-max-microvolt = <1300000>;
+
+Most of these ranges look suspiciously like the maximum possible
+variation the regulator has, not what the board actually requires (which
+is a depressingly common error, I've no idea why people seem to think
+they're supposed to cut'n'paste the physical limits of the regualtor out
+of the driver).  If something decides to take advantage of the variation
+this could be problematic.
+
+> > +				regulator@3 {
+> > +					reg = <3>;
+> > +					regulator-compatible = "ldo0";
+> > +					regulator-name = "+3.3vs_ldo0";
+> > +					regulator-min-microvolt = <1250000>;
+
+> I think the common sense was that this should also be 3.3 V as it is the pex 
+> clock (which is not used at all on this board). I guess it doesn't matter 
+> much. So ...
+
+> Acked-By: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+
+> > +					regulator-max-microvolt = <3300000>;
+
+This is one example, it looks like the rail needs to be fixed to 3.3V.
