@@ -1,101 +1,62 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Remove second instance of uart clk
-Date: Mon, 25 Jun 2012 13:25:08 +0530
-Message-ID: <1340610908-2729-1-git-send-email-pgaikwad@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
+Date: Mon, 25 Jun 2012 09:46:56 +0100
+Message-ID: <20120625084656.GA4037@opensource.wolfsonmicro.com>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
+ <4127323.noaajNecru@ax5200p>
+ <20120624123151.GZ4037@opensource.wolfsonmicro.com>
+ <27366523.LjLfRK1TqH@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Sz/4MAOlM1c8JZ8/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <27366523.LjLfRK1TqH@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-In Tegra30 clock file two clk objects were created for same UART clock.
-Remove the duplicates and add clock aliases instead.
 
-Update the Tegra20 clock file to make the names consistent.
+--Sz/4MAOlM1c8JZ8/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/tegra2_clocks.c  |   20 ++++++++++----------
- arch/arm/mach-tegra/tegra30_clocks.c |   20 ++++++++++----------
- 2 files changed, 20 insertions(+), 20 deletions(-)
+On Sun, Jun 24, 2012 at 03:27:42PM +0200, Marc Dietrich wrote:
+> On Sunday 24 June 2012 13:31:51 Mark Brown wrote:
 
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index b59315c..034d952 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -2189,11 +2189,11 @@ static struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("i2c2_i2c",	"tegra-i2c.1",		"i2c",	0,	0,	72000000,  mux_pllp_out3,			0),
- 	PERIPH_CLK("i2c3_i2c",	"tegra-i2c.2",		"i2c",	0,	0,	72000000,  mux_pllp_out3,			0),
- 	PERIPH_CLK("dvc_i2c",	"tegra-i2c.3",		"i2c",	0,	0,	72000000,  mux_pllp_out3,			0),
--	PERIPH_CLK("uarta",	"uart.0",		NULL,	6,	0x178,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
--	PERIPH_CLK("uartb",	"uart.1",		NULL,	7,	0x17c,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
--	PERIPH_CLK("uartc",	"uart.2",		NULL,	55,	0x1a0,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
--	PERIPH_CLK("uartd",	"uart.3",		NULL,	65,	0x1c0,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
--	PERIPH_CLK("uarte",	"uart.4",		NULL,	66,	0x1c4,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
-+	PERIPH_CLK("uarta",	"tegra-uart.0",		NULL,	6,	0x178,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
-+	PERIPH_CLK("uartb",	"tegra-uart.1",		NULL,	7,	0x17c,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
-+	PERIPH_CLK("uartc",	"tegra-uart.2",		NULL,	55,	0x1a0,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
-+	PERIPH_CLK("uartd",	"tegra-uart.3",		NULL,	65,	0x1c0,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
-+	PERIPH_CLK("uarte",	"tegra-uart.4",		NULL,	66,	0x1c4,	600000000, mux_pllp_pllc_pllm_clkm,	MUX),
- 	PERIPH_CLK("3d",	"3d",			NULL,	24,	0x158,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | PERIPH_MANUAL_RESET), /* scales with voltage and process_id */
- 	PERIPH_CLK("2d",	"2d",			NULL,	21,	0x15c,	300000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
- 	PERIPH_CLK("vi",	"tegra_camera",		"vi",	20,	0x148,	150000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71), /* scales with voltage and process_id */
-@@ -2245,11 +2245,11 @@ static struct clk tegra_list_clks[] = {
-  * table under two names.
-  */
- static struct clk_duplicate tegra_clk_duplicates[] = {
--	CLK_DUPLICATE("uarta",	"tegra_uart.0",	NULL),
--	CLK_DUPLICATE("uartb",	"tegra_uart.1",	NULL),
--	CLK_DUPLICATE("uartc",	"tegra_uart.2",	NULL),
--	CLK_DUPLICATE("uartd",	"tegra_uart.3",	NULL),
--	CLK_DUPLICATE("uarte",	"tegra_uart.4",	NULL),
-+	CLK_DUPLICATE("uarta",  "serial8250.0", NULL),
-+	CLK_DUPLICATE("uartb",  "serial8250.1", NULL),
-+	CLK_DUPLICATE("uartc",  "serial8250.2", NULL),
-+	CLK_DUPLICATE("uartd",  "serial8250.3", NULL),
-+	CLK_DUPLICATE("uarte",  "serial8250.4", NULL),
- 	CLK_DUPLICATE("usbd", "utmip-pad", NULL),
- 	CLK_DUPLICATE("usbd", "tegra-ehci.0", NULL),
- 	CLK_DUPLICATE("usbd", "tegra-otg", NULL),
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
-index e33fe4b..e1a7489 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks.c
-@@ -2924,16 +2924,11 @@ struct clk tegra_list_clks[] = {
- 	PERIPH_CLK("i2c3",	"tegra-i2c.2",		NULL,	67,	0x1b8,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
- 	PERIPH_CLK("i2c4",	"tegra-i2c.3",		NULL,	103,	0x3c4,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
- 	PERIPH_CLK("i2c5",	"tegra-i2c.4",		NULL,	47,	0x128,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
--	PERIPH_CLK("uarta",	"tegra_uart.0",		NULL,	6,	0x178,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartb",	"tegra_uart.1",		NULL,	7,	0x17c,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartc",	"tegra_uart.2",		NULL,	55,	0x1a0,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartd",	"tegra_uart.3",		NULL,	65,	0x1c0,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uarte",	"tegra_uart.4",		NULL,	66,	0x1c4,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uarta_dbg",	"serial8250.0",		"uarta", 6,	0x178,	800000000, mux_pllp_clkm,		MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartb_dbg",	"serial8250.0",		"uartb", 7,	0x17c,	800000000, mux_pllp_clkm,		MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartc_dbg",	"serial8250.0",		"uartc", 55,	0x1a0,	800000000, mux_pllp_clkm,		MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uartd_dbg",	"serial8250.0",		"uartd", 65,	0x1c0,	800000000, mux_pllp_clkm,		MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
--	PERIPH_CLK("uarte_dbg",	"serial8250.0",		"uarte", 66,	0x1c4,	800000000, mux_pllp_clkm,		MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
-+	PERIPH_CLK("uarta",	"tegra-uart.0",		NULL,	6,	0x178,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
-+	PERIPH_CLK("uartb",	"tegra-uart.1",		NULL,	7,	0x17c,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
-+	PERIPH_CLK("uartc",	"tegra-uart.2",		NULL,	55,	0x1a0,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
-+	PERIPH_CLK("uartd",	"tegra-uart.3",		NULL,	65,	0x1c0,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
-+	PERIPH_CLK("uarte",	"tegra-uart.4",		NULL,	66,	0x1c4,	800000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | DIV_U71_UART | PERIPH_ON_APB),
- 	PERIPH_CLK_EX("vi",	"tegra_camera",		"vi",	20,	0x148,	425000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | DIV_U71_INT,	&tegra_vi_clk_ops),
- 	PERIPH_CLK("3d",	"3d",			NULL,	24,	0x158,	520000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | DIV_U71_INT | DIV_U71_IDLE | PERIPH_MANUAL_RESET),
- 	PERIPH_CLK("3d2",       "3d2",			NULL,	98,	0x3b0,	520000000, mux_pllm_pllc_pllp_plla,	MUX | DIV_U71 | DIV_U71_INT | DIV_U71_IDLE | PERIPH_MANUAL_RESET),
-@@ -2983,6 +2978,11 @@ struct clk tegra_list_clks[] = {
-  * table under two names.
-  */
- struct clk_duplicate tegra_clk_duplicates[] = {
-+	CLK_DUPLICATE("uarta",  "serial8250.0", NULL),
-+	CLK_DUPLICATE("uartb",  "serial8250.1", NULL),
-+	CLK_DUPLICATE("uartc",  "serial8250.2", NULL),
-+	CLK_DUPLICATE("uartd",  "serial8250.3", NULL),
-+	CLK_DUPLICATE("uarte",  "serial8250.4", NULL),
- 	CLK_DUPLICATE("usbd", "utmip-pad", NULL),
- 	CLK_DUPLICATE("usbd", "tegra-ehci.0", NULL),
- 	CLK_DUPLICATE("usbd", "tegra-otg", NULL),
--- 
-1.7.4.1
+> > > there should be some initial value, e.g. regulator-default-microvolt, as
+> > > the original driver (from 2.6.32 ages) did. This way the maximum value
+> > > can be set
+
+> > That's *never* been in mainline, and nobody even bothered trying to
+> > submit it.
+
+> which was the best thing to do ;-)
+
+Well, no - had there been some attempt to submit it it might've helped
+stop people writing constaints like this.
+
+--Sz/4MAOlM1c8JZ8/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP6CV2AAoJEBus8iNuMP3dNeYP/R0l+fOH2g/fpQXM4Ubpih/p
+AgPHxAqwxngv6OcHwCG4Bl9vxgDx6OYFp2z/Oz1kvz2ytyeuqizFXA5sDyz35990
+hAsMsp7a5HFYyZPIaPHgMdpZrXlhyod/nDG9+Igdl15X43HWM0Hg6chv6jUqVYG3
+ceEciRBupTur/4Et7nqOITNIPQdMiqsSTjrvzoiQnvzyJOMS3ou2Oz6hiCmW3G9R
+4yAgiXccN+RHtmidS8Gg3yCyb+eYFKCsY4h9Q8KiqchY9izv9ThK6KDsksUxNFdE
+TqZ+Z5reTyYaOx5UjSBFWAlwRBZ69HRMJSPTlSE5Ipm8A6itXcs+S2/zli7+PCny
+rbvHulR4cBucJdjuUYtXieH3c8LiDNDju7o3FG9OCdWm07djTRVSJwd5MOzAp1GT
+VLbkTE0o/TH584R6xnoSFpxICcdEaPlFNtEPL4PhDA+gPXdxRCF7/oO+SdBvKr7z
+8JG5HyzteHNVVe24QKdrEosZ4bP+iaH77KcnYJThzquj9/WxMyPmI8SgAXczlkrl
+PdEjt4/RC/39XPM+HnxzUrNIhd+sk/XsQX6+UaYFTqsMbLMQ7C0JApPiJ60zt4u1
+KOFyqClLtmaozqw96PWLF2Ehym//GZuAhBokUPDQmV3ALbId8fEEdZFeIz85E3zS
+8QhTg97ojvM0N8LHGOYg
+=Iy/f
+-----END PGP SIGNATURE-----
+
+--Sz/4MAOlM1c8JZ8/--
