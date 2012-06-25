@@ -1,62 +1,71 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
-Date: Mon, 25 Jun 2012 09:46:56 +0100
-Message-ID: <20120625084656.GA4037@opensource.wolfsonmicro.com>
-References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
- <4127323.noaajNecru@ax5200p>
- <20120624123151.GZ4037@opensource.wolfsonmicro.com>
- <27366523.LjLfRK1TqH@ax5200p>
+From: "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [v2 1/5] iommu: Add DMA window parser, of_get_dma_window()
+Date: Mon, 25 Jun 2012 12:42:09 +0200
+Message-ID: <20120625104209.GR2624@amd.com>
+References: <4FE20457.8090307@wwwdotorg.org>
+	<20120621.094611.2108645748323641310.hdoyu@nvidia.com>
+	<4FE2C5F3.1010007@wwwdotorg.org>
+	<20120621.113023.1324461719984328307.hdoyu@nvidia.com>
+	<4FE34973.1020400@wwwdotorg.org>
+	<20120625081543.bf25af1f74d7d1057d9cd216@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Sz/4MAOlM1c8JZ8/"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <27366523.LjLfRK1TqH@ax5200p>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120625081543.bf25af1f74d7d1057d9cd216-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Jun 25, 2012 at 08:15:43AM +0300, Hiroshi Doyu wrote:
+> On Thu, 21 Jun 2012 18:18:59 +0200
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> 
+> > On 06/21/2012 02:30 AM, Hiroshi Doyu wrote:
+> > > From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > 
+> > > This code was based on:
+> > >     "arch/microblaze/kernel/prom_parse.c"
+> > >     "arch/powerpc/kernel/prom_parse.c"
+> > > 
+> > > Can replace "of_parse_dma_window()" in the above. This supports
+> > > different formats flexibly. "prefix" can be configured if any. "busno"
+> > > and "index" are optionally specified. Set NULL and 0 if not used.
+> > > 
+> > > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> 
+> Thanks.
+> 
+> > BTW, I only see patches 1 & 2 of 5 in this series; did you only mean to
+> > post just 2 patches or did the others get lost on the way to my system
+> > somehow?
+> 
+> I reposted only [1/5] and [2/5] as "v2" because the rests are
+> same. Probably it was better to send a whole series again. Sorry for
+> confusion.
 
---Sz/4MAOlM1c8JZ8/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please repost the whole series with the Acks included as a new thread so
+that I can easily apply them.
 
-On Sun, Jun 24, 2012 at 03:27:42PM +0200, Marc Dietrich wrote:
-> On Sunday 24 June 2012 13:31:51 Mark Brown wrote:
 
-> > > there should be some initial value, e.g. regulator-default-microvolt, as
-> > > the original driver (from 2.6.32 ages) did. This way the maximum value
-> > > can be set
+	Joerg
 
-> > That's *never* been in mainline, and nobody even bothered trying to
-> > submit it.
 
-> which was the best thing to do ;-)
+-- 
+AMD Operating System Research Center
 
-Well, no - had there been some attempt to submit it it might've helped
-stop people writing constaints like this.
-
---Sz/4MAOlM1c8JZ8/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP6CV2AAoJEBus8iNuMP3dNeYP/R0l+fOH2g/fpQXM4Ubpih/p
-AgPHxAqwxngv6OcHwCG4Bl9vxgDx6OYFp2z/Oz1kvz2ytyeuqizFXA5sDyz35990
-hAsMsp7a5HFYyZPIaPHgMdpZrXlhyod/nDG9+Igdl15X43HWM0Hg6chv6jUqVYG3
-ceEciRBupTur/4Et7nqOITNIPQdMiqsSTjrvzoiQnvzyJOMS3ou2Oz6hiCmW3G9R
-4yAgiXccN+RHtmidS8Gg3yCyb+eYFKCsY4h9Q8KiqchY9izv9ThK6KDsksUxNFdE
-TqZ+Z5reTyYaOx5UjSBFWAlwRBZ69HRMJSPTlSE5Ipm8A6itXcs+S2/zli7+PCny
-rbvHulR4cBucJdjuUYtXieH3c8LiDNDju7o3FG9OCdWm07djTRVSJwd5MOzAp1GT
-VLbkTE0o/TH584R6xnoSFpxICcdEaPlFNtEPL4PhDA+gPXdxRCF7/oO+SdBvKr7z
-8JG5HyzteHNVVe24QKdrEosZ4bP+iaH77KcnYJThzquj9/WxMyPmI8SgAXczlkrl
-PdEjt4/RC/39XPM+HnxzUrNIhd+sk/XsQX6+UaYFTqsMbLMQ7C0JApPiJ60zt4u1
-KOFyqClLtmaozqw96PWLF2Ehym//GZuAhBokUPDQmV3ALbId8fEEdZFeIz85E3zS
-8QhTg97ojvM0N8LHGOYg
-=Iy/f
------END PGP SIGNATURE-----
-
---Sz/4MAOlM1c8JZ8/--
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
