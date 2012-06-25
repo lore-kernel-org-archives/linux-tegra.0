@@ -1,54 +1,56 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 1/5] iommu: Add DMA window parser, of_get_dma_window()
-Date: Mon, 25 Jun 2012 08:15:43 +0300
-Message-ID: <20120625081543.bf25af1f74d7d1057d9cd216@nvidia.com>
-References: <4FE20457.8090307@wwwdotorg.org>
-	<20120621.094611.2108645748323641310.hdoyu@nvidia.com>
-	<4FE2C5F3.1010007@wwwdotorg.org>
-	<20120621.113023.1324461719984328307.hdoyu@nvidia.com>
-	<4FE34973.1020400@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
+Date: Mon, 25 Jun 2012 11:54:19 +0530
+Message-ID: <4FE80413.6070001@nvidia.com>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4FE34973.1020400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340406842-27135-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 21 Jun 2012 18:18:59 +0200
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On Saturday 23 June 2012 04:44 AM, Stephen Warren wrote:
+> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Seaboard uses a TPS6586x regulator. Instantiate this, and hook up a
+> couple of fixed GPIO-controlled regulators too.
+>
+> The regulator configurations were mostly taken from the ChromeOS 3.2
+> kernel. Exceptions are:
+>
+> * The schematic lists a fixed voltage for each rail, whereas the ChromeOS
+>    kernel lists a range for many rails. I used the values from the ChromeOS
+>    kernel in all cases, since I know the board file there is the most
+>    complete available for this hardware.
+>
+> * The vdd_1v2 fixed regulator is present only in the schematic. So, I added
+>    this based on the schematic.
+>
+> * A 3.3v fixed regulator using GPIO3 of the TPS6586x is present in the
+>    ChromeOS kernel, but not in the schematic. So, I dropped this based on
+>    the schematic.
+>
+> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 
-> On 06/21/2012 02:30 AM, Hiroshi Doyu wrote:
-> > From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > This code was based on:
-> >     "arch/microblaze/kernel/prom_parse.c"
-> >     "arch/powerpc/kernel/prom_parse.c"
-> > 
-> > Can replace "of_parse_dma_window()" in the above. This supports
-> > different formats flexibly. "prefix" can be configured if any. "busno"
-> > and "index" are optionally specified. Set NULL and 0 if not used.
-> > 
-> > Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks.
+I think this series very much depends on the series
+[PATCH V3 0/3] regulator: dt: add policy to match regulator with prop 
+"regulator-compatible"
 
-> BTW, I only see patches 1 & 2 of 5 in this series; did you only mean to
-> post just 2 patches or did the others get lost on the way to my system
-> somehow?
 
-I reposted only [1/5] and [2/5] as "v2" because the rests are
-same. Probably it was better to send a whole series again. Sorry for
-confusion.
+> +				regulator@3 {
+> +					reg =<3>;
+> +					regulator-compatible = "ldo0";
+> +					regulator-name = "vdd_ldo0";
+> +					regulator-min-microvolt =<1250000>;
+> +					regulator-max-microvolt =<3300000>;
+> +					vin-supply =<&sm2_reg>;
+
+I think support for vin-supply is still not there for this regulator in 
+driver.
