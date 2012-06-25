@@ -1,18 +1,23 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Vacation schedule
-Date: Mon, 25 Jun 2012 12:23:42 -0600
-Message-ID: <4FE8ACAE.6030705@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: Remove second instance of uart clk
+Date: Mon, 25 Jun 2012 12:31:56 -0600
+Message-ID: <4FE8AE9C.5000109@wwwdotorg.org>
+References: <1340610908-2729-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340610908-2729-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Just FYI, I'll be taking a planned vacation from July 7th through July
-22. I should have some level of email during that time, but anyone
-should plan for my being unresponsive. Hopefully the timing should line
-up well with 3.5-rc6 release and hence when patches for need to be in
-linux-next for 3.6, so this won't cause too much impact. I will send
-pull requests to arm-soc before I leave.
+On 06/25/2012 01:55 AM, Prashant Gaikwad wrote:
+> In Tegra30 clock file two clk objects were created for same UART clock.
+> Remove the duplicates and add clock aliases instead.
+> 
+> Update the Tegra20 clock file to make the names consistent.
+
+Thanks, applied to Tegra's for-3.6/common-clk since I assume your common
+clock work will depend on this.
