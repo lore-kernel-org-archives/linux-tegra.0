@@ -1,206 +1,250 @@
-From: Dong Aisheng <aisheng.dong-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: Re: Where to power on the wifi device before loading the driver.
-Date: Tue, 26 Jun 2012 16:56:07 +0800
-Message-ID: <20120626085605.GA6047@shlinux2.ap.freescale.net>
-References: <20120614121234.GC3913@opensource.wolfsonmicro.com>
- <4FDA092E.10301@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
- <4FDB5976.20809@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com>
- <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD622@HKMAIL01.nvidia.com>
- <20120619091719.GZ3974@opensource.wolfsonmicro.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD626@HKMAIL01.nvidia.com>
- <4FE112F2.7000506@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Tegra DRM device tree bindings
+Date: Tue, 26 Jun 2012 12:55:13 +0200
+Message-ID: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FE112F2.7000506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mursalin Akon <makon-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "'linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "'linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org'" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Philip Rakity' <prakity-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, r64343-KZfg59tc24xl57MIdRCFDg@public.gmane.org, b29397-KZfg59tc24xl57MIdRCFDg@public.gmane.org, b20223-KZfg59tc24xl57MIdRCFDg@public.gmane.org, r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 19, 2012 at 06:01:54PM -0600, Stephen Warren wrote:
-> On 06/19/2012 03:44 AM, Wei Ni wrote:
-> > On Tue, Jun 19, 2012 at 17:17:19, Mark Brown wrote:
-> >> * PGP Signed by an unknown key
-> >>
-> >> On Tue, Jun 19, 2012 at 12:25:58PM +0800, Wei Ni wrote:
-> >>
-> >> As Stephen previously said please fix your mail formatting - word 
-> >> wrapping within paragraphs is important!
-> >>
-> >>> On Tue, Jun 19, 2012 at 09:23:35, Philip Rakity wrote:
-> >>>> Why can't you use the regulator notify to get called back on power 
-> >>>> or voltage change options to plumb in the manipulation of the gpio. 
-> >>>> I can imagine you might need to add a notify call in core.c if you 
-> >>>> need to assert the gpio before power is applied
-> >>>
-> >>> Yes, we can use the regulator notify, but the Tegra30 support is via 
-> >>> device tree, I think there have no special board file to run the call 
-> >>> back.
-> >>
-> >> You can mix board files with device tree for cases where device tree is 
-> >> not yet up to the job, though the goal should be to come up with a way of expressing things in device tree.
-> > 
-> > I think we wish to use the device tree to handle these gpios, pass them to the related driver to assert them.
-> > If we mix the board files, we even can set these gpio directly, not use the notify. But I think this is not a goog way.
-> 
-> Yes, I would definitely not want to add this to a board file; there is
-> no board file for Cardhu, and we're getting close to deleting all the
-> board files that are left for other boards.
-> 
-> I think what we need is some way of matching a DT node to a device even
-> when that device was instantiated through some probing mechanism such as
-> SDIO or USB (and I've heard hints that one can already do this for PCI;
-> I should investigate).
-> 
-> So, we start off with the plain SDHCI controller node:
-> 
-> sdhci@78000000 {
-> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-> 	reg = <0x78000000 0x200>;
-> 	interrupts = <0 14 0x04>;
-> };
-> 
-> Then, we add a child node to represent the device that's attached:
-> 
-> sdhci@78000000 {
-> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-> 	reg = <0x78000000 0x200>;
-> 	interrupts = <0 14 0x04>;
-> 
-> 	sdio-device {
-> 		reset-gpios = <...>;
-> 		enable-gpios = <...>;
-> 	};
-> };
-> 
-> When the SDHCI controller/core instantiates the child device it finds on
-> the HW bus, it initializes that struct device's of_node with a pointer
-> to the sdio-device node above. From there, the child device can get DT
-> properties such as GPIOs in the usual way.
-> 
-> However, there are still some issues that need thought here; what if (as
-> is I believe the case on Cardhu) we can in fact plug in multiple
-> different types of device into the socket? Might we end up with
-> something like:
-> 
-> sdhci@78000000 {
-> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-> 	reg = <0x78000000 0x200>;
-> 	interrupts = <0 14 0x04>;
-> 
-> 	sdio-device-option@0 {
-> 		compatible = "broadcom,bcm4239";
-> 		reset-gpios = <...>;
-> 		enable-gpios = <...>;
-> 	};
-> 
-> 	sdio-device-option@1 {
-> 		compatible = "broadcom,bcm4330";
-> 		reset-gpios = <...>;
-> 		enable-gpios = <...>;
-> 	};
-> };
-> 
-> and match on compatible value?
-> 
-I like this idea.
-We may extend the sdio_device_id to contain a compatible string,
-then sdio core is responsible to pass the corresponding device node to the
-sdio function driver once a match device found, this is sdio function independent.
-The sdio function driver then are responsible to parse the device node to
-fetch the needed information like reset-gpios and enable-gpios to do correct
-initialization sequence.
 
-However, one known question for this model is that some WiFi may need reset the chip
-via gpio first before being able to be enumerated.
-Then this model may not work for such devices since it can not enumerate this device
-before completing the sdio function specific initialization, neither passing node to its
-driver.
-(i'm not sure this is a correct behavior since per my understanding, the sdio io function
-(function 1-7) specific initialization should not affect the normal sdio common function
-(function 0) enumeration, but i did not find a clear definition in sdio spec.
-Anyone see such real devices?)
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Then for such devices, that is definitely a problem.
-If the sdio function specific initialization affects the normal enumeration,
-then it definitely need to be put into sdio core as an interface like sdio_prepare before the
-enumeration.
-But it seems not reasonable since we did not know prepare for which sdio device
-before the sdio device enumeration completes.
-Maybe the possible solution is still do it in platform specific code via
-of_machine_is_compatible(....).
+Hi,
 
-For your question that user may plug multi types of sdio device with difference
-gpio using,
-did we see such a real device that the pluggable sdio devices need
-some extra gpio to work? I did not meet it before.
-If it real exists, can we rather consider it an integrated sdio devices on board?
-Then we can only define the integrated sdio device node on board under sdio controller.
+while I haven't got much time to work on the actual code right now, I
+think it might still be useful if we could get the device tree binding
+to a point where everybody is happy with it. That'll also save me some
+time once I get to writing the code because I won't have to redo it over
+again. =)
 
-> But in this case, at least some of the data those two drivers want from
-> that node is the same; the 2 GPIOs that control the reset and enable
-> signals. Do we just make the bindings for those two devices happen to
-> share the same properties so that we can get away with just one node
-> irrespective of what device type has been found? What we're really
-Maybe no.
-These things are board specific and should be put in board dts file.
-If really using the same gpios by chance, then add them for each board may
-be reasonable.
+So here's the current proposal:
 
-> modeling is the card slot, and the services it provides, so perhaps we
-> should really end up with:
-> 
-> sdhci@78000000 {
-> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-> 	reg = <0x78000000 0x200>;
-> 	interrupts = <0 14 0x04>;
-> 
-> 	socket {
-> 		reset-gpios = <...>;
-> 		enable-gpios = <...>;
-> 
-> 		sdio-device-option@0 {
-> 			compatible = "broadcom,bcm4239";
-> 		};
-> 
-> 		sdio-device-option@1 {
-> 			compatible = "broadcom,bcm4330";
-> 		};
-> 	};
-> };
-> 
-> Where somehow the WiFi drivers can obtain the reset/enable service from
-> the socket that hosts them, but still have nodes for the attached device
-> itself in case any additional driver-specific configuration is needed.
-> 
-> That sounds somewhat similar to the virtual platform device that was
-> mentioned earlier in this thread by Broadcom, although I'm not sure
-> whether explicitly modeling it as a platform device makes sense, rather
-> than the socket providing services to the WiFi module, not necessarily
-> through a device.
-> 
-> Unfortunately, it should be noted that the WiFi device socket on Cardhu
-> apparently isn't some standardized thing (like PCIe) but something
-> rather more custom, although there are apparently devices available to
-> plug into it from multiple module vendors which contain WiFi chips from
-> multiple chip vendors.
-That seems should be cared by the corresponding WiFi function driver
-rather than the binding itself no matter which is plugged in.
-The binding just pass the node to driver, then everything else is driver
-specific. Is that reasonable?
+	host1x {
+		compatible = "nvidia,tegra20-host1x", "simple-bus";
+		reg = <0x50000000 0x00024000>;
+		interrupts = <0 64 0x04   /* cop syncpt */
+			      0 65 0x04   /* mpcore syncpt */
+			      0 66 0x04   /* cop general */
+			      0 67 0x04>; /* mpcore general */
 
-Regards
-Dong Aisheng
-> 
-> Anyway, these are just some quick thoughts on the topic - obviously more
-> flesh is needed.
-> _______________________________________________
-> devicetree-discuss mailing list
-> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> https://lists.ozlabs.org/listinfo/devicetree-discuss
-> 
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		ranges = <0x54000000 0x54000000 0x04000000>;
+
+		status = "disabled";
+
+		gart = <&gart>;
+
+		/* video-encoding/decoding */
+		mpe {
+			reg = <0x54040000 0x00040000>;
+			interrupts = <0 68 0x04>;
+			status = "disabled";
+		};
+
+		/* video input */
+		vi {
+			reg = <0x54080000 0x00040000>;
+			interrupts = <0 69 0x04>;
+			status = "disabled";
+		};
+
+		/* EPP */
+		epp {
+			reg = <0x540c0000 0x00040000>;
+			interrupts = <0 70 0x04>;
+			status = "disabled";
+		};
+
+		/* ISP */
+		isp {
+			reg = <0x54100000 0x00040000>;
+			interrupts = <0 71 0x04>;
+			status = "disabled";
+		};
+
+		/* 2D engine */
+		gr2d {
+			reg = <0x54140000 0x00040000>;
+			interrupts = <0 72 0x04>;
+			status = "disabled";
+		};
+
+		/* 3D engine */
+		gr3d {
+			reg = <0x54180000 0x00040000>;
+			status = "disabled";
+		};
+
+		/* display controllers */
+		dc1: dc@54200000 {
+			compatible = "nvidia,tegra20-dc";
+			reg = <0x54200000 0x00040000>;
+			interrupts = <0 73 0x04>;
+			status = "disabled";
+		};
+
+		dc2: dc@54240000 {
+			compatible = "nvidia,tegra20-dc";
+			reg = <0x54240000 0x00040000>;
+			interrupts = <0 74 0x04>;
+			status = "disabled";
+		};
+
+		/* outputs */
+		rgb {
+			compatible = "nvidia,tegra20-rgb";
+			status = "disabled";
+		};
+
+		hdmi {
+			compatible = "nvidia,tegra20-hdmi";
+			reg = <0x54280000 0x00040000>;
+			interrupts = <0 75 0x04>;
+			status = "disabled";
+		};
+
+		tvo {
+			compatible = "nvidia,tegra20-tvo";
+			reg = <0x542c0000 0x00040000>;
+			interrupts = <0 76 0x04>;
+			status = "disabled";
+		};
+
+		dsi {
+			compatible = "nvidia,tegra20-dsi";
+			reg = <0x54300000 0x00040000>;
+			status = "disabled";
+		};
+	};
+
+This really isn't anything new but merely brings the Tegra DRM binding
+in sync with other devices in tegra20.dtsi (disable devices by default,
+leave out unit addresses for unique nodes). The only actual change is
+that host1x clients are now children of the host1x node. The children
+are instantiated by the initial call to of_platform_populate() since the
+host1x node is also marked compatible with "simple-bus".
+
+An alternative would be to call of_platform_populate() from the host1x
+driver. This has the advantage that it could integrate better with the
+host1x bus implementation that Terje is working on, but it also needs
+additional code to tear down the devices when the host1x driver is
+unloaded because a module reload would try to create duplicate devices
+otherwise.
+
+The rgb node is something that I don't quite know how to handle yet.
+Since it is really part of the display controller and uses its register
+space, it isn't quite correct to represent it as a separate device. But
+we will need a separate node to make it available as a connector, which
+will become more obvious below.
+
+Perhaps the ranges property can also be used to remap the reg properties
+of the child nodes so that they can be specified as an offset into the
+host1x aperture instead of an address in the CPU address space. But
+that's just a minor issue because the OF code should be able to handle
+it transparently.
+
+Board DTS files could then extend this with board-specific requirements
+and connectors. The following describes the Medcom Wide:
+
+	host1x {
+		carveout = <0x0e000000 0x02000000>;
+		display-controllers = <&dc1>;
+		status = "okay";
+
+		dc@54200000 {
+			status = "okay";
+		};
+
+		lvds: rgb {
+			status = "okay";
+		};
+	};
+
+	connectors {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		connector@0 {
+			reg = <0>;
+			edid = /incbin/("tegra-medcom.edid");
+			output = <&lvds>;
+		};
+	};
+
+Basically this turns on the first display controller and the RGB/LVDS
+output and hooks up a static EDID block with the LVDS output. There is
+also a carveout property which might be a better replacement for the
+"crippled" GART on Tegra20. Alternatively the CMA might work just as
+well instead.
+
+The Plutux can be described like this:
+
+	host1x {
+		carveout = <0x0e000000 0x02000000>;
+		display-controllers = <&dc1 &dc2>;
+		status = "okay";
+
+		dc@54200000 {
+			status = "okay";
+		};
+
+		hdmi: hdmi {
+			vdd-supply = <&ldo7_reg>;
+			pll-supply = <&ldo8_reg>;
+			status = "okay";
+
+		};
+	};
+
+	connectors {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		connector@0 {
+			reg = <0>;
+			output = <&hdmi>;
+			ddc = <&ddc>;
+
+			hpd-gpio = <&gpio 111 0>; /* PN7 */
+		};
+	};
+
+Which is similar to the Medcom Wide, only it uses the HDMI output and
+hooks it up with one of the Tegra's I2C controllers to do EDID probing
+via DDC. Additionally it can detect whether an HDMI cable is connected
+using the GPIO specified by the hpd-gpio property.
+
+Thierry
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP6ZURAAoJEN0jrNd/PrOhcHgQALvENJ7CGBntx6Ng8NI/c5n/
+V62TvbOjmN3Eohi7tPmLlVmp7gyLHpc/pjRV0RLgZ0E/cRGYeqgE5SylhJPtJiwQ
+C5DkEl5b01tGBkON7y3UPmyMByuC9NyEbiUkBl9whEAOmhMebkXL9dW0vRH0sIul
+vygLWSZGVRoURlgpvE/92JvfCwAG0r3Z4JRnXw8c2uWsxgHN38CleT1f/MogHbwL
+ef9ts38C91mSTOekRKqagMorl6Rgc3cmvaapVM29F73/8ikhoF76bQp7Gpd7pMlj
+HTZI3HzhTkr+jwzgkFk2iRNXZI3U9Z2T/RZBX6EPyyyzlq5Jv7Kckc/s+bLbHU18
+Oy0NZmDMCNLmF8/NndMitSdnvQlcJeLvfkhQpPL3TvEEpyC2/zNoyrBbxxAgnmiQ
+xUOtcZMqs0xcDxDL7L+ESqq4LWvVACOXzPJBPw3On1fQQwCchwJeIGO2qFO72tNo
+gdaTNDsh3Z64SPnRihpmQVPQ2UAnVbFzfldbx/iLZiEtV7dtSOATnspxZjYaIhB2
+7FNmdMTPqtfz9z+UNK5tYZY9npBkEx9qtFqiJup8z8y6aXQ7MPBfD0yjamDWHJiu
+QUHUbg8kvZBrGsoI/xWX751upUbw+9ch4Q4BaqBuZ29WlR/7U4DojbYvNXNo0rqR
+dBZZSyZpNjuOTaqYHhAS
+=IL9m
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
