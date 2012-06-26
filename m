@@ -1,117 +1,101 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Tue, 26 Jun 2012 16:48:14 -0600
-Message-ID: <4FEA3C2E.3030109@wwwdotorg.org>
-References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de> <4FE9FB22.1090902@wwwdotorg.org> <20120626195108.GB5308@avionic-0098.adnet.avionic-design.de>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
+Date: Wed, 27 Jun 2012 00:02:36 +0100
+Message-ID: <20120626230235.GX30406@opensource.wolfsonmicro.com>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
+ <1340406842-27135-3-git-send-email-swarren@wwwdotorg.org>
+ <1963397.cqAXgGafFs@ax5200p>
+ <20120624110306.GA16455@sirena.org.uk>
+ <4FEA3942.9040906@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zvmqw4jX2vbPsMQB"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120626195108.GB5308-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4FEA3942.9040906-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/26/2012 01:51 PM, Thierry Reding wrote:
-> On Tue, Jun 26, 2012 at 12:10:42PM -0600, Stephen Warren wrote:
->> On 06/26/2012 04:55 AM, Thierry Reding wrote:
->>> Hi,
->>> 
->>> while I haven't got much time to work on the actual code right
->>> now, I think it might still be useful if we could get the
->>> device tree binding to a point where everybody is happy with
->>> it. That'll also save me some time once I get to writing the
->>> code because I won't have to redo it over again. =)
->>> 
->>> So here's the current proposal:
->>> 
->>> host1x { compatible = "nvidia,tegra20-host1x", "simple-bus"; 
->>> reg = <0x50000000 0x00024000>; interrupts = <0 64 0x04   /* cop
->>> syncpt */ 0 65 0x04   /* mpcore syncpt */ 0 66 0x04   /* cop
->>> general */ 0 67 0x04>; /* mpcore general */
->>> 
->>> #address-cells = <1>; #size-cells = <1>;
->>> 
->>> ranges = <0x54000000 0x54000000 0x04000000>;
->>> 
->>> status = "disabled";
->> 
->> The idea behind status="disabled" is that some HW only makes
->> sense to use on particular boards. This concept really only
->> applies to HW modules that drive external interfaces on the SoC,
->> which in turn the board can choose whether to connect anything to
->> (or whether to even connect to any external pins using the
->> pinmux, or not).
->> 
->> As such, I don't think it makes sense to set status="disabled"
->> on host1x, nor many other internal-only engines such as say mpe,
->> epp, i2sp, gr2d, gr3d, dc1, dc2.
-> 
-> What about power management and resource usage? If a board for
-> instance doesn't need gr3d at all it could just leave it at status
-> = "disabled" to not have the corresponding driver loaded and not
-> waste the power and resources.
 
-The driver should be turning off all the clocks and power if the
-devices aren't actually used (or not turning it on in the first
-place). I guess there will be some slight overhead for the
-device/driver instantiation.
+--zvmqw4jX2vbPsMQB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-However, in all likelihood, all/most boards will enable this feature
-once it's in place. For very resource-constrained scenarios without
-display, presumably one would be building a custom kernel without the
-display driver enabled, so the DT content for display wouldn't ever
-come into play.
+On Tue, Jun 26, 2012 at 04:35:46PM -0600, Stephen Warren wrote:
 
->>> Board DTS files could then extend this with board-specific
->>> requirements and connectors. The following describes the Medcom
->>> Wide:
->> 
->>> connectors { #address-cells = <1>; #size-cells = <0>;
->>> 
->>> };
->> 
->> The connector seems to be a property of the individual output
->> resources. I'd expect to see the connector configuration be a
->> child of the outputs that a particular board had enabled;
->> something more like:
->> 
->> host1x { rgb { status = "okay";
->> 
->> connector@0 { nvidia,edid = /incbin/("tegra-medcom.edid"); }; }; 
->> hdmi { status = "okay";
->> 
->> connector@0 { nvidia,ddc-i2c-bus = <&tegra_i2c1>; }; }; };
->> 
->> Perhaps even completely omit the connector node, and put the
->> properties directly within the rgb/hdmi node itself. After all
->> the HDMI output really is the connector as far as Tegra goes.
-> 
-> Heh. I seem to remember you objecting to this in a previous
-> series[0] which is actually the reason that I moved them to the
-> top-level in the first place. =)
-> 
-> Thierry
-> 
-> [0]: http://www.spinics.net/lists/linux-tegra/msg05298.html
+> So I think this sm0 (and the sm1) entry might actually be correct; sm0
+> feeds vdd_core and sm1 feeds vdd_cpu. These rails have DVFS and hence
+> the voltage can vary. I guess I should change the regulator-name in
+> these cases to something more useful than the very first signal name on
+> the schematics too.
 
-I don't think I was objecting to exactly what I wrote above; in that
-email, there were already separate connector nodes, but they were
-placed directly inside the host1x node (at that time called graphics),
-so still rather disconnected from the HW they represent.
+Even if they feed these supplies are they capable of varying on this
+board if they're shared with other things?  This is one of the common
+issues with constraints...  But generally if the supply covers more than
+one thing the idiomatic thing is to list them all separated by / or
+something.
 
-The argument for sharing e.g. an HDMI port between both video and
-audio still exists though. That said, I think now I'd still be
-inclined to put all the connector information for video into the
-hdmi/rgb/tvo nodes. If DT does grow to represent the user-connectors
-at the top-level perhaps in conjunction with drivers/extcon, perhaps
-the hdmi node can point at the extcon node with a phandle, or
-vice-versa, to set up the link between the components of the
-user-visible port.
+> That said, we don't actually have DVFS in the mainline kernel yet, and
+> correlating the regulator limits in our downstream kernels against the
+> DVFS tables we use is ... challenging; I'm not sure they're consistent
+> anyway:-(
 
-Still, the decision here is possibly a little arbitrary; many schemes
-would work. I think at this point I don't care /too/ strongly about
-which is used, so the separate-connectors-at-top-level concept in your
-email is probably OK. I wonder if the hdmi node doesn't need a phandle
-pointing at the connector node though, so they can both "find" each-other?
+Well, if you're using the regulator API the regulator API limits will
+win if they're more constrained.  But this is half the problem with
+these silly constraints that just copy the regulator limits, you've no
+idea what the board is actually supposed to do.
+
+> However, it probably doesn't make sense to vary sm2, since all that is
+> used for is to feed the TPS6586x's input pins for the the LDO regulators.
+
+Actually if we get clever then there's some fun to be had there.  If we
+can have all the LDOs specify the headroom they need then we should be
+able to arrange to vary the DCDC depending on what the needs of the
+currently active LDOs are which would improve power efficiency as the
+goal here is to drop the voltage as much as possible using the more
+efficient DCDC then regulate on from there with the LDOs.
+
+I keep considering doing this but don't have any real need for it
+myself, it's just amusing.  Might fall out of (or be similar to) some
+work I'm going to be doing soon for bypass modes though.
+
+> Likewise, all the LDO regulators are used for various peripherals in
+> general, and in the main it probably makes no sense for those rails to vary.
+
+This is typically very unusual, the devices on the rails are normally
+heavily constrained when active.
+
+> So, what I think I'll do for any regulators where the downstream board
+> files specify a voltage range, is boot the kernel and find out what
+> voltage is selected by default, and program both min-/max-microvolt to
+> that specific value. That way, there will be no behaviour change. We can
+> expand the ranges on the regulators later if/when we add DVFS etc. Does
+> that sound like a reasonable approach?
+
+Yes.
+
+--zvmqw4jX2vbPsMQB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP6j+FAAoJEBus8iNuMP3dDlgP+wVg8liZP0nfQIkHLiOx1zBU
+WCTrMvkzshvGt3Fg9rvmG7sYPDP+QkfXJcytwhlS2f2Ke4Paoz0++CTg8+knUW9b
+jGa/V4DsMekJ2Why9rklHFaYR+ogEiUvt7SXri9daxSsmXmM2bHSoi21GCsuCsr7
+PZ4lN0f1AxROhTsRnJIJxi3tKGuT+47CukC/ImQfjkdvoUE3KvuppfvD+hW7sOGR
+tGgbDmqFcamlWHAp/NhW+bAJJKkIym5UOdpVpcY6mnqDb69A6dDbT28GSRkIMegO
+inxbonquh1E/RdefZit420kKVzTiXzHcQEZ9XOQpb/6bKyV2yJwGdk6RjOMaworx
+VBQb1pjgNNm/octUcaIvbsiwGvskV/v54AqvMaK+AmBGtxRzSMinxPuH3z8+A3w0
+Y1g67Q1R1g3MTWjIvE/qCA8T7X9UPSkg5eY33XDFpIT7w+qDSARvKM1Z7PoI7m5F
+ZmKMD9qfsPdc7U4hi6/0UmCz2OtIpy2ChwQjx6NIFWSVKvD98awhSw20vLaxJXdw
+9wjeKFFBaFX1H4AJPIXhqGpp1wan9C688TvXjJYbLbWFHd9PrFOD/AfCQH1UYSQk
+apzcPh0mfSmUiVIKWjtMj1+cf+cMTtkSziRTGwEg/EU+a80vPHNpx2nkC4h4qInC
+88QFut29qv1LguRg3ACm
+=OSKX
+-----END PGP SIGNATURE-----
+
+--zvmqw4jX2vbPsMQB--
