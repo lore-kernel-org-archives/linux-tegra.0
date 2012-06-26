@@ -1,150 +1,86 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Where to power on the wifi device before loading the driver.
-Date: Tue, 26 Jun 2012 10:53:27 -0600
-Message-ID: <4FE9E907.6050803@wwwdotorg.org>
-References: <20120614121234.GC3913@opensource.wolfsonmicro.com>
- <4FDA092E.10301@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
- <4FDB5976.20809@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com>
- <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD622@HKMAIL01.nvidia.com>
- <20120619091719.GZ3974@opensource.wolfsonmicro.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD626@HKMAIL01.nvidia.com>
- <4FE112F2.7000506@wwwdotorg.org>
- <20120626085605.GA6047@shlinux2.ap.freescale.net>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
+Date: Tue, 26 Jun 2012 11:22:32 -0600
+Message-ID: <4FE9EFD8.6010608@wwwdotorg.org>
+References: <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de> <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de> <4FE0EFBB.6090206@firmworks.com> <20120621064722.GA1122@avionic-0098.mockup.avionic-design.de> <CAErSpo6Bpfqm-0yGiBOXEhF4kD3PTDYvWVr0babLZ4GkBLXJiA@mail.gmail.com> <20120622110038.GA15212@avionic-0098.mockup.avionic-design.de> <4FE4A4B3.9010200@wwwdotorg.org> <4FE4AB2F.8090402@wwwdotorg.org> <20120625063456.GB11469@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20120626085605.GA6047-Fb7DQEYuewWctlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Dong Aisheng <aisheng.dong-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, b29397-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Mursalin Akon <makon-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, r64343-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "'linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Philip Rakity' <prakity-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Li Frank-B20596 <B20596-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "'frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org'" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Estevam Fabio-R49496 <r49496-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>'linu
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20120625063456.GB11469@avionic-0098.adnet.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Mitch Bradley <wmb@firmworks.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-(I'm adding everyone on thread "ARM: imx6q: add config-on-boot gpios" to
-the CC of this similar thread. Sorry if you think that's spam.)
-
-On 06/26/2012 02:56 AM, Dong Aisheng wrote:
-> On Tue, Jun 19, 2012 at 06:01:54PM -0600, Stephen Warren wrote:
-...
->> I think what we need is some way of matching a DT node to a device even
->> when that device was instantiated through some probing mechanism such as
->> SDIO or USB (and I've heard hints that one can already do this for PCI;
->> I should investigate).
->>
->> So, we start off with the plain SDHCI controller node:
->>
->> sdhci@78000000 {
->> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->> 	reg = <0x78000000 0x200>;
->> 	interrupts = <0 14 0x04>;
->> };
->>
->> Then, we add a child node to represent the device that's attached:
->>
->> sdhci@78000000 {
->> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->> 	reg = <0x78000000 0x200>;
->> 	interrupts = <0 14 0x04>;
->>
->> 	sdio-device {
->> 		reset-gpios = <...>;
->> 		enable-gpios = <...>;
->> 	};
->> };
->>
->> When the SDHCI controller/core instantiates the child device it finds on
->> the HW bus, it initializes that struct device's of_node with a pointer
->> to the sdio-device node above. From there, the child device can get DT
->> properties such as GPIOs in the usual way.
->>
->> However, there are still some issues that need thought here; what if (as
->> is I believe the case on Cardhu) we can in fact plug in multiple
->> different types of device into the socket? Might we end up with
->> something like:
->>
->> sdhci@78000000 {
->> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->> 	reg = <0x78000000 0x200>;
->> 	interrupts = <0 14 0x04>;
->>
->> 	sdio-device-option@0 {
->> 		compatible = "broadcom,bcm4239";
->> 		reset-gpios = <...>;
->> 		enable-gpios = <...>;
->> 	};
->>
->> 	sdio-device-option@1 {
->> 		compatible = "broadcom,bcm4330";
->> 		reset-gpios = <...>;
->> 		enable-gpios = <...>;
->> 	};
->> };
->>
->> and match on compatible value?
->>
-> I like this idea.
-> We may extend the sdio_device_id to contain a compatible string,
-> then sdio core is responsible to pass the corresponding device node to the
-> sdio function driver once a match device found, this is sdio function independent.
-> The sdio function driver then are responsible to parse the device node to
-> fetch the needed information like reset-gpios and enable-gpios to do correct
-> initialization sequence.
+On 06/25/2012 12:34 AM, Thierry Reding wrote:
+> On Fri, Jun 22, 2012 at 11:28:15AM -0600, Stephen Warren wrote:
+>> On 06/22/2012 11:00 AM, Stephen Warren wrote:
+>>> On 06/22/2012 05:00 AM, Thierry Reding wrote: ...
+>>>> Stephen: can you try to find out whether the Tegra PCIe
+>>>> controller indeed implements ECAM, or if this scheme is
+>>>> actually just a proprietary variant?
+>>> 
+>>> Sure. I have added this request to the bug I filed requesting
+>>> more complete PCIe host documentation.
+>> 
+>> I've received unofficial confirmation that we do indeed implement
+>> a non-standard/non-ECAM mapping, and what's in our driver matches
+>> our HW.
 > 
-> However, one known question for this model is that some WiFi may need reset the chip
-> via gpio first before being able to be enumerated.
+> What I don't quite see yet is how the extended configuration space
+> is supposed to work with the current driver. The PCIE_CONF_* macros
+> don't provide for registers >= 256. Passing a value higher than
+> that will mess with the device function field.
 
-Yes, that's exactly the issue that makes the above binding incorrect.
+The current downstream driver is incorrect for that case. We should be
+updating it (at least, I filed a bug to do this).
 
-In another thread on a very similar topic, I proposed a binding that
-would address this issue:
+Here's how the HW works (I believe this information should be in some
+future version of the TRM):
 
-http://www.spinics.net/lists/linux-usb/msg66013.html
+There are 3 address spaces:
 
-> sdhci@78000000 {
-> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
-> 	reg = <0x78000000 0x200>;
-> 	interrupts = <0 14 0x04>;
->
-> 	sdio-device {
-> 		reset-gpios = <...>;
-> 		enable-gpios = <...>;
-> 	};
-> };
+* The CPU bus.
 
-> ehci {
->     /* The following node is dynamically detected, although the hub
->      * IC is physically soldered onto the board
->      */
->     hub {
->         hub { /* also dynamic */
->             port@2 {
->                 child-supply = <&regulator>;
->                 reset-gpios = <&gpio 0 0>;
->             };
->         };
->     };
-> }
+* An internal (to the PCIe controller) 40-bit address space.
+Apparently the layout is HyperTransport-based. Whether HT defines
+this, or whether our HW engineers are referring to our particular
+implementation of HT, I'm not sure.
 
-Presumably something similar could be set up with platform data.
+* The PCIe external bus.
 
-Basically, the SD controller or USB host/hub node contains a child that
-represents the socket/port/... that needs some services provided to it
-(power, reset de-asserted, even clocks). The services provided by that
-node are set up before enumeration, so that the device will respond to
-enumeration. Hopefully, the DT representation of this socket/port/..
-could be shared across arbitrary types of controller (so both SD and
-USB) and the driver the "implements" that node would be common code that
-SD and USB call into, rather than having them both re-implement it from
-scratch.
+Accesses from the CPU to the PCIe controller's 1GB aperture are mapped
+into the 40-bit bus using the BAR configurations in the PCIe
+controller; I believe this is what tegra_pcie_setup_translations() is
+configuring in our downstream driver.
+
+Accesses are then mapped from this 40-bit bus to the external 32-bit
+bus, I believe using a hard-coded mapping, which I believe may be
+inherited from (our implementation of?) HyperTransport
+
+For config and extended config accesses the mapping from the internal
+to external bus is as follows:
+
+In the case of PCICFG space,
+addr[39:28]=12'hFDF,
+addr[27:24]=4'hE means type 0 and addr[27:24]=4'hF means type 1,
+addr[23:16]=bus number
+addr[15:11]=device number
+addr[10:8]=function number
+addr[7:0]=register number
+
+In the case of EXTCFG space,
+addr[39:32]=8'hFE,
+addr[31:28]=4'h0 means type 0 and addr[31:28]=4'h1 means type 1,
+addr[27:24]=upper register number (i.e. register number[11:8])
+addr[23:16]=bus number
+addr[15:11]=device number
+addr[10:8]=function number
+addr[7:0]=register number (i.e. register number[7:0])
+
+(in actual fact, the HW matches the top 16 or 12 bits to determine
+config/ext-config and transaction type, so the top two fields in the
+lists above should really be considered merged)
+
+I hope this helps!
