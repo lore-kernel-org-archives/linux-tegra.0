@@ -1,105 +1,150 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Tue, 26 Jun 2012 16:00:33 +0200
-Message-ID: <20120626140033.GC1115@avionic-0098.mockup.avionic-design.de>
-References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
- <20120626160224.40ba10a26e3dd3a56b1f312c@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Where to power on the wifi device before loading the driver.
+Date: Tue, 26 Jun 2012 10:53:27 -0600
+Message-ID: <4FE9E907.6050803@wwwdotorg.org>
+References: <20120614121234.GC3913@opensource.wolfsonmicro.com>
+ <4FDA092E.10301@wwwdotorg.org>
+ <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
+ <4FDB5976.20809@wwwdotorg.org>
+ <6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com>
+ <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
+ <6B4D417B830BC44B8026029FD256F7F1C6EE2DD622@HKMAIL01.nvidia.com>
+ <20120619091719.GZ3974@opensource.wolfsonmicro.com>
+ <6B4D417B830BC44B8026029FD256F7F1C6EE2DD626@HKMAIL01.nvidia.com>
+ <4FE112F2.7000506@wwwdotorg.org>
+ <20120626085605.GA6047@shlinux2.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20120626160224.40ba10a26e3dd3a56b1f312c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20120626085605.GA6047-Fb7DQEYuewWctlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Dong Aisheng <aisheng.dong-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Cc: USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, b29397-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Mursalin Akon <makon-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, r64343-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "'linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Philip Rakity' <prakity-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Li Frank-B20596 <B20596-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "'frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org'" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Estevam Fabio-R49496 <r49496-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>'linu
 List-Id: linux-tegra@vger.kernel.org
 
+(I'm adding everyone on thread "ARM: imx6q: add config-on-boot gpios" to
+the CC of this similar thread. Sorry if you think that's spam.)
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/26/2012 02:56 AM, Dong Aisheng wrote:
+> On Tue, Jun 19, 2012 at 06:01:54PM -0600, Stephen Warren wrote:
+...
+>> I think what we need is some way of matching a DT node to a device even
+>> when that device was instantiated through some probing mechanism such as
+>> SDIO or USB (and I've heard hints that one can already do this for PCI;
+>> I should investigate).
+>>
+>> So, we start off with the plain SDHCI controller node:
+>>
+>> sdhci@78000000 {
+>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+>> 	reg = <0x78000000 0x200>;
+>> 	interrupts = <0 14 0x04>;
+>> };
+>>
+>> Then, we add a child node to represent the device that's attached:
+>>
+>> sdhci@78000000 {
+>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+>> 	reg = <0x78000000 0x200>;
+>> 	interrupts = <0 14 0x04>;
+>>
+>> 	sdio-device {
+>> 		reset-gpios = <...>;
+>> 		enable-gpios = <...>;
+>> 	};
+>> };
+>>
+>> When the SDHCI controller/core instantiates the child device it finds on
+>> the HW bus, it initializes that struct device's of_node with a pointer
+>> to the sdio-device node above. From there, the child device can get DT
+>> properties such as GPIOs in the usual way.
+>>
+>> However, there are still some issues that need thought here; what if (as
+>> is I believe the case on Cardhu) we can in fact plug in multiple
+>> different types of device into the socket? Might we end up with
+>> something like:
+>>
+>> sdhci@78000000 {
+>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+>> 	reg = <0x78000000 0x200>;
+>> 	interrupts = <0 14 0x04>;
+>>
+>> 	sdio-device-option@0 {
+>> 		compatible = "broadcom,bcm4239";
+>> 		reset-gpios = <...>;
+>> 		enable-gpios = <...>;
+>> 	};
+>>
+>> 	sdio-device-option@1 {
+>> 		compatible = "broadcom,bcm4330";
+>> 		reset-gpios = <...>;
+>> 		enable-gpios = <...>;
+>> 	};
+>> };
+>>
+>> and match on compatible value?
+>>
+> I like this idea.
+> We may extend the sdio_device_id to contain a compatible string,
+> then sdio core is responsible to pass the corresponding device node to the
+> sdio function driver once a match device found, this is sdio function independent.
+> The sdio function driver then are responsible to parse the device node to
+> fetch the needed information like reset-gpios and enable-gpios to do correct
+> initialization sequence.
+> 
+> However, one known question for this model is that some WiFi may need reset the chip
+> via gpio first before being able to be enumerated.
 
-On Tue, Jun 26, 2012 at 04:02:24PM +0300, Hiroshi Doyu wrote:
-> Hi Thierry,
->=20
-> On Tue, 26 Jun 2012 12:55:13 +0200
-> Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
->=20
-> > * PGP Signed by an unknown key
-> >=20
-> > Hi,
-> >=20
-> > while I haven't got much time to work on the actual code right now, I
-> > think it might still be useful if we could get the device tree binding
-> > to a point where everybody is happy with it. That'll also save me some
-> > time once I get to writing the code because I won't have to redo it over
-> > again. =3D)
-> >=20
-> > So here's the current proposal:
-> >=20
-> > 	host1x {
-> > 		compatible =3D "nvidia,tegra20-host1x", "simple-bus";
-> > 		reg =3D <0x50000000 0x00024000>;
-> > 		interrupts =3D <0 64 0x04   /* cop syncpt */
-> > 			      0 65 0x04   /* mpcore syncpt */
-> > 			      0 66 0x04   /* cop general */
-> > 			      0 67 0x04>; /* mpcore general */
-> >=20
-> > 		#address-cells =3D <1>;
-> > 		#size-cells =3D <1>;
-> >=20
-> > 		ranges =3D <0x54000000 0x54000000 0x04000000>;
-> >=20
-> > 		status =3D "disabled";
-> >=20
-> > 		gart =3D <&gart>;
-> ...
-> > output and hooks up a static EDID block with the LVDS output. There is
-> > also a carveout property which might be a better replacement for the
-> > "crippled" GART on Tegra20. Alternatively the CMA might work just as
-> > well instead.
-> >=20
-> > The Plutux can be described like this:
-> >=20
-> > 	host1x {
-> > 		carveout =3D <0x0e000000 0x02000000>;
->=20
-> As discussed in the following ML thread previously, the necessary info
-> related to the "gart" would be got from the standard IOMMU API(or
-> something above layers, DMABUF or TTM?). So I don't think that we need
-> to refer to "gart" and "carveout" here in the end.
->=20
-> http://lists.linuxfoundation.org/pipermail/iommu/2012-June/004266.html
+Yes, that's exactly the issue that makes the above binding incorrect.
 
-Yes, if IOMMU or some layer above can provide the same information, then
-that is certainly better than explicitly referencing it in the DT.
+In another thread on a very similar topic, I proposed a binding that
+would address this issue:
 
-I'm not sure I understand how information about the carveout would be
-obtained from the IOMMU API, though.
+http://www.spinics.net/lists/linux-usb/msg66013.html
 
-Thierry
+> sdhci@78000000 {
+> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
+> 	reg = <0x78000000 0x200>;
+> 	interrupts = <0 14 0x04>;
+>
+> 	sdio-device {
+> 		reset-gpios = <...>;
+> 		enable-gpios = <...>;
+> 	};
+> };
 
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature
+> ehci {
+>     /* The following node is dynamically detected, although the hub
+>      * IC is physically soldered onto the board
+>      */
+>     hub {
+>         hub { /* also dynamic */
+>             port@2 {
+>                 child-supply = <&regulator>;
+>                 reset-gpios = <&gpio 0 0>;
+>             };
+>         };
+>     };
+> }
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Presumably something similar could be set up with platform data.
 
-iQIcBAEBAgAGBQJP6cCBAAoJEN0jrNd/PrOh61UP/35MXxx9f6Xmd8osMBM6gfP9
-j6v6A3W2HbyD1AF4AamHiuqvSPX+QGltd9njImljyuqTumu98itojicu0YKYF3hp
-d7+olhzhwFegVdk8W7Fs06OvhEg+KQmCMvOTnIvMoG8HfJRJXo5qlTOpTZVQ1MuS
-X56OaAOZOcch6rmmyTEy/aQL3E32ZJtHbwvRFlNuWeOhLn/Lp3HkeFCDclxN238n
-a+sQ5jLgisgVdmFQ1rgnO0z1ZT/7JrinXU17MHX42daNLRnOEioFGHvMRyGSmEp9
-PZ2rCSUAryDx6L/iZDf6Wif0bLf3acMI7hi2MhD1tKB8PenluYyUnlzMfoEusgzt
-EVudoJ92bKtxlDE4/E4Zb9Us1IK1Xx2fiEDAj5WUwzsBKk0GwTedG4c6sx8DKYfT
-ahQgj9wdUkbHJxrzCFNPbK6MRSQGJHrc+87aaScUIsIylFIBOS/ipWfT3Sh3z+CS
-uzu3bikqszgpeaZuoBp3yS2gHh34pauQTx1PLFcLSyXu6AM2V2Lpp2qXGcmfWZM/
-+MDaKSjLA+YjXEa34nspKO7MQ7ivDCL12n5Gp/uym00qED9SFEsfrMdU/FSL4SyI
-+cXK7/QTs+zCiOndyoVEotneNVPboTSc4PxCcWOR1aPLP76hesl7yNDuVi7I0Wwn
-T8/Hh5YAAxIX0soMtXew
-=Lk0D
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
+Basically, the SD controller or USB host/hub node contains a child that
+represents the socket/port/... that needs some services provided to it
+(power, reset de-asserted, even clocks). The services provided by that
+node are set up before enumeration, so that the device will respond to
+enumeration. Hopefully, the DT representation of this socket/port/..
+could be shared across arbitrary types of controller (so both SD and
+USB) and the driver the "implements" that node would be common code that
+SD and USB call into, rather than having them both re-implement it from
+scratch.
