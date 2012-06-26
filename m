@@ -1,86 +1,65 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 07/10] ARM: tegra: pcie: Add device tree support
-Date: Tue, 26 Jun 2012 11:22:32 -0600
-Message-ID: <4FE9EFD8.6010608@wwwdotorg.org>
-References: <20120614192903.GA2212@avionic-0098.mockup.avionic-design.de> <4FDA40A0.4030206@wwwdotorg.org> <20120615061236.GA4081@avionic-0098.mockup.avionic-design.de> <20120619133001.GB24138@avionic-0098.mockup.avionic-design.de> <4FE0EFBB.6090206@firmworks.com> <20120621064722.GA1122@avionic-0098.mockup.avionic-design.de> <CAErSpo6Bpfqm-0yGiBOXEhF4kD3PTDYvWVr0babLZ4GkBLXJiA@mail.gmail.com> <20120622110038.GA15212@avionic-0098.mockup.avionic-design.de> <4FE4A4B3.9010200@wwwdotorg.org> <4FE4AB2F.8090402@wwwdotorg.org> <20120625063456.GB11469@avionic-0098.adnet.avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Tue, 26 Jun 2012 11:41:43 -0600
+Message-ID: <4FE9F457.6090104@wwwdotorg.org>
+References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de> <4FE9B291.2020305@nvidia.com> <20120626134122.GA1115@avionic-0098.mockup.avionic-design.de> <4FE9C0E9.7060301@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20120625063456.GB11469@avionic-0098.adnet.avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Mitch Bradley <wmb@firmworks.com>, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4FE9C0E9.7060301-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/25/2012 12:34 AM, Thierry Reding wrote:
-> On Fri, Jun 22, 2012 at 11:28:15AM -0600, Stephen Warren wrote:
->> On 06/22/2012 11:00 AM, Stephen Warren wrote:
->>> On 06/22/2012 05:00 AM, Thierry Reding wrote: ...
->>>> Stephen: can you try to find out whether the Tegra PCIe
->>>> controller indeed implements ECAM, or if this scheme is
->>>> actually just a proprietary variant?
->>> 
->>> Sure. I have added this request to the bug I filed requesting
->>> more complete PCIe host documentation.
->> 
->> I've received unofficial confirmation that we do indeed implement
->> a non-standard/non-ECAM mapping, and what's in our driver matches
->> our HW.
-> 
-> What I don't quite see yet is how the extended configuration space
-> is supposed to work with the current driver. The PCIE_CONF_* macros
-> don't provide for registers >= 256. Passing a value higher than
-> that will mess with the device function field.
+On 06/26/2012 08:02 AM, Terje Bergstr=C3=B6m wrote:
+> On 26.06.2012 16:41, Thierry Reding wrote:
+>=20
+>> On Tue, Jun 26, 2012 at 04:01:05PM +0300, Terje Bergstr=C3=B6m wrote=
+:
+>>> We also assign certain host1x common resources per device by conven=
+tion,
+>>> f.ex. sync points, channels etc. We currently encode that informati=
+on in
+>>> the device node (3D uses sync point number X, 2D uses numbers Y and=
+ Z).
+>>> The information is not actually describing hardware, as it just
+>>> describes the convention, so I'm not sure if device tree is the pro=
+per
+>>> place for it.
+>> Are they configurable? If so I think we should provide for them bein=
+g
+>> specified in the device tree. They are still hardware resources bein=
+g
+>> assigned to devices.
+>=20
+> Yes, they're configurable, and there's nothing hardware specific in t=
+he
+> assignment of a sync point to a particular use. It's all just a softw=
+are
+> agreement. That's why I'm a bit hesitant on putting it in device tree=
+s,
+> which are supposed to only describe hardware.
 
-The current downstream driver is incorrect for that case. We should be
-updating it (at least, I filed a bug to do this).
+So I think that the DT can describe the existence of sync-points
+(presumably include a node for the sync-point HW device if it's
+separate). However, since the usage of each sync-point is entirely
+arbitrary, that seems like something which should be either assigned
+dynamically at run-time, or at least managed/assigned in SW at runtime
+somehow, rather than hard-coded into DT; it's more policy than HW.
 
-Here's how the HW works (I believe this information should be in some
-future version of the TRM):
+>>> Either way is fine for me. The full addresses are more familiar to =
+me as
+>>> we tend to use them internally.
+>
+>> Using the OF mechanism for translating the host1x bus addresses,
+>> relative to the host1x base address, to CPU addresses seems "purer",=
+ but
+>> either way should work fine.
+>=20
+> I'll let you decide, as I don't have a strong opinion either way. I
+> guess whatever is the more common way wins.
 
-There are 3 address spaces:
-
-* The CPU bus.
-
-* An internal (to the PCIe controller) 40-bit address space.
-Apparently the layout is HyperTransport-based. Whether HT defines
-this, or whether our HW engineers are referring to our particular
-implementation of HT, I'm not sure.
-
-* The PCIe external bus.
-
-Accesses from the CPU to the PCIe controller's 1GB aperture are mapped
-into the 40-bit bus using the BAR configurations in the PCIe
-controller; I believe this is what tegra_pcie_setup_translations() is
-configuring in our downstream driver.
-
-Accesses are then mapped from this 40-bit bus to the external 32-bit
-bus, I believe using a hard-coded mapping, which I believe may be
-inherited from (our implementation of?) HyperTransport
-
-For config and extended config accesses the mapping from the internal
-to external bus is as follows:
-
-In the case of PCICFG space,
-addr[39:28]=12'hFDF,
-addr[27:24]=4'hE means type 0 and addr[27:24]=4'hF means type 1,
-addr[23:16]=bus number
-addr[15:11]=device number
-addr[10:8]=function number
-addr[7:0]=register number
-
-In the case of EXTCFG space,
-addr[39:32]=8'hFE,
-addr[31:28]=4'h0 means type 0 and addr[31:28]=4'h1 means type 1,
-addr[27:24]=upper register number (i.e. register number[11:8])
-addr[23:16]=bus number
-addr[15:11]=device number
-addr[10:8]=function number
-addr[7:0]=register number (i.e. register number[7:0])
-
-(in actual fact, the HW matches the top 16 or 12 bits to determine
-config/ext-config and transaction type, so the top two fields in the
-lists above should really be considered merged)
-
-I hope this helps!
+I'd certainly prefer all the nodes to use the full/absolute address.
+That way, the DT will exactly match the addresses in the documentation.
