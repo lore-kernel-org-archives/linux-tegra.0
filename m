@@ -1,78 +1,46 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
-Date: Tue, 26 Jun 2012 12:08:24 +0530
-Message-ID: <4FE958E0.8030205@nvidia.com>
-References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org> <4FE80413.6070001@nvidia.com> <4FE87FE3.1080608@wwwdotorg.org> <4FE882A5.3080504@nvidia.com> <20120625222646.GB30406@opensource.wolfsonmicro.com> <4FE8EFC4.3090509@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: add device tree AUXDATA for APBDMA
+Date: Tue, 26 Jun 2012 12:48:31 +0530
+Message-ID: <1340695112-28270-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FE8EFC4.3090509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 26 June 2012 04:39 AM, Stephen Warren wrote:
-> On 06/25/2012 04:26 PM, Mark Brown wrote:
->> On Mon, Jun 25, 2012 at 08:54:21PM +0530, Laxman Dewangan wrote:
->>
->>> I had detailed discussion with Mark on  this support and as per
->>> him (based on my understanding), the input to different regulator
->>> is from the pin of the chips and so the name should be the
->>> <pin-name>-supply which should be part of chip-dt binding, not
->>> to the particular rail.
->> More specifically, all the supplies for a device (including those
->> that happen to be inputs for regulators) should be specified in
->> exactly the same fashion.  This makes the binding more regular and
->> means that users can just go through the schematic adding the
->> mappings without worrying about what what the supply happens to
->> be.
-> Just making sure I parsed that right. I think what you're saying is
-> that the device itself should represent its input pins, e.g.:
->
-> tps6586x {
->      vin-ldo01-supply =<&some_regulator>;
+Add DT AUXDATA for Tegra's APBDMA controller driver.
 
-I think it is fine. The pin name as per data sheet is VINLDO01 and so we 
-can have vin-ldo01.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-
->      vin-ldo23-supply =<...>;
->      vin-ldo4-supply =<...>;
->      vin-ldo678-supply =<...>;
->      vin-ldo9-supply =<...>;
->
->      regulators {
->          regulator@0 {
->              regulator-compatible = "ldo0";
->              ...
->          };
->          regulator@1 {
->              regulator-compatible = "ldo1";
->              ...
->          };
->      };
-> };
->
-> (and then the driver internally uses the *-supply to set up the
-> parents of each of its own regulators)
->
-> ... rather than each regulator specifying its parent, which might
-> result in some duplication, since in this case both ldo0/1 are
-> supplied from the same input pin:
->
-> tps6586x {
->      regulators {
->          regulator@0 {
->              regulator-compatible = "ldo0";
->              vin-supply =<&some_regulator>;
->              ...
->          };
->          regulator@1 {
->              regulator-compatible = "ldo1";
->              vin-supply =<&some_regulator>;
->              ...
->          };
->      };
-> };
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 8b4e6e1..1b43c33 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -64,6 +64,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 		       &tegra_ehci2_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
+ 		       &tegra_ehci3_pdata),
++	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", 0x6000a000, "tegra-apbdma", NULL),
+ 	{}
+ };
+ 
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index 4f76fa7..4a40986 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -52,6 +52,7 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C700, "tegra-i2c.3", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000D000, "tegra-i2c.4", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra30-ahub", 0x70080000, "tegra30-ahub", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra30-apbdma", 0x6000a000, "tegra-apbdma", NULL),
+ 	{}
+ };
+ 
+-- 
+1.7.1.1
