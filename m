@@ -1,173 +1,60 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Where to power on the wifi device before loading the driver.
-Date: Tue, 26 Jun 2012 16:26:04 -0500
-Message-ID: <4FEA28EC.2080906@gmail.com>
-References: <20120614121234.GC3913@opensource.wolfsonmicro.com>
- <4FDA092E.10301@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C377BFFE8D@HKMAIL01.nvidia.com>
- <4FDB5976.20809@wwwdotorg.org>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD61F@HKMAIL01.nvidia.com>
- <43E4817426ED174AA81263BCECB4351D138E8ACD6B@sc-vexch3.marvell.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD622@HKMAIL01.nvidia.com>
- <20120619091719.GZ3974@opensource.wolfsonmicro.com>
- <6B4D417B830BC44B8026029FD256F7F1C6EE2DD626@HKMAIL01.nvidia.com>
- <4FE112F2.7000506@wwwdotorg.org>
- <20120626085605.GA6047@shlinux2.ap.freescale.net>
- <4FE9E907.6050803@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
+Date: Tue, 26 Jun 2012 16:35:46 -0600
+Message-ID: <4FEA3942.9040906@wwwdotorg.org>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org> <1340406842-27135-3-git-send-email-swarren@wwwdotorg.org> <1963397.cqAXgGafFs@ax5200p> <20120624110306.GA16455@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <4FE9E907.6050803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Dong Aisheng <aisheng.dong-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "'linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, b29397-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Mursalin Akon <makon-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, r64343-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Philip Rakity' <prakity-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Li Frank-B20596 <B20596-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "'frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org'" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Estevam Fabio-R49496 <r49496-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, 'Mark Brown' <broonie@opensour>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120624110306.GA16455-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/26/2012 11:53 AM, Stephen Warren wrote:
-> (I'm adding everyone on thread "ARM: imx6q: add config-on-boot gpios" to
-> the CC of this similar thread. Sorry if you think that's spam.)
+On 06/24/2012 05:03 AM, Mark Brown wrote:
+> On Sat, Jun 23, 2012 at 06:35:01PM +0200, Marc Dietrich wrote:
 > 
-> On 06/26/2012 02:56 AM, Dong Aisheng wrote:
->> On Tue, Jun 19, 2012 at 06:01:54PM -0600, Stephen Warren wrote:
-> ...
->>> I think what we need is some way of matching a DT node to a device even
->>> when that device was instantiated through some probing mechanism such as
->>> SDIO or USB (and I've heard hints that one can already do this for PCI;
->>> I should investigate).
->>>
->>> So, we start off with the plain SDHCI controller node:
->>>
->>> sdhci@78000000 {
->>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->>> 	reg = <0x78000000 0x200>;
->>> 	interrupts = <0 14 0x04>;
->>> };
->>>
->>> Then, we add a child node to represent the device that's attached:
->>>
->>> sdhci@78000000 {
->>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->>> 	reg = <0x78000000 0x200>;
->>> 	interrupts = <0 14 0x04>;
->>>
->>> 	sdio-device {
->>> 		reset-gpios = <...>;
->>> 		enable-gpios = <...>;
->>> 	};
->>> };
->>>
->>> When the SDHCI controller/core instantiates the child device it finds on
->>> the HW bus, it initializes that struct device's of_node with a pointer
->>> to the sdio-device node above. From there, the child device can get DT
->>> properties such as GPIOs in the usual way.
->>>
->>> However, there are still some issues that need thought here; what if (as
->>> is I believe the case on Cardhu) we can in fact plug in multiple
->>> different types of device into the socket? Might we end up with
->>> something like:
->>>
->>> sdhci@78000000 {
->>> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->>> 	reg = <0x78000000 0x200>;
->>> 	interrupts = <0 14 0x04>;
->>>
->>> 	sdio-device-option@0 {
->>> 		compatible = "broadcom,bcm4239";
->>> 		reset-gpios = <...>;
->>> 		enable-gpios = <...>;
->>> 	};
->>>
->>> 	sdio-device-option@1 {
->>> 		compatible = "broadcom,bcm4330";
->>> 		reset-gpios = <...>;
->>> 		enable-gpios = <...>;
->>> 	};
->>> };
->>>
->>> and match on compatible value?
->>>
->> I like this idea.
->> We may extend the sdio_device_id to contain a compatible string,
->> then sdio core is responsible to pass the corresponding device node to the
->> sdio function driver once a match device found, this is sdio function independent.
->> The sdio function driver then are responsible to parse the device node to
->> fetch the needed information like reset-gpios and enable-gpios to do correct
->> initialization sequence.
->>
->> However, one known question for this model is that some WiFi may need reset the chip
->> via gpio first before being able to be enumerated.
+>>> The regulator configurations were all taken from the AC100 kernel used by
+>>> the Ubuntu port, specifically:
 > 
-> Yes, that's exactly the issue that makes the above binding incorrect.
+> These generally all look pretty broken...
 > 
-> In another thread on a very similar topic, I proposed a binding that
-> would address this issue:
+>>> +				regulator@0 {
+>>> +					reg = <0>;
+>>> +					regulator-compatible = "sm0";
+>>> +					regulator-name = "+1.2vs_sm0";
+>>> +					regulator-min-microvolt = < 725000>;
+>>> +					regulator-max-microvolt = <1300000>;
 > 
-> http://www.spinics.net/lists/linux-usb/msg66013.html
-> 
->> sdhci@78000000 {
->> 	compatible = "nvidia,tegra30-sdhci", "nvidia,tegra20-sdhci";
->> 	reg = <0x78000000 0x200>;
->> 	interrupts = <0 14 0x04>;
->>
->> 	sdio-device {
->> 		reset-gpios = <...>;
->> 		enable-gpios = <...>;
->> 	};
+> Most of these ranges look suspiciously like the maximum possible
+> variation the regulator has, not what the board actually requires (which
+> is a depressingly common error, I've no idea why people seem to think
+> they're supposed to cut'n'paste the physical limits of the regualtor out
+> of the driver).  If something decides to take advantage of the variation
+> this could be problematic.
 
-These are really no different than CD and WP on gpio lines. So I don't
-think a child node is even necessary. They are really properties of the
-host controller as you have to know how to handle them before enumeration.
+So I think this sm0 (and the sm1) entry might actually be correct; sm0
+feeds vdd_core and sm1 feeds vdd_cpu. These rails have DVFS and hence
+the voltage can vary. I guess I should change the regulator-name in
+these cases to something more useful than the very first signal name on
+the schematics too.
 
-One question is do the gpios have strict timing or ordering
-requirements. If so then that would be difficult to describe generically.
+That said, we don't actually have DVFS in the mainline kernel yet, and
+correlating the regulator limits in our downstream kernels against the
+DVFS tables we use is ... challenging; I'm not sure they're consistent
+anyway:-(
 
->> };
-> 
->> ehci {
->>     /* The following node is dynamically detected, although the hub
->>      * IC is physically soldered onto the board
->>      */
->>     hub {
->>         hub { /* also dynamic */
->>             port@2 {
->>                 child-supply = <&regulator>;
->>                 reset-gpios = <&gpio 0 0>;
->>             };
->>         };
->>     };
->> }
-> 
+However, it probably doesn't make sense to vary sm2, since all that is
+used for is to feed the TPS6586x's input pins for the the LDO regulators.
 
-Considering the same enumeration ordering requirement as above and that
-this is probably limited to a single hub/device on the root hub, I think
-the simple solution of just adding the gpio's to the ehci node and
-handling in the ehci driver is sufficient.
+Likewise, all the LDO regulators are used for various peripherals in
+general, and in the main it probably makes no sense for those rails to vary.
 
-> Presumably something similar could be set up with platform data.
-> 
-> Basically, the SD controller or USB host/hub node contains a child that
-> represents the socket/port/... that needs some services provided to it
-> (power, reset de-asserted, even clocks). The services provided by that
-> node are set up before enumeration, so that the device will respond to
-> enumeration. Hopefully, the DT representation of this socket/port/..
-> could be shared across arbitrary types of controller (so both SD and
-> USB) and the driver the "implements" that node would be common code that
-> SD and USB call into, rather than having them both re-implement it from
-> scratch.
-
-While I think this can be handled generically with SD and USB drivers,
-I'm not so sure there would be benefit across them. It is just getting a
-gpio and toggling it. But really that's a detail that doesn't matter
-until we're closer to an implementation...
-
-Rob
+So, what I think I'll do for any regulators where the downstream board
+files specify a voltage range, is boot the kernel and find out what
+voltage is selected by default, and program both min-/max-microvolt to
+that specific value. That way, there will be no behaviour change. We can
+expand the ranges on the regulators later if/when we add DVFS etc. Does
+that sound like a reasonable approach?
