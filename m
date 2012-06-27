@@ -1,48 +1,33 @@
 From: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 1/2] dma: tegra: set DMA_CYCLIC capability
-Date: Wed, 27 Jun 2012 18:59:08 +0530
-Message-ID: <1340803748.1562.244.camel@vkoul-udesk3>
-References: <1340365364-16276-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] dma: tegra: use sg_dma_address() for getting dma
+ buffer address
+Date: Wed, 27 Jun 2012 19:02:36 +0530
+Message-ID: <1340803956.1562.245.camel@vkoul-udesk3>
+References: <1340377870-10035-1-git-send-email-ldewangan@nvidia.com>
+	 <4FE4A78F.4090307@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340365364-16276-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4FE4A78F.4090307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-06-22 at 17:12 +0530, Laxman Dewangan wrote:
-> Tegra's APB DMA driver support the cyclic mode of data
-> transfer and hence setting the DMA_CYCLIC caps for dma
-> channels.
+On Fri, 2012-06-22 at 11:12 -0600, Stephen Warren wrote:
+> On 06/22/2012 09:11 AM, Laxman Dewangan wrote:
+> > Use the sg_dma_address() to get the segment buffer address for
+> > DMA transfer in place of sg_phys() which returns the physical
+> > address of an sg entry.
+> > The sg_dma_address() returns the correct buffer memory address
+> > for DMA transfer.
 > 
-> This is require when generic sound dmaengine pcm driver
-> request for dma channel with CYCLIC capability.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/dma/tegra20-apb-dma.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 134ea7c..b4bd50c 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1306,6 +1306,8 @@ static int __devinit tegra_dma_probe(struct platform_device *pdev)
->  
->  	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
->  	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-> +
->  	tdma->dma_dev.dev = &pdev->dev;
->  	tdma->dma_dev.device_alloc_chan_resources =
->  					tegra_dma_alloc_chan_resources;
-What sort of testing went into this.
-I can see that you are marking descriptor complete even for cyclic case,
-that is wrong you should fix that as well. See the other drivers for
-cyclic handling of descriptors.
+> It's what everyone else is doing, so:
+And this is the right thing to do. 
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+
+Applied, thanks
 
 -- 
 ~Vinod
