@@ -1,57 +1,189 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 Subject: Re: [PATCH V2] ARM: dt: tegra: paz00: add regulators
-Date: Wed, 27 Jun 2012 21:01:19 +0200
-Message-ID: <3814450.qCgZjqmj5N@ax5200p>
-References: <1340757060-27232-1-git-send-email-swarren@wwwdotorg.org> <21985997.TUGv5fZBXQ@ax5200p> <4FEB5741.6020400@wwwdotorg.org>
+Date: Wed, 27 Jun 2012 23:59:33 +0200
+Message-ID: <9938329.yDzqmf1yu1@ax5200p>
+References: <1340757060-27232-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FEB5741.6020400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1340757060-27232-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 27 June 2012 12:56:01 Stephen Warren wrote:
-> On 06/27/2012 12:50 PM, Marc Dietrich wrote:
-> > On Wednesday 27 June 2012 12:31:01 Mark Brown wrote:
-> >> On Tue, Jun 26, 2012 at 06:31:00PM -0600, Stephen Warren wrote:
-> >>> sm1: HW defaults and schematic match at 1.0v. marvin24's kernel had a
-> >>> max
-> >>> of 1.125v, but this wasn't applied since apply_uV wasn't set.
-> >> 
-> >> apply_uV is only valid if a single voltage is specified.
-> > 
-> > yes, that's why there is a ".apply_uV = (_minmv == _maxmv)" in the
-> > regulator macro.
-> > 
-> >> If a voltage
-> >> range were specified and it were acted on we'd take the lowest (not
-> >> highest) voltage allowed.
-> > 
-> > Sorry, I don't get it. In this case, the board wouldn't boot at all
-> > because
-> > nearly all supplies would be undervoltaged. I just checked and all
-> > voltages
-> > are actually set to the *highest* (max) value. Maybe they aren't changed
-> > at
-> > all?
+On Tuesday 26 June 2012 18:31:00 Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Yes, in the absence of any explicit action (i.e. a call to
-> regulator_set_voltage() elsewhere), the regulator core doesn't reprogram
-> the regulator at registration time, except for a few specific conditions
-> e.g. something like when min==max and apply_uV is set.
+> The Toshiba AC100/PAZ00 uses a TPS6586x regulator. Instantiate this.
 > 
-> I imagine the DVFS code in your downstream kernel /is/ calling
-> regulator_set_voltage() later, assuming that config option is enabled
-> anyway. See arch/arm/mach-tegra/{dvfs.c,tegra2_dvfs.c}.
+> [...]
+> 
+> Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Great, so all the tables (except sm0/1) were moot :-( At least I learned 
-something again ;-)
+I tested this on paz00 using linux-next and found no issues, so feel free to 
+add ...
 
-Stephen, I'm going to test your patch, just a few minutes ...
+Tested-By: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-Thanks
-
-Marc
+> ---
+> v2:
+> * Made all constraints specify a single voltage rather than different
+>   min/max, per description above.
+> * Removed vin-supply properties from LDO nodes; the driver and binding
+>   need to be updated to support specifying the parent regulators before
+>   we can put these into DT.
+> ---
+>  arch/arm/boot/dts/tegra20-paz00.dts |  130
+> +++++++++++++++++++++++++++++++++++ 1 files changed, 130 insertions(+), 0
+> deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> b/arch/arm/boot/dts/tegra20-paz00.dts index 684a9e1..dccc8b4 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -272,12 +272,142 @@
+>  		status = "okay";
+>  		clock-frequency = <400000>;
+> 
+> +		pmic: tps6586x@34 {
+> +			compatible = "ti,tps6586x";
+> +			reg = <0x34>;
+> +			interrupts = <0 86 0x4>;
+> +
+> +			#gpio-cells = <2>;
+> +			gpio-controller;
+> +
+> +			regulators {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				regulator@0 {
+> +					reg = <0>;
+> +					regulator-compatible = "sm0";
+> +					regulator-name = "+1.2vs_sm0";
+> +					regulator-min-microvolt = <1200000>;
+> +					regulator-max-microvolt = <1200000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@1 {
+> +					reg = <1>;
+> +					regulator-compatible = "sm1";
+> +					regulator-name = "+1.0vs_sm1";
+> +					regulator-min-microvolt = <1000000>;
+> +					regulator-max-microvolt = <1000000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@2 {
+> +					reg = <2>;
+> +					regulator-compatible = "sm2";
+> +					regulator-name = "+3.7vs_sm2";
+> +					regulator-min-microvolt = <3700000>;
+> +					regulator-max-microvolt = <3700000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@3 {
+> +					reg = <3>;
+> +					regulator-compatible = "ldo0";
+> +					regulator-name = "+3.3vs_ldo0";
+> +					regulator-min-microvolt = <3300000>;
+> +					regulator-max-microvolt = <3300000>;
+> +				};
+> +
+> +				regulator@4 {
+> +					reg = <4>;
+> +					regulator-compatible = "ldo1";
+> +					regulator-name = "+1.1vs_ldo1";
+> +					regulator-min-microvolt = <1100000>;
+> +					regulator-max-microvolt = <1100000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@5 {
+> +					reg = <5>;
+> +					regulator-compatible = "ldo2";
+> +					regulator-name = "+1.2vs_ldo2";
+> +					regulator-min-microvolt = <1200000>;
+> +					regulator-max-microvolt = <1200000>;
+> +				};
+> +
+> +				regulator@6 {
+> +					reg = <6>;
+> +					regulator-compatible = "ldo3";
+> +					regulator-name = "+3.3vs_ldo3";
+> +					regulator-min-microvolt = <3300000>;
+> +					regulator-max-microvolt = <3300000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@7 {
+> +					reg = <7>;
+> +					regulator-compatible = "ldo4";
+> +					regulator-name = "+1.8vs_ldo4";
+> +					regulator-min-microvolt = <1800000>;
+> +					regulator-max-microvolt = <1800000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@8 {
+> +					reg = <8>;
+> +					regulator-compatible = "ldo5";
+> +					regulator-name = "+2.85vs_ldo5";
+> +					regulator-min-microvolt = <2850000>;
+> +					regulator-max-microvolt = <2850000>;
+> +					regulator-always-on;
+> +				};
+> +
+> +				regulator@9 {
+> +					reg = <9>;
+> +					regulator-compatible = "ldo6";
+> +					regulator-name = "+2.85vs_ldo6";
+> +					regulator-min-microvolt = <2850000>;
+> +					regulator-max-microvolt = <2850000>;
+> +				};
+> +
+> +				regulator@10 {
+> +					reg = <10>;
+> +					regulator-compatible = "ldo7";
+> +					regulator-name = "+3.3vs_ldo7";
+> +					regulator-min-microvolt = <3300000>;
+> +					regulator-max-microvolt = <3300000>;
+> +				};
+> +
+> +				regulator@11 {
+> +					reg = <11>;
+> +					regulator-compatible = "ldo8";
+> +					regulator-name = "+1.8vs_ldo8";
+> +					regulator-min-microvolt = <1800000>;
+> +					regulator-max-microvolt = <1800000>;
+> +				};
+> +
+> +				regulator@12 {
+> +					reg = <12>;
+> +					regulator-compatible = "ldo9";
+> +					regulator-name = "+2.85vs_ldo9";
+> +					regulator-min-microvolt = <2850000>;
+> +					regulator-max-microvolt = <2850000>;
+> +					regulator-always-on;
+> +				};
+> +			};
+> +		};
+> +
+>  		adt7461@4c {
+>  			compatible = "adi,adt7461";
+>  			reg = <0x4c>;
+>  		};
+>  	};
+> 
+> +	pmc {
+> +		nvidia,invert-interrupt;
+> +	};
+> +
+>  	usb@c5000000 {
+>  		status = "okay";
+>  	};
