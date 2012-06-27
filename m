@@ -1,53 +1,101 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: dt: tegra: paz00: add regulators
-Date: Wed, 27 Jun 2012 12:31:01 +0100
-Message-ID: <20120627113100.GF308@opensource.wolfsonmicro.com>
-References: <1340757060-27232-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Wed, 27 Jun 2012 15:44:00 +0300
+Message-ID: <20120627154400.d9d7db67128404079d98ab39@nvidia.com>
+References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
+	<20120626160224.40ba10a26e3dd3a56b1f312c@nvidia.com>
+	<20120626140033.GC1115@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1340757060-27232-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120626140033.GC1115-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 26 Jun 2012 16:00:33 +0200
+Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
 
---1Y7d0dPL928TPQbc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jun 26, 2012 at 04:02:24PM +0300, Hiroshi Doyu wrote:
+> > Hi Thierry,
+> > 
+> > On Tue, 26 Jun 2012 12:55:13 +0200
+> > Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> > 
+> > > > Old Signed by an unknown key
+> > > 
+> > > Hi,
+> > > 
+> > > while I haven't got much time to work on the actual code right now, I
+> > > think it might still be useful if we could get the device tree binding
+> > > to a point where everybody is happy with it. That'll also save me some
+> > > time once I get to writing the code because I won't have to redo it over
+> > > again. =)
+> > > 
+> > > So here's the current proposal:
+> > > 
+> > > 	host1x {
+> > > 		compatible = "nvidia,tegra20-host1x", "simple-bus";
+> > > 		reg = <0x50000000 0x00024000>;
+> > > 		interrupts = <0 64 0x04   /* cop syncpt */
+> > > 			      0 65 0x04   /* mpcore syncpt */
+> > > 			      0 66 0x04   /* cop general */
+> > > 			      0 67 0x04>; /* mpcore general */
+> > > 
+> > > 		#address-cells = <1>;
+> > > 		#size-cells = <1>;
+> > > 
+> > > 		ranges = <0x54000000 0x54000000 0x04000000>;
+> > > 
+> > > 		status = "disabled";
+> > > 
+> > > 		gart = <&gart>;
+> > ...
+> > > output and hooks up a static EDID block with the LVDS output. There is
+> > > also a carveout property which might be a better replacement for the
+> > > "crippled" GART on Tegra20. Alternatively the CMA might work just as
+> > > well instead.
+> > > 
+> > > The Plutux can be described like this:
+> > > 
+> > > 	host1x {
+> > > 		carveout = <0x0e000000 0x02000000>;
+> > 
+> > As discussed in the following ML thread previously, the necessary info
+> > related to the "gart" would be got from the standard IOMMU API(or
+> > something above layers, DMABUF or TTM?). So I don't think that we need
+> > to refer to "gart" and "carveout" here in the end.
+> > 
+> > http://lists.linuxfoundation.org/pipermail/iommu/2012-June/004266.html
+> 
+> Yes, if IOMMU or some layer above can provide the same information, then
+> that is certainly better than explicitly referencing it in the DT.
+> 
+> I'm not sure I understand how information about the carveout would be
+> obtained from the IOMMU API, though.
 
-On Tue, Jun 26, 2012 at 06:31:00PM -0600, Stephen Warren wrote:
+I think that there are 2 cases:
 
-> sm1: HW defaults and schematic match at 1.0v. marvin24's kernel had a max
-> of 1.125v, but this wasn't applied since apply_uV wasn't set.
+  (1) discontiguous memory with IOMMU
+  (2) contiguous memory without IOMMU(called "carveout" in general?)
 
-apply_uV is only valid if a single voltage is specified.  If a voltage
-range were specified and it were acted on we'd take the lowest (not
-highest) voltage allowed.
+For (1), the necessary info should be passed via IOMMU API as
+mentioned in the previous reply, like DT->{GART,SMMU}->IOMMU->DRM.
 
---1Y7d0dPL928TPQbc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  [PATCH 0/5] IOMMU: Make IOMMU-API ready for GART-like hardware
+    https://lkml.org/lkml/2012/1/19/170
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+For (2), although memory is mostly anonymous one, we may need to know
+how much to allocate, where we only need "size". This size is not from
+h/w feature, but it depends on the system load/usage. So I think that
+this size can be passed from kernel command line? For exmaple, we can
+specify how much contiguous memory is necessary with putting
+"coherent_pool=??M" in the kernel command line as below:
 
-iQIcBAEBAgAGBQJP6u5vAAoJEBus8iNuMP3d9OIP/1hBQ7si7GK7S2XzP4H6WYLW
-nRXQKYnqX3/ii5BLM8l3aErJHutqLpTedt7A51Ay3VZD2W3VAafwfM1Qw5WEDQUJ
-8XD74GGnysZmgX+pF3CZWDCLOmV5t9schiBfAdYkLgEMQ4xXvlmsAZ490P5OoThz
-I2xlLo8oDClxo7RtQAAY1Mknjmt1YSKN/w6B84ACMiqsRomk63Fj/J1zJMAmxyEX
-J8+VE11S3QD63gnlpBpSTpT7a4e7VItVjjKlYdavtlkZFvo64mZZxYjP0LeCoOqy
-0CL1weCkblQEfn9sptJ+WCr4VQTQGuIPbW7GKwC5DgI1XkraeI1taNk2MdqqFzw9
-8FmtYVjbaXs2GqmMI+JE1aE6hSqyJ0ettY7m7jRqFXrXEWytj5qj4m7UCVW7jcsV
-bR8isGY/0HGObHxuYWXwcGZzIejQJSNOheqFq+2I0voEw1jzsuxGh4J+kwq3QVu4
-mp8/UyN40nrQ8AOgKFBcpq76hp3xF9ojXDCQ7MExRPLxwZOadX9o1ORg1E+0Pr5o
-BskBXYeGHuoLdXAgabFEEV2wvAINjfxjZoVumRI1YDv0O4S53F8vjY/jZ0qmBAws
-eNndu3tNRne3/xuydsZVLUsDySElyxBuH3x5ct1YThRh3BfmooDeGNCGx4XitqMj
-EIAuqRd7sjw4Pwwew18W
-=ZWJF
------END PGP SIGNATURE-----
-
---1Y7d0dPL928TPQbc--
+	coherent_pool=nn[KMG]	[ARM,KNL]
+			Sets the size of memory pool for coherent, atomic dma
+			allocations.
