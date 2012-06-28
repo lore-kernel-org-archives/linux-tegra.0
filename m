@@ -1,107 +1,94 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: Tegra DRM device tree bindings
-Date: Thu, 28 Jun 2012 13:58:43 +0200
-Message-ID: <20120628115843.GD15137@avionic-0098.mockup.avionic-design.de>
+Date: Thu, 28 Jun 2012 14:07:05 +0200
+Message-ID: <20120628120704.GE15137@avionic-0098.mockup.avionic-design.de>
 References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
-	<20120626160224.40ba10a26e3dd3a56b1f312c@nvidia.com>
-	<20120626140033.GC1115@avionic-0098.mockup.avionic-design.de>
-	<20120627154400.d9d7db67128404079d98ab39@nvidia.com>
-	<4FEB4AC6.2060909@wwwdotorg.org>
+ <4FE9FB22.1090902@wwwdotorg.org>
+ <20120626195108.GB5308@avionic-0098.adnet.avionic-design.de>
+ <4FEA3C2E.3030109@wwwdotorg.org>
+ <20120627050733.GA7177@avionic-0098.mockup.avionic-design.de>
+ <4FEB47B7.4080104@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8983684205935869069=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4FEB4AC6.2060909-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4FEB47B7.4080104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============8983684205935869069==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n2Pv11Ogg/Ox8ay5"
-Content-Disposition: inline
-
-
---n2Pv11Ogg/Ox8ay5
+--2hMgfIw2X+zgXrFs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 27, 2012 at 12:02:46PM -0600, Stephen Warren wrote:
-> On 06/27/2012 06:44 AM, Hiroshi Doyu wrote:
+On Wed, Jun 27, 2012 at 11:49:43AM -0600, Stephen Warren wrote:
+> On 06/26/2012 11:07 PM, Thierry Reding wrote:
+> > On Tue, Jun 26, 2012 at 04:48:14PM -0600, Stephen Warren wrote:
 > ...
-> > I think that there are 2 cases:
-> >=20
-> >   (1) discontiguous memory with IOMMU
-> >   (2) contiguous memory without IOMMU(called "carveout" in general?)
-> ...
-> > For (2), although memory is mostly anonymous one, we may need to know
-> > how much to allocate, where we only need "size". This size is not from
-> > h/w feature, but it depends on the system load/usage. So I think that
-> > this size can be passed from kernel command line? For exmaple, we can
-> > specify how much contiguous memory is necessary with putting
-> > "coherent_pool=3D??M" in the kernel command line as below:
-> >=20
-> > 	coherent_pool=3Dnn[KMG]	[ARM,KNL]
-> > 			Sets the size of memory pool for coherent, atomic dma
-> > 			allocations.
+> > I actually like what you proposed above a lot, so if you don't
+> > mind either way I'll go with that proposal. Keeping the connector
+> > nodes as children of the outputs has the advantage of being able to
+> > reference them if we need it at some point. But it is also
+> > redundant in that a single output doesn't usually (never?) driver
+> > more than one connector.
 >=20
-> I guess if that's the standard way of initializing CMA, then that's fine.
->=20
-> It'd be nice if there was a way to specify that from the DT too; that
-> way the user/distro/bootloader constructing the kernel command-line
-> wouldn't have to remember to add "random" (potentially
-> Tegra-/board-specific) extra arguments onto the command-line; the Tegra
-> command-line in the upstream kernel is quite clean right now, especially
-> compare to the enormous number of options we require downstream:-(
+> Yes, I believe that each output is 1:1 with (the video portion of) a
+> connector. The display controllers obviously aren't 1:1.
 
-Looking at Documentation/kernel-parameters.txt it seems the canonical
-way to initialize CMA is using the "cma" kernel command-line parameter.
-For device tree we could extend the "chosen" node to include something
-like "carveout =3D <0x04000000>;". Or "contiguous-memory" or whatever.
+Yes, the display controllers are only 1:1 for the RGB outputs. I'll
+merge your proposed changes and see if I can come up with some code to
+parse it.
+
+> > The same issue will have to be addressed for the CSI and VI nodes,
+> > but as I currently use neither of those I don't feel qualified to
+> > propose a binding for them. Also for the VI part we're completely
+> > missing documentation. Maybe somebody could push this to be
+> > released as well?
+>=20
+> I did file a bug noting the request for VI documentation. At this
+> point in time, it's too early to say what, if anything, will come of that.
+
+I think we have some raw register documentation for VI but it's next to
+impossible to really understand the hardware block just by looking at
+the registers.
+
+> > If I understand correctly, most of the host1x children can also be=20
+> > chained in a processing pipeline to do postprocessing an video
+> > input for example. I suppose that's generic and doesn't need to be
+> > represented in DT either, right?
+>=20
+> Yes, I believe that's something internal to the driver.
+
+Okay. So I think apart from the carveout topic in the other subthread I
+think we've settled on solutions for the remaining points. I'll try to
+find some time to work all the changes into a new binding proposal and
+get working on the code.
 
 Thierry
 
---n2Pv11Ogg/Ox8ay5
+--2hMgfIw2X+zgXrFs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP7EbzAAoJEN0jrNd/PrOhhCEP/1PsDueyxAmE8VmpTvD2OJsf
-Q/4Db7Zq9PJi1qZDrfUzuVDCywgxZCRECsFsintsJUOT66u2YXJpfSCQbnoLP4B6
-8VIVuvurj4018sf0kOKOoUblH8RRgM0Oi8BkxoB/BbLQDw/Qw9lq2xPwxR9ZbV5e
-2tHuXv0/rx8rELP8XDJnsx5MWgY2wDL1Vp6fp58sOSOD3mypK5FrddeT6GlKBE9P
-SWJIeW9eOiqa9QDUXanioQeFluMY1PzpLGDCJ+FaDIQgH0QttJ+Z5MMsLaWQjrC5
-xaPgWiRj8OWlXwSYbO2tryK0oOJ55V8Jk8iNnCFtSYTPYDIjN8xMUFDQko9fil0d
-Wy8edm/n9E7dlxCXwwEZrc/dH/7+TjuglDMwpF1KfNc3M0lrWAeggBHEON2bko62
-JS+S59HRF7ZX8Q1hb1RYkDW95f6Uamtn6qyR+hU5Bn12N3Bu/PU06egCzz+/OPjQ
-rrwotUTl3C/l2l/Of3ApiQyYRktnbQfpWzq7w8kyaeaG4vdhggKiv5s+DHRlSgud
-YQkBLApykz1XAP6csHY/8RQyNlQsK9D1oAdaC/scjV2a8+b4QSpY/NjCzcy1+O6+
-HANNTIHNxdWF9hQiH5BseC7qbXFRrcPgpEi4Y2fJmzj1l/BxefUbbHi+aGRoTPsO
-45uVbSH+0K3FgNQKuJnj
-=wgnG
+iQIcBAEBAgAGBQJP7EjoAAoJEN0jrNd/PrOhmiAP/27BVwLsv4k4ssV0wr6a9IZy
+o9nk8tNVDXitWYEQqCjB8SXt+53MDTkhhVe9BqGX/c5dJP8Jy0K0tVkmThS7HYSz
+u1hPrhMkZmdWFGUPHTK5VYBzS9wVTTNG2h3swV3sIhJr2FM/jJ4CFEOiIV8WzD4a
+DlW8PwV7NlUouhp7iGE1BiNhVdSryMD0bIeD5V8yJhYLeMiddDy+aDP6RScC1xyP
+TjI69d5GwvwK4E1NhKR9AKUgohIGySu1O6L4VCZZewkYTqE0yHF6ZvTiCsQjuVkr
+QIbFYpfsXGT/GgQD2YitMvpL1bZeFAzmF2VIlueaDsXDJ7th8ohy7Og9x0bEvJBa
++6tCYBEg1QG41Atoj+C3Jlu1g4A8uPyVJ/rVZLaeTaqFcqct4NY56vtpHHpxm9lO
+sJGG1VLxyFO5Wula+saW/eppYyu4+EN7VUI2qysPbq08HHrGqP3eg0ajc3W7r/Ha
+TeoEpzYSgLGWEPoBbKXn6v6l8vdZcX6or1xbSZvUVN6SJRmg+mecs7tfIbyNytvB
+BDdR17rxreFN4HK7wEwOXiRSJsPW+tJkuU7wyUOP4TjmM60JE5vI0mC+bb2rCkfE
+jm1PDA0gbbiJnumQGAEJlTwu/yQ9LD0ieUoDbP0oa55Ft5aCIlAmBqtdeftWGifT
+TjHuuMA9Aw/RGNRYqaXV
+=xCK0
 -----END PGP SIGNATURE-----
 
---n2Pv11Ogg/Ox8ay5--
-
---===============8983684205935869069==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-iommu mailing list
-iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-https://lists.linuxfoundation.org/mailman/listinfo/iommu
---===============8983684205935869069==--
+--2hMgfIw2X+zgXrFs--
