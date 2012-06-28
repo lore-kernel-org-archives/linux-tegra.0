@@ -1,94 +1,109 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Thu, 28 Jun 2012 14:07:05 +0200
-Message-ID: <20120628120704.GE15137@avionic-0098.mockup.avionic-design.de>
-References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
- <4FE9FB22.1090902@wwwdotorg.org>
- <20120626195108.GB5308@avionic-0098.adnet.avionic-design.de>
- <4FEA3C2E.3030109@wwwdotorg.org>
- <20120627050733.GA7177@avionic-0098.mockup.avionic-design.de>
- <4FEB47B7.4080104@wwwdotorg.org>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: [GIT PULL] PWM subsystem
+Date: Thu, 28 Jun 2012 22:33:06 +1000
+Message-ID: <20120628223306.1e6918316a6a5f65528ef63c@canb.auug.org.au>
+References: <20120621083650.GA2529@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__28_Jun_2012_22_33_06_+1000_GQF6.Z9OI9NXiY7_"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FEB47B7.4080104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120621083650.GA2529-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Kaehlcke <matthias-RprLehDfhQ3k1uMJSBkQmQ@public.gmane.org>, Kurt Van Dijck <kurt.van.dijck-/BeEPy95v10@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Mike Frysinger <vapier-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bernhard Walle <walle-pDveNdigDaDu9UdzE1sIFA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---2hMgfIw2X+zgXrFs
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Thu__28_Jun_2012_22_33_06_+1000_GQF6.Z9OI9NXiY7_
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 27, 2012 at 11:49:43AM -0600, Stephen Warren wrote:
-> On 06/26/2012 11:07 PM, Thierry Reding wrote:
-> > On Tue, Jun 26, 2012 at 04:48:14PM -0600, Stephen Warren wrote:
-> ...
-> > I actually like what you proposed above a lot, so if you don't
-> > mind either way I'll go with that proposal. Keeping the connector
-> > nodes as children of the outputs has the advantage of being able to
-> > reference them if we need it at some point. But it is also
-> > redundant in that a single output doesn't usually (never?) driver
-> > more than one connector.
+Hi Thierry,
+
+On Thu, 21 Jun 2012 10:36:51 +0200 Thierry Reding <thierry.reding@avionic-d=
+esign.de> wrote:
+>
+> The PWM subsystem patches have gone through a number of versions now and
+> all outstanding issues have been resolved. I believe that the subsystem
+> is ready for broader testing in linux-next. If all goes well I plan to
+> submit it to Linus during the 3.6 merge window.
 >=20
-> Yes, I believe that each output is 1:1 with (the video portion of) a
-> connector. The display controllers obviously aren't 1:1.
-
-Yes, the display controllers are only 1:1 for the RGB outputs. I'll
-merge your proposed changes and see if I can come up with some code to
-parse it.
-
-> > The same issue will have to be addressed for the CSI and VI nodes,
-> > but as I currently use neither of those I don't feel qualified to
-> > propose a binding for them. Also for the VI part we're completely
-> > missing documentation. Maybe somebody could push this to be
-> > released as well?
+> I am not aware of any dependencies in linux-next. The two patches that
+> don't touch the PWM subsystem itself are OF related and have been acked
+> by Rob Herring who prefers that I take them through the PWM tree.
 >=20
-> I did file a bug noting the request for VI documentation. At this
-> point in time, it's too early to say what, if anything, will come of that.
-
-I think we have some raw register documentation for VI but it's next to
-impossible to really understand the hardware block just by looking at
-the registers.
-
-> > If I understand correctly, most of the host1x children can also be=20
-> > chained in a processing pipeline to do postprocessing an video
-> > input for example. I suppose that's generic and doesn't need to be
-> > represented in DT either, right?
+> Please contact me if there are any issues with the tree.
 >=20
-> Yes, I believe that's something internal to the driver.
+> The following changes since commit cfaf025112d3856637ff34a767ef785ef5cf2c=
+a9:
+>=20
+>   Linux 3.5-rc2 (2012-06-08 18:40:09 -0700)
+>=20
+> are available in the git repository at:
+>=20
+>   git://gitorious.org/linux-pwm/linux-pwm.git for-next
+>=20
+> for you to fetch changes up to b5156ca503f9471449b941364bb2bc34fa355d5d:
+>=20
+>   pwm: Take over maintainership of the PWM subsystem (2012-06-15 12:57:07=
+ +0200)
 
-Okay. So I think apart from the carveout topic in the other subthread I
-think we've settled on solutions for the remaining points. I'll try to
-find some time to work all the changes into a new binding proposal and
-get working on the code.
+I have added your tree now.
 
-Thierry
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
---2hMgfIw2X+zgXrFs
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Thu__28_Jun_2012_22_33_06_+1000_GQF6.Z9OI9NXiY7_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP7EjoAAoJEN0jrNd/PrOhmiAP/27BVwLsv4k4ssV0wr6a9IZy
-o9nk8tNVDXitWYEQqCjB8SXt+53MDTkhhVe9BqGX/c5dJP8Jy0K0tVkmThS7HYSz
-u1hPrhMkZmdWFGUPHTK5VYBzS9wVTTNG2h3swV3sIhJr2FM/jJ4CFEOiIV8WzD4a
-DlW8PwV7NlUouhp7iGE1BiNhVdSryMD0bIeD5V8yJhYLeMiddDy+aDP6RScC1xyP
-TjI69d5GwvwK4E1NhKR9AKUgohIGySu1O6L4VCZZewkYTqE0yHF6ZvTiCsQjuVkr
-QIbFYpfsXGT/GgQD2YitMvpL1bZeFAzmF2VIlueaDsXDJ7th8ohy7Og9x0bEvJBa
-+6tCYBEg1QG41Atoj+C3Jlu1g4A8uPyVJ/rVZLaeTaqFcqct4NY56vtpHHpxm9lO
-sJGG1VLxyFO5Wula+saW/eppYyu4+EN7VUI2qysPbq08HHrGqP3eg0ajc3W7r/Ha
-TeoEpzYSgLGWEPoBbKXn6v6l8vdZcX6or1xbSZvUVN6SJRmg+mecs7tfIbyNytvB
-BDdR17rxreFN4HK7wEwOXiRSJsPW+tJkuU7wyUOP4TjmM60JE5vI0mC+bb2rCkfE
-jm1PDA0gbbiJnumQGAEJlTwu/yQ9LD0ieUoDbP0oa55Ft5aCIlAmBqtdeftWGifT
-TjHuuMA9Aw/RGNRYqaXV
-=xCK0
+iQIcBAEBCAAGBQJP7E8CAAoJEECxmPOUX5FE/uQQAIfr+uNY/CBou1S8jMuaTi2V
+zFZslVZ/xoupi4b+yKm5tR0fEzzqh3jtb2IbcPEK6B1qDQLFYxxug2Zgx7zRM07I
+TuSxyx6InnO8HADsXkImGuCRpNk9usMrdK1ZnWB+FqMSGraI3X9j36Xyod1FvQOR
+Mqh2bmngfMU1AYf9t/aRyFXu5P/VpD44egA1f0aTLowZRRer6e9VhKb9TU/4CHqB
+7h6iSv+2OpA/STSrEeLD6zHLl0BpS4RgOz3C/G+Gwt/NbWUu+zCRjNcMpI9eOeqe
+2qKWigibe4l1ypN9NJetnoawGOx1Bdc3bKYDt4GlHY83jdzfpBfzUhPe5YquyEgI
+NgSt9NQlcuU46Q5fjpWtXhED9umII0ZVm8eVZJWNsnkGOCrH1KkRa69VCIgh7wlR
+bXwu+XuZRJuX5VvFyRY+KD7EKEGhhnSM/toFHYwF9/pyhIaefMMslPfhW9lIWgft
+LUtHQLT27Q/56H+xbNFuyHbhSjSe3nwiekooMmEmQU0NVHSpd6mzAkrBtYl1S+Sm
+c1N1aL/2w8N+N4Fup3VArOSz6FB3z/a0seWr2vZRGnJCDc79z3Mkn+sqp72liGVE
+xNxYw3qGC7v8f9MUO8/YXQrt4Y3IT+tTioQACr2hpznUPql6+dSR5KUD1xzQijii
+5jJS0jcLZBIWqDJdH6oX
+=s12w
 -----END PGP SIGNATURE-----
 
---2hMgfIw2X+zgXrFs--
+--Signature=_Thu__28_Jun_2012_22_33_06_+1000_GQF6.Z9OI9NXiY7_--
