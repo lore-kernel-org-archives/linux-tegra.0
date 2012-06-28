@@ -1,104 +1,176 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Thu, 28 Jun 2012 20:19:42 +0200
-Message-ID: <20120628181942.GA13131@avionic-0098.adnet.avionic-design.de>
-References: <20120627051418.GB7177@avionic-0098.mockup.avionic-design.de>
-	<20120627155907.871b2a506374b7db14c202c4@nvidia.com>
-	<20120627140809.GD19319@avionic-0098.mockup.avionic-design.de>
-	<20120627172914.30a2ccfd1344161ca7724722@nvidia.com>
-	<20120627144414.GA20681@avionic-0098.mockup.avionic-design.de>
-	<1340812795.1350.7.camel@antimon>
-	<20120628111253.GC15137@avionic-0098.mockup.avionic-design.de>
-	<4FEC8B91.6010107@wwwdotorg.org> <1340903992.1348.27.camel@antimon>
-	<4FEC9584.4080100@wwwdotorg.org>
+From: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: tegra: Add clk_tegra structure and helper
+ functions
+Date: Thu, 28 Jun 2012 11:28:00 -0700
+Message-ID: <20120628182759.GA28424@gmail.com>
+References: <1340879846-12900-1-git-send-email-pgaikwad@nvidia.com>
+ <1340879846-12900-5-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7215670870857689605=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4FEC9584.4080100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1340879846-12900-5-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 20120628-16:07, Prashant Gaikwad wrote:
+> Add Tegra platform specific clock structure clk_tegra and
+> some helper functions for generic clock framework.
+> 
+> struct clk_tegra is the single strcture used for all types of
+> clocks. reset and cfg_ex ops moved to clk_tegra from clk_ops.
+> 
+> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---===============7215670870857689605==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
-Content-Disposition: inline
+Hi Prashant,
 
+I'm happy to see Tegra getting ported over to the common clk framework.
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+<snip>
+> +void tegra_clk_add(struct clk *clk)
+> +{
+> +	struct clk_tegra *c = to_clk_tegra(__clk_get_hw(clk));
+> +
+> +	mutex_lock(&clock_list_lock);
+> +	list_add(&c->node, &clocks);
+> +	mutex_unlock(&clock_list_lock);
+> +}
+> +
+> +struct clk *tegra_get_clock_by_name(const char *name)
+> +{
+> +	struct clk_tegra *c;
+> +	struct clk *ret = NULL;
+> +	mutex_lock(&clock_list_lock);
+> +	list_for_each_entry(c, &clocks, node) {
+> +		if (strcmp(__clk_get_name(c->hw.clk), name) == 0) {
+> +			ret = c->hw.clk;
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&clock_list_lock);
+> +	return ret;
+> +}
+> +
 
-On Thu, Jun 28, 2012 at 11:33:56AM -0600, Stephen Warren wrote:
-> On 06/28/2012 11:19 AM, Lucas Stach wrote:
-> ...
-> > CMA is just a way of providing large contiguous address space blocks in
-> > a dynamic fashion. ...
-> >=20
-> > TTM though solves more advanced matters, like buffer synchronisation
-> > between 3D and 2D block of hardware ...
-> >=20
-> > IMHO the best solution would be to use CMA as a flexible replacement of
-> > the static carveout area and put TTM on top of this ...
->=20
-> Ah right, thanks for the explanation. That makes sense to me now.
+Are you planning to continue using an internal list of struct clk_tegra?
+OMAP had a similar list for the legacy clock framework but that was
+since removed and now lookups are done solely through clkdev.
 
-Okay. I think that resolves the last open issue. I'll try to get some
-more work done on the DT and corresponding code soonish.
+<snip>
+> +void tegra_periph_reset_deassert(struct clk *c)
+> +{
+> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+> +	BUG_ON(!clk->reset);
+> +	clk->reset(__clk_get_hw(c), false);
+> +}
+> +EXPORT_SYMBOL(tegra_periph_reset_deassert);
+> +
+> +void tegra_periph_reset_assert(struct clk *c)
+> +{
+> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+> +	BUG_ON(!clk->reset);
+> +	clk->reset(__clk_get_hw(c), true);
+> +}
+> +EXPORT_SYMBOL(tegra_periph_reset_assert);
+> +
+> +/* Several extended clock configuration bits (e.g., clock routing, clock
+> + * phase control) are included in PLL and peripheral clock source
+> + * registers. */
+> +int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting)
+> +{
+> +	int ret = 0;
+> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+> +
+> +	if (!clk->clk_cfg_ex) {
+> +		ret = -ENOSYS;
+> +		goto out;
+> +	}
+> +	ret = clk->clk_cfg_ex(__clk_get_hw(c), p, setting);
+> +
+> +out:
+> +	return ret;
+> +}
 
-For those who don't know yet I've requested the creation of a project
-on freedesktop.org for Tegra graphics drivers[0]. I plan to have the DRM
-code hosted there once the project has been approved. Furthermore if we
-ever get to write a corresponding X driver it can be hosted there as
-well. We should also use the wiki for coordination once things get
-started.
+We had some discussions in the past on your clock reset and external
+line request operations which you've had to put into struct clk_tegra.
 
-Thierry
+Do you need to expose those ops to code in drivers/*?  I consider that a
+reasonable litmus test to start considering if something should be moved
+into the generic clk.h api.
 
-[0]: https://bugs.freedesktop.org/show_bug.cgi?id=3D51505
+<snip>
+> +enum clk_state {
+> +	UNINITIALIZED = 0,
+> +	ON,
+> +	OFF,
+> +};
 
---liOOAslEiF7prFVr
-Content-Type: application/pgp-signature
+How is clk_state used?  Might it be helpful to you if that was in the
+generic code in drivers/clk/clk.c?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+<snip>
+> +struct clk_tegra {
+> +	/* node for master clocks list */
+> +	struct list_head	node;	/* node for list of all clocks */
+> +	struct clk_lookup	lookup;
+> +	struct clk_hw		hw;
+> +
+> +	bool			set;
+> +	unsigned long		fixed_rate;
+> +	unsigned long		max_rate;
+> +	unsigned long		min_rate;
+> +	u32			flags;
+> +	const char		*name;
+> +
+> +	enum clk_state		state;
+> +	u32			div;
+> +	u32			mul;
+> +
+> +	u32				reg;
+> +	u32				reg_shift;
+> +
+> +	struct list_head		shared_bus_list;
+> +
+> +	union {
+> +		struct {
+> +			unsigned int			clk_num;
+> +		} periph;
+> +		struct {
+> +			unsigned long			input_min;
+> +			unsigned long			input_max;
+> +			unsigned long			cf_min;
+> +			unsigned long			cf_max;
+> +			unsigned long			vco_min;
+> +			unsigned long			vco_max;
+> +			const struct clk_pll_freq_table	*freq_table;
+> +			int				lock_delay;
+> +			unsigned long			fixed_rate;
+> +		} pll;
+> +		struct {
+> +			u32				sel;
+> +			u32				reg_mask;
+> +		} mux;
+> +		struct {
+> +			struct clk			*main;
+> +			struct clk			*backup;
+> +		} cpu;
+> +		struct {
+> +			struct list_head		node;
+> +			bool				enabled;
+> +			unsigned long			rate;
+> +		} shared_bus_user;
+> +	} u;
+> +
+> +	void (*reset)(struct clk_hw *, bool);
+> +	int (*clk_cfg_ex)(struct clk_hw *, enum tegra_clk_ex_param, u32);
+> +};
 
-iQIcBAEBAgAGBQJP7KA+AAoJEN0jrNd/PrOhi10P/jTqOfkKQ2rHdNZu8CzWrbYe
-Yh7oGLPgFECnNtEPoQwkI5ezmb09qhxKp7QHylRxEg6DPOtE+zHQpWH20+g4hqQf
-e6NPqETx41J6QLJN402wXUe3D/m5W/WX2oC6x17APmTguwaBkKswkwiOj7NYz0U1
-cSsNsigMl/a2xWDIILGkz7vpPNfmayFWTRoZ1litfULgYZQFfW4X0i1YF3QyutN7
-oKOOzqz7MAajHe5E3KX66/UsTwtu+iOIOtVhRrjBo65+m6xXyh6QKvSkw7miwGnX
-NstuzLy+ZUADV8YImf6yLmCeJviHywZyDxgpFxiclIc2RUd6x+EHi/Irt5Hr8YlE
-/mEmluM3RwWPbvVOuAk0xNp+EnLKx3RrkPNc8yjgyiAWQP8fFMSv/WkiFrWqyhwG
-zayS2aKOazh3IKtnWz9RCtBeU0NDbXB5JX+iP6NzP7D7KNPWq8C/AlbfefmAklpp
-1VkPDHeWK/5ZM4+Tqpbw2pW6tN5eHYXdLXEyOQmE1sZBuEIGLqnaufZnbWyLzVTG
-Z6wbrOiRzSHhD6ULgsFncbOolq6CibIUqgUMemV6IPWTtoZIE+1rMJHoanjQmiaG
-h73PFm+a3+jr3K17f9YzEOrfXIfGad9teOsGYP2R7QkKKWpywdgwi7VlfUW5xjsr
-zejj+bYqMN3e2eJQ4KUU
-=PB+4
------END PGP SIGNATURE-----
+I know this is an initial effort but I hope in time that struct
+clk_tegra can be broken up into separate clk types.  It would be even
+better if some of the Tegra clocks code be converted over to the common
+clk types in drivers/clk/clk-*.c
 
---liOOAslEiF7prFVr--
-
---===============7215670870857689605==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-iommu mailing list
-iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-https://lists.linuxfoundation.org/mailman/listinfo/iommu
---===============7215670870857689605==--
+Regards,
+Mike
