@@ -1,189 +1,57 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: dt: tegra: paz00: add regulators
-Date: Wed, 27 Jun 2012 23:59:33 +0200
-Message-ID: <9938329.yDzqmf1yu1@ax5200p>
-References: <1340757060-27232-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Thu, 28 Jun 2012 09:06:50 +0300
+Message-ID: <20120628090650.b915ad756c91d62d658eb53a@nvidia.com>
+References: <20120626160224.40ba10a26e3dd3a56b1f312c@nvidia.com>
+	<20120626140033.GC1115@avionic-0098.mockup.avionic-design.de>
+	<23B010BBA481A74B98487467C29BA57BF2361DA3AA@HKMAIL01.nvidia.com>
+	<4FEA6E09.30800@nvidia.com>
+	<23B010BBA481A74B98487467C29BA57BF2361DA3C4@HKMAIL01.nvidia.com>
+	<4FEA7472.7050201@nvidia.com>
+	<20120627051418.GB7177@avionic-0098.mockup.avionic-design.de>
+	<20120627155907.871b2a506374b7db14c202c4@nvidia.com>
+	<20120627140809.GD19319@avionic-0098.mockup.avionic-design.de>
+	<20120627172914.30a2ccfd1344161ca7724722@nvidia.com>
+	<20120627144414.GA20681@avionic-0098.mockup.avionic-design.de>
+	<1340812795.1350.7.camel@antimon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340757060-27232-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1340812795.1350.7.camel@antimon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 26 June 2012 18:31:00 Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The Toshiba AC100/PAZ00 uses a TPS6586x regulator. Instantiate this.
-> 
-> [...]
-> 
-> Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Lucas,
 
-I tested this on paz00 using linux-next and found no issues, so feel free to 
-add ...
+On Wed, 27 Jun 2012 17:59:55 +0200
+Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
 
-Tested-By: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> > > > > Rather than introducing a new property, how about using
+> > > > > "coherent_pool=??M" in the kernel command line if necessary? I think
+> > > > > that this carveout size depends on the system usage/load.
+> > > > 
+> > > > I was hoping that we could get away with using the CMA and perhaps
+> > > > initialize it based on device tree content. I agree that the carveout
+> > > > size depends on the use-case, but I still think it makes sense to
+> > > > specify it on a per-board basis.
+> > > 
+> > > DRM driver doesn't know if it uses CMA or not, because DRM only uses
+> > > DMA API.
+> > 
+> > So how is the DRM supposed to allocate buffers? Does it call the
+> > dma_alloc_from_contiguous() function to do that? I can see how it is
+> > used by arm_dma_ops but how does it end up in the driver?
+> > 
+> As I said before the DMA API is not a good fit for graphics drivers.
+> Most of the DMA buffers used by graphics cores are long lived and big,
+> so we need a special pool to alloc from to avoid eating all contiguous
+> address space, as DMA API does not provide shrinker callbacks for
+> clients using large amount of memory.
 
-> ---
-> v2:
-> * Made all constraints specify a single voltage rather than different
->   min/max, per description above.
-> * Removed vin-supply properties from LDO nodes; the driver and binding
->   need to be updated to support specifying the parent regulators before
->   we can put these into DT.
-> ---
->  arch/arm/boot/dts/tegra20-paz00.dts |  130
-> +++++++++++++++++++++++++++++++++++ 1 files changed, 130 insertions(+), 0
-> deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
-> b/arch/arm/boot/dts/tegra20-paz00.dts index 684a9e1..dccc8b4 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -272,12 +272,142 @@
->  		status = "okay";
->  		clock-frequency = <400000>;
-> 
-> +		pmic: tps6586x@34 {
-> +			compatible = "ti,tps6586x";
-> +			reg = <0x34>;
-> +			interrupts = <0 86 0x4>;
-> +
-> +			#gpio-cells = <2>;
-> +			gpio-controller;
-> +
-> +			regulators {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				regulator@0 {
-> +					reg = <0>;
-> +					regulator-compatible = "sm0";
-> +					regulator-name = "+1.2vs_sm0";
-> +					regulator-min-microvolt = <1200000>;
-> +					regulator-max-microvolt = <1200000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@1 {
-> +					reg = <1>;
-> +					regulator-compatible = "sm1";
-> +					regulator-name = "+1.0vs_sm1";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@2 {
-> +					reg = <2>;
-> +					regulator-compatible = "sm2";
-> +					regulator-name = "+3.7vs_sm2";
-> +					regulator-min-microvolt = <3700000>;
-> +					regulator-max-microvolt = <3700000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@3 {
-> +					reg = <3>;
-> +					regulator-compatible = "ldo0";
-> +					regulator-name = "+3.3vs_ldo0";
-> +					regulator-min-microvolt = <3300000>;
-> +					regulator-max-microvolt = <3300000>;
-> +				};
-> +
-> +				regulator@4 {
-> +					reg = <4>;
-> +					regulator-compatible = "ldo1";
-> +					regulator-name = "+1.1vs_ldo1";
-> +					regulator-min-microvolt = <1100000>;
-> +					regulator-max-microvolt = <1100000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@5 {
-> +					reg = <5>;
-> +					regulator-compatible = "ldo2";
-> +					regulator-name = "+1.2vs_ldo2";
-> +					regulator-min-microvolt = <1200000>;
-> +					regulator-max-microvolt = <1200000>;
-> +				};
-> +
-> +				regulator@6 {
-> +					reg = <6>;
-> +					regulator-compatible = "ldo3";
-> +					regulator-name = "+3.3vs_ldo3";
-> +					regulator-min-microvolt = <3300000>;
-> +					regulator-max-microvolt = <3300000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@7 {
-> +					reg = <7>;
-> +					regulator-compatible = "ldo4";
-> +					regulator-name = "+1.8vs_ldo4";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@8 {
-> +					reg = <8>;
-> +					regulator-compatible = "ldo5";
-> +					regulator-name = "+2.85vs_ldo5";
-> +					regulator-min-microvolt = <2850000>;
-> +					regulator-max-microvolt = <2850000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				regulator@9 {
-> +					reg = <9>;
-> +					regulator-compatible = "ldo6";
-> +					regulator-name = "+2.85vs_ldo6";
-> +					regulator-min-microvolt = <2850000>;
-> +					regulator-max-microvolt = <2850000>;
-> +				};
-> +
-> +				regulator@10 {
-> +					reg = <10>;
-> +					regulator-compatible = "ldo7";
-> +					regulator-name = "+3.3vs_ldo7";
-> +					regulator-min-microvolt = <3300000>;
-> +					regulator-max-microvolt = <3300000>;
-> +				};
-> +
-> +				regulator@11 {
-> +					reg = <11>;
-> +					regulator-compatible = "ldo8";
-> +					regulator-name = "+1.8vs_ldo8";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +				};
-> +
-> +				regulator@12 {
-> +					reg = <12>;
-> +					regulator-compatible = "ldo9";
-> +					regulator-name = "+2.85vs_ldo9";
-> +					regulator-min-microvolt = <2850000>;
-> +					regulator-max-microvolt = <2850000>;
-> +					regulator-always-on;
-> +				};
-> +			};
-> +		};
-> +
->  		adt7461@4c {
->  			compatible = "adi,adt7461";
->  			reg = <0x4c>;
->  		};
->  	};
-> 
-> +	pmc {
-> +		nvidia,invert-interrupt;
-> +	};
-> +
->  	usb@c5000000 {
->  		status = "okay";
->  	};
+For contiguious address space shortage issue in DMA API, I think that
+DMABUF framework can handle?
+
+If so, is there any good example for DMABUF used in DRM?
