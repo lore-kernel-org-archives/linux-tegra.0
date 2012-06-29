@@ -1,52 +1,227 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Fri, 29 Jun 2012 16:20:31 +0300
-Message-ID: <4FEDAB9F.5040406@nvidia.com>
-References: <23B010BBA481A74B98487467C29BA57BF2361DA3AA@HKMAIL01.nvidia.com>  <4FEA6E09.30800@nvidia.com>  <23B010BBA481A74B98487467C29BA57BF2361DA3C4@HKMAIL01.nvidia.com>  <4FEA7472.7050201@nvidia.com>  <20120627051418.GB7177@avionic-0098.mockup.avionic-design.de>  <20120627155907.871b2a506374b7db14c202c4@nvidia.com>  <20120627140809.GD19319@avionic-0098.mockup.avionic-design.de>  <20120627172914.30a2ccfd1344161ca7724722@nvidia.com>  <20120627144414.GA20681@avionic-0098.mockup.avionic-design.de>  <1340812795.1350.7.camel@antimon>  <20120628111253.GC15137@avionic-0098.mockup.avionic-design.de>  <4FEC8B91.6010107@wwwdotorg.org> <1340903992.1348.27.camel@antimon>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] pwm-backlight: add regulator and GPIO support
+Date: Fri, 29 Jun 2012 22:22:47 +0900
+Message-ID: <1340976167-27298-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340903992.1348.27.camel@antimon>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 28.06.2012 20:19, Lucas Stach wrote:
-> TTM though solves more advanced matters, like buffer synchronisation
-> between 3D and 2D block of hardware or syncing buffer access between GPU
-> and CPU.
-> One of the most interesting things of TTM is the ability to purge the
-> GPU DMA buffers to scattered sysmem or even swap them out, if they are
-> not currently used by the GPU. It then makes sure to move them in the
-> contig space again when the GPU really needs them and fix up the GPU
-> command stream with the new buffer address.
+Add support for an optional power regulator and enable/disable GPIO.
+This scheme is commonly used in embedded systems.
 
-We preferably should choose dma_buf as a common interface towards
-buffers. That way whatever we choose as the memory manager, all dma_buf
-aware drivers will be able to use buffers allocated by other drivers.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ .../bindings/video/backlight/pwm-backlight         |  4 +
+ drivers/video/backlight/pwm_bl.c                   | 86 ++++++++++++++++++----
+ include/linux/pwm_backlight.h                      |  5 ++
+ 3 files changed, 79 insertions(+), 16 deletions(-)
 
-We probably need to accommodate multiple memory managers to take care of
-legacy and new drivers. If V4L2 and DRM projects all move to dma_buf, we
-have the possibility to do zero-copy video without forcing everybody to
-use the same memory manager.
-
-As I understand, TTM is good for platforms where we have a separate
-frame buffer memory, as is the case with most of the graphics cards. In
-Tegra, graphics and CPU occupy the same memory, so I'm not sure if we
-require the level of functionality that TTM provides. I guess the level
-of functionality and the complexity that it brings is one reason why TTM
-hasn't really caught on in the ARM world.
-
-The synchronization primitives attached to TTM are slightly confusing.
-At the bottom level, it's operations which need to be synchronized
-between each other. That's the API level that we should to export from
-kernel to user space. It's then up to libdrm level (or whatever is doing
-the rendering in user space) to decide which operations it wants to have
-completed before a buffer can be reused/read/passed on to the next stage.
-
-Anyway, if we hide the memory manager behind dma_buf, we're free to muck
-around with multiple of them and see what works best.
-
-Terje
+diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backlight b/Documentation/devicetree/bindings/video/backlight/pwm-backlight
+index 1e4fc72..85cbb7b 100644
+--- a/Documentation/devicetree/bindings/video/backlight/pwm-backlight
++++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight
+@@ -14,6 +14,8 @@ Required properties:
+ Optional properties:
+   - pwm-names: a list of names for the PWM devices specified in the
+                "pwms" property (see PWM binding[0])
++  - power-supply: a reference to a regulator used to control the backlight power
++  - enable-gpios: a reference to a GPIO used to enable/disable the backlight
+ 
+ [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+ 
+@@ -25,4 +27,6 @@ Example:
+ 
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
++		power-supply = <&backlight_reg>;
++		enable-gpios = <&gpio 6 0>;
+ 	};
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 057389d..821e03e 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -20,6 +20,8 @@
+ #include <linux/pwm.h>
+ #include <linux/pwm_backlight.h>
+ #include <linux/slab.h>
++#include <linux/of_gpio.h>
++#include <linux/regulator/consumer.h>
+ 
+ struct pwm_bl_data {
+ 	struct pwm_device	*pwm;
+@@ -27,6 +29,9 @@ struct pwm_bl_data {
+ 	unsigned int		period;
+ 	unsigned int		lth_brightness;
+ 	unsigned int		*levels;
++	bool			enabled;
++	struct regulator	*power_reg;
++	int			enable_gpio;
+ 	int			(*notify)(struct device *,
+ 					  int brightness);
+ 	void			(*notify_after)(struct device *,
+@@ -35,6 +40,40 @@ struct pwm_bl_data {
+ 	void			(*exit)(struct device *);
+ };
+ 
++static void pwm_backlight_off(struct pwm_bl_data *pb)
++{
++	if (!pb->enabled)
++		return;
++
++	if (gpio_is_valid(pb->enable_gpio))
++		gpio_set_value_cansleep(pb->enable_gpio, 0);
++
++	if (pb->power_reg)
++		regulator_disable(pb->power_reg);
++
++	pwm_config(pb->pwm, 0, pb->period);
++	pwm_disable(pb->pwm);
++
++	pb->enabled = false;
++}
++
++static void pwm_backlight_on(struct pwm_bl_data *pb, int brightness)
++{
++	pwm_config(pb->pwm, brightness, pb->period);
++	pwm_enable(pb->pwm);
++
++	if (pb->enabled)
++		return;
++
++	if (pb->power_reg)
++		regulator_enable(pb->power_reg);
++
++	if (gpio_is_valid(pb->enable_gpio))
++		gpio_set_value_cansleep(pb->enable_gpio, 1);
++
++	pb->enabled = true;
++}
++
+ static int pwm_backlight_update_status(struct backlight_device *bl)
+ {
+ 	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
+@@ -51,8 +90,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 		brightness = pb->notify(pb->dev, brightness);
+ 
+ 	if (brightness == 0) {
+-		pwm_config(pb->pwm, 0, pb->period);
+-		pwm_disable(pb->pwm);
++		pwm_backlight_off(pb);
+ 	} else {
+ 		if (pb->levels) {
+ 			brightness = pb->levels[brightness];
+@@ -61,8 +99,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 
+ 		brightness = pb->lth_brightness +
+ 			(brightness * (pb->period - pb->lth_brightness) / max);
+-		pwm_config(pb->pwm, brightness, pb->period);
+-		pwm_enable(pb->pwm);
++		pwm_backlight_on(pb, brightness);
+ 	}
+ 
+ 	if (pb->notify_after)
+@@ -141,11 +178,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 		data->max_brightness--;
+ 	}
+ 
+-	/*
+-	 * TODO: Most users of this driver use a number of GPIOs to control
+-	 *       backlight power. Support for specifying these needs to be
+-	 *       added.
+-	 */
++	ret = of_get_named_gpio(node, "enable-gpios", 0);
++	if (ret >= 0) {
++		data->enable_gpio = of_get_named_gpio(node, "enable-gpios", 0);
++		data->use_enable_gpio = true;
++	} else if (ret != -ENOENT) {
++		/* GPIO is optional, so ENOENT is not an error here */
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -176,7 +216,9 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 
+ 	if (!data) {
+ 		ret = pwm_backlight_parse_dt(&pdev->dev, &defdata);
+-		if (ret < 0) {
++		if (ret == -EPROBE_DEFER) {
++			return ret;
++		} else if (ret < 0) {
+ 			dev_err(&pdev->dev, "failed to find platform data\n");
+ 			return ret;
+ 		}
+@@ -221,8 +263,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+-
+ 	/*
+ 	 * The DT case will set the pwm_period_ns field to 0 and store the
+ 	 * period, parsed from the DT, in the PWM device. For the non-DT case,
+@@ -231,6 +271,22 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	if (data->pwm_period_ns > 0)
+ 		pwm_set_period(pb->pwm, data->pwm_period_ns);
+ 
++
++	pb->power_reg = devm_regulator_get(&pdev->dev, "power");
++	if (IS_ERR(pb->power_reg))
++		return PTR_ERR(pb->power_reg);
++
++	pb->enable_gpio = -EINVAL;
++	if (data->use_enable_gpio) {
++		ret = devm_gpio_request_one(&pdev->dev, data->enable_gpio,
++				GPIOF_OUT_INIT_HIGH, "backlight_enable");
++		if (ret)
++			dev_warn(&pdev->dev,
++				"error %d requesting control gpio\n", ret);
++		else
++			pb->enable_gpio = data->enable_gpio;
++	}
++
+ 	pb->period = pwm_get_period(pb->pwm);
+ 	pb->lth_brightness = data->lth_brightness * (pb->period / max);
+ 
+@@ -265,8 +321,7 @@ static int pwm_backlight_remove(struct platform_device *pdev)
+ 	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
+ 
+ 	backlight_device_unregister(bl);
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
++	pwm_backlight_off(pb);
+ 	pwm_put(pb->pwm);
+ 	if (pb->exit)
+ 		pb->exit(&pdev->dev);
+@@ -281,8 +336,7 @@ static int pwm_backlight_suspend(struct device *dev)
+ 
+ 	if (pb->notify)
+ 		pb->notify(pb->dev, 0);
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
++	pwm_backlight_off(pb);
+ 	if (pb->notify_after)
+ 		pb->notify_after(pb->dev, 0);
+ 	return 0;
+diff --git a/include/linux/pwm_backlight.h b/include/linux/pwm_backlight.h
+index 56f4a86..5ae2cd0 100644
+--- a/include/linux/pwm_backlight.h
++++ b/include/linux/pwm_backlight.h
+@@ -18,6 +18,11 @@ struct platform_pwm_backlight_data {
+ 	void (*notify_after)(struct device *dev, int brightness);
+ 	void (*exit)(struct device *dev);
+ 	int (*check_fb)(struct device *dev, struct fb_info *info);
++	/* optional GPIO that enables/disables the backlight */
++	int enable_gpio;
++	/* 0 (default initialization value) is a valid GPIO number. Make use of
++	 * control gpio explicit to avoid bad surprises. */
++	bool use_enable_gpio;
+ };
+ 
+ #endif
+-- 
+1.7.11.1
