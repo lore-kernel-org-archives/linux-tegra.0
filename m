@@ -1,189 +1,194 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/6] ARM: tegra: Add clk_tegra structure and helper functions
-Date: Fri, 29 Jun 2012 14:04:22 +0530
-Message-ID: <4FED688E.9090408@nvidia.com>
-References: <1340879846-12900-1-git-send-email-pgaikwad@nvidia.com> <1340879846-12900-5-git-send-email-pgaikwad@nvidia.com> <20120628182759.GA28424@gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] ARM: tegra: apbio: use dmaengine based dma driver
+Date: Fri, 29 Jun 2012 17:00:07 +0530
+Message-ID: <1340969407-7662-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120628182759.GA28424-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, ccross@android.com, olof@lixom.net
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 28 June 2012 11:58 PM, Mike Turquette wrote:
-> On 20120628-16:07, Prashant Gaikwad wrote:
->> Add Tegra platform specific clock structure clk_tegra and
->> some helper functions for generic clock framework.
->>
->> struct clk_tegra is the single strcture used for all types of
->> clocks. reset and cfg_ex ops moved to clk_tegra from clk_ops.
->>
->> Signed-off-by: Prashant Gaikwad<pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Hi Prashant,
->
-> I'm happy to see Tegra getting ported over to the common clk framework.
+Use the dmaengine based Tegra APB DMA driver for
+apbio access in place of legacy Tegra APB DMA.
 
-Thanks Mike!! It will help to get in-line with recent developments.
+The new driver is selected if legacy driver is not
+selected and new DMA driver is enabled through config
+file.
 
-> <snip>
->> +void tegra_clk_add(struct clk *clk)
->> +{
->> +	struct clk_tegra *c = to_clk_tegra(__clk_get_hw(clk));
->> +
->> +	mutex_lock(&clock_list_lock);
->> +	list_add(&c->node,&clocks);
->> +	mutex_unlock(&clock_list_lock);
->> +}
->> +
->> +struct clk *tegra_get_clock_by_name(const char *name)
->> +{
->> +	struct clk_tegra *c;
->> +	struct clk *ret = NULL;
->> +	mutex_lock(&clock_list_lock);
->> +	list_for_each_entry(c,&clocks, node) {
->> +		if (strcmp(__clk_get_name(c->hw.clk), name) == 0) {
->> +			ret = c->hw.clk;
->> +			break;
->> +		}
->> +	}
->> +	mutex_unlock(&clock_list_lock);
->> +	return ret;
->> +}
->> +
-> Are you planning to continue using an internal list of struct clk_tegra?
-> OMAP had a similar list for the legacy clock framework but that was
-> since removed and now lookups are done solely through clkdev.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ arch/arm/mach-tegra/apbio.c |  135 +++++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 131 insertions(+), 4 deletions(-)
 
-No, will move to clkdev later.
-
-> <snip>
->> +void tegra_periph_reset_deassert(struct clk *c)
->> +{
->> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
->> +	BUG_ON(!clk->reset);
->> +	clk->reset(__clk_get_hw(c), false);
->> +}
->> +EXPORT_SYMBOL(tegra_periph_reset_deassert);
->> +
->> +void tegra_periph_reset_assert(struct clk *c)
->> +{
->> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
->> +	BUG_ON(!clk->reset);
->> +	clk->reset(__clk_get_hw(c), true);
->> +}
->> +EXPORT_SYMBOL(tegra_periph_reset_assert);
->> +
->> +/* Several extended clock configuration bits (e.g., clock routing, clock
->> + * phase control) are included in PLL and peripheral clock source
->> + * registers. */
->> +int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting)
->> +{
->> +	int ret = 0;
->> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
->> +
->> +	if (!clk->clk_cfg_ex) {
->> +		ret = -ENOSYS;
->> +		goto out;
->> +	}
->> +	ret = clk->clk_cfg_ex(__clk_get_hw(c), p, setting);
->> +
->> +out:
->> +	return ret;
->> +}
-> We had some discussions in the past on your clock reset and external
-> line request operations which you've had to put into struct clk_tegra.
->
-> Do you need to expose those ops to code in drivers/*?  I consider that a
-> reasonable litmus test to start considering if something should be moved
-> into the generic clk.h api.
-
-Yes, we need these ops in drivers. Peter has sent a patch proposing to 
-move these ops to generic clk.
-
-In addition, we also need mechanism/ops to change rate and parent from 
-clk_ops implementation. There was some discussion but I do not know the 
-latest status.
-
-> <snip>
->> +enum clk_state {
->> +	UNINITIALIZED = 0,
->> +	ON,
->> +	OFF,
->> +};
-> How is clk_state used?  Might it be helpful to you if that was in the
-> generic code in drivers/clk/clk.c?
-
-clk_state is used to store the clock state. I am planning to remove this 
-since is_enabled ops should work.
-
-> <snip>
->> +struct clk_tegra {
->> +	/* node for master clocks list */
->> +	struct list_head	node;	/* node for list of all clocks */
->> +	struct clk_lookup	lookup;
->> +	struct clk_hw		hw;
->> +
->> +	bool			set;
->> +	unsigned long		fixed_rate;
->> +	unsigned long		max_rate;
->> +	unsigned long		min_rate;
->> +	u32			flags;
->> +	const char		*name;
->> +
->> +	enum clk_state		state;
->> +	u32			div;
->> +	u32			mul;
->> +
->> +	u32				reg;
->> +	u32				reg_shift;
->> +
->> +	struct list_head		shared_bus_list;
->> +
->> +	union {
->> +		struct {
->> +			unsigned int			clk_num;
->> +		} periph;
->> +		struct {
->> +			unsigned long			input_min;
->> +			unsigned long			input_max;
->> +			unsigned long			cf_min;
->> +			unsigned long			cf_max;
->> +			unsigned long			vco_min;
->> +			unsigned long			vco_max;
->> +			const struct clk_pll_freq_table	*freq_table;
->> +			int				lock_delay;
->> +			unsigned long			fixed_rate;
->> +		} pll;
->> +		struct {
->> +			u32				sel;
->> +			u32				reg_mask;
->> +		} mux;
->> +		struct {
->> +			struct clk			*main;
->> +			struct clk			*backup;
->> +		} cpu;
->> +		struct {
->> +			struct list_head		node;
->> +			bool				enabled;
->> +			unsigned long			rate;
->> +		} shared_bus_user;
->> +	} u;
->> +
->> +	void (*reset)(struct clk_hw *, bool);
->> +	int (*clk_cfg_ex)(struct clk_hw *, enum tegra_clk_ex_param, u32);
->> +};
-> I know this is an initial effort but I hope in time that struct
-> clk_tegra can be broken up into separate clk types.  It would be even
-> better if some of the Tegra clocks code be converted over to the common
-> clk types in drivers/clk/clk-*.c
-
-Yes, that is next in my action list. One approach I am working on is to 
-model the clock as Mux -> Divider -> Gate by which we can use some of 
-common clock types.
-But this will take time.
-
-> Regards,
-> Mike
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index 74ac0db..00405be 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -17,8 +17,7 @@
+ #include <linux/io.h>
+ #include <mach/iomap.h>
+ #include <linux/of.h>
+-
+-#ifdef CONFIG_TEGRA_SYSTEM_DMA
++#include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/spinlock.h>
+ #include <linux/completion.h>
+@@ -29,9 +28,8 @@
+ 
+ #include "apbio.h"
+ 
++#if defined(CONFIG_TEGRA_SYSTEM_DMA) || defined(CONFIG_TEGRA20_APB_DMA)
+ static DEFINE_MUTEX(tegra_apb_dma_lock);
+-
+-static struct tegra_dma_channel *tegra_apb_dma;
+ static u32 *tegra_apb_bb;
+ static dma_addr_t tegra_apb_bb_phys;
+ static DECLARE_COMPLETION(tegra_apb_wait);
+@@ -39,6 +37,9 @@ static DECLARE_COMPLETION(tegra_apb_wait);
+ static u32 tegra_apb_readl_direct(unsigned long offset);
+ static void tegra_apb_writel_direct(u32 value, unsigned long offset);
+ 
++#if defined(CONFIG_TEGRA_SYSTEM_DMA)
++static struct tegra_dma_channel *tegra_apb_dma;
++
+ bool tegra_apb_init(void)
+ {
+ 	struct tegra_dma_channel *ch;
+@@ -149,6 +150,132 @@ static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
+ 
+ 	mutex_unlock(&tegra_apb_dma_lock);
+ }
++
++#else
++static struct dma_chan *tegra_apb_dma_chan;
++static struct dma_slave_config dma_sconfig;
++
++bool tegra_apb_dma_init(void)
++{
++	dma_cap_mask_t mask;
++
++	mutex_lock(&tegra_apb_dma_lock);
++
++	/* Check to see if we raced to setup */
++	if (tegra_apb_dma_chan)
++		goto skip_init;
++
++	dma_cap_zero(mask);
++	dma_cap_set(DMA_SLAVE, mask);
++	tegra_apb_dma_chan = dma_request_channel(mask, NULL, NULL);
++	if (!tegra_apb_dma_chan) {
++		pr_err("%s: can not allocate dma channel\n", __func__);
++		goto err_dma_alloc;
++	}
++
++	tegra_apb_bb = dma_alloc_coherent(NULL, sizeof(u32),
++		&tegra_apb_bb_phys, GFP_KERNEL);
++	if (!tegra_apb_bb) {
++		pr_err("%s: can not allocate bounce buffer\n", __func__);
++		goto err_buff_alloc;
++	}
++
++	dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++	dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++	dma_sconfig.slave_id = TEGRA_DMA_REQ_SEL_CNTR;
++	dma_sconfig.src_maxburst = 1;
++	dma_sconfig.dst_maxburst = 1;
++
++skip_init:
++	mutex_unlock(&tegra_apb_dma_lock);
++	return true;
++
++err_buff_alloc:
++	dma_release_channel(tegra_apb_dma_chan);
++	tegra_apb_dma_chan = NULL;
++
++err_dma_alloc:
++	mutex_unlock(&tegra_apb_dma_lock);
++	return false;
++}
++
++static void apb_dma_complete(void *args)
++{
++	complete(&tegra_apb_wait);
++}
++
++static int do_dma_transfer(unsigned long apb_add,
++		enum dma_transfer_direction dir)
++{
++	struct dma_async_tx_descriptor *dma_desc;
++	int ret;
++
++	if (dir == DMA_DEV_TO_MEM)
++		dma_sconfig.src_addr = apb_add;
++	else
++		dma_sconfig.dst_addr = apb_add;
++
++	ret = dmaengine_slave_config(tegra_apb_dma_chan, &dma_sconfig);
++	if (ret)
++		return ret;
++
++	dma_desc = dmaengine_prep_slave_single(tegra_apb_dma_chan,
++			tegra_apb_bb_phys, sizeof(u32), dir,
++			DMA_PREP_INTERRUPT |  DMA_CTRL_ACK);
++	if (!dma_desc)
++		return -EINVAL;
++
++	dma_desc->callback = apb_dma_complete;
++	dma_desc->callback_param = NULL;
++
++	INIT_COMPLETION(tegra_apb_wait);
++
++	dmaengine_submit(dma_desc);
++	dma_async_issue_pending(tegra_apb_dma_chan);
++	ret = wait_for_completion_timeout(&tegra_apb_wait,
++		msecs_to_jiffies(50));
++
++	if (WARN(ret == 0, "apb read dma timed out")) {
++		dmaengine_terminate_all(tegra_apb_dma_chan);
++		return -EFAULT;
++	}
++	return 0;
++}
++
++static u32 tegra_apb_readl_using_dma(unsigned long offset)
++{
++	int ret;
++
++	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
++		return tegra_apb_readl_direct(offset);
++
++	mutex_lock(&tegra_apb_dma_lock);
++	ret = do_dma_transfer(offset, DMA_DEV_TO_MEM);
++	if (ret < 0) {
++		pr_err("error in reading offset 0x%08lx using dma\n", offset);
++		*(u32 *)tegra_apb_bb = 0;
++	}
++	mutex_unlock(&tegra_apb_dma_lock);
++	return *((u32 *)tegra_apb_bb);
++}
++
++static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
++{
++	int ret;
++
++	if (!tegra_apb_dma_chan && !tegra_apb_dma_init()) {
++		tegra_apb_writel_direct(value, offset);
++		return;
++	}
++
++	mutex_lock(&tegra_apb_dma_lock);
++	*((u32 *)tegra_apb_bb) = value;
++	ret = do_dma_transfer(offset, DMA_MEM_TO_DEV);
++	if (ret < 0)
++		pr_err("error in writing offset 0x%08lx using dma\n", offset);
++	mutex_unlock(&tegra_apb_dma_lock);
++}
++#endif
+ #else
+ #define tegra_apb_readl_using_dma tegra_apb_readl_direct
+ #define tegra_apb_writel_using_dma tegra_apb_writel_direct
+-- 
+1.7.1.1
