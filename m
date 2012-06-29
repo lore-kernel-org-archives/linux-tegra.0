@@ -1,170 +1,189 @@
-From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v3 2/2] iommu/tegra: smmu: Fix unsleepable memory allocation at
-	alloc_pdir()
-Date: Fri, 29 Jun 2012 09:15:27 +0300
-Message-ID: <1340950527-16482-2-git-send-email-hdoyu@nvidia.com>
-References: <20120628.221945.1306825810095951985.hdoyu@nvidia.com>
-	<1340950527-16482-1-git-send-email-hdoyu@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: tegra: Add clk_tegra structure and helper functions
+Date: Fri, 29 Jun 2012 14:04:22 +0530
+Message-ID: <4FED688E.9090408@nvidia.com>
+References: <1340879846-12900-1-git-send-email-pgaikwad@nvidia.com> <1340879846-12900-5-git-send-email-pgaikwad@nvidia.com> <20120628182759.GA28424@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1340950527-16482-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120628182759.GA28424-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-alloc_pdir() is called from smmu_iommu_domain_init() with spin_lock
-held. memory allocations in alloc_pdir() had to be atomic. Instead of
-converting into atomic allocation, this patch once releases a lock,
-does the allocation, holds the lock again and then sees if it's raced
-or not in order to avoid introducing mutex and preallocation.
+On Thursday 28 June 2012 11:58 PM, Mike Turquette wrote:
+> On 20120628-16:07, Prashant Gaikwad wrote:
+>> Add Tegra platform specific clock structure clk_tegra and
+>> some helper functions for generic clock framework.
+>>
+>> struct clk_tegra is the single strcture used for all types of
+>> clocks. reset and cfg_ex ops moved to clk_tegra from clk_ops.
+>>
+>> Signed-off-by: Prashant Gaikwad<pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Hi Prashant,
+>
+> I'm happy to see Tegra getting ported over to the common clk framework.
 
-Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reported-by: Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
-Cc: Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
----
-v3:
-Added -EAGAIN in alloc_pdir when raced to retry.
----
- drivers/iommu/tegra-smmu.c |   77 +++++++++++++++++++++++++------------------
- 1 files changed, 45 insertions(+), 32 deletions(-)
+Thanks Mike!! It will help to get in-line with recent developments.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 532c8a4..dbba94c 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -539,28 +539,39 @@ static inline void put_signature(struct smmu_as *as,
- /*
-  * Caller must lock/unlock as
-  */
--static int alloc_pdir(struct smmu_as *as)
-+static int alloc_pdir(struct smmu_as *as, unsigned long *flags)
- {
- 	unsigned long *pdir;
--	int pdn;
-+	int pdn, err = 0;
- 	u32 val;
- 	struct smmu_device *smmu = as->smmu;
-+	struct page *page;
-+	unsigned int *cnt;
- 
--	as->pte_count = devm_kzalloc(smmu->dev,
--		     sizeof(as->pte_count[0]) * SMMU_PDIR_COUNT, GFP_KERNEL);
--	if (!as->pte_count) {
--		dev_err(smmu->dev,
--			"failed to allocate smmu_device PTE cunters\n");
--		return -ENOMEM;
-+	/*
-+	 * do the allocation outside the as lock
-+	 */
-+	spin_unlock_irqrestore(&as->lock, *flags);
-+	cnt = devm_kzalloc(smmu->dev,
-+			   sizeof(cnt[0]) * SMMU_PDIR_COUNT, GFP_KERNEL);
-+	page = alloc_page(GFP_KERNEL | __GFP_DMA);
-+	spin_lock_irqsave(&as->lock, *flags);
-+
-+	if (as->pdir_page) {
-+		/* We raced, free the redundant */
-+		err = -EAGAIN;
-+		goto err_out;
- 	}
--	as->pdir_page = alloc_page(GFP_KERNEL | __GFP_DMA);
--	if (!as->pdir_page) {
--		dev_err(smmu->dev,
--			"failed to allocate smmu_device page directory\n");
--		devm_kfree(smmu->dev, as->pte_count);
--		as->pte_count = NULL;
--		return -ENOMEM;
-+
-+	if (!page || !cnt) {
-+		dev_err(smmu->dev, "failed to allocate at %s\n", __func__);
-+		err = -ENOMEM;
-+		goto err_out;
- 	}
-+
-+	as->pdir_page = page;
-+	as->pte_count = cnt;
-+
- 	SetPageReserved(as->pdir_page);
- 	pdir = page_address(as->pdir_page);
- 
-@@ -577,6 +588,12 @@ static int alloc_pdir(struct smmu_as *as)
- 	FLUSH_SMMU_REGS(as->smmu);
- 
- 	return 0;
-+
-+err_out:
-+	devm_kfree(smmu->dev, cnt);
-+	if (page)
-+		__free_page(page);
-+	return err;
- }
- 
- static void __smmu_iommu_unmap(struct smmu_as *as, dma_addr_t iova)
-@@ -768,29 +785,29 @@ out:
- 
- static int smmu_iommu_domain_init(struct iommu_domain *domain)
- {
--	int i;
-+	int i, err = -ENODEV;
- 	unsigned long flags;
- 	struct smmu_as *as;
- 	struct smmu_device *smmu = smmu_handle;
- 
- 	/* Look for a free AS with lock held */
- 	for  (i = 0; i < smmu->num_as; i++) {
--		struct smmu_as *tmp = &smmu->as[i];
--
--		spin_lock_irqsave(&tmp->lock, flags);
--		if (!tmp->pdir_page) {
--			as = tmp;
--			goto found;
-+		as = &smmu->as[i];
-+		spin_lock_irqsave(&as->lock, flags);
-+		if (!as->pdir_page) {
-+			err = alloc_pdir(as, &flags);
-+			if (!err)
-+				goto found;
- 		}
--		spin_unlock_irqrestore(&tmp->lock, flags);
-+		spin_unlock_irqrestore(&as->lock, flags);
-+		if (err != -EAGAIN)
-+			break;
- 	}
--	dev_err(smmu->dev, "no free AS\n");
--	return -ENODEV;
-+	if (i == smmu->num_as)
-+		dev_err(smmu->dev,  "no free AS\n");
-+	return err;
- 
- found:
--	if (alloc_pdir(as) < 0)
--		goto err_alloc_pdir;
--
- 	spin_lock(&smmu->lock);
- 
- 	/* Update PDIR register */
-@@ -806,10 +823,6 @@ found:
- 
- 	dev_dbg(smmu->dev, "smmu_as@%p\n", as);
- 	return 0;
--
--err_alloc_pdir:
--	spin_unlock_irqrestore(&as->lock, flags);
--	return -ENODEV;
- }
- 
- static void smmu_iommu_domain_destroy(struct iommu_domain *domain)
--- 
-1.7.5.4
+> <snip>
+>> +void tegra_clk_add(struct clk *clk)
+>> +{
+>> +	struct clk_tegra *c = to_clk_tegra(__clk_get_hw(clk));
+>> +
+>> +	mutex_lock(&clock_list_lock);
+>> +	list_add(&c->node,&clocks);
+>> +	mutex_unlock(&clock_list_lock);
+>> +}
+>> +
+>> +struct clk *tegra_get_clock_by_name(const char *name)
+>> +{
+>> +	struct clk_tegra *c;
+>> +	struct clk *ret = NULL;
+>> +	mutex_lock(&clock_list_lock);
+>> +	list_for_each_entry(c,&clocks, node) {
+>> +		if (strcmp(__clk_get_name(c->hw.clk), name) == 0) {
+>> +			ret = c->hw.clk;
+>> +			break;
+>> +		}
+>> +	}
+>> +	mutex_unlock(&clock_list_lock);
+>> +	return ret;
+>> +}
+>> +
+> Are you planning to continue using an internal list of struct clk_tegra?
+> OMAP had a similar list for the legacy clock framework but that was
+> since removed and now lookups are done solely through clkdev.
+
+No, will move to clkdev later.
+
+> <snip>
+>> +void tegra_periph_reset_deassert(struct clk *c)
+>> +{
+>> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+>> +	BUG_ON(!clk->reset);
+>> +	clk->reset(__clk_get_hw(c), false);
+>> +}
+>> +EXPORT_SYMBOL(tegra_periph_reset_deassert);
+>> +
+>> +void tegra_periph_reset_assert(struct clk *c)
+>> +{
+>> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+>> +	BUG_ON(!clk->reset);
+>> +	clk->reset(__clk_get_hw(c), true);
+>> +}
+>> +EXPORT_SYMBOL(tegra_periph_reset_assert);
+>> +
+>> +/* Several extended clock configuration bits (e.g., clock routing, clock
+>> + * phase control) are included in PLL and peripheral clock source
+>> + * registers. */
+>> +int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting)
+>> +{
+>> +	int ret = 0;
+>> +	struct clk_tegra *clk = to_clk_tegra(__clk_get_hw(c));
+>> +
+>> +	if (!clk->clk_cfg_ex) {
+>> +		ret = -ENOSYS;
+>> +		goto out;
+>> +	}
+>> +	ret = clk->clk_cfg_ex(__clk_get_hw(c), p, setting);
+>> +
+>> +out:
+>> +	return ret;
+>> +}
+> We had some discussions in the past on your clock reset and external
+> line request operations which you've had to put into struct clk_tegra.
+>
+> Do you need to expose those ops to code in drivers/*?  I consider that a
+> reasonable litmus test to start considering if something should be moved
+> into the generic clk.h api.
+
+Yes, we need these ops in drivers. Peter has sent a patch proposing to 
+move these ops to generic clk.
+
+In addition, we also need mechanism/ops to change rate and parent from 
+clk_ops implementation. There was some discussion but I do not know the 
+latest status.
+
+> <snip>
+>> +enum clk_state {
+>> +	UNINITIALIZED = 0,
+>> +	ON,
+>> +	OFF,
+>> +};
+> How is clk_state used?  Might it be helpful to you if that was in the
+> generic code in drivers/clk/clk.c?
+
+clk_state is used to store the clock state. I am planning to remove this 
+since is_enabled ops should work.
+
+> <snip>
+>> +struct clk_tegra {
+>> +	/* node for master clocks list */
+>> +	struct list_head	node;	/* node for list of all clocks */
+>> +	struct clk_lookup	lookup;
+>> +	struct clk_hw		hw;
+>> +
+>> +	bool			set;
+>> +	unsigned long		fixed_rate;
+>> +	unsigned long		max_rate;
+>> +	unsigned long		min_rate;
+>> +	u32			flags;
+>> +	const char		*name;
+>> +
+>> +	enum clk_state		state;
+>> +	u32			div;
+>> +	u32			mul;
+>> +
+>> +	u32				reg;
+>> +	u32				reg_shift;
+>> +
+>> +	struct list_head		shared_bus_list;
+>> +
+>> +	union {
+>> +		struct {
+>> +			unsigned int			clk_num;
+>> +		} periph;
+>> +		struct {
+>> +			unsigned long			input_min;
+>> +			unsigned long			input_max;
+>> +			unsigned long			cf_min;
+>> +			unsigned long			cf_max;
+>> +			unsigned long			vco_min;
+>> +			unsigned long			vco_max;
+>> +			const struct clk_pll_freq_table	*freq_table;
+>> +			int				lock_delay;
+>> +			unsigned long			fixed_rate;
+>> +		} pll;
+>> +		struct {
+>> +			u32				sel;
+>> +			u32				reg_mask;
+>> +		} mux;
+>> +		struct {
+>> +			struct clk			*main;
+>> +			struct clk			*backup;
+>> +		} cpu;
+>> +		struct {
+>> +			struct list_head		node;
+>> +			bool				enabled;
+>> +			unsigned long			rate;
+>> +		} shared_bus_user;
+>> +	} u;
+>> +
+>> +	void (*reset)(struct clk_hw *, bool);
+>> +	int (*clk_cfg_ex)(struct clk_hw *, enum tegra_clk_ex_param, u32);
+>> +};
+> I know this is an initial effort but I hope in time that struct
+> clk_tegra can be broken up into separate clk types.  It would be even
+> better if some of the Tegra clocks code be converted over to the common
+> clk types in drivers/clk/clk-*.c
+
+Yes, that is next in my action list. One approach I am working on is to 
+model the clock as Mux -> Divider -> Gate by which we can use some of 
+common clock types.
+But this will take time.
+
+> Regards,
+> Mike
