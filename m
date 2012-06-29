@@ -1,54 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Fri, 29 Jun 2012 10:04:50 -0600
-Message-ID: <4FEDD222.7050905@wwwdotorg.org>
-References: <1340976167-27298-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH] arm: tegra: add Ventana backlight device
+Date: Fri, 29 Jun 2012 10:06:37 -0600
+Message-ID: <4FEDD28D.1000303@wwwdotorg.org>
+References: <1340976299-27601-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340976167-27298-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1340976299-27601-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/29/2012 07:22 AM, Alexandre Courbot wrote:
-> Add support for an optional power regulator and enable/disable GPIO.
-> This scheme is commonly used in embedded systems.
+On 06/29/2012 07:24 AM, Alexandre Courbot wrote:
+> Add the backlight device to the Ventana device tree.
 
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+As I mentioned downstream, I have a patch to add all the regulators for
+Ventana to DT. This patch should be rebased on top of that, since it
+adds the backlight regulator node too, but co-locates it with a bunch of
+other regulators, so won't merge with this patch.
 
-> -	dev_dbg(&pdev->dev, "got pwm for backlight\n");
-> -
+I hope I'll be able to publish an updated version of the Ventana patch
+today.
 
-That seems like an unrelated change?
-
-> @@ -231,6 +271,22 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  	if (data->pwm_period_ns > 0)
->  		pwm_set_period(pb->pwm, data->pwm_period_ns);
->  
-> +
-> +	pb->power_reg = devm_regulator_get(&pdev->dev, "power");
-
-There's an extra blank line there.
-
-> +	if (IS_ERR(pb->power_reg))
-> +		return PTR_ERR(pb->power_reg);
-> +
-> +	pb->enable_gpio = -EINVAL;
-> +	if (data->use_enable_gpio) {
-> +		ret = devm_gpio_request_one(&pdev->dev, data->enable_gpio,
-> +				GPIOF_OUT_INIT_HIGH, "backlight_enable");
-> +		if (ret)
-> +			dev_warn(&pdev->dev,
-> +				"error %d requesting control gpio\n", ret);
-
-Shouldn't that be a hard error? If the user specified that some GPIO be
-used, and the GPIO could not be requested, shouldn't the driver fail to
-initialize?
-
-> +		else
-> +			pb->enable_gpio = data->enable_gpio;
-
-Aside from that, this looks good to me.
+But aside from that, this patch looks reasonable.
