@@ -1,53 +1,31 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm: tegra: add Ventana backlight device
-Date: Fri, 29 Jun 2012 22:24:59 +0900
-Message-ID: <1340976299-27601-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v3 1/2] iommu/tegra: smmu: Remove unnecessary sanity check at
+	alloc_pdir()
+Date: Fri, 29 Jun 2012 09:34:21 -0600
+Message-ID: <4FEDCAFD.3070609@wwwdotorg.org>
+References: <20120628.221945.1306825810095951985.hdoyu@nvidia.com>
+	<1340950527-16482-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1340950527-16482-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the backlight device to the Ventana device tree.
+On 06/29/2012 12:15 AM, Hiroshi DOYU wrote:
+> alloc_pdir() is called with smmu->as[?].pdir_page == NULL. No need to
+> check pdir_page again inside alloc_pdir().
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-ventana.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index be90544..27616f7 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -317,6 +317,27 @@
- 		bus-width = <8>;
- 	};
- 
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 2 5000000>;
-+
-+		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
-+		default-brightness-level = <12>;
-+		power-supply = <&backlight_reg>;
-+		enable-gpios = <&gpio 28 0>;
-+	};
-+
-+	backlight_reg: fixedregulator@176 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "backlight_regulator";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio 176 0>;
-+		startup-delay-us = <0>;
-+		enable-active-high;
-+		regulator-boot-off;
-+	};
-+
- 	sound {
- 		compatible = "nvidia,tegra-audio-wm8903-ventana",
- 			     "nvidia,tegra-audio-wm8903";
--- 
-1.7.11.1
+Both patches,
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
