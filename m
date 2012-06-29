@@ -1,194 +1,209 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: apbio: use dmaengine based dma driver
-Date: Fri, 29 Jun 2012 17:04:32 +0530
-Message-ID: <1340969673-7776-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH] ASoC: tegra: use dmaengine based dma driver
+Date: Fri, 29 Jun 2012 17:04:33 +0530
+Message-ID: <1340969673-7776-2-git-send-email-ldewangan@nvidia.com>
+References: <1340969673-7776-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340969673-7776-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: tiwai-l3A5Bk7waGM@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Use the dmaengine based Tegra APB DMA driver for
-apbio access in place of legacy Tegra APB DMA.
+data transfer between SPI fifo and memory in
+place of legacy Tegra APB DMA.
+
+Because generic soc-dmaengine-pcm uses the DMAs API
+based on dmaengine, using the exported APIs provided
+by this generic driver.
 
 The new driver is selected if legacy driver is not
-selected and new DMA driver is enabled through config
+selected and new dma driver is enabled through config
 file.
 
 Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/apbio.c |  135 +++++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 131 insertions(+), 4 deletions(-)
+ sound/soc/tegra/Kconfig     |    3 +-
+ sound/soc/tegra/tegra_pcm.c |  115 +++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_pcm.h |    2 +
+ 3 files changed, 119 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
-index 74ac0db..00405be 100644
---- a/arch/arm/mach-tegra/apbio.c
-+++ b/arch/arm/mach-tegra/apbio.c
-@@ -17,8 +17,7 @@
- #include <linux/io.h>
- #include <mach/iomap.h>
- #include <linux/of.h>
--
--#ifdef CONFIG_TEGRA_SYSTEM_DMA
-+#include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/spinlock.h>
- #include <linux/completion.h>
-@@ -29,9 +28,8 @@
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 76dc230..02bcd30 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -1,7 +1,8 @@
+ config SND_SOC_TEGRA
+ 	tristate "SoC Audio for the Tegra System-on-Chip"
+-	depends on ARCH_TEGRA && TEGRA_SYSTEM_DMA
++	depends on ARCH_TEGRA && (TEGRA_SYSTEM_DMA || TEGRA20_APB_DMA)
+ 	select REGMAP_MMIO
++	select SND_SOC_DMAENGINE_PCM if TEGRA20_APB_DMA
+ 	help
+ 	  Say Y or M here if you want support for SoC audio on Tegra.
  
- #include "apbio.h"
+diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
+index 127348d..5658bce 100644
+--- a/sound/soc/tegra/tegra_pcm.c
++++ b/sound/soc/tegra/tegra_pcm.c
+@@ -36,6 +36,7 @@
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
++#include <sound/dmaengine_pcm.h>
  
-+#if defined(CONFIG_TEGRA_SYSTEM_DMA) || defined(CONFIG_TEGRA20_APB_DMA)
- static DEFINE_MUTEX(tegra_apb_dma_lock);
--
--static struct tegra_dma_channel *tegra_apb_dma;
- static u32 *tegra_apb_bb;
- static dma_addr_t tegra_apb_bb_phys;
- static DECLARE_COMPLETION(tegra_apb_wait);
-@@ -39,6 +37,9 @@ static DECLARE_COMPLETION(tegra_apb_wait);
- static u32 tegra_apb_readl_direct(unsigned long offset);
- static void tegra_apb_writel_direct(u32 value, unsigned long offset);
+ #include "tegra_pcm.h"
+ 
+@@ -56,6 +57,7 @@ static const struct snd_pcm_hardware tegra_pcm_hardware = {
+ 	.fifo_size		= 4,
+ };
  
 +#if defined(CONFIG_TEGRA_SYSTEM_DMA)
-+static struct tegra_dma_channel *tegra_apb_dma;
-+
- bool tegra_apb_init(void)
+ static void tegra_pcm_queue_dma(struct tegra_runtime_data *prtd)
  {
- 	struct tegra_dma_channel *ch;
-@@ -149,6 +150,132 @@ static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
- 
- 	mutex_unlock(&tegra_apb_dma_lock);
- }
-+
+ 	struct snd_pcm_substream *substream = prtd->substream;
+@@ -285,6 +287,119 @@ static struct snd_pcm_ops tegra_pcm_ops = {
+ 	.pointer	= tegra_pcm_pointer,
+ 	.mmap		= tegra_pcm_mmap,
+ };
 +#else
-+static struct dma_chan *tegra_apb_dma_chan;
-+static struct dma_slave_config dma_sconfig;
-+
-+bool tegra_apb_dma_init(void)
++static int tegra_pcm_open(struct snd_pcm_substream *substream)
 +{
-+	dma_cap_mask_t mask;
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+
-+	/* Check to see if we raced to setup */
-+	if (tegra_apb_dma_chan)
-+		goto skip_init;
-+
-+	dma_cap_zero(mask);
-+	dma_cap_set(DMA_SLAVE, mask);
-+	tegra_apb_dma_chan = dma_request_channel(mask, NULL, NULL);
-+	if (!tegra_apb_dma_chan) {
-+		pr_err("%s: can not allocate dma channel\n", __func__);
-+		goto err_dma_alloc;
-+	}
-+
-+	tegra_apb_bb = dma_alloc_coherent(NULL, sizeof(u32),
-+		&tegra_apb_bb_phys, GFP_KERNEL);
-+	if (!tegra_apb_bb) {
-+		pr_err("%s: can not allocate bounce buffer\n", __func__);
-+		goto err_buff_alloc;
-+	}
-+
-+	dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	dma_sconfig.slave_id = TEGRA_DMA_REQ_SEL_CNTR;
-+	dma_sconfig.src_maxburst = 1;
-+	dma_sconfig.dst_maxburst = 1;
-+
-+skip_init:
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return true;
-+
-+err_buff_alloc:
-+	dma_release_channel(tegra_apb_dma_chan);
-+	tegra_apb_dma_chan = NULL;
-+
-+err_dma_alloc:
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return false;
-+}
-+
-+static void apb_dma_complete(void *args)
-+{
-+	complete(&tegra_apb_wait);
-+}
-+
-+static int do_dma_transfer(unsigned long apb_add,
-+		enum dma_transfer_direction dir)
-+{
-+	struct dma_async_tx_descriptor *dma_desc;
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct device *dev = rtd->platform->dev;
 +	int ret;
 +
-+	if (dir == DMA_DEV_TO_MEM)
-+		dma_sconfig.src_addr = apb_add;
-+	else
-+		dma_sconfig.dst_addr = apb_add;
++	/* Set HW params now that initialization is complete */
++	snd_soc_set_runtime_hwparams(substream, &tegra_pcm_hardware);
 +
-+	ret = dmaengine_slave_config(tegra_apb_dma_chan, &dma_sconfig);
-+	if (ret)
++	ret = snd_dmaengine_pcm_open(substream, NULL, NULL);
++	if (ret) {
++		dev_err(dev, "dmaengine pcm open failed with err %d\n", ret);
 +		return ret;
++	}
 +
-+	dma_desc = dmaengine_prep_slave_single(tegra_apb_dma_chan,
-+			tegra_apb_bb_phys, sizeof(u32), dir,
-+			DMA_PREP_INTERRUPT |  DMA_CTRL_ACK);
-+	if (!dma_desc)
++	return 0;
++}
++
++static int tegra_pcm_close(struct snd_pcm_substream *substream)
++{
++	snd_dmaengine_pcm_close(substream);
++	return 0;
++}
++
++static int tegra_pcm_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct device *dev = rtd->platform->dev;
++	struct dma_chan *chan = snd_dmaengine_pcm_get_chan(substream);
++	struct tegra_pcm_dma_params *dmap;
++	struct dma_slave_config slave_config;
++	int ret;
++
++	dmap = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
++
++	ret = snd_hwparams_to_dma_slave_config(substream, params,
++						&slave_config);
++	if (ret) {
++		dev_err(dev, "hw params config failed with err %d\n", ret);
++		return ret;
++	}
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		slave_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++		slave_config.dst_addr = dmap->addr;
++		slave_config.src_maxburst = 0;
++	} else {
++		slave_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
++		slave_config.src_addr = dmap->addr;
++		slave_config.dst_maxburst = 0;
++	}
++	slave_config.slave_id = dmap->req_sel;
++
++	ret = dmaengine_slave_config(chan, &slave_config);
++	if (ret < 0) {
++		dev_err(dev, "dma slave config failed with err %d\n", ret);
++		return ret;
++	}
++
++	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
++	return 0;
++}
++
++static int tegra_pcm_hw_free(struct snd_pcm_substream *substream)
++{
++	snd_pcm_set_runtime_buffer(substream, NULL);
++	return 0;
++}
++
++static int tegra_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		return snd_dmaengine_pcm_trigger(substream,
++					SNDRV_PCM_TRIGGER_START);
++
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		return snd_dmaengine_pcm_trigger(substream,
++					SNDRV_PCM_TRIGGER_STOP);
++	default:
 +		return -EINVAL;
-+
-+	dma_desc->callback = apb_dma_complete;
-+	dma_desc->callback_param = NULL;
-+
-+	INIT_COMPLETION(tegra_apb_wait);
-+
-+	dmaengine_submit(dma_desc);
-+	dma_async_issue_pending(tegra_apb_dma_chan);
-+	ret = wait_for_completion_timeout(&tegra_apb_wait,
-+		msecs_to_jiffies(50));
-+
-+	if (WARN(ret == 0, "apb read dma timed out")) {
-+		dmaengine_terminate_all(tegra_apb_dma_chan);
-+		return -EFAULT;
 +	}
 +	return 0;
 +}
 +
-+static u32 tegra_apb_readl_using_dma(unsigned long offset)
++static int tegra_pcm_mmap(struct snd_pcm_substream *substream,
++				struct vm_area_struct *vma)
 +{
-+	int ret;
++	struct snd_pcm_runtime *runtime = substream->runtime;
 +
-+	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
-+		return tegra_apb_readl_direct(offset);
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+	ret = do_dma_transfer(offset, DMA_DEV_TO_MEM);
-+	if (ret < 0) {
-+		pr_err("error in reading offset 0x%08lx using dma\n", offset);
-+		*(u32 *)tegra_apb_bb = 0;
-+	}
-+	mutex_unlock(&tegra_apb_dma_lock);
-+	return *((u32 *)tegra_apb_bb);
++	return dma_mmap_writecombine(substream->pcm->card->dev, vma,
++					runtime->dma_area,
++					runtime->dma_addr,
++					runtime->dma_bytes);
 +}
 +
-+static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
-+{
-+	int ret;
-+
-+	if (!tegra_apb_dma_chan && !tegra_apb_dma_init()) {
-+		tegra_apb_writel_direct(value, offset);
-+		return;
-+	}
-+
-+	mutex_lock(&tegra_apb_dma_lock);
-+	*((u32 *)tegra_apb_bb) = value;
-+	ret = do_dma_transfer(offset, DMA_MEM_TO_DEV);
-+	if (ret < 0)
-+		pr_err("error in writing offset 0x%08lx using dma\n", offset);
-+	mutex_unlock(&tegra_apb_dma_lock);
-+}
++static struct snd_pcm_ops tegra_pcm_ops = {
++	.open		= tegra_pcm_open,
++	.close		= tegra_pcm_close,
++	.ioctl		= snd_pcm_lib_ioctl,
++	.hw_params	= tegra_pcm_hw_params,
++	.hw_free	= tegra_pcm_hw_free,
++	.trigger	= tegra_pcm_trigger,
++	.pointer	= snd_dmaengine_pcm_pointer,
++	.mmap		= tegra_pcm_mmap,
++};
 +#endif
- #else
- #define tegra_apb_readl_using_dma tegra_apb_readl_direct
- #define tegra_apb_writel_using_dma tegra_apb_writel_direct
+ 
+ static int tegra_pcm_preallocate_dma_buffer(struct snd_pcm *pcm, int stream)
+ {
+diff --git a/sound/soc/tegra/tegra_pcm.h b/sound/soc/tegra/tegra_pcm.h
+index 985d418..a3a4503 100644
+--- a/sound/soc/tegra/tegra_pcm.h
++++ b/sound/soc/tegra/tegra_pcm.h
+@@ -40,6 +40,7 @@ struct tegra_pcm_dma_params {
+ 	unsigned long req_sel;
+ };
+ 
++#if defined(CONFIG_TEGRA_SYSTEM_DMA)
+ struct tegra_runtime_data {
+ 	struct snd_pcm_substream *substream;
+ 	spinlock_t lock;
+@@ -51,6 +52,7 @@ struct tegra_runtime_data {
+ 	struct tegra_dma_req dma_req[2];
+ 	struct tegra_dma_channel *dma_chan;
+ };
++#endif
+ 
+ int tegra_pcm_platform_register(struct device *dev);
+ void tegra_pcm_platform_unregister(struct device *dev);
 -- 
 1.7.1.1
