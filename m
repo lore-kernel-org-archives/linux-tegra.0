@@ -1,31 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v3 1/2] iommu/tegra: smmu: Remove unnecessary sanity check at
-	alloc_pdir()
-Date: Fri, 29 Jun 2012 09:34:21 -0600
-Message-ID: <4FEDCAFD.3070609@wwwdotorg.org>
-References: <20120628.221945.1306825810095951985.hdoyu@nvidia.com>
-	<1340950527-16482-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
+Date: Fri, 29 Jun 2012 10:04:50 -0600
+Message-ID: <4FEDD222.7050905@wwwdotorg.org>
+References: <1340976167-27298-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1340950527-16482-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340976167-27298-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/29/2012 12:15 AM, Hiroshi DOYU wrote:
-> alloc_pdir() is called with smmu->as[?].pdir_page == NULL. No need to
-> check pdir_page again inside alloc_pdir().
+On 06/29/2012 07:22 AM, Alexandre Courbot wrote:
+> Add support for an optional power regulator and enable/disable GPIO.
+> This scheme is commonly used in embedded systems.
 
-Both patches,
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+
+> -	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+> -
+
+That seems like an unrelated change?
+
+> @@ -231,6 +271,22 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+>  	if (data->pwm_period_ns > 0)
+>  		pwm_set_period(pb->pwm, data->pwm_period_ns);
+>  
+> +
+> +	pb->power_reg = devm_regulator_get(&pdev->dev, "power");
+
+There's an extra blank line there.
+
+> +	if (IS_ERR(pb->power_reg))
+> +		return PTR_ERR(pb->power_reg);
+> +
+> +	pb->enable_gpio = -EINVAL;
+> +	if (data->use_enable_gpio) {
+> +		ret = devm_gpio_request_one(&pdev->dev, data->enable_gpio,
+> +				GPIOF_OUT_INIT_HIGH, "backlight_enable");
+> +		if (ret)
+> +			dev_warn(&pdev->dev,
+> +				"error %d requesting control gpio\n", ret);
+
+Shouldn't that be a hard error? If the user specified that some GPIO be
+used, and the GPIO could not be requested, shouldn't the driver fail to
+initialize?
+
+> +		else
+> +			pb->enable_gpio = data->enable_gpio;
+
+Aside from that, this looks good to me.
