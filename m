@@ -1,71 +1,146 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: use dmaengine based dma driver
-Date: Sat, 30 Jun 2012 20:38:29 +0530
-Message-ID: <4FEF166D.2010705@nvidia.com>
-References: <1340969673-7776-1-git-send-email-ldewangan@nvidia.com> <1340969673-7776-2-git-send-email-ldewangan@nvidia.com> <4FEDDF89.1050907@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Sat, 30 Jun 2012 19:54:11 +0200
+Message-ID: <20120630175411.GA23910@avionic-0098.adnet.avionic-design.de>
+References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
+ <20120626160224.40ba10a26e3dd3a56b1f312c@nvidia.com>
+ <20120626140033.GC1115@avionic-0098.mockup.avionic-design.de>
+ <23B010BBA481A74B98487467C29BA57BF2361DA3AA@HKMAIL01.nvidia.com>
+ <4FEA6E09.30800@nvidia.com>
+ <23B010BBA481A74B98487467C29BA57BF2361DA3C4@HKMAIL01.nvidia.com>
+ <4FEA7472.7050201@nvidia.com>
+ <20120627051418.GB7177@avionic-0098.mockup.avionic-design.de>
+ <1340784836.1384.16.camel@antimon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FEDDF89.1050907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1340784836.1384.16.camel@antimon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "tiwai-l3A5Bk7waGM@public.gmane.org" <tiwai-l3A5Bk7waGM@public.gmane.org>, "perex-/Fr2/VpizcU@public.gmane.org" <perex-/Fr2/VpizcU@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 29 June 2012 10:32 PM, Stephen Warren wrote:
-> On 06/29/2012 05:34 AM, Laxman Dewangan wrote:
->> Use the dmaengine based Tegra APB DMA driver for
->> data transfer between SPI fifo and memory in
->> place of legacy Tegra APB DMA.
->>
->> Because generic soc-dmaengine-pcm uses the DMAs API
->> based on dmaengine, using the exported APIs provided
->> by this generic driver.
->>
->> The new driver is selected if legacy driver is not
->> selected and new dma driver is enabled through config
->> file.
-> This works just fine with the existing non-dmaengine DMA driver enabled.
->
-> However, I can't get it to work with dmaengine:
->
->> # aplay ~/abba-dq-48000-stereo.wav
->> [  151.613476] tegra20-i2s tegra20-i2s.0: dmaengine pcm open failed with err -6
->> [  151.620557] tegra20-i2s tegra20-i2s.0: can't open platform tegra20-i2s.0: -6
->> aplay: main:654: audio open error: No such device or address
 
-With the error, it seems that dmachannel is not getting allocated.
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I do have the following in my local tree:
-> 68a67b8 ARM: tegra: add device tree AUXDATA for APBDMA
-> 0db7a96 ARM: tegra: dma: rename driver name for clock to "tegra-apbdma"
->
+On Wed, Jun 27, 2012 at 10:13:56AM +0200, Lucas Stach wrote:
+> Hi all,
+>=20
+> I'm not sure what your exact plans are for the direction in which the
+> DRM driver should head, as I'm still a bit out of the loop as many of
+> those matters were only discussed internally at NVIDIA or with some NDA
+> developers. But I'll still try to get into the discussion.
+>=20
+> Am Mittwoch, den 27.06.2012, 07:14 +0200 schrieb Thierry Reding:
+> > On Tue, Jun 26, 2012 at 08:48:18PM -0600, Stephen Warren wrote:
+> > > On 06/26/2012 08:32 PM, Mark Zhang wrote:
+> > > >> On 06/26/2012 07:46 PM, Mark Zhang wrote:
+> > > >>>>> On Tue, 26 Jun 2012 12:55:13 +0200
+> > > >>>>> Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> > > >> ...
+> > > >>>> I'm not sure I understand how information about the carveout wou=
+ld be
+> > > >>>> obtained from the IOMMU API, though.
+> > > >>>
+> > > >>> I think that can be similar with current gart implementation. Def=
+ine carveout as:
+> > > >>>
+> > > >>> carveout {
+> > > >>>         compatible =3D "nvidia,tegra20-carveout";
+> > > >>>         size =3D <0x10000000>;
+> > > >>> };
+> > > >>>
+> > > >>> Then create a file such like "tegra-carveout.c" to get these defi=
+nitions and
+> > > >> register itself as platform device's iommu instance.
+> > > >>
+> > > >> The carveout isn't a HW object, so it doesn't seem appropriate to =
+define a DT
+> > > >> node to represent it.
+> > > >=20
+> > > > Yes. But I think it's better to export the size of carveout as a co=
+nfigurable item.
+> > > > So we need to define this somewhere. How about define carveout as a=
+ property of gart?
+> > >=20
+> > > There already exists a way of preventing Linux from using certain chu=
+nks
+> > > of memory; the /memreserve/ syntax. From a brief look at the dtc sour=
+ce,
+> > > it looks like /memreserve/ entries can have labels, which implies tha=
+t a
+> > > property in the GART node could refer to the /memreserve/ entry by
+> > > phandle in order to know what memory regions to use.
+> >=20
+> > Wasn't the whole point of using a carveout supposed to be a replacement
+> > for the GART? As such I'd think the carveout should rather be a property
+> > of the host1x device.
+> >=20
+> In my understanding carveout is neither a hardware nor software
+> component. It's just a somewhat special pool of memory. As I pointed out
+> in one of the older mails, carveout can not completely replace GART.
+> While normal allocations for graphics use should be done contiguous,
+> GART allows us to link normal scattered sysram buffers into GPU address
+> space, which is a nice thing to have.
 
-Some dma changes which I sent and already on linux-next are also require 
-with the above change.
-Alsong with that I have local change like to rename the dma driver to 
-compatible with dts files (remove -new from driver).
+Do you agree that this will likely not be a problem with a more or less
+stupid framebuffer DRM driver? I recall you mention that in a 3D context
+where the scattered buffers are for example geometry provided by OpenGL,
+right?
 
-I think I should send that patches so that you can test it by:
-- Taking already applied dma driver change in linux-next.
-- Apply my new patches which I am going to send.
+I think we need to put some thoughts into that once we start to
+implement more advanced features. At that point we may also want to
+think about how to integrate that with TTM.
 
-And do local change in the tegra_defconfig to disable SYSTEM_DMA and 
-enable dmaengine based dma driver.
+> IMHO if carveout is to be used exclusively by the GPU (i.e. the DRM
+> driver) it should be a property of the host1x device.
+>=20
+> > AIUI what we want to do is have a large contiguous region of memory that
+> > a central component (host1x) manages as a pool from which clients (DRM,
+> > V4L, ...) can allocate buffers as needed. Since all of this memory will
+> > be contiguous anyway there isn't much use for the GART anymore.
+> >=20
+> I think this is the wrong way to go. Having a special memory pool
+> managed by some driver adds one more allocator to the kernel, which is
+> clearly not desirable. If we want a special mem region for GPU use, we
+> should not share this memory pool with other components.
+>=20
+> But if we want a mem region for contig allocations used by many
+> components, which seems to be consensus here, CMA is the way to go. In
+> this case I think we don't want to bother with the carveout property at
+> all at the DRM driver level. Such a shared mem region managed by CMA
+> should be defined at a higher level of the device tree.
 
+Okay, this pretty much matches what we've agreed on in another
+subthread. CMA looks like the best option for now as it should
+cover everything we need at present.
 
-> I also fixed the compatible values in drivers/dma/tegra20-apb-dma.c so
-> the driver would get instantiated, which it does;
-> /sys/devices/tegra-apbdma/dma has a bunch of dmaengine channels in it.
->
+Thierry
 
-Possibly some patches in dma driver  which is already applied in next is 
-not available in your tree. CYCLIC_DMA patch is important.
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature
 
-> (Note: This is on Ventana, although I doubt that makes much difference)
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-I tested on cardhu only but it should not matter.
+iQIcBAEBAgAGBQJP7z1DAAoJEN0jrNd/PrOhl04QAKalkC/6k+sZLP3H0WOLq7ep
+w0jh6/tYvcRtljk030JoV1yX1GEmj5EB7TWaCBbXzKRFLQ+RNSM45q+R0kSPYnOY
+LhOO2KV7ib+nJppv5Wi9L9jKTBLwI863MAc4qRG+3gNEjo7T3EmIJ5SmMTbWs5BS
+Gk1E3ljQeunz53tyreBiYvcqVWOTE2VFkwDhol7yZ4gMdokVztQIBTWU4ps1Nv1p
+6Q6v/7aKSmaEFyV/kHBSfV9gEvvCfZu9py6J3Tmw3+lqnuGq8LBEoGXBdAX0XwjW
+7B2hZKSPrTq8cBIsPrmz84Zn+4leQyYNBsE0m3AlMQCxLLx/hutpZzPLL/n23lD+
+7YBM+0E2VFQMSXfB6j5XCTSHt/iQi7hXWfWSE4mjRyGw6Gs+YN11SeGgZw8UNdQu
+cWaqbb09CWSsPPAUzIz5AQDpuKqXQbtb8kz9y8tFW8tmwjliTPFn2LpT1KShtFfU
+BGSiiVjc8wuAF+qSxfhSzZAIVDEzW2IZ+oYPfu6ZLjsClZg5mAWXbmMJHdbm7lNv
+bM/XxtM/hKvctDdxgMLrdJtnfSZ1O3/3ohllnf/7Pa9YI8BhhwFa4LmhKVwgqogN
+9Vhsuq/Ri23Ajxxw3ki43hjEW/WzH1hUpm5Fllz2NNphBVZPxf5A41q0vR9JbVQU
+NTPOQgAmHGSfoVCgjeAz
+=opol
+-----END PGP SIGNATURE-----
 
-> Is there something else I need to do to test this?
+--3MwIy2ne0vdjdPXF--
