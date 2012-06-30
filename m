@@ -1,39 +1,59 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Sat, 30 Jun 2012 12:54:04 +0900
-Message-ID: <4FEE785C.306@nvidia.com>
-References: <1340976167-27298-1-git-send-email-acourbot@nvidia.com> <4FEDD222.7050905@wwwdotorg.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dt: tegra: paz00: add regulators
+Date: Sat, 30 Jun 2012 12:45:17 +0100
+Message-ID: <20120630114517.GV28922@opensource.wolfsonmicro.com>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
+ <1340406842-27135-3-git-send-email-swarren@wwwdotorg.org>
+ <1963397.cqAXgGafFs@ax5200p>
+ <20120624110306.GA16455@sirena.org.uk>
+ <4FEA3942.9040906@wwwdotorg.org>
+ <20120626230235.GX30406@opensource.wolfsonmicro.com>
+ <4FEDE6AE.4080409@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xVUAO+xN0VJlKSe3"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FEDD222.7050905-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4FEDE6AE.4080409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/30/2012 01:04 AM, Stephen Warren wrote:
- >> -	dev_dbg(&pdev->dev, "got pwm for backlight\n");
- >> -
- >
- > That seems like an unrelated change?
 
-Dammit, I hoped that would have gone unnoticed. ;)
+--xVUAO+xN0VJlKSe3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- >> +	pb->enable_gpio = -EINVAL;
- >> +	if (data->use_enable_gpio) {
- >> +		ret = devm_gpio_request_one(&pdev->dev, data->enable_gpio,
- >> +				GPIOF_OUT_INIT_HIGH, "backlight_enable");
- >> +		if (ret)
- >> +			dev_warn(&pdev->dev,
- >> +				"error %d requesting control gpio\n", ret);
- >
- > Shouldn't that be a hard error? If the user specified that some GPIO be
- > used, and the GPIO could not be requested, shouldn't the driver fail to
- > initialize?
+On Fri, Jun 29, 2012 at 11:32:30AM -0600, Stephen Warren wrote:
 
-Yes, you are right.
+> Just FYI, the particular choice of "/" as a separator doesn't work
+> well, because then /sys/kernel/debug/regulator/${regulator-name} can't
+> be created. I guess I'll use a comma. I assume it's not worth fixing
+> the regulator core to s@/@,@ when generating the debugfs filenames?
 
-Thanks,
-Alex.
+I don't think that's sensible, no.
+
+--xVUAO+xN0VJlKSe3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP7ubHAAoJEBus8iNuMP3dU88P/0cbUpDxeRrePqmtutkY3wpV
+fGeP9dRrxT054qUlSOSQS+LPr++ahSoVtE43xi/2o4SvQB9DUt02DOe2Jd9Gbc7K
+KlJnONE7dOeswMMth5EikburZ/3YlNGH9ZaXHE6SvneJOdc8t0l389sL/pXEbatO
+xGTch4uTt5vaSH/61pW4CPEbsJHz5LaSJcGBEK+Q+mOPncWAyBQl2sQiPHhI76Gu
+eU+4MUN2eAbVjNFN1ZvVidtVeLtybZmELoDANQSZu5X3TYFj+aT+XviIU/MV+Wlr
+mJtDM59KllfB4iytlE0Ml5QQNQ5oJtMxf4PsjE8mfAvGV9LyGkldbITFBHrOP4zu
+TrWHP5cWp9qqyL84at8YDFX7NFABXOKkVWZZgna+l0KZwqRwAxdw22fM2WoK4mMa
+kOqHT8c1WUgHIaQdH0wXsrEolPtd0RvS7abvjQ4FBDWkaMwVpeEP2uO8jg8DR2Nh
+GvNNccTtN+986mjf+hjyz9ZCoyduOCsHLvSuiKsBPcDAmAQmQuBVf591OF3fDuG4
+cVXBmtjEHhW/HFFOQWwyntJn4sYu13qxPG2z+TQ1sLhnqZhej0vjwa1RT8CVE26a
+GgtWeK490x2VIp3miGYSFlwcYsMVYk5btuaW21TtypuW1rKISHKDRPWTD0KvvoBf
+z9TS5XDCZUuyVxULpDyd
+=YbMo
+-----END PGP SIGNATURE-----
+
+--xVUAO+xN0VJlKSe3--
