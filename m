@@ -1,68 +1,59 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: use dmaengine based dma driver
-Date: Mon, 2 Jul 2012 13:55:58 +0530
-Message-ID: <4FF15B16.9020903@nvidia.com>
-References: <1340969673-7776-1-git-send-email-ldewangan@nvidia.com> <1340969673-7776-2-git-send-email-ldewangan@nvidia.com> <4FEDDF89.1050907@wwwdotorg.org> <4FEF166D.2010705@nvidia.com>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix unsleepable memory allocation
+Date: Mon, 2 Jul 2012 11:57:47 +0200
+Message-ID: <20120702095747.GB2558@amd.com>
+References: <20120627.124628.673793050413876363.hdoyu@nvidia.com>
+ <1340790841-23349-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FEF166D.2010705-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1340790841-23349-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "tiwai-l3A5Bk7waGM@public.gmane.org" <tiwai-l3A5Bk7waGM@public.gmane.org>, "perex-/Fr2/VpizcU@public.gmane.org" <perex-/Fr2/VpizcU@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 30 June 2012 08:38 PM, Laxman Dewangan wrote:
-> On Friday 29 June 2012 10:32 PM, Stephen Warren wrote:
->> On 06/29/2012 05:34 AM, Laxman Dewangan wrote:
->>> Use the dmaengine based Tegra APB DMA driver for
->>> data transfer between SPI fifo and memory in
->>> place of legacy Tegra APB DMA.
->>>
->>> Because generic soc-dmaengine-pcm uses the DMAs API
->>> based on dmaengine, using the exported APIs provided
->>> by this generic driver.
->>>
->>> The new driver is selected if legacy driver is not
->>> selected and new dma driver is enabled through config
->>> file.
->> This works just fine with the existing non-dmaengine DMA driver enabled.
->>
->> However, I can't get it to work with dmaengine:
->>
->>> # aplay ~/abba-dq-48000-stereo.wav
->>> [  151.613476] tegra20-i2s tegra20-i2s.0: dmaengine pcm open failed with err -6
->>> [  151.620557] tegra20-i2s tegra20-i2s.0: can't open platform tegra20-i2s.0: -6
->>> aplay: main:654: audio open error: No such device or address
-> With the error, it seems that dmachannel is not getting allocated.
->
->> I do have the following in my local tree:
->> 68a67b8 ARM: tegra: add device tree AUXDATA for APBDMA
->> 0db7a96 ARM: tegra: dma: rename driver name for clock to "tegra-apbdma"
->>
-> Some dma changes which I sent and already on linux-next are also require
-> with the above change.
-> Alsong with that I have local change like to rename the dma driver to
-> compatible with dts files (remove -new from driver).
->
-> I think I should send that patches so that you can test it by:
-> - Taking already applied dma driver change in linux-next.
-> - Apply my new patches which I am going to send.
->
-> And do local change in the tegra_defconfig to disable SYSTEM_DMA and
-> enable dmaengine based dma driver.
->
->
-The new dma patches are:
+On Wed, Jun 27, 2012 at 12:54:01PM +0300, Hiroshi DOYU wrote:
+> allo_pdir() is called in smmu_iommu_domain_init() with spin_lock
+> held. memory allocations in it have to be atomic/unsleepable.
+> 
+> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reported-by: Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
+> ---
+>  drivers/iommu/tegra-smmu.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index ecd6790..3f3d09d 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -550,13 +550,13 @@ static int alloc_pdir(struct smmu_as *as)
+>  		return 0;
+>  
+>  	as->pte_count = devm_kzalloc(smmu->dev,
+> -		     sizeof(as->pte_count[0]) * SMMU_PDIR_COUNT, GFP_KERNEL);
+> +		     sizeof(as->pte_count[0]) * SMMU_PDIR_COUNT, GFP_ATOMIC);
+>  	if (!as->pte_count) {
+>  		dev_err(smmu->dev,
+>  			"failed to allocate smmu_device PTE cunters\n");
+>  		return -ENOMEM;
+>  	}
+> -	as->pdir_page = alloc_page(GFP_KERNEL | __GFP_DMA);
+> +	as->pdir_page = alloc_page(GFP_ATOMIC | __GFP_DMA);
+>  	if (!as->pdir_page) {
+>  		dev_err(smmu->dev,
+>  			"failed to allocate smmu_device page directory\n");
 
-  dma: tegra: fix residual calculation for cyclic case
-  dma: tegra: rename driver and compatible to match with dts
+Okay, I queued this one for v3.5. It is small enough so that it counts
+as a fix. The other two patches are 3.6 stuff.
 
-You require dma changes which is already in linux-next:
 
-  dma: tegra: set DMA_CYCLIC capability
-  dma: tegra: do not set transfer desc flag to DMA_CTRL_ACK in cyclic mode
-  dma: tegra: add clk_prepare/clk_unprepare
-  dma: tegra: use sg_dma_address() for getting dma buffer address
-  dma: tegra: add dmaengine based dma driver
+	Joerg
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
