@@ -1,66 +1,46 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: 3ad1308 pwm: tegra: Add device tree support
-Date: Mon, 2 Jul 2012 21:26:14 +0200
-Message-ID: <20120702192614.GB1299@avionic-0098.mockup.avionic-design.de>
-References: <4FF1DC86.1030508@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Conflicts between Tegra PWM tree and common clock patches
+Date: Mon, 02 Jul 2012 13:38:04 -0600
+Message-ID: <4FF1F89C.20907@wwwdotorg.org>
+References: <4FF1DBC8.2000406@wwwdotorg.org> <20120702192454.GA1299@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9zSXsLTf0vkW971A"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FF1DC86.1030508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120702192454.GA1299-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 07/02/2012 01:24 PM, Thierry Reding wrote:
+> On Mon, Jul 02, 2012 at 11:35:04AM -0600, Stephen Warren wrote:
+>> Thierry,
+>> 
+>> The following commits in your PWM tree conflict with some Tegra
+>> clock driver re-structuring that's part of the common clock
+>> conversion on Tegra.
+>> 
+>> df6da47 ARM: tegra: Provide clock for only one PWM controller 
+>> 65e7385 ARM: tegra: Fix PWM clock programming
+>> 
+>> To alleviate this, could we either:
+>> 
+>> a) Remove those two commits from your tree and into the Tegra
+>> tree. I think this won't cause any runtime issues, since Tegra
+>> PWM is a feature we aren't using yet, so it's OK if the branch
+>> it's made to work in is not the PWM branch.
+>> 
+>> b) If your branch is stable, I can merge it into the Tegra tree
+>> in order to resolve the conflicts there. However, for this to
+>> work, you need to 100% guarantee that the branch won't be rebased
+>> between now and when you send Linus a pull request for 3.6.
+> 
+> I'd very much prefer a). Both patches touch only Tegra code anyway
+> so there's no harm to take them through the Tegra tree. Both
+> patches are also not dependent on the PWM framework in any way.
 
---9zSXsLTf0vkW971A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, I'll pick the patches into the Tegra tree as soon as fetching your
+repo shows they aren't there.
 
-On Mon, Jul 02, 2012 at 11:38:14AM -0600, Stephen Warren wrote:
-> Thierry,
->=20
-> Could I ask you to apply a small fix to the following commit in your pwm
-> for-next tree:
->=20
-> 3ad1308 pwm: tegra: Add device tree support
->=20
-> The pwm node is added in the wrong place; the nodes should be sorted
-> numerically by address in the reg property, which would put the addition
-> between serial and i2c, not between i2c and pmc.
-
-I can do that.
-
-> If you're unable to rebase that branch for some reason, I can send an
-> incremental patch to do that.
-
-As mentioned in the other thread, if you carry the two Tegra-specific
-patches I can rebase without a problem.
-
-Thierry
-
---9zSXsLTf0vkW971A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP8fXWAAoJEN0jrNd/PrOhGp8QAJt60gOZ5OmTrtUTV4Nk4pTx
-SuOQfPJrordpqIGKMO6OIZPsTCJLcxLaltik9+aCtZ54sv46qNf62X2iPXz+T1ST
-cAkzT7RVO/0Et0DrNbh0VVg6ktsbGzm+J0hMjwBJHXSzVLu75sy2ZHBiEAy4LNVP
-JIWIKIZLm3zidpmmnGDAVoEMBuUmXnovuGyrI9FgvLGyqEMCt31ysDSP+F8sGrER
-GtGjE7XlIZYojMMPhLWAw0zUnORh3q6/dDLvUFIRvmKst8AI7RwEb4G9S2wfHtwb
-7unPcJh5xnFinHGFuxgCxDmQLN/6SuMQb4UjAKtWPtA9g/t23hdtfJFW/LEl6apD
-TM0uAKaT1auQshObFcwe0rATdzEcBhESe0rZU7Z6+oDeElVhU7fosR1DH6ILcP2a
-D6EdyyuPPn9r8f6dYxHwqKzRHbUhiDsxvKADkWuyXxwmbytAmQfMymBn8m8o0dr2
-AhymC0Vvltr/lEwjIKqXD2rvAfZ3uls7CfY9iOaxUL2s1xo74oeF3CTi3KRqVG2S
-8BD4JL5RexJXeEqbdSZsgn8dYbGChQDjzrC/q3jMCp5S4Tx7DIw+uFrC36L3rRW8
-twFT3E6Jyx/UrlnWx4LJOxg9JLDbw85xwgoMDt3Jf8sZ3NTOOhQjXnFLOn06LqTl
-p8oIRgJpr7K0of4Inb5h
-=ghET
------END PGP SIGNATURE-----
-
---9zSXsLTf0vkW971A--
+Thanks!
