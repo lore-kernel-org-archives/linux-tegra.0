@@ -1,85 +1,94 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Sun, 01 Jul 2012 19:06:01 +0200
-Message-ID: <1341162361.1415.15.camel@antimon>
-References: <20120627051418.GB7177@avionic-0098.mockup.avionic-design.de>
-	<20120627155907.871b2a506374b7db14c202c4@nvidia.com>
-	<20120627140809.GD19319@avionic-0098.mockup.avionic-design.de>
-	<20120627172914.30a2ccfd1344161ca7724722@nvidia.com>
-	<20120627144414.GA20681@avionic-0098.mockup.avionic-design.de>
-	<1340812795.1350.7.camel@antimon>
-	<20120628111253.GC15137@avionic-0098.mockup.avionic-design.de>
-	<4FEC8B91.6010107@wwwdotorg.org> <1340903992.1348.27.camel@antimon>
-	<4FEDAB9F.5040406@nvidia.com>
-	<20120630180143.GA23990@avionic-0098.adnet.avionic-design.de>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
+Date: Mon, 2 Jul 2012 12:35:12 +0900
+Message-ID: <4FF116F0.5070602@nvidia.com>
+References: <1340976167-27298-1-git-send-email-acourbot@nvidia.com> <20120630183742.GE23990@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120630180143.GA23990-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120630183742.GE23990-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QW0gU2Ftc3RhZywgZGVuIDMwLjA2LjIwMTIsIDIwOjAxICswMjAwIHNjaHJpZWIgVGhpZXJyeSBS
-ZWRpbmc6Cj4gT24gRnJpLCBKdW4gMjksIDIwMTIgYXQgMDQ6MjA6MzFQTSArMDMwMCwgVGVyamUg
-QmVyZ3N0csO2bSB3cm90ZToKPiA+IE9uIDI4LjA2LjIwMTIgMjA6MTksIEx1Y2FzIFN0YWNoIHdy
-b3RlOgo+ID4gPiBUVE0gdGhvdWdoIHNvbHZlcyBtb3JlIGFkdmFuY2VkIG1hdHRlcnMsIGxpa2Ug
-YnVmZmVyIHN5bmNocm9uaXNhdGlvbgo+ID4gPiBiZXR3ZWVuIDNEIGFuZCAyRCBibG9jayBvZiBo
-YXJkd2FyZSBvciBzeW5jaW5nIGJ1ZmZlciBhY2Nlc3MgYmV0d2VlbiBHUFUKPiA+ID4gYW5kIENQ
-VS4KPiA+ID4gT25lIG9mIHRoZSBtb3N0IGludGVyZXN0aW5nIHRoaW5ncyBvZiBUVE0gaXMgdGhl
-IGFiaWxpdHkgdG8gcHVyZ2UgdGhlCj4gPiA+IEdQVSBETUEgYnVmZmVycyB0byBzY2F0dGVyZWQg
-c3lzbWVtIG9yIGV2ZW4gc3dhcCB0aGVtIG91dCwgaWYgdGhleSBhcmUKPiA+ID4gbm90IGN1cnJl
-bnRseSB1c2VkIGJ5IHRoZSBHUFUuIEl0IHRoZW4gbWFrZXMgc3VyZSB0byBtb3ZlIHRoZW0gaW4g
-dGhlCj4gPiA+IGNvbnRpZyBzcGFjZSBhZ2FpbiB3aGVuIHRoZSBHUFUgcmVhbGx5IG5lZWRzIHRo
-ZW0gYW5kIGZpeCB1cCB0aGUgR1BVCj4gPiA+IGNvbW1hbmQgc3RyZWFtIHdpdGggdGhlIG5ldyBi
-dWZmZXIgYWRkcmVzcy4KPiA+IAo+ID4gV2UgcHJlZmVyYWJseSBzaG91bGQgY2hvb3NlIGRtYV9i
-dWYgYXMgYSBjb21tb24gaW50ZXJmYWNlIHRvd2FyZHMKPiA+IGJ1ZmZlcnMuIFRoYXQgd2F5IHdo
-YXRldmVyIHdlIGNob29zZSBhcyB0aGUgbWVtb3J5IG1hbmFnZXIsIGFsbCBkbWFfYnVmCj4gPiBh
-d2FyZSBkcml2ZXJzIHdpbGwgYmUgYWJsZSB0byB1c2UgYnVmZmVycyBhbGxvY2F0ZWQgYnkgb3Ro
-ZXIgZHJpdmVycy4KPiA+IAo+ID4gV2UgcHJvYmFibHkgbmVlZCB0byBhY2NvbW1vZGF0ZSBtdWx0
-aXBsZSBtZW1vcnkgbWFuYWdlcnMgdG8gdGFrZSBjYXJlIG9mCj4gPiBsZWdhY3kgYW5kIG5ldyBk
-cml2ZXJzLiBJZiBWNEwyIGFuZCBEUk0gcHJvamVjdHMgYWxsIG1vdmUgdG8gZG1hX2J1Ziwgd2UK
-PiA+IGhhdmUgdGhlIHBvc3NpYmlsaXR5IHRvIGRvIHplcm8tY29weSB2aWRlbyB3aXRob3V0IGZv
-cmNpbmcgZXZlcnlib2R5IHRvCj4gPiB1c2UgdGhlIHNhbWUgbWVtb3J5IG1hbmFnZXIuCj4gCj4g
-SSBhZ3JlZS4gU3VwcG9ydGluZyBETUEgQlVGIGFsc28gZG9lc24ndCBzZWVtIHZlcnkgZGlmZmlj
-dWx0Lgo+IAo+ID4gQXMgSSB1bmRlcnN0YW5kLCBUVE0gaXMgZ29vZCBmb3IgcGxhdGZvcm1zIHdo
-ZXJlIHdlIGhhdmUgYSBzZXBhcmF0ZQo+ID4gZnJhbWUgYnVmZmVyIG1lbW9yeSwgYXMgaXMgdGhl
-IGNhc2Ugd2l0aCBtb3N0IG9mIHRoZSBncmFwaGljcyBjYXJkcy4gSW4KPiA+IFRlZ3JhLCBncmFw
-aGljcyBhbmQgQ1BVIG9jY3VweSB0aGUgc2FtZSBtZW1vcnksIHNvIEknbSBub3Qgc3VyZSBpZiB3
-ZQo+ID4gcmVxdWlyZSB0aGUgbGV2ZWwgb2YgZnVuY3Rpb25hbGl0eSB0aGF0IFRUTSBwcm92aWRl
-cy4gSSBndWVzcyB0aGUgbGV2ZWwKPiA+IG9mIGZ1bmN0aW9uYWxpdHkgYW5kIHRoZSBjb21wbGV4
-aXR5IHRoYXQgaXQgYnJpbmdzIGlzIG9uZSByZWFzb24gd2h5IFRUTQo+ID4gaGFzbid0IHJlYWxs
-eSBjYXVnaHQgb24gaW4gdGhlIEFSTSB3b3JsZC4KPiA+IAo+ID4gVGhlIHN5bmNocm9uaXphdGlv
-biBwcmltaXRpdmVzIGF0dGFjaGVkIHRvIFRUTSBhcmUgc2xpZ2h0bHkgY29uZnVzaW5nLgo+ID4g
-QXQgdGhlIGJvdHRvbSBsZXZlbCwgaXQncyBvcGVyYXRpb25zIHdoaWNoIG5lZWQgdG8gYmUgc3lu
-Y2hyb25pemVkCj4gPiBiZXR3ZWVuIGVhY2ggb3RoZXIuIFRoYXQncyB0aGUgQVBJIGxldmVsIHRo
-YXQgd2Ugc2hvdWxkIHRvIGV4cG9ydCBmcm9tCj4gPiBrZXJuZWwgdG8gdXNlciBzcGFjZS4gSXQn
-cyB0aGVuIHVwIHRvIGxpYmRybSBsZXZlbCAob3Igd2hhdGV2ZXIgaXMgZG9pbmcKPiA+IHRoZSBy
-ZW5kZXJpbmcgaW4gdXNlciBzcGFjZSkgdG8gZGVjaWRlIHdoaWNoIG9wZXJhdGlvbnMgaXQgd2Fu
-dHMgdG8gaGF2ZQo+ID4gY29tcGxldGVkIGJlZm9yZSBhIGJ1ZmZlciBjYW4gYmUgcmV1c2VkL3Jl
-YWQvcGFzc2VkIG9uIHRvIHRoZSBuZXh0IHN0YWdlLgo+ID4gCj4gPiBBbnl3YXksIGlmIHdlIGhp
-ZGUgdGhlIG1lbW9yeSBtYW5hZ2VyIGJlaGluZCBkbWFfYnVmLCB3ZSdyZSBmcmVlIHRvIG11Y2sK
-PiA+IGFyb3VuZCB3aXRoIG11bHRpcGxlIG9mIHRoZW0gYW5kIHNlZSB3aGF0IHdvcmtzIGJlc3Qu
-Cj4gCj4gRXhhY3RseS4gT3RoZXIgc3VidGhyZWFkcyBlY2hvIHRoaXMgYXMgd2VsbC4gVXNpbmcg
-Q01BIHNlZW1zIHRoZSBlYXNpZXN0Cj4gYW5kIG1vc3QgZmxleGlibGUgZm9yIG5vdyBidXQgc3Rp
-bGwgY292ZXJzIGV2ZXJ5dGhpbmcgd2UgbmVlZC4gSWYgaXQKPiB0dXJucyBvdXQgdGhhdCBpdCBp
-c24ndCBzdWl0ZWQgZm9yIG1vcmUgYWR2YW5jZWQgc3R1ZmYgb25jZSB3ZSBzdGFydAo+IHN1cHBv
-cnRpbmcgM0QgdGhlbiB3ZSBjYW4gc3RpbGwgb3B0IGZvciBzb21ldGhpbmcgbGlrZSBUVE0uCj4g
-CkFzIHdvcmtpbmcgY29kZSBpcyB0aGUgcHJpbWFyeSBnb2FsLCBJIHdvdWxkIHNheSBnbyBmb3Ig
-aXQuIEkgc3RpbGwKdGhpbmsgVFRNIGlzIHRoZSB3YXkgdG8gZ28sIGV2ZW4gZm9yIHNpbXBsZSB0
-aGluZ3MgbGlrZSBhIERSTQpmcmFtZWJ1ZmZlciBkcml2ZXIsIGJ1dCBhcyBDTUEgYW5kIFRUTSB3
-b24ndCBjb2xsaWRlIGluIHRoZWlyIGdvYWxzIGl0CnNob3VsZCBiZSBlYXN5IHRvIHB1dCBUVE0g
-aW4gdGhlcmUgYWZ0ZXIgd2UgaGF2ZSBzb21ldGhpbmcgZ29pbmcgd2l0aApDTUEuCgpMdWNhcwoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFp
-bGluZyBsaXN0CmlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMu
-bGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+On 07/01/2012 03:37 AM, Thierry Reding wrote:>> +	ret = 
+of_get_named_gpio(node, "enable-gpios", 0);
+ >> +	if (ret >= 0) {
+ >> +		data->enable_gpio = of_get_named_gpio(node, "enable-gpios", 0);
+ >
+ > Can't you just reuse the value of ret here?
+
+Yes, definitely.
+
+ >> +	pb->enable_gpio = -EINVAL;
+ >
+ > Perhaps initialize this to -1? Assigning standard error codes to a GPIO
+ > doesn't make much sense.
+
+Documentation/gpio.txt states the following:
+
+"If you want to initialize a structure with an invalid GPIO number, use
+some negative number (perhaps "-EINVAL"); that will never be valid."
+
+gpio_is_valid() seems to be happy with any negative value, but -EINVAL 
+seems to be a convention here.
+
+ >> +	/* optional GPIO that enables/disables the backlight */
+ >> +	int enable_gpio;
+ >> +	/* 0 (default initialization value) is a valid GPIO number. Make 
+use of
+ >> +	 * control gpio explicit to avoid bad surprises. */
+ >> +	bool use_enable_gpio;
+ >
+ > It's a shame we have to add workarounds like this...
+
+Yeah, I hate that too. :/ I see nothing better to do unfortunately.
+
+Other remarks from Stephen made me realize that this patch has two major 
+flaws:
+
+1) The GPIO and regulator are fixed, optional entites ; this should 
+cover most cases but is not very flexible.
+2) Some (most?) backlight specify timings between turning power 
+on/enabling PWM/enabling backlight. Even the order of things may be 
+different. This patch totally ignores that.
+
+So instead of having fixed "power-supply" and "enable-gpio" properties, 
+how about having properties describing the power-on and power-off 
+sequences which odd cells alternate between phandles to 
+regulators/gpios/pwm and delays in microseconds before continuing the 
+sequence. For example:
+
+power-on = <&pwm 2 5000000
+	    10000
+	    &backlight_reg
+	    0
+	    &gpio 28 0>;
+power-off = <&gpio 28 0
+	     0
+	     &backlight_reg
+	     10000
+	     &pwm 2 0>;
+
+Here the power-on sequence would translate to, power on the second PWM 
+with a duty-cycle of 5ms, wait 10ms, then enable the backlight regulator 
+and GPIO 28 without delay. Power-off is the exact opposite. The nice 
+thing with this scheme is that you can reorder the sequence at will and 
+support the weirdest setups.
+
+What I don't know (device tree newbie here!) is:
+1) Is it legal to refer the same phandle several times in the same node?
+2) Is it ok to mix phandles of different types with integer values? The 
+DT above compiled, but can you e.g. resolve a regulator phandle in the 
+middle of a property?
+3) Can you "guess" the type of a phandle before parsing it? Here the 
+first phandle is a GPIO, but it could as well be the regulator. Do we 
+have means to know that in the driver code?
+
+Sorry for the long explanation, but I really wonder if doing this is 
+possible at all. If it is, then I think that's the way to do for 
+backlight initialization.
+
+Alex.
