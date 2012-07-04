@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH 4/5] ARM: dt: t30 cardhu: add pinmux, gpio for wlan
-Date: Wed, 4 Jul 2012 17:34:47 +0800
-Message-ID: <1341394488-13169-5-git-send-email-wni@nvidia.com>
+Subject: [PATCH 2/5] ARM: dt: t20 seaboard: add pinmux, gpio for wlan
+Date: Wed, 4 Jul 2012 17:34:45 +0800
+Message-ID: <1341394488-13169-3-git-send-email-wni@nvidia.com>
 References: <1341394488-13169-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,67 +12,28 @@ To: swarren@nvidia.com, olof@lixom.net, ccross@android.com
 Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, ldewangan@nvidia.com, arnd@arndb.de, grant.likely@secretlab.ca, cjb@laptop.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This adds wlan pinmux and gpio settings to the Tegra30 Cardhu device tree.
+This adds wlan pinmux and gpio settings to the Tegra20 Seaboard device tree.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30-cardhu.dts |   30 ++++++++++++++++++++++++++++++
- 1 files changed, 30 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra20-seaboard.dts |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dts b/arch/arm/boot/dts/tegra30-cardhu.dts
-index c169bce..08749cc 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dts
-@@ -31,6 +31,22 @@
- 				nvidia,pull = <2>;
- 				nvidia,tristate = <0>;
- 			};
-+			sdmmc3_clk_pa6 {
-+				nvidia,pins = "sdmmc3_clk_pa6";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			sdmmc3_cmd_pa7 {
-+				nvidia,pins =	"sdmmc3_cmd_pa7",
-+						"sdmmc3_dat0_pb7",
-+						"sdmmc3_dat1_pb6",
-+						"sdmmc3_dat2_pb5",
-+						"sdmmc3_dat3_pb4";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <2>;
-+				nvidia,tristate = <0>;
-+			};
- 			sdmmc4_clk_pcc4 {
- 				nvidia,pins =	"sdmmc4_clk_pcc4",
- 						"sdmmc4_rst_n_pcc3";
-@@ -60,6 +76,15 @@
- 				nvidia,pull = <0>;
- 				nvidia,tristate = <0>;
- 			};
-+			sdio3 {
-+				nvidia,pins = "drive_sdio3";
-+				nvidia,high-speed-mode = <0>;
-+				nvidia,schmitt = <0>;
-+				nvidia,pull-down-strength = <46>;
-+				nvidia,pull-up-strength = <42>;
-+				nvidia,slew-rate-rising = <1>;
-+				nvidia,slew-rate-falling = <1>;
-+			};
- 		};
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 85e621a..f377a61 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -440,6 +440,11 @@
+ 		status = "okay";
  	};
  
-@@ -142,6 +167,11 @@
- 		bus-width = <4>;
- 	};
- 
-+	sdhci@78000400 {
++	sdhci@c8000000 {
 +		status = "okay";
-+		power-gpios = <&gpio 28 0>; /* gpio PD4 */
++		power-gpios = <&gpio 86 0>; /* gpio PK6 */
 +	};
 +
- 	sdhci@78000600 {
+ 	sdhci@c8000400 {
  		status = "okay";
- 		bus-width = <8>;
+ 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
 -- 
 1.7.1
