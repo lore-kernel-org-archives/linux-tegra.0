@@ -1,52 +1,49 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: use dmaengine based dma driver
-Date: Tue, 3 Jul 2012 20:07:46 +0100
-Message-ID: <20120703190746.GB29030@opensource.wolfsonmicro.com>
-References: <1340969673-7776-1-git-send-email-ldewangan@nvidia.com>
- <1340969673-7776-2-git-send-email-ldewangan@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/6] Port Tegra to generic clk framework
+Date: Wed, 4 Jul 2012 11:08:05 +0530
+Message-ID: <4FF3D6BD.1000509@nvidia.com>
+References: <1341313761-22118-1-git-send-email-pgaikwad@nvidia.com> <4FF31DFC.8030708@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qD80nKKiJWXm4UaL"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1340969673-7776-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4FF31DFC.8030708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: tiwai-l3A5Bk7waGM@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-l0cyMroinI0@public.gmane.org" <mturquette-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday 03 July 2012 09:59 PM, Stephen Warren wrote:
+> On 07/03/2012 05:09 AM, Prashant Gaikwad wrote:
+>> This patch set ports Tegra clock code to generic clock framework.
+>>
+>> Depends on
+>> [PATCH v3 0/9] Add clk_prepare/clk_unprepare series
+>> [PATCH] ARM: tegra: Remove second instance of uart clk
+>> [PATCH] dma: tegra: add clk_prepare/clk_unprepare
+>> [PATCH] ARM: tegra: dma: rename driver name for clock to "tegra-apbdma"
+>>
+>> Tested on Ventana and Cardhu
+>>
+>> v2:
+>>   - Rebased on Tegra's for-3.6/common-clk
+> OK, this applies to for-3.6/common-clk without issue now. However, there
+> are still runtime problems:
+>
+> On Tegra20(Ventana), running Tegra's for-next branch with these patches
+> merged in, if I play audio, the sound is much too low a pitch; the I2S
+> clock must be being set too low. Also, if I play the same file twice,
+> once encoded as 48KHz once encoded as 44.1KHz, the pitch is different.
+>
+> On Tegra20(Ventana), running next-20120703 plus a few local patches for
+> regulators plus these common clock patches, then I see the same
+> segfaults during boot that I mentioned before. It seems something in
+> linux-next not in Tegra's for-next branch is breaking the common clock
+> code for us.
 
---qD80nKKiJWXm4UaL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Does these local patches include any changes in clock init table? Is it 
+possible to share the changes?
 
-On Fri, Jun 29, 2012 at 05:04:33PM +0530, Laxman Dewangan wrote:
-> Use the dmaengine based Tegra APB DMA driver for
-> data transfer between SPI fifo and memory in
-> place of legacy Tegra APB DMA.
-
-Applied, thanks.
-
---qD80nKKiJWXm4UaL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP80L5AAoJEBus8iNuMP3dXa0P/2DvVqppo8KzSaFeEyA2afvX
-wcBoJKP8JqS7IvQo+WLI4jsRSbWg+zfCguzyOVBLXLuawUF3Pfy7KSiIUAxrvuJN
-cxthQh0/zk7GYFTpo/nGN5f1gHq4oRd/txodLkW8c15Z1uauIwSus9U+cueVAkHq
-2Kc6qpxJt8yEw3RaQPDYEePHtQUcxJj2a5b/128mnH/a2j4iEkGQ+QG83kv7G5Rp
-iwpYDJ5PpPaPqbvGC4K/fY0mSZHGyD0+nsOpqLR/vLUsIwuRke0gRmVdfhrC4Lgo
-EPGMJcB28N765JqLJ1HN1WKHFH5qgVdoDqX+LGFThTkO0PUDV1pgg/4YWCKlVS64
-uPjPeOqiUprFZg4veT7N0Cqr9QxnIpPDJRE3MQGX7xIgckK9JllKO7gh2DEHuZc4
-LIGQipgWZ2VnX1LwdYiVW5Y7FvT24aI7z23qM7Knedci7osp8r+nhJD6ATRom3/T
-9wYVUUlwE0PEyoCBdtsF5jJLQoLFRoZb2F4/stltQoImM1r6DCqIjuJhu1gfVzzA
-+uv4IbbpcNbwRHvI1ZF7lVSuUzVDMtzLoMVwu7x8wcHry/bL+DWuA/zix+ddwZDz
-jIYBraQmM5ArdXnSBRg3VqYjbjFfyGbf/FjYFQ5888NWSybf2iOwjul3EO2L62sp
-Krfof+PDaCAOoZZJaknZ
-=xG/L
------END PGP SIGNATURE-----
-
---qD80nKKiJWXm4UaL--
+> Neither problem is seen on Cardhu with the same kernels.
+>
+> Can you please investigate and fix these issues? Thanks.
