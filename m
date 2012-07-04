@@ -1,51 +1,40 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] ARM: tegra: enable wireless in defconfig
-Date: Wed, 4 Jul 2012 17:34:48 +0800
-Message-ID: <1341394488-13169-6-git-send-email-wni@nvidia.com>
-References: <1341394488-13169-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH 0/5] ARM: tegra: enable wlan for t20 and t30
+Date: Wed, 4 Jul 2012 17:34:43 +0800
+Message-ID: <1341394488-13169-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1341394488-13169-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: swarren@nvidia.com, olof@lixom.net, ccross@android.com
+Cc: Wei Ni <wni@nvidia.com>, linux@arm.linux.org.uk, arnd@arndb.de, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-New options enabled:
-* WIRELESS: (dependency)
-* CFG80211: (dependency)
-* WLAN: (dependency)
-* BRCMFMAC: wlan driver, enable as module.
+Set up clocks, pinmux, gpios and configs to enable wlan for
+following tegra boards:
+Tegra30: Cardhu.
+Tegra20: Seaboard, Ventana.
 
-Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/configs/tegra_defconfig |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+Wei Ni (5):
+  ARM: tegra: set up wlan clocks for tegra dt
+  ARM: dt: t20 seaboard: add pinmux, gpio for wlan
+  ARM: dt: t20 ventana: add pinmux, gpio for wlan
+  ARM: dt: t30 cardhu: add pinmux, gpio for wlan
+  ARM: tegra: enable wireless in defconfig
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 4be9c1e..c0aa6d9 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -67,7 +67,8 @@ CONFIG_INET6_IPCOMP=y
- CONFIG_IPV6_MIP6=y
- CONFIG_IPV6_TUNNEL=y
- CONFIG_IPV6_MULTIPLE_TABLES=y
--# CONFIG_WIRELESS is not set
-+CONFIG_WIRELESS=y
-+CONFIG_CFG80211=y
- # CONFIG_FIRMWARE_IN_KERNEL is not set
- CONFIG_PROC_DEVICETREE=y
- CONFIG_BLK_DEV_LOOP=y
-@@ -87,7 +88,8 @@ CONFIG_USB_PEGASUS=y
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
--# CONFIG_WLAN is not set
-+CONFIG_WLAN=y
-+CONFIG_BRCMFMAC=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
--- 
-1.7.1
+ arch/arm/boot/dts/tegra20-seaboard.dts |    5 +++++
+ arch/arm/boot/dts/tegra20-ventana.dts  |   20 ++++++++++++++++++--
+ arch/arm/boot/dts/tegra30-cardhu.dts   |   30 ++++++++++++++++++++++++++++++
+ arch/arm/configs/tegra_defconfig       |    6 ++++--
+ arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
+ 6 files changed, 59 insertions(+), 4 deletions(-)
