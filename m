@@ -1,50 +1,64 @@
-From: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Wed, 4 Jul 2012 12:48:40 +0200
-Message-ID: <20120704104840.GJ24458@pengutronix.de>
-References: <1340976167-27298-1-git-send-email-acourbot@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: tegra: set up wlan clocks for tegra dt
+Date: Wed, 4 Jul 2012 19:23:33 +0800
+Message-ID: <1341401013.9009.931.camel@tegra-chromium-2>
+References: <1341394488-13169-1-git-send-email-wni@nvidia.com>
+	 <1341394488-13169-2-git-send-email-wni@nvidia.com>
+	 <6135516.CD1aogiCta@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1340976167-27298-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <6135516.CD1aogiCta@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org" <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Alexandre,
+On Wed, 2012-07-04 at 18:43 +0800, Marc Dietrich wrote:
+> Am Mittwoch, 4. Juli 2012, 17:34:44 schrieb Wei Ni:
+> > Set up the wlan clock tree for Tegra20 and Tegra30.
+> > 
+> > Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
+> >  arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
+> >  2 files changed, 2 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c
+> > b/arch/arm/mach-tegra/board-dt-tegra20.c index 70a19a9..fbcc7d9 100644
+> > --- a/arch/arm/mach-tegra/board-dt-tegra20.c
+> > +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+> > @@ -78,6 +78,7 @@ static __initdata struct tegra_clk_init_table
+> > tegra_dt_clk_init_table[] = { { "pll_a",      "pll_p_out1",   56448000,    
+> >   true },
+> >  	{ "pll_a_out0", "pll_a",        11289600,       true },
+> >  	{ "cdev1",      NULL,           0,              true },
+> > +	{ "blink",      "clk_32k",      32768,          true },
+> 
+> what's the reason to enable this on all boards? Would it make sense to set 
+> this to "false" instead?
 
-On Fri, Jun 29, 2012 at 10:22:47PM +0900, Alexandre Courbot wrote:
-> @@ -221,8 +263,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	dev_dbg(&pdev->dev, "got pwm for backlight\n");
-> -
->  	/*
->  	 * The DT case will set the pwm_period_ns field to 0 and store the
->  	 * period, parsed from the DT, in the PWM device. For the non-DT case,
-> @@ -231,6 +271,22 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  	if (data->pwm_period_ns > 0)
->  		pwm_set_period(pb->pwm, data->pwm_period_ns);
->  
-> +
-> +	pb->power_reg = devm_regulator_get(&pdev->dev, "power");
-> +	if (IS_ERR(pb->power_reg))
-> +		return PTR_ERR(pb->power_reg);
+This clock is used for the wlan device, it need to be enabled, so that
+the wlan device can be powered on, and then the mmc driver can enumerate
+it.
 
-This looses several resources allocated earlier, like the enable gpio
-and the pwm. This is really bad here since I have no regulator specified
-and devm_regulator_get returns with -EPROBE_DEFER. Next time the core
-tries to probe the driver the driver bails out because the gpio and the
-pwm is already requested.
-
-Sascha
-
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> 
+> Marc
+> 
+> 
+> >  	{ "i2s1",       "pll_a_out0",   11289600,       false},
+> >  	{ "i2s2",       "pll_a_out0",   11289600,       false},
+> >  	{ NULL,		NULL,		0,		0},
+> > diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c
+> > b/arch/arm/mach-tegra/board-dt-tegra30.c index 53bf60f..2d73c61 100644
+> > --- a/arch/arm/mach-tegra/board-dt-tegra30.c
+> > +++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+> > @@ -61,6 +61,7 @@ static __initdata struct tegra_clk_init_table
+> > tegra_dt_clk_init_table[] = { { "pll_a_out0",	"pll_a",	11289600,	true },
+> >  	{ "extern1",	"pll_a_out0",	0,		true },
+> >  	{ "clk_out_1",	"extern1",	0,		true },
+> > +	{ "blink",	"clk_32k",	32768,		true },
+> >  	{ "i2s0",	"pll_a_out0",	11289600,	false},
+> >  	{ "i2s1",	"pll_a_out0",	11289600,	false},
+> >  	{ "i2s2",	"pll_a_out0",	11289600,	false},
