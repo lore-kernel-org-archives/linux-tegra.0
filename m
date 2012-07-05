@@ -1,41 +1,74 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Thu, 5 Jul 2012 17:12:28 +0900
-Message-ID: <4FF54C6C.1060700@nvidia.com>
-References: <20120704104840.GJ24458@pengutronix.de> <4FF43692.2040805@nvidia.com> <20120704130056.GC30009@pengutronix.de> <4FF45DDF.9000306@nvidia.com> <20120704152451.GA7333@sirena.org.uk> <4FF4FDC0.8020405@nvidia.com> <20120705062011.GI30009@pengutronix.de> <4FF53368.6090805@nvidia.com> <20120705064742.GL30009@pengutronix.de> <4FF5459F.5090201@nvidia.com> <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH 1/5] ARM: tegra: set up wlan clocks for tegra dt
+Date: Thu, 05 Jul 2012 10:39:56 +0200
+Message-ID: <1721436.iVeh2uNYS7@fb07-iapwap2>
+References: <1341394488-13169-1-git-send-email-wni@nvidia.com> <5111476.afQhu2nTJB@fb07-iapwap2> <1341458294.9009.973.camel@tegra-chromium-2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de>
+In-Reply-To: <1341458294.9009.973.camel@tegra-chromium-2>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+To: Wei Ni <wni@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, "ccross@android.com" <ccross@android.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, "arnd@arndb.de" <arnd@arndb.de>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "cjb@laptop.org" <cjb@laptop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/05/2012 04:57 PM, Thierry Reding wrote:
-> I agree. Non-DT platforms have always used the callbacks to execute this
-> kind of code. As you've said before there are situations where it isn't
-> just about setting a GPIO or enabling a regulator but it also requires a
-> specific timing. Representing this in the platform data would become
-> tedious.
+Am Donnerstag, 5. Juli 2012, 11:18:14 schrieb Wei Ni:
+> On Wed, 2012-07-04 at 19:51 +0800, Marc Dietrich wrote:
+> > Am Mittwoch, 4. Juli 2012, 19:23:33 schrieb Wei Ni:
+> > > On Wed, 2012-07-04 at 18:43 +0800, Marc Dietrich wrote:
+> > > > Am Mittwoch, 4. Juli 2012, 17:34:44 schrieb Wei Ni:
+> > > > > Set up the wlan clock tree for Tegra20 and Tegra30.
+> > > > > 
+> > > > > Signed-off-by: Wei Ni <wni@nvidia.com>
+> > > > > ---
+> > > > > 
+> > > > >  arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
+> > > > >  arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
+> > > > >  2 files changed, 2 insertions(+), 0 deletions(-)
+> > > > > 
+> > > > > diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c
+> > > > > b/arch/arm/mach-tegra/board-dt-tegra20.c index 70a19a9..fbcc7d9
+> > > > > 100644
+> > > > > --- a/arch/arm/mach-tegra/board-dt-tegra20.c
+> > > > > +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+> > > > > @@ -78,6 +78,7 @@ static __initdata struct tegra_clk_init_table
+> > > > > tegra_dt_clk_init_table[] = { { "pll_a",      "pll_p_out1",  
+> > > > > 56448000,
+> > > > > 
+> > > > >   true },
+> > > > >   
+> > > > >  	{ "pll_a_out0", "pll_a",        11289600,       true },
+> > > > >  	{ "cdev1",      NULL,           0,              true },
+> > > > > 
+> > > > > +	{ "blink",      "clk_32k",      32768,          true },
+> > > > 
+> > > > what's the reason to enable this on all boards? Would it make sense to
+> > > > set
+> > > > this to "false" instead?
+> > > 
+> > > This clock is used for the wlan device, it need to be enabled, so that
+> > > the wlan device can be powered on, and then the mmc driver can enumerate
+> > > it.
+> > ...
+> Yes we have thought about this issue.
+> In here we need to enable this clock before loading wifi driver, so that
+> the mmc driver can enumerate it.
+> This likes another thing that the SD controller should be taught how to
+> provide to clients, such as trigger the power/reset gpios. We had talked
+> about it in the:
+> http://www.spinics.net/lists/linux-wireless/msg92093.html
 
-That will settle the whole issue then.
+ah, sorry, I didn't followed this discussion.
 
-> So I think for the DT case you can parse the power-on and power-off
-> sequences directly and execute code based on it, while in non-DT cases
-> the init and exit callbacks should be used instead. I think it even
-> makes sense to reuse the platform data's init and exit functions in the
-> DT case and implement the parser/interpreter within those.
+> And we are trying to provide the tegra clk framework support, so at that
+> time we could set this clock for different boards.
+> 
+> So I suppose we can just dump it into the clk init tables for now.
 
-It totally makes sense indeed.
+ok, thanks for explanation. Let's hope there will be a better solution in the 
+future.
 
-> I case where the regulator comes from a DT it should assume that it will
-> become available at some point, so -EPROBE_DEFER is correct. However if
-> the DT doesn't even contain the power-supply property, then EPROBE_DEFER
-> will never work because there's no regulator to become available.
+Thanks!
 
-Indeed. And as Sascha mentionned this could easily be fixed. Guess I can 
-also submit a patch for that while I am at it.
-
-Alex.
+Marc
