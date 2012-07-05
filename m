@@ -1,43 +1,50 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Thu, 05 Jul 2012 10:03:58 -0600
-Message-ID: <4FF5BAEE.3020403@wwwdotorg.org>
-References: <20120704104840.GJ24458@pengutronix.de> <4FF43692.2040805@nvidia.com> <20120704130056.GC30009@pengutronix.de> <4FF45DDF.9000306@nvidia.com> <20120704152451.GA7333@sirena.org.uk> <4FF4FDC0.8020405@nvidia.com> <20120705062011.GI30009@pengutronix.de> <4FF53368.6090805@nvidia.com> <20120705064742.GL30009@pengutronix.de> <4FF5459F.5090201@nvidia.com> <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de> <4FF54C6C.1060700@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 0/6] Port Tegra to generic clk framework
+Date: Thu, 05 Jul 2012 12:49:39 -0600
+Message-ID: <4FF5E1C3.6070309@wwwdotorg.org>
+References: <1341482120-3317-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FF54C6C.1060700@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Sascha Hauer <s.hauer@pengutronix.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1341482120-3317-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: mturquette-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/05/2012 02:12 AM, Alex Courbot wrote:
-> On 07/05/2012 04:57 PM, Thierry Reding wrote:
->> I agree. Non-DT platforms have always used the callbacks to execute this
->> kind of code. As you've said before there are situations where it isn't
->> just about setting a GPIO or enabling a regulator but it also requires a
->> specific timing. Representing this in the platform data would become
->> tedious.
-> 
-> That will settle the whole issue then.
-> 
->> So I think for the DT case you can parse the power-on and power-off
->> sequences directly and execute code based on it, while in non-DT cases
->> the init and exit callbacks should be used instead. I think it even
->> makes sense to reuse the platform data's init and exit functions in the
->> DT case and implement the parser/interpreter within those.
-> 
-> It totally makes sense indeed.
+On 07/05/2012 03:55 AM, Prashant Gaikwad wrote:
+> This patch set ports Tegra clock code to generic clock framework.
 
-I don't agree here. It'd be best if non-DT and DT cases worked as
-similarly as possible. Relying on callbacks in one case and
-data-parsed-from-DT in the other isn't consistent with that. After all,
-in the DT case, you parse some data out of the DT and into some data
-structure. In the non-DT case, you can have that data structure passed
-in directly using platform data. Now, there's certainly a need to
-continue to support callbacks for backwards compatibility, at the very
-least temporarily before all clients are converted to the new model, but
-requiring different models rather than simply allowing it seems like a
-bad idea to me.
+Unfortunately, this series causes some regressions, so I can't apply it
+now. Given that, it won't make 3.6 since I won't be around to apply it.
+
+I tested both Tegra's for-next, and next-20120705, both plus this
+series, next-20120705 plus the fix for the common clock code
+__clk_set_parent() issue.
+
+The following all appeared to work OK:
+
+Cardhu DT
+Ventana DT
+Seaboard DT
+Springbank DT
+Harmony DT
+Harmony non-DT
+
+However, the following failed, all(?) in ways that prevented the system
+getting to the login prompt:
+
+Whistler DT
+AC100 DT
+AC100 non-DT
+Trimslice DT
+Trimslice non-DT
+
+(The one slight difference between the 2 branches I tested is that AC100
+and Trimslice booted using DT passed in next-20120705 but failed only in
+Tegra's for-next. Otherwise, all results were identical)
+
+I'll try to investigate what the issues are since I imagine you don't
+have access to these boards. But, I probably won't be able to fix this
+until I return from vacation.
