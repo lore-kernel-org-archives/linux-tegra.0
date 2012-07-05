@@ -1,74 +1,63 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH 1/5] ARM: tegra: set up wlan clocks for tegra dt
-Date: Thu, 05 Jul 2012 10:39:56 +0200
-Message-ID: <1721436.iVeh2uNYS7@fb07-iapwap2>
-References: <1341394488-13169-1-git-send-email-wni@nvidia.com> <5111476.afQhu2nTJB@fb07-iapwap2> <1341458294.9009.973.camel@tegra-chromium-2>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/6] Port Tegra to generic clk framework
+Date: Thu, 5 Jul 2012 15:25:14 +0530
+Message-ID: <1341482120-3317-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1341458294.9009.973.camel@tegra-chromium-2>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, "ccross@android.com" <ccross@android.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, "arnd@arndb.de" <arnd@arndb.de>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "cjb@laptop.org" <cjb@laptop.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mturquette-l0cyMroinI0@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, 5. Juli 2012, 11:18:14 schrieb Wei Ni:
-> On Wed, 2012-07-04 at 19:51 +0800, Marc Dietrich wrote:
-> > Am Mittwoch, 4. Juli 2012, 19:23:33 schrieb Wei Ni:
-> > > On Wed, 2012-07-04 at 18:43 +0800, Marc Dietrich wrote:
-> > > > Am Mittwoch, 4. Juli 2012, 17:34:44 schrieb Wei Ni:
-> > > > > Set up the wlan clock tree for Tegra20 and Tegra30.
-> > > > > 
-> > > > > Signed-off-by: Wei Ni <wni@nvidia.com>
-> > > > > ---
-> > > > > 
-> > > > >  arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
-> > > > >  arch/arm/mach-tegra/board-dt-tegra30.c |    1 +
-> > > > >  2 files changed, 2 insertions(+), 0 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c
-> > > > > b/arch/arm/mach-tegra/board-dt-tegra20.c index 70a19a9..fbcc7d9
-> > > > > 100644
-> > > > > --- a/arch/arm/mach-tegra/board-dt-tegra20.c
-> > > > > +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-> > > > > @@ -78,6 +78,7 @@ static __initdata struct tegra_clk_init_table
-> > > > > tegra_dt_clk_init_table[] = { { "pll_a",      "pll_p_out1",  
-> > > > > 56448000,
-> > > > > 
-> > > > >   true },
-> > > > >   
-> > > > >  	{ "pll_a_out0", "pll_a",        11289600,       true },
-> > > > >  	{ "cdev1",      NULL,           0,              true },
-> > > > > 
-> > > > > +	{ "blink",      "clk_32k",      32768,          true },
-> > > > 
-> > > > what's the reason to enable this on all boards? Would it make sense to
-> > > > set
-> > > > this to "false" instead?
-> > > 
-> > > This clock is used for the wlan device, it need to be enabled, so that
-> > > the wlan device can be powered on, and then the mmc driver can enumerate
-> > > it.
-> > ...
-> Yes we have thought about this issue.
-> In here we need to enable this clock before loading wifi driver, so that
-> the mmc driver can enumerate it.
-> This likes another thing that the SD controller should be taught how to
-> provide to clients, such as trigger the power/reset gpios. We had talked
-> about it in the:
-> http://www.spinics.net/lists/linux-wireless/msg92093.html
+This patch set ports Tegra clock code to generic clock framework.
 
-ah, sorry, I didn't followed this discussion.
+Depends on
+[PATCH v3 0/9] Add clk_prepare/clk_unprepare series
+[PATCH] ARM: tegra: Remove second instance of uart clk
+[PATCH] dma: tegra: add clk_prepare/clk_unprepare
+[PATCH] ARM: tegra: dma: rename driver name for clock to "tegra-apbdma"
 
-> And we are trying to provide the tegra clk framework support, so at that
-> time we could set this clock for different boards.
-> 
-> So I suppose we can just dump it into the clk init tables for now.
+Depends on following fix currently in clk-fixes for 3.5-rc6
+http://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=commit;h=863b13271f1608ab3af6f7a371047d9a66693e38
 
-ok, thanks for explanation. Let's hope there will be a better solution in the 
-future.
+Tested on Ventana and Cardhu.
 
-Thanks!
+v3:
+ - Fix Tegra20 pll clk round rate.
+ - Fix Tegra30 periph clk ref count check.
 
-Marc
+v2:
+ - Rebased on Tegra's for-3.6/common-clk.
+
+Prashant Gaikwad (6):
+  ARM: tegra30: Separate out clk ops and clk data
+  ARM: tegra20: Separate out clk ops and clk data
+  ARM: tegra: Rename tegra20 clock file
+  ARM: tegra: Add clk_tegra structure and helper functions
+  ARM: tegra: Port tegra to generic clock framework
+  ARM: tegra: Remove duplicate code
+
+ arch/arm/Kconfig                          |    1 +
+ arch/arm/mach-tegra/Makefile              |    4 +-
+ arch/arm/mach-tegra/clock.c               |  570 +------
+ arch/arm/mach-tegra/clock.h               |   40 +-
+ arch/arm/mach-tegra/common.c              |    1 -
+ arch/arm/mach-tegra/include/mach/clk.h    |    3 +
+ arch/arm/mach-tegra/tegra20_clocks.c      | 1526 +++++++++++++++++
+ arch/arm/mach-tegra/tegra20_clocks.h      |   41 +
+ arch/arm/mach-tegra/tegra20_clocks_data.c | 1113 +++++++++++++
+ arch/arm/mach-tegra/tegra2_clocks.c       | 2484 ----------------------------
+ arch/arm/mach-tegra/tegra30_clocks.c      | 2559 ++++++++++-------------------
+ arch/arm/mach-tegra/tegra30_clocks.h      |   53 +
+ arch/arm/mach-tegra/tegra30_clocks_data.c | 1370 +++++++++++++++
+ 13 files changed, 4991 insertions(+), 4774 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/tegra20_clocks.c
+ create mode 100644 arch/arm/mach-tegra/tegra20_clocks.h
+ create mode 100644 arch/arm/mach-tegra/tegra20_clocks_data.c
+ delete mode 100644 arch/arm/mach-tegra/tegra2_clocks.c
+ create mode 100644 arch/arm/mach-tegra/tegra30_clocks.h
+ create mode 100644 arch/arm/mach-tegra/tegra30_clocks_data.c
+
+-- 
+1.7.4.1
