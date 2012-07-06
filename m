@@ -1,71 +1,52 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 5/5] ARM: tegra: enable wireless in defconfig
-Date: Fri, 06 Jul 2012 09:42:00 -0600
-Message-ID: <4FF70748.9090100@wwwdotorg.org>
-References: <1341394488-13169-1-git-send-email-wni@nvidia.com>  <1341394488-13169-6-git-send-email-wni@nvidia.com>  <4FF5F20F.2050005@wwwdotorg.org> <1341544095.3484.33.camel@tegra-chromium-2>
+Subject: Re: [PATCH v3 0/6] Port Tegra to generic clk framework
+Date: Fri, 06 Jul 2012 10:15:18 -0600
+Message-ID: <4FF70F16.50205@wwwdotorg.org>
+References: <1341482120-3317-1-git-send-email-pgaikwad@nvidia.com> <4FF5E1C3.6070309@wwwdotorg.org> <4FF6F7CF.9000405@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1341544095.3484.33.camel@tegra-chromium-2>
+In-Reply-To: <4FF6F7CF.9000405-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org" <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-l0cyMroinI0@public.gmane.org" <mturquette-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/05/2012 09:08 PM, Wei Ni wrote:
-> On Fri, 2012-07-06 at 03:59 +0800, Stephen Warren wrote:
->> On 07/04/2012 03:34 AM, Wei Ni wrote:
->>> New options enabled:
->>> * WIRELESS: (dependency)
->>> * CFG80211: (dependency)
->>> * WLAN: (dependency)
->>> * BRCMFMAC: wlan driver, enable as module.
+On 07/06/2012 08:35 AM, Prashant Gaikwad wrote:
+> On Friday 06 July 2012 12:19 AM, Stephen Warren wrote:
+>> On 07/05/2012 03:55 AM, Prashant Gaikwad wrote:
+>>> This patch set ports Tegra clock code to generic clock framework.
+> <snip>
+>> (The one slight difference between the 2 branches I tested is that AC100
+>> and Trimslice booted using DT passed in next-20120705 but failed only in
+>> Tegra's for-next. Otherwise, all results were identical)
 >>
->>> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
->>
->>> +CONFIG_BRCMFMAC=m
->>
->> Why does this need to be a module? Everything else in tegra_defconfig is
->> built-in, and it'd be nice to be consistent here. Built-in makes
->> net-booting new kernels from U-Boot much easier, since there aren't any
->> modules to copy.
->>
->> When I built a kernel with this series, I observed the following:
->>
->> CONFIG_BRCMFMAC=m
->>
->> * Neither Cardhu nor Ventana auto-load the module. When the module is
->> manually modprobe'd, I still see no wireless device being created.
->>
->> CONFIG_BRCMFMAC=y
->>
->> * Cardhu: No wireless device created. I do see some kernel spew such as
->> "mmc1: queuing unknown CIS tuple 0x80" which I believe is the SDIO
->> device being probed, but I don't see any Linux device being created.
->>
->> * Ventana: There's a 60s hang during boot, I believe related to the BRCM
->> driver, since the hang doesn't occur without the series.
->>
->> In summary, this series doesn't work at all for me. Can you please
->> explain what you tested and how? Are there any differences between the
->> various Cardhu and Ventana board revisions and/or the 2 different
->> wireless cards possible on Cardhu that'd explain this?
+>> I'll try to investigate what the issues are since I imagine you don't
+>> have access to these boards. But, I probably won't be able to fix this
+>> until I return from vacation.
 > 
-> I have verified this patch, it can work on these boards.
-> The t30/t20 version on my Cardhu and Ventana is A02, the wireless chip
-> is bcm4329. I didn't test on other boards, and I'm not sure if the
-> bcm4330 can work.
-> When you test, you need to copy the latest brcmfmac firmware to the
-> filesystem.
-> Please get it from:
-> http://linuxwireless.org/en/users/Drivers/brcm80211#Firmware_installation-1
+> Stephen,
 > 
-> You can run "ifconfig -a" to show the "wlan0" device.
+> Can you please try removing "late_initcall(clk_disable_unused);" from
+> drivers/clk/clk.c?
+> It will keep unused clocks enabled. If it works then there should not be
+> any regression in this patch series but need to enable some board
+> specific clock.
 
-Yes, I realized this after Marc mentioned the firmware loading.
+On Whistler using next-20120705, that did help a bit; the board actually
+boots to the login prompt in the usual amount of time rather than
+hanging before even detecting the root filesystem.
 
-I did copy the firmware from our Linux4Tegra releases, but that made no
-difference. I'll try again with the different firmware version you
-emailed me downstream (although I'm not sure why there are multiple
-versions of the firmware...)
+However, there is obviously still some problem with I2C accesses, since
+neither the pca953x nor wm8753 drivers are able to communicate with
+their devices.
+
+Re: the DT-vs-non-DT differences, it's most likely because only parts of
+the clock initialization table are common (in common.c) and parts are in
+board-${boardname}.c (for non-DT) or board-dt-tegra*.c (for DT). I'm
+looking forward to when we can just put all the clock setup in the
+board-specific .dts files:-)
+
+I'll investigate more later (where most later might mostly be in 2 weeks
+after I return from vacation)
