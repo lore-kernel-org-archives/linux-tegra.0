@@ -1,38 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Fri, 06 Jul 2012 13:59:13 -0600
-Message-ID: <4FF74391.5040004@wwwdotorg.org>
-References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de> <20120705121506.GA23732@avionic-0098.mockup.avionic-design.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [GIT PULL V2 0/7] ARM: tegra: pull requests for 3.6
+Date: Fri, 6 Jul 2012 20:31:01 +0000
+Message-ID: <201207062031.01998.arnd@arndb.de>
+References: <1341600482-11020-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120705121506.GA23732-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <1341600482-11020-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/05/2012 06:15 AM, Thierry Reding wrote:
-> Here's a new proposal that should address all issues collected
-> during the discussion of the previous one:
+On Friday 06 July 2012, Stephen Warren wrote:
+> This is Tegra's pull requests for v3.6.
 > 
-> From tegra20.dtsi:
-...
+> Changes in V2:
+> * Split for-3.6/{fixes,soc} to remove their dependency.
+> * Split for-3.6/{dt,boards} to remove their dependency.
+> * Added example merge resolution branches for the conflicts when merging
+>   the above pairs of branches.
 
-At a quick glance, that all seems pretty reasonable now.
+Pulled all of those, thanks for redoing the series so quickly!
 
-> One problem I've come across when trying to get some rudimentary
-> code working with this is that there's no longer a device which the
-> DRM driver can bind to, because the top-level device (host1x) now
-> has a separate driver.
+I pulled both the fixes and the cleanup branch into the arm-soc next/cleanup
+one, because I usually like the fixes to come even before the cleanups, but
+I think that's fine.
 
-Can't you just have the host1x driver trigger the instantiation of the
-DRM driver? In other words, the host1x node is both the plain host1x
-driver and the DRM driver. So, after initializing anything for host1x
-itself, just end host1x's probe() with something a call to
-drm_platform_init(), passing in host1x's own pdev.
+The merge conflicts were really trivial compared to other things I'm used
+to, so there is no need to provide an example merge in cases like this,
+git mergetool handles those just fine.
 
-After all, it seems like the whole point of representing host1x in the
-DT is to expose the graphics HW, so you'd need the DRM device in that
-case.
+I appreciate the comments for each pull request, I copied them into the
+merge changeset description where it makes sense. This would be even easier
+if you used signed tags because then you can put the text directly into
+the tag message and I don't have to copy it.
+
+Good job also on getting to the point where you can easily add support
+for a new board using DT.
+
+	Arnd
