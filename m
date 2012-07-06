@@ -1,80 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL V2 6/7] ARM: tegra: for-3.6/common-clk branch
-Date: Fri,  6 Jul 2012 12:48:01 -0600
-Message-ID: <1341600482-11020-7-git-send-email-swarren@wwwdotorg.org>
-References: <1341600482-11020-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Fri, 06 Jul 2012 13:59:13 -0600
+Message-ID: <4FF74391.5040004@wwwdotorg.org>
+References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de> <20120705121506.GA23732@avionic-0098.mockup.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1341600482-11020-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20120705121506.GA23732-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This branch contains numerous changes required as a baseline in order to
-convert Tegra to the common clock framework. The intention was to also
-include patches to actually convert Tegra to the common clock framework.
-However, those patches appeared late in the kernel cycle and currently cause
-regressions on some boards, so were dropped for now.
+On 07/05/2012 06:15 AM, Thierry Reding wrote:
+> Here's a new proposal that should address all issues collected
+> during the discussion of the previous one:
+> 
+> From tegra20.dtsi:
+...
 
-This branch depends only on v3.5-rc2.
+At a quick glance, that all seems pretty reasonable now.
 
-This branch is not included in a later pull request.
+> One problem I've come across when trying to get some rudimentary
+> code working with this is that there's no longer a device which the
+> DRM driver can bind to, because the top-level device (host1x) now
+> has a separate driver.
 
-----------------------------------------------------------------
+Can't you just have the host1x driver trigger the instantiation of the
+DRM driver? In other words, the host1x node is both the plain host1x
+driver and the DRM driver. So, after initializing anything for host1x
+itself, just end host1x's probe() with something a call to
+drm_platform_init(), passing in host1x's own pdev.
 
-The following changes since commit cfaf025112d3856637ff34a767ef785ef5cf2ca9:
-
-  Linux 3.5-rc2
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/common-clk
-
-for you to fetch changes up to 094479915618c526a1409dd6704bcb4ff2c5c1c2:
-
-  ARM: tegra: Provide clock for only one PWM controller
-
-----------------------------------------------------------------
-
-Laxman Dewangan (1):
-      ARM: tegra: dma: rename driver name for clock to "tegra-apbdma"
-
-Prashant Gaikwad (10):
-      ARM: tegra: add clk_prepare/clk_unprepare
-      i2c: tegra: Add clk_prepare/clk_unprepare
-      mmc: tegra: add clk_prepare/clk_unprepare
-      USB: ehci-tegra: add clk_prepare/clk_unprepare
-      Input: tegra-kbc - add clk_prepare/clk_unprepare
-      spi/tegra: add clk_prepare/clk_unprepare
-      staging: nvec: add clk_prepare/clk_unprepare
-      ASoC: tegra: add clk_prepare/clk_unprepare
-      crypto: add clk_prepare/clk_unprepare
-      ARM: tegra: Remove second instance of uart clk
-
-Simon Que (1):
-      ARM: tegra: Fix PWM clock programming
-
-Thierry Reding (1):
-      ARM: tegra: Provide clock for only one PWM controller
-
- arch/arm/mach-tegra/cpu-tegra.c      |    6 +-
- arch/arm/mach-tegra/dma.c            |    4 +-
- arch/arm/mach-tegra/pcie.c           |    6 +-
- arch/arm/mach-tegra/powergate.c      |    4 +-
- arch/arm/mach-tegra/tegra2_clocks.c  |   58 +++++++++++++++++++---------
- arch/arm/mach-tegra/tegra30_clocks.c |   28 ++++++--------
- arch/arm/mach-tegra/timer.c          |    4 +-
- arch/arm/mach-tegra/usb_phy.c        |   16 ++++----
- drivers/crypto/tegra-aes.c           |   12 +++---
- drivers/i2c/busses/i2c-tegra.c       |   10 ++--
- drivers/input/keyboard/tegra-kbc.c   |    4 +-
- drivers/mmc/host/sdhci-tegra.c       |    6 +-
- drivers/spi/spi-tegra.c              |    4 +-
- drivers/staging/nvec/nvec.c          |    8 ++--
- drivers/usb/host/ehci-tegra.c        |   20 +++++-----
- sound/soc/tegra/tegra20_i2s.c        |    4 +-
- sound/soc/tegra/tegra20_spdif.c      |    4 +-
- sound/soc/tegra/tegra30_ahub.c       |    8 ++--
- sound/soc/tegra/tegra30_i2s.c        |    4 +-
- sound/soc/tegra/tegra_asoc_utils.c   |   12 +++---
- 20 files changed, 119 insertions(+), 103 deletions(-)
+After all, it seems like the whole point of representing host1x in the
+DT is to expose the graphics HW, so you'd need the DRM device in that
+case.
