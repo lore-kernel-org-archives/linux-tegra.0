@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL V2 5/7] ARM: tegra: for-3.6/boards branch
-Date: Fri,  6 Jul 2012 12:48:00 -0600
-Message-ID: <1341600482-11020-6-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL V2 4/7] ARM: tegra: for-3.6/dt branch
+Date: Fri,  6 Jul 2012 12:47:59 -0600
+Message-ID: <1341600482-11020-5-git-send-email-swarren@wwwdotorg.org>
 References: <1341600482-11020-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1341600482-11020-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,17 +10,11 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch contains changes to Tegra board files, and related Kconfig and
-Makefile changes. Highlights include:
+This branch contains changes to Tegra device tree files, and related Kconfig
+and Makefile changes. Highlights are:
 
-* Removal of Seaboard/Springbank board files; these boards can now only be
-  used with device tree.
-
-* Use of small parts of some non-DT board files from the DT board files. This
-  enables all features that the non-DT board files have, when booting from DT.
-  This will allow almost complete removal of all non-DT board files in v3.7.
-
-* Other miscellaneous changes.
+* New support for the Whistler board.
+* Use of the I2C pinctrl-based bus mux on Seaboard/Springbank.
 
 This branch is based on Tegra's for-3.6/cleanup branch from a previous pull
 request.
@@ -38,40 +32,21 @@ The following changes since commit 702b0e4f2f2782962aab7d9a0a40ad68770bb1f6:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/boards
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/dt
 
-for you to fetch changes up to 2553dcc6e603e3833990bd3a29bee98d1dbdf251:
+for you to fetch changes up to 0879c5f72f0a3905d08081e8a2c38e69896b0d5e:
 
-  ARM: tegra: use of_default_bus_match_table
+  ARM: dt: tegra seaboard: move battery monitor to mux'd I2C bus.
 
 ----------------------------------------------------------------
 
-Laxman Dewangan (1):
-      ARM: tegra: add device tree AUXDATA for APBDMA
+Stephen Warren (3):
+      ARM: dt: tegra: add Whistler device tree file
+      ARM: dt: tegra: seaboard: instantiate pinctrl-based I2C bus mux
+      ARM: dt: tegra seaboard: move battery monitor to mux'd I2C bus.
 
-Stephen Warren (7):
-      ARM: tegra: make .dts compilation depend on Tegra2 support
-      ARM: tegra: remove CONFIG_MACH_TEGRA_DT
-      ARM: tegra: remove Seaboard board files
-      ARM: tegra: trimslice: enable PCIe when booting from device tree
-      ARM: tegra: harmony: init regulators, PCIe when booting from DT
-      ARM: tegra: paz00: enable WiFi rfkill when booting from device tree
-      ARM: tegra: use of_default_bus_match_table
-
- arch/arm/Kconfig                            |    1 +
- arch/arm/mach-tegra/Kconfig                 |   36 ---
- arch/arm/mach-tegra/Makefile                |   13 +-
- arch/arm/mach-tegra/Makefile.boot           |   10 +-
- arch/arm/mach-tegra/board-dt-tegra20.c      |   74 +++++-
- arch/arm/mach-tegra/board-dt-tegra30.c      |    8 +-
- arch/arm/mach-tegra/board-harmony-pcie.c    |   15 +-
- arch/arm/mach-tegra/board-harmony-power.c   |   25 ++-
- arch/arm/mach-tegra/board-paz00.c           |    7 +-
- arch/arm/mach-tegra/board-seaboard-pinmux.c |  197 --------------
- arch/arm/mach-tegra/board-seaboard.c        |  306 ----------------------
- arch/arm/mach-tegra/board-seaboard.h        |   47 ----
- arch/arm/mach-tegra/board.h                 |    9 +
- 13 files changed, 127 insertions(+), 621 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
- delete mode 100644 arch/arm/mach-tegra/board-seaboard.c
- delete mode 100644 arch/arm/mach-tegra/board-seaboard.h
+ arch/arm/boot/dts/tegra20-seaboard.dts |   85 ++++++--
+ arch/arm/boot/dts/tegra20-whistler.dts |  301 +++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile.boot      |    1 +
+ 3 files changed, 371 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra20-whistler.dts
