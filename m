@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL V2 2/7] ARM: tegra: for-3.6/fixes branch
-Date: Fri,  6 Jul 2012 12:47:57 -0600
-Message-ID: <1341600482-11020-3-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL V2 5/7] ARM: tegra: for-3.6/boards branch
+Date: Fri,  6 Jul 2012 12:48:00 -0600
+Message-ID: <1341600482-11020-6-git-send-email-swarren@wwwdotorg.org>
 References: <1341600482-11020-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1341600482-11020-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,15 +10,25 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch contains various small bug-fixes to Tegra code.
+This branch contains changes to Tegra board files, and related Kconfig and
+Makefile changes. Highlights include:
+
+* Removal of Seaboard/Springbank board files; these boards can now only be
+  used with device tree.
+
+* Use of small parts of some non-DT board files from the DT board files. This
+  enables all features that the non-DT board files have, when booting from DT.
+  This will allow almost complete removal of all non-DT board files in v3.7.
+
+* Other miscellaneous changes.
 
 This branch is based on Tegra's for-3.6/cleanup branch from a previous pull
 request.
 
 This branch is not included in a later pull request.
 
-Note that there will be a merge conflict between for-3.6/{fixes,soc}. The
-expected resolution may be found in branch for-3.6/merged-fixes-soc.
+Note that there will be a merge conflict between for-3.6/{dt,boards}. The
+expected resolution may be found in branch for-3.6/merged-dt-boards.
 
 ----------------------------------------------------------------
 
@@ -28,21 +38,40 @@ The following changes since commit 702b0e4f2f2782962aab7d9a0a40ad68770bb1f6:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/boards
 
-for you to fetch changes up to 95ef9958849381931a79ecec53e677e52c406c5a:
+for you to fetch changes up to 2553dcc6e603e3833990bd3a29bee98d1dbdf251:
 
-  ARM: tegra: build powergate unconditionally
+  ARM: tegra: use of_default_bus_match_table
 
 ----------------------------------------------------------------
 
-Roland Stigge (1):
-      ARM: tegra: Fix dts files w/ status property: "disable" -> "disabled"
+Laxman Dewangan (1):
+      ARM: tegra: add device tree AUXDATA for APBDMA
 
-Wolfram Sang (1):
-      ARM: tegra: build powergate unconditionally
+Stephen Warren (7):
+      ARM: tegra: make .dts compilation depend on Tegra2 support
+      ARM: tegra: remove CONFIG_MACH_TEGRA_DT
+      ARM: tegra: remove Seaboard board files
+      ARM: tegra: trimslice: enable PCIe when booting from device tree
+      ARM: tegra: harmony: init regulators, PCIe when booting from DT
+      ARM: tegra: paz00: enable WiFi rfkill when booting from device tree
+      ARM: tegra: use of_default_bus_match_table
 
- arch/arm/boot/dts/tegra20.dtsi |   36 ++++++++++++++++----------------
- arch/arm/boot/dts/tegra30.dtsi |   38 +++++++++++++++++-----------------
- arch/arm/mach-tegra/Makefile   |    2 +-
- 3 files changed, 38 insertions(+), 38 deletions(-)
+ arch/arm/Kconfig                            |    1 +
+ arch/arm/mach-tegra/Kconfig                 |   36 ---
+ arch/arm/mach-tegra/Makefile                |   13 +-
+ arch/arm/mach-tegra/Makefile.boot           |   10 +-
+ arch/arm/mach-tegra/board-dt-tegra20.c      |   74 +++++-
+ arch/arm/mach-tegra/board-dt-tegra30.c      |    8 +-
+ arch/arm/mach-tegra/board-harmony-pcie.c    |   15 +-
+ arch/arm/mach-tegra/board-harmony-power.c   |   25 ++-
+ arch/arm/mach-tegra/board-paz00.c           |    7 +-
+ arch/arm/mach-tegra/board-seaboard-pinmux.c |  197 --------------
+ arch/arm/mach-tegra/board-seaboard.c        |  306 ----------------------
+ arch/arm/mach-tegra/board-seaboard.h        |   47 ----
+ arch/arm/mach-tegra/board.h                 |    9 +
+ 13 files changed, 127 insertions(+), 621 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/board-seaboard-pinmux.c
+ delete mode 100644 arch/arm/mach-tegra/board-seaboard.c
+ delete mode 100644 arch/arm/mach-tegra/board-seaboard.h
