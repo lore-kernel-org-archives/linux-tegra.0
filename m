@@ -1,52 +1,51 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 0/6] Port Tegra to generic clk framework
-Date: Fri, 06 Jul 2012 10:15:18 -0600
-Message-ID: <4FF70F16.50205@wwwdotorg.org>
-References: <1341482120-3317-1-git-send-email-pgaikwad@nvidia.com> <4FF5E1C3.6070309@wwwdotorg.org> <4FF6F7CF.9000405@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL 2/7] ARM: tegra: for-3.6/fixes branch
+Date: Fri,  6 Jul 2012 10:46:43 -0600
+Message-ID: <1341593208-17914-2-git-send-email-swarren@wwwdotorg.org>
+References: <1341593208-17914-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FF6F7CF.9000405-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1341593208-17914-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-l0cyMroinI0@public.gmane.org" <mturquette-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/06/2012 08:35 AM, Prashant Gaikwad wrote:
-> On Friday 06 July 2012 12:19 AM, Stephen Warren wrote:
->> On 07/05/2012 03:55 AM, Prashant Gaikwad wrote:
->>> This patch set ports Tegra clock code to generic clock framework.
-> <snip>
->> (The one slight difference between the 2 branches I tested is that AC100
->> and Trimslice booted using DT passed in next-20120705 but failed only in
->> Tegra's for-next. Otherwise, all results were identical)
->>
->> I'll try to investigate what the issues are since I imagine you don't
->> have access to these boards. But, I probably won't be able to fix this
->> until I return from vacation.
-> 
-> Stephen,
-> 
-> Can you please try removing "late_initcall(clk_disable_unused);" from
-> drivers/clk/clk.c?
-> It will keep unused clocks enabled. If it works then there should not be
-> any regression in this patch series but need to enable some board
-> specific clock.
+This branch contains various small bug-fixes to Tegra code.
 
-On Whistler using next-20120705, that did help a bit; the board actually
-boots to the login prompt in the usual amount of time rather than
-hanging before even detecting the root filesystem.
+This branch is based on Tegra's for-3.6/cleanup branch from the previous pull
+request.
 
-However, there is obviously still some problem with I2C accesses, since
-neither the pca953x nor wm8753 drivers are able to communicate with
-their devices.
+This branch is included in a later pull request.
 
-Re: the DT-vs-non-DT differences, it's most likely because only parts of
-the clock initialization table are common (in common.c) and parts are in
-board-${boardname}.c (for non-DT) or board-dt-tegra*.c (for DT). I'm
-looking forward to when we can just put all the clock setup in the
-board-specific .dts files:-)
+----------------------------------------------------------------
 
-I'll investigate more later (where most later might mostly be in 2 weeks
-after I return from vacation)
+The following changes since commit 702b0e4f2f2782962aab7d9a0a40ad68770bb1f6:
+
+  ARM: dt: tegra: rename board files to match SoC
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.6/fixes
+
+for you to fetch changes up to 8994c34c194d5f59f014d3c3b90eb677672ddb03:
+
+  ARM: tegra: apbio access using dma for tegra20 only
+
+----------------------------------------------------------------
+
+Laxman Dewangan (1):
+      ARM: tegra: apbio access using dma for tegra20 only
+
+Roland Stigge (1):
+      ARM: tegra: Fix dts files w/ status property: "disable" -> "disabled"
+
+Wolfram Sang (1):
+      ARM: tegra: build powergate unconditionally
+
+ arch/arm/boot/dts/tegra20.dtsi |   36 ++++++++++----------
+ arch/arm/boot/dts/tegra30.dtsi |   38 +++++++++++-----------
+ arch/arm/mach-tegra/Makefile   |    5 ++-
+ arch/arm/mach-tegra/apbio.c    |   59 ++++++++++++++++++++++++++++++++---
+ arch/arm/mach-tegra/apbio.h    |   19 +----------
+ arch/arm/mach-tegra/common.c   |    3 ++
+ 6 files changed, 98 insertions(+), 62 deletions(-)
