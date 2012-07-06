@@ -1,70 +1,39 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cardhu: add dt entry for PMIC TPS65911.
-Date: Fri, 6 Jul 2012 15:37:42 +0530
-Message-ID: <4FF6B8EE.1030507@nvidia.com>
-References: <1341414479-6446-1-git-send-email-ldewangan@nvidia.com> <4FF5E803.7000304@wwwdotorg.org>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 0/6] Port Tegra to generic clk framework
+Date: Fri, 6 Jul 2012 20:05:59 +0530
+Message-ID: <4FF6F7CF.9000405@nvidia.com>
+References: <1341482120-3317-1-git-send-email-pgaikwad@nvidia.com> <4FF5E1C3.6070309@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FF5E803.7000304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <4FF5E1C3.6070309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "mturquette-l0cyMroinI0@public.gmane.org" <mturquette-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 06 July 2012 12:46 AM, Stephen Warren wrote:
-> On 07/04/2012 09:07 AM, Laxman Dewangan wrote:
->> Tegra30 based platform "cardhu" have the power management
->> IC TPS65911 for the regulator.
->> Adding DT entry for this device.
->>
->> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> I recall there were some differences between Cardhu A02 and A04. Does
-> this patch apply equally to both?
-
-Yes, this piece is common. I already sent the splitting A02 and A04 
-which is having some differences in the fixed regulator GPIOs. It is 
-pending for internal review.
-
-> Please have a look at the recent threads re: various Tegra20 boards'
-> regulator .dts files, and see the results at:
+On Friday 06 July 2012 12:19 AM, Stephen Warren wrote:
+> On 07/05/2012 03:55 AM, Prashant Gaikwad wrote:
+>> This patch set ports Tegra clock code to generic clock framework.
+<snip>
+> (The one slight difference between the 2 branches I tested is that AC100
+> and Trimslice booted using DT passed in next-20120705 but failed only in
+> Tegra's for-next. Otherwise, all results were identical)
 >
-> git://nv-tegra.nvidia.com/user/swarren/linux-2.6 linux-next_common
->
-> Most of these comments are driven by comments made in the review of
-> those patches.
->
-> In the patch description, can you please specify where you got all the
-> values from, and any discrepancies.
+> I'll try to investigate what the issues are since I imagine you don't
+> have access to these boards. But, I probably won't be able to fix this
+> until I return from vacation.
 
-Ok, I will do.
+Stephen,
 
->> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dts b/arch/arm/boot/dts/tegra30-cardhu.dts
->> +				vdd1_reg: regulator@0 {
->> +					reg =<0>;
->> +					regulator-compatible = "vdd1";
->> +					regulator-name = "vdd_1v2_gen";
-> It'd be good to list all the signals that these regulators drive
-> directly; the schematics "rename" the signals quite a lot.
+Can you please try removing "late_initcall(clk_disable_unused);" from 
+drivers/clk/clk.c?
+It will keep unused clocks enabled. If it works then there should not be 
+any regression in this patch series but need to enable some board 
+specific clock.
 
-Will add wherever it is possible.
-
->> +					regulator-min-microvolt =<  600000>;
->> +					regulator-max-microvolt =<1500000>;
-> Similarly, the contraints should list the exact voltage that's required
-> of the regulators, not a range. Right now, there is no DVFS in the
-> mainline kernel, so even for rails where DVFS could be used in the
-> future, we should specify the single voltage we want these rails to run
-> at without DVFS for now.
->
-Fine, will provide the one voltage.
->> +					regulator-always-on;
->> +					regulator-boot-on;
-> These properties aren't in the same order in all the nodes. It'd be nice
-> to have them ordered the same way everywhere.
->
-> I'm not sure if it really makes sense to specify regulator-boot-on,
-> since there's no way to know what SW has run before the kernel which
-> might have turned off the regulator; regulator-always-on seems to cover
-> all necessary use-cases.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
