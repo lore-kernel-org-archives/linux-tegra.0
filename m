@@ -1,107 +1,87 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 03/15] ARM: tegra: use fixed PCI i/o mapping
-Date: Fri, 06 Jul 2012 15:01:41 -0600
-Message-ID: <4FF75235.2050104@wwwdotorg.org>
-References: <1341600040-30993-1-git-send-email-robherring2@gmail.com> <1341600040-30993-4-git-send-email-robherring2@gmail.com> <4FF74028.6090300@wwwdotorg.org> <4FF74689.8070103@gmail.com> <4FF74789.8000804@wwwdotorg.org> <4FF74C61.4060903@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: Tegra DRM device tree bindings
+Date: Sun, 8 Jul 2012 07:53:06 +0200
+Message-ID: <20120708055306.GA5186@avionic-0098.mockup.avionic-design.de>
+References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
+ <20120705121506.GA23732@avionic-0098.mockup.avionic-design.de>
+ <4FF74391.5040004@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FF74C61.4060903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4FF74391.5040004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-(cutting down CCs for Tegra-specific discussion)
 
-On 07/06/2012 02:36 PM, Stephen Warren wrote:
-> On 07/06/2012 02:16 PM, Stephen Warren wrote:
->> On 07/06/2012 02:11 PM, Rob Herring wrote:
->>> On 07/06/2012 02:44 PM, Stephen Warren wrote:
->>>> On 07/06/2012 12:40 PM, Rob Herring wrote:
->>>>> From: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
->>>>>
->>>>> Move tegra PCI to fixed i/o mapping and remove io.h.
->>>>
->>>> Thierry, since you're the Tegra PCIe expert right now, could you please
->>>> test and/or comment on this.
->>>>
->>>> I did try testing this on next-20120705 on TrimSlice (i.e. the
->>>> PCIe-based Ethernet controller), but found that PCIe has stopped working
->>>> there due to "resource collisions". I know this used to work fairly
->>>> recently, since I tested it when I added the PCIe initialization call to
->>>> board-dt-tegra20.c. The PCIe messages are:
->>>
->>> This is with my change and it works currently without?
->>
->> Sorry, no, it's broken even without your change. Hence, I can't test the
->> impact of your change. Well, I saw the same failure with your patches
->> too, but that isn't really conclusive testing of your change:-)
-> 
-> Aha. The PCIe problem only shows up when booting TrimSlice using DT (in
-> next-20120705 or Tegra's for-next branch).
-> 
-> When booting using board files, PCIe works, both without and with your
-> patch, on top of next-20120705.
-> 
-> So, your patches are tested on Tegra and still working.
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I haven't root-caused it, but I have found what changed that triggered
-the problem:
+On Fri, Jul 06, 2012 at 01:59:13PM -0600, Stephen Warren wrote:
+> On 07/05/2012 06:15 AM, Thierry Reding wrote:
+> > Here's a new proposal that should address all issues collected
+> > during the discussion of the previous one:
+> >=20
+> > From tegra20.dtsi:
+> ...
+>=20
+> At a quick glance, that all seems pretty reasonable now.
+>=20
+> > One problem I've come across when trying to get some rudimentary
+> > code working with this is that there's no longer a device which the
+> > DRM driver can bind to, because the top-level device (host1x) now
+> > has a separate driver.
+>=20
+> Can't you just have the host1x driver trigger the instantiation of the
+> DRM driver? In other words, the host1x node is both the plain host1x
+> driver and the DRM driver. So, after initializing anything for host1x
+> itself, just end host1x's probe() with something a call to
+> drm_platform_init(), passing in host1x's own pdev.
+>=20
+> After all, it seems like the whole point of representing host1x in the
+> DT is to expose the graphics HW, so you'd need the DRM device in that
+> case.
 
-When I first wrote the patch to board-dt-tegra20.c that brought DT
-booting up to feature parity with non-DT boot, IIRC, I wrote a
-late_initcall() to run whatever code I added. I'm sure I tested
-TrimSlice PCIe when booting using DT then, since that was the whole
-point of the patch.
+The reason that I've been hesitating is that host1x isn't related only
+to graphics HW but is also required to make f.e. video input work. So I
+can imagine a setup where for instance you need only video input and
+send captured data via the network. If host1x registered the DRM driver
+it would imply that setups that don't require any output would still
+have the whole DRM initialized.
 
-Later, I revised the patch to sit on top of Shawn Guo's .init_late
-machine descriptor patch, and ran the code from there instead. However,
-this appears to have broken PCIe on Trimslice; I must have screwed up
-the testing of that change. I don't know why this causes a behavior
-difference though; perhaps some resource acquisition race condition.
+I did post a proposal to solve this problem, which doesn't seem Tegra
+specific, to dri-devel last week. But if nobody else thinks it's a
+problem to use host1x then I'll just use that as the easy way out. If
+this happens to cause problems at some point in the future we can always
+address it then. If host1x is tightly coupled to DRM then I think we can
+also keep the driver with the rest of the DRM code.
 
-But just reverting that change doesn't fix the problem; I need to switch
-to a *subsys*_initcall() instead (which is in fact what the Trimslice
-board file uses for PCIe init). In other words:
+Thierry
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c
-b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 70a19a9..74aefaf 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -145,19 +145,20 @@ static struct {
- #endif
- };
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature
 
--static void __init tegra_dt_init_late(void)
-+static int __init tegra_dt_init_late(void)
- {
- 	int i;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
--	tegra_init_late();
--
- 	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
- 		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
- 			board_init_funcs[i].init();
- 			break;
- 		}
- 	}
-+
-+	return 0;
- }
-+subsys_initcall(tegra_dt_init_late);
+iQIcBAEBAgAGBQJP+SBCAAoJEN0jrNd/PrOh0lcP/1vd6v0+4fzbPdTGujK1c6PA
+wjTYtOONav1v1diLVXuSaJgG4v6IxLWJ1w8uCNIGltFPKkzK0YZHTkCZn28Y0syo
+M9TuoPRzy+okcowJb7JuACvbbxJVt7+tTYu8HWHVFfXlPwvG4P5ysiduWPm/NUdG
+3CRUAtlIckYPZdvb4Gh/pRFP4ahFZVC95Ox5idkRIcBaWroor/GCvTiDYxntZKEo
+tdrU99g84y/BH6qBEjunSbaTaRciMygD65BHVGb05sq4uFIH1Tc6cBXIRbUzdZcd
+Jy5P9Wjdtprms4fSrOqPiUBD0zCTvicSu5WGswPEFDKDLlPMmaLXhrj9IqoWpJNV
+fpzDO+1Z8/WDnykXRqS6aoMLDCrncEOvRqybofqAulOSiukbJTYmcw1cEKinrNQv
+MJzbFWBuP3tsnLVE+t+9AypGEPWwca9m+eytrPNNmJDbcsfgUAs0yWKScbhKoY2M
+MOo08RyLBkCuCGk0AqCs1Z7lVlhgSyEMmtyYGqgEV+ePt6J0XtDRqlyATCAhmULv
+UwPYYu2sn7xHJ+yow06mHR2jFTlod9cBW2DgTst0v7MFob2a1sEZtG0eHVFW7yt2
+FfyQQ2EAqErC60QGb/Yw1a4gA6ZdmP1Ovn/Y4T2Np0iWRM5wfHqXFi9xkNKyxNRI
+XOLWA7LJX89rfFqEfJQV
+=dJsp
+-----END PGP SIGNATURE-----
 
- static const char *tegra20_dt_board_compat[] = {
- 	"nvidia,tegra20",
-@@ -171,7 +172,7 @@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegra20
-(Flattened Device Tree)")
- 	.handle_irq	= gic_handle_irq,
- 	.timer		= &tegra_timer,
- 	.init_machine	= tegra_dt_init,
--	.init_late	= tegra_dt_init_late,
-+	.init_late	= tegra_init_late,
- 	.restart	= tegra_assert_system_reset,
- 	.dt_compat	= tegra20_dt_board_compat,
- MACHINE_END
+--azLHFNyN32YCQGCU--
