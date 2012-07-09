@@ -1,77 +1,48 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Mon, 09 Jul 2012 14:19:40 +0900
-Message-ID: <00ae01cd5d92$70d1f9f0$5275edd0$%han@samsung.com>
-References: <20120704104840.GJ24458@pengutronix.de>
- <4FF43692.2040805@nvidia.com> <20120704130056.GC30009@pengutronix.de>
- <4FF45DDF.9000306@nvidia.com> <20120704152451.GA7333@sirena.org.uk>
- <4FF4FDC0.8020405@nvidia.com> <20120705062011.GI30009@pengutronix.de>
- <4FF53368.6090805@nvidia.com> <20120705064742.GL30009@pengutronix.de>
- <4FF5459F.5090201@nvidia.com>
- <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de>
- <4FF54C6C.1060700@nvidia.com> <4FF5BAEE.3020403@wwwdotorg.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC][PATCHv2 0/3] Power sequences interpreter for pwm_backlight
+Date: Mon, 9 Jul 2012 15:08:22 +0900
+Message-ID: <1341814105-20690-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4FF5BAEE.3020403@wwwdotorg.org>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Alex Courbot' <acourbot@nvidia.com>
-Cc: 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Sascha Hauer' <s.hauer@pengutronix.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This is a RFC since this patch largely drifted beyond its original goal
+of supporting one GPIO and one regulator for the pwm_backlight driver.
 
+The issue to address is that backlight power sequences, which were
+implemented using board-specific callbacks so far, could not be used with
+the device tree. This series of patches adds a small power sequence 
+interpreter that allows to acquire and control regulators, GPIOs, and PWMs
+during sequences defined in the device tree. It is easy to use,
+low-footprint, and takes care of managing the resources that it acquires.
 
-> -----Original Message-----
-> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-owner@vger.kernel.org] On Behalf Of Stephen
-> Warren
-> Sent: Friday, July 06, 2012 1:04 AM
-> To: Alex Courbot
-> Cc: Thierry Reding; Sascha Hauer; Mark Brown; linux-tegra@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-fbdev@vger.kernel.org
-> Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-> 
-> On 07/05/2012 02:12 AM, Alex Courbot wrote:
-> > On 07/05/2012 04:57 PM, Thierry Reding wrote:
-> >> I agree. Non-DT platforms have always used the callbacks to execute this
-> >> kind of code. As you've said before there are situations where it isn't
-> >> just about setting a GPIO or enabling a regulator but it also requires a
-> >> specific timing. Representing this in the platform data would become
-> >> tedious.
-> >
-> > That will settle the whole issue then.
-> >
-> >> So I think for the DT case you can parse the power-on and power-off
-> >> sequences directly and execute code based on it, while in non-DT cases
-> >> the init and exit callbacks should be used instead. I think it even
-> >> makes sense to reuse the platform data's init and exit functions in the
-> >> DT case and implement the parser/interpreter within those.
-> >
-> > It totally makes sense indeed.
-> 
-> I don't agree here. It'd be best if non-DT and DT cases worked as
-> similarly as possible. Relying on callbacks in one case and
-> data-parsed-from-DT in the other isn't consistent with that. After all,
-> in the DT case, you parse some data out of the DT and into some data
-> structure. In the non-DT case, you can have that data structure passed
-> in directly using platform data. Now, there's certainly a need to
-> continue to support callbacks for backwards compatibility, at the very
-> least temporarily before all clients are converted to the new model, but
-> requiring different models rather than simply allowing it seems like a
-> bad idea to me.
+The implementation is working and should be complete, but documentation is
+lacking. Also since the interpreter could be used by other drivers (which
+ones?), it may make sense to have it in a better place than
+drivers/video/backlight/.
 
-Hi Alex Courbot,
+The tegra device tree nodes are just here as an example usage.
 
-I couldn't agree with Stephen Warren more.
-Could you support DT and non-DT case for backwards compatibility?
+Alexandre Courbot (3):
+  Power sequences interpreter for device tree
+  pwm-backlight: use power sequences
+  tegra: add pwm backlight device tree nodes
 
-Best regards,
-Jingoo Han
+ .../bindings/video/backlight/pwm-backlight.txt     |  28 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |  31 +++
+ arch/arm/boot/dts/tegra20.dtsi                     |   2 +-
+ drivers/video/backlight/Makefile                   |   2 +-
+ drivers/video/backlight/power_seq.c                | 298 +++++++++++++++++++++
+ drivers/video/backlight/pwm_bl.c                   | 212 +++++++++++----
+ include/linux/power_seq.h                          |  96 +++++++
+ include/linux/pwm_backlight.h                      |  37 ++-
+ 8 files changed, 645 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/video/backlight/power_seq.c
+ create mode 100644 include/linux/power_seq.h
 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.7.11.1
