@@ -1,87 +1,77 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Tegra DRM device tree bindings
-Date: Sun, 8 Jul 2012 07:53:06 +0200
-Message-ID: <20120708055306.GA5186@avionic-0098.mockup.avionic-design.de>
-References: <20120626105513.GA9552@avionic-0098.mockup.avionic-design.de>
- <20120705121506.GA23732@avionic-0098.mockup.avionic-design.de>
- <4FF74391.5040004@wwwdotorg.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH] pwm-backlight: add regulator and GPIO support
+Date: Mon, 09 Jul 2012 14:19:40 +0900
+Message-ID: <00ae01cd5d92$70d1f9f0$5275edd0$%han@samsung.com>
+References: <20120704104840.GJ24458@pengutronix.de>
+ <4FF43692.2040805@nvidia.com> <20120704130056.GC30009@pengutronix.de>
+ <4FF45DDF.9000306@nvidia.com> <20120704152451.GA7333@sirena.org.uk>
+ <4FF4FDC0.8020405@nvidia.com> <20120705062011.GI30009@pengutronix.de>
+ <4FF53368.6090805@nvidia.com> <20120705064742.GL30009@pengutronix.de>
+ <4FF5459F.5090201@nvidia.com>
+ <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de>
+ <4FF54C6C.1060700@nvidia.com> <4FF5BAEE.3020403@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FF74391.5040004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <4FF5BAEE.3020403@wwwdotorg.org>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Alex Courbot' <acourbot@nvidia.com>
+Cc: 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Sascha Hauer' <s.hauer@pengutronix.de>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 06, 2012 at 01:59:13PM -0600, Stephen Warren wrote:
-> On 07/05/2012 06:15 AM, Thierry Reding wrote:
-> > Here's a new proposal that should address all issues collected
-> > during the discussion of the previous one:
-> >=20
-> > From tegra20.dtsi:
-> ...
->=20
-> At a quick glance, that all seems pretty reasonable now.
->=20
-> > One problem I've come across when trying to get some rudimentary
-> > code working with this is that there's no longer a device which the
-> > DRM driver can bind to, because the top-level device (host1x) now
-> > has a separate driver.
->=20
-> Can't you just have the host1x driver trigger the instantiation of the
-> DRM driver? In other words, the host1x node is both the plain host1x
-> driver and the DRM driver. So, after initializing anything for host1x
-> itself, just end host1x's probe() with something a call to
-> drm_platform_init(), passing in host1x's own pdev.
->=20
-> After all, it seems like the whole point of representing host1x in the
-> DT is to expose the graphics HW, so you'd need the DRM device in that
-> case.
+> -----Original Message-----
+> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-owner@vger.kernel.org] On Behalf Of Stephen
+> Warren
+> Sent: Friday, July 06, 2012 1:04 AM
+> To: Alex Courbot
+> Cc: Thierry Reding; Sascha Hauer; Mark Brown; linux-tegra@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-fbdev@vger.kernel.org
+> Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
+> 
+> On 07/05/2012 02:12 AM, Alex Courbot wrote:
+> > On 07/05/2012 04:57 PM, Thierry Reding wrote:
+> >> I agree. Non-DT platforms have always used the callbacks to execute this
+> >> kind of code. As you've said before there are situations where it isn't
+> >> just about setting a GPIO or enabling a regulator but it also requires a
+> >> specific timing. Representing this in the platform data would become
+> >> tedious.
+> >
+> > That will settle the whole issue then.
+> >
+> >> So I think for the DT case you can parse the power-on and power-off
+> >> sequences directly and execute code based on it, while in non-DT cases
+> >> the init and exit callbacks should be used instead. I think it even
+> >> makes sense to reuse the platform data's init and exit functions in the
+> >> DT case and implement the parser/interpreter within those.
+> >
+> > It totally makes sense indeed.
+> 
+> I don't agree here. It'd be best if non-DT and DT cases worked as
+> similarly as possible. Relying on callbacks in one case and
+> data-parsed-from-DT in the other isn't consistent with that. After all,
+> in the DT case, you parse some data out of the DT and into some data
+> structure. In the non-DT case, you can have that data structure passed
+> in directly using platform data. Now, there's certainly a need to
+> continue to support callbacks for backwards compatibility, at the very
+> least temporarily before all clients are converted to the new model, but
+> requiring different models rather than simply allowing it seems like a
+> bad idea to me.
 
-The reason that I've been hesitating is that host1x isn't related only
-to graphics HW but is also required to make f.e. video input work. So I
-can imagine a setup where for instance you need only video input and
-send captured data via the network. If host1x registered the DRM driver
-it would imply that setups that don't require any output would still
-have the whole DRM initialized.
+Hi Alex Courbot,
 
-I did post a proposal to solve this problem, which doesn't seem Tegra
-specific, to dri-devel last week. But if nobody else thinks it's a
-problem to use host1x then I'll just use that as the easy way out. If
-this happens to cause problems at some point in the future we can always
-address it then. If host1x is tightly coupled to DRM then I think we can
-also keep the driver with the rest of the DRM code.
+I couldn't agree with Stephen Warren more.
+Could you support DT and non-DT case for backwards compatibility?
 
-Thierry
+Best regards,
+Jingoo Han
 
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP+SBCAAoJEN0jrNd/PrOh0lcP/1vd6v0+4fzbPdTGujK1c6PA
-wjTYtOONav1v1diLVXuSaJgG4v6IxLWJ1w8uCNIGltFPKkzK0YZHTkCZn28Y0syo
-M9TuoPRzy+okcowJb7JuACvbbxJVt7+tTYu8HWHVFfXlPwvG4P5ysiduWPm/NUdG
-3CRUAtlIckYPZdvb4Gh/pRFP4ahFZVC95Ox5idkRIcBaWroor/GCvTiDYxntZKEo
-tdrU99g84y/BH6qBEjunSbaTaRciMygD65BHVGb05sq4uFIH1Tc6cBXIRbUzdZcd
-Jy5P9Wjdtprms4fSrOqPiUBD0zCTvicSu5WGswPEFDKDLlPMmaLXhrj9IqoWpJNV
-fpzDO+1Z8/WDnykXRqS6aoMLDCrncEOvRqybofqAulOSiukbJTYmcw1cEKinrNQv
-MJzbFWBuP3tsnLVE+t+9AypGEPWwca9m+eytrPNNmJDbcsfgUAs0yWKScbhKoY2M
-MOo08RyLBkCuCGk0AqCs1Z7lVlhgSyEMmtyYGqgEV+ePt6J0XtDRqlyATCAhmULv
-UwPYYu2sn7xHJ+yow06mHR2jFTlod9cBW2DgTst0v7MFob2a1sEZtG0eHVFW7yt2
-FfyQQ2EAqErC60QGb/Yw1a4gA6ZdmP1Ovn/Y4T2Np0iWRM5wfHqXFi9xkNKyxNRI
-XOLWA7LJX89rfFqEfJQV
-=dJsp
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
