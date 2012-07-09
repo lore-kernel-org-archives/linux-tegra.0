@@ -1,24 +1,38 @@
 From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] pwm-backlight: add regulator and GPIO support
-Date: Mon, 9 Jul 2012 15:12:21 +0900
-Message-ID: <4FFA7645.4050107@nvidia.com>
-References: <20120704104840.GJ24458@pengutronix.de> <4FF43692.2040805@nvidia.com> <20120704130056.GC30009@pengutronix.de> <4FF45DDF.9000306@nvidia.com> <20120704152451.GA7333@sirena.org.uk> <4FF4FDC0.8020405@nvidia.com> <20120705062011.GI30009@pengutronix.de> <4FF53368.6090805@nvidia.com> <20120705064742.GL30009@pengutronix.de> <4FF5459F.5090201@nvidia.com> <20120705075714.GA26428@avionic-0098.mockup.avionic-design.de> <4FF54C6C.1060700@nvidia.com> <4FF5BAEE.3020403@wwwdotorg.org> <00ae01cd5d92$70d1f9f0$5275edd0$%han@samsung.com>
+Subject: Re: [RFC][PATCH V2 2/3] pwm_backlight: use power sequences
+Date: Mon, 9 Jul 2012 16:48:28 +0900
+Message-ID: <4FFA8CCC.8060000@nvidia.com>
+References: <1341814105-20690-1-git-send-email-acourbot@nvidia.com> <1341814105-20690-3-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <00ae01cd5d92$70d1f9f0$5275edd0$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1341814105-20690-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, 'Sascha Hauer' <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2012 02:19 PM, Jingoo Han wrote:
-> I couldn't agree with Stephen Warren more.
-> Could you support DT and non-DT case for backwards compatibility?
+Sorry, I just noticed a mistake in this patch I made while merging 
+another one. The following also needs to be changed, otherwise the 
+power-on sequence will never be executed:
 
-Both cases are handled in the new version I just sent. I hope all other 
-concerns have also been addressed properly. If I forgot something please 
-ping me.
+diff --git a/drivers/video/backlight/pwm_bl.c 
+b/drivers/video/backlight/pwm_bl.c
+index 1a38953..4546d23 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -65,7 +98,7 @@ static int pwm_backlight_update_status(struct 
+backlight_device *bl)
+                 duty_cycle = pb->lth_brightness +
+                      (duty_cycle * (pb->period - pb->lth_brightness) / 
+max);
+                 pwm_config(pb->pwm, duty_cycle, pb->period);
+-               pwm_enable(pb->pwm);
++               pwm_backlight_on(bl);
+         }
+
+
+Apologies for the inconvenience.
 
 Alex.
