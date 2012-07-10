@@ -1,8 +1,8 @@
 From: markz <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: Tegra-DRM: Tegra30: DMA mapping API (was: About dma mapping
  apis)
-Date: Tue, 10 Jul 2012 08:47:01 +0800
-Message-ID: <1341881221.11874.2.camel@markz-desktop>
+Date: Tue, 10 Jul 2012 16:14:01 +0800
+Message-ID: <1341908041.9360.6.camel@markz-desktop>
 References: <23B010BBA481A74B98487467C29BA57BF2366A1010@HKMAIL01.nvidia.com>
 	 <20120706.092417.916278591811517036.hdoyu@nvidia.com>
 	 <23B010BBA481A74B98487467C29BA57BF2366A1012@HKMAIL01.nvidia.com>
@@ -18,9 +18,6 @@ To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Peer Chen <pchen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Emily Jiang <ejiang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thank you. I'll give it a try.
-
-Mark
 On Mon, 2012-07-09 at 23:28 +0800, Hiroshi Doyu wrote:
 > Hi Mark, adding linux-tegra on Cc:.... 
 > 
@@ -48,6 +45,11 @@ On Mon, 2012-07-09 at 23:28 +0800, Hiroshi Doyu wrote:
 >   [PATCH 0/5] IOMMU: Make IOMMU-API ready for GART-like hardware
 >     https://lkml.org/lkml/2012/1/19/170
 > 
+
+Got it. Seems this patch hasn't been integrated yet. Besides, SMMU
+module should do some implementations for this set/get attribute
+functions as well, right?
+
 > > 2. I took a quick glance of tegra-smmu.c, I noticed that there is a
 > > dts property named dma-window, which it's value is: <0x0
 > > 0x40000000>. Does this means the iova which SMMU handles is from 0 -
@@ -56,6 +58,9 @@ On Mon, 2012-07-09 at 23:28 +0800, Hiroshi Doyu wrote:
 > It tries to avoid overwrapping 1-1 iovirt-phys mapping, which is
 > necessary for some drivers right now.
 > 
+
+Sorry I didn't get it. What is overwrapping 1-1 iovirt-phys mapping?
+
 > > 3. Right now in my drm driver, arm_iommu_attach_device failed with
 > > an error code: -22(Invalid Argument). I think this is caused by
 > > these codes in function smmu_iommu_attach_dev:
@@ -70,6 +75,10 @@ On Mon, 2012-07-09 at 23:28 +0800, Hiroshi Doyu wrote:
 > 
 > You can skip that check with the following patch.
 > 
+
+Yes, it works. Right now the framebuffer works on my T30.
+Thank you!
+
 > From 42a03ff88ed133db613389d2cc4c4ad33cd5d7e3 Mon Sep 17 00:00:00 2001
 > From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > Date: Tue, 28 Feb 2012 15:33:17 +0200
