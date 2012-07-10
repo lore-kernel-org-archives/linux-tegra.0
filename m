@@ -1,59 +1,33 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
-Date: Tue, 10 Jul 2012 17:52:36 +0100
-Message-ID: <20120710165236.GI10022@opensource.wolfsonmicro.com>
-References: <4FE882A5.3080504@nvidia.com>
- <20120625222646.GB30406@opensource.wolfsonmicro.com>
- <4FE8EFC4.3090509@wwwdotorg.org>
- <4FFC190A.2040800@nvidia.com>
- <20120710134436.GD9409@opensource.wolfsonmicro.com>
- <4FFC31D5.7090600@nvidia.com>
- <20120710135302.GG9409@opensource.wolfsonmicro.com>
- <4FFC4478.7000204@nvidia.com>
- <20120710154201.GE10022@opensource.wolfsonmicro.com>
- <4FFC5ACA.8010003@nvidia.com>
+Date: Tue, 10 Jul 2012 22:23:48 +0530
+Message-ID: <4FFC5E1C.7000500@nvidia.com>
+References: <4FE882A5.3080504@nvidia.com> <20120625222646.GB30406@opensource.wolfsonmicro.com> <4FE8EFC4.3090509@wwwdotorg.org> <4FFC190A.2040800@nvidia.com> <20120710134436.GD9409@opensource.wolfsonmicro.com> <4FFC31D5.7090600@nvidia.com> <20120710135302.GG9409@opensource.wolfsonmicro.com> <4FFC4478.7000204@nvidia.com> <20120710154201.GE10022@opensource.wolfsonmicro.com> <4FFC5ACA.8010003@nvidia.com> <20120710165236.GI10022@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6lXr1rPCNTf1w0X8"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4FFC5ACA.8010003-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120710165236.GI10022-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday 10 July 2012 10:22 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Jul 10, 2012 at 10:09:38PM +0530, Laxman Dewangan wrote:
+>
+>> Do we need to make such supply pin entry as required inplace of optional?
+> That's the idea.
 
---6lXr1rPCNTf1w0X8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Then I will have 2 question:
+1. If that pin is connected to battery then what should be entry?
+    vcc1-supply = <>>>;
+Do we need to register battery supply as fixed (non-gpio based) and then 
+refer here for phandle?
 
-On Tue, Jul 10, 2012 at 10:09:38PM +0530, Laxman Dewangan wrote:
-
-> Do we need to make such supply pin entry as required inplace of optional?
-
-That's the idea.
-
---6lXr1rPCNTf1w0X8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP/F3NAAoJEBus8iNuMP3dGAIP/AvgpoQPsvIIF0RM6QLSPlES
-8CJ+jyG61Bz/fl8WQAyBD9ITpyDXPTGPQQnm0T9/6KRcUcI8A3cTmgBB3Sdc6gso
-f4We6byZdgIxGVzGbGvbm0b4qZlfbuhgvsVKPpiQd7/0QzDZLQFdCi8adVDMbchz
-VE+AX+iVPbqx4d1Y2MHPKbkQq/I3HEt2ThIOpPbpO8Vms1KK9ck8YLj/970gK3QF
-rop3jEJ73qfukTVuM8Yg7ga6Y3EiYBQ7NHegVFV2cVf5WJzpRq8zZkI7AcGuGsHu
-o62xKsKBwQevSkh6C736RwzJWkfLR7oJ8hhVX59xRIHAmKk46qy24IT28ViqtDsg
-EXY+yELZHEfFlU/YXuiPwL5O9t/jP/sBiziWhNVrYl60aVQ+fH4tQzfI2Wr7axUJ
-oOl/joUzxB1eIR+uG6WjU+W0Ub9StX4cjHyGUZpw9QJIgzp5PdkYJ0lH/C/GvXex
-3ZQWaF44p/2BhwZ0CiMro8LYHVn0kGjUKlbEJDXm2tamcH2ysH5PVJkKAmqSvS2d
-uheU4J8Yk6mFa5kIy/wrKzNm+6KQejQk4aGvTfljNBy9Sas8/BU0Uie/cpUsKCth
-imoUvlvCA9bXiewkDN/NI7aPJbBSdPE3K/UcI6aR3eADAVySDJ7ReuMvAzypQ5wl
-gN6NxVESTCT988CrNpfz
-=0Mto
------END PGP SIGNATURE-----
-
---6lXr1rPCNTf1w0X8--
+2. what about non-dt case? The regulator registration will also fail 
+here because of there is no regulator saying vcc1 in this case. Do we 
+need to register the vcc1 regualtor as fixed, battery supplied regulator 
+in board files so that the ldo's registration will success?
