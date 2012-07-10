@@ -1,27 +1,42 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/5] i2c: tegra: Code cleanups and suspend/resume related changes
-Date: Tue, 10 Jul 2012 16:50:39 +0530
-Message-ID: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 2/5] i2c: tegra: use clk_disable_unprepare in place of clk_disable
+Date: Tue, 10 Jul 2012 16:50:41 +0530
+Message-ID: <1341919244-23327-3-git-send-email-ldewangan@nvidia.com>
+References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org
+Cc: swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series does:
-- Code cleanups like removing unused variables, using already define function
-- Use clock_disable_unprepare in place of clock_disable()
-- Use dev_pm_ops for suspend/resume inplace of legacy suspend/resume callbacks.
-- Convert suspend/resume to _noirq version to support late suspend/early resume.
+Use clk_disable_unprepare() inplace of clk_disable().
+This was missed as part of moving clock enable/disable to
+prepare/unprepare for using the common clock framework.
 
-Laxman Dewangan (5):
-  i2c: tegra: remove unused member variable
-  i2c: tegra: use clk_disable_unprepare in place of clk_disable
-  i2c: tegra: use of_match_ptr() for match_table initialization
-  i2c: tegra: Use struct dev_pm_ops for power management
-  i2c: tegra: convert normal suspend/resume to *_noirq
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+This is already discussed in patch
+[PATCH] i2c: tegra: use clk_disable_unprepare in place of clk_disable
+for applying in Wolfram Tree. Resending this as patch series.
 
- drivers/i2c/busses/i2c-tegra.c |   27 +++++++++++++++------------
- 1 files changed, 15 insertions(+), 12 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 00cdc10..d071cf0 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -696,7 +696,7 @@ static int __devinit tegra_i2c_probe(struct platform_device *pdev)
+ 	ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to add I2C adapter\n");
+-		clk_disable(i2c_dev->i2c_clk);
++		clk_disable_unprepare(i2c_dev->i2c_clk);
+ 		return ret;
+ 	}
+ 
+-- 
+1.7.1.1
