@@ -1,46 +1,30 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 3/5] i2c: tegra: use of_match_ptr() for match_table initialization
-Date: Tue, 10 Jul 2012 16:50:42 +0530
-Message-ID: <1341919244-23327-4-git-send-email-ldewangan@nvidia.com>
+From: Shubhrajyoti Datta <omaplinuxkernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/5] i2c: tegra: remove unused member variable
+Date: Tue, 10 Jul 2012 17:03:51 +0530
+Message-ID: <CAM=Q2ctEijbh5dPRKHMBPaSupSkZSN0J36hpYBbd4Xb+-O6DCQ@mail.gmail.com>
 References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
+	<1341919244-23327-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org
-Cc: swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1341919244-23327-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-In place of defining match_table for non-DT based as NULL,
-use of_match_ptr() for initialzing the of_match_table.
+Hi Laxman,
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+On Tue, Jul 10, 2012 at 4:50 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Remove unused member variable "iomem" of the
+> i2c device structure.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index d071cf0..0792674 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -754,8 +754,6 @@ static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
- 	{},
- };
- MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
--#else
--#define tegra_i2c_of_match NULL
- #endif
- 
- static struct platform_driver tegra_i2c_driver = {
-@@ -768,7 +766,7 @@ static struct platform_driver tegra_i2c_driver = {
- 	.driver  = {
- 		.name  = "tegra-i2c",
- 		.owner = THIS_MODULE,
--		.of_match_table = tegra_i2c_of_match,
-+		.of_match_table = of_match_ptr(tegra_i2c_of_match),
- 	},
- };
- 
--- 
-1.7.1.1
+You might want to mention the commit which removed the last usage etc.
+
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> This patch is resend of earlier patch
+>  i2c: tegra: remove unused member variable.
+> and sending it as part fo series.
+>
