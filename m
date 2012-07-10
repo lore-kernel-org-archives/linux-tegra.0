@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 4/5] i2c: tegra: Use struct dev_pm_ops for power management
-Date: Tue, 10 Jul 2012 16:50:43 +0530
-Message-ID: <1341919244-23327-5-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 3/5] i2c: tegra: use of_match_ptr() for match_table initialization
+Date: Tue, 10 Jul 2012 16:50:42 +0530
+Message-ID: <1341919244-23327-4-git-send-email-ldewangan@nvidia.com>
 References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,69 +12,33 @@ To: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org
 Cc: swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Make the tegra i2c driver define its PM callbacks through
-struct dev_pm_ops objects rather than by using legacy PM hooks
-in struct platform_driver.
+In place of defining match_table for non-DT based as NULL,
+use of_match_ptr() for initialzing the of_match_table.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c |   19 +++++++++++++------
- 1 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 0792674..5f0572d 100644
+index d071cf0..0792674 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -713,8 +713,9 @@ static int __devexit tegra_i2c_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM
--static int tegra_i2c_suspend(struct platform_device *pdev, pm_message_t state)
-+static int tegra_i2c_suspend(struct device *dev)
- {
-+	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
- 
- 	i2c_lock_adapter(&i2c_dev->adapter);
-@@ -724,8 +725,9 @@ static int tegra_i2c_suspend(struct platform_device *pdev, pm_message_t state)
- 	return 0;
- }
- 
--static int tegra_i2c_resume(struct platform_device *pdev)
-+static int tegra_i2c_resume(struct device *dev)
- {
-+	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_i2c_dev *i2c_dev = platform_get_drvdata(pdev);
- 	int ret;
- 
-@@ -744,6 +746,14 @@ static int tegra_i2c_resume(struct platform_device *pdev)
- 
- 	return 0;
- }
-+
-+static const struct dev_pm_ops tegra_i2c_dev_pm_ops = {
-+	.suspend = tegra_i2c_suspend,
-+	.resume = tegra_i2c_resume,
-+};
-+#define TEGRA_I2C_DEV_PM_OPS (&tegra_i2c_dev_pm_ops)
-+#else
-+#define TEGRA_I2C_DEV_PM_OPS NULL
+@@ -754,8 +754,6 @@ static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
+-#else
+-#define tegra_i2c_of_match NULL
  #endif
  
- #if defined(CONFIG_OF)
-@@ -759,14 +769,11 @@ MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
  static struct platform_driver tegra_i2c_driver = {
- 	.probe   = tegra_i2c_probe,
- 	.remove  = __devexit_p(tegra_i2c_remove),
--#ifdef CONFIG_PM
--	.suspend = tegra_i2c_suspend,
--	.resume  = tegra_i2c_resume,
--#endif
+@@ -768,7 +766,7 @@ static struct platform_driver tegra_i2c_driver = {
  	.driver  = {
  		.name  = "tegra-i2c",
  		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(tegra_i2c_of_match),
-+		.pm = TEGRA_I2C_DEV_PM_OPS,
+-		.of_match_table = tegra_i2c_of_match,
++		.of_match_table = of_match_ptr(tegra_i2c_of_match),
  	},
  };
  
