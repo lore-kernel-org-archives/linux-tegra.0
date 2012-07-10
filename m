@@ -1,64 +1,53 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
-Date: Tue, 10 Jul 2012 17:29:06 +0530
-Message-ID: <4FFC190A.2040800@nvidia.com>
-References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org> <4FE80413.6070001@nvidia.com> <4FE87FE3.1080608@wwwdotorg.org> <4FE882A5.3080504@nvidia.com> <20120625222646.GB30406@opensource.wolfsonmicro.com> <4FE8EFC4.3090509@wwwdotorg.org>
+Subject: Re: [PATCH] spi: tegra: use dmaengine based dma driver
+Date: Tue, 10 Jul 2012 18:04:31 +0530
+Message-ID: <4FFC2157.7090501@nvidia.com>
+References: <1340969480-7702-1-git-send-email-ldewangan@nvidia.com>
+	<4FEDD97A.7050702@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4FE8EFC4.3090509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <4FEDD97A.7050702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
-I require  your input on supporting the vin-supply for tps6586x.
-
-On Tuesday 26 June 2012 04:39 AM, Stephen Warren wrote:
-> On 06/25/2012 04:26 PM, Mark Brown wrote:
+On Friday 29 June 2012 10:06 PM, Stephen Warren wrote:
+> On 06/29/2012 05:31 AM, Laxman Dewangan wrote:
+>> Use the dmaengine based Tegra APB DMA driver for
+>> data transfer between SPI FIFO and memory in
+>> place of legacy Tegra APB DMA.
 >>
->> More specifically, all the supplies for a device (including those
->> that happen to be inputs for regulators) should be specified in
->> exactly the same fashion.  This makes the binding more regular and
->> means that users can just go through the schematic adding the
->> mappings without worrying about what what the supply happens to
->> be.
-> Just making sure I parsed that right. I think what you're saying is
-> that the device itself should represent its input pins, e.g.:
+>> The new driver is selected if legacy driver is not
+>> selected and new DMA driver is enabled through config
+>> file.
+>>
+>> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren<swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 >
-> tps6586x {
->      vin-ldo01-supply =<&some_regulator>;
->      vin-ldo23-supply =<...>;
->      vin-ldo4-supply =<...>;
->      vin-ldo678-supply =<...>;
->      vin-ldo9-supply =<...>;
-> :::::::::::
-> };
 
-Looked tps6586x-regulator driver and it has the platform data which is 
-regulator_init_data.
-So for adding the vin-supply similar to what we have in fixed or 
-tps6591x regulator to pass through the desc.supply_name, we are not 
-having option here in platform data which can work for DT and non-DT case.
-
-So if still want to have the DT and non-DT case similar, we can add one 
-tps6586x_regulator_platform_data as
-
-struct tps6586x_regulator_platform_data
-{
-     const char *input_supply;
-     struct regulator_init_data *reg_init_data;
-}
-
-and then pass this when registering the regulator.
-
-Or,
-second option is to support the input supply name for DT case through 
-desc.supply_name and for non-DT let it be there through regulator_init_data.
-
-Please let me know your opinion.
+Hi Mark,
+Understand from Grant's mail's discussion that you are picking up the 
+spi change.
+Please let me know if I need to re-send this patch.
 
 Thanks,
 Laxman
+
+
+
+------------------------------------------------------------------------------
+Live Security Virtual Conference
+Exclusive live event will cover all the ways today's security and 
+threat landscape has changed and how IT managers can respond. Discussions 
+will include endpoint security, mobile security and the latest in malware 
+threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
