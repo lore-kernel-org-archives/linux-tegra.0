@@ -1,54 +1,66 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: use dmaengine based dma driver
-Date: Tue, 10 Jul 2012 14:36:41 +0100
-Message-ID: <20120710133640.GA9409@opensource.wolfsonmicro.com>
-References: <1340969480-7702-1-git-send-email-ldewangan@nvidia.com>
- <4FEDD97A.7050702@wwwdotorg.org>
- <4FFC2157.7090501@nvidia.com>
+Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
+Date: Tue, 10 Jul 2012 14:44:36 +0100
+Message-ID: <20120710134436.GD9409@opensource.wolfsonmicro.com>
+References: <1340406842-27135-1-git-send-email-swarren@wwwdotorg.org>
+ <4FE80413.6070001@nvidia.com>
+ <4FE87FE3.1080608@wwwdotorg.org>
+ <4FE882A5.3080504@nvidia.com>
+ <20120625222646.GB30406@opensource.wolfsonmicro.com>
+ <4FE8EFC4.3090509@wwwdotorg.org>
+ <4FFC190A.2040800@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+	protocol="application/pgp-signature"; boundary="sXc4Kmr5FA7axrvy"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FFC2157.7090501-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <4FFC190A.2040800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---fUYQa+Pmc3FrFX/N
+--sXc4Kmr5FA7axrvy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 10, 2012 at 06:04:31PM +0530, Laxman Dewangan wrote:
+On Tue, Jul 10, 2012 at 05:29:06PM +0530, Laxman Dewangan wrote:
 
-> Understand from Grant's mail's discussion that you are picking up
-> the spi change.
-> Please let me know if I need to re-send this patch.
+> Looked tps6586x-regulator driver and it has the platform data which
+> is regulator_init_data.
+> So for adding the vin-supply similar to what we have in fixed or
+> tps6591x regulator to pass through the desc.supply_name, we are not
+> having option here in platform data which can work for DT and non-DT
+> case.
 
-Yes.
+> So if still want to have the DT and non-DT case similar, we can add
+> one tps6586x_regulator_platform_data as
 
---fUYQa+Pmc3FrFX/N
+The supply names are not supposed to be conditional (I realise they are
+for your current DT patch, I let that in because I just want to see an
+end to all this DT stuff).
+
+--sXc4Kmr5FA7axrvy
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP/C/hAAoJEBus8iNuMP3d+gAQAISNB7Xsn4dYu10OArIYHm6O
-eG9T3tyLBsF7ShDic+azypzSLxYKxYsB1V1TA6bCGxcE6g1g/MeA4t6HKGhR+cxK
-HivI+Y9Rbe47ZY1100MMSUspTZ+RCfDMoet9obHqjn2YQ/vQd80hc8B2eW4g6iKP
-t0dpRGGNDXJq+ybaTnSMfCZZ3QkrjTXNC93WvQs+TWBd2vHgyMRm+2Z+l8uQrkl0
-c240Nzt1nQWHKGgA4vqU4IxDYNA5VeygNmsViGSyFnFtyYdXih5RJa7ReeYqpv/w
-uNPRzwrA+iZz8MzrK14VR9cSJVeg1MVClp2bOCuYk3zkt3BU9LqyT6Rjo+O5xVGR
-VIwRx85digBhi8fl0JQVlJ7+9DMYejBOqJs6M4rMVIXTHvmr5AdD2L206OE85drJ
-VHxq62l2bD4fO6B+hCbp+3aQdHcVXnqqel9Z3kStnNqV6n8WBqKEMKpsvuKs2ghO
-I7XBP1J+i4HzveOlz/Qj+DKysR43arNyMGbz6K9MUvoiwXaeuL33ln7OEHaqJwBV
-SjXUpeFB89mHtr4kG5cV8sZ5XKO0wS5MMybI6kFML1AcMgpghV2s4644FFvPftPt
-872FOaVxDTX6IUnopqmSPApmNN1YoJVdZWObQbMYWnEXt0XiOxJZlDK2fNmDpOwt
-6mtg2QG3Wm/sLc+5AOUt
-=pRE9
+iQIcBAEBAgAGBQJP/DG+AAoJEBus8iNuMP3d6fQP/1fFo9pDWssu3fhwhvtjyNBL
+rX7gnVwaYSOmvWP8ZJvYvqgcJLIeTepQn5BU7WJfm8bE/OIZSSbRHPd6+NpyIdPu
+VaEPdCRSWcif9TEgI+Oin8Mn/0TyMs/nsQtYflmAsPONRBJ1RtY7Mrodblyjaz6p
+xvuDYfZQv6EKXyO7LFNtBvjRKQHJfwuBqkuFzcWdyxFlLE8ZG7hiy166IWxpLNr8
+tdSPjk4Ho4STHp+DOsx37csXUzvcQmWnfRkfM24T20SxOQSlQJh2y8/Ayj3KdZv8
+29/2jYE9C45oyoKXHXHXh0ISXFIvzpKUP9H+wdiR/pjFzdCt25J9ib0VfMQC4pDa
+PH+kE78v1cri3OjWa2YYZhZL/eTkVCLHL8JNAgEkM3HwuhQrPQp49DdmHr4FGSdt
+BT3LnEvOhhG/OIOVzlccL50MtD5ZmWzb968yXoIQ13+dGI7ndLTbl75m4jiGmCwk
+VhxZA8td2DovrrBiAKS1dzym/NsFa3WwsP+JwxABELUwBPR3Ivze31q+YwHHnE8M
+OBNadmdsTRc1WeNbTz58o/4hr4BaY1nYo1LJOhcUWAZs8+yY0DUS0HLdIGkOkZs/
+0iE+bLB7pnEnDr5oCmKO/O/JQJZBv6TeA6g7VfUSAfkdiz9w8XsEiWgUKXFK5JpP
+P/E1Zkdj9lTAiJNyIUG4
+=Qv9e
 -----END PGP SIGNATURE-----
 
---fUYQa+Pmc3FrFX/N--
+--sXc4Kmr5FA7axrvy--
