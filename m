@@ -1,43 +1,37 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH RESEND] spi: tegra: use dmaengine based dma driver
-Date: Wed, 11 Jul 2012 15:30:42 +0530
-Message-ID: <4FFD4ECA.8090304@nvidia.com>
-References: <1341927517-4584-1-git-send-email-ldewangan@nvidia.com>
-	<20120711095504.GD3938@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
+Date: Wed, 11 Jul 2012 15:32:01 +0530
+Message-ID: <4FFD4F19.8070404@nvidia.com>
+References: <4FE8EFC4.3090509@wwwdotorg.org> <4FFC190A.2040800@nvidia.com> <20120710134436.GD9409@opensource.wolfsonmicro.com> <4FFC31D5.7090600@nvidia.com> <20120710135302.GG9409@opensource.wolfsonmicro.com> <4FFC4478.7000204@nvidia.com> <20120710154201.GE10022@opensource.wolfsonmicro.com> <4FFC5ACA.8010003@nvidia.com> <20120710165236.GI10022@opensource.wolfsonmicro.com> <4FFC5E1C.7000500@nvidia.com> <20120710170112.GK10022@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <20120711095504.GD3938-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120710170112.GK10022-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 11 July 2012 03:25 PM, Mark Brown wrote:
+On Tuesday 10 July 2012 10:31 PM, Mark Brown wrote:
 > * PGP Signed by an unknown key
 >
-> On Tue, Jul 10, 2012 at 07:08:37PM +0530, Laxman Dewangan wrote:
->> The new driver is selected if legacy driver is not
->> selected and new DMA driver is enabled through config
->> file.
-> Is this any different to the version of the patch that I already
-> applied?
-I believe you have applied for the ASoC one. This is for spi one.
-BTW, are you taking the same in regulator subsystem or created new for 
-spi? I can verify from there.
+> On Tue, Jul 10, 2012 at 10:23:48PM +0530, Laxman Dewangan wrote:
+>
+>> Then I will have 2 question:
+>> 1. If that pin is connected to battery then what should be entry?
+>>     vcc1-supply =<>>>;
+>> Do we need to register battery supply as fixed (non-gpio based) and
+>> then refer here for phandle?
+> Use a fixed voltage regulator to represent the battery.
+>
+>> 2. what about non-dt case? The regulator registration will also fail
+>> here because of there is no regulator saying vcc1 in this case. Do
+>> we need to register the vcc1 regualtor as fixed, battery supplied
+>> regulator in board files so that the ldo's registration will
+>> success?
+> Same thing, use a fixed voltage regulator.
 
 
-------------------------------------------------------------------------------
-Live Security Virtual Conference
-Exclusive live event will cover all the ways today's security and 
-threat landscape has changed and how IT managers can respond. Discussions 
-will include endpoint security, mobile security and the latest in malware 
-threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
+Understood completely and it is so simple to support vin-supply. Will 
+implement the same. Thanks for clearing doubts.
