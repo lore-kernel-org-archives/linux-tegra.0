@@ -1,38 +1,44 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH RESEND] spi: tegra: use dmaengine based dma driver
-Date: Wed, 11 Jul 2012 15:44:26 +0530
-Message-ID: <4FFD5202.9080206@nvidia.com>
-References: <1341927517-4584-1-git-send-email-ldewangan@nvidia.com> <20120711095504.GD3938@opensource.wolfsonmicro.com> <4FFD4ECA.8090304@nvidia.com> <20120711101527.GE3938@opensource.wolfsonmicro.com>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: Tegra-DRM: Tegra30: DMA mapping API
+Date: Wed, 11 Jul 2012 12:58:27 +0200
+Message-ID: <20120711105827.GE25282@amd.com>
+References: <23B010BBA481A74B98487467C29BA57BF2366A1010@HKMAIL01.nvidia.com>
+ <20120706.092417.916278591811517036.hdoyu@nvidia.com>
+ <23B010BBA481A74B98487467C29BA57BF2366A1012@HKMAIL01.nvidia.com>
+ <20120709.182828.1247752887335819184.hdoyu@nvidia.com>
+ <1341908041.9360.6.camel@markz-desktop>
+ <20120710132417.b52fbc05847cabec7e16cebd@nvidia.com>
+ <20120710132639.a65ce779fcfabe74435dd6bc@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120711101527.GE3938-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120710132639.a65ce779fcfabe74435dd6bc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peer Chen <pchen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Emily Jiang <ejiang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 11 July 2012 03:45 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jul 11, 2012 at 03:30:42PM +0530, Laxman Dewangan wrote:
->> On Wednesday 11 July 2012 03:25 PM, Mark Brown wrote:
->
->> I believe you have applied for the ASoC one. This is for spi one.
-> No, there's a dmaengine patch in my SPI branch too which I applied
-> yesterday.
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git spi-next
->
+Hi,
 
-Looked at your misc/spi-next and you have already applied. This was just 
-resend.
+On Tue, Jul 10, 2012 at 01:26:39PM +0300, Hiroshi Doyu wrote:
+> > http://lists.linuxfoundation.org/pipermail/iommu/2012-January/003531.html
+> 
+> Do you have any plan to merge the above "IOMMU: Make IOMMU-API ready
+> for GART-like hardware"?
+> 
+> Tegra DRM seems to need that feature eventually.
 
-Thanks for taking care.
+I just rebased and updated the patch-set. A new version is sent out. If
+no major objections come up I queue it for the next merge window.
 
->
-> I'm sorry, I can't parse this sentance at all.
->
-Just wanted to know that spi changes will be in regulator/for-next or 
-some other tree. It is in misc/spi-next.
+Regards,
+
+	Joerg
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
