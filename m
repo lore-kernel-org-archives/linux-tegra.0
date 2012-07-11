@@ -1,71 +1,57 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dt: tegra: seaboard: add regulators
-Date: Tue, 10 Jul 2012 18:01:13 +0100
-Message-ID: <20120710170112.GK10022@opensource.wolfsonmicro.com>
-References: <4FE8EFC4.3090509@wwwdotorg.org>
- <4FFC190A.2040800@nvidia.com>
- <20120710134436.GD9409@opensource.wolfsonmicro.com>
- <4FFC31D5.7090600@nvidia.com>
- <20120710135302.GG9409@opensource.wolfsonmicro.com>
- <4FFC4478.7000204@nvidia.com>
- <20120710154201.GE10022@opensource.wolfsonmicro.com>
- <4FFC5ACA.8010003@nvidia.com>
- <20120710165236.GI10022@opensource.wolfsonmicro.com>
- <4FFC5E1C.7000500@nvidia.com>
+Subject: Re: [PATCH RESEND] spi: tegra: use dmaengine based dma driver
+Date: Wed, 11 Jul 2012 10:55:04 +0100
+Message-ID: <20120711095504.GD3938@opensource.wolfsonmicro.com>
+References: <1341927517-4584-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/0U0QBNx7JIUZLHm"
+	protocol="application/pgp-signature"; boundary="OaZoDhBhXzo6bW1J"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4FFC5E1C.7000500-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1341927517-4584-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---/0U0QBNx7JIUZLHm
+--OaZoDhBhXzo6bW1J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 10, 2012 at 10:23:48PM +0530, Laxman Dewangan wrote:
+On Tue, Jul 10, 2012 at 07:08:37PM +0530, Laxman Dewangan wrote:
+> Use the dmaengine based Tegra APB DMA driver for
+> data transfer between SPI FIFO and memory in
+> place of legacy Tegra APB DMA.
+>=20
+> The new driver is selected if legacy driver is not
+> selected and new DMA driver is enabled through config
+> file.
 
-> Then I will have 2 question:
-> 1. If that pin is connected to battery then what should be entry?
->    vcc1-supply = <>>>;
-> Do we need to register battery supply as fixed (non-gpio based) and
-> then refer here for phandle?
+Is this any different to the version of the patch that I already
+applied?
 
-Use a fixed voltage regulator to represent the battery.
-
-> 2. what about non-dt case? The regulator registration will also fail
-> here because of there is no regulator saying vcc1 in this case. Do
-> we need to register the vcc1 regualtor as fixed, battery supplied
-> regulator in board files so that the ldo's registration will
-> success?
-
-Same thing, use a fixed voltage regulator.
-
---/0U0QBNx7JIUZLHm
+--OaZoDhBhXzo6bW1J
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP/F/PAAoJEBus8iNuMP3dosgP/jejgxjqjpLX7sEHQMwxydki
-pZCeKgr7mjNi5UHuInnPvjFqvZhQuEgeIA6gbcdHLKJ2xSB1aHViU74Y1SAdpfH3
-lg1D3MkLvCWeeqVAqwcmduUWgKKHEzO1O5vs498QYCGjC0xpcT7VPVE/R7TH1GIz
-Euxx31XiieqcwctkUIgaSdsRv81gICESWtpt/j9Lo3sl7qPoFBx0SPmsIVlKbHFd
-2Y1upL2+7PIc68m3ej5MCak34Wl6eiy9DaIkIz/J4VQBBgq/rECA0hMzk0mfFo4D
-hP0B7+hBbmxQ7lr2Vp0CLFVExoPhgAZYyeaCKxl4i0e/dU3oLOBtba9WQMsSkAxf
-lHkiacnVwTAH/6TT1H/RSE993/3AfjAeXgE9kpKeAqdg/GU0x4X0mZ6s5I57hEFz
-f9DA7B6OgF4s5lfUWBe1VojXtWYbk7aSl4os81WZ/TPqv8Xg3fp3bM3rS3lYusHz
-bmWbRzadxorcSOxq8fgzHQWJ3Byf2/4uisrYCLA8NcWqmK2dbfmEtTWxaVFJDeKF
-2V1OUjs9rVz7SC/yVIml3r6kzDluqqlb9juENMb3QrNAm4zum5aD6IwzYTcqCgHB
-lMQ9bY40mT/LuH269OMwL2qEPkg/nJdHe/IyvxMVOR+98ymXrCTYpOZsa2Di4XjJ
-GvIfVt+EO10MtakLwbAt
-=1JeG
+iQIcBAEBAgAGBQJP/U1rAAoJEBus8iNuMP3dRq4P/1A9KG0kjV5UVr/W/Wxt7gag
+9L/tU3LcQw3KdNSWSGX76U6Z0AdC6VQTEKhEHIaTd5LqgCt4heajdWlvEBe2y9Ho
+5j7SX+2Xcey74svIzRAi9SqfLa5V9xEN9akm93LeZ3S9XKoU2udi/kCyNs1mephN
+xFPt1ImL/gNfTIA9LQYlILjCjyL+oviz+UZVWV5Ev5+z/FVn0u06S6wUdttWmzVc
+h/lmr9c6ji6QIWSQLkfa35bJD8XbTkgeh7DjSBdEqy7bWDBHyKdCXfxFVZKe/MaO
+LXdZtKhyeDlna/ROOIcD+BgCarb9kxMmFZ/Io3j6la4sr8rIDXISEMaZ608ijd89
+h0995TG2j4WjTCoyynvxjuqlbLFXCIcKpI8HnDjutvahv0qCcJ8i2jPVtpDPcLln
+PnyGbbpH/i/qq9YwI1gKhBvpF6MC6HysJmw1Sem4fFVnwesq8Jnkv68SJS11GV/a
+a5D0/YfF/8tlyoKPrqGTJc1V0ShjCTMVrC6/8r2W6oPX8hUD2peGJ6Z4Gnmfsa3U
+q2jCaFVKPESNkugbzerVceApt3lg1O6usoEU04r2vncGSErQlFQumcuzEN6Z1Lfs
+h82lfGPeLCT3+ByIsiHpRdq5/YLebwPA+rTB5NoawE4cIaOFZzqr7UfoQ0kAGQbH
+byvXaNKpcRej8uDshgjx
+=AVt/
 -----END PGP SIGNATURE-----
 
---/0U0QBNx7JIUZLHm--
+--OaZoDhBhXzo6bW1J--
