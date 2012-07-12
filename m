@@ -1,42 +1,55 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: How to use the generic thermal sysfs.
-Date: Thu, 12 Jul 2012 18:22:53 +0800
-Message-ID: <1342088573.27605.101.camel@tegra-chromium-2>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 5/5] i2c: tegra: convert normal suspend/resume to *_noirq
+Date: Thu, 12 Jul 2012 12:35:09 +0200
+Message-ID: <20120712103509.GF27520@pengutronix.de>
+References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
+ <1341919244-23327-6-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com, len.brown@intel.com, akpm@linux-foundation.org, khali@linux-fr.org, joe@perches.com, durgadoss.r@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@ger.kernel.org, acourbot@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="w3uUfsyyY1Pqa/ej"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1341919244-23327-6-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, all
-I'm working on the tegra thermal throttling upstream issue.
-The tegra30 board use the nct1008 as the thermal sensor, and the lm90 is
-the sensor driver. We want to use the generic thermal sysfs.
- 
-My question is where should we register the thermal zone device? We may
-have two place to do it:
-1. register it in the sensor driver, such as lm90.c
-In this way, the sensor driver doesn't need to export any APIs, such as
-get_temp.
-2. register in my tegra thermal framework.
-In this way, the sensor driver need to export some APIs, which are used
-to register the ops and do any other things.
 
-How should I do it?
+--w3uUfsyyY1Pqa/ej
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And in current codes, there have the event notification, in the form of
-a netlink event. But it's difficult to be used in the kernel, it's
-normally for the communication with user-space. How about to add a
-notify call chain for it? So when the sensor has irq alert, it can send
-a notify to my thermal framework in kernel.
+On Tue, Jul 10, 2012 at 04:50:44PM +0530, Laxman Dewangan wrote:
+> To provide the late suspend and early resume for i2c
+> driver, convert the suspend/resume as
+> 	suspend-> suspend_noirq
+> 	resume -> resume_noirq
+>=20
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Do anyone has suggestions?
+Applied to next on top of Rafael's patches. Please have a look if I did
+the fixup right.
 
-Thanks.
-Wei.
+Thanks,
 
----
-nvpublic
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--w3uUfsyyY1Pqa/ej
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk/+qF0ACgkQD27XaX1/VRu2WgCgi9aUaeM1UBu9b86KWLwvDQnb
+4WQAoI5dCvRZRh8VbCn7wERKuYrXDCPc
+=nqtJ
+-----END PGP SIGNATURE-----
+
+--w3uUfsyyY1Pqa/ej--
