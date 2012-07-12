@@ -1,32 +1,48 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5/5] i2c: tegra: convert normal suspend/resume to *_noirq
-Date: Thu, 12 Jul 2012 16:00:32 +0530
-Message-ID: <4FFEA748.9080109@nvidia.com>
-References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com> <1341919244-23327-6-git-send-email-ldewangan@nvidia.com> <20120712103509.GF27520@pengutronix.de>
+From: "R, Durgadoss" <durgadoss.r@intel.com>
+Subject: RE: How to use the generic thermal sysfs.
+Date: Thu, 12 Jul 2012 10:54:01 +0000
+Message-ID: <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
+References: <1342088573.27605.101.camel@tegra-chromium-2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120712103509.GF27520-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1342088573.27605.101.camel@tegra-chromium-2>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>, "Zhang, Rui" <rui.zhang@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "joe@perches.com" <joe@perches.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>, "acourbot@nvidia.com" <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 12 July 2012 04:05 PM, Wolfram Sang wrote:
-> * PGP Signed by an unknown key
->
-> On Tue, Jul 10, 2012 at 04:50:44PM +0530, Laxman Dewangan wrote:
->> To provide the late suspend and early resume for i2c
->> driver, convert the suspend/resume as
->> 	suspend->  suspend_noirq
->> 	resume ->  resume_noirq
->>
->> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Applied to next on top of Rafael's patches. Please have a look if I did
-> the fixup right.
-Thanks for taking care.
-Can you please point me your git path so that I can verify it?
-
-Thanks,
-Laxman
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV2VpIE5pIFttYWls
+dG86d25pQG52aWRpYS5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBKdWx5IDEyLCAyMDEyIDM6NTMg
+UE0NCj4gVG86IFpoYW5nLCBSdWk7IEJyb3duLCBMZW47IGFrcG1AbGludXgtZm91bmRhdGlvbi5v
+cmc7IGtoYWxpQGxpbnV4LWZyLm9yZzsNCj4gam9lQHBlcmNoZXMuY29tOyBSLCBEdXJnYWRvc3MN
+Cj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXRlZ3JhQGdlci5rZXJu
+ZWwub3JnOw0KPiBhY291cmJvdEBudmlkaWEuY29tDQo+IFN1YmplY3Q6IEhvdyB0byB1c2UgdGhl
+IGdlbmVyaWMgdGhlcm1hbCBzeXNmcy4NCj4gDQo+IEhpLCBhbGwNCj4gSSdtIHdvcmtpbmcgb24g
+dGhlIHRlZ3JhIHRoZXJtYWwgdGhyb3R0bGluZyB1cHN0cmVhbSBpc3N1ZS4NCj4gVGhlIHRlZ3Jh
+MzAgYm9hcmQgdXNlIHRoZSBuY3QxMDA4IGFzIHRoZSB0aGVybWFsIHNlbnNvciwgYW5kIHRoZSBs
+bTkwIGlzDQo+IHRoZSBzZW5zb3IgZHJpdmVyLiBXZSB3YW50IHRvIHVzZSB0aGUgZ2VuZXJpYyB0
+aGVybWFsIHN5c2ZzLg0KPiANCj4gTXkgcXVlc3Rpb24gaXMgd2hlcmUgc2hvdWxkIHdlIHJlZ2lz
+dGVyIHRoZSB0aGVybWFsIHpvbmUgZGV2aWNlPyBXZSBtYXkNCj4gaGF2ZSB0d28gcGxhY2UgdG8g
+ZG8gaXQ6DQo+IDEuIHJlZ2lzdGVyIGl0IGluIHRoZSBzZW5zb3IgZHJpdmVyLCBzdWNoIGFzIGxt
+OTAuYw0KPiBJbiB0aGlzIHdheSwgdGhlIHNlbnNvciBkcml2ZXIgZG9lc24ndCBuZWVkIHRvIGV4
+cG9ydCBhbnkgQVBJcywgc3VjaCBhcw0KPiBnZXRfdGVtcC4NCg0KVGhpcyBhcHByb2FjaCBpcyBw
+cmVmZXJyZWQuDQoNCj4gMi4gcmVnaXN0ZXIgaW4gbXkgdGVncmEgdGhlcm1hbCBmcmFtZXdvcmsu
+DQo+IEluIHRoaXMgd2F5LCB0aGUgc2Vuc29yIGRyaXZlciBuZWVkIHRvIGV4cG9ydCBzb21lIEFQ
+SXMsIHdoaWNoIGFyZSB1c2VkDQo+IHRvIHJlZ2lzdGVyIHRoZSBvcHMgYW5kIGRvIGFueSBvdGhl
+ciB0aGluZ3MuDQoNCldoYXQgZG8geW91IG1lYW4gYnkgIm15IHRlZ3JhIHRoZXJtYWwgZnJhbWV3
+b3JrIiA/IFdoZXJlIGRvZXMgdGhlIHNvdXJjZQ0KZmlsZSBmb3IgdGhpcyBzaXQgaW4gdGhlIG1h
+aW5saW5lIGtlcm5lbCA/DQoNCj4gDQo+IEhvdyBzaG91bGQgSSBkbyBpdD8NCj4gDQo+IEFuZCBp
+biBjdXJyZW50IGNvZGVzLCB0aGVyZSBoYXZlIHRoZSBldmVudCBub3RpZmljYXRpb24sIGluIHRo
+ZSBmb3JtIG9mDQo+IGEgbmV0bGluayBldmVudC4gQnV0IGl0J3MgZGlmZmljdWx0IHRvIGJlIHVz
+ZWQgaW4gdGhlIGtlcm5lbCwgaXQncw0KPiBub3JtYWxseSBmb3IgdGhlIGNvbW11bmljYXRpb24g
+d2l0aCB1c2VyLXNwYWNlLiBIb3cgYWJvdXQgdG8gYWRkIGENCj4gbm90aWZ5IGNhbGwgY2hhaW4g
+Zm9yIGl0PyBTbyB3aGVuIHRoZSBzZW5zb3IgaGFzIGlycSBhbGVydCwgaXQgY2FuIHNlbmQNCj4g
+YSBub3RpZnkgdG8gbXkgdGhlcm1hbCBmcmFtZXdvcmsgaW4ga2VybmVsLg0KDQpXZSBhcmUgd29y
+a2luZyBvbiBhIG5vdGlmaWNhdGlvbiBBUEkgZnJvbSBhbnkgZ2VuZXJpYyBzZW5zb3IgZHJpdmVy
+IHRvDQp0aGUgdGhlcm1hbCBmcmFtZXdvcmsuDQpQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhlICdu
+b3RpZnlfdGhlcm1hbF9mcmFtZXdvcmsnIEFQSSBpbiB0aGUgcGF0Y2ggaGVyZToNCmh0dHA6Ly93
+d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGludXgtYWNwaS9tc2czNjA0OS5odG1sDQoNClRoYW5rcywN
+CkR1cmdhDQoNCg==
