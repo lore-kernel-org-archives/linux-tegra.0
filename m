@@ -1,95 +1,103 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: How to use the generic thermal sysfs.
-Date: Fri, 13 Jul 2012 17:53:33 +0800
-Message-ID: <1342173213.27605.174.camel@tegra-chromium-2>
-References: <1342088573.27605.101.camel@tegra-chromium-2>
-	 <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
-	 <1342144273.1682.237.camel@rui.sh.intel.com>
-	 <1342164616.27605.129.camel@tegra-chromium-2>
-	 <1342165278.1682.259.camel@rui.sh.intel.com>
-	 <1342167087.27605.158.camel@tegra-chromium-2>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] ARM: tegra: harmony: add regulator supply name and its input supply
+Date: Fri, 13 Jul 2012 19:20:31 +0530
+Message-ID: <1342187432-18668-2-git-send-email-ldewangan@nvidia.com>
+References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1342167087.27605.158.camel@tegra-chromium-2>
+In-Reply-To: <1342187432-18668-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: "R, Durgadoss" <durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Brown, Len" <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-q7rQbLoQdy39qxiX1TGQuw@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-07-13 at 16:11 +0800, Wei Ni wrote:
-> On Fri, 2012-07-13 at 15:41 +0800, Zhang Rui wrote:
-> > On =E4=BA=94, 2012-07-13 at 15:30 +0800, Wei Ni wrote:
-> > > Our tegra thermal framework also will use the generic thermal lay=
-er. It
-> > > will register the cooling device, and run the throttling in this =
-generic
-> > > framework.
-> > > But we have a special mechanism, when the temp is below the trip =
-temp,
-> > > we will set different cpu capability for different temp range. Fo=
-r
-> > > example, set the low/high temp as 20C/30C to the sensor, and set =
-the cpu
-> > > to the max capability, it mean the cpu can run up to the max freq=
- and
-> > > voltage in this temp range. if the temp is out that range, the se=
-nsor
-> > > will have irq/alert to notify the tegra framework, then we will s=
-et to
-> > > another temperature range and cpu capability.
-> > > I think we can try to add this mechanism to the generic framework=
- as a
-> > > new policy, right?
-> > >=20
-> > I think you can make use of the upper&lower limit in my patch set.
-> > Say, here is your thermal policy
-> > 20C - 30C, P0
-> > 30C - 40C, P1 - P2
-> > 40C - 60C, P3 - P5
-> > 60C+, P6 ~ Pn
-> >=20
-> > you can register to the thermal layer 4 passive trip points,
-> > 20C, 30C, 40C, 60C, and then
-> > 1) for trip 0 (20C), upper limit 0, lower limit 0
-> > 2) for trip 1 (30C), upper limit 2, lower limit 1
-> > 3) for trip 2 (40C), upper limit 5, lower limit 3
-> > 4) for trip 3 (60C), upper limit n, lower limit 6
-> >=20
-> > you can program your own sensor to get interrupt when the temperatu=
-re
-> > hits 20C/30C/40C/60C, and the generic thermal layer will put the
-> > processors to proper frequency for each trip point.
-> >=20
-> > what do you think?
->=20
-> It's great, this is exactly what we need.
-> I think for these trip points, we can use a new trip type, such as
-> TRIP_LIMIT, and use new policy. Because in these state, we only need =
-to
-> set the processors to proper frequency capability, it's not like the
-> passive type, the currently passive type will try to set cooling devi=
-ce
-> state continually.
+Name the regulator as per board schematics and adds its
+supply name info in regulator data.
+Add the always on fixed regulator to refer the battery supply.
 
-I read the patches of "Thermal Framework Enhancements", it seems the
-fair_share governor can be used for this throttling.
+Use this fixed regulator for input supply of some of PMIC
+regulator
 
-Look forward to your public git tree, so that I can sync the entire
-codes :)
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony-power.c |   33 +++++++++++++++++-----------
+ 1 files changed, 20 insertions(+), 13 deletions(-)
 
-> And for these trip temp, it's better to add hysteresis value, so that=
- it
-> can avoid unnecessary interrupt.
->=20
-> >=20
-> > BTW, the upper and lower limit is introduced in the patch set I'm
-> > testing, so maybe you were not aware of it.
->=20
-> How can I get these codes?
->=20
-> >=20
-> > thanks,
-> > rui
->=20
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+index 44dcb2e..8fd387b 100644
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ b/arch/arm/mach-tegra/board-harmony-power.c
+@@ -19,6 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/mfd/tps6586x.h>
+ #include <linux/of.h>
+ #include <linux/of_i2c.h>
+@@ -34,7 +35,9 @@ static struct regulator_consumer_supply tps658621_ldo0_supply[] = {
+ };
+ 
+ static struct regulator_init_data ldo0_data = {
++	.supply_regulator = "vdd_sm2",
+ 	.constraints = {
++		.name = "vdd_ldo0",
+ 		.min_uV = 3300 * 1000,
+ 		.max_uV = 3300 * 1000,
+ 		.valid_modes_mask = (REGULATOR_MODE_NORMAL |
+@@ -48,9 +51,11 @@ static struct regulator_init_data ldo0_data = {
+ 	.consumer_supplies = tps658621_ldo0_supply,
+ };
+ 
+-#define HARMONY_REGULATOR_INIT(_id, _minmv, _maxmv)			\
++#define HARMONY_REGULATOR_INIT(_id, _name, _supply, _minmv, _maxmv)	\
+ 	static struct regulator_init_data _id##_data = {		\
++		.supply_regulator = _supply,				\
+ 		.constraints = {					\
++			.name = _name,					\
+ 			.min_uV = (_minmv)*1000,			\
+ 			.max_uV = (_maxmv)*1000,			\
+ 			.valid_modes_mask = (REGULATOR_MODE_NORMAL |	\
+@@ -61,18 +66,18 @@ static struct regulator_init_data ldo0_data = {
+ 		},							\
+ 	}
+ 
+-HARMONY_REGULATOR_INIT(sm0, 725, 1500);
+-HARMONY_REGULATOR_INIT(sm1, 725, 1500);
+-HARMONY_REGULATOR_INIT(sm2, 3000, 4550);
+-HARMONY_REGULATOR_INIT(ldo1, 725, 1500);
+-HARMONY_REGULATOR_INIT(ldo2, 725, 1500);
+-HARMONY_REGULATOR_INIT(ldo3, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo4, 1700, 2475);
+-HARMONY_REGULATOR_INIT(ldo5, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo6, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo7, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo8, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo9, 1250, 3300);
++HARMONY_REGULATOR_INIT(sm0,  "vdd_sm0",  "vdd_sys", 725, 1500);
++HARMONY_REGULATOR_INIT(sm1,  "vdd_sm1",  "vdd_sys", 725, 1500);
++HARMONY_REGULATOR_INIT(sm2,  "vdd_sm2",  "vdd_sys", 3000, 4550);
++HARMONY_REGULATOR_INIT(ldo1, "vdd_ldo1", "vdd_sm2", 725, 1500);
++HARMONY_REGULATOR_INIT(ldo2, "vdd_ldo2", "vdd_sm2", 725, 1500);
++HARMONY_REGULATOR_INIT(ldo3, "vdd_ldo3", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo4, "vdd_ldo4", "vdd_sm2", 1700, 2475);
++HARMONY_REGULATOR_INIT(ldo5, "vdd_ldo5", NULL,	    1250, 3300);
++HARMONY_REGULATOR_INIT(ldo6, "vdd_ldo6", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo7, "vdd_ldo7", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo8, "vdd_ldo8", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo9, "vdd_ldo9", "vdd_sm2", 1250, 3300);
+ 
+ #define TPS_REG(_id, _data)			\
+ 	{					\
+@@ -115,6 +120,8 @@ static struct i2c_board_info __initdata harmony_regulators[] = {
+ int __init harmony_regulator_init(void)
+ {
+ 	if (machine_is_harmony()) {
++		regulator_register_always_on(0, "vdd_sys",
++			NULL, 0, 5000000);
+ 		i2c_register_board_info(3, harmony_regulators, 1);
+ 	} else { /* Harmony, booted using device tree */
+ 		struct device_node *np;
+-- 
+1.7.1.1
