@@ -1,53 +1,28 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 2/2] regulator: tps6586x: add support for input supply
-Date: Fri, 13 Jul 2012 15:22:30 +0100
-Message-ID: <20120713142229.GM4215@opensource.wolfsonmicro.com>
-References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com>
- <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
+Date: Fri, 13 Jul 2012 22:45:12 +0530
+Message-ID: <500057A0.1050108@nvidia.com>
+References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-3-git-send-email-ldewangan@nvidia.com> <20120713142229.GM4215@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VIOdPewhitSMo36n"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: ccross@android.com, olof@lixom.net, swarren@wwwdotorg.org, lrg@ti.com, thierry.reding@avionic-design.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120713142229.GM4215-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Friday 13 July 2012 07:52 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Fri, Jul 13, 2012 at 07:20:32PM +0530, Laxman Dewangan wrote:
+>> There is multiple voltage input pins on device which
+>> takes the voltage input for different voltage regulator.
+>> Support to configure the voltage input supplied by
+>> different regulator for each regulators.
+> Applied, thanks.
+Thanks for care.
 
---VIOdPewhitSMo36n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jul 13, 2012 at 07:20:32PM +0530, Laxman Dewangan wrote:
-> There is multiple voltage input pins on device which
-> takes the voltage input for different voltage regulator.
-> Support to configure the voltage input supplied by
-> different regulator for each regulators.
-
-Applied, thanks.
-
---VIOdPewhitSMo36n
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQAC8DAAoJEBus8iNuMP3d6vEP/3WoHqW4W3x1iLzifEMyf2te
-lH8dIT7igfEemLOMyZGyWd2uIrtvliGKTs16r5uM/KL76CRXPTLiM2ExqUrVDNDb
-l40YJ5U02ymf0qk2qp+3k0Xyd20PZOaUVV0vzOR3Gua6kycpzZBZ8Mno0qKp6U/B
-XHY/FPZXiEFeRpL+OBIPxdDo+166ZjOzpbLLpRxtjU/K1W1lUr8Iglnw6pgo6f5T
-FPF9HfRdj4fDUR8C+ly1VeTENzFgfY24dLD0HvzgryAZXSWJA7bi4FdyK86x862v
-0b1uCLLThlgPJENSUxvYXVAmbPD+Fu9oeTfBgN9qy983fBNADIBFudVprGxsOBTu
-tc6lqgX4m6hPHHTRGxQyWpOYUZxMKCNR2o3Mpk1ZE4ejDkGBCEsWgYxPyQVliUKY
-d8MGG8vzY5Ks/URbiU3r8fVHf2xipF8c4I1hewvAkXstur0oGCdWmDMiXCz0e5uh
-i1MpnPtM2jGR6s/V+y8AvdKIL64cfIvICZopJVJ/wioltCslUsR0oAyMnrr8WEJv
-Ouq5fS6APFnUKT7mv7bSfQxBNURB0+Ez9m+YSgUbJyIicMWystE6Rmne9d4HPc3O
-6FZmwcBjPoZHfqflT625FBDUnBPIqNm/u+Pbs6xP4XbWPFz08aZ7QZEu23lDHHi9
-eJlcnszTMcXaIwfX5FQt
-=4y1h
------END PGP SIGNATURE-----
-
---VIOdPewhitSMo36n--
+I was thinking that 1/2 should also go through your tree to avoid any 
+functionality break on existing platform who are using this regulator.
