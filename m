@@ -1,42 +1,32 @@
-From: "R, Durgadoss" <durgadoss.r@intel.com>
-Subject: RE: How to use the generic thermal sysfs.
-Date: Fri, 13 Jul 2012 05:54:26 +0000
-Message-ID: <4D68720C2E767A4AA6A8796D42C8EB5915392A@BGSMSX101.gar.corp.intel.com>
-References: <1342088573.27605.101.camel@tegra-chromium-2>
- <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
- <4FFFB6BD.903@nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: How to use the generic thermal sysfs.
+Date: Fri, 13 Jul 2012 15:08:17 +0900
+Message-ID: <4FFFBB51.7010409@nvidia.com>
+References: <1342088573.27605.101.camel@tegra-chromium-2> <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com> <4FFFB6BD.903@nvidia.com> <4D68720C2E767A4AA6A8796D42C8EB5915392A@BGSMSX101.gar.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FFFB6BD.903@nvidia.com>
-Content-Language: en-US
+In-Reply-To: <4D68720C2E767A4AA6A8796D42C8EB5915392A@BGSMSX101.gar.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
+To: "R, Durgadoss" <durgadoss.r@intel.com>
 Cc: Wei Ni <wni@nvidia.com>, "Zhang, Rui" <rui.zhang@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbGV4IENvdXJib3QgW21haWx0
-bzphY291cmJvdEBudmlkaWEuY29tXQ0KPiBTZW50OiBGcmlkYXksIEp1bHkgMTMsIDIwMTIgMTE6
-MTkgQU0NCj4gVG86IFIsIER1cmdhZG9zcw0KPiBDYzogV2VpIE5pOyBaaGFuZywgUnVpOyBCcm93
-biwgTGVuOyBha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOyBraGFsaUBsaW51eC0NCj4gZnIub3Jn
-OyBqb2VAcGVyY2hlcy5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0K
-PiB0ZWdyYUBnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogSG93IHRvIHVzZSB0aGUgZ2Vu
-ZXJpYyB0aGVybWFsIHN5c2ZzLg0KPiANCj4gT24gMDcvMTIvMjAxMiAwNzo1NCBQTSwgUiwgRHVy
-Z2Fkb3NzIHdyb3RlOg0KPiA+IFdlIGFyZSB3b3JraW5nIG9uIGEgbm90aWZpY2F0aW9uIEFQSSBm
-cm9tIGFueSBnZW5lcmljIHNlbnNvciBkcml2ZXIgdG8NCj4gPiB0aGUgdGhlcm1hbCBmcmFtZXdv
-cmsuDQo+ID4gUGxlYXNlIGhhdmUgYSBsb29rIGF0IHRoZSAnbm90aWZ5X3RoZXJtYWxfZnJhbWV3
-b3JrJyBBUEkgaW4gdGhlIHBhdGNoIGhlcmU6DQo+ID4gaHR0cDovL3d3dy5zcGluaWNzLm5ldC9s
-aXN0cy9saW51eC1hY3BpL21zZzM2MDQ5Lmh0bWwNCj4gDQo+IEF0IGZpcnN0IHNpZ2h0IHRoZXNl
-IHBhdGNoZXMgbG9vayBjbG9zZSB0byB3aGF0IHdlIG5lZWQgYXMgd2VsbC4gQXJlIHlvdQ0KPiBj
-b25zaWRlcmluZyB0byBzdXBwb3J0IHRoZSBkZWZpbml0aW9ucyBvZiB0aGVybWFsIHpvbmVzIHVz
-aW5nIHRoZSBkZXZpY2UNCj4gdHJlZT8gSXMgdGhlcmUgYSBwdWJsaWMgZ2l0IHRyZWUgd2hlcmUg
-d2UgY2FuIHB1bGwgdGhlIGxhdGVzdCB2ZXJzaW9uIG9mDQo+IHRoaXMgY29kZSBpbiBvcmRlciB0
-byBrZWVwIGluIHN5bmMgd2l0aCB5b3UgZ3V5cz8NCg0KQXMgb2Ygbm93LCB3ZSBhcmUgZ2V0dGlu
-ZyB0aGUgZGVmaW5pdGlvbnMgZG9uZSB0aHJvdWdoIHRoZSBwbGF0Zm9ybSBsYXllcg0KZGF0YS4g
-Q29uc2lkZXJhdGlvbnMgZm9yIGRldmljZSB0cmVlIC4uIHllcy4uIGJ1dCBJIGRvIG5vdCBoYXZl
-IGFueSBzYW1wbGUNCmltcGxlbWVudGF0aW9uLi4NCg0KT24gdGhlIHB1YmxpYyB0cmVlOg0KUnVp
-IGlzIHRyeWluZyB0byBnZXQgYSBwdWJsaWMgdHJlZSBmcm9tIHdoZXJlIHdlIGNhbiBwdWxsIFRo
-ZXJtYWwgc3Vic3lzdGVtDQpjaGFuZ2VzOyBhbmQgc3VibWl0IHBhdGNoZXMgYWdhaW5zdCB0aGlz
-IHRyZWUuDQoNCkkgaG9wZSBSdWkgd2lsbCBwdWJsaXNoIHRoZSBsaW5rIHZlcnkgc29vbiA6LSkN
-Cg0KVGhhbmtzLA0KRHVyZ2ENCg==
+On Fri 13 Jul 2012 02:54:26 PM JST, R, Durgadoss wrote:
+> As of now, we are getting the definitions done through the platform layer
+> data. Considerations for device tree .. yes.. but I do not have any sample
+> implementation..
+
+Maybe we can help with that then, since we are going to need it.
+
+> On the public tree:
+> Rui is trying to get a public tree from where we can pull Thermal subsystem
+> changes; and submit patches against this tree.
+>
+> I hope Rui will publish the link very soon :-)
+
+Excellent. Could you keep us posted when this happens?
+
+Thanks!
+Alex.
