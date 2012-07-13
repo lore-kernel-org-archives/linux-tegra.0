@@ -1,71 +1,35 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [RFC][PATCH V2 3/3] tegra: add pwm backlight device tree nodes
-Date: Fri, 13 Jul 2012 14:32:12 +0900
-Message-ID: <4FFFB2DC.3040605@nvidia.com>
-References: <1341814105-20690-1-git-send-email-acourbot@nvidia.com> <1341814105-20690-4-git-send-email-acourbot@nvidia.com> <CAPnjgZ1QbjE+-tr0c01K2feUdEE2wMBfR=bKpTxnyDOJbY8+1Q@mail.gmail.com> <4FFEA2D4.9050308@nvidia.com> <CAPnjgZ2=Ga2P-40trA_=UABm=i7Uy4NTAM=ehea11mE22VfDew@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] dma: tegra: fix residual calculation for cyclic case
+Date: Fri, 13 Jul 2012 11:09:02 +0530
+Message-ID: <4FFFB476.9050006@nvidia.com>
+References: <1341217328-6676-1-git-send-email-ldewangan@nvidia.com>	 <4FF1C62B.5070005@wwwdotorg.org> <1342149336.1726.5.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPnjgZ2=Ga2P-40trA_=UABm=i7Uy4NTAM=ehea11mE22VfDew@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Glass <sjg@chromium.org>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1342149336.1726.5.camel@vkoul-udesk3>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/12/2012 11:27 PM, Simon Glass wrote
->> I agree the type strings are a problem in the current form - if we could get
->> constants in the device tree, that would be much better. Your way of
->> representing the sequences is interesting though, if we can solve the type
->> issue (and also evaluate its cost in terms of memory footprint), it would be
->> interesting to consider it as well.
->
-> At a guess:
->
->>>> +               power-on-sequence = "REGULATOR", "power", <1>,
->>>> +                                   "DELAY", <10>,
->>>> +                                   "PWM", "backlight", <1>,
->>>> +                                   "GPIO", "enable", <1>;
->
-> About 106 bytes I think
->
->>>      step@0 { 16
->              type = "regulator"; 24
->>>         phandle = <&backlight_reg>; 16
->>>         enable = <1>; 16
->>>         post-delay = <10>; 16
->>>      }
->>>      step@1 { 16
->              type = "pwm"; 16
->>>         phandle = <&pwm 2 5000000>; 24
->>>      }
->>>      step@2 { 16
->              type = "gpio"; 20
->>>         phandle = <&gpio 28 0>; 24
->>>         enable = <1>; 16
->>>      }
->
-> 220?
+On Friday 13 July 2012 08:45 AM, Vinod Koul wrote:
+> On Mon, 2012-07-02 at 10:02 -0600, Stephen Warren wrote:
+>> On 07/02/2012 02:22 AM, Laxman Dewangan wrote:
+>>> In cyclic mode of DMA, the byte transferred can be more
+>>> than the requested size and in this case, calculating
+>>> residuals based on the current position of DMA transfer to
+>>> bytes requested i.e. bytes required to transfer to reach
+>>> bytes requested from current DMA position.
+>>>
+>>> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> This makes sense to me, although I wonder if details like this aren't
+>> something that the dmaengine core should be handling.
+> No core doesn't know anything about the how much you are transferring
+> and where you are. That is the driver to calculate and provide.
 
-I compiled both versions to try it out. Your version was just 50 bytes 
-larger than mine (I assumed that with yours, we would be able to remove 
-the top-level pwm/regulator/gpio definitions that are referred by the 
-sequence). The question here is do we want to have something more 
-DT-ish, or are we trying to save every possible byte in the DT structure?
+Just for confirmation, are you going to apply this patch or do I need to 
+do anything here.
 
-As Thierry also mentionned, we are trying to provide the same feature 
-using the platform interface. I am not sure how we can elegantly support 
-both ways through this.
-
->  From my understanding mixing strings and numbers in a property is
-> frowned on though.
-
-But doesn't it make sense in the current case? The power sequence is 
-basically a program that is run by an interpreter. From this 
-perspective, it makes more sense to me to have it as a binary field 
-rather than a hierarchy of nodes and properties that will be harder to 
-parse and will make error detection more complicated. I don't really see 
-any practical benefit from turning the steps into sub-nodes, but then 
-again I am not so familiar with the DT.
-
-Alex.
+Thanks,
+Laxman
