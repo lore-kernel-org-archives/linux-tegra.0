@@ -1,35 +1,28 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] dma: tegra: fix residual calculation for cyclic case
-Date: Fri, 13 Jul 2012 11:09:02 +0530
-Message-ID: <4FFFB476.9050006@nvidia.com>
-References: <1341217328-6676-1-git-send-email-ldewangan@nvidia.com>	 <4FF1C62B.5070005@wwwdotorg.org> <1342149336.1726.5.camel@vkoul-udesk3>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: How to use the generic thermal sysfs.
+Date: Fri, 13 Jul 2012 14:48:45 +0900
+Message-ID: <4FFFB6BD.903@nvidia.com>
+References: <1342088573.27605.101.camel@tegra-chromium-2> <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1342149336.1726.5.camel@vkoul-udesk3>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "R, Durgadoss" <durgadoss.r@intel.com>
+Cc: Wei Ni <wni@nvidia.com>, "Zhang, Rui" <rui.zhang@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 13 July 2012 08:45 AM, Vinod Koul wrote:
-> On Mon, 2012-07-02 at 10:02 -0600, Stephen Warren wrote:
->> On 07/02/2012 02:22 AM, Laxman Dewangan wrote:
->>> In cyclic mode of DMA, the byte transferred can be more
->>> than the requested size and in this case, calculating
->>> residuals based on the current position of DMA transfer to
->>> bytes requested i.e. bytes required to transfer to reach
->>> bytes requested from current DMA position.
->>>
->>> Signed-off-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> This makes sense to me, although I wonder if details like this aren't
->> something that the dmaengine core should be handling.
-> No core doesn't know anything about the how much you are transferring
-> and where you are. That is the driver to calculate and provide.
+On 07/12/2012 07:54 PM, R, Durgadoss wrote:
+> We are working on a notification API from any generic sensor driver to
+> the thermal framework.
+> Please have a look at the 'notify_thermal_framework' API in the patch here:
+> http://www.spinics.net/lists/linux-acpi/msg36049.html
 
-Just for confirmation, are you going to apply this patch or do I need to 
-do anything here.
+At first sight these patches look close to what we need as well. Are you 
+considering to support the definitions of thermal zones using the device 
+tree? Is there a public git tree where we can pull the latest version of 
+this code in order to keep in sync with you guys?
 
 Thanks,
-Laxman
+Alex.
