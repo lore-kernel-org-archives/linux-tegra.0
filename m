@@ -1,56 +1,110 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] regulator: tps6586x: add support for input supply
-Date: Sun, 15 Jul 2012 22:21:15 +0100
-Message-ID: <20120715212114.GI4041@opensource.wolfsonmicro.com>
-References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com>
- <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
- <20120713142229.GM4215@opensource.wolfsonmicro.com>
- <500057A0.1050108@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH RESEND] ARM: tegra: harmony: add regulator supply name and its input supply
+Date: Mon, 16 Jul 2012 12:35:53 +0530
+Message-ID: <1342422353-10973-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4LFBTxd4L5NLO6ly"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <500057A0.1050108@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "ccross@android.com" <ccross@android.com>, "olof@lixom.net" <olof@lixom.net>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "lrg@ti.com" <lrg@ti.com>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Name the regulator as per board schematics and adds its
+supply name info in regulator data.
+Add the always on fixed regulator to refer the battery supply.
 
---4LFBTxd4L5NLO6ly
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Use this fixed regulator for input supply of some of PMIC
+regulator
 
-On Fri, Jul 13, 2012 at 10:45:12PM +0530, Laxman Dewangan wrote:
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This was 1/2 of the series
+[PATCH 0/2] regulator: tps6586x: support for input supply
 
-> I was thinking that 1/2 should also go through your tree to avoid
-> any functionality break on existing platform who are using this
-> regulator.
+There is change in the regulator driver of tps6586x to support input
+supply, this change is also require to avoid any functionality break.
+The regulator change is in the Mark's regulator/for-next, this change
+should also go from this tree.
+Resending this as Mark suggested.
 
-I'd be happy to do that if the ARM people are happy with it; just let me
-know and resend the patch if you want me to apply it.
+ arch/arm/mach-tegra/board-harmony-power.c |   33 +++++++++++++++++-----------
+ 1 files changed, 20 insertions(+), 13 deletions(-)
 
---4LFBTxd4L5NLO6ly
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQAzQ+AAoJEBus8iNuMP3d0WAP/A5PwYChGg8POUqZiQEyxdGC
-5uyLG81AvkS2vz5WNVktM/fM55mudtHScY09kpa1pz1fn3won7qZFYnm5C9VHQEF
-GlLktGRGc5jG7rFivlEbdrUDaB7qDhBIHTD45b1hkUTPxm26/cZEDXXNqx4TKSe1
-32ELootKEnQdvrmRSJt9/Wha5wLHMk00jgRWXAWivYvuY33bk7wxyrQGoNkxvHT3
-rkdDYAmu77370+s2u6lzPs7+gMRwaFBZCc9o1T3FYqZSxp/RBDc3vRVXKp5MtePh
-KiIJk1Xt1XEnEHY6nE8xo68B7rMeRSzo3xu3AT0vAGGP7xcn5Van2RJaQXEuWkI+
-xSaCrQYZBo9jIvFVhS+5TV8bomykQKrVEceeKqOn9MHJZAkjm9B5GAsJ7rZnj4vX
-Uw+/U4HxO6DP3o/d2V2j8jjCg8GpTe7iUr0ZMPLNSGQxDfJrpfmDMHz6lFjdSY6+
-ZRfPbqAa6n6eTj8HCqifkhVXET+yW9LBmRT2i2kD7nUa7okZBA9wFw2Xax8MZLqP
-aUaReVNmrauotO6aysNGDVKjGaCl/pGTtIo5PUtzZ6IzSmIZKGiBh89n7ZwiI0v2
-dLpC6b6YVqtFgurmBssaPkSjkO6Vr9SL1kpF1cCLaIXFyWcoG7iTMD/ql+gP9l0/
-0zFMJHAGRdycz77C1jO3
-=7Z0V
------END PGP SIGNATURE-----
-
---4LFBTxd4L5NLO6ly--
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+index 44dcb2e..8fd387b 100644
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ b/arch/arm/mach-tegra/board-harmony-power.c
+@@ -19,6 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/mfd/tps6586x.h>
+ #include <linux/of.h>
+ #include <linux/of_i2c.h>
+@@ -34,7 +35,9 @@ static struct regulator_consumer_supply tps658621_ldo0_supply[] = {
+ };
+ 
+ static struct regulator_init_data ldo0_data = {
++	.supply_regulator = "vdd_sm2",
+ 	.constraints = {
++		.name = "vdd_ldo0",
+ 		.min_uV = 3300 * 1000,
+ 		.max_uV = 3300 * 1000,
+ 		.valid_modes_mask = (REGULATOR_MODE_NORMAL |
+@@ -48,9 +51,11 @@ static struct regulator_init_data ldo0_data = {
+ 	.consumer_supplies = tps658621_ldo0_supply,
+ };
+ 
+-#define HARMONY_REGULATOR_INIT(_id, _minmv, _maxmv)			\
++#define HARMONY_REGULATOR_INIT(_id, _name, _supply, _minmv, _maxmv)	\
+ 	static struct regulator_init_data _id##_data = {		\
++		.supply_regulator = _supply,				\
+ 		.constraints = {					\
++			.name = _name,					\
+ 			.min_uV = (_minmv)*1000,			\
+ 			.max_uV = (_maxmv)*1000,			\
+ 			.valid_modes_mask = (REGULATOR_MODE_NORMAL |	\
+@@ -61,18 +66,18 @@ static struct regulator_init_data ldo0_data = {
+ 		},							\
+ 	}
+ 
+-HARMONY_REGULATOR_INIT(sm0, 725, 1500);
+-HARMONY_REGULATOR_INIT(sm1, 725, 1500);
+-HARMONY_REGULATOR_INIT(sm2, 3000, 4550);
+-HARMONY_REGULATOR_INIT(ldo1, 725, 1500);
+-HARMONY_REGULATOR_INIT(ldo2, 725, 1500);
+-HARMONY_REGULATOR_INIT(ldo3, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo4, 1700, 2475);
+-HARMONY_REGULATOR_INIT(ldo5, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo6, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo7, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo8, 1250, 3300);
+-HARMONY_REGULATOR_INIT(ldo9, 1250, 3300);
++HARMONY_REGULATOR_INIT(sm0,  "vdd_sm0",  "vdd_sys", 725, 1500);
++HARMONY_REGULATOR_INIT(sm1,  "vdd_sm1",  "vdd_sys", 725, 1500);
++HARMONY_REGULATOR_INIT(sm2,  "vdd_sm2",  "vdd_sys", 3000, 4550);
++HARMONY_REGULATOR_INIT(ldo1, "vdd_ldo1", "vdd_sm2", 725, 1500);
++HARMONY_REGULATOR_INIT(ldo2, "vdd_ldo2", "vdd_sm2", 725, 1500);
++HARMONY_REGULATOR_INIT(ldo3, "vdd_ldo3", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo4, "vdd_ldo4", "vdd_sm2", 1700, 2475);
++HARMONY_REGULATOR_INIT(ldo5, "vdd_ldo5", NULL,	    1250, 3300);
++HARMONY_REGULATOR_INIT(ldo6, "vdd_ldo6", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo7, "vdd_ldo7", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo8, "vdd_ldo8", "vdd_sm2", 1250, 3300);
++HARMONY_REGULATOR_INIT(ldo9, "vdd_ldo9", "vdd_sm2", 1250, 3300);
+ 
+ #define TPS_REG(_id, _data)			\
+ 	{					\
+@@ -115,6 +120,8 @@ static struct i2c_board_info __initdata harmony_regulators[] = {
+ int __init harmony_regulator_init(void)
+ {
+ 	if (machine_is_harmony()) {
++		regulator_register_always_on(0, "vdd_sys",
++			NULL, 0, 5000000);
+ 		i2c_register_board_info(3, harmony_regulators, 1);
+ 	} else { /* Harmony, booted using device tree */
+ 		struct device_node *np;
+-- 
+1.7.1.1
