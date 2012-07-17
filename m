@@ -1,110 +1,148 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH RESEND] ARM: tegra: harmony: add regulator supply name and its input supply
-Date: Mon, 16 Jul 2012 12:35:53 +0530
-Message-ID: <1342422353-10973-1-git-send-email-ldewangan@nvidia.com>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [v3.6 3/3] iommu/tegra: smmu: Fix unsleepable memory allocation
+ at alloc_pdir()
+Date: Tue, 17 Jul 2012 12:09:01 +0200
+Message-ID: <20120717100901.GH4213@amd.com>
+References: <1341228398-6878-1-git-send-email-hdoyu@nvidia.com>
+ <1341228398-6878-3-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1341228398-6878-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Name the regulator as per board schematics and adds its
-supply name info in regulator data.
-Add the always on fixed regulator to refer the battery supply.
+On Mon, Jul 02, 2012 at 02:26:38PM +0300, Hiroshi DOYU wrote:
 
-Use this fixed regulator for input supply of some of PMIC
-regulator
+> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reported-by: Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
+> Cc: Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Applied patch 2 and 3 but not patch 1. The resulting conflicts are
+solved while merging the next branch. Also I am not happy with the way
+the as->lock is taken and released multiple times in patch 3. So I added
+another commit on-top. Please have a look at it as I can only
+compile-test that change:
+
+From f9a4f063a88297e361fd6676986cf3e39b22de72 Mon Sep 17 00:00:00 2001
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Date: Tue, 17 Jul 2012 11:47:14 +0200
+Subject: [PATCH] iommu/tegra: Don't call alloc_pdir with as->lock
+
+Instead of taking as->lock before calling alloc_pdir() and
+releasing it in that function to allocate memory, just take
+the lock only in the alloc_pdir function and run the loop
+without any lock held. This simplifies the complicated
+lock->unlock->alloc->lock->unlock sequence into
+alloc->lock->unlock.
+
+Signed-off-by: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
 ---
-This was 1/2 of the series
-[PATCH 0/2] regulator: tps6586x: support for input supply
+ drivers/iommu/tegra-smmu.c |   29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-There is change in the regulator driver of tps6586x to support input
-supply, this change is also require to avoid any functionality break.
-The regulator change is in the Mark's regulator/for-next, this change
-should also go from this tree.
-Resending this as Mark suggested.
-
- arch/arm/mach-tegra/board-harmony-power.c |   33 +++++++++++++++++-----------
- 1 files changed, 20 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
-index 44dcb2e..8fd387b 100644
---- a/arch/arm/mach-tegra/board-harmony-power.c
-+++ b/arch/arm/mach-tegra/board-harmony-power.c
-@@ -19,6 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/gpio.h>
- #include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/mfd/tps6586x.h>
- #include <linux/of.h>
- #include <linux/of_i2c.h>
-@@ -34,7 +35,9 @@ static struct regulator_consumer_supply tps658621_ldo0_supply[] = {
- };
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 68a15a0..541d210 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -553,11 +553,11 @@ static inline void put_signature(struct smmu_as *as,
+ #endif
  
- static struct regulator_init_data ldo0_data = {
-+	.supply_regulator = "vdd_sm2",
- 	.constraints = {
-+		.name = "vdd_ldo0",
- 		.min_uV = 3300 * 1000,
- 		.max_uV = 3300 * 1000,
- 		.valid_modes_mask = (REGULATOR_MODE_NORMAL |
-@@ -48,9 +51,11 @@ static struct regulator_init_data ldo0_data = {
- 	.consumer_supplies = tps658621_ldo0_supply,
- };
- 
--#define HARMONY_REGULATOR_INIT(_id, _minmv, _maxmv)			\
-+#define HARMONY_REGULATOR_INIT(_id, _name, _supply, _minmv, _maxmv)	\
- 	static struct regulator_init_data _id##_data = {		\
-+		.supply_regulator = _supply,				\
- 		.constraints = {					\
-+			.name = _name,					\
- 			.min_uV = (_minmv)*1000,			\
- 			.max_uV = (_maxmv)*1000,			\
- 			.valid_modes_mask = (REGULATOR_MODE_NORMAL |	\
-@@ -61,18 +66,18 @@ static struct regulator_init_data ldo0_data = {
- 		},							\
- 	}
- 
--HARMONY_REGULATOR_INIT(sm0, 725, 1500);
--HARMONY_REGULATOR_INIT(sm1, 725, 1500);
--HARMONY_REGULATOR_INIT(sm2, 3000, 4550);
--HARMONY_REGULATOR_INIT(ldo1, 725, 1500);
--HARMONY_REGULATOR_INIT(ldo2, 725, 1500);
--HARMONY_REGULATOR_INIT(ldo3, 1250, 3300);
--HARMONY_REGULATOR_INIT(ldo4, 1700, 2475);
--HARMONY_REGULATOR_INIT(ldo5, 1250, 3300);
--HARMONY_REGULATOR_INIT(ldo6, 1250, 3300);
--HARMONY_REGULATOR_INIT(ldo7, 1250, 3300);
--HARMONY_REGULATOR_INIT(ldo8, 1250, 3300);
--HARMONY_REGULATOR_INIT(ldo9, 1250, 3300);
-+HARMONY_REGULATOR_INIT(sm0,  "vdd_sm0",  "vdd_sys", 725, 1500);
-+HARMONY_REGULATOR_INIT(sm1,  "vdd_sm1",  "vdd_sys", 725, 1500);
-+HARMONY_REGULATOR_INIT(sm2,  "vdd_sm2",  "vdd_sys", 3000, 4550);
-+HARMONY_REGULATOR_INIT(ldo1, "vdd_ldo1", "vdd_sm2", 725, 1500);
-+HARMONY_REGULATOR_INIT(ldo2, "vdd_ldo2", "vdd_sm2", 725, 1500);
-+HARMONY_REGULATOR_INIT(ldo3, "vdd_ldo3", "vdd_sm2", 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo4, "vdd_ldo4", "vdd_sm2", 1700, 2475);
-+HARMONY_REGULATOR_INIT(ldo5, "vdd_ldo5", NULL,	    1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo6, "vdd_ldo6", "vdd_sm2", 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo7, "vdd_ldo7", "vdd_sm2", 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo8, "vdd_ldo8", "vdd_sm2", 1250, 3300);
-+HARMONY_REGULATOR_INIT(ldo9, "vdd_ldo9", "vdd_sm2", 1250, 3300);
- 
- #define TPS_REG(_id, _data)			\
- 	{					\
-@@ -115,6 +120,8 @@ static struct i2c_board_info __initdata harmony_regulators[] = {
- int __init harmony_regulator_init(void)
+ /*
+- * Caller must lock/unlock as
++ * Caller must not hold as->lock
+  */
+-static int alloc_pdir(struct smmu_as *as, unsigned long *flags)
++static int alloc_pdir(struct smmu_as *as)
  {
- 	if (machine_is_harmony()) {
-+		regulator_register_always_on(0, "vdd_sys",
-+			NULL, 0, 5000000);
- 		i2c_register_board_info(3, harmony_regulators, 1);
- 	} else { /* Harmony, booted using device tree */
- 		struct device_node *np;
+-	unsigned long *pdir;
++	unsigned long *pdir, flags;
+ 	int pdn, err = 0;
+ 	u32 val;
+ 	struct smmu_device *smmu = as->smmu;
+@@ -565,13 +565,14 @@ static int alloc_pdir(struct smmu_as *as, unsigned long *flags)
+ 	unsigned int *cnt;
+ 
+ 	/*
+-	 * do the allocation outside the as->lock
++	 * do the allocation, then grab as->lock
+ 	 */
+-	spin_unlock_irqrestore(&as->lock, *flags);
+ 	cnt = devm_kzalloc(smmu->dev,
+-			   sizeof(cnt[0]) * SMMU_PDIR_COUNT, GFP_KERNEL);
++			   sizeof(cnt[0]) * SMMU_PDIR_COUNT,
++			   GFP_KERNEL);
+ 	page = alloc_page(GFP_KERNEL | __GFP_DMA);
+-	spin_lock_irqsave(&as->lock, *flags);
++
++	spin_lock_irqsave(&as->lock, flags);
+ 
+ 	if (as->pdir_page) {
+ 		/* We raced, free the redundant */
+@@ -603,9 +604,13 @@ static int alloc_pdir(struct smmu_as *as, unsigned long *flags)
+ 	smmu_write(smmu, val, SMMU_TLB_FLUSH);
+ 	FLUSH_SMMU_REGS(as->smmu);
+ 
++	spin_unlock_irqrestore(&as->lock, flags);
++
+ 	return 0;
+ 
+ err_out:
++	spin_unlock_irqrestore(&as->lock, flags);
++
+ 	devm_kfree(smmu->dev, cnt);
+ 	if (page)
+ 		__free_page(page);
+@@ -809,13 +814,11 @@ static int smmu_iommu_domain_init(struct iommu_domain *domain)
+ 	/* Look for a free AS with lock held */
+ 	for  (i = 0; i < smmu->num_as; i++) {
+ 		as = &smmu->as[i];
+-		spin_lock_irqsave(&as->lock, flags);
+ 		if (!as->pdir_page) {
+-			err = alloc_pdir(as, &flags);
++			err = alloc_pdir(as);
+ 			if (!err)
+ 				goto found;
+ 		}
+-		spin_unlock_irqrestore(&as->lock, flags);
+ 		if (err != -EAGAIN)
+ 			break;
+ 	}
+@@ -824,7 +827,7 @@ static int smmu_iommu_domain_init(struct iommu_domain *domain)
+ 	return err;
+ 
+ found:
+-	spin_lock(&smmu->lock);
++	spin_lock_irqsave(&smmu->lock, flags);
+ 
+ 	/* Update PDIR register */
+ 	smmu_write(smmu, SMMU_PTB_ASID_CUR(as->asid), SMMU_PTB_ASID);
+@@ -832,12 +835,12 @@ found:
+ 		   SMMU_MK_PDIR(as->pdir_page, as->pdir_attr), SMMU_PTB_DATA);
+ 	FLUSH_SMMU_REGS(smmu);
+ 
+-	spin_unlock(&smmu->lock);
++	spin_unlock_irqrestore(&smmu->lock, flags);
+ 
+-	spin_unlock_irqrestore(&as->lock, flags);
+ 	domain->priv = as;
+ 
+ 	dev_dbg(smmu->dev, "smmu_as@%p\n", as);
++
+ 	return 0;
+ }
+ 
 -- 
-1.7.1.1
+1.7.9.5
+
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
