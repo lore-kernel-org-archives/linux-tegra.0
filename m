@@ -1,67 +1,53 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [v3.6 3/3] iommu/tegra: smmu: Fix unsleepable memory allocation
- at alloc_pdir()
-Date: Wed, 18 Jul 2012 10:50:35 +0200
-Message-ID: <20120718.115035.519900225393247427.hdoyu@nvidia.com>
-References: <20120717100901.GH4213@amd.com><20120717.152524.175499431618552821.hdoyu@nvidia.com><20120717132300.GK4213@amd.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] dma: tegra: enable/disable dma clock
+Date: Wed, 18 Jul 2012 14:26:09 +0530
+Message-ID: <1342601769-13852-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20120717132300.GK4213@amd.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: "joerg.roedel@amd.com" <joerg.roedel@amd.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "chrisw@sous-sol.org" <chrisw@sous-sol.org>, "ohad@wizery.com" <ohad@wizery.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-"joerg.roedel@amd.com" <joerg.roedel@amd.com> wrote @ Tue, 17 Jul 2012 15:23:00 +0200:
+Enable the DMA clock when registering DMA driver and
+disable clock when removing the DMA driver.
 
-> On Tue, Jul 17, 2012 at 02:25:24PM +0200, Hiroshi Doyu wrote:
-> > The above spin_lock is always necessary. "as->lock" should be held to
-> > protect "as->pdir_page". Only when "as->pdir_page" is NULL,
-> > "as->pdir_page" would be allocated in "alloc_pdir()". Without this
-> > lock, the following race could happen:
-> > 
-> > 
-> > Without as->lock:
-> > A:			B:
-> > i == 3
-> > pdir_page == NULL
-> > 			i == 3
-> > 	     		pdir_page == NULL
-> > pdir_page = a;
-> > 			pdir_page = b;	!!!!!! OVERWRITTEN !!!!!!
-> >
-> 
-> Unless I am missing something, this is not the correct situation with my
-> patch. It would look more like this:
-> 
-> 
->  A:					B:
->  i == 3
->  pdir_page == NULL
->  					i == 3
->  	     				pdir_page == NULL
-> 
->  take as->lock
-> 
->  /* race check */
->  pdir_page == NULL -> proceed		/* spinning on as->lock */
-> 
->  pdir_page = a;
-> 
->  release as->lock
-> 
-> 					 take as->lock
-> 
-> 					 /* race check */
-> 					 pdir_page != NULL -> return
-> 
-> This should be fine, no? Do I miss something?
+The failure was observed on Tegra20 based system by
+Stephen Warren. However, it is working fine on tegra30
+based system and probably becasue uboot enable the clock
+on Tegra30.
 
-You are right. I didn't get the point of your patch. In the case that
-you can return -EAGAIN, the complicated "lock,unlock,lock,check race"
-is not necessary as you did.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reported-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+---
+ drivers/dma/tegra20-apb-dma.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-Verified the patch w/ Tegra3 based board. Please put this into next
-queue. Thanks.
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index d52dbc6..ccfdaf4 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1255,6 +1255,12 @@ static int __devinit tegra_dma_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	ret = clk_prepare_enable(tdma->dma_clk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "clk_prepare_enable failed: %d\n", ret);
++		goto err_pm_disable;
++	}
++
+ 	/* Reset DMA controller */
+ 	tegra_periph_reset_assert(tdma->dma_clk);
+ 	udelay(2);
+@@ -1363,6 +1369,7 @@ static int __devexit tegra_dma_remove(struct platform_device *pdev)
+ 	if (!pm_runtime_status_suspended(&pdev->dev))
+ 		tegra_dma_runtime_suspend(&pdev->dev);
+ 
++	clk_disable_unprepare(tdma->dma_clk);
+ 	return 0;
+ }
+ 
+-- 
+1.7.1.1
