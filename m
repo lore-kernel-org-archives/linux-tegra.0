@@ -1,61 +1,44 @@
-From: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] dma: tegra: enable/disable dma clock
-Date: Fri, 20 Jul 2012 11:32:21 +0530
-Message-ID: <1342764141.1726.199.camel@vkoul-udesk3>
-References: <1342601769-13852-1-git-send-email-ldewangan@nvidia.com>
+Date: Fri, 20 Jul 2012 11:34:08 +0530
+Message-ID: <5008F4D8.9070108@nvidia.com>
+References: <1342601769-13852-1-git-send-email-ldewangan@nvidia.com> <1342764141.1726.199.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1342601769-13852-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1342764141.1726.199.camel@vkoul-udesk3>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2012-07-18 at 14:26 +0530, Laxman Dewangan wrote:
-> Enable the DMA clock when registering DMA driver and
-> disable clock when removing the DMA driver.
-> 
-> The failure was observed on Tegra20 based system by
-> Stephen Warren. However, it is working fine on tegra30
-> based system and probably becasue uboot enable the clock
-> on Tegra30.
-Don't know much about the clock subsystem, but shouldn't the clocks be
-enabled runtime..... when you actually start using the controller??
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reported-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> ---
->  drivers/dma/tegra20-apb-dma.c |    7 +++++++
->  1 files changed, 7 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index d52dbc6..ccfdaf4 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1255,6 +1255,12 @@ static int __devinit tegra_dma_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	ret = clk_prepare_enable(tdma->dma_clk);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "clk_prepare_enable failed: %d\n", ret);
-> +		goto err_pm_disable;
-> +	}
-> +
->  	/* Reset DMA controller */
->  	tegra_periph_reset_assert(tdma->dma_clk);
->  	udelay(2);
-> @@ -1363,6 +1369,7 @@ static int __devexit tegra_dma_remove(struct platform_device *pdev)
->  	if (!pm_runtime_status_suspended(&pdev->dev))
->  		tegra_dma_runtime_suspend(&pdev->dev);
->  
-> +	clk_disable_unprepare(tdma->dma_clk);
->  	return 0;
->  }
->  
+On Friday 20 July 2012 11:32 AM, Vinod Koul wrote:
+> On Wed, 2012-07-18 at 14:26 +0530, Laxman Dewangan wrote:
+>> Enable the DMA clock when registering DMA driver and
+>> disable clock when removing the DMA driver.
+>>
+>> The failure was observed on Tegra20 based system by
+>> Stephen Warren. However, it is working fine on tegra30
+>> based system and probably becasue uboot enable the clock
+>> on Tegra30.
+> Don't know much about the clock subsystem, but shouldn't the clocks be
+> enabled runtime..... when you actually start using the controller??
 
+Yes, this is the plan and I am going to implement dynamic clock 
+management but it will take some time to complete and have testing 
+throughly. some of the issue which I am seeing and analyzing on this 
+approach is that
+  - clock disable can be called from isr context or not?
+  - how much complexity will be added in dma driver to implement this?
+  - What power benefit we will get on this.
+  - Is there any user which generally use dma and always keep dma on 
+requested state like UART RX always ready etc.
 
--- 
-~Vinod
+So keeping that in mind, it will take some time to complete this and 
+meanwhile, I want to make it work for Tegra20 based system which is not 
+working on current driver.
+and hence this is the change.
+
+Thanks,
+Laxman
