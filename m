@@ -1,33 +1,60 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: harmony: add regulator supply name and
- its input supply
-Date: Mon, 23 Jul 2012 14:49:36 -0600
-Message-ID: <500DB8E0.1050100@wwwdotorg.org>
-References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-2-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/2] regulator: tps6586x: add support for input supply
+Date: Mon, 23 Jul 2012 14:51:44 -0600
+Message-ID: <500DB960.6020802@wwwdotorg.org>
+References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1342187432-18668-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: broonie@opensource.wolfsonmicro.com, ccross@android.com, olof@lixom.net, lrg@ti.com, thierry.reding@avionic-design.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca
 List-Id: linux-tegra@vger.kernel.org
 
 On 07/13/2012 07:50 AM, Laxman Dewangan wrote:
-> Name the regulator as per board schematics and adds its
-> supply name info in regulator data.
-> Add the always on fixed regulator to refer the battery supply.
+> There is multiple voltage input pins on device which
+> takes the voltage input for different voltage regulator.
+> Support to configure the voltage input supplied by
+> different regulator for each regulators.
 > 
-> Use this fixed regulator for input supply of some of PMIC
-> regulator
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+>  .../devicetree/bindings/regulator/tps6586x.txt     |   17 +++++++
+>  drivers/regulator/tps6586x-regulator.c             |   47 ++++++++++---------
+>  2 files changed, 42 insertions(+), 22 deletions(-)
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> diff --git a/Documentation/devicetree/bindings/regulator/tps6586x.txt b/Documentation/devicetree/bindings/regulator/tps6586x.txt
+> index ab17ef6..d156e1b 100644
+> --- a/Documentation/devicetree/bindings/regulator/tps6586x.txt
+> +++ b/Documentation/devicetree/bindings/regulator/tps6586x.txt
+> @@ -9,6 +9,14 @@ Required properties:
+>  - regulators: list of regulators provided by this controller, must have
+>    property "regulator-compatible" to match their hardware counterparts:
+>    sm[0-2], ldo[0-9] and ldo_rtc
+> +- sm0-supply: The input supply for the SM0.
+> +- sm1-supply: The input supply for the SM1.
+> +- sm2-supply: The input supply for the SM2.
+> +- vinldo01-supply: The input supply for the LDO1 and LDO2
+> +- vinldo23-supply: The input supply for the LDO2 and LDO3
+> +- vinldo4-supply: The input supply for the LDO4
+> +- vinldo678-supply: The input supply for the LDO6, LDO7 and LDO8
+> +- vinldo9-supply: The input supply for the LDO9
 
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Hmm. The signal names in my data sheet are VIN_SMn and VINLDOn, so
+having "vin" in just some of the property names seems a little inconsistent.
 
-Note that this file might well be deleted within the 3.7 development
-cycle, since we will presumably get to the point where when booting from
-DT, the DT will set up the regulators, and we won't support non-DT
-booting any more on Harmony. Still, that should merge without issues, so
-I don't think this will be a problem.
+> diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
+
+>  static inline struct device *to_tps6586x_dev(struct regulator_dev *rdev)
+>  {
+> -	return rdev_get_dev(rdev)->parent->parent;
+> +	return rdev_get_dev(rdev)->parent;
+...
+> @@ -351,7 +354,7 @@ static int __devinit tps6586x_regulator_probe(struct platform_device *pdev)
+...
+> -	config.dev = &pdev->dev;
+> +	config.dev = pdev->dev.parent;
+
+Those seem like unrelated changes, but I suppose it's fine.
