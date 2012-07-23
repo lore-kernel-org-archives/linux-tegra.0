@@ -1,42 +1,34 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: make tegra_cpu_reset_handler_enable() __init
-Date: Mon, 23 Jul 2012 14:09:30 -0600
-Message-ID: <500DAF7A.3000302@wwwdotorg.org>
-References: <1340053310-20855-1-git-send-email-swarren@wwwdotorg.org> <20120718150130.GV9437@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC][PATCH V2 3/3] tegra: add pwm backlight device tree nodes
+Date: Mon, 23 Jul 2012 14:38:15 -0600
+Message-ID: <500DB637.8000502@wwwdotorg.org>
+References: <1341814105-20690-1-git-send-email-acourbot@nvidia.com> <1341814105-20690-4-git-send-email-acourbot@nvidia.com> <CAPnjgZ1QbjE+-tr0c01K2feUdEE2wMBfR=bKpTxnyDOJbY8+1Q@mail.gmail.com> <4FFEA2D4.9050308@nvidia.com> <CAPnjgZ2=Ga2P-40trA_=UABm=i7Uy4NTAM=ehea11mE22VfDew@mail.gmail.com> <4FFFB2DC.3040605@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120718150130.GV9437-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arndb-r2nGTMty4D4@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FFFB2DC.3040605@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Simon Glass <sjg@chromium.org>, Thierry Reding <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/18/2012 09:01 AM, Peter De Schrijver wrote:
-> On Mon, Jun 18, 2012 at 11:01:50PM +0200, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This solves a section mismatch warning. I hadn't noticed this before,
->> because my compiler was inlining tegra_cpu_reset_handler_enable() inside
->> tegra_cpu_reset_handler_init(), which is already __init, but I switched
->> compilers and it stopped doing that.
+On 07/12/2012 11:32 PM, Alex Courbot wrote:
+> On 07/12/2012 11:27 PM, Simon Glass wrote
+...
+>>  From my understanding mixing strings and numbers in a property is
+>> frowned on though.
 > 
-> Why does this generate a section mismatch warning? I see why calling a
-> a __init marked function from a non __init marked function is a problem, but
-> the opposite should be ok no?
+> But doesn't it make sense in the current case? The power sequence is
+> basically a program that is run by an interpreter. From this
+> perspective, it makes more sense to me to have it as a binary field
+> rather than a hierarchy of nodes and properties that will be harder to
+> parse and will make error detection more complicated. I don't really see
+> any practical benefit from turning the steps into sub-nodes, but then
+> again I am not so familiar with the DT.
 
-The issue is that tegra_cpu_reset_handler_enable() itself (which was not
-__init but the patch made to be __init) was referencing variable
-__tegra_cpu_reset_handler_{start,end}. This wasn't noticed before
-because when tegra_cpu_reset_handler_enable() was inlined into
-tegra_cpu_reset_handler_init(), tegra_cpu_reset_handler_enable() was
-effectively __init. However, when built as a separate function, you
-ended up with a non-__init function referencing other things that were
-__init.
-
-In other words, this is indeed nothing to do with __init function
-tegra_cpu_reset_handler_init() calling non-__init function
-tegra_cpu_reset_handler_enable().
-
-You can get the details by reverting the patch and building:-)
+Mixing strings and integers in a property isn't "allowed" (by convention
+of DT bindings reviewers - as you noticed, dtc will happily compile it);
+there are practical issues with attempting to do so, such as causing the
+integer values to be unaligned, and thus causing the current integer
+parsing code to fail, etc.
