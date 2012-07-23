@@ -1,60 +1,27 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 2/2] regulator: tps6586x: add support for input supply
-Date: Mon, 23 Jul 2012 14:51:44 -0600
-Message-ID: <500DB960.6020802@wwwdotorg.org>
-References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
+Date: Mon, 23 Jul 2012 14:54:55 -0600
+Message-ID: <500DBA1F.7050605@wwwdotorg.org>
+References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-3-git-send-email-ldewangan@nvidia.com> <20120713142229.GM4215@opensource.wolfsonmicro.com> <500057A0.1050108@nvidia.com> <20120715212114.GI4041@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1342187432-18668-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: broonie@opensource.wolfsonmicro.com, ccross@android.com, olof@lixom.net, lrg@ti.com, thierry.reding@avionic-design.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120715212114.GI4041-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/13/2012 07:50 AM, Laxman Dewangan wrote:
-> There is multiple voltage input pins on device which
-> takes the voltage input for different voltage regulator.
-> Support to configure the voltage input supplied by
-> different regulator for each regulators.
+On 07/15/2012 03:21 PM, Mark Brown wrote:
+> On Fri, Jul 13, 2012 at 10:45:12PM +0530, Laxman Dewangan wrote:
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  .../devicetree/bindings/regulator/tps6586x.txt     |   17 +++++++
->  drivers/regulator/tps6586x-regulator.c             |   47 ++++++++++---------
->  2 files changed, 42 insertions(+), 22 deletions(-)
+>> I was thinking that 1/2 should also go through your tree to
+>> avoid any functionality break on existing platform who are using
+>> this regulator.
 > 
-> diff --git a/Documentation/devicetree/bindings/regulator/tps6586x.txt b/Documentation/devicetree/bindings/regulator/tps6586x.txt
-> index ab17ef6..d156e1b 100644
-> --- a/Documentation/devicetree/bindings/regulator/tps6586x.txt
-> +++ b/Documentation/devicetree/bindings/regulator/tps6586x.txt
-> @@ -9,6 +9,14 @@ Required properties:
->  - regulators: list of regulators provided by this controller, must have
->    property "regulator-compatible" to match their hardware counterparts:
->    sm[0-2], ldo[0-9] and ldo_rtc
-> +- sm0-supply: The input supply for the SM0.
-> +- sm1-supply: The input supply for the SM1.
-> +- sm2-supply: The input supply for the SM2.
-> +- vinldo01-supply: The input supply for the LDO1 and LDO2
-> +- vinldo23-supply: The input supply for the LDO2 and LDO3
-> +- vinldo4-supply: The input supply for the LDO4
-> +- vinldo678-supply: The input supply for the LDO6, LDO7 and LDO8
-> +- vinldo9-supply: The input supply for the LDO9
+> I'd be happy to do that if the ARM people are happy with it; just
+> let me know and resend the patch if you want me to apply it.
 
-Hmm. The signal names in my data sheet are VIN_SMn and VINLDOn, so
-having "vin" in just some of the property names seems a little inconsistent.
-
-> diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
-
->  static inline struct device *to_tps6586x_dev(struct regulator_dev *rdev)
->  {
-> -	return rdev_get_dev(rdev)->parent->parent;
-> +	return rdev_get_dev(rdev)->parent;
-...
-> @@ -351,7 +354,7 @@ static int __devinit tps6586x_regulator_probe(struct platform_device *pdev)
-...
-> -	config.dev = &pdev->dev;
-> +	config.dev = pdev->dev.parent;
-
-Those seem like unrelated changes, but I suppose it's fine.
+Patch 2/2 really depends on patch 1/2 to avoid git bisect breakage;
+are you able to rebase it to maintain that order when applying it?
