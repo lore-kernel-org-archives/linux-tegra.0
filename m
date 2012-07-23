@@ -1,33 +1,31 @@
-From: Nuno Santos <nuno.m.santos-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: NVFlash hangs when flashing U-Boot on Tegra2 board
-Date: Mon, 23 Jul 2012 17:11:07 +0200
-Message-ID: <500D698B.3040405@gmail.com>
-References: <loom.20120723T101555-779@post.gmane.org> <500D1F5C.1060603@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 5/5] i2c: tegra: convert normal suspend/resume to *_noirq
+Date: Mon, 23 Jul 2012 12:24:38 -0600
+Message-ID: <500D96E6.4060507@wwwdotorg.org>
+References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com> <1341919244-23327-6-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <500D1F5C.1060603-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1341919244-23327-6-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: w.sang@pengutronix.de, khali@linux-fr.org, ben-linux@fluff.org, swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Alex
+On 07/10/2012 05:20 AM, Laxman Dewangan wrote:
+> To provide the late suspend and early resume for i2c
+> driver, convert the suspend/resume as
+> 	suspend-> suspend_noirq
+> 	resume -> resume_noirq
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Thank you so much for your prompt response! It really help me understand 
-what's going on! Based on your clarification, I was already able to 
-flash u-boot on its own partition and have the device booting u-boot 
-directly from flash.
+Why do we need this change?
 
-Just one more thing. The next step is now to boot linux from u-boot. 
-Ideally, I'd like to load the kernel from the Harmony board's nand flash 
-using the "nboot" command. This command, however, is not available when 
-I compile U-boot for Harmony and looking at U-boot's source code, there 
-apparently no nand support for Tegra 2 based boards (at least I couldn't 
-find any specific driver code). Do you know if this is actually the case?
+IIRC, I proposed it before solely to solve some suspend/resume ordering
+issues, and Colin Cross NAKd it. These days, deferred probe should make
+this change unnecessary.
 
-Thank you again in advance!
-
-Kind regards,
---Nuno
+Unless there's a really good reason for this change, I'd tend to request
+reverting it.
