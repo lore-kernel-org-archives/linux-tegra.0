@@ -1,40 +1,40 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: harmony: add regulator supply name and its input supply
-Date: Tue, 24 Jul 2012 19:27:50 +0000
-Message-ID: <201207241927.50579.arnd@arndb.de>
-References: <1343147783-24948-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: turn on UART A clock at boot
+Date: Tue, 24 Jul 2012 16:50:00 -0600
+Message-ID: <1343170200-28228-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1343147783-24948-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 24 July 2012, Stephen Warren wrote:
-> From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Name the regulator as per board schematics and adds its
-> supply name info in regulator data.
-> Add the always on fixed regulator to refer the battery supply.
-> 
-> Use this fixed regulator for input supply of some of PMIC
-> regulator
-> 
-> This patch was originally part of a 2-patch series. Patch 2 got applied
-> to the regulator tree as 7c7fac3 "regulator: tps6586x: add support for
-> input supply" without this patch. This broke regulator support on
-> Harmony.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [swarren: added dependency info to commit description]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied to fixes branch.
+Some boards use UART D for the main serial console, and some use UART A.
+UART D's clock is listed in board-dt-tegra20.c's clock table, whereas
+UART A's clock is not. This causes the clock code to think UART A's
+clock is unsed. The common clock framework turns off unused clocks at
+boot time. This makes the kernel appear to hang. Add UART A's clock into
+the clock table to prevent this. Eventually, this requirement should be
+handled by the UART driver, and/or properties in a board-specific device
+tree file.
 
-thanks,
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-	Arnd
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 70a19a9..5daffd5 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -71,6 +71,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 
+ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
++	{ "uarta",	"pll_p",	216000000,	true },
+ 	{ "uartd",	"pll_p",	216000000,	true },
+ 	{ "usbd",	"clk_m",	12000000,	false },
+ 	{ "usb2",	"clk_m",	12000000,	false },
+-- 
+1.7.0.4
