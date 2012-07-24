@@ -1,32 +1,59 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] regulator: tps6586x: add support for input supply
-Date: Tue, 24 Jul 2012 09:59:19 +0530
-Message-ID: <500E249F.4080700@nvidia.com>
-References: <1342187432-18668-1-git-send-email-ldewangan@nvidia.com> <1342187432-18668-3-git-send-email-ldewangan@nvidia.com> <500DB960.6020802@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: make tegra_cpu_reset_handler_enable() __init
+Date: Tue, 24 Jul 2012 12:06:30 +0300
+Message-ID: <20120724090630.GI12034@tbergstrom-lnx.Nvidia.com>
+References: <1340053310-20855-1-git-send-email-swarren@wwwdotorg.org>
+ <20120718150130.GV9437@tbergstrom-lnx.Nvidia.com>
+ <500DAF7A.3000302@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <500DB960.6020802-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <500DAF7A.3000302@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arndb@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 24 July 2012 02:21 AM, Stephen Warren wrote:
-> On 07/13/2012 07:50 AM, Laxman Dewangan wrote:
->>     sm[0-2], ldo[0-9] and ldo_rtc
->> +- sm0-supply: The input supply for the SM0.
->> +- sm1-supply: The input supply for the SM1.
->> +- sm2-supply: The input supply for the SM2.
->> +- vinldo01-supply: The input supply for the LDO1 and LDO2
->> +- vinldo23-supply: The input supply for the LDO2 and LDO3
->> +- vinldo4-supply: The input supply for the LDO4
->> +- vinldo678-supply: The input supply for the LDO6, LDO7 and LDO8
->> +- vinldo9-supply: The input supply for the LDO9
-> Hmm. The signal names in my data sheet are VIN_SMn and VINLDOn, so
-> having "vin" in just some of the property names seems a little inconsistent.
->
+On Mon, Jul 23, 2012 at 10:09:30PM +0200, Stephen Warren wrote:
+> On 07/18/2012 09:01 AM, Peter De Schrijver wrote:
+> > On Mon, Jun 18, 2012 at 11:01:50PM +0200, Stephen Warren wrote:
+> >> From: Stephen Warren <swarren@nvidia.com>
+> >>
+> >> This solves a section mismatch warning. I hadn't noticed this before,
+> >> because my compiler was inlining tegra_cpu_reset_handler_enable() inside
+> >> tegra_cpu_reset_handler_init(), which is already __init, but I switched
+> >> compilers and it stopped doing that.
+> > 
+> > Why does this generate a section mismatch warning? I see why calling a
+> > a __init marked function from a non __init marked function is a problem, but
+> > the opposite should be ok no?
+> 
+> The issue is that tegra_cpu_reset_handler_enable() itself (which was not
+> __init but the patch made to be __init) was referencing variable
+> __tegra_cpu_reset_handler_{start,end}. This wasn't noticed before
+> because when tegra_cpu_reset_handler_enable() was inlined into
+> tegra_cpu_reset_handler_init(), tegra_cpu_reset_handler_enable() was
+> effectively __init. However, when built as a separate function, you
+> ended up with a non-__init function referencing other things that were
+> __init.
+> 
+> In other words, this is indeed nothing to do with __init function
+> tegra_cpu_reset_handler_init() calling non-__init function
+> tegra_cpu_reset_handler_enable().
 
-My bad, not sure why I missed it.  I will send the patch for correcting 
-this before Tegra's board ventana/harmony fills the dt entry.
+Ah. That makes sense :) We need to be careful with this when introducing
+system suspend support because some of this work needs to be redone on resume.
+
+Cheers,
+
+Peter.
