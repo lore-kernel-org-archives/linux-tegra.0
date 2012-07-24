@@ -1,62 +1,73 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 5/5] i2c: tegra: convert normal suspend/resume to *_noirq
-Date: Tue, 24 Jul 2012 17:29:34 +0200
-Message-ID: <20120724152934.GA25942@pengutronix.de>
-References: <1341919244-23327-1-git-send-email-ldewangan@nvidia.com>
- <1341919244-23327-6-git-send-email-ldewangan@nvidia.com>
- <500D96E6.4060507@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Linux hangs on Tegra 2 / U-Boot board
+Date: Tue, 24 Jul 2012 09:59:51 -0600
+Message-ID: <500EC677.5040309@wwwdotorg.org>
+References: <loom.20120724T152735-115@post.gmane.org> <20120724140547.GA27999@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <500D96E6.4060507-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120724140547.GA27999-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Nuno Santos <nuno.m.santos-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 23, 2012 at 12:24:38PM -0600, Stephen Warren wrote:
-> On 07/10/2012 05:20 AM, Laxman Dewangan wrote:
-> > To provide the late suspend and early resume for i2c
-> > driver, convert the suspend/resume as
-> > 	suspend-> suspend_noirq
-> > 	resume -> resume_noirq
-> >=20
-> > Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/24/2012 08:05 AM, Thierry Reding wrote:
+> On Tue, Jul 24, 2012 at 01:32:59PM +0000, Nuno Santos wrote:
+>> Hi
+>>=20
+>> As I explained in a previous post, I have a Tegra2 based board
+>> (Harmony) and (thanks to your help) I successfully managed to
+>> flash and boot U-Boot.
+>>=20
+>> However, I=E2=80=99ve been trying to boot Linux from U-Boot but to n=
+o
+>> avail. Once the device runs U-boot, I load a Linux image into
+>> memory over TFTP, run the command =E2=80=9Cbootm=E2=80=9D, and then =
+Linux
+>> immediately hangs after printing message =E2=80=9CStarting kernel ..=
+=2E".
+>>=20
+>> I=E2=80=99ve tried multiple suggestions I=E2=80=99ve seen online: de=
+fining linux
+>> console boot in the =E2=80=9Cbootargs=E2=80=9D parameter in case it =
+is a console
+>> misconfiguration, recompile the kernel with CONFIG_DEBUG_LL to
+>> diagnose the problem, and check the machine id (by providing
+>> machine id 0xAAB in the environment var =E2=80=9Cmachid=E2=80=9D). I=
+n all these
+>> attempts there is no change whatsoever in the output.
 >=20
-> Why do we need this change?
+> You need to pass earlyprintk in bootargs to see early debug output=20
+> (CONFIG_DEBUG_LL). Also make sure that you've flashed with the
+> correct ODMDATA set so the output goes to the correct UART.
+
+Also, you need an appropriate Kconfig option to select which debug
+UART to use. CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA should hopefully
+work fine, assuming your ODMDATA contains the correct UART setting
+(e.g. 0x300d8011 should work).
+
+>> I=E2=80=99d be really grateful if someone could give me a hand on th=
+is.
+>> So, here=E2=80=99s the details.
+>>=20
+>> 1. I=E2=80=99m using the kernel from
+>> git://nv-tegra.nvidia.com/linux-2.6.git, pulled today and
+>> configured as indicated in the doc (make tegra_defconfig); the
+>> compilation also creates a uImage for U-Boot. I=E2=80=99m using the
+>> latest version of U-Boot, compiled locally using the standard
+>> procedure.
 >=20
-> IIRC, I proposed it before solely to solve some suspend/resume ordering
-> issues, and Colin Cross NAKd it. These days, deferred probe should make
-> this change unnecessary.
->=20
-> Unless there's a really good reason for this change, I'd tend to request
-> reverting it.
+> It might help to try and run the upstream kernel just to check
+> that everything works. I believe the NVIDIA downstream kernels
+> currently don't boot properly when run from the upstream U-Boot.
+> But I may be mistaken.
 
-I will drop it from my tree and exclude it from my pull request. Please
-resend if it should go in later.
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iEYEARECAAYFAlAOv14ACgkQD27XaX1/VRvV3wCfcHSaErshHwP4cAd+V1ysV+8M
-i9sAn1pSEwrBjkeb/zrWtlZ0zYvi4gNl
-=goUI
------END PGP SIGNATURE-----
-
---fdj2RfSjLxBAspz7--
+Upstream U-Boot has primarily (perhaps even only) been tested with an
+upstream Linux kernel. Equally, our downstream kernels have mostly
+only been tested with downstream fastboot, and partially with
+downstream U-Boot. The upshot of this is that downstream kernels
+incorrectly assume that the bootloader initializes a lot more stuff
+(e.g. clocks). You will likely have much more luck booting an upstream
+kernel, at least initially in order to get the process working.
