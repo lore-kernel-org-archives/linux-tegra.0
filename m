@@ -1,139 +1,38 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v3 09/10] of: Add of_pci_parse_ranges()
-Date: Thu, 26 Jul 2012 21:55:11 +0200
-Message-ID: <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: [PATCH v3 05/10] resource: add PCI configuration space support
+Date: Thu, 26 Jul 2012 21:55:07 +0200
+Message-ID: <1343332512-28762-6-git-send-email-thierry.reding@avionic-design.de>
 References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1343332512-28762-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-This new function parses the ranges property of PCI device nodes into
-an array of struct resource elements. It is useful in multiple-port PCI
-host controller drivers to collect information about the ranges that it
-needs to forward to the respective ports.
+This commit adds a new flag that allows marking resources as PCI
+configuration space.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 ---
 Changes in v3:
 - new patch
 
- drivers/of/of_pci.c    | 84 +++++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/of_pci.h |  2 ++
- 2 files changed, 85 insertions(+), 1 deletion(-)
+ include/linux/ioport.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
-index 13e37e2..bcff301 100644
---- a/drivers/of/of_pci.c
-+++ b/drivers/of/of_pci.c
-@@ -1,7 +1,8 @@
- #include <linux/kernel.h>
- #include <linux/export.h>
--#include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_pci.h>
-+#include <linux/slab.h>
- #include <asm/prom.h>
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 589e0e7..3314843 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -102,7 +102,7 @@ struct resource {
  
- static inline int __of_pci_pci_compare(struct device_node *node,
-@@ -40,3 +41,84 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
- 	return NULL;
- }
- EXPORT_SYMBOL_GPL(of_pci_find_child_device);
-+
-+struct resource *of_pci_parse_ranges(struct device_node *node,
-+				     unsigned int *countp)
-+{
-+	unsigned int count, i = 0;
-+	struct resource *ranges;
-+	const __be32 *values;
-+	int len, pna, np;
-+
-+	values = of_get_property(node, "ranges", &len);
-+	if (!values)
-+		return NULL;
-+
-+	pna = of_n_addr_cells(node);
-+	np = pna + 5;
-+
-+	count = len / (np * sizeof(*values));
-+
-+	ranges = kzalloc(sizeof(*ranges) * count, GFP_KERNEL);
-+	if (!ranges)
-+		return NULL;
-+
-+	pr_debug("PCI ranges:\n");
-+
-+	while ((len -= np * sizeof(*values)) >= 0) {
-+		u64 addr = of_translate_address(node, values + 3);
-+		u64 size = of_read_number(values + 3 + pna, 2);
-+		u32 type = be32_to_cpup(values);
-+		const char *suffix = "";
-+		struct resource range;
-+
-+		memset(&range, 0, sizeof(range));
-+		range.start = addr;
-+		range.end = addr + size - 1;
-+
-+		switch ((type >> 24) & 0x3) {
-+		case 0:
-+			range.flags = IORESOURCE_MEM | IORESOURCE_PCI_CS;
-+			pr_debug("  CS  %#x-%#x\n", range.start, range.end);
-+			break;
-+
-+		case 1:
-+			range.flags = IORESOURCE_IO;
-+			pr_debug("  IO  %#x-%#x\n", range.start, range.end);
-+			break;
-+
-+		case 2:
-+			range.flags = IORESOURCE_MEM;
-+
-+			if (type & 0x40000000) {
-+				range.flags |= IORESOURCE_PREFETCH;
-+				suffix = "prefetch";
-+			}
-+
-+			pr_debug("  MEM %#x-%#x %s\n", range.start, range.end,
-+				 suffix);
-+			break;
-+
-+		case 3:
-+			range.flags = IORESOURCE_MEM | IORESOURCE_MEM_64;
-+
-+			if (type & 0x40000000) {
-+				range.flags |= IORESOURCE_PREFETCH;
-+				suffix = "prefetch";
-+			}
-+
-+			pr_debug("  MEM %#x-%#x 64-bit %s\n", range.start,
-+				 range.end, suffix);
-+			break;
-+		}
-+
-+		memcpy(&ranges[i++], &range, sizeof(range));
-+		values += np;
-+	}
-+
-+	if (countp)
-+		*countp = count;
-+
-+	return ranges;
-+}
-+EXPORT_SYMBOL_GPL(of_pci_parse_ranges);
-diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-index bb115de..c0db6ea 100644
---- a/include/linux/of_pci.h
-+++ b/include/linux/of_pci.h
-@@ -10,5 +10,7 @@ int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
- struct device_node;
- struct device_node *of_pci_find_child_device(struct device_node *parent,
- 					     unsigned int devfn);
-+struct resource *of_pci_parse_ranges(struct device_node *node,
-+				     unsigned int *countp);
+ /* PCI control bits.  Shares IORESOURCE_BITS with above PCI ROM.  */
+ #define IORESOURCE_PCI_FIXED		(1<<4)	/* Do not move resource */
+-
++#define IORESOURCE_PCI_CS		(1<<5)	/* PCI configuration space */
  
- #endif
+ /* helpers to define resources */
+ #define DEFINE_RES_NAMED(_start, _size, _name, _flags)			\
 -- 
 1.7.11.2
