@@ -1,53 +1,78 @@
 From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: [PATCH v3 08/10] of/address: Handle #address-cells > 2 specially
-Date: Thu, 26 Jul 2012 21:55:10 +0200
-Message-ID: <1343332512-28762-9-git-send-email-thierry.reding@avionic-design.de>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
+Date: Thu, 26 Jul 2012 21:55:02 +0200
+Message-ID: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
 Sender: linux-pci-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
 Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-When a bus specifies #address-cells > 2, of_bus_default_map() now
-assumes that the mapping isn't for a physical address but rather an
-identifier that needs to match exactly.
+This patch series adds support for device tree based probing of the PCIe
+controller found on Tegra SoCs.
 
-This is required by bindings that use multiple cells to translate a
-resource to the parent bus (device index, type, ...).
+Patches 1 and 2 keep the pci_fixup_irqs() and ARM-specific
+pci_common_init() functions around after init. This is required to
+support driver probe deferral, which may cause built-in drivers to be
+probed after __init data has already been freed.
 
-See here for the discussion:
+Patch 3 allows a driver's probe function to pass per-controller private
+data when calling the pci_common_init() function.
 
-	https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-June/016577.html
+Patch 4 is trivial and has already been Acked-by: Stephen Warren before.
 
-Originally-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
----
-Changes in v3:
-- new patch
+Patch 5 adds a flag to mark a struct resource as defining a PCI
+configuration space. The flag will be used subsequently to differentiate
+between memory-mapped I/O regions and PCI configuration space.
 
- drivers/of/address.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Patch 6 rewrites PCIe support as a driver and switches the Harmony and
+TrimSlice boards to add the proper platform device instead of calling
+the tegra_pcie_init() function. Patch 7 adds MSI support as an IRQ
+domain.
 
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index 7e262a6..2776119 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -69,6 +69,14 @@ static u64 of_bus_default_map(u32 *addr, const __be32 *range,
- 		 (unsigned long long)cp, (unsigned long long)s,
- 		 (unsigned long long)da);
- 
-+	/*
-+	 * If the number of address cells is larger than 2 we assume the
-+	 * mapping doesn't specify a physical address. Rather, the address
-+	 * specifies an identifier that must match exactly.
-+	 */
-+	if (na > 2 && memcmp(range, addr, na * 4) != 0)
-+		return OF_BAD_ADDR;
-+
- 	if (da < cp || da >= (cp + s))
- 		return OF_BAD_ADDR;
- 	return da - cp;
+Patches 8 and 9 add code to support the new PCIe controller binding used
+by patch 10 to instantiate the controller from DT.
+
+
+Thierry Reding (10):
+  PCI: Keep pci_fixup_irqs() around after init
+  ARM: pci: Keep pci_common_init() around after init
+  ARM: pci: Allow passing per-controller private data
+  ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
+  resource: add PCI configuration space support
+  ARM: tegra: Rewrite PCIe support as a driver
+  ARM: tegra: pcie: Add MSI support
+  of/address: Handle #address-cells > 2 specially
+  of: Add of_pci_parse_ranges()
+  ARM: tegra: pcie: Add device tree support
+
+ .../bindings/pci/nvidia,tegra20-pcie.txt           |   94 ++
+ arch/arm/boot/dts/tegra20.dtsi                     |   62 +
+ arch/arm/include/asm/mach/pci.h                    |    1 +
+ arch/arm/kernel/bios32.c                           |    7 +-
+ arch/arm/mach-tegra/Kconfig                        |    1 +
+ arch/arm/mach-tegra/board-dt-tegra20.c             |    7 +-
+ arch/arm/mach-tegra/board-harmony-pcie.c           |   30 +-
+ arch/arm/mach-tegra/board-harmony.c                |    1 +
+ arch/arm/mach-tegra/board-harmony.h                |    1 +
+ arch/arm/mach-tegra/board-trimslice.c              |   11 +-
+ arch/arm/mach-tegra/board.h                        |    2 +-
+ arch/arm/mach-tegra/devices.c                      |  142 ++
+ arch/arm/mach-tegra/devices.h                      |    3 +
+ arch/arm/mach-tegra/include/mach/iomap.h           |    3 -
+ arch/arm/mach-tegra/include/mach/irqs.h            |    5 +-
+ arch/arm/mach-tegra/include/mach/pci-tegra.h       |   38 +
+ arch/arm/mach-tegra/pcie.c                         | 1406 ++++++++++++++------
+ arch/arm/mach-tegra/pmc.c                          |   16 +
+ arch/arm/mach-tegra/pmc.h                          |    1 +
+ drivers/of/address.c                               |    8 +
+ drivers/of/of_pci.c                                |   84 +-
+ drivers/pci/setup-irq.c                            |    4 +-
+ include/linux/ioport.h                             |    2 +-
+ include/linux/of_pci.h                             |    2 +
+ 24 files changed, 1485 insertions(+), 446 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+ create mode 100644 arch/arm/mach-tegra/include/mach/pci-tegra.h
+
 -- 
 1.7.11.2
