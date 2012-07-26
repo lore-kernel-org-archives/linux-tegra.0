@@ -1,60 +1,139 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Remove unneeded include
-Date: Thu, 26 Jul 2012 19:43:20 +0200
-Message-ID: <20120726174320.GA27390@avionic-0098.mockup.avionic-design.de>
-References: <1343323707-27221-1-git-send-email-thierry.reding@avionic-design.de>
- <5011802D.7060105@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Subject: [PATCH v3 09/10] of: Add of_pci_parse_ranges()
+Date: Thu, 26 Jul 2012 21:55:11 +0200
+Message-ID: <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5011802D.7060105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1343332512-28762-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This new function parses the ranges property of PCI device nodes into
+an array of struct resource elements. It is useful in multiple-port PCI
+host controller drivers to collect information about the ranges that it
+needs to forward to the respective ports.
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+Changes in v3:
+- new patch
 
-On Thu, Jul 26, 2012 at 11:36:45AM -0600, Stephen Warren wrote:
-> On 07/26/2012 11:28 AM, Thierry Reding wrote:
-> > The linux/notifier.h include is no longer required. This removal was
-> > most likely forgotten in the move to the new pinctrl driver in commit
-> > f30d12b ("ARM: tegra: Switch to new pinctrl driver").
->=20
-> Does the include actually cause any problems? One of the first commits
-> I'll send for 3.7 is to remove all the board files leaving only device
-> tree support, so this file is going away soon anyway...
+ drivers/of/of_pci.c    | 84 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/of_pci.h |  2 ++
+ 2 files changed, 85 insertions(+), 1 deletion(-)
 
-No, it doesn't cause any problems. If the file is going away for 3.7
-anyway you can ignore this patch.
-
-Thierry
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQEYG4AAoJEN0jrNd/PrOhk3kP/3JAvN7voRS3Q84oX2imdV/z
-ARyx+QQ3//JRQmnd1FtjkEBUabY9MedQTNwCx2io7qzPWxeoqD44P/858NsK8Puc
-McPsXrqMQ5DuXJ5Q6igdPKt2/fTnGINUZjcZHY8LWBK0YBcE1E8sF8Z0uElidPrR
-1SDx5q1OKge0uU+KDUyT/TymJoqYm+tpJ58zHxrnm27X25+PTWO1HcNaGaGoeF9/
-TW2K6jkxMsPgcplaue5up5EwKvuCaMOSiwt24D1ULaKYcz5v+uowvnOT9sqeIlhd
-M+W8F9fLeun9RZwHrTKepQz8cOj1vwgD14kX1neXCiTb18GA7rVF3D00SaZmkXAO
-RWEGXDfIdx3bBdZMWpzT9lGILsED/HTqNIn26IhhaMSQd6JWN7hVifDJj6rmOfWp
-ppY1JQ4mpeEEYD2ItU/HktTW6cewcZazfkqNrNzobd5Rwvr0wOiJdWdhPqKdi5rl
-uciwrfnptGprCtVNzOxqTivcnB1wsEH3vY8zZYyV7PhBCbApq3IVTtr8f/hDTZ21
-V7YbsNI5YjgnH6apNpzmj/l2EmCokrLl8SiOgVk8i5KuSk8dpePdIwFjMMZ1/88+
-EfEXI0OBIkkFF2wwvQeYJSuV+jRhOy8q5MmZXzf/dOivjKtDZht7/bXNcssXm/sw
-iG3AJ7+XnSgKkrvaIjGi
-=C47I
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
+index 13e37e2..bcff301 100644
+--- a/drivers/of/of_pci.c
++++ b/drivers/of/of_pci.c
+@@ -1,7 +1,8 @@
+ #include <linux/kernel.h>
+ #include <linux/export.h>
+-#include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/of_pci.h>
++#include <linux/slab.h>
+ #include <asm/prom.h>
+ 
+ static inline int __of_pci_pci_compare(struct device_node *node,
+@@ -40,3 +41,84 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(of_pci_find_child_device);
++
++struct resource *of_pci_parse_ranges(struct device_node *node,
++				     unsigned int *countp)
++{
++	unsigned int count, i = 0;
++	struct resource *ranges;
++	const __be32 *values;
++	int len, pna, np;
++
++	values = of_get_property(node, "ranges", &len);
++	if (!values)
++		return NULL;
++
++	pna = of_n_addr_cells(node);
++	np = pna + 5;
++
++	count = len / (np * sizeof(*values));
++
++	ranges = kzalloc(sizeof(*ranges) * count, GFP_KERNEL);
++	if (!ranges)
++		return NULL;
++
++	pr_debug("PCI ranges:\n");
++
++	while ((len -= np * sizeof(*values)) >= 0) {
++		u64 addr = of_translate_address(node, values + 3);
++		u64 size = of_read_number(values + 3 + pna, 2);
++		u32 type = be32_to_cpup(values);
++		const char *suffix = "";
++		struct resource range;
++
++		memset(&range, 0, sizeof(range));
++		range.start = addr;
++		range.end = addr + size - 1;
++
++		switch ((type >> 24) & 0x3) {
++		case 0:
++			range.flags = IORESOURCE_MEM | IORESOURCE_PCI_CS;
++			pr_debug("  CS  %#x-%#x\n", range.start, range.end);
++			break;
++
++		case 1:
++			range.flags = IORESOURCE_IO;
++			pr_debug("  IO  %#x-%#x\n", range.start, range.end);
++			break;
++
++		case 2:
++			range.flags = IORESOURCE_MEM;
++
++			if (type & 0x40000000) {
++				range.flags |= IORESOURCE_PREFETCH;
++				suffix = "prefetch";
++			}
++
++			pr_debug("  MEM %#x-%#x %s\n", range.start, range.end,
++				 suffix);
++			break;
++
++		case 3:
++			range.flags = IORESOURCE_MEM | IORESOURCE_MEM_64;
++
++			if (type & 0x40000000) {
++				range.flags |= IORESOURCE_PREFETCH;
++				suffix = "prefetch";
++			}
++
++			pr_debug("  MEM %#x-%#x 64-bit %s\n", range.start,
++				 range.end, suffix);
++			break;
++		}
++
++		memcpy(&ranges[i++], &range, sizeof(range));
++		values += np;
++	}
++
++	if (countp)
++		*countp = count;
++
++	return ranges;
++}
++EXPORT_SYMBOL_GPL(of_pci_parse_ranges);
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index bb115de..c0db6ea 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -10,5 +10,7 @@ int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
+ struct device_node;
+ struct device_node *of_pci_find_child_device(struct device_node *parent,
+ 					     unsigned int devfn);
++struct resource *of_pci_parse_ranges(struct device_node *node,
++				     unsigned int *countp);
+ 
+ #endif
+-- 
+1.7.11.2
