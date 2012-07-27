@@ -1,149 +1,77 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Fri, 27 Jul 2012 21:05:48 +0900
-Message-ID: <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC][PATCH v3 2/3] pwm_backlight: use power sequences
+Date: Fri, 27 Jul 2012 21:05:49 +0900
+Message-ID: <1343390750-3642-3-git-send-email-acourbot@nvidia.com>
 References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Alexandre Courbot <acourbot@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1343390750-3642-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Some device drivers (panel backlights especially) need to follow precise
-sequences for powering on and off, involving gpios, regulators, PWMs
-with a precise powering order and delays to respect between each steps.
-These sequences are board-specific, and do not belong to a particular
-driver - therefore they have been performed by board-specific hook
-functions to far.
+Make use of the power sequences specified in the device tree or platform
+data, if any.
 
-With the advent of the device tree and of ARM kernels that are not
-board-tied, we cannot rely on these board-specific hooks anymore but
-need a way to implement these sequences in a portable manner. This patch
-introduces a simple interpreter that can execute such power sequences
-encoded either as platform data or within the device tree.
-
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- Documentation/power/power_seq.txt | 120 +++++++++++++++
- drivers/base/Kconfig              |   4 +
- drivers/base/Makefile             |   1 +
- drivers/base/power_seq.c          | 300 ++++++++++++++++++++++++++++++++++++++
- include/linux/power_seq.h         | 139 ++++++++++++++++++
- 5 files changed, 564 insertions(+)
- create mode 100644 Documentation/power/power_seq.txt
- create mode 100644 drivers/base/power_seq.c
- create mode 100644 include/linux/power_seq.h
+ .../bindings/video/backlight/pwm-backlight.txt     |  55 +++++-
+ drivers/video/backlight/Kconfig                    |   1 +
+ drivers/video/backlight/pwm_bl.c                   | 213 +++++++++++++++------
+ include/linux/pwm_backlight.h                      |  18 +-
+ 4 files changed, 225 insertions(+), 62 deletions(-)
 
-diff --git a/Documentation/power/power_seq.txt b/Documentation/power/power_seq.txt
-new file mode 100644
-index 0000000..aa2ceb5
---- /dev/null
-+++ b/Documentation/power/power_seq.txt
-@@ -0,0 +1,120 @@
-+Runtime Interpreted Power Sequences
-+-----------------------------------
+diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+index 1e4fc72..59abeba 100644
+--- a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
++++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+@@ -2,7 +2,6 @@ pwm-backlight bindings
+ 
+ Required properties:
+   - compatible: "pwm-backlight"
+-  - pwms: OF device-tree PWM specification (see PWM binding[0])
+   - brightness-levels: Array of distinct brightness levels. Typically these
+       are in the range from 0 to 255, but any range starting at 0 will do.
+       The actual brightness level (PWM duty cycle) will be interpolated
+@@ -10,10 +9,22 @@ Required properties:
+       last value in the array represents a 100% duty cycle (brightest).
+   - default-brightness-level: the default brightness level (index into the
+       array defined by the "brightness-levels" property)
++  - pwms: OF device-tree PWM specification (see PWM binding[0]). Exactly one PWM
++      must be specified
++  - pwm-names: a list of names for the PWM devices specified in the
++      "pwms" property (see PWM binding[0])
++  - power-on-sequence: Power sequence that will bring the backlight on. This
++      sequence must reference the PWM specified in the pwms property by its
++      name. It can also reference extra GPIOs or regulators, and introduce
++      delays between sequence steps
++  - power-off-sequence: Power sequence that will bring the backlight off. This
++      sequence must reference the PWM specified in the pwms property by its
++      name. It can also reference extra GPIOs or regulators, and introduce
++      delays between sequence steps
+ 
+ Optional properties:
+-  - pwm-names: a list of names for the PWM devices specified in the
+-               "pwms" property (see PWM binding[0])
++  - *-supply: regulators used within a power sequence
++  - *-gpio: GPIOs used within a power sequence
+ 
+ [0]: Documentation/devicetree/bindings/pwm/pwm.txt
+ 
+@@ -21,8 +32,42 @@ Example:
+ 
+ 	backlight {
+ 		compatible = "pwm-backlight";
+-		pwms = <&pwm 0 5000000>;
+-
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
 +
-+Problem
-+-------
-+One very common board-dependent code is the out-of-driver code that is used to
-+turn a device on or off. For instance, SoC boards very commonly use a GPIO
-+(abstracted to a regulator or not) to control the power supply of a backlight,
-+disabling it when the backlight is not used in order to save power. The GPIO
-+that should be used, however, as well as the exact power sequence that may
-+involve different resources, is board-dependent and thus unknown of the driver.
-+
-+This has been addressed so far by using hooks in the device's platform data that
-+are called whenever the state of the device might reflect a power change. This
-+approach, however, introduces board-dependant code into the kernel and is not
-+compatible with the device tree.
-+
-+The Runtime Interpreted Power Sequences (or power sequences for short) aim at
-+turning this code into platform data or device tree nodes. Power sequences are
-+described using a simple format and run by a simple interpreter whenever needed.
-+This allows to remove the callback mechanism and makes the kernel less
-+board-dependant.
-+
-+Sequences Format
-+----------------
-+Power sequences are a series of sequential steps during which an action is
-+performed on a resource. The supported resources so far are:
-+- GPIOs
-+- Regulators
-+- PWMs
-+
-+Each step designates a resource and the following parameters:
-+- Whether the step should enable or disable the resource,
-+- Delay to wait before performing the action,
-+- Delay to wait after performing the action.
-+
-+Both new resources and parameters can be introduced, but the goal is of course
-+to keep things as simple and compact as possible.
-+
-+The platform data is a simple array of platform_power_seq_step instances, each
-+instance describing a step. The type as well as one of id or gpio members
-+(depending on the type) must be specified. The last step must be of type
-+POWER_SEQ_STOP. Regulator and PWM resources are identified by name. GPIO are
-+identified by number. For example, the following sequence will turn on the
-+"power" regulator of the device, wait 10ms, and set GPIO number 110 to 1:
-+
-+struct platform_power_seq_step power_on_seq[] = {
-+	{
-+		.type = POWER_SEQ_REGULATOR,
-+		.id = "power",
-+		.params = {
-+			.enable = 1,
-+			.post_delay = 10,
-+		},
-+	},
-+	{
-+		.type = POWER_SEQ_GPIO,
-+		.gpio = 110,
-+		.params = {
-+			.enable = 1,
-+		},
-+	},
-+	{
-+		.type = POWER_SEQ_STOP,
-+	},
-+};
-+
-+Usage by Drivers and Resources Management
-+-----------------------------------------
-+Power sequences make use of resources that must be properly allocated and
-+managed. The power_seq_build() function takes care of resolving the resources as
-+they are met in the sequence and to allocate them if needed:
-+
-+power_seq *power_seq_build(struct device *dev, power_seq_resources *ress,
-+			   platform_power_seq *pseq);
-+
-+You will need an instance of power_seq_resources to keep track of the resources
-+that are already allocated. On success, the function returns a devm allocated
-+resolved sequence that is ready to be passed to power_seq_run(). In case of
-+failure, and error code is returned.
-+
-+A resolved power sequence returned by power_seq_build can be run by
-+power_run_run():
-+
-+int power_seq_run(struct device *dev, power_seq *seq);
-+
-+It returns 0 if the sequence has successfully been run, or an error code if a
-+problem occured.
-+
-+Finally, some resources that cannot be allocated through devm need to be freed
-+manually. Therefore, be sure to call power_seq_free_resources() in your device
-+remove function:
-+
-+void power_seq_free_resources(power_seq_resources *ress);
-+
-+Device tree
-+-----------
-+All the same, power sequences can be encoded as device tree nodes. The following
-+properties and nodes are equivalent to the platform data defined previously:
-+
-+		power-supply = <&mydevice_reg>;
++		pwms = <&pwm 0 5000000>;
++		pwm-names = "backlight";
++		power-supply = <&backlight_reg>;
 +		enable-gpio = <&gpio 6 0>;
 +
 +		power-on-sequence {
@@ -152,492 +80,402 @@ index 0000000..aa2ceb5
 +				enable;
 +				post-delay = <10>;
 +			};
-+			gpio@1 {
++			pwm@1 {
++				id = "backlight";
++				enable;
++			};
++			gpio@2 {
 +				id = "enable-gpio";
 +				enable;
 +			};
 +		};
++		power-off-sequence {
++			gpio@0 {
++				id = "enable-gpio";
++				disable;
++			};
++			pwm@1 {
++				id = "backlight";
++				disable;
++			};
++			regulator@2 {
++				id = "power";
++				disable;
++				pre-delay = <10>;
++			};
++		};
+ 	};
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index cf28276..6fb8aa3 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -246,6 +246,7 @@ config BACKLIGHT_CARILLO_RANCH
+ config BACKLIGHT_PWM
+ 	tristate "Generic PWM based Backlight Driver"
+ 	depends on PWM
++	select POWER_SEQ
+ 	help
+ 	  If you have a LCD backlight adjustable by PWM, say Y to enable
+ 	  this driver.
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 995f016..6e3a49e 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -27,6 +27,12 @@ struct pwm_bl_data {
+ 	unsigned int		period;
+ 	unsigned int		lth_brightness;
+ 	unsigned int		*levels;
++	bool			enabled;
++	power_seq_resources	resources;
++	power_seq		*power_on_seq;
++	power_seq		*power_off_seq;
 +
-+Note that first, the phandles of the regulator and gpio used in the sequences
-+are defined as properties. Then the sequence references them through the id
-+property of every step. The name of sub-properties defines the type of the step.
-+Valid names are "regulator", "gpio" and "pwm". Steps must be numbered
-+sequentially.
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 08b4c52..65bebfe 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -282,4 +282,8 @@ config CMA_AREAS
++	/* Legacy callbacks */
+ 	int			(*notify)(struct device *,
+ 					  int brightness);
+ 	void			(*notify_after)(struct device *,
+@@ -35,6 +41,34 @@ struct pwm_bl_data {
+ 	void			(*exit)(struct device *);
+ };
  
- endif
- 
-+config POWER_SEQ
-+	bool
-+	default n
++static void pwm_backlight_on(struct backlight_device *bl)
++{
++	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
++	int ret;
 +
- endmenu
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index 5aa2d70..4c498c1 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
- ifeq ($(CONFIG_SYSFS),y)
- obj-$(CONFIG_MODULES)	+= module.o
- endif
-+obj-$(CONFIG_POWER_SEQ)	+= power_seq.o
- obj-$(CONFIG_SYS_HYPERVISOR) += hypervisor.o
- obj-$(CONFIG_REGMAP)	+= regmap/
- obj-$(CONFIG_SOC_BUS) += soc.o
-diff --git a/drivers/base/power_seq.c b/drivers/base/power_seq.c
-new file mode 100644
-index 0000000..6ccefa1
---- /dev/null
-+++ b/drivers/base/power_seq.c
-@@ -0,0 +1,300 @@
-+/*
-+ * power_seq.c - A simple power sequence interpreter for platform devices
-+ *               and device tree.
-+ *
-+ * Author: Alexandre Courbot <acourbot@nvidia.com>
-+ *
-+ * Copyright (c) 2012 NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, write to the Free Software Foundation, Inc.,
-+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ *
++	if (pb->enabled)
++		return;
++
++	if ((ret = power_seq_run(pb->dev, pb->power_on_seq)) < 0)
++		dev_err(&bl->dev, "cannot run power on sequence\n");
++
++	pb->enabled = true;
++}
++
++static void pwm_backlight_off(struct backlight_device *bl)
++{
++	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
++	int ret;
++
++	if (!pb->enabled)
++		return;
++
++	if ((ret = power_seq_run(pb->dev, pb->power_off_seq)) < 0)
++		dev_err(&bl->dev, "cannot run power off sequence\n");
++
++	pb->enabled = false;
++}
++
+ static int pwm_backlight_update_status(struct backlight_device *bl)
+ {
+ 	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
+@@ -51,8 +85,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 		brightness = pb->notify(pb->dev, brightness);
+ 
+ 	if (brightness == 0) {
+-		pwm_config(pb->pwm, 0, pb->period);
+-		pwm_disable(pb->pwm);
++		pwm_backlight_off(bl);
+ 	} else {
+ 		int duty_cycle;
+ 
+@@ -66,7 +99,7 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
+ 		duty_cycle = pb->lth_brightness +
+ 		     (duty_cycle * (pb->period - pb->lth_brightness) / max);
+ 		pwm_config(pb->pwm, duty_cycle, pb->period);
+-		pwm_enable(pb->pwm);
++		pwm_backlight_on(bl);
+ 	}
+ 
+ 	if (pb->notify_after)
+@@ -145,12 +178,16 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 		data->max_brightness--;
+ 	}
+ 
+-	/*
+-	 * TODO: Most users of this driver use a number of GPIOs to control
+-	 *       backlight power. Support for specifying these needs to be
+-	 *       added.
+-	 */
++	data->power_on_seq = of_parse_power_seq(dev, of_find_node_by_name(node,
++							"power-on-sequence"));
++	if (IS_ERR(data->power_on_seq))
++		return PTR_ERR(data->power_on_seq);
++	data->power_off_seq = of_parse_power_seq(dev, of_find_node_by_name(node,
++							"power-off-sequence"));
++	if (IS_ERR(data->power_off_seq))
++		return PTR_ERR(data->power_off_seq);
+ 
++	data->use_power_sequences = true;
+ 	return 0;
+ }
+ 
+@@ -168,73 +205,141 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ }
+ #endif
+ 
++/**
++ * Construct the power sequences corresponding to the legacy platform data.
 + */
-+
-+#include <linux/power_seq.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/device.h>
-+#include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/pwm.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/gpio.h>
-+
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#endif
-+
-+static int power_seq_step_run(struct power_seq_step *step)
++static int pwm_backlight_legacy_probe(struct platform_device *pdev,
++				      struct pwm_bl_data *pb)
 +{
-+	int err = 0;
++	struct platform_pwm_backlight_data *data = pdev->dev.platform_data;
++	struct device *dev = &pdev->dev;
++	struct power_seq_resource *res;
++	struct power_seq_step *step;
 +
-+	if (step->params.pre_delay)
-+		mdelay(step->params.pre_delay);
++	pb->pwm = pwm_get(dev, NULL);
++	if (IS_ERR(pb->pwm)) {
++		dev_warn(dev, "unable to request PWM, trying legacy API\n");
 +
-+	switch (step->resource->type) {
-+#ifdef CONFIG_REGULATOR
-+	case POWER_SEQ_REGULATOR:
-+		if (step->params.enable)
-+			err = regulator_enable(step->resource->regulator);
-+		else
-+			err = regulator_disable(step->resource->regulator);
-+		break;
-+#endif
-+#ifdef CONFIG_PWM
-+	case POWER_SEQ_PWM:
-+		if (step->params.enable)
-+			err = pwm_enable(step->resource->pwm);
-+		else
-+			pwm_disable(step->resource->pwm);
-+		break;
-+#endif
-+#ifdef CONFIG_GPIOLIB
-+	case POWER_SEQ_GPIO:
-+		gpio_set_value_cansleep(step->resource->gpio,
-+					step->params.enable);
-+		break;
-+#endif
-+	/*
-+	 * should never happen unless the sequence includes a step which
-+	 * type does not have support compiled in
-+	 */
-+	default:
-+		return -EINVAL;
++		pb->pwm = pwm_request(data->pwm_id, "pwm-backlight");
++		if (IS_ERR(pb->pwm)) {
++			dev_err(dev, "unable to request legacy PWM\n");
++			return PTR_ERR(pb->pwm);
++		}
++		pwm_set_period(pb->pwm, data->pwm_period_ns);
 +	}
 +
-+	if (err < 0)
-+		return err;
++	pb->notify = data->notify;
++	pb->notify_after = data->notify_after;
++	pb->check_fb = data->check_fb;
++	pb->exit = data->exit;
++	pb->dev = dev;
 +
-+	if (step->params.post_delay)
-+		mdelay(step->params.post_delay);
++	/* Now build the resources and sequences corresponding to this PWM */
++	res = devm_kzalloc(dev, sizeof(*res), GFP_KERNEL);
++	if (!res) return -ENOMEM;
++	res->type = POWER_SEQ_PWM;
++	res->id = "pwm-backlight";
++	res->pwm = pb->pwm;
++	list_add(&res->list, &pb->resources);
++
++	/* allocate both power on and off sequences at the same time */
++	step = devm_kzalloc(dev, sizeof(*step) * 4, GFP_KERNEL);
++	if (!step) return -ENOMEM;
++	step->resource = res;
++	memcpy(&step[2], &step[0], sizeof(*step));
++	step[0].params.enable = 1;
++	pb->power_on_seq = &step[0];
++	pb->power_off_seq = &step[2];
 +
 +	return 0;
 +}
 +
-+int power_seq_run(struct device *dev, power_seq *seq)
-+{
-+	int err;
-+
-+	if (!seq) return 0;
-+
-+	while (seq->resource) {
-+		if ((err = power_seq_step_run(seq++))) {
-+			dev_err(dev, "error %d while running power sequence!\n",
-+				err);
-+			return err;
-+		}
+ static int pwm_backlight_probe(struct platform_device *pdev)
+ {
+ 	struct platform_pwm_backlight_data *data = pdev->dev.platform_data;
+ 	struct platform_pwm_backlight_data defdata;
++	struct power_seq_resource *res;
+ 	struct backlight_properties props;
+ 	struct backlight_device *bl;
+ 	struct pwm_bl_data *pb;
+ 	unsigned int max;
+ 	int ret;
+ 
++	pb = devm_kzalloc(&pdev->dev, sizeof(*pb), GFP_KERNEL);
++	if (!pb) {
++		dev_err(&pdev->dev, "no memory for state\n");
++		return -ENOMEM;
 +	}
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(power_seq_run);
++	INIT_LIST_HEAD(&pb->resources);
 +
-+#ifdef CONFIG_OF
-+static int of_parse_power_seq_step(struct device *dev, struct device_node *node,
-+				   struct platform_power_seq_step *step)
-+{
-+	if (of_property_read_string(node, "id", &step->id)) {
-+		dev_err(dev, "missing id property!\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!strcmp(node->name, "regulator")) {
-+		step->type = POWER_SEQ_REGULATOR;
-+#ifdef CONFIG_OF_GPIO
-+	} else if (!strcmp(node->name, "gpio")) {
-+		int gpio;
-+
-+		step->type = POWER_SEQ_GPIO;
-+		gpio = of_get_named_gpio(dev->of_node, step->id, 0);
-+		if (gpio < 0) {
-+			dev_err(dev, "cannot resolve gpio \"%s\"\n", step->id);
-+			return gpio;
-+		}
-+		step->gpio = gpio;
-+#endif /* CONFIG_OF_GPIO */
-+	} else if (!strcmp(node->name, "pwm")) {
-+		step->type = POWER_SEQ_PWM;
++	/* using new interface or device tree */
+ 	if (!data) {
++		/* build platform data from device tree */
+ 		ret = pwm_backlight_parse_dt(&pdev->dev, &defdata);
+-		if (ret < 0) {
++		if (ret == -EPROBE_DEFER) {
++			return ret;
++		} else if (ret < 0) {
+ 			dev_err(&pdev->dev, "failed to find platform data\n");
+ 			return ret;
+ 		}
+-
+ 		data = &defdata;
+ 	}
+ 
+-	if (data->init) {
+-		ret = data->init(&pdev->dev);
++	if (!data->use_power_sequences) {
++		/* using legacy interface */
++		ret = pwm_backlight_legacy_probe(pdev, pb);
+ 		if (ret < 0)
+ 			return ret;
 +	} else {
-+		dev_err(dev, "invalid power seq step type!\n");
++		/* build sequences and allocate resources from platform data */
++		if (data->power_on_seq) {
++			pb->power_on_seq = power_seq_build(&pdev->dev,
++							   &pb->resources,
++							   data->power_on_seq);
++			if (IS_ERR(pb->power_on_seq))
++				return PTR_ERR(pb->power_on_seq);
++		}
++		if (data->power_off_seq) {
++			pb->power_off_seq = power_seq_build(&pdev->dev,
++							    &pb->resources,
++							   data->power_off_seq);
++			if (IS_ERR(pb->power_off_seq))
++				return PTR_ERR(pb->power_off_seq);
++		}
++
++		/* we must have exactly one PWM for this driver */
++		list_for_each_entry(res, &pb->resources, list) {
++			if (res->type != POWER_SEQ_PWM)
++				continue;
++			if (pb->pwm) {
++				dev_err(&pdev->dev, "more than one PWM used\n");
++				return -EINVAL;
++			}
++			/* keep the pwm at hand */
++			pb->pwm = res->pwm;
++		}
+ 	}
+ 
+-	pb = devm_kzalloc(&pdev->dev, sizeof(*pb), GFP_KERNEL);
+-	if (!pb) {
+-		dev_err(&pdev->dev, "no memory for state\n");
+-		ret = -ENOMEM;
+-		goto err_alloc;
++	/* from here we should have a PWM */
++	if (!pb->pwm) {
++		dev_err(&pdev->dev, "no PWM defined!\n");
 +		return -EINVAL;
 +	}
 +
-+	if (of_find_property(node, "enable", NULL)) {
-+		step->params.enable = 1;
-+	} else if (!of_find_property(node, "disable", NULL)) {
-+		dev_err(dev, "missing enable or disable property!\n");
-+		return -EINVAL;
-+	}
++	if (data->init) {
++		ret = data->init(&pdev->dev);
++		if (ret < 0)
++			goto err;
+ 	}
+ 
+ 	if (data->levels) {
+ 		max = data->levels[data->max_brightness];
+ 		pb->levels = data->levels;
+-	} else
++	} else {
+ 		max = data->max_brightness;
+-
+-	pb->notify = data->notify;
+-	pb->notify_after = data->notify_after;
+-	pb->check_fb = data->check_fb;
+-	pb->exit = data->exit;
+-	pb->dev = &pdev->dev;
+-
+-	pb->pwm = pwm_get(&pdev->dev, NULL);
+-	if (IS_ERR(pb->pwm)) {
+-		dev_err(&pdev->dev, "unable to request PWM, trying legacy API\n");
+-
+-		pb->pwm = pwm_request(data->pwm_id, "pwm-backlight");
+-		if (IS_ERR(pb->pwm)) {
+-			dev_err(&pdev->dev, "unable to request legacy PWM\n");
+-			ret = PTR_ERR(pb->pwm);
+-			goto err_alloc;
+-		}
+ 	}
+ 
+-	dev_dbg(&pdev->dev, "got pwm for backlight\n");
+-
+-	/*
+-	 * The DT case will set the pwm_period_ns field to 0 and store the
+-	 * period, parsed from the DT, in the PWM device. For the non-DT case,
+-	 * set the period from platform data.
+-	 */
+-	if (data->pwm_period_ns > 0)
+-		pwm_set_period(pb->pwm, data->pwm_period_ns);
+-
+ 	pb->period = pwm_get_period(pb->pwm);
+ 	pb->lth_brightness = data->lth_brightness * (pb->period / max);
+ 
+@@ -246,20 +351,20 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 	if (IS_ERR(bl)) {
+ 		dev_err(&pdev->dev, "failed to register backlight\n");
+ 		ret = PTR_ERR(bl);
+-		goto err_bl;
++		goto err;
+ 	}
+ 
+ 	bl->props.brightness = data->dft_brightness;
+ 	backlight_update_status(bl);
+ 
+ 	platform_set_drvdata(pdev, bl);
 +
-+	of_property_read_u32(node, "pre-delay", &step->params.pre_delay);
-+	of_property_read_u32(node, "post-delay", &step->params.post_delay);
+ 	return 0;
+ 
+-err_bl:
+-	pwm_put(pb->pwm);
+-err_alloc:
++err:
+ 	if (data->exit)
+ 		data->exit(&pdev->dev);
++	power_seq_free_resources(&pb->resources);
+ 	return ret;
+ }
+ 
+@@ -269,9 +374,9 @@ static int pwm_backlight_remove(struct platform_device *pdev)
+ 	struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
+ 
+ 	backlight_device_unregister(bl);
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
+-	pwm_put(pb->pwm);
++	pwm_backlight_off(bl);
++	power_seq_free_resources(&pb->resources);
 +
-+	return 0;
-+}
-+
-+platform_power_seq *of_parse_power_seq(struct device *dev,
-+				       struct device_node *node)
-+{
-+	struct device_node *child = NULL;
-+	platform_power_seq *ret;
-+	int cpt = 0;
-+	int err;
-+
-+	if (!node) return NULL;
-+
-+	while ((child = of_get_next_child(node, child)))
-+		cpt++;
-+
-+	/* allocate one more step to signal end of sequence */
-+	ret = devm_kzalloc(dev, sizeof(*ret) * (cpt + 1), GFP_KERNEL);
-+	if (!ret)
-+		return ERR_PTR(-ENOMEM);
-+
-+	cpt = 0;
-+	while ((child = of_get_next_child(node, child))) {
-+		if ((err = of_parse_power_seq_step(dev, child, &ret[cpt++])))
-+			return ERR_PTR(err);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(of_parse_power_seq);
-+#endif /* CONFIG_OF */
-+
-+static
-+struct power_seq_resource * power_seq_find_resource(power_seq_resources *ress,
-+					struct platform_power_seq_step *res)
-+{
-+	struct power_seq_resource *step;
-+
-+	list_for_each_entry(step, ress, list) {
-+		if (step->type != res->type) continue;
-+		switch (res->type) {
-+		case POWER_SEQ_GPIO:
-+			if (step->gpio == res->gpio)
-+				return step;
-+			break;
-+		default:
-+			if (!strcmp(step->id, res->id))
-+				return step;
-+			break;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static int power_seq_allocate_resource(struct device *dev,
-+				       struct power_seq_resource *res)
-+{
-+	int err;
-+
-+	switch (res->type) {
-+#ifdef CONFIG_REGULATOR
-+	case POWER_SEQ_REGULATOR:
-+		res->regulator = devm_regulator_get(dev, res->id);
-+		if (IS_ERR(res->regulator)) {
-+			dev_err(dev, "cannot get regulator \"%s\"\n", res->id);
-+			return PTR_ERR(res->regulator);
-+		}
-+		break;
-+#endif
-+#ifdef CONFIG_PWM
-+	case POWER_SEQ_PWM:
-+		res->pwm = pwm_get(dev, res->id);
-+		if (IS_ERR(res->pwm)) {
-+			dev_err(dev, "cannot get pwm \"%s\"\n", res->id);
-+			return PTR_ERR(res->pwm);
-+		}
-+		break;
-+#endif
-+#ifdef CONFIG_GPIOLIB
-+	case POWER_SEQ_GPIO:
-+		err = devm_gpio_request_one(dev, res->gpio, GPIOF_OUT_INIT_HIGH,
-+					    "backlight_gpio");
-+		if (err) {
-+			dev_err(dev, "cannot get gpio %d\n", res->gpio);
-+			return err;
-+		}
-+		break;
-+#endif
-+	default:
-+		dev_err(dev, "invalid resource type %d\n", res->type);
-+		return -EINVAL;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+power_seq *power_seq_build(struct device *dev, power_seq_resources *ress,
-+			   platform_power_seq *pseq)
-+{
-+	struct power_seq_step *seq = NULL, *ret;
-+	struct power_seq_resource *res;
-+	int cpt, err;
-+
-+	/* first pass to count the number of steps to allocate */
-+	for (cpt = 0; pseq[cpt].type != POWER_SEQ_STOP; cpt++);
-+
-+	if (!cpt)
-+		return seq;
-+
-+	/* 1 more for the STOP step */
-+	ret = seq = devm_kzalloc(dev, sizeof(*seq) * (cpt + 1), GFP_KERNEL);
-+	if (!seq)
-+		return ERR_PTR(-ENOMEM);
-+
-+	for (; pseq->type != POWER_SEQ_STOP; pseq++, seq++) {
-+		/* create resource node if not referenced already */
-+		if (!(res = power_seq_find_resource(ress, pseq))) {
-+			res = devm_kzalloc(dev, sizeof(*res), GFP_KERNEL);
-+			if (!res)
-+				return ERR_PTR(-ENOMEM);
-+			res->type = pseq->type;
-+
-+			if (res->type == POWER_SEQ_GPIO)
-+				res->gpio = pseq->gpio;
-+			else
-+				res->id = pseq->id;
-+
-+			if ((err = power_seq_allocate_resource(dev, res)) < 0)
-+				return ERR_PTR(err);
-+
-+			list_add(&res->list, ress);
-+		}
-+		seq->resource = res;
-+		memcpy(&seq->params, &pseq->params, sizeof(seq->params));
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(power_seq_build);
-+
-+void power_seq_free_resources(power_seq_resources *ress) {
-+	struct power_seq_resource *res;
-+
-+#ifdef CONFIG_PWM
-+	list_for_each_entry(res, ress, list) {
-+		if (res->type == POWER_SEQ_PWM)
-+			pwm_put(res->pwm);
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL_GPL(power_seq_free_resources);
-+
-+MODULE_AUTHOR("Alexandre Courbot <acourbot@nvidia.com>");
-+MODULE_DESCRIPTION("Runtime Interpreted Power Sequences");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/power_seq.h b/include/linux/power_seq.h
-new file mode 100644
-index 0000000..da0593a
---- /dev/null
-+++ b/include/linux/power_seq.h
-@@ -0,0 +1,139 @@
-+/*
-+ * power_seq.h
-+ *
-+ * Simple interpreter for defining power sequences as platform data or device
-+ * tree properties. Initially designed for use with backlight drivers.
-+ *
-+ * Power sequences are designed to replace the callbacks typically used in
-+ * board-specific files that implement board-specific power sequences of devices
-+ * such as backlights. A power sequence is an array of resources (which can a
-+ * regulator, a GPIO, a PWM, ...) with an action to perform on it (enable or
-+ * disable) and optional pre and post step delays. By having them interpreted
-+ * instead of arbitrarily executed, it is possible to describe these in the
-+ * device tree and thus remove board-specific code from the kernel.
-+ *
-+ * Author: Alexandre Courbot <acourbot@nvidia.com>
-+ *
-+ * Copyright (c) 2012 NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, write to the Free Software Foundation, Inc.,
-+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ *
-+ */
-+
-+#ifndef __LINUX_POWER_SEQ_H
-+#define __LINUX_POWER_SEQ_H
-+
-+#include <linux/types.h>
-+
-+struct device;
-+struct regulator;
-+struct pwm_device;
-+struct device_node;
-+
-+/**
-+ * The different kinds of resources that can be controlled during the sequences.
-+ */
-+typedef enum {
-+	POWER_SEQ_STOP = 0,
-+	POWER_SEQ_REGULATOR,
-+	POWER_SEQ_PWM,
-+	POWER_SEQ_GPIO,
-+	POWER_SEQ_MAX,
-+} power_res_type;
-+
-+struct power_seq_resource {
-+	power_res_type type;
-+	/* name to resolve for resources with a name (regulator, pwm) */
-+	const char *id;
-+	/* resolved resource */
-+	union {
-+		struct regulator *regulator;
-+		struct pwm_device *pwm;
-+		int gpio;
-+	};
-+	/* used to maintain the list of resources used by the driver */
-+	struct list_head list;
-+};
-+typedef struct list_head power_seq_resources;
-+
-+struct power_step_params {
-+	/* enable the resource if 1, disable if 0 */
-+	bool enable;
-+	/* delay (in ms) to wait before executing the step */
-+	int  pre_delay;
-+	/* delay (in ms) to wait after executing the step */
-+	int post_delay;
-+};
-+
-+/**
-+ * Platform definition of power sequences. A sequence is an array of these,
-+ * terminated by a STOP instance.
-+ */
-+struct platform_power_seq_step {
-+	power_res_type type;
-+	union {
-+		/* Used by REGULATOR and PWM types to name the resource */
-+		const char *id;
-+		/* Used by GPIO */
-+		int gpio;
-+	};
-+	struct power_step_params params;
-+};
-+typedef struct platform_power_seq_step platform_power_seq;
-+
-+/**
-+ * Power sequence steps resolved against their resource. Built by
-+ * power_seq_build and used to run the sequence.
-+ */
-+struct power_seq_step {
-+	struct power_seq_resource *resource;
-+	struct power_step_params params;
-+};
-+typedef struct power_seq_step power_seq;
-+
-+#ifdef CONFIG_OF
-+/**
-+ * Build a platform data sequence from a device tree node. Memory for the
-+ * sequence is allocated using devm_kzalloc on dev.
-+ */
-+platform_power_seq *of_parse_power_seq(struct device *dev,
-+				       struct device_node *node);
-+#else
-+platform_power_seq *of_parse_power_seq(struct device *dev,
-+				       struct device_node *node)
-+{
-+	return NULL;
-+}
-+#endif
-+
-+/**
-+ * Build a runnable power sequence from platform data, and add the resources
-+ * it uses into ress. Memory for the sequence is allocated using devm_kzalloc
-+ * on dev.
-+ */
-+power_seq *power_seq_build(struct device *dev, power_seq_resources *ress,
-+			   platform_power_seq *pseq);
-+
-+/**
-+ * Free all the resources previously allocated by power_seq_allocate_resources.
-+ */
-+void power_seq_free_resources(power_seq_resources *ress);
-+
-+/**
-+ * Run the given power sequence. Returns 0 on success, error code in case of
-+ * failure.
-+ */
-+int power_seq_run(struct device *dev, power_seq *seq);
-+
-+#endif
+ 	if (pb->exit)
+ 		pb->exit(&pdev->dev);
+ 	return 0;
+@@ -285,8 +390,7 @@ static int pwm_backlight_suspend(struct device *dev)
+ 
+ 	if (pb->notify)
+ 		pb->notify(pb->dev, 0);
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
++	pwm_backlight_off(bl);
+ 	if (pb->notify_after)
+ 		pb->notify_after(pb->dev, 0);
+ 	return 0;
+@@ -323,4 +427,3 @@ module_platform_driver(pwm_backlight_driver);
+ MODULE_DESCRIPTION("PWM based Backlight Driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:pwm-backlight");
+-
+diff --git a/include/linux/pwm_backlight.h b/include/linux/pwm_backlight.h
+index 56f4a86..3e8bd2c 100644
+--- a/include/linux/pwm_backlight.h
++++ b/include/linux/pwm_backlight.h
+@@ -5,14 +5,28 @@
+ #define __LINUX_PWM_BACKLIGHT_H
+ 
+ #include <linux/backlight.h>
++#include <linux/power_seq.h>
+ 
+ struct platform_pwm_backlight_data {
+-	int pwm_id;
+ 	unsigned int max_brightness;
+ 	unsigned int dft_brightness;
+ 	unsigned int lth_brightness;
+-	unsigned int pwm_period_ns;
+ 	unsigned int *levels;
++	/* Set this to true otherwise the legacy interface will be used */
++	bool use_power_sequences;
++	/*
++	 * New interface - arrays of steps terminated by a STOP instance, or
++	 * NULL if unused.
++	 */
++	struct platform_power_seq_step *power_on_seq;
++	struct platform_power_seq_step *power_off_seq;
++	/*
++	 * Legacy interface - single PWM and callback methods to control
++	 * the power sequence. pwm_id and pwm_period_ns need only be specified
++	 * if get_pwm(dev, NULL) will return NULL.
++	 */
++	int pwm_id;
++	unsigned int pwm_period_ns;
+ 	int (*init)(struct device *dev);
+ 	int (*notify)(struct device *dev, int brightness);
+ 	void (*notify_after)(struct device *dev, int brightness);
 -- 
 1.7.11.3
