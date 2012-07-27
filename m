@@ -1,54 +1,49 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Fri, 27 Jul 2012 11:20:23 -0700
-Message-ID: <20120727182023.GC23564@kroah.com>
-References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
- <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: Add Avionic Design Plutux support
+Date: Fri, 27 Jul 2012 14:22:33 -0600
+Message-ID: <5012F889.1020004@wwwdotorg.org>
+References: <1343228775-1330-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1343390750-3642-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1343228775-1330-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 27, 2012 at 09:05:48PM +0900, Alexandre Courbot wrote:
-> +++ b/include/linux/power_seq.h
-> @@ -0,0 +1,139 @@
-> +/*
-> + * power_seq.h
-> + *
-> + * Simple interpreter for defining power sequences as platform data or device
-> + * tree properties. Initially designed for use with backlight drivers.
-> + *
-> + * Power sequences are designed to replace the callbacks typically used in
-> + * board-specific files that implement board-specific power sequences of devices
-> + * such as backlights. A power sequence is an array of resources (which can a
-> + * regulator, a GPIO, a PWM, ...) with an action to perform on it (enable or
-> + * disable) and optional pre and post step delays. By having them interpreted
-> + * instead of arbitrarily executed, it is possible to describe these in the
-> + * device tree and thus remove board-specific code from the kernel.
-> + *
-> + * Author: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> + *
-> + * Copyright (c) 2012 NVIDIA Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; version 2 of the License.
-> + *
-> + * This program is distributed in the hope that it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along
-> + * with this program; if not, write to the Free Software Foundation, Inc.,
-> + * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+On 07/25/2012 09:06 AM, Thierry Reding wrote:
+> The Plutux is a set-top box device based on the Tamonten SOM and can be
+> connected to a display via HDMI.
 
-As I always say:
-	Unless you want to track the office movements of the FSF for the
-	next 40 years, and keep this file up to date, drop that last
-	paragraph, it's pointless.
+> diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
+
+> +	regulators {
+> +		compatible = "simple-bus";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+
+Depending on the outcome of the simple-bus discussion I mentioned on
+IRC, this might want to be updated to match that. We'll see!
+
+> +	sound {
+> +		compatible = "nvidia,tegra-audio-wm8903-harmony",
+> +			     "nvidia,tegra-audio-wm8903";
+
+I think that first compatible value should be more like
+"at,tegra-audio-plutux" or something like that; the driver itself
+matches on "nvidia,tegra-audio-wm8903" only, and the first compatible
+value is just in case we ever need board-specific fixes/hacks in the driver.
+
+> diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-trimslice.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-ventana.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-whistler.dtb
+> +dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += tegra30-cardhu.dtb
+
+It'd be nice to keep that sorted first on 2x/3x SoC version, then
+alphabetically.
