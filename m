@@ -1,78 +1,100 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Thu, 26 Jul 2012 21:55:02 +0200
-Message-ID: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: RE: How to use the generic thermal sysfs.
+Date: Fri, 27 Jul 2012 09:21:38 +0800
+Message-ID: <1343352098.1682.447.camel@rui.sh.intel.com>
+References: <1342088573.27605.101.camel@tegra-chromium-2>
+	 <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
+	 <1342144273.1682.237.camel@rui.sh.intel.com>
+	 <1342164616.27605.129.camel@tegra-chromium-2>
+	 <1342165278.1682.259.camel@rui.sh.intel.com>
+	 <1343295094.4042.24.camel@tegra-chromium-2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1343295094.4042.24.camel@tegra-chromium-2>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: "R, Durgadoss" <durgadoss.r@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>, Alex Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series adds support for device tree based probing of the PCIe
-controller found on Tegra SoCs.
+On =E5=9B=9B, 2012-07-26 at 17:31 +0800, Wei Ni wrote:
+> On Fri, 2012-07-13 at 15:41 +0800, Zhang Rui wrote:
+> > On =E4=BA=94, 2012-07-13 at 15:30 +0800, Wei Ni wrote:
+> > >=20
+> > > Our tegra thermal framework also will use the generic thermal lay=
+er. It
+> > > will register the cooling device, and run the throttling in this =
+generic
+> > > framework.
+> > > But we have a special mechanism, when the temp is below the trip =
+temp,
+> > > we will set different cpu capability for different temp range. Fo=
+r
+> > > example, set the low/high temp as 20C/30C to the sensor, and set =
+the cpu
+> > > to the max capability, it mean the cpu can run up to the max freq=
+ and
+> > > voltage in this temp range. if the temp is out that range, the se=
+nsor
+> > > will have irq/alert to notify the tegra framework, then we will s=
+et to
+> > > another temperature range and cpu capability.
+> > > I think we can try to add this mechanism to the generic framework=
+ as a
+> > > new policy, right?
+> > >=20
+> > I think you can make use of the upper&lower limit in my patch set.
+> > Say, here is your thermal policy
+> > 20C - 30C, P0
+> > 30C - 40C, P1 - P2
+> > 40C - 60C, P3 - P5
+> > 60C+, P6 ~ Pn
+> >=20
+> > you can register to the thermal layer 4 passive trip points,
+> > 20C, 30C, 40C, 60C, and then
+> > 1) for trip 0 (20C), upper limit 0, lower limit 0
+> > 2) for trip 1 (30C), upper limit 2, lower limit 1
+> > 3) for trip 2 (40C), upper limit 5, lower limit 3
+> > 4) for trip 3 (60C), upper limit n, lower limit 6
+> >=20
+> > you can program your own sensor to get interrupt when the temperatu=
+re
+> > hits 20C/30C/40C/60C, and the generic thermal layer will put the
+> > processors to proper frequency for each trip point.
+> >=20
+> > what do you think?
+>=20
+> Hi, Rui
+> I'm trying your upper/lower codes on our tegra platform.
+> Since we want to set limit value to the sensor to get interrupt, and
+> many sensor drivers can support the limit alert property, could we ad=
+d a
+> new callback .set_limits() for the thermal zone device, so that we ca=
+n
+> program it in the generic layer. when the temperature hits the
+> trip_temp,
 
-Patches 1 and 2 keep the pci_fixup_irqs() and ARM-specific
-pci_common_init() functions around after init. This is required to
-support driver probe deferral, which may cause built-in drivers to be
-probed after __init data has already been freed.
+at this time, there should be an interrupt, right?
 
-Patch 3 allows a driver's probe function to pass per-controller private
-data when calling the pci_common_init() function.
+>  we can try to set to the next limit range.
 
-Patch 4 is trivial and has already been Acked-by: Stephen Warren before.
+is it possible to program the sensor at this time, in your own thermal
+driver?
 
-Patch 5 adds a flag to mark a struct resource as defining a PCI
-configuration space. The flag will be used subsequently to differentiate
-between memory-mapped I/O regions and PCI configuration space.
-
-Patch 6 rewrites PCIe support as a driver and switches the Harmony and
-TrimSlice boards to add the proper platform device instead of calling
-the tegra_pcie_init() function. Patch 7 adds MSI support as an IRQ
-domain.
-
-Patches 8 and 9 add code to support the new PCIe controller binding used
-by patch 10 to instantiate the controller from DT.
-
-
-Thierry Reding (10):
-  PCI: Keep pci_fixup_irqs() around after init
-  ARM: pci: Keep pci_common_init() around after init
-  ARM: pci: Allow passing per-controller private data
-  ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
-  resource: add PCI configuration space support
-  ARM: tegra: Rewrite PCIe support as a driver
-  ARM: tegra: pcie: Add MSI support
-  of/address: Handle #address-cells > 2 specially
-  of: Add of_pci_parse_ranges()
-  ARM: tegra: pcie: Add device tree support
-
- .../bindings/pci/nvidia,tegra20-pcie.txt           |   94 ++
- arch/arm/boot/dts/tegra20.dtsi                     |   62 +
- arch/arm/include/asm/mach/pci.h                    |    1 +
- arch/arm/kernel/bios32.c                           |    7 +-
- arch/arm/mach-tegra/Kconfig                        |    1 +
- arch/arm/mach-tegra/board-dt-tegra20.c             |    7 +-
- arch/arm/mach-tegra/board-harmony-pcie.c           |   30 +-
- arch/arm/mach-tegra/board-harmony.c                |    1 +
- arch/arm/mach-tegra/board-harmony.h                |    1 +
- arch/arm/mach-tegra/board-trimslice.c              |   11 +-
- arch/arm/mach-tegra/board.h                        |    2 +-
- arch/arm/mach-tegra/devices.c                      |  142 ++
- arch/arm/mach-tegra/devices.h                      |    3 +
- arch/arm/mach-tegra/include/mach/iomap.h           |    3 -
- arch/arm/mach-tegra/include/mach/irqs.h            |    5 +-
- arch/arm/mach-tegra/include/mach/pci-tegra.h       |   38 +
- arch/arm/mach-tegra/pcie.c                         | 1406 ++++++++++++++------
- arch/arm/mach-tegra/pmc.c                          |   16 +
- arch/arm/mach-tegra/pmc.h                          |    1 +
- drivers/of/address.c                               |    8 +
- drivers/of/of_pci.c                                |   84 +-
- drivers/pci/setup-irq.c                            |    4 +-
- include/linux/ioport.h                             |    2 +-
- include/linux/of_pci.h                             |    2 +
- 24 files changed, 1485 insertions(+), 446 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
- create mode 100644 arch/arm/mach-tegra/include/mach/pci-tegra.h
-
--- 
-1.7.11.2
+thanks,
+rui
+> I can try to add these codes base on your patches.
+>=20
+> Thanks.
+> Wei.
+>=20
+> >=20
+> > BTW, the upper and lower limit is introduced in the patch set I'm
+> > testing, so maybe you were not aware of it.
+> >=20
+> > thanks,
+> > rui
+>=20
+>=20
+>=20
