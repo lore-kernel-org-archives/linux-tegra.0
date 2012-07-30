@@ -1,22 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: Add Avionic Design Medcom-Wide support
-Date: Mon, 30 Jul 2012 10:44:44 -0600
-Message-ID: <5016B9FC.5040107@wwwdotorg.org>
-References: <1343228775-1330-1-git-send-email-thierry.reding@avionic-design.de> <1343228775-1330-2-git-send-email-thierry.reding@avionic-design.de> <5012F95E.9050200@wwwdotorg.org> <20120730080550.GE15245@avionic-0098.mockup.avionic-design.de>
+From: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+Subject: Re: Gethering power management/policy hw drivers under drivers/power/? (Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences)
+Date: Mon, 30 Jul 2012 22:59:39 +0200
+Message-ID: <201207302259.39396.rjw@sisk.pl>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <5015E8AE.8060404@nvidia.com> <20120730024049.GA10442@lizard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120730080550.GE15245-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20120730024049.GA10442@lizard>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Pihet <j-pihet-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/30/2012 02:05 AM, Thierry Reding wrote:
-...
-> Perhaps it even makes sense to separate commonalities out into a 
-> tegra20-tamonten.dtsi?
+On Monday, July 30, 2012, Anton Vorontsov wrote:
+> On Mon, Jul 30, 2012 at 10:51:42AM +0900, Alex Courbot wrote:
+> [...]
+> > On the other hand I have just noticed that the apparently unrelated
+> > Adaptive Voltage Scaling driver just appeared in drivers/power/avs.
+> > So if Anton and David are ok with this, maybe I could put the power
+> > sequences code in its own subdirectory within drivers/power.
+> 
+> Well, currently drivers/power/ is indeed just for power supply class
+> subsystem and drivers. But if the trend is to gather power management
+> ("policy") stuff under one directory, i.e.
+> 
+> drivers/
+>   power/
+>     supplies/    <- former "power supply class and drivers"
+>     regulators/
+>     idle/
+>     cpuidle/
+>     cpufreq/
+>     devfreq/
+>     avs/
+>     ...
+> 
+> That would probably make sense, we could easily see the big picture.
+> But if we're not going to do this long-term,
 
-Yes, if a bunch of the .dts file is driven by the main CPU board
-rather than what it plugs into, that probably makes sense.
+Yes, we may do this eventually, but surely not right now.
+
+Thanks,
+Rafael
