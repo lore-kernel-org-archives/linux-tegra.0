@@ -1,101 +1,197 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: Add Avionic Design Medcom-Wide support
-Date: Mon, 30 Jul 2012 10:05:50 +0200
-Message-ID: <20120730080550.GE15245@avionic-0098.mockup.avionic-design.de>
-References: <1343228775-1330-1-git-send-email-thierry.reding@avionic-design.de>
- <1343228775-1330-2-git-send-email-thierry.reding@avionic-design.de>
- <5012F95E.9050200@wwwdotorg.org>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Mon, 30 Jul 2012 12:00:32 +0100
+Message-ID: <CAPnjgZ0H2xrJcL-ytMaX11iYrrhCg7LEM00u_NgEaveM4gHMPw@mail.gmail.com>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
+	<1343390750-3642-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5012F95E.9050200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1343390750-3642-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
---HeFlAV5LIbMFYYuh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 27, 2012 at 1:05 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Some device drivers (panel backlights especially) need to follow precise
+> sequences for powering on and off, involving gpios, regulators, PWMs
+> with a precise powering order and delays to respect between each steps.
+> These sequences are board-specific, and do not belong to a particular
+> driver - therefore they have been performed by board-specific hook
+> functions to far.
+>
+> With the advent of the device tree and of ARM kernels that are not
+> board-tied, we cannot rely on these board-specific hooks anymore but
+> need a way to implement these sequences in a portable manner. This patch
+> introduces a simple interpreter that can execute such power sequences
+> encoded either as platform data or within the device tree.
 
-On Fri, Jul 27, 2012 at 02:26:06PM -0600, Stephen Warren wrote:
-> On 07/25/2012 09:06 AM, Thierry Reding wrote:
-> > The Medcom is a 16:9 15" terminal that is used for patient infotainment
-> > in hospitals.
->=20
-> > diff --git a/arch/arm/boot/dts/tegra20-medcom.dts b/arch/arm/boot/dts/t=
-egra20-medcom.dts
->=20
-> > +	model =3D "Avionic Design Medcom-Wide board";
-> > +	compatible =3D "ad,medcom-wide", "nvidia,tegra20";
->=20
-> The filename implies just "medcom" but the compatible value says
-> "medcom-wide". I assume the two should match. Are there multiple medcom
-> versions, with SW-visible differences?
+This all looks very reasonable to me, just a few comments.
 
-Actually there's about 5 different Medcom versions. Medcom-Wide is the
-newest incarnation and is the one using the Tamonten/Tegra20. Older ones
-were PXA and VR41xx-based and there are also Atom-based variants. For
-the Tegra20-based devices, Medcom-Wide is the actual marketing name. I
-know the U-Boot support also currently uses just "medcom". For the
-kernel it's probably okay to keep it to just "medcom" because I doubt
-there will ever be a second variant using the Tegra20. There is probably
-going to be a Tegra30-based variant, but the DTS files will already have
-a different prefix anyway. I have no idea what the marketing or model
-name will be, so maybe using "medcom-wide" as the compatible value will
-be best.
+>
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/power/power_seq.txt | 120 +++++++++++++++
+>  drivers/base/Kconfig              |   4 +
+>  drivers/base/Makefile             |   1 +
+>  drivers/base/power_seq.c          | 300 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/power_seq.h         | 139 ++++++++++++++++++
+>  5 files changed, 564 insertions(+)
+>  create mode 100644 Documentation/power/power_seq.txt
+>  create mode 100644 drivers/base/power_seq.c
+>  create mode 100644 include/linux/power_seq.h
+>
+> diff --git a/Documentation/power/power_seq.txt b/Documentation/power/power_seq.txt
+> new file mode 100644
+> index 0000000..aa2ceb5
+> --- /dev/null
+> +++ b/Documentation/power/power_seq.txt
+> @@ -0,0 +1,120 @@
+> +Runtime Interpreted Power Sequences
+> +-----------------------------------
+> +
+> +Problem
+> +-------
+> +One very common board-dependent code is the out-of-driver code that is used to
+> +turn a device on or off. For instance, SoC boards very commonly use a GPIO
+> +(abstracted to a regulator or not) to control the power supply of a backlight,
+> +disabling it when the backlight is not used in order to save power. The GPIO
+> +that should be used, however, as well as the exact power sequence that may
+> +involve different resources, is board-dependent and thus unknown of the driver.
+> +
+> +This has been addressed so far by using hooks in the device's platform data that
+> +are called whenever the state of the device might reflect a power change. This
+> +approach, however, introduces board-dependant code into the kernel and is not
+> +compatible with the device tree.
+> +
+> +The Runtime Interpreted Power Sequences (or power sequences for short) aim at
+> +turning this code into platform data or device tree nodes. Power sequences are
+> +described using a simple format and run by a simple interpreter whenever needed.
+> +This allows to remove the callback mechanism and makes the kernel less
+> +board-dependant.
+> +
+> +Sequences Format
+> +----------------
+> +Power sequences are a series of sequential steps during which an action is
+> +performed on a resource. The supported resources so far are:
+> +- GPIOs
+> +- Regulators
+> +- PWMs
+> +
+> +Each step designates a resource and the following parameters:
+> +- Whether the step should enable or disable the resource,
+> +- Delay to wait before performing the action,
+> +- Delay to wait after performing the action.
+> +
+> +Both new resources and parameters can be introduced, but the goal is of course
+> +to keep things as simple and compact as possible.
+> +
+> +The platform data is a simple array of platform_power_seq_step instances, each
+> +instance describing a step. The type as well as one of id or gpio members
+> +(depending on the type) must be specified. The last step must be of type
+> +POWER_SEQ_STOP. Regulator and PWM resources are identified by name. GPIO are
+> +identified by number. For example, the following sequence will turn on the
+> +"power" regulator of the device, wait 10ms, and set GPIO number 110 to 1:
 
-I should probably sit down with marketing and talk about this.
+For the delay, I think milliseconds is reasonable. I suppose there is
+no reasonable need for microseconds?
 
-> > +	sdhci@c8000600 {
-> > +		cd-gpios =3D <&gpio 58 0>; /* gpio PH2 */
-> > +		wp-gpios =3D <&gpio 59 0>; /* gpio PH3 */
-> > +		status =3D "okay";
-> > +	};
->=20
-> You want a bus-width property in that node. Same for Plutux.
+> +
+> +struct platform_power_seq_step power_on_seq[] = {
+> +       {
+> +               .type = POWER_SEQ_REGULATOR,
+> +               .id = "power",
+> +               .params = {
+> +                       .enable = 1,
+> +                       .post_delay = 10,
+> +               },
+> +       },
+> +       {
+> +               .type = POWER_SEQ_GPIO,
+> +               .gpio = 110,
+> +               .params = {
+> +                       .enable = 1,
+> +               },
+> +       },
+> +       {
+> +               .type = POWER_SEQ_STOP,
+> +       },
+> +};
+> +
+> +Usage by Drivers and Resources Management
+> +-----------------------------------------
+> +Power sequences make use of resources that must be properly allocated and
+> +managed. The power_seq_build() function takes care of resolving the resources as
+> +they are met in the sequence and to allocate them if needed:
+> +
+> +power_seq *power_seq_build(struct device *dev, power_seq_resources *ress,
+> +                          platform_power_seq *pseq);
+> +
+> +You will need an instance of power_seq_resources to keep track of the resources
+> +that are already allocated. On success, the function returns a devm allocated
+> +resolved sequence that is ready to be passed to power_seq_run(). In case of
+> +failure, and error code is returned.
+> +
+> +A resolved power sequence returned by power_seq_build can be run by
+> +power_run_run():
+> +
+> +int power_seq_run(struct device *dev, power_seq *seq);
+> +
+> +It returns 0 if the sequence has successfully been run, or an error code if a
+> +problem occured.
+> +
+> +Finally, some resources that cannot be allocated through devm need to be freed
+> +manually. Therefore, be sure to call power_seq_free_resources() in your device
+> +remove function:
+> +
+> +void power_seq_free_resources(power_seq_resources *ress);
+> +
+> +Device tree
+> +-----------
+> +All the same, power sequences can be encoded as device tree nodes. The following
+> +properties and nodes are equivalent to the platform data defined previously:
+> +
+> +               power-supply = <&mydevice_reg>;
+> +               enable-gpio = <&gpio 6 0>;
+> +
+> +               power-on-sequence {
+> +                       regulator@0 {
+> +                               id = "power";
 
-Okay, will do.
+Is there a reason not to put the phandle here, like:
 
-> > +	backlight {
-> > +		compatible =3D "pwm-backlight";
-> > +		pwms =3D <&pwm 0 5000000>;
->=20
-> The tegra20.dtsi doesn't assign label "pwm" to the PWM controller yet...
+                                   id = <&mydevice_reg>;
 
-Yes, that's in a separate patch that I forgot to add to the series.
+(or maybe 'device' instead of id?)
 
-> The Plutux comments all apply here as well.
+> +                               enable;
+> +                               post-delay = <10>;
+> +                       };
+> +                       gpio@1 {
+> +                               id = "enable-gpio";
+> +                               enable;
+> +                       };
+> +               };
+> +
+> +Note that first, the phandles of the regulator and gpio used in the sequences
+> +are defined as properties. Then the sequence references them through the id
+> +property of every step. The name of sub-properties defines the type of the step.
+> +Valid names are "regulator", "gpio" and "pwm". Steps must be numbered
+> +sequentially.
 
-Alright. I'll update the patches. I suppose most applies to the TEC as
-well. Perhaps it even makes sense to separate commonalities out into a
-tegra20-tamonten.dtsi?
+For the regulator and gpio types I think you only have an enable. For
+the pwm, what is the intended binding? Is that documented elsewhere?
 
-Thierry
+Also it might be worth mentioning how you get a struct power_seq from
+an fdt node, and perhaps given an example of a device which has an
+attached node, so we can see how it is referenced from the device
+(of_parse_power_seq I think). Do put the sequence inside the device
+node or reference it with a phandle?
 
---HeFlAV5LIbMFYYuh
-Content-Type: application/pgp-signature
+Finally, should you use typedefs?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQFkBeAAoJEN0jrNd/PrOhzucP/1A+dgJlR9Rm58jfDupjIlWC
-MSDo9gj7mG05MBqRBa8h8YYZ4ax6jAWA7SiXy93Rk6MnmRnryclMUpyJRqnY2IUT
-MYcVhYmN6XOPE5M1e1UECdqEvNDwKBH4qvyx4hJqE370Y5XwfLmMq1dpymB9k1iV
-VaqeVUAXEL2MTqoFtUdj0lYEF7OHQxBm78ZBjZ9hmmMOrLE3YgscWDf7UlYtRqq7
-b0jbGL5KVNO88tfti2wO0K5QZ6QeI35+YB+lSPwMnyl4eNV+3OpFlrZagCiWN90b
-ghYeF3ghJoF7IzkWe5tcpNnsnF+hW+KAUPS0XD7JM0rZZz6Qa/c7rUiAZW0ev78N
-EJQ8E4etRblaGSUmePccBcDNrpJr6eR7rrU1heThJOVfuNruyHxq3YkfQUrBhfus
-tEAsJm30MntuRBVEtmn0FKquRX1Cz79yWnEyhqaibJcYvr2C9yNKEqBotRv+6RdO
-gjZQAvqFDWK2/Lstnhth+dc28woEmCg+XIpRN6UpfkxA/pOCWQVj777OJAKe5aeZ
-6mwi6Mu1T/lh8iq9R2Gi/OQXf5s/dKcAA9wxavskwhcm5lIle69V3wcp7ZHjvKjt
-SXJPHi4KKkjvAp05ZR6pl0iAUNo3rPJ8OctZg9g7ygBLdKn2zqf0hMMVDMQa+i2p
-Lx1RqcYIwwOw0CHgR3wz
-=EUeA
------END PGP SIGNATURE-----
-
---HeFlAV5LIbMFYYuh--
+Regards,
+Simon
