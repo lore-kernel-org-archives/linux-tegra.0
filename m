@@ -1,93 +1,101 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: Add Avionic Design Plutux support
-Date: Mon, 30 Jul 2012 09:54:05 +0200
-Message-ID: <20120730075405.GD15245@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH 2/3] ARM: tegra: Add Avionic Design Medcom-Wide support
+Date: Mon, 30 Jul 2012 10:05:50 +0200
+Message-ID: <20120730080550.GE15245@avionic-0098.mockup.avionic-design.de>
 References: <1343228775-1330-1-git-send-email-thierry.reding@avionic-design.de>
- <5012F889.1020004@wwwdotorg.org>
+ <1343228775-1330-2-git-send-email-thierry.reding@avionic-design.de>
+ <5012F95E.9050200@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4zI0WCX1RcnW9Hbu"
+	protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5012F889.1020004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5012F95E.9050200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---4zI0WCX1RcnW9Hbu
+--HeFlAV5LIbMFYYuh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 27, 2012 at 02:22:33PM -0600, Stephen Warren wrote:
+On Fri, Jul 27, 2012 at 02:26:06PM -0600, Stephen Warren wrote:
 > On 07/25/2012 09:06 AM, Thierry Reding wrote:
-> > The Plutux is a set-top box device based on the Tamonten SOM and can be
-> > connected to a display via HDMI.
+> > The Medcom is a 16:9 15" terminal that is used for patient infotainment
+> > in hospitals.
 >=20
-> > diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/t=
-egra20-plutux.dts
+> > diff --git a/arch/arm/boot/dts/tegra20-medcom.dts b/arch/arm/boot/dts/t=
+egra20-medcom.dts
 >=20
-> > +	regulators {
-> > +		compatible =3D "simple-bus";
-> > +
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <1>;
+> > +	model =3D "Avionic Design Medcom-Wide board";
+> > +	compatible =3D "ad,medcom-wide", "nvidia,tegra20";
 >=20
-> Depending on the outcome of the simple-bus discussion I mentioned on
-> IRC, this might want to be updated to match that. We'll see!
+> The filename implies just "medcom" but the compatible value says
+> "medcom-wide". I assume the two should match. Are there multiple medcom
+> versions, with SW-visible differences?
 
-Yes, I forgot to mention that.
+Actually there's about 5 different Medcom versions. Medcom-Wide is the
+newest incarnation and is the one using the Tamonten/Tegra20. Older ones
+were PXA and VR41xx-based and there are also Atom-based variants. For
+the Tegra20-based devices, Medcom-Wide is the actual marketing name. I
+know the U-Boot support also currently uses just "medcom". For the
+kernel it's probably okay to keep it to just "medcom" because I doubt
+there will ever be a second variant using the Tegra20. There is probably
+going to be a Tegra30-based variant, but the DTS files will already have
+a different prefix anyway. I have no idea what the marketing or model
+name will be, so maybe using "medcom-wide" as the compatible value will
+be best.
 
->=20
-> > +	sound {
-> > +		compatible =3D "nvidia,tegra-audio-wm8903-harmony",
-> > +			     "nvidia,tegra-audio-wm8903";
->=20
-> I think that first compatible value should be more like
-> "at,tegra-audio-plutux" or something like that; the driver itself
-> matches on "nvidia,tegra-audio-wm8903" only, and the first compatible
-> value is just in case we ever need board-specific fixes/hacks in the driv=
-er.
+I should probably sit down with marketing and talk about this.
 
-Okay, that makes sense.
-
-> > diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Ma=
-kefile.boot
+> > +	sdhci@c8000600 {
+> > +		cd-gpios =3D <&gpio 58 0>; /* gpio PH2 */
+> > +		wp-gpios =3D <&gpio 59 0>; /* gpio PH3 */
+> > +		status =3D "okay";
+> > +	};
 >=20
-> >  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) +=3D tegra20-trimslice.dtb
-> >  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) +=3D tegra20-ventana.dtb
-> >  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) +=3D tegra20-whistler.dtb
-> > +dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) +=3D tegra20-plutux.dtb
-> >  dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) +=3D tegra30-cardhu.dtb
->=20
-> It'd be nice to keep that sorted first on 2x/3x SoC version, then
-> alphabetically.
+> You want a bus-width property in that node. Same for Plutux.
 
-Absolutely.
+Okay, will do.
+
+> > +	backlight {
+> > +		compatible =3D "pwm-backlight";
+> > +		pwms =3D <&pwm 0 5000000>;
+>=20
+> The tegra20.dtsi doesn't assign label "pwm" to the PWM controller yet...
+
+Yes, that's in a separate patch that I forgot to add to the series.
+
+> The Plutux comments all apply here as well.
+
+Alright. I'll update the patches. I suppose most applies to the TEC as
+well. Perhaps it even makes sense to separate commonalities out into a
+tegra20-tamonten.dtsi?
 
 Thierry
 
---4zI0WCX1RcnW9Hbu
+--HeFlAV5LIbMFYYuh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQFj2dAAoJEN0jrNd/PrOhcRcQAIq+u3f0U/P3wfWnQWejGXWq
-iqvGJxTHcZtJIEdVDfNRiAiD+PNjcmOgKdx5LU6+XuBjcH5kuyut04nttAgtxV6f
-crLLrrtJ2wsx5yYmRgZUqYGtVvPPiwdIPIbgUyaEkG1XF0UQoDpgGM9/ah9YZ1ZB
-mJXj9JuLd7PHeb1EgvraUexP8juDed0hhRKMlrbEfRqr0+d2SMMFxL2pT1Y2ItsP
-U7d6+qwl9EP4nImqIK7IE41oAAhZ9jJcNHqJcInU9Kq+JH9KIdxn1lAbBA+2JoE8
-udkqilz5dylSqIsHvIllbv7MhkSkFncG0M9j4EWUE9rnY1orkiokfjw2tGtR05h9
-46BfHjJGfQclgEm08X7vwBMl+lTG3o5CUmzs2u3od92PRkGiVRxOneTw+qFK1PZd
-hT9ZW4YShH5/poGF4qrURlOut9OdaSnOIEXthk+SL7Ze64xOoiwI9QINhlWKrUbc
-ljiPXsf8TnH3XPXlDzj5//qzq9SY45k7kJi652vkxe6lBXsDPEUf1G6Rx71F4jRE
-NFrujXsvu+uy7429LDvmqWDKtg9exUiX6Jn9fz82sxxFBdCG9Ohnk9sS43HTP128
-wJX5q0KCCjS0gesMOg4QW1Ig8uhGG3+qZPMNVNfxKIutPxWm9ag8qZrBFYnDc0UF
-3Ffcd+D7F1plD7bLDecz
-=wscL
+iQIcBAEBAgAGBQJQFkBeAAoJEN0jrNd/PrOhzucP/1A+dgJlR9Rm58jfDupjIlWC
+MSDo9gj7mG05MBqRBa8h8YYZ4ax6jAWA7SiXy93Rk6MnmRnryclMUpyJRqnY2IUT
+MYcVhYmN6XOPE5M1e1UECdqEvNDwKBH4qvyx4hJqE370Y5XwfLmMq1dpymB9k1iV
+VaqeVUAXEL2MTqoFtUdj0lYEF7OHQxBm78ZBjZ9hmmMOrLE3YgscWDf7UlYtRqq7
+b0jbGL5KVNO88tfti2wO0K5QZ6QeI35+YB+lSPwMnyl4eNV+3OpFlrZagCiWN90b
+ghYeF3ghJoF7IzkWe5tcpNnsnF+hW+KAUPS0XD7JM0rZZz6Qa/c7rUiAZW0ev78N
+EJQ8E4etRblaGSUmePccBcDNrpJr6eR7rrU1heThJOVfuNruyHxq3YkfQUrBhfus
+tEAsJm30MntuRBVEtmn0FKquRX1Cz79yWnEyhqaibJcYvr2C9yNKEqBotRv+6RdO
+gjZQAvqFDWK2/Lstnhth+dc28woEmCg+XIpRN6UpfkxA/pOCWQVj777OJAKe5aeZ
+6mwi6Mu1T/lh8iq9R2Gi/OQXf5s/dKcAA9wxavskwhcm5lIle69V3wcp7ZHjvKjt
+SXJPHi4KKkjvAp05ZR6pl0iAUNo3rPJ8OctZg9g7ygBLdKn2zqf0hMMVDMQa+i2p
+Lx1RqcYIwwOw0CHgR3wz
+=EUeA
 -----END PGP SIGNATURE-----
 
---4zI0WCX1RcnW9Hbu--
+--HeFlAV5LIbMFYYuh--
