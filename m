@@ -1,307 +1,79 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] iommu/tegra: smmu: debugfs for TLB/PTC statistics
-Date: Tue, 31 Jul 2012 08:14:41 +0300
-Message-ID: <1343711681-23394-1-git-send-email-hdoyu@nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Tue, 31 Jul 2012 17:37:07 +0900
+Message-ID: <50179933.9090501@nvidia.com>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com> <CAPnjgZ0H2xrJcL-ytMaX11iYrrhCg7LEM00u_NgEaveM4gHMPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPnjgZ0H2xrJcL-ytMaX11iYrrhCg7LEM00u_NgEaveM4gHMPw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Simon Glass <sjg@chromium.org>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add debugfs entries to collect TLB/PTC statistics.
+Hi Simon,
 
-  $ echo "reset" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ echo "on" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ echo "off" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ cat /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  hit:0014910c miss:00014d22
+On 07/30/2012 08:00 PM, Simon Glass wrote:
+> For the delay, I think milliseconds is reasonable. I suppose there is
+> no reasonable need for microseconds?
 
-  The above format is:
-  hit:<HIT count><SPC>miss:<MISS count><SPC><CR+LF>
+I don't see any need for microseconds myself - anybody sees use for 
+finer-grained delays?
 
-  fscanf(fp, "hit:%lx miss:%lx", &hit, &miss);
+Btw, I noticed I was using mdelay instead of msleep - caught and fixed that.
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c |  202 +++++++++++++++++++++++++++++++++++++++++---
- 1 files changed, 190 insertions(+), 12 deletions(-)
+>> +Device tree
+>> +-----------
+>> +All the same, power sequences can be encoded as device tree nodes. The following
+>> +properties and nodes are equivalent to the platform data defined previously:
+>> +
+>> +               power-supply = <&mydevice_reg>;
+>> +               enable-gpio = <&gpio 6 0>;
+>> +
+>> +               power-on-sequence {
+>> +                       regulator@0 {
+>> +                               id = "power";
+>
+> Is there a reason not to put the phandle here, like:
+>
+>                                     id = <&mydevice_reg>;
+>
+> (or maybe 'device' instead of id?)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 4ba325a..2e0eee9 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -32,6 +32,8 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_iommu.h>
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
- 
- #include <asm/page.h>
- #include <asm/cacheflush.h>
-@@ -47,16 +49,29 @@
- #define SMMU_CONFIG_DISABLE			0
- #define SMMU_CONFIG_ENABLE			1
- 
--#define SMMU_TLB_CONFIG				0x14
--#define SMMU_TLB_CONFIG_STATS__MASK		(1 << 31)
--#define SMMU_TLB_CONFIG_STATS__ENABLE		(1 << 31)
-+/* REVISIT: To support multiple MCs */
-+enum {
-+	_MC = 0,
-+};
-+
-+enum {
-+	_TLB = 0,
-+	_PTC,
-+};
-+
-+#define SMMU_CACHE_CONFIG_BASE			0x14
-+#define __SMMU_CACHE_CONFIG(mc, cache)		(SMMU_CACHE_CONFIG_BASE + 4 * cache)
-+#define SMMU_CACHE_CONFIG(cache)		__SMMU_CACHE_CONFIG(_MC, cache)
-+
-+#define SMMU_CACHE_CONFIG_STATS_SHIFT		31
-+#define SMMU_CACHE_CONFIG_STATS_ENABLE		(1 << SMMU_CACHE_CONFIG_STATS_SHIFT)
-+#define SMMU_CACHE_CONFIG_STATS_TEST_SHIFT	30
-+#define SMMU_CACHE_CONFIG_STATS_TEST		(1 << SMMU_CACHE_CONFIG_STATS_TEST_SHIFT)
-+
- #define SMMU_TLB_CONFIG_HIT_UNDER_MISS__ENABLE	(1 << 29)
- #define SMMU_TLB_CONFIG_ACTIVE_LINES__VALUE	0x10
- #define SMMU_TLB_CONFIG_RESET_VAL		0x20000010
- 
--#define SMMU_PTC_CONFIG				0x18
--#define SMMU_PTC_CONFIG_STATS__MASK		(1 << 31)
--#define SMMU_PTC_CONFIG_STATS__ENABLE		(1 << 31)
- #define SMMU_PTC_CONFIG_CACHE__ENABLE		(1 << 29)
- #define SMMU_PTC_CONFIG_INDEX_MAP__PATTERN	0x3f
- #define SMMU_PTC_CONFIG_RESET_VAL		0x2000003f
-@@ -86,10 +101,10 @@
- 
- #define SMMU_ASID_SECURITY			0x38
- 
--#define SMMU_STATS_TLB_HIT_COUNT		0x1f0
--#define SMMU_STATS_TLB_MISS_COUNT		0x1f4
--#define SMMU_STATS_PTC_HIT_COUNT		0x1f8
--#define SMMU_STATS_PTC_MISS_COUNT		0x1fc
-+#define SMMU_STATS_CACHE_COUNT_BASE		0x1f0
-+
-+#define SMMU_STATS_CACHE_COUNT(mc, cache, hitmiss)		\
-+	(SMMU_STATS_CACHE_COUNT_BASE + 8 * cache + 4 * hitmiss)
- 
- #define SMMU_TRANSLATION_ENABLE_0		0x228
- #define SMMU_TRANSLATION_ENABLE_1		0x22c
-@@ -251,6 +266,8 @@ struct smmu_device {
- 	unsigned long translation_enable_2;
- 	unsigned long asid_security;
- 
-+	struct dentry *debugfs_root;
-+
- 	struct device_node *ahb;
- 
- 	int		num_as;
-@@ -412,8 +429,8 @@ static int smmu_setup_regs(struct smmu_device *smmu)
- 	smmu_write(smmu, smmu->translation_enable_1, SMMU_TRANSLATION_ENABLE_1);
- 	smmu_write(smmu, smmu->translation_enable_2, SMMU_TRANSLATION_ENABLE_2);
- 	smmu_write(smmu, smmu->asid_security, SMMU_ASID_SECURITY);
--	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_TLB_CONFIG);
--	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_PTC_CONFIG);
-+	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_TLB));
-+	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_PTC));
- 
- 	smmu_flush_regs(smmu, 1);
- 
-@@ -892,6 +909,164 @@ static struct iommu_ops smmu_iommu_ops = {
- 	.pgsize_bitmap	= SMMU_IOMMU_PGSIZES,
- };
- 
-+/* Should be in the order of enum */
-+static const char * const smmu_debugfs_mc[] = { "mc", };
-+static const char * const smmu_debugfs_cache[] = {  "tlb", "ptc", };
-+
-+static ssize_t smmu_debugfs_stats_write(struct file *file,
-+					const char __user *buffer,
-+					size_t count, loff_t *pos)
-+{
-+	struct smmu_device *smmu;
-+	struct dentry *dent;
-+	int i, cache, mc;
-+	enum {
-+		_OFF = 0,
-+		_ON,
-+		_RESET,
-+	};
-+	const char * const command[] = {
-+		[_OFF]		= "off",
-+		[_ON]		= "on",
-+		[_RESET]	= "reset",
-+	};
-+	char str[] = "reset";
-+	u32 val;
-+	size_t offs;
-+
-+	count = min_t(size_t, count, sizeof(str));
-+	if (copy_from_user(str, buffer, count))
-+		return -EINVAL;
-+
-+	for (i = 0; i < ARRAY_SIZE(command); i++)
-+		if (strncmp(str, command[i],
-+			    strlen(command[i])) == 0)
-+			break;
-+
-+	if (i == ARRAY_SIZE(command))
-+		return -EINVAL;
-+
-+	dent = file->f_dentry;
-+	cache = (int)dent->d_inode->i_private;
-+	mc = (int)dent->d_parent->d_inode->i_private;
-+	smmu = dent->d_parent->d_parent->d_inode->i_private;
-+
-+	offs = SMMU_CACHE_CONFIG(cache);
-+	val = smmu_read(smmu, offs);
-+	switch (i) {
-+	case _OFF:
-+		val &= ~SMMU_CACHE_CONFIG_STATS_ENABLE;
-+		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-+		smmu_write(smmu, val, offs);
-+		break;
-+	case _ON:
-+		val |= SMMU_CACHE_CONFIG_STATS_ENABLE;
-+		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-+		smmu_write(smmu, val, offs);
-+		break;
-+	case _RESET:
-+		val |= SMMU_CACHE_CONFIG_STATS_TEST;
-+		smmu_write(smmu, val, offs);
-+		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-+		smmu_write(smmu, val, offs);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	dev_dbg(smmu->dev, "%s() %08x, %08x @%08x\n", __func__,
-+		val, smmu_read(smmu, offs), offs);
-+
-+	return count;
-+}
-+
-+static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
-+{
-+	struct smmu_device *smmu;
-+	struct dentry *dent;
-+	int i, cache, mc;
-+	const char * const stats[] = { "hit", "miss", };
-+
-+	dent = d_find_alias(s->private);
-+	cache = (int)dent->d_inode->i_private;
-+	mc = (int)dent->d_parent->d_inode->i_private;
-+	smmu = dent->d_parent->d_parent->d_inode->i_private;
-+
-+	for (i = 0; i < ARRAY_SIZE(stats); i++) {
-+		u32 val;
-+		size_t offs;
-+
-+		offs = SMMU_STATS_CACHE_COUNT(mc, cache, i);
-+		val = smmu_read(smmu, offs);
-+		seq_printf(s, "%s %08x ", stats[i], val);
-+
-+		dev_dbg(smmu->dev, "%s() %s %08x @%08x\n", __func__,
-+			stats[i], val, offs);
-+	}
-+	seq_printf(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int smmu_debugfs_stats_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, smmu_debugfs_stats_show, inode);
-+}
-+
-+static const struct file_operations smmu_debugfs_stats_fops = {
-+	.open		= smmu_debugfs_stats_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+	.write		= smmu_debugfs_stats_write,
-+};
-+
-+static void smmu_debugfs_delete(struct smmu_device *smmu)
-+{
-+	debugfs_remove_recursive(smmu->debugfs_root);
-+}
-+
-+static void smmu_debugfs_create(struct smmu_device *smmu)
-+{
-+	int i;
-+	struct dentry *root;
-+
-+	root = debugfs_create_file(dev_name(smmu->dev),
-+				   S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
-+				   NULL, smmu, NULL);
-+	if (!root)
-+		goto err_out;
-+	smmu->debugfs_root = root;
-+
-+	for (i = 0; i < ARRAY_SIZE(smmu_debugfs_mc); i++) {
-+		int j;
-+		struct dentry *mc;
-+
-+		mc = debugfs_create_file(smmu_debugfs_mc[i],
-+					 S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
-+					 root, (void *)i, NULL);
-+		if (!mc)
-+			goto err_out;
-+
-+		for (j = 0; j < ARRAY_SIZE(smmu_debugfs_cache); j++) {
-+			struct dentry *cache;
-+
-+			cache = debugfs_create_file(smmu_debugfs_cache[j],
-+						    S_IWUGO | S_IRUGO, mc,
-+						    (void *)j,
-+						    &smmu_debugfs_stats_fops);
-+			if (!cache)
-+				goto err_out;
-+		}
-+	}
-+
-+	return;
-+
-+err_out:
-+	smmu_debugfs_delete(smmu);
-+}
-+
- static int tegra_smmu_suspend(struct device *dev)
- {
- 	struct smmu_device *smmu = dev_get_drvdata(dev);
-@@ -996,6 +1171,7 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 	if (!smmu->avp_vector_page)
- 		return -ENOMEM;
- 
-+	smmu_debugfs_create(smmu);
- 	smmu_handle = smmu;
- 	return 0;
- }
-@@ -1005,6 +1181,8 @@ static int tegra_smmu_remove(struct platform_device *pdev)
- 	struct smmu_device *smmu = platform_get_drvdata(pdev);
- 	int i;
- 
-+	smmu_debugfs_delete(smmu);
-+
- 	smmu_write(smmu, SMMU_CONFIG_DISABLE, SMMU_CONFIG);
- 	for (i = 0; i < smmu->num_as; i++)
- 		free_pdir(&smmu->as[i]);
--- 
-1.7.5.4
+There is one reason, but it might be a bad one. On Tegra, PWM phandle 
+uses an extra cell to encode the duty-cycle the PWM should have when we 
+call get_pwm(). This makes it possible to address the same PWM with 
+different phandles (and different duty cycles), which causes an issue to 
+know whether a PWM is already used in a sequence (potentially resulting 
+in multiple get_pwm calls on the same PWM, and also opens the door to 
+ambiguities in behavior (what is the correct duty-cycle to use if 
+several different values are passed?)
+
+Maybe the problem lies in how PWM phandles are handled - if duty-cycle 
+was not part of the information, we would not have this problem.
+
+>> +Note that first, the phandles of the regulator and gpio used in the sequences
+>> +are defined as properties. Then the sequence references them through the id
+>> +property of every step. The name of sub-properties defines the type of the step.
+>> +Valid names are "regulator", "gpio" and "pwm". Steps must be numbered
+>> +sequentially.
+>
+> For the regulator and gpio types I think you only have an enable. For
+> the pwm, what is the intended binding? Is that documented elsewhere?
+
+Same thing, enable/disable which would call pwm_enable and pwm_disable. 
+One could also image an additional property to set the duty cycle if it 
+can be taken off the phandle.
+
+> Also it might be worth mentioning how you get a struct power_seq from
+> an fdt node, and perhaps given an example of a device which has an
+> attached node, so we can see how it is referenced from the device
+> (of_parse_power_seq I think). Do put the sequence inside the device
+> node or reference it with a phandle?
+
+Yes, this definitely needs more documentation - especially the DT part.
+
+Thanks,
+Alex.
