@@ -1,175 +1,307 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Mon, 30 Jul 2012 16:45:52 -0600
-Message-ID: <50170EA0.1010408@wwwdotorg.org>
-References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] iommu/tegra: smmu: debugfs for TLB/PTC statistics
+Date: Tue, 31 Jul 2012 08:14:41 +0300
+Message-ID: <1343711681-23394-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1343390750-3642-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/27/2012 06:05 AM, Alexandre Courbot wrote:
-> Some device drivers (panel backlights especially) need to follow precise
-> sequences for powering on and off, involving gpios, regulators, PWMs
-> with a precise powering order and delays to respect between each steps.
-> These sequences are board-specific, and do not belong to a particular
-> driver - therefore they have been performed by board-specific hook
-> functions to far.
+Add debugfs entries to collect TLB/PTC statistics.
 
-> diff --git a/Documentation/power/power_seq.txt b/Documentation/power/power_seq.txt
+  $ echo "reset" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
+  $ echo "on" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
+  $ echo "off" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
+  $ cat /sys/kernel/debug/smmu/mc/{tlb,ptc}
+  hit:0014910c miss:00014d22
 
-> +Sequences Format
-> +----------------
-> +Power sequences are a series of sequential steps during which an action is
-> +performed on a resource. The supported resources so far are:
-> +- GPIOs
-> +- Regulators
-> +- PWMs
-> +
-> +Each step designates a resource and the following parameters:
-> +- Whether the step should enable or disable the resource,
+  The above format is:
+  hit:<HIT count><SPC>miss:<MISS count><SPC><CR+LF>
 
-At the highest level, i.e. what's being describe here, I wouldn't even
-talk about enable/disable, but rather the action to perform on the
-resource. The set of legal actions may be specific to the type of
-resource in question. Admittedly enable/disable are common though.
+  fscanf(fp, "hit:%lx miss:%lx", &hit, &miss);
 
-> +- Delay to wait before performing the action,
-> +- Delay to wait after performing the action.
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/iommu/tegra-smmu.c |  202 +++++++++++++++++++++++++++++++++++++++++---
+ 1 files changed, 190 insertions(+), 12 deletions(-)
 
-I don't see a need to have a delay both before and after an action;
-except at the start of the sequence, step n's post-delay is at the same
-point in the sequence as step n+1's pre-delay. Perhaps make a "delay"
-step type?
-
-> +Both new resources and parameters can be introduced, but the goal is of course
-> +to keep things as simple and compact as possible.
-
-> +The platform data is a simple array of platform_power_seq_step instances, each
-
-Rather than jumping straight into platform data here, I'd expect an
-enumeration of legal resource types, and what actions can be performed
-on each, followed by a description of a sequence (very simply, just a
-list of actions and their parameters). This could be followed by a
-section describing the mapping of the abstract concepts to concrete
-platform data representation (and concrete device tree representation).
-
-> +instance describing a step. The type as well as one of id or gpio members
-> +(depending on the type) must be specified. The last step must be of type
-> +POWER_SEQ_STOP.
-
-I'd certainly suggest having a step count rather than a sentinel value
-in the list.
-
-> Regulator and PWM resources are identified by name. GPIO are
-> +identified by number.
-
-That's a little implementation-specific. I guess it's entirely true for
-a platform data representation, but not when mapping this into device tree.
-
-> +Usage by Drivers and Resources Management
-> +-----------------------------------------
-> +Power sequences make use of resources that must be properly allocated and
-> +managed. The power_seq_build() function takes care of resolving the resources as
-> +they are met in the sequence and to allocate them if needed:
-> +
-> +power_seq *power_seq_build(struct device *dev, power_seq_resources *ress,
-> +			   platform_power_seq *pseq);
-> +
-> +You will need an instance of power_seq_resources to keep track of the resources
-> +that are already allocated. On success, the function returns a devm allocated
-> +resolved sequence that is ready to be passed to power_seq_run(). In case of
-> +failure, and error code is returned.
-
-If the result is devm-allocated, the function probably should be named
-devm_power_seq_build().
-
-I wonder if using the same structure/array as input and output would
-simplify the API; the platform data would fill in the fields mentioned
-above, and power_seq_build() would parse those, then set other fields in
-the same structs to the looked-up handle values?
-
-> +Finally, some resources that cannot be allocated through devm need to be freed
-> +manually. Therefore, be sure to call power_seq_free_resources() in your device
-> +remove function:
-> +
-> +void power_seq_free_resources(power_seq_resources *ress);
-
-You can make a custom devm free routine for the power_seq_resources
-itself, so the overall free'ing of the content can be triggered by devm,
-but the free'ing function can then call whatever non-devm APIs it wants
-for the non-devm-allocated members.
-
-> +Device tree
-> +-----------
-> +All the same, power sequences can be encoded as device tree nodes. The following
-> +properties and nodes are equivalent to the platform data defined previously:
-> +
-> +		power-supply = <&mydevice_reg>;
-> +		enable-gpio = <&gpio 6 0>;
-> +
-> +		power-on-sequence {
-> +			regulator@0 {
-
-As Thierry mentioned, the step nodes should be named for the type of
-object they are (a "step") not the type or name of resource they act
-upon ("regulator" or "gpio").
-
-If the nodes have a unit address (i.e. end in "@n"), which they will
-have to if all named "step" and there's more than one of them, then they
-will need a matching reg property. Equally, the parent node will need
-#address-cells and #size-cells too. So, the last couple lines would be:
-
-		power-on-sequence {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			step@0 {
-				reg = <0>;
-
-> +				id = "power";
-
-"id" is usually a name or identifier. I think you mean "type" or perhaps
-"action" here:
-
-				type = "regulator";
-				action = "enable";
-
-or:
-
-				action = "enable-regulator";
-
-I wish we had integer constants in DT so we didn't have to do all this
-with strings. Sigh.
-
-> +				enable;
-> +				post-delay = <10>;
-> +			};
-> +			gpio@1 {
-> +				id = "enable-gpio";
-> +				enable;
-> +			};
-> +		};
-> +
-> +Note that first, the phandles of the regulator and gpio used in the sequences
-> +are defined as properties. Then the sequence references them through the id
-> +property of every step. The name of sub-properties defines the type of the step.
-> +Valid names are "regulator", "gpio" and "pwm". Steps must be numbered
-> +sequentially.
-
-Oh I see. That's a little confusing. Why not just reference the relevant
-resources directly in each step; something more like:
-
-		gpio@1 {
-			action = "enable-gpio";
-			gpio = <&gpio 1 0>;
-		};
-
-I guess that might make parsing/building a little harder, since you'd
-have to detect when you'd already done gpio_request() on a given GPIO
-and not repeat it or something like that, but to me this makes the DT a
-lot easier to comprehend.
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 4ba325a..2e0eee9 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -32,6 +32,8 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_iommu.h>
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
+ 
+ #include <asm/page.h>
+ #include <asm/cacheflush.h>
+@@ -47,16 +49,29 @@
+ #define SMMU_CONFIG_DISABLE			0
+ #define SMMU_CONFIG_ENABLE			1
+ 
+-#define SMMU_TLB_CONFIG				0x14
+-#define SMMU_TLB_CONFIG_STATS__MASK		(1 << 31)
+-#define SMMU_TLB_CONFIG_STATS__ENABLE		(1 << 31)
++/* REVISIT: To support multiple MCs */
++enum {
++	_MC = 0,
++};
++
++enum {
++	_TLB = 0,
++	_PTC,
++};
++
++#define SMMU_CACHE_CONFIG_BASE			0x14
++#define __SMMU_CACHE_CONFIG(mc, cache)		(SMMU_CACHE_CONFIG_BASE + 4 * cache)
++#define SMMU_CACHE_CONFIG(cache)		__SMMU_CACHE_CONFIG(_MC, cache)
++
++#define SMMU_CACHE_CONFIG_STATS_SHIFT		31
++#define SMMU_CACHE_CONFIG_STATS_ENABLE		(1 << SMMU_CACHE_CONFIG_STATS_SHIFT)
++#define SMMU_CACHE_CONFIG_STATS_TEST_SHIFT	30
++#define SMMU_CACHE_CONFIG_STATS_TEST		(1 << SMMU_CACHE_CONFIG_STATS_TEST_SHIFT)
++
+ #define SMMU_TLB_CONFIG_HIT_UNDER_MISS__ENABLE	(1 << 29)
+ #define SMMU_TLB_CONFIG_ACTIVE_LINES__VALUE	0x10
+ #define SMMU_TLB_CONFIG_RESET_VAL		0x20000010
+ 
+-#define SMMU_PTC_CONFIG				0x18
+-#define SMMU_PTC_CONFIG_STATS__MASK		(1 << 31)
+-#define SMMU_PTC_CONFIG_STATS__ENABLE		(1 << 31)
+ #define SMMU_PTC_CONFIG_CACHE__ENABLE		(1 << 29)
+ #define SMMU_PTC_CONFIG_INDEX_MAP__PATTERN	0x3f
+ #define SMMU_PTC_CONFIG_RESET_VAL		0x2000003f
+@@ -86,10 +101,10 @@
+ 
+ #define SMMU_ASID_SECURITY			0x38
+ 
+-#define SMMU_STATS_TLB_HIT_COUNT		0x1f0
+-#define SMMU_STATS_TLB_MISS_COUNT		0x1f4
+-#define SMMU_STATS_PTC_HIT_COUNT		0x1f8
+-#define SMMU_STATS_PTC_MISS_COUNT		0x1fc
++#define SMMU_STATS_CACHE_COUNT_BASE		0x1f0
++
++#define SMMU_STATS_CACHE_COUNT(mc, cache, hitmiss)		\
++	(SMMU_STATS_CACHE_COUNT_BASE + 8 * cache + 4 * hitmiss)
+ 
+ #define SMMU_TRANSLATION_ENABLE_0		0x228
+ #define SMMU_TRANSLATION_ENABLE_1		0x22c
+@@ -251,6 +266,8 @@ struct smmu_device {
+ 	unsigned long translation_enable_2;
+ 	unsigned long asid_security;
+ 
++	struct dentry *debugfs_root;
++
+ 	struct device_node *ahb;
+ 
+ 	int		num_as;
+@@ -412,8 +429,8 @@ static int smmu_setup_regs(struct smmu_device *smmu)
+ 	smmu_write(smmu, smmu->translation_enable_1, SMMU_TRANSLATION_ENABLE_1);
+ 	smmu_write(smmu, smmu->translation_enable_2, SMMU_TRANSLATION_ENABLE_2);
+ 	smmu_write(smmu, smmu->asid_security, SMMU_ASID_SECURITY);
+-	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_TLB_CONFIG);
+-	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_PTC_CONFIG);
++	smmu_write(smmu, SMMU_TLB_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_TLB));
++	smmu_write(smmu, SMMU_PTC_CONFIG_RESET_VAL, SMMU_CACHE_CONFIG(_PTC));
+ 
+ 	smmu_flush_regs(smmu, 1);
+ 
+@@ -892,6 +909,164 @@ static struct iommu_ops smmu_iommu_ops = {
+ 	.pgsize_bitmap	= SMMU_IOMMU_PGSIZES,
+ };
+ 
++/* Should be in the order of enum */
++static const char * const smmu_debugfs_mc[] = { "mc", };
++static const char * const smmu_debugfs_cache[] = {  "tlb", "ptc", };
++
++static ssize_t smmu_debugfs_stats_write(struct file *file,
++					const char __user *buffer,
++					size_t count, loff_t *pos)
++{
++	struct smmu_device *smmu;
++	struct dentry *dent;
++	int i, cache, mc;
++	enum {
++		_OFF = 0,
++		_ON,
++		_RESET,
++	};
++	const char * const command[] = {
++		[_OFF]		= "off",
++		[_ON]		= "on",
++		[_RESET]	= "reset",
++	};
++	char str[] = "reset";
++	u32 val;
++	size_t offs;
++
++	count = min_t(size_t, count, sizeof(str));
++	if (copy_from_user(str, buffer, count))
++		return -EINVAL;
++
++	for (i = 0; i < ARRAY_SIZE(command); i++)
++		if (strncmp(str, command[i],
++			    strlen(command[i])) == 0)
++			break;
++
++	if (i == ARRAY_SIZE(command))
++		return -EINVAL;
++
++	dent = file->f_dentry;
++	cache = (int)dent->d_inode->i_private;
++	mc = (int)dent->d_parent->d_inode->i_private;
++	smmu = dent->d_parent->d_parent->d_inode->i_private;
++
++	offs = SMMU_CACHE_CONFIG(cache);
++	val = smmu_read(smmu, offs);
++	switch (i) {
++	case _OFF:
++		val &= ~SMMU_CACHE_CONFIG_STATS_ENABLE;
++		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
++		smmu_write(smmu, val, offs);
++		break;
++	case _ON:
++		val |= SMMU_CACHE_CONFIG_STATS_ENABLE;
++		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
++		smmu_write(smmu, val, offs);
++		break;
++	case _RESET:
++		val |= SMMU_CACHE_CONFIG_STATS_TEST;
++		smmu_write(smmu, val, offs);
++		val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
++		smmu_write(smmu, val, offs);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	dev_dbg(smmu->dev, "%s() %08x, %08x @%08x\n", __func__,
++		val, smmu_read(smmu, offs), offs);
++
++	return count;
++}
++
++static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
++{
++	struct smmu_device *smmu;
++	struct dentry *dent;
++	int i, cache, mc;
++	const char * const stats[] = { "hit", "miss", };
++
++	dent = d_find_alias(s->private);
++	cache = (int)dent->d_inode->i_private;
++	mc = (int)dent->d_parent->d_inode->i_private;
++	smmu = dent->d_parent->d_parent->d_inode->i_private;
++
++	for (i = 0; i < ARRAY_SIZE(stats); i++) {
++		u32 val;
++		size_t offs;
++
++		offs = SMMU_STATS_CACHE_COUNT(mc, cache, i);
++		val = smmu_read(smmu, offs);
++		seq_printf(s, "%s %08x ", stats[i], val);
++
++		dev_dbg(smmu->dev, "%s() %s %08x @%08x\n", __func__,
++			stats[i], val, offs);
++	}
++	seq_printf(s, "\n");
++
++	return 0;
++}
++
++static int smmu_debugfs_stats_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, smmu_debugfs_stats_show, inode);
++}
++
++static const struct file_operations smmu_debugfs_stats_fops = {
++	.open		= smmu_debugfs_stats_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++	.write		= smmu_debugfs_stats_write,
++};
++
++static void smmu_debugfs_delete(struct smmu_device *smmu)
++{
++	debugfs_remove_recursive(smmu->debugfs_root);
++}
++
++static void smmu_debugfs_create(struct smmu_device *smmu)
++{
++	int i;
++	struct dentry *root;
++
++	root = debugfs_create_file(dev_name(smmu->dev),
++				   S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
++				   NULL, smmu, NULL);
++	if (!root)
++		goto err_out;
++	smmu->debugfs_root = root;
++
++	for (i = 0; i < ARRAY_SIZE(smmu_debugfs_mc); i++) {
++		int j;
++		struct dentry *mc;
++
++		mc = debugfs_create_file(smmu_debugfs_mc[i],
++					 S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
++					 root, (void *)i, NULL);
++		if (!mc)
++			goto err_out;
++
++		for (j = 0; j < ARRAY_SIZE(smmu_debugfs_cache); j++) {
++			struct dentry *cache;
++
++			cache = debugfs_create_file(smmu_debugfs_cache[j],
++						    S_IWUGO | S_IRUGO, mc,
++						    (void *)j,
++						    &smmu_debugfs_stats_fops);
++			if (!cache)
++				goto err_out;
++		}
++	}
++
++	return;
++
++err_out:
++	smmu_debugfs_delete(smmu);
++}
++
+ static int tegra_smmu_suspend(struct device *dev)
+ {
+ 	struct smmu_device *smmu = dev_get_drvdata(dev);
+@@ -996,6 +1171,7 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	if (!smmu->avp_vector_page)
+ 		return -ENOMEM;
+ 
++	smmu_debugfs_create(smmu);
+ 	smmu_handle = smmu;
+ 	return 0;
+ }
+@@ -1005,6 +1181,8 @@ static int tegra_smmu_remove(struct platform_device *pdev)
+ 	struct smmu_device *smmu = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	smmu_debugfs_delete(smmu);
++
+ 	smmu_write(smmu, SMMU_CONFIG_DISABLE, SMMU_CONFIG);
+ 	for (i = 0; i < smmu->num_as; i++)
+ 		free_pdir(&smmu->as[i]);
+-- 
+1.7.5.4
