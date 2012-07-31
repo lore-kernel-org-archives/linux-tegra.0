@@ -1,34 +1,157 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Tue, 31 Jul 2012 17:50:44 +0100
-Message-ID: <20120731165044.GH11892@opensource.wolfsonmicro.com>
-References: <5017B434.2010706@nvidia.com>
- <20120731105640.GD16155@avionic-0098.adnet.avionic-design.de>
- <20120731141328.GS4468@opensource.wolfsonmicro.com>
- <20120731142216.GA19591@avionic-0098.adnet.avionic-design.de>
- <20120731142607.GV4468@opensource.wolfsonmicro.com>
- <20120731143235.GA21126@avionic-0098.adnet.avionic-design.de>
- <20120731153941.GF4468@opensource.wolfsonmicro.com>
- <20120731161954.GB4941@kroah.com>
- <20120731162230.GE11892@opensource.wolfsonmicro.com>
- <20120731164245.GA5762@kroah.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v3 09/10] of: Add of_pci_parse_ranges()
+Date: Tue, 31 Jul 2012 15:07:31 -0500
+Message-ID: <50183B03.2090809@gmail.com>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120731164245.GA5762@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Alex Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Colin Cross <ccross@android.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 31, 2012 at 09:42:45AM -0700, Greg Kroah-Hartman wrote:
-> On Tue, Jul 31, 2012 at 05:22:30PM +0100, Mark Brown wrote:
+On 07/26/2012 02:55 PM, Thierry Reding wrote:
+> This new function parses the ranges property of PCI device nodes into
+> an array of struct resource elements. It is useful in multiple-port PCI
+> host controller drivers to collect information about the ranges that it
+> needs to forward to the respective ports.
 
-> > Hrm?  I'm not sure I understand the direct relevance here - we're
-> > talking about platform data.
+It seems to me that some of the DT PCI code in arch/powerpc/kernel/pci*
+like pci_process_bridge_OF_ranges() should apply for ARM as well.
 
-> The platform data was marked __devdata, and you said it could be thrown
-> away after init so you should keep it around somehow.
+Each arch defining their own pci controller structs complicates this,
+but I would think at least the DT parsing can be common.
 
-Ah, sorry - I was thinking __devinitdata.
+> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+> ---
+> Changes in v3:
+> - new patch
+> 
+>  drivers/of/of_pci.c    | 84 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/of_pci.h |  2 ++
+>  2 files changed, 85 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
+> index 13e37e2..bcff301 100644
+> --- a/drivers/of/of_pci.c
+> +++ b/drivers/of/of_pci.c
+> @@ -1,7 +1,8 @@
+>  #include <linux/kernel.h>
+>  #include <linux/export.h>
+> -#include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/of_pci.h>
+> +#include <linux/slab.h>
+>  #include <asm/prom.h>
+>  
+>  static inline int __of_pci_pci_compare(struct device_node *node,
+> @@ -40,3 +41,84 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(of_pci_find_child_device);
+> +
+> +struct resource *of_pci_parse_ranges(struct device_node *node,
+> +				     unsigned int *countp)
+> +{
+> +	unsigned int count, i = 0;
+> +	struct resource *ranges;
+
+I think res or pci_res would be clearer than ranges that this is a
+struct resource.
+
+> +	const __be32 *values;
+> +	int len, pna, np;
+> +
+> +	values = of_get_property(node, "ranges", &len);
+> +	if (!values)
+> +		return NULL;
+> +
+> +	pna = of_n_addr_cells(node);
+> +	np = pna + 5;
+> +
+> +	count = len / (np * sizeof(*values));
+> +
+> +	ranges = kzalloc(sizeof(*ranges) * count, GFP_KERNEL);
+> +	if (!ranges)
+> +		return NULL;
+> +
+> +	pr_debug("PCI ranges:\n");
+> +
+> +	while ((len -= np * sizeof(*values)) >= 0) {
+> +		u64 addr = of_translate_address(node, values + 3);
+> +		u64 size = of_read_number(values + 3 + pna, 2);
+> +		u32 type = be32_to_cpup(values);
+> +		const char *suffix = "";
+> +		struct resource range;
+
+Same here.
+
+Rob
+
+> +
+> +		memset(&range, 0, sizeof(range));
+> +		range.start = addr;
+> +		range.end = addr + size - 1;
+> +
+> +		switch ((type >> 24) & 0x3) {
+> +		case 0:
+> +			range.flags = IORESOURCE_MEM | IORESOURCE_PCI_CS;
+> +			pr_debug("  CS  %#x-%#x\n", range.start, range.end);
+> +			break;
+> +
+> +		case 1:
+> +			range.flags = IORESOURCE_IO;
+> +			pr_debug("  IO  %#x-%#x\n", range.start, range.end);
+> +			break;
+> +
+> +		case 2:
+> +			range.flags = IORESOURCE_MEM;
+> +
+> +			if (type & 0x40000000) {
+> +				range.flags |= IORESOURCE_PREFETCH;
+> +				suffix = "prefetch";
+> +			}
+> +
+> +			pr_debug("  MEM %#x-%#x %s\n", range.start, range.end,
+> +				 suffix);
+> +			break;
+> +
+> +		case 3:
+> +			range.flags = IORESOURCE_MEM | IORESOURCE_MEM_64;
+> +
+> +			if (type & 0x40000000) {
+> +				range.flags |= IORESOURCE_PREFETCH;
+> +				suffix = "prefetch";
+> +			}
+> +
+> +			pr_debug("  MEM %#x-%#x 64-bit %s\n", range.start,
+> +				 range.end, suffix);
+> +			break;
+> +		}
+> +
+> +		memcpy(&ranges[i++], &range, sizeof(range));
+> +		values += np;
+> +	}
+> +
+> +	if (countp)
+> +		*countp = count;
+> +
+> +	return ranges;
+> +}
+> +EXPORT_SYMBOL_GPL(of_pci_parse_ranges);
+> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+> index bb115de..c0db6ea 100644
+> --- a/include/linux/of_pci.h
+> +++ b/include/linux/of_pci.h
+> @@ -10,5 +10,7 @@ int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
+>  struct device_node;
+>  struct device_node *of_pci_find_child_device(struct device_node *parent,
+>  					     unsigned int devfn);
+> +struct resource *of_pci_parse_ranges(struct device_node *node,
+> +				     unsigned int *countp);
+>  
+>  #endif
+> 
