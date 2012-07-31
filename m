@@ -1,157 +1,59 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v3 09/10] of: Add of_pci_parse_ranges()
-Date: Tue, 31 Jul 2012 15:07:31 -0500
-Message-ID: <50183B03.2090809@gmail.com>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 08/10] of/address: Handle #address-cells > 2 specially
+Date: Tue, 31 Jul 2012 15:18:43 -0500
+Message-ID: <50183DA3.8020308@gmail.com>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <1343332512-28762-9-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Colin Cross <ccross@android.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1343332512-28762-9-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 07/26/2012 02:55 PM, Thierry Reding wrote:
-> This new function parses the ranges property of PCI device nodes into
-> an array of struct resource elements. It is useful in multiple-port PCI
-> host controller drivers to collect information about the ranges that it
-> needs to forward to the respective ports.
+> When a bus specifies #address-cells > 2, of_bus_default_map() now
+> assumes that the mapping isn't for a physical address but rather an
+> identifier that needs to match exactly.
+> 
+> This is required by bindings that use multiple cells to translate a
+> resource to the parent bus (device index, type, ...).
+> 
+> See here for the discussion:
+> 
+> 	https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-June/016577.html
+> 
+> Originally-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-It seems to me that some of the DT PCI code in arch/powerpc/kernel/pci*
-like pci_process_bridge_OF_ranges() should apply for ARM as well.
+Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 
-Each arch defining their own pci controller structs complicates this,
-but I would think at least the DT parsing can be common.
-
-> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 > ---
 > Changes in v3:
 > - new patch
 > 
->  drivers/of/of_pci.c    | 84 +++++++++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/of_pci.h |  2 ++
->  2 files changed, 85 insertions(+), 1 deletion(-)
+>  drivers/of/address.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
-> index 13e37e2..bcff301 100644
-> --- a/drivers/of/of_pci.c
-> +++ b/drivers/of/of_pci.c
-> @@ -1,7 +1,8 @@
->  #include <linux/kernel.h>
->  #include <linux/export.h>
-> -#include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_pci.h>
-> +#include <linux/slab.h>
->  #include <asm/prom.h>
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 7e262a6..2776119 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -69,6 +69,14 @@ static u64 of_bus_default_map(u32 *addr, const __be32 *range,
+>  		 (unsigned long long)cp, (unsigned long long)s,
+>  		 (unsigned long long)da);
 >  
->  static inline int __of_pci_pci_compare(struct device_node *node,
-> @@ -40,3 +41,84 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(of_pci_find_child_device);
+> +	/*
+> +	 * If the number of address cells is larger than 2 we assume the
+> +	 * mapping doesn't specify a physical address. Rather, the address
+> +	 * specifies an identifier that must match exactly.
+> +	 */
+> +	if (na > 2 && memcmp(range, addr, na * 4) != 0)
+> +		return OF_BAD_ADDR;
 > +
-> +struct resource *of_pci_parse_ranges(struct device_node *node,
-> +				     unsigned int *countp)
-> +{
-> +	unsigned int count, i = 0;
-> +	struct resource *ranges;
-
-I think res or pci_res would be clearer than ranges that this is a
-struct resource.
-
-> +	const __be32 *values;
-> +	int len, pna, np;
-> +
-> +	values = of_get_property(node, "ranges", &len);
-> +	if (!values)
-> +		return NULL;
-> +
-> +	pna = of_n_addr_cells(node);
-> +	np = pna + 5;
-> +
-> +	count = len / (np * sizeof(*values));
-> +
-> +	ranges = kzalloc(sizeof(*ranges) * count, GFP_KERNEL);
-> +	if (!ranges)
-> +		return NULL;
-> +
-> +	pr_debug("PCI ranges:\n");
-> +
-> +	while ((len -= np * sizeof(*values)) >= 0) {
-> +		u64 addr = of_translate_address(node, values + 3);
-> +		u64 size = of_read_number(values + 3 + pna, 2);
-> +		u32 type = be32_to_cpup(values);
-> +		const char *suffix = "";
-> +		struct resource range;
-
-Same here.
-
-Rob
-
-> +
-> +		memset(&range, 0, sizeof(range));
-> +		range.start = addr;
-> +		range.end = addr + size - 1;
-> +
-> +		switch ((type >> 24) & 0x3) {
-> +		case 0:
-> +			range.flags = IORESOURCE_MEM | IORESOURCE_PCI_CS;
-> +			pr_debug("  CS  %#x-%#x\n", range.start, range.end);
-> +			break;
-> +
-> +		case 1:
-> +			range.flags = IORESOURCE_IO;
-> +			pr_debug("  IO  %#x-%#x\n", range.start, range.end);
-> +			break;
-> +
-> +		case 2:
-> +			range.flags = IORESOURCE_MEM;
-> +
-> +			if (type & 0x40000000) {
-> +				range.flags |= IORESOURCE_PREFETCH;
-> +				suffix = "prefetch";
-> +			}
-> +
-> +			pr_debug("  MEM %#x-%#x %s\n", range.start, range.end,
-> +				 suffix);
-> +			break;
-> +
-> +		case 3:
-> +			range.flags = IORESOURCE_MEM | IORESOURCE_MEM_64;
-> +
-> +			if (type & 0x40000000) {
-> +				range.flags |= IORESOURCE_PREFETCH;
-> +				suffix = "prefetch";
-> +			}
-> +
-> +			pr_debug("  MEM %#x-%#x 64-bit %s\n", range.start,
-> +				 range.end, suffix);
-> +			break;
-> +		}
-> +
-> +		memcpy(&ranges[i++], &range, sizeof(range));
-> +		values += np;
-> +	}
-> +
-> +	if (countp)
-> +		*countp = count;
-> +
-> +	return ranges;
-> +}
-> +EXPORT_SYMBOL_GPL(of_pci_parse_ranges);
-> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-> index bb115de..c0db6ea 100644
-> --- a/include/linux/of_pci.h
-> +++ b/include/linux/of_pci.h
-> @@ -10,5 +10,7 @@ int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
->  struct device_node;
->  struct device_node *of_pci_find_child_device(struct device_node *parent,
->  					     unsigned int devfn);
-> +struct resource *of_pci_parse_ranges(struct device_node *node,
-> +				     unsigned int *countp);
->  
->  #endif
+>  	if (da < cp || da >= (cp + s))
+>  		return OF_BAD_ADDR;
+>  	return da - cp;
 > 
