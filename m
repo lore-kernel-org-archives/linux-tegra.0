@@ -1,79 +1,83 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: How to use the generic thermal sysfs.
-Date: Wed, 01 Aug 2012 09:02:52 +0800
-Message-ID: <1343782972.1682.489.camel@rui.sh.intel.com>
-References: <1342088573.27605.101.camel@tegra-chromium-2>
-	 <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
-	 <1342144273.1682.237.camel@rui.sh.intel.com>
-	 <1342164616.27605.129.camel@tegra-chromium-2>
-	 <1342165278.1682.259.camel@rui.sh.intel.com>
-	 <1343295094.4042.24.camel@tegra-chromium-2>
-	 <1343352098.1682.447.camel@rui.sh.intel.com>
-	 <1343357901.4042.70.camel@tegra-chromium-2>
-	 <20120727093037.094335eb@endymion.delvare>
-	 <1343374793.1682.475.camel@rui.sh.intel.com>
-	 <1343386122.4042.88.camel@tegra-chromium-2>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Wed, 1 Aug 2012 10:42:34 +0900
+Message-ID: <5018898A.4050700@nvidia.com>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com> <50170EA0.1010408@wwwdotorg.org> <5017B434.2010706@nvidia.com> <20120731105640.GD16155@avionic-0098.adnet.avionic-design.de> <5017CDF9.2060304@firmworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1343386122.4042.88.camel@tegra-chromium-2>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Jean Delvare <khali@linux-fr.org>, "R, Durgadoss" <durgadoss.r@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>, Alex Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5017CDF9.2060304-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On =E4=BA=94, 2012-07-27 at 18:48 +0800, Wei Ni wrote:
-> On Fri, 2012-07-27 at 15:39 +0800, Zhang Rui wrote:
-> > On =E4=BA=94, 2012-07-27 at 09:30 +0200, Jean Delvare wrote:
-> > > On Fri, 27 Jul 2012 10:58:21 +0800, Wei Ni wrote:
-> > > > On Fri, 2012-07-27 at 09:21 +0800, Zhang Rui wrote:
-> > > > > is it possible to program the sensor at this time, in your ow=
-n thermal
-> > > > > driver?
-> > > >=20
-> > > > Since we are using the generic thermal driver lm90.c, I'm not s=
-ure if we
-> > > > could program these limits in the generic driver, I think it's =
-better to
-> > > > have a generic interface to set the limits, so I wish to add a
-> > > > callback .set_limits() in the generic thermal framework.
-> > >=20
-> > > I can confirm that hwmon drivers do not set limits, it is up to
-> > > user-space to do it if they want. So if there is a need to do so =
-in the
-> > > kernel itself, a proper interface at the generic thermal framewor=
-k
-> > > level seems appropriate.
-> > >=20
-> > oh, setting limits from userspace?
-> > I think you can program the senor when writing the trip point?
-> > with this patch,
-> > http://marc.info/?l=3Dlinux-acpi&m=3D134318814620429&w=3D2
->=20
-> Do you mean it can use .set_trip_temp() to set limits when writing th=
-e
-> trip point? But I think this callback is used to change the trip_temp=
-,
-> it could not used to set the limits, in here the limit value is used =
-to
-> trigger the interrupt.
->=20
-yes, you are right. .set_trip_temp does not work.
+On 07/31/2012 09:22 PM, Mitch Bradley wrote:
+> On 7/31/2012 6:56 PM, Thierry Reding wrote:
+>> On Tue, Jul 31, 2012 at 07:32:20PM +0900, Alex Courbot wrote:
+>>> On 07/31/2012 07:45 AM, Stephen Warren wrote:
+>>>> I wonder if using the same structure/array as input and output would
+>>>> simplify the API; the platform data would fill in the fields mentioned
+>>>> above, and power_seq_build() would parse those, then set other fields in
+>>>> the same structs to the looked-up handle values?
+>>>
+>>> The thing is that I am not sure what happens to the platform data
+>>> once probe() is done. Isn't it customary to mark it with __devinit
+>>> and have it freed after probing is successful?
+>>
+>> No, platform data should stay around forever. Otherwise, consider what
+>> would happen if your driver is built as a module and you unload and load
+>> it again.
+>>
+>>> More generally, I think it is a good practice to have data
+>>> structures tailored right for what they need to do - code with
+>>> members that are meaningful only at given points of an instance's
+>>> life tends to be more confusing.
+>>
+>> I agree. Furthermore the driver unload/reload would be another reason
+>> not to reuse platform data as the output of the build() function.
+>>
+>> But maybe what Stephen meant was more like filling a structure with data
+>> taken from the platform data and pass that to a resolve() function which
+>> would fill in the missing pieces like pointers to actual resources. I
+>> imagine a managed interface would become a little trickier to do using
+>> such an approach.
+>>
+>>>> If the nodes have a unit address (i.e. end in "@n"), which they will
+>>>> have to if all named "step" and there's more than one of them, then they
+>>>> will need a matching reg property. Equally, the parent node will need
+>>>> #address-cells and #size-cells too. So, the last couple lines would be:
+>>>>
+>>>> 		power-on-sequence {
+>>>> 			#address-cells = <1>;
+>>>> 			#size-cells = <0>;
+>>>> 			step@0 {
+>>>> 				reg = <0>;
+>>>
+>>> That's precisely what I would like to avoid - I don't need the steps
+>>> to be numbered and I certainly have no use for a reg property. Isn't
+>>> there a way to make it simpler?
+>>
+>> It's not technically valid to not have the reg property. Or
+>> #address-cells and #size-cells properties for that matter.
+>
+> I'm not keen on this representation where individual steps are nodes.
+> That seems like it could end up being too "heavyweight" for a long sequence.
 
-usually, this is needed to re-program the sensor when the temperature
-hits a trip point , right?
+Using nodes has a big advantage though: we can use any arbitrary 
+property to add extra parameters to the resource being controlled. Right 
+now we only use enable/disable, but for example one can imagine an 
+optional voltage setting for a regulator. It is much more future-proof 
+than a design where the number of parameters would be fixed and could 
+not be extended without breaking compatibility.
 
-can we make use of the thermal_zone_device_ops.notify()?
-say we invoke .notify() in thermal_zone_device_update for each trip
-point.
+I experimented encoding the whole sequence within a single property. It 
+works of course, but is not really flexible, hard to read, and quite 
+error-prone overall. The memory footprint gain was not so obvious 
+neither (although it was indeed more compact).
 
-thanks,
-rui
-> >=20
-> > thanks,
-> > rui
-> >=20
-> >=20
->=20
->=20
+What bothers me is to have to specify the cells layout and reg property 
+for *every single sequence*, but well, I guess we can live with that.
+
+Alex.
