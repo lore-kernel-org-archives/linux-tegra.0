@@ -1,112 +1,126 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 09/10] of: Add of_pci_parse_ranges()
-Date: Wed, 1 Aug 2012 08:54:37 +0200
-Message-ID: <20120801065437.GB26791@avionic-0098.adnet.avionic-design.de>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-10-git-send-email-thierry.reding@avionic-design.de>
- <50183B03.2090809@gmail.com>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Wed, 1 Aug 2012 09:17:43 +0200
+Message-ID: <20120801071743.GC29673@avionic-0098.adnet.avionic-design.de>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
+ <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
+ <20120730113323.GA7303@avionic-0098.adnet.avionic-design.de>
+ <5017AA87.2040503@nvidia.com>
+ <20120731101931.GB16155@avionic-0098.adnet.avionic-design.de>
+ <5018997B.7010808@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50183B03.2090809-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0458671159872084231=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <5018997B.7010808-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---oLBj+sq0vYjzfsbl
+--===============0458671159872084231==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
+Content-Disposition: inline
+
+
+--E/DnYTRukya0zdZ1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 31, 2012 at 03:07:31PM -0500, Rob Herring wrote:
-> On 07/26/2012 02:55 PM, Thierry Reding wrote:
-> > This new function parses the ranges property of PCI device nodes into
-> > an array of struct resource elements. It is useful in multiple-port PCI
-> > host controller drivers to collect information about the ranges that it
-> > needs to forward to the respective ports.
+On Wed, Aug 01, 2012 at 11:50:35AM +0900, Alex Courbot wrote:
+> On 07/31/2012 07:19 PM, Thierry Reding wrote:
+> >* PGP Signed by an unknown key
+> >
+> >On Tue, Jul 31, 2012 at 06:51:03PM +0900, Alex Courbot wrote:
+> >>I would like to do that actually. The issue is that it did not work
+> >>go well with the legacy pwm_backlight behavior: a power sequence
+> >>needs to be constructed out of a PWM obtained through
+> >>pwm_request(int pwm_id, char *label) and this behavior cannot be
+> >>emulated using the new platform data interface (which only works
+> >>with pwm_get()). But if I remove this old behavior, then I could
+> >>make power_seq opaque. I don't think many drivers are using it. What
+> >>do you think?
+> >
+> >I don't see how that is relevant here, since this power-sequencing code
+> >is supposed to be generic and not tied to any specific implementation.
+> >Can you explain further?
+> >
+> >In any case you shouldn't be using pwm_request() in new code.
 >=20
-> It seems to me that some of the DT PCI code in arch/powerpc/kernel/pci*
-> like pci_process_bridge_OF_ranges() should apply for ARM as well.
+> Power sequences only rely on pwm_get, and never call pwm_request
+> since it is, as you stated, deprecated. However there are still
+> boards that use the old pwm_id member of the
+> pwm_backlight_platform_data. For these, we must call pwm_request
+> from the pwm_backlight driver in order to resolve the PWM (see
+> pwm_backlight_legacy_probe of the seconds patch). As the PWM is
+> being resolved by the backlight driver, and not within the power
+> sequences parser, the resolved data structure must be visible to
+> pwm_backlight so it can construct it. There are two ways to solve
+> this and keep the power sequences structure private:
 >=20
-> Each arch defining their own pci controller structs complicates this,
-> but I would think at least the DT parsing can be common.
+> 1) Add a way to resolve a PWM by id using pwm_request in the power
+> sequences (we probably should not do that)
 
-Yes, there's quite a lot of room for refactoring. When I first started
-work on this there had been some discussion about whether it would make
-sense to move PCI controller drivers into a common location to make it
-easier to refactor but the consensus at the time was that this should
-not be done.
+No. But I think we don't need that either. If you use power sequences,
+then you shouldn't be using the pwm_id member. Both methods should be
+exclusive.
 
-I still think this might be worthwhile, but I have other things that I
-need to finish first.
+> 2) Port the old platform pwm_request code to use pwm_add_table and
+> pwm_get instead.
 
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > ---
-> > Changes in v3:
-> > - new patch
-> >=20
-> >  drivers/of/of_pci.c    | 84 ++++++++++++++++++++++++++++++++++++++++++=
-+++++++-
-> >  include/linux/of_pci.h |  2 ++
-> >  2 files changed, 85 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
-> > index 13e37e2..bcff301 100644
-> > --- a/drivers/of/of_pci.c
-> > +++ b/drivers/of/of_pci.c
-> > @@ -1,7 +1,8 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/export.h>
-> > -#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> >  #include <linux/of_pci.h>
-> > +#include <linux/slab.h>
-> >  #include <asm/prom.h>
-> > =20
-> >  static inline int __of_pci_pci_compare(struct device_node *node,
-> > @@ -40,3 +41,84 @@ struct device_node *of_pci_find_child_device(struct =
-device_node *parent,
-> >  	return NULL;
-> >  }
-> >  EXPORT_SYMBOL_GPL(of_pci_find_child_device);
-> > +
-> > +struct resource *of_pci_parse_ranges(struct device_node *node,
-> > +				     unsigned int *countp)
-> > +{
-> > +	unsigned int count, i =3D 0;
-> > +	struct resource *ranges;
->=20
-> I think res or pci_res would be clearer than ranges that this is a
-> struct resource.
+In the long term, every PWM user should move to pwm_add_table() and
+pwm_get(), but there are quite a lot of boards that need conversion.
 
-"range" is the term used by the PCI specifications to denote these
-regions. I don't see what's wrong with using it as a variable name.
+> Do I get points if I do 2)? :)
+
+Yes. =3D) I have a sample patch for PXA EZX, but as I said, many more
+boards need conversion.
 
 Thierry
 
---oLBj+sq0vYjzfsbl
+--E/DnYTRukya0zdZ1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQGNKtAAoJEN0jrNd/PrOh1IIP/04wyxMUrXfPzYMwNaIJOFpD
-NvXK508GfgkG/r4KqpUxZ3EIZxJvPuGZWVcd+YS1KQw47BpLSCjTRqKRwX/T98kM
-zEA34DLi99TNTMDF8CNfF1FkjaZ1hhr1Sto5OKWTjp4vXZpDUWskbfIWLjVPNjZ7
-VzGby5gbDI+GDiXS0xIEWc54j4oYm3xpbIGUgRGH1DG4G70bGEhW7OnZ1XUq6X3B
-u0MXz3RZ9FU2lAoA7/GXnuTjyiZJ03AMHQjs3AEzUrkWRWqeniK7kIE2iJ9TG/8k
-9xAAFz7pyjoNbYnjyHNpUbasDQF2qty+WCx7DQx0+7rj0vwN28cqrn2ct4/1xG22
-OHIrALGTxAjYKOjD0vDo/hQpfOe05cdv53iv9Klsje5ZpndVDdNdFoHNTBWet5ip
-HXLcJI/4D6G32bx4cosO4qZ/MClh4e//nu1FtEVryGSpanmP7dHEUG/eR67HPhDZ
-HzrzX+al2rYZteodoBAs+bDiIoFPKkQf+Eiae4D8bRiiBTkR6vGGQyb7YLwqX9Pu
-UGLkGXcdNm8dxpqOhDq/gN8uyzRiYtqR2cpXjGAGOLV0Exj6l4zdht/jihgMmg65
-DsHnX1hxAAThLXN4a0xEgCSsHQa8JFQLdjiY1W+h3VbOBrrgL2xKA9Bia5kNpGdm
-WEUFAp0CiYVQ7/pkg2GI
-=e139
+iQIcBAEBAgAGBQJQGNgXAAoJEN0jrNd/PrOhjH8P/jwFMsjOzjdLlk6En+dhimdc
+hEwsfudds/LWNomPtCaFV99BAe14Sa2iV8G23zdIoR2x5MkWJ7AQJkozrw+BRyzO
+F9NoeA+MGsKmBtQAMic5t44JrD1F7ttxtY/hTdBrL+Vhnptp1f2h3Jb7eSeNuRFQ
+eFHf+gMRS4agDExjEJv9pTLjmlQKnehFvUjpqcfr5XLmenYKCeY0urQO7ytuJd3F
+EF54kEqPj8xS5JW3y5swJYgwJH2IJe+5Z1CkhF3QpgL8ZcPowF9MOVjUiq39GYlg
+4ODENbljxqqtgxPKZt2aHQC6m9erw00WL/1GE4X/n5N8kqdaie+vKS+UvRYgTXEq
+3A6yL+xXLcTO3CEkkCyRCKuIo2KnwK8mQm416ElshRUFY3G+inCak/PS5osFDItt
+DYJFBvy3ZnqjC8N3nAHsq6tLoJSx7lKxhLSNaa+5wugG3w68gT/OMiLvu9WpA4Yr
+v1eNrHe7Mwvn2ePpicW2zD/YtMhPv5X41b9UtYGrIHds7jzZ8tpY/uTZoxwIPojf
+SF6Tv3ckw5WWnLKL8EBwtRvl60t91jXNIPbobsPJsHhS4ZcohSDdUoIReXeAeYmF
+uRu04rX2YCqvb5Uwv/fs4QmK6+YNxB5Nf23ZGDEvPJHQYdn82AELyzTFTKqrFmYp
+wc0BBKfaNplIr5dq+2b+
+=FkVc
 -----END PGP SIGNATURE-----
 
---oLBj+sq0vYjzfsbl--
+--E/DnYTRukya0zdZ1--
+
+--===============0458671159872084231==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============0458671159872084231==--
