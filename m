@@ -1,182 +1,90 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Wed, 1 Aug 2012 11:50:35 +0900
-Message-ID: <5018997B.7010808@nvidia.com>
-References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com> <20120730113323.GA7303@avionic-0098.adnet.avionic-design.de> <5017AA87.2040503@nvidia.com> <20120731101931.GB16155@avionic-0098.adnet.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
+Date: Wed, 1 Aug 2012 08:35:45 +0200
+Message-ID: <20120801063545.GA26791@avionic-0098.adnet.avionic-design.de>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+ <50180547.9040603@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120731101931.GB16155-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50180547.9040603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/31/2012 07:19 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Tue, Jul 31, 2012 at 06:51:03PM +0900, Alex Courbot wrote:
->> On 07/30/2012 08:33 PM, Thierry Reding wrote:
->>>> +You will need an instance of power_seq_resources to keep track of the resources
->>>> +that are already allocated. On success, the function returns a devm allocated
->>>> +resolved sequence that is ready to be passed to power_seq_run(). In case of
->>>> +failure, and error code is returned.
->>>
->>> I don't quite understand why the struct power_seq_resources is needed.
->>> Can this not be stored within power_seq?
->>
->> power_seq_resources serves two purposes:
->> 1) When parsing sequences, it keeps track of the resources we have
->> already allocated to avoid getting the same resource twice
->> 2) On cleanup, it cleans the resources that needs to be freed (i.e.
->> those that are not devm-handled).
->>
->> 2) can certainly be removed either by enforcing use of devm, or by
->> doing reference counting. 1) seems more difficult to avoid - we need
->> to keep track of the resources we already own between calls to
->> power_seq_build(). I'd certainly be glad to remove that structure
->> from public view and simplify the code if that is possible though.
->
-> I still don't see the problem. Managing the resources should be part of
-> the power_seq core and shouldn't be visible to users. Maybe what you are
-> worried about is that you may need the same resource both for a power-up
-> and a power-down sequence? I can see how that would require a global
-> list of resources.
 
-Yes, that is precisely my concern. Sorry for not stating that more clearly.
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> However I still think it would be easier to encapsulate that completely.
-> Maybe another level of abstraction is required. You could for example
-> add another type to encapsulate several power sequences and that could
-> keep a list of used resources. I can't think of a good name, but maybe
-> the following DT snippet clarifies what I mean:
->
->          power-sequences {
->                  #address-cells = <1>;
->                  #size-cells = <0>;
->
->                  sequence@0 {
->                          name = "up";
->
->                          #address-cells = <1>;
->                          #size-cells = <0>;
->
->                          step@0 {
->                                  ...
->                          };
->
->                          ...
->                  };
->
->                  sequence@1 {
->                          name = "down";
->
->                          #address-cells = <1>;
->                          #size-cells = <0>;
->
->                          step@0 {
->                                  ...
->                          };
->
->                          ...
->                  };
->          };
->
-> If you add a name property like this, you could extend the API to
-> support running a named sequence:
->
->          power_seq_run(seq, "up");
->          ...
->          power_seq_run(seq, "down);
+On Tue, Jul 31, 2012 at 10:18:15AM -0600, Stephen Warren wrote:
+> On 07/26/2012 01:55 PM, Thierry Reding wrote:
+> > This patch series adds support for device tree based probing of the PCIe
+> > controller found on Tegra SoCs.
+>=20
+> Thierry,
+>=20
+> I think one thing that would help here would be to split up this series
+> into one per subsystem, and to get all the dependencies merged by the
+> respective maintainers. Preferably, each subsystem would export a stable
+> branch (perhaps consisting of just these patches) that I can then merge
+> into the Tegra tree and use as a basis for the PCIe driver itself.
+> Hopefully this approach will get more traction on all the non-Tegra
+> changes. Does that sound like a good plan?
 
-Mmm, that's something to consider. Forcing power sequences to be grouped 
-within a "power-sequences" node would also make parsing easier from the 
-driver side since it would not have to explicitly parse every sequence. 
-We could even imagine some tighter integration with the device subsystem 
-to automatically run specifically-named sequences during suspend/resume. 
-But maybe I'm thinking too much here.
+I don't understand. The series is already split up into per-subsystem
+patches. I just didn't want to post them separately so everybody on Cc
+would be able to see the big picture and the reason why the patch was
+required.
 
->
->>> Also, is there some way we can make the id property for GPIOs not
->>> require the -gpio suffix? If the resource type is already GPIO, then it
->>> seems redundant to add -gpio to the ID.
->>
->> There is unfortunately an inconsistency between the way regulators
->> and GPIOs are gotten by name. regulator_get(id) will expect to find
->> a property named "id-supply", while gpio_request_one(id) expects a
->> property named exactly "id". To workaround this we could sprintf the
->> correct property name from a non-suffixed property name within the
->> driver, but I think this actually speaks more in favor of having
->> phandles directly into the sequences.
->
-> Yes, if it can be made to work by specifying the phandle directly that
-> is certainly better.
+> Or, I can just take it all through the Tegra tree, but I'll definitely
+> need acks on all/most of the non-Tegra patches, since although the
+> patches themselves are quite small, I'd like to be sure that maintainers
+> are OK with the conceptual changes, like initializing PCI controllers
+> later than at present etc.
 
-Let's do that then - as for the PWM issue I had, let's address that by 
-clearly stating in the documentation that phandles referring to a same 
-device *must* be identical.
+Taking the patches through the individual trees should be fine. Only so
+far other subsystem maintainers haven't commented on this.
 
->>>> +     if (!seq) return 0;
->>>
->>> I don't think this is acceptable according to the coding style. Also,
->>> perhaps returning -EINVAL would be more meaningful?
->>
->> I neglected running checkpatch before submitting, apologies for
->> that. The return value seems correct to me, a NULL sequence has no
->> effect.
->
-> But seq == NULL should never happen anyway, right?
+As to when the PCI controller is initialized, there really aren't many
+options. On Harmony (and TEC, which in this respect, and others, is very
+similar) the VDD is supplied by a GPIO of the PMU, so it is currently
+necessary to probe it at least after the PMU. And unless we want to
+work around these issues using different initcall ordering we need to
+rely on deferred probing, which turns out to be done after the init
+phase often (always?).
 
-It could if you are parsing a NULL node. It seems safe to me to consider 
-that a NULL sequence is an empty sequence, but if I go for your solution 
-involving another data structure to encapsulate the sequence, then this 
-might change.
+Also I had been toying with making the Tegra PCIe driver work as a
+module, but that doesn't work currently with MSI support. However it
+might be nice to allow MSI controllers to register at runtime generally,
+which wouldn't be all that difficult to do I think. Of course somebody
+more knowledgeable may disagree.
 
->>> Perhaps this should check for POWER_SEQ_STOP instead?
->>
->> There is no resource for POWER_SEQ_STOP - therefore, a NULL resource
->> is used instead.
->
-> Still, you use POWER_SEQ_STOP as an explicit sentinel to mark the end of
-> a sequence, so intuitively I'd be looking for that as a stop condition.
+Thierry
 
-That is for platform data - resolved sequences get their type from their 
-resource, and a STOP sequence does not have a resource. But the STOP 
-type will go away too since we will have a steps count in the platform 
-data instead.
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature
 
->> I would like to do that actually. The issue is that it did not work
->> go well with the legacy pwm_backlight behavior: a power sequence
->> needs to be constructed out of a PWM obtained through
->> pwm_request(int pwm_id, char *label) and this behavior cannot be
->> emulated using the new platform data interface (which only works
->> with pwm_get()). But if I remove this old behavior, then I could
->> make power_seq opaque. I don't think many drivers are using it. What
->> do you think?
->
-> I don't see how that is relevant here, since this power-sequencing code
-> is supposed to be generic and not tied to any specific implementation.
-> Can you explain further?
->
-> In any case you shouldn't be using pwm_request() in new code.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-Power sequences only rely on pwm_get, and never call pwm_request since 
-it is, as you stated, deprecated. However there are still boards that 
-use the old pwm_id member of the pwm_backlight_platform_data. For these, 
-we must call pwm_request from the pwm_backlight driver in order to 
-resolve the PWM (see pwm_backlight_legacy_probe of the seconds patch). 
-As the PWM is being resolved by the backlight driver, and not within the 
-power sequences parser, the resolved data structure must be visible to 
-pwm_backlight so it can construct it. There are two ways to solve this 
-and keep the power sequences structure private:
+iQIcBAEBAgAGBQJQGM5BAAoJEN0jrNd/PrOhMMsP/jXL0GKN5NUE7OdHFwUV/DrX
+05Qvq8qUl/K61phGiq8Q1hw6HSZJPBcX5ROaIVwvtu21CDCULnO5XOXAdGx3pP0y
+gwzdPF/BL1AWsRFbtwu4wV0PpYeG+x0mNuZ3K04zKJc2qXtcgonNPFBG47cdJw+N
+BaeslBXB//3Dh+QBMMvRE+mTnV81YsavdZTxfhonNjziCvwGYU/qbGh1C6cQpoHy
+nhvVYnx7y2yDFe3dndDOE5XeeuhFSFzT6E6/eBXWkhKhVSDvf9me8CUuRtnWToXX
+3bWwgysu+J5KvggtH4nva3qK4VUdoAW7came4i0+gAwBp+mZM5wewDR5hqTor4EG
+AfBF4y30S9+/b4hIrtW17uBqeuEPFaw76rteRA7QIGtbY19suPXAtMrWFeV6HzvT
+TDnFO6kRU2pf3CUkDkXGloMd9ZdRZixTyH5X6CzCF29qUj+AUfctuQdkxM/7q/sH
+v55Xdts8y0MVV+1WC68NvDZ8u6rqvycbWPlxfCsgAO9t1siGhn14cRwRc82BAl5J
+7kiIVM0ea/RrBeSz2WLIInCfjgPXik/VN02Imi98wlyShRT3yobwORqmCfBfNEA2
+HIWAycTaMNjSz0McvENffc0YTlSzY+krKiAlEfe3jJk+x0ewWvbXQ8Rf4N52MBaH
+z2Uqv+g94+PkJXSasFnU
+=lXfK
+-----END PGP SIGNATURE-----
 
-1) Add a way to resolve a PWM by id using pwm_request in the power 
-sequences (we probably should not do that)
-2) Port the old platform pwm_request code to use pwm_add_table and 
-pwm_get instead.
-
-Do I get points if I do 2)? :)
-
-Thanks,
-Alex.
+--yrj/dFKFPuw6o+aM--
