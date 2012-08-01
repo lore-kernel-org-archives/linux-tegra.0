@@ -1,83 +1,35 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: How to use the generic thermal sysfs.
-Date: Wed, 1 Aug 2012 19:29:51 +0800
-Message-ID: <1343820591.2295.79.camel@tegra-chromium-2>
-References: <1342088573.27605.101.camel@tegra-chromium-2>
-	 <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
-	 <1342144273.1682.237.camel@rui.sh.intel.com>
-	 <1342164616.27605.129.camel@tegra-chromium-2>
-	 <1342165278.1682.259.camel@rui.sh.intel.com>
-	 <1343295094.4042.24.camel@tegra-chromium-2>
-	 <1343352098.1682.447.camel@rui.sh.intel.com>
-	 <1343357901.4042.70.camel@tegra-chromium-2>
-	 <20120727093037.094335eb@endymion.delvare>
-	 <1343374793.1682.475.camel@rui.sh.intel.com>
-	 <1343386122.4042.88.camel@tegra-chromium-2>
-	 <1343782972.1682.489.camel@rui.sh.intel.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Wed, 1 Aug 2012 14:26:51 +0100
+Message-ID: <20120801132651.GU11892@opensource.wolfsonmicro.com>
+References: <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
+ <50170EA0.1010408@wwwdotorg.org>
+ <5017B434.2010706@nvidia.com>
+ <20120731105640.GD16155@avionic-0098.adnet.avionic-design.de>
+ <20120731141328.GS4468@opensource.wolfsonmicro.com>
+ <20120731142216.GA19591@avionic-0098.adnet.avionic-design.de>
+ <20120731142607.GV4468@opensource.wolfsonmicro.com>
+ <20120731143235.GA21126@avionic-0098.adnet.avionic-design.de>
+ <20120731153941.GF4468@opensource.wolfsonmicro.com>
+ <20120801074113.GF29673@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1343782972.1682.489.camel@rui.sh.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Jean Delvare <khali@linux-fr.org>, "R, Durgadoss" <durgadoss.r@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@ger.kernel.org>, Alex Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120801074113.GF29673-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2012-08-01 at 09:02 +0800, Zhang Rui wrote:
-> On =E4=BA=94, 2012-07-27 at 18:48 +0800, Wei Ni wrote:
-> > On Fri, 2012-07-27 at 15:39 +0800, Zhang Rui wrote:
-> > > On =E4=BA=94, 2012-07-27 at 09:30 +0200, Jean Delvare wrote:
-> > > > On Fri, 27 Jul 2012 10:58:21 +0800, Wei Ni wrote:
-> > > > > On Fri, 2012-07-27 at 09:21 +0800, Zhang Rui wrote:
-> > > > > > is it possible to program the sensor at this time, in your =
-own thermal
-> > > > > > driver?
-> > > > >=20
-> > > > > Since we are using the generic thermal driver lm90.c, I'm not=
- sure if we
-> > > > > could program these limits in the generic driver, I think it'=
-s better to
-> > > > > have a generic interface to set the limits, so I wish to add =
-a
-> > > > > callback .set_limits() in the generic thermal framework.
-> > > >=20
-> > > > I can confirm that hwmon drivers do not set limits, it is up to
-> > > > user-space to do it if they want. So if there is a need to do s=
-o in the
-> > > > kernel itself, a proper interface at the generic thermal framew=
-ork
-> > > > level seems appropriate.
-> > > >=20
-> > > oh, setting limits from userspace?
-> > > I think you can program the senor when writing the trip point?
-> > > with this patch,
-> > > http://marc.info/?l=3Dlinux-acpi&m=3D134318814620429&w=3D2
-> >=20
-> > Do you mean it can use .set_trip_temp() to set limits when writing =
-the
-> > trip point? But I think this callback is used to change the trip_te=
-mp,
-> > it could not used to set the limits, in here the limit value is use=
-d to
-> > trigger the interrupt.
-> >=20
-> yes, you are right. .set_trip_temp does not work.
->=20
-> usually, this is needed to re-program the sensor when the temperature
-> hits a trip point , right?
+On Wed, Aug 01, 2012 at 09:41:13AM +0200, Thierry Reding wrote:
+> On Tue, Jul 31, 2012 at 04:39:41PM +0100, Mark Brown wrote:
 
-Yes, we need to re-program the sensor to set the limit value.
+> > Sure there is - take a copy of the platform data in probe().
 
->=20
-> can we make use of the thermal_zone_device_ops.notify()?
-> say we invoke .notify() in thermal_zone_device_update for each trip
-> point.
+> Yes, but that will only work for built-in drivers. If you unload the
+> module and that causes the platform data to be discarded, reloading
+> won't work.
 
-oh, it's a good idea, we can re-program the sensor in the .notify(), is
-it right?
-I will try it later, thanks for your suggestions.
-
->=20
-> thanks,
-> rui
+This is why __devinit data will only be discarded when this is not
+possible.
