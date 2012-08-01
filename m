@@ -1,77 +1,83 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Wed, 1 Aug 2012 09:41:13 +0200
-Message-ID: <20120801074113.GF29673@avionic-0098.adnet.avionic-design.de>
-References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com>
- <1343390750-3642-2-git-send-email-acourbot@nvidia.com>
- <50170EA0.1010408@wwwdotorg.org>
- <5017B434.2010706@nvidia.com>
- <20120731105640.GD16155@avionic-0098.adnet.avionic-design.de>
- <20120731141328.GS4468@opensource.wolfsonmicro.com>
- <20120731142216.GA19591@avionic-0098.adnet.avionic-design.de>
- <20120731142607.GV4468@opensource.wolfsonmicro.com>
- <20120731143235.GA21126@avionic-0098.adnet.avionic-design.de>
- <20120731153941.GF4468@opensource.wolfsonmicro.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: How to use the generic thermal sysfs.
+Date: Wed, 1 Aug 2012 19:29:51 +0800
+Message-ID: <1343820591.2295.79.camel@tegra-chromium-2>
+References: <1342088573.27605.101.camel@tegra-chromium-2>
+	 <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
+	 <1342144273.1682.237.camel@rui.sh.intel.com>
+	 <1342164616.27605.129.camel@tegra-chromium-2>
+	 <1342165278.1682.259.camel@rui.sh.intel.com>
+	 <1343295094.4042.24.camel@tegra-chromium-2>
+	 <1343352098.1682.447.camel@rui.sh.intel.com>
+	 <1343357901.4042.70.camel@tegra-chromium-2>
+	 <20120727093037.094335eb@endymion.delvare>
+	 <1343374793.1682.475.camel@rui.sh.intel.com>
+	 <1343386122.4042.88.camel@tegra-chromium-2>
+	 <1343782972.1682.489.camel@rui.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2FkSFaIQeDFoAt0B"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120731153941.GF4468@opensource.wolfsonmicro.com>
+In-Reply-To: <1343782972.1682.489.camel@rui.sh.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Alex Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Jean Delvare <khali@linux-fr.org>, "R, Durgadoss" <durgadoss.r@intel.com>, "Brown, Len" <len.brown@intel.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@ger.kernel.org>, Alex Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---2FkSFaIQeDFoAt0B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 31, 2012 at 04:39:41PM +0100, Mark Brown wrote:
-> On Tue, Jul 31, 2012 at 04:32:35PM +0200, Thierry Reding wrote:
-> > On Tue, Jul 31, 2012 at 03:26:07PM +0100, Mark Brown wrote:
+On Wed, 2012-08-01 at 09:02 +0800, Zhang Rui wrote:
+> On =E4=BA=94, 2012-07-27 at 18:48 +0800, Wei Ni wrote:
+> > On Fri, 2012-07-27 at 15:39 +0800, Zhang Rui wrote:
+> > > On =E4=BA=94, 2012-07-27 at 09:30 +0200, Jean Delvare wrote:
+> > > > On Fri, 27 Jul 2012 10:58:21 +0800, Wei Ni wrote:
+> > > > > On Fri, 2012-07-27 at 09:21 +0800, Zhang Rui wrote:
+> > > > > > is it possible to program the sensor at this time, in your =
+own thermal
+> > > > > > driver?
+> > > > >=20
+> > > > > Since we are using the generic thermal driver lm90.c, I'm not=
+ sure if we
+> > > > > could program these limits in the generic driver, I think it'=
+s better to
+> > > > > have a generic interface to set the limits, so I wish to add =
+a
+> > > > > callback .set_limits() in the generic thermal framework.
+> > > >=20
+> > > > I can confirm that hwmon drivers do not set limits, it is up to
+> > > > user-space to do it if they want. So if there is a need to do s=
+o in the
+> > > > kernel itself, a proper interface at the generic thermal framew=
+ork
+> > > > level seems appropriate.
+> > > >=20
+> > > oh, setting limits from userspace?
+> > > I think you can program the senor when writing the trip point?
+> > > with this patch,
+> > > http://marc.info/?l=3Dlinux-acpi&m=3D134318814620429&w=3D2
+> >=20
+> > Do you mean it can use .set_trip_temp() to set limits when writing =
+the
+> > trip point? But I think this callback is used to change the trip_te=
+mp,
+> > it could not used to set the limits, in here the limit value is use=
+d to
+> > trigger the interrupt.
+> >=20
+> yes, you are right. .set_trip_temp does not work.
 >=20
-> > > This is framework code - it doesn't have much option.  Disabling HOTP=
-LUG
-> > > is totally reasonable on space constrained systems, there's no reason
-> > > for the code to break things for people.
+> usually, this is needed to re-program the sensor when the temperature
+> hits a trip point , right?
+
+Yes, we need to re-program the sensor to set the limit value.
+
 >=20
-> > Still if you use this code and disable HOTPLUG, then you shouldn't be
-> > using modules either. I mean there is no way you can write a driver that
+> can we make use of the thermal_zone_device_ops.notify()?
+> say we invoke .notify() in thermal_zone_device_update for each trip
+> point.
+
+oh, it's a good idea, we can re-program the sensor in the .notify(), is
+it right?
+I will try it later, thanks for your suggestions.
+
 >=20
-> Of course.
->=20
-> > can gracefully handle its platform data being discarded.
->=20
-> Sure there is - take a copy of the platform data in probe().
-
-Yes, but that will only work for built-in drivers. If you unload the
-module and that causes the platform data to be discarded, reloading
-won't work.
-
-Thierry
-
---2FkSFaIQeDFoAt0B
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQGN2ZAAoJEN0jrNd/PrOhwA4QALx5Ijacwp3D88JCHvWwFNe1
-pheBUhSZpna/ZaT7GmlV3CzMeKSCekffp8DRHYT24aHkaCB5RCV64zLeCGoR7ECA
-7ZFNeeLY+YhqP3+YlTQHJ/0BdrTGHmSVWiUOguGloQ2WEzA6Bzg/ELOqrVF4hRdm
-a4TaM9E+iZrMx0tVVgZCylH5uWhFwPnOfQ1u+lg8trR3h2NYpU3V7CXJv5T9XjQx
-3l5+iZUm4LnTh/vljucp6z1LBq7ALzmD1xSGDgATs4y0LnLDAqZ5lC9Nq73CGfBe
-HQk0ypeYA9WUbVHL+34K/uwnq9m7j2NJFrgQ9olRdpfX3W9vBPDuER0j2b0vOdaF
-s2VYFD3BZ5XPBAFciEeHngelVb433kBuBtxpptXFe5ZpyVUp6FZLTEMoFKEWHpJP
-bWzarSMd/D8ekN/KxyAdm7/2tErPtf53nHNoOXYUL7dipESrxntTw+s2DSYvdnYH
-iqCYmHgRONyQqjSUDOuoUmi4IuMJhAQkN2eSSQ1KAF1f78kAaYx5TUhrXHtAVR7L
-uOAU8hcaUb5ZOOffslDmfAyEh83crQwK7GiZGLvcApSogUkFd6Xi4MD6L6B72L0K
-AAm5/CJ+qdkkoIFlkoU8mV4w8MNeFz5eKqHxm/+RDpyRLpctvKG2YPfCas4oah5r
-HXWkWxOZMAwobE6+J6Xa
-=XPf8
------END PGP SIGNATURE-----
-
---2FkSFaIQeDFoAt0B--
+> thanks,
+> rui
