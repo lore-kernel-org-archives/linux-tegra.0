@@ -1,281 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra: paz00: add regulators
-Date: Thu,  2 Aug 2012 12:36:33 -0600
-Message-ID: <1343932593-999-1-git-send-email-swarren@wwwdotorg.org>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
+Date: Fri, 3 Aug 2012 10:15:46 +0900
+Message-ID: <501B2642.4080805@nvidia.com>
+References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com> <50170EA0.1010408@wwwdotorg.org> <501A338D.7080105@nvidia.com> <20120802082157.GA14866@avionic-0098.adnet.avionic-design.de> <20120802181111.GM4537@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120802181111.GM4537-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri 03 Aug 2012 03:11:12 AM JST, Mark Brown wrote:
+> On Thu, Aug 02, 2012 at 10:21:57AM +0200, Thierry Reding wrote:
+>> On Thu, Aug 02, 2012 at 05:00:13PM +0900, Alex Courbot wrote:
+>
+>>> The problem is, how do we turn these phandles into the resource of
+>>> interest. The type of the resource can be infered by the name of the
+>>> property. The hard part is resolving the resource from the phandle -
+>>> it seems like the API just does not allow to do this. GPIO has
+>>> of_get_named_gpio, but AFAIK there are no equivalent for regulator
+>>> consumer and PWM: the only way to use the DT with them is through
+>>> get_regulator and get_pwm which work at the device level.
+>
+>>> Or is there a way that I overlooked?
+>
+>> No, you are right. Perhaps we should add exported functions that do the
+>> equivalent of of_pwm_request() or the regulator_dev_lookup() and
+>> of_get_regulator() pair.
+>
+> I missed some of the earlier bits of the thread here but why can't we do
+> device based lookups?
 
-The Toshiba AC100/PAZ00 uses a TPS6586x regulator. Instantiate this.
+That is because the phandles would not be properties of the device node 
+but rather of its sub-nodes:
 
-Three data sources were used for the data encoded here:
-* The HW defaults, as extracted from real HW.
-* The schematic, which specifies a voltage for each rail in the signal
-  names.
-* The AC100 kernel used by the Ubuntu port:
+backlight {
+     compatible = "pwm-backlight";
+     ...
+     power-on-sequence {
+         step@0 {
+             regulator = <&backlight_reg>;
+             enable;
+         };
 
-  repo git://gitorious.org/~marvin24/ac100/marvin24s-kernel.git
-  branch chromeos-ac100-3.0
-  file arch/arm/mach-tegra/board-paz00-power.c
 
-  For many rails, the constraints in that tree specified differing min
-  and max voltages. In all cases, the min value was ignored, since
-  there's no need currently to vary any of the voltages at run-time.
-  DVFS might change this in the future.
+So here simply using regulator_get on the backlight device would not work.
 
-In most cases these sources all matched. Differences are:
-
-sm0: HW defaults and schematic match at 1.2v. marvin24's kernel had a max
-of 1.3v, but this higher voltage was only applied to HW by DVFS code,
-which isn't currently supported in mainline.
-
-sm1: HW defaults and schematic match at 1.0v. marvin24's kernel had a max
-of 1.125v, but this higher voltage was only applied to HW by DVFS code,
-which isn't currently supported in mainline.
-
-ldo3: The HW default is on. marvin24's kernel didn't specify always-on,
-but since the board wasn't marked as having fully constrained regulators,
-the rail was not turned off, so the difference had no effect. The rail
-is needed for USB.
-
-ldo6: The HW default is 2.85v. The schematics indicate 2.85v. However,
-since this regulator is used for the same purpose as on other boards that
-require 1.8v, this is set to 1.8v. Note that this regulator feeds the CRT
-VDAC on Tegra, and so in practice is unlikely to be used, even though it
-is actaully hooked up in HW.
-
-Portions based on work by Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> # v2
----
-Laxman, note that I have similar patches for Seaboard and Ventana too, but
-since the structure of all 3 is basically the same, I figured I'd only send
-1 for review first to get any issues sorted, then post the other 2 later.
-
-v4:
-* Added supply properties for all TPS6586x regulators.
-* Made SM* supplied by the new SYS regulator.
-* Removed ldo0 configuration, since it isn't used. Clarified ldo6 usage in
-  commit description.
-v3:
-* Slight rewording of sm0/sm1 data source resolution description.
-* Adjusted ldo6 to 1.8v to match other boards using it for the same thing.
-* Enhanced all regulator-name properties to also list the Tegra20 pins
-  driven by the regulators. Thus, the regulator-name properties mostly match
-  Seaboard and Ventana. Note that the AC100 schematics don't actually name
-  the signals themselves after the pins, like Seaboard/Ventana do.
-* Added ldo_rtc regulator.
-v2:
-* Made all constraints specify a single voltage rather than different
-  min/max, per description above.
-* Removed vin-supply properties from LDO nodes; the driver and binding
-  need to be updated to support specifying the parent regulators before
-  we can put these into DT.
----
- arch/arm/boot/dts/tegra20-paz00.dts |  173 +++++++++++++++++++++++++++++++++++
- 1 files changed, 173 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 684a9e1..ddf287f 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -272,12 +272,170 @@
- 		status = "okay";
- 		clock-frequency = <400000>;
- 
-+		pmic: tps6586x@34 {
-+			compatible = "ti,tps6586x";
-+			reg = <0x34>;
-+			interrupts = <0 86 0x4>;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			sys-supply = <&p5valw_reg>;
-+			vin-sm0-supply = <&sys_reg>;
-+			vin-sm1-supply = <&sys_reg>;
-+			vin-sm2-supply = <&sys_reg>;
-+			vinldo01-supply = <&sm2_reg>;
-+			vinldo23-supply = <&sm2_reg>;
-+			vinldo4-supply = <&sm2_reg>;
-+			vinldo678-supply = <&sm2_reg>;
-+			vinldo9-supply = <&sm2_reg>;
-+
-+			regulators {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sys_reg: regulator@0 {
-+					reg = <0>;
-+					regulator-compatible = "sys";
-+					regulator-name = "vdd_sys";
-+					regulator-always-on;
-+				};
-+
-+				regulator@1 {
-+					reg = <1>;
-+					regulator-compatible = "sm0";
-+					regulator-name = "+1.2vs_sm0,vdd_core";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@2 {
-+					reg = <2>;
-+					regulator-compatible = "sm1";
-+					regulator-name = "+1.0vs_sm1,vdd_cpu";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				sm2_reg: regulator@3 {
-+					reg = <3>;
-+					regulator-compatible = "sm2";
-+					regulator-name = "+3.7vs_sm2,vin_ldo*";
-+					regulator-min-microvolt = <3700000>;
-+					regulator-max-microvolt = <3700000>;
-+					regulator-always-on;
-+				};
-+
-+				/* LDO0 is not connected to anything */
-+
-+				regulator@5 {
-+					reg = <5>;
-+					regulator-compatible = "ldo1";
-+					regulator-name = "+1.1vs_ldo1,avdd_pll*";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@6 {
-+					reg = <6>;
-+					regulator-compatible = "ldo2";
-+					regulator-name = "+1.2vs_ldo2,vdd_rtc";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				regulator@7 {
-+					reg = <7>;
-+					regulator-compatible = "ldo3";
-+					regulator-name = "+3.3vs_ldo3,avdd_usb*";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@8 {
-+					reg = <8>;
-+					regulator-compatible = "ldo4";
-+					regulator-name = "+1.8vs_ldo4,avdd_osc,vddio_sys";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@9 {
-+					reg = <9>;
-+					regulator-compatible = "ldo5";
-+					regulator-name = "+2.85vs_ldo5,vcore_mmc";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@10 {
-+					reg = <10>;
-+					regulator-compatible = "ldo6";
-+					/*
-+					 * Research indicates this should be
-+					 * 1.8v; other boards that use this
-+					 * rail for the same purpose need it
-+					 * set to 1.8v. The schematic signal
-+					 * name is incorrect; perhaps copied
-+					 * from an incorrect NVIDIA reference.
-+					 */
-+					regulator-name = "+2.85vs_ldo6,avdd_vdac";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				regulator@11 {
-+					reg = <11>;
-+					regulator-compatible = "ldo7";
-+					regulator-name = "+3.3vs_ldo7,avdd_hdmi";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				regulator@12 {
-+					reg = <12>;
-+					regulator-compatible = "ldo8";
-+					regulator-name = "+1.8vs_ldo8,avdd_hdmi_pll";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				regulator@13 {
-+					reg = <13>;
-+					regulator-compatible = "ldo9";
-+					regulator-name = "+2.85vs_ldo9,vdd_ddr_rx";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@14 {
-+					reg = <14>;
-+					regulator-compatible = "ldo_rtc";
-+					regulator-name = "+3.3vs_rtc";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
-+
- 		adt7461@4c {
- 			compatible = "adi,adt7461";
- 			reg = <0x4c>;
- 		};
- 	};
- 
-+	pmc {
-+		nvidia,invert-interrupt;
-+	};
-+
- 	usb@c5000000 {
- 		status = "okay";
- 	};
-@@ -325,6 +483,21 @@
- 		};
- 	};
- 
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		p5valw_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "+5valw";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+	};
-+
- 	sound {
- 		compatible = "nvidia,tegra-audio-alc5632-paz00",
- 			"nvidia,tegra-audio-alc5632";
--- 
-1.7.0.4
+Alex.
