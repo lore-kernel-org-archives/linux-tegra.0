@@ -1,47 +1,78 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC][PATCH v3 1/3] runtime interpreted power sequences
-Date: Mon, 06 Aug 2012 10:16:39 -0600
-Message-ID: <501FEDE7.1060202@wwwdotorg.org>
-References: <1343390750-3642-1-git-send-email-acourbot@nvidia.com> <1343390750-3642-2-git-send-email-acourbot@nvidia.com> <50170EA0.1010408@wwwdotorg.org> <501A338D.7080105@nvidia.com> <20120802082157.GA14866@avionic-0098.adnet.avionic-design.de> <20120802181111.GM4537@opensource.wolfsonmicro.com> <501B2642.4080805@nvidia.com> <20120804141155.GJ10523@opensource.wolfsonmicro.com> <501F2BAA.8000808@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
+Date: Mon, 06 Aug 2012 13:42:21 -0600
+Message-ID: <50201E1D.5060200@wwwdotorg.org>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <501F2BAA.8000808-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/05/2012 08:27 PM, Alex Courbot wrote:
-> On 08/04/2012 11:12 PM, Mark Brown wrote:
->> On Fri, Aug 03, 2012 at 10:15:46AM +0900, Alex Courbot wrote:
->>> On Fri 03 Aug 2012 03:11:12 AM JST, Mark Brown wrote:
->>
->>>> I missed some of the earlier bits of the thread here but why can't
->>>> we do
->>>> device based lookups?
-...
-> I think we only have two choices for this:
-> 
-> 1) Stick to the scheme where resources are declared at the device level,
-> such as they can be referenced by name in the sub-nodes (basically what
-> I did in this patch):
-> 
-> backlight {
->      compatible = "pwm-backlight";
->      ...
->      backlight-supply = <&backlight_reg>;
-> 
->      power-on-sequence {
->          step@0 {
->              regulator = "backlight";
->              enable;
->          };
-> 
-> This would translate by a get_regulator(dev, "backlight") in the code
-> which would be properly resolved.
+On 07/26/2012 01:55 PM, Thierry Reding wrote:
+> This patch series adds support for device tree based probing of the PCIe
+> controller found on Tegra SoCs.
 
-Yes, upon reflection, that scheme does make sense. I withdraw the
-comments I made re: whether it'd be better to just stick the phandles
-into the steps.
+Thierry, I just tested all Tegra boards in v3.6-rc1, and noticed that
+PCIe doesn't work on TrimSlice when booting use device tree. I think I
+found the cause, and I can't see why the same problem doesn't affect
+this series. Perhaps you can enlighten me?
+
+When booting TrimSlice (or Harmony) using board files, Tegra's PCIe is
+initialized using a subsys_initcall to tegra_pcie_init() directly (or
+for Harmony to harmony_pcie_init() which then calls tegra_pcie_init()).
+
+The final thing tegra_pcie_init() does is call pci_common_init(). This
+calls pcibios_init_hw() which calls hw->scan() which calls
+pci_scan_root_bus() which adds a device object for each device on the
+PCIe bus. However, since this happens very early in the boot sequence, I
+believe the enumerated PCIe devices don't immediately get probed.
+Instead, control gets returned to pci_common_init() which I believe then
+calls pci_bus_assign_resources() which actually sets up the resources
+for those devices. Later, the PCIe devices actually get probed, and
+everything works.
+
+However, when booting using device tree, with the code currently in
+v3.6-rc1, tegra_pcie_init() is called late in the boot sequence, and so
+in the sequence described above, as soon as pci_scan_root_bus() adds a
+device, it gets probed, before the device object's resources have been
+set up, which results in the following failure:
+
+PCI: Device 0000:01:00.0 not available because of resource collisions
+
+... because of the following code in pcibios_enable_device():
+
+> 	for (idx = 0; idx < 6; idx++) {
+> 		/* Only set up the requested stuff */
+> 		if (!(mask & (1 << idx)))
+> 			continue;
+> 
+> 		r = dev->resource + idx;
+> 		if (!r->start && r->end) {
+> 			printk(KERN_ERR "PCI: Device %s not available because"
+> 			       " of resource collisions\n", pci_name(dev));
+
+Doesn't this same problem exist when instantiating the PCIe device
+itself from device tree as in your patch series? If not, can you explain
+why?
+
+Now, the obvious solution in v3.6 would be to simply have
+tegra_pcie_init() be called at the same early stage in the boot process
+when booting using device tree as it is when booting using board files.
+This works for TrimSlice.
+
+However, on Harmony, it doesn't work, because PCIe on Harmony depends on
+regulators, and the regulators are accessed using an I2C bus that is
+instantiated from DT, and the instantiation of the I2C bus happens
+fairly late in the boot process so can't be found early during the boot
+sequence. See harmony_regulator_init() for the failing code.
+
+Does anyone have any good ideas (small, self-contained patches) for
+solving this in v3.6 in such a way that PCIe works on both TrimSlice and
+Harmony?
+
+Thanks.
