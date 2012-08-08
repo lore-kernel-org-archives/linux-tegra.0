@@ -1,122 +1,73 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Tue, 7 Aug 2012 20:20:24 +0200
-Message-ID: <20120807182024.GA11328@avionic-0098.mockup.avionic-design.de>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <50201E1D.5060200@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: =?y?q?=5BRFC=5D=5BPATCH=200/2=5D=20debugfs=3A=20Allow=20debugfs=5Fcreate=5Fdir=28=29=20to=20take=20data=20from=20caller?=
+Date: Wed, 8 Aug 2012 09:24:31 +0300
+Message-ID: <1344407073-12030-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <50201E1D.5060200@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The commit c3b1a35 "debugfs: make sure that debugfs_create_file() gets
+used only for regulars" doesn't allow to use debugfs_create_file() for
+creating directory, and the current debugfs_create_dir() cannot take
+the private data from caller. There are some cases that we want to pass=
+ some
+client data to dir, especially when dir is nested deeply. We can work
+around to pass all necessary data with some invented data structure to
+the end files, but if directory itself had private data, we could
+avoid to introduce new structures just to pass data to end files.
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+=46or example, tegra iommu(smmu) case, debugfs structure could be as
+below.
 
-On Mon, Aug 06, 2012 at 01:42:21PM -0600, Stephen Warren wrote:
-> On 07/26/2012 01:55 PM, Thierry Reding wrote:
-> > This patch series adds support for device tree based probing of the PCIe
-> > controller found on Tegra SoCs.
->=20
-> Thierry, I just tested all Tegra boards in v3.6-rc1, and noticed that
-> PCIe doesn't work on TrimSlice when booting use device tree. I think I
-> found the cause, and I can't see why the same problem doesn't affect
-> this series. Perhaps you can enlighten me?
->=20
-> When booting TrimSlice (or Harmony) using board files, Tegra's PCIe is
-> initialized using a subsys_initcall to tegra_pcie_init() directly (or
-> for Harmony to harmony_pcie_init() which then calls tegra_pcie_init()).
->=20
-> The final thing tegra_pcie_init() does is call pci_common_init(). This
-> calls pcibios_init_hw() which calls hw->scan() which calls
-> pci_scan_root_bus() which adds a device object for each device on the
-> PCIe bus. However, since this happens very early in the boot sequence, I
-> believe the enumerated PCIe devices don't immediately get probed.
-> Instead, control gets returned to pci_common_init() which I believe then
-> calls pci_bus_assign_resources() which actually sets up the resources
-> for those devices. Later, the PCIe devices actually get probed, and
-> everything works.
->=20
-> However, when booting using device tree, with the code currently in
-> v3.6-rc1, tegra_pcie_init() is called late in the boot sequence, and so
-> in the sequence described above, as soon as pci_scan_root_bus() adds a
-> device, it gets probed, before the device object's resources have been
-> set up, which results in the following failure:
->=20
-> PCI: Device 0000:01:00.0 not available because of resource collisions
->=20
-> ... because of the following code in pcibios_enable_device():
->=20
-> > 	for (idx =3D 0; idx < 6; idx++) {
-> > 		/* Only set up the requested stuff */
-> > 		if (!(mask & (1 << idx)))
-> > 			continue;
-> >=20
-> > 		r =3D dev->resource + idx;
-> > 		if (!r->start && r->end) {
-> > 			printk(KERN_ERR "PCI: Device %s not available because"
-> > 			       " of resource collisions\n", pci_name(dev));
->=20
-> Doesn't this same problem exist when instantiating the PCIe device
-> itself from device tree as in your patch series? If not, can you explain
-> why?
+sys/
+=E2=94=94=E2=94=80=E2=94=80 kernel
+    =E2=94=94=E2=94=80=E2=94=80 debug
+        =E2=94=9C=E2=94=80=E2=94=80 smmu.0
+        =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 mc
+        =E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=
+=94=80 ptc
+        =E2=94=82=C2=A0=C2=A0 =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=
+=94=80 tlb
+        =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 mc0
+        =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 ptc
+        =E2=94=82=C2=A0=C2=A0     =E2=94=94=E2=94=80=E2=94=80 tlb
+        =E2=94=94=E2=94=80=E2=94=80 smmu.1
+            =E2=94=9C=E2=94=80=E2=94=80 mc
+            =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ptc
+            =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 tlb
+            =E2=94=9C=E2=94=80=E2=94=80 mc0
+            =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 ptc
+            =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 tlb
+            =E2=94=94=E2=94=80=E2=94=80 mc1
+                =E2=94=9C=E2=94=80=E2=94=80 ptc
+                =E2=94=94=E2=94=80=E2=94=80 tlb
 
-I think I've seen this before as well but hadn't had the time to
-investigate further. The devices that failed to initialize were serial
-ports I think. Perhaps the ordering here is the key. All the drivers
-that I use for the PCI devices are loaded as modules, so they'll probe
-the devices much later anyway. The serial driver is an exception here as
-it is builtin.
+The end files, {ptc,tlb} depend on which mc? to belong to, and
+which smmu.? to belong to. The parent data can be accessed from those
+end files if necessary.
 
-> Now, the obvious solution in v3.6 would be to simply have
-> tegra_pcie_init() be called at the same early stage in the boot process
-> when booting using device tree as it is when booting using board files.
-> This works for TrimSlice.
->=20
-> However, on Harmony, it doesn't work, because PCIe on Harmony depends on
-> regulators, and the regulators are accessed using an I2C bus that is
-> instantiated from DT, and the instantiation of the I2C bus happens
-> fairly late in the boot process so can't be found early during the boot
-> sequence. See harmony_regulator_init() for the failing code.
->=20
-> Does anyone have any good ideas (small, self-contained patches) for
-> solving this in v3.6 in such a way that PCIe works on both TrimSlice and
-> Harmony?
+  dent =3D d_find_alias(s->private);
+  cache =3D (int)dent->d_inode->i_private;
+  mc =3D (int)dent->d_parent->d_inode->i_private;
+  smmu =3D dent->d_parent->d_parent->d_inode->i_private;
 
-To me this looks like a problem in the probing code. Drivers' .probe()
-shouldn't be called on devices that haven't had their resources assigned
-yet. Perhaps nobody has ever seen this before because the ordering
-always ensured that the PCI controller driver was loaded first.
+The original tegra smmu debugfs patch is:
+  http://lists.linuxfoundation.org/pipermail/iommu/2012-August/004507.h=
+tml
 
-Thierry
+Hiroshi Doyu (2):
+  debugfs: Allow debugfs_create_dir() to take data
+  iommu/tegra: smmu: Use __debugfs_create_dir
 
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature
+ drivers/iommu/tegra-smmu.c |    4 +---
+ fs/debugfs/inode.c         |    7 ++++---
+ include/linux/debugfs.h    |    9 ++++++++-
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQIVxoAAoJEN0jrNd/PrOho90P/01oIODwJG7mLqxCp6EPeMO8
-n3GpjqHDDvHWAlMfN7ndq9xPgYnHgZ2Cq43qhfr6/ps+s71EZXmMu75nxGaxpByG
-igreDRA6BQRoCClZipoOrVz22a510jSHRhZ4ANKbseLz3IfHmvmk6YH0g+qG0KH1
-128Wa97n/mpzACFBn19vk292Ikd7J85vJlt3Y1E6BIDMPAS6YPOxMtB0Z3DrlSia
-7M+4UWbGFtoveIMX0RJROKYJvmcL7CnG/iIYOQZj5ZTl7VwByNuF+SzCb64RTToC
-nmVQji3IpVQ/raVJ71EKKIxKzzLdKT6SK1/5L4j+eJXv/xXRZhP7UsqM7TuLqoX7
-CVWN27bvIOQX5ffD8ZT8dvSFDFb8U2zdkfw7B6alDwZFDTNCiO6PQKaDCS4+wlKc
-Ma7Y/gWdazPs2Lek9RRptkKqSEZwiF3L9++Lp69/UExC+kTUA4URwTX9Q1sTpAFA
-Rt3zkXVJdQ33BOf9nPYAZV2aOO3H7vi5+AlC6fMaq8yS4pjc0rOprrzk8IoRyYas
-48XdOd82grZ2jzeHkvY5sY/xOhSILVZbwHGIlzJWi5g11k3YO6oHwyHTJL8SZwvO
-1C7JbgaP9ng7EBJLhRaGiwKNBsdyqjkr4WqQMeeoChIQwTnReBWer74ZWbvj64qG
-3i+gxyViOmVUvoXXkdnF
-=GGeB
------END PGP SIGNATURE-----
-
---0OAP2g/MAC+5xKAE--
+--
+1.7.5.4
