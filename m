@@ -1,16 +1,16 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 0/3] ARM: dt: tegra: cardhu: add entry for regulators
-Date: Wed, 08 Aug 2012 11:18:36 -0600
-Message-ID: <50229F6C.10802@wwwdotorg.org>
+Date: Wed, 08 Aug 2012 11:28:58 -0600
+Message-ID: <5022A1DA.5000203@wwwdotorg.org>
 References: <1344408527-32051-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1344408527-32051-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: olof@lixom.net, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1344408527-32051-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/08/2012 12:48 AM, Laxman Dewangan wrote:
@@ -22,28 +22,16 @@ On 08/08/2012 12:48 AM, Laxman Dewangan wrote:
 > This patch series split the cardhu dts file to cardhu-a02 and 
 > carchu-a04 and then add entry for different fixed regualtors.
 
-With this series, I see the following warnings:
+Two more comments on this patch, sorry for the noise...
 
-tps65910 4-002d: VMBCH-Threshold not specified
-tps65910 4-002d: VMBCH2-Threshold not specified
+1) With this patch, running "reboot" or "shutdown -r now" no longer
+works; the system hangs. Reboot works fine without this patch, in
+next-20120708.
 
-I also see the following error:
-
-vdd_sdmmc1: Failed to request enable GPIO31: -16
-reg-fixed-voltage c.regulator: Failed to register regulator: -16
-reg-fixed-voltage: probe of c.regulator failed with error -16
-
-... because both the existing SDHCI node and the new "vdd_sdmmc1_reg:
-regulator@12" node both use the same GPIO.
-
-I also don't see "pex_hvdd_3v3_reg: regulator@5" being created, for
-reasons I haven't tracked down.
-
-Note that I have a Cardhu A02, although all the issues are with
-regulators in the common file.
-
-Can you please fix these, roll in the fixes for the board ID comment
-issues I mentioned before, retest to ensure there are no errors and that
-all regulators get created as expected, and resubmit.
-
-Thanks.
+2) U-Boot initializes the LCD, and prints to it. This is left running
+when the kernel is booted, and the kernel doesn't reprogram the HW, so
+the LCD continues to scan out some "random" area of memory. Typically,
+this then gets used and so the LCD shows random patterns. In today's
+linux-next it seems to be turned black though; not sure why that's
+happening. Either way, this patch turns the whole LCD completely white.
+Is that an expected change?
