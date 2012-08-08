@@ -1,67 +1,41 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC][PATCH 0/2] debugfs: Allow debugfs_create_dir() to take data
-	from caller
-Date: Wed, 8 Aug 2012 09:28:01 +0300
-Message-ID: <20120808092801.33008fd9ca37bf3fd7b1e95f@nvidia.com>
-References: <1344407073-12030-1-git-send-email-hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] ARM: dt: tegra: cardhu: add entry for regulators
+Date: Wed, 8 Aug 2012 12:18:44 +0530
+Message-ID: <1344408527-32051-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1344407073-12030-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkZWQgbWlzc2luZyBTdWJqZWN0OgogIFtSRkNdW1BBVENIIDAvMl0gZGVidWdmczogQWxsb3cg
-ZGVidWdmc19jcmVhdGVfZGlyKCkgdG8gdGFrZSBkYXRhIGZyb20gY2FsbGVyCgpPbiBXZWQsIDgg
-QXVnIDIwMTIgMDg6MjQ6MzEgKzAyMDAKSGlyb3NoaSBEb3l1IDxoZG95dUBudmlkaWEuY29tPiB3
-cm90ZToKCj4gVGhlIGNvbW1pdCBjM2IxYTM1ICJkZWJ1Z2ZzOiBtYWtlIHN1cmUgdGhhdCBkZWJ1
-Z2ZzX2NyZWF0ZV9maWxlKCkgZ2V0cwo+IHVzZWQgb25seSBmb3IgcmVndWxhcnMiIGRvZXNuJ3Qg
-YWxsb3cgdG8gdXNlIGRlYnVnZnNfY3JlYXRlX2ZpbGUoKSBmb3IKPiBjcmVhdGluZyBkaXJlY3Rv
-cnksIGFuZCB0aGUgY3VycmVudCBkZWJ1Z2ZzX2NyZWF0ZV9kaXIoKSBjYW5ub3QgdGFrZQo+IHRo
-ZSBwcml2YXRlIGRhdGEgZnJvbSBjYWxsZXIuIFRoZXJlIGFyZSBzb21lIGNhc2VzIHRoYXQgd2Ug
-d2FudCB0byBwYXNzIHNvbWUKPiBjbGllbnQgZGF0YSB0byBkaXIsIGVzcGVjaWFsbHkgd2hlbiBk
-aXIgaXMgbmVzdGVkIGRlZXBseS4gV2UgY2FuIHdvcmsKPiBhcm91bmQgdG8gcGFzcyBhbGwgbmVj
-ZXNzYXJ5IGRhdGEgd2l0aCBzb21lIGludmVudGVkIGRhdGEgc3RydWN0dXJlIHRvCj4gdGhlIGVu
-ZCBmaWxlcywgYnV0IGlmIGRpcmVjdG9yeSBpdHNlbGYgaGFkIHByaXZhdGUgZGF0YSwgd2UgY291
-bGQKPiBhdm9pZCB0byBpbnRyb2R1Y2UgbmV3IHN0cnVjdHVyZXMganVzdCB0byBwYXNzIGRhdGEg
-dG8gZW5kIGZpbGVzLgo+IAo+IEZvciBleGFtcGxlLCB0ZWdyYSBpb21tdShzbW11KSBjYXNlLCBk
-ZWJ1Z2ZzIHN0cnVjdHVyZSBjb3VsZCBiZSBhcwo+IGJlbG93Lgo+IAo+IHN5cy8KPiDilJTilIDi
-lIAga2VybmVsCj4gICAgIOKUlOKUgOKUgCBkZWJ1Zwo+ICAgICAgICAg4pSc4pSA4pSAIHNtbXUu
-MAo+ICAgICAgICAg4pSCwqDCoCDilJzilIDilIAgbWMKPiAgICAgICAgIOKUgsKgwqAg4pSCwqDC
-oCDilJzilIDilIAgcHRjCj4gICAgICAgICDilILCoMKgIOKUgsKgwqAg4pSU4pSA4pSAIHRsYgo+
-ICAgICAgICAg4pSCwqDCoCDilJTilIDilIAgbWMwCj4gICAgICAgICDilILCoMKgICAgICDilJzi
-lIDilIAgcHRjCj4gICAgICAgICDilILCoMKgICAgICDilJTilIDilIAgdGxiCj4gICAgICAgICDi
-lJTilIDilIAgc21tdS4xCj4gICAgICAgICAgICAg4pSc4pSA4pSAIG1jCj4gICAgICAgICAgICAg
-4pSCwqDCoCDilJzilIDilIAgcHRjCj4gICAgICAgICAgICAg4pSCwqDCoCDilJTilIDilIAgdGxi
-Cj4gICAgICAgICAgICAg4pSc4pSA4pSAIG1jMAo+ICAgICAgICAgICAgIOKUgsKgwqAg4pSc4pSA
-4pSAIHB0Ywo+ICAgICAgICAgICAgIOKUgsKgwqAg4pSU4pSA4pSAIHRsYgo+ICAgICAgICAgICAg
-IOKUlOKUgOKUgCBtYzEKPiAgICAgICAgICAgICAgICAg4pSc4pSA4pSAIHB0Ywo+ICAgICAgICAg
-ICAgICAgICDilJTilIDilIAgdGxiCj4gCj4gVGhlIGVuZCBmaWxlcywge3B0Yyx0bGJ9IGRlcGVu
-ZCBvbiB3aGljaCBtYz8gdG8gYmVsb25nIHRvLCBhbmQKPiB3aGljaCBzbW11Lj8gdG8gYmVsb25n
-IHRvLiBUaGUgcGFyZW50IGRhdGEgY2FuIGJlIGFjY2Vzc2VkIGZyb20gdGhvc2UKPiBlbmQgZmls
-ZXMgaWYgbmVjZXNzYXJ5Lgo+IAo+ICAgZGVudCA9IGRfZmluZF9hbGlhcyhzLT5wcml2YXRlKTsK
-PiAgIGNhY2hlID0gKGludClkZW50LT5kX2lub2RlLT5pX3ByaXZhdGU7Cj4gICBtYyA9IChpbnQp
-ZGVudC0+ZF9wYXJlbnQtPmRfaW5vZGUtPmlfcHJpdmF0ZTsKPiAgIHNtbXUgPSBkZW50LT5kX3Bh
-cmVudC0+ZF9wYXJlbnQtPmRfaW5vZGUtPmlfcHJpdmF0ZTsKPiAKPiBUaGUgb3JpZ2luYWwgdGVn
-cmEgc21tdSBkZWJ1Z2ZzIHBhdGNoIGlzOgo+ICAgaHR0cDovL2xpc3RzLmxpbnV4Zm91bmRhdGlv
-bi5vcmcvcGlwZXJtYWlsL2lvbW11LzIwMTItQXVndXN0LzAwNDUwNy5odG1sCj4gCj4gSGlyb3No
-aSBEb3l1ICgyKToKPiAgIGRlYnVnZnM6IEFsbG93IGRlYnVnZnNfY3JlYXRlX2RpcigpIHRvIHRh
-a2UgZGF0YQo+ICAgaW9tbXUvdGVncmE6IHNtbXU6IFVzZSBfX2RlYnVnZnNfY3JlYXRlX2Rpcgo+
-IAo+ICBkcml2ZXJzL2lvbW11L3RlZ3JhLXNtbXUuYyB8ICAgIDQgKy0tLQo+ICBmcy9kZWJ1Z2Zz
-L2lub2RlLmMgICAgICAgICB8ICAgIDcgKysrKy0tLQo+ICBpbmNsdWRlL2xpbnV4L2RlYnVnZnMu
-aCAgICB8ICAgIDkgKysrKysrKystCj4gIDMgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygr
-KSwgNyBkZWxldGlvbnMoLSkKPiAKPiAtLQo+IDEuNy41LjQKPiAKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxp
-c3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
+This patch series add the PMIC and fixed regulators for 
+cardhu board. There is multiple versions of cardhu baord named
+as A01, A02, A03..and so on. Cardhu A01 and A03 are not supported.
+Cardhu A02 and A04 have different sets of GPIO for regualtors.
+The cardhu A04 is compatible for A05, A06 and A07 in GPIOs.
+This patch series split the cardhu dts file to cardhu-a02 and 
+carchu-a04 and then add entry for different fixed regualtors.
+
+In patch 1, it enabled the PMIC tps65910 which is main pmu for 
+the cardhu.
+In Patch 2, split the cardhu support for cardhu-a02 and cardhu-a04.
+In Patch 3, add different regulators.
+
+Laxman Dewangan (3):
+  ARM: dt: tegra: cardhu: add entry for PMIC TPS65911.
+  ARM: dt: tegra: cardhu: split dts file for support multiple board
+    versions
+  ARM: tegra: cardhu: add dt entry for fixed regulators
+
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts |   87 ++++++
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts |   98 ++++++
+ arch/arm/boot/dts/tegra30-cardhu.dts     |  171 -----------
+ arch/arm/boot/dts/tegra30-cardhu.dtsi    |  483 ++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile.boot        |    3 +-
+ 5 files changed, 670 insertions(+), 172 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra30-cardhu-a02.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-cardhu-a04.dts
+ delete mode 100644 arch/arm/boot/dts/tegra30-cardhu.dts
+ create mode 100644 arch/arm/boot/dts/tegra30-cardhu.dtsi
