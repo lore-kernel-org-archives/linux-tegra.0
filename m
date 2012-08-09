@@ -1,86 +1,104 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3] ARM: dt: tegra: ventana: add regulators
-Date: Thu, 9 Aug 2012 17:33:34 +0530
-Message-ID: <5023A716.50807@nvidia.com>
-References: <1344017356-29352-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] debugfs: Allow debugfs_create_dir() to take data
+Date: Thu, 9 Aug 2012 15:56:24 +0300
+Message-ID: <20120809155624.b781edae9efa7c51faf6c31c@nvidia.com>
+References: <1344407073-12030-1-git-send-email-hdoyu@nvidia.com>
+	<1344407073-12030-2-git-send-email-hdoyu@nvidia.com>
+	<20120808133427.GA14417@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1344017356-29352-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20120808133427.GA14417-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 03 August 2012 11:39 PM, Stephen Warren wrote:
-> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Ventana uses a TPS6586x regulator. Instantiate this, and hook up a
-> couple of fixed GPIO-controlled regulators too.
->
-> The data was chosen to match the PMIC HW defaults, with the following
-> exception:
->
-> ldo6: The HW default is 2.85v. The schematics are unlabelled. Internal
-> research indicates that 1.8v is correct. Our downstream kernel also uses
-> 1.8v.
->
-> Portions based on work by Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v3:
-> * Switch back to simple-bus compatible value for the /regulators node.
-> * Added supply properties for all TPS6586x regulators.
-> * Made SM* children of the new SYS regulator.
-> * Removed ldo0 configuration, since it isn't used.
-> v2:
-> * Made all constraints match the HW defaults to avoid behavior changes,
->    with exceptions noted above.
-> * Removed vin-supply properties from LDO nodes; the driver and binding
->    need to be updated to support specifying the parent regulators before
->    we can put these into DT.
-> * Rename vdd_pnl regulator-name to match schematic.
-> * Added vdd_bl regulator.
-> * Fix typo in regulator@3 reg property.
-> * Use the enumerated-bus compatible value for the /regulators node.
-> * Enhanced all regulator-name properties to list all signal names directly
->    derived from the regulator pins.
-> * Added ldo_rtc regulator.
-> ---
-
-Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-You can addd my ACK for harmony dts file.
-
->   arch/arm/boot/dts/tegra20-ventana.dts |  204 +++++++++++++++++++++++++++++++++
->   1 files changed, 204 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-> index be90544..4ec6b4c 100644
-> --- a/arch/arm/boot/dts/tegra20-ventana.dts
-> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
-> @@ -289,6 +289,156 @@
->   	i2c@7000d000 {
->   		status = "okay";
->   		clock-frequency =<400000>;
-> +
-> +		pmic: tps6586x@34 {
-> +			compatible = "ti,tps6586x";
-> +			reg =<0x34>;
-> +			interrupts =<0 86 0x4>;
-
-Should we say interrupt-controller also here?
-> +
-> +			sys-supply =<&vdd_5v0_reg>;
-> +			vin-sm0-supply =<&sys_reg>;
-> +			vin-sm1-supply =<&sys_reg>;
-> +			vin-sm2-supply =<&sys_reg>;
-
-This depends on two changes on tps6586x regulator which are not merged yet.
-
-
-> +
-> +	pmc {
-
-Should say status OK?
+SGkgR3JlZywgRmVsaXBlLAoKT24gV2VkLCA4IEF1ZyAyMDEyIDE1OjM0OjI3ICswMjAwCkdyZWcg
+S3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+IHdyb3RlOgoKPiBPbiBX
+ZWQsIEF1ZyAwOCwgMjAxMiBhdCAwOToyNDozMkFNICswMzAwLCBIaXJvc2hpIERveXUgd3JvdGU6
+Cj4gPiBBZGQgX19kZWJ1Z2ZzX2NyZWF0ZV9kaXIoKSwgd2hpY2ggdGFrZXMgZGF0YSBwYXNzZWQg
+ZnJvbSBjYWxsZXIuCj4gCj4gV2h5Pwo+IAo+ID4gU2lnbmVkLW9mZi1ieTogSGlyb3NoaSBEb3l1
+IDxoZG95dUBudmlkaWEuY29tPgo+ID4gLS0tCj4gPiAgZnMvZGVidWdmcy9pbm9kZS5jICAgICAg
+fCAgICA3ICsrKystLS0KPiA+ICBpbmNsdWRlL2xpbnV4L2RlYnVnZnMuaCB8ICAgIDkgKysrKysr
+KystCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
+KQouLi4uLgo+IFdoYXQgYXJlIHlvdSB0cnlpbmcgdG8gZG8gaGVyZT8gIFRoaXMgcGF0Y2ggZG9l
+c24ndCBsb29rIHJpZ2h0IGF0IGFsbC4KCkkgbWlzc2VkIHRvIHNlbmQgdGhlIGNvdmVyIGxldHRl
+ciBvZiB0aGlzIHBhdGNoIHNlcmllcyB0byBMS01MLCB3aGljaApleHBsYWluZWQgdGhlIGJhY2tn
+cm91bmQuIEkgYXR0YWNoZWQgdGhhdCBjb3ZlciBsZXR0ZXIgYmVsb3cuIFBsZWFzZQpyZWFkIHRo
+ZSBmb2xsb3dpbmcgZXhwbGFuYXRpb24gdG9vLgoKVGhlIHBvaW50IHdhcyB0aGF0LCBzaW5jZSBk
+aXJlY3RvcnkgaGllcmFyY2h5IGl0c2VsZiBhbHJlYWR5IGhhcwp0aGUgbmVjZXNzYXJ5IGluZm8s
+IGxpa2UgcGFyZW50IDwtIGNoaWxkIHJlbGF0aW9uc2hpcHMsIGFtb25nIGVhY2gKZW50aXRpZXMo
+aGVyZSwgc21tdT8sIG1jPywgY2FjaGV7dGxiLHB0Y30pLCBJIGp1c3Qgd2FudGVkIHRvIGF2b2lk
+IHRvCmhhdmUgdGhvc2UgKnJlc2lkdWFsKiBpbmZvIGVtYmVkZGVkIGluIG5vcm1hbCBkYXRhIGhp
+ZXJhcmNoeSwgYmVjYXVzZQpjYWNoZXt0bGIscHRjfSBpcyB1c2VkIG9ubHkgaW4gZGVidWdmcywg
+bm90IGluIHRoZSBub3JtYWwgcGF0aC4gV2l0aApkaXJlY3RvcnkvZmlsZSBoaWVyYXJjaHksIHdl
+IGNvdWxkIGdldCBuZWNlc3NhcnkgZGF0YSBhdCBhbnkgdGltZQpvbi10aGUtZmx5LgoKT1RPSCwg
+aWYgZGVidWdmcyBoYXMgdGhlIGFzc3VtcHRpb24gdGhhdCBpdCBoYXMgdG8gYmUgYWx3YXlzIHBy
+b2plY3RlZApmcm9tIHRoZSBleGlzdGluZyBkYXRhIGhpZXJhcmNoeSwgSSBzaG91bGQgZml4IHRv
+IGhhdmUgdGhlIHNhbWUKaGllcmFyY2h5IGluIGVudGl0aWVzKGhlcmUsIHNtbXU/LCBtYz8sIGNh
+Y2hle3RsYixwdGN9KSwgYXMgRmVsaXBlCnBvaW50ZWQgb3V0IGluIGFub3RoZXIgdGhyZWFkLgoK
+SXQgbWlnaHQgbm90IGJlIHNvIGJhZCB0aGF0IGRlYnVnZnMgaGFzIHRoZSBhYmlsaXR5IHRvIG1h
+bmFnZSBpdHMgb3duCmhpZXJhcmNoeSB3aXRoIGlfcHJpdmF0ZSwgYXBhcnQgZnJvbSB0aGUgb3Jp
+Z2luYWwgZGF0YSBoaWVyYXJjaHkKdG9vLiBJbiBvdXIgY2FzZSwgY2FjaGV7dGxiLHB0Y30gZGF0
+YSBpcyB1c2VkIG9ubHkgZm9yIGRlYnVnZnMuIFRoZXkKZG9uJ3QgaGF2ZSB0byBiZSBpbiB0aGUg
+bm9ybWFsIGRhdGEgaGllcmFyY2h5LiBUaGlzIGRlcGVuZHMgb24gdGhlCmFib3ZlIGFzc3VtcHRp
+b24sIGRvZXMgZGVidWdmcyBoYXZlIHRvIGJlIGFsd2F5cyBwcm9qZWN0ZWQgZnJvbSB0aGUKbm9y
+bWFsIGRhdGEgaGllcmFyY2h5PwoKVGhlIG9yaWdpbmFsIHRlZ3JhIHNtbXUgZGVidWdmcyBwYXRj
+aCBpczoKICBodHRwOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9waXBlcm1haWwvaW9tbXUv
+MjAxMi1BdWd1c3QvMDA0NTA3Lmh0bWwKCkhlcmUncyB0aGUgb3JpZ2luYWwgbWlzc2VkIGNvdmVy
+IGxldHRlcjoKClN1YmplY3Q6W1JGQ11bUEFUQ0ggMC8yXSBkZWJ1Z2ZzOiBBbGxvdyBkZWJ1Z2Zz
+X2NyZWF0ZV9kaXIoKSB0byB0YWtlIGRhdGEgZnJvbSBjYWxsZXIKRnJvbTogSGlyb3NoaSBEb3l1
+IDxoZG95dUBudmlkaWEuY29tPgpUbzogSGlyb3NoaSBEb3l1IDxoZG95dUBudmlkaWEuY29tPgpD
+QzogImlvbW11QGxpc3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnIiA8aW9tbXVAbGlzdHMubGludXgt
+Zm91bmRhdGlvbi5vcmc+LAoJImxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZyIgPGxpbnV4LXRl
+Z3JhQHZnZXIua2VybmVsLm9yZz4sIEFsIFZpcm8gPHZpcm9AemVuaXYubGludXgub3JnLnVrPgpE
+YXRlOiBXZWQsIDggQXVnIDIwMTIgMDg6MjQ6MzEgKzAyMDAKVGhyZWFkLUluZGV4OiBBYzExTG9U
+SGIrZksvTU9NUlgyUkZUdnRQODlqZWc9PQpBY2NlcHQtTGFuZ3VhZ2U6IGVuLVVTLCBlbi1DQSwg
+ZmktRkkKClRoZSBjb21taXQgYzNiMWEzNSAiZGVidWdmczogbWFrZSBzdXJlIHRoYXQgZGVidWdm
+c19jcmVhdGVfZmlsZSgpIGdldHMKdXNlZCBvbmx5IGZvciByZWd1bGFycyIgZG9lc24ndCBhbGxv
+dyB0byB1c2UgZGVidWdmc19jcmVhdGVfZmlsZSgpIGZvcgpjcmVhdGluZyBkaXJlY3RvcnksIGFu
+ZCB0aGUgY3VycmVudCBkZWJ1Z2ZzX2NyZWF0ZV9kaXIoKSBjYW5ub3QgdGFrZQp0aGUgcHJpdmF0
+ZSBkYXRhIGZyb20gY2FsbGVyLiBUaGVyZSBhcmUgc29tZSBjYXNlcyB0aGF0IHdlIHdhbnQgdG8g
+cGFzcyBzb21lCmNsaWVudCBkYXRhIHRvIGRpciwgZXNwZWNpYWxseSB3aGVuIGRpciBpcyBuZXN0
+ZWQgZGVlcGx5LiBXZSBjYW4gd29yawphcm91bmQgdG8gcGFzcyBhbGwgbmVjZXNzYXJ5IGRhdGEg
+d2l0aCBzb21lIGludmVudGVkIGRhdGEgc3RydWN0dXJlIHRvCnRoZSBlbmQgZmlsZXMsIGJ1dCBp
+ZiBkaXJlY3RvcnkgaXRzZWxmIGhhZCBwcml2YXRlIGRhdGEsIHdlIGNvdWxkCmF2b2lkIHRvIGlu
+dHJvZHVjZSBuZXcgc3RydWN0dXJlcyBqdXN0IHRvIHBhc3MgZGF0YSB0byBlbmQgZmlsZXMuCgpG
+b3IgZXhhbXBsZSwgdGVncmEgaW9tbXUoc21tdSkgY2FzZSwgZGVidWdmcyBzdHJ1Y3R1cmUgY291
+bGQgYmUgYXMKYmVsb3cuCgpzeXMvCuKUlOKUgOKUgCBrZXJuZWwKICAgIOKUlOKUgOKUgCBkZWJ1
+ZwogICAgICAgIOKUnOKUgOKUgCBzbW11LjAKICAgICAgICDilILCoMKgIOKUnOKUgOKUgCBtYwog
+ICAgICAgIOKUgsKgwqAg4pSCwqDCoCDilJzilIDilIAgcHRjCiAgICAgICAg4pSCwqDCoCDilILC
+oMKgIOKUlOKUgOKUgCB0bGIKICAgICAgICDilILCoMKgIOKUlOKUgOKUgCBtYzAKICAgICAgICDi
+lILCoMKgICAgICDilJzilIDilIAgcHRjCiAgICAgICAg4pSCwqDCoCAgICAg4pSU4pSA4pSAIHRs
+YgogICAgICAgIOKUlOKUgOKUgCBzbW11LjEKICAgICAgICAgICAg4pSc4pSA4pSAIG1jCiAgICAg
+ICAgICAgIOKUgsKgwqAg4pSc4pSA4pSAIHB0YwogICAgICAgICAgICDilILCoMKgIOKUlOKUgOKU
+gCB0bGIKICAgICAgICAgICAg4pSc4pSA4pSAIG1jMAogICAgICAgICAgICDilILCoMKgIOKUnOKU
+gOKUgCBwdGMKICAgICAgICAgICAg4pSCwqDCoCDilJTilIDilIAgdGxiCiAgICAgICAgICAgIOKU
+lOKUgOKUgCBtYzEKICAgICAgICAgICAgICAgIOKUnOKUgOKUgCBwdGMKICAgICAgICAgICAgICAg
+IOKUlOKUgOKUgCB0bGIKClRoZSBlbmQgZmlsZXMsIHtwdGMsdGxifSBkZXBlbmQgb24gd2hpY2gg
+bWM/IHRvIGJlbG9uZyB0bywgYW5kCndoaWNoIHNtbXUuPyB0byBiZWxvbmcgdG8uIFRoZSBwYXJl
+bnQgZGF0YSBjYW4gYmUgYWNjZXNzZWQgZnJvbSB0aG9zZQplbmQgZmlsZXMgaWYgbmVjZXNzYXJ5
+LgoKICBkZW50ID0gZF9maW5kX2FsaWFzKHMtPnByaXZhdGUpOwogIGNhY2hlID0gKGludClkZW50
+LT5kX2lub2RlLT5pX3ByaXZhdGU7CiAgbWMgPSAoaW50KWRlbnQtPmRfcGFyZW50LT5kX2lub2Rl
+LT5pX3ByaXZhdGU7CiAgc21tdSA9IGRlbnQtPmRfcGFyZW50LT5kX3BhcmVudC0+ZF9pbm9kZS0+
+aV9wcml2YXRlOwoKVGhlIG9yaWdpbmFsIHRlZ3JhIHNtbXUgZGVidWdmcyBwYXRjaCBpczoKICBo
+dHRwOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9waXBlcm1haWwvaW9tbXUvMjAxMi1BdWd1
+c3QvMDA0NTA3Lmh0bWwKCkhpcm9zaGkgRG95dSAoMik6CiAgZGVidWdmczogQWxsb3cgZGVidWdm
+c19jcmVhdGVfZGlyKCkgdG8gdGFrZSBkYXRhCiAgaW9tbXUvdGVncmE6IHNtbXU6IFVzZSBfX2Rl
+YnVnZnNfY3JlYXRlX2RpcgoKIGRyaXZlcnMvaW9tbXUvdGVncmEtc21tdS5jIHwgICAgNCArLS0t
+CiBmcy9kZWJ1Z2ZzL2lub2RlLmMgICAgICAgICB8ICAgIDcgKysrKy0tLQogaW5jbHVkZS9saW51
+eC9kZWJ1Z2ZzLmggICAgfCAgICA5ICsrKysrKysrLQogMyBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNl
+cnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKLS0KMS43LjUuNAoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KaW9tbXUgbWFpbGluZyBsaXN0CmlvbW11QGxp
+c3RzLmxpbnV4LWZvdW5kYXRpb24ub3JnCmh0dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11
