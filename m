@@ -1,198 +1,43 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/3] ARM: dt: tegra: cardhu: add entry for PMIC TPS65911.
-Date: Thu, 9 Aug 2012 16:30:37 +0530
-Message-ID: <1344510039-17754-2-git-send-email-ldewangan@nvidia.com>
-References: <1344510039-17754-1-git-send-email-ldewangan@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: How to get the irq flags from the dts file
+Date: Thu, 9 Aug 2012 11:48:42 +0000
+Message-ID: <201208091148.42748.arnd@arndb.de>
+References: <1344509006.2295.148.camel@tegra-chromium-2>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1344510039-17754-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1344509006.2295.148.camel@tegra-chromium-2>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra30 based platform "cardhu" have the power management
-IC TPS65911 for the regulator.
-Adding DT entry for this device.
-Data are chosen from downstream kernel and making the
-voltage output as require by default for device to
-operate.
-The default interrupt line is HIGH from PMIC device and so
-inverting the interrupt detection line of PMU interrupt
-through configuring PMC.
-In this patch, do not registering LDO5 because the input
-supply for this rail is different for different version of
-cardhu i..e A02 and A04. The registration will be done once
-the dts file for cardhu A02 and A04 are added in follow on
-patches.
+On Thursday 09 August 2012, Wei Ni wrote:
+> In the wlan driver, it will use platform_get_resource() to get the
+> res->irq, res->flags, the irq number is right, but the flags will be
+> IORESOURCE_IRQ, not the 0x04 (IRQF_TRIGGER_HIGH).
+> The wlan driver wish this flags include the IRQF_TRGGER_* information,
+> and it will use this flags to configure other hw settings. If it is
+> wrong, the wlan can't work.
+> 
+> I checked drivers/of/irq.c, in function of_irq_to_resource(), it will
+> set r->flags = IORESOURCE_IRQ directly, not read the flags from the dtb
+> file. And I didn't find any of_xx api to get this flags.
+> 
+> How can I get this flags, does anyone has suggestion?
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes from V1-->V2:
-- No changes.
+The driver should not need to know about thie flag. It gets read
+by irq_create_of_mapping when calling teh xlate function and
+gets set using irq_set_irq_type from there too.
 
- arch/arm/boot/dts/tegra30-cardhu.dts |  134 ++++++++++++++++++++++++++++++++++
- 1 files changed, 134 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dts b/arch/arm/boot/dts/tegra30-cardhu.dts
-index c169bce..6f9daae 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dts
-@@ -126,6 +126,120 @@
- 			ti,vsel0-state-high;
- 			ti,vsel1-state-high;
- 		};
-+
-+		pmic: tps65911@2d {
-+			compatible = "ti,tps65911";
-+			reg = <0x2d>;
-+
-+			interrupts = <0 86 0x4>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			vcc1-supply = <&vdd_ac_bat_reg>;
-+			vcc2-supply = <&vdd_ac_bat_reg>;
-+			vcc3-supply = <&vio_reg>;
-+			vcc5-supply = <&vdd_ac_bat_reg>;
-+			vcc6-supply = <&vdd2_reg>;
-+			vcc7-supply = <&vdd_ac_bat_reg>;
-+			vccio-supply = <&vdd_ac_bat_reg>;
-+
-+			regulators {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				vdd1_reg: regulator@0 {
-+					reg = <0>;
-+					regulator-compatible = "vdd1";
-+					regulator-name = "vddio_ddr_1v2";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				vdd2_reg: regulator@1 {
-+					reg = <1>;
-+					regulator-compatible = "vdd2";
-+					regulator-name = "vdd_1v5_gen";
-+					regulator-min-microvolt = <1500000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+				};
-+
-+				vddctrl_reg: regulator@2 {
-+					reg = <2>;
-+					regulator-compatible = "vddctrl";
-+					regulator-name = "vdd_cpu,vdd_sys";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				vio_reg: regulator@3 {
-+					reg = <3>;
-+					regulator-compatible = "vio";
-+					regulator-name = "vdd_1v8_gen";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo1_reg: regulator@4 {
-+					reg = <4>;
-+					regulator-compatible = "ldo1";
-+					regulator-name = "vdd_pexa,vdd_pexb";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+				};
-+
-+				ldo2_reg: regulator@5 {
-+					reg = <5>;
-+					regulator-compatible = "ldo2";
-+					regulator-name = "vdd_sata,avdd_plle";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+				};
-+
-+				/* LDO3 is not connected to anything */
-+
-+				ldo4_reg: regulator@7 {
-+					reg = <7>;
-+					regulator-compatible = "ldo4";
-+					regulator-name = "vdd_rtc";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo6_reg: regulator@9 {
-+					reg = <9>;
-+					regulator-compatible = "ldo6";
-+					regulator-name = "avdd_dsi_csi,pwrdet_mipi";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				ldo7_reg: regulator@10 {
-+					reg = <10>;
-+					regulator-compatible = "ldo7";
-+					regulator-name = "vdd_pllm,x,u,a_p_c_s";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: regulator@11 {
-+					reg = <11>;
-+					regulator-compatible = "ldo8";
-+					regulator-name = "vdd_ddr_hs";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
- 	};
- 
- 	ahub {
-@@ -134,6 +248,11 @@
- 		};
- 	};
- 
-+	pmc {
-+		status = "okay";
-+		nvidia,invert-interrupt;
-+	};
-+
- 	sdhci@78000000 {
- 		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-@@ -147,6 +266,21 @@
- 		bus-width = <8>;
- 	};
- 
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vdd_ac_bat_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vdd_ac_bat";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+	};
-+
- 	sound {
- 		compatible = "nvidia,tegra-audio-wm8903-cardhu",
- 			     "nvidia,tegra-audio-wm8903";
--- 
-1.7.1.1
+	Arnd
