@@ -1,41 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: more regulator fixes for Harmony
-Date: Wed, 08 Aug 2012 16:44:16 -0600
-Message-ID: <5022EBC0.5060102@wwwdotorg.org>
-References: <1344037521-6157-1-git-send-email-swarren@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: How to get the irq flags from the dts file
+Date: Thu, 9 Aug 2012 18:43:26 +0800
+Message-ID: <1344509006.2295.148.camel@tegra-chromium-2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1344037521-6157-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/03/2012 05:45 PM, Stephen Warren wrote:
-> Commit 3d55c29 "ARM: tegra: harmony: add regulator supply name and its
-> input supply" was supposed to fix all the problems with regulators on
-> Harmony. However, it appears that I only tested it when booting using
-> board files, not when booting using device tree. This change fixes two
-> problems with regulators when booting using device tree:
-> 
-> 1) That patch only created the vdd_sys regulator when booting using a
->    board file. Since this is the root of the whole regulator tree, this
->    caused no regulators to successfully initialize when booting using
->    device tree. The registration of vdd_sys is moved to fix this.
-> 
-> 2) When booting use DT, the regulator core sets has_full_constraints,
->    which in turn causes the core to turn off any regulators not marked
->    as always on. Some of the affected regulators are required for basic
->    system operation. To solve this, add always on constraints to all
->    relevant regulators. This doesn't affect booting using a board file
->    since nothing sets has_full_constraints in that case.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This is a fix for v3.6.
+Hi, all
+I'm working on tegra wlan upstream issue.
+The tegra board use the Broadcom 4329 as wlan device, and the driver is
+the brcmfmac. 
 
-Arnd, Olof, I don't see this in the arm-soc fixes tree, although do see
-you've applied a bunch of patches since I posted this. Did it drop
-through the cracks?
+This wlan driver support out-band-interrupt (OOB), I want to add DT
+support to use this OOB.
+I can add following lines in the dts file to create platform device and
+pass the interrupt resource to the driver.
+
+wlan {
+        compatible = "broadcome, brcmf_sdio_pd";
+        interrupt-parten = <&gpio>;
+        interrupts = <144, 0x04>; /* IRQF_TRIGGER_HIGH */
+};
+
+In the wlan driver, it will use platform_get_resource() to get the
+res->irq, res->flags, the irq number is right, but the flags will be
+IORESOURCE_IRQ, not the 0x04 (IRQF_TRIGGER_HIGH).
+The wlan driver wish this flags include the IRQF_TRGGER_* information,
+and it will use this flags to configure other hw settings. If it is
+wrong, the wlan can't work.
+
+I checked drivers/of/irq.c, in function of_irq_to_resource(), it will
+set r->flags = IORESOURCE_IRQ directly, not read the flags from the dtb
+file. And I didn't find any of_xx api to get this flags.
+
+How can I get this flags, does anyone has suggestion?
+
+Thanks.
+Wei.
