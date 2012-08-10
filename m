@@ -1,58 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3] ARM: dt: tegra: ventana: add regulators
-Date: Thu, 09 Aug 2012 12:04:14 -0600
-Message-ID: <5023FB9E.4010904@wwwdotorg.org>
-References: <1344017356-29352-1-git-send-email-swarren@wwwdotorg.org> <5023A716.50807@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: How to get the irq flags from the dts file
+Date: Fri, 10 Aug 2012 17:11:56 +0800
+Message-ID: <1344589916.21467.1.camel@tegra-chromium-2>
+References: <1344509006.2295.148.camel@tegra-chromium-2>
+	 <201208091148.42748.arnd@arndb.de>  <20120809120530.GC8474@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5023A716.50807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20120809120530.GC8474-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/09/2012 06:03 AM, Laxman Dewangan wrote:
-> On Friday 03 August 2012 11:39 PM, Stephen Warren wrote:
->> Ventana uses a TPS6586x regulator. Instantiate this, and hook up a
->> couple of fixed GPIO-controlled regulators too.
-...
-
-Sorry, I didn't look below at your other comments. Now responding...
-
->> +        pmic: tps6586x@34 {
->> +            compatible = "ti,tps6586x";
->> +            reg =<0x34>;
->> +            interrupts =<0 86 0x4>;
+On Thu, 2012-08-09 at 20:05 +0800, Mark Brown wrote:
+> On Thu, Aug 09, 2012 at 11:48:42AM +0000, Arnd Bergmann wrote:
+> > On Thursday 09 August 2012, Wei Ni wrote:
 > 
-> Should we say interrupt-controller also here?
-
-I don't think so; it looks like all the interrupts within this chip are
-for things that should be handled completely internally to to driver
-itself. Either way, there's certainly nothing attempting to use any
-interrupts from this chip right now, so if we did need that property, we
-could always add it if/when we added a client that needed it.
-
->> +
->> +            sys-supply =<&vdd_5v0_reg>;
->> +            vin-sm0-supply =<&sys_reg>;
->> +            vin-sm1-supply =<&sys_reg>;
->> +            vin-sm2-supply =<&sys_reg>;
+> > > The wlan driver wish this flags include the IRQF_TRGGER_* information,
+> > > and it will use this flags to configure other hw settings. If it is
+> > > wrong, the wlan can't work.
 > 
-> This depends on two changes on tps6586x regulator which are not merged yet.
+> You can read the configuration with irqd_get_trigger_type() - see the OF
+> code in sound/soc/codecs/wm8903.c for an example.
 
-Yes, I'm waiting for those changes to be merged before actually applying
-this. However, there's no particular dependency; this patch simply won't
-end up enabling the regulators until it's merged with the other patches,
-so the .dts and regulator driver patches can go in through separate
-trees OK.
+I tried it, it worked fine. thanks for your help.
 
->> +    pmc {
 > 
-> Should say status OK?
-
-The default status is OK. Since the PMC is useful on all boards, it
-isn't disabled in tegra30.dtsi; only board-specific things are disabled
-in tegra30.dtsi (e.g. which I2C, MMC, I2S, ... ports are used is board
-specific. Core SoC functionality isn't.)
+> > The driver should not need to know about thie flag. It gets read
+> > by irq_create_of_mapping when calling teh xlate function and
+> > gets set using irq_set_irq_type from there too.
+> 
+> That only helps the interrupt controller, it doesn't help the interrupt
+> source.  A good proportion of embedded devices have a great deal of
+> flexibility in how they signal interrupts so they need to know what mode
+> to pick.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
