@@ -1,60 +1,61 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: How to get the irq flags from the dts file
-Date: Fri, 10 Aug 2012 17:14:58 +0800
-Message-ID: <1344590098.21467.4.camel@tegra-chromium-2>
-References: <1344509006.2295.148.camel@tegra-chromium-2>
-	 <5023A88F.8040402@broadcom.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: use IO_ADDRESS for getting virtual address
+Date: Fri, 10 Aug 2012 18:33:02 +0530
+Message-ID: <1344603782-2541-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5023A88F.8040402-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2012-08-09 at 20:09 +0800, Arend van Spriel wrote:
-> On 08/09/2012 12:43 PM, Wei Ni wrote:
-> > Hi, all
-> > I'm working on tegra wlan upstream issue.
-> > The tegra board use the Broadcom 4329 as wlan device, and the driver is
-> > the brcmfmac. 
-> > 
-> > This wlan driver support out-band-interrupt (OOB), I want to add DT
-> > support to use this OOB.
-> > I can add following lines in the dts file to create platform device and
-> > pass the interrupt resource to the driver.
-> > 
-> > wlan {
-> >         compatible = "broadcome, brcmf_sdio_pd";
-> 
-> I don't know the DT syntax, but I assume broadcome should be broadcom,
-> right? ;-)
+Use macro IO_ADDRESS for getting virtual address of
+corresponding physical address to make the consistency
+with rest of Tegra code-base.
+This macro calls the IO_TO_VIRT() which is defined in
+arch/arm/mach-tegra/include/mach/iomap.h
 
-Sorry, it's my typo, it should be broadcom.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/apbio.c |    4 ++--
+ arch/arm/mach-tegra/fuse.c  |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> 
-> >         interrupt-parten = <&gpio>;
-> >         interrupts = <144, 0x04>; /* IRQF_TRIGGER_HIGH */
-> > };
-> > 
-> > In the wlan driver, it will use platform_get_resource() to get the
-> > res->irq, res->flags, the irq number is right, but the flags will be
-> > IORESOURCE_IRQ, not the 0x04 (IRQF_TRIGGER_HIGH).
-> > The wlan driver wish this flags include the IRQF_TRGGER_* information,
-> > and it will use this flags to configure other hw settings. If it is
-> > wrong, the wlan can't work.
-> > 
-> > I checked drivers/of/irq.c, in function of_irq_to_resource(), it will
-> > set r->flags = IORESOURCE_IRQ directly, not read the flags from the dtb
-> > file. And I didn't find any of_xx api to get this flags.
-> > 
-> > How can I get this flags, does anyone has suggestion?
-> 
-> I did a quick search in the kernel and there are a number of platform
-> drivers that seem to expect the IRQF_TRIGGER_* info by using (res->flags
-> & IRQF_TRIGGER_MASK) and to determine IRQF_SHARED as well.
-> 
-> Gr. AvS
-> 
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index dc0fe38..643a378 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -293,12 +293,12 @@ static apbio_write_fptr apbio_write;
+ 
+ static u32 tegra_apb_readl_direct(unsigned long offset)
+ {
+-	return readl(IO_TO_VIRT(offset));
++	return readl(IO_ADDRESS(offset));
+ }
+ 
+ static void tegra_apb_writel_direct(u32 value, unsigned long offset)
+ {
+-	writel(value, IO_TO_VIRT(offset));
++	writel(value, IO_ADDRESS(offset));
+ }
+ 
+ void tegra_apb_io_init(void)
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index f946d12..0b7db17 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -93,9 +93,9 @@ void tegra_init_fuse(void)
+ {
+ 	u32 id;
+ 
+-	u32 reg = readl(IO_TO_VIRT(TEGRA_CLK_RESET_BASE + 0x48));
++	u32 reg = readl(IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x48));
+ 	reg |= 1 << 28;
+-	writel(reg, IO_TO_VIRT(TEGRA_CLK_RESET_BASE + 0x48));
++	writel(reg, IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x48));
+ 
+ 	reg = tegra_fuse_readl(FUSE_SKU_INFO);
+ 	tegra_sku_id = reg & 0xFF;
+-- 
+1.7.1.1
