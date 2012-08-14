@@ -1,17 +1,13 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Tue, 14 Aug 2012 21:58:34 +0200
-Message-ID: <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v3 10/10] ARM: tegra: pcie: Add device tree support
+Date: Tue, 14 Aug 2012 22:12:15 +0200
+Message-ID: <20120814201215.GA10542@avionic-0098.mockup.avionic-design.de>
 References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <50201E1D.5060200@wwwdotorg.org>
- <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
- <50294BCA.1070807@wwwdotorg.org>
- <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
- <502AA96B.2050709@wwwdotorg.org>
+ <1343332512-28762-11-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5221672487267184901=="
+Content-Type: multipart/mixed; boundary="===============4807180548327052846=="
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <502AA96B.2050709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1343332512-28762-11-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -22,119 +18,142 @@ List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
 Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Sender: "devicetree-discuss"
  <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5221672487267184901==
+--===============4807180548327052846==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
 Content-Disposition: inline
 
 
---SLDf9lqlvOQaIe6s
+--d6Gm4EdcadzBjdND
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 14, 2012 at 01:39:23PM -0600, Stephen Warren wrote:
-> On 08/13/2012 05:18 PM, Bjorn Helgaas wrote:
-> > On Mon, Aug 13, 2012 at 11:47 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org=
-> wrote:
-> ...
-> >> whereas for a device tree boot:
-> >>
-> >> (same):
-> >>> [    2.112217] pci 0000:01:00.0: reg 10: [io  0x0000-0x00ff]
-> >>> [    2.117635] pci 0000:01:00.0: reg 18: [mem 0x00000000-0x00000fff 6=
-4bit pref]
-> >>> [    2.124690] pci 0000:01:00.0: reg 20: [mem 0x00000000-0x00003fff 6=
-4bit pref]
-> >>> [    2.131731] pci 0000:01:00.0: reg 30: [mem 0x00000000-0x0001ffff p=
-ref]
-> >> ... (request region happens early)
-> >>> [    2.179838] r8169 0000:01:00.0: BAR 0: requesting [io  0x0000-0x00=
-ff]
-> >>> [    2.193312] r8169 0000:01:00.0: BAR 2: requesting [mem 0x00000000-=
-0x00000fff 64bit pref]
-> >>> [    2.201397] r8169 0000:01:00.0: BAR 2: can't reserve [mem 0x000000=
-00-0x00000fff 64bit pref]
-> >>> [    2.209742] r8169 0000:01:00.0: (unregistered net_device): could n=
-ot request regions
-> >> ... (same, just happens too late)
-> >>> [    2.236818] pci 0000:01:00.0: BAR 6: assigned [mem 0xa0000000-0xa0=
-01ffff pref]
-> >>> [    2.244027] pci 0000:01:00.0: BAR 4: assigned [mem 0xa0020000-0xa0=
-023fff 64bit pref]
-> >>> [    2.251794] pci 0000:01:00.0: BAR 2: assigned [mem 0xa0024000-0xa0=
-024fff 64bit pref]
-> >>> [    2.259542] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
-> >>
-> >> I suspect this is all still related to the PCI devices themselves being
-> >> probed much earlier in the overall PCI initialization sequence when the
-> >> PCI controller is probed later in the boot sequence, whereas PCI device
-> >> probe is deferred until the overall PCI initialization sequence is
-> >> complete if the PCI controller is probed very early in the boot sequen=
-ce.
-> >=20
-> > I don't know what to apply your patches to (they don't apply cleanly
-> > to v3.6-rc2), so I can't see exactly what you're doing.  But it looks
-> > like you might be calling pci_bus_add_devices() before
-> > pci_bus_assign_resource(), which isn't going to work.
->=20
-> Yes, that's exactly what is happening.
->=20
-> PCIe initialization starts in arch/arm/mach-tegra/pci.e
-> tegra_pcie_init() which calls arch/arm/kernel/bios32.c
-> pci_common_init(). That function first calls pcibios_init_hw() (in the
-> same file, more about this later) and then loops over PCI buses, calling
-> amongst other things pci_bus_assign_resources() then pci_bus_add_devices(=
-).
->=20
-> The problem is that ARM's pcibios_init_hw() calls pci_scan_root_bus()
-> (or a host-driver-specific function which that also calls
-> pci_scan_root_bus() in Tegra's case) which in turn calls
-> pci_bus_add_devices() right at the end, before control has returned to
-> pci_common_init() and hence before pci_bus_assign_resources() has been
-> called.
->=20
-> If I modify pci_scan_root_bus() and remove the call to
-> pci_bus_add_devices(), everything works as expected.
->=20
-> So, I guess the question is: Should ARM's pcibios_init_hw() not be
-> calling pci_scan_root_bus(), or at least presumably the ARM PCI code
-> needs to do things in a slightly different order?
+On Thu, Jul 26, 2012 at 09:55:12PM +0200, Thierry Reding wrote:
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.d=
+tsi
+> index a094c97..c886dff 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -199,6 +199,68 @@
+>  		#size-cells =3D <0>;
+>  	};
+> =20
+> +	pcie-controller {
+> +		compatible =3D "nvidia,tegra20-pcie";
+> +		reg =3D <0x80003000 0x00000800   /* PADS registers */
+> +		       0x80003800 0x00000200   /* AFI registers */
+> +		       0x81000000 0x01000000   /* configuration space */
+> +		       0x90000000 0x10000000>; /* extended configuration space */
+> +		interrupts =3D <0 98 0x04   /* controller interrupt */
+> +		              0 99 0x04>; /* MSI interrupt */
+> +		status =3D "disabled";
+> +
+> +		ranges =3D <0 0 0  0x80000000 0x00001000   /* root port 0 */
+> +			  0 1 0  0x81000000 0x00800000   /* port 0 config space */
+> +			  0 2 0  0x90000000 0x08000000   /* port 0 ext config space */
+> +			  0 3 0  0x82000000 0x00010000   /* port 0 downstream I/O */
+> +			  0 4 0  0xa0000000 0x08000000   /* port 0 non-prefetchable memory */
+> +			  0 5 0  0xb0000000 0x08000000   /* port 0 prefetchable memory */
+> +
+> +			  1 0 0  0x80001000 0x00001000   /* root port 1 */
+> +			  1 1 0  0x81800000 0x00800000   /* port 1 config space */
+> +			  1 2 0  0x98000000 0x08000000   /* port 1 ext config space */
+> +			  1 3 0  0x82010000 0x00010000   /* port 1 downstream I/O */
+> +			  1 4 0  0xa8000000 0x08000000   /* port 1 non-prefetchable memory */
+> +			  1 5 0  0xb8000000 0x08000000>; /* port 1 prefetchable memory */
 
-Maybe pci_scan_root_bus() should be calling pci_bus_assign_resources()?
-Or a new function could be added which also assigns the resources.
+I've been thinking about this some more. The translations for both the
+regular and extended configuration spaces are configured in the top-
+level PCIe controller. It is therefore wrong how they are passed to the
+PCI host bridges via the ranges property.
+
+I remember Mitch saying that it should be passed down to the children
+because it is partitioned among them, but since the layout is compatible
+with ECAM, the partitioning isn't as simple as what's in the tree. In
+fact the partitions will be dependent on the number of devices attached
+to the host bridges.
+
+> +
+> +		#address-cells =3D <3>;
+> +		#size-cells =3D <1>;
+> +
+> +		pci@0 {
+> +			device_type =3D "pciex";
+> +			reg =3D <0 0 0 0x1000>;
+> +			status =3D "disabled";
+> +
+> +			#address-cells =3D <3>;
+> +			#size-cells =3D <2>;
+> +
+> +			ranges =3D <0x80000000 0 0  0 1 0  0 0x00800000   /* config space */
+> +				  0x90000000 0 0  0 2 0  0 0x08000000   /* ext config space */
+> +				  0x81000000 0 0  0 3 0  0 0x00010000   /* I/O */
+> +				  0x82000000 0 0  0 4 0  0 0x08000000   /* non-prefetchable memory */
+> +				  0xc2000000 0 0  0 5 0  0 0x08000000>; /* prefetchable memory */
+> +
+> +			nvidia,num-lanes =3D <2>;
+> +		};
+> +
+> +		pci@1 {
+> +			device_type =3D "pciex";
+> +			reg =3D <1 0 0 0x1000>;
+> +			status =3D "disabled";
+> +
+> +			#address-cells =3D <3>;
+> +			#size-cells =3D <2>;
+> +
+> +			ranges =3D <0x80000000 0 0  1 1 0  0 0x00800000   /* config space */
+> +				  0x90000000 0 0  1 2 0  0 0x08000000   /* ext config space */
+> +				  0x81000000 0 0  1 3 0  0 0x00010000   /* I/O */
+> +				  0x82000000 0 0  1 4 0  0 0x08000000   /* non-prefetchable memory */
+> +				  0xc2000000 0 0  1 5 0  0 0x08000000>; /* prefetchable memory */
+> +
+> +			nvidia,num-lanes =3D <2>;
+> +		};
+> +	};
+
+The same is true for the ranges properties of the PCI host bridge nodes.
+Which part of the configuration spaces maps to the children of the
+respective host bridge depends on the actual device hierarchy.
+
+Would it be possible to alternatively pass the complete range to the
+children without further partitioning?
+
+The driver doesn't actually care about the ranges property and only uses
+the values specified in the reg property of the pcie-controller node.
 
 Thierry
 
---SLDf9lqlvOQaIe6s
+--d6Gm4EdcadzBjdND
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQKq3qAAoJEN0jrNd/PrOhP2cP/05Hri/fpgsloAYwBoPS1Bby
-DzQI/WIjMSs2KbjJj5SnpS0o98CVQH31gjcENzPMBwHLG34UDfr1DyjNi0VHElTJ
-OYt1y11lomN7uXpgH6ixP29YAT5ANXNPqYaqEf4qG046pWOFgFKOd6RF6gwZ0DZT
-UvODa7314xtuEA9TuTRXD7rVK98cyh3ZiOiAtPSZu9KeT4Rz2uLX45D8lm+Na0zB
-kJcqH+hbB/D2h2tCWkHPT7aDz4klTFiwvCaheZ+LSIIeUBl3sOlDeWCBK9/AOpwr
-TEoNhVL0HskzeOJEZYK4vDKiGtOJyUYBY6HzyzD5z/5HA8mQcSpiDKUGl34lGXOQ
-2HmuHRM4k3/6gZCmN4w/uCIl/iteiqvasapGuMQXFVivIuMF66ZhFox5HDeci7CS
-EtRGVhPOxUSrgKJw2TzRnBfAoB/fytlig868B5dQvkQ0EEyR4dARBftrwhH2t5vH
-l+xC4PBZFVWGG7qDYyb7nqfC54ZYrpEXcnsOsaeDISUsK/uDnAmASo+3nWrGEH9W
-LelY+U3B0T0da7rwETY3neTRRIr0O0YqSJYtrKQnq1IxMK1UNDoqHnZmfXIORs5C
-RnH/qQ0cC6FDEeVqNH0TOZVQ3gpz47n+GovrCQGVEsiaX+OTPi9WwbsVccB3p7kL
-0GcjxSEIg1GcxMNF4mGi
-=IpwQ
+iQIcBAEBAgAGBQJQKrEfAAoJEN0jrNd/PrOhPmMQALt4izwmLsNjMlYFcqX1w521
+J0JpuuT4ogI9TvnLLE7g5enTcMyNT0jH58dWF6LzlKCMAfPj8X5sFsFMn6UBo1Fi
+DSBOvROYBNFw7aBMQvniI+noIMHQLO1UaAJnhjghAY4/4aS52mkxVcHmNv/f88wq
+8C3nATkeEgzgysXyvIC6uLPsG53EaaFShloYDakTDl1iUfsEdK7zelzRHlIrVpzo
+m8GFd20QBNjqwN62wkZcFvAxYHu1K+7wGN0U/5LOgnKZe1RjxwxXWdLKXkiSSLJY
+4qqbkY5soUkg/3uFXfqH7ruuTyDa2rqsc6PbDnE9Ljeaydq50q+7r/gTILY1k1Xa
+GIIhvzphd/g457TzQKp9EXHxRKqTvSlXTMsu/e0VQ+w4dc86gcDYv3IRnF1gIhMT
+SMNEEr7kBrcYCUsrwDRXKGQyqrAZdweIAbGUSUiob6Ogji8FsghqyI/h/TY/Z2W5
+fkLddNakaoyVs8vr5VDpInr5ASPQSIbArx4CiLi0ALPMwLY8Ai/M2+eQSE+zD7h1
++4swgf/o15GBkZqtAMePELx11yCN9E7olWWI9xkDIVwkjNCjD4CQJ4UVCtup5F24
+nq6l0VsxcX+ydMRQA9NZmf1XXdSMwoO2NrpmQBOvCRoy0j2QXhgxuiZut0aXF71u
+RNK269viHeqbMBRiDLc8
+=XyB7
 -----END PGP SIGNATURE-----
 
---SLDf9lqlvOQaIe6s--
+--d6Gm4EdcadzBjdND--
 
---===============5221672487267184901==
+--===============4807180548327052846==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -145,4 +164,4 @@ devicetree-discuss mailing list
 devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 https://lists.ozlabs.org/listinfo/devicetree-discuss
 
---===============5221672487267184901==--
+--===============4807180548327052846==--
