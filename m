@@ -1,174 +1,36 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 05/10] resource: add PCI configuration space support
-Date: Tue, 14 Aug 2012 20:01:42 +0200
-Message-ID: <20120814180142.GA9430@avionic-0098.mockup.avionic-design.de>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-6-git-send-email-thierry.reding@avionic-design.de>
- <CAErSpo4qg45brVRwEbw3=R04VsbnvUowSMWcT+M6VoAxbf3Cqg@mail.gmail.com>
- <20120814055542.GB16181@avionic-0098.mockup.avionic-design.de>
- <CAErSpo6LYpkC5wop53S1r1z3ov4+w4soqrQARzbbouVs1trzUg@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 0/5] ARM: tegra: add CPU hotplug support
+Date: Tue, 14 Aug 2012 12:32:45 -0600
+Message-ID: <502A99CD.3060400@wwwdotorg.org>
+References: <1344931644-3927-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0684293298482863846=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAErSpo6LYpkC5wop53S1r1z3ov4+w4soqrQARzbbouVs1trzUg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1344931644-3927-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/14/2012 02:07 AM, Joseph Lo wrote:
+> This patch set adds CPU hotplug support for Tegra20 and Tegra30 SoCs.
+> 
+> The first 3 patches make the CPU clock and reset control be a module and
+> the abstraction APIs for TegraXX SoCs. And clean up some codes for later
+> usage. Then add CPU hotplug support for Tegra20 and Tegra30.
+> 
+> Verified on Seaboard(Tegra20) and Cardhu(Tegra30)
 
---===============0684293298482863846==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
-Content-Disposition: inline
+There are two problems with this series:
 
+1) It doesn't compile if CONFIG_HOTPLUG_CPU isn't enabled. Please also
+make sure that Tegra20-only and Tegra30-only kernels compile (I didn't
+check this, so it may well already be the case).
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2) It prevents the "reboot" from working; the kernel hangs as it
+attempts to do the reboot. I've confirmed this isn't the case without
+this patch series, even if CONFIG_HOTPLUG_CPU is enabled.
 
-On Tue, Aug 14, 2012 at 10:38:08AM -0700, Bjorn Helgaas wrote:
-> On Mon, Aug 13, 2012 at 10:55 PM, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > On Mon, Aug 13, 2012 at 10:00:45PM -0700, Bjorn Helgaas wrote:
-> >> On Thu, Jul 26, 2012 at 12:55 PM, Thierry Reding
-> >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> >> > This commit adds a new flag that allows marking resources as PCI
-> >> > configuration space.
-> >> >
-> >> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> >> > ---
-> >> > Changes in v3:
-> >> > - new patch
-> >> >
-> >> >  include/linux/ioport.h | 2 +-
-> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >
-> >> > diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-> >> > index 589e0e7..3314843 100644
-> >> > --- a/include/linux/ioport.h
-> >> > +++ b/include/linux/ioport.h
-> >> > @@ -102,7 +102,7 @@ struct resource {
-> >> >
-> >> >  /* PCI control bits.  Shares IORESOURCE_BITS with above PCI ROM.  */
-> >> >  #define IORESOURCE_PCI_FIXED           (1<<4)  /* Do not move resou=
-rce */
-> >> > -
-> >> > +#define IORESOURCE_PCI_CS              (1<<5)  /* PCI configuration=
- space */
-> >>
-> >> What is the purpose of this?  It seems that you are marking regions
-> >> that we call MMCONFIG on x86, or ECAM-type regions in the language of
-> >> the PCIe spec.  I see that you set it in several places, but I don't
-> >> see anything that ever looks for it.  Do you have plans to use it in
-> >> the future?  If it really does correspond to MMCONFIG/ECAM, we should
-> >> handle those regions consistently across all architectures.
-> >
-> > The purpose is ultimately to obtain the MMCONFIG/ECAM resources assigned
-> > to a PCI host controller. I've used this in the of_pci_parse_ranges()
-> > and in the static board setup code to mark ranges as such. Perhaps
-> > IORESOURCE_ECAM or IORESOURCE_MMCONFIG might have been better names. I
-> > also just noticed that I'm not using this anywhere, but the plan was to
-> > eventually use it with platform_get_resource(). However that doesn't
-> > seem to work either because the lower bits of the flags aren't use for
-> > comparison in that function.
-> >
-> > Any other ideas how that could be handled? Basically what I need is a
-> > way to mark a resource as an MMCONFIG/ECAM range so that it can be used
-> > to program the PCI host controller accordingly. I don't know how these
-> > are assigned on x86. I was under the impression that the MMCONFIG/ECAM
-> > space was accessed through a single single address/data register pair.
->=20
-> The legacy config access mechanism (CF8h/CFCh registers described in
-> PCI 3.0 spec sec 3.2.2.3.2) is a single address/data pair, but this is
-> mostly x86-specific.  The ECAM mechanism (described in the PCIe 3.0
-> spec sec 7.2.2) is not a single address/data pair; instead, each byte
-> of config space is directly mapped into the host's MMIO space.
->=20
-> Here's what we do on x86 (omitting some historical grunge that
-> complicates things):
->=20
->   - Discover the host bridge via a PNP0A08 device in the ACPI namespace.
->   - Discover the bus number range behind the bridge using a _CRS
-> method in the PNP0A08 device.
->   - Discover the ECAM space for those buses via a _CBA method in the
-> PNP0A08 device.
->   - Tell the config accessors (struct pci_ops) that the ECAM space for
-> buses A-B is at address X.
->   - Enumerate the devices behind the host bridge by calling
-> pci_scan_root_bus(), passing the config accessors.
->=20
-> It sounds like you want a way to parse the resources at one point,
-> saving them and marking the ECAM region, then at a later point, look
-> up the ECAM from a saved list.  We don't do that on x86 because the
-> config accessors keep an internal list of the ECAM area for each bus.
->=20
-> We do of course want to put this ECAM space in the IORESOURCE_MEM tree
-> because it consumes address space and we have to make sure we don't
-> put anything else on top of it.  But we don't have any reason to
-> describe the MMIO -> config space function in that tree.  From the
-> point of view of the rest of the system, it's just MMIO space that's
-> consumed by the PCI host bridge, just like any other device-specific
-> MMIO area.
-
-What I currently do is pass the ECAM space as a resource to the PCI host
-bridge platform device. Regular and extended configuration spaces are
-given by the third and fourth resources, respectively. If I understand
-correctly, you're saying that nothing beyond that needs to be encoded.
-In other words it is enough for the PCI host bridge driver to know where
-to take the data from.
-
-I'll have to see what this means for the DT binding. There are other
-issues that I need to think about, like for example how to pass the ECAM
-space from the PCI host controller to each of the two bridges via the
-ranges property. This no longer makes sense in the current form, as the
-ECAM covers the configuration spaces for devices of both bridges and
-cannot really be split among them.
-
-Thierry
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQKpKGAAoJEN0jrNd/PrOhUQsQAL0f9w9cA1RJjqCvQiu4hUnN
-IF49DsuA2YM2O8FTZzvT12ziO3/QYyqDuPaq9UQEJwfoqBEnpeG6mG0Pb7sKAFhi
-y6m6dA3AcXurrvfLsTYuZy+kj3aLWcBRxe1Zm1bA5Q769juAWQoKJ4nVpKzdZhtr
-OFGIbbOC2cb4Q+ljmw/HjhKL0qSeOFW+VkE4mlAhxjBkf5Wz4BuedVJhJb/QiTP1
-nGXdr3M0pq1myLfuasRT28kOGWOus0sM4AYBZnYQMAnTanKn3WjFl3xWbh1ag0w4
-6e4ZPZpRHrILjPcSWWkbD7fJSCyFAd/CCIuaOKAj/ImDNiJguwZriffWIjrYcwSt
-kk04VrzawY+YYZl25PgMgE0TSiaq65adyvX+8a66vPU6MyPMYIhq1zVWgN2FrcQJ
-HmK62YgTipWLi/xW/RZ6lZHvsR8voitBrk8hr7RSRrzjL2NAT/3qYLkMr1PjTEmq
-+/FrTzYLqYEJCiGHr5rqLJJz+mKXi3Y7eMV46uTClkBfG5s1gslZNLIHqERhylzR
-iDqAEMN/C2S7/xN4T+kYXA4JvpsdyQmOzQmYaQyOkN2O/740ieklZAWT25k1vFmR
-1rqOQojFCm/ZPaiPV/0V4UcPrFlVodIs12CZxV+MfkzZ9LgXmjxxhfRYpRW/FVcH
-3HQemIta9nevWYybrf3x
-=EU2E
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
-
---===============0684293298482863846==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============0684293298482863846==--
+I assume we'll want to enable CONFIG_HOTPLUG_CPU in tegra_defconfig once
+this is checked in?
