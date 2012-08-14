@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/5] ARM: tegra: replace the CPU CAR access code by tegra_cpu_car_ops
-Date: Tue, 14 Aug 2012 16:07:21 +0800
-Message-ID: <1344931644-3927-3-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 4/5] ARM: tegra30: add CPU hotplug support
+Date: Tue, 14 Aug 2012 16:07:23 +0800
+Message-ID: <1344931644-3927-5-git-send-email-josephl@nvidia.com>
 References: <1344931644-3927-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,97 +12,357 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johan
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Replacing the code that directly access to CAR registers with
-tegra_cpu_car_ops. This ops hides CPU CAR access inside and
-provides control interface for it.
+Hotplug function put CPUs in offline or online state at runtime.
+When the CPU been put in the offline state, it was been clock and
+power gated. Except primary CPU other CPUs can be hotplugged.
+
+Based on the work by:
+Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/platsmp.c |   29 +++++------------------------
- 1 files changed, 5 insertions(+), 24 deletions(-)
+ arch/arm/mach-tegra/Makefile    |    1 +
+ arch/arm/mach-tegra/common.c    |    2 +
+ arch/arm/mach-tegra/hotplug.c   |  110 +++++++++------------------------------
+ arch/arm/mach-tegra/sleep-t30.S |  107 +++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/sleep.h     |   21 +++++++
+ 5 files changed, 155 insertions(+), 86 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/sleep-t30.S
 
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 1a208db..96ed171 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -31,6 +31,7 @@
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 060592a..211e279 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks_data.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks_data.o
++obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= sleep-t30.o
+ obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
+ obj-$(CONFIG_SMP)                       += reset.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index f3654f8..0652056 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -34,6 +34,7 @@
  #include "fuse.h"
- #include "flowctrl.h"
- #include "reset.h"
+ #include "pmc.h"
+ #include "apbio.h"
++#include "sleep.h"
+ 
+ /*
+  * Storage for debug-macro.S's state.
+@@ -147,6 +148,7 @@ void __init tegra30_init_early(void)
+ 	tegra_init_cache(0x441, 0x551);
+ 	tegra_pmc_init();
+ 	tegra_powergate_init();
++	tegra30_hotplug_init();
+ }
+ #endif
+ 
+diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
+index d8dc9dd..d72ed2b 100644
+--- a/arch/arm/mach-tegra/hotplug.c
++++ b/arch/arm/mach-tegra/hotplug.c
+@@ -1,94 +1,32 @@
+ /*
+- *  linux/arch/arm/mach-realview/hotplug.c
+  *
+  *  Copyright (C) 2002 ARM Ltd.
+  *  All Rights Reserved
++ *  Copyright (c) 2010, 2012 NVIDIA Corporation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+ #include <linux/kernel.h>
+-#include <linux/errno.h>
+ #include <linux/smp.h>
+ 
+ #include <asm/cacheflush.h>
+-#include <asm/cp15.h>
++#include <asm/smp_plat.h>
+ 
+-static inline void cpu_enter_lowpower(void)
+-{
+-	unsigned int v;
++#include "sleep.h"
 +#include "tegra_cpu_car.h"
  
- extern void tegra_secondary_startup(void);
- 
-@@ -38,17 +39,6 @@ static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
- 
- #define EVP_CPU_RESET_VECTOR \
- 	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
--#define CLK_RST_CONTROLLER_CLK_CPU_CMPLX \
--	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x4c)
--#define CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET \
--	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x340)
--#define CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR \
--	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x344)
--#define CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR \
--	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x34c)
+-	flush_cache_all();
+-	asm volatile(
+-	"	mcr	p15, 0, %1, c7, c5, 0\n"
+-	"	mcr	p15, 0, %1, c7, c10, 4\n"
+-	/*
+-	 * Turn off coherency
+-	 */
+-	"	mrc	p15, 0, %0, c1, c0, 1\n"
+-	"	bic	%0, %0, #0x20\n"
+-	"	mcr	p15, 0, %0, c1, c0, 1\n"
+-	"	mrc	p15, 0, %0, c1, c0, 0\n"
+-	"	bic	%0, %0, %2\n"
+-	"	mcr	p15, 0, %0, c1, c0, 0\n"
+-	  : "=&r" (v)
+-	  : "r" (0), "Ir" (CR_C)
+-	  : "cc");
+-}
 -
--#define CPU_CLOCK(cpu)	(0x1<<(8+cpu))
--#define CPU_RESET(cpu)	(0x1111ul<<(cpu))
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
++static void (*tegra_hotplug_shutdown)(void);
  
- void __cpuinit platform_secondary_init(unsigned int cpu)
- {
-@@ -63,13 +53,8 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 
- static int tegra20_power_up_cpu(unsigned int cpu)
- {
--	u32 reg;
+-	asm volatile(
+-	"mrc	p15, 0, %0, c1, c0, 0\n"
+-	"	orr	%0, %0, %1\n"
+-	"	mcr	p15, 0, %0, c1, c0, 0\n"
+-	"	mrc	p15, 0, %0, c1, c0, 1\n"
+-	"	orr	%0, %0, #0x20\n"
+-	"	mcr	p15, 0, %0, c1, c0, 1\n"
+-	  : "=&r" (v)
+-	  : "Ir" (CR_C)
+-	  : "cc");
+-}
 -
- 	/* Enable the CPU clock. */
--	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
--	writel(reg & ~CPU_CLOCK(cpu), CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
--	barrier();
--	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
-+	tegra_enable_cpu_clock(cpu);
- 
- 	/* Clear flow controller CSR. */
- 	flowctrl_write_cpu_csr(cpu, 0);
-@@ -79,7 +64,6 @@ static int tegra20_power_up_cpu(unsigned int cpu)
- 
- static int tegra30_power_up_cpu(unsigned int cpu)
+-static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
++int platform_cpu_kill(unsigned int cpu)
  {
--	u32 reg;
- 	int ret, pwrgateid;
- 	unsigned long timeout;
+-	/*
+-	 * there is no power-control hardware on this platform, so all
+-	 * we can do is put the core into WFI; this is safe as the calling
+-	 * code will have already disabled interrupts
+-	 */
+-	for (;;) {
+-		/*
+-		 * here's the WFI
+-		 */
+-		asm(".word	0xe320f003\n"
+-		    :
+-		    :
+-		    : "memory", "cc");
++	cpu = cpu_logical_map(cpu);
  
-@@ -103,8 +87,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
- 	}
+-		/*if (pen_release == cpu) {*/
+-			/*
+-			 * OK, proper wakeup, we're done
+-			 */
+-			break;
+-		/*}*/
++	/* Clock gate the CPU */
++	tegra_wait_cpu_in_reset(cpu);
++	tegra_disable_cpu_clock(cpu);
  
- 	/* CPU partition is powered. Enable the CPU clock. */
--	writel(CPU_CLOCK(cpu), CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
--	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
-+	tegra_enable_cpu_clock(cpu);
- 	udelay(10);
- 
- 	/* Remove I/O clamps. */
-@@ -128,8 +111,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * via the flow controller). This will have no effect on first boot
- 	 * of the CPU since it should already be in reset.
- 	 */
--	writel(CPU_RESET(cpu), CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
--	dmb();
-+	tegra_put_cpu_in_reset(cpu);
- 
- 	/*
- 	 * Unhalt the CPU. If the flow controller was used to power-gate the
-@@ -155,8 +137,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 		goto done;
- 
- 	/* Take the CPU out of reset. */
--	writel(CPU_RESET(cpu), CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR);
--	wmb();
-+	tegra_cpu_out_of_reset(cpu);
- done:
- 	return status;
+-		/*
+-		 * Getting here, means that we have come out of WFI without
+-		 * having been woken up - this shouldn't happen
+-		 *
+-		 * Just note it happening - when we're woken, we can report
+-		 * its occurrence.
+-		 */
+-		(*spurious)++;
+-	}
+-}
+-
+-int platform_cpu_kill(unsigned int cpu)
+-{
+ 	return 1;
  }
+ 
+@@ -99,22 +37,14 @@ int platform_cpu_kill(unsigned int cpu)
+  */
+ void platform_cpu_die(unsigned int cpu)
+ {
+-	int spurious = 0;
+-
+-	/*
+-	 * we're ready for shutdown now, so do it
+-	 */
+-	cpu_enter_lowpower();
+-	platform_do_lowpower(cpu, &spurious);
++	/* Flush the L1 data cache. */
++	flush_cache_all();
+ 
+-	/*
+-	 * bring this CPU back into the world of cache
+-	 * coherency, and then restore interrupts
+-	 */
+-	cpu_leave_lowpower();
++	/* Shut down the current CPU. */
++	tegra_hotplug_shutdown();
+ 
+-	if (spurious)
+-		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
++	/* Should never return here. */
++	BUG();
+ }
+ 
+ int platform_cpu_disable(unsigned int cpu)
+@@ -125,3 +55,11 @@ int platform_cpu_disable(unsigned int cpu)
+ 	 */
+ 	return cpu == 0 ? -EPERM : 0;
+ }
++
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++extern void tegra30_hotplug_shutdown(void);
++void __init tegra30_hotplug_init(void)
++{
++	tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
++}
++#endif
+diff --git a/arch/arm/mach-tegra/sleep-t30.S b/arch/arm/mach-tegra/sleep-t30.S
+new file mode 100644
+index 0000000..777d9ce
+--- /dev/null
++++ b/arch/arm/mach-tegra/sleep-t30.S
+@@ -0,0 +1,107 @@
++/*
++ * Copyright (c) 2012, NVIDIA Corporation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/linkage.h>
++
++#include <asm/assembler.h>
++
++#include <mach/iomap.h>
++
++#include "sleep.h"
++#include "flowctrl.h"
++
++#define TEGRA30_POWER_HOTPLUG_SHUTDOWN	(1 << 27) /* Hotplug shutdown */
++
++#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_PM_SLEEP)
++/*
++ * tegra30_hotplug_shutdown(void)
++ *
++ * Powergates the current CPU.
++ * Should never return.
++ */
++ENTRY(tegra30_hotplug_shutdown)
++	/* Turn off SMP coherency */
++	exit_smp r4, r5
++
++	/* Powergate this CPU */
++	mov	r0, #TEGRA30_POWER_HOTPLUG_SHUTDOWN
++	bl	tegra30_cpu_shutdown
++	mov	pc, lr			@ should never get here
++ENDPROC(tegra30_hotplug_shutdown)
++
++/*
++ * tegra30_cpu_shutdown(unsigned long flags)
++ *
++ * Puts the current CPU in wait-for-event mode on the flow controller
++ * and powergates it -- flags (in R0) indicate the request type.
++ * Must never be called for CPU 0.
++ *
++ * corrupts r0-r4, r12
++ */
++ENTRY(tegra30_cpu_shutdown)
++	cpu_id	r3
++	cmp	r3, #0
++	moveq	pc, lr		@ Must never be called for CPU 0
++
++	ldr	r12, =TEGRA_FLOW_CTRL_VIRT
++	cpu_to_csr_reg r1, r3
++	add	r1, r1, r12	@ virtual CSR address for this CPU
++	cpu_to_halt_reg r2, r3
++	add	r2, r2, r12	@ virtual HALT_EVENTS address for this CPU
++
++	/*
++	 * Clear this CPU's "event" and "interrupt" flags and power gate
++	 * it when halting but not before it is in the "WFE" state.
++	 */
++	movw	r12, \
++		FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG | \
++		FLOW_CTRL_CSR_ENABLE
++	mov	r4, #(1 << 4)
++	orr	r12, r12, r4, lsl r3
++	str	r12, [r1]
++
++	/* Halt this CPU. */
++	mov	r3, #0x400
++delay_1:
++	subs	r3, r3, #1			@ delay as a part of wfe war.
++	bge	delay_1;
++	cpsid	a				@ disable imprecise aborts.
++	ldr	r3, [r1]			@ read CSR
++	str	r3, [r1]			@ clear CSR
++	tst	r0, #TEGRA30_POWER_HOTPLUG_SHUTDOWN
++	movne	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
++	str	r3, [r2]
++	ldr	r0, [r2]
++	b	wfe_war
++
++__cpu_reset_again:
++	dsb
++	.align 5
++	wfe					@ CPU should be power gated here
++wfe_war:
++	b	__cpu_reset_again
++
++	/*
++	 * 38 nop's, which fills reset of wfe cache line and
++	 * 4 more cachelines with nop
++	 */
++	.rept 38
++	nop
++	.endr
++	b	.				@ should never get here
++
++ENDPROC(tegra30_cpu_shutdown)
++#endif
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index d0c7a8b..2ad9b6d 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -19,6 +19,8 @@
+ 
+ #include <mach/iomap.h>
+ 
++#define TEGRA_ARM_PERIF_VIRT (TEGRA_ARM_PERIF_BASE - IO_CPU_PHYS \
++					+ IO_CPU_VIRT)
+ #define TEGRA_FLOW_CTRL_VIRT (TEGRA_FLOW_CTRL_BASE - IO_PPSB_PHYS \
+ 					+ IO_PPSB_VIRT)
+ 
+@@ -52,5 +54,24 @@
+ 	movw	\reg, #:lower16:\val
+ 	movt	\reg, #:upper16:\val
+ .endm
++
++/* Macro to exit SMP coherency. */
++.macro exit_smp, tmp1, tmp2
++	mrc	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
++	bic	\tmp1, \tmp1, #(1<<6) | (1<<0)	@ clear ACTLR.SMP | ACTLR.FW
++	mcr	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
++	isb
++	cpu_id	\tmp1
++	mov	\tmp1, \tmp1, lsl #2
++	mov	\tmp2, #0xf
++	mov	\tmp2, \tmp2, lsl \tmp1
++	mov32	\tmp1, TEGRA_ARM_PERIF_VIRT + 0xC
++	str	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
++	dsb
++.endm
++#else
++
++void tegra30_hotplug_init(void);
++
+ #endif
+ #endif
 -- 
 1.7.0.4
