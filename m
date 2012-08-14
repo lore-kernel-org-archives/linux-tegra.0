@@ -1,14 +1,14 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] PCI: Keep pci_fixup_irqs() around after init
-Date: Tue, 14 Aug 2012 07:37:55 +0200
-Message-ID: <20120814053755.GA16181@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v3 05/10] resource: add PCI configuration space support
+Date: Tue, 14 Aug 2012 07:55:42 +0200
+Message-ID: <20120814055542.GB16181@avionic-0098.mockup.avionic-design.de>
 References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-2-git-send-email-thierry.reding@avionic-design.de>
- <CAErSpo5YDwstHv7B7LEbDQmnHnuVsMA2ibTFNLkiCKmkkeE4Zw@mail.gmail.com>
+ <1343332512-28762-6-git-send-email-thierry.reding@avionic-design.de>
+ <CAErSpo4qg45brVRwEbw3=R04VsbnvUowSMWcT+M6VoAxbf3Cqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5931096065310466336=="
+Content-Type: multipart/mixed; boundary="===============6715772579540426761=="
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAErSpo5YDwstHv7B7LEbDQmnHnuVsMA2ibTFNLkiCKmkkeE4Zw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAErSpo4qg45brVRwEbw3=R04VsbnvUowSMWcT+M6VoAxbf3Cqg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -24,64 +24,96 @@ Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79u
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5931096065310466336==
+--===============6715772579540426761==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+	protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
 Content-Disposition: inline
 
 
---gKMricLos+KVdGMg
+--1LKvkjL3sHcu1TtY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 13, 2012 at 10:06:38PM -0700, Bjorn Helgaas wrote:
+On Mon, Aug 13, 2012 at 10:00:45PM -0700, Bjorn Helgaas wrote:
 > On Thu, Jul 26, 2012 at 12:55 PM, Thierry Reding
 > <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > When using deferred driver probing, PCI host controller drivers may
-> > actually require this function after the init stage.
->=20
-> Yes, this is a bug.  Actually, there's still another bug here: if we
-> hot-add a device, we won't do pdev_fixup_irq() for it.  But your
-> change is worthwhile even without fixing that other bug.
->=20
-> Normally I would include this in my PCI tree since it's under
-> drivers/pci.  That would make it easier for somebody to fix the
-> hotplug problem in this cycle.  Would having it in my PCI tree make
-> things harder for you?
-
-No, not at all.
-
+> > This commit adds a new flag that allows marking resources as PCI
+> > configuration space.
+> >
 > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> > ---
+> > Changes in v3:
+> > - new patch
+> >
+> >  include/linux/ioport.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> > index 589e0e7..3314843 100644
+> > --- a/include/linux/ioport.h
+> > +++ b/include/linux/ioport.h
+> > @@ -102,7 +102,7 @@ struct resource {
+> >
+> >  /* PCI control bits.  Shares IORESOURCE_BITS with above PCI ROM.  */
+> >  #define IORESOURCE_PCI_FIXED           (1<<4)  /* Do not move resource=
+ */
+> > -
+> > +#define IORESOURCE_PCI_CS              (1<<5)  /* PCI configuration sp=
+ace */
 >=20
-> Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> What is the purpose of this?  It seems that you are marking regions
+> that we call MMCONFIG on x86, or ECAM-type regions in the language of
+> the PCIe spec.  I see that you set it in several places, but I don't
+> see anything that ever looks for it.  Do you have plans to use it in
+> the future?  If it really does correspond to MMCONFIG/ECAM, we should
+> handle those regions consistently across all architectures.
+
+The purpose is ultimately to obtain the MMCONFIG/ECAM resources assigned
+to a PCI host controller. I've used this in the of_pci_parse_ranges()
+and in the static board setup code to mark ranges as such. Perhaps
+IORESOURCE_ECAM or IORESOURCE_MMCONFIG might have been better names. I
+also just noticed that I'm not using this anywhere, but the plan was to
+eventually use it with platform_get_resource(). However that doesn't
+seem to work either because the lower bits of the flags aren't use for
+comparison in that function.
+
+Any other ideas how that could be handled? Basically what I need is a
+way to mark a resource as an MMCONFIG/ECAM range so that it can be used
+to program the PCI host controller accordingly. I don't know how these
+are assigned on x86. I was under the impression that the MMCONFIG/ECAM
+space was accessed through a single single address/data register pair.
+
+On Tegra 20 this region can be anywhere in the upper 1 GiB of the 4 GiB
+address space, while on Tegra 30 it can be anywhere in the lower 1 GiB,
+so they can be freely assigned.
 
 Thierry
 
---gKMricLos+KVdGMg
+--1LKvkjL3sHcu1TtY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQKeQzAAoJEN0jrNd/PrOhdCsQAKrXlGD327UeqNjOhCM4H1PV
-47jmcum0n17F0hQBaAx9smVXX8Sx+ifUYYGs3sv305iQ0p7om19IPLBggzqkVhk4
-CYFKb21kj/OxnibFTchbxfDaK0rUEFI5X2o0cc/QzIe0RFIN2hsh7PRuxPB9wP1d
-WE1EoGpOTwPr5wCxm4WhUWQZUMJ/AOVpEp9hS/ugwcwoKXfEHMTCRCRCpJIpXovD
-TZnMSzpEiB4cwUrpwzcrQ9dn/5r3I3f2+Orol7sVBmEeTZJPlcaBz+atQ/RHInA8
-S4fV37mG9pnv2Hiin34JF3RSO/TS0R1kRZQpHfIxfxnisFQM6yJmwaX5VOwE8JMJ
-6TZLEdMsOsjpnAdVAx0ZO1oCxsiYvPWe3zUg73xWazd47N1J26qZreqlSy2af1ej
-goWf0WsiFMC3MGfmrj/XwzI+A49suk82iqC9MzL2OJUCIwonxzVDiJC9hyCHkVbw
-CPy5ivFV/wMlmiR0jXZXWibhq1R0uoNCKSBtnT4ZRnCnIGmC5zvFlku0Ve/3txuM
-mJ40ERby1RNJes76eryRxy3vw2cCyoKMNLs0JX7xXzvw31yqk3sxOTb1pw1vTEJF
-en9l32MtpaGGUeE/4I+6fZ5ICWtS0HdFcsZG8rVJBFgkuBXpmIIR/XED273LAK6Z
-YuaARHxYHR63nMSmaQhK
-=sqZj
+iQIcBAEBAgAGBQJQKeheAAoJEN0jrNd/PrOhEcAQAIFN7k1DjHENH+mEgHxbll8R
+N53Uw5NbO7LDzvMdIOGThFDi6dLM8HV5qr7wHcCtubi+S2WE3aMa4nFyL3fbUNWc
+9q/tVEpUd8/vronyeGerxKKEDq4UABq6FbfMKFxTKSrhzDs5ySyO50pjfbKO13Vm
+xuW54fv5PcUK2VPyEoKnrqDxkWSMess4rU61HI9oEHMYiDvuvv48yFQJhBAg4mO8
+UAxv2v/1TGdLGA2CoJVn2BI3K/19BrNqtcJjqlFANDW7gKCf1TeTnZ8Qnx23Ezxa
+rxl94f6hek2VMQowiJ3xB4JGy+vDup9ViwZ17OfyelsrioTD7xa+sAlgpAgnC7b4
+YoBlkFARDPFPM2jpys9C0xSSEb3a9ugBqCg8apsDPvggQg75h1IUNtYmhb1lJ0L4
+T8VihxtsSfHPvXrD9lPdERH58belpdEzqdCoc4iNzrmmD+2D02vpuuhl38Q3iQ1S
+EAnkVt0Me3AbJNEyK7TO+iVdB1J5jwfbaMHRAnNK8pioxj8XX4lY8Jlos70CZJNZ
+CQ7BGIq/vIkVG/tHslHpv3CmqO8bpsQevUc4D2GIYScSnnYBWUQcRu+TNwCoRz2G
+ml40FIi5huWoIYE87x6xmBG7Tmwb+QIyjv51L4/FSg1FyxTt5hpQHWp7C90oqYCz
+7id+DhTJiQkzW17D+j2d
+=7JD/
 -----END PGP SIGNATURE-----
 
---gKMricLos+KVdGMg--
+--1LKvkjL3sHcu1TtY--
 
---===============5931096065310466336==
+--===============6715772579540426761==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -92,4 +124,4 @@ devicetree-discuss mailing list
 devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 https://lists.ozlabs.org/listinfo/devicetree-discuss
 
---===============5931096065310466336==--
+--===============6715772579540426761==--
