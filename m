@@ -1,187 +1,108 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 5/6] ARM: tegra20: add CPU hotplug support
-Date: Wed, 15 Aug 2012 17:22:33 +0800
-Message-ID: <1345022554-26292-6-git-send-email-josephl@nvidia.com>
-References: <1345022554-26292-1-git-send-email-josephl@nvidia.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v3 10/10] ARM: tegra: pcie: Add device tree support
+Date: Wed, 15 Aug 2012 05:18:04 -0700
+Message-ID: <CAErSpo7Y9ADYHwZMjQjDwd7m8jtwgcxsE-NE_K5X_Z+PuV=C4w@mail.gmail.com>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+ <1343332512-28762-11-git-send-email-thierry.reding@avionic-design.de>
+ <20120814201215.GA10542@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo6Awbx9-DWM3V02HUg7Xv4tWAhcLO7UKuT_0uXbpZ+nKw@mail.gmail.com> <20120815063718.GA15665@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1345022554-26292-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20120815063718.GA15665@avionic-0098.mockup.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Hotplug function put CPU in offline or online mode at runtime.
-When the CPU been put into offline, it was been clock gated. The
-offline CPU can be power gated, when the remaining CPU goes into
-LP2.
+On Tue, Aug 14, 2012 at 11:37 PM, Thierry Reding
+<thierry.reding@avionic-design.de> wrote:
+> On Tue, Aug 14, 2012 at 04:50:26PM -0700, Bjorn Helgaas wrote:
+>> On Tue, Aug 14, 2012 at 1:12 PM, Thierry Reding
+>> <thierry.reding@avionic-design.de> wrote:
+>> > On Thu, Jul 26, 2012 at 09:55:12PM +0200, Thierry Reding wrote:
+>> >> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+>> >> index a094c97..c886dff 100644
+>> >> --- a/arch/arm/boot/dts/tegra20.dtsi
+>> >> +++ b/arch/arm/boot/dts/tegra20.dtsi
+>> >> @@ -199,6 +199,68 @@
+>> >>               #size-cells = <0>;
+>> >>       };
+>> >>
+>> >> +     pcie-controller {
+>> >> +             compatible = "nvidia,tegra20-pcie";
+>> >> +             reg = <0x80003000 0x00000800   /* PADS registers */
+>> >> +                    0x80003800 0x00000200   /* AFI registers */
+>> >> +                    0x81000000 0x01000000   /* configuration space */
+>> >> +                    0x90000000 0x10000000>; /* extended configuration space */
+>> >> +             interrupts = <0 98 0x04   /* controller interrupt */
+>> >> +                           0 99 0x04>; /* MSI interrupt */
+>> >> +             status = "disabled";
+>> >> +
+>> >> +             ranges = <0 0 0  0x80000000 0x00001000   /* root port 0 */
+>> >> +                       0 1 0  0x81000000 0x00800000   /* port 0 config space */
+>> >> +                       0 2 0  0x90000000 0x08000000   /* port 0 ext config space */
+>> >> +                       0 3 0  0x82000000 0x00010000   /* port 0 downstream I/O */
+>> >> +                       0 4 0  0xa0000000 0x08000000   /* port 0 non-prefetchable memory */
+>> >> +                       0 5 0  0xb0000000 0x08000000   /* port 0 prefetchable memory */
+>> >> +
+>> >> +                       1 0 0  0x80001000 0x00001000   /* root port 1 */
+>> >> +                       1 1 0  0x81800000 0x00800000   /* port 1 config space */
+>> >> +                       1 2 0  0x98000000 0x08000000   /* port 1 ext config space */
+>> >> +                       1 3 0  0x82010000 0x00010000   /* port 1 downstream I/O */
+>> >> +                       1 4 0  0xa8000000 0x08000000   /* port 1 non-prefetchable memory */
+>> >> +                       1 5 0  0xb8000000 0x08000000>; /* port 1 prefetchable memory */
+>> >
+>> > I've been thinking about this some more. The translations for both the
+>> > regular and extended configuration spaces are configured in the top-
+>> > level PCIe controller. It is therefore wrong how they are passed to the
+>> > PCI host bridges via the ranges property.
+>> >
+>> > I remember Mitch saying that it should be passed down to the children
+>> > because it is partitioned among them, but since the layout is compatible
+>> > with ECAM, the partitioning isn't as simple as what's in the tree. In
+>> > fact the partitions will be dependent on the number of devices attached
+>> > to the host bridges.
+>>
+>> I don't understand this last bit about the number of devices attached
+>> to the host bridges.  Logically, the host bridge has a bus number
+>> aperture that you can know up front, even before you know anything
+>> about what devices are below it.  On x86, for example, the ACPI _CRS
+>> method has something like "[bus 00-7f]" in it, which means that any
+>> buses in that range are below this bridge.  That doesn't tell us
+>> anything about which buses actually have devices on them, of course;
+>> it's just analogous to the secondary and subordinate bus number
+>> registers in a P2P bridge.
+>
+> That's one of the issues I still need to take care of. Currently no bus
+> resource is attached to the individual bridges (nor the PCI controller
+> for that matter), so the PCI core will assign them dynamically.
 
-Based on the worked by:
-Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+So your PCI controller driver knows how to program the controller bus
+number aperture?  Sometimes people start by assuming that two host
+bridges both have [bus 00-ff] apertures, then they enumerate below the
+first and adjust the bus number apertures based on what they found.
+For example, if they found buses 00-12 behind the first bridge, they
+make the apertures [bus 00-12] for the first bridge and [bus 13-ff]
+for the second.  That might be the case, depending on what firmware
+set up, but it seems like a dubious way to do it, and of course it
+precludes a lot of hot-plug scenarios.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile    |    1 +
- arch/arm/mach-tegra/common.c    |    1 +
- arch/arm/mach-tegra/hotplug.c   |    8 ++++
- arch/arm/mach-tegra/sleep-t20.S |   82 +++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/sleep.h     |    3 +
- 5 files changed, 95 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/sleep-t20.S
+> If this
+> range is known at boot time we could assign ECAM ranges based on the bus
+> numbers. Standard ECAM ranges, that is. On Tegra this won't work because
+> as Stephen mentioned in a previous mail, the bus field is not the top
+> field in the ECAM addresses. Basically what you have is this:
+>
+>         [27:24] upper 4 bits of the register address for extended
+>                 configuration space
+>         [23:16] bus number
+>         [15:11] device number
+>         [10: 8] device function
+>         [ 8: 0] register
+>
+> So the ECAM space cannot be partitioned by bus number.
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 211e279..959a429 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_CPU_IDLE)			+= sleep.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks_data.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
-+obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= sleep-t20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks_data.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= sleep-t30.o
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 0652056..0560538 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -136,6 +136,7 @@ void __init tegra20_init_early(void)
- 	tegra_init_cache(0x331, 0x441);
- 	tegra_pmc_init();
- 	tegra_powergate_init();
-+	tegra20_hotplug_init();
- }
- #endif
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index be92d4c..d02a354 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -56,6 +56,14 @@ int platform_cpu_disable(unsigned int cpu)
- 	return cpu == 0 ? -EPERM : 0;
- }
- 
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+extern void tegra20_hotplug_shutdown(void);
-+void __init tegra20_hotplug_init(void)
-+{
-+	tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
-+}
-+#endif
-+
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
- extern void tegra30_hotplug_shutdown(void);
- void __init tegra30_hotplug_init(void)
-diff --git a/arch/arm/mach-tegra/sleep-t20.S b/arch/arm/mach-tegra/sleep-t20.S
-new file mode 100644
-index 0000000..a36ae41
---- /dev/null
-+++ b/arch/arm/mach-tegra/sleep-t20.S
-@@ -0,0 +1,82 @@
-+/*
-+ * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
-+ * Copyright (c) 2011, Google, Inc.
-+ *
-+ * Author: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-+ *         Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/linkage.h>
-+
-+#include <asm/assembler.h>
-+
-+#include <mach/iomap.h>
-+
-+#include "sleep.h"
-+#include "flowctrl.h"
-+
-+#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_PM_SLEEP)
-+/*
-+ * tegra20_hotplug_shutdown(void)
-+ *
-+ * puts the current cpu in reset
-+ * should never return
-+ */
-+ENTRY(tegra20_hotplug_shutdown)
-+	/* Turn off SMP coherency */
-+	exit_smp r4, r5
-+
-+	/* Put this CPU down */
-+	cpu_id	r0
-+	bl	tegra20_cpu_shutdown
-+	mov	pc, lr			@ should never get here
-+ENDPROC(tegra20_hotplug_shutdown)
-+
-+/*
-+ * tegra20_cpu_shutdown(int cpu)
-+ *
-+ * r0 is cpu to reset
-+ *
-+ * puts the specified CPU in wait-for-event mode on the flow controller
-+ * and puts the CPU in reset
-+ * can be called on the current cpu or another cpu
-+ * if called on the current cpu, does not return
-+ * MUST NOT BE CALLED FOR CPU 0.
-+ *
-+ * corrupts r0-r3, r12
-+ */
-+ENTRY(tegra20_cpu_shutdown)
-+	cmp	r0, #0
-+	moveq	pc, lr			@ must not be called for CPU 0
-+
-+	cpu_to_halt_reg r1, r0
-+	ldr	r3, =TEGRA_FLOW_CTRL_VIRT
-+	mov	r2, #FLOW_CTRL_WAITEVENT | FLOW_CTRL_JTAG_RESUME
-+	str	r2, [r3, r1]		@ put flow controller in wait event mode
-+	ldr	r2, [r3, r1]
-+	isb
-+	dsb
-+	movw	r1, 0x1011
-+	mov	r1, r1, lsl r0
-+	ldr	r3, =TEGRA_CLK_RESET_VIRT
-+	str	r1, [r3, #0x340]	@ put slave CPU in reset
-+	isb
-+	dsb
-+	cpu_id	r3
-+	cmp	r3, r0
-+	beq	.
-+	mov	pc, lr
-+ENDPROC(tegra20_cpu_shutdown)
-+#endif
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 2ad9b6d..42236e1 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -23,6 +23,8 @@
- 					+ IO_CPU_VIRT)
- #define TEGRA_FLOW_CTRL_VIRT (TEGRA_FLOW_CTRL_BASE - IO_PPSB_PHYS \
- 					+ IO_PPSB_VIRT)
-+#define TEGRA_CLK_RESET_VIRT (TEGRA_CLK_RESET_BASE - IO_PPSB_PHYS \
-+					+ IO_PPSB_VIRT)
- 
- #ifdef __ASSEMBLY__
- /* returns the offset of the flow controller halt register for a cpu */
-@@ -71,6 +73,7 @@
- .endm
- #else
- 
-+void tegra20_hotplug_init(void);
- void tegra30_hotplug_init(void);
- 
- #endif
--- 
-1.7.0.4
+Ah, OK, so definitely not standard PCIe ECAM.
+
+Bjorn
