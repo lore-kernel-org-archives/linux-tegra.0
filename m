@@ -1,53 +1,108 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/6] ARM: tegra: add CPU hotplug support
-Date: Wed, 15 Aug 2012 17:22:28 +0800
-Message-ID: <1345022554-26292-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 2/6] ARM: tegra: replace the CPU CAR access code by tegra_cpu_car_ops
+Date: Wed, 15 Aug 2012 17:22:30 +0800
+Message-ID: <1345022554-26292-3-git-send-email-josephl@nvidia.com>
+References: <1345022554-26292-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1345022554-26292-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set adds CPU hotplug support for Tegra20 and Tegra30 SoCs.
+Replacing the code that directly access to CAR registers with
+tegra_cpu_car_ops. This ops hides CPU CAR access inside and
+provides control interface for it.
 
-The first 3 patches make the CPU clock and reset control be a module and
-the abstraction APIs for TegraXX SoCs. And clean up some codes for later
-usage. Then add CPU hotplug support for Tegra20 and Tegra30.
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/platsmp.c |   29 +++++------------------------
+ 1 files changed, 5 insertions(+), 24 deletions(-)
 
-Verified on Seaboard(Tegra20) and Cardhu(Tegra30)
-
-V2:
-* add one more patch for enable HOTPLUG_CPU [6/6]
-* move all the SoC specific CPU shutdown code into platform_cpu_die [4/6]
-
-Joseph Lo (6):
-  ARM: tegra: introduce tegra_cpu_car_ops structures
-  ARM: tegra: replace the CPU CAR access code by tegra_cpu_car_ops
-  ARM: tegra: clean up the common assembly macros into sleep.h
-  ARM: tegra30: add CPU hotplug support
-  ARM: tegra20: add CPU hotplug support
-  ARM: tegra: defconfig: enable HOTPLUG_CPU
-
- arch/arm/configs/tegra_defconfig          |    1 +
- arch/arm/mach-tegra/Makefile              |    2 +
- arch/arm/mach-tegra/clock.c               |    4 +
- arch/arm/mach-tegra/common.c              |    3 +
- arch/arm/mach-tegra/headsmp.S             |    6 +-
- arch/arm/mach-tegra/hotplug.c             |  118 ++++++++---------------------
- arch/arm/mach-tegra/platsmp.c             |   29 +------
- arch/arm/mach-tegra/sleep-t20.S           |   82 ++++++++++++++++++++
- arch/arm/mach-tegra/sleep-t30.S           |  107 ++++++++++++++++++++++++++
- arch/arm/mach-tegra/sleep.S               |   33 +--------
- arch/arm/mach-tegra/sleep.h               |   80 +++++++++++++++++++
- arch/arm/mach-tegra/tegra20_clocks.c      |   70 +++++++++++++++++
- arch/arm/mach-tegra/tegra20_clocks_data.c |    2 +
- arch/arm/mach-tegra/tegra30_clocks.c      |   72 +++++++++++++++++
- arch/arm/mach-tegra/tegra30_clocks_data.c |    3 +
- arch/arm/mach-tegra/tegra_cpu_car.h       |   87 +++++++++++++++++++++
- 16 files changed, 552 insertions(+), 147 deletions(-)
- create mode 100644 arch/arm/mach-tegra/sleep-t20.S
- create mode 100644 arch/arm/mach-tegra/sleep-t30.S
- create mode 100644 arch/arm/mach-tegra/sleep.h
- create mode 100644 arch/arm/mach-tegra/tegra_cpu_car.h
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index 1a208db..96ed171 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -31,6 +31,7 @@
+ #include "fuse.h"
+ #include "flowctrl.h"
+ #include "reset.h"
++#include "tegra_cpu_car.h"
+ 
+ extern void tegra_secondary_startup(void);
+ 
+@@ -38,17 +39,6 @@ static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+ 
+ #define EVP_CPU_RESET_VECTOR \
+ 	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+-#define CLK_RST_CONTROLLER_CLK_CPU_CMPLX \
+-	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x4c)
+-#define CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET \
+-	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x340)
+-#define CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR \
+-	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x344)
+-#define CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR \
+-	(IO_ADDRESS(TEGRA_CLK_RESET_BASE) + 0x34c)
+-
+-#define CPU_CLOCK(cpu)	(0x1<<(8+cpu))
+-#define CPU_RESET(cpu)	(0x1111ul<<(cpu))
+ 
+ void __cpuinit platform_secondary_init(unsigned int cpu)
+ {
+@@ -63,13 +53,8 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 
+ static int tegra20_power_up_cpu(unsigned int cpu)
+ {
+-	u32 reg;
+-
+ 	/* Enable the CPU clock. */
+-	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
+-	writel(reg & ~CPU_CLOCK(cpu), CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
+-	barrier();
+-	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++	tegra_enable_cpu_clock(cpu);
+ 
+ 	/* Clear flow controller CSR. */
+ 	flowctrl_write_cpu_csr(cpu, 0);
+@@ -79,7 +64,6 @@ static int tegra20_power_up_cpu(unsigned int cpu)
+ 
+ static int tegra30_power_up_cpu(unsigned int cpu)
+ {
+-	u32 reg;
+ 	int ret, pwrgateid;
+ 	unsigned long timeout;
+ 
+@@ -103,8 +87,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
+ 	}
+ 
+ 	/* CPU partition is powered. Enable the CPU clock. */
+-	writel(CPU_CLOCK(cpu), CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
+-	reg = readl(CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
++	tegra_enable_cpu_clock(cpu);
+ 	udelay(10);
+ 
+ 	/* Remove I/O clamps. */
+@@ -128,8 +111,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * via the flow controller). This will have no effect on first boot
+ 	 * of the CPU since it should already be in reset.
+ 	 */
+-	writel(CPU_RESET(cpu), CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
+-	dmb();
++	tegra_put_cpu_in_reset(cpu);
+ 
+ 	/*
+ 	 * Unhalt the CPU. If the flow controller was used to power-gate the
+@@ -155,8 +137,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		goto done;
+ 
+ 	/* Take the CPU out of reset. */
+-	writel(CPU_RESET(cpu), CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR);
+-	wmb();
++	tegra_cpu_out_of_reset(cpu);
+ done:
+ 	return status;
+ }
+-- 
+1.7.0.4
