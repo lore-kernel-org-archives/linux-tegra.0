@@ -1,144 +1,55 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Tue, 14 Aug 2012 17:08:33 -0700
-Message-ID: <CAErSpo40sydj+ufaqXu_iGFncJWuQGAkc-+ucesXJasb7js5-g@mail.gmail.com>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
- <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
- <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
- <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com> <502AD82F.3080702@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] debugfs: Allow debugfs_create_dir() to take data
+Date: Wed, 15 Aug 2012 08:40:08 +0300
+Message-ID: <20120815084008.3d8f4ac20af5dc3372cd7681@nvidia.com>
+References: <1344407073-12030-1-git-send-email-hdoyu@nvidia.com>
+	<1344407073-12030-2-git-send-email-hdoyu@nvidia.com>
+	<20120808133427.GA14417@kroah.com>
+	<20120809155624.b781edae9efa7c51faf6c31c@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <502AD82F.3080702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20120809155624.b781edae9efa7c51faf6c31c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 14, 2012 at 3:58 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 08/14/2012 03:55 PM, Bjorn Helgaas wrote:
->> On Tue, Aug 14, 2012 at 12:58 PM, Thierry Reding
->> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
->>> On Tue, Aug 14, 2012 at 01:39:23PM -0600, Stephen Warren wrote:
->>>> On 08/13/2012 05:18 PM, Bjorn Helgaas wrote:
->>>>> On Mon, Aug 13, 2012 at 11:47 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>> ...
->>>>>> whereas for a device tree boot:
->>>>>>
->>>>>> (same):
->>>>>>> [    2.112217] pci 0000:01:00.0: reg 10: [io  0x0000-0x00ff]
->>>>>>> [    2.117635] pci 0000:01:00.0: reg 18: [mem 0x00000000-0x00000fff 64bit pref]
->>>>>>> [    2.124690] pci 0000:01:00.0: reg 20: [mem 0x00000000-0x00003fff 64bit pref]
->>>>>>> [    2.131731] pci 0000:01:00.0: reg 30: [mem 0x00000000-0x0001ffff pref]
->>>>>> ... (request region happens early)
->>>>>>> [    2.179838] r8169 0000:01:00.0: BAR 0: requesting [io  0x0000-0x00ff]
->>>>>>> [    2.193312] r8169 0000:01:00.0: BAR 2: requesting [mem 0x00000000-0x00000fff 64bit pref]
->>>>>>> [    2.201397] r8169 0000:01:00.0: BAR 2: can't reserve [mem 0x00000000-0x00000fff 64bit pref]
->>>>>>> [    2.209742] r8169 0000:01:00.0: (unregistered net_device): could not request regions
->>>>>> ... (same, just happens too late)
->>>>>>> [    2.236818] pci 0000:01:00.0: BAR 6: assigned [mem 0xa0000000-0xa001ffff pref]
->>>>>>> [    2.244027] pci 0000:01:00.0: BAR 4: assigned [mem 0xa0020000-0xa0023fff 64bit pref]
->>>>>>> [    2.251794] pci 0000:01:00.0: BAR 2: assigned [mem 0xa0024000-0xa0024fff 64bit pref]
->>>>>>> [    2.259542] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
->>>>>>
->>>>>> I suspect this is all still related to the PCI devices themselves being
->>>>>> probed much earlier in the overall PCI initialization sequence when the
->>>>>> PCI controller is probed later in the boot sequence, whereas PCI device
->>>>>> probe is deferred until the overall PCI initialization sequence is
->>>>>> complete if the PCI controller is probed very early in the boot sequence.
->>>>>
->>>>> I don't know what to apply your patches to (they don't apply cleanly
->>>>> to v3.6-rc2), so I can't see exactly what you're doing.  But it looks
->>>>> like you might be calling pci_bus_add_devices() before
->>>>> pci_bus_assign_resource(), which isn't going to work.
->>>>
->>>> Yes, that's exactly what is happening.
->>>>
->>>> PCIe initialization starts in arch/arm/mach-tegra/pci.e
->>>> tegra_pcie_init() which calls arch/arm/kernel/bios32.c
->>>> pci_common_init(). That function first calls pcibios_init_hw() (in the
->>>> same file, more about this later) and then loops over PCI buses, calling
->>>> amongst other things pci_bus_assign_resources() then pci_bus_add_devices().
->>>>
->>>> The problem is that ARM's pcibios_init_hw() calls pci_scan_root_bus()
->>>> (or a host-driver-specific function which that also calls
->>>> pci_scan_root_bus() in Tegra's case) which in turn calls
->>>> pci_bus_add_devices() right at the end, before control has returned to
->>>> pci_common_init() and hence before pci_bus_assign_resources() has been
->>>> called.
->>>>
->>>> If I modify pci_scan_root_bus() and remove the call to
->>>> pci_bus_add_devices(), everything works as expected.
->>>>
->>>> So, I guess the question is: Should ARM's pcibios_init_hw() not be
->>>> calling pci_scan_root_bus(), or at least presumably the ARM PCI code
->>>> needs to do things in a slightly different order?
->>
->> I think you need to do something like this instead of using pci_scan_root_bus():
->>
->>     pci_create_root_bus()
->>     pci_scan_child_bus()
->>     pci_bus_assign_resources()
->>     pci_bus_add_devices()
->>
->> This is the effective order used by most of the pci_create_root_bus() callers.
->
-> That would pretty much duplicate everything in pci_scan_root_bus(). That
-> might cause divergence down the road.
+On Thu, 9 Aug 2012 14:56:24 +0200
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-That's true, but it is what most other architectures do, and if you do
-it the same way, we'll be able to converge things more easily later.
+> Hi Greg, Felipe,
+> 
+> On Wed, 8 Aug 2012 15:34:27 +0200
+> Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+> 
+> > On Wed, Aug 08, 2012 at 09:24:32AM +0300, Hiroshi Doyu wrote:
+> > > Add __debugfs_create_dir(), which takes data passed from caller.
+> > 
+> > Why?
+> > 
+> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  fs/debugfs/inode.c      |    7 ++++---
+> > >  include/linux/debugfs.h |    9 ++++++++-
+> > >  2 files changed, 12 insertions(+), 4 deletions(-)
+> .....
+> > What are you trying to do here?  This patch doesn't look right at all.
+> 
+> I missed to send the cover letter of this patch series to LKML, which
+> explained the background. I attached that cover letter below. Please
+> read the following explanation too.
 
-> Can't we make the call to pci_bus_add_devices() optional in
-> pci_scan_root_bus() somehow; one of:
->
-> * Add a parameter to pci_scan_root_bus() controlling this.
->
-> (rather a large patch)
->
-> * Split pci_scan_root_bus() into pci_scan_root_bus() and
-> pci_scan_root_bus_no_add(), such that pci_scan_root_bus() is just a
-> wrapper that calls pci_scan_root_bus_no_add() then pci_bus_add_devices().
->
-> (very simple patch, and the new function can easily be used as/when it's
-> needed, e.g. enabled just for Tegra in 3.6 to reduce risk of regressions)
->
-> * Add a flag to struct pci_bus that requests pci_scan_root_bus() skip
-> the call to pci_bus_add_devices().
->
-> (a flag in the bus struct just for one function seems a little
-> circuitous, but perhaps OK)
->
-> * ifdef out the call to pci_bus_add_devices(), if building for ARM.
->
-> (very simple, and probably correct)
+Any chance to get some feedback on this?
 
-I'd rather not add more variants of pci_scan_root_bus().  We already
-have several very similar things in drivers/pci/probe.c:
-
-  pci_scan_bus()
-  pci_scan_bus_parented()
-  pci_scan_root_bus()
-
-And in addition, we have many callers of pci_create_root_bus() that
-look very much like one of these.  I'm trying to consolidate all this,
-but there's a fair amount of work, and I think the simplest thing is
-to just use pci_create_root_bus() for now.
-
-> Actually, I'm not totally convinced some other archs shouldn't skip this
-> too; while I couldn't find any other arch that explicitly calls
-> pci_bus_assign_resources() and pci_bus_add_devices() after
-> pci_scan_root_bus(), I did see some that call
-> pci_assign_unassigned_resources() which seems like it might be due to a
-> similar situation?
-
-Yes, that does sound like a similar problem.  In the past, resource
-assignment has been pretty much separate from enumeration, with the
-arch having the responsibility to enumerate, assign, then add devices.
- But that is error-prone and needlessly arch-specific, and I'd like to
-pull it into generic code.  It's just not done yet :)
-
-> * Add another pcibios_*() callback that pci_scan_root_bus() calls to
-> determine whether to call pci_bus_add_devices(), with default
-> implementation.
+I'm also sending another version of patch, which just uses
+debgufs_create_dir() as Felipe suggested, in-reply-to this mail.
