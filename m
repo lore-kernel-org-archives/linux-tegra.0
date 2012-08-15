@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 3/6] ARM: tegra: clean up the common assembly macros into sleep.h
-Date: Wed, 15 Aug 2012 17:22:31 +0800
-Message-ID: <1345022554-26292-4-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 1/6] ARM: tegra: introduce tegra_cpu_car_ops structures
+Date: Wed, 15 Aug 2012 17:22:29 +0800
+Message-ID: <1345022554-26292-2-git-send-email-josephl@nvidia.com>
 References: <1345022554-26292-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,91 +12,268 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johan
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-There are some common macros for Tegra low-level assembly code. Clean
-up them into one header file and move the definitions that will be
-re-used into it as well.
+The tegra_cpu_car_ops provide the interface for CPU to control
+it's clock gating and reset status. The other drivers should use
+this for CPU control. And should not directly access CAR registers
+to control CPU.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/headsmp.S |    6 +---
- arch/arm/mach-tegra/sleep.S   |   33 +-----------------------
- arch/arm/mach-tegra/sleep.h   |   56 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 58 insertions(+), 37 deletions(-)
- create mode 100644 arch/arm/mach-tegra/sleep.h
+ arch/arm/mach-tegra/clock.c               |    4 +
+ arch/arm/mach-tegra/tegra20_clocks.c      |   70 +++++++++++++++++++++++
+ arch/arm/mach-tegra/tegra20_clocks_data.c |    2 +
+ arch/arm/mach-tegra/tegra30_clocks.c      |   72 ++++++++++++++++++++++++
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    3 +
+ arch/arm/mach-tegra/tegra_cpu_car.h       |   87 +++++++++++++++++++++++++++++
+ 6 files changed, 238 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/tegra_cpu_car.h
 
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-index fef9c2c..6addc78 100644
---- a/arch/arm/mach-tegra/headsmp.S
-+++ b/arch/arm/mach-tegra/headsmp.S
-@@ -7,17 +7,13 @@
+diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
+index 632133f..fd82085 100644
+--- a/arch/arm/mach-tegra/clock.c
++++ b/arch/arm/mach-tegra/clock.c
+@@ -31,6 +31,10 @@
  
- #include "flowctrl.h"
- #include "reset.h"
-+#include "sleep.h"
+ #include "board.h"
+ #include "clock.h"
++#include "tegra_cpu_car.h"
++
++/* Global data of Tegra CPU CAR ops */
++struct tegra_cpu_car_ops *tegra_cpu_car_ops;
  
- #define APB_MISC_GP_HIDREV	0x804
- #define PMC_SCRATCH41	0x140
+ /*
+  * Locking:
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+index a1e0f8a..b073396 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -33,6 +33,7 @@
+ #include "clock.h"
+ #include "fuse.h"
+ #include "tegra2_emc.h"
++#include "tegra_cpu_car.h"
  
- #define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
+ #define RST_DEVICES			0x004
+ #define RST_DEVICES_SET			0x300
+@@ -152,6 +153,14 @@
+ #define PMC_BLINK_TIMER_DATA_OFF_SHIFT	16
+ #define PMC_BLINK_TIMER_DATA_OFF_MASK	0xffff
  
--	.macro mov32, reg, val
--	movw	\reg, #:lower16:\val
--	movt	\reg, #:upper16:\val
--	.endm
--
-         .section ".text.head", "ax"
- 	__CPUINIT
++/* Tegra CPU clock and reset control regs */
++#define TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX		0x4c
++#define TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET	0x340
++#define TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR	0x344
++
++#define CPU_CLOCK(cpu)	(0x1 << (8 + cpu))
++#define CPU_RESET(cpu)	(0x1111ul << (cpu))
++
+ static void __iomem *reg_clk_base = IO_ADDRESS(TEGRA_CLK_RESET_BASE);
+ static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
  
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index d29b156..ea81554 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -29,36 +29,5 @@
- #include <mach/iomap.h>
+@@ -1524,3 +1533,64 @@ struct clk_ops tegra_cdev_clk_ops = {
+ 	.disable = tegra20_cdev_clk_disable,
+ 	.recalc_rate = tegra20_cdev_recalc_rate,
+ };
++
++/* Tegra20 CPU clock and reset control functions */
++static void tegra20_wait_cpu_in_reset(u32 cpu)
++{
++	unsigned int reg;
++
++	do {
++		reg = readl(reg_clk_base +
++			    TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
++		cpu_relax();
++	} while (!(reg & (1 << cpu)));	/* check CPU been reset or not */
++
++	return;
++}
++
++static void tegra20_put_cpu_in_reset(u32 cpu)
++{
++	writel(CPU_RESET(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
++	dmb();
++}
++
++static void tegra20_cpu_out_of_reset(u32 cpu)
++{
++	writel(CPU_RESET(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR);
++	wmb();
++}
++
++static void tegra20_enable_cpu_clock(u32 cpu)
++{
++	unsigned int reg;
++
++	reg = readl(reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++	writel(reg & ~CPU_CLOCK(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++	barrier();
++	reg = readl(reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++}
++
++static void tegra20_disable_cpu_clock(u32 cpu)
++{
++	unsigned int reg;
++
++	reg = readl(reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++	writel(reg | CPU_CLOCK(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++}
++
++static struct tegra_cpu_car_ops tegra20_cpu_car_ops = {
++	.wait_for_reset	= tegra20_wait_cpu_in_reset,
++	.put_in_reset	= tegra20_put_cpu_in_reset,
++	.out_of_reset	= tegra20_cpu_out_of_reset,
++	.enable_clock	= tegra20_enable_cpu_clock,
++	.disable_clock	= tegra20_disable_cpu_clock,
++};
++
++void __init tegra20_cpu_car_ops_init(void)
++{
++	tegra_cpu_car_ops = &tegra20_cpu_car_ops;
++}
+diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
+index b5c518e..56552f9 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+@@ -34,6 +34,7 @@
+ #include "fuse.h"
+ #include "tegra2_emc.h"
+ #include "tegra20_clocks.h"
++#include "tegra_cpu_car.h"
  
- #include "flowctrl.h"
-+#include "sleep.h"
+ /* Clock definitions */
  
--#define TEGRA_FLOW_CTRL_VIRT (TEGRA_FLOW_CTRL_BASE - IO_PPSB_PHYS \
--					+ IO_PPSB_VIRT)
--
--/* returns the offset of the flow controller halt register for a cpu */
--.macro cpu_to_halt_reg rd, rcpu
--	cmp	\rcpu, #0
--	subne	\rd, \rcpu, #1
--	movne	\rd, \rd, lsl #3
--	addne	\rd, \rd, #0x14
--	moveq	\rd, #0
--.endm
--
--/* returns the offset of the flow controller csr register for a cpu */
--.macro cpu_to_csr_reg rd, rcpu
--	cmp	\rcpu, #0
--	subne	\rd, \rcpu, #1
--	movne	\rd, \rd, lsl #3
--	addne	\rd, \rd, #0x18
--	moveq	\rd, #8
--.endm
--
--/* returns the ID of the current processor */
--.macro cpu_id, rd
--	mrc	p15, 0, \rd, c0, c0, 5
--	and	\rd, \rd, #0xF
--.endm
--
--/* loads a 32-bit value into a register without a data access */
--.macro mov32, reg, val
--	movw	\reg, #:lower16:\val
--	movt	\reg, #:upper16:\val
--.endm
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+@@ -1110,4 +1111,5 @@ void __init tegra2_init_clocks(void)
+ 	}
+ 
+ 	init_audio_sync_clock_mux();
++	tegra20_cpu_car_ops_init();
+ }
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
+index a9fa8ea..b2d0864 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.c
++++ b/arch/arm/mach-tegra/tegra30_clocks.c
+@@ -35,6 +35,7 @@
+ 
+ #include "clock.h"
+ #include "fuse.h"
++#include "tegra_cpu_car.h"
+ 
+ #define USE_PLL_LOCK_BITS 0
+ 
+@@ -299,6 +300,16 @@
+ /* FIXME: recommended safety delay after lock is detected */
+ #define PLL_POST_LOCK_DELAY		100
+ 
++/* Tegra CPU clock and reset control regs */
++#define TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX		0x4c
++#define TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET	0x340
++#define TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR	0x344
++#define TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR	0x34c
++#define TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
++
++#define CPU_CLOCK(cpu)	(0x1 << (8 + cpu))
++#define CPU_RESET(cpu)	(0x1111ul << (cpu))
++
+ /**
+ * Structure defining the fields for USB UTMI clocks Parameters.
+ */
+@@ -2221,3 +2232,64 @@ struct clk_ops tegra_cml_clk_ops = {
+ struct clk_ops tegra_pciex_clk_ops = {
+ 	.recalc_rate = tegra30_clk_fixed_recalc_rate,
+ };
++
++/* Tegra30 CPU clock and reset control functions */
++static void tegra30_wait_cpu_in_reset(u32 cpu)
++{
++	unsigned int reg;
++
++	do {
++		reg = readl(reg_clk_base +
++			    TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
++		cpu_relax();
++	} while (!(reg & (1 << cpu)));	/* check CPU been reset or not */
++
++	return;
++}
++
++static void tegra30_put_cpu_in_reset(u32 cpu)
++{
++	writel(CPU_RESET(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
++	dmb();
++}
++
++static void tegra30_cpu_out_of_reset(u32 cpu)
++{
++	writel(CPU_RESET(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_CLR);
++	wmb();
++}
++
++static void tegra30_enable_cpu_clock(u32 cpu)
++{
++	unsigned int reg;
++
++	writel(CPU_CLOCK(cpu),
++	       reg_clk_base + TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
++	reg = readl(reg_clk_base +
++		    TEGRA30_CLK_RST_CONTROLLER_CLK_CPU_CMPLX_CLR);
++}
++
++static void tegra30_disable_cpu_clock(u32 cpu)
++{
++
++	unsigned int reg;
++
++	reg = readl(reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++	writel(reg | CPU_CLOCK(cpu),
++	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
++}
++
++static struct tegra_cpu_car_ops tegra30_cpu_car_ops = {
++	.wait_for_reset	= tegra30_wait_cpu_in_reset,
++	.put_in_reset	= tegra30_put_cpu_in_reset,
++	.out_of_reset	= tegra30_cpu_out_of_reset,
++	.enable_clock	= tegra30_enable_cpu_clock,
++	.disable_clock	= tegra30_disable_cpu_clock,
++};
++
++void __init tegra30_cpu_car_ops_init(void)
++{
++	tegra_cpu_car_ops = &tegra30_cpu_car_ops;
++}
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index c924240..8252f88 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -32,6 +32,7 @@
+ #include "clock.h"
+ #include "fuse.h"
+ #include "tegra30_clocks.h"
++#include "tegra_cpu_car.h"
+ 
+ #define DEFINE_CLK_TEGRA(_name, _rate, _ops, _flags,		\
+ 		   _parent_names, _parents, _parent)		\
+@@ -1367,4 +1368,6 @@ void __init tegra30_init_clocks(void)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tegra_clk_out_list); i++)
+ 		tegra30_init_one_clock(tegra_clk_out_list[i]);
++
++	tegra30_cpu_car_ops_init();
+ }
+diff --git a/arch/arm/mach-tegra/tegra_cpu_car.h b/arch/arm/mach-tegra/tegra_cpu_car.h
 new file mode 100644
-index 0000000..d0c7a8b
+index 0000000..30d063a
 --- /dev/null
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -0,0 +1,56 @@
++++ b/arch/arm/mach-tegra/tegra_cpu_car.h
+@@ -0,0 +1,87 @@
 +/*
-+ * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or modify it
 + * under the terms and conditions of the GNU General Public License,
@@ -111,45 +288,76 @@ index 0000000..d0c7a8b
 + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#ifndef __MACH_TEGRA_SLEEP_H
-+#define __MACH_TEGRA_SLEEP_H
++#ifndef __MACH_TEGRA_CPU_CAR_H
++#define __MACH_TEGRA_CPU_CAR_H
 +
-+#include <mach/iomap.h>
++/*
++ * Tegra CPU clock and reset control ops
++ *
++ * wait_for_reset:
++ *	keep waiting until the CPU in reset state
++ * put_in_reset:
++ *	put the CPU in reset state
++ * out_of_reset:
++ *	release the CPU from reset state
++ * enable_clock:
++ *	CPU clock un-gate
++ * disable_clock:
++ *	CPU clock gate
++ */
++struct tegra_cpu_car_ops {
++	void (*wait_for_reset)(u32 cpu);
++	void (*put_in_reset)(u32 cpu);
++	void (*out_of_reset)(u32 cpu);
++	void (*enable_clock)(u32 cpu);
++	void (*disable_clock)(u32 cpu);
++};
 +
-+#define TEGRA_FLOW_CTRL_VIRT (TEGRA_FLOW_CTRL_BASE - IO_PPSB_PHYS \
-+					+ IO_PPSB_VIRT)
++extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
 +
-+#ifdef __ASSEMBLY__
-+/* returns the offset of the flow controller halt register for a cpu */
-+.macro cpu_to_halt_reg rd, rcpu
-+	cmp	\rcpu, #0
-+	subne	\rd, \rcpu, #1
-+	movne	\rd, \rd, lsl #3
-+	addne	\rd, \rd, #0x14
-+	moveq	\rd, #0
-+.endm
++static inline void tegra_wait_cpu_in_reset(u32 cpu)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->wait_for_reset))
++		return;
 +
-+/* returns the offset of the flow controller csr register for a cpu */
-+.macro cpu_to_csr_reg rd, rcpu
-+	cmp	\rcpu, #0
-+	subne	\rd, \rcpu, #1
-+	movne	\rd, \rd, lsl #3
-+	addne	\rd, \rd, #0x18
-+	moveq	\rd, #8
-+.endm
++	tegra_cpu_car_ops->wait_for_reset(cpu);
++}
 +
-+/* returns the ID of the current processor */
-+.macro cpu_id, rd
-+	mrc	p15, 0, \rd, c0, c0, 5
-+	and	\rd, \rd, #0xF
-+.endm
++static inline void tegra_put_cpu_in_reset(u32 cpu)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->put_in_reset))
++		return;
 +
-+/* loads a 32-bit value into a register without a data access */
-+.macro mov32, reg, val
-+	movw	\reg, #:lower16:\val
-+	movt	\reg, #:upper16:\val
-+.endm
-+#endif
-+#endif
++	tegra_cpu_car_ops->put_in_reset(cpu);
++}
++
++static inline void tegra_cpu_out_of_reset(u32 cpu)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->out_of_reset))
++		return;
++
++	tegra_cpu_car_ops->out_of_reset(cpu);
++}
++
++static inline void tegra_enable_cpu_clock(u32 cpu)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->enable_clock))
++		return;
++
++	tegra_cpu_car_ops->enable_clock(cpu);
++}
++
++static inline void tegra_disable_cpu_clock(u32 cpu)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->disable_clock))
++		return;
++
++	tegra_cpu_car_ops->disable_clock(cpu);
++}
++
++void tegra20_cpu_car_ops_init(void);
++void tegra30_cpu_car_ops_init(void);
++
++#endif /* __MACH_TEGRA_CPU_CAR_H */
 -- 
 1.7.0.4
