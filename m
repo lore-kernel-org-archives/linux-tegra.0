@@ -1,66 +1,121 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] PCI: Keep pci_fixup_irqs() around after init
-Date: Wed, 15 Aug 2012 10:06:27 -0700
-Message-ID: <CAErSpo7v+i8i=mXCs7ZW8DtGTDN_4AEntwYLqGG8FcCzweySFg@mail.gmail.com>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-2-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: defconfig updates
+Date: Wed, 15 Aug 2012 11:39:35 -0600
+Message-ID: <1345052375-13374-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1343332512-28762-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 26, 2012 at 12:55 PM, Thierry Reding
-<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> When using deferred driver probing, PCI host controller drivers may
-> actually require this function after the init stage.
->
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> ---
-> Changes in v3:
-> - none
->
-> Changes in v2:
-> - use __devinit annotations
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Your original patch removed __init completely.  Here you change it to
-__devinit.  That means we decide whether to discard the function based
-on whether CONFIG_HOTPLUG is supported.  But I think your point is not
-about hotplug; it's merely that we should be able to scan a PCI bus
-after init-time.  We ought to be able to do a late PCI scan even if
-hotplug is not supported.
+Removed:
 
-Therefore, I'd be inclined to remove __init completely unless you have
-another reason for preferring __devinit.
+* MACH_HARMONY
+* MACH_PAZ00
+* MACH_TRIMSLICE
 
->  drivers/pci/setup-irq.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
-> index eb219a1..f0bcd56 100644
-> --- a/drivers/pci/setup-irq.c
-> +++ b/drivers/pci/setup-irq.c
-> @@ -18,7 +18,7 @@
->  #include <linux/cache.h>
->
->
-> -static void __init
-> +static void __devinit
->  pdev_fixup_irq(struct pci_dev *dev,
->                u8 (*swizzle)(struct pci_dev *, u8 *),
->                int (*map_irq)(const struct pci_dev *, u8, u8))
-> @@ -54,7 +54,7 @@ pdev_fixup_irq(struct pci_dev *dev,
->         pcibios_update_irq(dev, irq);
->  }
->
-> -void __init
-> +void __devinit
->  pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
->                int (*map_irq)(const struct pci_dev *, u8, u8))
->  {
-> --
-> 1.7.11.2
->
+  These used to enable board support for individual boards. Now that we
+  only support device tree, these options have been removed.
+
+Added:
+
+* TEGRA_PCI
+
+  This used to be selected by the board options above. Select this
+  explicitly now that the board options have been removed.
+
+* TEGRA_DEBUG_UART_AUTO_ODMDATA
+
+  This makes the kernel automatically pick a UART for earlyprintk. It's
+  likely to be a useful option for everyone.
+
+* PWM
+* PWM_TEGRA
+
+  Enable the new PWM subsystem, and the Tegra driver within it.
+
+* GPIO_PCA953X
+* GPIO_PCA953X_IRQ
+* MFD_MAX8907
+* REGULATOR_MAX8907
+* RTC_DRV_MAX8907
+
+  Various drivers required for the Whistler board.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig |   15 ++++++++++-----
+ 1 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index db22453..4f078e0 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -24,11 +24,11 @@ CONFIG_EFI_PARTITION=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ # CONFIG_IOSCHED_CFQ is not set
+ CONFIG_ARCH_TEGRA=y
++CONFIG_GPIO_PCA953X=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+-CONFIG_MACH_HARMONY=y
+-CONFIG_MACH_PAZ00=y
+-CONFIG_MACH_TRIMSLICE=y
++CONFIG_TEGRA_PCI=y
++CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA=y
+ CONFIG_TEGRA_EMC_SCALING_ENABLE=y
+ CONFIG_SMP=y
+ CONFIG_PREEMPT=y
+@@ -105,17 +105,20 @@ CONFIG_I2C_MUX_PINCTRL=y
+ CONFIG_I2C_TEGRA=y
+ CONFIG_SPI=y
+ CONFIG_SPI_TEGRA=y
+-CONFIG_GPIO_TPS65910=y
++CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_TPS6586X=y
++CONFIG_GPIO_TPS65910=y
+ CONFIG_POWER_SUPPLY=y
+ CONFIG_BATTERY_SBS=y
+ CONFIG_SENSORS_LM90=y
+ CONFIG_MFD_TPS6586X=y
+ CONFIG_MFD_TPS65910=y
++CONFIG_MFD_MAX8907=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
+ CONFIG_REGULATOR_GPIO=y
++CONFIG_REGULATOR_MAX8907=y
+ CONFIG_REGULATOR_TPS62360=y
+ CONFIG_REGULATOR_TPS6586X=y
+ CONFIG_REGULATOR_TPS65910=y
+@@ -123,7 +126,6 @@ CONFIG_SOUND=y
+ CONFIG_SND=y
+ # CONFIG_SND_SUPPORT_OLD_API is not set
+ # CONFIG_SND_DRIVERS is not set
+-# CONFIG_SND_PCI is not set
+ # CONFIG_SND_ARM is not set
+ # CONFIG_SND_SPI is not set
+ # CONFIG_SND_USB is not set
+@@ -143,6 +145,7 @@ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_SDHCI_TEGRA=y
+ CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MAX8907=y
+ CONFIG_RTC_DRV_EM3027=y
+ CONFIG_RTC_DRV_TEGRA=y
+ CONFIG_STAGING=y
+@@ -156,6 +159,8 @@ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_MEMORY=y
+ CONFIG_IIO=y
++CONFIG_PWM=y
++CONFIG_PWM_TEGRA=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT2_FS_XATTR=y
+ CONFIG_EXT2_FS_POSIX_ACL=y
+-- 
+1.7.0.4
