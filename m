@@ -1,19 +1,22 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Tue, 14 Aug 2012 17:51:33 -0600
-Message-ID: <502AE485.8060307@wwwdotorg.org>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de> <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com> <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de> <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com> <502AD82F.3080702@wwwdotorg.org>
+Date: Tue, 14 Aug 2012 17:08:33 -0700
+Message-ID: <CAErSpo40sydj+ufaqXu_iGFncJWuQGAkc-+ucesXJasb7js5-g@mail.gmail.com>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+ <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
+ <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
+ <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com> <502AD82F.3080702@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <502AD82F.3080702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/14/2012 04:58 PM, Stephen Warren wrote:
+On Tue, Aug 14, 2012 at 3:58 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 > On 08/14/2012 03:55 PM, Bjorn Helgaas wrote:
 >> On Tue, Aug 14, 2012 at 12:58 PM, Thierry Reding
 >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
@@ -80,16 +83,62 @@ On 08/14/2012 04:58 PM, Stephen Warren wrote:
 >>     pci_bus_add_devices()
 >>
 >> This is the effective order used by most of the pci_create_root_bus() callers.
-> 
+>
 > That would pretty much duplicate everything in pci_scan_root_bus(). That
 > might cause divergence down the road.
-> 
+
+That's true, but it is what most other architectures do, and if you do
+it the same way, we'll be able to converge things more easily later.
+
 > Can't we make the call to pci_bus_add_devices() optional in
 > pci_scan_root_bus() somehow; one of:
+>
+> * Add a parameter to pci_scan_root_bus() controlling this.
+>
+> (rather a large patch)
+>
+> * Split pci_scan_root_bus() into pci_scan_root_bus() and
+> pci_scan_root_bus_no_add(), such that pci_scan_root_bus() is just a
+> wrapper that calls pci_scan_root_bus_no_add() then pci_bus_add_devices().
+>
+> (very simple patch, and the new function can easily be used as/when it's
+> needed, e.g. enabled just for Tegra in 3.6 to reduce risk of regressions)
+>
+> * Add a flag to struct pci_bus that requests pci_scan_root_bus() skip
+> the call to pci_bus_add_devices().
+>
+> (a flag in the bus struct just for one function seems a little
+> circuitous, but perhaps OK)
+>
+> * ifdef out the call to pci_bus_add_devices(), if building for ARM.
+>
+> (very simple, and probably correct)
 
-Sigh, that turns out not to work correctly; it solves at least this part
-of the problem when booting using device tree, but when booting using a
-board file, it causes the IRQ number passed to the PCIe device to be
-bogus:-(
+I'd rather not add more variants of pci_scan_root_bus().  We already
+have several very similar things in drivers/pci/probe.c:
 
-I give up for now.
+  pci_scan_bus()
+  pci_scan_bus_parented()
+  pci_scan_root_bus()
+
+And in addition, we have many callers of pci_create_root_bus() that
+look very much like one of these.  I'm trying to consolidate all this,
+but there's a fair amount of work, and I think the simplest thing is
+to just use pci_create_root_bus() for now.
+
+> Actually, I'm not totally convinced some other archs shouldn't skip this
+> too; while I couldn't find any other arch that explicitly calls
+> pci_bus_assign_resources() and pci_bus_add_devices() after
+> pci_scan_root_bus(), I did see some that call
+> pci_assign_unassigned_resources() which seems like it might be due to a
+> similar situation?
+
+Yes, that does sound like a similar problem.  In the past, resource
+assignment has been pretty much separate from enumeration, with the
+arch having the responsibility to enumerate, assign, then add devices.
+ But that is error-prone and needlessly arch-specific, and I'd like to
+pull it into generic code.  It's just not done yet :)
+
+> * Add another pcibios_*() callback that pci_scan_root_bus() calls to
+> determine whether to call pci_bus_add_devices(), with default
+> implementation.
