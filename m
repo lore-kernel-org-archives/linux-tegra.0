@@ -1,137 +1,236 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v3 10/10] ARM: tegra: pcie: Add device tree support
-Date: Wed, 15 Aug 2012 08:37:18 +0200
-Message-ID: <20120815063718.GA15665@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH v3 05/10] resource: add PCI configuration space support
+Date: Wed, 15 Aug 2012 08:49:02 +0200
+Message-ID: <20120815064902.GB15665@avionic-0098.mockup.avionic-design.de>
 References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-11-git-send-email-thierry.reding@avionic-design.de>
- <20120814201215.GA10542@avionic-0098.mockup.avionic-design.de>
- <CAErSpo6Awbx9-DWM3V02HUg7Xv4tWAhcLO7UKuT_0uXbpZ+nKw@mail.gmail.com>
+ <1343332512-28762-6-git-send-email-thierry.reding@avionic-design.de>
+ <CAErSpo4qg45brVRwEbw3=R04VsbnvUowSMWcT+M6VoAxbf3Cqg@mail.gmail.com>
+ <20120814055542.GB16181@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo6LYpkC5wop53S1r1z3ov4+w4soqrQARzbbouVs1trzUg@mail.gmail.com>
+ <20120814180142.GA9430@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo4Efy-Dt67rktzNiYfZfOTSu=pmYtyGd3tR-zZQ3jDGtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAErSpo6Awbx9-DWM3V02HUg7Xv4tWAhcLO7UKuT_0uXbpZ+nKw@mail.gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: multipart/mixed; boundary="===============7903678820971005849=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAErSpo4Efy-Dt67rktzNiYfZfOTSu=pmYtyGd3tR-zZQ3jDGtA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Nq2Wo0NMKNjxTN9z
+--===============7903678820971005849==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Disposition: inline
+
+
+--DKU6Jbt7q3WqK7+M
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 14, 2012 at 04:50:26PM -0700, Bjorn Helgaas wrote:
-> On Tue, Aug 14, 2012 at 1:12 PM, Thierry Reding
-> <thierry.reding@avionic-design.de> wrote:
-> > On Thu, Jul 26, 2012 at 09:55:12PM +0200, Thierry Reding wrote:
-> >> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra2=
-0.dtsi
-> >> index a094c97..c886dff 100644
-> >> --- a/arch/arm/boot/dts/tegra20.dtsi
-> >> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> >> @@ -199,6 +199,68 @@
-> >>               #size-cells =3D <0>;
-> >>       };
+On Tue, Aug 14, 2012 at 02:44:24PM -0700, Bjorn Helgaas wrote:
+> On Tue, Aug 14, 2012 at 11:01 AM, Thierry Reding
+> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> > On Tue, Aug 14, 2012 at 10:38:08AM -0700, Bjorn Helgaas wrote:
+> >> On Mon, Aug 13, 2012 at 10:55 PM, Thierry Reding
+> >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> >> > On Mon, Aug 13, 2012 at 10:00:45PM -0700, Bjorn Helgaas wrote:
+> >> >> On Thu, Jul 26, 2012 at 12:55 PM, Thierry Reding
+> >> >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> >> >> > This commit adds a new flag that allows marking resources as PCI
+> >> >> > configuration space.
+> >> >> >
+> >> >> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> >> >> > ---
+> >> >> > Changes in v3:
+> >> >> > - new patch
+> >> >> >
+> >> >> >  include/linux/ioport.h | 2 +-
+> >> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >> >
+> >> >> > diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> >> >> > index 589e0e7..3314843 100644
+> >> >> > --- a/include/linux/ioport.h
+> >> >> > +++ b/include/linux/ioport.h
+> >> >> > @@ -102,7 +102,7 @@ struct resource {
+> >> >> >
+> >> >> >  /* PCI control bits.  Shares IORESOURCE_BITS with above PCI ROM.=
+  */
+> >> >> >  #define IORESOURCE_PCI_FIXED           (1<<4)  /* Do not move re=
+source */
+> >> >> > -
+> >> >> > +#define IORESOURCE_PCI_CS              (1<<5)  /* PCI configurat=
+ion space */
+> >> >>
+> >> >> What is the purpose of this?  It seems that you are marking regions
+> >> >> that we call MMCONFIG on x86, or ECAM-type regions in the language =
+of
+> >> >> the PCIe spec.  I see that you set it in several places, but I don't
+> >> >> see anything that ever looks for it.  Do you have plans to use it in
+> >> >> the future?  If it really does correspond to MMCONFIG/ECAM, we shou=
+ld
+> >> >> handle those regions consistently across all architectures.
+> >> >
+> >> > The purpose is ultimately to obtain the MMCONFIG/ECAM resources assi=
+gned
+> >> > to a PCI host controller. I've used this in the of_pci_parse_ranges()
+> >> > and in the static board setup code to mark ranges as such. Perhaps
+> >> > IORESOURCE_ECAM or IORESOURCE_MMCONFIG might have been better names.=
+ I
+> >> > also just noticed that I'm not using this anywhere, but the plan was=
+ to
+> >> > eventually use it with platform_get_resource(). However that doesn't
+> >> > seem to work either because the lower bits of the flags aren't use f=
+or
+> >> > comparison in that function.
+> >> >
+> >> > Any other ideas how that could be handled? Basically what I need is a
+> >> > way to mark a resource as an MMCONFIG/ECAM range so that it can be u=
+sed
+> >> > to program the PCI host controller accordingly. I don't know how the=
+se
+> >> > are assigned on x86. I was under the impression that the MMCONFIG/EC=
+AM
+> >> > space was accessed through a single single address/data register pai=
+r.
 > >>
-> >> +     pcie-controller {
-> >> +             compatible =3D "nvidia,tegra20-pcie";
-> >> +             reg =3D <0x80003000 0x00000800   /* PADS registers */
-> >> +                    0x80003800 0x00000200   /* AFI registers */
-> >> +                    0x81000000 0x01000000   /* configuration space */
-> >> +                    0x90000000 0x10000000>; /* extended configuration=
- space */
-> >> +             interrupts =3D <0 98 0x04   /* controller interrupt */
-> >> +                           0 99 0x04>; /* MSI interrupt */
-> >> +             status =3D "disabled";
-> >> +
-> >> +             ranges =3D <0 0 0  0x80000000 0x00001000   /* root port =
-0 */
-> >> +                       0 1 0  0x81000000 0x00800000   /* port 0 confi=
-g space */
-> >> +                       0 2 0  0x90000000 0x08000000   /* port 0 ext c=
-onfig space */
-> >> +                       0 3 0  0x82000000 0x00010000   /* port 0 downs=
-tream I/O */
-> >> +                       0 4 0  0xa0000000 0x08000000   /* port 0 non-p=
-refetchable memory */
-> >> +                       0 5 0  0xb0000000 0x08000000   /* port 0 prefe=
-tchable memory */
-> >> +
-> >> +                       1 0 0  0x80001000 0x00001000   /* root port 1 =
-*/
-> >> +                       1 1 0  0x81800000 0x00800000   /* port 1 confi=
-g space */
-> >> +                       1 2 0  0x98000000 0x08000000   /* port 1 ext c=
-onfig space */
-> >> +                       1 3 0  0x82010000 0x00010000   /* port 1 downs=
-tream I/O */
-> >> +                       1 4 0  0xa8000000 0x08000000   /* port 1 non-p=
-refetchable memory */
-> >> +                       1 5 0  0xb8000000 0x08000000>; /* port 1 prefe=
-tchable memory */
+> >> The legacy config access mechanism (CF8h/CFCh registers described in
+> >> PCI 3.0 spec sec 3.2.2.3.2) is a single address/data pair, but this is
+> >> mostly x86-specific.  The ECAM mechanism (described in the PCIe 3.0
+> >> spec sec 7.2.2) is not a single address/data pair; instead, each byte
+> >> of config space is directly mapped into the host's MMIO space.
+> >>
+> >> Here's what we do on x86 (omitting some historical grunge that
+> >> complicates things):
+> >>
+> >>   - Discover the host bridge via a PNP0A08 device in the ACPI namespac=
+e.
+> >>   - Discover the bus number range behind the bridge using a _CRS
+> >> method in the PNP0A08 device.
+> >>   - Discover the ECAM space for those buses via a _CBA method in the
+> >> PNP0A08 device.
+> >>   - Tell the config accessors (struct pci_ops) that the ECAM space for
+> >> buses A-B is at address X.
+> >>   - Enumerate the devices behind the host bridge by calling
+> >> pci_scan_root_bus(), passing the config accessors.
+> >>
+> >> It sounds like you want a way to parse the resources at one point,
+> >> saving them and marking the ECAM region, then at a later point, look
+> >> up the ECAM from a saved list.  We don't do that on x86 because the
+> >> config accessors keep an internal list of the ECAM area for each bus.
+> >>
+> >> We do of course want to put this ECAM space in the IORESOURCE_MEM tree
+> >> because it consumes address space and we have to make sure we don't
+> >> put anything else on top of it.  But we don't have any reason to
+> >> describe the MMIO -> config space function in that tree.  From the
+> >> point of view of the rest of the system, it's just MMIO space that's
+> >> consumed by the PCI host bridge, just like any other device-specific
+> >> MMIO area.
 > >
-> > I've been thinking about this some more. The translations for both the
-> > regular and extended configuration spaces are configured in the top-
-> > level PCIe controller. It is therefore wrong how they are passed to the
-> > PCI host bridges via the ranges property.
-> >
-> > I remember Mitch saying that it should be passed down to the children
-> > because it is partitioned among them, but since the layout is compatible
-> > with ECAM, the partitioning isn't as simple as what's in the tree. In
-> > fact the partitions will be dependent on the number of devices attached
-> > to the host bridges.
+> > What I currently do is pass the ECAM space as a resource to the PCI host
+> > bridge platform device. Regular and extended configuration spaces are
+> > given by the third and fourth resources, respectively. If I understand
+> > correctly, you're saying that nothing beyond that needs to be encoded.
+> > In other words it is enough for the PCI host bridge driver to know where
+> > to take the data from.
 >=20
-> I don't understand this last bit about the number of devices attached
-> to the host bridges.  Logically, the host bridge has a bus number
-> aperture that you can know up front, even before you know anything
-> about what devices are below it.  On x86, for example, the ACPI _CRS
-> method has something like "[bus 00-7f]" in it, which means that any
-> buses in that range are below this bridge.  That doesn't tell us
-> anything about which buses actually have devices on them, of course;
-> it's just analogous to the secondary and subordinate bus number
-> registers in a P2P bridge.
+> Yes, I think so.
+>=20
+> I'd like to someday make ECAM support generic, since it's specified by
+> the PCIe spec.  The spec doesn't differentiate between PCI
+> configuration space (offsets 0-0xff) and PCI Express *extended*
+> configuration space (offsets 0x100-0xfff).  But it sounds like Tegra
+> might have a memory-mapped configuration mechanism that is similar to
+> ECAM but with a different address map, since you mention two resources
+> (third and fourth).  That's not a problem, since you're doing a
+> Tegra-specific solution right now anyway, but something to keep in the
+> back of your mind if we ever do make a generic ECAM solution.
 
-That's one of the issues I still need to take care of. Currently no bus
-resource is attached to the individual bridges (nor the PCI controller
-for that matter), so the PCI core will assign them dynamically. If this
-range is known at boot time we could assign ECAM ranges based on the bus
-numbers. Standard ECAM ranges, that is. On Tegra this won't work because
-as Stephen mentioned in a previous mail, the bus field is not the top
-field in the ECAM addresses. Basically what you have is this:
+Something that's kept me wondering is why there actually need to be two
+separate regions. Since the extended configuration space is a superset
+of the regular configuration space it should be possible to access the
+regular registers via the extended configuration space as well.
 
-	[27:24] upper 4 bits of the register address for extended
-	        configuration space
-	[23:16] bus number
-	[15:11] device number
-	[10: 8] device function
-	[ 8: 0] register
+Stephen: Could you try to find out whether the regular configuration
+space translation can just be omitted if we already set up the one for
+the extended configuration space? In tegra_pcie_setup_translations(),
+BAR 0 is setup for regular configuration space (which requires a 16 MiB
+region), while BAR 1 is setup for the extended configuration space
+(requiring a full 256 MiB region). However, if I understand correctly,
+each of the registers that can be accessed via the BAR 0 translation can
+also be accessed via the BAR 1 translation. That seems like we're
+wasting the 16 MiB set aside for the BAR 0 mapping.
 
-So the ECAM space cannot be partitioned by bus number.
+> > I'll have to see what this means for the DT binding. There are other
+> > issues that I need to think about, like for example how to pass the ECAM
+> > space from the PCI host controller to each of the two bridges via the
+> > ranges property. This no longer makes sense in the current form, as the
+> > ECAM covers the configuration spaces for devices of both bridges and
+> > cannot really be split among them.
+>=20
+> We have the same situation on x86.  Part of the historical grunge that
+> I omitted is that there's a static ACPI table (MCFG) that can tell you
+> the ECAM range for a bus number range.  Often that bus number range
+> includes several host bridges.  On x86, we have a single set of ECAM
+> config accessors (see pci_mmcfg), and they maintain a list of "bus
+> number -> ECAM addr" mappings internally, independent of which host
+> bridge leads to the buses.
+
+That's very similar to how things work on Tegra. Configuration space
+accesses to the host bridges are done via their respective memory-mapped
+register spaces. All other accesses use either the BAR 0 or BAR 1
+translations as I described above. These translations however are unique
+and only a single set of accessors are provided.
+
+Given that and what I said in the other mail about the implementation of
+ECAM on Tegra any CS range we pass to the host bridges via the DT ranges
+property is actually wrong.
 
 Thierry
 
---Nq2Wo0NMKNjxTN9z
+--DKU6Jbt7q3WqK7+M
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQK0OeAAoJEN0jrNd/PrOh6iIQAL0V0gBkvqgHGnr/26kjXhtX
-6h06I20vrEGvYv8iB3Z5CcBk4/aUgpyhWajMbQqDLHJ4Cdy/grasFvpP9BeywlfK
-SFFRsx2cJs0LUz+b7t8RpKCKCxyEmWYE2XpCfVw5F/gAWh4O75wuxkafFu7bQDlM
-5nZaNwYZElIuq3FpOrd1Y/68yJVmdsbiDbz2acsueMVaBdQZ+GoVi19/ADbfP1BN
-FpCacaUmzg+IqlcrrJf1Jmxf78EkOQEdoxFkXIMzxX4UKqJD6OgPLeQvPNsQCpXE
-Ska47BvZuNETfcJtmoU5mKRc9k6IM8LOP/+6ydd8HzPO6ZVM1AKh/qrzgImrWDbf
-O/ohn7Zgmxyu6XIdP2lMnNwFVvcchsVGvD2faZapT3uswWJJrvzKDIZCRFC11yWi
-ScXK0v2B+WjX9vd3SUcIpF4FiZUwruv4MMkhj2mMxIljjyk1zf6zUP6FKvEm3J+O
-8wptN80OvEpZMocsYaJmela31ujOQWWFH5RHSRYKLcLv3rAKBYDLWPZAUhbWDulU
-ID/mZSLEPTmf95EBuYqVe+bjcw8NMCSUg3z5xTO6Y7Rw1/xeyok1wwFB5illveJT
-+Fsy+pYfE3DAS73oNtqB/7tEMYhxYbRlL8SehCJf4clg8/Ef8ssNvCdMJ0rZ+AzN
-YYTUBXh7cJwj6qfSXcMG
-=NDBv
+iQIcBAEBAgAGBQJQK0ZeAAoJEN0jrNd/PrOhsIQQALG59G9hwDdBek8uAvW/fkqY
+Hse6VPd9w4ISHDvRLrSzNYclCmC8nfADN88eKQBl0KXPRZJP7eY/2Kt5l8MXDSXi
+E9x31w4BPhX1YjIkyJMrdNvCEV1C8fchKHpXq+rddnJnsxm4GcRMX7WqB4sv3hoq
+x1hf2fSp210VHAEfKYKVZQkoX20nvWfmEbgzLKI6AzqE1WVsne+t6rWRKUZi/cJJ
+XuW4kHXqdGMEakmHYpGWuzmDeLEjOB55zzyjdlyG296sE+MuZ8LFi3XgpyBXCUYU
+bDDn0JwLGSiw/IEgiTgkMYGQ/ejNR6c+ywEBbjWB4nZaur/luOITzc0s9Ae7rXn7
+Jqjgm3QMae0crPBlTtoGCKObX9w5rF9O1X4TyNoMbAsfXQxR7TXDMe5PkHwxEPpr
+CmNFQzhViHkV681BEMGBuaPLXvw6i8Ghyn0YTYH6DyQMFydwwE+aIxoWziD5pdBf
+aAiCD+9xatqb2L00Vwbu6VTjNPNGVIAS+vRBM+Ubtg7Xd1QDox8pErQHrpypmABd
+EJUCHrVeFQS1sHkxIJRhUhf/wc+AFEsktgTa468phQW7Bfm/QlLuSrsGFsi/NARU
+LQryhB9gKrQ2RzF1mZ+Tj4ji97h4SiUvpTsU06lBOHV7LC8vOHRp0dQtWdtAYDrr
+wKdI+Abr22UOH3vWYJ3+
+=A2dz
 -----END PGP SIGNATURE-----
 
---Nq2Wo0NMKNjxTN9z--
+--DKU6Jbt7q3WqK7+M--
+
+--===============7903678820971005849==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============7903678820971005849==--
