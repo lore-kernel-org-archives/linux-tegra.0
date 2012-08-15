@@ -1,324 +1,137 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] iommu/tegra: smmu: Use __debugfs_create_dir
-Date: Wed, 15 Aug 2012 09:34:21 +0300
-Message-ID: <20120815093421.c08fdbbf4d7ce6c3986861f2@nvidia.com>
-References: <1344407073-12030-1-git-send-email-hdoyu@nvidia.com>
-	<1344407073-12030-3-git-send-email-hdoyu@nvidia.com>
-	<20120808151128.GC9091@arwen.pp.htv.fi>
-	<20120808153100.GE9091@arwen.pp.htv.fi>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v3 10/10] ARM: tegra: pcie: Add device tree support
+Date: Wed, 15 Aug 2012 08:37:18 +0200
+Message-ID: <20120815063718.GA15665@avionic-0098.mockup.avionic-design.de>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
+ <1343332512-28762-11-git-send-email-thierry.reding@avionic-design.de>
+ <20120814201215.GA10542@avionic-0098.mockup.avionic-design.de>
+ <CAErSpo6Awbx9-DWM3V02HUg7Xv4tWAhcLO7UKuT_0uXbpZ+nKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120808153100.GE9091-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Wright <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAErSpo6Awbx9-DWM3V02HUg7Xv4tWAhcLO7UKuT_0uXbpZ+nKw@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
-Thank you for review. Already sent the another version of patch(v2:
-*1), but I tried to answer the remaining questions inlined.....
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 8 Aug 2012 17:31:02 +0200
-Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
-
-> * PGP Signed by an unknown key
-> 
-> Hi,
-> 
-> On Wed, Aug 08, 2012 at 06:11:29PM +0300, Felipe Balbi wrote:
-> > Hi,
+On Tue, Aug 14, 2012 at 04:50:26PM -0700, Bjorn Helgaas wrote:
+> On Tue, Aug 14, 2012 at 1:12 PM, Thierry Reding
+> <thierry.reding@avionic-design.de> wrote:
+> > On Thu, Jul 26, 2012 at 09:55:12PM +0200, Thierry Reding wrote:
+> >> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra2=
+0.dtsi
+> >> index a094c97..c886dff 100644
+> >> --- a/arch/arm/boot/dts/tegra20.dtsi
+> >> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> >> @@ -199,6 +199,68 @@
+> >>               #size-cells =3D <0>;
+> >>       };
+> >>
+> >> +     pcie-controller {
+> >> +             compatible =3D "nvidia,tegra20-pcie";
+> >> +             reg =3D <0x80003000 0x00000800   /* PADS registers */
+> >> +                    0x80003800 0x00000200   /* AFI registers */
+> >> +                    0x81000000 0x01000000   /* configuration space */
+> >> +                    0x90000000 0x10000000>; /* extended configuration=
+ space */
+> >> +             interrupts =3D <0 98 0x04   /* controller interrupt */
+> >> +                           0 99 0x04>; /* MSI interrupt */
+> >> +             status =3D "disabled";
+> >> +
+> >> +             ranges =3D <0 0 0  0x80000000 0x00001000   /* root port =
+0 */
+> >> +                       0 1 0  0x81000000 0x00800000   /* port 0 confi=
+g space */
+> >> +                       0 2 0  0x90000000 0x08000000   /* port 0 ext c=
+onfig space */
+> >> +                       0 3 0  0x82000000 0x00010000   /* port 0 downs=
+tream I/O */
+> >> +                       0 4 0  0xa0000000 0x08000000   /* port 0 non-p=
+refetchable memory */
+> >> +                       0 5 0  0xb0000000 0x08000000   /* port 0 prefe=
+tchable memory */
+> >> +
+> >> +                       1 0 0  0x80001000 0x00001000   /* root port 1 =
+*/
+> >> +                       1 1 0  0x81800000 0x00800000   /* port 1 confi=
+g space */
+> >> +                       1 2 0  0x98000000 0x08000000   /* port 1 ext c=
+onfig space */
+> >> +                       1 3 0  0x82010000 0x00010000   /* port 1 downs=
+tream I/O */
+> >> +                       1 4 0  0xa8000000 0x08000000   /* port 1 non-p=
+refetchable memory */
+> >> +                       1 5 0  0xb8000000 0x08000000>; /* port 1 prefe=
+tchable memory */
 > >
-> > On Wed, Aug 08, 2012 at 09:24:33AM +0300, Hiroshi Doyu wrote:
-> > > The commit c3b1a35 "debugfs: make sure that debugfs_create_file() gets
-> > > used only for regulars" doesn't allow to use debugfs_create_file() for
-> > > dir. Use the version with "data", __debugfs_create_dir().
-> > >
-> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > Reported-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/iommu/tegra-smmu.c |    4 +---
-> > >  1 files changed, 1 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> > > index 5e51fb7..41aff7a 100644
-> > > --- a/drivers/iommu/tegra-smmu.c
-> > > +++ b/drivers/iommu/tegra-smmu.c
-> > > @@ -1035,9 +1035,7 @@ static void smmu_debugfs_create(struct smmu_device *smmu)
-> > >     int i;
-> > >     struct dentry *root;
-> > >
-> > > -   root = debugfs_create_file(dev_name(smmu->dev),
-> > > -                              S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
-> > > -                              NULL, smmu, NULL);
-> > > +   root = __debugfs_create_dir(dev_name(smmu->dev), NULL, smmu);
+> > I've been thinking about this some more. The translations for both the
+> > regular and extended configuration spaces are configured in the top-
+> > level PCIe controller. It is therefore wrong how they are passed to the
+> > PCI host bridges via the ranges property.
 > >
-> > why would the directory need extra data ? Looking in mainline,
-> > tegra-smmu.c doesn't have any debugfs support, where can I see the
-> > patches adding debugfs to tegra-smmu ? It doesn't look correct that the
-> > directory will have a data field.
-> 
-> Looking at linux-next I found the commit which added it:
+> > I remember Mitch saying that it should be passed down to the children
+> > because it is partitioned among them, but since the layout is compatible
+> > with ECAM, the partitioning isn't as simple as what's in the tree. In
+> > fact the partitions will be dependent on the number of devices attached
+> > to the host bridges.
+>=20
+> I don't understand this last bit about the number of devices attached
+> to the host bridges.  Logically, the host bridge has a bus number
+> aperture that you can know up front, even before you know anything
+> about what devices are below it.  On x86, for example, the ACPI _CRS
+> method has something like "[bus 00-7f]" in it, which means that any
+> buses in that range are below this bridge.  That doesn't tell us
+> anything about which buses actually have devices on them, of course;
+> it's just analogous to the secondary and subordinate bus number
+> registers in a P2P bridge.
 
-FYI: The original tegra smmu debugfs patch is:
-  http://lists.linuxfoundation.org/pipermail/iommu/2012-August/004507.html
+That's one of the issues I still need to take care of. Currently no bus
+resource is attached to the individual bridges (nor the PCI controller
+for that matter), so the PCI core will assign them dynamically. If this
+range is known at boot time we could assign ECAM ranges based on the bus
+numbers. Standard ECAM ranges, that is. On Tegra this won't work because
+as Stephen mentioned in a previous mail, the bus field is not the top
+field in the ECAM addresses. Basically what you have is this:
 
-> > @@ -892,6 +909,164 @@ static struct iommu_ops smmu_iommu_ops = {
-> >       .pgsize_bitmap  = SMMU_IOMMU_PGSIZES,
-> >  };
-> >
-> > +/* Should be in the order of enum */
-> > +static const char * const smmu_debugfs_mc[] = { "mc", };
-> > +static const char * const smmu_debugfs_cache[] = {  "tlb", "ptc", };
-> > +
-> > +static ssize_t smmu_debugfs_stats_write(struct file *file,
-> > +                                     const char __user *buffer,
-> > +                                     size_t count, loff_t *pos)
-> > +{
-> > +     struct smmu_device *smmu;
-> > +     struct dentry *dent;
-> > +     int i, cache, mc;
-> > +     enum {
-> > +             _OFF = 0,
-> > +             _ON,
-> > +             _RESET,
-> > +     };
-> > +     const char * const command[] = {
-> > +             [_OFF]          = "off",
-> > +             [_ON]           = "on",
-> > +             [_RESET]        = "reset",
-> > +     };
-> > +     char str[] = "reset";
-> > +     u32 val;
-> > +     size_t offs;
-> > +
-> > +     count = min_t(size_t, count, sizeof(str));
-> > +     if (copy_from_user(str, buffer, count))
-> > +             return -EINVAL;
-> > +
-> > +     for (i = 0; i < ARRAY_SIZE(command); i++)
-> > +             if (strncmp(str, command[i],
-> > +                         strlen(command[i])) == 0)
-> > +                     break;
-> > +
-> > +     if (i == ARRAY_SIZE(command))
-> > +             return -EINVAL;
-> > +
-> > +     dent = file->f_dentry;
-> > +     cache = (int)dent->d_inode->i_private;
-> 
-> cache you can figure out by the filename. In fact, it would be much
-> better to have tlc and ptc directories with a "status" filename which
-> you write ON/OFF/RESET or enable/disable/reset to trigger what you need.
+	[27:24] upper 4 bits of the register address for extended
+	        configuration space
+	[23:16] bus number
+	[15:11] device number
+	[10: 8] device function
+	[ 8: 0] register
 
-Actually I also considered {ptc,tlb} directories, but I thought that
-those might be residual, or nested one more unnecessarily.
+So the ECAM space cannot be partitioned by bus number.
 
-The current usage is:
+Thierry
 
-  $ echo "reset" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ echo "on" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ echo "off" > /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  $ cat /sys/kernel/debug/smmu/mc/{tlb,ptc}
-  hit:0014910c miss:00014d22
+--Nq2Wo0NMKNjxTN9z
+Content-Type: application/pgp-signature
 
-  The above format is:
-  hit:<HIT count><SPC>miss:<MISS count><SPC><CR+LF>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-  fscanf(fp, "hit:%lx miss:%lx", &hit, &miss);
+iQIcBAEBAgAGBQJQK0OeAAoJEN0jrNd/PrOh6iIQAL0V0gBkvqgHGnr/26kjXhtX
+6h06I20vrEGvYv8iB3Z5CcBk4/aUgpyhWajMbQqDLHJ4Cdy/grasFvpP9BeywlfK
+SFFRsx2cJs0LUz+b7t8RpKCKCxyEmWYE2XpCfVw5F/gAWh4O75wuxkafFu7bQDlM
+5nZaNwYZElIuq3FpOrd1Y/68yJVmdsbiDbz2acsueMVaBdQZ+GoVi19/ADbfP1BN
+FpCacaUmzg+IqlcrrJf1Jmxf78EkOQEdoxFkXIMzxX4UKqJD6OgPLeQvPNsQCpXE
+Ska47BvZuNETfcJtmoU5mKRc9k6IM8LOP/+6ydd8HzPO6ZVM1AKh/qrzgImrWDbf
+O/ohn7Zgmxyu6XIdP2lMnNwFVvcchsVGvD2faZapT3uswWJJrvzKDIZCRFC11yWi
+ScXK0v2B+WjX9vd3SUcIpF4FiZUwruv4MMkhj2mMxIljjyk1zf6zUP6FKvEm3J+O
+8wptN80OvEpZMocsYaJmela31ujOQWWFH5RHSRYKLcLv3rAKBYDLWPZAUhbWDulU
+ID/mZSLEPTmf95EBuYqVe+bjcw8NMCSUg3z5xTO6Y7Rw1/xeyok1wwFB5illveJT
++Fsy+pYfE3DAS73oNtqB/7tEMYhxYbRlL8SehCJf4clg8/Ef8ssNvCdMJ0rZ+AzN
+YYTUBXh7cJwj6qfSXcMG
+=NDBv
+-----END PGP SIGNATURE-----
 
-
-If {ptc,tlb} was dir, the usage would be:
-
-  $ echo "reset" > /sys/kernel/debug/smmu/mc/{tlb,ptc}/status
-  $ echo "on" > /sys/kernel/debug/smmu/mc/{tlb,ptc}/status
-  $ echo "off" > /sys/kernel/debug/smmu/mc/{tlb,ptc}/status
-  $ cat /sys/kernel/debug/smmu/mc/{tlb,ptc}/data
-  hit:0014910c miss:00014d22
-
-One advantage of dirs could be, you may be able to check the current
-status by reading "status". It might be less likely read back
-practically because if writing succeeded, the state should be what was
-written.
-
-> For that to work, you should probably hold tlb and ptc on an array of
-> some sort, and pass those as data to their respective "status" files as
-> the data field. If tlb and ptc are properly defined structures which can
-> point back to smmu, then you have everything you need.
-
-I also considered to introduce new structure like what you suggested
-below, but I felt that the parent<-chile relationships are already in
-directory hierarchy, and I wanted to avoid the residual data with
-introducing new structures. Instead of introducing new structure,
-those parent<-child relationships are always gotton from debugfs
-directory hierarchy on demand. That was why I wanted to put data in
-debugfs dir. With debugfs directories having private data, the
-connections between entities would be kept in filesystem.
-
-I've already sent another version of patch(v2, *1), which passes all
-necessary data to a file, put in a structure. This v2 patch may be a
-little bit simliear to what Felipe suggested below.
-
-*1: http://lists.linuxfoundation.org/pipermail/iommu/2012-August/004535.html
-
-> I mean something like:
-> 
-> struct smmu;
-> 
-> struct mc {
->         const char *name;
->         void __iomem *regs;
-> 
->         struct smmu *smmu;
-> };
-> 
-> struct smmu {
->         struct mc mc[2]; /*what does mc stand for ? memory controller ? */
-> 
->         ...
-> };
-> 
-> debugfs_create_dir(smmu);
-> debugfs_create_dir(mc);
-> debugfs_create_dir(smmu->mc[1].name);
-> debugfs_create_dir(smmu->mc[2].name);
-> debugfs_create_file(&smmu->mc[1], status);
-> debugfs_create_file(&smmu->mc[2], status);
-> 
-> or something similar. You will avoid all the trickery you did here to
-> achieve what you need.
-> 
-> > +     mc = (int)dent->d_parent->d_inode->i_private;
-> > +     smmu = dent->d_parent->d_parent->d_inode->i_private;
-> > +
-> > +     offs = SMMU_CACHE_CONFIG(cache);
-> > +     val = smmu_read(smmu, offs);
-> > +     switch (i) {
-> > +     case _OFF:
-> > +             val &= ~SMMU_CACHE_CONFIG_STATS_ENABLE;
-> > +             val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-> > +             smmu_write(smmu, val, offs);
-> > +             break;
-> > +     case _ON:
-> > +             val |= SMMU_CACHE_CONFIG_STATS_ENABLE;
-> > +             val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-> > +             smmu_write(smmu, val, offs);
-> > +             break;
-> > +     case _RESET:
-> > +             val |= SMMU_CACHE_CONFIG_STATS_TEST;
-> > +             smmu_write(smmu, val, offs);
-> > +             val &= ~SMMU_CACHE_CONFIG_STATS_TEST;
-> > +             smmu_write(smmu, val, offs);
-> > +             break;
-> > +     default:
-> > +             BUG();
-> > +             break;
-> > +     }
-> > +
-> > +     dev_dbg(smmu->dev, "%s() %08x, %08x @%08x\n", __func__,
-> > +             val, smmu_read(smmu, offs), offs);
-> > +
-> > +     return count;
-> > +}
-> > +
-> > +static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
-> > +{
-> > +     struct smmu_device *smmu;
-> > +     struct dentry *dent;
-> > +     int i, cache, mc;
-> > +     const char * const stats[] = { "hit", "miss", };
-> > +
-> > +     dent = d_find_alias(s->private);
-> > +     cache = (int)dent->d_inode->i_private;
-> > +     mc = (int)dent->d_parent->d_inode->i_private;
-> > +     smmu = dent->d_parent->d_parent->d_inode->i_private;
-> > +
-> > +     for (i = 0; i < ARRAY_SIZE(stats); i++) {
-> > +             u32 val;
-> > +             size_t offs;
-> > +
-> > +             offs = SMMU_STATS_CACHE_COUNT(mc, cache, i);
-> > +             val = smmu_read(smmu, offs);
-> > +             seq_printf(s, "%s:%08x ", stats[i], val);
-> > +
-> > +             dev_dbg(smmu->dev, "%s() %s %08x @%08x\n", __func__,
-> > +                     stats[i], val, offs);
-> > +     }
-> > +     seq_printf(s, "\n");
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int smmu_debugfs_stats_open(struct inode *inode, struct file *file)
-> > +{
-> > +     return single_open(file, smmu_debugfs_stats_show, inode);
-> > +}
-> > +
-> > +static const struct file_operations smmu_debugfs_stats_fops = {
-> > +     .open           = smmu_debugfs_stats_open,
-> > +     .read           = seq_read,
-> > +     .llseek         = seq_lseek,
-> > +     .release        = single_release,
-> > +     .write          = smmu_debugfs_stats_write,
-> > +};
-> > +
-> > +static void smmu_debugfs_delete(struct smmu_device *smmu)
-> > +{
-> > +     debugfs_remove_recursive(smmu->debugfs_root);
-> > +}
-> > +
-> > +static void smmu_debugfs_create(struct smmu_device *smmu)
-> > +{
-> > +     int i;
-> > +     struct dentry *root;
-> > +
-> > +     root = debugfs_create_file(dev_name(smmu->dev),
-> > +                                S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
-> > +                                NULL, smmu, NULL);
-> 
-> directories don't need data. You don't even have a file_operations
-> structure so when exactly are you going to access the data ? What you
-> did above is actually wrong. You need to either patch this ASAP or drop
-> the patch you wrote and rewrite the whole debugfs support.
-> 
-> > +     if (!root)
-> > +             goto err_out;
-> > +     smmu->debugfs_root = root;
-> > +
-> > +     for (i = 0; i < ARRAY_SIZE(smmu_debugfs_mc); i++) {
-> > +             int j;
-> > +             struct dentry *mc;
-> > +
-> > +             mc = debugfs_create_file(smmu_debugfs_mc[i],
-> > +                                      S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
-> > +                                      root, (void *)i, NULL);
-> 
-> likewise here. What would you use that index for ? Even if you were to
-> access it, how would you use it ? Not to mention that you never, ever
-> access the private_data of the directory :-)
-> 
-> Just convert these two to the proper debugfs_create_dir()
-> 
-> > +             if (!mc)
-> > +                     goto err_out;
-> > +
-> > +             for (j = 0; j < ARRAY_SIZE(smmu_debugfs_cache); j++) {
-> > +                     struct dentry *cache;
-> > +
-> > +                     cache = debugfs_create_file(smmu_debugfs_cache[j],
-> > +                                                 S_IWUGO | S_IRUGO, mc,
-> > +                                                 (void *)j,
-> > +                                                 &smmu_debugfs_stats_fops);
-> 
-> it would be far better to pass a structure which you actually need. In
-> this case 'smmu'. That will be a lot more useful for your code.
+--Nq2Wo0NMKNjxTN9z--
