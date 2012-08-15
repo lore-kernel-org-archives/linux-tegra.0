@@ -1,62 +1,53 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/5] ARM: tegra: add CPU hotplug support
-Date: Wed, 15 Aug 2012 17:14:51 +0800
-Message-ID: <1345022091.25319.158.camel@jlo-ubuntu-64.nvidia.com>
-References: <1344931644-3927-1-git-send-email-josephl@nvidia.com>
-	 <502A99CD.3060400@wwwdotorg.org>
+Subject: [PATCH V2 0/6] ARM: tegra: add CPU hotplug support
+Date: Wed, 15 Aug 2012 17:22:28 +0800
+Message-ID: <1345022554-26292-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <502A99CD.3060400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+This patch set adds CPU hotplug support for Tegra20 and Tegra30 SoCs.
 
-Thanks for your review.
+The first 3 patches make the CPU clock and reset control be a module and
+the abstraction APIs for TegraXX SoCs. And clean up some codes for later
+usage. Then add CPU hotplug support for Tegra20 and Tegra30.
 
-On Wed, 2012-08-15 at 02:32 +0800, Stephen Warren wrote:
-> On 08/14/2012 02:07 AM, Joseph Lo wrote:
-> > This patch set adds CPU hotplug support for Tegra20 and Tegra30 SoCs.
-> > 
-> > The first 3 patches make the CPU clock and reset control be a module and
-> > the abstraction APIs for TegraXX SoCs. And clean up some codes for later
-> > usage. Then add CPU hotplug support for Tegra20 and Tegra30.
-> > 
-> > Verified on Seaboard(Tegra20) and Cardhu(Tegra30)
-> 
-> There are two problems with this series:
-> 
-> 1) It doesn't compile if CONFIG_HOTPLUG_CPU isn't enabled. Please also
-> make sure that Tegra20-only and Tegra30-only kernels compile (I didn't
-> check this, so it may well already be the case).
+Verified on Seaboard(Tegra20) and Cardhu(Tegra30)
 
-I will add one more patch to enable HOTPLUG_CPU in this patch set.
+V2:
+* add one more patch for enable HOTPLUG_CPU [6/6]
+* move all the SoC specific CPU shutdown code into platform_cpu_die [4/6]
 
-I also verified the compiling and functionality of the Tegra20-only and
-Tegra30-only kernels. It's OK.
-> 
-> 2) It prevents the "reboot" from working; the kernel hangs as it
-> attempts to do the reboot. I've confirmed this isn't the case without
-> this patch series, even if CONFIG_HOTPLUG_CPU is enabled.
+Joseph Lo (6):
+  ARM: tegra: introduce tegra_cpu_car_ops structures
+  ARM: tegra: replace the CPU CAR access code by tegra_cpu_car_ops
+  ARM: tegra: clean up the common assembly macros into sleep.h
+  ARM: tegra30: add CPU hotplug support
+  ARM: tegra20: add CPU hotplug support
+  ARM: tegra: defconfig: enable HOTPLUG_CPU
 
-I just found during the reboot process. It will call to
-"platfor_cpu_kill" before assert the reset. But in this patch, the
-"platform_cpu_kill" can't just be called along. It must be called after
-"platform_cpu_die". So I will move all the SoC specific CPU shutdown
-code into "platform_cpu_die" not separate into two functions. It will
-prevent the system hang when calling to "smp_send_stop". (the flow for
-your reference,
-sys_reboot->machine_restart->smp_send_stop->smp_kill_cpus->platform_cpu_kill.)
-> 
-> I assume we'll want to enable CONFIG_HOTPLUG_CPU in tegra_defconfig once
-> this is checked in?
-
-Thanks,
-Joseph
-
---
-nvpublic
+ arch/arm/configs/tegra_defconfig          |    1 +
+ arch/arm/mach-tegra/Makefile              |    2 +
+ arch/arm/mach-tegra/clock.c               |    4 +
+ arch/arm/mach-tegra/common.c              |    3 +
+ arch/arm/mach-tegra/headsmp.S             |    6 +-
+ arch/arm/mach-tegra/hotplug.c             |  118 ++++++++---------------------
+ arch/arm/mach-tegra/platsmp.c             |   29 +------
+ arch/arm/mach-tegra/sleep-t20.S           |   82 ++++++++++++++++++++
+ arch/arm/mach-tegra/sleep-t30.S           |  107 ++++++++++++++++++++++++++
+ arch/arm/mach-tegra/sleep.S               |   33 +--------
+ arch/arm/mach-tegra/sleep.h               |   80 +++++++++++++++++++
+ arch/arm/mach-tegra/tegra20_clocks.c      |   70 +++++++++++++++++
+ arch/arm/mach-tegra/tegra20_clocks_data.c |    2 +
+ arch/arm/mach-tegra/tegra30_clocks.c      |   72 +++++++++++++++++
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    3 +
+ arch/arm/mach-tegra/tegra_cpu_car.h       |   87 +++++++++++++++++++++
+ 16 files changed, 552 insertions(+), 147 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/sleep-t20.S
+ create mode 100644 arch/arm/mach-tegra/sleep-t30.S
+ create mode 100644 arch/arm/mach-tegra/sleep.h
+ create mode 100644 arch/arm/mach-tegra/tegra_cpu_car.h
