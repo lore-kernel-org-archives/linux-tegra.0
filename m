@@ -1,26 +1,25 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 0/6] ARM: tegra: add CPU hotplug support
-Date: Thu, 16 Aug 2012 11:22:04 -0600
-Message-ID: <502D2C3C.9090506@wwwdotorg.org>
-References: <1345109513-21553-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 1/5] ARM: tegra: config: enable dmaengine based APB DMA
+ driver
+Date: Thu, 16 Aug 2012 11:53:58 -0600
+Message-ID: <502D33B6.7070103@wwwdotorg.org>
+References: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com> <1345126397-28864-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1345109513-21553-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1345126397-28864-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/16/2012 03:31 AM, Joseph Lo wrote:
-> This patch set adds CPU hotplug support for Tegra20 and Tegra30 SoCs.
-> 
-> The first 3 patches make the CPU clock and reset control be a module and
-> the abstraction APIs for TegraXX SoCs. And clean up some codes for later
-> usage. Then add CPU hotplug support for Tegra20 and Tegra30.
-> 
-> Verified on Seaboard(Tegra20) and Cardhu(Tegra30)
+On 08/16/2012 08:13 AM, Laxman Dewangan wrote:
+> Enable config for dmaengine based Tegra APB DMA driver and
+> disable the legacy APB DMA driver (SYSTEM_DMA).
 
-Thanks, I applied patches 1-5 to for-3.7/cpu-hotplug, and squashed patch
-6 into the patch in for-3.7/defconfig.
+Laxman, if I apply this series to next-20120816 (plus a few patches in
+my local work branch plus the CPU hotplug patches from Joseph, although
+I suspect none of that matters), then audio playback on Tegra20 is
+broken; the pitch is far too high. Audio playback on Tegra30 works as
+expected.
