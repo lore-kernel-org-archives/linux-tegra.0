@@ -1,67 +1,54 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 2/3] pwm_backlight: use power sequences
-Date: Thu, 16 Aug 2012 12:42:24 -0600
-Message-ID: <502D3F10.1020509@wwwdotorg.org>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com> <1345097337-24170-3-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 3/3] tegra: add pwm backlight device tree nodes
+Date: Thu, 16 Aug 2012 12:45:30 -0600
+Message-ID: <502D3FCA.6030708@wwwdotorg.org>
+References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
+ <1345097337-24170-4-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1345097337-24170-3-git-send-email-acourbot@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1345097337-24170-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/16/2012 12:08 AM, Alexandre Courbot wrote:
-> Make use of the power sequences specified in the device tree or platform
-> data to control how the backlight is powered on and off.
 
-> +++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
 
->  Required properties:
->    - compatible: "pwm-backlight"
-> -  - pwms: OF device-tree PWM specification (see PWM binding[0])
->    - brightness-levels: Array of distinct brightness levels. Typically these
->        are in the range from 0 to 255, but any range starting at 0 will do.
->        The actual brightness level (PWM duty cycle) will be interpolated
-> @@ -10,19 +9,72 @@ Required properties:
->        last value in the array represents a 100% duty cycle (brightest).
->    - default-brightness-level: the default brightness level (index into the
->        array defined by the "brightness-levels" property)
-> +  - pwms: OF device-tree PWM specification (see PWM binding[0]). Exactly one PWM
-> +      must be specified
+> +	backlight_reg: fixedregulator@176 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "backlight_regulator";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		gpio = <&gpio 176 0>;
+> +		startup-delay-us = <0>;
+> +		enable-active-high;
+> +		regulator-boot-off;
+> +	};
 
-There's probably no need to move that entry just to change it?
+Rather than add that as a separate node at the top-level, I think just
+add another sub-node to the "regulators" node. Oh, in fact it's already
+there in next-20120816; you just need to add a label.
 
->  Optional properties:
-> -  - pwm-names: a list of names for the PWM devices specified in the
-> -               "pwms" property (see PWM binding[0])
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
 
-> +  - *-supply: regulators used within a power sequence
-> +  - *-gpio: GPIOs used within a power sequence
+> -	pwm {
+> +	pwm: pwm {
+>  		compatible = "nvidia,tegra20-pwm";
+>  		reg = <0x7000a000 0x100>;
 
-I don't think these really warrant mentioning here; such properties are
-part of the standard regulator and GPIO bindings, and are required as a
-side-effect of a power sequence using a resource of those types, rather
-than being something actively defined or needed directly by the
-pwm-backlight binding.
-
-> +  - pwm-names: name for the PWM device specified in the "pwms" property (see PWM
-> +      binding[0]). Necessary if power sequences are used
-
-> +  - power-on-sequence: Power sequence (see Power sequences[1]) used to bring the
-> +      backlight on. This sequence must reference the PWM specified in the pwms
-> +      property by its name. It can also reference other resources supported by
-> +      the power sequences mechanism
-> +  - power-off-sequence: Power sequence (see Power sequences[1]) used to bring
-> +      the backlight off. This sequence must reference the PWM specified in the
-> +      pwms property by its name. It can also reference other resources supported
-> +      by the power sequences mechanism
-
-For these two, I would personally simply say that the pwm-backlight
-binding requires that two power sequences named "on" and "off" must
-exists, and are to defined according to [1].
-
->  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
-> +[1]: Documentation/devicetree/bindings/power_seq/power_seq.txt
+It's pretty trivial I know, but I'd almost be tempted to make that a
+separate patch so that it could be cherry-picked somewhere without a
+tegra20-ventana.dts. But, perhaps that's silly.
