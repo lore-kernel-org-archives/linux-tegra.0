@@ -1,55 +1,46 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
-Date: Thu, 16 Aug 2012 15:14:19 +0100
-Message-ID: <20120816141418.GL15365@opensource.wolfsonmicro.com>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
- <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/5] ARM: tegra: move all APB DMA client to dmaengine based driver
+Date: Thu, 16 Aug 2012 19:43:12 +0530
+Message-ID: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Cc: vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 16, 2012 at 03:08:55PM +0900, Alexandre Courbot wrote:
+This patch series enable the dmaengine based Tegra APB DMA driver
+and remove the support code for the legacy dma driver from different
+APB DMA clients.
+Patch 1 enable the dmaengine based dma drie and disable the legacy dma driver
+        in config file.
+Patch 2 remove the legacy dma driver.
+Patch 3,4, 5 remove the support code from different APB DMA clients to support
+        legacy dma driver.
 
-> +		power-off-sequence {
-> +			step0 {
-> +				gpio = "enable";
-> +				disable;
+Please note that this series will depends on patch
+dma: tegra: enable/disable dma clock
+which is not in 3.6-rc1 but will be available in next RC (rc2) of 3.6 as
+part of fixes.
 
-I'd change the name to "reset" or something in the example - avoids any
-confusion with the action.
+Laxman Dewangan (5):
+  ARM: tegra: config: enable dmaengine based APB DMA driver
+  ARM: tegra: dma: remove legacy APB DMA driver
+  ARM: tegra: apbio: remove support of legacy DMA driver based access
+  spi: tegra: remove support of legacy DMA driver based access
+  ASoC: tegra: remove support of legacy DMA driver based access
 
-> +#ifdef CONFIG_REGULATOR
-> +	case POWER_SEQ_REGULATOR:
-> +		if (pdata->regulator.enable)
-> +			err = regulator_enable(step->resource->regulator);
-> +		else
-> +			err = regulator_disable(step->resource->regulator);
-> +		break;
-
-The regulator and GPIO APIs should stub themselves out adequately to not
-need the ifdefs at least for regulator I'd use the stubs since...
-
-> +	/*
-> +	 * should never happen unless the sequence includes a step which
-> +	 * type does not have support compiled in
-> +	 */
-> +	default:
-> +		return -EINVAL;
-
-...this probably isn't what's meant.  It might also be nice to have
-support for bulk_enable() but that's definitely something that could be
-added later.
-
-> +		err = power_seq_step_run(&seq->steps[cpt]);
-> +		if (err) {
-> +			dev_err(dev, "error %d while running power sequence!\n",
-> +				err);
-> +			return err;
-
-I'd also log at least the step number, it'll make diagnostics easier.
+ arch/arm/configs/tegra_defconfig       |    3 +
+ arch/arm/mach-tegra/Kconfig            |    7 -
+ arch/arm/mach-tegra/Makefile           |    1 -
+ arch/arm/mach-tegra/apbio.c            |  118 +-----
+ arch/arm/mach-tegra/dma.c              |  823 --------------------------------
+ arch/arm/mach-tegra/include/mach/dma.h |   97 ----
+ drivers/spi/Kconfig                    |    2 +-
+ drivers/spi/spi-tegra.c                |   55 +--
+ sound/soc/tegra/Kconfig                |    2 +-
+ sound/soc/tegra/tegra_pcm.c            |  232 ---------
+ sound/soc/tegra/tegra_pcm.h            |   14 -
+ 11 files changed, 7 insertions(+), 1347 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/dma.c
