@@ -1,77 +1,45 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v4 0/3] Runtime Interpreted Power Sequences
-Date: Fri, 17 Aug 2012 17:54:32 +0900
-Message-ID: <502E06C8.8090508@nvidia.com>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com> <201208162347.34810.rjw@sisk.pl>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: tegra: config: enable dmaengine based APB DMA
+ driver
+Date: Fri, 17 Aug 2012 09:17:55 -0600
+Message-ID: <502E60A3.1020405@wwwdotorg.org>
+References: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com> <1345126397-28864-2-git-send-email-ldewangan@nvidia.com> <502D33B6.7070103@wwwdotorg.org> <502DE6FE.8040200@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-2"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201208162347.34810.rjw@sisk.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <502DE6FE.8040200-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org" <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/17/2012 06:47 AM, Rafael J. Wysocki wrote:
-> On Thursday, August 16, 2012, Alexandre Courbot wrote:
->> Overdue revision of this new feature, some changes required additional thought
->> and rework.
->>
->> The most important change is in the way power sequences are expressed in the
->> device tree. In order to avoid having to specify #address-cells, #size-cells and
->> reg properties, the @ notation in the step names is dropped, and instead a
->> fixed, sequential naming is adopted. The type of the resource used by a step is
->> decided by the presence of some recognized properties:
->>
->> power-on-sequence {
->> 	step0 {
->> 		regulator = "power";
->> 		enable;
->> 	};
->> 	step1 {
->> 		delay = <10000>;
->> 	};
->> 	step2 {
->> 		pwm = "backlight";
->> 		enable;
->> 	};
->> 	...
->>
->> To me this looks safe, clear and close to the platform data representation, but
->> needs approval from DT experts.
->>
->> Resources are still referenced by name instead of having their phandles defined
->> directly inside the sequences, as previous discussion came to the conclusion
->> that doing so would require controversial changes to the regulator and PWM
->> frameworks, and that having the resources declared at the device level was
->> making sense logically speaking.
->>
->> Other changes/fixes since last revision:
->> * Move to drivers/power/ (hope this is ok with the maintainers?)
->> * Use microseconds for delay
->> * Use devm for PWM resources and remove cleanup function as all resources are
->>    devm-managed
->> * Remove "-gpio" suffix for GPIO reference in the driver
->> * Remove params structure
->> * Make power_seq structure private
->> * Number of steps in a sequence is explicitly stated instead of resorting to a
->>    "stop" sequence step
->> * Delays are a step instead of being a step parameter
->> * Use flexible member arrays to limit number of memory allocations
->> * Add documentation to DT bindings
->>
->> There was a lot of feedback on the previous version (thanks!) so if I forgot
->> to address some important point, please bring it to my attention again.
->>
->> Alexandre Courbot (3):
->>    Runtime Interpreted Power Sequences
->>    pwm_backlight: use power sequences
->>    tegra: add pwm backlight device tree nodes
+On 08/17/2012 12:38 AM, Laxman Dewangan wrote:
+> On Thursday 16 August 2012 11:23 PM, Stephen Warren wrote:
+>> On 08/16/2012 08:13 AM, Laxman Dewangan wrote:
+>>> Enable config for dmaengine based Tegra APB DMA driver and
+>>> disable the legacy APB DMA driver (SYSTEM_DMA).
+>> Laxman, if I apply this series to next-20120816 (plus a few patches in
+>> my local work branch plus the CPU hotplug patches from Joseph, although
+>> I suspect none of that matters), then audio playback on Tegra20 is
+>> broken; the pitch is far too high. Audio playback on Tegra30 works as
+>> expected.
 >
-> May I ask that the next version of this patchset be CCed to
-> linux-pm@vger.kernel.org?
+> I run the test again on ventana and did not see any issue.
+> I play one song and saw similar behavior with/without this series.
 
-Will do.
+OK, I'll test some other boards. I tested Whistler, although all the
+clocking logic is identical between all Tegra20 boards.
 
-Alex.
+> With this series:
+> --------------------
+> 
+> ubuntu@tegra-ubuntu:/home$ aplay "1-04 Hungry Like The Wolf.wav"
+> Playing WAVE '1-04 Hungry Like The Wolf.wav' : Signed 16 bit Little
+> Endian, Rate
+>  44100 Hz, Stereo
+> underrun!!! (at least 5039.388 ms long)
+
+Why are you getting all these underruns? I almost never see this, except
+when something else is hammering the SD card containing the .wav file.
+If I saw those, I'd count it as a test failure.
