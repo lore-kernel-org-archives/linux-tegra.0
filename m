@@ -1,84 +1,44 @@
-From: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
-Subject: Re: [PATCH v4 0/3] Runtime Interpreted Power Sequences
-Date: Thu, 16 Aug 2012 23:47:34 +0200
-Message-ID: <201208162347.34810.rjw@sisk.pl>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
+ DEBUG
+Date: Fri, 17 Aug 2012 08:04:16 +0200
+Message-ID: <20120817.090416.563933713934615530.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1345097337-24170-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, "htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, August 16, 2012, Alexandre Courbot wrote:
-> Overdue revision of this new feature, some changes required additional thought
-> and rework.
-> 
-> The most important change is in the way power sequences are expressed in the
-> device tree. In order to avoid having to specify #address-cells, #size-cells and
-> reg properties, the @ notation in the step names is dropped, and instead a
-> fixed, sequential naming is adopted. The type of the resource used by a step is
-> decided by the presence of some recognized properties:
-> 
-> power-on-sequence {
-> 	step0 {
-> 		regulator = "power";
-> 		enable;
-> 	};
-> 	step1 {
-> 		delay = <10000>;
-> 	};
-> 	step2 {
-> 		pwm = "backlight";
-> 		enable;
-> 	};
-> 	...
-> 
-> To me this looks safe, clear and close to the platform data representation, but
-> needs approval from DT experts.
-> 
-> Resources are still referenced by name instead of having their phandles defined
-> directly inside the sequences, as previous discussion came to the conclusion
-> that doing so would require controversial changes to the regulator and PWM
-> frameworks, and that having the resources declared at the device level was
-> making sense logically speaking.
-> 
-> Other changes/fixes since last revision:
-> * Move to drivers/power/ (hope this is ok with the maintainers?)
-> * Use microseconds for delay
-> * Use devm for PWM resources and remove cleanup function as all resources are
->   devm-managed
-> * Remove "-gpio" suffix for GPIO reference in the driver
-> * Remove params structure
-> * Make power_seq structure private
-> * Number of steps in a sequence is explicitly stated instead of resorting to a
->   "stop" sequence step
-> * Delays are a step instead of being a step parameter
-> * Use flexible member arrays to limit number of memory allocations
-> * Add documentation to DT bindings
-> 
-> There was a lot of feedback on the previous version (thanks!) so if I forgot
-> to address some important point, please bring it to my attention again.
-> 
-> Alexandre Courbot (3):
->   Runtime Interpreted Power Sequences
->   pwm_backlight: use power sequences
->   tegra: add pwm backlight device tree nodes
+dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+suppressed". This shouldn't print anything without DEBUG.
 
-May I ask that the next version of this patchset be CCed to
-linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org?
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reported-by: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
+---
+ include/linux/device.h |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/include/linux/device.h b/include/linux/device.h
+index eb945e1..d4dc26e 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -962,9 +962,13 @@ do {									\
+ 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+ #define dev_info_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
++#if defined(DEBUG)
+ #define dev_dbg_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+-
++#else
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#endif
+ /*
+  * Stupid hackaround for existing uses of non-printk uses dev_info
+  *
+-- 
+1.7.5.4
