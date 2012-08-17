@@ -1,44 +1,87 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
- DEBUG
-Date: Fri, 17 Aug 2012 08:04:16 +0200
-Message-ID: <20120817.090416.563933713934615530.hdoyu@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: clocks: separate tegra_clk_32k_ops from Tegra20 and Tegra30
+Date: Fri, 17 Aug 2012 14:51:21 +0800
+Message-ID: <1345186281-3859-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, "htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
-suppressed". This shouldn't print anything without DEBUG.
+Currently the tegra20 and tegra30 share the same symbol for
+tegra_clk_32k_ops. This will cause a compile error when building
+a tegra20-only kernel image. Add tegra_clk_32k_ops for tegra20 and
+modify tegra30_clk_32k_ops for tegra30.
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reported-by: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/linux/device.h |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/tegra20_clocks.c      |   10 ++++++++++
+ arch/arm/mach-tegra/tegra30_clocks.c      |    2 +-
+ arch/arm/mach-tegra/tegra30_clocks.h      |    2 +-
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    2 +-
+ 4 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index eb945e1..d4dc26e 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -962,9 +962,13 @@ do {									\
- 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
- #define dev_info_ratelimited(dev, fmt, ...)				\
- 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
-+#if defined(DEBUG)
- #define dev_dbg_ratelimited(dev, fmt, ...)				\
- 	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
--
-+#else
-+#define dev_dbg_ratelimited(dev, fmt, ...)			\
-+	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
-+#endif
- /*
-  * Stupid hackaround for existing uses of non-printk uses dev_info
-  *
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+index b073396..ee6922b 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -240,6 +240,16 @@ static int clk_div16_get_divider(unsigned long parent_rate, unsigned long rate)
+ 	return divider_u16 - 1;
+ }
+ 
++static unsigned long tegra_clk_fixed_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	return to_clk_tegra(hw)->fixed_rate;
++}
++
++struct clk_ops tegra_clk_32k_ops = {
++	.recalc_rate = tegra_clk_fixed_recalc_rate,
++};
++
+ /* clk_m functions */
+ static unsigned long tegra20_clk_m_recalc_rate(struct clk_hw *hw,
+ 			unsigned long prate)
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
+index b2d0864..7dad44d 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.c
++++ b/arch/arm/mach-tegra/tegra30_clocks.c
+@@ -489,7 +489,7 @@ static unsigned long tegra30_clk_fixed_recalc_rate(struct clk_hw *hw,
+ 	return to_clk_tegra(hw)->fixed_rate;
+ }
+ 
+-struct clk_ops tegra_clk_32k_ops = {
++struct clk_ops tegra30_clk_32k_ops = {
+ 	.recalc_rate = tegra30_clk_fixed_recalc_rate,
+ };
+ 
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.h b/arch/arm/mach-tegra/tegra30_clocks.h
+index aeb4e96..b08b8d9 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.h
++++ b/arch/arm/mach-tegra/tegra30_clocks.h
+@@ -17,7 +17,7 @@
+ #ifndef __MACH_TEGRA30_CLOCK_H
+ #define __MACH_TEGRA30_CLOCK_H
+ 
+-extern struct clk_ops tegra_clk_32k_ops;
++extern struct clk_ops tegra30_clk_32k_ops;
+ extern struct clk_ops tegra30_clk_m_ops;
+ extern struct clk_ops tegra_clk_m_div_ops;
+ extern struct clk_ops tegra_pll_ref_ops;
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index dad1b2f..2271ac1 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -58,7 +58,7 @@ static struct clk_tegra tegra_clk_32k_hw = {
+ static struct clk tegra_clk_32k = {
+ 	.name = "clk_32k",
+ 	.hw = &tegra_clk_32k_hw.hw,
+-	.ops = &tegra_clk_32k_ops,
++	.ops = &tegra30_clk_32k_ops,
+ 	.flags = CLK_IS_ROOT,
+ };
+ 
 -- 
-1.7.5.4
+1.7.0.4
