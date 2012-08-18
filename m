@@ -1,66 +1,44 @@
-From: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
-Subject: Re: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
- DEBUG
-Date: Sat, 18 Aug 2012 03:11:56 +0300
-Message-ID: <502EDDCC.200@iki.fi>
-References: <20120817.090416.563933713934615530.hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] i2c: tegra: protect suspend/resume callbacks with CONFIG_PM_SLEEP
+Date: Sat, 18 Aug 2012 17:49:58 +0530
+Message-ID: <1345292398-10609-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120817.090416.563933713934615530.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/17/2012 09:04 AM, Hiroshi Doyu wrote:
-> dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
-> suppressed". This shouldn't print anything without DEBUG.
->
-> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reported-by: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
-> ---
->   include/linux/device.h |    6 +++++-
->   1 files changed, 5 insertions(+), 1 deletions(-)
->
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index eb945e1..d4dc26e 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -962,9 +962,13 @@ do {									\
->   	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
->   #define dev_info_ratelimited(dev, fmt, ...)				\
->   	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
-> +#if defined(DEBUG)
->   #define dev_dbg_ratelimited(dev, fmt, ...)				\
->   	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
-> -
-> +#else
-> +#define dev_dbg_ratelimited(dev, fmt, ...)			\
-> +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
-> +#endif
->   /*
->    * Stupid hackaround for existing uses of non-printk uses dev_info
->    *
->
+The CONFIG_PM doesn't actually enable any of the PM callbacks, it
+only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
+This means if CONFIG_PM is used to protect system sleep callbacks
+then it may end up unreferenced if only runtime PM is enabled.
+Hence protecting sleep callbacks with CONFIG_PM_SLEEP.
 
-NACK. I don't think that's correct behavior. After that patch it kills 
-all output of dev_dbg_ratelimited(). If I use dynamic debugs and order 
-debugs, I expect to see debugs as earlier.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch will remove the compilation warning if CONFIG_PM_SLEEP
+is not enabled.
 
-I did test module in order to demonstrate problem. Here it is:
-http://git.linuxtv.org/anttip/media_tree.git/shortlog/refs/heads/dev_dbg_ratelimited
+Change from V1 ->V2:
+provide more details in description as per Mark's response.
 
-There is also file named: test_results.txt
-It contains 4 test cases:
-1) without that patch & without module dynamic debug
-2) without that patch & module dynamic debug ordered
-3) with that patch & without module dynamic debug
-4) with that patch & module dynamic debug ordered
+ drivers/i2c/busses/i2c-tegra.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-regards
-Antti
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 66eb53f..9a08c57 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -712,7 +712,7 @@ static int __devexit tegra_i2c_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ static int tegra_i2c_suspend(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
 -- 
-http://palosaari.fi/
+1.7.1.1
