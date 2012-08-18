@@ -1,71 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
-Date: Sat, 18 Aug 2012 00:04:26 +0100
-Message-ID: <20120817230426.GC21888@opensource.wolfsonmicro.com>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
- <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
- <502D3E29.1010501@wwwdotorg.org>
- <502D61C6.5050101@firmworks.com>
+From: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
+Subject: Re: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
+ DEBUG
+Date: Sat, 18 Aug 2012 03:11:56 +0300
+Message-ID: <502EDDCC.200@iki.fi>
+References: <20120817.090416.563933713934615530.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <502D61C6.5050101@firmworks.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mitch Bradley <wmb@firmworks.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, devicetree-discuss@lists.ozlabs.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120817.090416.563933713934615530.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <htl10-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org" <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/17/2012 09:04 AM, Hiroshi Doyu wrote:
+> dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+> suppressed". This shouldn't print anything without DEBUG.
+>
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reported-by: Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>
+> ---
+>   include/linux/device.h |    6 +++++-
+>   1 files changed, 5 insertions(+), 1 deletions(-)
+>
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index eb945e1..d4dc26e 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -962,9 +962,13 @@ do {									\
+>   	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+>   #define dev_info_ratelimited(dev, fmt, ...)				\
+>   	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
+> +#if defined(DEBUG)
+>   #define dev_dbg_ratelimited(dev, fmt, ...)				\
+>   	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+> -
+> +#else
+> +#define dev_dbg_ratelimited(dev, fmt, ...)			\
+> +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+> +#endif
+>   /*
+>    * Stupid hackaround for existing uses of non-printk uses dev_info
+>    *
+>
 
---TiqCXmo5T1hvSQQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+NACK. I don't think that's correct behavior. After that patch it kills 
+all output of dev_dbg_ratelimited(). If I use dynamic debugs and order 
+debugs, I expect to see debugs as earlier.
 
-On Thu, Aug 16, 2012 at 11:10:30AM -1000, Mitch Bradley wrote:
-> On 8/16/2012 8:38 AM, Stephen Warren wrote:
+I did test module in order to demonstrate problem. Here it is:
+http://git.linuxtv.org/anttip/media_tree.git/shortlog/refs/heads/dev_dbg_ratelimited
 
-> > Device tree bindings shouldn't reference Linux documentation; the
-> > bindings are supposed to be OS-agnostic.
+There is also file named: test_results.txt
+It contains 4 test cases:
+1) without that patch & without module dynamic debug
+2) without that patch & module dynamic debug ordered
+3) with that patch & without module dynamic debug
+4) with that patch & module dynamic debug ordered
 
-> While it is true that bindings should try to be OS-agnostic, there is
-> the practical matter of where to put documentation so that it is widely
-> accessible.  The Linux source tree is one of the most accessible things
-> there is, considering how widely it is replicated.
+regards
+Antti
 
-> As the original instigator of the policy that the device tree should
-> describe the hardware "OS-neutrally", I personally don't have a problem
-> with bindings referring to Linux documentation.  I wouldn't like
-> references to proprietary and inaccessible documentation.
-
-OS agnosticness isn't the only issue here - the other problem with using
-Linux documentation is that except for things that are specifically
-userspace interfaces and the DT bindings nothing is intended to be
-stable so bindings defined in terms of Linux documentation may randomly
-change.  We're not doing an awesome job of that with DT right now but we
-should try and so we ought to avoid including non-ABI things in ABIs
-like this.
-
---TiqCXmo5T1hvSQQg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQLs3zAAoJEFJkBDiqVpZ4NucQAJowkgvCBihoqNrplgWBVFgj
-eps2rAS3cFRH8aUzgqi31UuAvyHmxxnI1+BoT4k256E86vC+b6asdeSov3iUGTKZ
-zZ6JKvaNIhkWaFYDKsciztyFbrF+26Eq2qRgLImM2vy0Z/yjayQGrI1DVJ3z9B00
-3WIaAwC7Q8SNc6Ilwnw1jOGWMGWe+2Gp8Z+BOXt3bsmqeESoQvaxP2tedU2/NYgX
-WdYbOy/eP5lC46/R35yuGvRSeCs0AU3/Ii0psRzn7eVlCwViqSBl2ST7H8rGa1Qx
-Vn94ZyWN6gVgBjadQqX6B35By05uhl/fyKA01kX1CL5JQowD0tjno+E9Ai8objER
-JuWzBH7IPKxY+p47Ak5sGhB2yrFdtJCNEQv8lnAoRLPM0C9X9D5vwmQkc1hNMSr4
-rDdiZ8xowXEfAnOcMBVryWrQcaUvpW2rvshTxuVvWamn9Mg1F4PD1m0X/nzcprv4
-hYgtOu3oF7M7rj1RpFdKdZRX7+J3HvmtRdB58E1mNJrqcGag0YhjNtBu7CFrRsrd
-dm1V8vjqKiEufh80lpvIZ+ipWcG6JAGplrL/vEwd0prv8beHGM6RUH6wMOngsVe0
-r6gZFkmTnJP5at09+4Yep99RNpFn6dPjN+ijWmAYrCqVn3JmKJK+lUnQTk/i2D12
-7Ivne2SQwes7v1TvJeQg
-=V2+Q
------END PGP SIGNATURE-----
-
---TiqCXmo5T1hvSQQg--
+-- 
+http://palosaari.fi/
