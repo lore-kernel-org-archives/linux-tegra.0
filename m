@@ -1,126 +1,70 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH] ARM: tegra: update defconfig to support more paz00 hardware
-Date: Sat, 18 Aug 2012 19:10:41 +0200
-Message-ID: <2895bbda75127f208239e07dbbcf79e718cf684f.1345309601.git.marvin24@gmx.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH REBASE 1/2] i2c: tegra: I2_M_NOSTART functionality not
+ supported in Tegra20
+Date: Sat, 18 Aug 2012 20:29:40 +0200
+Message-ID: <20120818182940.GA19802@pengutronix.de>
+References: <1345230155-4252-1-git-send-email-ldewangan@nvidia.com>
+ <20120818124703.GC12839@pengutronix.de>
+ <502F8F83.5030902@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <502F8F83.5030902-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This update adds various devices found on the usb bus on PAZ00 boards:
 
-	- Wifi chip (rt3070)
-	- Bluetooth (btusb)
-	- Camera (uvcvideo)
-	- 3G modem (acm and wdm)
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These are enabled as modules because they are not needed for boot and
-will not be used on other boards. Wifi also needs to be module because
-of the firmware loader.
 
-The update also enabled support for the rfkill switch, the Wifi LED and
-the nvec power and led driver which got lost in the past.
+> >>-	clk_prepare_enable(i2c_dev->div_clk);
+> >>+	/* Support I2C_M_NOSTART only if HW support continue xfer. */
+> >>+	for (i =3D 0; i<  num - 1; i++) {
+> >>+		if ((msgs[i + 1].flags&  I2C_M_NOSTART)&&
+> >>+			!i2c_dev->has_continue_xfer_support) {
+> >>+			dev_err(i2c_dev->dev,
+> >>+				"mesg %d have illegal flag\n", i + 1);
+> >>+			return -EINVAL;
+> >>+		}
+> >>+	}
+> >Drivers are requested to explicitly check for features of the I2C bus
+> >(like M_NOSTART) before using them, so I'd skip this extra check.
+> >
+>=20
+> Ok, I kept this as part of flag checking so illegal flag should not
+> be passed. I will remove this on next version patch.
+>=20
+> >>+
+> >>+	clk_prepare_enable(i2c_dev->clk);
+> > From a glimpse, this change looks unrelated at least. Even wrong, no?
+> >
+>=20
+> It was already there, just before above check. Due to insertion of
+> check, this code shifted, otherwise it is not a new code.
 
-Finally, devtmpfs and tmpfs acls are enabled because they are mandatory
-on modern linux distros.
+It used to be ->div_clk and now it is ->clk?
 
-Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
----
- arch/arm/configs/tegra_defconfig |   33 +++++++++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 4 deletions(-)
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index c7f7c7f..ef2c679 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -68,7 +68,18 @@ CONFIG_INET6_IPCOMP=y
- CONFIG_IPV6_MIP6=y
- CONFIG_IPV6_TUNNEL=y
- CONFIG_IPV6_MULTIPLE_TABLES=y
--# CONFIG_WIRELESS is not set
-+CONFIG_BT=y
-+CONFIG_BT_RFCOMM=y
-+CONFIG_BT_BNEP=y
-+CONFIG_BT_HIDP=y
-+CONFIG_BT_HCIBTUSB=m
-+CONFIG_CFG80211=y
-+CONFIG_MAC80211=y
-+CONFIG_RFKILL=y
-+CONFIG_RFKILL_INPUT=y
-+CONFIG_RFKILL_GPIO=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
- # CONFIG_FIRMWARE_IN_KERNEL is not set
- CONFIG_PROC_DEVICETREE=y
- CONFIG_BLK_DEV_LOOP=y
-@@ -88,7 +99,8 @@ CONFIG_USB_PEGASUS=y
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
--# CONFIG_WLAN is not set
-+CONFIG_RT2X00=y
-+CONFIG_RT2800USB=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
-@@ -123,6 +135,11 @@ CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_TPS62360=y
- CONFIG_REGULATOR_TPS6586X=y
- CONFIG_REGULATOR_TPS65910=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_USB_VIDEO_CLASS=m
-+# CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV is not set
-+# CONFIG_USB_GSPCA is not set
- CONFIG_SOUND=y
- CONFIG_SND=y
- # CONFIG_SND_SUPPORT_OLD_API is not set
-@@ -139,12 +156,19 @@ CONFIG_SND_SOC_TEGRA_ALC5632=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TEGRA=y
-+CONFIG_USB_ACM=y
-+CONFIG_USB_WDM=y
- CONFIG_USB_STORAGE=y
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SDHCI_TEGRA=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_GPIO=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_MAX8907=y
- CONFIG_RTC_DRV_EM3027=y
-@@ -156,6 +180,8 @@ CONFIG_SENSORS_AK8975=y
- CONFIG_MFD_NVEC=y
- CONFIG_KEYBOARD_NVEC=y
- CONFIG_SERIO_NVEC_PS2=y
-+CONFIG_NVEC_POWER=y
-+CONFIG_NVEC_PAZ00=y
- CONFIG_TEGRA_IOMMU_GART=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_MEMORY=y
-@@ -174,6 +200,7 @@ CONFIG_EXT4_FS=y
- # CONFIG_DNOTIFY is not set
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_NFS_FS=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
-@@ -192,8 +219,6 @@ CONFIG_DEBUG_VM=y
- CONFIG_DEBUG_SG=y
- CONFIG_DEBUG_LL=y
- CONFIG_EARLY_PRINTK=y
--CONFIG_CRYPTO_ECB=y
--CONFIG_CRYPTO_ARC4=y
- CONFIG_CRYPTO_TWOFISH=y
- # CONFIG_CRYPTO_ANSI_CPRNG is not set
- CONFIG_CRYPTO_DEV_TEGRA_AES=y
--- 
-1.7.9.5
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAlAv3xQACgkQD27XaX1/VRuMSwCgwWBZ/GTWIGew9JIPPT1F+OJW
+QOIAoKnHdvNb2jtx3suvGHm+WNAro7p9
+=SQ3A
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
