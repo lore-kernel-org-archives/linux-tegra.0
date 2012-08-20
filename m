@@ -1,61 +1,188 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH V2 1/2] i2c: tegra: I2_M_NOSTART functionality not
- supported in Tegra20
-Date: Sun, 19 Aug 2012 08:33:14 +0200
-Message-ID: <20120819063314.GA2147@pengutronix.de>
-References: <1345317467-22258-1-git-send-email-ldewangan@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
+ DEBUG
+Date: Mon, 20 Aug 2012 13:14:54 +0200
+Message-ID: <20120820.141454.449841061737873578.hdoyu@nvidia.com>
+References: <20120817.090416.563933713934615530.hdoyu@nvidia.com><502EDDCC.200@iki.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1345317467-22258-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: khali@linux-fr.org, swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <502EDDCC.200@iki.fi>
+Sender: linux-media-owner@vger.kernel.org
+To: "crope@iki.fi" <crope@iki.fi>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Antti,
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Antti Palosaari <crope@iki.fi> wrote @ Sat, 18 Aug 2012 02:11:56 +0200:
 
-On Sun, Aug 19, 2012 at 12:47:46AM +0530, Laxman Dewangan wrote:
-> Tegra20 i2c controller does not support the continue transfer
-> which implements the I2C_M_NOSTART functionality of i2c
-> protocol mangling.
-> Removing the I2C_M_NOSTART functionality support for Tegra20.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
-> Changes from V1:
-> - make the hw feature structure as part of tegra device structure in
->   place of copying the member.
-> - Remove check for extra M_NOSTART flag if it is not supported in xfer fu=
-nction.
->=20
-> Please note that this should go on tegra common clock source tree to avoi=
-d conflicts.
+> On 08/17/2012 09:04 AM, Hiroshi Doyu wrote:
+> > dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+> > suppressed". This shouldn't print anything without DEBUG.
+> >
+> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> > Reported-by: Antti Palosaari <crope@iki.fi>
+> > ---
+> >   include/linux/device.h |    6 +++++-
+> >   1 files changed, 5 insertions(+), 1 deletions(-)
+> >
+> > diff --git a/include/linux/device.h b/include/linux/device.h
+> > index eb945e1..d4dc26e 100644
+> > --- a/include/linux/device.h
+> > +++ b/include/linux/device.h
+> > @@ -962,9 +962,13 @@ do {									\
+> >   	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+> >   #define dev_info_ratelimited(dev, fmt, ...)				\
+> >   	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
+> > +#if defined(DEBUG)
+> >   #define dev_dbg_ratelimited(dev, fmt, ...)				\
+> >   	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+> > -
+> > +#else
+> > +#define dev_dbg_ratelimited(dev, fmt, ...)			\
+> > +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+> > +#endif
+> >   /*
+> >    * Stupid hackaround for existing uses of non-printk uses dev_info
+> >    *
+> >
+>
+> NACK. I don't think that's correct behavior. After that patch it kills
+> all output of dev_dbg_ratelimited(). If I use dynamic debugs and order
+> debugs, I expect to see debugs as earlier.
 
-Looks good to me regarding the I2C part:
+You are right. I attached the update patch, just moving *_ratelimited
+functions after dev_dbg() definitions.
 
-Reviewed-by: Wolfram Sang <w.sang@pengutronix.de>
+With DEBUG defined/undefined in your "test.ko", it works fine. With
+CONFIG_DYNAMIC_DEBUG, it works with "+p", but with "-p", still
+"..callbacks suppressed" is printed.
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+$ insmod test.ko
+$ echo -n 'module test +p' > /sys/kernel/debug/dynamic_debug/control"
+$ rmmod test
+$ dmesg | tail -15
+<7>[   69.047192] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   69.047233] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   69.047275] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<4>[   75.057045] print_dev_dbg_ratelimited: 90 callbacks suppressed
+<7>[   75.063595] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.063796] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.063970] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064137] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064307] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064472] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064640] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064806] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.064972] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<7>[   75.065137] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
+<6>[   75.065510] test module unloaded!
 
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+$ insmod test.ko
+$ echo -n 'module test -p' > /sys/kernel/debug/dynamic_debug/control"
+$ rmmod test
+$ dmesg
+...
+<6>[   82.715925] test module loaded!
+<6>[   82.795642] dynamic_debug:ddebug_exec_queries: processed 1 queries, with 1 matches, 0 errs
+<4>[   88.892096] print_dev_dbg_ratelimited: 90 callbacks suppressed
+<6>[   88.898397] test module unloaded!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Any suggestion to control "... callbacks suppressed" with
+CONFIG_DYNAMIC_DEBUG would be appreciated.
 
-iEYEARECAAYFAlAwiKoACgkQD27XaX1/VRs8MwCfROdoJPccn631aBFjG2WhGuDW
-bUQAnR3c2FBXVIjkT0KHva7nssU0dhJE
-=0ojK
------END PGP SIGNATURE-----
+From 5b33751f89c2e91ee734325e6d73ed7e1c6d4b02 Mon Sep 17 00:00:00 2001
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Date: Mon, 20 Aug 2012 13:49:19 +0300
+Subject: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
+ DEBUG
 
---8t9RHnE3ZwKMSgU+--
+dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+suppressed". This shouldn't print anything without DEBUG.
+
+With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
+
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+Reported-by: Antti Palosaari <crope@iki.fi>
+---
+ include/linux/device.h |   53 ++++++++++++++++++++++++++---------------------
+ 1 files changed, 29 insertions(+), 24 deletions(-)
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 9648331..763bca4 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 
+ #endif
+ 
++/*
++ * Stupid hackaround for existing uses of non-printk uses dev_info
++ *
++ * Note that the definition of dev_info below is actually _dev_info
++ * and a macro is used to avoid redefining dev_info
++ */
++
++#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
++
++#if defined(CONFIG_DYNAMIC_DEBUG)
++#define dev_dbg(dev, format, ...)		     \
++do {						     \
++	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++} while (0)
++#elif defined(DEBUG)
++#define dev_dbg(dev, format, arg...)		\
++	dev_printk(KERN_DEBUG, dev, format, ##arg)
++#else
++#define dev_dbg(dev, format, arg...)				\
++({								\
++	if (0)							\
++		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
++	0;							\
++})
++#endif
++
+ #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+@@ -955,33 +981,12 @@ do {									\
+ 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+ #define dev_info_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
++#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
+ #define dev_dbg_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+-
+-/*
+- * Stupid hackaround for existing uses of non-printk uses dev_info
+- *
+- * Note that the definition of dev_info below is actually _dev_info
+- * and a macro is used to avoid redefining dev_info
+- */
+-
+-#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
+-
+-#if defined(CONFIG_DYNAMIC_DEBUG)
+-#define dev_dbg(dev, format, ...)		     \
+-do {						     \
+-	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
+-} while (0)
+-#elif defined(DEBUG)
+-#define dev_dbg(dev, format, arg...)		\
+-	dev_printk(KERN_DEBUG, dev, format, ##arg)
+ #else
+-#define dev_dbg(dev, format, arg...)				\
+-({								\
+-	if (0)							\
+-		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
+-	0;							\
+-})
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ #ifdef VERBOSE_DEBUG
+-- 
+1.7.5.4
