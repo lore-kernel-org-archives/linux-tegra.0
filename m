@@ -1,34 +1,27 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: update defconfig to support more paz00 hardware
-Date: Mon, 20 Aug 2012 11:14:16 -0600
-Message-ID: <50327068.6010705@wwwdotorg.org>
-References: <2895bbda75127f208239e07dbbcf79e718cf684f.1345309601.git.marvin24@gmx.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 1/2] i2c: tegra: I2_M_NOSTART functionality not supported
+ in Tegra20
+Date: Mon, 20 Aug 2012 11:15:31 -0600
+Message-ID: <503270B3.7000007@wwwdotorg.org>
+References: <1345317467-22258-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2895bbda75127f208239e07dbbcf79e718cf684f.1345309601.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1345317467-22258-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: khali@linux-fr.org, w.sang@pengutronix.de, swarren@nvidia.com, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/18/2012 11:10 AM, Marc Dietrich wrote:
-> This update adds various devices found on the usb bus on PAZ00 boards:
-> 
-> 	- Wifi chip (rt3070)
-> 	- Bluetooth (btusb)
-> 	- Camera (uvcvideo)
-> 	- 3G modem (acm and wdm)
-> 
-> These are enabled as modules because they are not needed for boot and
-> will not be used on other boards. Wifi also needs to be module because
-> of the firmware loader.
-> 
-> The update also enabled support for the rfkill switch, the Wifi LED and
-> the nvec power and led driver which got lost in the past.
-> 
-> Finally, devtmpfs and tmpfs acls are enabled because they are mandatory
-> on modern linux distros.
+On 08/18/2012 01:17 PM, Laxman Dewangan wrote:
+> Tegra20 i2c controller does not support the continue transfer
+> which implements the I2C_M_NOSTART functionality of i2c
+> protocol mangling.
+> Removing the I2C_M_NOSTART functionality support for Tegra20.
 
-Thanks, applied to Tegra's for-3.7/defconfig branch.
+Thanks, applied the series to Tegra's for-3.7/drivers-i2c branch.
+
+Note that I had to fix up patch 1 to remove const on the tegra*_i2c_hw
+variable declarations to avoid compiler warnings when assigning pointers
+into tegra_i2c_of_match[].data.
