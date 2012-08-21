@@ -1,103 +1,128 @@
-From: Dennis Gilmore <dennis-OMEdqnBlyiw@public.gmane.org>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: Binding together tegradrm & nvhost
-Date: Mon, 20 Aug 2012 22:50:21 -0500
-Message-ID: <20120820225021.2d821400@adria.ausil.us>
+Date: Tue, 21 Aug 2012 12:57:25 +0800
+Message-ID: <1345525045.31608.145.camel@markz-desktop>
 References: <50323513.3090606@nvidia.com>
-	<20120820131800.GA13785@avionic-0098.mockup.avionic-design.de>
+Reply-To: <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120820131800.GA13785-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <50323513.3090606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Terje =?UTF-8?B?QmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-LS0tLS1CRUdJTiBQR1AgU0lHTkVEIE1FU1NBR0UtLS0tLQ0KSGFzaDogU0hBMQ0KDQpFbCBNb24s
-IDIwIEF1ZyAyMDEyIDE1OjE4OjAxICswMjAwDQpUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
-bmdAYXZpb25pYy1kZXNpZ24uZGU+IGVzY3JpYmnDszoNCj4gT24gTW9uLCBBdWcgMjAsIDIwMTIg
-YXQgMDQ6MDE6MDdQTSArMDMwMCwgVGVyamUgQmVyZ3N0csO2bSB3cm90ZToNCj4gPiBIaSwNCj4g
-PiANCj4gPiBJJ3ZlIGJlZW4gdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgdGhlIGJlc3Qgd2F5IHRvIGJp
-bmQgdG9nZXRoZXINCj4gPiB0ZWdyYWRybSBhbmQgbnZob3N0LiBJIGFzc3VtZSB0aGF0IG52aG9z
-dCBhbmQgdGVncmFkcm0gd2lsbCBsaXZlIGFzDQo+ID4gc2VwYXJhdGUgZHJpdmVycywgd2l0aCB0
-ZWdyYWRybSB0YWtpbmcgY2FyZSBvZiBkaXNwbGF5IGNvbnRyb2xsZXIsDQo+ID4gYW5kIG52aG9z
-dCB0YWtpbmcgY2FyZSBvZiBob3N0MXggYW5kIG90aGVyIGNsaWVudCBkZXZpY2VzLg0KPiA+IA0K
-PiA+IEkndmUgaWRlbnRpZmllZCBhIGJ1bXBzIHRoYXQgd2UgbmVlZCB0byBhZ3JlZSBvbi4gSSd2
-ZSBpbmNsdWRlZA0KPiA+IGhlcmUgdGhlIHByb2JsZW0gYW5kIG15IHByb3Bvc2FsOg0KPiA+IA0K
-PiA+IDEpIERldmljZSAmIGRyaXZlciByZWdpc3RyYXRpb24NCj4gPiB0ZWdyYWRybSByZWdpc3Rl
-cnMgYXMgcGxhdGZvcm1fZHJpdmVyLCBhbmQgZXhwb3J0cyBpb2N0bCdzLiBIZXJlIHdlDQo+ID4g
-YWxyZWFkeSBoYXZlIHRvIGFncmVlIG9uIHdoaWNoIGRldmljZSB0aGUgcGxhdGZvcm1fZHJpdmVy
-IG1hcHMgdG8uDQo+ID4gQ3VycmVudGx5IGl0IG1hcHMgdG8gaG9zdDF4LCBidXQgd2UnbGwgbmVl
-ZCB0byBtb3ZlIGNvbnRyb2wgb2YNCj4gPiBob3N0MXggdG8gbnZob3N0IGRyaXZlci4gV2UnbGwg
-bmVlZCB0byBwYXNzIGRybV9wbGF0Zm9ybV9pbml0KCkgc29tZQ0KPiA+IHBsYXRmb3JtX2Rldmlj
-ZSAtIEkgcHJvcG9zZSB0aGF0IHdlIGNyZWF0ZSBhIHZpcnR1YWwgZGV2aWNlIGZvcg0KPiA+IHRo
-aXMuDQo+ID4gDQo+ID4gMikgRGV2aWNlIHRyZWUgcGFyc2luZw0KPiA+IEF0IGJvb3R1cCwgd2Ug
-bmVlZCB0byBwYXJzZSBvbmx5IGhvc3QxeCBub2RlIGFuZCBjcmVhdGUgYSBkZXZpY2UgZm9yDQo+
-ID4gdGhhdC4gaG9zdDF4IHByb2JlIHdpbGwgbmVlZCB0byBkaWcgaW50byBob3N0MXggdG8gY3Jl
-YXRlIHRoZQ0KPiA+IGNoaWxkcmVuLiBUaGlzIGlzIHNvbWV0aGluZyB0aGF0IHdlJ2xsIG5lZWQg
-dG8gaW1wbGVtZW50IGZpcnN0IGluDQo+ID4gdGhlIGludGVybmFsIGtlcm5lbC4gdGVncmEtZGMg
-d291bGQgZ2V0IHByb2JlZCBvbmx5IGFmdGVyIHRoaXMNCj4gPiBzZXF1ZW5jZS4gSWYgdGhpcyBp
-cyBvaywgSSdsbCB0YWtlIGNhcmUgb2YgdGhpcyBwYXJ0LCBhbmQNCj4gPiBhZGp1c3RtZW50cyB0
-byB0ZWdyYWRybSB3aGVuIHRoaXMgYmVjb21lcyB0b3BpY2FsLg0KPiANCj4gSSBoYXZlIGEgbmV3
-IHBhdGNoIHNlcmllcyB0aGF0IHRha2VzIGNhcmUgb2YgdGhlc2UgdHdvIHN0ZXBzLiBNYXJrDQo+
-IHNlbnQgc29tZSBwYXRjaGVzIGZvciBUZWdyYTMwIGFuZCBIRE1JIG9uIHRvcCBvZiB0aGUgb2xk
-ZXIgc2VyaWVzDQo+IHRoYXQgSSBuZWVkIHRvIG1lcmdlIHdpdGggd2hhdCBJIGhhdmUuIE1heWJl
-IEknbGwgZGVjaWRlIHRvIHNlbmQgdGhlDQo+IHNlcmllcyBvdXQgd2l0aG91dCB0aGUgcGF0Y2hl
-cyBtZXJnZWQsIGRlcGVuZGluZyBvbiBob3cgbXVjaCB0aW1lDQo+IEknbGwgZ2V0IG9yIGhvdyBt
-dWNoIGVmZm9ydCBpdCByZXF1aXJlcy4gSSBoYWQgaG9wZWQgdGhlIG5leHQgc2VyaWVzDQo+IHdv
-dWxkIGhhdmUgd29ya2luZyBIRE1JIHN1cHBvcnQsIHdoaWNoIGlzIHdoeSBJIHdhaXRlZC4NCj4g
-DQo+IEJhc2ljYWxseSB3aGF0IEkgaGF2ZSBpcyBhIHZlcnkgcnVkaW1lbnRhcnkgZHJpdmVyIGZv
-ciBob3N0MXgsIHdoaWNoDQo+IHdhaXRzIGZvciBzb21lIG9mIHRoZSBzdWJkZXZpY2VzIHRvIGJl
-IHJlZ2lzdGVyZWQgYW5kIHRoZW4gY3JlYXRlcyBhDQo+IGR1bW15IGRldmljZSBhZ2FpbnN0IHdo
-aWNoIHRoZSBUZWdyYSBEUk0gZHJpdmVyIGNhbiBiaW5kLiBJdCdzIG5vdA0KPiBxdWl0ZSB3aGF0
-IHlvdSBwcm9wb3NlZCBhYm92ZSwgYnV0IHZlcnkgc2ltaWxhci4NCj4gDQo+IEZvciBub3cgSSd2
-ZSBhbHNvIHB1dCB0aGUgaG9zdDF4IGRyaXZlciBpbiB0aGUgc2FtZSBkaXJlY3RvcnkgYXMgdGhl
-DQo+IFRlZ3JhIERSTSBiZWNhdXNlIHRoZXJlIGFyZSBubyBvdGhlciB1c2Vycy4gV2UgbWF5IHdh
-bnQgdG8gY2hhbmdlIHRoYXQNCj4gYXQgc29tZSBwb2ludC4NCj4gDQo+ID4gV2UgaW5jbHVkZSBp
-biBkZXZpY2UgdHJlZSB0aGUgcmVnaXN0ZXIgYWRkcmVzc2VzLiBTb21lIGluZm9ybWF0aW9uDQo+
-ID4gdGhhdCB3b3VsZCBiZSBuZWVkZWQgaXMgc3RpbGwgY2xvY2tzLCBjbG9jayBnYXRpbmcgYmVo
-YXZpb3IsIHBvd2VyDQo+ID4gZG9tYWluIGlkcywgbWFwcGluZyBvZiBjbGllbnQgZGV2aWNlcyB0
-byBjaGFubmVscywgYW5kIG1hcHBpbmcgb2YNCj4gPiBzeW5jIHBvaW50cyBwZXIgY2hhbm5uZWwN
-Cj4gPiANCj4gPiAzKSBUaGUgaGFuZGxpbmcgb2YgaW9jdGwncyBmcm9tIHVzZXIgc3BhY2UNCj4g
-PiBUaGUgaW9jdGwncyByZXByZXNlbnQgdGhlIG5lZWRlZCBzeW5jaHJvbml6YXRpb24gYW5kIGNo
-YW5uZWwNCj4gPiBmdW5jdGlvbmFsaXR5LiBJJ2xsIHdyaXRlIHRoZSBuZWNlc3NhcnkgZ2x1ZS4g
-VGhlcmUgd291bGQgYmUgdHdvDQo+ID4gY2F0ZWdvcmllcyBvZiBpb2N0bCdzOg0KPiA+IA0KPiA+
-IDNhKSBTaW1wbGUgb3BlcmF0aW9ucyBzdWNoIGFzIHN5bmNocm9uaXphdGlvbjoNCj4gPiANCj4g
-PiBXYWl0LCBzaWduYWwsIHJlYWQsIGV0Yy4gYXJlIGV4cG9ydGVkIGZyb20gbnZob3N0IGFzIHB1
-YmxpYyBBUElzLA0KPiA+IGFuZCB0ZWdyYWRybSBzaW1wbHkgY2FsbHMgdGhlbS4gTm8gYmlnIGh1
-cmRsZSB0aGVyZS4gSSBhbHJlYWR5IGhhdmUNCj4gPiBjb25jZXB0IGNvZGUgdG8gZG8gdGhpcy4N
-Cj4gPiANCj4gPiAzYikgQ2hhbm5lbCBvcGVyYXRpb25zOg0KPiA+IA0KPiA+IHRlZ3JhZHJtIG5l
-ZWRzIHRvIGhhdmUgYSBjb25jZXB0IG9mIGxvZ2ljYWwgY2hhbm5lbC4gQ2hhbm5lbCBvcGVuDQo+
-ID4gY3JlYXRlcyBhIGxvZ2ljYWwgY2hhbm5lbCAoL2NvbnRleHQpIGJ5IGNhbGxpbmcgbnZob3N0
-LiBudmhvc3QNCj4gPiBuZWVkcyB0byBrbm93IHdoaWNoIGh3IGlzIGdvaW5nIHRvIGJlIHVzZWQg
-YnkgdGhlIGNoYW5uZWwgdG8gYmUNCj4gPiBhYmxlIHRvIGNvbnRyb2wgcG93ZXIsIGFuZCB0byBt
-YXAgdG8gcGh5c2ljYWwgY2hhbm5lbCwgc28gdGhhdA0KPiA+IGNvbWVzIGFzIGEgcGFyYW1ldGVy
-IGluIGlvY3RsLg0KPiA+IA0KPiA+IEVhY2ggY2hhbm5lbCBvcGVyYXRpb24gbmVlZHMgdG8gcGFz
-cyB0aGUgY2hhbm5lbCBpZCwgYW5kIHRlZ3JhZHJtDQo+ID4gcGFzc2VzIHRoZSBjYWxscyB0byBu
-dmhvc3QuIE1vc3QgaW1wb3J0YW50IG9wZXJhdGlvbiBpcyBzdWJtaXQsDQo+ID4gd2hpY2ggc2Vu
-ZHMgYSBjb21tYW5kIGJ1ZmZlciB0byBudmhvc3QncyBxdWV1ZS4NCj4gDQo+IFNvbWUgdGhvdWdo
-dCB3aWxsIHByb2JhYmx5IGhhdmUgdG8gZ28gaW50byB0aGVzZS4gVGhlIGVhc2llc3Qgd291bGQN
-Cj4gcHJvYmFibHkgYmUgdG8gaGF2ZSBhIGRyaXZlciB0aGF0IG5lZWRzIHRvIGRvIHN5bmNocm9u
-aXphdGlvbiBvciBvdGhlcg0KPiBjaGFubmVsIG9wZXJhdGlvbnMuIEl0IG1heSBtYWtlIHRoZSBy
-ZXF1aXJlbWVudHMgb24gdGhlIGV4YWN0IGlvY3Rscw0KPiBjbGVhcmVyLg0KPiANCj4gPiA0KSBC
-dWZmZXIgbWFuYWdlbWVudA0KPiA+IFdlIGFscmVhZHkga25vdyB0aGF0IHRoaXMgaXMgYSBtaXNz
-aW5nIHBhcnQuIEhvcGVmdWxseSB3ZSBjYW4gZ2V0DQo+ID4gdGhpcyBmaWxsZWQgc29vbi4NCj4g
-DQo+IFRoaXMgc2hvdWxkIGJlIGNoZWFwIGlmIHdlIHVzZSBHRU0gYWxvbmcgd2l0aCBETUEtQlVG
-LiBIb3dldmVyIHdpdGhvdXQNCj4gb3RoZXIgZHJpdmVycyB0aGF0IHRoZSBidWZmZXJzIGNhbiBi
-ZSBzaGFyZWQgd2l0aCB0aGlzIHdvbid0IGRvIHVzIGFueQ0KPiBnb29kLiBTbyBtYXliZSBzb21l
-dGhpbmcgbGlrZSBhIHZpZGVvIGNhcHR1cmluZyBkcml2ZXIgZm9yIFRlZ3JhDQo+IHNob3VsZCBi
-ZSBhZGRlZCBmaXJzdCBzbyB3ZSBjYW4gYWN0dWFsbHkgdGVzdCBidWZmZXIgc2hhcmluZy4NCg0K
-Q2FuIHdlIHBsZWFzZSBwdXNoIHRvIGdldCB0ZWdyYWRybSBtZXJnZWQgaW50byBzdGFnaW5nIGlu
-IGxpbnVzJ3MgdHJlZS4NCkZvciBmZWRvcmEgdG8gc2hpcCBhIHdvcmtpbmcgY29uc29sZSBhbmQg
-YWxsb3cgdGVncmEgc3lzdGVtcyB0byBydW4gWA0KZXRjIHdlIG5lZWQgdG8gZ2V0IGl0IG1lcmdl
-ZCB1cHN0cmVhbS4gVGhlcmUgaXMgYSBsb3Qgb2YgZmVkb3JhIGZvbGtzDQp3aXRoIHRyaW1zbGlj
-ZXMgYW5kIG90aGVyIHRlZ3JhIGJhc2VkIGRldmljZXMsIGl0IHdvdWxkIGJlIGdvb2QgdG8gc2Vl
-DQp0aGVtIGZ1bGx5IHN1cHBvcnRlZCBmb3IgRmVkb3JhIDE4LCB3ZSBhcmUgdmVyeSBzaG9ydCBp
-biB0aW1lIHdlIGFyZQ0KY3VycmVudGx5IHJ1bm5pbmcgMy42IGJhc2VkIGtlcm5lbHMgYW5kIHdl
-IGZvbGxvdyB2ZXJ5IGNsb3NlbHkgbGludXMncw0KdHJlZS4gQnVpbGRpbmcgYWxsIGtlcm5lbHMg
-ZnJvbSBpdCB3aXRoIGFzIGxpdHRsZSBwYXRjaGluZyBhcyBwb3NzaWJsZS4NCg0KRGVubmlzDQot
-LS0tLUJFR0lOIFBHUCBTSUdOQVRVUkUtLS0tLQ0KVmVyc2lvbjogR251UEcgdjIuMC4xOCAoR05V
-L0xpbnV4KQ0KDQppRVlFQVJFQ0FBWUZBbEF6QllJQUNna1FrU3htNDdCYVdmZWVpd0Nnc0dJcm44
-TUNDZ0M4REVISEJYSjF1K1ZiDQpJMXdBbjJSbWZwUFNCY2NFVnp4RzRlLzlNRGpCVDF0SA0KPWto
-RWoNCi0tLS0tRU5EIFBHUCBTSUdOQVRVUkUtLS0tLQ0K
+On Mon, 2012-08-20 at 21:01 +0800, Terje Bergstrom wrote:
+> Hi,
+> 
+> I've been trying to figure out the best way to bind together tegradrm
+> and nvhost. I assume that nvhost and tegradrm will live as separate
+> drivers, with tegradrm taking care of display controller, and nvhost
+> taking care of host1x and other client devices.
+> 
+> I've identified a bumps that we need to agree on. I've included here the
+> problem and my proposal:
+> 
+> 1) Device & driver registration
+> tegradrm registers as platform_driver, and exports ioctl's. Here we
+> already have to agree on which device the platform_driver maps to.
+> Currently it maps to host1x, but we'll need to move control of host1x to
+> nvhost driver. We'll need to pass drm_platform_init() some
+> platform_device - I propose that we create a virtual device for this.
+> 
+
+This has been discussed several times. Indeed, we need a virtual device
+for drm driver. The problem is, where do we define it? It's not a good
+idea define it in dt, we all agreed with that before. Also it's not good
+to define it in the code...
+So, do you have any further proposal about this?
+
+> 2) Device tree parsing
+> At bootup, we need to parse only host1x node and create a device for
+> that. host1x probe will need to dig into host1x to create the children.
+> This is something that we'll need to implement first in the internal
+> kernel. tegra-dc would get probed only after this sequence. If this is
+> ok, I'll take care of this part, and adjustments to tegradrm when this
+> becomes topical.
+> 
+
+I know little about host1x hardware. I wanna know does host1x have the
+functionality to enum it's children? If this is true, do we still need
+to define these host1x child devices in the dt? Will the 2 dc devices be
+enumed and created during host1x's probe?
+
+> We include in device tree the register addresses. Some information that
+> would be needed is still clocks, clock gating behavior, power domain
+> ids, mapping of client devices to channels, and mapping of sync points
+> per channnel
+> 
+> 3) The handling of ioctl's from user space
+> The ioctl's represent the needed synchronization and channel
+> functionality. I'll write the necessary glue. There would be two
+> categories of ioctl's:
+> 
+> 3a) Simple operations such as synchronization:
+> 
+> Wait, signal, read, etc. are exported from nvhost as public APIs, and
+> tegradrm simply calls them. No big hurdle there. I already have concept
+> code to do this.
+> 
+
+Hm... I think in last conference we agreed that nvhost driver will not
+have it's device file, so this kind of ioctl's are going to routed to
+tegra drm driver, then drm driver passes these ioctl's to nvhost driver.
+Right?
+
+> 3b) Channel operations:
+> 
+> tegradrm needs to have a concept of logical channel. Channel open
+> creates a logical channel (/context) by calling nvhost. nvhost needs to
+> know which hw is going to be used by the channel to be able to control
+> power, and to map to physical channel, so that comes as a parameter in
+> ioctl.
+> 
+> Each channel operation needs to pass the channel id, and tegradrm passes
+> the calls to nvhost. Most important operation is submit, which sends a
+> command buffer to nvhost's queue.
+> 
+> 4) Buffer management
+> We already know that this is a missing part. Hopefully we can get this
+> filled soon.
+> 
+
+I'm still not very clear about this part. So let me try to explain this.
+Correct me if I'm wrong.
+[Userspace]
+Cause dma-buf has not explicit userspace apis, so we consider GEM.
+Userspace programs call GEM interfaces to create/close/flink/mmap the
+buffers.
+Besides, by using GEM PRIME's handle to fd ioctl, userspace program is
+able to convert a GEM handle to a dma-buf fd. This FD can be passed to
+kernel driver so that the drivers gain the opportunity to access the
+buffer.
+
+[Kernel]
+DRM driver handles GEM buffer creation. Shmfs or CMA can be used as
+backing storage. Right now CMA buffer allocation is wrapped by dma
+mapping apis and shmfs has it's individual APIs.
+DRM driver should export this buffer as dma-buf after GEM buffer is
+created. Otherwise, drm prime can't get fd from this gem buffer handle
+later.
+
+Currently I'm still confused with these problems:
+1. Userspace program is able to get a dma-buf fd for a specific GEM
+buffer. Is this a unique fd? I mean, can I pass this fd from one process
+to another, then other processes can access the same buffer? If the
+answer is yes, does this mean we don't need GEM's "flink" functionality?
+If the answer is no, GEM's "flink" makes sense. 
+
+2. How to sync buffer operations between these different frameworks? For
+example, GEM has it's own buffer read/write/mmap interfaces, while
+dma-buf has either. So if the userspace program does something on the
+buffer via GEM apis, while a kernel driver is operating the same buffer
+via dma-buf interfaces, what should we do? Because GEM and dma-buf are
+different frameworks, where shall we setup a sync mechanism?
+
+> Terje
