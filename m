@@ -1,69 +1,46 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
-Date: Tue, 21 Aug 2012 17:57:38 +0100
-Message-ID: <20120821165738.GY7995@opensource.wolfsonmicro.com>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
- <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
- <1345535069.4085.7.camel@deskari>
- <1562509.b0FYTUZ1D8@percival>
- <20120821083329.GA28992@avionic-0098.adnet.avionic-design.de>
- <1345539465.4085.22.camel@deskari>
- <20120821091306.GA4819@avionic-0098.mockup.avionic-design.de>
- <1345542860.4085.40.camel@deskari>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC v2 5/5] drm: Add NVIDIA Tegra support
+Date: Tue, 21 Aug 2012 12:42:35 -0600
+Message-ID: <5033D69B.8020104@wwwdotorg.org>
+References: <1335347102-14905-1-git-send-email-thierry.reding@avionic-design.de> <1335347102-14905-6-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Ubca5Sl/zyRO+Ah+"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1345542860.4085.40.camel@deskari>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Alex Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1335347102-14905-6-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/25/2012 03:45 AM, Thierry Reding wrote:
+> This commit adds a very basic DRM driver for NVIDIA Tegra SoCs. It
+> currently has rudimentary GEM support and can run a console on the
+> framebuffer as well as X using the xf86-video-modesetting driver. Only
+> the RGB output is supported.
+> 
+> HDMI support was taken from NVIDIA's Linux kernel tree but it doesn't
+> quite work. EDID data can be retrieved but the output doesn't properly
+> activate the connected TV.
+> 
+> The DSI and TVO outputs and the HOST1X driver are just stubs that setup
+> the corresponding resources but don't do anything useful yet.
 
---Ubca5Sl/zyRO+Ah+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> diff --git a/drivers/gpu/drm/tegra/tegra-dc.c b/drivers/gpu/drm/tegra/tegra-dc.c
 
-On Tue, Aug 21, 2012 at 12:54:20PM +0300, Tomi Valkeinen wrote:
+> +	switch (crtc->fb->pixel_format) {
+> +	case DRM_FORMAT_XRGB8888:
+> +		win.fmt = WIN_COLOR_DEPTH_R8G8B8A8;
 
-> However, if we already have a generic driver for that type of panel,
-> (which we would need anyway for the DT based approach), the developer
-> only needs to add the name of the panel and the data for the power
-> sequence to the panel driver's database, which is about the same amount
-> of work as with DT.
+I think that should be WIN_COLOR_DEPTH_B8G8R8A8 instead. At least,
+making that change solves the R/B color swap on my Springbank(Seaboard)
+board. The component ordering in the names matches better, so it seems
+likely this is generally applicable.
 
-> So it's really just a question of where to put the data in question, DT
-> or driver. Both contain the same data, and the data structure may also
-> be the same. In DT's case it just needs to be parsed first, whereas in
-> database case you'll enter the data in structs.
+The same comment applies in the default case below.
 
-I think the device tree idiomatic way of doing this is to have a bunch
-of .dtsi files for the panels which then get included by reference in
-the board files.  This isn't helpful to people working on non-DT
-architectures though.
-
---Ubca5Sl/zyRO+Ah+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQM734AAoJEFJkBDiqVpZ4h28P/iblWU1WkmSB3gX1ANEaTXg2
-MiYoBQNiUON4KY+6nOse+vEGsWlhsNaCmsxxp1zp/yNeG5zzPUhcosh6qK00IxMI
-dlu1zMJ5Ng4KNq7xAVf2OisX8UAfUNK4PxdzwClGhmy7/oSN+/ojajhRDRAWlODw
-4V5diV6t6USWZocfTrsIHBMJju1vMgm9H6T6JoND7azvt+mk65PQFh6IIQyMJWRx
-Q4EDivYkcrLLR2cmLlPq9SAqCy0Jhym0HkL8tYNgQafu4/SjlkRTc3heLiQzMmDB
-cnaPjrEkIjn3ONqBsueBismBQR6I7Q4lt3u+XVwVu8i1Cc4aOIpAelhh40ZE7DM/
-+vgsQsulybCO9c+WxxK+6ZGnEsHOPIoAyJ3V4Dk4zG0+22W/JQPRl9DPfd2i96CN
-W6TXAoqXhsAawCVjt/MLCzzmuxk9qX6R9+aBLQF4d2MygVLKeOm6MM9Jm/XOxf0b
-BWfHADatomudMD8Ewxij+uB+4sgp+O9pzWnERASqERO06yvUWM9QO2uuNYMNNfGV
-ZMtV+LPspwnZxvOtSKgG7DENcVScMq1KNJQMjrp5X6bEhaaKwyO6F0MHMYAnJmAl
-nNVjct/Rbio/XYcySv2bcUln81iNu5qJCeyGVhirJNHeWFt2EnbJc5RUSZa5K7eC
-+uTonIehAvqSzbGlma7H
-=FIV2
------END PGP SIGNATURE-----
-
---Ubca5Sl/zyRO+Ah+--
+BTW, I added these patches to a kernel based on next-20120820, and will
+be using a netbook running with them to take notes at the conference
+next week. It's awesome to be running a Tegra system with graphics using
+100% Open-Source and nearly 100% upstream SW (even all the
+BCT/bootloader/flashing tools too).
