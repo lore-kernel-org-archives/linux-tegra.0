@@ -1,105 +1,98 @@
-From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
-Date: Tue, 21 Aug 2012 12:54:20 +0300
-Message-ID: <1345542860.4085.40.camel@deskari>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
-	 <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
-	 <1345535069.4085.7.camel@deskari> <1562509.b0FYTUZ1D8@percival>
-	 <20120821083329.GA28992@avionic-0098.adnet.avionic-design.de>
-	 <1345539465.4085.22.camel@deskari>
-	 <20120821091306.GA4819@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: Binding together tegradrm & nvhost
+Date: Tue, 21 Aug 2012 16:57:09 +0200
+Message-ID: <20120821145709.GA701@avionic-0098.mockup.avionic-design.de>
+References: <50323513.3090606@nvidia.com>
+ <20120820131800.GA13785@avionic-0098.mockup.avionic-design.de>
+ <1345527561.31608.152.camel@markz-desktop>
+ <20120821054256.GA5325@avionic-0098.mockup.avionic-design.de>
+ <1345529761.31608.169.camel@markz-desktop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-7E61pVNOK8ptK17BGKHa"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120821091306.GA4819-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1345529761.31608.169.camel@markz-desktop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <leelakrishna.a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-7E61pVNOK8ptK17BGKHa
-Content-Type: text/plain; charset="UTF-8"
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2012-08-21 at 11:13 +0200, Thierry Reding wrote:
-> On Tue, Aug 21, 2012 at 11:57:45AM +0300, Tomi Valkeinen wrote:
-
-> > This doesn't mean that we'd have a separate driver for each device. For
-> > example, we have a generic panel driver in OMAP, which contains a kind
-> > of small panel database. The panel database contains the name of the
-> > panel as a key, and panel specific configuration as a value. This
-> > configuration could also contain some kind of generic power sequence.
+On Tue, Aug 21, 2012 at 02:16:01PM +0800, Mark Zhang wrote:
+> On Tue, 2012-08-21 at 13:42 +0800, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Tue, Aug 21, 2012 at 01:39:21PM +0800, Mark Zhang wrote:
+> > > On Mon, 2012-08-20 at 21:18 +0800, Thierry Reding wrote:
+> > > > I have a new patch series that takes care of these two steps. Mark =
+sent
+> > > > some patches for Tegra30 and HDMI on top of the older series that I=
+ need
+> > > > to merge with what I have. Maybe I'll decide to send the series out
+> > > > without the patches merged, depending on how much time I'll get or =
+how
+> > > > much effort it requires. I had hoped the next series would have wor=
+king
+> > > > HDMI support, which is why I waited.
+> > >=20
+> > > OK. So I'm going to pause the patch writing right now and wait for yo=
+ur
+> > > codes to be published on linux-tegra. Regardless of whether my patches
+> > > be merged into yours, I'll provide patches for the version which you
+> > > send to maillist in the near future.
+> >=20
+> > Let me see if I can upload my patches to the repository on gitorious.
+> > I'm not sure when exactly I find time to merge your patches, and I don't
+> > want to hold you up.
+> >=20
 >=20
-> I see. I do like the idea of it, because it is more straightforward than
-> representing the whole sequence in DT. Matching could be done using the
-> standard compatible property.
+> All right, thank you. Let us know when you finish uploading.
+> By the way, any updates from freedesktop?
 
-Right.
+Finally the upload is done. You can find my latest work in the next
+branch of the following repository:
 
-> However this also means we'll essentially just be moving the board code.
+	git://gitorious.org/linux-tegra-drm/linux-tegra-drm.git
 
-What do you mean "just"? Wasn't the point of the whole "arm board file
-mess" to get rid of the code from the board files? If the code in the
-board file is device specific code, not board specific, then the driver
-of the device is a logical place to place it.
+It's down to two patches and based on next-20120820. Eventually I was
+going to maybe split it up a bit to separate at least the hunks for
+arch/ (Stephen will probably want this anyway) and maybe also some
+functionality like HDMI support.
 
-And as I said, I don't have any problems with some kind of generic power
-sequences. So the code in the board file could be moved and converted to
-use the power sequences, if that is better than just plain c code.
+Mark: If you find the time it'd be great if you could rebase your
+patches on top of that branch. I think for a first submission to
+mainline some things probably need to be cleaned up and the history
+should probably be clean, so we may want to squash some of the patches
+that you sent into the existing ones. For now it's probably best if you
+continue your work on top of this.
 
-> Being in a central location it would be easier to refactor commonalities
-> though.
->=20
-> > I'd like to require the board developer to only fill in to the DT data
-> > what panel he is using, and how it's connected on his board. Not panel'=
-s
-> > internal functionality.
->=20
-> The amount of work required by the board developer would largely depend
-> on whether support for the panel is already present or not. For new
-> panels this would mean that a new driver needs to be written, while
-> representing the power sequence in DT might be easier to do, and readily
-> available from some datasheet.
+Thierry
 
-That's true.
-
-However, if we already have a generic driver for that type of panel,
-(which we would need anyway for the DT based approach), the developer
-only needs to add the name of the panel and the data for the power
-sequence to the panel driver's database, which is about the same amount
-of work as with DT.
-
-So it's really just a question of where to put the data in question, DT
-or driver. Both contain the same data, and the data structure may also
-be the same. In DT's case it just needs to be parsed first, whereas in
-database case you'll enter the data in structs.
-
- Tomi
-
-
---=-7E61pVNOK8ptK17BGKHa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAABAgAGBQJQM1rMAAoJEPo9qoy8lh71Dz4QAIt9FeQ0fcNavme5qLDfvdxb
-AK/z9/DPBICHd9srOzUZ94EkVClmGDwQ18V18UgVnxBYbengCcaUCgWYH32u1IBf
-h9p3mIeK7wNFimR3fygJCkuzveBvpMu6dFmYpUwOBdLNvS69l9C9TUKSgTmgvgR/
-wWyBSMTWgR+1zM9FWv5muVfIK5K3r0TCL1Ypy0CKsgKQl9hG9akRRxW9Zc8ZtHsz
-GO0xWoSHbSyKcspVIXOcZm3+ZDrvyPrrn3WSgOUQ6Q0ss/crdyTUzgVthr86bU4k
-HE/iuvCv/LnxyZBNzJpFlj35hiATFFvE+R+dP/ZHB9c2OwkhtJ121ZA5PIuK1n6C
-SatzFXHxdeAwnKKWmhZoRqip5jOd3b94sPn+Njbgrp0sWlVu+MB0ULUcMZu+Zg5e
-9SPIsscsG54eY92cASxWAgkR+yTfoyS67oTHvbjgsy/8TxbqF4e+rP2ed9WJj/LY
-ww0PW0E1lL/LQ79QndJ+PNnA6Mcm4Z8gLoNh3jq+URzctRt1QI87BgjC0rA8ZHo/
-nn/0ruLuiFIFHaHQT56JRhub4phy5fpGCKeq1ygkRXBZFAOunPA6NUoZVo4b7ORv
-AiKa9PtnRqF+6q7Aqo8ip6/21PoEHFI6eCem9DjzmHxFOJE3XKCn0HPVJBpbJQje
-YDJ2tGzgU3fI6+pfnPeA
-=NTnp
+iQIcBAEBAgAGBQJQM6HFAAoJEN0jrNd/PrOhjOkQAJLuu55AaftGvxylKiAx8kw/
+2dw1tS592YE77jm8n80zjn6yNjbj6G/6zqO8tAEx1mwFja1Id75d4rkjwX2UXqaG
+JHQwelMAk0hZ6gm2ZSw0LWy7XdO/g9m489UwI9SSlbBshdfd8c6s3mgjKZVjIr/u
+vIAJsRwQ/gZCl0GMQc21P5+ZZD9pzZpyjs6jho0ypJmdJx7qpiutrRHbaWPJQAq6
+tMsYvwacOa7EaUHe0RuEC8bBYJm9WmKB3J0fuRWRXp/dhtGY+b6Jcu5bfX4U6U1N
+WYqyWZY3p3DOd4UpkFu5z/cIeAgFdpn5viKWpRQdiDu4NCGOAc1AYVWPbpZzLxvQ
+SPAdon9S5YdrFA69D4LmqML0NVg+fEff6C0RjRhvCafD4oXG94AvrW0qKf62cHiT
+r5LTHSWvzSDWrXx1/618x9gSETJhWdxOjY6FT31qrXzH3Vmp7OKUr8t9BwHSSYMv
+NDmpC9mAuS45uJO+rWGXZ9y2CAmz+KHNwQEvkiu9irHw6C07b0695UxglVDIHXA1
+ATOUkf9aperAxzljN3gdRgL5nmwuH36EMTzcPqvuz2nigqvOdgM1SKOYUpOyokcY
+5d6MLSw+sVArOpMceqlTLFv8qB44HvTR/f6BT8rvDeO9KftCD4sOH3JvtENOsLoR
+4rvyL3CHHCwC89ZRBG8/
+=H7DE
 -----END PGP SIGNATURE-----
 
---=-7E61pVNOK8ptK17BGKHa--
+--a8Wt8u1KmwUX3Y2C--
