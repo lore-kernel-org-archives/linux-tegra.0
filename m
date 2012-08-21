@@ -1,98 +1,69 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: Binding together tegradrm & nvhost
-Date: Tue, 21 Aug 2012 16:57:09 +0200
-Message-ID: <20120821145709.GA701@avionic-0098.mockup.avionic-design.de>
-References: <50323513.3090606@nvidia.com>
- <20120820131800.GA13785@avionic-0098.mockup.avionic-design.de>
- <1345527561.31608.152.camel@markz-desktop>
- <20120821054256.GA5325@avionic-0098.mockup.avionic-design.de>
- <1345529761.31608.169.camel@markz-desktop>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
+Date: Tue, 21 Aug 2012 17:57:38 +0100
+Message-ID: <20120821165738.GY7995@opensource.wolfsonmicro.com>
+References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
+ <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
+ <1345535069.4085.7.camel@deskari>
+ <1562509.b0FYTUZ1D8@percival>
+ <20120821083329.GA28992@avionic-0098.adnet.avionic-design.de>
+ <1345539465.4085.22.camel@deskari>
+ <20120821091306.GA4819@avionic-0098.mockup.avionic-design.de>
+ <1345542860.4085.40.camel@deskari>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="Ubca5Sl/zyRO+Ah+"
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1345529761.31608.169.camel@markz-desktop>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1345542860.4085.40.camel@deskari>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Alex Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---a8Wt8u1KmwUX3Y2C
+--Ubca5Sl/zyRO+Ah+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 21, 2012 at 02:16:01PM +0800, Mark Zhang wrote:
-> On Tue, 2012-08-21 at 13:42 +0800, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Tue, Aug 21, 2012 at 01:39:21PM +0800, Mark Zhang wrote:
-> > > On Mon, 2012-08-20 at 21:18 +0800, Thierry Reding wrote:
-> > > > I have a new patch series that takes care of these two steps. Mark =
-sent
-> > > > some patches for Tegra30 and HDMI on top of the older series that I=
- need
-> > > > to merge with what I have. Maybe I'll decide to send the series out
-> > > > without the patches merged, depending on how much time I'll get or =
-how
-> > > > much effort it requires. I had hoped the next series would have wor=
-king
-> > > > HDMI support, which is why I waited.
-> > >=20
-> > > OK. So I'm going to pause the patch writing right now and wait for yo=
-ur
-> > > codes to be published on linux-tegra. Regardless of whether my patches
-> > > be merged into yours, I'll provide patches for the version which you
-> > > send to maillist in the near future.
-> >=20
-> > Let me see if I can upload my patches to the repository on gitorious.
-> > I'm not sure when exactly I find time to merge your patches, and I don't
-> > want to hold you up.
-> >=20
->=20
-> All right, thank you. Let us know when you finish uploading.
-> By the way, any updates from freedesktop?
+On Tue, Aug 21, 2012 at 12:54:20PM +0300, Tomi Valkeinen wrote:
 
-Finally the upload is done. You can find my latest work in the next
-branch of the following repository:
+> However, if we already have a generic driver for that type of panel,
+> (which we would need anyway for the DT based approach), the developer
+> only needs to add the name of the panel and the data for the power
+> sequence to the panel driver's database, which is about the same amount
+> of work as with DT.
 
-	git://gitorious.org/linux-tegra-drm/linux-tegra-drm.git
+> So it's really just a question of where to put the data in question, DT
+> or driver. Both contain the same data, and the data structure may also
+> be the same. In DT's case it just needs to be parsed first, whereas in
+> database case you'll enter the data in structs.
 
-It's down to two patches and based on next-20120820. Eventually I was
-going to maybe split it up a bit to separate at least the hunks for
-arch/ (Stephen will probably want this anyway) and maybe also some
-functionality like HDMI support.
+I think the device tree idiomatic way of doing this is to have a bunch
+of .dtsi files for the panels which then get included by reference in
+the board files.  This isn't helpful to people working on non-DT
+architectures though.
 
-Mark: If you find the time it'd be great if you could rebase your
-patches on top of that branch. I think for a first submission to
-mainline some things probably need to be cleaned up and the history
-should probably be clean, so we may want to squash some of the patches
-that you sent into the existing ones. For now it's probably best if you
-continue your work on top of this.
-
-Thierry
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature
+--Ubca5Sl/zyRO+Ah+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQM6HFAAoJEN0jrNd/PrOhjOkQAJLuu55AaftGvxylKiAx8kw/
-2dw1tS592YE77jm8n80zjn6yNjbj6G/6zqO8tAEx1mwFja1Id75d4rkjwX2UXqaG
-JHQwelMAk0hZ6gm2ZSw0LWy7XdO/g9m489UwI9SSlbBshdfd8c6s3mgjKZVjIr/u
-vIAJsRwQ/gZCl0GMQc21P5+ZZD9pzZpyjs6jho0ypJmdJx7qpiutrRHbaWPJQAq6
-tMsYvwacOa7EaUHe0RuEC8bBYJm9WmKB3J0fuRWRXp/dhtGY+b6Jcu5bfX4U6U1N
-WYqyWZY3p3DOd4UpkFu5z/cIeAgFdpn5viKWpRQdiDu4NCGOAc1AYVWPbpZzLxvQ
-SPAdon9S5YdrFA69D4LmqML0NVg+fEff6C0RjRhvCafD4oXG94AvrW0qKf62cHiT
-r5LTHSWvzSDWrXx1/618x9gSETJhWdxOjY6FT31qrXzH3Vmp7OKUr8t9BwHSSYMv
-NDmpC9mAuS45uJO+rWGXZ9y2CAmz+KHNwQEvkiu9irHw6C07b0695UxglVDIHXA1
-ATOUkf9aperAxzljN3gdRgL5nmwuH36EMTzcPqvuz2nigqvOdgM1SKOYUpOyokcY
-5d6MLSw+sVArOpMceqlTLFv8qB44HvTR/f6BT8rvDeO9KftCD4sOH3JvtENOsLoR
-4rvyL3CHHCwC89ZRBG8/
-=H7DE
+iQIcBAEBAgAGBQJQM734AAoJEFJkBDiqVpZ4h28P/iblWU1WkmSB3gX1ANEaTXg2
+MiYoBQNiUON4KY+6nOse+vEGsWlhsNaCmsxxp1zp/yNeG5zzPUhcosh6qK00IxMI
+dlu1zMJ5Ng4KNq7xAVf2OisX8UAfUNK4PxdzwClGhmy7/oSN+/ojajhRDRAWlODw
+4V5diV6t6USWZocfTrsIHBMJju1vMgm9H6T6JoND7azvt+mk65PQFh6IIQyMJWRx
+Q4EDivYkcrLLR2cmLlPq9SAqCy0Jhym0HkL8tYNgQafu4/SjlkRTc3heLiQzMmDB
+cnaPjrEkIjn3ONqBsueBismBQR6I7Q4lt3u+XVwVu8i1Cc4aOIpAelhh40ZE7DM/
++vgsQsulybCO9c+WxxK+6ZGnEsHOPIoAyJ3V4Dk4zG0+22W/JQPRl9DPfd2i96CN
+W6TXAoqXhsAawCVjt/MLCzzmuxk9qX6R9+aBLQF4d2MygVLKeOm6MM9Jm/XOxf0b
+BWfHADatomudMD8Ewxij+uB+4sgp+O9pzWnERASqERO06yvUWM9QO2uuNYMNNfGV
+ZMtV+LPspwnZxvOtSKgG7DENcVScMq1KNJQMjrp5X6bEhaaKwyO6F0MHMYAnJmAl
+nNVjct/Rbio/XYcySv2bcUln81iNu5qJCeyGVhirJNHeWFt2EnbJc5RUSZa5K7eC
++uTonIehAvqSzbGlma7H
+=FIV2
 -----END PGP SIGNATURE-----
 
---a8Wt8u1KmwUX3Y2C--
+--Ubca5Sl/zyRO+Ah+--
