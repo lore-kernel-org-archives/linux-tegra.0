@@ -1,64 +1,85 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Binding together tegradrm & nvhost
-Date: Tue, 21 Aug 2012 15:12:23 +0800
-Message-ID: <1345533143.31608.172.camel@markz-desktop>
-References: <50323513.3090606@nvidia.com>
-	 <1345525045.31608.145.camel@markz-desktop>  <50331F32.4040903@nvidia.com>
-	 <1345529528.31608.165.camel@markz-desktop>  <50332C22.7090009@nvidia.com>
-Reply-To: markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
+Date: Tue, 21 Aug 2012 10:44:29 +0300
+Message-ID: <1345535069.4085.7.camel@deskari>
+References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
+	 <1345097337-24170-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-DqQcqcJZ3QuxHhqjuHRu"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50332C22.7090009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1345097337-24170-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <leelakrishna.a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-08-21 at 14:35 +0800, Terje Bergstr=C3=B6m wrote:
-> On 21.08.2012 09:12, Mark Zhang wrote:
-> > OK, thank you. In current version, all devices are created by
-> > "of_platform_populate" in board init function. So if we still need =
-to
-> > define devices in dt, what's the benefit that we put these device
-> > creation works into host1x's probe function? I don't see any differ=
-ence
-> > although create device in host1x probe() sounds more reasonable...
->=20
-> Until I have managed to integrate nvhost to tegradrm, the devices
-> creation should be done as it is done now. With nvhost, we will need
-> extra data per device, so we'll need to create the devices in nvhost.
->=20
 
-OK. Thank you.
+--=-DqQcqcJZ3QuxHhqjuHRu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > OK. So we have fence to sync all operations on a specific buffer. S=
-o
-> > this also means we should add fence support on GEM and dma-buf
-> > implementation both, right?
->=20
-> We'll have fences for operations, not buffers. User space must figure
-> out that if operation that reads from/writes to buffer is complete, t=
-he
-> buffer is ready to be reused.
-> Discussion in mm-sig attaches fences to buffers, which would cause a =
-lot
-> of synchronization logic being added to kernel. Each operation can wo=
-rk
-> on multiple buffers, some in read-only, some in read-write, some in
-> write-only mode, so we'd end up returning an array of fences in a
-> complicated structure.
->=20
+Hi,
 
-OK. I'll have a look at discussions in mm-sig.
+On Thu, 2012-08-16 at 15:08 +0900, Alexandre Courbot wrote:
 
-> It's simpler if kernel just knows when operation ends, and lets user
-> space take care of the complexity.
->=20
-> Terje
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra=
-" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +Problem
+> +-------
+> +One very common board-dependent code is the out-of-driver code that is u=
+sed to
+> +turn a device on or off. For instance, SoC boards very commonly use a GP=
+IO
+> +(abstracted to a regulator or not) to control the power supply of a back=
+light,
+> +disabling it when the backlight is not used in order to save power. The =
+GPIO
+> +that should be used, however, as well as the exact power sequence that m=
+ay
+> +also involve other resources, is board-dependent and thus unknown of the=
+ driver.
+> +
+> +This was previously addressed by having hooks in the device's platform d=
+ata that
+> +are called whenever the state of the device might reflect a power change=
+. This
+> +approach, however, introduces board-dependant code into the kernel and i=
+s not
+> +compatible with the device tree.
+
+I've been having the same problems on OMAP display related code, but the
+problem has always been fixable by just having the driver to use a
+common framework to do the job (a framework which may not have existed
+at the time). The problems have never been board specific in the end,
+but device specific.
+
+Can you describe your particular HW problem a bit more? In the backlight
+case, what exactly requires the delays and the sequence you show in the
+example to enable/disable the backlight?
+
+ Tomi
+
+
+--=-DqQcqcJZ3QuxHhqjuHRu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAABAgAGBQJQMzxdAAoJEPo9qoy8lh71lwwP/0uNfoQ7aOpM+/q8cOSwLxRV
+FqU1xzMzaW/6gtjgjIq+RJXuJHjUwZQPEnqBION6zjaxc5t0nbVxLnH8b534OOSC
+POj/tQSvb27MSpV1d90CqWVASySuOS3fJyQWq+3JwlhfYf21JjaN8OSJoi9wnKgF
+9oPGGoQMg5IOBhgb/lVm/xwJuMky2YQblJuzPfx/MPvATsHz9qSs2AfabjjwKhBP
+X+ft+3KecV0J2RnCUBOuZkP+dLU62vNmri/kE1r1xzAGpx+X9eMxyYTGTyAE27/P
+kHqBex0S6Nf2wt1eo1tKRf0CyzAvQh0+aB107RACT97utNSP+dR+OepDXOjYAMTC
+g1PZtVsdDq8VcSsRKjz0k0tEkYhd2VkSeq/qSlxBiM4Im8PiT2ZaepGHWcX2zJN2
+LomBI0yV8u3gbizYR1cWCUzGPQK90K9hVt/fSDY0Abl3lzvlmgSIDTov7aKYZbQo
+cvO1OCL7Yx606Y7X0YwX+0YGuQDxVu+xpTC6onSrIaURH0Vrp8rkmnJygInDBwsz
+QgsGqOOij8hopNOF5GgMtgIR6crsoyeezxLZKKFccGBrWIogekmIU1xV5mK+TpyE
+wiKzzGdFad4YZm5Pe5Lz/MVmqAa0/vgEe8s9mfpC3RhxNjqzfd9sNGSJQy42rar5
+ns1eRlqzqieoLKJQyefj
+=6AEd
+-----END PGP SIGNATURE-----
+
+--=-DqQcqcJZ3QuxHhqjuHRu--
