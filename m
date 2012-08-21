@@ -1,44 +1,172 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Binding together tegradrm & nvhost
-Date: Tue, 21 Aug 2012 09:35:14 +0300
-Message-ID: <50332C22.7090009@nvidia.com>
-References: <50323513.3090606@nvidia.com>  <1345525045.31608.145.camel@markz-desktop>  <50331F32.4040903@nvidia.com> <1345529528.31608.165.camel@markz-desktop>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
+ DEBUG
+Date: Tue, 21 Aug 2012 09:02:04 +0200
+Message-ID: <20120821.100204.446226016699627525.hdoyu@nvidia.com>
+References: <502EDDCC.200@iki.fi><20120820.141454.449841061737873578.hdoyu@nvidia.com><5032AC3E.5080402@iki.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1345529528.31608.165.camel@markz-desktop>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5032AC3E.5080402@iki.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "crope@iki.fi" <crope@iki.fi>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21.08.2012 09:12, Mark Zhang wrote:
-> OK, thank you. In current version, all devices are created by
-> "of_platform_populate" in board init function. So if we still need to
-> define devices in dt, what's the benefit that we put these device
-> creation works into host1x's probe function? I don't see any difference
-> although create device in host1x probe() sounds more reasonable...
+Antti Palosaari <crope@iki.fi> wrote @ Mon, 20 Aug 2012 23:29:34 +0200:
 
-Until I have managed to integrate nvhost to tegradrm, the devices
-creation should be done as it is done now. With nvhost, we will need
-extra data per device, so we'll need to create the devices in nvhost.
+> On 08/20/2012 02:14 PM, Hiroshi Doyu wrote:
+> > Hi Antti,
+> >
+> > Antti Palosaari <crope@iki.fi> wrote @ Sat, 18 Aug 2012 02:11:56 +0200:
+> >
+> >> On 08/17/2012 09:04 AM, Hiroshi Doyu wrote:
+> >>> dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+> >>> suppressed". This shouldn't print anything without DEBUG.
+> >>>
+> >>> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> >>> Reported-by: Antti Palosaari <crope@iki.fi>
+> >>> ---
+> >>>    include/linux/device.h |    6 +++++-
+> >>>    1 files changed, 5 insertions(+), 1 deletions(-)
+> >>>
+> >>> diff --git a/include/linux/device.h b/include/linux/device.h
+> >>> index eb945e1..d4dc26e 100644
+> >>> --- a/include/linux/device.h
+> >>> +++ b/include/linux/device.h
+> >>> @@ -962,9 +962,13 @@ do {									\
+> >>>    	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+> >>>    #define dev_info_ratelimited(dev, fmt, ...)				\
+> >>>    	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
+> >>> +#if defined(DEBUG)
+> >>>    #define dev_dbg_ratelimited(dev, fmt, ...)				\
+> >>>    	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+> >>> -
+> >>> +#else
+> >>> +#define dev_dbg_ratelimited(dev, fmt, ...)			\
+> >>> +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+> >>> +#endif
+> >>>    /*
+> >>>     * Stupid hackaround for existing uses of non-printk uses dev_info
+> >>>     *
+> >>>
+> >>
+> >> NACK. I don't think that's correct behavior. After that patch it kills
+> >> all output of dev_dbg_ratelimited(). If I use dynamic debugs and order
+> >> debugs, I expect to see debugs as earlier.
+> >
+> > You are right. I attached the update patch, just moving *_ratelimited
+> > functions after dev_dbg() definitions.
+> >
+> > With DEBUG defined/undefined in your "test.ko", it works fine. With
+> > CONFIG_DYNAMIC_DEBUG, it works with "+p", but with "-p", still
+> > "..callbacks suppressed" is printed.
+> 
+> I am using dynamic debugs and behavior is now just same as it was when 
+> reported that bug. OK, likely for static debug it is now correct.
 
-> OK. So we have fence to sync all operations on a specific buffer. So
-> this also means we should add fence support on GEM and dma-buf
-> implementation both, right?
+The following patch can also refrain "..callbacks suppressed" with
+"-p". I think that it's ok for all cases.
 
-We'll have fences for operations, not buffers. User space must figure
-out that if operation that reads from/writes to buffer is complete, the
-buffer is ready to be reused.
+From b4c6aa9160f03b61ed17975c73db36c983a48927 Mon Sep 17 00:00:00 2001
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Date: Mon, 20 Aug 2012 13:49:19 +0300
+Subject: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without DEBUG
 
-Discussion in mm-sig attaches fences to buffers, which would cause a lot
-of synchronization logic being added to kernel. Each operation can work
-on multiple buffers, some in read-only, some in read-write, some in
-write-only mode, so we'd end up returning an array of fences in a
-complicated structure.
+dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+suppressed". This shouldn't print anything without DEBUG.
 
-It's simpler if kernel just knows when operation ends, and lets user
-space take care of the complexity.
+With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
 
-Terje
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+Reported-by: Antti Palosaari <crope@iki.fi>
+---
+ include/linux/device.h |   62 +++++++++++++++++++++++++++++------------------
+ 1 files changed, 38 insertions(+), 24 deletions(-)
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 9648331..bb6ffcb 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 
+ #endif
+ 
++/*
++ * Stupid hackaround for existing uses of non-printk uses dev_info
++ *
++ * Note that the definition of dev_info below is actually _dev_info
++ * and a macro is used to avoid redefining dev_info
++ */
++
++#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
++
++#if defined(CONFIG_DYNAMIC_DEBUG)
++#define dev_dbg(dev, format, ...)		     \
++do {						     \
++	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++} while (0)
++#elif defined(DEBUG)
++#define dev_dbg(dev, format, arg...)		\
++	dev_printk(KERN_DEBUG, dev, format, ##arg)
++#else
++#define dev_dbg(dev, format, arg...)				\
++({								\
++	if (0)							\
++		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
++	0;							\
++})
++#endif
++
+ #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+@@ -955,33 +981,21 @@ do {									\
+ 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+ #define dev_info_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
++#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
+ #define dev_dbg_ratelimited(dev, fmt, ...)				\
+-	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+-
+-/*
+- * Stupid hackaround for existing uses of non-printk uses dev_info
+- *
+- * Note that the definition of dev_info below is actually _dev_info
+- * and a macro is used to avoid redefining dev_info
+- */
+-
+-#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
+-
+-#if defined(CONFIG_DYNAMIC_DEBUG)
+-#define dev_dbg(dev, format, ...)		     \
+-do {						     \
+-	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
++	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
++	    __ratelimit(&_rs))						\
++		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
++				   ##__VA_ARGS__);			\
+ } while (0)
+-#elif defined(DEBUG)
+-#define dev_dbg(dev, format, arg...)		\
+-	dev_printk(KERN_DEBUG, dev, format, ##arg)
+ #else
+-#define dev_dbg(dev, format, arg...)				\
+-({								\
+-	if (0)							\
+-		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
+-	0;							\
+-})
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ #ifdef VERBOSE_DEBUG
+-- 
+1.7.5.4
