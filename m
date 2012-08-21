@@ -1,203 +1,103 @@
-From: Antti Palosaari <crope@iki.fi>
-Subject: Re: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
- DEBUG
-Date: Tue, 21 Aug 2012 00:29:34 +0300
-Message-ID: <5032AC3E.5080402@iki.fi>
-References: <20120817.090416.563933713934615530.hdoyu@nvidia.com><502EDDCC.200@iki.fi> <20120820.141454.449841061737873578.hdoyu@nvidia.com>
+From: Dennis Gilmore <dennis-OMEdqnBlyiw@public.gmane.org>
+Subject: Re: Binding together tegradrm & nvhost
+Date: Mon, 20 Aug 2012 22:50:21 -0500
+Message-ID: <20120820225021.2d821400@adria.ausil.us>
+References: <50323513.3090606@nvidia.com>
+	<20120820131800.GA13785@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120820.141454.449841061737873578.hdoyu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120820131800.GA13785-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Terje =?UTF-8?B?QmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/20/2012 02:14 PM, Hiroshi Doyu wrote:
-> Hi Antti,
->
-> Antti Palosaari <crope@iki.fi> wrote @ Sat, 18 Aug 2012 02:11:56 +0200:
->
->> On 08/17/2012 09:04 AM, Hiroshi Doyu wrote:
->>> dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
->>> suppressed". This shouldn't print anything without DEBUG.
->>>
->>> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
->>> Reported-by: Antti Palosaari <crope@iki.fi>
->>> ---
->>>    include/linux/device.h |    6 +++++-
->>>    1 files changed, 5 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/include/linux/device.h b/include/linux/device.h
->>> index eb945e1..d4dc26e 100644
->>> --- a/include/linux/device.h
->>> +++ b/include/linux/device.h
->>> @@ -962,9 +962,13 @@ do {									\
->>>    	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
->>>    #define dev_info_ratelimited(dev, fmt, ...)				\
->>>    	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
->>> +#if defined(DEBUG)
->>>    #define dev_dbg_ratelimited(dev, fmt, ...)				\
->>>    	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
->>> -
->>> +#else
->>> +#define dev_dbg_ratelimited(dev, fmt, ...)			\
->>> +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
->>> +#endif
->>>    /*
->>>     * Stupid hackaround for existing uses of non-printk uses dev_info
->>>     *
->>>
->>
->> NACK. I don't think that's correct behavior. After that patch it kills
->> all output of dev_dbg_ratelimited(). If I use dynamic debugs and order
->> debugs, I expect to see debugs as earlier.
->
-> You are right. I attached the update patch, just moving *_ratelimited
-> functions after dev_dbg() definitions.
->
-> With DEBUG defined/undefined in your "test.ko", it works fine. With
-> CONFIG_DYNAMIC_DEBUG, it works with "+p", but with "-p", still
-> "..callbacks suppressed" is printed.
-
-I am using dynamic debugs and behavior is now just same as it was when 
-reported that bug. OK, likely for static debug it is now correct.
-
-> $ insmod test.ko
-> $ echo -n 'module test +p' > /sys/kernel/debug/dynamic_debug/control"
-> $ rmmod test
-> $ dmesg | tail -15
-> <7>[   69.047192] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   69.047233] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   69.047275] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <4>[   75.057045] print_dev_dbg_ratelimited: 90 callbacks suppressed
-> <7>[   75.063595] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.063796] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.063970] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064137] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064307] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064472] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064640] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064806] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.064972] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <7>[   75.065137] (NULL device *): print_dev_dbg_ratelimited: dev_dbg_ratelimited()
-> <6>[   75.065510] test module unloaded!
->
-> $ insmod test.ko
-> $ echo -n 'module test -p' > /sys/kernel/debug/dynamic_debug/control"
-> $ rmmod test
-> $ dmesg
-> ...
-> <6>[   82.715925] test module loaded!
-> <6>[   82.795642] dynamic_debug:ddebug_exec_queries: processed 1 queries, with 1 matches, 0 errs
-> <4>[   88.892096] print_dev_dbg_ratelimited: 90 callbacks suppressed
-> <6>[   88.898397] test module unloaded!
->
-> Any suggestion to control "... callbacks suppressed" with
-> CONFIG_DYNAMIC_DEBUG would be appreciated.
-
-Is it Joe Perches who has added these Kernel dynamic pr_ and dev_ 
-debugging? Maybe he has proper solution that fixes ratelimit for dynamic 
-debugging too.
-
-regards
-Antti
-
->
->>From 5b33751f89c2e91ee734325e6d73ed7e1c6d4b02 Mon Sep 17 00:00:00 2001
-> From: Hiroshi Doyu <hdoyu@nvidia.com>
-> Date: Mon, 20 Aug 2012 13:49:19 +0300
-> Subject: [PATCH 1/1] driver-core: Shut up dev_dbg_reatelimited() without
->   DEBUG
->
-> dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
-> suppressed". This shouldn't print anything without DEBUG.
->
-> With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
->
-> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> Reported-by: Antti Palosaari <crope@iki.fi>
-> ---
->   include/linux/device.h |   53 ++++++++++++++++++++++++++---------------------
->   1 files changed, 29 insertions(+), 24 deletions(-)
->
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 9648331..763bca4 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
->
->   #endif
->
-> +/*
-> + * Stupid hackaround for existing uses of non-printk uses dev_info
-> + *
-> + * Note that the definition of dev_info below is actually _dev_info
-> + * and a macro is used to avoid redefining dev_info
-> + */
-> +
-> +#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-> +
-> +#if defined(CONFIG_DYNAMIC_DEBUG)
-> +#define dev_dbg(dev, format, ...)		     \
-> +do {						     \
-> +	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-> +} while (0)
-> +#elif defined(DEBUG)
-> +#define dev_dbg(dev, format, arg...)		\
-> +	dev_printk(KERN_DEBUG, dev, format, ##arg)
-> +#else
-> +#define dev_dbg(dev, format, arg...)				\
-> +({								\
-> +	if (0)							\
-> +		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
-> +	0;							\
-> +})
-> +#endif
-> +
->   #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
->   do {									\
->   	static DEFINE_RATELIMIT_STATE(_rs,				\
-> @@ -955,33 +981,12 @@ do {									\
->   	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
->   #define dev_info_ratelimited(dev, fmt, ...)				\
->   	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
-> +#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
->   #define dev_dbg_ratelimited(dev, fmt, ...)				\
->   	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
-> -
-> -/*
-> - * Stupid hackaround for existing uses of non-printk uses dev_info
-> - *
-> - * Note that the definition of dev_info below is actually _dev_info
-> - * and a macro is used to avoid redefining dev_info
-> - */
-> -
-> -#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-> -
-> -#if defined(CONFIG_DYNAMIC_DEBUG)
-> -#define dev_dbg(dev, format, ...)		     \
-> -do {						     \
-> -	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-> -} while (0)
-> -#elif defined(DEBUG)
-> -#define dev_dbg(dev, format, arg...)		\
-> -	dev_printk(KERN_DEBUG, dev, format, ##arg)
->   #else
-> -#define dev_dbg(dev, format, arg...)				\
-> -({								\
-> -	if (0)							\
-> -		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
-> -	0;							\
-> -})
-> +#define dev_dbg_ratelimited(dev, fmt, ...)			\
-> +	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
->   #endif
->
->   #ifdef VERBOSE_DEBUG
->
-
-
--- 
-http://palosaari.fi/
+LS0tLS1CRUdJTiBQR1AgU0lHTkVEIE1FU1NBR0UtLS0tLQ0KSGFzaDogU0hBMQ0KDQpFbCBNb24s
+IDIwIEF1ZyAyMDEyIDE1OjE4OjAxICswMjAwDQpUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRp
+bmdAYXZpb25pYy1kZXNpZ24uZGU+IGVzY3JpYmnDszoNCj4gT24gTW9uLCBBdWcgMjAsIDIwMTIg
+YXQgMDQ6MDE6MDdQTSArMDMwMCwgVGVyamUgQmVyZ3N0csO2bSB3cm90ZToNCj4gPiBIaSwNCj4g
+PiANCj4gPiBJJ3ZlIGJlZW4gdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgdGhlIGJlc3Qgd2F5IHRvIGJp
+bmQgdG9nZXRoZXINCj4gPiB0ZWdyYWRybSBhbmQgbnZob3N0LiBJIGFzc3VtZSB0aGF0IG52aG9z
+dCBhbmQgdGVncmFkcm0gd2lsbCBsaXZlIGFzDQo+ID4gc2VwYXJhdGUgZHJpdmVycywgd2l0aCB0
+ZWdyYWRybSB0YWtpbmcgY2FyZSBvZiBkaXNwbGF5IGNvbnRyb2xsZXIsDQo+ID4gYW5kIG52aG9z
+dCB0YWtpbmcgY2FyZSBvZiBob3N0MXggYW5kIG90aGVyIGNsaWVudCBkZXZpY2VzLg0KPiA+IA0K
+PiA+IEkndmUgaWRlbnRpZmllZCBhIGJ1bXBzIHRoYXQgd2UgbmVlZCB0byBhZ3JlZSBvbi4gSSd2
+ZSBpbmNsdWRlZA0KPiA+IGhlcmUgdGhlIHByb2JsZW0gYW5kIG15IHByb3Bvc2FsOg0KPiA+IA0K
+PiA+IDEpIERldmljZSAmIGRyaXZlciByZWdpc3RyYXRpb24NCj4gPiB0ZWdyYWRybSByZWdpc3Rl
+cnMgYXMgcGxhdGZvcm1fZHJpdmVyLCBhbmQgZXhwb3J0cyBpb2N0bCdzLiBIZXJlIHdlDQo+ID4g
+YWxyZWFkeSBoYXZlIHRvIGFncmVlIG9uIHdoaWNoIGRldmljZSB0aGUgcGxhdGZvcm1fZHJpdmVy
+IG1hcHMgdG8uDQo+ID4gQ3VycmVudGx5IGl0IG1hcHMgdG8gaG9zdDF4LCBidXQgd2UnbGwgbmVl
+ZCB0byBtb3ZlIGNvbnRyb2wgb2YNCj4gPiBob3N0MXggdG8gbnZob3N0IGRyaXZlci4gV2UnbGwg
+bmVlZCB0byBwYXNzIGRybV9wbGF0Zm9ybV9pbml0KCkgc29tZQ0KPiA+IHBsYXRmb3JtX2Rldmlj
+ZSAtIEkgcHJvcG9zZSB0aGF0IHdlIGNyZWF0ZSBhIHZpcnR1YWwgZGV2aWNlIGZvcg0KPiA+IHRo
+aXMuDQo+ID4gDQo+ID4gMikgRGV2aWNlIHRyZWUgcGFyc2luZw0KPiA+IEF0IGJvb3R1cCwgd2Ug
+bmVlZCB0byBwYXJzZSBvbmx5IGhvc3QxeCBub2RlIGFuZCBjcmVhdGUgYSBkZXZpY2UgZm9yDQo+
+ID4gdGhhdC4gaG9zdDF4IHByb2JlIHdpbGwgbmVlZCB0byBkaWcgaW50byBob3N0MXggdG8gY3Jl
+YXRlIHRoZQ0KPiA+IGNoaWxkcmVuLiBUaGlzIGlzIHNvbWV0aGluZyB0aGF0IHdlJ2xsIG5lZWQg
+dG8gaW1wbGVtZW50IGZpcnN0IGluDQo+ID4gdGhlIGludGVybmFsIGtlcm5lbC4gdGVncmEtZGMg
+d291bGQgZ2V0IHByb2JlZCBvbmx5IGFmdGVyIHRoaXMNCj4gPiBzZXF1ZW5jZS4gSWYgdGhpcyBp
+cyBvaywgSSdsbCB0YWtlIGNhcmUgb2YgdGhpcyBwYXJ0LCBhbmQNCj4gPiBhZGp1c3RtZW50cyB0
+byB0ZWdyYWRybSB3aGVuIHRoaXMgYmVjb21lcyB0b3BpY2FsLg0KPiANCj4gSSBoYXZlIGEgbmV3
+IHBhdGNoIHNlcmllcyB0aGF0IHRha2VzIGNhcmUgb2YgdGhlc2UgdHdvIHN0ZXBzLiBNYXJrDQo+
+IHNlbnQgc29tZSBwYXRjaGVzIGZvciBUZWdyYTMwIGFuZCBIRE1JIG9uIHRvcCBvZiB0aGUgb2xk
+ZXIgc2VyaWVzDQo+IHRoYXQgSSBuZWVkIHRvIG1lcmdlIHdpdGggd2hhdCBJIGhhdmUuIE1heWJl
+IEknbGwgZGVjaWRlIHRvIHNlbmQgdGhlDQo+IHNlcmllcyBvdXQgd2l0aG91dCB0aGUgcGF0Y2hl
+cyBtZXJnZWQsIGRlcGVuZGluZyBvbiBob3cgbXVjaCB0aW1lDQo+IEknbGwgZ2V0IG9yIGhvdyBt
+dWNoIGVmZm9ydCBpdCByZXF1aXJlcy4gSSBoYWQgaG9wZWQgdGhlIG5leHQgc2VyaWVzDQo+IHdv
+dWxkIGhhdmUgd29ya2luZyBIRE1JIHN1cHBvcnQsIHdoaWNoIGlzIHdoeSBJIHdhaXRlZC4NCj4g
+DQo+IEJhc2ljYWxseSB3aGF0IEkgaGF2ZSBpcyBhIHZlcnkgcnVkaW1lbnRhcnkgZHJpdmVyIGZv
+ciBob3N0MXgsIHdoaWNoDQo+IHdhaXRzIGZvciBzb21lIG9mIHRoZSBzdWJkZXZpY2VzIHRvIGJl
+IHJlZ2lzdGVyZWQgYW5kIHRoZW4gY3JlYXRlcyBhDQo+IGR1bW15IGRldmljZSBhZ2FpbnN0IHdo
+aWNoIHRoZSBUZWdyYSBEUk0gZHJpdmVyIGNhbiBiaW5kLiBJdCdzIG5vdA0KPiBxdWl0ZSB3aGF0
+IHlvdSBwcm9wb3NlZCBhYm92ZSwgYnV0IHZlcnkgc2ltaWxhci4NCj4gDQo+IEZvciBub3cgSSd2
+ZSBhbHNvIHB1dCB0aGUgaG9zdDF4IGRyaXZlciBpbiB0aGUgc2FtZSBkaXJlY3RvcnkgYXMgdGhl
+DQo+IFRlZ3JhIERSTSBiZWNhdXNlIHRoZXJlIGFyZSBubyBvdGhlciB1c2Vycy4gV2UgbWF5IHdh
+bnQgdG8gY2hhbmdlIHRoYXQNCj4gYXQgc29tZSBwb2ludC4NCj4gDQo+ID4gV2UgaW5jbHVkZSBp
+biBkZXZpY2UgdHJlZSB0aGUgcmVnaXN0ZXIgYWRkcmVzc2VzLiBTb21lIGluZm9ybWF0aW9uDQo+
+ID4gdGhhdCB3b3VsZCBiZSBuZWVkZWQgaXMgc3RpbGwgY2xvY2tzLCBjbG9jayBnYXRpbmcgYmVo
+YXZpb3IsIHBvd2VyDQo+ID4gZG9tYWluIGlkcywgbWFwcGluZyBvZiBjbGllbnQgZGV2aWNlcyB0
+byBjaGFubmVscywgYW5kIG1hcHBpbmcgb2YNCj4gPiBzeW5jIHBvaW50cyBwZXIgY2hhbm5uZWwN
+Cj4gPiANCj4gPiAzKSBUaGUgaGFuZGxpbmcgb2YgaW9jdGwncyBmcm9tIHVzZXIgc3BhY2UNCj4g
+PiBUaGUgaW9jdGwncyByZXByZXNlbnQgdGhlIG5lZWRlZCBzeW5jaHJvbml6YXRpb24gYW5kIGNo
+YW5uZWwNCj4gPiBmdW5jdGlvbmFsaXR5LiBJJ2xsIHdyaXRlIHRoZSBuZWNlc3NhcnkgZ2x1ZS4g
+VGhlcmUgd291bGQgYmUgdHdvDQo+ID4gY2F0ZWdvcmllcyBvZiBpb2N0bCdzOg0KPiA+IA0KPiA+
+IDNhKSBTaW1wbGUgb3BlcmF0aW9ucyBzdWNoIGFzIHN5bmNocm9uaXphdGlvbjoNCj4gPiANCj4g
+PiBXYWl0LCBzaWduYWwsIHJlYWQsIGV0Yy4gYXJlIGV4cG9ydGVkIGZyb20gbnZob3N0IGFzIHB1
+YmxpYyBBUElzLA0KPiA+IGFuZCB0ZWdyYWRybSBzaW1wbHkgY2FsbHMgdGhlbS4gTm8gYmlnIGh1
+cmRsZSB0aGVyZS4gSSBhbHJlYWR5IGhhdmUNCj4gPiBjb25jZXB0IGNvZGUgdG8gZG8gdGhpcy4N
+Cj4gPiANCj4gPiAzYikgQ2hhbm5lbCBvcGVyYXRpb25zOg0KPiA+IA0KPiA+IHRlZ3JhZHJtIG5l
+ZWRzIHRvIGhhdmUgYSBjb25jZXB0IG9mIGxvZ2ljYWwgY2hhbm5lbC4gQ2hhbm5lbCBvcGVuDQo+
+ID4gY3JlYXRlcyBhIGxvZ2ljYWwgY2hhbm5lbCAoL2NvbnRleHQpIGJ5IGNhbGxpbmcgbnZob3N0
+LiBudmhvc3QNCj4gPiBuZWVkcyB0byBrbm93IHdoaWNoIGh3IGlzIGdvaW5nIHRvIGJlIHVzZWQg
+YnkgdGhlIGNoYW5uZWwgdG8gYmUNCj4gPiBhYmxlIHRvIGNvbnRyb2wgcG93ZXIsIGFuZCB0byBt
+YXAgdG8gcGh5c2ljYWwgY2hhbm5lbCwgc28gdGhhdA0KPiA+IGNvbWVzIGFzIGEgcGFyYW1ldGVy
+IGluIGlvY3RsLg0KPiA+IA0KPiA+IEVhY2ggY2hhbm5lbCBvcGVyYXRpb24gbmVlZHMgdG8gcGFz
+cyB0aGUgY2hhbm5lbCBpZCwgYW5kIHRlZ3JhZHJtDQo+ID4gcGFzc2VzIHRoZSBjYWxscyB0byBu
+dmhvc3QuIE1vc3QgaW1wb3J0YW50IG9wZXJhdGlvbiBpcyBzdWJtaXQsDQo+ID4gd2hpY2ggc2Vu
+ZHMgYSBjb21tYW5kIGJ1ZmZlciB0byBudmhvc3QncyBxdWV1ZS4NCj4gDQo+IFNvbWUgdGhvdWdo
+dCB3aWxsIHByb2JhYmx5IGhhdmUgdG8gZ28gaW50byB0aGVzZS4gVGhlIGVhc2llc3Qgd291bGQN
+Cj4gcHJvYmFibHkgYmUgdG8gaGF2ZSBhIGRyaXZlciB0aGF0IG5lZWRzIHRvIGRvIHN5bmNocm9u
+aXphdGlvbiBvciBvdGhlcg0KPiBjaGFubmVsIG9wZXJhdGlvbnMuIEl0IG1heSBtYWtlIHRoZSBy
+ZXF1aXJlbWVudHMgb24gdGhlIGV4YWN0IGlvY3Rscw0KPiBjbGVhcmVyLg0KPiANCj4gPiA0KSBC
+dWZmZXIgbWFuYWdlbWVudA0KPiA+IFdlIGFscmVhZHkga25vdyB0aGF0IHRoaXMgaXMgYSBtaXNz
+aW5nIHBhcnQuIEhvcGVmdWxseSB3ZSBjYW4gZ2V0DQo+ID4gdGhpcyBmaWxsZWQgc29vbi4NCj4g
+DQo+IFRoaXMgc2hvdWxkIGJlIGNoZWFwIGlmIHdlIHVzZSBHRU0gYWxvbmcgd2l0aCBETUEtQlVG
+LiBIb3dldmVyIHdpdGhvdXQNCj4gb3RoZXIgZHJpdmVycyB0aGF0IHRoZSBidWZmZXJzIGNhbiBi
+ZSBzaGFyZWQgd2l0aCB0aGlzIHdvbid0IGRvIHVzIGFueQ0KPiBnb29kLiBTbyBtYXliZSBzb21l
+dGhpbmcgbGlrZSBhIHZpZGVvIGNhcHR1cmluZyBkcml2ZXIgZm9yIFRlZ3JhDQo+IHNob3VsZCBi
+ZSBhZGRlZCBmaXJzdCBzbyB3ZSBjYW4gYWN0dWFsbHkgdGVzdCBidWZmZXIgc2hhcmluZy4NCg0K
+Q2FuIHdlIHBsZWFzZSBwdXNoIHRvIGdldCB0ZWdyYWRybSBtZXJnZWQgaW50byBzdGFnaW5nIGlu
+IGxpbnVzJ3MgdHJlZS4NCkZvciBmZWRvcmEgdG8gc2hpcCBhIHdvcmtpbmcgY29uc29sZSBhbmQg
+YWxsb3cgdGVncmEgc3lzdGVtcyB0byBydW4gWA0KZXRjIHdlIG5lZWQgdG8gZ2V0IGl0IG1lcmdl
+ZCB1cHN0cmVhbS4gVGhlcmUgaXMgYSBsb3Qgb2YgZmVkb3JhIGZvbGtzDQp3aXRoIHRyaW1zbGlj
+ZXMgYW5kIG90aGVyIHRlZ3JhIGJhc2VkIGRldmljZXMsIGl0IHdvdWxkIGJlIGdvb2QgdG8gc2Vl
+DQp0aGVtIGZ1bGx5IHN1cHBvcnRlZCBmb3IgRmVkb3JhIDE4LCB3ZSBhcmUgdmVyeSBzaG9ydCBp
+biB0aW1lIHdlIGFyZQ0KY3VycmVudGx5IHJ1bm5pbmcgMy42IGJhc2VkIGtlcm5lbHMgYW5kIHdl
+IGZvbGxvdyB2ZXJ5IGNsb3NlbHkgbGludXMncw0KdHJlZS4gQnVpbGRpbmcgYWxsIGtlcm5lbHMg
+ZnJvbSBpdCB3aXRoIGFzIGxpdHRsZSBwYXRjaGluZyBhcyBwb3NzaWJsZS4NCg0KRGVubmlzDQot
+LS0tLUJFR0lOIFBHUCBTSUdOQVRVUkUtLS0tLQ0KVmVyc2lvbjogR251UEcgdjIuMC4xOCAoR05V
+L0xpbnV4KQ0KDQppRVlFQVJFQ0FBWUZBbEF6QllJQUNna1FrU3htNDdCYVdmZWVpd0Nnc0dJcm44
+TUNDZ0M4REVISEJYSjF1K1ZiDQpJMXdBbjJSbWZwUFNCY2NFVnp4RzRlLzlNRGpCVDF0SA0KPWto
+RWoNCi0tLS0tRU5EIFBHUCBTSUdOQVRVUkUtLS0tLQ0K
