@@ -1,132 +1,82 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
-Date: Fri, 24 Aug 2012 13:34:16 +0300
-Message-ID: <1345804456.9287.54.camel@lappyti>
-References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com>
-	 <20120821091306.GA4819@avionic-0098.mockup.avionic-design.de>
-	 <1345542860.4085.40.camel@deskari> <6044581.2jEzZBWCu1@percival>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Shutdown problem in SMP system happened on Tegra20
+Date: Fri, 24 Aug 2012 09:19:09 -0600
+Message-ID: <50379B6D.6070706@wwwdotorg.org>
+References: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-4E5jpmn3JkyQUAiDm8Zk"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <6044581.2jEzZBWCu1@percival>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848-jYPH5V5jAeRDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/24/2012 02:23 AM, Bill Huang wrote:
+> Hi,
+> 
 
---=-4E5jpmn3JkyQUAiDm8Zk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[Explicitly CCing a few people, and dropping the linux-kernel mailing
+list since the ARM list is most useful]
 
-On Fri, 2012-08-24 at 18:24 +0900, Alex Courbot wrote:
-> On Tuesday 21 August 2012 17:54:20 Tomi Valkeinen wrote:
-
-> > And as I said, I don't have any problems with some kind of generic powe=
-r
-> > sequences. So the code in the board file could be moved and converted t=
-o
-> > use the power sequences, if that is better than just plain c code.
->=20
-> My concern now is, provided that all drivers to their job and handle how =
-their=20
-> devices are switched on and off, when (if at all) are encoded power seque=
-nces=20
-> better than their equivalent C code? There is the matching database size =
-issue=20
-> that you mentionned, is it a sufficient concern to justify a new kernel f=
-eature?
-
-Good question.
-
-I think obviously the worst solution is to have separate .c driver files
-for each panel, where the drivers do 99% the same thing.
-
-So the question is how to represent the 1% difference the panels have.
-
-I think it depends on the panels. If it looks like all the panel have,
-say, max 2 regulators and one reset/enable gpio, and they are always
-enabled in the same order (regulators first, then the gpio), it should
-be easy to handle it in the driver without any power sequence framework.
-
-If the panels require more complex setups, then the code in the panel
-driver would probably start to form into a power sequence framework, and
-it would make sense to have it as a separate framework.
-
-Then again, if the panel setup is complex, it makes me wonder if it'd be
-just easier to handle it with c code in a separate driver.
-
-Also, the database size issue is a bit separate issue. There's the db
-size problem with or without the framework, if we do not pass the data
-from DT.
-
-So as clarification, I see 4 different options:
-- Power sequences in DT (as proposed in this series)
-- Custom panel data in DT, that the driver uses to power up properly
-- Power sequences in a panel database in kernel
-- Custom panel data in a panel db in kernel
-
-> On the other hand some devices like panels are typically not used in many=
-=20
-> different appliances, so maybe it is not worth to separate them from thei=
-r=20
-
-Yep, this is the reason for my concern with the database size. The DB
-could contain 10k panels, of which a board uses one. The rest just waste
-memory. But then again, 10k panels is probably not a realistic amount.
-It's difficult to guess the amount of memory used by such a database,
-though. If it uses, say, 8kB, I'm not sure if it's a reason to panic.
-
-And, as I mentioned, it could be optimized so that the driver throws
-away the unneeded panels at __init. Of course here the problem is that
-the panel needs to know what panels are needed.
-
-> board definition. As Mark mentionned, having .dtsi files for the DT (and =
-their=20
-> equivalent .h for kernels that use platform data) might be a good middle=
-=20
-> ground.
-
-I guess it's the perfectionist in me that leans toward handling it fully
-in the kernel, as I think that's architecturally correct thing to do.
-The DT data should contain parameters that can be configured per board,
-or nodes (like regulators) that are needed by other parts of the DT
-data.
-
-If the only reason why to do it via DT is to avoid the possible size
-problem with the panel database, perhaps what we should solve is the
-optimization of the database. If that seems unsolvable, then DT approach
-could be used as a workaround.
-
-And I have to say I'm not too familiar with DT, so if I'm wrong about
-what DT should contain, I'm all ears =3D).
-
- Tomi
-
-
---=-4E5jpmn3JkyQUAiDm8Zk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJQN1ioAAoJEPo9qoy8lh71EncP/RHUcx4gu5R9TA6l4zGNkNuB
-saZ+3/v5yyTn752DpXO5FVJbNdGcEeq5hea1XDAECMTyI99dbUtQxcGNtmDW3t1R
-BdCw7ZE/bCkOEnu05r4C/JFhavqMoKkpqYR9nVQIlJV8RUqLe5Ye9yT2UKNDUa+2
-ljqlD1DJ216IT5ZPE6O6ukRwFpx6PWtbGKvgH5R3VsXE9cv69vSX6iAZGurgQLnk
-rj8K+nQGWw3pJoAnNj3NJ8DZhq07jOeiLgQ+8lld/7uxVMP2f4Eo8rm1mtcH4Htr
-5Qr1kvtYcIWC2UypMyCLAqXE3Am6mNxEvrugxERd9Pm3Viw8Yp30BYwaPqO5DTuM
-PZmmrawIarfkxMs66MPeIs3eA5qmbeFvXo19lz4RN97c1As+xz78Nlmm2cAcJmxJ
-5IjmBM0jKF6gNRsbOFlYbCuc4KwjmIdCifr03eY6/L5YATke7rHaWWCHVAQdGYSO
-o5P+YTWV/HhzYrcxGFwabH/pWY0xiC95g5QYBYuLDjJc2eDliLYHXLq2Ob2AC4XT
-vkdr4DFM8S1ekkVfRdPvATeuWOjHjvEt6TUfHIjK2XeFlU+F7pDeueFhJUX3hAO/
-7AI//6dRKJBMeXCGvuDIHCtuoJdvSUeWLfuX1tHnpLUtzYSeT2TiEWEJASvai54d
-9c//so8lHtE3LS6VgCy6
-=zarw
------END PGP SIGNATURE-----
-
---=-4E5jpmn3JkyQUAiDm8Zk--
-
+> When doing shutdown on Tegra20/Tegra30, we need to read/write PMIC registers through I2C
+> to perform the power off sequence. Unfortunately, sometimes we'll fail to shutdown
+> due to I2C timeout on Tegra20. And the cause of the timeout is due to the CPU which I2C
+> controller IRQ affined to will have chance to be offlined without migrating all irqs affined 
+> to it, so the following I2C transactions will fail (no any CPU will handle that interrupt
+> since then).
+> 
+> Some snippet of the shutdown codes:
+> 
+> void kernel_power_off(void)
+> {
+> 	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
+> 	:
+> 	disable_nonboot_cpus();
+> 	:
+> 	machine_power_off();
+> }
+> 
+> void machine_power_off(void)
+> {
+> 	machine_shutdown();
+> 	if (pm_power_off)
+> 		pm_power_off(); /* this is where we send I2C write to shutdown */
+> }
+> 
+> void machine_shutdown(void)
+> {
+> #ifdef CONFIG_SMP
+> 	smp_send_stop();
+> #endif
+> }
+> 
+> In "smp_send_stop()", it will send "IPI_CPU_STOPS" to offline other cpus except
+> current cpu (smp_processor_id()), however, current cpu will not always be cpu0 at
+> least at Tegra20, that said for example cpu1 might be the current cpu and cpu0 will
+> be offlined and this is the case why the I2C transaction will timeout. 
+> 
+> For normal case, "disable_nonboot_cpus()" call will disable all other Cpus except
+> cpu0, that means we won't hit the problem mentioned here since cpu0 will always be
+> the current cpu in the call "smp_send_stop", but the call to "disable_nonboot_cpus" 
+> will happen only when "CONFIG_PM_SLEEP_SMP" is enabled which is not the case for
+> Tegra20/Tegra30, we don't support suspend yet so this can't be enabled.
+> 
+> There are two known fix for this, the first one is enable suspend (ARCH_SUSPEND_POSSIBLE)
+> so the cpu0 will be the only online cpu while doing "machine_shutdown". The second
+> fix is adding call to "migrate_irqs()" in "ipi_cpu_stop" so all irqs can be migrated to
+> the active cpu.
+> 
+> Could someone familiar with the ARM SMP design help to answer my two questions?
+> 
+> 1. Does it make sense that "smp_processor_id()" could be non-cpu0 in the call
+>    "smp_send_stop()"? In Tegra30 it will always be cpu0 but Tegra20 will be 50-50,
+>    I just can't find the magic.
+> 
+> 2. If current cpu is not necessarily be cpu0 in the call "smp_send_stop()", then
+>    does it make sense to add "migrate_irqs()" in "ipi_cpu_stop()"? Or is there any
+>    other fix which makes more sense?
+> 
+> Thanks,
+> Bill
