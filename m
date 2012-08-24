@@ -1,40 +1,113 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH] mmc: tegra: convert to device tree support only
-Date: Fri, 24 Aug 2012 09:40:33 +0800
-Message-ID: <1345772433.5081.1.camel@jlo-ubuntu-64.nvidia.com>
-References: <1345187071-6619-1-git-send-email-josephl@nvidia.com>
-	 <502E950B.2010205@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without DEBUG
+Date: Fri, 24 Aug 2012 06:35:35 +0200
+Message-ID: <20120824.073535.1710298672594744200.hdoyu@nvidia.com>
+Reply-To: "1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com"
+	  <1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <502E950B.2010205@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "crope@iki.fi" <crope@iki.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 2012-08-18 at 03:01 +0800, Stephen Warren wrote:
-> On 08/17/2012 01:04 AM, Joseph Lo wrote:
-> > When compiling a kernel that supports only Tegra30 and not Tegra20,
-> > the SDHCI driver will fail to compile since the of_match_device() failure
-> > fallback code unconditinally references soc_data_tegra20, which is only
-> > compiled in when Tegra20 support is enabled.
-> > 
-> > In Kernel 3.7, both Tegra20 and Tegra30 will only support booting using
-> > device tree, Hence, there is never a need to fall back to using
-> > soc_data_tegra20 if of_mach_device() fails. Instead, make this case an
-> > error. This removes the reference to soc_data_tegra20, and hence solves
-> > the compile failure.
-> 
-> Tested-by: Stephen Warren <swarren@wwwdotorg.org>
-> 
-> (built and tested both Tegra20-only and Tegr30-only kernels with this
-> applied on top of next-20120816).
+dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+suppressed". This shouldn't print anything without DEBUG.
 
-Ping.
+With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
 
-Could anyone help to review this?
-Thanks.
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+Reported-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+Tested-by: Antti Palosaari <crope@iki.fi>
+Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+---
+ include/linux/device.h |   62 +++++++++++++++++++++++++++++------------------
+ 1 files changed, 38 insertions(+), 24 deletions(-)
 
-
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 9648331..bb6ffcb 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 
+ #endif
+ 
++/*
++ * Stupid hackaround for existing uses of non-printk uses dev_info
++ *
++ * Note that the definition of dev_info below is actually _dev_info
++ * and a macro is used to avoid redefining dev_info
++ */
++
++#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
++
++#if defined(CONFIG_DYNAMIC_DEBUG)
++#define dev_dbg(dev, format, ...)		     \
++do {						     \
++	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++} while (0)
++#elif defined(DEBUG)
++#define dev_dbg(dev, format, arg...)		\
++	dev_printk(KERN_DEBUG, dev, format, ##arg)
++#else
++#define dev_dbg(dev, format, arg...)				\
++({								\
++	if (0)							\
++		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
++	0;							\
++})
++#endif
++
+ #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+@@ -955,33 +981,21 @@ do {									\
+ 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+ #define dev_info_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
++#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
+ #define dev_dbg_ratelimited(dev, fmt, ...)				\
+-	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+-
+-/*
+- * Stupid hackaround for existing uses of non-printk uses dev_info
+- *
+- * Note that the definition of dev_info below is actually _dev_info
+- * and a macro is used to avoid redefining dev_info
+- */
+-
+-#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
+-
+-#if defined(CONFIG_DYNAMIC_DEBUG)
+-#define dev_dbg(dev, format, ...)		     \
+-do {						     \
+-	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
++	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
++	    __ratelimit(&_rs))						\
++		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
++				   ##__VA_ARGS__);			\
+ } while (0)
+-#elif defined(DEBUG)
+-#define dev_dbg(dev, format, arg...)		\
+-	dev_printk(KERN_DEBUG, dev, format, ##arg)
+ #else
+-#define dev_dbg(dev, format, arg...)				\
+-({								\
+-	if (0)							\
+-		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
+-	0;							\
+-})
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ #ifdef VERBOSE_DEBUG
+-- 
+1.7.5.4
