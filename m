@@ -1,113 +1,77 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without DEBUG
-Date: Fri, 24 Aug 2012 06:35:35 +0200
-Message-ID: <20120824.073535.1710298672594744200.hdoyu@nvidia.com>
-Reply-To: "1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com"
-	  <1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Shutdown problem in SMP system happened on Tegra20
+Date: Fri, 24 Aug 2012 16:23:39 +0800
+Message-ID: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "crope@iki.fi" <crope@iki.fi>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
-suppressed". This shouldn't print anything without DEBUG.
+Hi,
 
-With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
+When doing shutdown on Tegra20/Tegra30, we need to read/write PMIC registers through I2C
+to perform the power off sequence. Unfortunately, sometimes we'll fail to shutdown
+due to I2C timeout on Tegra20. And the cause of the timeout is due to the CPU which I2C
+controller IRQ affined to will have chance to be offlined without migrating all irqs affined 
+to it, so the following I2C transactions will fail (no any CPU will handle that interrupt
+since then).
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-Reported-by: Hin-Tak Leung <htl10@users.sourceforge.net>
-Tested-by: Antti Palosaari <crope@iki.fi>
-Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
----
- include/linux/device.h |   62 +++++++++++++++++++++++++++++------------------
- 1 files changed, 38 insertions(+), 24 deletions(-)
+Some snippet of the shutdown codes:
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 9648331..bb6ffcb 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
- 
- #endif
- 
-+/*
-+ * Stupid hackaround for existing uses of non-printk uses dev_info
-+ *
-+ * Note that the definition of dev_info below is actually _dev_info
-+ * and a macro is used to avoid redefining dev_info
-+ */
-+
-+#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-+
-+#if defined(CONFIG_DYNAMIC_DEBUG)
-+#define dev_dbg(dev, format, ...)		     \
-+do {						     \
-+	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-+} while (0)
-+#elif defined(DEBUG)
-+#define dev_dbg(dev, format, arg...)		\
-+	dev_printk(KERN_DEBUG, dev, format, ##arg)
-+#else
-+#define dev_dbg(dev, format, arg...)				\
-+({								\
-+	if (0)							\
-+		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
-+	0;							\
-+})
-+#endif
-+
- #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
- do {									\
- 	static DEFINE_RATELIMIT_STATE(_rs,				\
-@@ -955,33 +981,21 @@ do {									\
- 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
- #define dev_info_ratelimited(dev, fmt, ...)				\
- 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
-+#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
- #define dev_dbg_ratelimited(dev, fmt, ...)				\
--	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
--
--/*
-- * Stupid hackaround for existing uses of non-printk uses dev_info
-- *
-- * Note that the definition of dev_info below is actually _dev_info
-- * and a macro is used to avoid redefining dev_info
-- */
--
--#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
--
--#if defined(CONFIG_DYNAMIC_DEBUG)
--#define dev_dbg(dev, format, ...)		     \
--do {						     \
--	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-+do {									\
-+	static DEFINE_RATELIMIT_STATE(_rs,				\
-+				      DEFAULT_RATELIMIT_INTERVAL,	\
-+				      DEFAULT_RATELIMIT_BURST);		\
-+	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
-+	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
-+	    __ratelimit(&_rs))						\
-+		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
-+				   ##__VA_ARGS__);			\
- } while (0)
--#elif defined(DEBUG)
--#define dev_dbg(dev, format, arg...)		\
--	dev_printk(KERN_DEBUG, dev, format, ##arg)
- #else
--#define dev_dbg(dev, format, arg...)				\
--({								\
--	if (0)							\
--		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
--	0;							\
--})
-+#define dev_dbg_ratelimited(dev, fmt, ...)			\
-+	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
- #endif
- 
- #ifdef VERBOSE_DEBUG
--- 
-1.7.5.4
+void kernel_power_off(void)
+{
+	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
+	:
+	disable_nonboot_cpus();
+	:
+	machine_power_off();
+}
+
+void machine_power_off(void)
+{
+	machine_shutdown();
+	if (pm_power_off)
+		pm_power_off(); /* this is where we send I2C write to shutdown */
+}
+
+void machine_shutdown(void)
+{
+#ifdef CONFIG_SMP
+	smp_send_stop();
+#endif
+}
+
+In "smp_send_stop()", it will send "IPI_CPU_STOPS" to offline other cpus except
+current cpu (smp_processor_id()), however, current cpu will not always be cpu0 at
+least at Tegra20, that said for example cpu1 might be the current cpu and cpu0 will
+be offlined and this is the case why the I2C transaction will timeout. 
+
+For normal case, "disable_nonboot_cpus()" call will disable all other Cpus except
+cpu0, that means we won't hit the problem mentioned here since cpu0 will always be
+the current cpu in the call "smp_send_stop", but the call to "disable_nonboot_cpus" 
+will happen only when "CONFIG_PM_SLEEP_SMP" is enabled which is not the case for
+Tegra20/Tegra30, we don't support suspend yet so this can't be enabled.
+
+There are two known fix for this, the first one is enable suspend (ARCH_SUSPEND_POSSIBLE)
+so the cpu0 will be the only online cpu while doing "machine_shutdown". The second
+fix is adding call to "migrate_irqs()" in "ipi_cpu_stop" so all irqs can be migrated to
+the active cpu.
+
+Could someone familiar with the ARM SMP design help to answer my two questions?
+
+1. Does it make sense that "smp_processor_id()" could be non-cpu0 in the call
+   "smp_send_stop()"? In Tegra30 it will always be cpu0 but Tegra20 will be 50-50,
+   I just can't find the magic.
+
+2. If current cpu is not necessarily be cpu0 in the call "smp_send_stop()", then
+   does it make sense to add "migrate_irqs()" in "ipi_cpu_stop()"? Or is there any
+   other fix which makes more sense?
+
+Thanks,
+Bill
+nvpublic
