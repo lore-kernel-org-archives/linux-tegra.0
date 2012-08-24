@@ -1,77 +1,49 @@
-From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Shutdown problem in SMP system happened on Tegra20
-Date: Fri, 24 Aug 2012 16:23:39 +0800
-Message-ID: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v4 1/3] Runtime Interpreted Power Sequences
+Date: Fri, 24 Aug 2012 18:24:54 +0900
+Message-ID: <6044581.2jEzZBWCu1@percival>
+References: <1345097337-24170-1-git-send-email-acourbot@nvidia.com> <20120821091306.GA4819@avionic-0098.mockup.avionic-design.de> <1345542860.4085.40.camel@deskari>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1345542860.4085.40.camel@deskari>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@nvidia.com>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Tuesday 21 August 2012 17:54:20 Tomi Valkeinen wrote:
+> > However this also means we'll essentially just be moving the board code.
+> 
+> 
+> What do you mean "just"? Wasn't the point of the whole "arm board file
+> mess" to get rid of the code from the board files? If the code in the
+> board file is device specific code, not board specific, then the driver
+> of the device is a logical place to place it.
 
-When doing shutdown on Tegra20/Tegra30, we need to read/write PMIC registers through I2C
-to perform the power off sequence. Unfortunately, sometimes we'll fail to shutdown
-due to I2C timeout on Tegra20. And the cause of the timeout is due to the CPU which I2C
-controller IRQ affined to will have chance to be offlined without migrating all irqs affined 
-to it, so the following I2C transactions will fail (no any CPU will handle that interrupt
-since then).
+I think Tomi has a point here - these sequences were not belonging to the 
+board code in the first place. They are definitely tied to the device, hence 
+should have been handled by the driver all along, with the board code 
+assigning the correct resources to the device (like the vast majority of 
+device drivers do).
 
-Some snippet of the shutdown codes:
+> And as I said, I don't have any problems with some kind of generic power
+> sequences. So the code in the board file could be moved and converted to
+> use the power sequences, if that is better than just plain c code.
 
-void kernel_power_off(void)
-{
-	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
-	:
-	disable_nonboot_cpus();
-	:
-	machine_power_off();
-}
+My concern now is, provided that all drivers to their job and handle how their 
+devices are switched on and off, when (if at all) are encoded power sequences 
+better than their equivalent C code? There is the matching database size issue 
+that you mentionned, is it a sufficient concern to justify a new kernel feature?
 
-void machine_power_off(void)
-{
-	machine_shutdown();
-	if (pm_power_off)
-		pm_power_off(); /* this is where we send I2C write to shutdown */
-}
+On the other hand some devices like panels are typically not used in many 
+different appliances, so maybe it is not worth to separate them from their 
+board definition. As Mark mentionned, having .dtsi files for the DT (and their 
+equivalent .h for kernels that use platform data) might be a good middle 
+ground.
 
-void machine_shutdown(void)
-{
-#ifdef CONFIG_SMP
-	smp_send_stop();
-#endif
-}
+But the line is really tight between what is code and what is data here.
 
-In "smp_send_stop()", it will send "IPI_CPU_STOPS" to offline other cpus except
-current cpu (smp_processor_id()), however, current cpu will not always be cpu0 at
-least at Tegra20, that said for example cpu1 might be the current cpu and cpu0 will
-be offlined and this is the case why the I2C transaction will timeout. 
+Alex.
 
-For normal case, "disable_nonboot_cpus()" call will disable all other Cpus except
-cpu0, that means we won't hit the problem mentioned here since cpu0 will always be
-the current cpu in the call "smp_send_stop", but the call to "disable_nonboot_cpus" 
-will happen only when "CONFIG_PM_SLEEP_SMP" is enabled which is not the case for
-Tegra20/Tegra30, we don't support suspend yet so this can't be enabled.
-
-There are two known fix for this, the first one is enable suspend (ARCH_SUSPEND_POSSIBLE)
-so the cpu0 will be the only online cpu while doing "machine_shutdown". The second
-fix is adding call to "migrate_irqs()" in "ipi_cpu_stop" so all irqs can be migrated to
-the active cpu.
-
-Could someone familiar with the ARM SMP design help to answer my two questions?
-
-1. Does it make sense that "smp_processor_id()" could be non-cpu0 in the call
-   "smp_send_stop()"? In Tegra30 it will always be cpu0 but Tegra20 will be 50-50,
-   I just can't find the magic.
-
-2. If current cpu is not necessarily be cpu0 in the call "smp_send_stop()", then
-   does it make sense to add "migrate_irqs()" in "ipi_cpu_stop()"? Or is there any
-   other fix which makes more sense?
-
-Thanks,
-Bill
-nvpublic
