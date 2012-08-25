@@ -1,75 +1,38 @@
-From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: Shutdown problem in SMP system happened on Tegra20
-Date: Sat, 25 Aug 2012 08:00:56 +0800
-Message-ID: <A7051F87A141B744BCAF487D48E5B3BDF5BA98284A@HKMAIL02.nvidia.com>
-References: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com>
- <20120824182133.GB18957@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] sound: tegra_alc5632: remove HP detect GPIO inversion
+Date: Fri, 24 Aug 2012 21:20:15 -0600
+Message-ID: <1345864815-19539-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120824182133.GB18957-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-nvpublic
-> On Fri, Aug 24, 2012 at 04:23:39PM +0800, Bill Huang wrote:
-> > When doing shutdown on Tegra20/Tegra30, we need to read/write PMIC
-> > registers through I2C to perform the power off sequence.
-> > Unfortunately, sometimes we'll fail to shutdown due to I2C timeout on
-> > Tegra20. And the cause of the timeout is due to the CPU which I2C
-> > controller IRQ affined to will have chance to be offlined without
-> > migrating all irqs affined to it, so the following I2C transactions
-> > will fail (no any CPU will handle that interrupt since then).
-> 
-> > Some snippet of the shutdown codes:
-> >
-> > void kernel_power_off(void)
-> > {
-> > 	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
-> > 	:
-> > 	disable_nonboot_cpus();
-> > 	:
-> > 	machine_power_off();
-> > }
-> >
-> > void machine_power_off(void)
-> > {
-> > 	machine_shutdown();
-> > 	if (pm_power_off)
-> > 		pm_power_off(); /* this is where we send I2C write to shutdown */ }
-> >
-> > void machine_shutdown(void)
-> > {
-> > #ifdef CONFIG_SMP
-> > 	smp_send_stop();
-> > #endif
-> > }
-> >
-> > In "smp_send_stop()", it will send "IPI_CPU_STOPS" to offline other
-> > cpus except current cpu (smp_processor_id()), however, current cpu
-> > will not always be cpu0 at least at Tegra20, that said for example
-> > cpu1 might be the current cpu and cpu0 will be offlined and this is the case why the I2C transaction
-> will timeout.
-> >
-> > For normal case, "disable_nonboot_cpus()" call will disable all other
-> > Cpus except cpu0, that means we won't hit the problem mentioned here
-> > since cpu0 will always be the current cpu in the call "smp_send_stop", but the call to
-> "disable_nonboot_cpus"
-> > will happen only when "CONFIG_PM_SLEEP_SMP" is enabled which is not
-> > the case for Tegra20/Tegra30, we don't support suspend yet so this can't be enabled.
-> 
-> So what you're asking for is a feature to do what CONFIG_PM_SLEEP_SMP does, but without
-> CONFIG_PM_SLEEP_SMP enabled?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yeah pretty much, I'm actually asking should we take care of this since maybe not all platforms 
-will have this config enabled?
-> 
-> Why not just ensure that CONFIG_PM_SLEEP_SMP is enabled if your platform requires that the lowest CPU
-> number be the CPU dealing with reboot?
+Both the schematics and practical testing show that the HP detect GPIO
+is high when the headphones are plugged in. Hence, the snd_soc_jack_gpio
+should not specify to invert the signal.
 
-Someday we will have it enabled, but before that we'll hit the issue, so you don't think
-this should be taken care of? Thanks.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.4 v3.5
+---
+ sound/soc/tegra/tegra_alc5632.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+index e463529..76cb1b3 100644
+--- a/sound/soc/tegra/tegra_alc5632.c
++++ b/sound/soc/tegra/tegra_alc5632.c
+@@ -89,7 +89,6 @@ static struct snd_soc_jack_gpio tegra_alc5632_hp_jack_gpio = {
+ 	.name = "Headset detection",
+ 	.report = SND_JACK_HEADSET,
+ 	.debounce_time = 150,
+-	.invert = 1,
+ };
+ 
+ static const struct snd_soc_dapm_widget tegra_alc5632_dapm_widgets[] = {
+-- 
+1.7.9.5
