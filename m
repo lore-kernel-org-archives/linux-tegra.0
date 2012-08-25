@@ -1,221 +1,36 @@
-From: Hin-Tak Leung <htl10@users.sourceforge.net>
-Subject: Re: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without DEBUG
-Date: Sat, 25 Aug 2012 08:12:23 +0100 (BST)
-Message-ID: <1345878743.62338.YahooMailClassic@web29404.mail.ird.yahoo.com>
-References: <20120824.073535.1710298672594744200.hdoyu@nvidia.com>
-Reply-To: htl10@users.sourceforge.net
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: Shutdown problem in SMP system happened on Tegra20
+Date: Sat, 25 Aug 2012 08:17:56 +0100
+Message-ID: <20120825071755.GG18957@n2100.arm.linux.org.uk>
+References: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com> <20120824182133.GB18957@n2100.arm.linux.org.uk> <A7051F87A141B744BCAF487D48E5B3BDF5BA98284A@HKMAIL02.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20120824.073535.1710298672594744200.hdoyu@nvidia.com>
-Sender: linux-media-owner@vger.kernel.org
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com" <1345726463.82057.YahooMailClassic@web29403.mail.ird.yahoo.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "crope@iki.fi" <crope@iki.fi>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <A7051F87A141B744BCAF487D48E5B3BDF5BA98284A-jYPH5V5jAeRDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---- On Fri, 24/8/12, Hiroshi Doyu <hdoyu@nvidia.com> wrote:
+On Sat, Aug 25, 2012 at 08:00:56AM +0800, Bill Huang wrote:
+> nvpublic
+> > So what you're asking for is a feature to do what CONFIG_PM_SLEEP_SMP does, but without
+> > CONFIG_PM_SLEEP_SMP enabled?
+> 
+> Yeah pretty much, I'm actually asking should we take care of this since maybe not all platforms 
+> will have this config enabled?
+> > 
+> > Why not just ensure that CONFIG_PM_SLEEP_SMP is enabled if your platform requires that the lowest CPU
+> > number be the CPU dealing with reboot?
+> 
+> Someday we will have it enabled, but before that we'll hit the issue, so you don't think
+> this should be taken care of? Thanks.
 
-> From: Hiroshi Doyu <hdoyu@nvidia.com>
-> Subject: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without=
- DEBUG
-> To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-> Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "h=
-tl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media=
-@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe=
-@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.o=
-rg>, "crope@iki.fi" <crope@iki.fi>
-> Date: Friday, 24 August, 2012, 5:35
-> dev_dbg_reatelimited() without DEBUG
-> printed "217078 callbacks
-> suppressed". This shouldn't print anything without DEBUG.
->=20
-> With CONFIG_DYNAMIC_DEBUG, the print should be configured as
-> expected.
->=20
-> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> Reported-by: Hin-Tak Leung <htl10@users.sourceforge.net>
-> Tested-by: Antti Palosaari <crope@iki.fi>
-> Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+Well, just enable CONFIG_PM_SLEEP_SMP then - it'll be far better than
+trying to implement something in the ARM code, especially as sysrq can
+be used for poweroff/reboot etc (which will run from atomic contexts
+where you can't switch to another CPU.)
 
-Tested-by: Hin-Tak Leung <htl10@users.sourceforge.net>
-
-Went ahead and patched my 2.5.x distro kernel-devel package header, and=
- it works as expected. Apologies about the red-herring with media_build=
- (for those who are not familar with it, =3D "back-port" wrapper packag=
-e for building new DVB modules against older kernels).=20
-
-The distro kernel-devel headers is per installed distro kernel so will =
-be replaced in a week or two... no permanent demage done :-).  =20
-
-> ---
->  include/linux/device.h |=A0=A0=A062
-> +++++++++++++++++++++++++++++------------------
->  1 files changed, 38 insertions(+), 24 deletions(-)
->=20
-> diff --git a/include/linux/device.h
-> b/include/linux/device.h
-> index 9648331..bb6ffcb 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -932,6 +932,32 @@ int _dev_info(const struct device *dev,
-> const char *fmt, ...)
-> =20
->  #endif
-> =20
-> +/*
-> + * Stupid hackaround for existing uses of non-printk uses
-> dev_info
-> + *
-> + * Note that the definition of dev_info below is actually
-> _dev_info
-> + * and a macro is used to avoid redefining dev_info
-> + */
-> +
-> +#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt,
-> ##arg)
-> +
-> +#if defined(CONFIG_DYNAMIC_DEBUG)
-> +#define dev_dbg(dev, format, ...)=A0=A0=A0
-> =A0=A0=A0 =A0 =A0=A0=A0\
-> +do {=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0 =A0=A0=A0\
-> +=A0=A0=A0 dynamic_dev_dbg(dev, format,
-> ##__VA_ARGS__); \
-> +} while (0)
-> +#elif defined(DEBUG)
-> +#define dev_dbg(dev, format, arg...)=A0=A0=A0
-> =A0=A0=A0 \
-> +=A0=A0=A0 dev_printk(KERN_DEBUG, dev, format,
-> ##arg)
-> +#else
-> +#define dev_dbg(dev, format, arg...)=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> +({=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
-> +=A0=A0=A0 if (0)=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> +=A0=A0=A0 =A0=A0=A0
-> dev_printk(KERN_DEBUG, dev, format,
-> ##arg);=A0=A0=A0 \
-> +=A0=A0=A0 0;=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
-> +})
-> +#endif
-> +
->  #define dev_level_ratelimited(dev_level, dev, fmt,
-> ...)=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> \
->  do {=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
->  =A0=A0=A0 static
-> DEFINE_RATELIMIT_STATE(_rs,=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> @@ -955,33 +981,21 @@ do {=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
->  =A0=A0=A0 dev_level_ratelimited(dev_notice, dev,
-> fmt, ##__VA_ARGS__)
->  #define dev_info_ratelimited(dev, fmt,
-> ...)=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
->  =A0=A0=A0 dev_level_ratelimited(dev_info, dev,
-> fmt, ##__VA_ARGS__)
-> +#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
->  #define dev_dbg_ratelimited(dev, fmt,
-> ...)=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
-> -=A0=A0=A0 dev_level_ratelimited(dev_dbg, dev, fmt,
-> ##__VA_ARGS__)
-> -
-> -/*
-> - * Stupid hackaround for existing uses of non-printk uses
-> dev_info
-> - *
-> - * Note that the definition of dev_info below is actually
-> _dev_info
-> - * and a macro is used to avoid redefining dev_info
-> - */
-> -
-> -#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt,
-> ##arg)
-> -
-> -#if defined(CONFIG_DYNAMIC_DEBUG)
-> -#define dev_dbg(dev, format, ...)=A0=A0=A0
-> =A0=A0=A0 =A0 =A0=A0=A0\
-> -do {=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0 =A0=A0=A0\
-> -=A0=A0=A0 dynamic_dev_dbg(dev, format,
-> ##__VA_ARGS__); \
-> +do {=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
-> +=A0=A0=A0 static
-> DEFINE_RATELIMIT_STATE(_rs,=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0 =A0 =A0
-> DEFAULT_RATELIMIT_INTERVAL,=A0=A0=A0 \
-> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0 =A0 =A0
-> DEFAULT_RATELIMIT_BURST);=A0=A0=A0
-> =A0=A0=A0 \
-> +=A0=A0=A0
-> DEFINE_DYNAMIC_DEBUG_METADATA(descriptor,
-> fmt);=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
-> +=A0=A0=A0 if (unlikely(descriptor.flags &
-> _DPRINTK_FLAGS_PRINT) &&=A0=A0=A0 \
-> +=A0=A0=A0 =A0 =A0
-> __ratelimit(&_rs))=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 \
-> +=A0=A0=A0 =A0=A0=A0
-> __dynamic_pr_debug(&descriptor,
-> pr_fmt(fmt),=A0=A0=A0 =A0=A0=A0 \
-> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0
-> =A0=A0=A0##__VA_ARGS__);=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
->  } while (0)
-> -#elif defined(DEBUG)
-> -#define dev_dbg(dev, format, arg...)=A0=A0=A0
-> =A0=A0=A0 \
-> -=A0=A0=A0 dev_printk(KERN_DEBUG, dev, format,
-> ##arg)
->  #else
-> -#define dev_dbg(dev, format, arg...)=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> -({=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
-> -=A0=A0=A0 if (0)=A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
-> -=A0=A0=A0 =A0=A0=A0
-> dev_printk(KERN_DEBUG, dev, format,
-> ##arg);=A0=A0=A0 \
-> -=A0=A0=A0 0;=A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> =A0=A0=A0 =A0=A0=A0 \
-> -})
-> +#define dev_dbg_ratelimited(dev, fmt,
-> ...)=A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> \
-> +=A0=A0=A0 no_printk(KERN_DEBUG pr_fmt(fmt),
-> ##__VA_ARGS__)
->  #endif
-> =20
->  #ifdef VERBOSE_DEBUG
-> --=20
-> 1.7.5.4
->=20
+What you're asking for will make these callbacks fragile for other
+platforms.
