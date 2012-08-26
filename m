@@ -1,76 +1,54 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] dma: tegra: add const to of_device_id.data's structure
-Date: Sun, 26 Aug 2012 15:44:23 +0530
-Message-ID: <1345976063-24437-1-git-send-email-ldewangan@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH] sound: tegra_alc5632: remove HP detect GPIO inversion
+Date: Sun, 26 Aug 2012 21:55:49 +0200
+Message-ID: <3199962.US3JxCkD1s@ax5200p>
+References: <1345864815-19539-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vinod.koul@intel.com, djbw@fb.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, swarren@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1345864815-19539-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The membe "data" of structure of_device_id is changed to const
-pointer. Hence initializing this with const type data.
-This will fix the compilation warning like
-drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards 'con=
-st' qualifier from
-pointer target type [enabled by default]
+Hi Stephen,
 
-This warning came after the change
----------
-commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
-Author: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-    of: add const to struct *of_device_id.data
----------
+On Friday 24 August 2012 21:20:15 Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Both the schematics and practical testing show that the HP detect GPIO
+> is high when the headphones are plugged in. Hence, the snd_soc_jack_gpio
+> should not specify to invert the signal.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> Cc: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.4 v3.5
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/dma/tegra20-apb-dma.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+I tested it and evtest gives back the right stuff with your patch. Can't test 
+more because I have no headphone/mic here (I just inserted a screwdriver, 
+grr). On 3.1 kernels, we also have no pin inversion, so unless Leon or Andrey 
+(cc'ed) have different opinions, this can go through. Just give them a week...
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
-a.c
-index 24acd71..09a15ff 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -201,7 +201,7 @@ struct tegra_dma {
- 	struct clk			*dma_clk;
- 	spinlock_t			global_lock;
- 	void __iomem			*base_addr;
--	struct tegra_dma_chip_data	*chip_data;
-+	const struct tegra_dma_chip_data	*chip_data;
-=20
- 	/* Some register need to be cache before suspend */
- 	u32				reg_gen;
-@@ -1173,14 +1173,14 @@ static void tegra_dma_free_chan_resources(struc=
-t dma_chan *dc)
- }
-=20
- /* Tegra20 specific DMA controller information */
--static struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
-+static const struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
- 	.nr_channels		=3D 16,
- 	.max_dma_count		=3D 1024UL * 64,
- };
-=20
- #if defined(CONFIG_OF)
- /* Tegra30 specific DMA controller information */
--static struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
-+static const struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
- 	.nr_channels		=3D 32,
- 	.max_dma_count		=3D 1024UL * 64,
- };
-@@ -1204,7 +1204,7 @@ static int __devinit tegra_dma_probe(struct platf=
-orm_device *pdev)
- 	struct tegra_dma *tdma;
- 	int ret;
- 	int i;
--	struct tegra_dma_chip_data *cdata =3D NULL;
-+	const struct tegra_dma_chip_data *cdata =3D NULL;
-=20
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
---=20
-1.7.1.1
+Thanks!
+
+Marc
+
+> ---
+>  sound/soc/tegra/tegra_alc5632.c |    1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_alc5632.c
+> b/sound/soc/tegra/tegra_alc5632.c index e463529..76cb1b3 100644
+> --- a/sound/soc/tegra/tegra_alc5632.c
+> +++ b/sound/soc/tegra/tegra_alc5632.c
+> @@ -89,7 +89,6 @@ static struct snd_soc_jack_gpio tegra_alc5632_hp_jack_gpio
+> = { .name = "Headset detection",
+>  	.report = SND_JACK_HEADSET,
+>  	.debounce_time = 150,
+> -	.invert = 1,
+>  };
+> 
+>  static const struct snd_soc_dapm_widget tegra_alc5632_dapm_widgets[] = {
