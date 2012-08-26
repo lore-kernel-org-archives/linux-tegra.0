@@ -1,56 +1,76 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: Shutdown problem in SMP system happened on Tegra20
-Date: Sat, 25 Aug 2012 18:33:01 +0800
-Message-ID: <20120825103257.GN31998@S2101-09.ap.freescale.net>
-References: <A7051F87A141B744BCAF487D48E5B3BDF5BA982848@HKMAIL02.nvidia.com>
- <20120824182133.GB18957@n2100.arm.linux.org.uk>
- <20120825073624.GI31998@S2101-09.ap.freescale.net>
- <20120825075221.GH18957@n2100.arm.linux.org.uk>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] dma: tegra: add const to of_device_id.data's structure
+Date: Sun, 26 Aug 2012 15:44:23 +0530
+Message-ID: <1345976063-24437-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120825075221.GH18957@n2100.arm.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Bill Huang <bilhuang@nvidia.com>, "'linux-tegra@vger.kernel.org'" <linux-tegra@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>
+To: vinod.koul@intel.com, djbw@fb.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, swarren@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Aug 25, 2012 at 08:52:21AM +0100, Russell King - ARM Linux wrote:
-> On Sat, Aug 25, 2012 at 03:36:27PM +0800, Shawn Guo wrote:
-> > On Fri, Aug 24, 2012 at 07:21:33PM +0100, Russell King - ARM Linux wrote:
-> > > Why not just ensure that CONFIG_PM_SLEEP_SMP is enabled if your platform
-> > > requires that the lowest CPU number be the CPU dealing with reboot?
-> > 
-> > I have CONFIG_PM_SLEEP_SMP enabled for imx6q, but still see the imx6q
-> > restart hook running on cpu1 than cpu0.  It seems that
-> > disable_nonboot_cpus is only called in kernel_power_off but never
-> > kernel_restart.  We should probably patch kernel_restart or
-> > machine_restart to have disable_nonboot_cpus called? 
-> 
-> Remember that this path gets called from IRQ context which makes calling
-> functions which sleep very dodgy.
+The membe "data" of structure of_device_id is changed to const
+pointer. Hence initializing this with const type data.
+This will fix the compilation warning like
+drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards 'con=
+st' qualifier from
+pointer target type [enabled by default]
 
-I'm so familiar with the code/context.  Are you saying disable_nonboot_cpus
-sleeps and kernel_power_off never gets called from IRQ context?
+This warning came after the change
+---------
+commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
+Author: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+    of: add const to struct *of_device_id.data
+---------
 
-I tested the code change below on kernel_restart with
-CONFIG_DEBUG_ATOMIC_SLEEP enabled.  It fixes imx6q restart issue (with
-no change on cpu_relax) while no sleep-inside-atomic-section warning
-is seen. 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/dma/tegra20-apb-dma.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-Regards,
-Shawn
-
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 241507f..0359328 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -373,6 +373,7 @@ void kernel_restart(char *cmd)
-        else
-                printk(KERN_EMERG "Restarting system with command '%s'.\n", cmd);
-        kmsg_dump(KMSG_DUMP_RESTART);
-+       disable_nonboot_cpus();
-        machine_restart(cmd);
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+index 24acd71..09a15ff 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -201,7 +201,7 @@ struct tegra_dma {
+ 	struct clk			*dma_clk;
+ 	spinlock_t			global_lock;
+ 	void __iomem			*base_addr;
+-	struct tegra_dma_chip_data	*chip_data;
++	const struct tegra_dma_chip_data	*chip_data;
+=20
+ 	/* Some register need to be cache before suspend */
+ 	u32				reg_gen;
+@@ -1173,14 +1173,14 @@ static void tegra_dma_free_chan_resources(struc=
+t dma_chan *dc)
  }
- EXPORT_SYMBOL_GPL(kernel_restart);
+=20
+ /* Tegra20 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
+ 	.nr_channels		=3D 16,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+=20
+ #if defined(CONFIG_OF)
+ /* Tegra30 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
+ 	.nr_channels		=3D 32,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+@@ -1204,7 +1204,7 @@ static int __devinit tegra_dma_probe(struct platf=
+orm_device *pdev)
+ 	struct tegra_dma *tdma;
+ 	int ret;
+ 	int i;
+-	struct tegra_dma_chip_data *cdata =3D NULL;
++	const struct tegra_dma_chip_data *cdata =3D NULL;
+=20
+ 	if (pdev->dev.of_node) {
+ 		const struct of_device_id *match;
+--=20
+1.7.1.1
