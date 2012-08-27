@@ -1,52 +1,46 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR directly
- for non-OOB
-Date: Mon, 27 Aug 2012 13:06:29 -0700
-Message-ID: <503BD345.6030501@wwwdotorg.org>
-References: <1346063114-30361-1-git-send-email-wni@nvidia.com> <1346063114-30361-3-git-send-email-wni@nvidia.com> <503B9F31.5050502@broadcom.com>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: convert to device tree support only
+Date: Mon, 27 Aug 2012 18:28:35 -0400
+Message-ID: <87a9xgynos.fsf@octavius.laptop.org>
+References: <1345187071-6619-1-git-send-email-josephl@nvidia.com>
+	<502E950B.2010205@wwwdotorg.org>
+	<1345772433.5081.1.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <503B9F31.5050502@broadcom.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Wei Ni <wni@nvidia.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, rvossen@broadcom.com, krakesh@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1345772433.5081.1.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org> (Joseph Lo's
+	message of "Fri, 24 Aug 2012 09:40:33 +0800")
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc@vger.kernel.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/27/2012 09:24 AM, Arend van Spriel wrote:
-> On 08/27/2012 12:25 PM, Wei Ni wrote:
->> In case of inband interrupts, if we handle the interrupt in dpc thread,
->> two level of thread switching takes place to process wifi interrupts.
->> One in SDHCI driver and the other in Wifi driver. This may cause the
->> system
->> instability.
-> 
-> Looking into the sdhci/mmc code indeed shows that the brcmfmac irq
-> handler is not called in true IRQ context. So the dpc thread may add
-> unnecessary complexity, but to me there is not indication that there is
-> a stability issue.
-> 
->> Because the SDHCI calls sdio_irq_thread() to handle the irq, this
->> thread locks
->> mmc host and calls wifi handler. It expects WiFi handler to be quick and
->> enables sdio interrupt from card at end. If wifi handler defers this
->> work for
->> a different thread, sdio_irq_thread() will be stuck on next wifi
->> interrupt
->> since mmc lock is not freed.
-> 
-> Not sure if I can follow this explanation. The isr is called with host
-> claimed (by sdio_irq_thread) and all it does is at a linked list member
-> and signal the dpc thread. After doing this the host is released.
+Hi,
 
-Is the issue something like the ISR handler or first level of threading
-does:
+On Thu, Aug 23 2012, Joseph Lo wrote:
+> On Sat, 2012-08-18 at 03:01 +0800, Stephen Warren wrote:
+>> On 08/17/2012 01:04 AM, Joseph Lo wrote:
+>> > When compiling a kernel that supports only Tegra30 and not Tegra20,
+>> > the SDHCI driver will fail to compile since the of_match_device() failure
+>> > fallback code unconditinally references soc_data_tegra20, which is only
+>> > compiled in when Tegra20 support is enabled.
+>> > 
+>> > In Kernel 3.7, both Tegra20 and Tegra30 will only support booting using
+>> > device tree, Hence, there is never a need to fall back to using
+>> > soc_data_tegra20 if of_mach_device() fails. Instead, make this case an
+>> > error. This removes the reference to soc_data_tegra20, and hence solves
+>> > the compile failure.
+>> 
+>> Tested-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>> 
+>> (built and tested both Tegra20-only and Tegr30-only kernels with this
+>> applied on top of next-20120816).
+>
+> Ping.
 
-* Trigger DPC
-* Re-enable interrupt
+Thanks, pushed to mmc-next for 3.7.
 
-So that the interrupt then fires again before the triggered DPC can run
-to handle/clear it, thus causing an interrupt storm?
-
-Whereas handling the interrupt directly prevents this race condition?
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
