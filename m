@@ -1,38 +1,63 @@
-From: Vinod Koul <vkoul-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: add const to of_device_id.data's structure
-Date: Wed, 29 Aug 2012 03:38:13 +0530
-Message-ID: <1346191693.27195.6.camel@vkoul-mobl4>
-References: <1345976063-24437-1-git-send-email-ldewangan@nvidia.com>
-	 <503AF6B6.1010808@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR directly
+ for non-OOB
+Date: Tue, 28 Aug 2012 15:39:40 -0700
+Message-ID: <503D48AC.5040509@wwwdotorg.org>
+References: <1346063114-30361-1-git-send-email-wni@nvidia.com> <1346063114-30361-3-git-send-email-wni@nvidia.com> <503B9F31.5050502@broadcom.com> <503BD345.6030501@wwwdotorg.org> <1346152413.3516.211.camel@tegra-chromium-2> <503CF5B3.8040201@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503AF6B6.1010808-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, djbw-b10kYP2dOMg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <503CF5B3.8040201-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Franky Lin <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 2012-08-26 at 21:25 -0700, Stephen Warren wrote:
-> On 08/26/2012 03:14 AM, Laxman Dewangan wrote:
-> > The membe "data" of structure of_device_id is changed to const
-> > pointer. Hence initializing this with const type data.
-> > This will fix the compilation warning like
-> > drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards =
-'const' qualifier from
-> > pointer target type [enabled by default]
-> >=20
-> > This warning came after the change
-> > ---------
-> > commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
-> > Author: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-> >     of: add const to struct *of_device_id.data
-> > ---------
->=20
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Acked-by: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+On 08/28/2012 09:45 AM, Franky Lin wrote:
+> On 08/28/2012 04:13 AM, Wei Ni wrote:
+>> On Tue, 2012-08-28 at 04:06 +0800, Stephen Warren wrote:
+>>> On 08/27/2012 09:24 AM, Arend van Spriel wrote:
+>>>> On 08/27/2012 12:25 PM, Wei Ni wrote:
+>>>>> In case of inband interrupts, if we handle the interrupt in dpc
+>>>>> thread,
+>>>>> two level of thread switching takes place to process wifi interrupts.
+>>>>> One in SDHCI driver and the other in Wifi driver. This may cause the
+>>>>> system
+>>>>> instability.
+...
+>>>> Not sure if I can follow this explanation. The isr is called with host
+>>>> claimed (by sdio_irq_thread) and all it does is at a linked list member
+>>>> and signal the dpc thread. After doing this the host is released.
+>>>
+>>> Is the issue something like the ISR handler or first level of threading
+>>> does:
+>>>
+>>> * Trigger DPC
+>>> * Re-enable interrupt
+>>>
+>>> So that the interrupt then fires again before the triggered DPC can run
+>>> to handle/clear it, thus causing an interrupt storm?
+>>>
+>>> Whereas handling the interrupt directly prevents this race condition?
+>>
+>> Above is my understanding.
+> 
+> I understand the issue here and totally agree that we should treat
+> in-band and out-band interrupts differently. But my concern is that the
+> behavior of releasing the host before calling brcmf_sdbrcm_isr and grab
+> it after is likely error prone. Also we are restructuring the dpc
+> routine internally and it's almost done. I will find a better solution
+> for in-band interrupt and get it the queue as well. So I suggest
+> dropping this patch.
 
---=20
-~Vinod Koul
-Intel Corp.
+Franky, do you know which kernel release the DPC restructuring will make
+it into? I ask because I can't apply the rest of the patches in this
+series without first resolving the stability issues with the Broadcom
+WiFi enabled, since that'd de-stabilize the Tegra platform
+significantly, and I'd like to plan when we can apply these patches to
+Tegra. Thanks!
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
