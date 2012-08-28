@@ -1,48 +1,71 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Debugging U-Boot standalone apps on Tegra 2 board
-Date: Tue, 28 Aug 2012 17:03:13 +0300
-Message-ID: <20120828140313.GX3589@tbergstrom-lnx.Nvidia.com>
-References: <50365CA3.6000103@gmail.com>
- <50366B2A.7080306@wwwdotorg.org>
- <5FBF8E85CA34454794F0F7ECBA79798F379DE7253E@HQMAIL04.nvidia.com>
- <5037B83A.4010002@gmail.com>
- <5037C756.4030802@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] usb: tegra: moving phy driver into drivers directory
+Date: Tue, 28 Aug 2012 07:07:28 -0700
+Message-ID: <503CD0A0.7080300@wwwdotorg.org>
+References: <1346146338-4996-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5037C756.4030802-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1346146338-4996-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Nuno Santos <nuno.m.santos-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 24, 2012 at 08:26:30PM +0200, Stephen Warren wrote:
-> On 08/24/2012 11:22 AM, Nuno Santos wrote:
-> > On 8/23/12 7:47 PM, Tom Warren wrote:
-> >> As Stephen says - whoever gave you the Harmony originally should be
-> >> able to help you get the debug board to go with it.
-> > Thank you very much for all your contributions!
-> > 
-> > I've just contacted NVIDIA, from whom I bough my Harmony board, and
-> > asked for the external debug board. Unfortunately, the only way to
-> > acquire / get assistance on these products is through their developer
-> > portal, which has been under maintenance for the past two months...
-> > 
-> > Do you have any idea about alternative hardware manufacturers or
-> > distributors that commercialize the debug board for Harmony? Otherwise,
-> > it seems that I'll have to change hardware platform...
+On 08/28/2012 02:32 AM, Venu Byravarasu wrote:
+> In order to keep up with the USB driver files organization,
+> moving USB phy driver from mach-tegra to drivers/USB directory.
 > 
-> Sorry, I sincerely doubt the board is available through anyone but
-> NVIDIA. I'll ask internally and see if the board is available for
-> external purchase.
+> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+> diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
+
+> -struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
+> -	.reset_gpio = -1,
+> -	.clk = "cdev2",
+> -};
+> -
+>  struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+>  	.operating_mode = TEGRA_USB_OTG,
+>  	.power_down_on_bus_suspend = 1,
+> @@ -450,7 +444,7 @@ struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+>  };
+>  
+>  struct tegra_ehci_platform_data tegra_ehci2_pdata = {
+> -	.phy_config = &tegra_ehci2_ulpi_phy_config,
+> +	.phy_config = NULL,
+
+The PHY driver checks that field isn't NULL, and fails if it is:
+
+> struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+>         void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode)
+> {
+...
+>         phy->config = config;
+>         phy->mode = phy_mode;
 > 
-> I believe Peter De Schrijver has used JTAG on the TrimSlice, but again
-> you need a (different) debug board, and I have no idea if Compulab make
-> those available. I CC'd Peter to see if he knows.
+>         if (!phy->config) {
+>                 if (phy_is_ulpi(phy)) {
+>                         pr_err("%s: ulpi phy configuration missing", __func__);
+>                         err = -EINVAL;
+>                         goto err0;
 
-I tried to, but I never managed to get it to work unfortunately and gave up.
+So, this change will completely break ULPI support, which currently
+works fine. So, NAK.
 
-Cheers,
+I also plan on deleting devices.[ch] in kernel 3.7, and moving the USB
+platform data into board-dt-tegra20.c, since that's the only place it's
+used right now. So, this patch would conflict with that rather badly. I
+just posted the patches for that to the linux-tegra mailing list last
+night. Do you have better proposals for that? Perhaps usb_phy.c should
+set phy->config to &ulpi_default in a similar fashion to how it works
+for UTMI; that would remove some of the coupling between the changes.
 
-Peter.
+BTW, in your response to Felipe, you said...
+
+> Thanks Felipe for your comments.
+> Created a patch to separate out phy related stuff to phy.h with you as a reviewer.
+> Plz let me know your comments. 
+
+... where is that patch?
