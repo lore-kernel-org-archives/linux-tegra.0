@@ -1,180 +1,71 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] usb: tegra: moving phy driver into drivers directory
-Date: Tue, 28 Aug 2012 12:49:26 +0300
-Message-ID: <20120828094924.GT27166@arwen.pp.htv.fi>
-References: <1346146338-4996-1-git-send-email-vbyravarasu@nvidia.com>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR directly
+ for non-OOB
+Date: Tue, 28 Aug 2012 19:13:33 +0800
+Message-ID: <1346152413.3516.211.camel@tegra-chromium-2>
+References: <1346063114-30361-1-git-send-email-wni@nvidia.com>
+	 <1346063114-30361-3-git-send-email-wni@nvidia.com>
+	 <503B9F31.5050502@broadcom.com>  <503BD345.6030501@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="L2YZAWjVjAQ1Un1Q"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1346146338-4996-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <503BD345.6030501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "Franky (Zhenhui) Lin" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 2012-08-28 at 04:06 +0800, Stephen Warren wrote:
+> On 08/27/2012 09:24 AM, Arend van Spriel wrote:
+> > On 08/27/2012 12:25 PM, Wei Ni wrote:
+> >> In case of inband interrupts, if we handle the interrupt in dpc thread,
+> >> two level of thread switching takes place to process wifi interrupts.
+> >> One in SDHCI driver and the other in Wifi driver. This may cause the
+> >> system
+> >> instability.
+> > 
+> > Looking into the sdhci/mmc code indeed shows that the brcmfmac irq
+> > handler is not called in true IRQ context. So the dpc thread may add
+> > unnecessary complexity, but to me there is not indication that there is
+> > a stability issue.
 
---L2YZAWjVjAQ1Un1Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The brcmfmac irq handler is called in the thread sdio_irq_thread(), this
+thread indeed is driven by the sdhci irq, although it's not the true IRQ
+context. If the brcmfmac doesn't clear the IRQ condition ASAP, the
+sdio_irq_thread will be triggered again and again, and in this condition
+it's too difficult to run the brcmfmac dpc thread, more and more
+interrupt can't be handled.
 
-Hi,
+> > 
+> >> Because the SDHCI calls sdio_irq_thread() to handle the irq, this
+> >> thread locks
+> >> mmc host and calls wifi handler. It expects WiFi handler to be quick and
+> >> enables sdio interrupt from card at end. If wifi handler defers this
+> >> work for
+> >> a different thread, sdio_irq_thread() will be stuck on next wifi
+> >> interrupt
+> >> since mmc lock is not freed.
+> > 
+> > Not sure if I can follow this explanation. The isr is called with host
+> > claimed (by sdio_irq_thread) and all it does is at a linked list member
+> > and signal the dpc thread. After doing this the host is released.
+> 
+> Is the issue something like the ISR handler or first level of threading
+> does:
+> 
+> * Trigger DPC
+> * Re-enable interrupt
+> 
+> So that the interrupt then fires again before the triggered DPC can run
+> to handle/clear it, thus causing an interrupt storm?
+> 
+> Whereas handling the interrupt directly prevents this race condition?
 
-On Tue, Aug 28, 2012 at 03:02:18PM +0530, Venu Byravarasu wrote:
-> In order to keep up with the USB driver files organization,
-> moving USB phy driver from mach-tegra to drivers/USB directory.
->=20
-> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/Makefile                       |    1 -
->  arch/arm/mach-tegra/devices.c                      |    8 +-------
->  arch/arm/mach-tegra/devices.h                      |    2 --
->  drivers/usb/host/ehci-tegra.c                      |    2 +-
->  drivers/usb/phy/Makefile                           |    1 +
->  .../usb_phy.c =3D> drivers/usb/phy/tegra_usb_phy.c   |    4 +---
->  .../usb_phy.h =3D> drivers/usb/phy/tegra_usb_phy.h   |    2 --
->  7 files changed, 4 insertions(+), 16 deletions(-)
->  rename arch/arm/mach-tegra/usb_phy.c =3D> drivers/usb/phy/tegra_usb_phy.=
-c (99%)
->  rename arch/arm/mach-tegra/include/mach/usb_phy.h =3D> drivers/usb/phy/t=
-egra_usb_phy.h (97%)
->=20
-> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-> index b94858f..b542dac 100644
-> --- a/arch/arm/mach-tegra/Makefile
-> +++ b/arch/arm/mach-tegra/Makefile
-> @@ -25,7 +25,6 @@ obj-$(CONFIG_HOTPLUG_CPU)               +=3D hotplug.o
->  obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+=3D dma.o
->  obj-$(CONFIG_CPU_FREQ)                  +=3D cpu-tegra.o
->  obj-$(CONFIG_TEGRA_PCI)			+=3D pcie.o
-> -obj-$(CONFIG_USB_SUPPORT)		+=3D usb_phy.o
-> =20
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+=3D board-dt-tegra20.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+=3D board-dt-tegra30.o
-> diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
-> index 61e9603..232d7e1 100644
-> --- a/arch/arm/mach-tegra/devices.c
-> +++ b/arch/arm/mach-tegra/devices.c
-> @@ -26,7 +26,6 @@
->  #include <mach/irqs.h>
->  #include <mach/iomap.h>
->  #include <mach/dma.h>
-> -#include <mach/usb_phy.h>
-> =20
->  #include "gpio-names.h"
->  #include "devices.h"
-> @@ -438,11 +437,6 @@ static struct resource tegra_usb3_resources[] =3D {
->  	},
->  };
-> =20
-> -struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config =3D {
-> -	.reset_gpio =3D -1,
-> -	.clk =3D "cdev2",
-> -};
-> -
->  struct tegra_ehci_platform_data tegra_ehci1_pdata =3D {
->  	.operating_mode =3D TEGRA_USB_OTG,
->  	.power_down_on_bus_suspend =3D 1,
-> @@ -450,7 +444,7 @@ struct tegra_ehci_platform_data tegra_ehci1_pdata =3D=
- {
->  };
-> =20
->  struct tegra_ehci_platform_data tegra_ehci2_pdata =3D {
-> -	.phy_config =3D &tegra_ehci2_ulpi_phy_config,
-> +	.phy_config =3D NULL,
->  	.operating_mode =3D TEGRA_USB_HOST,
->  	.power_down_on_bus_suspend =3D 1,
->  	.vbus_gpio =3D -1,
-> diff --git a/arch/arm/mach-tegra/devices.h b/arch/arm/mach-tegra/devices.h
-> index 4f50527..6bac5e6 100644
-> --- a/arch/arm/mach-tegra/devices.h
-> +++ b/arch/arm/mach-tegra/devices.h
-> @@ -22,8 +22,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/tegra_usb.h>
-> =20
-> -#include <mach/usb_phy.h>
-> -
->  extern struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config;
-> =20
->  extern struct tegra_ehci_platform_data tegra_ehci1_pdata;
-> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-> index 75eca42..a03e279 100644
-> --- a/drivers/usb/host/ehci-tegra.c
-> +++ b/drivers/usb/host/ehci-tegra.c
-> @@ -27,7 +27,7 @@
->  #include <linux/of_gpio.h>
->  #include <linux/pm_runtime.h>
-> =20
-> -#include <mach/usb_phy.h>
-> +#include "../phy/tegra_usb_phy.h"
->  #include <mach/iomap.h>
-> =20
->  #define TEGRA_USB_DMA_ALIGN 32
-> diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
-> index eca095b..663164f 100644
-> --- a/drivers/usb/phy/Makefile
-> +++ b/drivers/usb/phy/Makefile
-> @@ -5,3 +5,4 @@
->  ccflags-$(CONFIG_USB_DEBUG) :=3D -DDEBUG
-> =20
->  obj-$(CONFIG_USB_ISP1301)		+=3D isp1301.o
-> +obj-$(CONFIG_USB_EHCI_TEGRA)		+=3D tegra_usb_phy.o
-> diff --git a/arch/arm/mach-tegra/usb_phy.c b/drivers/usb/phy/tegra_usb_ph=
-y.c
-> similarity index 99%
-> rename from arch/arm/mach-tegra/usb_phy.c
-> rename to drivers/usb/phy/tegra_usb_phy.c
-> index 022b33a..c856716 100644
-> --- a/arch/arm/mach-tegra/usb_phy.c
-> +++ b/drivers/usb/phy/tegra_usb_phy.c
-> @@ -1,6 +1,4 @@
->  /*
-> - * arch/arm/mach-tegra/usb_phy.c
-> - *
->   * Copyright (C) 2010 Google, Inc.
->   *
->   * Author:
-> @@ -31,7 +29,7 @@
->  #include <linux/usb/ulpi.h>
->  #include <asm/mach-types.h>
->  #include <mach/gpio-tegra.h>
-> -#include <mach/usb_phy.h>
-> +#include "tegra_usb_phy.h"
->  #include <mach/iomap.h>
-> =20
->  #define ULPI_VIEWPORT		0x170
+Above is my understanding.
 
-NAK, needs to be converted to proper PHY driver (misnamed as
-include/linux/usb/otg.h). You will need proper phy->init, phy->suspend,
-phy->resume, etc callbacks.
 
---=20
-balbi
-
---L2YZAWjVjAQ1Un1Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQPJQkAAoJEIaOsuA1yqREceMP/21DQjQdbSgEPw8/6zS+DQ5E
-EMXf0wtHCBNTl6F57vQa5pmymBmK2kIg9QxjlHx+ARNZuQrU9cITi2xrICGyWPbW
-iIFUkeJiAb4haPCcEGvf0E+8bLYADCT05NDgcEvQ+uGMDkcHH0zVI1BXSMDqrv3C
-wVI1wLPbwxX8jZbd0XSbAY86dFXgIn8UqbUOOLT4scWTSNeOedx5EOTeXQrQM98e
-CeRnnNgRXNXQ3QBTRXYPbZfULzoevMhSZAclBH4/dO8AR3LTAlY/eJMuF37qZAbN
-VsyCORw9ZjtmPUdRX3K61yeUKQTSrpf4MqoDcsWILOD1T/phpqQa5punB067XUOv
-MKScpvzlluo+kEpCOMzUvp9OSowuuhE5FxX4cK/nrqu8r/gZ68FoZ7t38iiBYRf6
-2oZCp/+WuUweDQXiihmSB6JRIdXDucg8Cpx6vwpsE3oyJQkTPRBQrqGeX7rntQfh
-JUtUq2S+6DDBtbJxce4SVaPvMdRCeu4kyNYSYZCyPAf81KK5RM6brrTGETmDikw+
-8AP1a2genhXWwRCUNvk/eZhp0/pC3iNw8yX9MfORtuFJEFu81NmIriEdq0kDxTYy
-TQJRCA1ARzNKLdPnj8qhTL7Tilb9NSuOQRWn+OokqQwTB4AjZF2E3OjZgocwT/EM
-TD2Bg4nNVnbqAAF5Oi0C
-=IFvN
------END PGP SIGNATURE-----
-
---L2YZAWjVjAQ1Un1Q--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
