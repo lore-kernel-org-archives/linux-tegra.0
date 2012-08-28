@@ -1,37 +1,50 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: remove useless include of <mach/*.h>
-Date: Tue, 28 Aug 2012 13:24:38 -0400
-Message-ID: <87bohvvsix.fsf@octavius.laptop.org>
-References: <1346137258-7186-1-git-send-email-swarren@wwwdotorg.org>
-	<503CFE0C.4070502@nvidia.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] dma: tegra: add const to of_device_id.data's structure
+Date: Tue, 28 Aug 2012 20:38:16 +0200
+Message-ID: <20120828183815.GD28643@pengutronix.de>
+References: <1345976063-24437-1-git-send-email-ldewangan@nvidia.com>
+ <503AF6B6.1010808@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503CFE0C.4070502-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Stephen Warren's message of "Tue,
-	28 Aug 2012 10:21:16 -0700")
+Content-Disposition: inline
+In-Reply-To: <503AF6B6.1010808-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+On Sun, Aug 26, 2012 at 09:25:26PM -0700, Stephen Warren wrote:
+> On 08/26/2012 03:14 AM, Laxman Dewangan wrote:
+> > The membe "data" of structure of_device_id is changed to const
+> > pointer. Hence initializing this with const type data.
+> > This will fix the compilation warning like
+> > drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards =
+'const' qualifier from
+> > pointer target type [enabled by default]
+> >=20
+> > This warning came after the change
+> > ---------
+> > commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
+> > Author: Uwe Kleine-K=F6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> >     of: add const to struct *of_device_id.data
+> > ---------
+>=20
+> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>=20
+> I wonder if this should go through Uwe's branch that made similar
+> changes for all other drivers though? Uwe now CC'd.
+If you forward/bounce the patch to me I can include it in my branch. I
+wonder if I missed this warning while testing. I did test all arm
+defconfigs based on 3.6-rc1.
 
-On Tue, Aug 28 2012, Stephen Warren wrote:
-> On 08/28/2012 12:00 AM, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> 
->> Nothing from this file is needed, so remove the include. This helps
->> single zImage work by reducing use of the mach-tegra/include/mach/
->> directory.
->
-> BTW, it'd be easiest for me to take this through the Tegra tree, since I
-> may be able to delete <mach/gpio-tegra.h> after this.
+Best regards
+Uwe
 
-Fine with me:
-
-Acked-by: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
