@@ -1,83 +1,35 @@
-From: "Franky Lin" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR
- directly for non-OOB
-Date: Tue, 28 Aug 2012 09:45:39 -0700
-Message-ID: <503CF5B3.8040201@broadcom.com>
-References: <1346063114-30361-1-git-send-email-wni@nvidia.com>
- <1346063114-30361-3-git-send-email-wni@nvidia.com>
- <503B9F31.5050502@broadcom.com> <503BD345.6030501@wwwdotorg.org>
- <1346152413.3516.211.camel@tegra-chromium-2>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [v4 0/4] ARM: dma-mapping: IOMMU atomic allocation
+Date: Tue, 28 Aug 2012 18:51:00 +0200
+Message-ID: <503CF6F4.7060702@samsung.com>
+References: <1346130784-23571-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1346152413.3516.211.camel@tegra-chromium-2>
+In-reply-to: <1346130784-23571-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/28/2012 04:13 AM, Wei Ni wrote:
-> On Tue, 2012-08-28 at 04:06 +0800, Stephen Warren wrote:
->> On 08/27/2012 09:24 AM, Arend van Spriel wrote:
->>> On 08/27/2012 12:25 PM, Wei Ni wrote:
->>>> In case of inband interrupts, if we handle the interrupt in dpc thread,
->>>> two level of thread switching takes place to process wifi interrupts.
->>>> One in SDHCI driver and the other in Wifi driver. This may cause the
->>>> system
->>>> instability.
->>>
->>> Looking into the sdhci/mmc code indeed shows that the brcmfmac irq
->>> handler is not called in true IRQ context. So the dpc thread may add
->>> unnecessary complexity, but to me there is not indication that there is
->>> a stability issue.
->
-> The brcmfmac irq handler is called in the thread sdio_irq_thread(), this
-> thread indeed is driven by the sdhci irq, although it's not the true IRQ
-> context. If the brcmfmac doesn't clear the IRQ condition ASAP, the
-> sdio_irq_thread will be triggered again and again, and in this condition
-> it's too difficult to run the brcmfmac dpc thread, more and more
-> interrupt can't be handled.
->
->>>
->>>> Because the SDHCI calls sdio_irq_thread() to handle the irq, this
->>>> thread locks
->>>> mmc host and calls wifi handler. It expects WiFi handler to be quick and
->>>> enables sdio interrupt from card at end. If wifi handler defers this
->>>> work for
->>>> a different thread, sdio_irq_thread() will be stuck on next wifi
->>>> interrupt
->>>> since mmc lock is not freed.
->>>
->>> Not sure if I can follow this explanation. The isr is called with host
->>> claimed (by sdio_irq_thread) and all it does is at a linked list member
->>> and signal the dpc thread. After doing this the host is released.
->>
->> Is the issue something like the ISR handler or first level of threading
->> does:
->>
->> * Trigger DPC
->> * Re-enable interrupt
->>
->> So that the interrupt then fires again before the triggered DPC can run
->> to handle/clear it, thus causing an interrupt storm?
->>
->> Whereas handling the interrupt directly prevents this race condition?
->
-> Above is my understanding.
->
+Hello,
 
-Hi Wei,
+On 8/28/2012 7:13 AM, Hiroshi Doyu wrote:
+> The commit e9da6e9 "ARM: dma-mapping: remove custom consistent dma
+> region" breaks the compatibility with existing drivers. This causes
+> the following kernel oops(*1). That driver has called dma_pool_alloc()
+> to allocate memory from the interrupt context, and it hits
+> BUG_ON(in_interrpt()) in "get_vm_area_caller()". This patch seris
+> fixes this problem with making use of the pre-allocate atomic memory
+> pool which DMA is using in the same way as DMA does now.
+>
+> Any comment would be really appreciated.
 
-I understand the issue here and totally agree that we should treat 
-in-band and out-band interrupts differently. But my concern is that the 
-behavior of releasing the host before calling brcmf_sdbrcm_isr and grab 
-it after is likely error prone. Also we are restructuring the dpc 
-routine internally and it's almost done. I will find a better solution 
-for in-band interrupt and get it the queue as well. So I suggest 
-dropping this patch.
+Looks fine now. I will do some tests and apply them to my fixes-for-3.6
+branch. Thanks for Your contribution!
 
-Thanks,
-Franky
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
