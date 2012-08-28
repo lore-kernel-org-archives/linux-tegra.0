@@ -1,71 +1,33 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR directly
- for non-OOB
-Date: Tue, 28 Aug 2012 19:13:33 +0800
-Message-ID: <1346152413.3516.211.camel@tegra-chromium-2>
-References: <1346063114-30361-1-git-send-email-wni@nvidia.com>
-	 <1346063114-30361-3-git-send-email-wni@nvidia.com>
-	 <503B9F31.5050502@broadcom.com>  <503BD345.6030501@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/4] ARM: dma-mapping: Remove unsed var at arm_coherent_iommu_unmap_page
+Date: Tue, 28 Aug 2012 14:43:50 +0300
+Message-ID: <1346154232-13299-2-git-send-email-hdoyu@nvidia.com>
+References: <1346154232-13299-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503BD345.6030501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "Franky (Zhenhui) Lin" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1346154232-13299-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-08-28 at 04:06 +0800, Stephen Warren wrote:
-> On 08/27/2012 09:24 AM, Arend van Spriel wrote:
-> > On 08/27/2012 12:25 PM, Wei Ni wrote:
-> >> In case of inband interrupts, if we handle the interrupt in dpc thread,
-> >> two level of thread switching takes place to process wifi interrupts.
-> >> One in SDHCI driver and the other in Wifi driver. This may cause the
-> >> system
-> >> instability.
-> > 
-> > Looking into the sdhci/mmc code indeed shows that the brcmfmac irq
-> > handler is not called in true IRQ context. So the dpc thread may add
-> > unnecessary complexity, but to me there is not indication that there is
-> > a stability issue.
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mm/dma-mapping.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-The brcmfmac irq handler is called in the thread sdio_irq_thread(), this
-thread indeed is driven by the sdhci irq, although it's not the true IRQ
-context. If the brcmfmac doesn't clear the IRQ condition ASAP, the
-sdio_irq_thread will be triggered again and again, and in this condition
-it's too difficult to run the brcmfmac dpc thread, more and more
-interrupt can't be handled.
-
-> > 
-> >> Because the SDHCI calls sdio_irq_thread() to handle the irq, this
-> >> thread locks
-> >> mmc host and calls wifi handler. It expects WiFi handler to be quick and
-> >> enables sdio interrupt from card at end. If wifi handler defers this
-> >> work for
-> >> a different thread, sdio_irq_thread() will be stuck on next wifi
-> >> interrupt
-> >> since mmc lock is not freed.
-> > 
-> > Not sure if I can follow this explanation. The isr is called with host
-> > claimed (by sdio_irq_thread) and all it does is at a linked list member
-> > and signal the dpc thread. After doing this the host is released.
-> 
-> Is the issue something like the ISR handler or first level of threading
-> does:
-> 
-> * Trigger DPC
-> * Re-enable interrupt
-> 
-> So that the interrupt then fires again before the triggered DPC can run
-> to handle/clear it, thus causing an interrupt storm?
-> 
-> Whereas handling the interrupt directly prevents this race condition?
-
-Above is my understanding.
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index aaea5e4..8cb9542 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1557,7 +1557,6 @@ static void arm_coherent_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+ {
+ 	struct dma_iommu_mapping *mapping = dev->archdata.mapping;
+ 	dma_addr_t iova = handle & PAGE_MASK;
+-	struct page *page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
+ 	int offset = handle & ~PAGE_MASK;
+ 	int len = PAGE_ALIGN(size + offset);
+ 
+-- 
+1.7.5.4
