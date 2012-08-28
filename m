@@ -1,35 +1,554 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: remove useless includes of <mach/*.h>
-Date: Tue, 28 Aug 2012 00:03:22 -0700
-Message-ID: <1346137402-7342-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/2] ARM: dt: tegra: harmony: add regulators
+Date: Tue, 28 Aug 2012 00:10:00 -0700
+Message-ID: <1346137800-7448-2-git-send-email-swarren@wwwdotorg.org>
+References: <1346137800-7448-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1346137800-7448-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Nothing from these files is needed, so remove the includes. This helps
-single zImage work by reducing use of the mach-tegra/include/mach/
-directory.
+Harmony uses a TPS6586x regulator. Instantiate this, and hook up a
+couple of fixed GPIO-controlled regulators too.
 
+Based on Ventana regulator patch by Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+and converted to Harmony.
+
+[swarren: Remove board-harmony{-power.c,.h} now that they're unused.
+ Fixed board-harmony-pcie.c to control the 1V5 GPIO using the regulator
+ introduced in the .dts file rather than directly]
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/usb_phy.c |    1 -
- 1 file changed, 1 deletion(-)
+Note that this depends on a TPS6586x driver patch that I believe Mark
+Brown will be placing into a branch for the Tegra tree to merge. Also,
+I haven't boot-tested this, but I hope that Laxman will. If not, I will
+once I get back from the conference.
 
-diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
-index 022b33a..34ffebb 100644
---- a/arch/arm/mach-tegra/usb_phy.c
-+++ b/arch/arm/mach-tegra/usb_phy.c
-@@ -30,7 +30,6 @@
- #include <linux/usb/otg.h>
- #include <linux/usb/ulpi.h>
- #include <asm/mach-types.h>
--#include <mach/gpio-tegra.h>
- #include <mach/usb_phy.h>
- #include <mach/iomap.h>
+ arch/arm/boot/dts/tegra20-harmony.dts     |  210 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile              |    1 -
+ arch/arm/mach-tegra/board-dt-tegra20.c    |    9 +-
+ arch/arm/mach-tegra/board-harmony-pcie.c  |   28 ++--
+ arch/arm/mach-tegra/board-harmony-power.c |  144 --------------------
+ arch/arm/mach-tegra/board-harmony.h       |   28 ----
+ 6 files changed, 227 insertions(+), 193 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/board-harmony-power.c
+ delete mode 100644 arch/arm/mach-tegra/board-harmony.h
+
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index f146dbf..0add02b 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -275,6 +275,152 @@
+ 	i2c@7000d000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
++
++		pmic: tps6586x@34 {
++			compatible = "ti,tps6586x";
++			reg = <0x34>;
++			interrupts = <0 86 0x4>;
++
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			sys-supply = <&vdd_5v0_reg>;
++			vin-sm0-supply = <&sys_reg>;
++			vin-sm1-supply = <&sys_reg>;
++			vin-sm2-supply = <&sys_reg>;
++			vinldo01-supply = <&sm2_reg>;
++			vinldo23-supply = <&sm2_reg>;
++			vinldo4-supply = <&sm2_reg>;
++			vinldo678-supply = <&sm2_reg>;
++			vinldo9-supply = <&sm2_reg>;
++
++			regulators {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sys_reg: regulator@0 {
++					reg = <0>;
++					regulator-compatible = "sys";
++					regulator-name = "vdd_sys";
++					regulator-always-on;
++				};
++
++				regulator@1 {
++					reg = <1>;
++					regulator-compatible = "sm0";
++					regulator-name = "vdd_sm0,vdd_core";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				regulator@2 {
++					reg = <2>;
++					regulator-compatible = "sm1";
++					regulator-name = "vdd_sm1,vdd_cpu";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				sm2_reg: regulator@3 {
++					reg = <3>;
++					regulator-compatible = "sm2";
++					regulator-name = "vdd_sm2,vin_ldo*";
++					regulator-min-microvolt = <3700000>;
++					regulator-max-microvolt = <3700000>;
++					regulator-always-on;
++				};
++
++				/* LDO0 is not connected to anything */
++
++				regulator@5 {
++					reg = <5>;
++					regulator-compatible = "ldo1";
++					regulator-name = "vdd_ldo1,avdd_pll*";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				regulator@6 {
++					reg = <6>;
++					regulator-compatible = "ldo2";
++					regulator-name = "vdd_ldo2,vdd_rtc";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++				};
++
++				regulator@7 {
++					reg = <7>;
++					regulator-compatible = "ldo3";
++					regulator-name = "vdd_ldo3,avdd_usb*";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				regulator@8 {
++					reg = <8>;
++					regulator-compatible = "ldo4";
++					regulator-name = "vdd_ldo4,avdd_osc,vddio_sys";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				regulator@9 {
++					reg = <9>;
++					regulator-compatible = "ldo5";
++					regulator-name = "vdd_ldo5,vcore_mmc";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++				};
++
++				regulator@10 {
++					reg = <10>;
++					regulator-compatible = "ldo6";
++					regulator-name = "vdd_ldo6,avdd_vdac";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				regulator@11 {
++					reg = <11>;
++					regulator-compatible = "ldo7";
++					regulator-name = "vdd_ldo7,avdd_hdmi,vdd_fuse";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				regulator@12 {
++					reg = <12>;
++					regulator-compatible = "ldo8";
++					regulator-name = "vdd_ldo8,avdd_hdmi_pll";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				regulator@13 {
++					reg = <13>;
++					regulator-compatible = "ldo9";
++					regulator-name = "vdd_ldo9,avdd_2v85,vdd_ddr_rx";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++				};
++
++				regulator@14 {
++					reg = <14>;
++					regulator-compatible = "ldo_rtc";
++					regulator-name = "vdd_rtc_out,vdd_cell";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++			};
++		};
+ 	};
  
+ 	pmc {
+@@ -310,6 +456,70 @@
+ 		bus-width = <8>;
+ 	};
+ 
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vdd_5v0_reg: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "vdd_5v0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
++
++		regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "vdd_1v5";
++			regulator-min-microvolt = <1500000>;
++			regulator-max-microvolt = <1500000>;
++			gpio = <&pmic 0 0>;
++		};
++
++		regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "vdd_1v2";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			gpio = <&pmic 1 0>;
++			enable-active-high;
++		};
++
++		regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "vdd_1v05";
++			regulator-min-microvolt = <10500000>;
++			regulator-max-microvolt = <10500000>;
++			gpio = <&pmic 2 0>;
++			enable-active-high;
++		};
++
++		regulator@4 {
++			compatible = "regulator-fixed";
++			reg = <4>;
++			regulator-name = "vdd_pnl";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpio 22 0>; /* gpio PC6 */
++			enable-active-high;
++		};
++
++		regulator@5 {
++			compatible = "regulator-fixed";
++			reg = <5>;
++			regulator-name = "vdd_bl";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpio 176 0>; /* gpio PW0 */
++			enable-active-high;
++		};
++	};
++
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-wm8903-harmony",
+ 			     "nvidia,tegra-audio-wm8903";
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 90a40c3..0e04bc4 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -29,6 +29,5 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-dt-tegra20.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
+ 
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
+-obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-power.o
+ 
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 30f8036..adc6b98 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -44,7 +44,6 @@
+ #include <mach/usb_phy.h>
+ 
+ #include "board.h"
+-#include "board-harmony.h"
+ #include "clock.h"
+ 
+ struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+@@ -134,15 +133,9 @@ static void __init trimslice_init(void)
+ 
+ static void __init harmony_init(void)
+ {
++#ifdef CONFIG_TEGRA_PCI
+ 	int ret;
+ 
+-	ret = harmony_regulator_init();
+-	if (ret) {
+-		pr_err("harmony_regulator_init() failed: %d\n", ret);
+-		return;
+-	}
+-
+-#ifdef CONFIG_TEGRA_PCI
+ 	ret = harmony_pcie_init();
+ 	if (ret)
+ 		pr_err("harmony_pcie_init() failed: %d\n", ret);
+diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-tegra/board-harmony-pcie.c
+index e8c3fda..662fb20 100644
+--- a/arch/arm/mach-tegra/board-harmony-pcie.c
++++ b/arch/arm/mach-tegra/board-harmony-pcie.c
+@@ -23,26 +23,29 @@
+ #include <asm/mach-types.h>
+ 
+ #include "board.h"
+-#include "board-harmony.h"
+ 
+ #ifdef CONFIG_TEGRA_PCI
+ 
+ int __init harmony_pcie_init(void)
+ {
+-	struct regulator *regulator = NULL;
++	struct regulator *regulator_1v5, *regulator_pex;
+ 	int err;
+ 
+-	err = gpio_request(TEGRA_GPIO_EN_VDD_1V05_GPIO, "EN_VDD_1V05");
+-	if (err)
+-		return err;
++	regulator_1v5 = regulator_get(NULL, "vdd_1v5");
++	if (IS_ERR_OR_NULL(regulator_1v5)) {
++		err = PTR_ERR(regulator_1v5);
++		goto err_reg;
++	}
+ 
+-	gpio_direction_output(TEGRA_GPIO_EN_VDD_1V05_GPIO, 1);
++	regulator_enable(regulator_1v5);
+ 
+-	regulator = regulator_get(NULL, "pex_clk");
+-	if (IS_ERR_OR_NULL(regulator))
++	regulator_pex = regulator_get(NULL, "pex_clk");
++	if (IS_ERR_OR_NULL(regulator_pex)) {
++		err = PTR_ERR(regulator_pex);
+ 		goto err_reg;
++	}
+ 
+-	regulator_enable(regulator);
++	regulator_enable(regulator_pex);
+ 
+ 	err = tegra_pcie_init(true, true);
+ 	if (err)
+@@ -51,10 +54,11 @@ int __init harmony_pcie_init(void)
+ 	return 0;
+ 
+ err_pcie:
+-	regulator_disable(regulator);
+-	regulator_put(regulator);
++	regulator_disable(regulator_pex);
++	regulator_put(regulator_pex);
+ err_reg:
+-	gpio_free(TEGRA_GPIO_EN_VDD_1V05_GPIO);
++	regulator_disable(regulator_1v5);
++	regulator_put(regulator_1v5);
+ 
+ 	return err;
+ }
+diff --git a/arch/arm/mach-tegra/board-harmony-power.c b/arch/arm/mach-tegra/board-harmony-power.c
+deleted file mode 100644
+index 8f9cf77..0000000
+--- a/arch/arm/mach-tegra/board-harmony-power.c
++++ /dev/null
+@@ -1,144 +0,0 @@
+-/*
+- * Copyright (C) 2010 NVIDIA, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+- * 02111-1307, USA
+- */
+-#include <linux/i2c.h>
+-#include <linux/platform_device.h>
+-#include <linux/gpio.h>
+-#include <linux/regulator/machine.h>
+-#include <linux/regulator/fixed.h>
+-#include <linux/mfd/tps6586x.h>
+-#include <linux/of.h>
+-#include <linux/of_i2c.h>
+-
+-#include <asm/mach-types.h>
+-
+-#include <mach/irqs.h>
+-
+-#include "board-harmony.h"
+-
+-static struct regulator_consumer_supply tps658621_ldo0_supply[] = {
+-	REGULATOR_SUPPLY("pex_clk", NULL),
+-};
+-
+-static struct regulator_init_data ldo0_data = {
+-	.supply_regulator = "vdd_sm2",
+-	.constraints = {
+-		.name = "vdd_ldo0",
+-		.min_uV = 3300 * 1000,
+-		.max_uV = 3300 * 1000,
+-		.valid_modes_mask = (REGULATOR_MODE_NORMAL |
+-				     REGULATOR_MODE_STANDBY),
+-		.valid_ops_mask = (REGULATOR_CHANGE_MODE |
+-				   REGULATOR_CHANGE_STATUS |
+-				   REGULATOR_CHANGE_VOLTAGE),
+-		.apply_uV = 1,
+-	},
+-	.num_consumer_supplies = ARRAY_SIZE(tps658621_ldo0_supply),
+-	.consumer_supplies = tps658621_ldo0_supply,
+-};
+-
+-#define HARMONY_REGULATOR_INIT(_id, _name, _supply, _minmv, _maxmv, _on)\
+-	static struct regulator_init_data _id##_data = {		\
+-		.supply_regulator = _supply,				\
+-		.constraints = {					\
+-			.name = _name,					\
+-			.min_uV = (_minmv)*1000,			\
+-			.max_uV = (_maxmv)*1000,			\
+-			.valid_modes_mask = (REGULATOR_MODE_NORMAL |	\
+-					     REGULATOR_MODE_STANDBY),	\
+-			.valid_ops_mask = (REGULATOR_CHANGE_MODE |	\
+-					   REGULATOR_CHANGE_STATUS |	\
+-					   REGULATOR_CHANGE_VOLTAGE),	\
+-			.always_on = _on,				\
+-		},							\
+-	}
+-
+-HARMONY_REGULATOR_INIT(sm0,  "vdd_sm0",  "vdd_sys", 725, 1500, 1);
+-HARMONY_REGULATOR_INIT(sm1,  "vdd_sm1",  "vdd_sys", 725, 1500, 1);
+-HARMONY_REGULATOR_INIT(sm2,  "vdd_sm2",  "vdd_sys", 3000, 4550, 1);
+-HARMONY_REGULATOR_INIT(ldo1, "vdd_ldo1", "vdd_sm2", 725, 1500, 1);
+-HARMONY_REGULATOR_INIT(ldo2, "vdd_ldo2", "vdd_sm2", 725, 1500, 0);
+-HARMONY_REGULATOR_INIT(ldo3, "vdd_ldo3", "vdd_sm2", 1250, 3300, 1);
+-HARMONY_REGULATOR_INIT(ldo4, "vdd_ldo4", "vdd_sm2", 1700, 2475, 1);
+-HARMONY_REGULATOR_INIT(ldo5, "vdd_ldo5", NULL,	    1250, 3300, 1);
+-HARMONY_REGULATOR_INIT(ldo6, "vdd_ldo6", "vdd_sm2", 1250, 3300, 0);
+-HARMONY_REGULATOR_INIT(ldo7, "vdd_ldo7", "vdd_sm2", 1250, 3300, 0);
+-HARMONY_REGULATOR_INIT(ldo8, "vdd_ldo8", "vdd_sm2", 1250, 3300, 0);
+-HARMONY_REGULATOR_INIT(ldo9, "vdd_ldo9", "vdd_sm2", 1250, 3300, 1);
+-
+-#define TPS_REG(_id, _data)			\
+-	{					\
+-		.id = TPS6586X_ID_##_id,	\
+-		.name = "tps6586x-regulator",	\
+-		.platform_data = _data,		\
+-	}
+-
+-static struct tps6586x_subdev_info tps_devs[] = {
+-	TPS_REG(SM_0, &sm0_data),
+-	TPS_REG(SM_1, &sm1_data),
+-	TPS_REG(SM_2, &sm2_data),
+-	TPS_REG(LDO_0, &ldo0_data),
+-	TPS_REG(LDO_1, &ldo1_data),
+-	TPS_REG(LDO_2, &ldo2_data),
+-	TPS_REG(LDO_3, &ldo3_data),
+-	TPS_REG(LDO_4, &ldo4_data),
+-	TPS_REG(LDO_5, &ldo5_data),
+-	TPS_REG(LDO_6, &ldo6_data),
+-	TPS_REG(LDO_7, &ldo7_data),
+-	TPS_REG(LDO_8, &ldo8_data),
+-	TPS_REG(LDO_9, &ldo9_data),
+-};
+-
+-static struct tps6586x_platform_data tps_platform = {
+-	.irq_base	= TEGRA_NR_IRQS,
+-	.num_subdevs	= ARRAY_SIZE(tps_devs),
+-	.subdevs	= tps_devs,
+-	.gpio_base	= HARMONY_GPIO_TPS6586X(0),
+-};
+-
+-static struct i2c_board_info __initdata harmony_regulators[] = {
+-	{
+-		I2C_BOARD_INFO("tps6586x", 0x34),
+-		.irq		= INT_EXTERNAL_PMU,
+-		.platform_data	= &tps_platform,
+-	},
+-};
+-
+-int __init harmony_regulator_init(void)
+-{
+-	struct device_node *np;
+-	struct i2c_adapter *adapter;
+-
+-	regulator_register_always_on(0, "vdd_sys",
+-		NULL, 0, 5000000);
+-
+-	np = of_find_node_by_path("/i2c@7000d000");
+-	if (np == NULL) {
+-		pr_err("Could not find device_node for DVC I2C\n");
+-		return -ENODEV;
+-	}
+-
+-	adapter = of_find_i2c_adapter_by_node(np);
+-	if (!adapter) {
+-		pr_err("Could not find i2c_adapter for DVC I2C\n");
+-		return -ENODEV;
+-	}
+-
+-	i2c_new_device(adapter, harmony_regulators);
+-
+-	return 0;
+-}
+diff --git a/arch/arm/mach-tegra/board-harmony.h b/arch/arm/mach-tegra/board-harmony.h
+deleted file mode 100644
+index 7ae87088..0000000
+--- a/arch/arm/mach-tegra/board-harmony.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/board-harmony.h
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef _MACH_TEGRA_BOARD_HARMONY_H
+-#define _MACH_TEGRA_BOARD_HARMONY_H
+-
+-#include <mach/gpio-tegra.h>
+-
+-#define HARMONY_GPIO_TPS6586X(_x_)	(TEGRA_NR_GPIOS + (_x_))
+-
+-#define TEGRA_GPIO_EN_VDD_1V05_GPIO	HARMONY_GPIO_TPS6586X(2)
+-
+-int harmony_regulator_init(void);
+-
+-#endif
 -- 
 1.7.9.5
