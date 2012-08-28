@@ -1,71 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] usb: tegra: moving phy driver into drivers directory
-Date: Tue, 28 Aug 2012 07:07:28 -0700
-Message-ID: <503CD0A0.7080300@wwwdotorg.org>
-References: <1346146338-4996-1-git-send-email-vbyravarasu@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: remove dead code
+Date: Tue, 28 Aug 2012 20:19:45 +0530
+Message-ID: <503CDA89.2020403@nvidia.com>
+References: <1346137800-7448-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1346146338-4996-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1346137800-7448-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/28/2012 02:32 AM, Venu Byravarasu wrote:
-> In order to keep up with the USB driver files organization,
-> moving USB phy driver from mach-tegra to drivers/USB directory.
-> 
-> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tuesday 28 August 2012 12:39 PM, Stephen Warren wrote:
+> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Now that all boards are converted to device tree, devices.[ch] and
+> board-pinmux.[ch] are no longer used. So, remove them.
+>
+> The only exception is the EHCI platform data in devices.h. Move that
+> data to board-dt-tegra20.c - the only places it's used.
+>
+> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> These patches are both destined for Tegra's for-3.7/board-removal branch.
 
-> diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-tegra/devices.c
 
-> -struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
-> -	.reset_gpio = -1,
-> -	.clk = "cdev2",
-> -};
-> -
->  struct tegra_ehci_platform_data tegra_ehci1_pdata = {
->  	.operating_mode = TEGRA_USB_OTG,
->  	.power_down_on_bus_suspend = 1,
-> @@ -450,7 +444,7 @@ struct tegra_ehci_platform_data tegra_ehci1_pdata = {
->  };
->  
->  struct tegra_ehci_platform_data tegra_ehci2_pdata = {
-> -	.phy_config = &tegra_ehci2_ulpi_phy_config,
-> +	.phy_config = NULL,
-
-The PHY driver checks that field isn't NULL, and fails if it is:
-
-> struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
->         void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode)
-> {
-...
->         phy->config = config;
->         phy->mode = phy_mode;
-> 
->         if (!phy->config) {
->                 if (phy_is_ulpi(phy)) {
->                         pr_err("%s: ulpi phy configuration missing", __func__);
->                         err = -EINVAL;
->                         goto err0;
-
-So, this change will completely break ULPI support, which currently
-works fine. So, NAK.
-
-I also plan on deleting devices.[ch] in kernel 3.7, and moving the USB
-platform data into board-dt-tegra20.c, since that's the only place it's
-used right now. So, this patch would conflict with that rather badly. I
-just posted the patches for that to the linux-tegra mailing list last
-night. Do you have better proposals for that? Perhaps usb_phy.c should
-set phy->config to &ulpi_default in a similar fashion to how it works
-for UTMI; that would remove some of the coupling between the changes.
-
-BTW, in your response to Felipe, you said...
-
-> Thanks Felipe for your comments.
-> Created a patch to separate out phy related stuff to phy.h with you as a reviewer.
-> Plz let me know your comments. 
-
-... where is that patch?
+I applied both patches and it crash on with following log:
+[    1.652934] VFP support v0.3: implementor 41 architecture 3 part 30 
+variant 9
+  rev 1
+[    1.661661] Unable to handle kernel paging request at virtual address 
+fffffe0
+7
+[    1.670980] pgd = c0004000
+[    1.673711] [fffffe07] *pgd=2f7fe821, *pte=00000000, *ppte=00000000
+[    1.679988] Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+[    1.685369] Modules linked in:
+[    1.688419] CPU: 0    Not tainted  (3.6.0-rc3-next-20120824-dirty #2)
+[    1.694852] PC is at regulator_disable+0x4/0x60
+[    1.699378] LR is at harmony_pcie_init+0x50/0xa0
+[    1.703983] pc : [<c01f71f0>]    lr : [<c05e3810>]    psr: 20000013
+[    1.703983] sp : ef04bf38  ip : 22222222  fp : 00000000
+[    1.715434] r10: c05dd690  r9 : c0602eb0  r8 : c05db26c
+[    1.720642] r7 : 00000000  r6 : fffffdfb  r5 : c0459004  r4 : fffffdfb
+[    1.727151] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : fffffdfb
+[    1.733663] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  
+Segment kern
+el
+[    1.740953] Control: 10c5387d  Table: 0000404a  DAC: 00000015
+[    1.746682] Process swapper/0 (pid: 1, stack limit = 0xef04a2f0)
+[    1.752672] Stack: (0xef04bf38 to 0xef04c000)
+[    1.757015] 
+bf20:                                                       fffff
+dfb c0459004
+[    1.765174] bf40: fffffdfb c05e3810 00000002 c0459004 c045900c 
+c05e3718 c05e3
+710 c05e36f8
+[    1.773333] bf60: c05fd8ec ef04a000 c06595c0 c05dd6ac 00000000 c00085c8
