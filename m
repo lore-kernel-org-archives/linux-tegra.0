@@ -1,85 +1,99 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: dma-mapping: Skip cache maint for invalid page
-Date: Wed, 29 Aug 2012 06:49:43 +0200
-Message-ID: <20120829.074943.1208694903968924153.hdoyu@nvidia.com>
-References: <1346154232-13299-1-git-send-email-hdoyu@nvidia.com><1346154232-13299-4-git-send-email-hdoyu@nvidia.com><503D3F18.7070507@samsung.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] usb: tegra: moving phy driver into drivers directory
+Date: Wed, 29 Aug 2012 10:47:51 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6DDE14DD7C@BGMAIL02.nvidia.com>
+References: <1346146338-4996-1-git-send-email-vbyravarasu@nvidia.com>
+ <503CD0A0.7080300@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503D3F18.7070507-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <503CD0A0.7080300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marek,
 
-Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote @ Tue, 28 Aug 2012 23:58:48 +0200:
-
-> Hello,
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Tuesday, August 28, 2012 7:37 PM
+> To: Venu Byravarasu
+> Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org; linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org;
+> stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org; gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; balbi-l0cyMroinI0@public.gmane.org;
+> linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-
+> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: Re: [PATCH] usb: tegra: moving phy driver into drivers directory
 > 
-> On 8/28/2012 1:43 PM, Hiroshi Doyu wrote:
+> On 08/28/2012 02:32 AM, Venu Byravarasu wrote:
+> > In order to keep up with the USB driver files organization,
+> > moving USB phy driver from mach-tegra to drivers/USB directory.
+> >
+> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> > Skip cache maint for invalid page but warn it.
-> >
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >   arch/arm/mm/dma-mapping.c |    9 +++++++++
-> >   1 files changed, 9 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> > index 2621282..0368702 100644
-> > --- a/arch/arm/mm/dma-mapping.c
-> > +++ b/arch/arm/mm/dma-mapping.c
-> > @@ -1589,6 +1589,9 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
-> >   	if (!iova)
-> >   		return;
-> >
-> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
-> > +		return;
-> > +
-> >   	if (!dma_get_attr(DMA_ATTR_SKIP_CPU_SYNC, attrs))
-> >   		__dma_page_dev_to_cpu(page, offset, size, dir);
-> >
-> > @@ -1607,6 +1610,9 @@ static void arm_iommu_sync_single_for_cpu(struct device *dev,
-> >   	if (!iova)
-> >   		return;
-> >
-> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
-> > +		return;
-> > +
-> >   	__dma_page_dev_to_cpu(page, offset, size, dir);
-> >   }
-> >
-> > @@ -1621,6 +1627,9 @@ static void arm_iommu_sync_single_for_device(struct device *dev,
-> >   	if (!iova)
-> >   		return;
-> >
-> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
-> > +		return;
-> > +
-> >   	__dma_page_cpu_to_dev(page, offset, size, dir);
-> >   }
+> > diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-
+> tegra/devices.c
 > 
-> I really wonder what has happened in your system that you require
-> such paranoid checks. All of the above functions are called on the
-> scatter-list which has been first passed to dma_map_sg(). IMHO it
-> makes much more sense to add a pfn_valid() check in dma_map_sg()
-> and return error if the provided scatter list is not valid instead
-> of these WARN_ONs.
+> > -struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
+> > -	.reset_gpio = -1,
+> > -	.clk = "cdev2",
+> > -};
+> > -
+> >  struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+> >  	.operating_mode = TEGRA_USB_OTG,
+> >  	.power_down_on_bus_suspend = 1,
+> > @@ -450,7 +444,7 @@ struct tegra_ehci_platform_data tegra_ehci1_pdata
+> = {
+> >  };
+> >
+> >  struct tegra_ehci_platform_data tegra_ehci2_pdata = {
+> > -	.phy_config = &tegra_ehci2_ulpi_phy_config,
+> > +	.phy_config = NULL,
+> 
+> The PHY driver checks that field isn't NULL, and fails if it is:
+> 
+> > struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int
+> instance,
+> >         void __iomem *regs, void *config, enum tegra_usb_phy_mode
+> phy_mode)
+> > {
+> ...
+> >         phy->config = config;
+> >         phy->mode = phy_mode;
+> >
+> >         if (!phy->config) {
+> >                 if (phy_is_ulpi(phy)) {
+> >                         pr_err("%s: ulpi phy configuration missing", __func__);
+> >                         err = -EINVAL;
+> >                         goto err0;
+> 
+> So, this change will completely break ULPI support, which currently
+> works fine. So, NAK.
 
-Actually one device driver hit Oops at unmap_page() since this
-function could be called directly from device drivers, and
-WARN_ON(dump_stack) helped to find out which device driver did
-something wrong. IIRC, the following functions can be called directly
-from device drivers?
+My initial plan was to add support for phy interfaces one by one.
+As part of that thought of UTMI only support at first and then add
+ULPI and HSIC in next patches.
+However as you were mentioning that it is not correct way, will
+push ULPI & UTMI support at once in next patches.
 
-static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
-				  size_t size, enum dma_data_direction dir);
-static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
-					   size_t size,
-					   enum dma_data_direction dir);
-static inline void dma_sync_single_for_device(struct device *dev,
-					      dma_addr_t addr, size_t size,
-					      enum dma_data_direction dir);
+> 
+> I also plan on deleting devices.[ch] in kernel 3.7, and moving the USB
+> platform data into board-dt-tegra20.c, since that's the only place it's
+> used right now. So, this patch would conflict with that rather badly. I
+> just posted the patches for that to the linux-tegra mailing list last
+> night. Do you have better proposals for that? Perhaps usb_phy.c should
+> set phy->config to &ulpi_default in a similar fashion to how it works
+> for UTMI; that would remove some of the coupling between the changes.
+> 
+> BTW, in your response to Felipe, you said...
+> 
+> > Thanks Felipe for your comments.
+> > Created a patch to separate out phy related stuff to phy.h with you as a
+> reviewer.
+> > Plz let me know your comments.
+> 
+> ... where is that patch?
+
+Plz see https://lkml.org/lkml/2012/8/28/58 
+ 
