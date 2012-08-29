@@ -1,51 +1,59 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH RESEND] dma: tegra: add const to of_device_id.data's
- structure
-Date: Wed, 29 Aug 2012 10:49:11 +0200
-Message-ID: <20120829084911.GE28643@pengutronix.de>
-References: <1346217447-19730-1-git-send-email-ldewangan@nvidia.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH 2/2] dma: tegra: make data used as *of_device_id.data const
+Date: Wed, 29 Aug 2012 10:51:35 +0200
+Message-ID: <1346230295-15898-2-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <20120829084911.GE28643@pengutronix.de>
+ <1346230295-15898-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1346217447-19730-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: vinod.koul@intel.com, djbw@fb.com, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel@pengutronix.de
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1346230295-15898-1-git-send-email-u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, djbw-b10kYP2dOMg@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+=46rom: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Wed, Aug 29, 2012 at 10:47:27AM +0530, Laxman Dewangan wrote:
-> The member "data" of structure of_device_id is changed to const
-> pointer. Hence initializing this with const type data.
-> This will fix the compilation warning like
-> drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards 'c=
-onst' qualifier from
-> pointer target type [enabled by default]
->=20
-> This warning came after the change
-> ---------
-> commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
-> Author: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
->     of: add const to struct *of_device_id.data
-> ---------
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-> Acked-by: Vinod Koul <vinod.koul@linux.intel.com>
-I took the patch into my series now and split it in two to prevent
-warnings in the middle of the series. I assumed the two acks for both
-patches and send them in a moment in reply to this mail.
+Since of_device_id.data is declared as a pointer to const data a few
+more consts can be added in this driver.
 
-You can find the updated series
+[ukl: split Laxman's patch to prevent warnings in the middle of the
+series. Original patch was sent with msgid
+1346217447-19730-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org]
 
-	git://git.pengutronix.de/git/ukl/linux.git ofdeviceiddata
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Acked-by: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+---
+ drivers/dma/tegra20-apb-dma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Arnd or Olof, can you please update the corresponding branch arm-soc
-from there?
-
-Best regards and thanks
-Uwe
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+index 29a39b8..56adcfc 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1166,14 +1166,14 @@ static void tegra_dma_free_chan_resources(struc=
+t dma_chan *dc)
+ }
+=20
+ /* Tegra20 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
+ 	.nr_channels		=3D 16,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+=20
+ #if defined(CONFIG_OF)
+ /* Tegra30 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
+ 	.nr_channels		=3D 32,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+--=20
+1.7.10.4
