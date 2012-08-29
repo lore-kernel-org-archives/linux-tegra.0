@@ -1,99 +1,82 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] usb: tegra: moving phy driver into drivers directory
-Date: Wed, 29 Aug 2012 10:47:51 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6DDE14DD7C@BGMAIL02.nvidia.com>
-References: <1346146338-4996-1-git-send-email-vbyravarasu@nvidia.com>
- <503CD0A0.7080300@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH RESEND] dma: tegra: add const to of_device_id.data's structure
+Date: Wed, 29 Aug 2012 10:47:27 +0530
+Message-ID: <1346217447-19730-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503CD0A0.7080300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org" <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The member "data" of structure of_device_id is changed to const
+pointer. Hence initializing this with const type data.
+This will fix the compilation warning like
+drivers/dma/tegra20-apb-dma.c:1217:9: warning: assignment discards 'con=
+st' qualifier from
+pointer target type [enabled by default]
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Tuesday, August 28, 2012 7:37 PM
-> To: Venu Byravarasu
-> Cc: ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org; olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org; linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org;
-> stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org; gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; balbi-l0cyMroinI0@public.gmane.org;
-> linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-
-> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [PATCH] usb: tegra: moving phy driver into drivers directory
-> 
-> On 08/28/2012 02:32 AM, Venu Byravarasu wrote:
-> > In order to keep up with the USB driver files organization,
-> > moving USB phy driver from mach-tegra to drivers/USB directory.
-> >
-> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> > diff --git a/arch/arm/mach-tegra/devices.c b/arch/arm/mach-
-> tegra/devices.c
-> 
-> > -struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
-> > -	.reset_gpio = -1,
-> > -	.clk = "cdev2",
-> > -};
-> > -
-> >  struct tegra_ehci_platform_data tegra_ehci1_pdata = {
-> >  	.operating_mode = TEGRA_USB_OTG,
-> >  	.power_down_on_bus_suspend = 1,
-> > @@ -450,7 +444,7 @@ struct tegra_ehci_platform_data tegra_ehci1_pdata
-> = {
-> >  };
-> >
-> >  struct tegra_ehci_platform_data tegra_ehci2_pdata = {
-> > -	.phy_config = &tegra_ehci2_ulpi_phy_config,
-> > +	.phy_config = NULL,
-> 
-> The PHY driver checks that field isn't NULL, and fails if it is:
-> 
-> > struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int
-> instance,
-> >         void __iomem *regs, void *config, enum tegra_usb_phy_mode
-> phy_mode)
-> > {
-> ...
-> >         phy->config = config;
-> >         phy->mode = phy_mode;
-> >
-> >         if (!phy->config) {
-> >                 if (phy_is_ulpi(phy)) {
-> >                         pr_err("%s: ulpi phy configuration missing", __func__);
-> >                         err = -EINVAL;
-> >                         goto err0;
-> 
-> So, this change will completely break ULPI support, which currently
-> works fine. So, NAK.
+This warning came after the change
+---------
+commit 98d7bbb9929bcc14e11ac8a55245a4f2dc174e17
+Author: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+    of: add const to struct *of_device_id.data
+---------
 
-My initial plan was to add support for phy interfaces one by one.
-As part of that thought of UTMI only support at first and then add
-ULPI and HSIC in next patches.
-However as you were mentioning that it is not correct way, will
-push ULPI & UTMI support at once in next patches.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Acked-by: Vinod Koul <vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 
-> 
-> I also plan on deleting devices.[ch] in kernel 3.7, and moving the USB
-> platform data into board-dt-tegra20.c, since that's the only place it's
-> used right now. So, this patch would conflict with that rather badly. I
-> just posted the patches for that to the linux-tegra mailing list last
-> night. Do you have better proposals for that? Perhaps usb_phy.c should
-> set phy->config to &ulpi_default in a similar fashion to how it works
-> for UTMI; that would remove some of the coupling between the changes.
-> 
-> BTW, in your response to Felipe, you said...
-> 
-> > Thanks Felipe for your comments.
-> > Created a patch to separate out phy related stuff to phy.h with you as a
-> reviewer.
-> > Plz let me know your comments.
-> 
-> ... where is that patch?
+---
+Resending patch to Uwe and adding ack from Stephen and Vinod.
+=46ix typo in description.
 
-Plz see https://lkml.org/lkml/2012/8/28/58 
- 
+ drivers/dma/tegra20-apb-dma.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
+a.c
+index 24acd71..09a15ff 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -201,7 +201,7 @@ struct tegra_dma {
+ 	struct clk			*dma_clk;
+ 	spinlock_t			global_lock;
+ 	void __iomem			*base_addr;
+-	struct tegra_dma_chip_data	*chip_data;
++	const struct tegra_dma_chip_data	*chip_data;
+=20
+ 	/* Some register need to be cache before suspend */
+ 	u32				reg_gen;
+@@ -1173,14 +1173,14 @@ static void tegra_dma_free_chan_resources(struc=
+t dma_chan *dc)
+ }
+=20
+ /* Tegra20 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra20_dma_chip_data =3D {
+ 	.nr_channels		=3D 16,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+=20
+ #if defined(CONFIG_OF)
+ /* Tegra30 specific DMA controller information */
+-static struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
++static const struct tegra_dma_chip_data tegra30_dma_chip_data =3D {
+ 	.nr_channels		=3D 32,
+ 	.max_dma_count		=3D 1024UL * 64,
+ };
+@@ -1204,7 +1204,7 @@ static int __devinit tegra_dma_probe(struct platf=
+orm_device *pdev)
+ 	struct tegra_dma *tdma;
+ 	int ret;
+ 	int i;
+-	struct tegra_dma_chip_data *cdata =3D NULL;
++	const struct tegra_dma_chip_data *cdata =3D NULL;
+=20
+ 	if (pdev->dev.of_node) {
+ 		const struct of_device_id *match;
+--=20
+1.7.1.1
