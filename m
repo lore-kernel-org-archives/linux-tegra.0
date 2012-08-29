@@ -1,92 +1,85 @@
-From: "Franky Lin" <frankyl-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 2/6] brcmfmac: Handling the interrupt in ISR
- directly for non-OOB
-Date: Tue, 28 Aug 2012 16:10:07 -0700
-Message-ID: <503D4FCF.7030109@broadcom.com>
-References: <1346063114-30361-1-git-send-email-wni@nvidia.com>
- <1346063114-30361-3-git-send-email-wni@nvidia.com>
- <503B9F31.5050502@broadcom.com> <503BD345.6030501@wwwdotorg.org>
- <1346152413.3516.211.camel@tegra-chromium-2>
- <503CF5B3.8040201@broadcom.com> <503D48AC.5040509@wwwdotorg.org>
- <503D4DD9.2060808@broadcom.com> <503D4E7F.9010205@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: dma-mapping: Skip cache maint for invalid page
+Date: Wed, 29 Aug 2012 06:49:43 +0200
+Message-ID: <20120829.074943.1208694903968924153.hdoyu@nvidia.com>
+References: <1346154232-13299-1-git-send-email-hdoyu@nvidia.com><1346154232-13299-4-git-send-email-hdoyu@nvidia.com><503D3F18.7070507@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503D4E7F.9010205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <503D3F18.7070507-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <rvossen-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rakesh Kumar <krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org" <brcm80211-dev-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+To: "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/28/2012 04:04 PM, Stephen Warren wrote:
-> On 08/28/2012 04:01 PM, Franky Lin wrote:
->> On 08/28/2012 03:39 PM, Stephen Warren wrote:
->>> On 08/28/2012 09:45 AM, Franky Lin wrote:
->>>> On 08/28/2012 04:13 AM, Wei Ni wrote:
->>>>> On Tue, 2012-08-28 at 04:06 +0800, Stephen Warren wrote:
->>>>>> On 08/27/2012 09:24 AM, Arend van Spriel wrote:
->>>>>>> On 08/27/2012 12:25 PM, Wei Ni wrote:
->>>>>>>> In case of inband interrupts, if we handle the interrupt in dpc
->>>>>>>> thread,
->>>>>>>> two level of thread switching takes place to process wifi
->>>>>>>> interrupts.
->>>>>>>> One in SDHCI driver and the other in Wifi driver. This may cause the
->>>>>>>> system
->>>>>>>> instability.
->>> ...
->>>>>>> Not sure if I can follow this explanation. The isr is called with
->>>>>>> host
->>>>>>> claimed (by sdio_irq_thread) and all it does is at a linked list
->>>>>>> member
->>>>>>> and signal the dpc thread. After doing this the host is released.
->>>>>>
->>>>>> Is the issue something like the ISR handler or first level of
->>>>>> threading
->>>>>> does:
->>>>>>
->>>>>> * Trigger DPC
->>>>>> * Re-enable interrupt
->>>>>>
->>>>>> So that the interrupt then fires again before the triggered DPC can
->>>>>> run
->>>>>> to handle/clear it, thus causing an interrupt storm?
->>>>>>
->>>>>> Whereas handling the interrupt directly prevents this race condition?
->>>>>
->>>>> Above is my understanding.
->>>>
->>>> I understand the issue here and totally agree that we should treat
->>>> in-band and out-band interrupts differently. But my concern is that the
->>>> behavior of releasing the host before calling brcmf_sdbrcm_isr and grab
->>>> it after is likely error prone. Also we are restructuring the dpc
->>>> routine internally and it's almost done. I will find a better solution
->>>> for in-band interrupt and get it the queue as well. So I suggest
->>>> dropping this patch.
->>>
->>> Franky, do you know which kernel release the DPC restructuring will make
->>> it into? I ask because I can't apply the rest of the patches in this
->>> series without first resolving the stability issues with the Broadcom
->>> WiFi enabled, since that'd de-stabilize the Tegra platform
->>> significantly, and I'd like to plan when we can apply these patches to
->>> Tegra. Thanks!
->>>
->>
->> Hi Stephen,
->>
->> Since we submit patches through linux-wireless tree, you may only be
->> able to pick it up at 3.7-rc1. It's quite a big change so I don't think
->> it will qualify as a bug fix to get into 3.6-rcX.
->
-> That's as quick as I expected it to show up, so that's great. I don't
-> suppose you could mail Wei and myself once the patch gets into the
-> linux-wireless tree, so we can test it out on Tegra. If the patch could
-> possibly go into a topic branch in the wireless tree so it can be merged
-> into the Tegra tree before this series, that would be awesome. Thanks.
->
+Hi Marek,
 
-Will keep you posted.
+Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote @ Tue, 28 Aug 2012 23:58:48 +0200:
 
-Franky
+> Hello,
+> 
+> On 8/28/2012 1:43 PM, Hiroshi Doyu wrote:
+> 
+> > Skip cache maint for invalid page but warn it.
+> >
+> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >   arch/arm/mm/dma-mapping.c |    9 +++++++++
+> >   1 files changed, 9 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> > index 2621282..0368702 100644
+> > --- a/arch/arm/mm/dma-mapping.c
+> > +++ b/arch/arm/mm/dma-mapping.c
+> > @@ -1589,6 +1589,9 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+> >   	if (!iova)
+> >   		return;
+> >
+> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
+> > +		return;
+> > +
+> >   	if (!dma_get_attr(DMA_ATTR_SKIP_CPU_SYNC, attrs))
+> >   		__dma_page_dev_to_cpu(page, offset, size, dir);
+> >
+> > @@ -1607,6 +1610,9 @@ static void arm_iommu_sync_single_for_cpu(struct device *dev,
+> >   	if (!iova)
+> >   		return;
+> >
+> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
+> > +		return;
+> > +
+> >   	__dma_page_dev_to_cpu(page, offset, size, dir);
+> >   }
+> >
+> > @@ -1621,6 +1627,9 @@ static void arm_iommu_sync_single_for_device(struct device *dev,
+> >   	if (!iova)
+> >   		return;
+> >
+> > +	if (WARN_ON(!pfn_valid(page_to_pfn(page))))
+> > +		return;
+> > +
+> >   	__dma_page_cpu_to_dev(page, offset, size, dir);
+> >   }
+> 
+> I really wonder what has happened in your system that you require
+> such paranoid checks. All of the above functions are called on the
+> scatter-list which has been first passed to dma_map_sg(). IMHO it
+> makes much more sense to add a pfn_valid() check in dma_map_sg()
+> and return error if the provided scatter list is not valid instead
+> of these WARN_ONs.
+
+Actually one device driver hit Oops at unmap_page() since this
+function could be called directly from device drivers, and
+WARN_ON(dump_stack) helped to find out which device driver did
+something wrong. IIRC, the following functions can be called directly
+from device drivers?
+
+static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+				  size_t size, enum dma_data_direction dir);
+static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+					   size_t size,
+					   enum dma_data_direction dir);
+static inline void dma_sync_single_for_device(struct device *dev,
+					      dma_addr_t addr, size_t size,
+					      enum dma_data_direction dir);
