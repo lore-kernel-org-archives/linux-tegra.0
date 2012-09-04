@@ -1,47 +1,90 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: move platform data header
-Date: Tue,  4 Sep 2012 16:43:46 -0600
-Message-ID: <1346798626-28925-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] mmc: tegra: move platform data header
+Date: Tue, 04 Sep 2012 18:52:00 -0400
+Message-ID: <87zk55flkf.fsf@octavius.laptop.org>
+References: <1346798565-28884-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1346798565-28884-1-git-send-email-swarren@wwwdotorg.org>
+	(Stephen Warren's message of "Tue, 4 Sep 2012 16:42:45 -0600")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Stephen,
 
-Move the Tegra+WM8903 ASoC platform data header out of
-arch/arm/mach-tegra, as a pre-requisite of single zImage.
+On Tue, Sep 04 2012, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>
+> Move the Tegra SDHCI platform data header out of arch/arm/mach-tegra, as
+> a pre-requisite of single zImage.
+>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c                     |    3 +--
+>  .../sdhci.h => include/linux/mmc/tegra_sdhci.h     |    2 --
+>  2 files changed, 1 insertions(+), 4 deletions(-)
+>  rename arch/arm/mach-tegra/include/mach/sdhci.h => include/linux/mmc/tegra_sdhci.h (93%)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index f98ece6..73c5d1f 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -24,11 +24,10 @@
+>  #include <linux/gpio.h>
+>  #include <linux/mmc/card.h>
+>  #include <linux/mmc/host.h>
+> +#include <linux/mmc/tegra_sdhci.h>
+>  
+>  #include <asm/gpio.h>
+>  
+> -#include <mach/sdhci.h>
+> -
+>  #include "sdhci-pltfm.h"
+>  
+>  /* Tegra SDHOST controller vendor register definitions */
+> diff --git a/arch/arm/mach-tegra/include/mach/sdhci.h b/include/linux/mmc/tegra_sdhci.h
+> similarity index 93%
+> rename from arch/arm/mach-tegra/include/mach/sdhci.h
+> rename to include/linux/mmc/tegra_sdhci.h
+> index 4231bc7..70aa1a7 100644
+> --- a/arch/arm/mach-tegra/include/mach/sdhci.h
+> +++ b/include/linux/mmc/tegra_sdhci.h
+> @@ -1,6 +1,4 @@
+>  /*
+> - * include/asm-arm/arch-tegra/include/mach/sdhci.h
+> - *
+>   * Copyright (C) 2009 Palm, Inc.
+>   * Author: Yvonne Yip <y@palm.com>
+>   *
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../sound/tegra_wm8903.h                           |    0
- sound/soc/tegra/tegra_wm8903.c                     |    3 +--
- 2 files changed, 1 insertions(+), 2 deletions(-)
- rename arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h => include/sound/tegra_wm8903.h (100%)
+You should change the outer ifdef too:
 
-diff --git a/arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h b/include/sound/tegra_wm8903.h
-similarity index 100%
-rename from arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h
-rename to include/sound/tegra_wm8903.h
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index d4f14e4..cee13b7 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -34,13 +34,12 @@
- #include <linux/gpio.h>
- #include <linux/of_gpio.h>
+diff --git a/include/linux/mmc/tegra_sdhci.h b/include/linux/mmc/tegra_sdhci.h
+index 70aa1a7..2b31080 100644
+--- a/include/linux/mmc/tegra_sdhci.h
++++ b/include/linux/mmc/tegra_sdhci.h
+@@ -12,8 +12,8 @@
+  * GNU General Public License for more details.
+  *
+  */
+-#ifndef __ASM_ARM_ARCH_TEGRA_SDHCI_H
+-#define __ASM_ARM_ARCH_TEGRA_SDHCI_H
++#ifndef LINUX_MMC_TEGRA_SDHCI_H
++#define LINUX_MMC_TEGRA_SDHCI_H
  
--#include <mach/tegra_wm8903_pdata.h>
--
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
-+#include <sound/tegra_wm8903.h>
+ #include <linux/mmc/host.h>
  
- #include "../codecs/wm8903.h"
- 
+
+After that:
+
+Acked-by: Chris Ball <cjb@laptop.org>
+
+Thanks,
+
+- Chris.
 -- 
-1.7.0.4
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
