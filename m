@@ -1,167 +1,42 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: move pinconf-tegra.h content into drivers/pinctrl
-Date: Tue,  4 Sep 2012 16:39:30 -0600
-Message-ID: <1346798370-28795-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] Input: tegra: move platform data header
+Date: Tue,  4 Sep 2012 16:40:31 -0600
+Message-ID: <1346798431-28839-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Now that Tegra's pinmux is configured solely from device tree, there's
-no need for the pinconf types to be defined in arch/arm/mach-tegra/.
-Move it into the pinctrl directory to clean up mach-tegra, as a pre-
-requisite for single-zImage.
+Move the Tegra KBC platform data header out of arch/arm/mach-tegra, as
+a pre-requisite of single zImage.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-I'll need to take this through the Tegra tree, since it depends on some
-patches that remove inclusion of the deleted header.
+ drivers/input/keyboard/tegra-kbc.c                 |    2 +-
+ .../mach/kbc.h => include/linux/input/tegra_kbc.h  |    0
+ 2 files changed, 1 insertions(+), 1 deletions(-)
+ rename arch/arm/mach-tegra/include/mach/kbc.h => include/linux/input/tegra_kbc.h (100%)
 
- arch/arm/mach-tegra/include/mach/pinconf-tegra.h |   63 ----------------------
- drivers/pinctrl/pinctrl-tegra.c                  |    2 -
- drivers/pinctrl/pinctrl-tegra.h                  |   44 +++++++++++++++
- 3 files changed, 44 insertions(+), 65 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/include/mach/pinconf-tegra.h
-
-diff --git a/arch/arm/mach-tegra/include/mach/pinconf-tegra.h b/arch/arm/mach-tegra/include/mach/pinconf-tegra.h
-deleted file mode 100644
-index 1f24d30..0000000
---- a/arch/arm/mach-tegra/include/mach/pinconf-tegra.h
-+++ /dev/null
-@@ -1,63 +0,0 @@
--/*
-- * pinctrl configuration definitions for the NVIDIA Tegra pinmux
-- *
-- * Copyright (c) 2011, NVIDIA CORPORATION.  All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- */
--
--#ifndef __PINCONF_TEGRA_H__
--#define __PINCONF_TEGRA_H__
--
--enum tegra_pinconf_param {
--	/* argument: tegra_pinconf_pull */
--	TEGRA_PINCONF_PARAM_PULL,
--	/* argument: tegra_pinconf_tristate */
--	TEGRA_PINCONF_PARAM_TRISTATE,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_ENABLE_INPUT,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_OPEN_DRAIN,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_LOCK,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_IORESET,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_SCHMITT,
--	/* argument: Boolean */
--	TEGRA_PINCONF_PARAM_LOW_POWER_MODE,
--	/* argument: Integer, range is HW-dependant */
--	TEGRA_PINCONF_PARAM_DRIVE_DOWN_STRENGTH,
--	/* argument: Integer, range is HW-dependant */
--	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH,
--	/* argument: Integer, range is HW-dependant */
--	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING,
--	/* argument: Integer, range is HW-dependant */
--	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
--};
--
--enum tegra_pinconf_pull {
--	TEGRA_PINCONFIG_PULL_NONE,
--	TEGRA_PINCONFIG_PULL_DOWN,
--	TEGRA_PINCONFIG_PULL_UP,
--};
--
--enum tegra_pinconf_tristate {
--	TEGRA_PINCONFIG_DRIVEN,
--	TEGRA_PINCONFIG_TRISTATE,
--};
--
--#define TEGRA_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
--#define TEGRA_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
--#define TEGRA_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
--
--#endif
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index ae52e4e..729b686 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -30,8 +30,6 @@
- #include <linux/pinctrl/pinconf.h>
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 2c1c9ed..5faaf25 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -29,8 +29,8 @@
+ #include <linux/of.h>
+ #include <linux/clk.h>
  #include <linux/slab.h>
++#include <linux/input/tegra_kbc.h>
+ #include <mach/clk.h>
+-#include <mach/kbc.h>
  
--#include <mach/pinconf-tegra.h>
--
- #include "core.h"
- #include "pinctrl-tegra.h"
+ #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
  
-diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
-index 705c007..62e3809 100644
---- a/drivers/pinctrl/pinctrl-tegra.h
-+++ b/drivers/pinctrl/pinctrl-tegra.h
-@@ -16,6 +16,50 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+enum tegra_pinconf_param {
-+	/* argument: tegra_pinconf_pull */
-+	TEGRA_PINCONF_PARAM_PULL,
-+	/* argument: tegra_pinconf_tristate */
-+	TEGRA_PINCONF_PARAM_TRISTATE,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_ENABLE_INPUT,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_OPEN_DRAIN,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_LOCK,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_IORESET,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_SCHMITT,
-+	/* argument: Boolean */
-+	TEGRA_PINCONF_PARAM_LOW_POWER_MODE,
-+	/* argument: Integer, range is HW-dependant */
-+	TEGRA_PINCONF_PARAM_DRIVE_DOWN_STRENGTH,
-+	/* argument: Integer, range is HW-dependant */
-+	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH,
-+	/* argument: Integer, range is HW-dependant */
-+	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING,
-+	/* argument: Integer, range is HW-dependant */
-+	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
-+};
-+
-+enum tegra_pinconf_pull {
-+	TEGRA_PINCONFIG_PULL_NONE,
-+	TEGRA_PINCONFIG_PULL_DOWN,
-+	TEGRA_PINCONFIG_PULL_UP,
-+};
-+
-+enum tegra_pinconf_tristate {
-+	TEGRA_PINCONFIG_DRIVEN,
-+	TEGRA_PINCONFIG_TRISTATE,
-+};
-+
-+#define TEGRA_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
-+#define TEGRA_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
-+#define TEGRA_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
-+
- /**
-  * struct tegra_function - Tegra pinctrl mux function
-  * @name: The name of the function, exported to pinctrl core.
+diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/include/linux/input/tegra_kbc.h
+similarity index 100%
+rename from arch/arm/mach-tegra/include/mach/kbc.h
+rename to include/linux/input/tegra_kbc.h
 -- 
 1.7.0.4
