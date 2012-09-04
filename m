@@ -1,31 +1,112 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra: remove useless includes of <mach/*.h>
-Date: Sat, 1 Sep 2012 00:53:11 +0200
-Message-ID: <CACRpkda3qN3VVOv6TxjXB9qTZc4CszvQpLb+mO1pdf1OuCn2wg@mail.gmail.com>
-References: <1346137196-7138-1-git-send-email-swarren@wwwdotorg.org>
-	<503CFDFC.7060607@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: [v3 1/1] driver-core: Shut up dev_dbg_reatelimited() without DEBUG
+Date: Tue, 4 Sep 2012 06:40:40 +0200
+Message-ID: <20120904.074040.1817050383890381031.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <503CFDFC.7060607-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "htl10@users.sourceforge.net" <htl10@users.sourceforge.net>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "joe@perches.com" <joe@perches.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "crope@iki.fi" <crope@iki.fi>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 28, 2012 at 7:21 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 08/27/2012 11:59 PM, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Nothing from these files is needed, so remove the includes. This helps
->> single zImage work by reducing use of the mach-tegra/include/mach/
->> directory.
->
-> BTW, it'd be easiest for me to take this through the Tegra tree, since I
-> may be able to delete <mach/suspend.h> after this.
+dev_dbg_reatelimited() without DEBUG printed "217078 callbacks
+suppressed". This shouldn't print anything without DEBUG.
 
-OK go ahead,
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+With CONFIG_DYNAMIC_DEBUG, the print should be configured as expected.
 
-Yours,
-Linus Walleij
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+Reported-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+Tested-by: Antti Palosaari <crope@iki.fi>
+Tested-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
+---
+ include/linux/device.h |   62 +++++++++++++++++++++++++++++------------------
+ 1 files changed, 38 insertions(+), 24 deletions(-)
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 9648331..bb6ffcb 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -932,6 +932,32 @@ int _dev_info(const struct device *dev, const char *fmt, ...)
+ 
+ #endif
+ 
++/*
++ * Stupid hackaround for existing uses of non-printk uses dev_info
++ *
++ * Note that the definition of dev_info below is actually _dev_info
++ * and a macro is used to avoid redefining dev_info
++ */
++
++#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
++
++#if defined(CONFIG_DYNAMIC_DEBUG)
++#define dev_dbg(dev, format, ...)		     \
++do {						     \
++	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++} while (0)
++#elif defined(DEBUG)
++#define dev_dbg(dev, format, arg...)		\
++	dev_printk(KERN_DEBUG, dev, format, ##arg)
++#else
++#define dev_dbg(dev, format, arg...)				\
++({								\
++	if (0)							\
++		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
++	0;							\
++})
++#endif
++
+ #define dev_level_ratelimited(dev_level, dev, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+@@ -955,33 +981,21 @@ do {									\
+ 	dev_level_ratelimited(dev_notice, dev, fmt, ##__VA_ARGS__)
+ #define dev_info_ratelimited(dev, fmt, ...)				\
+ 	dev_level_ratelimited(dev_info, dev, fmt, ##__VA_ARGS__)
++#if defined(CONFIG_DYNAMIC_DEBUG) || defined(DEBUG)
+ #define dev_dbg_ratelimited(dev, fmt, ...)				\
+-	dev_level_ratelimited(dev_dbg, dev, fmt, ##__VA_ARGS__)
+-
+-/*
+- * Stupid hackaround for existing uses of non-printk uses dev_info
+- *
+- * Note that the definition of dev_info below is actually _dev_info
+- * and a macro is used to avoid redefining dev_info
+- */
+-
+-#define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
+-
+-#if defined(CONFIG_DYNAMIC_DEBUG)
+-#define dev_dbg(dev, format, ...)		     \
+-do {						     \
+-	dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
++	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
++	    __ratelimit(&_rs))						\
++		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),		\
++				   ##__VA_ARGS__);			\
+ } while (0)
+-#elif defined(DEBUG)
+-#define dev_dbg(dev, format, arg...)		\
+-	dev_printk(KERN_DEBUG, dev, format, ##arg)
+ #else
+-#define dev_dbg(dev, format, arg...)				\
+-({								\
+-	if (0)							\
+-		dev_printk(KERN_DEBUG, dev, format, ##arg);	\
+-	0;							\
+-})
++#define dev_dbg_ratelimited(dev, fmt, ...)			\
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ #ifdef VERBOSE_DEBUG
+-- 
+1.7.5.4
