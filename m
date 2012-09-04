@@ -1,37 +1,41 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] dma: tegra: move smmu.h into SMMU driver
-Date: Tue,  4 Sep 2012 16:36:15 -0600
-Message-ID: <1346798175-28733-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] pinctrl: tegra: move pinconf-tegra.h content into drivers/pinctrl
+Date: Tue,  4 Sep 2012 16:39:30 -0600
+Message-ID: <1346798370-28795-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-There's no need to place these defines into arch/arm/mach-tegra/include/.
-Move them into the SMMU driver to clean up mach-tegra, as a pre-requisite
-for single-zImage.
+Now that Tegra's pinmux is configured solely from device tree, there's
+no need for the pinconf types to be defined in arch/arm/mach-tegra/.
+Move it into the pinctrl directory to clean up mach-tegra, as a pre-
+requisite for single-zImage.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/include/mach/smmu.h |   63 -------------------------------
- drivers/iommu/tegra-smmu.c              |   41 +++++++++++++++++++-
- 2 files changed, 40 insertions(+), 64 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/include/mach/smmu.h
+I'll need to take this through the Tegra tree, since it depends on some
+patches that remove inclusion of the deleted header.
 
-diff --git a/arch/arm/mach-tegra/include/mach/smmu.h b/arch/arm/mach-tegra/include/mach/smmu.h
+ arch/arm/mach-tegra/include/mach/pinconf-tegra.h |   63 ----------------------
+ drivers/pinctrl/pinctrl-tegra.c                  |    2 -
+ drivers/pinctrl/pinctrl-tegra.h                  |   44 +++++++++++++++
+ 3 files changed, 44 insertions(+), 65 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/pinconf-tegra.h
+
+diff --git a/arch/arm/mach-tegra/include/mach/pinconf-tegra.h b/arch/arm/mach-tegra/include/mach/pinconf-tegra.h
 deleted file mode 100644
-index dad403a..0000000
---- a/arch/arm/mach-tegra/include/mach/smmu.h
+index 1f24d30..0000000
+--- a/arch/arm/mach-tegra/include/mach/pinconf-tegra.h
 +++ /dev/null
 @@ -1,63 +0,0 @@
 -/*
-- * IOMMU API for SMMU in Tegra30
+- * pinctrl configuration definitions for the NVIDIA Tegra pinmux
 - *
-- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+- * Copyright (c) 2011, NVIDIA CORPORATION.  All rights reserved.
 - *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms and conditions of the GNU General Public License,
@@ -41,109 +45,123 @@ index dad403a..0000000
 - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
 - * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
 - */
 -
--#ifndef	MACH_SMMU_H
--#define	MACH_SMMU_H
+-#ifndef __PINCONF_TEGRA_H__
+-#define __PINCONF_TEGRA_H__
 -
--enum smmu_hwgrp {
--	HWGRP_AFI,
--	HWGRP_AVPC,
--	HWGRP_DC,
--	HWGRP_DCB,
--	HWGRP_EPP,
--	HWGRP_G2,
--	HWGRP_HC,
--	HWGRP_HDA,
--	HWGRP_ISP,
--	HWGRP_MPE,
--	HWGRP_NV,
--	HWGRP_NV2,
--	HWGRP_PPCS,
--	HWGRP_SATA,
--	HWGRP_VDE,
--	HWGRP_VI,
--
--	HWGRP_COUNT,
--
--	HWGRP_END = ~0,
+-enum tegra_pinconf_param {
+-	/* argument: tegra_pinconf_pull */
+-	TEGRA_PINCONF_PARAM_PULL,
+-	/* argument: tegra_pinconf_tristate */
+-	TEGRA_PINCONF_PARAM_TRISTATE,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_ENABLE_INPUT,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_OPEN_DRAIN,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_LOCK,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_IORESET,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_SCHMITT,
+-	/* argument: Boolean */
+-	TEGRA_PINCONF_PARAM_LOW_POWER_MODE,
+-	/* argument: Integer, range is HW-dependant */
+-	TEGRA_PINCONF_PARAM_DRIVE_DOWN_STRENGTH,
+-	/* argument: Integer, range is HW-dependant */
+-	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH,
+-	/* argument: Integer, range is HW-dependant */
+-	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING,
+-	/* argument: Integer, range is HW-dependant */
+-	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
 -};
 -
--#define HWG_AFI		(1 << HWGRP_AFI)
--#define HWG_AVPC	(1 << HWGRP_AVPC)
--#define HWG_DC		(1 << HWGRP_DC)
--#define HWG_DCB		(1 << HWGRP_DCB)
--#define HWG_EPP		(1 << HWGRP_EPP)
--#define HWG_G2		(1 << HWGRP_G2)
--#define HWG_HC		(1 << HWGRP_HC)
--#define HWG_HDA		(1 << HWGRP_HDA)
--#define HWG_ISP		(1 << HWGRP_ISP)
--#define HWG_MPE		(1 << HWGRP_MPE)
--#define HWG_NV		(1 << HWGRP_NV)
--#define HWG_NV2		(1 << HWGRP_NV2)
--#define HWG_PPCS	(1 << HWGRP_PPCS)
--#define HWG_SATA	(1 << HWGRP_SATA)
--#define HWG_VDE		(1 << HWGRP_VDE)
--#define HWG_VI		(1 << HWGRP_VI)
+-enum tegra_pinconf_pull {
+-	TEGRA_PINCONFIG_PULL_NONE,
+-	TEGRA_PINCONFIG_PULL_DOWN,
+-	TEGRA_PINCONFIG_PULL_UP,
+-};
 -
--#endif	/* MACH_SMMU_H */
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index c749f96..0b4d62e 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -39,9 +39,48 @@
- #include <asm/cacheflush.h>
+-enum tegra_pinconf_tristate {
+-	TEGRA_PINCONFIG_DRIVEN,
+-	TEGRA_PINCONFIG_TRISTATE,
+-};
+-
+-#define TEGRA_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
+-#define TEGRA_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
+-#define TEGRA_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
+-
+-#endif
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index ae52e4e..729b686 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -30,8 +30,6 @@
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/slab.h>
  
- #include <mach/iomap.h>
--#include <mach/smmu.h>
- #include <mach/tegra-ahb.h>
+-#include <mach/pinconf-tegra.h>
+-
+ #include "core.h"
+ #include "pinctrl-tegra.h"
  
-+enum smmu_hwgrp {
-+	HWGRP_AFI,
-+	HWGRP_AVPC,
-+	HWGRP_DC,
-+	HWGRP_DCB,
-+	HWGRP_EPP,
-+	HWGRP_G2,
-+	HWGRP_HC,
-+	HWGRP_HDA,
-+	HWGRP_ISP,
-+	HWGRP_MPE,
-+	HWGRP_NV,
-+	HWGRP_NV2,
-+	HWGRP_PPCS,
-+	HWGRP_SATA,
-+	HWGRP_VDE,
-+	HWGRP_VI,
-+
-+	HWGRP_COUNT,
-+
-+	HWGRP_END = ~0,
+diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+index 705c007..62e3809 100644
+--- a/drivers/pinctrl/pinctrl-tegra.h
++++ b/drivers/pinctrl/pinctrl-tegra.h
+@@ -16,6 +16,50 @@
+ #ifndef __PINMUX_TEGRA_H__
+ #define __PINMUX_TEGRA_H__
+ 
++enum tegra_pinconf_param {
++	/* argument: tegra_pinconf_pull */
++	TEGRA_PINCONF_PARAM_PULL,
++	/* argument: tegra_pinconf_tristate */
++	TEGRA_PINCONF_PARAM_TRISTATE,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_ENABLE_INPUT,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_OPEN_DRAIN,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_LOCK,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_IORESET,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_SCHMITT,
++	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_LOW_POWER_MODE,
++	/* argument: Integer, range is HW-dependant */
++	TEGRA_PINCONF_PARAM_DRIVE_DOWN_STRENGTH,
++	/* argument: Integer, range is HW-dependant */
++	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH,
++	/* argument: Integer, range is HW-dependant */
++	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING,
++	/* argument: Integer, range is HW-dependant */
++	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
 +};
 +
-+#define HWG_AFI		(1 << HWGRP_AFI)
-+#define HWG_AVPC	(1 << HWGRP_AVPC)
-+#define HWG_DC		(1 << HWGRP_DC)
-+#define HWG_DCB		(1 << HWGRP_DCB)
-+#define HWG_EPP		(1 << HWGRP_EPP)
-+#define HWG_G2		(1 << HWGRP_G2)
-+#define HWG_HC		(1 << HWGRP_HC)
-+#define HWG_HDA		(1 << HWGRP_HDA)
-+#define HWG_ISP		(1 << HWGRP_ISP)
-+#define HWG_MPE		(1 << HWGRP_MPE)
-+#define HWG_NV		(1 << HWGRP_NV)
-+#define HWG_NV2		(1 << HWGRP_NV2)
-+#define HWG_PPCS	(1 << HWGRP_PPCS)
-+#define HWG_SATA	(1 << HWGRP_SATA)
-+#define HWG_VDE		(1 << HWGRP_VDE)
-+#define HWG_VI		(1 << HWGRP_VI)
++enum tegra_pinconf_pull {
++	TEGRA_PINCONFIG_PULL_NONE,
++	TEGRA_PINCONFIG_PULL_DOWN,
++	TEGRA_PINCONFIG_PULL_UP,
++};
 +
- /* bitmap of the page sizes currently supported */
- #define SMMU_IOMMU_PGSIZES	(SZ_4K)
- 
++enum tegra_pinconf_tristate {
++	TEGRA_PINCONFIG_DRIVEN,
++	TEGRA_PINCONFIG_TRISTATE,
++};
++
++#define TEGRA_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
++#define TEGRA_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
++#define TEGRA_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
++
+ /**
+  * struct tegra_function - Tegra pinctrl mux function
+  * @name: The name of the function, exported to pinctrl core.
 -- 
 1.7.0.4
