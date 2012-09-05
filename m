@@ -1,55 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] Input: tegra: move platform data header
-Date: Tue, 4 Sep 2012 23:06:00 -0700
-Message-ID: <20120905060600.GA25962@core.coreip.homeip.net>
-References: <1346798431-28839-1-git-send-email-swarren@wwwdotorg.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: tegra: move pinconf-tegra.h content into drivers/pinctrl
+Date: Wed, 5 Sep 2012 10:26:24 +0200
+Message-ID: <CACRpkdaDQtHvtH-gqps5T5c=EZOzFkMVkg0QbOabzT1zQ1kBdQ@mail.gmail.com>
+References: <1346798370-28795-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1346798431-28839-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-input-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1346798370-28795-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 04, 2012 at 04:40:31PM -0600, Stephen Warren wrote:
+On Wed, Sep 5, 2012 at 12:39 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+
 > From: Stephen Warren <swarren@nvidia.com>
-> 
-> Move the Tegra KBC platform data header out of arch/arm/mach-tegra, as
-> a pre-requisite of single zImage.
-> 
+>
+> Now that Tegra's pinmux is configured solely from device tree, there's
+> no need for the pinconf types to be defined in arch/arm/mach-tegra/.
+> Move it into the pinctrl directory to clean up mach-tegra, as a pre-
+> requisite for single-zImage.
+>
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
-
-Applied, thank you Stephen.
- 
 > ---
->  drivers/input/keyboard/tegra-kbc.c                 |    2 +-
->  .../mach/kbc.h => include/linux/input/tegra_kbc.h  |    0
->  2 files changed, 1 insertions(+), 1 deletions(-)
->  rename arch/arm/mach-tegra/include/mach/kbc.h => include/linux/input/tegra_kbc.h (100%)
-> 
-> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> index 2c1c9ed..5faaf25 100644
-> --- a/drivers/input/keyboard/tegra-kbc.c
-> +++ b/drivers/input/keyboard/tegra-kbc.c
-> @@ -29,8 +29,8 @@
->  #include <linux/of.h>
->  #include <linux/clk.h>
->  #include <linux/slab.h>
-> +#include <linux/input/tegra_kbc.h>
->  #include <mach/clk.h>
-> -#include <mach/kbc.h>
->  
->  #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
->  
-> diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/include/linux/input/tegra_kbc.h
-> similarity index 100%
-> rename from arch/arm/mach-tegra/include/mach/kbc.h
-> rename to include/linux/input/tegra_kbc.h
-> -- 
-> 1.7.0.4
-> 
+> I'll need to take this through the Tegra tree, since it depends on some
+> patches that remove inclusion of the deleted header.
 
--- 
-Dmitry
+Go for it:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
