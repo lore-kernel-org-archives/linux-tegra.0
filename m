@@ -1,42 +1,22 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] pwm_backlight: use power sequences
-Date: Wed, 05 Sep 2012 11:25:27 -0600
-Message-ID: <50478B07.4080708@wwwdotorg.org>
-References: <1346412846-17102-1-git-send-email-acourbot@nvidia.com> <1346412846-17102-3-git-send-email-acourbot@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V2] ASoC: tegra: move platform data header
+Date: Thu, 6 Sep 2012 06:29:25 +0800
+Message-ID: <20120905222924.GC10580@opensource.wolfsonmicro.com>
+References: <1346862434-12012-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1346412846-17102-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1346862434-12012-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/31/2012 05:34 AM, Alexandre Courbot wrote:
-> Make use of the power sequences specified in the device tree or platform
-> data to control how the backlight is powered on and off.
+On Wed, Sep 05, 2012 at 10:27:14AM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Move the Tegra+WM8903 ASoC platform data header out of
+> arch/arm/mach-tegra, as a pre-requisite of single zImage.
 
-> +++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
-
->  Optional properties:
-> -  - pwm-names: a list of names for the PWM devices specified in the
-> -               "pwms" property (see PWM binding[0])
-> +  - pwm-names: name for the PWM device specified in the "pwms" property (see PWM
-> +      binding[0]). Necessary if power sequences are used
-
-So this implies that power sequence are completely optional in the pwm
-binding...
-
-> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-
->  config BACKLIGHT_PWM
->  	tristate "Generic PWM based Backlight Driver"
->  	depends on PWM
-> +	select POWER_SEQ
-
-... but that implies they're basically mandatory.
-
-Briefly looking at the code, power sequences don't appear to be
-optional, at least for the DT case, so perhaps you just need to update
-the documentation to make "pwm-names" non-optional?
+Applied, thanks.
