@@ -1,36 +1,55 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: move smmu.h into SMMU driver
-Date: Wed, 5 Sep 2012 07:39:25 +0300
-Message-ID: <20120905073925.4a2234eed1d53b9db4e97871@nvidia.com>
-References: <1346798175-28733-1-git-send-email-swarren@wwwdotorg.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] Input: tegra: move platform data header
+Date: Tue, 4 Sep 2012 23:06:00 -0700
+Message-ID: <20120905060600.GA25962@core.coreip.homeip.net>
+References: <1346798431-28839-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1346798175-28733-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1346798431-28839-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 5 Sep 2012 00:36:15 +0200
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Sep 04, 2012 at 04:40:31PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
-> There's no need to place these defines into arch/arm/mach-tegra/include/.
-> Move them into the SMMU driver to clean up mach-tegra, as a pre-requisite
-> for single-zImage.
+> Move the Tegra KBC platform data header out of arch/arm/mach-tegra, as
+> a pre-requisite of single zImage.
 > 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 
-Ok to me. Acked-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Applied, thank you Stephen.
+ 
+> ---
+>  drivers/input/keyboard/tegra-kbc.c                 |    2 +-
+>  .../mach/kbc.h => include/linux/input/tegra_kbc.h  |    0
+>  2 files changed, 1 insertions(+), 1 deletions(-)
+>  rename arch/arm/mach-tegra/include/mach/kbc.h => include/linux/input/tegra_kbc.h (100%)
+> 
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> index 2c1c9ed..5faaf25 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -29,8 +29,8 @@
+>  #include <linux/of.h>
+>  #include <linux/clk.h>
+>  #include <linux/slab.h>
+> +#include <linux/input/tegra_kbc.h>
+>  #include <mach/clk.h>
+> -#include <mach/kbc.h>
+>  
+>  #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
+>  
+> diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/include/linux/input/tegra_kbc.h
+> similarity index 100%
+> rename from arch/arm/mach-tegra/include/mach/kbc.h
+> rename to include/linux/input/tegra_kbc.h
+> -- 
+> 1.7.0.4
+> 
+
+-- 
+Dmitry
