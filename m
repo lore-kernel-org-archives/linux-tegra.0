@@ -1,30 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4] regulator: tps6586x: add support for SYS rail
-Date: Thu, 06 Sep 2012 17:05:47 -0600
-Message-ID: <50492C4B.6010502@wwwdotorg.org>
-References: <1346791419-31290-1-git-send-email-swarren@wwwdotorg.org> <20120906000136.GM10580@opensource.wolfsonmicro.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] ASoC: tegra: fix maxburst settings in
+	dmaengine code
+Date: Thu,  6 Sep 2012 17:47:33 -0600
+Message-ID: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120906000136.GM10580-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/05/2012 06:01 PM, Mark Brown wrote:
-> On Tue, Sep 04, 2012 at 02:43:39PM -0600, Stephen Warren wrote:
->> From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Device have SYS rail which is always ON. It is system power bus. LDO5
->> and LDO_RTC get powered through this rail internally. Add support for
->> this rail and make the LDO5/LDO_RTC supply by it. Update document
->> accordingly.
-> 
-> Applied, thanks.  It'll be next week before I can give you a signed tag
-> to pull, sorry.
+From: Stephen Warren <swarren@nvidia.com>
 
-Thanks. For the record, as I mentioned on IRC, I've merged the topic
-branch that contains this patch into the Tegra tree. As soon as you have
-a tag available, I'll pull that in instead, and rebase on it.
+The I2S controllers are programmed with an "attention" level of 4 DWORDs.
+This must match the configuration passed to the DMA driver, so that when
+they burst in data, they don't overflow the available FIFO space. Also,
+the burst size is relevant to the destination for playback, and source
+for capture, not vice-versa as originally written.
+
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+Mark, I'd like to take this patch through the Tegra tree, since it's a
+dependency for the series that converts Tegra to dmaengine. Thanks.
+
+ sound/soc/tegra/tegra_pcm.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
+index 5658bce..8d6900c 100644
+--- a/sound/soc/tegra/tegra_pcm.c
++++ b/sound/soc/tegra/tegra_pcm.c
+@@ -334,11 +334,11 @@ static int tegra_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		slave_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 		slave_config.dst_addr = dmap->addr;
+-		slave_config.src_maxburst = 0;
++		slave_config.dst_maxburst = 4;
+ 	} else {
+ 		slave_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 		slave_config.src_addr = dmap->addr;
+-		slave_config.dst_maxburst = 0;
++		slave_config.src_maxburst = 4;
+ 	}
+ 	slave_config.slave_id = dmap->req_sel;
+ 
+-- 
+1.7.0.4
