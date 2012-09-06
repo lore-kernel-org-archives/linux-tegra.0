@@ -1,58 +1,29 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] ASoC: tegra: fix maxburst settings in
-	dmaengine code
-Date: Thu,  6 Sep 2012 17:47:33 -0600
-Message-ID: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 4/5] spi: tegra: remove support of legacy DMA driver based
+ access
+Date: Thu, 06 Sep 2012 17:50:07 -0600
+Message-ID: <504936AF.8010701@wwwdotorg.org>
+References: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com> <1345126397-28864-5-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1345126397-28864-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+On 08/16/2012 08:13 AM, Laxman Dewangan wrote:
+> Remove the support code which uses the legacy APB DMA driver
+> for accessing the SPI FIFO.
+> The driver will use the dmaengine based APB DMA driver for
+> accessing reqding/writing to SPI FIFO.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The I2S controllers are programmed with an "attention" level of 4 DWORDs.
-This must match the configuration passed to the DMA driver, so that when
-they burst in data, they don't overflow the available FIFO space. Also,
-the burst size is relevant to the destination for playback, and source
-for capture, not vice-versa as originally written.
+Grant, Mark,
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-Mark, I'd like to take this patch through the Tegra tree, since it's a
-dependency for the series that converts Tegra to dmaengine. Thanks.
-
- sound/soc/tegra/tegra_pcm.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
-index 5658bce..8d6900c 100644
---- a/sound/soc/tegra/tegra_pcm.c
-+++ b/sound/soc/tegra/tegra_pcm.c
-@@ -334,11 +334,11 @@ static int tegra_pcm_hw_params(struct snd_pcm_substream *substream,
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
- 		slave_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 		slave_config.dst_addr = dmap->addr;
--		slave_config.src_maxburst = 0;
-+		slave_config.dst_maxburst = 4;
- 	} else {
- 		slave_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
- 		slave_config.src_addr = dmap->addr;
--		slave_config.dst_maxburst = 0;
-+		slave_config.src_maxburst = 4;
- 	}
- 	slave_config.slave_id = dmap->req_sel;
- 
--- 
-1.7.0.4
+I'd like to take this patch through the Tegra tree, since it relies on
+the previous Tegra patches to convert to dmaengine. Could I please get
+an ack if that's OK? Thanks.
