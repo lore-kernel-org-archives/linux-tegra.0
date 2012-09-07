@@ -1,62 +1,137 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 08/10] of/address: Handle #address-cells > 2 specially
-Date: Fri, 07 Sep 2012 11:32:50 -0500
-Message-ID: <504A21B2.3030507@gmail.com>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <1343332512-28762-9-git-send-email-thierry.reding@avionic-design.de> <50183DA3.8020308@gmail.com> <20120815200655.GC12870@avionic-0098.mockup.avionic-design.de> <504A1FA4.9040302@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v5 1/4] Runtime Interpreted Power Sequences
+Date: Fri, 07 Sep 2012 10:36:02 -0600
+Message-ID: <504A2272.8040209@wwwdotorg.org>
+References: <1346412846-17102-1-git-send-email-acourbot@nvidia.com>
+ <201209061614.54022.heiko@sntech.de> <1887927.1deN8M9siP@percival>
+ <201209071108.42083.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <504A1FA4.9040302-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <201209071108.42083.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/07/2012 11:24 AM, Stephen Warren wrote:
-> On 08/15/2012 02:06 PM, Thierry Reding wrote:
->> On Tue, Jul 31, 2012 at 03:18:43PM -0500, Rob Herring wrote:
->>> On 07/26/2012 02:55 PM, Thierry Reding wrote:
->>>> When a bus specifies #address-cells > 2, of_bus_default_map()
->>>> now assumes that the mapping isn't for a physical address but
->>>> rather an identifier that needs to match exactly.
->>>>
->>>> This is required by bindings that use multiple cells to
->>>> translate a resource to the parent bus (device index, type,
->>>> ...).
->>>>
->>>> See here for the discussion:
->>>>
->>>> https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-June/016577.html
->>>>
->>>>
->>>>
-> Originally-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
->>>> Signed-off-by: Thierry Reding
->>>> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+On 09/07/2012 03:08 AM, Heiko St=FCbner wrote:
+> Am Freitag, 7. September 2012, 10:04:24 schrieb Alex Courbot:
+>>> For your power_seq_run function you write that it simply returns an err=
+or
+>>> code on failure and looking through it I also just found the error retu=
+rn
+>>> statement. This would leave a device half turned on.
 >>>
->>> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+>>> So I'm wondering, if it shouldn't turn off all the things it turned on
+>>> until the step that produced the error. All your possible step types
+>>> (execpt the delay) are booleans, so it should be possible to simply
+>>> negate them when backtracking through the previous steps.
 >>
->> Hi Rob,
+>> Indeed, I think you raised an important point. Right now all step types =
+are
+>> invertible, but we cannot rely on that statement to be true forever. For
+>> instance, one short-term improvement will be to allow finer regulator
+>> control, like voltage setting. In this case, how can we go back to the
+>> initial state without recording it?
 >>
->> Were you going to take this through your DT tree? I'm trying to
->> reduce the number of patches in this series to make it more
->> manageable and split it into smaller chunks. There are also a
->> couple of issues that need to be resolved so I don't know if I can
->> get the whole series into shape for 3.7.
->>
->> However if you don't think this patch is useful to be applied by
->> itself I can also carry it until the complete series is ready.
-> 
-> Rob,
-> 
-> Are you able to take this patch now for 3.7, or should it be held off
-> until the Tegra PCIe driver is re-written and requires this
-> functionality (in which case I'd expect to take this through the Tegra
-> tree at that time).
-> 
-> For reference, it's at http://patchwork.ozlabs.org/patch/173497/.
+>> If e.g. the power on sequence fails at step N (of M steps for that
+>> sequence), one could try playing the corresponding power off sequence
+>> (either completely of from step M - N), but then again we cannot rely on
+>> sequences to be perfectly symetrical. Maybe this is more something for t=
+he
+>> calling driver to check for and control?
+> =
 
-Applied for 3.7.
+> Am Freitag, 7. September 2012, 10:15:03 schrieb Mark Brown:
+>> On Fri, Sep 07, 2012 at 05:04:24PM +0900, Alex Courbot wrote:
+>>> If e.g. the power on sequence fails at step N (of M steps for that
+>>> sequence), one could try playing the corresponding power off sequence
+>>> (either completely of from step M - N), but then again we cannot rely on
+>>> sequences to be perfectly symetrical. Maybe this is more something for
+>>> the calling driver to check for and control?
+>>
+>> That had been my thought too - depending on what the sequence is for it
+>> may be that the corrective action is something very different to
+>> reversing the sequence, for example a device reset may be required.
+> =
 
-Rob
+> If I understood the description correctly, the power sequence should be =
+
+> transparent to the driver, as it implements board specific actions and =
+
+> shouldn't bother the driver with it to much.
+
+Well, the contents/implementation of the sequence should be transparent
+to the driver. The fact that a sequence exists and needs to be executed
+obviously can't be transparent to the driver, since the driver needs to
+call an API to execute the sequence.
+
+I'd assert that requiring the driver to get back to a sane state by
+executing sequence (b) if sequence (a) fails is fairly reasonable, and
+doesn't give the driver any more knowledge of what the sequences are
+than what it already has.
+
+But then I start to wonder: What if the "help something went wrong"
+sequence gets an error...
+
+> Therefore my thoughts went along
+> the lines how gpio_request_array handles this, always producing a sane st=
+ate =
+
+> at the end.
+> =
+
+> Recording the previous state, could be done by making a copy of the curre=
+nt =
+
+> sequence, and just noting the previous values (including voltages etc) in=
+ the =
+
+> respective entries. And in the error case running this new sequence from =
+the =
+
+> error point instead to power down again.
+> =
+
+> =
+
+> As both Alex and Mark wrote, reversing the sequence might be the action o=
+f =
+
+> choice only for some devices, but others might need to run a completely =
+
+> different powerdown sequence and still others would need special handling.
+> =
+
+> Would it be possible to encode this in the sequence definition, something=
+ like
+> 	on-error =3D "reverse"
+> =
+
+> 	on-error =3D "sequence"
+> 	error-seq =3D <&other_sequence>
+> =
+
+> 	on-error =3D "driver"
+> with better names and types of course.
+> =
+
+> This would keep the power sequence transparent to most drivers and only t=
+he =
+
+> real esoteric ones would need to do their special handling on their own.
+
+Yes, something like that sounds reasonable on the surface. I'm not sure
+about the on-error=3D"driver" case though; if the driver knows nothing
+about the content of the sequences, I'm not sure how the driver could
+possibly do anything other than execute some sequence to recover.
