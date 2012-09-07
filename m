@@ -1,89 +1,116 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v3 01/10] PCI: Keep pci_fixup_irqs() around after init
-Date: Fri, 7 Sep 2012 10:22:28 -0700
-Message-ID: <CAErSpo4Y4QXfahRkBoJ_jmKy6VAYqOzixTmCPkwSATfO+rzVxg@mail.gmail.com>
-References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de>
- <1343332512-28762-2-git-send-email-thierry.reding@avionic-design.de>
- <CAErSpo7v+i8i=mXCs7ZW8DtGTDN_4AEntwYLqGG8FcCzweySFg@mail.gmail.com>
- <20120815192814.GA12870@avionic-0098.mockup.avionic-design.de>
- <CAErSpo6cjOzJegJqXzmk59DChExcbLK1sOhwyAyQL4FZkTN21A@mail.gmail.com>
- <504A1EA2.9030008@wwwdotorg.org> <20120907170024.GA16114@avionic-0098.mockup.avionic-design.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
+Date: Fri, 07 Sep 2012 17:34:35 -0600
+Message-ID: <504A848B.1090703@wwwdotorg.org>
+References: <1343332512-28762-1-git-send-email-thierry.reding@avionic-design.de> <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de> <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com> <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de> <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com> <502AD82F.3080702@wwwdotorg.org> <502AE485.8060307@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20120907170024.GA16114@avionic-0098.mockup.avionic-design.de>
+In-Reply-To: <502AE485.8060307@wwwdotorg.org>
 Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
+To: Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@avionic-design.de>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Mitch Bradley <wmb@firmworks.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 7, 2012 at 10:00 AM, Thierry Reding
-<thierry.reding@avionic-design.de> wrote:
-> On Fri, Sep 07, 2012 at 10:19:46AM -0600, Stephen Warren wrote:
->> On 08/15/2012 01:42 PM, Bjorn Helgaas wrote:
->> > On Wed, Aug 15, 2012 at 1:28 PM, Thierry Reding
->> > <thierry.reding@avionic-design.de> wrote:
->> >> On Wed, Aug 15, 2012 at 10:06:27AM -0700, Bjorn Helgaas wrote:
->> >>> On Thu, Jul 26, 2012 at 12:55 PM, Thierry Reding
->> >>> <thierry.reding@avionic-design.de> wrote:
->> >>>> When using deferred driver probing, PCI host controller drivers may
->> >>>> actually require this function after the init stage.
->> >>>>
->> >>>> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
->> >>>> ---
->> >>>> Changes in v3:
->> >>>> - none
->> >>>>
->> >>>> Changes in v2:
->> >>>> - use __devinit annotations
->> >>>
->> >>> Your original patch removed __init completely.  Here you change it to
->> >>> __devinit.  That means we decide whether to discard the function based
->> >>> on whether CONFIG_HOTPLUG is supported.  But I think your point is not
->> >>> about hotplug; it's merely that we should be able to scan a PCI bus
->> >>> after init-time.  We ought to be able to do a late PCI scan even if
->> >>> hotplug is not supported.
->> >>>
->> >>> Therefore, I'd be inclined to remove __init completely unless you have
->> >>> another reason for preferring __devinit.
->> >>
->> >> I thought __devinit would resolve to nothing if HOTPLUG is defined and
->> >> __init otherwise. That seemed more appropriate. However you are right
->> >> that it is useful to always have it available, so I'm fine with removing
->> >> the annotations altogether. Do you want me to follow up with a patch? Or
->> >> can you just take the first version? I'm not sure if it still applies.
->> >
->> > You're right about how __devinit works.  It's just that I don't think
->> > hotplug is actually relevant here.  We're trying to make
->> > pci_fixup_irqs() work after init, whether it's because of hotplug or
->> > simply because the arch scans host bridges after init.
->> >
->> > I applied this to my "next" branch.  Thanks!
+On 08/14/2012 05:51 PM, Stephen Warren wrote:
+> On 08/14/2012 04:58 PM, Stephen Warren wrote:
+>> On 08/14/2012 03:55 PM, Bjorn Helgaas wrote:
+>>> On Tue, Aug 14, 2012 at 12:58 PM, Thierry Reding
+>>> <thierry.reding@avionic-design.de> wrote:
+>>>> On Tue, Aug 14, 2012 at 01:39:23PM -0600, Stephen Warren wrote:
+>>>>> On 08/13/2012 05:18 PM, Bjorn Helgaas wrote:
+>>>>>> On Mon, Aug 13, 2012 at 11:47 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>>> ...
+>>>>>>> whereas for a device tree boot:
+>>>>>>>
+>>>>>>> (same):
+>>>>>>>> [    2.112217] pci 0000:01:00.0: reg 10: [io  0x0000-0x00ff]
+>>>>>>>> [    2.117635] pci 0000:01:00.0: reg 18: [mem 0x00000000-0x00000fff 64bit pref]
+>>>>>>>> [    2.124690] pci 0000:01:00.0: reg 20: [mem 0x00000000-0x00003fff 64bit pref]
+>>>>>>>> [    2.131731] pci 0000:01:00.0: reg 30: [mem 0x00000000-0x0001ffff pref]
+>>>>>>> ... (request region happens early)
+>>>>>>>> [    2.179838] r8169 0000:01:00.0: BAR 0: requesting [io  0x0000-0x00ff]
+>>>>>>>> [    2.193312] r8169 0000:01:00.0: BAR 2: requesting [mem 0x00000000-0x00000fff 64bit pref]
+>>>>>>>> [    2.201397] r8169 0000:01:00.0: BAR 2: can't reserve [mem 0x00000000-0x00000fff 64bit pref]
+>>>>>>>> [    2.209742] r8169 0000:01:00.0: (unregistered net_device): could not request regions
+>>>>>>> ... (same, just happens too late)
+>>>>>>>> [    2.236818] pci 0000:01:00.0: BAR 6: assigned [mem 0xa0000000-0xa001ffff pref]
+>>>>>>>> [    2.244027] pci 0000:01:00.0: BAR 4: assigned [mem 0xa0020000-0xa0023fff 64bit pref]
+>>>>>>>> [    2.251794] pci 0000:01:00.0: BAR 2: assigned [mem 0xa0024000-0xa0024fff 64bit pref]
+>>>>>>>> [    2.259542] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
+>>>>>>>
+>>>>>>> I suspect this is all still related to the PCI devices themselves being
+>>>>>>> probed much earlier in the overall PCI initialization sequence when the
+>>>>>>> PCI controller is probed later in the boot sequence, whereas PCI device
+>>>>>>> probe is deferred until the overall PCI initialization sequence is
+>>>>>>> complete if the PCI controller is probed very early in the boot sequence.
+>>>>>>
+>>>>>> I don't know what to apply your patches to (they don't apply cleanly
+>>>>>> to v3.6-rc2), so I can't see exactly what you're doing.  But it looks
+>>>>>> like you might be calling pci_bus_add_devices() before
+>>>>>> pci_bus_assign_resource(), which isn't going to work.
+>>>>>
+>>>>> Yes, that's exactly what is happening.
+>>>>>
+>>>>> PCIe initialization starts in arch/arm/mach-tegra/pci.e
+>>>>> tegra_pcie_init() which calls arch/arm/kernel/bios32.c
+>>>>> pci_common_init(). That function first calls pcibios_init_hw() (in the
+>>>>> same file, more about this later) and then loops over PCI buses, calling
+>>>>> amongst other things pci_bus_assign_resources() then pci_bus_add_devices().
+>>>>>
+>>>>> The problem is that ARM's pcibios_init_hw() calls pci_scan_root_bus()
+>>>>> (or a host-driver-specific function which that also calls
+>>>>> pci_scan_root_bus() in Tegra's case) which in turn calls
+>>>>> pci_bus_add_devices() right at the end, before control has returned to
+>>>>> pci_common_init() and hence before pci_bus_assign_resources() has been
+>>>>> called.
+>>>>>
+>>>>> If I modify pci_scan_root_bus() and remove the call to
+>>>>> pci_bus_add_devices(), everything works as expected.
+>>>>>
+>>>>> So, I guess the question is: Should ARM's pcibios_init_hw() not be
+>>>>> calling pci_scan_root_bus(), or at least presumably the ARM PCI code
+>>>>> needs to do things in a slightly different order?
+>>>
+>>> I think you need to do something like this instead of using pci_scan_root_bus():
+>>>
+>>>     pci_create_root_bus()
+>>>     pci_scan_child_bus()
+>>>     pci_bus_assign_resources()
+>>>     pci_bus_add_devices()
+>>>
+>>> This is the effective order used by most of the pci_create_root_bus() callers.
 >>
->> Bjorn, I don't see this patch in next-20120907. Did it get dropped for
->> some reason?
->
-> Yes, it turns out that dropping the annotations causes lots of section
-> mismatches on other architectures. See here[0] for the details. I think
-> the solution to the issue would be to either remove HOTPLUG altogether
-> and drop __devinit and __devexit annotations or update all architectures
-> to fix these warnings. I think Bjorn and I settled on the latter because
-> it's obviously less intrusive. I've been busy building toolchains for
-> all the PCI architectures and I think I have all of them. I'll just need
-> some more time to build, find and fix any remaining section mismatches.
+>> That would pretty much duplicate everything in pci_scan_root_bus(). That
+>> might cause divergence down the road.
+>>
+>> Can't we make the call to pci_bus_add_devices() optional in
+>> pci_scan_root_bus() somehow; one of:
+> 
+> Sigh, that turns out not to work correctly; it solves at least this part
+> of the problem when booting using device tree, but when booting using a
+> board file, it causes the IRQ number passed to the PCIe device to be
+> bogus:-(
 
-Greg KH is actively removing CONFIG_HOTPLUG altogether -- see
-https://lkml.org/lkml/2012/9/4/489
+The reason this fails is because the following happens after
+pci_scan_bus_root():
 
-That will make __devinit resolve to nothing in all cases, and we'll
-eventually remove __devinit completely.  So we don't want to convert
-__init to __devinit; we have to remove the __init altogether.  I think
-that means we have to update all arches first to avoid the section
-mismatches.
+	pci_fixup_irqs(pcibios_swizzle, pcibios_map_irq);
 
-So I think Thierry is on the right track:
-  1) Change all arch pcibios_update_irq() implementations (and
-probably a few other things) to be non-__init
-  2) Change pci_fixup_irqs() to be non-__init
+(in arch/arm/kernel/bios32.c:pci_common_init())
 
-Bjorn
+So, if I replace the call to pci_scan_root_bus() with the code you wrote
+above, then the IRQ numbers aren't assigned into the pci_dev structures
+until after they're device_add()ed, and hence probed().
+
+Ideally, I could just add a call to pci_fixup_irqs() right before the
+call to pci_bus_add_devices() in the code you wrote above. However, that
+won't work, because pci_fixup_irqs() finds all the PCI devices to fix up
+by searching the list of devices that pci_bus_add_devices() adds to:-(
+
+I guess it's a pretty basic premise of the current PCI code that all the
+PCI scanning happens well before any device drivers are registered,
+which in turn means that device_add() doesn't trigger the device's
+probe() until much later, after all the fixups and resource assignments
+are done?
