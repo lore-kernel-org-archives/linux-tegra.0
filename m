@@ -1,31 +1,81 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] pwm_backlight: use power sequences
-Date: Fri, 7 Sep 2012 17:34:34 +0900
-Message-ID: <1584217.aCLniK0dpS@percival>
-References: <1346412846-17102-1-git-send-email-acourbot@nvidia.com> <2360396.YKI4EihrfI@percival> <20120907082835.GC17749@opensource.wolfsonmicro.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 1/4] Runtime Interpreted Power Sequences
+Date: Fri, 7 Sep 2012 11:08:41 +0200
+Message-ID: <201209071108.42083.heiko@sntech.de>
+References: <1346412846-17102-1-git-send-email-acourbot@nvidia.com> <201209061614.54022.heiko@sntech.de> <1887927.1deN8M9siP@percival>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120907082835.GC17749-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1887927.1deN8M9siP@percival>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <leelakrishna.a@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 07 September 2012 16:29:03 Mark Brown wrote:
-> On Fri, Sep 07, 2012 at 05:28:17PM +0900, Alex Courbot wrote:
-> > We could make power sequences an option of its own and add #ifdefs to
-> > drivers that use it to lift this ambiguity, but I like the transparency
-> > of the current way. It also seems hard (illegal?) to get rid of the
-> > legacy DT interface.
-> If you're doing this I'd suggest using stubs rather than ifdefs in the
-> users, otherwise it's just going to cause lots of annoyance from
-> randconfig build.  Is the code likely to big enough to worry about,
-> though?
+Am Freitag, 7. September 2012, 10:04:24 schrieb Alex Courbot:
+> > For your power_seq_run function you write that it simply returns an error
+> > code on failure and looking through it I also just found the error return
+> > statement. This would leave a device half turned on.
+> > 
+> > So I'm wondering, if it shouldn't turn off all the things it turned on
+> > until the step that produced the error. All your possible step types
+> > (execpt the delay) are booleans, so it should be possible to simply
+> > negate them when backtracking through the previous steps.
+> 
+> Indeed, I think you raised an important point. Right now all step types are
+> invertible, but we cannot rely on that statement to be true forever. For
+> instance, one short-term improvement will be to allow finer regulator
+> control, like voltage setting. In this case, how can we go back to the
+> initial state without recording it?
+>
+> If e.g. the power on sequence fails at step N (of M steps for that
+> sequence), one could try playing the corresponding power off sequence
+> (either completely of from step M - N), but then again we cannot rely on
+> sequences to be perfectly symetrical. Maybe this is more something for the
+> calling driver to check for and control?
 
-I don't think is will ever become big enough to bother. Moreover if the power 
-seqs way meets acceptance, new drivers/frameworks are likely to use them as 
-the only option, making it really mandatory.
+Am Freitag, 7. September 2012, 10:15:03 schrieb Mark Brown:
+> On Fri, Sep 07, 2012 at 05:04:24PM +0900, Alex Courbot wrote:
+> > If e.g. the power on sequence fails at step N (of M steps for that
+> > sequence), one could try playing the corresponding power off sequence
+> > (either completely of from step M - N), but then again we cannot rely on
+> > sequences to be perfectly symetrical. Maybe this is more something for
+> > the calling driver to check for and control?
+> 
+> That had been my thought too - depending on what the sequence is for it
+> may be that the corrective action is something very different to
+> reversing the sequence, for example a device reset may be required.
 
-Alex.
+
+If I understood the description correctly, the power sequence should be 
+transparent to the driver, as it implements board specific actions and 
+shouldn't bother the driver with it to much. Therefore my thoughts went along 
+the lines how gpio_request_array handles this, always producing a sane state 
+at the end.
+
+Recording the previous state, could be done by making a copy of the current 
+sequence, and just noting the previous values (including voltages etc) in the 
+respective entries. And in the error case running this new sequence from the 
+error point instead to power down again.
+
+
+As both Alex and Mark wrote, reversing the sequence might be the action of 
+choice only for some devices, but others might need to run a completely 
+different powerdown sequence and still others would need special handling.
+
+Would it be possible to encode this in the sequence definition, something like
+	on-error = "reverse"
+
+	on-error = "sequence"
+	error-seq = <&other_sequence>
+
+	on-error = "driver"
+with better names and types of course.
+
+This would keep the power sequence transparent to most drivers and only the 
+real esoteric ones would need to do their special handling on their own.
+
+
+Heiko
