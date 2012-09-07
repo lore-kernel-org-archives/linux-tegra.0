@@ -1,25 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: fix maxburst settings in dmaengine code
-Date: Thu, 06 Sep 2012 19:36:12 -0600
-Message-ID: <50494F8C.3030906@wwwdotorg.org>
-References: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org> <20120907010050.GE4400@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ASoC: tegra: fix maxburst settings in
+	dmaengine code
+Date: Fri, 7 Sep 2012 09:51:57 +0800
+Message-ID: <20120907015155.GA6827@opensource.wolfsonmicro.com>
+References: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120907010050.GE4400-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lrg@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/06/2012 07:00 PM, Mark Brown wrote:
-> On Thu, Sep 06, 2012 at 05:47:33PM -0600, Stephen Warren wrote:
+On Thu, Sep 06, 2012 at 05:47:33PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
->> Mark, I'd like to take this patch through the Tegra tree, since it's a
->> dependency for the series that converts Tegra to dmaengine. Thanks.
-> 
-> Since it's a fix I was going to send it as a patch for 3.6 so that
-> shouldn't be an issue?
+> The I2S controllers are programmed with an "attention" level of 4 DWORDs.
+> This must match the configuration passed to the DMA driver, so that when
+> they burst in data, they don't overflow the available FIFO space. Also,
+> the burst size is relevant to the destination for playback, and source
+> for capture, not vice-versa as originally written.
 
-Oh right, that makes sense too, thanks.
+Applied, thanks.
