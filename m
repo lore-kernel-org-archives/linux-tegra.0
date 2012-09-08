@@ -1,64 +1,55 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Fri, 07 Sep 2012 23:53:08 -0600
-Message-ID: <504ADD44.6040501@wwwdotorg.org>
-References: <50201E1D.5060200@wwwdotorg.org>
- <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
- <50294BCA.1070807@wwwdotorg.org>
- <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
- <502AA96B.2050709@wwwdotorg.org>
- <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
+Date: Sat, 8 Sep 2012 11:51:00 -0600
+Message-ID: <CAErSpo42AME4nJqdVk9cC2EcTfu96r+yxmmOB=hXNi6jh-c+XA@mail.gmail.com>
+References: <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
+ <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
+ <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
  <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com>
  <502AD82F.3080702@wwwdotorg.org> <502AE485.8060307@wwwdotorg.org>
- <504A848B.1090703@wwwdotorg.org>
- <20120908000430.GF13739@n2100.arm.linux.org.uk>
+ <504A848B.1090703@wwwdotorg.org> <20120908000430.GF13739@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20120908000430.GF13739-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/07/2012 06:04 PM, Russell King - ARM Linux wrote:
+On Fri, Sep 7, 2012 at 6:04 PM, Russell King - ARM Linux
+<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
 > On Fri, Sep 07, 2012 at 05:34:35PM -0600, Stephen Warren wrote:
 >> I guess it's a pretty basic premise of the current PCI code that all the
 >> PCI scanning happens well before any device drivers are registered,
 >> which in turn means that device_add() doesn't trigger the device's
 >> probe() until much later, after all the fixups and resource assignments
 >> are done?
-> 
+>
 > Are you saying that the PCI layer is again screwed up after all my
 > hard work several years ago to ensure that PCI devices are properly
 > setup _before_ they're made available to the PCI drivers then?  That
 > was around the time I was looking at Cardbus stuff, ensuring that that
 > worked with the same guarantees.
-> 
+>
 > Not amused.
-> 
+>
 > What is wrong with the "probe devices, apply fixups, setup resources,
 > apply more fixups, publish" process that it's had to be yet again
 > broken?
 
-I must admit, I'm having a hard time finding when the code worked like
-that; ARM's bios32.c:pcibios_init_hw() seems to have always called
-pci_scan_root_bus(), or ops function hw->scan(), which at least in the 1
-PCIe controller driver I looked at, in turn always called either
-pci_scan_root_bus() or another similar function that I believe always
-called pci_bus_add_devices(), which is before pci_common_init() could
-assign the resources. Maybe I'm just looking at the wrong PCIe
-controller driver, or not looking back far enough in git history (or
-pre-git)? If you could point out when it was working as you describe
-(which sounds reasonable), I'd be interested in tracing the history from
-there to see when/why it changed.
+It seems that there are some bugs in the PCI layer, no doubt
+introduced after all your hard work.  We'll do our best to fix them.
+
+The particular issue of pci_fixup_irqs() has been on my list for a
+while, and we talked about it at the recent PCI mini-summit.  It's
+clearly broken that we do this with for_each_pci_dev() once at
+boot-time because that does nothing for hot-added devices.  It's also
+broken that it is called after device_add() because the core shouldn't
+touch the device after it's available to drivers.
+
+This should get fixed reasonably soon, probably not in v3.6, but
+hopefully in v3.7.  It's not completely trivial because many arches
+have the same problem, and we need to fix all of them.
+
+Bjorn
