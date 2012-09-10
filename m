@@ -1,55 +1,43 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 00/10] ARM: tegra: Add PCIe device tree support
-Date: Sat, 8 Sep 2012 11:51:00 -0600
-Message-ID: <CAErSpo42AME4nJqdVk9cC2EcTfu96r+yxmmOB=hXNi6jh-c+XA@mail.gmail.com>
-References: <50201E1D.5060200@wwwdotorg.org> <20120813174003.GA2527@avionic-0098.mockup.avionic-design.de>
- <50294BCA.1070807@wwwdotorg.org> <CAErSpo7og1XgOSv_mFCQ=hP7pq0j3gXWh2QFL2wBJjz7kcAq=g@mail.gmail.com>
- <502AA96B.2050709@wwwdotorg.org> <20120814195834.GA10431@avionic-0098.mockup.avionic-design.de>
- <CAErSpo4Bm_Ryx=OK+svjqAwD4N8v0vrheLVdc-N1ijx8i_-N3w@mail.gmail.com>
- <502AD82F.3080702@wwwdotorg.org> <502AE485.8060307@wwwdotorg.org>
- <504A848B.1090703@wwwdotorg.org> <20120908000430.GF13739@n2100.arm.linux.org.uk>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v3 1/3] ARM: add cpufreq transiton notifier to adjust
+ loops_per_jiffy for smp
+Date: Mon, 10 Sep 2012 09:17:45 +0800
+Message-ID: <20120910011741.GP26709@S2101-09.ap.freescale.net>
+References: <1344577046-14847-1-git-send-email-shawn.guo@linaro.org>
+ <1344577046-14847-2-git-send-email-shawn.guo@linaro.org>
+ <5049252D.9000802@wwwdotorg.org>
+ <20120907025847.GI26709@S2101-09.ap.freescale.net>
+ <504A26E4.4070600@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120908000430.GF13739-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <cpufreq-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <504A26E4.4070600@wwwdotorg.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Kevin Hilman <khilman@ti.com>, Nishanth Menon <nm@ti.com>, Mike Turquette <mturquette@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-pm@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, cpufreq@vger.kernel.org, Shilimkar Santosh <santosh.shilimkar@ti.com>, Rob Herring <rob.herring@calxeda.com>, Richard Zhao <richard.zhao@freescale.com>, Richard Zhao <richard.zhao@linaro.org>, linux-arm-kernel@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 7, 2012 at 6:04 PM, Russell King - ARM Linux
-<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> On Fri, Sep 07, 2012 at 05:34:35PM -0600, Stephen Warren wrote:
->> I guess it's a pretty basic premise of the current PCI code that all the
->> PCI scanning happens well before any device drivers are registered,
->> which in turn means that device_add() doesn't trigger the device's
->> probe() until much later, after all the fixups and resource assignments
->> are done?
->
-> Are you saying that the PCI layer is again screwed up after all my
-> hard work several years ago to ensure that PCI devices are properly
-> setup _before_ they're made available to the PCI drivers then?  That
-> was around the time I was looking at Cardbus stuff, ensuring that that
-> worked with the same guarantees.
->
-> Not amused.
->
-> What is wrong with the "probe devices, apply fixups, setup resources,
-> apply more fixups, publish" process that it's had to be yet again
-> broken?
+On Fri, Sep 07, 2012 at 10:55:00AM -0600, Stephen Warren wrote:
+> Yes, that does solve the problem (well, with s/late_init/late_initcall/).
+> 
+> As you imply, that change wouldn't help if cpu-tegra.c was built as a
+> module.
 
-It seems that there are some bugs in the PCI layer, no doubt
-introduced after all your hard work.  We'll do our best to fix them.
+I doubt that.  Have you confirmed it with testing?  When you install
+module cpu-tegra, the pcie initialization has been done, right?
 
-The particular issue of pci_fixup_irqs() has been on my list for a
-while, and we talked about it at the recent PCI mini-summit.  It's
-clearly broken that we do this with for_each_pci_dev() once at
-boot-time because that does nothing for hot-added devices.  It's also
-broken that it is called after device_add() because the core shouldn't
-touch the device after it's available to drivers.
+> So, is this something you can work around in your patch?
+> 
+Before we head to a solution, we need to identify the cause.
 
-This should get fixed reasonably soon, probably not in v3.6, but
-hopefully in v3.7.  It's not completely trivial because many arches
-have the same problem, and we need to fix all of them.
+One thing I note is there is no loops_per_jiffy updating in cpu-tegra
+driver.  But if I understand correctly, the driver is running on
+MP system.  It should update loops_per_jiffy when cpu frequency
+changes, right?  I'm worrying about that the timeout in tegra pcie
+driver just happens to work with a wrong loops_per_jiffy, but becomes
+broken when loops_per_jiffy gets correct.
 
-Bjorn
+-- 
+Regards,
+Shawn
