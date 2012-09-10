@@ -1,44 +1,122 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v2 1/1] iommu/tegra: smmu: Use debugfs_create_dir for directory
-Date: Mon, 10 Sep 2012 12:24:06 -0600
-Message-ID: <504E3046.9080103@wwwdotorg.org>
-References: <20120809155624.b781edae9efa7c51faf6c31c@nvidia.com><1345009652-13408-1-git-send-email-hdoyu@nvidia.com><502BCA9E.5090206@wwwdotorg.org>
-	<20120904.095134.292349834288373260.hdoyu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120904.095134.292349834288373260.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
+Date: Mon, 10 Sep 2012 17:12:38 -0600
+Message-ID: <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org>
+References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1347318758-7954-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/04/2012 12:51 AM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 15 Aug 2012 18:13:18 +0200:
-> 
->> On 08/14/2012 11:47 PM, Hiroshi Doyu wrote:
->>> The commit c3b1a35 "debugfs: make sure that debugfs_create_file() gets
->>> used only for regulars" doesn't allow to use debugfs_create_file() for
->>> dir. Keep debugfs data in smmu_device instead of directory's i_private.
->>>
->>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Tested-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>
->> Since this fixes a BUG during kernel boot, it'd be great if this could
->> be applied ASAP unless there are significant issues with it.
-> 
-> Joerg, any chance to get this in?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Joerg, could you please apply this patch ASAP? Currently, Tegra won't
-boot in linux-next without it. Alternatively, would you like me to take
-the patch through the Tegra tree? Thanks.
+When changing a PLL's rate, it must have no active children. The CPU
+clock cannot be stopped, and CPU clock's divider is not used. The old
+clock driver used to handle this by internally reparenting the CPU clock
+onto a different PLL when changing the CPU clock rate. However, the new
+common-clock based clock driver does not do this, and probably cannot do
+this due to the locking issues it would cause.
+
+To solve this, have the Tegra cpufreq driver explicitly perform the
+reparenting operations itself. This is probably reasonable anyway,
+since such reparenting is somewhat a matter of policy (e.g. which
+alternate clock source to use, whether to leave the CPU clock a child
+of the alternate clock source if it's running at the desired rate),
+and hence is something more appropriate for the cpufreq driver than
+the core clock driver anyway.
+
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+These two fixes are required to resolve the regression exposed by commit
+ec971ea "ARM: add cpufreq transiton notifier to adjust loops_per_jiffy for
+smp"
+---
+ arch/arm/mach-tegra/cpu-tegra.c |   48 ++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 47 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index ceb52db..627bf0f 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -49,6 +49,8 @@ static struct cpufreq_frequency_table freq_table[] = {
+ #define NUM_CPUS	2
+ 
+ static struct clk *cpu_clk;
++static struct clk *pll_x_clk;
++static struct clk *pll_p_clk;
+ static struct clk *emc_clk;
+ 
+ static unsigned long target_cpu_speed[NUM_CPUS];
+@@ -71,6 +73,42 @@ static unsigned int tegra_getspeed(unsigned int cpu)
+ 	return rate;
+ }
+ 
++static int tegra_cpu_clk_set_rate(unsigned long rate)
++{
++	int ret;
++
++	/*
++	 * Take an extra reference to the main pll so it doesn't turn
++	 * off when we move the cpu off of it
++	 */
++	clk_prepare_enable(pll_x_clk);
++
++	ret = clk_set_parent(cpu_clk, pll_p_clk);
++	if (ret) {
++		pr_err("Failed to switch cpu to clock pll_p\n");
++		goto out;
++	}
++
++	if (rate == clk_get_rate(pll_p_clk))
++		goto out;
++
++	ret = clk_set_rate(pll_x_clk, rate);
++	if (ret) {
++		pr_err("Failed to change pll_x to %lu\n", rate);
++		goto out;
++	}
++
++	ret = clk_set_parent(cpu_clk, pll_x_clk);
++	if (ret) {
++		pr_err("Failed to switch cpu to clock pll_x\n");
++		goto out;
++	}
++
++out:
++	clk_disable_unprepare(pll_x_clk);
++	return ret;
++}
++
+ static int tegra_update_cpu_speed(unsigned long rate)
+ {
+ 	int ret = 0;
+@@ -101,7 +139,7 @@ static int tegra_update_cpu_speed(unsigned long rate)
+ 	       freqs.old, freqs.new);
+ #endif
+ 
+-	ret = clk_set_rate(cpu_clk, freqs.new * 1000);
++	ret = tegra_cpu_clk_set_rate(freqs.new * 1000);
+ 	if (ret) {
+ 		pr_err("cpu-tegra: Failed to set cpu frequency to %d kHz\n",
+ 			freqs.new);
+@@ -183,6 +221,14 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ 	if (IS_ERR(cpu_clk))
+ 		return PTR_ERR(cpu_clk);
+ 
++	pll_x_clk = clk_get_sys(NULL, "pll_x");
++	if (IS_ERR(pll_x_clk))
++		return PTR_ERR(pll_x_clk);
++
++	pll_p_clk = clk_get_sys(NULL, "pll_p");
++	if (IS_ERR(pll_p_clk))
++		return PTR_ERR(pll_p_clk);
++
+ 	emc_clk = clk_get_sys("cpu", "emc");
+ 	if (IS_ERR(emc_clk)) {
+ 		clk_put(cpu_clk);
+-- 
+1.7.0.4
