@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: config: enable RTC for Cardhu and Whistler
-Date: Tue, 11 Sep 2012 12:15:10 -0600
-Message-ID: <1347387310-13087-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: dt: tegra: whistler: configure power off
+Date: Tue, 11 Sep 2012 13:20:37 -0600
+Message-ID: <1347391237-31044-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,55 +10,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Enable CONFIG_RTC_DRV_TPS65910, CONFIG_RTC_DRV_MAX8907, and some RTC
-options that Kconfig help implies should typically be enabled;
-RTC_INTF_SYSFS, INTF_PROC, RTC_INTF_DEV.
-
-While rebuilding defconfig:
-
-* Removed entry for HOTPLUG_CPU since it is now implied by PM_SLEEP_SMP.
-* Enabled MEDIA_USB_SUPPORT, which is a requirement to keep
-  USB_VIDEO_CLASS=m.
+Add DT property to tell the MAX8907 that it should provide the
+pm_power_off() implementation. This allows "shutdown" to work.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/configs/tegra_defconfig |    8 +++++---
- 1 files changed, 5 insertions(+), 3 deletions(-)
+I will probably squash this into "ARM: dt: configure power off for some
+boards" when applying.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index ef2c679..adcf3c2 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -31,7 +31,6 @@ CONFIG_TEGRA_PCI=y
- CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
- CONFIG_SMP=y
--CONFIG_HOTPLUG_CPU=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- # CONFIG_OABI_COMPAT is not set
-@@ -137,9 +136,8 @@ CONFIG_REGULATOR_TPS6586X=y
- CONFIG_REGULATOR_TPS65910=y
- CONFIG_MEDIA_SUPPORT=y
- CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_USB_SUPPORT=y
- CONFIG_USB_VIDEO_CLASS=m
--# CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV is not set
--# CONFIG_USB_GSPCA is not set
- CONFIG_SOUND=y
- CONFIG_SND=y
- # CONFIG_SND_SUPPORT_OLD_API is not set
-@@ -170,7 +168,11 @@ CONFIG_LEDS_GPIO=y
- CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_GPIO=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_INTF_SYSFS=y
-+CONFIG_RTC_INTF_PROC=y
-+CONFIG_RTC_INTF_DEV=y
- CONFIG_RTC_DRV_MAX8907=y
-+CONFIG_RTC_DRV_TPS65910=y
- CONFIG_RTC_DRV_EM3027=y
- CONFIG_RTC_DRV_TEGRA=y
- CONFIG_STAGING=y
+ arch/arm/boot/dts/tegra20-whistler.dts |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 4ae1e5d..c636d00 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -267,6 +267,8 @@
+ 			reg = <0x3c>;
+ 			interrupts = <0 86 0x4>;
+ 
++			maxim,system-power-controller;
++
+ 			mbatt-supply = <&usb0_vbus_reg>;
+ 			in-v1-supply = <&mbatt_reg>;
+ 			in-v2-supply = <&mbatt_reg>;
 -- 
 1.7.0.4
