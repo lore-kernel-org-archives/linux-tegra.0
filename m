@@ -1,37 +1,148 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: fix maxburst settings in dmaengine code
-Date: Tue, 11 Sep 2012 08:05:46 +0800
-Message-ID: <20120911000539.GB30699@opensource.wolfsonmicro.com>
-References: <1346975253-2935-1-git-send-email-swarren@wwwdotorg.org>
- <20120907010050.GE4400@opensource.wolfsonmicro.com>
- <50494F8C.3030906@wwwdotorg.org>
- <504E2B73.2020006@wwwdotorg.org>
+From: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
+Date: Mon, 10 Sep 2012 21:45:30 -0700
+Message-ID: <20120911044530.20289.8165@nucleus>
+References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
+ <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <504E2B73.2020006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1347318758-7954-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 10, 2012 at 12:03:31PM -0600, Stephen Warren wrote:
+Quoting Stephen Warren (2012-09-10 16:12:38)
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> When changing a PLL's rate, it must have no active children. The CPU
+> clock cannot be stopped, and CPU clock's divider is not used. The old
+> clock driver used to handle this by internally reparenting the CPU clock
+> onto a different PLL when changing the CPU clock rate. However, the new
+> common-clock based clock driver does not do this, and probably cannot do
+> this due to the locking issues it would cause.
+> 
 
-> Anyway, since this patch didn't make 3.6-rc5, it is difficult for me to
-> use as a baseline for any branches destined for 3.7, since I'm supposed
-> to send my pull requests to arm-soc before 3.6-rc6 is released, yet if
-> this patch goes into 3.6, it won't be there until 3.6-rc6 at the earliest.
+This is possible today.  Clock drivers can call __clk_reparent to update
+the common clk bookkeeping to reflect changes in parent muxing.  There
+are some examples of this out in the wild, and the unmerged OMAP port
+certainly uses this during the PLL relock sequence.
 
-> I'm not sure how best to resolve this; is it possible for me to take the
-> patch through the Tegra tree instead, as I originally intended?
+> To solve this, have the Tegra cpufreq driver explicitly perform the
+> reparenting operations itself. This is probably reasonable anyway,
+> since such reparenting is somewhat a matter of policy (e.g. which
+> alternate clock source to use, whether to leave the CPU clock a child
+> of the alternate clock source if it's running at the desired rate),
+> and hence is something more appropriate for the cpufreq driver than
+> the core clock driver anyway.
+> 
 
-Just merge the pull request in.  I should send something out
-on Thursday I expect, though no guarantees about -rc6.  It doesn't seem
-sensible to not merge the fix.
+I definitely agree about the policy.  Just FYI I'm hacking on an RFC to
+make reparenting clocks from a call to clk_set_rate even easier, but
+perhaps in your case it is better the cpufreq driver knows the clock
+tree topology details.
 
-Or bend the rules for arm-soc by putting it in your own -next branch and
-then rebasing before it gets pulled into arm-soc.  This would seem a
-sensible thing in general given arm-soc has this sort of model, it'd
-avoid what is essentially an extended merge window for arm-soc but still
-give things exposure in -next before they hit arm-soc itself.
+Regards,
+Mike
+
+> Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> These two fixes are required to resolve the regression exposed by commit
+> ec971ea "ARM: add cpufreq transiton notifier to adjust loops_per_jiffy for
+> smp"
+> ---
+>  arch/arm/mach-tegra/cpu-tegra.c |   48 ++++++++++++++++++++++++++++++++++++++-
+>  1 files changed, 47 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+> index ceb52db..627bf0f 100644
+> --- a/arch/arm/mach-tegra/cpu-tegra.c
+> +++ b/arch/arm/mach-tegra/cpu-tegra.c
+> @@ -49,6 +49,8 @@ static struct cpufreq_frequency_table freq_table[] = {
+>  #define NUM_CPUS       2
+>  
+>  static struct clk *cpu_clk;
+> +static struct clk *pll_x_clk;
+> +static struct clk *pll_p_clk;
+>  static struct clk *emc_clk;
+>  
+>  static unsigned long target_cpu_speed[NUM_CPUS];
+> @@ -71,6 +73,42 @@ static unsigned int tegra_getspeed(unsigned int cpu)
+>         return rate;
+>  }
+>  
+> +static int tegra_cpu_clk_set_rate(unsigned long rate)
+> +{
+> +       int ret;
+> +
+> +       /*
+> +        * Take an extra reference to the main pll so it doesn't turn
+> +        * off when we move the cpu off of it
+> +        */
+> +       clk_prepare_enable(pll_x_clk);
+> +
+> +       ret = clk_set_parent(cpu_clk, pll_p_clk);
+> +       if (ret) {
+> +               pr_err("Failed to switch cpu to clock pll_p\n");
+> +               goto out;
+> +       }
+> +
+> +       if (rate == clk_get_rate(pll_p_clk))
+> +               goto out;
+> +
+> +       ret = clk_set_rate(pll_x_clk, rate);
+> +       if (ret) {
+> +               pr_err("Failed to change pll_x to %lu\n", rate);
+> +               goto out;
+> +       }
+> +
+> +       ret = clk_set_parent(cpu_clk, pll_x_clk);
+> +       if (ret) {
+> +               pr_err("Failed to switch cpu to clock pll_x\n");
+> +               goto out;
+> +       }
+> +
+> +out:
+> +       clk_disable_unprepare(pll_x_clk);
+> +       return ret;
+> +}
+> +
+>  static int tegra_update_cpu_speed(unsigned long rate)
+>  {
+>         int ret = 0;
+> @@ -101,7 +139,7 @@ static int tegra_update_cpu_speed(unsigned long rate)
+>                freqs.old, freqs.new);
+>  #endif
+>  
+> -       ret = clk_set_rate(cpu_clk, freqs.new * 1000);
+> +       ret = tegra_cpu_clk_set_rate(freqs.new * 1000);
+>         if (ret) {
+>                 pr_err("cpu-tegra: Failed to set cpu frequency to %d kHz\n",
+>                         freqs.new);
+> @@ -183,6 +221,14 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+>         if (IS_ERR(cpu_clk))
+>                 return PTR_ERR(cpu_clk);
+>  
+> +       pll_x_clk = clk_get_sys(NULL, "pll_x");
+> +       if (IS_ERR(pll_x_clk))
+> +               return PTR_ERR(pll_x_clk);
+> +
+> +       pll_p_clk = clk_get_sys(NULL, "pll_p");
+> +       if (IS_ERR(pll_p_clk))
+> +               return PTR_ERR(pll_p_clk);
+> +
+>         emc_clk = clk_get_sys("cpu", "emc");
+>         if (IS_ERR(emc_clk)) {
+>                 clk_put(cpu_clk);
+> -- 
+> 1.7.0.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
