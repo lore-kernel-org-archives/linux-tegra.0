@@ -1,34 +1,102 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra: move pinconf-tegra.h content into drivers/pinctrl
-Date: Tue, 11 Sep 2012 11:12:23 -0600
-Message-ID: <504F70F7.9020303@wwwdotorg.org>
-References: <1346798370-28795-1-git-send-email-swarren@wwwdotorg.org> <CACRpkdaDQtHvtH-gqps5T5c=EZOzFkMVkg0QbOabzT1zQ1kBdQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaDQtHvtH-gqps5T5c=EZOzFkMVkg0QbOabzT1zQ1kBdQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: delete unused headers
+Date: Tue, 11 Sep 2012 11:13:29 -0600
+Message-ID: <1347383609-26418-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/05/2012 02:26 AM, Linus Walleij wrote:
-> On Wed, Sep 5, 2012 at 12:39 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> 
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Now that Tegra's pinmux is configured solely from device tree, there's
->> no need for the pinconf types to be defined in arch/arm/mach-tegra/.
->> Move it into the pinctrl directory to clean up mach-tegra, as a pre-
->> requisite for single-zImage.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->> I'll need to take this through the Tegra tree, since it depends on some
->> patches that remove inclusion of the deleted header.
-> 
-> Go for it:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied to Tegra's for-3.7/cleanup2 branch.
+Nothing includes these headers any more; remove them.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/include/mach/gpio-tegra.h |   28 ------------------
+ arch/arm/mach-tegra/include/mach/suspend.h    |   38 -------------------------
+ 2 files changed, 0 insertions(+), 66 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/gpio-tegra.h
+ delete mode 100644 arch/arm/mach-tegra/include/mach/suspend.h
+
+diff --git a/arch/arm/mach-tegra/include/mach/gpio-tegra.h b/arch/arm/mach-tegra/include/mach/gpio-tegra.h
+deleted file mode 100644
+index a978b3c..0000000
+--- a/arch/arm/mach-tegra/include/mach/gpio-tegra.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/include/mach/gpio.h
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Erik Gilling <konkers-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef __MACH_TEGRA_GPIO_TEGRA_H
+-#define __MACH_TEGRA_GPIO_TEGRA_H
+-
+-#include <linux/types.h>
+-#include <mach/irqs.h>
+-
+-#define TEGRA_NR_GPIOS		INT_GPIO_NR
+-
+-#endif
+diff --git a/arch/arm/mach-tegra/include/mach/suspend.h b/arch/arm/mach-tegra/include/mach/suspend.h
+deleted file mode 100644
+index 5af8715..0000000
+--- a/arch/arm/mach-tegra/include/mach/suspend.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/include/mach/suspend.h
+- *
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-
+-#ifndef _MACH_TEGRA_SUSPEND_H_
+-#define _MACH_TEGRA_SUSPEND_H_
+-
+-void tegra_pinmux_suspend(void);
+-void tegra_irq_suspend(void);
+-void tegra_gpio_suspend(void);
+-void tegra_clk_suspend(void);
+-void tegra_dma_suspend(void);
+-void tegra_timer_suspend(void);
+-
+-void tegra_pinmux_resume(void);
+-void tegra_irq_resume(void);
+-void tegra_gpio_resume(void);
+-void tegra_clk_resume(void);
+-void tegra_dma_resume(void);
+-void tegra_timer_resume(void);
+-
+-#endif /* _MACH_TEGRA_SUSPEND_H_ */
+-- 
+1.7.0.4
