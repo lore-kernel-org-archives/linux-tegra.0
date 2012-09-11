@@ -1,50 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
-Date: Mon, 10 Sep 2012 23:43:37 -0600
-Message-ID: <504ECF89.5050809@wwwdotorg.org>
-References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org> <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org> <20120911044530.20289.8165@nucleus>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: fix overflow in tegra20_pll_clk_round_rate()
+Date: Tue, 11 Sep 2012 11:49:26 +0530
+Message-ID: <504ED7EE.5050103@nvidia.com>
+References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120911044530.20289.8165@nucleus>
+In-Reply-To: <1347318758-7954-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/10/2012 10:45 PM, Mike Turquette wrote:
-> Quoting Stephen Warren (2012-09-10 16:12:38)
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> When changing a PLL's rate, it must have no active children. The CPU
->> clock cannot be stopped, and CPU clock's divider is not used. The old
->> clock driver used to handle this by internally reparenting the CPU clock
->> onto a different PLL when changing the CPU clock rate. However, the new
->> common-clock based clock driver does not do this, and probably cannot do
->> this due to the locking issues it would cause.
->>
-> 
-> This is possible today.  Clock drivers can call __clk_reparent to update
-> the common clk bookkeeping to reflect changes in parent muxing.  There
-> are some examples of this out in the wild, and the unmerged OMAP port
-> certainly uses this during the PLL relock sequence.
+On Tuesday 11 September 2012 04:42 AM, Stephen Warren wrote:
+> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> 32-bit math isn't enough when e.g. *prate=12000000, and sel->n=1000.
+> Use 64-bit math to prevent this.
 
-The CPU clock's set_rate needs to both __clk_reparent() /and/ set the
-rate of the parent PLL. I think a (non-static) __clk_set_rate() is
-missing? (although perhaps that could be easily solved if desired).
+Thanks Stephen!!
 
->> To solve this, have the Tegra cpufreq driver explicitly perform the
->> reparenting operations itself. This is probably reasonable anyway,
->> since such reparenting is somewhat a matter of policy (e.g. which
->> alternate clock source to use, whether to leave the CPU clock a child
->> of the alternate clock source if it's running at the desired rate),
->> and hence is something more appropriate for the cpufreq driver than
->> the core clock driver anyway.
-> 
-> I definitely agree about the policy.  Just FYI I'm hacking on an RFC to
-> make reparenting clocks from a call to clk_set_rate even easier, but
-> perhaps in your case it is better the cpufreq driver knows the clock
-> tree topology details.
+> Cc: Prashant Gaikwad<pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Prashant, can you please audit all of the Tegra clock driver to see if
+> there are any other instances of the same issue? Thanks.
 
-OK, sounds fine to me:-)
+Sure.
+
+> ---
+>   arch/arm/mach-tegra/tegra20_clocks.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+> index ee6922b..e2a43e4 100644
+> --- a/arch/arm/mach-tegra/tegra20_clocks.c
+> +++ b/arch/arm/mach-tegra/tegra20_clocks.c
+> @@ -798,7 +798,7 @@ static long tegra20_pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>   	struct clk_tegra *c = to_clk_tegra(hw);
+>   	const struct clk_pll_freq_table *sel;
+>   	unsigned long input_rate = *prate;
+> -	unsigned long output_rate = *prate;
+> +	u64 output_rate = *prate;
+>   	int mul;
+>   	int div;
+>
