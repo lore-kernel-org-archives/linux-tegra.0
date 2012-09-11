@@ -1,26 +1,89 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: fix overflow in tegra20_pll_clk_round_rate()
-Date: Tue, 11 Sep 2012 10:38:04 -0600
-Message-ID: <504F68EC.3050606@wwwdotorg.org>
-References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V2] ARM: tegra: remove useless includes of <mach/*.h>
+Date: Tue, 11 Sep 2012 10:42:36 -0600
+Message-ID: <1347381756-28714-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347318758-7954-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/10/2012 05:12 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> 32-bit math isn't enough when e.g. *prate=12000000, and sel->n=1000.
-> Use 64-bit math to prevent this.
-> 
-> Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I've applied the series to Tegra's for-3.7/common-clk branch, since both
-patches fix issues triggered by the common clock conversion.
+Nothing from these files is needed, so remove the includes. This helps
+single zImage work by reducing use of the mach-tegra/include/mach/
+directory.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: Also remove 4 includes of <mach/suspend.h>
+---
+ arch/arm/mach-tegra/dma.c                 |    1 -
+ arch/arm/mach-tegra/tegra20_clocks.c      |    1 -
+ arch/arm/mach-tegra/tegra20_clocks_data.c |    1 -
+ arch/arm/mach-tegra/timer.c               |    1 -
+ arch/arm/mach-tegra/usb_phy.c             |    1 -
+ 5 files changed, 0 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/dma.c b/arch/arm/mach-tegra/dma.c
+index 29c5114..7f27320 100644
+--- a/arch/arm/mach-tegra/dma.c
++++ b/arch/arm/mach-tegra/dma.c
+@@ -31,7 +31,6 @@
+ #include <mach/dma.h>
+ #include <mach/irqs.h>
+ #include <mach/iomap.h>
+-#include <mach/suspend.h>
+ 
+ #include "apbio.h"
+ 
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+index e2a43e4..a4561da 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -28,7 +28,6 @@
+ #include <linux/clk.h>
+ 
+ #include <mach/iomap.h>
+-#include <mach/suspend.h>
+ 
+ #include "clock.h"
+ #include "fuse.h"
+diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
+index be57764..0e8ed37 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+@@ -28,7 +28,6 @@
+ #include <linux/clk.h>
+ 
+ #include <mach/iomap.h>
+-#include <mach/suspend.h>
+ 
+ #include "clock.h"
+ #include "fuse.h"
+diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
+index 57b5bdc..eccdce9 100644
+--- a/arch/arm/mach-tegra/timer.c
++++ b/arch/arm/mach-tegra/timer.c
+@@ -33,7 +33,6 @@
+ 
+ #include <mach/iomap.h>
+ #include <mach/irqs.h>
+-#include <mach/suspend.h>
+ 
+ #include "board.h"
+ #include "clock.h"
+diff --git a/arch/arm/mach-tegra/usb_phy.c b/arch/arm/mach-tegra/usb_phy.c
+index 022b33a..34ffebb 100644
+--- a/arch/arm/mach-tegra/usb_phy.c
++++ b/arch/arm/mach-tegra/usb_phy.c
+@@ -30,7 +30,6 @@
+ #include <linux/usb/otg.h>
+ #include <linux/usb/ulpi.h>
+ #include <asm/mach-types.h>
+-#include <mach/gpio-tegra.h>
+ #include <mach/usb_phy.h>
+ #include <mach/iomap.h>
+ 
+-- 
+1.7.0.4
