@@ -1,71 +1,66 @@
-From: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
-Date: Tue, 11 Sep 2012 10:20:34 -0700
-Message-ID: <20120911172034.20289.95189@nucleus>
-References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
- <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org>
- <20120911044530.20289.8165@nucleus> <504ECF89.5050809@wwwdotorg.org>
- <504F22E6.9040307@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 2/2] ARM: dt: tegra: configure power off for some boards
+Date: Tue, 11 Sep 2012 11:43:47 -0600
+Message-ID: <1347385427-9676-2-git-send-email-swarren@wwwdotorg.org>
+References: <1347385427-9676-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <504F22E6.9040307-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1347385427-9676-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Prashant Gaikwad (2012-09-11 04:39:18)
-> On Tuesday 11 September 2012 11:13 AM, Stephen Warren wrote:
-> 
->     On 09/10/2012 10:45 PM, Mike Turquette wrote:
-> 
->         Quoting Stephen Warren (2012-09-10 16:12:38)
-> 
->             From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
->             When changing a PLL's rate, it must have no active children. The CPU
->             clock cannot be stopped, and CPU clock's divider is not used. The old
->             clock driver used to handle this by internally reparenting the CPU clock
->             onto a different PLL when changing the CPU clock rate. However, the new
->             common-clock based clock driver does not do this, and probably cannot do
->             this due to the locking issues it would cause.
-> 
-> 
->         This is possible today.  Clock drivers can call __clk_reparent to update
->         the common clk bookkeeping to reflect changes in parent muxing.  There
->         are some examples of this out in the wild, and the unmerged OMAP port
->         certainly uses this during the PLL relock sequence.
-> 
->     The CPU clock's set_rate needs to both __clk_reparent() /and/ set the
->     rate of the parent PLL. I think a (non-static) __clk_set_rate() is
->     missing? (although perhaps that could be easily solved if desired).
-> 
-> 
->             To solve this, have the Tegra cpufreq driver explicitly perform the
->             reparenting operations itself. This is probably reasonable anyway,
->             since such reparenting is somewhat a matter of policy (e.g. which
->             alternate clock source to use, whether to leave the CPU clock a child
->             of the alternate clock source if it's running at the desired rate),
->             and hence is something more appropriate for the cpufreq driver than
->             the core clock driver anyway.
-> 
->         I definitely agree about the policy.  Just FYI I'm hacking on an RFC to
->         make reparenting clocks from a call to clk_set_rate even easier, but
->         perhaps in your case it is better the cpufreq driver knows the clock
->         tree topology details.
-> 
->     OK, sounds fine to me:-)
-> 
-> 
-> Policies can change for Tegra20 and Tegra30. IMO we should implement it in clock driver.
-> But it can not be done unless there is a way to call clk_set_rate from clk ops.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-OMAP 4460/4470 have a similar constraint to have reparenting operation
-depending on the frequency that the ARM runs at.  I'll try to implement
-this soon and I will Cc you guys on it.  Hopefully the same method makes
-sense for you.
+For Seaboard, Ventana, and Cardhu, add DT property to tell the regulator
+that it should provide the pm_power_off() implementation. This allows
+"shutdown" to work.
 
-Regards,
-Mike
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-seaboard.dts |    2 ++
+ arch/arm/boot/dts/tegra20-ventana.dts  |    2 ++
+ arch/arm/boot/dts/tegra30-cardhu.dtsi  |    2 ++
+ 3 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 92deb36..e60dc71 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -379,6 +379,8 @@
+ 			reg = <0x34>;
+ 			interrupts = <0 86 0x4>;
+ 
++			ti,system-power-controller;
++
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+ 
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 4ec6b4c..3e5952f 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -295,6 +295,8 @@
+ 			reg = <0x34>;
+ 			interrupts = <0 86 0x4>;
+ 
++			ti,system-power-controller;
++
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+ 
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 4794693..d10c9c5 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -156,6 +156,8 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 
++			ti,system-power-controller;
++
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+ 
+-- 
+1.7.0.4
