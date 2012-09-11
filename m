@@ -1,48 +1,57 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: fix overflow in tegra20_pll_clk_round_rate()
-Date: Tue, 11 Sep 2012 11:49:26 +0530
-Message-ID: <504ED7EE.5050103@nvidia.com>
-References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/2] dma: tegra: make tegra_dma.chip_data a pointer to
+ const data
+Date: Tue, 11 Sep 2012 08:58:19 +0200
+Message-ID: <20120911065819.GF28643@pengutronix.de>
+References: <20120829084911.GE28643@pengutronix.de>
+ <1346230295-15898-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <504E2F95.6040808@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347318758-7954-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <504E2F95.6040808@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, djbw@fb.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 11 September 2012 04:42 AM, Stephen Warren wrote:
-> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> 32-bit math isn't enough when e.g. *prate=12000000, and sel->n=1000.
-> Use 64-bit math to prevent this.
+On Mon, Sep 10, 2012 at 12:21:09PM -0600, Stephen Warren wrote:
+> On 08/29/2012 02:51 AM, Uwe Kleine-K=F6nig wrote:
+> > From: Laxman Dewangan <ldewangan@nvidia.com>
+> >=20
+> > This prepares *of_device_id.data becoming const. Without this chang=
+e
+> > the following warning would occur:
+> >=20
+> > 	drivers/dma/tegra20-apb-dma.c: In function 'tegra_dma_probe':
+> > 	drivers/dma/tegra20-apb-dma.c:1210:9: warning: assignment discards=
+ 'const' qualifier from pointer target type [enabled by default]
+> >=20
+> > [ukl: split Laxman's patch to prevent warnings in the middle of the
+> > series. Original patch was sent with msgid
+> > 1346217447-19730-1-git-send-email-ldewangan@nvidia.com]
+> >=20
+> > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> > Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> > Acked-by: Vinod Koul <vinod.koul@linux.intel.com>
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+>=20
+> Uwe,
+>=20
+> I don't see these patches in linux-next, so compilation is still brok=
+en.
+> Can you please apply them? Thanks.
+I have, but my new tree didn't make it into arm-soc. Arnd/Olof, can you
+please refetch it?
 
-Thanks Stephen!!
+Thanks
+Uwe
 
-> Cc: Prashant Gaikwad<pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Prashant, can you please audit all of the Tegra clock driver to see if
-> there are any other instances of the same issue? Thanks.
-
-Sure.
-
-> ---
->   arch/arm/mach-tegra/tegra20_clocks.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
-> index ee6922b..e2a43e4 100644
-> --- a/arch/arm/mach-tegra/tegra20_clocks.c
-> +++ b/arch/arm/mach-tegra/tegra20_clocks.c
-> @@ -798,7 +798,7 @@ static long tegra20_pll_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->   	struct clk_tegra *c = to_clk_tegra(hw);
->   	const struct clk_pll_freq_table *sel;
->   	unsigned long input_rate = *prate;
-> -	unsigned long output_rate = *prate;
-> +	u64 output_rate = *prate;
->   	int mul;
->   	int div;
->
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
