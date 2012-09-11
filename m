@@ -1,54 +1,47 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] ARM: add cpufreq transiton notifier to adjust
- loops_per_jiffy for smp
-Date: Tue, 11 Sep 2012 09:16:56 -0600
-Message-ID: <504F55E8.3000803@wwwdotorg.org>
-References: <1344577046-14847-1-git-send-email-shawn.guo@linaro.org> <1344577046-14847-2-git-send-email-shawn.guo@linaro.org> <5049252D.9000802@wwwdotorg.org> <20120907025847.GI26709@S2101-09.ap.freescale.net> <504A26E4.4070600@wwwdotorg.org> <20120910011741.GP26709@S2101-09.ap.freescale.net> <504E20BE.8050107@wwwdotorg.org> <504F2789.1070006@nvidia.com>
+Subject: Re: [PATCH 09/16] ARM: tegra: move platform_data definitions
+Date: Tue, 11 Sep 2012 09:35:45 -0600
+Message-ID: <504F5A51.9000506@wwwdotorg.org>
+References: <1347368350-31212-1-git-send-email-arnd@arndb.de> <1347368390-31252-1-git-send-email-arnd@arndb.de> <1347368390-31252-9-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <504F2789.1070006-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1347368390-31252-9-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shilimkar Santosh <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Zhao <richard.zhao-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Richard Zhao <richard.zhao-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/2012 05:59 AM, Prashant Gaikwad wrote:
-> On Monday 10 September 2012 10:47 PM, Stephen Warren wrote:
->> On 09/09/2012 07:17 PM, Shawn Guo wrote:
->>> On Fri, Sep 07, 2012 at 10:55:00AM -0600, Stephen Warren wrote:
->>>> Yes, that does solve the problem (well, with
->>>> s/late_init/late_initcall/).
->>>>
->>>> As you imply, that change wouldn't help if cpu-tegra.c was built as a
->>>> module.
->>> I doubt that.  Have you confirmed it with testing?  When you install
->>> module cpu-tegra, the pcie initialization has been done, right?
->> Never mind, the code can't be built as a module anyway.
->>
->> Aside from that, I misinterpreted your test patch, and thought that it
->> was moving the Tegra cpufreq driver initialization earlier, but it's
->> actually moving it later, and in fact by chance after PCIe
->> initialization, which explains why it solves the issue.
->>
->> I think the root of the problem is that cpufreq is lowering the CPU
->> frequency, yet the patch which converted Tegra to the common clock
->> framework removed the code that actually changes the CPU clock rate. So,
->> cpufreq thinks the CPU is running at e.g. 216MHz, but it's actually
->> still running at 1.0GHz, and hence re-calculating the delay loops breaks
->> things, since delays aren't as long as the system thinks they are. The
->> variability is due to whether lowering the CPU frequency just happens to
->> occur before or after the PCIe controller is initialized.
->>
->> Prashant, are you able to fix the clock driver deficiency within the
->> next 2-3 days or so (so I can include the fix in the pull requests I
->> send for 3.7, which need to be sent before the end of the week)? Or, do
->> we need to disable cpufreq for Tegra because of this?
+On 09/11/2012 06:59 AM, Arnd Bergmann wrote:
+> Platform data for device drivers should be defined in
+> include/linux/platform_data/*.h, not in the architecture
+> and platform specific directories.
 > 
-> Your fix looks good to me except the concern I have mentioned in reply
-> to that patch.
+> This moves such data out of the tegra include directories
 
-Well, the cpufreq driver will need explicit knowledge of
-Tega20-vs-Tegra30 anyway, due to e.g. differing CPU clock names,
-probable different latencies, etc.
+I have already submitted patches for some of these:
+
+>  .../linux/platform_data/asoc-tegra_wm8903.h                        |    0
+
+03f6743 ASoC: tegra: move platform data header
+
+This moves the file to include/sound/tegra_wm8903.h, which seems
+consistent with other sound-related platform data.
+
+>  .../mach/kbc.h => include/linux/platform_data/keyboard-tegra-kbc.h |    0
+
+a85442a Input: tegra - move platform data header
+
+This moves the file to include/linux/input/tegra_kbc.h, which seems
+consistent with other input-related platform data.
+
+>  .../mach/sdhci.h => include/linux/platform_data/mmc-sdhci-tegra.h  |    0
+
+I have a not-yet-applied (but ack'd by Chris Ball) patch to move this to
+include/linux/mmc/tegra_sdhci.h. I believe all the dependencies are
+staged in the Tegra tree now, so I can apply it if you want. I'm fine
+with you apply this patch though; just let me know. If you want to take
+your patch, then this part:
+
+Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
