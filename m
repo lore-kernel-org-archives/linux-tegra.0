@@ -1,150 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 09/16] ARM: tegra: move platform_data definitions
-Date: Tue, 11 Sep 2012 14:59:43 +0200
-Message-ID: <1347368390-31252-9-git-send-email-arnd@arndb.de>
-References: <1347368350-31212-1-git-send-email-arnd@arndb.de>
- <1347368390-31252-1-git-send-email-arnd@arndb.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] ARM: add cpufreq transiton notifier to adjust
+ loops_per_jiffy for smp
+Date: Tue, 11 Sep 2012 09:16:56 -0600
+Message-ID: <504F55E8.3000803@wwwdotorg.org>
+References: <1344577046-14847-1-git-send-email-shawn.guo@linaro.org> <1344577046-14847-2-git-send-email-shawn.guo@linaro.org> <5049252D.9000802@wwwdotorg.org> <20120907025847.GI26709@S2101-09.ap.freescale.net> <504A26E4.4070600@wwwdotorg.org> <20120910011741.GP26709@S2101-09.ap.freescale.net> <504E20BE.8050107@wwwdotorg.org> <504F2789.1070006@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1347368390-31252-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Chris Ball <cjb@laptop.org>, Liam Girdwood <lrg@ti.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <504F2789.1070006-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shilimkar Santosh <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Richard Zhao <richard.zhao-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Richard Zhao <richard.zhao-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Platform data for device drivers should be defined in
-include/linux/platform_data/*.h, not in the architecture
-and platform specific directories.
+On 09/11/2012 05:59 AM, Prashant Gaikwad wrote:
+> On Monday 10 September 2012 10:47 PM, Stephen Warren wrote:
+>> On 09/09/2012 07:17 PM, Shawn Guo wrote:
+>>> On Fri, Sep 07, 2012 at 10:55:00AM -0600, Stephen Warren wrote:
+>>>> Yes, that does solve the problem (well, with
+>>>> s/late_init/late_initcall/).
+>>>>
+>>>> As you imply, that change wouldn't help if cpu-tegra.c was built as a
+>>>> module.
+>>> I doubt that.  Have you confirmed it with testing?  When you install
+>>> module cpu-tegra, the pcie initialization has been done, right?
+>> Never mind, the code can't be built as a module anyway.
+>>
+>> Aside from that, I misinterpreted your test patch, and thought that it
+>> was moving the Tegra cpufreq driver initialization earlier, but it's
+>> actually moving it later, and in fact by chance after PCIe
+>> initialization, which explains why it solves the issue.
+>>
+>> I think the root of the problem is that cpufreq is lowering the CPU
+>> frequency, yet the patch which converted Tegra to the common clock
+>> framework removed the code that actually changes the CPU clock rate. So,
+>> cpufreq thinks the CPU is running at e.g. 216MHz, but it's actually
+>> still running at 1.0GHz, and hence re-calculating the delay loops breaks
+>> things, since delays aren't as long as the system thinks they are. The
+>> variability is due to whether lowering the CPU frequency just happens to
+>> occur before or after the PCIe controller is initialized.
+>>
+>> Prashant, are you able to fix the clock driver deficiency within the
+>> next 2-3 days or so (so I can include the fix in the pull requests I
+>> send for 3.7, which need to be sent before the end of the week)? Or, do
+>> we need to disable cpufreq for Tegra because of this?
+> 
+> Your fix looks good to me except the concern I have mentioned in reply
+> to that patch.
 
-This moves such data out of the tegra include directories
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Colin Cross <ccross@android.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Chris Ball <cjb@laptop.org>
-Cc: Liam Girdwood <lrg@ti.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-tegra@vger.kernel.org
----
- arch/arm/mach-tegra/board-harmony.c                                |    4 ++--
- arch/arm/mach-tegra/board-paz00.c                                  |    2 +-
- arch/arm/mach-tegra/board-trimslice.c                              |    2 +-
- drivers/input/keyboard/tegra-kbc.c                                 |    2 +-
- drivers/mmc/host/sdhci-tegra.c                                     |    2 +-
- .../linux/platform_data/asoc-tegra_wm8903.h                        |    0
- .../mach/kbc.h => include/linux/platform_data/keyboard-tegra-kbc.h |    0
- .../mach/sdhci.h => include/linux/platform_data/mmc-sdhci-tegra.h  |    0
- sound/soc/tegra/tegra_wm8903.c                                     |    2 +-
- 9 files changed, 7 insertions(+), 7 deletions(-)
- rename arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h => include/linux/platform_data/asoc-tegra_wm8903.h (100%)
- rename arch/arm/mach-tegra/include/mach/kbc.h => include/linux/platform_data/keyboard-tegra-kbc.h (100%)
- rename arch/arm/mach-tegra/include/mach/sdhci.h => include/linux/platform_data/mmc-sdhci-tegra.h (100%)
-
-diff --git a/arch/arm/mach-tegra/board-harmony.c b/arch/arm/mach-tegra/board-harmony.c
-index e65e837..31b3b72 100644
---- a/arch/arm/mach-tegra/board-harmony.c
-+++ b/arch/arm/mach-tegra/board-harmony.c
-@@ -35,10 +35,10 @@
- #include <asm/hardware/gic.h>
- #include <asm/setup.h>
- 
--#include <mach/tegra_wm8903_pdata.h>
-+#include <linux/platform_data/asoc-tegra_wm8903.h>
- #include <mach/iomap.h>
- #include <mach/irqs.h>
--#include <mach/sdhci.h>
-+#include <linux/platform_data/mmc-sdhci-tegra.h>
- 
- #include "board.h"
- #include "board-harmony.h"
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index 4b64af5..6dd6854 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -40,7 +40,7 @@
- 
- #include <mach/iomap.h>
- #include <mach/irqs.h>
--#include <mach/sdhci.h>
-+#include <linux/platform_data/mmc-sdhci-tegra.h>
- 
- #include "board.h"
- #include "board-paz00.h"
-diff --git a/arch/arm/mach-tegra/board-trimslice.c b/arch/arm/mach-tegra/board-trimslice.c
-index 776aa95..fb80c8f 100644
---- a/arch/arm/mach-tegra/board-trimslice.c
-+++ b/arch/arm/mach-tegra/board-trimslice.c
-@@ -34,7 +34,7 @@
- #include <asm/setup.h>
- 
- #include <mach/iomap.h>
--#include <mach/sdhci.h>
-+#include <linux/platform_data/mmc-sdhci-tegra.h>
- 
- #include "board.h"
- #include "clock.h"
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index 2c1c9ed..40aded8 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -30,7 +30,7 @@
- #include <linux/clk.h>
- #include <linux/slab.h>
- #include <mach/clk.h>
--#include <mach/kbc.h>
-+#include <linux/platform_data/keyboard-tegra-kbc.h>
- 
- #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
- 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 0810ccc..d43e746 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -28,7 +28,7 @@
- #include <asm/gpio.h>
- 
- #include <mach/gpio-tegra.h>
--#include <mach/sdhci.h>
-+#include <linux/platform_data/mmc-sdhci-tegra.h>
- 
- #include "sdhci-pltfm.h"
- 
-diff --git a/arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h b/include/linux/platform_data/asoc-tegra_wm8903.h
-similarity index 100%
-rename from arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata.h
-rename to include/linux/platform_data/asoc-tegra_wm8903.h
-diff --git a/arch/arm/mach-tegra/include/mach/kbc.h b/include/linux/platform_data/keyboard-tegra-kbc.h
-similarity index 100%
-rename from arch/arm/mach-tegra/include/mach/kbc.h
-rename to include/linux/platform_data/keyboard-tegra-kbc.h
-diff --git a/arch/arm/mach-tegra/include/mach/sdhci.h b/include/linux/platform_data/mmc-sdhci-tegra.h
-similarity index 100%
-rename from arch/arm/mach-tegra/include/mach/sdhci.h
-rename to include/linux/platform_data/mmc-sdhci-tegra.h
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index d4f14e4..8deedf5 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -34,7 +34,7 @@
- #include <linux/gpio.h>
- #include <linux/of_gpio.h>
- 
--#include <mach/tegra_wm8903_pdata.h>
-+#include <linux/platform_data/asoc-tegra_wm8903.h>
- 
- #include <sound/core.h>
- #include <sound/jack.h>
--- 
-1.7.10
+Well, the cpufreq driver will need explicit knowledge of
+Tega20-vs-Tegra30 anyway, due to e.g. differing CPU clock names,
+probable different latencies, etc.
