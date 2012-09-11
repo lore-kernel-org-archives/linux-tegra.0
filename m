@@ -1,25 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: tegra: remove useless includes of <mach/*.h>
-Date: Tue, 11 Sep 2012 11:11:35 -0600
-Message-ID: <504F70C7.80502@wwwdotorg.org>
-References: <1347381756-28714-1-git-send-email-swarren@wwwdotorg.org>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 09/16] ARM: tegra: move platform_data definitions
+Date: Tue, 11 Sep 2012 13:11:55 -0400
+Message-ID: <87sjaowkkk.fsf@octavius.laptop.org>
+References: <1347368350-31212-1-git-send-email-arnd@arndb.de>
+	<1347368390-31252-9-git-send-email-arnd@arndb.de>
+	<871ui8y3at.fsf@octavius.laptop.org>
+	<201209111705.37490.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347381756-28714-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <201209111705.37490.arnd-r2nGTMty4D4@public.gmane.org> (Arnd Bergmann's message of
+	"Tue, 11 Sep 2012 17:05:37 +0000")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/2012 10:42 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Nothing from these files is needed, so remove the includes. This helps
-> single zImage work by reducing use of the mach-tegra/include/mach/
-> directory.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi,
 
-Applied to Tegra's for-3.7/cleanup2 branch.
+On Tue, Sep 11 2012, Arnd Bergmann wrote:
+>> Looks like you aren't renaming the idempotency guards, so e.g.
+>> include/linux/platform_data/mmc-sdhci-tegra.h will contain:
+>> 
+>> #ifndef __ASM_ARM_ARCH_TEGRA_SDHCI_H
+>> #define __ASM_ARM_ARCH_TEGRA_SDHCI_H
+>> 
+>> Is that intentional?  Thanks,
+>
+> No, it's not intentional. We actually have a lot of instances that
+> are already wrong. Do we care enough to change the ones I'm moving here?
+
+It's clearly not a big deal.  I did fix it in Stephen's previous version
+of this change, though.
+
+Maybe just add a note to the commit message explaining that you aren't
+changing the guards and driver maintainers might want to fix them up if
+it's something they care about?
+
+Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
