@@ -1,54 +1,90 @@
-From: "Turquette, Mike" <mturquette-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
-Date: Tue, 11 Sep 2012 20:57:40 -0700
-Message-ID: <CAJOA=zP5mYLBKGcTzEoJEfNa5WLbdBei0BeN26Qgn=CJyXw=1Q@mail.gmail.com>
-References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
- <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org> <20120911044530.20289.8165@nucleus>
- <20120912041001.GB3402@S2100-06.ap.freescale.net>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Wed, 12 Sep 2012 18:57:43 +0900
+Message-ID: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120912041001.GB3402-+NayF8gZjK2ctlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 11, 2012 at 9:10 PM, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, Sep 10, 2012 at 09:45:30PM -0700, Mike Turquette wrote:
->> > To solve this, have the Tegra cpufreq driver explicitly perform the
->> > reparenting operations itself. This is probably reasonable anyway,
->> > since such reparenting is somewhat a matter of policy (e.g. which
->> > alternate clock source to use, whether to leave the CPU clock a child
->> > of the alternate clock source if it's running at the desired rate),
->> > and hence is something more appropriate for the cpufreq driver than
->> > the core clock driver anyway.
->> >
->>
->> I definitely agree about the policy.  Just FYI I'm hacking on an RFC to
->> make reparenting clocks from a call to clk_set_rate even easier, but
->> perhaps in your case it is better the cpufreq driver knows the clock
->> tree topology details.
->>
-> I disagree.  The whole point of clock framework is to hide clock details
-> like tree topology behind clock API, so that we do not need every single
-> clock client driver to handle those details on their own.  It's
-> definitely desired to have clk_set_rate call handle reparenting nicely.
->
-> From what I see, if tegra clock driver can handle the dependency between
-> cpu_clk and emc_clk that is currently handled in cpufreq driver.  It's
-> likely that the generic cpufreq driver (cpufreq-cpu0) would work for
-> tegra.  But with this patch, the driver moves to the opposite direction.
->
+New revision of the power sequences, taking as usual the feedback that was
+kindly provided about the last version.
 
-Hmm, the cpufreq-cpu0 case is a good point.  Well like I said in my
-previous email this can be done in the framework.  I'll try to get an
-example of this on the list ASAP but of course my todo list is a fifo
-not a stack.
+I think now is a good time to discuss integrating this and to start looking for
+a maintainer who would be willing to merge this into his/her tree (I am
+especially thinking about the power framework maintainers, since this is where
+the code is right now. The second patch in this series enables the pwm_backlight
+driver to be used with the device tree, without relying on board-dependent
+callbacks to support complex power sequences. We also plan to use power
+sequences in other Tegra drivers, and other people have expressed interest in
+this work during earlier reviews. See for instance
 
-Regards,
-Mike
+https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-August/018532.html
 
-> Regards,
-> Shawn
->
+and
+
+https://lkml.org/lkml/2012/9/6/270
+
+There is probably some more details to fix and improve, but the current shape
+should be enough to know if we want this and where - therefore any sign from
+a maintainer would be greatly appreciated!
+
+Changes since v5:
+* Removed pointers to platform data from resource structure for better code
+  clarity
+* devm_power_seq_set_build() now automatically checks the DT if no platform
+  data is present, making it possible to remove the explicit DT parsing function
+* Lots of fixes in the documentation which should be clearer now (thanks
+  Stephen!)
+
+Alexandre Courbot (4):
+  Runtime Interpreted Power Sequences
+  pwm_backlight: use power sequences
+  tegra: dt: add label to tegra20's PWM
+  tegra: ventana: add pwm backlight DT nodes
+
+ .../devicetree/bindings/power_seq/power_seq.txt    | 122 ++++++
+ .../bindings/video/backlight/pwm-backlight.txt     |  65 ++-
+ Documentation/power/power_seq.txt                  | 215 ++++++++++
+ arch/arm/boot/dts/tegra20-ventana.dts              |  59 ++-
+ arch/arm/boot/dts/tegra20.dtsi                     |   2 +-
+ drivers/power/Kconfig                              |   1 +
+ drivers/power/Makefile                             |   1 +
+ drivers/power/power_seq/Kconfig                    |   2 +
+ drivers/power/power_seq/Makefile                   |   1 +
+ drivers/power/power_seq/power_seq.c                | 446 +++++++++++++++++++++
+ drivers/power/power_seq/power_seq_delay.c          |  51 +++
+ drivers/power/power_seq/power_seq_gpio.c           |  91 +++++
+ drivers/power/power_seq/power_seq_pwm.c            |  87 ++++
+ drivers/power/power_seq/power_seq_regulator.c      |  87 ++++
+ drivers/video/backlight/Kconfig                    |   1 +
+ drivers/video/backlight/pwm_bl.c                   | 180 ++++++---
+ include/linux/power_seq.h                          | 172 ++++++++
+ include/linux/pwm_backlight.h                      |  15 +-
+ 18 files changed, 1543 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power_seq/power_seq.txt
+ create mode 100644 Documentation/power/power_seq.txt
+ create mode 100644 drivers/power/power_seq/Kconfig
+ create mode 100644 drivers/power/power_seq/Makefile
+ create mode 100644 drivers/power/power_seq/power_seq.c
+ create mode 100644 drivers/power/power_seq/power_seq_delay.c
+ create mode 100644 drivers/power/power_seq/power_seq_gpio.c
+ create mode 100644 drivers/power/power_seq/power_seq_pwm.c
+ create mode 100644 drivers/power/power_seq/power_seq_regulator.c
+ create mode 100644 include/linux/power_seq.h
+
+-- 
+1.7.12
