@@ -1,98 +1,73 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v6 4/4] tegra: ventana: add pwm backlight DT nodes
-Date: Wed, 12 Sep 2012 18:57:47 +0900
-Message-ID: <1347443867-18868-5-git-send-email-acourbot@nvidia.com>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH] usb: move phy driver from mach-tegra to drivers/usb
+Date: Wed, 12 Sep 2012 16:49:21 +0300
+Message-ID: <20120912134919.GR5732@arwen.pp.htv.fi>
+References: <1346851223-29180-1-git-send-email-vbyravarasu@nvidia.com>
+ <504F681E.4070402@wwwdotorg.org>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SWsnvgFfkTS2ATo5"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <504F681E.4070402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- arch/arm/boot/dts/tegra20-ventana.dts | 59 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 3e5952f..4ca3ceb 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -469,6 +469,63 @@
- 		bus-width = <8>;
- 	};
- 
-+	backlight {
-+		compatible = "pwm-backlight";
-+		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
-+		default-brightness-level = <12>;
-+
-+		/* resources used by the power sequences */
-+		pwms = <&pwm 2 5000000>;
-+		pwm-names = "backlight";
-+		power-supply = <&vdd_bl_reg>;
-+
-+		power-sequences {
-+			power-on {
-+				step0 {
-+					type = "regulator";
-+					id = "power";
-+					enable;
-+				};
-+				step1 {
-+					type = "delay";
-+					delay = <10000>;
-+				};
-+				step2 {
-+					type = "pwm";
-+					id = "backlight";
-+					enable;
-+				};
-+				step3 {
-+					type = "gpio";
-+					gpio = <&gpio 28 0>;
-+					value = <1>;
-+				};
-+			};
-+
-+			power-off {
-+				step0 {
-+					type = "gpio";
-+					gpio = <&gpio 28 0>;
-+					value = <0>;
-+				};
-+				step1 {
-+					type = "pwm";
-+					id = "backlight";
-+					disable;
-+				};
-+				step2 {
-+					type = "delay";
-+					delay = <10000>;
-+				};
-+				step3 {
-+					type = "regulator";
-+					id = "power";
-+					disable;
-+				};
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -512,7 +569,7 @@
- 			enable-active-high;
- 		};
- 
--		regulator@4 {
-+		vdd_bl_reg: regulator@4 {
- 			compatible = "regulator-fixed";
- 			reg = <4>;
- 			regulator-name = "vdd_bl";
--- 
-1.7.12
+--SWsnvgFfkTS2ATo5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 11, 2012 at 10:34:38AM -0600, Stephen Warren wrote:
+> On 09/05/2012 07:20 AM, Venu Byravarasu wrote:
+> > As part of this patch:
+> > 	1. Moved existing tegra phy driver to drivers/USB directory.
+> > 	2. Added standard USB phy driver APIs to tegra phy driver.
+> >=20
+> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Felipe,
+>=20
+> I see this patch hasn't been applied yet. Can I ask that it be deferred
+> to 3.8 rather than being applied for 3.7. The reason is that in 3.7, I
+> want to add a new include of the header that this patch moves, and
+> without merging the Tegra and USB PHY trees together, the two patches
+> together would cause a build break. Now, it's a little late to merge the
+> branches, since I need to send my pull requests in about 3 days, so they
+> hit arm-soc by 3.6-rc6.
+
+According to git I've applied this on September 5th:
+
+http://git.kernel.org/?p=3Dlinux/kernel/git/balbi/usb.git;a=3Dcommit;h=3D1b=
+a8216f0bc02af6ba70d1108d60eb1b064395e4
+
+--=20
+balbi
+
+--SWsnvgFfkTS2ATo5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQUJLfAAoJEIaOsuA1yqRERgsP/3LuZeHco5judyy01tabcIqB
+2fLTQTasdYJnMuaKgBC96Ql0iFzOivemXFcL2k8g9if6qrfiYyfmrV0eRjS7TOgT
+UJvmRLZBBDVcZydIxP6b8FqAp+fTrkBSlS+cRrLBjyIA0OwzlQMwBpW5CMdf51qr
+B2xlLoFKadvPmX7LrU/xcK93uaU5psQgt8q40APZlb5prT2Ip1PPwW3wb0cO2bbZ
+YufAqjcnpsXh/ZYNa4q5UM2V+HKm4vYWzm+EBwu4ZEXtdzfqAWIR17qJSv1WBa2U
+kFRIeLjM7zyxJmYxbmaVKky26UWkn0CA+T1AxTHc9JJf5EL3lG8uQFDQKv+GdrCK
+Rg/uviOXIXv1e74GKFMLSMshMQ5SooetbEd6jTP7tErfB0Vs27vxQ4z99c7+2lzY
+JE9Jg25dMIx1qOwGSKhgVvzRu71scTJucXClRE3CjgZMpmQk6ktwS4sxIEEqmDwI
+vyyCMietjkhqcotiN7dDsYl0wBk+NPIKOmAdHFIndUmL6dQPt9leERENtuT9KV9d
+JIcqxkQ9c6ND79Zrr18gFxEk1yBSojdMDpsdF/YIeKitRzMV7Ng/DJEx/ESnOAoo
+SyVlRHpdVjMcccCl07jMDGLKz0JVETm1/gqnxVR4ZGKykYDxeeIDUP0cG5i018lH
+mh52xM6sOI6yBzhcz40x
+=3Xn+
+-----END PGP SIGNATURE-----
+
+--SWsnvgFfkTS2ATo5--
