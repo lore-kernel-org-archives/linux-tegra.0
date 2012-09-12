@@ -1,32 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: config: enable RTC for Cardhu and Whistler
-Date: Tue, 11 Sep 2012 14:03:01 -0600
-Message-ID: <504F98F5.2010402@wwwdotorg.org>
-References: <1347387310-13087-1-git-send-email-swarren@wwwdotorg.org>
+From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: cpu-tegra: explicitly manage re-parenting
+Date: Wed, 12 Sep 2012 12:10:08 +0800
+Message-ID: <20120912041001.GB3402@S2100-06.ap.freescale.net>
+References: <1347318758-7954-1-git-send-email-swarren@wwwdotorg.org>
+ <1347318758-7954-2-git-send-email-swarren@wwwdotorg.org>
+ <20120911044530.20289.8165@nucleus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347387310-13087-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120911044530.20289.8165@nucleus>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/2012 12:15 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Sep 10, 2012 at 09:45:30PM -0700, Mike Turquette wrote:
+> > To solve this, have the Tegra cpufreq driver explicitly perform the
+> > reparenting operations itself. This is probably reasonable anyway,
+> > since such reparenting is somewhat a matter of policy (e.g. which
+> > alternate clock source to use, whether to leave the CPU clock a child
+> > of the alternate clock source if it's running at the desired rate),
+> > and hence is something more appropriate for the cpufreq driver than
+> > the core clock driver anyway.
+> > 
 > 
-> Enable CONFIG_RTC_DRV_TPS65910, CONFIG_RTC_DRV_MAX8907, and some RTC
-> options that Kconfig help implies should typically be enabled;
-> RTC_INTF_SYSFS, INTF_PROC, RTC_INTF_DEV.
+> I definitely agree about the policy.  Just FYI I'm hacking on an RFC to
+> make reparenting clocks from a call to clk_set_rate even easier, but
+> perhaps in your case it is better the cpufreq driver knows the clock
+> tree topology details.
 > 
-> While rebuilding defconfig:
-> 
-> * Removed entry for HOTPLUG_CPU since it is now implied by PM_SLEEP_SMP.
-> * Enabled MEDIA_USB_SUPPORT, which is a requirement to keep
->   USB_VIDEO_CLASS=m.
+I disagree.  The whole point of clock framework is to hide clock details
+like tree topology behind clock API, so that we do not need every single
+clock client driver to handle those details on their own.  It's
+definitely desired to have clk_set_rate call handle reparenting nicely.
 
-Applied to Tegra's for-3.7/defconfig branch. I also squashed all the (3)
-patches in that branch into a single patch to avoid a little bit of
-churn due to earlier patches enabling some features that ended up being
-selected later on, and hence not showing up any more.
+From what I see, if tegra clock driver can handle the dependency between
+cpu_clk and emc_clk that is currently handled in cpufreq driver.  It's
+likely that the generic cpufreq driver (cpufreq-cpu0) would work for
+tegra.  But with this patch, the driver moves to the opposite direction.
+
+Regards,
+Shawn
