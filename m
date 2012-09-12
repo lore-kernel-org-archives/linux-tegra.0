@@ -1,55 +1,146 @@
-From: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
-Date: Wed, 12 Sep 2012 14:33:56 -0700
-Message-ID: <20120912213355.GA3342@lizard>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
- <5050FE28.2080502@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
+Date: Wed, 12 Sep 2012 16:07:13 -0600
+Message-ID: <50510791.8080302@wwwdotorg.org>
+References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com> <1347443867-18868-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5050FE28.2080502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1347443867-18868-2-git-send-email-acourbot@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 12, 2012 at 03:27:04PM -0600, Stephen Warren wrote:
-> On 09/12/2012 03:57 AM, Alexandre Courbot wrote:
-> > New revision of the power sequences, taking as usual the feedback that was
-> > kindly provided about the last version.
-> > 
-> > I think now is a good time to discuss integrating this and to start looking for
-> > a maintainer who would be willing to merge this into his/her tree (I am
-> > especially thinking about the power framework maintainers, since this is where
-> > the code is right now.
+On 09/12/2012 03:57 AM, Alexandre Courbot wrote:
+> Some device drivers (panel backlights especially) need to follow precise
+> sequences for powering on and off, involving gpios, regulators, PWMs
+> with a precise powering order and delays to respect between each steps.
+> These sequences are board-specific, and do not belong to a particular
+> driver - therefore they have been performed by board-specific hook
+> functions to far.
 > 
-> The other alternative is for you to maintain this going forward; I
-> believe that would be as simple as:
+> With the advent of the device tree and of ARM kernels that are not
+> board-tied, we cannot rely on these board-specific hooks anymore but
+> need a way to implement these sequences in a portable manner. This patch
+> introduces a simple interpreter that can execute such power sequences
+> encoded either as platform data or within the device tree.
 > 
-> * Create a patch to add yourself to MAINTAINERS for the
-> drivers/power/power_seq/ directory.
-> 
-> * Get a kernel.org account, push this patch to a branch there, and add
-> the branch into linux-next.
-> 
-> * Send a pull request to Linus at the appropriate time.
-> 
-> * Ongoing: Accept any patches, perform any maintenance required, etc.
-> 
-> Does anyone see any issue with Alexandre doing this? Nobody else has
-> volunteered yet:-)
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Yup, looks like the best way.
+> diff --git a/Documentation/power/power_seq.txt b/Documentation/power/power_seq.txt
 
-Anton.
+> +Sometimes, you may want to browse the list of resources allocated by a sequence,
+> +for instance to ensure that a resource of a given type is present. The
+> +power_seq_set_resources() function returns a list head that can be used with
+> +the power_seq_for_each_resource() macro to browse all the resources of a set:
+> +
+> +  struct list_head *power_seq_set_resources(struct power_seq_set *seqs);
+
+I don't think you need to include that prototype here?
+
+> +  power_seq_for_each_resource(pos, seqs)
+> +
+> +Here "pos" will be a pointer to a struct power_seq_resource. This structure
+> +contains the type of the resource, the information used for identifying it, and
+> +the resolved resource itself.
+
+> diff --git a/drivers/power/power_seq/Makefile b/drivers/power/power_seq/Makefile
+> new file mode 100644
+> index 0000000..f77a359
+> --- /dev/null
+> +++ b/drivers/power/power_seq/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_POWER_SEQ)		+= power_seq.o
+
+Don't you need to compile all the power_seq_*.c too?
+
+Oh, I see the following in power_seq.c:
+
+> +#include "power_seq_delay.c"
+> +#include "power_seq_regulator.c"
+> +#include "power_seq_pwm.c"
+> +#include "power_seq_gpio.c"
+
+It's probably better just to compile them separately and link them.
+
+> diff --git a/drivers/power/power_seq/power_seq.c b/drivers/power/power_seq/power_seq.c
+
+> +struct power_seq_step {
+> +	/* Copy of the platform data */
+> +	struct platform_power_seq_step pdata;
+
+I'd reword the comment to "Copy of the step", and name the field "step".
+
+> +static const struct power_seq_res_ops power_seq_types[POWER_SEQ_NUM_TYPES] = {
+> +	[POWER_SEQ_DELAY] = POWER_SEQ_DELAY_TYPE,
+> +	[POWER_SEQ_REGULATOR] = POWER_SEQ_REGULATOR_TYPE,
+> +	[POWER_SEQ_PWM] = POWER_SEQ_PWM_TYPE,
+> +	[POWER_SEQ_GPIO] = POWER_SEQ_GPIO_TYPE,
+> +};
+
+Ah, I see why you're using #include now.
+
+> +MODULE_LICENSE("GPL");
+
+s/GPL/GPL v2/ given the license header.
+
+> diff --git a/drivers/power/power_seq/power_seq_gpio.c b/drivers/power/power_seq/power_seq_gpio.c
+
+> +static int power_seq_res_alloc_gpio(struct device *dev,
+> +				    struct platform_power_seq_step *pstep,
+> +				    struct power_seq_resource *res)
+> +{
+> +	int err;
+> +
+> +	err = devm_gpio_request_one(dev, pstep->gpio.gpio,
+> +				    GPIOF_OUT_INIT_LOW, dev_name(dev));
+
+Hmm. The INIT_LOW part of that might be somewhat presumptive. I would
+suggest simply requesting the GPIO here, and using
+gpio_direction_output() in power_seq_step_run_gpio(), thus deferring the
+decision of what value to set the GPIO to until a real sequence is
+actually run.
+
+> diff --git a/drivers/power/power_seq/power_seq_pwm.c b/drivers/power/power_seq/power_seq_pwm.c
+
+> diff --git a/drivers/power/power_seq/power_seq_regulator.c b/drivers/power/power_seq/power_seq_regulator.c
+
+> diff --git a/include/linux/power_seq.h b/include/linux/power_seq.h
+
+> +#include <net/irda/parameters.h>
+
+That looks out of place.
+
+> +/**
+> + * struct power_seq_resource - resource used by a power sequence set
+> + * @pdata:	Pointer to the platform data used to resolve this resource
+> + * @regulator:	Resolved regulator if of type POWER_SEQ_REGULATOR
+> + * @pwm:	Resolved PWM if of type POWER_SEQ_PWM
+> + * @list:	Used to link resources together
+> + */
+
+I think that kerneldoc is stale.
+
+> +struct power_seq_resource {
+> +	enum power_seq_res_type type;
+> +	/* resolved resource and identifier */
+> +	union {
+> +		struct {
+> +			struct regulator *regulator;
+> +			const char *id;
+> +		} regulator;
+> +		struct {
+> +			struct pwm_device *pwm;
+> +			const char *id;
+> +		} pwm;
+> +		struct {
+> +			int gpio;
+> +		} gpio;
+> +	};
+> +	struct list_head list;
+> +};
+
+Aside from those minor issues, this all looks reasonable to me, so,
+Reviewed-by: Stephen Warren <swarren@wwwdotorg.org>
