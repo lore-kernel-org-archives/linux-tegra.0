@@ -1,37 +1,47 @@
-From: Nuno Santos <nuno.m.santos-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Linux timer interrupts not working when booting in normal-world
-Date: Wed, 12 Sep 2012 16:01:45 +0200
-Message-ID: <505095C9.5000108@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] usb: move phy driver from mach-tegra to drivers/usb
+Date: Wed, 12 Sep 2012 09:29:56 -0600
+Message-ID: <5050AA74.6050408@wwwdotorg.org>
+References: <1346851223-29180-1-git-send-email-vbyravarasu@nvidia.com> <504F681E.4070402@wwwdotorg.org> <20120912134919.GR5732@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120912134919.GR5732@arwen.pp.htv.fi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: Venu Byravarasu <vbyravarasu@nvidia.com>, linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi
+On 09/12/2012 07:49 AM, Felipe Balbi wrote:
+> On Tue, Sep 11, 2012 at 10:34:38AM -0600, Stephen Warren wrote:
+>> On 09/05/2012 07:20 AM, Venu Byravarasu wrote:
+>>> As part of this patch: 1. Moved existing tegra phy driver to
+>>> drivers/USB directory. 2. Added standard USB phy driver APIs to
+>>> tegra phy driver.
+>>> 
+>>> Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+>> 
+>> Felipe,
+>> 
+>> I see this patch hasn't been applied yet. Can I ask that it be
+>> deferred to 3.8 rather than being applied for 3.7. The reason is
+>> that in 3.7, I want to add a new include of the header that this
+>> patch moves, and without merging the Tegra and USB PHY trees
+>> together, the two patches together would cause a build break.
+>> Now, it's a little late to merge the branches, since I need to
+>> send my pull requests in about 3 days, so they hit arm-soc by
+>> 3.6-rc6.
+> 
+> According to git I've applied this on September 5th:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/balbi/usb.git;a=commit;h=1ba8216f0bc02af6ba70d1108d60eb1b064395e4
 
-I'm currently playing with the TrustZone technology on the Tegra2 
-Harmony board, and my goal is to boot Linux not in the secure world (as 
-it is in mainstream Linux), but in the normal world. However, in doing 
-this, timer interrupts are not being triggered and the system halts 
-early in the bootstrap stage. I'd like to ask if anyone could give me a 
-hint for why this is happening.
+Sorry,
+> 
+I had not noticed that; that branch isn't in linux-next, and I
+didn't see any email notification that the patch was applied.
 
-So far I managed to set up the secure world environment so that we can 
-invoke secure services through the SMC instruction from the normal 
-world. This configuration step is done by u-boot, after which it enters 
-normal world and jumps to Linux. To make sure that Linux can handle 
-interrupts freely, in this setup phase, I assign the SCR register 0x3 
-(EA, FIQ, and IRQ bit are clear, and AW and FW are set).
-
-Assuming that this configuration is correct, one possible explanation 
-for the absence of timer interrupts is that the Harmony board may impose 
-some restrictions to the timer re-configuration in the normal world. 
-Does anyone have an idea if there are such restrictions? If not, is 
-there any other explanation for this? Is there some configuration step 
-that I'm missing?
-
-Thank you very much in advance!
---Nuno Santos
+As discussed off-list, I'll resolve this by rebasing the relevant
+Tegra branch on top of your xceiv branch's pull request tag. Sorry for
+the confusion.
