@@ -1,23 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v6 4/4] tegra: ventana: add pwm backlight DT nodes
-Date: Wed, 12 Sep 2012 15:23:10 -0600
-Message-ID: <5050FD3E.6000107@wwwdotorg.org>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com> <1347443867-18868-5-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Wed, 12 Sep 2012 15:27:04 -0600
+Message-ID: <5050FE28.2080502@wwwdotorg.org>
+References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347443867-18868-5-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org, linux-pm@vger.kernel.org, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/12/2012 03:57 AM, Alexandre Courbot wrote:
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> New revision of the power sequences, taking as usual the feedback that was
+> kindly provided about the last version.
+> 
+> I think now is a good time to discuss integrating this and to start looking for
+> a maintainer who would be willing to merge this into his/her tree (I am
+> especially thinking about the power framework maintainers, since this is where
+> the code is right now.
 
-Both patches 3 and 4 in the series,
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+The other alternative is for you to maintain this going forward; I
+believe that would be as simple as:
 
-I will take those patches into the Tegra tree when (hopefully rather
-than if) patches 1 and 2 are accepted.
+* Create a patch to add yourself to MAINTAINERS for the
+drivers/power/power_seq/ directory.
+
+* Get a kernel.org account, push this patch to a branch there, and add
+the branch into linux-next.
+
+* Send a pull request to Linus at the appropriate time.
+
+* Ongoing: Accept any patches, perform any maintenance required, etc.
+
+Does anyone see any issue with Alexandre doing this? Nobody else has
+volunteered yet:-)
