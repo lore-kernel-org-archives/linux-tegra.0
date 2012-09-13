@@ -1,26 +1,30 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
 Subject: RE: [PATCH] USB: phy: re-organize tegra phy driver
-Date: Thu, 13 Sep 2012 09:19:41 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6DDEFB8D80@BGMAIL02.nvidia.com>
+Date: Thu, 13 Sep 2012 09:46:04 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6DDEFB8D8F@BGMAIL02.nvidia.com>
 References: <1347447481-25574-1-git-send-email-vbyravarasu@nvidia.com>
  <5050D622.7080704@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5050D622.7080704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5050D622.7080704@wwwdotorg.org>
 Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "balbi@ti.com" <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Forgot to address some of the comments made by stephen, in my previous update.
+Hence addressing them now.
+Thanks a lot Stephen, for detailed review.
+
 > -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> From: Stephen Warren [mailto:swarren@wwwdotorg.org]
 > Sent: Thursday, September 13, 2012 12:06 AM
 > To: Venu Byravarasu
-> Cc: balbi-l0cyMroinI0@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: balbi@ti.com; linux-kernel@vger.kernel.org; linux-usb@vger.kernel.org;
+> linux-tegra@vger.kernel.org
 > Subject: Re: [PATCH] USB: phy: re-organize tegra phy driver
 > 
 > On 09/12/2012 04:58 AM, Venu Byravarasu wrote:
@@ -36,17 +40,13 @@ List-Id: linux-tegra@vger.kernel.org
 > 
 > NVIDIA produces several Tegra SoCs viz Tegra20, Tegra30 etc.
 > In order to support USB PHY drivers on these SoCs, existing
-
-Will change tegra2 to Tegra20 and similar for Tegra30 & NVIDIA.
-However as phy is not an acronym, should we still have it in Caps?
-
 > PHY driver is split into SoC agnostic common USB PHY driver and
 > Tegra20-specific USB phy driver. This will facilitate easy addition
 > and deletion of phy drivers for Tegra SoCs.
 > 
 > ... and s/tegra/Tegra/ in the patch subject.
 > 
-> Tested-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Tested-by: Stephen Warren <swarren@wwwdotorg.org>
 > 
 > (On Harmony, both the USB Ethernet on USB3/UTMI and USB2's ULPI to a
 > breakout board)
@@ -75,6 +75,9 @@ However as phy is not an acronym, should we still have it in Caps?
 > Do we not support device mode yet? There's a dr_mode property in the DT
 > that's supposed to indicate host/device/otg.
 > 
+
+Device & otg support will be added soon.
+
 > > diff --git a/drivers/usb/phy/tegra2_usb_phy.c
 > b/drivers/usb/phy/tegra2_usb_phy.c
 > 
@@ -82,6 +85,9 @@ However as phy is not an acronym, should we still have it in Caps?
 > 
 > Please remove that #include statement; the heaer is not needed, and will
 > be deleted in the kernel 3.7 merge window.
+
+Sure, will remove it.
+
 > 
 > > +static int tegra2_utmip_pad_open(struct tegra_usb_phy *phy)
 > > +{
@@ -98,6 +104,10 @@ However as phy is not an acronym, should we still have it in Caps?
 > Can we use something other than phy->instance here? I see lots of usage
 > of this field, but we should really be deleting the following code from
 > ehci-tegra.c, rather the propagating the use of that field.
+
+I too feel the same way.
+Planning to address it in next patches. 
+
 > 
 >         /* This is pretty ugly and needs to be fixed when we do only
 >          * device-tree probing. Old code relies on the platform_device
@@ -123,6 +133,9 @@ However as phy is not an acronym, should we still have it in Caps?
 > 
 > Still, I suppose the cleanup not to use the instance value could be a
 > later patch as long as you're aware of the issue and planning to solve it.
+
+Yes, planning to address it in next patches.
+
 > 
 > > +		phy->pad_regs = ioremap(TEGRA_USB_BASE,
 > TEGRA_USB_SIZE);
@@ -131,6 +144,12 @@ However as phy is not an acronym, should we still have it in Caps?
 > controller already map them? I'm a little confused what in HW causes the
 > need for this whole if statement.
 > 
+
+In order to have very minimal changes in the patch, I did not clean this up.
+This was taken from old code, which is yet to be cleaned up.
+This patch just moves tegra2 specific code from single phy driver to tegra2_usb_phy.c
+Will address all clean up stuff in next patches.
+
 > > +		if (!phy->pad_regs) {
 > > +			pr_err("%s: can't remap usb registers\n", __func__);
 > > +			clk_put(phy->pad_clk);
@@ -148,6 +167,9 @@ However as phy is not an acronym, should we still have it in Caps?
 > Hmmm. There sure are a lot of places where the code is conditional based
 > on instance. This seems to be crying out to be split into more ops
 > functions that get set up once at probe() time and then just used.
+
+As mentioned already, can address all clean up stuff in other patch.
+
 > 
 > > +static int tegra2_utmi_phy_power_off(struct tegra_usb_phy *phy)
 > > +{
@@ -159,6 +181,10 @@ However as phy is not an acronym, should we still have it in Caps?
 > > +	if (phy->mode == TEGRA_USB_PHY_MODE_DEVICE) {
 > 
 > Hmm. Yet here, we have some support for device-mode.
+
+Complete device support will be added soon.
+This is from the old code. 
+
 > 
 > > +static int	tegra2_usb_phy_open(struct tegra_usb_phy *phy)
 > > +{
@@ -169,6 +195,10 @@ However as phy is not an acronym, should we still have it in Caps?
 > 
 > Similarly, this seems like it'd be better as two separate functions,
 > since there's already an op defined for open.
+
+tegra2_usb_phy_open is called via open of ops only. 
+Plz let me know if you still have any concern here.
+
 > 
 > > +		ulpi_config = phy->config;
 > > +		phy->clk = clk_get_sys(NULL, ulpi_config->clk);
@@ -203,6 +233,11 @@ However as phy is not an acronym, should we still have it in Caps?
 > 
 > In the else clause above, phy->pll_u was never assigned, yet failure
 > jumps here...
+
+Thanks for pointing this out.
+As I mentioned earlier, this was all taken from old code.
+Any how will fix this in my next patch.
+ 
 > 
 > > +	return err;
 > > +}
@@ -217,14 +252,14 @@ However as phy is not an acronym, should we still have it in Caps?
 > ...
 > 
 > It doesn't seem like a good idea to put data into a header file.
-> 
+
+Fine, will try moving it to implementation.
+
 > > diff --git a/include/linux/usb/tegra_usb_phy.h
 > b/include/linux/usb/tegra_usb_phy.h
 > 
 > > +struct usb_phy_ops {
 > 
 > Shouldn't that be tegra_usb_phy_ops to avoid namespace collisions?
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 
+Sure, will rename it.
