@@ -1,45 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: Tegra: Add smp_twd clock for Tegra20
-Date: Thu, 13 Sep 2012 12:33:18 -0600
-Message-ID: <505226EE.70201@wwwdotorg.org>
-References: <1347528873-3799-1-git-send-email-pgaikwad@nvidia.com> <5052027F.1000404@wwwdotorg.org> <5052174A.8090701@wwwdotorg.org> <20120913182749.3094.64766@nucleus>
+Subject: Re: [PATCH 0/5] ARM: tegra: move all APB DMA client to dmaengine
+ based driver
+Date: Thu, 13 Sep 2012 17:35:20 -0600
+Message-ID: <50526DB8.3090808@wwwdotorg.org>
+References: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120913182749.3094.64766@nucleus>
+In-Reply-To: <1345126397-28864-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-l0cyMroinI0@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, lrg-l0cyMroinI0@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, vinod.koul-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/13/2012 12:27 PM, Mike Turquette wrote:
-> Quoting Stephen Warren (2012-09-13 10:26:34)
->> On 09/13/2012 09:57 AM, Stephen Warren wrote:
->>> On 09/13/2012 03:34 AM, Prashant Gaikwad wrote:
->>>> Clockevent's frequency is changed upon cpufreq change
->>>> notification. It fetches local timer's rate to update the
->>>> clockevent frequency. This patch adds local timer clock
->>>> for Tegra20.
->>>
->>> Hmm. Off-list, I'd asked you to check whether this patch, and Mike's
->>> twd/clk-notifier changes were OK for Tegra, and part of your reponse was:
->>>
->>> Tegra20 (Ventana)
->>>         Tegra's for-next (common clock) + smp_twd : Panic
->>>
->>> Is that true? If so, I can't apply this patch...
->>
->> Oh, perhaps you mean the warning below? That's exactly the issue that
->> Mike's patch was intended to solve, so it's not surprising that it'd be
->> seen as soon as we actually implement the smp_twd clock. If that's all,
->> then it seems OK to apply this.
->>
+On 08/16/2012 08:13 AM, Laxman Dewangan wrote:
+> This patch series enable the dmaengine based Tegra APB DMA driver
+> and remove the support code for the legacy dma driver from different
+> APB DMA clients.
+> Patch 1 enable the dmaengine based dma drie and disable the legacy dma driver
+>         in config file.
+> Patch 2 remove the legacy dma driver.
+> Patch 3,4, 5 remove the support code from different APB DMA clients to support
+>         legacy dma driver.
 > 
-> Can you confirm that the problem goes away with this patch:
-> http://article.gmane.org/gmane.linux.ports.arm.kernel/187488/match=
+> Please note that this series will depends on patch
+> dma: tegra: enable/disable dma clock
+> which is not in 3.6-rc1 but will be available in next RC (rc2) of 3.6 as
+> part of fixes.
 
-Yes, it does.
-
-That patch is what triggered the creation of this patch (since because
-of it I noticed we didn't have the smp_twd clock in our driver).
+I have applied this series to Tegra's for-3.7/dmaengine branch. Right
+now, that branch is based directly on Mark Brown's ASoC for-3.6 branch
+in order to pick up the fix it depends on. However, I'll rebase on the
+3.6 pull request tag he sends for that branch as soon as it's available.
