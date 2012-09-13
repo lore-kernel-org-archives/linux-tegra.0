@@ -1,96 +1,123 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 10:32:38 +0200
-Message-ID: <20120913083238.GB12259@avionic-0098.mockup.avionic-design.de>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
- <1464760.6eqxJ2IzZ2@percival> <1347517377.7471.23.camel@lappyti>
- <2689722.93BQTh4lSC@percival> <1347519249.7471.42.camel@lappyti>
- <20120913070012.GC6180@pengutronix.de>
- <1347519807.7471.45.camel@lappyti>
- <20120913072920.GA11459@avionic-0098.mockup.avionic-design.de>
- <1347523218.3014.4.camel@deskari>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: Tegra: Add smp_twd clock for Tegra20
+Date: Thu, 13 Sep 2012 15:04:33 +0530
+Message-ID: <1347528873-3799-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1542887071621019939=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1347523218.3014.4.camel@deskari>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Clockevent's frequency is changed upon cpufreq change
+notification. It fetches local timer's rate to update the
+clockevent frequency. This patch adds local timer clock
+for Tegra20.
 
---===============1542887071621019939==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
-Content-Disposition: inline
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra20_clocks.c      |   19 ++++++++++++++++++
+ arch/arm/mach-tegra/tegra20_clocks.h      |    1 +
+ arch/arm/mach-tegra/tegra20_clocks_data.c |   30 +++++++++++++++++++++++++++++
+ 3 files changed, 50 insertions(+), 0 deletions(-)
 
-
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Sep 13, 2012 at 11:00:18AM +0300, Tomi Valkeinen wrote:
-> Yes, I think the backlight and the panel should be considered separate
-> devices. Just like, say, a touch screen and a panel may happen to be in
-> the same display module, a backlight and a panel can be in the same
-> display module. They are still separate, independent things, although
-> they are, of course, used together.
-
-Still, as Alex mentioned, there may be some dependency between the panel
-and the backlight, so we may need to have some kind of connection. I
-haven't had much time to look at the panel subsystem, but perhaps it
-should provide for this.
-
-I obviously don't know every panel and backlight combination out there,
-but isn't the dependency more of a usability nature. What I mean is that
-the panel will work even if you switch the backlight on immediately,
-just that the panel might take some time to properly display data and
-therefore the backlight should remain powered off so the user doesn't
-see garbage. Or are there really any functional dependencies?
-
-Thierry
-
---ftEhullJWpWg/VHq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQUZomAAoJEN0jrNd/PrOhoxkP/1NcMahOa2vJssXtRd00kKjt
-43a6kdaicffWOSgNh6grb8KYv1yc3obztLPrDXZK+mEYI4BZRw4HSR+xkoRHH1B7
-tYBbrnB7gwJV3aI1kEbF2O78SPIuk6OcdpMcF1G7vYV/W9aI04GTUMxbeARSppQI
-omA8Fsp6r0XtMYMeupBXRBAgrXB0UB7SESrB2ZRYCYK/Ok7+lZ/6A9Wfals7Cep7
-ZdGa0PsXBp9XqEKiG3xyW3Z1HEM2Xjq306OoxWjci8kyy3s2oIerAj2/d087fkWY
-brt/hTKIxPUYPRorYFgT5O+LyHhPQDr8GER11kqRRsaYrrV1aQ/DH/0n3dTtD3Ts
-TFume+Cu9gDLJ69yh6Iyohf5NqhQTmeERR8h8lwWfLZjhi7ksxl3wwEA1BorT2ly
-MQe8FRiJEvQLnneYjPlcIvjCGW1h+NpjmRdRAiS7XsRec3O/t+U71MxY/nNkxR/u
-aUXtvVBVklTOSzhqsU2H3BSYHw2F/Ngvu9TkqbBz/YRtzwSroVMJMeiU8DRGl0Hs
-gY6bogMqy9UT+WE4xtsVEm3h7K6tlBkNgX9ZVSr7OcJ1kzH2YtKQ32DI3MVXl4DJ
-xJvsMEeRgBuYFFtY35mG2zGx04nLdcUDoVoeNS2jmTfxW7dWHdIsGveyGU7ANWF6
-EFnBvzqsTwC2AaDlAJJz
-=M0St
------END PGP SIGNATURE-----
-
---ftEhullJWpWg/VHq--
-
---===============1542887071621019939==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============1542887071621019939==--
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+index a4561da..deb873f 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -384,6 +384,25 @@ struct clk_ops tegra_super_ops = {
+ 	.recalc_rate = tegra20_super_clk_recalc_rate,
+ };
+ 
++static unsigned long tegra20_twd_clk_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	u64 rate = parent_rate;
++
++	if (c->mul != 0 && c->div != 0) {
++		rate *= c->mul;
++		rate += c->div - 1; /* round up */
++		do_div(rate, c->div);
++	}
++
++	return rate;
++}
++
++struct clk_ops tegra_twd_ops = {
++	.recalc_rate = tegra20_twd_clk_recalc_rate,
++};
++
+ static u8 tegra20_cop_clk_get_parent(struct clk_hw *hw)
+ {
+ 	return 0;
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.h b/arch/arm/mach-tegra/tegra20_clocks.h
+index 0e42ec0..8bfd31b 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.h
++++ b/arch/arm/mach-tegra/tegra20_clocks.h
+@@ -28,6 +28,7 @@ extern struct clk_ops tegra_cdev_clk_ops;
+ extern struct clk_ops tegra_audio_sync_clk_ops;
+ extern struct clk_ops tegra_super_ops;
+ extern struct clk_ops tegra_cpu_ops;
++extern struct clk_ops tegra_twd_ops;
+ extern struct clk_ops tegra_cop_ops;
+ extern struct clk_ops tegra_bus_ops;
+ extern struct clk_ops tegra_blink_clk_ops;
+diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
+index 0e8ed37..dc2ad7d 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+@@ -583,6 +583,34 @@ static struct clk_tegra tegra_cclk_hw = {
+ DEFINE_CLK_TEGRA(cclk, 0, &tegra_super_ops, 0, mux_cclk,
+ 		mux_cclk_p, NULL);
+ 
++static const char *mux_twd[] = {
++	"cclk",
++};
++
++static struct clk *mux_twd_p[] = {
++	&tegra_cclk,
++};
++
++static struct clk tegra_clk_twd;
++static struct clk_tegra tegra_clk_twd_hw = {
++	.hw = {
++		.clk = &tegra_clk_twd,
++	},
++	.max_rate = 1000000000,
++	.mul = 1,
++	.div = 4,
++};
++
++static struct clk tegra_clk_twd = {
++	.name = "twd",
++	.ops = &tegra_twd_ops,
++	.hw = &tegra_clk_twd_hw.hw,
++	.parent = &tegra_cclk,
++	.parent_names = mux_twd,
++	.parents = mux_twd_p,
++	.num_parents = ARRAY_SIZE(mux_twd),
++};
++
+ static struct clk tegra_sclk;
+ static struct clk_tegra tegra_sclk_hw = {
+ 	.hw = {
+@@ -1023,6 +1051,7 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.1", "fast-clk"),
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
++	CLK_DUPLICATE("twd",	"smp_twd",	NULL),
+ };
+ 
+ #define CLK(dev, con, ck)	\
+@@ -1053,6 +1082,7 @@ static struct clk *tegra_ptr_clks[] = {
+ 	&tegra_pll_x,
+ 	&tegra_pll_e,
+ 	&tegra_cclk,
++	&tegra_clk_twd,
+ 	&tegra_sclk,
+ 	&tegra_hclk,
+ 	&tegra_pclk,
+-- 
+1.7.4.1
