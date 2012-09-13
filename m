@@ -1,44 +1,64 @@
-From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 08:45:39 +0300
-Message-ID: <1347515139.7471.7.camel@lappyti>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Thu, 13 Sep 2012 08:50:47 +0300
+Message-ID: <1347515447.7471.12.camel@lappyti>
 References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
-	 <1347443867-18868-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-X7CYTU1tnldXpuBQcygl"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347443867-18868-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+	boundary="=-gzBHsi+GVVosWN9StYJ9"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-X7CYTU1tnldXpuBQcygl
+--=-gzBHsi+GVVosWN9StYJ9
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2012-09-12 at 18:57 +0900, Alexandre Courbot wrote:
-> Some device drivers (panel backlights especially) need to follow precise
-> sequences for powering on and off, involving gpios, regulators, PWMs
-> with a precise powering order and delays to respect between each steps.
-> These sequences are board-specific, and do not belong to a particular
-> driver - therefore they have been performed by board-specific hook
-> functions to far.
+> New revision of the power sequences, taking as usual the feedback that wa=
+s
+> kindly provided about the last version.
+>=20
+> I think now is a good time to discuss integrating this and to start looki=
+ng for
+> a maintainer who would be willing to merge this into his/her tree (I am
+> especially thinking about the power framework maintainers, since this is =
+where
+> the code is right now. The second patch in this series enables the pwm_ba=
+cklight
+> driver to be used with the device tree, without relying on board-dependen=
+t
+> callbacks to support complex power sequences. We also plan to use power
+> sequences in other Tegra drivers, and other people have expressed interes=
+t in
+> this work during earlier reviews. See for instance
+>=20
+> https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-August/018532.=
+html
+>=20
+> and
+>=20
+> https://lkml.org/lkml/2012/9/6/270
+>=20
+> There is probably some more details to fix and improve, but the current s=
+hape
+> should be enough to know if we want this and where - therefore any sign f=
+rom
+> a maintainer would be greatly appreciated!
 
-The sequences are not board-specific, they are device (backlight, etc.)
-specific. The sequences have been handled in board-specific hook
-functions so far because there hasn't been proper drivers for the
-devices.
-
-If I were to take the same panel (and backlight) you have and install it
-on my board, I would need the same power sequence.
+I want to reiterate my opinion that I think power sequences in DT data
+is the wrong way to go. Powering sequences are device specific issues
+and should be handled in the device driver. But I also think that power
+sequences inside the drivers would probably be useful.
 
  Tomi
 
 
---=-X7CYTU1tnldXpuBQcygl
+--=-gzBHsi+GVVosWN9StYJ9
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -46,19 +66,20 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJQUXMDAAoJEPo9qoy8lh71ChgP/3m4mVfwgbYy4y0p23b9clXf
-CyGznDlFYfwXfS0GZSWvdsU9MnaY5X8AWFidc6SjtbICMG0IzsPIL4Qv4093izVZ
-/8O8r+6W0tXbvug++jHFFdXao2FZOvbzGRFCkIij3gnZB87SlKgpXL4IXY83Wmf6
-DsZw18x3xeNT72vKB9oG0VGNCF3g475m+nRb0MXPxecLtLAl1XoK04TdyP+6NikJ
-5MQEtKbp86hGh1a1AZiGVl15SYrsR7nVVmbxHsfJC2qQbP4vWdGIFhrjMl8vWq61
-WS57bQ3yP/pIwz1QwapkHoz25+xXjIA9al7LTcBl5svlABfoJjXMyRB9Ini90pqv
-ihYJ+l+sktIPErZLDtvJP4neiMyxxVB3gQ5k2emgvVk2ze1TAEm4AaL3lU1JULX5
-LS3ed/kWT3L6PEu2FQDbL4PnKBbW+0IMIzrMT4Cc1h/IWsThQfbLke1YHJGX211e
-oMGvKHe5gqkoAsOnYzglco6c0MViX5YqR5/MIhcLGbnM0ztX77feSdX0slnWnSn7
-nufo6Vks8qbJmIXVuwxdSXlRpPSwF7sM3+HHRAmwjaZSx8VqcAjsj5eUclPDSLmV
-yxMLMpPWYWZ2PMzA4aFWN1bFjwgy12gs8WNSnVhiZBj61SVxobFqbFDyGx/bqC+S
-8PSrC/MZMcLG9Ys+RvCW
-=SqAz
+iQIcBAABAgAGBQJQUXQ3AAoJEPo9qoy8lh719rcP/jyzp7W4J8YX1Hsn7F+h/YpP
+ZiYdW9bVvlEN0s72haK5+chjNX7+ukvowIWFY38qppvVDn3eJlvkpxuGjO+5khPZ
+ACvArt9tlt7AQJcyqQ9plD1G22o5KaV6FWz9b1D0KObflDCe7yk0nTS+cpIscx4t
+ktc0dNGu7I1GnqgBDVBgjFJ0ceMtPpOVYuwXqtOIhoDzHkeG50PRWVCuFS3aaa8A
+gV8AJjMuFhDTTEI/R31X1hZg6L/QpT7p0ASUmGe41H293FoI3a2CzPxnOm6oqeth
+Cr7twC9FCINJRVR6q669NKf4I2bGhd572m8UZsLpMEN7re9atsMK4HMQD1WmAatj
+/fQ9jQh35UVXJblVb/y/REr4ZtiEiYxlG1pdWNjl2UobUPhW198QgkxIA8S5+VlG
+/9Y9tPZaz0PJdWbfeQpwEvxyy+vhsNK2KIEPl87SDHGF6xf8sxgLRT5dg9QhY3Hw
+d+IDfcwiPF76Yg+0UlkX70gfq+Qon7AnvN5Z7XEiDou3iZVXnstm2UmDup+KDZXH
+yTurR3iNbXudp7YXeicwtuYPWgnqAI5sp5A+E5oT2hI9GAiNROs8/vErgjyJj7Cs
+gx87Q+7nLdO71J7aUW8/cxXYlkTOCrJ6gALFOUhFp6SUuyqZMiMy0LEm5jK/NkNf
+7nfg9R9HGl132dJL6A8c
+=Aqwb
 -----END PGP SIGNATURE-----
 
---=-X7CYTU1tnldXpuBQcygl--
+--=-gzBHsi+GVVosWN9StYJ9--
+
