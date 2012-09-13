@@ -1,103 +1,28 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 09:44:17 -0600
-Message-ID: <5051FF51.1080800@wwwdotorg.org>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
- <1347443867-18868-2-git-send-email-acourbot@nvidia.com>
- <50510791.8080302@wwwdotorg.org> <3678448.5nUOr4ZZV4@percival>
+Subject: Re: [PATCH] ARM: Tegra: Add smp_twd clock for Tegra20
+Date: Thu, 13 Sep 2012 09:57:51 -0600
+Message-ID: <5052027F.1000404@wwwdotorg.org>
+References: <1347528873-3799-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <3678448.5nUOr4ZZV4@percival>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1347528873-3799-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/13/2012 12:02 AM, Alex Courbot wrote:
-> On Thursday 13 September 2012 06:07:13 Stephen Warren wrote:
->> On 09/12/2012 03:57 AM, Alexandre Courbot wrote:
->>> Some device drivers (panel backlights especially) need to follow precise
->>> sequences for powering on and off, involving gpios, regulators, PWMs
->>> with a precise powering order and delays to respect between each steps.
->>> These sequences are board-specific, and do not belong to a particular
->>> driver - therefore they have been performed by board-specific hook
->>> functions to far.
->>>
->>> With the advent of the device tree and of ARM kernels that are not
->>> board-tied, we cannot rely on these board-specific hooks anymore but
->>> need a way to implement these sequences in a portable manner. This patch
->>> introduces a simple interpreter that can execute such power sequences
->>> encoded either as platform data or within the device tree.
->>>
->>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> diff --git a/Documentation/power/power_seq.txt
->>> b/Documentation/power/power_seq.txt
->>>
->>> +Sometimes, you may want to browse the list of resources allocated by a
->>> sequence, +for instance to ensure that a resource of a given type is
->>> present. The +power_seq_set_resources() function returns a list head that
->>> can be used with +the power_seq_for_each_resource() macro to browse all
->>> the resources of a set: +
->>> +  struct list_head *power_seq_set_resources(struct power_seq_set *seqs);
->>> +  power_seq_for_each_resource(pos, seqs)
->>> +
->>> +Here "pos" will be a pointer to a struct power_seq_resource. This
->>> structure +contains the type of the resource, the information used for
->>> identifying it, and +the resolved resource itself.
->>
->> I don't think you need to include that [power_seq_set_resources] prototype
->> here?
-> 
-> Why not? I thought it was customary to include the prototypes in the 
-> documentation, and this seems to be the right place for this function.
+On 09/13/2012 03:34 AM, Prashant Gaikwad wrote:
+> Clockevent's frequency is changed upon cpufreq change
+> notification. It fetches local timer's rate to update the
+> clockevent frequency. This patch adds local timer clock
+> for Tegra20.
 
-It's something used internally to the macro; what the user cares about
-is which macro to use for the functionality you're describing, not any
-prototypes needed by the internal implementation of the macro, which are
-always provided by the appropriate header.
+Hmm. Off-list, I'd asked you to check whether this patch, and Mike's
+twd/clk-notifier changes were OK for Tegra, and part of your reponse was:
 
->>> diff --git a/drivers/power/power_seq/power_seq.c
->>> b/drivers/power/power_seq/power_seq.c
->>>
->>> +struct power_seq_step {
->>> +	/* Copy of the platform data */
->>> +	struct platform_power_seq_step pdata;
->>
->> I'd reword the comment to "Copy of the step", and name the field "step".
-> 
-> That would make a step within a step - doesn't pdata make it more explicit 
-> what this member is for (containing the platform data for this step)?
+Tegra20 (Ventana)
+        Tegra's for-next (common clock) + smp_twd : Panic
 
-Well, it's not always platform data; it could come from device tree.
-Sorry for bike-shedding slightly, but how about just "data",
-"step_data", "config", or "step_config"?
-
->>> +static const struct power_seq_res_ops
->>> power_seq_types[POWER_SEQ_NUM_TYPES] = { +	[POWER_SEQ_DELAY] =
->>> POWER_SEQ_DELAY_TYPE,
->>> +	[POWER_SEQ_REGULATOR] = POWER_SEQ_REGULATOR_TYPE,
->>> +	[POWER_SEQ_PWM] = POWER_SEQ_PWM_TYPE,
->>> +	[POWER_SEQ_GPIO] = POWER_SEQ_GPIO_TYPE,
->>> +};
->>
->> Ah, I see why you're using #include now.
-> 
-> We could also go with something more dynamic and compile these files 
-> separately, but that would require some registration mechanism which I don't 
-> think is needed for such a simple feature.
-
-Sure. There are already examples in the kernel of basically what you're
-doing anyway, and it's not like it'd be hard to change this if we want
-to do something different in the future too.
+Is that true? If so, I can't apply this patch...
