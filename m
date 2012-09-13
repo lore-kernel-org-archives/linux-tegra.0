@@ -1,32 +1,53 @@
-From: Antti P Miettinen <ananaza-X3B1VOXEql0@public.gmane.org>
-Subject: Re: Linux timer interrupts not working when booting in normal-world
-Date: Thu, 13 Sep 2012 10:22:58 +0300
-Message-ID: <87ipbiwfn1.fsf@amiettinen-lnx.nvidia.com>
-References: <505095C9.5000108@gmail.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Thu, 13 Sep 2012 15:29:44 +0800
+Message-ID: <20120913072943.GB20959@opensource.wolfsonmicro.com>
+References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
+ <4473898.CeAQBgUhKL@percival>
+ <20120913071928.GA20959@opensource.wolfsonmicro.com>
+ <1378218.yLeQheNFT0@percival>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1378218.yLeQheNFT0@percival>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Nuno Santos <nuno.m.santos-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-writes:
-> I'm currently playing with the TrustZone technology on the Tegra2
-> Harmony board, and my goal is to boot Linux not in the secure world
-> (as it is in mainstream Linux), but in the normal world. However, in
-> doing this, timer interrupts are not being triggered and the system
-> halts early in the bootstrap stage. I'd like to ask if anyone could
-> give me a hint for why this is happening.
+On Thu, Sep 13, 2012 at 04:26:34PM +0900, Alex Courbot wrote:
+> On Thursday 13 September 2012 15:19:30 Mark Brown wrote:
+> > > On Thursday 13 September 2012 14:25:53 Mark Brown wrote:
+> > > > It would be sensible to make sure that the framework is done in such a
+> > > > way that drivers can use it - there will be drivers (perhaps not display
+> > > > ones) that have a known power sequence and which could benefit from the
+> > > > ability to use library code to implement it based on the user simply
+> > > > supplying named resources.
 
-GIC configuration? I'm not at all familiar with TZ, but you might need
-to configure the interrupts as non-secure:
+> > > Not sure I understand what you mean, but things should be working this way
+> > > already - regulators and PWMs are acquired by name using the standard
+> > > regulator_get() and pwm_get() functions. GPIOs do not, AFAIK, have a way
+> > > to be referenced by name so their number is used instead.
 
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0048a/CHDCEAIF.html
+> > Right, but the sequencing for enabling them is currently open coded in
+> > each driver.
 
-So you have a secure monitor you can create SMCs for? Is that code
-available?
+> Mmm then I'm afraid I don't see what you wanted to say initially - could you 
+> elaborate?
 
---
-Antti P Miettinen
-http://www.iki.fi/~ananaza/
+The driver knows the power sequence.  Having to type the same sequence
+into the DT or platform data for each board using the device wouuld be
+retarded so we need the drivers to be able to give the sequence to the
+library if they're going to be able to reuse it (which is a lot of what
+Tomi is talking about).
