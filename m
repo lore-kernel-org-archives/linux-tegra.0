@@ -1,65 +1,44 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 16:21:28 +0900
-Message-ID: <2382448.ok7bO52bKX@percival>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com> <20120913070012.GC6180@pengutronix.de> <1347519807.7471.45.camel@lappyti>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Thu, 13 Sep 2012 15:19:30 +0800
+Message-ID: <20120913071928.GA20959@opensource.wolfsonmicro.com>
+References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
+ <1749811.4qrG1GZfBf@percival>
+ <20120913062552.GB17869@opensource.wolfsonmicro.com>
+ <4473898.CeAQBgUhKL@percival>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1347519807.7471.45.camel@lappyti>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4473898.CeAQBgUhKL@percival>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 13 September 2012 15:03:27 Tomi Valkeinen wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, 2012-09-13 at 09:00 +0200, Sascha Hauer wrote:
-> 
-> > On Thu, Sep 13, 2012 at 09:54:09AM +0300, Tomi Valkeinen wrote:
-> > 
-> > > On Thu, 2012-09-13 at 15:36 +0900, Alex Courbot wrote:
-> > > 
-> > > > On Thursday 13 September 2012 14:22:57 Tomi Valkeinen wrote:
-> > > > 
-> > > >  
-> > > >  
-> > > > > However, I fear these board specific things may be quite a bit
-> > > > > anything,
-> > > > > so it may well be pwm, gpios and regulators are not enough for them.
-> > > > > For
-> > > > > example, there could be an FPGA on the board which requires some
-> > > > > configuration to accomplish the task at hand. It could be rather
-> > > > > difficult to handle it with a generic power sequence.
-> > > > 
-> > > > 
-> > > > Right. Note that this framework is supposed to be extended - I would
-> > > > like to 
- at least add regulator voltage setting, and maybe even
-> > > > support for clocks and pinmux (but that might be out of place).
-> > > 
-> > > 
-> > > Yes, that's one concern of mine... I already can imagine someone
-> > > suggesting adding conditionals to the power sequence data. Perhaps also
-> > > direct memory read/writes so you can twiddle registers directly. And so
-> > > on. Where's the limit what it should contain? Can we soon write full
-> > > drivers with the DT data? =)
-> > 
-> > 
-> > I have this concern aswell, that's why I'm sceptical about this patch
-> > set. But what are the alternatives? Adding power code to the drivers and
-> > thus adding board specific code to them is backwards.
-> 
-> 
-> As was pointed out in earlier posts in this thread, these are almost
-> always device specific, not board specific.
+On Thu, Sep 13, 2012 at 03:42:11PM +0900, Alex Courbot wrote:
+> On Thursday 13 September 2012 14:25:53 Mark Brown wrote:
 
-I think the confusion comes from the fact that in practice, people just wrote 
-their hooks into the board files instead of writing more "specialized" drivers 
-(which I agree would have been the correct way of doing). That is why hooks 
-like those of the pwm_backlight driver were "board specific code" to me too.
+> > It would be sensible to make sure that the framework is done in such a
+> > way that drivers can use it - there will be drivers (perhaps not display
+> > ones) that have a known power sequence and which could benefit from the
+> > ability to use library code to implement it based on the user simply
+> > supplying named resources.
 
-Alex.
+> Not sure I understand what you mean, but things should be working this way 
+> already - regulators and PWMs are acquired by name using the standard 
+> regulator_get() and pwm_get() functions. GPIOs do not, AFAIK, have a way to be 
+> referenced by name so their number is used instead.
 
+Right, but the sequencing for enabling them is currently open coded in
+each driver.
