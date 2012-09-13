@@ -1,41 +1,52 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 09:48:08 +0300
-Message-ID: <1347518888.7471.38.camel@lappyti>
+From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
+Date: Thu, 13 Sep 2012 09:54:09 +0300
+Message-ID: <1347519249.7471.42.camel@lappyti>
 References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
-	 <1347515447.7471.12.camel@lappyti> <1749811.4qrG1GZfBf@percival>
+	 <1464760.6eqxJ2IzZ2@percival> <1347517377.7471.23.camel@lappyti>
+	 <2689722.93BQTh4lSC@percival>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-fAdGNzRhttcXPFVhUejd"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1749811.4qrG1GZfBf@percival>
-Sender: linux-doc-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+	boundary="=-Z7zQN41Yy4VWSEps7HLu"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2689722.93BQTh4lSC@percival>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-fAdGNzRhttcXPFVhUejd
+--=-Z7zQN41Yy4VWSEps7HLu
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2012-09-13 at 15:23 +0900, Alex Courbot wrote:
+On Thu, 2012-09-13 at 15:36 +0900, Alex Courbot wrote:
+> On Thursday 13 September 2012 14:22:57 Tomi Valkeinen wrote:
+> =20
+> > However, I fear these board specific things may be quite a bit anything=
+,
+> > so it may well be pwm, gpios and regulators are not enough for them. Fo=
+r
+> > example, there could be an FPGA on the board which requires some
+> > configuration to accomplish the task at hand. It could be rather
+> > difficult to handle it with a generic power sequence.
+>=20
+> Right. Note that this framework is supposed to be extended - I would like=
+ to=20
+> at least add regulator voltage setting, and maybe even support for clocks=
+ and=20
+> pinmux (but that might be out of place).
 
-> DT support is actually the main point of power sequences, as outside of t=
-he DT=20
-> we can always work the old way and use callbacks. If we were to remove DT=
-=20
-> support, I am not sure this work would still be worth being merged.
-
-Ah, I guess you meant hooks in the driver, not hooks to board files?
-Yes, that would work, but if all the hooks do essentially the same
-things with just minor modifications like sleep-time, it makes more
-sense to have just one piece of code which gets the sequence as data.
+Yes, that's one concern of mine... I already can imagine someone
+suggesting adding conditionals to the power sequence data. Perhaps also
+direct memory read/writes so you can twiddle registers directly. And so
+on. Where's the limit what it should contain? Can we soon write full
+drivers with the DT data? =3D)
 
  Tomi
 
 
---=-fAdGNzRhttcXPFVhUejd
+--=-Z7zQN41Yy4VWSEps7HLu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -43,20 +54,19 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJQUYGoAAoJEPo9qoy8lh71l38P/3+BcNUPNUVaUMSBT8HhxKR4
-StxDb/+IIhZUkkauxkGOflFlQdp7oQtkoV28/5+R5khDzbUNCA2shDCLGq22xg3o
-SN44j9UbySCjwbqwLnhCph2B4g+dvVLilS6bYieQaL2oCJAoJVJ54UKLC+DMmGdj
-J+vlHx+byyWEq57/EY7Nk8/qMMHVYRLV+yaSz5vct+AEmQIDNEou6yQHYOEtUml/
-juK/KIE6dR41NEwc/+nhchao5PwUlhdiVGCImtqJS+9h1xLxtFbNYti6fcnxgryK
-1HSBK+jbTVGB09+zwqGiX4/hXGTr3L1ASXGBgMFjq8/I9UQU4u4PJ4RZ2ZhPxxyS
-DFRljioAQbyys5RMwyjqIAvwid3yd3g786WEeSphggB/tUxKRm7HObcaclhgdeEL
-D7N1/UUrbSUPSgNTVndXAW09IQfr4vpAg/V4gUQkRRqDlhkMR5xYHli1DH2L0M8g
-Lgx//ha90WgTCpxRinl+NzUzuByM4L+m75Ud73NntU1Vpgn4PQak5jcdsWkokVfo
-yqioF32iHq4r1i1aI8o8sjFaqYzqLjNGGVc6jVwtJdm1UysyGjy8beRJ59oHWq+r
-C8zxeAmb+IH1/V/uXN366y2KXXsAv8BpO/istze+M4kXMeXxVZBDRXj0aSlqbJiO
-vnWS0FGfYFh47qrNdiwJ
-=vBoM
+iQIcBAABAgAGBQJQUYMRAAoJEPo9qoy8lh71/G0QAK/iACEID25N+9nv22F94xd8
+XJaD08QNPvPVBn6i2ImESx9GyIC0MW38txdKcNLWsoEmxiTTUiHZt9ORH5uihGMZ
+0etZRUzuFZKgYLXfpMR57Np+23j55w51vYYjBsmrRooDsWxdcXO6CDTJQEzVctya
+SJg4LjH/HznrwMsSbtFsmWEO2RIO9ukM4kHqTCRgYOdVfmRP8il/rpMyTBCneZ2y
+qfEHkWIUtwmdDuzOj45c8G0apugUmb0eBGai5xc7PkXng5zfveZZNiBSlt4Z+CQ5
+C9+PElyF+6NOEtHV1J0OCz3njOJnGGUjqPpoaP5SSSRKtqdzh5ypmM59O9SWHx08
+AIaWBZkbctf21EWyRoLsXKckn2JC9NUR7qCNyOTLbH5wPwXdhA5o6wehuZMOTNk/
+AsGpl0W/fL+sxZ9OerIYCZhiLpIO28pA9X1TuUOEsPqFjod1CCgKVrm+xwephZn1
+VuRFOAYTYf/OYo2ahcSxZ9+s3q3vkCQMsiqdtFK7TaLE7YdTPDGQBKHfEzSICIeQ
+DLvmaldw9MuhwsxF+HAtzdIUlzwtJ2UfIcFNoHY57iYCf8lrfbV2DdwL4f/FCk43
+lhEeZryEkqDhnLCEw8LdjkxDY+o+8lcm1uY6YhG6dNtFpeMbbHR24p8SNtAZ0lZu
+exN3o8jW2fuTRlnisslK
+=deQn
 -----END PGP SIGNATURE-----
 
---=-fAdGNzRhttcXPFVhUejd--
-
+--=-Z7zQN41Yy4VWSEps7HLu--
