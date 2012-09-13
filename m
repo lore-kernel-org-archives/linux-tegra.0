@@ -1,83 +1,35 @@
 From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v6 1/4] Runtime Interpreted Power Sequences
-Date: Thu, 13 Sep 2012 15:36:23 +0900
-Message-ID: <2689722.93BQTh4lSC@percival>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com> <1464760.6eqxJ2IzZ2@percival> <1347517377.7471.23.camel@lappyti>
+Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
+Date: Thu, 13 Sep 2012 15:42:11 +0900
+Message-ID: <4473898.CeAQBgUhKL@percival>
+References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com> <1749811.4qrG1GZfBf@percival> <20120913062552.GB17869@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1347517377.7471.23.camel@lappyti>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120913062552.GB17869@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 13 September 2012 14:22:57 Tomi Valkeinen wrote:
-> * PGP Signed by an unknown key
+On Thursday 13 September 2012 14:25:53 Mark Brown wrote:
+> On Thu, Sep 13, 2012 at 03:23:06PM +0900, Alex Courbot wrote:
+> > I understand the logic behind handling powering sequences in the device
+> > driver, but as we discussed for some classes of devices this might just
+> > not
+> > scale. I don't know how many different panels (each with different
+> > powering
 > 
-> On Thu, 2012-09-13 at 15:08 +0900, Alex Courbot wrote:
-> 
-> > On Thursday 13 September 2012 13:45:39 Tomi Valkeinen wrote:
-> > 
-> > > > Old Signed by an unknown key
-> > > 
-> > > 
-> > > On Wed, 2012-09-12 at 18:57 +0900, Alexandre Courbot wrote:
-> > > 
-> > > 
-> > > > Some device drivers (panel backlights especially) need to follow
-> > > > precise
-> > > > sequences for powering on and off, involving gpios, regulators, PWMs
-> > > > with a precise powering order and delays to respect between each
-> > > > steps.
-> > > > These sequences are board-specific, and do not belong to a particular
-> > > > driver - therefore they have been performed by board-specific hook
-> > > > functions to far.
-> > > 
-> > > 
-> > > 
-> > > The sequences are not board-specific, they are device (backlight, etc.)
-> > > specific. The sequences have been handled in board-specific hook
-> > > functions so far because there hasn't been proper drivers for the
-> > > devices.
-> > > 
-> > > If I were to take the same panel (and backlight) you have and install
-> > > it
-> > > on my board, I would need the same power sequence.
-> > 
-> > 
-> > You could also have power sequences that control a set of GPIOs for an 
-> > external interface (and would then be more board-specific), but you are
-> > right 
-> 
-> What do you mean with "external interface"?
+> It would be sensible to make sure that the framework is done in such a
+> way that drivers can use it - there will be drivers (perhaps not display
+> ones) that have a known power sequence and which could benefit from the
+> ability to use library code to implement it based on the user simply
+> supplying named resources.
 
-Any crazy circuit design that would make the regular power sequence not usable 
-on a specific board. Sorry, I don't have any concrete example in mind, the 
-above is just speculation.
-
-> But it's true that there can always be interesting board specific
-> hardware designs, and they truly are board specific. In my experience
-> these are quite rare, though, but perhaps not so rare that we wouldn't
-> need to care about them.
-> 
-> However, I fear these board specific things may be quite a bit anything,
-> so it may well be pwm, gpios and regulators are not enough for them. For
-> example, there could be an FPGA on the board which requires some
-> configuration to accomplish the task at hand. It could be rather
-> difficult to handle it with a generic power sequence.
-
-Right. Note that this framework is supposed to be extended - I would like to 
-at least add regulator voltage setting, and maybe even support for clocks and 
-pinmux (but that might be out of place).
-
-> So I guess what I'm saying is that mostly these issues are device
-> specific, and when they are not, they may be rather complex/strange and
-> require c code.
-
-You're definitely right about the powering issue being a device issue 99% of 
-the time. For the rest I do not have enough insight to emit an opinion.
+Not sure I understand what you mean, but things should be working this way 
+already - regulators and PWMs are acquired by name using the standard 
+regulator_get() and pwm_get() functions. GPIOs do not, AFAIK, have a way to be 
+referenced by name so their number is used instead.
 
 Alex.
-
