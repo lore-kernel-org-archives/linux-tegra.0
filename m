@@ -1,316 +1,157 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH RESEND 5/5] ASoC: tegra: remove support of legacy DMA driver based access
-Date: Fri, 14 Sep 2012 10:11:29 -0600
-Message-ID: <1347639089-2520-5-git-send-email-swarren@wwwdotorg.org>
-References: <1347639089-2520-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH REPOST] iommu/tegra: smmu: Use debugfs_create_dir for directory
+Date: Fri, 14 Sep 2012 10:22:00 -0600
+Message-ID: <1347639720-2991-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1347639089-2520-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Remove the support code which uses the legacy APB DMA driver
-for accessing the I2S FIFO.
-The driver will use the dmaengine based APB DMA driver for
-accessing reqding/writing to I2S FIFO.
+The commit c3b1a35 "debugfs: make sure that debugfs_create_file() gets
+used only for regulars" doesn't allow to use debugfs_create_file() for
+dir. Keep debugfs data in smmu_device instead of directory's i_private.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/Kconfig     |    2 +-
- sound/soc/tegra/tegra_pcm.c |  232 -------------------------------------------
- sound/soc/tegra/tegra_pcm.h |   14 ---
- 3 files changed, 1 insertions(+), 247 deletions(-)
+ drivers/iommu/tegra-smmu.c |   52 +++++++++++++++++++++++++++++--------------
+ 1 files changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
-index 02bcd30..19e5fe7 100644
---- a/sound/soc/tegra/Kconfig
-+++ b/sound/soc/tegra/Kconfig
-@@ -1,6 +1,6 @@
- config SND_SOC_TEGRA
- 	tristate "SoC Audio for the Tegra System-on-Chip"
--	depends on ARCH_TEGRA && (TEGRA_SYSTEM_DMA || TEGRA20_APB_DMA)
-+	depends on ARCH_TEGRA && TEGRA20_APB_DMA
- 	select REGMAP_MMIO
- 	select SND_SOC_DMAENGINE_PCM if TEGRA20_APB_DMA
- 	help
-diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
-index 8d6900c..e187339 100644
---- a/sound/soc/tegra/tegra_pcm.c
-+++ b/sound/soc/tegra/tegra_pcm.c
-@@ -57,237 +57,6 @@ static const struct snd_pcm_hardware tegra_pcm_hardware = {
- 	.fifo_size		= 4,
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 5e51fb7..c749f96 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -246,6 +246,12 @@ struct smmu_as {
+ 	spinlock_t		client_lock; /* for client list */
  };
  
--#if defined(CONFIG_TEGRA_SYSTEM_DMA)
--static void tegra_pcm_queue_dma(struct tegra_runtime_data *prtd)
--{
--	struct snd_pcm_substream *substream = prtd->substream;
--	struct snd_dma_buffer *buf = &substream->dma_buffer;
--	struct tegra_dma_req *dma_req;
--	unsigned long addr;
--
--	dma_req = &prtd->dma_req[prtd->dma_req_idx];
--	prtd->dma_req_idx = 1 - prtd->dma_req_idx;
--
--	addr = buf->addr + prtd->dma_pos;
--	prtd->dma_pos += dma_req->size;
--	if (prtd->dma_pos >= prtd->dma_pos_end)
--		prtd->dma_pos = 0;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		dma_req->source_addr = addr;
--	else
--		dma_req->dest_addr = addr;
--
--	tegra_dma_enqueue_req(prtd->dma_chan, dma_req);
--}
--
--static void dma_complete_callback(struct tegra_dma_req *req)
--{
--	struct tegra_runtime_data *prtd = (struct tegra_runtime_data *)req->dev;
--	struct snd_pcm_substream *substream = prtd->substream;
--	struct snd_pcm_runtime *runtime = substream->runtime;
--
--	spin_lock(&prtd->lock);
--
--	if (!prtd->running) {
--		spin_unlock(&prtd->lock);
--		return;
--	}
--
--	if (++prtd->period_index >= runtime->periods)
--		prtd->period_index = 0;
--
--	tegra_pcm_queue_dma(prtd);
--
--	spin_unlock(&prtd->lock);
--
--	snd_pcm_period_elapsed(substream);
--}
--
--static void setup_dma_tx_request(struct tegra_dma_req *req,
--					struct tegra_pcm_dma_params * dmap)
--{
--	req->complete = dma_complete_callback;
--	req->to_memory = false;
--	req->dest_addr = dmap->addr;
--	req->dest_wrap = dmap->wrap;
--	req->source_bus_width = 32;
--	req->source_wrap = 0;
--	req->dest_bus_width = dmap->width;
--	req->req_sel = dmap->req_sel;
--}
--
--static void setup_dma_rx_request(struct tegra_dma_req *req,
--					struct tegra_pcm_dma_params * dmap)
--{
--	req->complete = dma_complete_callback;
--	req->to_memory = true;
--	req->source_addr = dmap->addr;
--	req->dest_wrap = 0;
--	req->source_bus_width = dmap->width;
--	req->source_wrap = dmap->wrap;
--	req->dest_bus_width = 32;
--	req->req_sel = dmap->req_sel;
--}
--
--static int tegra_pcm_open(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct tegra_runtime_data *prtd;
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct tegra_pcm_dma_params * dmap;
--	int ret = 0;
--
--	prtd = kzalloc(sizeof(struct tegra_runtime_data), GFP_KERNEL);
--	if (prtd == NULL)
--		return -ENOMEM;
--
--	runtime->private_data = prtd;
--	prtd->substream = substream;
--
--	spin_lock_init(&prtd->lock);
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		dmap = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
--		setup_dma_tx_request(&prtd->dma_req[0], dmap);
--		setup_dma_tx_request(&prtd->dma_req[1], dmap);
--	} else {
--		dmap = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
--		setup_dma_rx_request(&prtd->dma_req[0], dmap);
--		setup_dma_rx_request(&prtd->dma_req[1], dmap);
--	}
--
--	prtd->dma_req[0].dev = prtd;
--	prtd->dma_req[1].dev = prtd;
--
--	prtd->dma_chan = tegra_dma_allocate_channel(TEGRA_DMA_MODE_ONESHOT);
--	if (prtd->dma_chan == NULL) {
--		ret = -ENOMEM;
--		goto err;
--	}
--
--	/* Set HW params now that initialization is complete */
--	snd_soc_set_runtime_hwparams(substream, &tegra_pcm_hardware);
--
--	/* Ensure that buffer size is a multiple of period size */
--	ret = snd_pcm_hw_constraint_integer(runtime,
--						SNDRV_PCM_HW_PARAM_PERIODS);
--	if (ret < 0)
--		goto err;
--
--	return 0;
--
--err:
--	if (prtd->dma_chan) {
--		tegra_dma_free_channel(prtd->dma_chan);
--	}
--
--	kfree(prtd);
--
--	return ret;
--}
--
--static int tegra_pcm_close(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct tegra_runtime_data *prtd = runtime->private_data;
--
--	tegra_dma_free_channel(prtd->dma_chan);
--
--	kfree(prtd);
--
--	return 0;
--}
--
--static int tegra_pcm_hw_params(struct snd_pcm_substream *substream,
--				struct snd_pcm_hw_params *params)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct tegra_runtime_data *prtd = runtime->private_data;
--
--	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
--
--	prtd->dma_req[0].size = params_period_bytes(params);
--	prtd->dma_req[1].size = prtd->dma_req[0].size;
--
--	return 0;
--}
--
--static int tegra_pcm_hw_free(struct snd_pcm_substream *substream)
--{
--	snd_pcm_set_runtime_buffer(substream, NULL);
--
--	return 0;
--}
--
--static int tegra_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct tegra_runtime_data *prtd = runtime->private_data;
--	unsigned long flags;
--
--	switch (cmd) {
--	case SNDRV_PCM_TRIGGER_START:
--		prtd->dma_pos = 0;
--		prtd->dma_pos_end = frames_to_bytes(runtime, runtime->periods * runtime->period_size);
--		prtd->period_index = 0;
--		prtd->dma_req_idx = 0;
--		/* Fall-through */
--	case SNDRV_PCM_TRIGGER_RESUME:
--	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
--		spin_lock_irqsave(&prtd->lock, flags);
--		prtd->running = 1;
--		spin_unlock_irqrestore(&prtd->lock, flags);
--		tegra_pcm_queue_dma(prtd);
--		tegra_pcm_queue_dma(prtd);
--		break;
--	case SNDRV_PCM_TRIGGER_STOP:
--	case SNDRV_PCM_TRIGGER_SUSPEND:
--	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
--		spin_lock_irqsave(&prtd->lock, flags);
--		prtd->running = 0;
--		spin_unlock_irqrestore(&prtd->lock, flags);
--		tegra_dma_dequeue_req(prtd->dma_chan, &prtd->dma_req[0]);
--		tegra_dma_dequeue_req(prtd->dma_chan, &prtd->dma_req[1]);
--		break;
--	default:
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--static snd_pcm_uframes_t tegra_pcm_pointer(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct tegra_runtime_data *prtd = runtime->private_data;
--
--	return prtd->period_index * runtime->period_size;
--}
--
--
--static int tegra_pcm_mmap(struct snd_pcm_substream *substream,
--				struct vm_area_struct *vma)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--
--	return dma_mmap_writecombine(substream->pcm->card->dev, vma,
--					runtime->dma_area,
--					runtime->dma_addr,
--					runtime->dma_bytes);
--}
--
--static struct snd_pcm_ops tegra_pcm_ops = {
--	.open		= tegra_pcm_open,
--	.close		= tegra_pcm_close,
--	.ioctl		= snd_pcm_lib_ioctl,
--	.hw_params	= tegra_pcm_hw_params,
--	.hw_free	= tegra_pcm_hw_free,
--	.trigger	= tegra_pcm_trigger,
--	.pointer	= tegra_pcm_pointer,
--	.mmap		= tegra_pcm_mmap,
--};
--#else
- static int tegra_pcm_open(struct snd_pcm_substream *substream)
++struct smmu_debugfs_info {
++	struct smmu_device *smmu;
++	int mc;
++	int cache;
++};
++
+ /*
+  * Per SMMU device - IOMMU device
+  */
+@@ -267,6 +273,7 @@ struct smmu_device {
+ 	unsigned long asid_security;
+ 
+ 	struct dentry *debugfs_root;
++	struct smmu_debugfs_info *debugfs_info;
+ 
+ 	struct device_node *ahb;
+ 
+@@ -920,9 +927,10 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
+ 					const char __user *buffer,
+ 					size_t count, loff_t *pos)
  {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-@@ -399,7 +168,6 @@ static struct snd_pcm_ops tegra_pcm_ops = {
- 	.pointer	= snd_dmaengine_pcm_pointer,
- 	.mmap		= tegra_pcm_mmap,
- };
--#endif
++	struct smmu_debugfs_info *info;
+ 	struct smmu_device *smmu;
+ 	struct dentry *dent;
+-	int i, cache, mc;
++	int i;
+ 	enum {
+ 		_OFF = 0,
+ 		_ON,
+@@ -950,11 +958,10 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
+ 		return -EINVAL;
  
- static int tegra_pcm_preallocate_dma_buffer(struct snd_pcm *pcm, int stream)
+ 	dent = file->f_dentry;
+-	cache = (int)dent->d_inode->i_private;
+-	mc = (int)dent->d_parent->d_inode->i_private;
+-	smmu = dent->d_parent->d_parent->d_inode->i_private;
++	info = dent->d_inode->i_private;
++	smmu = info->smmu;
+ 
+-	offs = SMMU_CACHE_CONFIG(cache);
++	offs = SMMU_CACHE_CONFIG(info->cache);
+ 	val = smmu_read(smmu, offs);
+ 	switch (i) {
+ 	case _OFF:
+@@ -986,21 +993,21 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
+ 
+ static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
  {
-diff --git a/sound/soc/tegra/tegra_pcm.h b/sound/soc/tegra/tegra_pcm.h
-index a3a4503..b40279b 100644
---- a/sound/soc/tegra/tegra_pcm.h
-+++ b/sound/soc/tegra/tegra_pcm.h
-@@ -40,20 +40,6 @@ struct tegra_pcm_dma_params {
- 	unsigned long req_sel;
- };
++	struct smmu_debugfs_info *info;
+ 	struct smmu_device *smmu;
+ 	struct dentry *dent;
+-	int i, cache, mc;
++	int i;
+ 	const char * const stats[] = { "hit", "miss", };
  
--#if defined(CONFIG_TEGRA_SYSTEM_DMA)
--struct tegra_runtime_data {
--	struct snd_pcm_substream *substream;
--	spinlock_t lock;
--	int running;
--	int dma_pos;
--	int dma_pos_end;
--	int period_index;
--	int dma_req_idx;
--	struct tegra_dma_req dma_req[2];
--	struct tegra_dma_channel *dma_chan;
--};
--#endif
--
- int tegra_pcm_platform_register(struct device *dev);
- void tegra_pcm_platform_unregister(struct device *dev);
+ 	dent = d_find_alias(s->private);
+-	cache = (int)dent->d_inode->i_private;
+-	mc = (int)dent->d_parent->d_inode->i_private;
+-	smmu = dent->d_parent->d_parent->d_inode->i_private;
++	info = dent->d_inode->i_private;
++	smmu = info->smmu;
  
+ 	for (i = 0; i < ARRAY_SIZE(stats); i++) {
+ 		u32 val;
+ 		size_t offs;
+ 
+-		offs = SMMU_STATS_CACHE_COUNT(mc, cache, i);
++		offs = SMMU_STATS_CACHE_COUNT(info->mc, info->cache, i);
+ 		val = smmu_read(smmu, offs);
+ 		seq_printf(s, "%s:%08x ", stats[i], val);
+ 
+@@ -1028,16 +1035,22 @@ static const struct file_operations smmu_debugfs_stats_fops = {
+ static void smmu_debugfs_delete(struct smmu_device *smmu)
+ {
+ 	debugfs_remove_recursive(smmu->debugfs_root);
++	kfree(smmu->debugfs_info);
+ }
+ 
+ static void smmu_debugfs_create(struct smmu_device *smmu)
+ {
+ 	int i;
++	size_t bytes;
+ 	struct dentry *root;
+ 
+-	root = debugfs_create_file(dev_name(smmu->dev),
+-				   S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
+-				   NULL, smmu, NULL);
++	bytes = ARRAY_SIZE(smmu_debugfs_mc) * ARRAY_SIZE(smmu_debugfs_cache) *
++		sizeof(*smmu->debugfs_info);
++	smmu->debugfs_info = kmalloc(bytes, GFP_KERNEL);
++	if (!smmu->debugfs_info)
++		return;
++
++	root = debugfs_create_dir(dev_name(smmu->dev), NULL);
+ 	if (!root)
+ 		goto err_out;
+ 	smmu->debugfs_root = root;
+@@ -1046,18 +1059,23 @@ static void smmu_debugfs_create(struct smmu_device *smmu)
+ 		int j;
+ 		struct dentry *mc;
+ 
+-		mc = debugfs_create_file(smmu_debugfs_mc[i],
+-					 S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
+-					 root, (void *)i, NULL);
++		mc = debugfs_create_dir(smmu_debugfs_mc[i], root);
+ 		if (!mc)
+ 			goto err_out;
+ 
+ 		for (j = 0; j < ARRAY_SIZE(smmu_debugfs_cache); j++) {
+ 			struct dentry *cache;
++			struct smmu_debugfs_info *info;
++
++			info = smmu->debugfs_info;
++			info += i * ARRAY_SIZE(smmu_debugfs_mc) + j;
++			info->smmu = smmu;
++			info->mc = i;
++			info->cache = j;
+ 
+ 			cache = debugfs_create_file(smmu_debugfs_cache[j],
+ 						    S_IWUGO | S_IRUGO, mc,
+-						    (void *)j,
++						    (void *)info,
+ 						    &smmu_debugfs_stats_fops);
+ 			if (!cache)
+ 				goto err_out;
 -- 
 1.7.0.4
