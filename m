@@ -1,157 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST] iommu/tegra: smmu: Use debugfs_create_dir for directory
-Date: Fri, 14 Sep 2012 10:22:00 -0600
-Message-ID: <1347639720-2991-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 5/5] ASoC: tegra: remove support of legacy
+ DMA driver based access
+Date: Fri, 14 Sep 2012 17:33:40 +0100
+Message-ID: <20120914163340.GF4684@opensource.wolfsonmicro.com>
+References: <1345126397-28864-1-git-send-email-ldewangan@nvidia.com>
+ <1345126397-28864-6-git-send-email-ldewangan@nvidia.com>
+ <50526DFE.5030709@wwwdotorg.org>
+ <20120914155335.GB4684@opensource.wolfsonmicro.com>
+ <505354A7.3090502@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <505354A7.3090502@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: vinod.koul@linux.intel.com, linux@arm.linux.org.uk, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, olof@lixom.net, spi-devel-general@lists.sourceforge.net, lrg@ti.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Sep 14, 2012 at 10:00:39AM -0600, Stephen Warren wrote:
 
-The commit c3b1a35 "debugfs: make sure that debugfs_create_file() gets
-used only for regulars" doesn't allow to use debugfs_create_file() for
-dir. Keep debugfs data in smmu_device instead of directory's i_private.
+> But do note that I pinged 8 days ago for an ack, and received no
+> objections, and you were well aware that the bug was fixed since you
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c |   52 +++++++++++++++++++++++++++++--------------
- 1 files changed, 35 insertions(+), 17 deletions(-)
+I didn't read these mails enough to notice that they were asking for an
+ack, they were followups to already discarded patches (the were
+discarded due to the testing problems).  One of the things I do to deal
+with mail overload is to drop followups to patches that I don't remember
+reviewing (as in this case where the negative test reports arrived
+before I saw the patches) or where I remember I was already happy.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 5e51fb7..c749f96 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -246,6 +246,12 @@ struct smmu_as {
- 	spinlock_t		client_lock; /* for client list */
- };
- 
-+struct smmu_debugfs_info {
-+	struct smmu_device *smmu;
-+	int mc;
-+	int cache;
-+};
-+
- /*
-  * Per SMMU device - IOMMU device
-  */
-@@ -267,6 +273,7 @@ struct smmu_device {
- 	unsigned long asid_security;
- 
- 	struct dentry *debugfs_root;
-+	struct smmu_debugfs_info *debugfs_info;
- 
- 	struct device_node *ahb;
- 
-@@ -920,9 +927,10 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
- 					const char __user *buffer,
- 					size_t count, loff_t *pos)
- {
-+	struct smmu_debugfs_info *info;
- 	struct smmu_device *smmu;
- 	struct dentry *dent;
--	int i, cache, mc;
-+	int i;
- 	enum {
- 		_OFF = 0,
- 		_ON,
-@@ -950,11 +958,10 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
- 		return -EINVAL;
- 
- 	dent = file->f_dentry;
--	cache = (int)dent->d_inode->i_private;
--	mc = (int)dent->d_parent->d_inode->i_private;
--	smmu = dent->d_parent->d_parent->d_inode->i_private;
-+	info = dent->d_inode->i_private;
-+	smmu = info->smmu;
- 
--	offs = SMMU_CACHE_CONFIG(cache);
-+	offs = SMMU_CACHE_CONFIG(info->cache);
- 	val = smmu_read(smmu, offs);
- 	switch (i) {
- 	case _OFF:
-@@ -986,21 +993,21 @@ static ssize_t smmu_debugfs_stats_write(struct file *file,
- 
- static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
- {
-+	struct smmu_debugfs_info *info;
- 	struct smmu_device *smmu;
- 	struct dentry *dent;
--	int i, cache, mc;
-+	int i;
- 	const char * const stats[] = { "hit", "miss", };
- 
- 	dent = d_find_alias(s->private);
--	cache = (int)dent->d_inode->i_private;
--	mc = (int)dent->d_parent->d_inode->i_private;
--	smmu = dent->d_parent->d_parent->d_inode->i_private;
-+	info = dent->d_inode->i_private;
-+	smmu = info->smmu;
- 
- 	for (i = 0; i < ARRAY_SIZE(stats); i++) {
- 		u32 val;
- 		size_t offs;
- 
--		offs = SMMU_STATS_CACHE_COUNT(mc, cache, i);
-+		offs = SMMU_STATS_CACHE_COUNT(info->mc, info->cache, i);
- 		val = smmu_read(smmu, offs);
- 		seq_printf(s, "%s:%08x ", stats[i], val);
- 
-@@ -1028,16 +1035,22 @@ static const struct file_operations smmu_debugfs_stats_fops = {
- static void smmu_debugfs_delete(struct smmu_device *smmu)
- {
- 	debugfs_remove_recursive(smmu->debugfs_root);
-+	kfree(smmu->debugfs_info);
- }
- 
- static void smmu_debugfs_create(struct smmu_device *smmu)
- {
- 	int i;
-+	size_t bytes;
- 	struct dentry *root;
- 
--	root = debugfs_create_file(dev_name(smmu->dev),
--				   S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
--				   NULL, smmu, NULL);
-+	bytes = ARRAY_SIZE(smmu_debugfs_mc) * ARRAY_SIZE(smmu_debugfs_cache) *
-+		sizeof(*smmu->debugfs_info);
-+	smmu->debugfs_info = kmalloc(bytes, GFP_KERNEL);
-+	if (!smmu->debugfs_info)
-+		return;
-+
-+	root = debugfs_create_dir(dev_name(smmu->dev), NULL);
- 	if (!root)
- 		goto err_out;
- 	smmu->debugfs_root = root;
-@@ -1046,18 +1059,23 @@ static void smmu_debugfs_create(struct smmu_device *smmu)
- 		int j;
- 		struct dentry *mc;
- 
--		mc = debugfs_create_file(smmu_debugfs_mc[i],
--					 S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
--					 root, (void *)i, NULL);
-+		mc = debugfs_create_dir(smmu_debugfs_mc[i], root);
- 		if (!mc)
- 			goto err_out;
- 
- 		for (j = 0; j < ARRAY_SIZE(smmu_debugfs_cache); j++) {
- 			struct dentry *cache;
-+			struct smmu_debugfs_info *info;
-+
-+			info = smmu->debugfs_info;
-+			info += i * ARRAY_SIZE(smmu_debugfs_mc) + j;
-+			info->smmu = smmu;
-+			info->mc = i;
-+			info->cache = j;
- 
- 			cache = debugfs_create_file(smmu_debugfs_cache[j],
- 						    S_IWUGO | S_IRUGO, mc,
--						    (void *)j,
-+						    (void *)info,
- 						    &smmu_debugfs_stats_fops);
- 			if (!cache)
- 				goto err_out;
--- 
-1.7.0.4
+> applied the fix to the Tegra ASoC PCM driver yourself, and we had
+> discussed this being a dependency for the dmaengine patches, and you'd
+> told me to just base the Tegra branch on top of your tree until a signed
+> tag was available for me to base upon.
+
+I knew it was a dependency, I didn't know that there were no further
+changes required to the series - your note when you posted the patch
+didn't mention anything.
