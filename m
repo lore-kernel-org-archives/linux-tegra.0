@@ -1,26 +1,24 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 09/10] ARM: tegra: defconfig updates
-Date: Sun, 16 Sep 2012 19:12:21 -0700
-Message-ID: <20120917021221.GL19186@quad.lixom.net>
+Subject: Re: [GIT PULL 10/10] ARM: tegra: MAINTAINERS updates
+Date: Sun, 16 Sep 2012 19:12:35 -0700
+Message-ID: <20120917021235.GM19186@quad.lixom.net>
 References: <1347653181-19936-1-git-send-email-swarren@wwwdotorg.org>
- <1347653181-19936-9-git-send-email-swarren@wwwdotorg.org>
+ <1347653181-19936-10-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1347653181-19936-9-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1347653181-19936-10-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 14, 2012 at 02:06:20PM -0600, Stephen Warren wrote:
-> This branch updates tegra_defconfig mainly to enable new features that
-> were either implemented in this kernel release, previously missing, or
-> recently determined to be useful.
-> 
-> The config entries for explicit board support are now removed, since
-> Tegra now only supports booting from device tree.
+On Fri, Sep 14, 2012 at 02:06:21PM -0600, Stephen Warren wrote:
+> Two changes are made to MAINTAINERS: addition of an entry for
+> tegra_defconfig, and removal of Olof and Colin from the Tegra entry. I'd
+> like to take this opportunity again to thank both Olof and Colin for all
+> the work they have put into Tegra support.
 > 
 > This branch is based on v3.6-rc4.
 > 
@@ -32,9 +30,9 @@ On Fri, Sep 14, 2012 at 02:06:20PM -0600, Stephen Warren wrote:
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.7-defconfig
+>   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.7-maintainers
 
-Pulled into next/defconfig.
+Pulled into next/maintainers.
 
 
 -Olof
