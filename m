@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 3/4] ARM: tegra: Add Avionic Design Medcom-Wide support
-Date: Tue, 18 Sep 2012 11:06:59 +0200
-Message-ID: <1347959220-20166-3-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v2 2/4] ARM: tegra: Add Avionic Design Plutux support
+Date: Tue, 18 Sep 2012 11:06:58 +0200
+Message-ID: <1347959220-20166-2-git-send-email-thierry.reding@avionic-design.de>
 References: <1347959220-20166-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1347959220-20166-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,29 +10,29 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Medcom is a 16:9 15" terminal that is used for patient infotainment
-in hospitals.
+The Plutux is a set-top box device based on the Tamonten SOM and can be
+connected to a display via HDMI.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-medcom.dts | 60 ++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra20-plutux.dts | 52 ++++++++++++++++++++++++++++++++++++
  arch/arm/mach-tegra/Makefile.boot    |  1 +
- 2 files changed, 61 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra20-medcom.dts
+ 2 files changed, 53 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-plutux.dts
 
-diff --git a/arch/arm/boot/dts/tegra20-medcom.dts b/arch/arm/boot/dts/tegra20-medcom.dts
+diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
 new file mode 100644
-index 0000000..1f88981
+index 0000000..b012782
 --- /dev/null
-+++ b/arch/arm/boot/dts/tegra20-medcom.dts
-@@ -0,0 +1,60 @@
++++ b/arch/arm/boot/dts/tegra20-plutux.dts
+@@ -0,0 +1,52 @@
 +/dts-v1/;
 +
 +/include/ "tegra20-tamonten.dtsi"
 +
 +/ {
-+	model = "Avionic Design Medcom-Wide board";
-+	compatible = "ad,medcom-wide", "ad,tamonten";
++	model = "Avionic Design Plutux board";
++	compatible = "ad,plutux", "ad,tamonten";
 +
 +	i2c@7000c000 {
 +		wm8903: wm8903@1a {
@@ -54,18 +54,10 @@ index 0000000..1f88981
 +		};
 +	};
 +
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
 +	sound {
 +		compatible = "nvidia,tegra-audio-wm8903-harmony",
 +			     "nvidia,tegra-audio-wm8903";
-+		nvidia,model = "Avionic Design Medcom-Wide";
++		nvidia,model = "Avionic Design Plutux";
 +
 +		nvidia,audio-routing =
 +			"Headphone Jack", "HPOUTR",
@@ -87,16 +79,16 @@ index 0000000..1f88981
 +	};
 +};
 diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index 63f1d61..b4994214 100644
+index 6e35207..63f1d61 100644
 --- a/arch/arm/mach-tegra/Makefile.boot
 +++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -3,6 +3,7 @@ params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
- initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+@@ -4,6 +4,7 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
  
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-harmony.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-medcom.dtb
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-paz00.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
++dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-seaboard.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-trimslice.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-ventana.dtb
 -- 
 1.7.12
