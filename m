@@ -1,60 +1,37 @@
-From: =?utf-8?B?5q+P5aSp5LuFMTDlhYM=?= <admin-JpAWIi8UyI5Wk0Htik3J/w@public.gmane.org>
-Subject: =?utf-8?B?MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jEIyQuivog==?=
-	=?utf-8?B?55uY5Lmw5a6244CBdGhvbWFzbmV0IOmHh+i0reWVhizmtbflhbM=?=
-	=?utf-8?B?5pWw5o2uLOe+pOWPkei9r+S7tu+8jOWxleS8muS5sOWutiDku4UzMDDlhYMh?=
-Date: Wed, 19 Sep 2012 07:21:27 +0000 (UTC)
-Message-ID: <20240919150802354011@soontest.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC 0/5] ARM: dma-mapping: New dma_map_ops to control IOVA more precisely
+Date: Wed, 19 Sep 2012 07:59:45 +0000
+Message-ID: <201209190759.46174.arnd@arndb.de>
+References: <1346223335-31455-1-git-send-email-hdoyu@nvidia.com> <20120918124918.GK2505@amd.com> <20120919095843.d1db155e0f085f4fcf64ea32@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Date: Thu, 19 Sep 2024 15:07:49 +0800
+In-Reply-To: <20120919095843.d1db155e0f085f4fcf64ea32-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lucac1-vcC760zL2fQ1GQ1Ptb7lUw@public.gmane.org, lucanxiong-KN7UnAbNpbg@public.gmane.org, linux-expert-WVlzvzqoTvw@public.gmane.org, lucas.n-EMRzualFZlQ@public.gmane.org, lucas.weakley-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lucas-9MZp7ZqArvOCqqr6xb6PNopmd20KqlRB35y40paUtzeNLZ7b95+KnVAUjnlXr6A1@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuzappz-PkbjNfxxIARBDgjK7y7TUQ@public.gmane.org, linw-Bmn0NHDPX5LQT0dZR+AlfA@public.gmane.org, linwei-21oTXDvgc7MnDS1+zs4M5A@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org" <linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jOa1t+WFs+aVsOaNruaPkOWNlXBpZXJz
-54mI77yMMjAwOC0yMDEy5bm0OeWxiuW5v+S6pOS8muaVsOaNruOAgg0KDQrkuIDlhbExMOS4quWM
-hSjmlbDmja7mmK/lhajooYzkuJrnmoTvvIzlj6/ku6XmjInnhaflhbPplK7or43mj5Dlj5blh7rm
-naXnmoQp77yaIA0KMe+8jDIwMTLmmKXlraMxMTHlsYrlub/kuqTkvJrkubDlrrbnjrDlnLror6Ln
-m5jmlbDmja7lupPmlrDpspzlh7rngonvvIzotoXnuqfmlrDpspzkubDlrrbvvIzmlrDpspzmlbDm
-ja7vvIzlrrnmmJPmiJDljZXvvIEgDQoy77yM6LSt5Lmw5ZCO5Y+v5Lul5YWN6LS55pu05pawMjAx
-Mueni+Wto+W5v+S6pOS8muS5sOWutuaVsOaNruOAguWkqui2heWAvOS6huOAgg0KM++8jDIwMTLm
-nIDmlrDlhajnkIPlsZXkvJrnjrDlnLrkubDlrrblupMo5LiO6LS45Y+R5ZCM5q2lKSzlhbE0NuS4
-h+adoeaVsOaNruOAgiAo5oyJ54Wn6KGM5Lia5YiG57G7KQ0KNO+8jDIwMTEsMjAxMOW5tCwyMDA5
-5bm0LDIwMDjlubQg5pil5a2jK+eni+Wto+W5v+S6pOS8muS5sOWutuWQjeW9le+8jDEwMyAxMDQg
-MTA1IDEwNiAxMDcgMTA4LDEwOSwxMTAg5YWx5YWt5bGKIOWFsTEyMC425LiH5pWw5o2u44CCDQo1
-77yMNDguNjjkuIfmnaHmnIDmlrDkubDlrrbor6Lnm5jvvIzpg73luKbmnIlFbWFpbO+8jOacgOac
-ieS7t+WAvOeahOivouebmOOAgg0KNu+8jDIwMTHmnIDmlrAgQjJCIOiLseaWh+WbvemZheermTYw
-5LiH5bim6IGU57uc5pa55byP6K+i55uYIOacgOacieS7t+WAvOivouebmOS5i+S4gC4NCjfvvIwy
-MDEw5rW35YWz5o+Q5Y2VcGllcnPniYgxMDAw5LiH5pWw5o2uLg0KOO+8jDIwMTHlubTliLDpppnm
-uK/ph4fotK3nmoTlm73lpJblrqLkurrlkI3lvZUo6aaZ5riv6LS45Y+R5bGA5o+Q5L6bKe+8jOi2
-hee6p+mHjeimgeeahOS5sOWutuOAgg0KOe+8jDIwMTHlubTmlrDlop7liqDnmoQt576O5Zu9QjJC
-IHRob21hc25ldCDph4fotK3llYblkI3ljZXjgIINCjEw77yM576k5Y+R6L2v5Lu25a6J6KOF5LiO
-6YOo572y5pyN5Yqh44CCDQoNCui/meS6m+WFqOacie+8jOWFsTEyODDkuIcg5pWw5o2u44CCDQoN
-CiANCuimgeeahOaKk+e0p+iBlOezu1FROiA0NjAxMjI2NDEg5oiW6ICF56uL5Y2z5Zue5aSN6YKu
-566xOiA0NjAxMjI2NDFAcXEuY29tDQropoHnmoTmipPntKfogZTns7tRUTogNDYwMTIyNjQxIOaI
-luiAheeri+WNs+WbnuWkjemCrueusTogNDYwMTIyNjQxQHFxLmNvbQ0K6KaB55qE5oqT57Sn6IGU
-57O7UVE6IDQ2MDEyMjY0MSDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDQ2MDEyMjY0MUBxcS5j
-b20NCg0K6K+a5L+h5Li65pys77yM5aaC5p6c5LiN5L+h5Lu75pys5Lq6LOWPr+S7pei1sOa3mOWu
-neS6pOaYkyzmlLbliLDmlbDmja7pqozor4Ez5aSp5ZCO5YaN5LuY5qy+LOi/meaYr+WvueaCqOac
-gOWlveeahOS/nemanOS6huOAgiANCg0KDQoNCuWwj+aKgOW3p++8miANCuaKijUwMOS4h+S5sOWu
-tue+pOWPkeS7peS4gOmBje+8jOWdh+S8muacieaVsOWNg+S4quWbnuWkjeeahO+8jOi/meS6m+Ww
-seaYr+mdnuW4uOmrmOi0qOmHj+eahOS5sOWutuOAgiANCuS9v+eUqOaIkeS7rOmAgeeahOe+pOWP
-kei9r+S7tu+8jDEtMuWRqOWwseWPr+WujOWFqOWPkeWujOOAgg0KDQoNCg0KDQoNCuW5v+S6pOS8
-muS5sOWutuaMieS6p+WTgeexu+WIq+WIhuexu++8jOWIhuS4uuS7peS4i+WHoOexu++8mg0KMSDl
-ip7lhazorr7lpIcNCjIg57yW57uH5Y+K6Jek6ZOB5bel6Im65ZOBDQozIOeOu+eSgw0KNCDppJDl
-jqjnlKjlhbcNCjUg6L2m6L6GDQo2IOWkp+Wei+acuuaisOWPiuiuvuWkhw0KNyDnlLXlrZDnlLXm
-sJQNCjgg55S15a2Q5raI6LS55ZOBDQo5IOe6uue7hw0KMTAg5pyN6KOFDQoxMSDkuKrkurrmiqTn
-kIYNCjEyIOW3peeoi+acuuaisA0KMTMg5bel5YW3DQoxNCDljJblt6UNCjE1IOiuoeeul+acuuWP
-iumAmuiurw0KMTYg5a625bGF55So5ZOBDQoxNyDlrrblsYXoo4XppbANCjE4IOWutuWFtw0KMTkg
-5a6255So55S15ZmoDQoyMCDlu7rnrZHlj4roo4XppbDmnZDmlpkNCjIxIOiKguaXpeeUqOWTgQ0K
-MjIg56S85ZOB5Y+K6LWg5ZOBDQoyMyDmkanmiZjovaYNCjI0IOaxvei9pumFjeS7tg0KMjUg6aOf
-5ZOBDQoyNiDpmbbnk7cNCjI3IOmTgeefsw0KMjgg546p5YW3DQoyOSDljavmtbQNCjMwIOS6lOmH
-kQ0KMzEg5bCP5Z6L5py65qKwDQozMiDpnosNCjMzIOS8kemXsueUqOWTgQ0KMzQg5Yy755aXDQoz
-NSDmtbTlrqTkuqflk4ENCjM2IOWbreaelw0KMzcg54Wn5piO5Lqn5ZOBDQozOCDpkp/ooajnnLzp
-lZwNCjM5IOiHquihjOi9pg0KNDAg5YyFDQoNCg0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemr
-mA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+ae
-gemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeO
-h+aegemrmA0K
+On Wednesday 19 September 2012, Hiroshi Doyu wrote:
+> I guess that it would work. Originally I thought that using DMA-API
+> and IOMMU-API together in driver might be kind of layering violation
+> since IOMMU-API itself is used in DMA-API. Only DMA-API used in driver
+> might be cleaner. Considering that DMA API traditionally handling
+> anonymous {bus,iova} address only, introducing the concept of
+> specific address in DMA API may not be so encouraged, though.
+> 
+> It would be nice to listen how other SoCs have solved similar needs.
+
+In general, I would recommend using only the IOMMU API when you have a device
+driver that needs to control the bus virtual address space and that manages
+a device that resides in its own IOMMU context. I would recommend using
+only the dma-mapping API when you have a device that lives in a shared
+bus virtual address space with other devices, and then never ask for
+a specific bus virtual address.
+
+Can you explain what devices you see that don't fit in one of those two
+categories?
+
+	Arnd
