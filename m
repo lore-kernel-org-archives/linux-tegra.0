@@ -1,42 +1,76 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v6 0/4] Runtime Interpreted Power Sequences
-Date: Tue, 18 Sep 2012 23:01:16 -0400
-Message-ID: <20120919030116.GN8832@opensource.wolfsonmicro.com>
-References: <1347443867-18868-1-git-send-email-acourbot@nvidia.com>
- <4473898.CeAQBgUhKL@percival>
- <20120913071928.GA20959@opensource.wolfsonmicro.com>
- <1378218.yLeQheNFT0@percival>
- <20120913072943.GB20959@opensource.wolfsonmicro.com>
- <5051FAC5.40501@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [RFC 0/5] ARM: dma-mapping: New dma_map_ops to control IOVA
+ more precisely
+Date: Wed, 19 Sep 2012 09:58:43 +0300
+Message-ID: <20120919095843.d1db155e0f085f4fcf64ea32@nvidia.com>
+References: <1346223335-31455-1-git-send-email-hdoyu@nvidia.com>
+	<20120918124918.GK2505@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5051FAC5.40501@wwwdotorg.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alex Courbot <acourbot@nvidia.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20120918124918.GK2505@amd.com>
+Sender: owner-linux-mm@kvack.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "minchan@kernel.org" <minchan@kernel.org>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Krishna Reddy <vdumpa@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 13, 2012 at 09:24:53AM -0600, Stephen Warren wrote:
-> On 09/13/2012 01:29 AM, Mark Brown wrote:
+Hi Joerg,
 
-> > The driver knows the power sequence.  Having to type the same sequence
-> > into the DT or platform data for each board using the device wouuld be
-> > retarded so we need the drivers to be able to give the sequence to the
-> > library if they're going to be able to reuse it (which is a lot of what
-> > Tomi is talking about).
+On Tue, 18 Sep 2012 14:49:18 +0200
+Joerg Roedel <joerg.roedel@amd.com> wrote:
 
-> I believe that's trivial to implement. The relevant function is:
+> On Wed, Aug 29, 2012 at 09:55:30AM +0300, Hiroshi Doyu wrote:
+> > The following APIs are needed for us to support the legacy Tegra
+> > memory manager for devices("NvMap") with *DMA mapping API*.
+> 
+> Maybe I am not understanding the need completly. Can you elaborate on
+> why this is needed for legacy Tegra?
 
-Right, that's what I'm saying - the code is mostly there now.
+Actually not for legacy but it's necessary to replace homebrewed
+in-kernel API(not upstreamed) with the standard ones. The homebrewed
+in-kernel API has been used for the abvoe nvmap as its backend. The
+homebrewed ones are being replaced with the standard ones, IOMMU-API,
+DMA-API and dma-buf, mainly for transition purpose. I found that some
+missing features in DMA-API for that. I posted since other SoCs may
+have the similiar requirements, (1) To specify IOVA address at
+allocation, and (2) To have IOVA allocation and mapping separately.
 
-> It's up to the driver whether pseq comes from platform data or is
-> hard-coded into the driver (or not provided at all, for the DT case).
-> So, the only change needed to convert a "hard-coded" driver to this API
-> is to convert the current custom data structure (or code) that describes
-> the sequence into a struct platform_power_seq_set.
+> > New API:
+> > 
+> >  ->iova_alloc(): To allocate IOVA area.
+> >  ->iova_alloc_at(): To allocate IOVA area at specific address.
+> >  ->iova_free():  To free IOVA area.
+> > 
+> >  ->map_page_at(): To map page at specific IOVA.
+> 
+> This sounds like a layering violation. The situation today is as
+> follows:
+> 
+> 	DMA-API   : Handle DMA-addresses including an address allocator
+> 	IOMMU-API : Full control over DMA address space, no address
+> 	            allocator
+> 
+> So what you want to do add to the DMA-API is already part of the
+> IOMMU-API.
+>
+> Here is my suggestion what you can do instead of extending the DMA-API.
+> You can use the IOMMU-API to initialize the device address space with
+> any mappings at the IOVAs you need the mappings. In the end you allocate
+> another free range in the device address space and use that to satisfy
+> DMA-API allocations. Any reason why that could not work?
 
-The framework could still help by providing ways to avoid having to copy
-the structure and fill in the blanks for GPIO numbers (and anything else
-that is numbered rather than named) by hand.
+I guess that it would work. Originally I thought that using DMA-API
+and IOMMU-API together in driver might be kind of layering violation
+since IOMMU-API itself is used in DMA-API. Only DMA-API used in driver
+might be cleaner. Considering that DMA API traditionally handling
+*anonymous* {bus,iova} address only, introducing the concept of
+specific address in DMA API may not be so encouraged, though.
+
+It would be nice to listen how other SoCs have solved similar needs.
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
