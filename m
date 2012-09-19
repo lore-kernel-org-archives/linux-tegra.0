@@ -1,79 +1,97 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v4 2/5] ARM: tegra: Add Avionic Design Tamonten support
-Date: Wed, 19 Sep 2012 18:38:04 +0200
-Message-ID: <20120919163804.GA19464@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v4 3/5] ARM: tegra: Add Avionic Design Plutux support
+Date: Wed, 19 Sep 2012 18:42:42 +0200
+Message-ID: <20120919164242.GB19464@avionic-0098.mockup.avionic-design.de>
 References: <1347979144-24462-1-git-send-email-thierry.reding@avionic-design.de>
- <1347979144-24462-2-git-send-email-thierry.reding@avionic-design.de>
- <5059EAF2.10706@wwwdotorg.org>
+ <1347979144-24462-3-git-send-email-thierry.reding@avionic-design.de>
+ <5059EB47.5010600@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+	protocol="application/pgp-signature"; boundary="MW5yreqqjyrRcusr"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5059EAF2.10706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5059EB47.5010600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 19, 2012 at 09:55:30AM -0600, Stephen Warren wrote:
+On Wed, Sep 19, 2012 at 09:56:55AM -0600, Stephen Warren wrote:
 > On 09/18/2012 08:39 AM, Thierry Reding wrote:
-> > The Tamonten is an NVIDIA Tegra2 based system-on-module (SOM) that is
-> > designed to cover a broad range of applications.
+> > The Plutux is a set-top box device based on the Tamonten SOM and can be
+> > connected to a display via HDMI.
 >=20
-> > diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dt=
-s/tegra20-tamonten.dtsi
-> ...
-> > +		pmic: tps6586x@34 {
-> ...
-> > +			regulators {
-> ...
-> > +					regulator-name =3D "vdd_sys";
-> ...
-> > +					regulator-name =3D "vdd_sm0,vdd_core";
-> ...
-> > +					regulator-name =3D "vdd_sm1,vdd_cpu";
-> ...
-> > +					regulator-name =3D "vdd_sm2,vin_ldo*";
-> ...
-> > +					regulator-name =3D "vdd_ldo0,vddio_pex_clk";
+> > diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/t=
+egra20-plutux.dts
 >=20
-> etc.
+> > +	sound {
+> > +		compatible =3D "ad,tegra-audio-plutux",
+> > +			     "nvidia,tegra-audio-wm8903";
+> > +		nvidia,model =3D "Avionic Design Plutux";
+> > +
+> > +		nvidia,audio-routing =3D
+> > +			"Headphone Jack", "HPOUTR",
+> > +			"Headphone Jack", "HPOUTL",
+> > +			"Int Spk", "ROP",
+> > +			"Int Spk", "RON",
+> > +			"Int Spk", "LOP",
+> > +			"Int Spk", "LON",
+> > +			"Mic Jack", "MICBIAS",
+> > +			"IN1L", "Mic Jack";
+> > +
+> > +		nvidia,i2s-controller =3D <&tegra_i2s1>;
+> > +		nvidia,audio-codec =3D <&wm8903>;
+> > +
+> > +		nvidia,spkr-en-gpios =3D <&wm8903 2 0>;
+> > +		nvidia,hp-det-gpios =3D <&gpio 178 0>; /* gpio PW2 */
+> > +		nvidia,int-mic-en-gpios =3D <&gpio 184 0>; /*gpio PX0 */
+> > +		nvidia,ext-mic-en-gpios =3D <&gpio 185 0>; /* gpio PX1 */
 >=20
-> I just wanted to confirm that those regulator-name values truly are the
-> signal names in the schematic and not something copied blindly from the
-> Harmony .dts file without any updates. Same for the voltages.
+> Does your board really have all of those GPIOs? Having both
+> int-mic-en-gpios and ext-mic-en-gpios is something pretty unique to
+> Harmony so far,
 
-I believe the schematics were blindly copied from the Harmony reference
-design. =3D) But I'll double check.
+The hardware was kept as close to Harmony as possible on purpose in
+order to reduce the time needed for customization. This is obviously no
+longer true now because the hardware is already about 18 months old but
+you can't change hardware retroactively...
+
+Again I'll make sure to double check this against the schematics but I'm
+pretty sure these are the connections.
+
+> and also a pretty broken HW design, so I'd hope people
+> haven't copied it.
+
+Would you mind explaining why it is broken? I haven't really been
+involved with the codec parts so I don't have very deep insights.
 
 Thierry
 
---3V7upXqbjpZ4EhLz
+--MW5yreqqjyrRcusr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQWfTsAAoJEN0jrNd/PrOhXZkP/2ZAo9UiWlaaaPSaGRNlpjg6
-hQMwcAb5CLcCVGxib/zngGXt0l28ojzaWClPhWcCBbtn4S2dnQ2SfRTO1qJI6GVp
-+G3b78wJ47UtXndWiDV3G6q8yQ8XLqHDILQ96ujkcrYcWXepnv6s/L5q2OIZJp1L
-bt0i6jQpon53HYB/21gybcB9sHxAiFUA6W1/CINuj4kKkPcY/ppeGBlzZyWG4VpE
-f4QUFx/nJKd8iQhNss3KSmvPpD8olZGJP387nX5odfqxZ1PAowXQQ1RrUjhkEeNH
-oEj24NPlhSyQR/WuqwASlqlNuK4ckfe01J6Q2oWw8jMYzWfOw3eFl/Jl0h4Bipv5
-bB7tUZs0hvmyOvlKAaq1XgoWCnRWDn2UrgkuiWxPRzUICPnoh3PgLQkvXPYvLleE
-e++Jj38XL/M5pxm23vN79Vaa2wcUFnUfqjrtLrN5ETrfjpbxocFK2tyGhV0jhrOu
-+ANX9BLLjP4uj5gnuYTlWZhzfFBei4lWX6VE81CDnSlI546LUl2d2VZ8+noTElW1
-mlkgd9fSc/3S4gGiTUnBEVW8DDg/m+Nyu+48tvfD3nkyWL9SxNXRqyd7xyTDUpDt
-htO1hECPvmdBi2xWmaXG7kLAER5yTyqzWg+t6e52eS+QSfplibkyUGMcs9oQ9gqE
-gUhc5E7MzyBGwp0ZUQx/
-=BhJQ
+iQIcBAEBAgAGBQJQWfYCAAoJEN0jrNd/PrOhHQwP/3d3xp6j/6M5eb7P49wdB3TI
+dQFXKXC9B8C40YWIV6eaKKOt3UYz3ifVxpU5UDF7WmMNiCgxPs2z8ERPNOav7jFE
+8ytMTmIFb87zgezP/iDpkqC/0XY9gQYhwJbyoJT1BgGK8wHYG4VhZ/8j/8i6TUuH
+/3cKUqBP4eFcLoL2ln2ryhl+zddPTbRe7TjtWJ4QYQdqPgjQ/HkERtuJldjwAjOH
+NEgyjYKLiPcaDyRM0mgUdO31/hm7FpSiUP6V4IWKLd/lH79iMrV1tbWiMoycHh93
+y00WNVy0pqJYxu268FK2apvyxqB9GNUjYHCEuPvgtGY3xfWVteSQintyFqei8fus
+6ngjP7ajTI+WDoubpJkRDq3HR8d9msS32KPDUqeSmc6sTXra4qmkDm5ZtzQ1c9nU
+F6tCallft7RojUNL1Qri4cj0LEIw7HOeUTaIHh6bZVHUcNYjKGiv3QXWpTCNe2dg
+Kq+C6uw7WGz8u4KvIQ/g9wbL3xUcVQtzD894ATb5PY2ub+2rfIkJvxiwgjPmCp5q
+EgzGNvOAhskKyx6WKIYtDvbb9+c/RqhZh6rHbKN/scFRVQYnXXtVO0+ybFaxomz8
+NAkPLc38yphw++Ieke2Aexdm8eI+oIZlMbc+dWxvz2tnpfOLEJKkaDg5V3gt1WPW
+wNxvN0B1PWbAavs6Z1zu
+=hGlQ
 -----END PGP SIGNATURE-----
 
---3V7upXqbjpZ4EhLz--
+--MW5yreqqjyrRcusr--
