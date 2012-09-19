@@ -1,129 +1,77 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 1/5] ARM: tegra: define DT bindings for and instantiate timer
-Date: Wed, 19 Sep 2012 15:31:15 -0600
-Message-ID: <1348090279-22631-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: move tegra-ahb.h out of arch/arm/mach-tegra/
+Date: Wed, 19 Sep 2012 15:55:08 -0600
+Message-ID: <1348091708-6622-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra timer provides a number of 29-bit timer channels, a single
-32-bit free running counter, and in the Tegra30 variant, 5 watchdog modules.
-The first two channels may also trigger a legacy watchdog reset.
-
-Define a DT binding for this HW module, and add the module into the Tegra
-device tree files.
+We wish to empty arch/arm/mach-tegra/include/mach/ as much as possible
+to enable single zImage. Move tegra-ahb.h to a more central location
+(suggested by Arnd, OK'd by Greg KH), and actually make tegra-ahb.c
+include the header to ensure client and provider agree on the prototype.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/timer/nvidia,tegra20-timer.txt        |   21 ++++++++++++++++++
- .../bindings/timer/nvidia,tegra30-timer.txt        |   23 ++++++++++++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |    9 +++++++
- arch/arm/boot/dts/tegra30.dtsi                     |   11 +++++++++
- 4 files changed, 64 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
+ drivers/amba/tegra-ahb.c                           |    1 +
+ drivers/iommu/tegra-smmu.c                         |    2 +-
+ .../include/mach => include/linux}/tegra-ahb.h     |    6 +++---
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+ rename {arch/arm/mach-tegra/include/mach => include/linux}/tegra-ahb.h (86%)
 
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
-new file mode 100644
-index 0000000..e019fdc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nvidia,tegra20-timer.txt
-@@ -0,0 +1,21 @@
-+NVIDIA Tegra20 timer
-+
-+The Tegra20 timer provides four 29-bit timer channels and a single 32-bit free
-+running counter. The first two channels may also trigger a watchdog reset.
-+
-+Required properties:
-+
-+- compatible : should be "nvidia,tegra20-timer".
-+- reg : Specifies base physical address and size of the registers.
-+- interrupts : A list of 4 interrupts; one per timer channel.
-+
-+Example:
-+
-+timer {
-+	compatible = "nvidia,tegra20-timer";
-+	reg = <0x60005000 0x60>;
-+	interrupts = <0 0 0x04
-+			0 1 0x04
-+			0 41 0x04
-+			0 42 0x04>;
-+};
-diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-new file mode 100644
-index 0000000..906109d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nvidia,tegra30-timer.txt
-@@ -0,0 +1,23 @@
-+NVIDIA Tegra30 timer
-+
-+The Tegra30 timer provides ten 29-bit timer channels, a single 32-bit free
-+running counter, and 5 watchdog modules. The first two channels may also
-+trigger a legacy watchdog reset.
-+
-+Required properties:
-+
-+- compatible : should be "nvidia,tegra30-timer", "nvidia,tegra20-timer".
-+- reg : Specifies base physical address and size of the registers.
-+- interrupts : A list of 6 interrupts; one per each of timer channels 1
-+    through 5, and one for the shared interrupt for the remaining channels.
-+
-+timer {
-+	compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-+	reg = <0x60005000 0x400>;
-+	interrupts = <0 0 0x04
-+		      0 1 0x04
-+		      0 41 0x04
-+		      0 42 0x04
-+		      0 121 0x04
-+		      0 122 0x04>;
-+};
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 405d167..0fadf4d 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -12,6 +12,15 @@
- 		#interrupt-cells = <3>;
- 	};
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index 0b6f0b2..bd5de08 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
++#include <linux/tegra-ahb.h>
  
-+	timer@60005000 {
-+		compatible = "nvidia,tegra20-timer";
-+		reg = <0x60005000 0x60>;
-+		interrupts = <0 0 0x04
-+			      0 1 0x04
-+			      0 41 0x04
-+			      0 42 0x04>;
-+	};
-+
- 	apbdma: dma {
- 		compatible = "nvidia,tegra20-apbdma";
- 		reg = <0x6000a000 0x1200>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 3e4334d..d6f8e4c 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -12,6 +12,17 @@
- 		#interrupt-cells = <3>;
- 	};
+ #define DRV_NAME "tegra-ahb"
  
-+	timer@60005000 {
-+		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
-+		reg = <0x60005000 0x400>;
-+		interrupts = <0 0 0x04
-+			      0 1 0x04
-+			      0 41 0x04
-+			      0 42 0x04
-+			      0 121 0x04
-+			      0 122 0x04>;
-+	};
-+
- 	apbdma: dma {
- 		compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
- 		reg = <0x6000a000 0x1400>;
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 0b4d62e..ac57b2f 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -34,12 +34,12 @@
+ #include <linux/of_iommu.h>
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
++#include <linux/tegra-ahb.h>
+ 
+ #include <asm/page.h>
+ #include <asm/cacheflush.h>
+ 
+ #include <mach/iomap.h>
+-#include <mach/tegra-ahb.h>
+ 
+ enum smmu_hwgrp {
+ 	HWGRP_AFI,
+diff --git a/arch/arm/mach-tegra/include/mach/tegra-ahb.h b/include/linux/tegra-ahb.h
+similarity index 86%
+rename from arch/arm/mach-tegra/include/mach/tegra-ahb.h
+rename to include/linux/tegra-ahb.h
+index e0f8c84..f1cd075 100644
+--- a/arch/arm/mach-tegra/include/mach/tegra-ahb.h
++++ b/include/linux/tegra-ahb.h
+@@ -11,9 +11,9 @@
+  * more details.
+  */
+ 
+-#ifndef __MACH_TEGRA_AHB_H__
+-#define __MACH_TEGRA_AHB_H__
++#ifndef __LINUX_AHB_H__
++#define __LINUX_AHB_H__
+ 
+ extern int tegra_ahb_enable_smmu(struct device_node *ahb);
+ 
+-#endif	/* __MACH_TEGRA_AHB_H__ */
++#endif	/* __LINUX_AHB_H__ */
 -- 
 1.7.0.4
