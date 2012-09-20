@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v5 4/5] ARM: tegra: Add Avionic Design Medcom-Wide support
-Date: Thu, 20 Sep 2012 17:06:08 +0200
-Message-ID: <1348153569-19083-4-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v5 3/5] ARM: tegra: Add Avionic Design Plutux support
+Date: Thu, 20 Sep 2012 17:06:07 +0200
+Message-ID: <1348153569-19083-3-git-send-email-thierry.reding@avionic-design.de>
 References: <1348153569-19083-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1348153569-19083-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,8 +10,8 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Medcom is a 16:9 15" terminal that is used for patient infotainment
-in hospitals.
+The Plutux is a set-top box device based on the Tamonten SOM and can be
+connected to a display via HDMI.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
@@ -20,27 +20,26 @@ Changes in v5:
 
 Changes in v4:
 - based on tegra20-tamonten.dtsi
-- rename compatible of sound property to match device
-- rename DTS file to match device name
+- rename compatible of sound property to match device name
 ---
- arch/arm/boot/dts/tegra20-medcom-wide.dts | 58 +++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/Makefile.boot         |  1 +
- 2 files changed, 59 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra20-medcom-wide.dts
+ arch/arm/boot/dts/tegra20-plutux.dts | 50 ++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile.boot    |  1 +
+ 2 files changed, 51 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-plutux.dts
 
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
 new file mode 100644
-index 0000000..a2d6d65
+index 0000000..331a3ef
 --- /dev/null
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-@@ -0,0 +1,58 @@
++++ b/arch/arm/boot/dts/tegra20-plutux.dts
+@@ -0,0 +1,50 @@
 +/dts-v1/;
 +
 +/include/ "tegra20-tamonten.dtsi"
 +
 +/ {
-+	model = "Avionic Design Medcom-Wide board";
-+	compatible = "ad,medcom-wide", "ad,tamonten", "nvidia,tegra20";
++	model = "Avionic Design Plutux board";
++	compatible = "ad,plutux", "ad,tamonten", "nvidia,tegra20";
 +
 +	i2c@7000c000 {
 +		wm8903: wm8903@1a {
@@ -62,18 +61,10 @@ index 0000000..a2d6d65
 +		};
 +	};
 +
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
 +	sound {
-+		compatible = "ad,tegra-audio-wm8903-medcom-wide",
++		compatible = "ad,tegra-audio-plutux",
 +			     "nvidia,tegra-audio-wm8903";
-+		nvidia,model = "Avionic Design Medcom-Wide";
++		nvidia,model = "Avionic Design Plutux";
 +
 +		nvidia,audio-routing =
 +			"Headphone Jack", "HPOUTR",
@@ -93,16 +84,16 @@ index 0000000..a2d6d65
 +	};
 +};
 diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
-index 63f1d61..020548a 100644
+index 6e35207..63f1d61 100644
 --- a/arch/arm/mach-tegra/Makefile.boot
 +++ b/arch/arm/mach-tegra/Makefile.boot
-@@ -3,6 +3,7 @@ params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
- initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
+@@ -4,6 +4,7 @@ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
  
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-harmony.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-medcom-wide.dtb
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-paz00.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
++dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-seaboard.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-trimslice.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-ventana.dtb
 -- 
 1.7.12
