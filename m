@@ -1,22 +1,56 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] ARM: tegra: dts: Add pwm label
-Date: Thu, 20 Sep 2012 09:43:38 -0600
-Message-ID: <505B39AA.3090301@wwwdotorg.org>
-References: <1348153569-19083-1-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL] ARM: tegra: second round of device tree changes
+Date: Thu, 20 Sep 2012 09:45:28 -0600
+Message-ID: <1348155928-12405-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1348153569-19083-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/20/2012 09:06 AM, Thierry Reding wrote:
-> PWM devices can be referenced in the DT by phandle and per-chip index.
-> In order for this to work properly, the PWM controller needs to have a
-> label attached to it.
+This branch includes some late device tree changes for Tegra:
 
-I've applied the series to Tegra's for-3.7/dt2 branch, and will send a
-pull request very shortly.
+A property is added to Whistler's device tree to enable the PMIC to
+act as the pm_power_off() implementation.
+
+A number of new device tree are added for boards from Avionic Design.
+
+----------------------------------------------------------------
+
+The following changes since commit 44b12ef78106141574f038852d013fd3207acb23:
+
+  ARM: dt: tegra: configure power off for some boards
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.7-dt2
+
+for you to fetch changes up to 175f16fa38977dfed9f9fe247279516ce892fb15:
+
+  ARM: tegra: Add Avionic Design Tamonten Evaluation Carrier support
+
+----------------------------------------------------------------
+
+Stephen Warren (1):
+      ARM: dt: tegra: whistler: configure power off
+
+Thierry Reding (5):
+      ARM: tegra: dts: Add pwm label
+      ARM: tegra: Add Avionic Design Tamonten support
+      ARM: tegra: Add Avionic Design Plutux support
+      ARM: tegra: Add Avionic Design Medcom-Wide support
+      ARM: tegra: Add Avionic Design Tamonten Evaluation Carrier support
+
+ arch/arm/boot/dts/tegra20-medcom-wide.dts |   58 +++
+ arch/arm/boot/dts/tegra20-plutux.dts      |   50 +++
+ arch/arm/boot/dts/tegra20-tamonten.dtsi   |  449 ++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra20-tec.dts         |   53 +++
+ arch/arm/boot/dts/tegra20-whistler.dts    |    2 +
+ arch/arm/boot/dts/tegra20.dtsi            |    2 +-
+ arch/arm/boot/dts/tegra30.dtsi            |    2 +-
+ arch/arm/mach-tegra/Makefile.boot         |    3 +
+ 8 files changed, 617 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra20-medcom-wide.dts
+ create mode 100644 arch/arm/boot/dts/tegra20-plutux.dts
+ create mode 100644 arch/arm/boot/dts/tegra20-tamonten.dtsi
+ create mode 100644 arch/arm/boot/dts/tegra20-tec.dts
