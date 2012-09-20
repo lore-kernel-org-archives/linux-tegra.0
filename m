@@ -1,48 +1,108 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v5 1/5] ARM: tegra: dts: Add pwm label
-Date: Thu, 20 Sep 2012 17:06:05 +0200
-Message-ID: <1348153569-19083-1-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v5 4/5] ARM: tegra: Add Avionic Design Medcom-Wide support
+Date: Thu, 20 Sep 2012 17:06:08 +0200
+Message-ID: <1348153569-19083-4-git-send-email-thierry.reding@avionic-design.de>
+References: <1348153569-19083-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1348153569-19083-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PWM devices can be referenced in the DT by phandle and per-chip index.
-In order for this to work properly, the PWM controller needs to have a
-label attached to it.
+The Medcom is a 16:9 15" terminal that is used for patient infotainment
+in hospitals.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 2 +-
- arch/arm/boot/dts/tegra30.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes in v5:
+- remove nvidia,{ext,int}-mic-en-gpios properties
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 405d167..67a6cd9 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -123,7 +123,7 @@
- 		status = "disabled";
- 	};
+Changes in v4:
+- based on tegra20-tamonten.dtsi
+- rename compatible of sound property to match device
+- rename DTS file to match device name
+---
+ arch/arm/boot/dts/tegra20-medcom-wide.dts | 58 +++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile.boot         |  1 +
+ 2 files changed, 59 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-medcom-wide.dts
+
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+new file mode 100644
+index 0000000..a2d6d65
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -0,0 +1,58 @@
++/dts-v1/;
++
++/include/ "tegra20-tamonten.dtsi"
++
++/ {
++	model = "Avionic Design Medcom-Wide board";
++	compatible = "ad,medcom-wide", "ad,tamonten", "nvidia,tegra20";
++
++	i2c@7000c000 {
++		wm8903: wm8903@1a {
++			compatible = "wlf,wm8903";
++			reg = <0x1a>;
++			interrupt-parent = <&gpio>;
++			interrupts = <187 0x04>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			micdet-cfg = <0>;
++			micdet-delay = <100>;
++			gpio-cfg = <0xffffffff
++				    0xffffffff
++				    0
++				    0xffffffff
++				    0xffffffff>;
++		};
++	};
++
++	backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm 0 5000000>;
++
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++	};
++
++	sound {
++		compatible = "ad,tegra-audio-wm8903-medcom-wide",
++			     "nvidia,tegra-audio-wm8903";
++		nvidia,model = "Avionic Design Medcom-Wide";
++
++		nvidia,audio-routing =
++			"Headphone Jack", "HPOUTR",
++			"Headphone Jack", "HPOUTL",
++			"Int Spk", "ROP",
++			"Int Spk", "RON",
++			"Int Spk", "LOP",
++			"Int Spk", "LON",
++			"Mic Jack", "MICBIAS",
++			"IN1L", "Mic Jack";
++
++		nvidia,i2s-controller = <&tegra_i2s1>;
++		nvidia,audio-codec = <&wm8903>;
++
++		nvidia,spkr-en-gpios = <&wm8903 2 0>;
++		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
++	};
++};
+diff --git a/arch/arm/mach-tegra/Makefile.boot b/arch/arm/mach-tegra/Makefile.boot
+index 63f1d61..020548a 100644
+--- a/arch/arm/mach-tegra/Makefile.boot
++++ b/arch/arm/mach-tegra/Makefile.boot
+@@ -3,6 +3,7 @@ params_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00000100
+ initrd_phys-$(CONFIG_ARCH_TEGRA_2x_SOC)	:= 0x00800000
  
--	pwm {
-+	pwm: pwm {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
- 		#pwm-cells = <2>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 3e4334d..b1497c7 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -117,7 +117,7 @@
- 		status = "disabled";
- 	};
- 
--	pwm {
-+	pwm: pwm {
- 		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
- 		#pwm-cells = <2>;
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-harmony.dtb
++dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-medcom-wide.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-paz00.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-plutux.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += tegra20-seaboard.dtb
 -- 
 1.7.12
