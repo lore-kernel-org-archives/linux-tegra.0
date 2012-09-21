@@ -1,111 +1,61 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 4/5] ARM: dt: t30 cardhu: set pinmux and power for wlan
-Date: Fri, 21 Sep 2012 16:54:59 +0800
-Message-ID: <1348217700-12309-5-git-send-email-wni@nvidia.com>
-References: <1348217700-12309-1-git-send-email-wni@nvidia.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2] USB: PHY: Re-organize Tegra USB PHY driver
+Date: Fri, 21 Sep 2012 12:37:11 +0300
+Message-ID: <20120921093710.GC15626@arwen.pp.htv.fi>
+References: <1347519738-24162-1-git-send-email-vbyravarasu@nvidia.com>
+ <5052157F.8040201@wwwdotorg.org>
+ <D958900912E20642BCBC71664EFECE3E6DDF601145@BGMAIL02.nvidia.com>
+ <20120920120004.GD3523@kroah.com>
+ <D958900912E20642BCBC71664EFECE3E6DDF601261@BGMAIL02.nvidia.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1348217700-12309-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ABTtc+pdwF7KHXCz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <D958900912E20642BCBC71664EFECE3E6DDF601261@BGMAIL02.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "balbi@ti.com" <balbi@ti.com>, Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
 List-Id: linux-tegra@vger.kernel.org
 
-Configure pinmux as required for WiFi.
-Enable the SDHCI1 controller for a02 and a04 board, which is connected to the
-WiFi module.
-For now, always enable the regulator that provides power to the Wifi module.
 
-Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra30-cardhu-a02.dts |    6 ++++++
- arch/arm/boot/dts/tegra30-cardhu-a04.dts |    6 ++++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi    |   27 +++++++++++++++++++++++++++
- 3 files changed, 39 insertions(+), 0 deletions(-)
+--ABTtc+pdwF7KHXCz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-index dd4222f..adc88aa 100644
---- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-@@ -83,5 +83,11 @@
- 			gpio = <&gpio 83 0>; /* GPIO PK3 */
- 		};
- 	};
-+
-+	sdhci@78000400 {
-+		status = "okay";
-+		power-gpios = <&gpio 28 0>; /* gpio PD4 */
-+		bus-width = <4>;
-+	};
- };
- 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-index 0828f09..08163e1 100644
---- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-@@ -95,4 +95,10 @@
- 			gpio = <&gpio 232 0>; /* GPIO PDD0 */
- 		};
- 	};
-+
-+	sdhci@78000400 {
-+		status = "okay";
-+		power-gpios = <&gpio 27 0>; /* gpio PD3 */
-+		bus-width = <4>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index d10c9c5..4475750 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -52,6 +52,22 @@
- 				nvidia,pull = <2>;
- 				nvidia,tristate = <0>;
- 			};
-+			sdmmc3_clk_pa6 {
-+				nvidia,pins = "sdmmc3_clk_pa6";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			sdmmc3_cmd_pa7 {
-+				nvidia,pins =	"sdmmc3_cmd_pa7",
-+						"sdmmc3_dat0_pb7",
-+						"sdmmc3_dat1_pb6",
-+						"sdmmc3_dat2_pb5",
-+						"sdmmc3_dat3_pb4";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <2>;
-+				nvidia,tristate = <0>;
-+			};
- 			sdmmc4_clk_pcc4 {
- 				nvidia,pins =	"sdmmc4_clk_pcc4",
- 						"sdmmc4_rst_n_pcc3";
-@@ -81,6 +97,15 @@
- 				nvidia,pull = <0>;
- 				nvidia,tristate = <0>;
- 			};
-+			sdio3 {
-+				nvidia,pins = "drive_sdio3";
-+				nvidia,high-speed-mode = <0>;
-+				nvidia,schmitt = <0>;
-+				nvidia,pull-down-strength = <46>;
-+				nvidia,pull-up-strength = <42>;
-+				nvidia,slew-rate-rising = <1>;
-+				nvidia,slew-rate-falling = <1>;
-+			};
- 		};
- 	};
- 
-@@ -409,6 +434,8 @@
- 			regulator-name = "vdd_com";
- 			regulator-min-microvolt = <3300000>;
- 			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+			regulator-boot-on;
- 			enable-active-high;
- 			gpio = <&gpio 24 0>; /* gpio PD0 */
- 			vin-supply = <&sys_3v3_reg>;
--- 
-1.7.1
+Hi,
+
+On Thu, Sep 20, 2012 at 05:32:36PM +0530, Venu Byravarasu wrote:
+> Thanks Greg, for quick response.
+
+I'm waiting for a newer version fixing Kishon's comments. BTW, his
+comment about pdata usage is 100% valid. You should fix that.
+
+--=20
+balbi
+
+--ABTtc+pdwF7KHXCz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQXDVGAAoJEIaOsuA1yqREfvIQAJ48H3qF97borDnWsxu5/d4h
+3/RDneiLhYFrDc9RSz1vJ10VUVqgGniMiMIEyWx6XFKIcbxklpaHBA2izFMdvsuV
+Seas9s5Iv500Vc0QoS6ZkO9RGLBaVvQNT8cGlwkJbeVA34IYw2ruwlyJ5XG/l6HT
+u5wusmGpzzSkU0UKVSUvsFbxZikOfKxCe3gk1zTanv1niVaL0/izS3/5sf34GnHY
+9HfQr2FU4JyiyaYXbtmqBehofgZTkrCsfLKtiu7G8Pm1iwTAD7AeRhWwQm8FJNsZ
+3WaEhouJ5aBnrrfcKmhtLgrf5XFV3hSBrRDyjN87lLNR+CV1XA6FW8uq7dqUybhR
+/psy15te5xHzt9wBjmU+HmV8QVi48FkLahQbxEE8XlWprXVIRSfapBvxPfe9zK+0
+HOhc04Wc/hK/dpx68LQPkJKaDhXsdlmjcO2mPf5Xm3/i4erj4sZlhF8Xrm4kZWxL
+i/LXx2eLHghUP2IQ3/JBD6ADflRCGi3QUDrGvdAb4VLzYceAkdV7fCh5fdUfD6Nx
+G01SL/O5RGNMRAaG8ZpFfroOVmSkSs1p9ojvZJoz5nz8cAdjSpDTOPwy37zgz7fU
+9wlxLmkuH2vmkq8LL95ysCpmaLUF/fNqrIy4+xiGtsbSa82rU9xbySX8NLOCu8F5
+mfHVAom35XTjp1N/4Pfu
+=gEP1
+-----END PGP SIGNATURE-----
+
+--ABTtc+pdwF7KHXCz--
