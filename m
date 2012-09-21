@@ -1,60 +1,46 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2] USB: PHY: Re-organize Tegra USB PHY driver
-Date: Fri, 21 Sep 2012 15:20:46 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6DDF6013ED@BGMAIL02.nvidia.com>
-References: <1347519738-24162-1-git-send-email-vbyravarasu@nvidia.com>
- <5052157F.8040201@wwwdotorg.org>
- <D958900912E20642BCBC71664EFECE3E6DDF601145@BGMAIL02.nvidia.com>
- <20120920120004.GD3523@kroah.com>
- <D958900912E20642BCBC71664EFECE3E6DDF601261@BGMAIL02.nvidia.com>
- <20120921093710.GC15626@arwen.pp.htv.fi>
+From: "Arend van Spriel" <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] ARM: tegra: enable brcmfmac in defconfig
+Date: Fri, 21 Sep 2012 16:39:35 +0200
+Message-ID: <505C7C27.2050108@broadcom.com>
+References: <1348217700-12309-1-git-send-email-wni@nvidia.com>
+ <1348217700-12309-6-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120921093710.GC15626-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1348217700-12309-6-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: Felipe Balbi [mailto:balbi-l0cyMroinI0@public.gmane.org]
-> Sent: Friday, September 21, 2012 3:07 PM
-> To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; balbi-l0cyMroinI0@public.gmane.org; Stephen Warren; linux-
-> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Stephen Warren; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
-> Subject: Re: [PATCH v2] USB: PHY: Re-organize Tegra USB PHY driver
-> 
-> * PGP Signed by an unknown key
-> 
-> Hi,
-> 
-> On Thu, Sep 20, 2012 at 05:32:36PM +0530, Venu Byravarasu wrote:
-> > Thanks Greg, for quick response.
-> 
-> I'm waiting for a newer version fixing Kishon's comments. 
+On 09/21/2012 10:55 AM, Wei Ni wrote:
+> New options enabled:
+> * CFG80211_WEXT: (dependency)
+> * BRCMFMAC: wlan driver, enable as module.
+>
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   arch/arm/configs/tegra_defconfig |    2 ++
+>   1 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index adcf3c2..04b18ea 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -73,6 +73,7 @@ CONFIG_BT_BNEP=y
+>   CONFIG_BT_HIDP=y
+>   CONFIG_BT_HCIBTUSB=m
+>   CONFIG_CFG80211=y
+> +CONFIG_CFG80211_WEXT=y
 
-As I mentioned in reply to his comments,  most of the patch is
-dealing with re-organizing the code. Hence kept the cleaning
-part aside for next patch.
+Any particular reason for enabling this? The driver does not 
+specifically need it. The option only allows use of WEXT dependent 
+user-space tools like iwconfig and iwlist. At least it is not needed by 
+brcmfmac driver hence it does not select it.
 
-> BTW, his comment about pdata usage is 100% valid. You should fix that.
-> 
+You indicate there is a dependency. Could you elaborate?
 
-Are you referring to below comments:
-
-It's better you have the below code under *if (np)*, since both device
-node and pdata co-exist for you.
-> +       phy_type = of_property_match_string(np, "phy_type", "utmi");
-> +       if (phy_type >= 0)
- 
-If so, I can address it and push an updated patch with that.
-
-> --
-> balbi
-> 
-> * Unknown Key
-> * 0x35CAA444
+Gr. AvS
