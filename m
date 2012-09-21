@@ -1,42 +1,40 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/5] ARM: tegra: enable wlan for t20 and t30
-Date: Fri, 21 Sep 2012 16:54:55 +0800
-Message-ID: <1348217700-12309-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v2 2/5] ARM: dt: t20 seaboard: turn on the power for wlan
+Date: Fri, 21 Sep 2012 16:54:57 +0800
+Message-ID: <1348217700-12309-3-git-send-email-wni@nvidia.com>
+References: <1348217700-12309-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1348217700-12309-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: krakesh@nvidia.com, ldewangan@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable wlan for following tegra board:
-Tegra30: Cardhu.
-Tegra20: Seaboard, Ventana.
+Enable the SDHCI1 controller. This is connected to the WiFi module.
 
-Note that this series depends on specific brcmfmac patches:
-http://thread.gmane.org/gmane.linux.kernel.wireless.general/97337.
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ arch/arm/boot/dts/tegra20-seaboard.dts |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-V2: -Since Broadcom restructure the dpc routine with above link,
-     it can fix non-OOB issue, so we remove the patches for brcmfmac driver.
-    -Support Cardhu a02 and a04 board.
-    -Remove the config WLAN and WIRELESS in the patch,
-     because they are default=y
-    -Add bus-width for sdhci in the dts file
-
-Wei Ni (5):
-  ARM: tegra: set up wlan clocks for tegra dt
-  ARM: dt: t20 seaboard: turn on the power for wlan
-  ARM: dt: t20 ventana: set pinmux and power for wlan
-  ARM: dt: t30 cardhu: set pinmux and power for wlan
-  ARM: tegra: enable brcmfmac in defconfig
-
- arch/arm/boot/dts/tegra20-seaboard.dts   |    6 ++++++
- arch/arm/boot/dts/tegra20-ventana.dts    |   16 ++++++++++++++++
- arch/arm/boot/dts/tegra30-cardhu-a02.dts |    6 ++++++
- arch/arm/boot/dts/tegra30-cardhu-a04.dts |    6 ++++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi    |   27 +++++++++++++++++++++++++++
- arch/arm/configs/tegra_defconfig         |    2 ++
- arch/arm/mach-tegra/board-dt-tegra20.c   |    4 ++++
- arch/arm/mach-tegra/board-dt-tegra30.c   |    4 ++++
- 8 files changed, 71 insertions(+), 0 deletions(-)
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index e60dc71..0ee474d 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -592,6 +592,12 @@
+ 		status = "okay";
+ 	};
+ 
++	sdhci@c8000000 {
++		status = "okay";
++		power-gpios = <&gpio 86 0>; /* gpio PK6 */
++		bus-width = <4>;
++	};
++
+ 	sdhci@c8000400 {
+ 		status = "okay";
+ 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
+-- 
+1.7.1
