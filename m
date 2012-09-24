@@ -1,90 +1,66 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: How to specify IOMMU'able devices in DT
-Date: Mon, 24 Sep 2012 13:50:14 +0200
-Message-ID: <20120924.145014.1452596970914043018.hdoyu@nvidia.com>
-References: <1348478881.2467.27.camel@dabdike><20120924124452.41070ed2ee9944d930cffffc@nvidia.com><054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] ARM: tegra: enable brcmfmac in defconfig
+Date: Mon, 24 Sep 2012 11:48:28 -0600
+Message-ID: <50609CEC.1050001@wwwdotorg.org>
+References: <1348217700-12309-1-git-send-email-wni@nvidia.com> <1348217700-12309-6-git-send-email-wni@nvidia.com> <505C7C27.2050108@broadcom.com> <505C93A1.2040801@wwwdotorg.org> <505CBA6E.3030304@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com>
-Sender: owner-linux-mm@kvack.org
-To: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
-Cc: "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, "arnd@arndb.de" <arnd@arndb.de>, Krishna Reddy <vdumpa@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "minchan@kernel.org" <minchan@kernel.org>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, linux-arm-kernel@lists.infrade
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <505CBA6E.3030304-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marek,
+On 09/21/2012 01:05 PM, Arend van Spriel wrote:
+> On 09/21/2012 06:19 PM, Stephen Warren wrote:
+>> On 09/21/2012 08:39 AM, Arend van Spriel wrote:
+>>> On 09/21/2012 10:55 AM, Wei Ni wrote:
+>>>> New options enabled:
+>>>> * CFG80211_WEXT: (dependency)
+>>>> * BRCMFMAC: wlan driver, enable as module.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>>    arch/arm/configs/tegra_defconfig |    2 ++
+>>>>    1 files changed, 2 insertions(+), 0 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/configs/tegra_defconfig
+>>>> b/arch/arm/configs/tegra_defconfig
+>>>> index adcf3c2..04b18ea 100644
+>>>> --- a/arch/arm/configs/tegra_defconfig
+>>>> +++ b/arch/arm/configs/tegra_defconfig
+>>>> @@ -73,6 +73,7 @@ CONFIG_BT_BNEP=y
+>>>>    CONFIG_BT_HIDP=y
+>>>>    CONFIG_BT_HCIBTUSB=m
+>>>>    CONFIG_CFG80211=y
+>>>> +CONFIG_CFG80211_WEXT=y
+>>>
+>>> Any particular reason for enabling this? The driver does not
+>>> specifically need it. The option only allows use of WEXT dependent
+>>> user-space tools like iwconfig and iwlist. At least it is not needed by
+>>> brcmfmac driver hence it does not select it.
+>>>
+>>> You indicate there is a dependency. Could you elaborate?
+>>
+>> "Dependency" probably isn't correct.
+>>
+>> However, the intent of tegra_defconfig is to provide a useful
+>> configuration for Tegra boards. Without the ability to use
+>> iwconfig/iwlist, enabling the wireless driver doesn't seem useful; how
+>> would someone configure the wireless connection?
+> 
+> Let me explain. CFG80211 provides a netlink api called NL80211 which is
+> favorable over WEXT api. In user-space the iw tool is replacing iwconfig
+> and iwlist. Also wpa_supplicant has support for both wext and nl80211.
+> 
+> CFG80211_WEXT basically provides an adaptation/compatibility layer that
+> allows user-space tools to interact with cfg80211 drivers. However, it
+> is intended to be phased out so I would not recommend putting it in a
+> defconfig.
 
-Marek Szyprowski <m.szyprowski@samsung.com> wrote @ Mon, 24 Sep 2012 13:14:=
-51 +0200:
-
-> Hello,
->=20
-> On Monday, September 24, 2012 11:45 AM Hiroshi Doyu wrote:
->=20
-> > On Mon, 24 Sep 2012 11:28:01 +0200
-> > James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> >=20
-> > > On Mon, 2012-09-24 at 12:04 +0300, Hiroshi Doyu wrote:
-> > > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > > > index a1a7225..9eae3be 100644
-> > > > --- a/drivers/base/platform.c
-> > > > +++ b/drivers/base/platform.c
-> > > > @@ -21,6 +21,8 @@
-> > > >  #include <linux/slab.h>
-> > > >  #include <linux/pm_runtime.h>
-> > > >
-> > > > +#include <asm/dma-iommu.h>
-> > > > +
-> > > >  #include "base.h"
-> > > >
-> > > >  #define to_platform_driver(drv)        (container_of((drv), struct
-> > > > platform_driver, \
-> > > > @@ -305,8 +307,19 @@ int platform_device_add(struct platform_device
-> > > > *pdev)
-> > > >                  dev_name(&pdev->dev), dev_name(pdev->dev.parent));
-> > > >
-> > > >         ret =3D device_add(&pdev->dev);
-> > > > -       if (ret =3D=3D 0)
-> > > > -               return ret;
-> > > > +       if (ret)
-> > > > +               goto failed;
-> > > > +
-> > > > +#ifdef CONFIG_PLATFORM_ENABLE_IOMMU
-> > > > +       if (platform_bus_type.map && !pdev->dev.archdata.mapping) {
-> > > > +               ret =3D arm_iommu_attach_device(&pdev->dev,
-> > > > +                                             platform_bus_type.map=
-);
-> > > > +               if (ret)
-> > > > +                       goto failed;
-> > >
-> > > This is horrible ... you're adding an architecture specific callback
-> > > into our generic code; that's really a no-no.  If the concept of
-> > > CONFIG_PLATFORM_ENABE_IOMMU is useful to more than just arm, then thi=
-s
-> > > could become a generic callback.
-> >=20
-> > As mentioned in the original, this is a heck to explain what is
-> > needed. I am looking for some generic solution for how to specify
-> > IOMMU info for each platform devices. I'm guessing that some other SoC
-> > may have the similar requirements on the above. As you mentioned, this
-> > solution should be a generic, not arch specific.
->=20
-> Please read more about bus notifiers. IMHO a good example is provided in=
-=20
-> the following thread:
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12238.ht=
-ml
-
-This bus notifier seems enough flexible to afford the variation of
-IOMMU map info, like Tegra ASID, which could be platform-specific, and
-the other could be common too. There's already iommu_bus_notifier
-too. I'll try to implement something base on this.
-
-Thanks for the good info.
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+OK, I suppose that I'd expect to use a given kernel's defconfig with a
+fairly recent distro, so switching to "iw" is reasonable, and so
+removing that defconfig entry is reasonable. I'll just remove that line
+when applying these patches unless there's any other need for a re-spin.
