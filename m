@@ -1,66 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] ARM: tegra: enable brcmfmac in defconfig
-Date: Mon, 24 Sep 2012 11:48:28 -0600
-Message-ID: <50609CEC.1050001@wwwdotorg.org>
-References: <1348217700-12309-1-git-send-email-wni@nvidia.com> <1348217700-12309-6-git-send-email-wni@nvidia.com> <505C7C27.2050108@broadcom.com> <505C93A1.2040801@wwwdotorg.org> <505CBA6E.3030304@broadcom.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [RFC PATCH 0/3] ARM: uncompress.h multi-platform enablement
+Date: Tue, 25 Sep 2012 16:46:49 -0600
+Message-ID: <1348613212-21897-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <505CBA6E.3030304-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arend van Spriel <arend-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, krakesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/21/2012 01:05 PM, Arend van Spriel wrote:
-> On 09/21/2012 06:19 PM, Stephen Warren wrote:
->> On 09/21/2012 08:39 AM, Arend van Spriel wrote:
->>> On 09/21/2012 10:55 AM, Wei Ni wrote:
->>>> New options enabled:
->>>> * CFG80211_WEXT: (dependency)
->>>> * BRCMFMAC: wlan driver, enable as module.
->>>>
->>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> ---
->>>>    arch/arm/configs/tegra_defconfig |    2 ++
->>>>    1 files changed, 2 insertions(+), 0 deletions(-)
->>>>
->>>> diff --git a/arch/arm/configs/tegra_defconfig
->>>> b/arch/arm/configs/tegra_defconfig
->>>> index adcf3c2..04b18ea 100644
->>>> --- a/arch/arm/configs/tegra_defconfig
->>>> +++ b/arch/arm/configs/tegra_defconfig
->>>> @@ -73,6 +73,7 @@ CONFIG_BT_BNEP=y
->>>>    CONFIG_BT_HIDP=y
->>>>    CONFIG_BT_HCIBTUSB=m
->>>>    CONFIG_CFG80211=y
->>>> +CONFIG_CFG80211_WEXT=y
->>>
->>> Any particular reason for enabling this? The driver does not
->>> specifically need it. The option only allows use of WEXT dependent
->>> user-space tools like iwconfig and iwlist. At least it is not needed by
->>> brcmfmac driver hence it does not select it.
->>>
->>> You indicate there is a dependency. Could you elaborate?
->>
->> "Dependency" probably isn't correct.
->>
->> However, the intent of tegra_defconfig is to provide a useful
->> configuration for Tegra boards. Without the ability to use
->> iwconfig/iwlist, enabling the wireless driver doesn't seem useful; how
->> would someone configure the wireless connection?
-> 
-> Let me explain. CFG80211 provides a netlink api called NL80211 which is
-> favorable over WEXT api. In user-space the iw tool is replacing iwconfig
-> and iwlist. Also wpa_supplicant has support for both wext and nl80211.
-> 
-> CFG80211_WEXT basically provides an adaptation/compatibility layer that
-> allows user-space tools to interact with cfg80211 drivers. However, it
-> is intended to be phased out so I would not recommend putting it in a
-> defconfig.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-OK, I suppose that I'd expect to use a given kernel's defconfig with a
-fairly recent distro, so switching to "iw" is reasonable, and so
-removing that defconfig entry is reasonable. I'll just remove that line
-when applying these patches unless there's any other need for a re-spin.
+Tegra's uncompress and debug-macro.S communicate to each-other. Hence,
+we can't be left without uncompress.h in a multi-platform enabled kernel,
+or we'll lose features. This series allows uncompress.h to be used in a
+multi-platform kernel, restores the mvebu uncompress.h, and finally moves
+the Tegra debug macros into the common location. The series as mainly an
+RFC due to the outstanding question of where to put Tegra's <mach/iomap.h>
+in the final patch.
+
+Stephen Warren (3):
+  ARM: move ICEDCC uncompress.h to common location
+  ARM: mvebu: restore uncompress.h
+  ARM: tegra: move debug macros to include/debug
+
+ arch/arm/Kconfig.debug                             |   20 ++++++
+ arch/arm/boot/compressed/misc.c                    |   64 +-------------------
+ arch/arm/include/debug/icedcc-uncompress.h         |   61 +++++++++++++++++++
+ arch/arm/include/debug/mvebu-uncompress.h          |   43 +++++++++++++
+ arch/arm/include/debug/none-uncompress.h           |    3 +
+ .../debug/tegra-uncompress.h}                      |    6 +-
+ .../mach/debug-macro.S => include/debug/tegra.S}   |    6 +-
+ 7 files changed, 132 insertions(+), 71 deletions(-)
+ create mode 100644 arch/arm/include/debug/icedcc-uncompress.h
+ create mode 100644 arch/arm/include/debug/mvebu-uncompress.h
+ create mode 100644 arch/arm/include/debug/none-uncompress.h
+ rename arch/arm/{mach-tegra/include/mach/uncompress.h => include/debug/tegra-uncompress.h} (98%)
+ rename arch/arm/{mach-tegra/include/mach/debug-macro.S => include/debug/tegra.S} (96%)
