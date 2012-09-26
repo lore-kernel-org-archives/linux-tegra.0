@@ -1,115 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [RFC PATCH 3/3] ARM: tegra: move debug macros to include/debug
-Date: Tue, 25 Sep 2012 16:46:52 -0600
-Message-ID: <1348613212-21897-4-git-send-email-swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] ARM: uncompress.h multi-platform enablement
+Date: Wed, 26 Sep 2012 10:38:36 +0000
+Message-ID: <201209261038.36223.arnd@arndb.de>
 References: <1348613212-21897-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1348613212-21897-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tuesday 25 September 2012, Stephen Warren wrote:
+> 
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra's uncompress and debug-macro.S communicate to each-other. Hence,
+> we can't be left without uncompress.h in a multi-platform enabled kernel,
+> or we'll lose features. This series allows uncompress.h to be used in a
+> multi-platform kernel, restores the mvebu uncompress.h, and finally moves
+> the Tegra debug macros into the common location. The series as mainly an
+> RFC due to the outstanding question of where to put Tegra's <mach/iomap.h>
+> in the final patch.
 
-Move Tegra's debug-macro.S and uncompress.h over to the common debug
-macro directory.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-TODO: We need to find a better solution for access to <mach/iomap.h>.
-Perhaps the headers should just be moved into some generally accessible
-location, such as arch/arm/include or include/linux/...
----
- arch/arm/Kconfig.debug                             |    9 +++++++++
- .../debug/tegra-uncompress.h}                      |    6 ++----
- .../mach/debug-macro.S => include/debug/tegra.S}   |    6 ++----
- 3 files changed, 13 insertions(+), 8 deletions(-)
- rename arch/arm/{mach-tegra/include/mach/uncompress.h => include/debug/tegra-uncompress.h} (98%)
- rename arch/arm/{mach-tegra/include/mach/debug-macro.S => include/debug/tegra.S} (96%)
+To follow up on the IRC discussion we had yesterday leading to this patch
+set, I had another idea of how to handle the same: Since the decompressor
+code is actually fairly separate from the kernel, we could also build
+multiple versions of it, and link in the same compressed vmlinux.
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index af34a43..78e11ed 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -345,6 +345,13 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  on SOCFPGA based platforms.
- 
-+	config DEBUG_TEGRA_UART
-+		depends on ARCH_TEGRA
-+		bool "Use Tegra UART for low-level debug"
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on Tegra based platforms.
-+
- 	config DEBUG_VEXPRESS_UART0_DETECT
- 		bool "Autodetect UART0 on Versatile Express Cortex-A core tiles"
- 		depends on ARCH_VEXPRESS && CPU_CP15_MMU
-@@ -418,12 +425,14 @@ config DEBUG_LL_INCLUDE
- 	default "debug/socfpga.S" if DEBUG_SOCFPGA_UART
- 	default "debug/vexpress.S" if DEBUG_VEXPRESS_UART0_DETECT || \
- 		DEBUG_VEXPRESS_UART0_CA9 || DEBUG_VEXPRESS_UART0_RS1
-+	default "debug/tegra.S" if DEBUG_TEGRA_UART
- 	default "mach/debug-macro.S"
- 
- config UNCOMPRESS_INCLUDE
- 	string
- 	default "debug/icedcc-uncompress.h" if DEBUG_ICEDCC
- 	default "debug/mvebu-uncompress.h" if DEBUG_MVEBU_UART
-+	default "debug/tegra-uncompress.h" if DEBUG_TEGRA_UART
- 	default "debug/none-uncompress.h" if ARCH_MULTIPLATFORM || \
- 		DEBUG_HIGHBANK_UART || \
- 		DEBUG_PICOXCELL_UART || DEBUG_SOCFPGA_UART || \
-diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/include/debug/tegra-uncompress.h
-similarity index 98%
-rename from arch/arm/mach-tegra/include/mach/uncompress.h
-rename to arch/arm/include/debug/tegra-uncompress.h
-index 937c4c5..da0f7e5 100644
---- a/arch/arm/mach-tegra/include/mach/uncompress.h
-+++ b/arch/arm/include/debug/tegra-uncompress.h
-@@ -1,6 +1,4 @@
- /*
-- * arch/arm/mach-tegra/include/mach/uncompress.h
-- *
-  * Copyright (C) 2010 Google, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * Copyright (C) 2011-2012 NVIDIA CORPORATION. All Rights Reserved.
-@@ -28,8 +26,8 @@
- #include <linux/types.h>
- #include <linux/serial_reg.h>
- 
--#include <mach/iomap.h>
--#include <mach/irammap.h>
-+#include "../../mach-tegra/include/mach/iomap.h"
-+#include "../../mach-tegra/include/mach/irammap.h"
- 
- #define BIT(x) (1 << (x))
- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/include/debug/tegra.S
-similarity index 96%
-rename from arch/arm/mach-tegra/include/mach/debug-macro.S
-rename to arch/arm/include/debug/tegra.S
-index 8ce0661..879511b 100644
---- a/arch/arm/mach-tegra/include/mach/debug-macro.S
-+++ b/arch/arm/include/debug/tegra.S
-@@ -1,6 +1,4 @@
- /*
-- * arch/arm/mach-tegra/include/mach/debug-macro.S
-- *
-  * Copyright (C) 2010,2011 Google, Inc.
-  * Copyright (C) 2011-2012 NVIDIA CORPORATION. All Rights Reserved.
-  *
-@@ -26,8 +24,8 @@
- 
- #include <linux/serial_reg.h>
- 
--#include <mach/iomap.h>
--#include <mach/irammap.h>
-+#include "../../mach-tegra/include/mach/iomap.h"
-+#include "../../mach-tegra/include/mach/irammap.h"
- 
- 		.macro  addruart, rp, rv, tmp
- 		adr	\rp, 99f		@ actual addr of 99f
--- 
-1.7.0.4
+We already allow building Image/zImage/uImage from the same vmlinux,
+and that could theoretically be extended.
+
+Your approach of course also sounds ok, and we could eventually combine
+the two.
+
+	Arnd
