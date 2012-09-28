@@ -1,65 +1,44 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+From: Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
 Subject: Re: [RFC PATCH 0/3] ARM: uncompress.h multi-platform enablement
-Date: Thu, 27 Sep 2012 07:37:15 +0200
-Message-ID: <20120927053715.GK17667@game.jcrosoft.org>
+Date: Thu, 27 Sep 2012 23:53:33 -0400 (EDT)
+Message-ID: <alpine.LFD.2.02.1209272343330.6667@xanadu.home>
 References: <1348613212-21897-1-git-send-email-swarren@wwwdotorg.org>
+ <201209261417.18883.arnd@arndb.de> <506315A6.3090300@am.sony.com>
+ <201209261449.48468.arnd@arndb.de>
+ <20120926151023.GC30938@n2100.arm.linux.org.uk>
+ <50632096.7080208@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1348613212-21897-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <50632096.7080208-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tim Bird <tim.bird-mEdOJwZ7QcZBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-HI,
+On Wed, 26 Sep 2012, Stephen Warren wrote:
 
-	what happend on the patch serie taht use the fdt to do the same
+> In the Tegra case, by omitting uncompress.h, we lose more than just the
+> "Decompressing Linux..." message; uncompress.h contains code to parse
+> extract the platform's debug UART ID from data set up by the boot ROM
+> (since we have 5 UARTs), and pass this on to debug-macro.S.
 
-Best Regards,
-J.
-On 16:46 Tue 25 Sep     , Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> Tegra's uncompress and debug-macro.S communicate to each-other. Hence,
-> we can't be left without uncompress.h in a multi-platform enabled kernel,
-> or we'll lose features. This series allows uncompress.h to be used in a
-> multi-platform kernel, restores the mvebu uncompress.h, and finally moves
-> the Tegra debug macros into the common location. The series as mainly an
-> RFC due to the outstanding question of where to put Tegra's <mach/iomap.h>
-> in the final patch.
-> 
-> Stephen Warren (3):
->   ARM: move ICEDCC uncompress.h to common location
->   ARM: mvebu: restore uncompress.h
->   ARM: tegra: move debug macros to include/debug
-> 
->  arch/arm/Kconfig.debug                             |   20 ++++++
->  arch/arm/boot/compressed/misc.c                    |   64 +-------------------
->  arch/arm/include/debug/icedcc-uncompress.h         |   61 +++++++++++++++++++
->  arch/arm/include/debug/mvebu-uncompress.h          |   43 +++++++++++++
->  arch/arm/include/debug/none-uncompress.h           |    3 +
->  .../debug/tegra-uncompress.h}                      |    6 +-
->  .../mach/debug-macro.S => include/debug/tegra.S}   |    6 +-
->  7 files changed, 132 insertions(+), 71 deletions(-)
->  create mode 100644 arch/arm/include/debug/icedcc-uncompress.h
->  create mode 100644 arch/arm/include/debug/mvebu-uncompress.h
->  create mode 100644 arch/arm/include/debug/none-uncompress.h
->  rename arch/arm/{mach-tegra/include/mach/uncompress.h => include/debug/tegra-uncompress.h} (98%)
->  rename arch/arm/{mach-tegra/include/mach/debug-macro.S => include/debug/tegra.S} (96%)
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Let me tell you that this is totally evil.  OMAP and Davinci are doing 
+the same abuse.
+
+> Without uncompress.h running, debug-macro.S would either have to 
+> hard-code a single UART ID (and different boards uses different UARTs, 
+> which would make running a single kernel image across all Tegra 
+> devices with earlyprintk enabled impossible) *or* we'd have to port 
+> the UART ID extraction code to debug-macro.S too,
+
+Please do the later.  That's the only sane solution.
+
+> which I don't fancy very much since that's assembly whereas 
+> uncompress.h is C.
+
+Well, that's too bad.  Time to sharpen your assembly skills.  ;-)
+
+
+Nicolas
