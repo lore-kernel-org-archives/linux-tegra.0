@@ -1,37 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] staging: nvec: remove include of <mach/iomap.h>
-Date: Tue, 02 Oct 2012 16:44:05 -0600
-Message-ID: <506B6E35.5050005@wwwdotorg.org>
-References: <1349216336-986-1-git-send-email-swarren@wwwdotorg.org> <20121002222435.GA32288@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] usb: phy: tegra remove include of <mach/iomap.h>
+Date: Tue,  2 Oct 2012 16:50:02 -0600
+Message-ID: <1349218202-3534-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121002222435.GA32288-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/02/2012 04:24 PM, Greg Kroah-Hartman wrote:
-> On Tue, Oct 02, 2012 at 04:18:56PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Nothing from this file is used, and the file will hopefully be deleted
->> soon.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Greg, if this patch can get into 3.7 (it's late, I know) then that
->> would be great. If not, may I please request an ack so I can take the
->> change through the Tegra tree in 3.8, since I will probably have cleanup
->> patches that depend on this change. Thanks.
-> 
-> I can apply this after 3.7-rc1 is out, so that it will be in the final
-> 3.7, is that ok for you?  If not, feel free to take it in your tree as
-> well:
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks. I may as well take it through my tree so I can start building on
-top of it as soon as rc1 is out rather than waiting for rc2 or later.
+Almost nothing from this file is used, and the file will hopefully be
+deleted soon. Copy the tiny portions that are used directly into
+tegra_usb_phy.c. I believe that Venu Byravarasu is working on cleaning up
+our USB driver, and those cleanups will remove the need for these
+constants.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Felipe, Greg, if this patch can get into 3.7 (it's late, I know) at a point
+before wherever you branch off your USB tree for 3.8, then that would be
+great. If not, may I please request this patch be merged into a separate
+branch/tag that is merged into both the Tegra and USB trees for 3.8, since
+I will probably have cleanup patches in the Tegra tree that depend on this
+change, and Venu will likely be sending patches through the USB tree that
+will need to be merged with this too.
+---
+ drivers/usb/phy/tegra_usb_phy.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
+index 987116f..9d13c81 100644
+--- a/drivers/usb/phy/tegra_usb_phy.c
++++ b/drivers/usb/phy/tegra_usb_phy.c
+@@ -29,7 +29,9 @@
+ #include <linux/usb/ulpi.h>
+ #include <asm/mach-types.h>
+ #include <linux/usb/tegra_usb_phy.h>
+-#include <mach/iomap.h>
++
++#define TEGRA_USB_BASE		0xC5000000
++#define TEGRA_USB_SIZE		SZ_16K
+ 
+ #define ULPI_VIEWPORT		0x170
+ 
+-- 
+1.7.0.4
