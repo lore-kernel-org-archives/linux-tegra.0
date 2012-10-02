@@ -1,87 +1,62 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 1/2] ARM: tegra: fix invalid unit-address in tegra*.dtsi
-Date: Tue, 2 Oct 2012 22:03:11 +0200
-Message-ID: <20121002200311.GB31363@avionic-0098.mockup.avionic-design.de>
-References: <1349205048-22228-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: simplify DEBUG_LL UART selection options
+Date: Tue, 02 Oct 2012 14:12:23 -0600
+Message-ID: <506B4AA7.60609@wwwdotorg.org>
+References: <1349204866-21810-1-git-send-email-swarren@wwwdotorg.org> <20121002200130.GA31363@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2887652278998058312=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1349205048-22228-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, arm@kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121002200130.GA31363-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/02/2012 02:01 PM, Thierry Reding wrote:
+> On Tue, Oct 02, 2012 at 01:07:44PM -0600, Stephen Warren wrote: 
+> [...]
+>> choice -        prompt "Default low-level debug console UART" -
+>> default TEGRA_DEBUG_UART_NONE +        prompt "Low-level debug
+>> console UART" +        default TEGRA_DEBUG_UART_AUTO_ODMDATA
+>> 
+>> -config TEGRA_DEBUG_UART_NONE -        bool "None" +config
+>> TEGRA_DEBUG_UART_AUTO_ODMDATA
+> 
+> The first item in a list of choices is automatically selected as
+> the default, so technically the default is redundant here. I
+> suppose it doesn't hurt to be explicit.
+> 
+>> diff --git a/arch/arm/mach-tegra/common.c
+>> b/arch/arm/mach-tegra/common.c index 0b0a5f5..0913d1f 100644 ---
+>> a/arch/arm/mach-tegra/common.c +++
+>> b/arch/arm/mach-tegra/common.c @@ -44,14 +44,13 @@ * kernel is
+>> loaded. The data is declared here rather than debug-macro.S so *
+>> that multiple inclusions of debug-macro.S point at the same
+>> data. */ -#define TEGRA_DEBUG_UART_OFFSET (TEGRA_DEBUG_UART_BASE
+>> & 0xFFFF) u32 tegra_uart_config[3] = { /* Debug UART
+>> initialization required */ 1, /* Debug UART physical address */ -
+>> (u32)(IO_APB_PHYS + TEGRA_DEBUG_UART_OFFSET), +	0, /* Debug UART
+>> virtual address */ -	(u32)(IO_APB_VIRT +
+>> TEGRA_DEBUG_UART_OFFSET), +	0, };
+> 
+> I don't quite see how this is supposed to work now. Won't the
+> debug.S code fail if these fields are set to 0?
 
---===============2887652278998058312==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
-Content-Disposition: inline
+If those fields remain set to 0, then there will be no DEBUG_LL output.
 
+However, assuming use of a compressed zImage rather than an
+uncompressed Image then at this stage in the series, uncompress.h
+writes the UART selection and a cookie to Tegra's IRAM, and
+debug-macro.S reads that selection, and re-initializes those fields to
+whatever uncompress.h chose.
 
---GID0FwUMdk1T2AWN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In patch 2 in the series, the coupling between uncompress.h and
+debug-macro.S is entirely removed, and instead, debug-macro.S
+initializes those values the first time a character is printed.
 
-On Tue, Oct 02, 2012 at 01:10:47PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->=20
-> Unit addresses, whilst written in hex, don't contain a 0x prefix.
->=20
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> A couple of small cleanups/tweaks for 3.7 if possible.
->=20
->  arch/arm/boot/dts/tegra20-seaboard.dts |    2 +-
->  arch/arm/boot/dts/tegra20.dtsi         |    4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-
-Both patches,
-
-Reviewed-by: Thierry Reding <thierry.reding@avionic-design.de>
-
---GID0FwUMdk1T2AWN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQa0h/AAoJEN0jrNd/PrOhpo8P/3Mdo4C27uLQVgfp0TJK7Wa0
-SMYG7DESb8UtszRiUOv1UIPZrRxaK7VGtOJ8lDWRLcCb5CZ+buMdIainLtHSp3+F
-H4HmS+vBudA+fZzAVcbqTNFV2x6cpVb3rhG0zt0hP1WlgW3mIJMXMbO3gJINiQoK
-OYYijAlfHi7K8dr3Y5QkqT8IN9dWGt1AK78LNPEXqB43wCl+keBi70CrNih03Bid
-L0XNGdwzWrWHiK+p8bez6EbEMWVFIwt8ziFyuvptHOG1owh/e6SgEm+EEc+OoweO
-pyvE7QDi49PyGfbVPkjxCWC0OXLx+fY7ppxu+x3gp/HpKMLCntA8kqFRcNGTcTRa
-S832KR7idx2KzYkm4ctFVeYiNIlteKtO27lAU8zu5hBueypITSC/bbl3u+fTtS08
-wDvgYIes6W8AQ6WsejjjP9uWlFM7zD4TYapajqYulisRvKbDqMfYCvyIZk+8gtO4
-J7r0OtGZMcddwFcMhYAi70a4wKlq7bsR06CUzJf5Udyg96QYmLQuL3/34fP4Skui
-rtL2e345ZHDkHTCPchx1JK4hJlOVLrm0CVYxsg5ya8UX0dgUWkoVlmfESYr35KjI
-A5tPuEJFRWQka4v6SSFtqoZXIQGTLlIxsQleYleSRkbk8nOffY8+H/8IgcSYV6jL
-sZNx5SnzCir82NdQQ0Vy
-=WKt9
------END PGP SIGNATURE-----
-
---GID0FwUMdk1T2AWN--
-
-
---===============2887652278998058312==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2887652278998058312==--
+The values aren't hard-coded there since they are now (after patch 2)
+always over-written. Even when a single static UART is selected, we
+can't hard-code the address since debug-macro.S validates that the
+clock and reset bits to the UART are correctly set before using it,
+hence we might end up not using the UART anyway.
