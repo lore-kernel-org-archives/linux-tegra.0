@@ -1,62 +1,41 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: simplify DEBUG_LL UART selection options
-Date: Tue, 02 Oct 2012 14:12:23 -0600
-Message-ID: <506B4AA7.60609@wwwdotorg.org>
-References: <1349204866-21810-1-git-send-email-swarren@wwwdotorg.org> <20121002200130.GA31363@avionic-0098.mockup.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] iommu: tegra: remove include of <mach/iomap.h>
+Date: Tue,  2 Oct 2012 16:15:49 -0600
+Message-ID: <1349216149-858-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121002200130.GA31363-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/02/2012 02:01 PM, Thierry Reding wrote:
-> On Tue, Oct 02, 2012 at 01:07:44PM -0600, Stephen Warren wrote: 
-> [...]
->> choice -        prompt "Default low-level debug console UART" -
->> default TEGRA_DEBUG_UART_NONE +        prompt "Low-level debug
->> console UART" +        default TEGRA_DEBUG_UART_AUTO_ODMDATA
->> 
->> -config TEGRA_DEBUG_UART_NONE -        bool "None" +config
->> TEGRA_DEBUG_UART_AUTO_ODMDATA
-> 
-> The first item in a list of choices is automatically selected as
-> the default, so technically the default is redundant here. I
-> suppose it doesn't hurt to be explicit.
-> 
->> diff --git a/arch/arm/mach-tegra/common.c
->> b/arch/arm/mach-tegra/common.c index 0b0a5f5..0913d1f 100644 ---
->> a/arch/arm/mach-tegra/common.c +++
->> b/arch/arm/mach-tegra/common.c @@ -44,14 +44,13 @@ * kernel is
->> loaded. The data is declared here rather than debug-macro.S so *
->> that multiple inclusions of debug-macro.S point at the same
->> data. */ -#define TEGRA_DEBUG_UART_OFFSET (TEGRA_DEBUG_UART_BASE
->> & 0xFFFF) u32 tegra_uart_config[3] = { /* Debug UART
->> initialization required */ 1, /* Debug UART physical address */ -
->> (u32)(IO_APB_PHYS + TEGRA_DEBUG_UART_OFFSET), +	0, /* Debug UART
->> virtual address */ -	(u32)(IO_APB_VIRT +
->> TEGRA_DEBUG_UART_OFFSET), +	0, };
-> 
-> I don't quite see how this is supposed to work now. Won't the
-> debug.S code fail if these fields are set to 0?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-If those fields remain set to 0, then there will be no DEBUG_LL output.
+Nothing from this file is used, and the file will hopefully be deleted
+soon.
 
-However, assuming use of a compressed zImage rather than an
-uncompressed Image then at this stage in the series, uncompress.h
-writes the UART selection and a cookie to Tegra's IRAM, and
-debug-macro.S reads that selection, and re-initializes those fields to
-whatever uncompress.h chose.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Joerg, if this patch can get into 3.7 (it's late, I know) then that
+would be great. If not, may I please request an ack so I can take the
+change through the Tegra tree in 3.8, since I will probably have cleanup
+patches that depend on this change. Thanks.
 
-In patch 2 in the series, the coupling between uncompress.h and
-debug-macro.S is entirely removed, and instead, debug-macro.S
-initializes those values the first time a character is printed.
+This is based on the IOMMU arm/tegra branch.
+---
+ drivers/iommu/tegra-smmu.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-The values aren't hard-coded there since they are now (after patch 2)
-always over-written. Even when a single static UART is selected, we
-can't hard-code the address since debug-macro.S validates that the
-clock and reset bits to the UART are correctly set before using it,
-hence we might end up not using the UART anyway.
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index e1d17fe..e7b56da 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -38,7 +38,6 @@
+ #include <asm/page.h>
+ #include <asm/cacheflush.h>
+ 
+-#include <mach/iomap.h>
+ #include <mach/tegra-ahb.h>
+ 
+ enum smmu_hwgrp {
+-- 
+1.7.0.4
