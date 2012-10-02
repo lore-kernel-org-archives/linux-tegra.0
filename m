@@ -1,41 +1,40 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] iommu: tegra: remove include of <mach/iomap.h>
-Date: Tue,  2 Oct 2012 16:15:49 -0600
-Message-ID: <1349216149-858-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] crypto: tegra: remove include of <mach/clk.h>
+Date: Tue,  2 Oct 2012 16:17:40 -0600
+Message-ID: <1349216260-917-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>
+Cc: linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
 Nothing from this file is used, and the file will hopefully be deleted
 soon.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-Joerg, if this patch can get into 3.7 (it's late, I know) then that
+Herbert, if this patch can get into 3.7 (it's late, I know) then that
 would be great. If not, may I please request an ack so I can take the
 change through the Tegra tree in 3.8, since I will probably have cleanup
 patches that depend on this change. Thanks.
-
-This is based on the IOMMU arm/tegra branch.
 ---
- drivers/iommu/tegra-smmu.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ drivers/crypto/tegra-aes.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index e1d17fe..e7b56da 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -38,7 +38,6 @@
- #include <asm/page.h>
- #include <asm/cacheflush.h>
+diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
+index ac236f6..88d860b 100644
+--- a/drivers/crypto/tegra-aes.c
++++ b/drivers/crypto/tegra-aes.c
+@@ -41,8 +41,6 @@
+ #include <linux/completion.h>
+ #include <linux/workqueue.h>
  
--#include <mach/iomap.h>
- #include <mach/tegra-ahb.h>
- 
- enum smmu_hwgrp {
+-#include <mach/clk.h>
+-
+ #include <crypto/scatterwalk.h>
+ #include <crypto/aes.h>
+ #include <crypto/internal/rng.h>
 -- 
 1.7.0.4
