@@ -1,40 +1,41 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] crypto: tegra: remove include of <mach/clk.h>
-Date: Tue,  2 Oct 2012 16:17:40 -0600
-Message-ID: <1349216260-917-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>
-Cc: linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] staging: nvec: remove include of <mach/iomap.h>
+Date: Tue,  2 Oct 2012 16:18:56 -0600
+Message-ID: <1349216336-986-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Nothing from this file is used, and the file will hopefully be deleted
 soon.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Herbert, if this patch can get into 3.7 (it's late, I know) then that
+Greg, if this patch can get into 3.7 (it's late, I know) then that
 would be great. If not, may I please request an ack so I can take the
 change through the Tegra tree in 3.8, since I will probably have cleanup
 patches that depend on this change. Thanks.
----
- drivers/crypto/tegra-aes.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
-index ac236f6..88d860b 100644
---- a/drivers/crypto/tegra-aes.c
-+++ b/drivers/crypto/tegra-aes.c
-@@ -41,8 +41,6 @@
- #include <linux/completion.h>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/staging/nvec/nvec.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 094fdc3..97cdf08 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -39,7 +39,6 @@
  #include <linux/workqueue.h>
  
--#include <mach/clk.h>
--
- #include <crypto/scatterwalk.h>
- #include <crypto/aes.h>
- #include <crypto/internal/rng.h>
+ #include <mach/clk.h>
+-#include <mach/iomap.h>
+ 
+ #include "nvec.h"
+ 
 -- 
 1.7.0.4
