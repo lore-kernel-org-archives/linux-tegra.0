@@ -1,55 +1,76 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] usb: host: tegra remove include of <mach/iomap.h>
-Date: Tue,  2 Oct 2012 16:49:25 -0600
-Message-ID: <1349218165-3494-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: delete empty sleep.S
+Date: Tue,  2 Oct 2012 17:21:09 -0600
+Message-ID: <1349220069-4051-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Almost nothing from this file is used, and the file will hopefully be
-deleted soon. Copy the tiny portions that are used directly into
-ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
-our USB driver, and those cleanups will remove the need for these
-constants.
+sleep.S doesn't provide anything useful any more; commit b4e395b "ARM:
+tegra: Remove flow controller programming" removed the last public code
+here, so that everyting that was left was just macros or #includes.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Greg, if this patch can get into 3.7 (it's late, I know) at a point before
-wherever you branch off your USB tree for 3.8, then that would be great.
-If not, may I please request this patch be merged into a separate branch/tag
-that is merged into both the Tegra and USB trees for 3.8, since I will
-probably have cleanup patches in the Tegra tree that depend on this change,
-and Venu will likely be sending patches through the USB tree that will need
-to be merged with this too.
----
- drivers/usb/host/ehci-tegra.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
+ arch/arm/mach-tegra/Makefile |    1 -
+ arch/arm/mach-tegra/sleep.S  |   33 ---------------------------------
+ 2 files changed, 0 insertions(+), 34 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/sleep.S
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 6223d17..2de0890 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -28,7 +28,10 @@
- #include <linux/pm_runtime.h>
- 
- #include <linux/usb/tegra_usb_phy.h>
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 9aa653b..c623752 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -9,7 +9,6 @@ obj-y					+= flowctrl.o
+ obj-y					+= powergate.o
+ obj-y					+= apbio.o
+ obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
+-obj-$(CONFIG_CPU_IDLE)			+= sleep.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks_data.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
+deleted file mode 100644
+index ea81554..0000000
+--- a/arch/arm/mach-tegra/sleep.S
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/sleep.S
+- *
+- * Copyright (c) 2010-2011, NVIDIA Corporation.
+- * Copyright (c) 2011, Google, Inc.
+- *
+- * Author: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+- *         Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along
+- * with this program; if not, write to the Free Software Foundation, Inc.,
+- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+- */
+-
+-#include <linux/linkage.h>
+-
+-#include <asm/assembler.h>
+-
 -#include <mach/iomap.h>
-+
-+#define TEGRA_USB_BASE			0xC5000000
-+#define TEGRA_USB2_BASE			0xC5004000
-+#define TEGRA_USB3_BASE			0xC5008000
- 
- #define TEGRA_USB_DMA_ALIGN 32
- 
+-
+-#include "flowctrl.h"
+-#include "sleep.h"
+-
 -- 
 1.7.0.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
