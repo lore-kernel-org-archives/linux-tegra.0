@@ -1,13 +1,13 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
 Subject: [PATCH] dma: tegra: fix interrupt name issue with apb dma.
-Date: Wed, 3 Oct 2012 22:48:07 +0530
-Message-ID: <1349284687-22311-1-git-send-email-ldewangan@nvidia.com>
+Date: Wed, 3 Oct 2012 22:51:53 +0530
+Message-ID: <1349284913-22350-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: arm@kernel.org, djbw@fb.com, vinod.koul@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stable@kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 When watching the interrupts through /proc/interrupts,
@@ -19,8 +19,10 @@ Allocate the pointer as part of dma channel and pass
 this pointer as the devname for irq registration to
 avoid change of name.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
+Resending as mail was not delivered to arm@kernel.org.
+
  drivers/dma/tegra20-apb-dma.c |    6 +++---
  1 files changed, 3 insertions(+), 3 deletions(-)
 
