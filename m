@@ -1,19 +1,19 @@
-From: Greg KH <gregkh@linuxfoundation.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH] dma: tegra: fix interrupt name issue with apb dma.
-Date: Wed, 3 Oct 2012 11:17:57 -0700
-Message-ID: <20121003181757.GA24871@kroah.com>
-References: <1349284687-22311-1-git-send-email-ldewangan@nvidia.com>
+Date: Wed, 03 Oct 2012 14:53:44 -0600
+Message-ID: <506CA5D8.1050201@wwwdotorg.org>
+References: <1349284913-22350-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1349284687-22311-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: arm@vger.kernel.org, djbw@fb.com, vinod.koul@intel.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1349284913-22350-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 03, 2012 at 10:48:07PM +0530, Laxman Dewangan wrote:
+On 10/03/2012 11:21 AM, Laxman Dewangan wrote:
 > When watching the interrupts through /proc/interrupts,
 > the name of the interrupts are blank or garbage. The
 > reason is the pointer passed for devname during irq
@@ -22,16 +22,9 @@ On Wed, Oct 03, 2012 at 10:48:07PM +0530, Laxman Dewangan wrote:
 > Allocate the pointer as part of dma channel and pass
 > this pointer as the devname for irq registration to
 > avoid change of name.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  drivers/dma/tegra20-apb-dma.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
 
-<formletter>
+(Dropping stable Cc; Olof/Arnd or Vinod, is it possible you could add
+that into the patch description when applying this?)
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
-
-</formletter>
+Reported-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
