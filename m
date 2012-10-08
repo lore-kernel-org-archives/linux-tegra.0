@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/7] ARM: tegra: cpuidle: add LP2 resume function
-Date: Mon, 8 Oct 2012 18:26:16 +0800
-Message-ID: <1349691981-31038-3-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 5/7] ARM: tegra30: clocks: add CPU low-power function into tegra_cpu_car_ops
+Date: Mon, 8 Oct 2012 18:26:19 +0800
+Message-ID: <1349691981-31038-6-git-send-email-josephl@nvidia.com>
 References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,133 +12,216 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-LP2 is one of the Tegra low power states that supports power gating both
-CPU cores and GICs. Adding a resume function for taking care the CPUs that
-resume from LP2. This function was been hooked to reset handler. We take
-care everything here before go into kernel.
-
-Based on the work by:
-Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
+functions were used for CPU low-power state maintenance (e.g., LP2). One
+thing needs to notice the rail_off_ready API only availalbe for cpu_g
+cluster not cpu_lp cluster.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/headsmp.S |   58 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/reset.c   |    6 ++++
- arch/arm/mach-tegra/sleep.h   |    1 +
- 3 files changed, 65 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/tegra30_clocks.c |  107 ++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/tegra_cpu_car.h  |   37 ++++++++++++
+ 2 files changed, 144 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-index 6addc78..abf86b3 100644
---- a/arch/arm/mach-tegra/headsmp.S
-+++ b/arch/arm/mach-tegra/headsmp.S
-@@ -69,6 +69,53 @@ ENTRY(tegra_secondary_startup)
-         b       secondary_startup
- ENDPROC(tegra_secondary_startup)
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
+index 5cd502c..23f513b 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.c
++++ b/arch/arm/mach-tegra/tegra30_clocks.c
+@@ -32,6 +32,7 @@
+ #include <asm/clkdev.h>
  
-+#ifdef CONFIG_PM_SLEEP
-+/*
-+ *	tegra_resume
-+ *
-+ *	  CPU boot vector when restarting the a CPU following
-+ *	  an LP2 transition. Also branched to by LP0 and LP1 resume after
-+ *	  re-enabling sdram.
-+ */
-+ENTRY(tegra_resume)
-+	bl	v7_invalidate_l1
-+	/* Enable coresight */
-+	mov32	r0, 0xC5ACCE55
-+	mcr	p14, 0, r0, c7, c12, 6
-+
-+	cpu_id	r0
-+	cmp	r0, #0				@ CPU0?
-+	bne	cpu_resume			@ no
-+
-+	/* Are we on Tegra20? */
-+	mov32	r6, TEGRA_APB_MISC_BASE
-+	ldr	r0, [r6, #APB_MISC_GP_HIDREV]
-+	and	r0, r0, #0xff00
-+	cmp	r0, #(0x20 << 8)
-+	beq	1f
-+#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-+	/* Clear the flow controller flags for this CPU. */
-+	mov32	r2, TEGRA_FLOW_CTRL_BASE + FLOW_CTRL_CPU0_CSR	@ CPU0 CSR
-+	ldr	r1, [r2]
-+	/* Clear event & intr flag */
-+	orr	r1, r1, \
-+		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
-+	movw	r0, #0x0FFD	@ enable, cluster_switch, immed, & bitmaps
-+	bic	r1, r1, r0
-+	str	r1, [r2]
-+#endif
-+1:
-+
-+	/* enable SCU */
-+	mov32	r0, TEGRA_ARM_PERIF_BASE
-+	ldr	r1, [r0]
-+	orr	r1, r1, #1
-+	str	r1, [r0]
-+
-+	b	cpu_resume
-+ENDPROC(tegra_resume)
-+#endif
-+
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler_start)
+ #include <mach/iomap.h>
++#include <mach/powergate.h>
  
-@@ -122,6 +169,17 @@ ENTRY(__tegra_cpu_reset_handler)
- 1:
- #endif
- 
-+	/* Waking up from LP2? */
-+	ldr	r9, [r12, #RESET_DATA(MASK_LP2)]
-+	tst	r9, r11				@ if in_lp2
-+	beq	__is_not_lp2
-+	ldr	lr, [r12, #RESET_DATA(STARTUP_LP2)]
-+	cmp	lr, #0
-+	bleq	__die				@ no LP2 startup handler
-+	bx	lr
-+
-+__is_not_lp2:
-+
- #ifdef CONFIG_SMP
- 	/*
- 	 * Can only be secondary boot (initial or hotplug) but CPU 0
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index 5beb7eb..c48548f 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -26,6 +26,7 @@
- #include <mach/irammap.h>
- 
- #include "reset.h"
-+#include "sleep.h"
+ #include "clock.h"
  #include "fuse.h"
+@@ -310,6 +311,31 @@
+ #define CPU_CLOCK(cpu)	(0x1 << (8 + cpu))
+ #define CPU_RESET(cpu)	(0x1111ul << (cpu))
  
- #define TEGRA_IRAM_RESET_BASE (TEGRA_IRAM_BASE + \
-@@ -80,5 +81,10 @@ void __init tegra_cpu_reset_handler_init(void)
- 		virt_to_phys((void *)tegra_secondary_startup);
- #endif
- 
++#define CLK_RESET_CCLK_BURST	0x20
++#define CLK_RESET_CCLK_DIVIDER  0x24
++#define CLK_RESET_PLLX_BASE	0xe0
++#define CLK_RESET_PLLX_MISC	0xe4
++
++#define CLK_RESET_SOURCE_CSITE	0x1d4
++
++#define CLK_RESET_CCLK_BURST_POLICY_SHIFT	28
++#define CLK_RESET_CCLK_RUN_POLICY_SHIFT		4
++#define CLK_RESET_CCLK_IDLE_POLICY_SHIFT	0
++#define CLK_RESET_CCLK_IDLE_POLICY		1
++#define CLK_RESET_CCLK_RUN_POLICY		2
++#define CLK_RESET_CCLK_BURST_POLICY_PLLX	8
++
 +#ifdef CONFIG_PM_SLEEP
-+	__tegra_cpu_reset_handler_data[TEGRA_RESET_STARTUP_LP2] =
-+		virt_to_phys((void *)tegra_resume);
++static struct cpu_clk_suspend_context {
++	u32 pllx_misc;
++	u32 pllx_base;
++
++	u32 cpu_burst;
++	u32 clk_csite_src;
++	u32 cclk_divider;
++} tegra30_cpu_clk_sctx;
 +#endif
 +
- 	tegra_cpu_reset_handler_enable();
+ /**
+ * Structure defining the fields for USB UTMI clocks Parameters.
+ */
+@@ -2281,12 +2307,93 @@ static void tegra30_disable_cpu_clock(u32 cpu)
+ 	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
  }
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index e25a7cd..c9dec37 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -72,6 +72,7 @@
- 	dsb
- .endm
- #else
-+void tegra_resume(void);
  
- #ifdef CONFIG_HOTPLUG_CPU
- void tegra20_hotplug_init(void);
++#ifdef CONFIG_PM_SLEEP
++static bool tegra30_cpu_rail_off_ready(void)
++{
++	unsigned int cpu_rst_status;
++	int cpu_pwr_status;
++
++	cpu_rst_status = readl(reg_clk_base +
++			       TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
++	cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
++			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
++			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
++
++	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
++		return false;
++
++	return true;
++}
++
++static void tegra30_cpu_clock_suspend(void)
++{
++	/* switch coresite to clk_m, save off original source */
++	tegra30_cpu_clk_sctx.clk_csite_src =
++				readl(reg_clk_base + CLK_RESET_SOURCE_CSITE);
++	writel(3<<30, reg_clk_base + CLK_RESET_SOURCE_CSITE);
++
++	tegra30_cpu_clk_sctx.cpu_burst =
++				readl(reg_clk_base + CLK_RESET_CCLK_BURST);
++	tegra30_cpu_clk_sctx.pllx_base =
++				readl(reg_clk_base + CLK_RESET_PLLX_BASE);
++	tegra30_cpu_clk_sctx.pllx_misc =
++				readl(reg_clk_base + CLK_RESET_PLLX_MISC);
++	tegra30_cpu_clk_sctx.cclk_divider =
++				readl(reg_clk_base + CLK_RESET_CCLK_DIVIDER);
++}
++
++static void tegra30_cpu_clock_resume(void)
++{
++	unsigned int reg, policy;
++
++	/* Is CPU complex already running on PLLX? */
++	reg = readl(reg_clk_base + CLK_RESET_CCLK_BURST);
++	policy = (reg >> CLK_RESET_CCLK_BURST_POLICY_SHIFT) & 0xF;
++
++	if (policy == CLK_RESET_CCLK_IDLE_POLICY)
++		reg = (reg >> CLK_RESET_CCLK_IDLE_POLICY_SHIFT) & 0xF;
++	else if (policy == CLK_RESET_CCLK_RUN_POLICY)
++		reg = (reg >> CLK_RESET_CCLK_RUN_POLICY_SHIFT) & 0xF;
++	else
++		BUG();
++
++	if (reg != CLK_RESET_CCLK_BURST_POLICY_PLLX) {
++		/* restore PLLX settings if CPU is on different PLL */
++		writel(tegra30_cpu_clk_sctx.pllx_misc,
++					reg_clk_base + CLK_RESET_PLLX_MISC);
++		writel(tegra30_cpu_clk_sctx.pllx_base,
++					reg_clk_base + CLK_RESET_PLLX_BASE);
++
++		/* wait for PLL stabilization if PLLX was enabled */
++		if (tegra30_cpu_clk_sctx.pllx_base & (1 << 30))
++			udelay(300);
++	}
++
++	/*
++	 * Restore original burst policy setting for calls resulting from CPU
++	 * LP2 in idle or system suspend.
++	 */
++	writel(tegra30_cpu_clk_sctx.cclk_divider,
++					reg_clk_base + CLK_RESET_CCLK_DIVIDER);
++	writel(tegra30_cpu_clk_sctx.cpu_burst,
++					reg_clk_base + CLK_RESET_CCLK_BURST);
++
++	writel(tegra30_cpu_clk_sctx.clk_csite_src,
++					reg_clk_base + CLK_RESET_SOURCE_CSITE);
++}
++#endif
++
+ static struct tegra_cpu_car_ops tegra30_cpu_car_ops = {
+ 	.wait_for_reset	= tegra30_wait_cpu_in_reset,
+ 	.put_in_reset	= tegra30_put_cpu_in_reset,
+ 	.out_of_reset	= tegra30_cpu_out_of_reset,
+ 	.enable_clock	= tegra30_enable_cpu_clock,
+ 	.disable_clock	= tegra30_disable_cpu_clock,
++#ifdef CONFIG_PM_SLEEP
++	.rail_off_ready	= tegra30_cpu_rail_off_ready,
++	.suspend	= tegra30_cpu_clock_suspend,
++	.resume		= tegra30_cpu_clock_resume,
++#endif
+ };
+ 
+ void __init tegra30_cpu_car_ops_init(void)
+diff --git a/arch/arm/mach-tegra/tegra_cpu_car.h b/arch/arm/mach-tegra/tegra_cpu_car.h
+index 30d063a..9764d31 100644
+--- a/arch/arm/mach-tegra/tegra_cpu_car.h
++++ b/arch/arm/mach-tegra/tegra_cpu_car.h
+@@ -30,6 +30,12 @@
+  *	CPU clock un-gate
+  * disable_clock:
+  *	CPU clock gate
++ * rail_off_ready:
++ *	CPU is ready for rail off
++ * suspend:
++ *	save the clock settings when CPU go into low-power state
++ * resume:
++ *	restore the clock settings when CPU exit low-power state
+  */
+ struct tegra_cpu_car_ops {
+ 	void (*wait_for_reset)(u32 cpu);
+@@ -37,6 +43,11 @@ struct tegra_cpu_car_ops {
+ 	void (*out_of_reset)(u32 cpu);
+ 	void (*enable_clock)(u32 cpu);
+ 	void (*disable_clock)(u32 cpu);
++#ifdef CONFIG_PM_SLEEP
++	bool (*rail_off_ready)(void);
++	void (*suspend)(void);
++	void (*resume)(void);
++#endif
+ };
+ 
+ extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
+@@ -81,6 +92,32 @@ static inline void tegra_disable_cpu_clock(u32 cpu)
+ 	tegra_cpu_car_ops->disable_clock(cpu);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static inline bool tegra_cpu_rail_off_ready(void)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->rail_off_ready))
++		return false;
++
++	return tegra_cpu_car_ops->rail_off_ready();
++}
++
++static inline void tegra_cpu_clock_suspend(void)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->suspend))
++		return;
++
++	tegra_cpu_car_ops->suspend();
++}
++
++static inline void tegra_cpu_clock_resume(void)
++{
++	if (WARN_ON(!tegra_cpu_car_ops->resume))
++		return;
++
++	tegra_cpu_car_ops->resume();
++}
++#endif
++
+ void tegra20_cpu_car_ops_init(void);
+ void tegra30_cpu_car_ops_init(void);
+ 
 -- 
 1.7.0.4
