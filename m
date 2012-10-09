@@ -1,126 +1,131 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH] ARM: sort select statements alphanumerically
-Date: Tue, 9 Oct 2012 14:18:25 +0800
-Message-ID: <CAGsJ_4zi1GNOAVW3dVrwHkjQEWrVTkNvpiq1R-=GVvN5VC-weA@mail.gmail.com>
-References: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 3/7] ARM: tegra30: cpuidle: add LP2 driver for secondary
+ CPUs
+Date: Tue, 9 Oct 2012 09:38:05 +0100
+Message-ID: <20121009083804.GA11840@e102568-lin.cambridge.arm.com>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
+ <1349691981-31038-4-git-send-email-josephl@nvidia.com>
+ <20121008163504.GC5377@e102568-lin.cambridge.arm.com>
+ <1349755995.15153.145.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, Haojian Zhuang <haojian.zhuang@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Kukjin Kim <kgene.kim@samsung.com>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>linux
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1349755995.15153.145.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-2012/10/7 Russell King <rmk+kernel@arm.linux.org.uk>:
-> As suggested by Andrew Morton:
->
->   This is a pet peeve of mine.  Any time there's a long list of items
->   (header file inclusions, kconfig entries, array initalisers, etc) and
->   someone wants to add a new item, they *always* go and stick it at the
->   end of the list.
->   ...
->   Guys, don't do this.  Either put the new item into a randomly-chosen
->   position or, probably better, alphanumerically sort the list.
->
->   For this reason it looks like approximately 0% of the patchset will
->   apply, sorry.
->
-> lets sort all our select statements alphanumerically.  This commit was
-> created by the following script:
->
-> #!/usr/bin/perl
-> while (<>) {
->         while (/\\\s*$/) {
->                 $_ .= <>;
->         }
->         undef %selects if /^\s*config\s+/;
->         if (/^\s+select\s+(\w+).*/) {
->                 if (defined($selects{$1})) {
->                         if ($selects{$1} eq $_) {
->                                 print STDERR "Warning: removing duplicated $1 entry\n";
->                         } else {
->                                 print STDERR "Error: $1 differently selected\n".
->                                         "\tOld: $selects{$1}\n".
->                                         "\tNew: $_\n";
->                                 exit 1;
->                         }
->                 }
->                 $selects{$1} = $_;
->                 next;
->         }
->         if (%selects and (/^\s*$/ or /^\s+help/)) {
->                 foreach $k (sort (keys %selects)) {
->                         print "$selects{$k}";
->                 }
->                 undef %selects;
->         }
->         print;
-> }
-> if (%selects) {
->         foreach $k (sort (keys %selects)) {
->                 print "$selects{$k}";
->         }
-> }
->
-> It found two duplicates:
->
-> Warning: removing duplicated S5P_SETUP_MIPIPHY entry
-> Warning: removing duplicated HARDIRQS_SW_RESEND entry
->
-> and they are identical duplicates, hence the shrinkage in the diffstat
-> of two lines.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+On Tue, Oct 09, 2012 at 05:13:15AM +0100, Joseph Lo wrote:
 
-Changes in CSR prima2 arch look fine,
+[...]
 
-Acked-by: Barry Song <Baohua.Song@csr.com>
+> > > +ENTRY(tegra_flush_l1_cache)
+> > > +       stmfd   sp!, {r4-r5, r7, r9-r11, lr}
+> > > +       dmb                                     @ ensure ordering
+> > > +
+> > > +       /* Disable the data cache */
+> > > +       mrc     p15, 0, r2, c1, c0, 0
+> > > +       bic     r2, r2, #CR_C
+> > > +       dsb
+> > > +       mcr     p15, 0, r2, c1, c0, 0
+> > > +
+> > > +       /* Flush data cache */
+> > > +       mov     r10, #0
+> > > +#ifdef CONFIG_PREEMPT
+> > > +       save_and_disable_irqs_notrace r9        @ make cssr&csidr read atomic
+> > > +#endif
+> > > +       mcr     p15, 2, r10, c0, c0, 0          @ select current cache level in cssr
+> > > +       isb                                     @ isb to sych the new cssr&csidr
+> > > +       mrc     p15, 1, r1, c0, c0, 0           @ read the new csidr
+> > > +#ifdef CONFIG_PREEMPT
+> > > +       restore_irqs_notrace r9
+> > > +#endif
+> > > +       and     r2, r1, #7                      @ extract the length of the cache lines
+> > > +       add     r2, r2, #4                      @ add 4 (line length offset)
+> > > +       ldr     r4, =0x3ff
+> > > +       ands    r4, r4, r1, lsr #3              @ find maximum number on the way size
+> > > +       clz     r5, r4                          @ find bit position of way size increment
+> > > +       ldr     r7, =0x7fff
+> > > +       ands    r7, r7, r1, lsr #13             @ extract max number of the index size
+> > > +loop2:
+> > > +       mov     r9, r4                          @ create working copy of max way size
+> > > +loop3:
+> > > +       orr     r11, r10, r9, lsl r5            @ factor way and cache number into r11
+> > > +       orr     r11, r11, r7, lsl r2            @ factor index number into r11
+> > > +       mcr     p15, 0, r11, c7, c14, 2         @ clean & invalidate by set/way
+> > > +       subs    r9, r9, #1                      @ decrement the way
+> > > +       bge     loop3
+> > > +       subs    r7, r7, #1                      @ decrement the index
+> > > +       bge     loop2
+> > > +finished:
+> > > +       mov     r10, #0                         @ swith back to cache level 0
+> > > +       mcr     p15, 2, r10, c0, c0, 0          @ select current cache level in cssr 
+> > > +       dsb
+> > > +       isb
+> > 
+> > This code is already in the kernel in cache-v7.S, please use that.
+> > We are just adding the new LoUIS API that probably does what you
+> > want, even though for Tegra, that is an A9 based platform I fail to
+> > understand why Level of Coherency differs from L1.
+> > 
+> > Can you explain to me please why Level of Coherency (LoC) is != from L1
+> > on Tegra ?
+> > 
+> 
+> Thanks for introducing the new LoUIS cache API. Did LoUIS been changed
+> by other HW? I checked the new LoUIS API. If LoUIS == 0, it means inner
+> shareable then it do nothing just return. But I need to flush L1 data
+> cache here to sync the coherency before CPU be power gated. And disable
+> data cache before flush is needed.
 
-BTW, i have a bundle of patches coming for new Marco platform which
-will also change the Kconfig.
+I understand that, that's why I am asking. To me LoUIS and LoC should
+both be the same for A9 based platforms and they should both represent
+a cache level that *includes* L1.
 
-> ---
-> This commit is likely to change as we get closer to the end of the merge
-> window, as other changes get merged into Linus' tree.  I will be refreshing
-> this from time to time, and keeping it out of linux-next, as it will cause
-> more pain than its worth to put it into linux-next.
->
-> Anyone who wants to give this a review to check that it's correct are welcome,
-> but I don't think it would be appropriate to collect attributation tags for
-> it, as this won't be the final patch.
->
-> This patch is intentionally broken to prevent Linus from applying it - this
-> is information only!
->
-> Anyone who wants to apply it can do so by first running this patch through:
->
->         sed 's/^-- /@@ /'
->
->  arch/arm/Kconfig                  |  399 ++++++++++++++++++-------------------
->  arch/arm/common/Kconfig           |    4 +-
->  arch/arm/mach-at91/Kconfig        |   26 ++--
->  arch/arm/mach-clps711x/Kconfig    |    4 +-
->  arch/arm/mach-davinci/Kconfig     |   16 +-
->  arch/arm/mach-exynos/Kconfig      |  181 +++++++++---------
->  arch/arm/mach-footbridge/Kconfig  |    8 +-
->  arch/arm/mach-h720x/Kconfig       |    2 +-
->  arch/arm/mach-imx/Kconfig         |  120 ++++++------
->  arch/arm/mach-ixp4xx/Kconfig      |    2 +-
->  arch/arm/mach-mmp/Kconfig         |    6 +-
->  arch/arm/mach-msm/Kconfig         |   28 ++--
->  arch/arm/mach-nomadik/Kconfig     |    4 +-
->  arch/arm/mach-omap1/Kconfig       |    8 +-
->  arch/arm/mach-omap2/Kconfig       |   68 +++---
->  arch/arm/mach-prima2/Kconfig      |    2 +-
+Can you provide me with the CLIDR value for Tegra3 please ?
 
--barry
+> 
+> I can tell you the sequence that why we just do L1 data cache flush
+> here. Maybe I need to change the comment to "flush to point of
+> coherency" not "level of coherency".
+> 
+> For secondary CPUs:
+> * after cpu_suspend
+> * disable data cache and flush L1 data cache
+    ^(1)
+> * Turn off SMP coherency
+    ^(2)
+
+Two steps above, one assembly function, no access to any data whatsoever
+please.
+
+> * power gate CPU
+> 
+> For CPU0:
+> * outer_disable (flush and disable L2)
+
+I guess L2 cannot be retained on Tegra ?
+
+> * cpu_suspend
+> * disable data cache and flush L1 data cache
+> * Turn off SMP coherency
+> * Turn off MMU
+> * shut off the CPU rail
+> 
+> So we only do flush to PoC.
+> 
+> And changing the sequence of secondary CPUs to belows maybe more
+> suitable?
+
+Yes, basically because the net effect should be identical.
+
+Lorenzo
+
+> * after cpu_suspend
+> * disable data cache and call to v7_flush_dcache_all
+> * Turn off SMP coherency
+> * power gate CPU
+> 
