@@ -1,143 +1,111 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Thu, 11 Oct 2012 19:24:45 +0800
-Message-ID: <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
-References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
-	 <1349691981-31038-8-git-send-email-josephl@nvidia.com>
-	 <5074AA0E.2080508@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/7] ARM: tegra30: cpuidle: add LP2 driver for secondary
+ CPUs
+Date: Thu, 11 Oct 2012 10:24:14 -0600
+Message-ID: <5076F2AE.6030509@wwwdotorg.org>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>  <1349691981-31038-4-git-send-email-josephl@nvidia.com>  <5074A74A.8010803@wwwdotorg.org> <1349946918.19413.130.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5074AA0E.2080508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1349946918.19413.130.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2012-10-10 at 06:49 +0800, Stephen Warren wrote:
-> On 10/08/2012 04:26 AM, Joseph Lo wrote:
-> > The cpuidle LP2 is a power gating idle mode. It support power gating
-> > vdd_cpu rail after all cpu cores in LP2. For Tegra30, the CPU0 must
-> > be last one to go into LP2. We need to take care and make sure whole
-> > secondary CPUs were in LP2 by checking CPU and power gate status.
-> > After that, the CPU0 can go into LP2 safely. Then power gating the
-> > CPU rail.
+On 10/11/2012 03:15 AM, Joseph Lo wrote:
+> On Wed, 2012-10-10 at 06:38 +0800, Stephen Warren wrote:
+>> On 10/08/2012 04:26 AM, Joseph Lo wrote:
+>>> This supports power-gated (LP2) idle on secondary CPUs for Tegra30.
+>>> The secondary CPUs can go into LP2 state independently. When CPU goes
+>>> into LP2 state, it saves it's state and puts itself to flow controlled
+>>> WFI state. After that, it will been power gated.
+>>
+>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+>>
+>>>  static struct cpuidle_driver tegra_idle_driver = {
+>>>  	.name = "tegra_idle",
+>>>  	.owner = THIS_MODULE,
+>>>  	.en_core_tk_irqen = 1,
+>>> -	.state_count = 1,
+>>> +	.state_count = 2,
+>>
+>> Doesn't that assignment need to be ifdef'd just like the array entry
+>> setup below:
+>>
+>>>  	.states = {
+>>>  		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+>>> +#ifdef CONFIG_PM_SLEEP
+>>> +		[1] = {
+>>> +			.enter			= tegra30_idle_lp2,
+>>> +			.exit_latency		= 2000,
+>>> +			.target_residency	= 2200,
+>>> +			.power_usage		= 0,
+>>> +			.flags			= CPUIDLE_FLAG_TIME_VALID,
+>>> +			.name			= "LP2",
+>>> +			.desc			= "CPU power-gate",
+>>> +		},
+>>> +#endif
+>>>  	},
+>>>  };
+>>
+>>> @@ -41,6 +114,10 @@ int __init tegra30_cpuidle_init(void)
+>>>  	struct cpuidle_device *dev;
+>>>  	struct cpuidle_driver *drv = &tegra_idle_driver;
+>>>  
+>>> +#ifndef CONFIG_PM_SLEEP
+>>> +	drv->state_count = 1;	/* support clockgating only */
+>>> +#endif
+>>
+>> Oh, I see it's done here. Just fixing the static initialization seems a
+>> lot simpler?
+>>
+> OK. Will do.
 > 
-> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+>>> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+>>
+>>> +void __cpuinit tegra_clear_cpu_in_lp2(int cpu)
+>>> +{
+>>> +	spin_lock(&tegra_lp2_lock);
+>>> +	BUG_ON(!cpumask_test_cpu(cpu, &tegra_in_lp2));
+>>> +	cpumask_clear_cpu(cpu, &tegra_in_lp2);
+>>> +
+>>> +	/*
+>>> +	 * Update the IRAM copy used by the reset handler. The IRAM copy
+>>> +	 * can't use used directly by cpumask_clear_cpu() because it uses
+>>> +	 * LDREX/STREX which requires the addressed location to be inner
+>>> +	 * cacheable and sharable which IRAM isn't.
+>>> +	 */
+>>> +	writel(tegra_in_lp2.bits[0], tegra_cpu_lp2_mask);
+>>> +	dsb();
+>>
+>> Why not /just/ store the data in IRAM, and read/write directly to it,
+>> rather than maintaining an SDRAM-based copy of it?
+>>
+>> Then, wouldn't the body of this function be simply:
+>>
+>> spin_lock();
+>> BUG_ON(!(tegra_cpu_lp2_mask & BIT(cpu)));
+>> tegra_cpu_lp2_mask |= BIT(cpu);
+>> spin_unlock();
+>>
 > 
-> > +static bool tegra30_idle_enter_lp2_cpu_0(struct cpuidle_device *dev,
-> > +					 struct cpuidle_driver *drv,
-> > +					 int index)
-> > +{
-> > +	struct cpuidle_state *state = &drv->states[index];
-> > +	u32 cpu_on_time = state->exit_latency;
-> > +	u32 cpu_off_time = state->target_residency - state->exit_latency;
-> > +
-> > +	if (num_online_cpus() > 1 && !tegra_cpu_rail_off_ready()) {
-> 
-> Should that be || not &&?
-> 
-> Isn't the "num_online_cpus() > 1" condition effectively checked at the
-> call site, i.e. in tegra30_idle_lp2() below via the if (last_cpu) check?
-> 
+> It may not simple like this. To maintain it identical to a cpumask. It
+> may look likes below. Because I need to compare it with cpu_online_mask.
 
-Should be "&&" here.
-Because we need to check if there are still multi CPUs online, then we
-need to make sure all the secondary CPUs be power gated first. After all
-the secondary CPUs been power gated, the CPU0 could go into LP2 and the
-CPU rail could be shut off.
-If all the secondary CPUs been hot plugged, then the "num_online_cpus()
->1" would be always false. Then the CPU0 can go into LP2 directly.
+Oh, the comparison against cpu_online_mask() is what I was missing. I
+guess that offline CPUs don't go into LP2, so you can't just check that
+tegra_cpu_lp2_mask == (1 << num_cpus()) - 1.
 
-So it was used to check are there multi cpus online or not? It's
-difference with the last_cpu check below. The last_cpu was used to check
-all the CPUs were in LP2 process or not. If the CPU0 is the last one
-went into LP2 process, then it would be true.
+One way to avoid that might be to maintain a cpu_in_lp2_count variable
+alongside the mask, and simply compare that against num_online_cpus()
+rather than comparing the two masks. At least that would avoid the
+following line:
 
-So the point here is. We can avoid to check the power status of the
-secodarys CPUs if they be unplugged.
+>>> +	writel(tegra_in_lp2.bits[0], tegra_cpu_lp2_mask);
 
-> > @@ -85,16 +108,22 @@ static int __cpuinit tegra30_idle_lp2(struct cpuidle_device *dev,
-> >  				      int index)
-> >  {
-> >  	bool entered_lp2 = false;
-> > +	bool last_cpu;
-> >  
-> >  	local_fiq_disable();
-> >  
-> > +	last_cpu = tegra_set_cpu_in_lp2(dev->cpu);
-> > +	if (dev->cpu == 0) {
-> > +		if (last_cpu)
-> > +			entered_lp2 = tegra30_idle_enter_lp2_cpu_0(dev, drv,
-> > +								   index);
-> > +		else
-> > +			cpu_do_idle();
-> > +	} else {
-> >  		entered_lp2 = tegra30_idle_enter_lp2_cpu_n(dev, drv, index);
-> > +	}
-> 
-> Hmm. That means that if the last CPU to enter LP2 is e.g. CPU1, then
-> even though all CPUs are now in LP2, the complex as a whole doesn't
-> enter LP2. Is there a way to make the cluster as a whole enter LP2 in
-> this case? Isn't that what coupled cpuidle is for?
-> 
+... making use of knowledge of the internal structure of the struct
+cpumask type.
 
-It may look like the coupled cpuidle can satisfy the usage here. But it
-didn't. Please check the criteria of coupled cpuidle. 
-
-/*
- * To use coupled cpuidle states, a cpuidle driver must:
- *
- *    Set struct cpuidle_device.coupled_cpus to the mask of all
- *    coupled cpus, usually the same as cpu_possible_mask if all cpus
- *    are part of the same cluster.  The coupled_cpus mask must be
- *    set in the struct cpuidle_device for each cpu.
- *
- *    Set struct cpuidle_device.safe_state to a state that is not a
- *    coupled state.  This is usually WFI.
- *
- *    Set CPUIDLE_FLAG_COUPLED in struct cpuidle_state.flags for each
- *    state that affects multiple cpus.
- *
- *    Provide a struct cpuidle_state.enter function for each state
- *    that affects multiple cpus.  This function is guaranteed to be
- *    called on all cpus at approximately the same time.  The driver
- *    should ensure that the cpus all abort together if any cpu tries
- *    to abort once the function is called.  The function should return
- *    with interrupts still disabled.
- */
-
-The Tegra30 can support the secondary CPUs go into LP2 (power-gate)
-independently. The limitation of the CPU0 is the CPU0 must be the last
-one to go into LP2 to shut off CPU rail.
-
-It also no need for every CPU to leave LP2 at the same time. The CPU0
-would be always the first one that woken up from LP2. But all the other
-secondary CPUs can still keep in LP2. One of the secondary CPUs can also
-be woken up alone, if the CPU0 already up.
-
-> > diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-> 
-> > +static void set_power_timers(unsigned long us_on, unsigned long us_off)
-> 
-> > +	if (tegra_pclk == NULL) {
-> > +		tegra_pclk = clk_get_sys(NULL, "pclk");
-> > +		if (IS_ERR(tegra_pclk)) {
-> > +			/*
-> > +			 * pclk not been init or not exist.
-> > +			 * Use sclk to take the place of it.
-> > +			 * The default setting was pclk=sclk.
-> > +			 */
-> > +			tegra_pclk = clk_get_sys(NULL, "sclk");
-> > +		}
-> > +	}
-> 
-> That's a little odd. Surely the HW has pclk or it doesn't? Why use
-> different clocks at different times for what is apparently the same thing?
-
-It just because the "pclk" is not available on the Tegra30's clock
-framework but Tegra20 right now.
-
-Thanks,
-Joseph
+However, given the comparison requirement, either way is probably fine.
