@@ -1,72 +1,54 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/7] ARM: tegra: cpuidle: separate cpuidle driver for
- different chips
-Date: Thu, 11 Oct 2012 14:42:11 +0800
-Message-ID: <1349937731.19413.80.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 2/7] ARM: tegra: cpuidle: add LP2 resume function
+Date: Thu, 11 Oct 2012 15:08:35 +0800
+Message-ID: <1349939315.19413.81.camel@jlo-ubuntu-64.nvidia.com>
 References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
-	 <1349691981-31038-2-git-send-email-josephl@nvidia.com>
-	 <5074A3C3.1080006@wwwdotorg.org>
+	 <1349691981-31038-3-git-send-email-josephl@nvidia.com>
+	 <5074A559.8030206@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5074A3C3.1080006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5074A559.8030206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2012-10-10 at 06:22 +0800, Stephen Warren wrote:
+On Wed, 2012-10-10 at 06:29 +0800, Stephen Warren wrote:
 > On 10/08/2012 04:26 AM, Joseph Lo wrote:
-> > The different Tegra chips may have different CPU idle states and data.
-> > Individual CPU idle driver make it more easy to maintain.
+> > LP2 is one of the Tegra low power states that supports power gating both
+> > CPU cores and GICs. Adding a resume function for taking care the CPUs that
+> > resume from LP2. This function was been hooked to reset handler. We take
+> > care everything here before go into kernel.
 > 
-> > diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > similarity index 72%
-> > copy from arch/arm/mach-tegra/cpuidle.c
-> > copy to arch/arm/mach-tegra/cpuidle-tegra20.c
-> > index 4e0b07c..e2fc26a 100644
-> > --- a/arch/arm/mach-tegra/cpuidle.c
-> > +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > @@ -1,24 +1,22 @@
-> >  /*
-> > - * arch/arm/mach-tegra/cpuidle.c
-> > + * CPU idle driver for Tegra20 CPUs
-> >   *
-> > - * CPU idle driver for Tegra CPUs
-> > - *
-> > - * Copyright (c) 2010-2012, NVIDIA Corporation.
-> > + * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
-> >   * Copyright (c) 2011 Google, Inc.
-> >   * Author: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> >   *         Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >   *
-> > - * Rework for 3.3 by Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > - *
-> > - * This program is free software; you can redistribute it and/or modify
-> > - * it under the terms of the GNU General Public License as published by
-> > - * the Free Software Foundation; either version 2 of the License, or
-> > - * (at your option) any later version.
-> > + * This program is free software; you can redistribute it and/or modify it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> >   *
-> >   * This program is distributed in the hope that it will be useful, but WITHOUT
-> >   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> >   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> >   * more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> >   */
+> > diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
 > 
-> While that is the correct (c) header for new work submitted upstream,
-> given this file is existing, just renamed and tweaked a bit, I don't
-> believe you want to be changing the (c) header at all. Same for
-> cpuidle-tegra30.c.
+> > +ENTRY(tegra_resume)
+> ...
+> > +	/* Are we on Tegra20? */
+> > +	mov32	r6, TEGRA_APB_MISC_BASE
+> > +	ldr	r0, [r6, #APB_MISC_GP_HIDREV]
+> > +	and	r0, r0, #0xff00
+> > +	cmp	r0, #(0x20 << 8)
+> > +	beq	1f
+> > +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> > +	/* Clear the flow controller flags for this CPU. */
+> > +	mov32	r2, TEGRA_FLOW_CTRL_BASE + FLOW_CTRL_CPU0_CSR	@ CPU0 CSR
+> > +	ldr	r1, [r2]
+> > +	/* Clear event & intr flag */
+> > +	orr	r1, r1, \
+> > +		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
+> > +	movw	r0, #0x0FFD	@ enable, cluster_switch, immed, & bitmaps
+> > +	bic	r1, r1, r0
+> > +	str	r1, [r2]
+> > +#endif
+> > +1:
+> 
+> couldn't that entire quoted chunk go inside the ifdef; all of reading
+> the HIDREV register and the 1: label?
 
-OK. I would just remove this line.
-- * arch/arm/mach-tegra/cpuidle.c
+Ah. Yes, it's OK. Will do.
 
 Thanks,
 Joseph
