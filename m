@@ -1,55 +1,72 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/7] ARM: tegra30: cpuidle: add LP2 support
-Date: Thu, 11 Oct 2012 14:39:44 +0800
-Message-ID: <1349937584.19413.78.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 1/7] ARM: tegra: cpuidle: separate cpuidle driver for
+ different chips
+Date: Thu, 11 Oct 2012 14:42:11 +0800
+Message-ID: <1349937731.19413.80.camel@jlo-ubuntu-64.nvidia.com>
 References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
-	 <5074A47B.3050906@wwwdotorg.org>
+	 <1349691981-31038-2-git-send-email-josephl@nvidia.com>
+	 <5074A3C3.1080006@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5074A47B.3050906-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5074A3C3.1080006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
-
-Thanks for review and sorry for late response due to national holiday
-yesterday.
-
-On Wed, 2012-10-10 at 06:26 +0800, Stephen Warren wrote:
+On Wed, 2012-10-10 at 06:22 +0800, Stephen Warren wrote:
 > On 10/08/2012 04:26 AM, Joseph Lo wrote:
-> > The CPU idle LP2 is a power gating idle mode for Tegra30. It supports the
-> > secondary CPUs (i.e., CPU1-CPU3) to go into LP2 dynamically. When any of
-> > the secondary CPUs go into LP2, it can be power gated alone. There is a
-> > limitation on CPU0. The CPU0 can go into LP2 only when all secondary CPUs
-> > are already in LP2. After CPU0 is in LP2, the CPU rail can be turned off.
-> > 
-> > Verified on Seaboard(Tegra20) and Cardhu(Tegra30).
+> > The different Tegra chips may have different CPU idle states and data.
+> > Individual CPU idle driver make it more easy to maintain.
 > 
-> What's the most comprehensive way to verify this? I booted Cardhu with
-> these patches applied and saw that all CPU cores did enter both idle
-> states. However, I'm unsure what the best way to stress the system is,
-> i.e. how would I stress and test for correct handling of all the L2
-> caching/SMP coherency issues, etc.
+> > diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> > similarity index 72%
+> > copy from arch/arm/mach-tegra/cpuidle.c
+> > copy to arch/arm/mach-tegra/cpuidle-tegra20.c
+> > index 4e0b07c..e2fc26a 100644
+> > --- a/arch/arm/mach-tegra/cpuidle.c
+> > +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> > @@ -1,24 +1,22 @@
+> >  /*
+> > - * arch/arm/mach-tegra/cpuidle.c
+> > + * CPU idle driver for Tegra20 CPUs
+> >   *
+> > - * CPU idle driver for Tegra CPUs
+> > - *
+> > - * Copyright (c) 2010-2012, NVIDIA Corporation.
+> > + * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
+> >   * Copyright (c) 2011 Google, Inc.
+> >   * Author: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> >   *         Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >   *
+> > - * Rework for 3.3 by Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > - *
+> > - * This program is free software; you can redistribute it and/or modify
+> > - * it under the terms of the GNU General Public License as published by
+> > - * the Free Software Foundation; either version 2 of the License, or
+> > - * (at your option) any later version.
+> > + * This program is free software; you can redistribute it and/or modify it
+> > + * under the terms and conditions of the GNU General Public License,
+> > + * version 2, as published by the Free Software Foundation.
+> >   *
+> >   * This program is distributed in the hope that it will be useful, but WITHOUT
+> >   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> >   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> >   * more details.
+> > + *
+> > + * You should have received a copy of the GNU General Public License
+> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> >   */
+> 
+> While that is the correct (c) header for new work submitted upstream,
+> given this file is existing, just renamed and tweaked a bit, I don't
+> believe you want to be changing the (c) header at all. Same for
+> cpuidle-tegra30.c.
 
-Yes, we need a pattern to verify this. The idea is try to make data
-traffic busy and the CPU can still fall into LP2. So I used a software
-video decoding process to verify this. You can image how the data
-traffic it is. The raw video data from file system to memory. Memory to
-memory access during video decoding process. The L1/L2 cache and TLB
-maintenance procedure can be verified.
-
-To verify this, you need to get a mplayer and "lower resolution" video
-clips. Using DVD resolution would be good choice. Then creating two
-decoding processes in the background. Please do check the system can
-fall into LP2. If not, please try to lower the fps value. Finally, using
-loop to keep the decoding process always in the background.
-
-The criteria to pass the verification. The system need to keep alive
-over a weekend at least.
+OK. I would just remove this line.
+- * arch/arm/mach-tegra/cpuidle.c
 
 Thanks,
 Joseph
