@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Fri, 12 Oct 2012 15:11:20 +0800
-Message-ID: <1350025880.20241.83.camel@jlo-ubuntu-64.nvidia.com>
+Date: Fri, 12 Oct 2012 15:40:44 +0800
+Message-ID: <1350027644.20241.113.camel@jlo-ubuntu-64.nvidia.com>
 References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
 	 <1349691981-31038-8-git-send-email-josephl@nvidia.com>
 	 <5074AA0E.2080508@wwwdotorg.org>
@@ -134,7 +134,23 @@ On Fri, 2012-10-12 at 00:48 +0800, Colin Cross wrote:
 > will not wake up from an interrupt, and therefore don't need to be
 > woken up for the transitions.  I haven't worked with a cpu that needs
 > this optimization yet, so I haven't done it.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Hi Colin,
+
+Thanks for your update. I understand what you are talk about. Actually,
+I had tried it in the background for both Tegra20 and Tegra30. But I can
+just ran several times of coupled cpuidle state. Then it dead locked in
+the coupled cpuidle state. It's look like a race condition and dead lock
+by missing IPI. I am sure the GIC was on and the IPI be fired. But
+sometimes the CPU just can't catch the IPI. And I had a WAR for it by
+doing a very short local_irq_enable and local_irq_disable in the coupled
+cpuidle ready waiting loop. Then everything works. Not sure, did you
+meet this before? Any hint about this?
+
+Very interesting about "guaranteeing that they will not wake up from an
+interrupt", did these CPUs go into power-gete cpuidle mode by wfe? If
+the CPUs not wake up from an interrupt when doing cpuidle, how did them
+be woke up? By sending event to these CPUs?
+
+Thanks,
+Joseph
