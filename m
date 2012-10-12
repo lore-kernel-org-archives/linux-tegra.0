@@ -1,92 +1,62 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Fri, 12 Oct 2012 09:16:10 +0800
-Message-ID: <1350004570.3186.28.camel@markz-hp6200>
+Date: Fri, 12 Oct 2012 09:20:12 +0800
+Message-ID: <1350004812.3186.31.camel@markz-hp6200>
 References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de>
-	 <50775803.1010209@wwwdotorg.org>
 Reply-To: markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50775803.1010209-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20121011200705.GB27599-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-10-12 at 07:36 +0800, Stephen Warren wrote:
-> On 10/11/2012 02:07 PM, Thierry Reding wrote:
-> > Hi,
-> > 
-> > I've finally managed to get HDMI working on Tegra20. Unfortunately
-> > the xf86-video-modesetting driver doesn't work on top of it yet,
-> > but I think that's a different error somewhere else and I'm still
-> > trying to figure out what exactly is going wrong. However, a
-> > framebuffer console can be run on top of it, as does a small test
-> > program that I've written for testing.
-> 
-> I should start out by saying that this is all very excellent news!
-> Thanks so much for your hard work on tegra-drm.
-> 
-> I have managed to get Harmony HDMI working, mostly just by copying the
-> obvious device tree entries from tegra20-trimslice.dts. This didn't
-> quite work immediately though, and while debugging this I found a few
-> issues...
-> 
-> (most files I mention below are in drivers/gpu/drm/tegra/)
-> 
-> 1)
-> 
-> clock.c:tegra_clock_setup() calls clk_set_rate() on the PLL. However,
-> there is no error-checking, so any failure is completely silent and
-> simply results in the display not working without much clue as to why.
-> In my case, my monitor's preferred mode was 1920x1080 with a 154MHz
-> pixel clock, which required a 616MHz clock for pll_d. However,
-> mach-tegra/tegra20_clocks_data.c didn't have an entry for that rate,
-> so clk_set_rate() failed.
-> 
-> For reference, the following entry in tegra_pll_d_freq_table[] solves
-> this for me:
-> 
-> 	{ 12000000, 616000000, 616, 12, 1, 8},
-> 
-> (although I have no idea if the "cpcon" field there is correct)
-> 
-> I imagine that output.c:tegra_connector_mode_valid() should be
-> querying the clock API to determine whether the desired mode clock is
-> actually possible, and rejecting the mode if not. In my case, I assume
-> that would have caused the code to fall back to some other mode, and
-> hopefully found one that did (my monitor apparently lists 51 modes in
-> the EDID after all).
-> 
-> 2)
-> 
-> The code in clock.c uses lots of clk_get_sys() calls with hard-coded
-> clock names. We really should be using the common clock DT bindings
-> for this instead of hard-coding names. This is especially true since
-> the names differ on different SoCs, so there's a ton of
-> of_device_is_compatible(output->dev->of_node, "nvidia,tegra30-hdmi")
-> in this code.
-> 
+Thank you for your hard work, Thierry!
 
-Agree. But I've no idea how to utilize this common clock DT bindings in
-code. Could you give me some example codes or some reference docs?
+We're looking forward to your final merged drm driver and hope we can
+get it into 3.8.
 
-> 3)
+Mark
+On Fri, 2012-10-12 at 04:07 +0800, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 > 
-> It sucks that our clock driver can't just calculate the PLL m and n
-> values; without this, we will end up with an almost infinitely large
-> tegra_pll_d_freq_table[]. I'll try and find out whether this can be fixed.
-> --
-
-Absolutely. This is a problem when I debug HDMI issues. HDMI devices
-usually have a lot of video modes which require a lot of clock
-definitions. Seems in our downstream kernel, the clock driver will
-calculate the m/n values if the fixed clock table can't meet the
-requirement. I just feel strange that why we don't upstream this part of
-codes...
-
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Hi,
+> 
+> I've finally managed to get HDMI working on Tegra20. Unfortunately the
+> xf86-video-modesetting driver doesn't work on top of it yet, but I think
+> that's a different error somewhere else and I'm still trying to figure
+> out what exactly is going wrong. However, a framebuffer console can be
+> run on top of it, as does a small test program that I've written for
+> testing.
+> 
+> The branch that contains all of this is the tegra/next branch on my
+> personal Linux kernel tree on gitorious[0]. Some other things are
+> included as well, such as the latest PCIe driver, an experimental draft
+> of a NAND driver (loosely based on the U-Boot driver by Jim Lin and
+> Simon Glass) as well as various fixes and hacks. Some of it is probably
+> also junk that I'll throw away at some point. The branch isn't very
+> clean, but it should work well enough for anybody who wants to give it a
+> try.
+> 
+> My plan was to get LVDS and HDMI to work on Tegra20 with CMA for GEM
+> object allocations before submitting for mainline inclusion. Since all
+> of these are now working I will clean up the branch, provide a branch
+> with only the DRM bits into a separate branch and submit the patches for
+> review, with the hope of getting them included in 3.8. A lot of the HDMI
+> work has been contributed by NVIDIA's Mark Zhang, who is also busy (and
+> apparently very close to) getting Tegra30 support working. If he can
+> make it work, Tegra30 support can be included as well.
+> 
+> All of that said, I invite everyone with access to Tegra hardware to
+> give the DRM driver a spin and report back if you encounter any
+> problems. Feel free to also drop a note on success.
+> 
+> Thierry
+> 
+> [0]: git://gitorious.org/thierryreding/linux.git
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
