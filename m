@@ -1,62 +1,83 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Fri, 12 Oct 2012 09:20:12 +0800
-Message-ID: <1350004812.3186.31.camel@markz-hp6200>
-References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de>
-Reply-To: markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/7] ARM: tegra30: cpuidle: add LP2 driver for
+ secondary CPUs
+Date: Fri, 12 Oct 2012 11:21:39 +0800
+Message-ID: <1350012099.20241.10.camel@jlo-ubuntu-64.nvidia.com>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
+	 <1349691981-31038-4-git-send-email-josephl@nvidia.com>
+	 <5074A74A.8010803@wwwdotorg.org>
+	 <1349946918.19413.130.camel@jlo-ubuntu-64.nvidia.com>
+	 <5076F2AE.6030509@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121011200705.GB27599-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <5076F2AE.6030509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thank you for your hard work, Thierry!
+On Fri, 2012-10-12 at 00:24 +0800, Stephen Warren wrote:
+> On 10/11/2012 03:15 AM, Joseph Lo wrote:
+> > On Wed, 2012-10-10 at 06:38 +0800, Stephen Warren wrote:
+> >> On 10/08/2012 04:26 AM, Joseph Lo wrote:
+> >>> This supports power-gated (LP2) idle on secondary CPUs for Tegra30.
+> >>> The secondary CPUs can go into LP2 state independently. When CPU goes
+> >>> into LP2 state, it saves it's state and puts itself to flow controlled
+> >>> WFI state. After that, it will been power gated.
+> >>
+> >>> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> >>
+> >>> +void __cpuinit tegra_clear_cpu_in_lp2(int cpu)
+> >>> +{
+> >>> +	spin_lock(&tegra_lp2_lock);
+> >>> +	BUG_ON(!cpumask_test_cpu(cpu, &tegra_in_lp2));
+> >>> +	cpumask_clear_cpu(cpu, &tegra_in_lp2);
+> >>> +
+> >>> +	/*
+> >>> +	 * Update the IRAM copy used by the reset handler. The IRAM copy
+> >>> +	 * can't use used directly by cpumask_clear_cpu() because it uses
+> >>> +	 * LDREX/STREX which requires the addressed location to be inner
+> >>> +	 * cacheable and sharable which IRAM isn't.
+> >>> +	 */
+> >>> +	writel(tegra_in_lp2.bits[0], tegra_cpu_lp2_mask);
+> >>> +	dsb();
+> >>
+> >> Why not /just/ store the data in IRAM, and read/write directly to it,
+> >> rather than maintaining an SDRAM-based copy of it?
+> >>
+> >> Then, wouldn't the body of this function be simply:
+> >>
+> >> spin_lock();
+> >> BUG_ON(!(tegra_cpu_lp2_mask & BIT(cpu)));
+> >> tegra_cpu_lp2_mask |= BIT(cpu);
+> >> spin_unlock();
+> >>
+> > 
+> > It may not simple like this. To maintain it identical to a cpumask. It
+> > may look likes below. Because I need to compare it with cpu_online_mask.
+> 
+> Oh, the comparison against cpu_online_mask() is what I was missing. I
+> guess that offline CPUs don't go into LP2, so you can't just check that
+> tegra_cpu_lp2_mask == (1 << num_cpus()) - 1.
+> 
+> One way to avoid that might be to maintain a cpu_in_lp2_count variable
+> alongside the mask, and simply compare that against num_online_cpus()
+> rather than comparing the two masks. At least that would avoid the
+> following line:
+> 
+> >>> +	writel(tegra_in_lp2.bits[0], tegra_cpu_lp2_mask);
+> 
+> ... making use of knowledge of the internal structure of the struct
+> cpumask type.
+> 
+> However, given the comparison requirement, either way is probably fine.
 
-We're looking forward to your final merged drm driver and hope we can
-get it into 3.8.
+OK. I got your idea now. And I rechecked it today. The method that you
+suggested original could satisfy the usage here. It could maintain the
+CPUs go into LP2 as a cpumask. I just verified it. Will update in next
+version.
 
-Mark
-On Fri, 2012-10-12 at 04:07 +0800, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> Hi,
-> 
-> I've finally managed to get HDMI working on Tegra20. Unfortunately the
-> xf86-video-modesetting driver doesn't work on top of it yet, but I think
-> that's a different error somewhere else and I'm still trying to figure
-> out what exactly is going wrong. However, a framebuffer console can be
-> run on top of it, as does a small test program that I've written for
-> testing.
-> 
-> The branch that contains all of this is the tegra/next branch on my
-> personal Linux kernel tree on gitorious[0]. Some other things are
-> included as well, such as the latest PCIe driver, an experimental draft
-> of a NAND driver (loosely based on the U-Boot driver by Jim Lin and
-> Simon Glass) as well as various fixes and hacks. Some of it is probably
-> also junk that I'll throw away at some point. The branch isn't very
-> clean, but it should work well enough for anybody who wants to give it a
-> try.
-> 
-> My plan was to get LVDS and HDMI to work on Tegra20 with CMA for GEM
-> object allocations before submitting for mainline inclusion. Since all
-> of these are now working I will clean up the branch, provide a branch
-> with only the DRM bits into a separate branch and submit the patches for
-> review, with the hope of getting them included in 3.8. A lot of the HDMI
-> work has been contributed by NVIDIA's Mark Zhang, who is also busy (and
-> apparently very close to) getting Tegra30 support working. If he can
-> make it work, Tegra30 support can be included as well.
-> 
-> All of that said, I invite everyone with access to Tegra hardware to
-> give the DRM driver a spin and report back if you encounter any
-> problems. Feel free to also drop a note on success.
-> 
-> Thierry
-> 
-> [0]: git://gitorious.org/thierryreding/linux.git
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
+Thanks,
+Joseph
