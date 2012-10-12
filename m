@@ -1,87 +1,110 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Fri, 12 Oct 2012 15:04:20 -0600
-Message-ID: <507885D4.10604@wwwdotorg.org>
-References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>  <1349691981-31038-8-git-send-email-josephl@nvidia.com>  <5074AA0E.2080508@wwwdotorg.org>  <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>  <5076F5CB.4020200@wwwdotorg.org> <1350025676.20241.82.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: Tegra DRM with HDMI support (\o/)
+Date: Fri, 12 Oct 2012 15:17:04 -0600
+Message-ID: <507888D0.1090103@wwwdotorg.org>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <50775803.1010209@wwwdotorg.org> <20121012050957.GA29881@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350025676.20241.82.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <20121012050957.GA29881-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/12/2012 01:07 AM, Joseph Lo wrote:
-> On Fri, 2012-10-12 at 00:37 +0800, Stephen Warren wrote:
->> On 10/11/2012 05:24 AM, Joseph Lo wrote:
->>> On Wed, 2012-10-10 at 06:49 +0800, Stephen Warren wrote:
->>>> On 10/08/2012 04:26 AM, Joseph Lo wrote:
->>>>> The cpuidle LP2 is a power gating idle mode. It support power gating
->>>>> vdd_cpu rail after all cpu cores in LP2. For Tegra30, the CPU0 must
->>>>> be last one to go into LP2. We need to take care and make sure whole
->>>>> secondary CPUs were in LP2 by checking CPU and power gate status.
->>>>> After that, the CPU0 can go into LP2 safely. Then power gating the
->>>>> CPU rail.
->>>>
->>>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
->>>>
->>>>> +static bool tegra30_idle_enter_lp2_cpu_0(struct cpuidle_device *dev,
->>>>> +					 struct cpuidle_driver *drv,
->>>>> +					 int index)
->>>>> +{
->>>>> +	struct cpuidle_state *state = &drv->states[index];
->>>>> +	u32 cpu_on_time = state->exit_latency;
->>>>> +	u32 cpu_off_time = state->target_residency - state->exit_latency;
->>>>> +
->>>>> +	if (num_online_cpus() > 1 && !tegra_cpu_rail_off_ready()) {
->>>>
->>>> Should that be || not &&?
->>>>
->>>> Isn't the "num_online_cpus() > 1" condition effectively checked at the
->>>> call site, i.e. in tegra30_idle_lp2() below via the if (last_cpu) check?
->>>>
->>>
->>> Should be "&&" here.
->>> Because we need to check if there are still multi CPUs online, then we
->>> need to make sure all the secondary CPUs be power gated first. After all
->>> the secondary CPUs been power gated, the CPU0 could go into LP2 and the
->>> CPU rail could be shut off.
->>> If all the secondary CPUs been hot plugged, then the "num_online_cpus()
->>>> 1" would be always false. Then the CPU0 can go into LP2 directly.
->>>
->>> So it was used to check are there multi cpus online or not? It's
->>> difference with the last_cpu check below. The last_cpu was used to check
->>> all the CPUs were in LP2 process or not. If the CPU0 is the last one
->>> went into LP2 process, then it would be true.
->>>
->>> So the point here is. We can avoid to check the power status of the
->>> secodarys CPUs if they be unplugged.
->>
->> OK, so this condition is about ignoring the result of
->> tegra_cpu_rail_off_ready() if there is only 1 CPU online. That makes
->> sense, since we know in that case there cannot be any other CPUs to
->> check if they're in LP2 or not.
->>
->> But what about the case where 2 CPUs are online and 2 offline. In that
->> case, num_online_cpus() > 1, so the call to tegra_cpu_rail_off_ready()
->> is skipped.
-
-Uggh. I'm not thinking straight, so what I said there was backwards.
-
->> b) If CPUn can't trigger rail-gating, then when CPUn is the last to
->> enter LP2 of the whole complex, it needs to IPI to CPU0 to tell it to
->> rail-gate, and simply power-gate itself. I believe this IPI interaction
->> is exactly what coupled cpuidle is about, isn't it?
+On 10/11/2012 11:09 PM, Thierry Reding wrote:
+> On Thu, Oct 11, 2012 at 05:36:35PM -0600, Stephen Warren wrote:
+>> On 10/11/2012 02:07 PM, Thierry Reding wrote:
+>>> Hi,
+>>> 
+>>> I've finally managed to get HDMI working on Tegra20.
+>>> Unfortunately the xf86-video-modesetting driver doesn't work on
+>>> top of it yet, but I think that's a different error somewhere
+>>> else and I'm still trying to figure out what exactly is going
+>>> wrong. However, a framebuffer console can be run on top of it,
+>>> as does a small test program that I've written for testing.
+>> 
+>> I should start out by saying that this is all very excellent
+>> news! Thanks so much for your hard work on tegra-drm.
+>> 
+>> I have managed to get Harmony HDMI working, mostly just by
+>> copying the obvious device tree entries from
+>> tegra20-trimslice.dts. This didn't quite work immediately though,
+>> and while debugging this I found a few issues...
+...
+>> The code in clock.c uses lots of clk_get_sys() calls with
+>> hard-coded clock names. We really should be using the common
+>> clock DT bindings for this instead of hard-coding names. This is
+>> especially true since the names differ on different SoCs, so
+>> there's a ton of of_device_is_compatible(output->dev->of_node,
+>> "nvidia,tegra30-hdmi") in this code.
 > 
-> Yes, indeed. Actually, I had tried the coupled cpuidle on Tegra20. I
-> knew it a lot. But I met issues when porting it. It looks like a race
-> condition and becomes a dead lock caused by IPI missing. Anyway, we can
-> talk about it more detail when I try to upstream the coupled cpuidle
-> support for Tegra later.
+> I don't quite see how that is supposed to work. Wouldn't that mean
+> that we needed to setup various entries in the clock tables to be
+> able to look the clocks up by generic names? Like pll_d would need
+> to be the "parent" clock of "tegra-hdmi" or similar. In that case
+> we could call clk_get(hdmi->dev, "parent") instead. Is that what
+> you had in mind?
 
-Hmm. That sounds a little churny. Why can't we just use coupled cpuidle
-right from the start if the plan is to use it eventually anyway? From
-other comments, it sounds like you even already have the code basically
-working, but just need to iron out a bug or two?
+There are two ways this could work:
+
+1)
+
+All clocks needed could be represented in the node of that device (or
+perhaps in the DC node?) For example, perhaps hdmi might contain:
+
+clocks = <&car TEGRA_CLK_PLL_D>
+         <&car TEGRA_CLK_PLL_D_OUT_0>
+         <&car TEGRA_CLK_HDMI>
+         ...;
+clock-names = "pll_d", "pll_d_out_0", "hdmi", ...;
+
+That should work (I think) with pretty much no modification to the
+current code, other than calling clk_get(dev, "hdmi") rather than
+clk_get_sys(NULL, "hdmi").
+
+However, I'm not sure this is the best way or not; this still requires
+the HDMI driver to implement all the clocking policy (e.g. is the HDMI
+clock a child of PLL_D, PLL_C, PLL_P, ... and what rate should the
+parent PLL be set to, etc.)
+
+For example, what if the clock frequency HDMI needs can be generated
+by PLL_C, so we make PLL_C the parent of HDMI (so as to save power by
+not running PLL_D, or to use PLL_D for a second display head), then
+something else comes along and /has/ to use PLL_C. If the two childs'
+frequency requirements are the same, everything is fine. If the two
+child's frequency requirements are not compatible, we might need to
+spin up PLL_D and reparent HDMI onto it. More complex scenarios are
+possible where PLL_C needs to be reprogrammed, yet can be in a way
+that supports both HDMI and some other requirement, so we only need to
+temporarily move HDMI onto PLL_D, then reprogram PLL_C, then move HDMI
+back to it and spin PLL_D down. All these decisions should be made
+centrally in the Tegra clock driver, or at least some kind of
+centralized policy management point, and not by the HDMI driver:
+
+2)
+
+The HDMI device node only knows about the clocks used directly by the
+HDMI module:
+
+clocks = <&car TEGRA_CLK_HDMI>;
+clock-names = "hdmi";
+
+(note: that's just an example; I don't know off the top of my head
+exactly which clocks that module consumes directly)
+
+Then, the HDMI driver will simply perform a single clk = clk_get(dev,
+"hdmi"), and later call clk_set_rate(clk, rate) as appropriate. All
+the policy decisions then get made internally to the Tegra clock
+driver (since it's a central nexus for all clock outputs from the
+Clock And Reset controller (CAR).
+
+A similar question exists for audio too. Currently, our audio drivers
+do something similar to what tegra-drm is doing; (1) above. However, I
+have a feeling we may want to convert audio over to model (2) above too.
+
+Oh, and the cpufreq driver has a similar for centralized policy, since
+at 216MHz the CPU clocks are derived from one PLL, but for anything
+faster we use PLL_X to generate them. Right now, this is implemented
+in the cpufreq driver, but again should really be centrally managed.
