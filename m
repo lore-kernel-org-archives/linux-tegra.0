@@ -1,49 +1,152 @@
-From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Fri, 12 Oct 2012 16:30:20 +0800
-Message-ID: <20121012083017.GB4962@S2101-09.ap.freescale.net>
-References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
- <1349691981-31038-8-git-send-email-josephl@nvidia.com>
- <5074AA0E.2080508@wwwdotorg.org>
- <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
- <5076F5CB.4020200@wwwdotorg.org>
- <CAMbhsRScnEaEeyqGz6tfYQMHXaZva4UeHtFY4C9Vvu1MrKXPNg@mail.gmail.com>
- <20121012075358.GA4962@S2101-09.ap.freescale.net>
- <1350030264.15495.14.camel@jlo-ubuntu-64.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1350030264.15495.14.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH 2/2] ARM: config: make sure that platforms are ordered by
+ option string
+Date: Fri, 12 Oct 2012 14:26:40 +0100
+Message-ID: <E1TMfGC-0001Kx-9v@rmk-PC.arm.linux.org.uk>
+References: <20121012132553.GK28061@n2100.arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20121012132553.GK28061@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, spear-devel@list.st.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 12, 2012 at 04:24:24PM +0800, Joseph Lo wrote:
-> On Fri, 2012-10-12 at 15:54 +0800, Shawn Guo wrote:
-> > On Thu, Oct 11, 2012 at 09:48:45AM -0700, Colin Cross wrote:
-> > > As is, coupled cpuidle will work on Tegra30, but it will unnecessarily
-> > > wake up the secondary cpus during the transitions to off and back on
-> > > again.  Those cpus will immediately go back to single-cpu LP2,
-> > 
-> > I'm sure coupled cpuidle will work like that.  We have the following
-> > code at the end of  cpuidle_enter_state_coupled() to wait until all
-> > coupled cpus have exited idle.
-> > 
-> >         while (!cpuidle_coupled_no_cpus_ready(coupled))
-> >                 cpu_relax();
-> > 
-> > The cpu woken up during the transitions will just loop there until all
-> > other 3 cpus exit from idle function.
-> > 
-> 
-> Did this a good idea if the CPU was been woken up from an interrupt but
-> it still needed to wait all other CPUs been woken up then it could
-> handle the interrupt?
-> 
-This is how coupled cpuidle gets implemented right now.  And that's
-why I see RCU stall warning reported on that cpu when I tried coupled
-cpuidle on imx6q (CA9 Quad).
+The large platform selection choice should be sorted by option string
+so it's easy to find the platform you're looking for.  Fix the few
+options which are out of this order.
 
-Shawn
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/Kconfig |   76 +++++++++++++++++++++++++++---------------------------
+ 1 files changed, 38 insertions(+), 38 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index bd12ddd..1bc092e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -348,16 +348,6 @@ config ARCH_BCM2835
+ 	  This enables support for the Broadcom BCM2835 SoC. This SoC is
+ 	  use in the Raspberry Pi, and Roku 2 devices.
+ 
+-config ARCH_CLPS711X
+-	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
+-	select ARCH_USES_GETTIMEOFFSET
+-	select CLKDEV_LOOKUP
+-	select COMMON_CLK
+-	select CPU_ARM720T
+-	select NEED_MACH_MEMORY_H
+-	help
+-	  Support for Cirrus Logic 711x/721x/731x based boards.
+-
+ config ARCH_CNS3XXX
+ 	bool "Cavium Networks CNS3XXX family"
+ 	select ARM_GIC
+@@ -369,6 +359,16 @@ config ARCH_CNS3XXX
+ 	help
+ 	  Support for Cavium Networks CNS3XXX platform.
+ 
++config ARCH_CLPS711X
++	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
++	select ARCH_USES_GETTIMEOFFSET
++	select CLKDEV_LOOKUP
++	select COMMON_CLK
++	select CPU_ARM720T
++	select NEED_MACH_MEMORY_H
++	help
++	  Support for Cirrus Logic 711x/721x/731x based boards.
++
+ config ARCH_GEMINI
+ 	bool "Cortina Systems Gemini"
+ 	select ARCH_REQUIRE_GPIOLIB
+@@ -549,21 +549,6 @@ config ARCH_KIRKWOOD
+ 	  Support for the following Marvell Kirkwood series SoCs:
+ 	  88F6180, 88F6192 and 88F6281.
+ 
+-config ARCH_LPC32XX
+-	bool "NXP LPC32XX"
+-	select ARCH_REQUIRE_GPIOLIB
+-	select ARM_AMBA
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_MMIO
+-	select CPU_ARM926T
+-	select GENERIC_CLOCKEVENTS
+-	select HAVE_IDE
+-	select HAVE_PWM
+-	select USB_ARCH_HAS_OHCI
+-	select USE_OF
+-	help
+-	  Support for the NXP LPC32XX family of processors
+-
+ config ARCH_MV78XX0
+ 	bool "Marvell MV78xx0"
+ 	select ARCH_REQUIRE_GPIOLIB
+@@ -630,6 +615,21 @@ config ARCH_W90X900
+ 	  <http://www.nuvoton.com/hq/enu/ProductAndSales/ProductLines/
+ 		ConsumerElectronicsIC/ARMMicrocontroller/ARMMicrocontroller>
+ 
++config ARCH_LPC32XX
++	bool "NXP LPC32XX"
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_AMBA
++	select CLKDEV_LOOKUP
++	select CLKSRC_MMIO
++	select CPU_ARM926T
++	select GENERIC_CLOCKEVENTS
++	select HAVE_IDE
++	select HAVE_PWM
++	select USB_ARCH_HAS_OHCI
++	select USE_OF
++	help
++	  Support for the NXP LPC32XX family of processors
++
+ config ARCH_TEGRA
+ 	bool "NVIDIA Tegra"
+ 	select ARCH_HAS_CPUFREQ
+@@ -823,7 +823,7 @@ config ARCH_S5PV210
+ 	  Samsung S5PV210/S5PC110 series based systems
+ 
+ config ARCH_EXYNOS
+-	bool "SAMSUNG EXYNOS"
++	bool "Samsung EXYNOS"
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_SPARSEMEM_ENABLE
+@@ -899,6 +899,18 @@ config ARCH_NOMADIK
+ 	help
+ 	  Support for the Nomadik platform by ST-Ericsson
+ 
++config PLAT_SPEAR
++	bool "ST SPEAr"
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_AMBA
++	select CLKDEV_LOOKUP
++	select CLKSRC_MMIO
++	select COMMON_CLK
++	select GENERIC_CLOCKEVENTS
++	select HAVE_CLK
++	help
++	  Support for ST's SPEAr platform (SPEAr3xx, SPEAr6xx and SPEAr13xx).
++
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+@@ -926,18 +938,6 @@ config ARCH_OMAP
+ 	help
+ 	  Support for TI's OMAP platform (OMAP1/2/3/4).
+ 
+-config PLAT_SPEAR
+-	bool "ST SPEAr"
+-	select ARCH_REQUIRE_GPIOLIB
+-	select ARM_AMBA
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_MMIO
+-	select COMMON_CLK
+-	select GENERIC_CLOCKEVENTS
+-	select HAVE_CLK
+-	help
+-	  Support for ST's SPEAr platform (SPEAr3xx, SPEAr6xx and SPEAr13xx).
+-
+ config ARCH_VT8500
+ 	bool "VIA/WonderMedia 85xx"
+ 	select ARCH_HAS_CPUFREQ
+-- 
+1.7.4.4
