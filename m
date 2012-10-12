@@ -1,56 +1,87 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Fri, 12 Oct 2012 13:50:35 -0700
-Message-ID: <CAMbhsRRGyPB1DvXqkmNpF=hA-3ya5Y+JLV-KY5BW+FX_RoEc9g@mail.gmail.com>
-References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
-	<1349691981-31038-8-git-send-email-josephl@nvidia.com>
-	<5074AA0E.2080508@wwwdotorg.org>
-	<1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
-	<5076F5CB.4020200@wwwdotorg.org>
-	<CAMbhsRScnEaEeyqGz6tfYQMHXaZva4UeHtFY4C9Vvu1MrKXPNg@mail.gmail.com>
-	<20121012075358.GA4962@S2101-09.ap.freescale.net>
-	<1350030264.15495.14.camel@jlo-ubuntu-64.nvidia.com>
-	<20121012083017.GB4962@S2101-09.ap.freescale.net>
+Date: Fri, 12 Oct 2012 15:04:20 -0600
+Message-ID: <507885D4.10604@wwwdotorg.org>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>  <1349691981-31038-8-git-send-email-josephl@nvidia.com>  <5074AA0E.2080508@wwwdotorg.org>  <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>  <5076F5CB.4020200@wwwdotorg.org> <1350025676.20241.82.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121012083017.GB4962-rvtDTF3kK1ictlrPMvKcciBecyulp+rMXqFh9Ls21Oc@public.gmane.org>
+In-Reply-To: <1350025676.20241.82.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 12, 2012 at 1:30 AM, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Oct 12, 2012 at 04:24:24PM +0800, Joseph Lo wrote:
->> On Fri, 2012-10-12 at 15:54 +0800, Shawn Guo wrote:
->> > On Thu, Oct 11, 2012 at 09:48:45AM -0700, Colin Cross wrote:
->> > > As is, coupled cpuidle will work on Tegra30, but it will unnecessarily
->> > > wake up the secondary cpus during the transitions to off and back on
->> > > again.  Those cpus will immediately go back to single-cpu LP2,
->> >
->> > I'm sure coupled cpuidle will work like that.  We have the following
->> > code at the end of  cpuidle_enter_state_coupled() to wait until all
->> > coupled cpus have exited idle.
->> >
->> >         while (!cpuidle_coupled_no_cpus_ready(coupled))
->> >                 cpu_relax();
->> >
->> > The cpu woken up during the transitions will just loop there until all
->> > other 3 cpus exit from idle function.
->> >
+On 10/12/2012 01:07 AM, Joseph Lo wrote:
+> On Fri, 2012-10-12 at 00:37 +0800, Stephen Warren wrote:
+>> On 10/11/2012 05:24 AM, Joseph Lo wrote:
+>>> On Wed, 2012-10-10 at 06:49 +0800, Stephen Warren wrote:
+>>>> On 10/08/2012 04:26 AM, Joseph Lo wrote:
+>>>>> The cpuidle LP2 is a power gating idle mode. It support power gating
+>>>>> vdd_cpu rail after all cpu cores in LP2. For Tegra30, the CPU0 must
+>>>>> be last one to go into LP2. We need to take care and make sure whole
+>>>>> secondary CPUs were in LP2 by checking CPU and power gate status.
+>>>>> After that, the CPU0 can go into LP2 safely. Then power gating the
+>>>>> CPU rail.
+>>>>
+>>>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+>>>>
+>>>>> +static bool tegra30_idle_enter_lp2_cpu_0(struct cpuidle_device *dev,
+>>>>> +					 struct cpuidle_driver *drv,
+>>>>> +					 int index)
+>>>>> +{
+>>>>> +	struct cpuidle_state *state = &drv->states[index];
+>>>>> +	u32 cpu_on_time = state->exit_latency;
+>>>>> +	u32 cpu_off_time = state->target_residency - state->exit_latency;
+>>>>> +
+>>>>> +	if (num_online_cpus() > 1 && !tegra_cpu_rail_off_ready()) {
+>>>>
+>>>> Should that be || not &&?
+>>>>
+>>>> Isn't the "num_online_cpus() > 1" condition effectively checked at the
+>>>> call site, i.e. in tegra30_idle_lp2() below via the if (last_cpu) check?
+>>>>
+>>>
+>>> Should be "&&" here.
+>>> Because we need to check if there are still multi CPUs online, then we
+>>> need to make sure all the secondary CPUs be power gated first. After all
+>>> the secondary CPUs been power gated, the CPU0 could go into LP2 and the
+>>> CPU rail could be shut off.
+>>> If all the secondary CPUs been hot plugged, then the "num_online_cpus()
+>>>> 1" would be always false. Then the CPU0 can go into LP2 directly.
+>>>
+>>> So it was used to check are there multi cpus online or not? It's
+>>> difference with the last_cpu check below. The last_cpu was used to check
+>>> all the CPUs were in LP2 process or not. If the CPU0 is the last one
+>>> went into LP2 process, then it would be true.
+>>>
+>>> So the point here is. We can avoid to check the power status of the
+>>> secodarys CPUs if they be unplugged.
 >>
->> Did this a good idea if the CPU was been woken up from an interrupt but
->> it still needed to wait all other CPUs been woken up then it could
->> handle the interrupt?
+>> OK, so this condition is about ignoring the result of
+>> tegra_cpu_rail_off_ready() if there is only 1 CPU online. That makes
+>> sense, since we know in that case there cannot be any other CPUs to
+>> check if they're in LP2 or not.
 >>
-> This is how coupled cpuidle gets implemented right now.  And that's
-> why I see RCU stall warning reported on that cpu when I tried coupled
-> cpuidle on imx6q (CA9 Quad).
+>> But what about the case where 2 CPUs are online and 2 offline. In that
+>> case, num_online_cpus() > 1, so the call to tegra_cpu_rail_off_ready()
+>> is skipped.
 
-Current coupled cpuidle requires all cpus to wake up together and go
-back to the idle governor to select a new state, because that's what
-all available ARM cpus did when I wrote it.  You should be able to
-implement coupled idle on a cpu that does not need to wake all the
-cpus if you wake them anyways, and then later you can optimize it to
-avoid the extra wakeups when the extension to coupled cpuidle that I
-discussed previously gets implemented.
+Uggh. I'm not thinking straight, so what I said there was backwards.
+
+>> b) If CPUn can't trigger rail-gating, then when CPUn is the last to
+>> enter LP2 of the whole complex, it needs to IPI to CPU0 to tell it to
+>> rail-gate, and simply power-gate itself. I believe this IPI interaction
+>> is exactly what coupled cpuidle is about, isn't it?
+> 
+> Yes, indeed. Actually, I had tried the coupled cpuidle on Tegra20. I
+> knew it a lot. But I met issues when porting it. It looks like a race
+> condition and becomes a dead lock caused by IPI missing. Anyway, we can
+> talk about it more detail when I try to upstream the coupled cpuidle
+> support for Tegra later.
+
+Hmm. That sounds a little churny. Why can't we just use coupled cpuidle
+right from the start if the plan is to use it eventually anyway? From
+other comments, it sounds like you even already have the code basically
+working, but just need to iron out a bug or two?
