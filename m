@@ -1,28 +1,160 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 5/5] ARM: tegra: select SPARSE_IRQ
-Date: Mon, 15 Oct 2012 12:30:52 -0600
-Message-ID: <507C565C.7000101@wwwdotorg.org>
-References: <1348090279-22631-1-git-send-email-swarren@wwwdotorg.org> <1348090279-22631-5-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 2/2] ARM: tegra: move irammap.h to mach-tegra
+Date: Mon, 15 Oct 2012 12:37:29 -0600
+Message-ID: <1350326249-18405-2-git-send-email-swarren@wwwdotorg.org>
+References: <1350326249-18405-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1348090279-22631-5-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1350326249-18405-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/19/2012 03:31 PM, Stephen Warren wrote:
-> SPARSE_IRQ is required for single zImage support.
-> 
-> With this enabled, we can delete <mach/irqs.h>. This requires removing
-> one unnecessary include of that file, and hard-coding the PCIe IRQ into
-> the PCIe driver. This is a hack that will be dealt with as part of
-> converting the PCIe driver into a true DT-supporting driver.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I have applied this series to Tegra's for-3.8/single-zimage branch.
+Nothing outside mach-tegra uses this file, so there's no need for it to
+be in <mach/>.
 
-I'm not sure yet if Tegra will actually be able to be part of single
-zImage in 3.8, but this branch will certainly host a fair few changes to
-get it very close at least.
+Since uncompress.h and debug-macro.S remain in include/mach, they need
+to include "../../irammap.h" becaue of this change. Both these usages
+will be removed shortly, when Tegra's DEBUG_LL implementation is updated
+not to pass information through IRAM.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-tegra/include/mach/irammap.h     |   35 ------------------------
+ arch/arm/mach-tegra/include/mach/uncompress.h  |    3 +-
+ arch/arm/mach-tegra/irammap.h                  |   35 ++++++++++++++++++++++++
+ arch/arm/mach-tegra/reset.c                    |    3 +-
+ 5 files changed, 38 insertions(+), 40 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/include/mach/irammap.h
+ create mode 100644 arch/arm/mach-tegra/irammap.h
+
+diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/mach-tegra/include/mach/debug-macro.S
+index 58a7fa8..44ca7b1 100644
+--- a/arch/arm/mach-tegra/include/mach/debug-macro.S
++++ b/arch/arm/mach-tegra/include/mach/debug-macro.S
+@@ -27,7 +27,7 @@
+ #include <linux/serial_reg.h>
+ 
+ #include "../../iomap.h"
+-#include <mach/irammap.h>
++#include "../../irammap.h"
+ 
+ 		.macro  addruart, rp, rv, tmp
+ 		adr	\rp, 99f		@ actual addr of 99f
+diff --git a/arch/arm/mach-tegra/include/mach/irammap.h b/arch/arm/mach-tegra/include/mach/irammap.h
+deleted file mode 100644
+index 0cbe632..0000000
+--- a/arch/arm/mach-tegra/include/mach/irammap.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#ifndef __MACH_TEGRA_IRAMMAP_H
+-#define __MACH_TEGRA_IRAMMAP_H
+-
+-#include <asm/sizes.h>
+-
+-/* The first 1K of IRAM is permanently reserved for the CPU reset handler */
+-#define TEGRA_IRAM_RESET_HANDLER_OFFSET	0
+-#define TEGRA_IRAM_RESET_HANDLER_SIZE	SZ_1K
+-
+-/*
+- * These locations are written to by uncompress.h, and read by debug-macro.S.
+- * The first word holds the cookie value if the data is valid. The second
+- * word holds the UART physical address.
+- */
+-#define TEGRA_IRAM_DEBUG_UART_OFFSET	SZ_1K
+-#define TEGRA_IRAM_DEBUG_UART_SIZE	8
+-#define TEGRA_IRAM_DEBUG_UART_COOKIE	0x55415254
+-
+-#endif
+diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
+index 095216c..2772575 100644
+--- a/arch/arm/mach-tegra/include/mach/uncompress.h
++++ b/arch/arm/mach-tegra/include/mach/uncompress.h
+@@ -28,9 +28,8 @@
+ #include <linux/types.h>
+ #include <linux/serial_reg.h>
+ 
+-#include <mach/irammap.h>
+-
+ #include "../../iomap.h"
++#include "../../irammap.h"
+ 
+ #define BIT(x) (1 << (x))
+ #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+diff --git a/arch/arm/mach-tegra/irammap.h b/arch/arm/mach-tegra/irammap.h
+new file mode 100644
+index 0000000..0cbe632
+--- /dev/null
++++ b/arch/arm/mach-tegra/irammap.h
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __MACH_TEGRA_IRAMMAP_H
++#define __MACH_TEGRA_IRAMMAP_H
++
++#include <asm/sizes.h>
++
++/* The first 1K of IRAM is permanently reserved for the CPU reset handler */
++#define TEGRA_IRAM_RESET_HANDLER_OFFSET	0
++#define TEGRA_IRAM_RESET_HANDLER_SIZE	SZ_1K
++
++/*
++ * These locations are written to by uncompress.h, and read by debug-macro.S.
++ * The first word holds the cookie value if the data is valid. The second
++ * word holds the UART physical address.
++ */
++#define TEGRA_IRAM_DEBUG_UART_OFFSET	SZ_1K
++#define TEGRA_IRAM_DEBUG_UART_SIZE	8
++#define TEGRA_IRAM_DEBUG_UART_COOKIE	0x55415254
++
++#endif
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index 28e51b7..e05da7d 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -22,9 +22,8 @@
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+ 
+-#include <mach/irammap.h>
+-
+ #include "iomap.h"
++#include "irammap.h"
+ #include "reset.h"
+ #include "fuse.h"
+ 
+-- 
+1.7.0.4
