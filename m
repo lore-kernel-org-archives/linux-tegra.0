@@ -1,69 +1,124 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Mon, 15 Oct 2012 10:11:50 -0600
-Message-ID: <507C35C6.20705@wwwdotorg.org>
-References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <50775803.1010209@wwwdotorg.org> <20121012050957.GA29881@avionic-0098.mockup.avionic-design.de> <507888D0.1090103@wwwdotorg.org> <20121013204223.GA24354@avionic-0098.mockup.avionic-design.de>
+From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Use coupled cpuidle on imx6q
+Date: Tue, 16 Oct 2012 00:28:49 +0800
+Message-ID: <20121015162842.GD24393@S2101-09.ap.freescale.net>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
+ <1349691981-31038-8-git-send-email-josephl@nvidia.com>
+ <5074AA0E.2080508@wwwdotorg.org>
+ <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
+ <5076F5CB.4020200@wwwdotorg.org>
+ <CAMbhsRScnEaEeyqGz6tfYQMHXaZva4UeHtFY4C9Vvu1MrKXPNg@mail.gmail.com>
+ <20121012075358.GA4962@S2101-09.ap.freescale.net>
+ <1350030264.15495.14.camel@jlo-ubuntu-64.nvidia.com>
+ <20121012083017.GB4962@S2101-09.ap.freescale.net>
+ <CAMbhsRRGyPB1DvXqkmNpF=hA-3ya5Y+JLV-KY5BW+FX_RoEc9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121013204223.GA24354-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAMbhsRRGyPB1DvXqkmNpF=hA-3ya5Y+JLV-KY5BW+FX_RoEc9g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/13/2012 02:42 PM, Thierry Reding wrote:
-> On Fri, Oct 12, 2012 at 03:17:04PM -0600, Stephen Warren wrote:
->> On 10/11/2012 11:09 PM, Thierry Reding wrote:
->>> On Thu, Oct 11, 2012 at 05:36:35PM -0600, Stephen Warren
->>> wrote:
-> [...]
->>>> The code in clock.c uses lots of clk_get_sys() calls with 
->>>> hard-coded clock names. We really should be using the common 
->>>> clock DT bindings for this instead of hard-coding names. This
->>>> is especially true since the names differ on different SoCs,
->>>> so there's a ton of
->>>> of_device_is_compatible(output->dev->of_node, 
->>>> "nvidia,tegra30-hdmi") in this code.
->>> 
->>> I don't quite see how that is supposed to work. Wouldn't that
->>> mean that we needed to setup various entries in the clock
->>> tables to be able to look the clocks up by generic names? Like
->>> pll_d would need to be the "parent" clock of "tegra-hdmi" or
->>> similar. In that case we could call clk_get(hdmi->dev,
->>> "parent") instead. Is that what you had in mind?
->> 
->> There are two ways this could work:
->> 
->> 1)
->> 
->> All clocks needed could be represented in the node of that device
->> (or perhaps in the DC node?) For example, perhaps hdmi might
->> contain:
->> 
->> clocks = <&car TEGRA_CLK_PLL_D> <&car TEGRA_CLK_PLL_D_OUT_0> 
->> <&car TEGRA_CLK_HDMI> ...; clock-names = "pll_d", "pll_d_out_0",
->> "hdmi", ...;
->> 
->> That should work (I think) with pretty much no modification to
->> the current code, other than calling clk_get(dev, "hdmi") rather
->> than clk_get_sys(NULL, "hdmi").
-> 
-> I thought DT support didn't work for Tegra yet. If that works we
-> should probably get rid of the DRM related entries in the clock
-> tables and put the information in the DT regardless of which of the
-> alternatives is implemented.
+Changed subject (was: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2
+driver for CPU0) ...
 
-Certainly, the Tegra clock driver itself doesn't support DT, i.e.
-isn't a DT clock provider. So, this won't work completely right now. I
-believe Prashant had patches to implement this though. Prashant,
-what's the status on those?
+On Fri, Oct 12, 2012 at 01:50:35PM -0700, Colin Cross wrote:
+> Current coupled cpuidle requires all cpus to wake up together and go
+> back to the idle governor to select a new state, because that's what
+> all available ARM cpus did when I wrote it.  You should be able to
+> implement coupled idle on a cpu that does not need to wake all the
+> cpus if you wake them anyways,
 
-It looks like the core common clock DT support did make it into 3.7,
-so any dependencies are probably contained within the Tegra tree.
+Can you please elaborate it a little bit?  I do not quite understand
+what you mean.
 
-Still, perhaps this is something we can clean up later; we'd probably
-benefit more from having some form of tegra-drm in place earlier
-rather than having it later with perfect clock usage, although DT
-binding churn:-(
+Basically, imx6q has a low-power mode named WAIT.  When all 4 cores
+are in WFI, imx6q will go into WAIT mode, and whenever there is a
+wakeup interrupt, it will exit WAIT mode.  Software can configure
+hardware behavior during WAIT mode, clock gating or power gating for
+ARM core.
+
+I'm trying to implement this low-power mode with coupled cpuidle.
+I initially have the following code as the coupled cpuidle enter
+function for clock gating case.
+
+static int imx6q_enter_wait_coupled(struct cpuidle_device *dev,
+				    struct cpuidle_driver *drv, int index)
+{
+	int cpu = dev->cpu;
+
+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);
+
+	if (atomic_inc_return(&master) == num_online_cpus())
+		imx6q_set_lpm(WAIT_UNCLOCKED);
+
+	cpu_do_idle();
+
+	if (atomic_dec_return(&master) == num_online_cpus() - 1)
+		imx6q_set_lpm(WAIT_CLOCKED);
+
+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
+	return index;
+}
+
+However I think there are a couple of problems.  The first one is the
+extra wakeups you have mentioned.  When last cpu is in call
+imx6q_set_lpm(), some of the first 3 cpus that are already in WFI may
+exit from there.  The second one is when hardware exits WAIT mode and
+has ARM clock resumed, some cpus may stay in WFI if scheduler has
+nothing to wake them up.  This breaks the requirement of coupled cpuidle
+that all cpus need to exit together.  I can force the function to work
+around the problems by adding cpuidle_coupled_parallel_barrier() just
+above cpu_do_idle() and arch_send_wakeup_ipi_mask(cpu_online_mask)
+right after imx6q_set_lpm(WAIT_CLOCKED).  But I doubt it's appropriate.
+
+So I rewrite the function as below to not use coupled cpuidle, and it
+works fine.
+
+static int imx6q_enter_wait(struct cpuidle_device *dev,
+			    struct cpuidle_driver *drv, int index)
+{
+	int cpu = dev->cpu;
+
+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);
+
+	if (atomic_inc_return(&master) == num_online_cpus()) {
+		/*
+		 * With this lock, we prevent the other cpu to exit and
+		 * enter this function again and become the master.
+		 */
+		if (!spin_trylock(&master_lock))
+			goto idle;
+
+		imx6q_set_lpm(WAIT_UNCLOCKED);
+		cpu_do_idle();
+		imx6q_set_lpm(WAIT_CLOCKED);
+
+		spin_unlock(&master_lock);
+		goto out;
+	}
+
+idle:
+	cpu_do_idle();
+out:
+	atomic_dec(&master);
+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
+	return index;
+}
+
+For power gating case, it may better fit coupled cpuidle usage model,
+since all the cores will have to run resume routine and thus will not
+be in WFI when hardware exits from WAIT mode.  But we still need to
+work out the extra wakeup issue which will also be seen in this case.
+
+> and then later you can optimize it to
+> avoid the extra wakeups when the extension to coupled cpuidle that I
+> discussed previously gets implemented.
+
+Do you have a pointer to the initial discussion for the extension, or
+you have a draft patch for that already (hopefully:)?
+
+Shawn
