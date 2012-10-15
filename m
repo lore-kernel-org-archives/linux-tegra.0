@@ -1,73 +1,69 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Mon, 15 Oct 2012 09:59:36 -0600
-Message-ID: <507C32E8.1040701@wwwdotorg.org>
-References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>  <1349691981-31038-8-git-send-email-josephl@nvidia.com>  <5074AA0E.2080508@wwwdotorg.org>  <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>  <5076F5CB.4020200@wwwdotorg.org>  <1350025676.20241.82.camel@jlo-ubuntu-64.nvidia.com>  <507885D4.10604@wwwdotorg.org> <1350287799.23354.23.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: Tegra DRM with HDMI support (\o/)
+Date: Mon, 15 Oct 2012 10:11:50 -0600
+Message-ID: <507C35C6.20705@wwwdotorg.org>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <50775803.1010209@wwwdotorg.org> <20121012050957.GA29881@avionic-0098.mockup.avionic-design.de> <507888D0.1090103@wwwdotorg.org> <20121013204223.GA24354@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350287799.23354.23.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <20121013204223.GA24354-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/15/2012 01:56 AM, Joseph Lo wrote:
-> On Sat, 2012-10-13 at 05:04 +0800, Stephen Warren wrote:
->> On 10/12/2012 01:07 AM, Joseph Lo wrote:
->>> On Fri, 2012-10-12 at 00:37 +0800, Stephen Warren wrote:
->>>> On 10/11/2012 05:24 AM, Joseph Lo wrote:
->>>>> On Wed, 2012-10-10 at 06:49 +0800, Stephen Warren wrote:
->>>>>> On 10/08/2012 04:26 AM, Joseph Lo wrote:
->>>>>>> The cpuidle LP2 is a power gating idle mode. It support power gating
->>>>>>> vdd_cpu rail after all cpu cores in LP2. For Tegra30, the CPU0 must
->>>>>>> be last one to go into LP2. We need to take care and make sure whole
->>>>>>> secondary CPUs were in LP2 by checking CPU and power gate status.
->>>>>>> After that, the CPU0 can go into LP2 safely. Then power gating the
->>>>>>> CPU rail.
->>>>>>
->>>>>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
->>>> b) If CPUn can't trigger rail-gating, then when CPUn is the last to
->>>> enter LP2 of the whole complex, it needs to IPI to CPU0 to tell it to
->>>> rail-gate, and simply power-gate itself. I believe this IPI interaction
->>>> is exactly what coupled cpuidle is about, isn't it?
->>>
->>> Yes, indeed. Actually, I had tried the coupled cpuidle on Tegra20. I
->>> knew it a lot. But I met issues when porting it. It looks like a race
->>> condition and becomes a dead lock caused by IPI missing. Anyway, we can
->>> talk about it more detail when I try to upstream the coupled cpuidle
->>> support for Tegra later.
->>
->> Hmm. That sounds a little churny. Why can't we just use coupled cpuidle
->> right from the start if the plan is to use it eventually anyway? From
->> other comments, it sounds like you even already have the code basically
->> working, but just need to iron out a bug or two?
+On 10/13/2012 02:42 PM, Thierry Reding wrote:
+> On Fri, Oct 12, 2012 at 03:17:04PM -0600, Stephen Warren wrote:
+>> On 10/11/2012 11:09 PM, Thierry Reding wrote:
+>>> On Thu, Oct 11, 2012 at 05:36:35PM -0600, Stephen Warren
+>>> wrote:
+> [...]
+>>>> The code in clock.c uses lots of clk_get_sys() calls with 
+>>>> hard-coded clock names. We really should be using the common 
+>>>> clock DT bindings for this instead of hard-coding names. This
+>>>> is especially true since the names differ on different SoCs,
+>>>> so there's a ton of
+>>>> of_device_is_compatible(output->dev->of_node, 
+>>>> "nvidia,tegra30-hdmi") in this code.
+>>> 
+>>> I don't quite see how that is supposed to work. Wouldn't that
+>>> mean that we needed to setup various entries in the clock
+>>> tables to be able to look the clocks up by generic names? Like
+>>> pll_d would need to be the "parent" clock of "tegra-hdmi" or
+>>> similar. In that case we could call clk_get(hdmi->dev,
+>>> "parent") instead. Is that what you had in mind?
+>> 
+>> There are two ways this could work:
+>> 
+>> 1)
+>> 
+>> All clocks needed could be represented in the node of that device
+>> (or perhaps in the DC node?) For example, perhaps hdmi might
+>> contain:
+>> 
+>> clocks = <&car TEGRA_CLK_PLL_D> <&car TEGRA_CLK_PLL_D_OUT_0> 
+>> <&car TEGRA_CLK_HDMI> ...; clock-names = "pll_d", "pll_d_out_0",
+>> "hdmi", ...;
+>> 
+>> That should work (I think) with pretty much no modification to
+>> the current code, other than calling clk_get(dev, "hdmi") rather
+>> than clk_get_sys(NULL, "hdmi").
 > 
-> Stephen,
-> 
-> Even though we have plan to use coupled cpuidle, I still prefer to go
-> with the LP2 driver first. Then adding one more patch to support coupled
-> cpuidle based on LP2 driver. This is good for history. And if there is
-> any issue, it's more easy to roll back to the stable one.
+> I thought DT support didn't work for Tegra yet. If that works we
+> should probably get rid of the DRM related entries in the clock
+> tables and put the information in the DT regardless of which of the
+> alternatives is implemented.
 
-I don't think that implementing it one way and then changing to a
-different way will benefit history at all. It'll make the history more
-complicated. What exactly is the problem with just using coupled cpuidle
-from the start? If we did merge this implementation now, then switch to
-coupled cpuidle later, when do you think the switch would happen?
+Certainly, the Tegra clock driver itself doesn't support DT, i.e.
+isn't a DT clock provider. So, this won't work completely right now. I
+believe Prashant had patches to implement this though. Prashant,
+what's the status on those?
 
-> There is still one thing you should know. Because we are planning to
-> upstream "CPUquiet" framework that is a CPU auto hotplug mechanism. It
-> will auto hotplug the CPUs depends on the system is busy or not. So when
-> system is idle, there will be only one CPU online (i.e, CPU0). The
-> secondary CPUs will all be hot plugged (i.e, offline and power gate). We
-> need to think about do we still need coupled cpuidle on Tegra30 if we
-> are going to use "CPUquiet".
+It looks like the core common clock DT support did make it into 3.7,
+so any dependencies are probably contained within the Tegra tree.
 
-CPUquiet isn't relevant at all. First, a user may presumably disable
-CPUquiet's Kconfig option (it had better have one, and the system had
-better work with it disabled). Second, even if CPUquiet is enabled, I
-don't imagine there is a 100% guarantee that hot(un)plug will happen
-before cpuidle kicks in, is there? Finally, is there any guarantee that
-CPUquiet will actually be accepted upstream?
+Still, perhaps this is something we can clean up later; we'd probably
+benefit more from having some form of tegra-drm in place earlier
+rather than having it later with perfect clock usage, although DT
+binding churn:-(
