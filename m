@@ -1,56 +1,28 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST] usb: phy: tegra remove include of <mach/iomap.h>
-Date: Mon, 15 Oct 2012 12:16:36 -0600
-Message-ID: <1350324996-30838-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 5/5] ARM: tegra: select SPARSE_IRQ
+Date: Mon, 15 Oct 2012 12:30:52 -0600
+Message-ID: <507C565C.7000101@wwwdotorg.org>
+References: <1348090279-22631-1-git-send-email-swarren@wwwdotorg.org> <1348090279-22631-5-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1348090279-22631-5-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 09/19/2012 03:31 PM, Stephen Warren wrote:
+> SPARSE_IRQ is required for single zImage support.
+> 
+> With this enabled, we can delete <mach/irqs.h>. This requires removing
+> one unnecessary include of that file, and hard-coding the PCIe IRQ into
+> the PCIe driver. This is a hack that will be dealt with as part of
+> converting the PCIe driver into a true DT-supporting driver.
 
-Almost nothing from this file is used, and the file will hopefully be
-deleted soon. Copy the tiny portions that are used directly into
-tegra_usb_phy.c. I believe that Venu Byravarasu is working on cleaning up
-our USB driver, and those cleanups will remove the need for these
-constants.
+I have applied this series to Tegra's for-3.8/single-zimage branch.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Felipe, Greg,
-
-This patch is needed in the Tegra branch, since it's a dependency for
-cleanup required to support single zImage.
-
-However, I suspect/hope there will be significant improvements to the Tegra
-USB driver in 3.8, and this change may merge-conflict with those. It may be
-simplest if this patch can /also/ be taken through the USB tree and so act
-as a baseline for any Tegra USB work.
-
-As such, may I please request this patch be merged into a separate branch/tag
-in the USB tree, which is then merged into both the Tegra and USB trees.
-
-Thanks.
----
- drivers/usb/phy/tegra_usb_phy.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
-index 987116f..9d13c81 100644
---- a/drivers/usb/phy/tegra_usb_phy.c
-+++ b/drivers/usb/phy/tegra_usb_phy.c
-@@ -29,7 +29,9 @@
- #include <linux/usb/ulpi.h>
- #include <asm/mach-types.h>
- #include <linux/usb/tegra_usb_phy.h>
--#include <mach/iomap.h>
-+
-+#define TEGRA_USB_BASE		0xC5000000
-+#define TEGRA_USB_SIZE		SZ_16K
- 
- #define ULPI_VIEWPORT		0x170
- 
--- 
-1.7.0.4
+I'm not sure yet if Tegra will actually be able to be part of single
+zImage in 3.8, but this branch will certainly host a fair few changes to
+get it very close at least.
