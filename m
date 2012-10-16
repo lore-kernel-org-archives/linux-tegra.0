@@ -1,62 +1,43 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [Linaro-mm-sig] [RFC 0/2] DMA-mapping & IOMMU - physically
- contiguous allocations
-Date: Tue, 16 Oct 2012 09:04:34 +0300
-Message-ID: <20121016090434.7d5e088152a3e0b0606903c8@nvidia.com>
-References: <1350309832-18461-1-git-send-email-m.szyprowski@samsung.com>
-	<CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
+Date: Tue, 16 Oct 2012 11:06:34 +0300
+Message-ID: <20121016080634.GG3196@tbergstrom-lnx.Nvidia.com>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
+ <1349691981-31038-8-git-send-email-josephl@nvidia.com>
+ <5074AA0E.2080508@wwwdotorg.org>
+ <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
+ <5076F5CB.4020200@wwwdotorg.org>
+ <1350025676.20241.82.camel@jlo-ubuntu-64.nvidia.com>
+ <507885D4.10604@wwwdotorg.org>
+ <1350287799.23354.23.camel@jlo-ubuntu-64.nvidia.com>
+ <507C32E8.1040701@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <507C32E8.1040701-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Inki/Marek,
-
-On Tue, 16 Oct 2012 02:50:16 +0200
-Inki Dae <inki.dae@samsung.com> wrote:
-
-> 2012/10/15 Marek Szyprowski <m.szyprowski@samsung.com>:
-> > Hello,
-> >
-> > Some devices, which have IOMMU, for some use cases might require to
-> > allocate a buffers for DMA which is contiguous in physical memory. Such
-> > use cases appears for example in DRM subsystem when one wants to improve
-> > performance or use secure buffer protection.
-> >
-> > I would like to ask if adding a new attribute, as proposed in this RFC
-> > is a good idea? I feel that it might be an attribute just for a single
-> > driver, but I would like to know your opinion. Should we look for other
-> > solution?
-> >
+> > Even though we have plan to use coupled cpuidle, I still prefer to go
+> > with the LP2 driver first. Then adding one more patch to support coupled
+> > cpuidle based on LP2 driver. This is good for history. And if there is
+> > any issue, it's more easy to roll back to the stable one.
 > 
-> In addition, currently we have worked dma-mapping-based iommu support
-> for exynos drm driver with this patch set so this patch set has been
-> tested with iommu enabled exynos drm driver and worked fine. actually,
-> this feature is needed for secure mode such as TrustZone. in case of
-> Exynos SoC, memory region for secure mode should be physically
-> contiguous and also maybe OMAP but now dma-mapping framework doesn't
-> guarantee physically continuous memory allocation so this patch set
-> would make it possible.
+> I don't think that implementing it one way and then changing to a
+> different way will benefit history at all. It'll make the history more
+> complicated. What exactly is the problem with just using coupled cpuidle
+> from the start? If we did merge this implementation now, then switch to
+> coupled cpuidle later, when do you think the switch would happen?
+> 
 
-Agree that the contigous memory allocation is necessary for us too.
+Before we consider doing this, I think we should have some idea on how
+frequently we run into the situation where CPU0 is idle but a secondary
+core is not. Depending on that we can then decide how useful coupled cpuidle
+would be for us.
 
-In addition to those contiguous/discontiguous page allocation, is
-there any way to _import_ anonymous pages allocated by a process to be
-used in dma-mapping API later?
+Cheers,
 
-I'm considering the following scenario, an user process allocates a
-buffer by malloc() in advance, and then it asks some driver to convert
-that buffer into IOMMU'able/DMA'able ones later. In this case, pages
-are discouguous and even they may not be yet allocated at
-malloc()/mmap().
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Peter.
