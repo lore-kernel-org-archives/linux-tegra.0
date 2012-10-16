@@ -1,35 +1,34 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra30: clk: Fix output_rate overflow
-Date: Tue, 16 Oct 2012 16:31:49 +0800
-Message-ID: <1350376309-24557-1-git-send-email-markz@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [Linaro-mm-sig] [RFC 0/2] DMA-mapping & IOMMU - physically
+	contiguous allocations
+Date: Tue, 16 Oct 2012 09:59:28 +0100
+Message-ID: <20121016085928.GV21164@n2100.arm.linux.org.uk>
+References: <1350309832-18461-1-git-send-email-m.szyprowski@samsung.com> <CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com> <20121016090434.7d5e088152a3e0b0606903c8@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20121016090434.7d5e088152a3e0b0606903c8@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Change the type of variable from "unsigned long" to "u64".
-This avoids the overflow while clock rate calculating.
+On Tue, Oct 16, 2012 at 09:04:34AM +0300, Hiroshi Doyu wrote:
+> In addition to those contiguous/discontiguous page allocation, is
+> there any way to _import_ anonymous pages allocated by a process to be
+> used in dma-mapping API later?
+> 
+> I'm considering the following scenario, an user process allocates a
+> buffer by malloc() in advance, and then it asks some driver to convert
+> that buffer into IOMMU'able/DMA'able ones later. In this case, pages
+> are discouguous and even they may not be yet allocated at
+> malloc()/mmap().
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/tegra30_clocks.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That situation is covered.  It's the streaming API you're wanting for that.
+dma_map_sg() - but you may need additional cache handling via
+flush_dcache_page() to ensure that your code is safe for all CPU cache
+architectures.
 
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
-index 5cd502c..e9de5df 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks.c
-@@ -1199,7 +1199,7 @@ static long tegra30_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_tegra *c = to_clk_tegra(hw);
- 	unsigned long input_rate = *prate;
--	unsigned long output_rate = *prate;
-+	u64 output_rate = *prate;
- 	const struct clk_pll_freq_table *sel;
- 	struct clk_pll_freq_table cfg;
- 	int mul;
--- 
-1.7.9.5
+Remember that pages allocated into userspace will be cacheable, so a cache
+flush is required before they can be DMA'd.  Hence the streaming API.
