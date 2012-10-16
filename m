@@ -1,83 +1,41 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [Linaro-mm-sig] [RFC 0/2] DMA-mapping & IOMMU - physically
- contiguous allocations
-Date: Tue, 16 Oct 2012 16:13:38 +0200
-Message-ID: <20121016.171338.1300372057637804407.hdoyu@nvidia.com>
-References: <CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com><20121016090434.7d5e088152a3e0b0606903c8@nvidia.com><CAAQKjZNQFfxpr-7dFb4cgNB2Gkrxxrswds_fSrYgssxXaqRF7g@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Tegra DRM with HDMI support (\o/)
+Date: Tue, 16 Oct 2012 10:03:56 -0600
+Message-ID: <507D856C.1070708@wwwdotorg.org>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAAQKjZNQFfxpr-7dFb4cgNB2Gkrxxrswds_fSrYgssxXaqRF7g@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: "inki.dae@samsung.com" <inki.dae@samsung.com>
-Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350375538.2332.31.camel@markz-hp6200>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Inki,
+On 10/16/2012 02:18 AM, Mark Zhang wrote:
+> Hi, 
+> 
+> I've made this drm driver worked on Tegra 3(LVDS and HDMI both).
+> But the code that Thierry
+> hosts(git://gitorious.org/thierryreding/linux.git) doesn't work
+> directly. If you build and run it, you'll get a white blank screen on
+> Tegra 3. I didn't find the root cause but I think this is not caused by
+> drm driver itself(maybe the PCIE codes?). The main symptom is: some
+> regulators can't be inited all the time. I tried to build drm driver as
+> kernel module, after kernel booted, modprobe the drm driver, and you'll
+> find there are a lot of error prints like this:
+> 
+> =========================================================
+> [   21.383529] reg-fixed-voltage 1.regulator: Failed to find supply vin
+> [   21.390299] reg-fixed-voltage 1.regulator: Failed to register
+> regulator: -517
+> [   21.397645] platform 1.regulator: Driver reg-fixed-voltage requests
+> probe deferral
+> [   21.405604] platform 2.regulator: Driver reg-fixed-voltage requests
+> probe deferral
+> =========================================================
 
-Inki Dae <inki.dae@samsung.com> wrote @ Tue, 16 Oct 2012 12:12:49 +0200:
-
-> Hi Hiroshi,
->=20
-> 2012/10/16 Hiroshi Doyu <hdoyu@nvidia.com>:
-> > Hi Inki/Marek,
-> >
-> > On Tue, 16 Oct 2012 02:50:16 +0200
-> > Inki Dae <inki.dae@samsung.com> wrote:
-> >
-> >> 2012/10/15 Marek Szyprowski <m.szyprowski@samsung.com>:
-> >> > Hello,
-> >> >
-> >> > Some devices, which have IOMMU, for some use cases might require to
-> >> > allocate a buffers for DMA which is contiguous in physical memory. S=
-uch
-> >> > use cases appears for example in DRM subsystem when one wants to imp=
-rove
-> >> > performance or use secure buffer protection.
-> >> >
-> >> > I would like to ask if adding a new attribute, as proposed in this R=
-FC
-> >> > is a good idea? I feel that it might be an attribute just for a sing=
-le
-> >> > driver, but I would like to know your opinion. Should we look for ot=
-her
-> >> > solution?
-> >> >
-> >>
-> >> In addition, currently we have worked dma-mapping-based iommu support
-> >> for exynos drm driver with this patch set so this patch set has been
-> >> tested with iommu enabled exynos drm driver and worked fine. actually,
-> >> this feature is needed for secure mode such as TrustZone. in case of
-> >> Exynos SoC, memory region for secure mode should be physically
-> >> contiguous and also maybe OMAP but now dma-mapping framework doesn't
-> >> guarantee physically continuous memory allocation so this patch set
-> >> would make it possible.
-> >
-> > Agree that the contigous memory allocation is necessary for us too.
-> >
-> > In addition to those contiguous/discontiguous page allocation, is
-> > there any way to _import_ anonymous pages allocated by a process to be
-> > used in dma-mapping API later?
-> >
-> > I'm considering the following scenario, an user process allocates a
-> > buffer by malloc() in advance, and then it asks some driver to convert
-> > that buffer into IOMMU'able/DMA'able ones later. In this case, pages
-> > are discouguous and even they may not be yet allocated at
-> > malloc()/mmap().
-> >
->=20
-> I'm not sure I understand what you mean but we had already tried this
-> way and for this, you can refer to below link,
->                http://www.mail-archive.com/dri-devel@lists.freedesktop.or=
-g/msg22555.html
-
-The above patch doesn't seem to have so much platform/SoC specific
-code but rather it could common over other SoC as well. Is there any
-plan to make it more generic, which can be used by other DRM drivers?
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+This is normal; it's probe deferral. You'll find that those regulators
+initialize correctly later. Hopefully tegra-drm handles this correctly,
+and passes that error code through as the result of its probe.
