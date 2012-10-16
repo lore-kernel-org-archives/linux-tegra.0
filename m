@@ -1,65 +1,62 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: config: sort select statements alphanumerically
-Date: Tue, 16 Oct 2012 10:15:52 +0800
-Message-ID: <CAMPhdO_dhRo=DjUQ79sM_+rj1GVkdBeE4vnFhqfCmg-dwy-mWw@mail.gmail.com>
-References: <20121012132553.GK28061@n2100.arm.linux.org.uk>
- <E1TMfFr-0001Kt-W5@rmk-PC.arm.linux.org.uk>
- <CACRpkdba1q52bEDcWsd47QwXA-DNhq6PENf2M-tvZ6znYu+5yw@mail.gmail.com>
- <20121012144119.GM28061@n2100.arm.linux.org.uk>
- <20121012150945.GB30339@atomide.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [Linaro-mm-sig] [RFC 0/2] DMA-mapping & IOMMU - physically
+ contiguous allocations
+Date: Tue, 16 Oct 2012 09:04:34 +0300
+Message-ID: <20121016090434.7d5e088152a3e0b0606903c8@nvidia.com>
+References: <1350309832-18461-1-git-send-email-m.szyprowski@samsung.com>
+	<CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20121012150945.GB30339@atomide.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, Sekhar Nori <nsekhar@ti.com>, Shiraz Hashim <shiraz.hashim@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com>
+Sender: owner-linux-mm@kvack.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 12, 2012 at 11:09 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Russell King - ARM Linux <linux@arm.linux.org.uk> [121012 07:44]:
->> On Fri, Oct 12, 2012 at 04:04:28PM +0200, Linus Walleij wrote:
->> > On Fri, Oct 12, 2012 at 3:26 PM, Russell King
->> > <rmk+kernel@arm.linux.org.uk> wrote:
->> >
->> > > As suggested by Andrew Morton:
->> > >
->> > >   This is a pet peeve of mine.  Any time there's a long list of items
->> > >   (header file inclusions, kconfig entries, array initalisers, etc) and
->> > >   someone wants to add a new item, they *always* go and stick it at the
->> > >   end of the list.
->> > >
->> > >   Guys, don't do this.  Either put the new item into a randomly-chosen
->> > >   position or, probably better, alphanumerically sort the list.
->> > >
->> > > lets sort all our select statements alphanumerically.  This commit was
->> > > created by the following perl:
->> >
->> > I applied this and tried to configure the Nomadik defconfig,
->> > and I get this, sadly:
->>
->> Yes, I've just fixed those.  Unfortunately, the patch is soo large that
->> it trips the mailing list size limit, and has to be manually approved,
->> so I'm not sure I can call on the list maintainers again today to do the
->> approval thing.
->
-> After applying these two patches and manually running:
->
-> $ git checkout-index -f arch/arm/mach-pxa/Kconfig
-> $ git checkout-index -f arch/arm/mach-footbridge/Kconfig
+Hi Inki/Marek,
 
-Tony, why pxa and footbridge here?
+On Tue, 16 Oct 2012 02:50:16 +0200
+Inki Dae <inki.dae@samsung.com> wrote:
 
->
-> It builds just fine for omaps, so for omaps:
->
-> Acked-by: Tony Lindgren <tony@atomide.com>
+> 2012/10/15 Marek Szyprowski <m.szyprowski@samsung.com>:
+> > Hello,
+> >
+> > Some devices, which have IOMMU, for some use cases might require to
+> > allocate a buffers for DMA which is contiguous in physical memory. Such
+> > use cases appears for example in DRM subsystem when one wants to improve
+> > performance or use secure buffer protection.
+> >
+> > I would like to ask if adding a new attribute, as proposed in this RFC
+> > is a good idea? I feel that it might be an attribute just for a single
+> > driver, but I would like to know your opinion. Should we look for other
+> > solution?
+> >
+> 
+> In addition, currently we have worked dma-mapping-based iommu support
+> for exynos drm driver with this patch set so this patch set has been
+> tested with iommu enabled exynos drm driver and worked fine. actually,
+> this feature is needed for secure mode such as TrustZone. in case of
+> Exynos SoC, memory region for secure mode should be physically
+> contiguous and also maybe OMAP but now dma-mapping framework doesn't
+> guarantee physically continuous memory allocation so this patch set
+> would make it possible.
+
+Agree that the contigous memory allocation is necessary for us too.
+
+In addition to those contiguous/discontiguous page allocation, is
+there any way to _import_ anonymous pages allocated by a process to be
+used in dma-mapping API later?
+
+I'm considering the following scenario, an user process allocates a
+buffer by malloc() in advance, and then it asks some driver to convert
+that buffer into IOMMU'able/DMA'able ones later. In this case, pages
+are discouguous and even they may not be yet allocated at
+malloc()/mmap().
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
