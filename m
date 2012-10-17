@@ -1,93 +1,123 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Wed, 17 Oct 2012 14:38:50 -0600
-Message-ID: <507F175A.3000406@wwwdotorg.org>
-References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200> <507D856C.1070708@wwwdotorg.org> <507E0AC1.8020001@nvidia.com>
+Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
+Date: Wed, 17 Oct 2012 15:12:17 -0600
+Message-ID: <507F1F31.2060503@wwwdotorg.org>
+References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org> <507EC303.1080000@gmail.com> <507EDB37.1060102@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <507E0AC1.8020001-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <507EDB37.1060102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/16/2012 07:32 PM, Mark Zhang wrote:
-> On 10/17/2012 12:03 AM, Stephen Warren wrote:
->> On 10/16/2012 02:18 AM, Mark Zhang wrote:
->>> Hi,
+On 10/17/2012 10:22 AM, Stephen Warren wrote:
+> On 10/17/2012 08:38 AM, Rob Herring wrote:
+>> On 10/15/2012 02:07 PM, Stephen Warren wrote:
+>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>
->>> I've made this drm driver worked on Tegra 3(LVDS and HDMI both).
->>> But the code that Thierry
->>> hosts(git://gitorious.org/thierryreding/linux.git) doesn't work
->>> directly. If you build and run it, you'll get a white blank screen on
->>> Tegra 3. I didn't find the root cause but I think this is not caused by
->>> drm driver itself(maybe the PCIE codes?). The main symptom is: some
->>> regulators can't be inited all the time. I tried to build drm driver as
->>> kernel module, after kernel booted, modprobe the drm driver, and you'll
->>> find there are a lot of error prints like this:
+>>> Move Tegra's debug-macro.S over to the common debug macro directory.
 >>>
->>> =========================================================
->>> [   21.383529] reg-fixed-voltage 1.regulator: Failed to find supply vin
->>> [   21.390299] reg-fixed-voltage 1.regulator: Failed to register
->>> regulator: -517
->>> [   21.397645] platform 1.regulator: Driver reg-fixed-voltage requests
->>> probe deferral
->>> [   21.405604] platform 2.regulator: Driver reg-fixed-voltage requests
->>> probe deferral
->>> =========================================================
+>>> Move Tegra's debug UART selection menu into ARM's Kconfig.debug, so that
+>>> all related options are selected in the same place.
+>>>
+>>> Tegra's uncompress.h is left in mach-tegra/include/mach; it will be
+>>> removed whenever Tegra is converted to multi-platform.
+>>>
+>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>> Rob, Arnd, Olof, I'd particularly like feedback on whether the following:
+>>>
+>>> #include "../../mach-tegra/iomap.h"
+>>>
+>>> in arch/arm/include/debug/tegra.S is acceptable. I'd really like to
+>>> continue to #include a header to share the defines to Tegra physical
+>>> memory layout and virtual based addresses with Tegra's io.c's struct
+>>> map_desc entries, so they can't get out of sync. So, the include can
+>>> either use the relative path as quoted above (which I don't think will
+>>> cause any significant maintenance issue), or Tegra's iomap.h would have
+>>> to be moved somewhere public so e.g. <tegra-iomap.h> could be included.
 >>
->> This is normal; it's probe deferral. You'll find that those regulators
->> initialize correctly later. Hopefully tegra-drm handles this correctly,
->> and passes that error code through as the result of its probe.
->>
+>> We already have a way to get the phys and virt addresses at runtime with
+>> addruart macro.
 > 
-> I don't think so. In normal scenario, the regulator will be inited
-> correctly finally. But in the scenario I described above, these
-> regulators will not be inited correctly all the time. Just as I
-> mentioned above, I tried to build drm driver as kernel module, that
-> means I will load drm driver after kernel booting finished. Besides,
-> during the loading of drm driver, these regulator probe error were still
-> be printed out. And I'm sure this is not the normal case.
+> So this discussion is mainly about the implementation of addruart.
+> 
+>> Couldn't we wrap this with a proper function and setup
+>> the mapping at runtime. This would move it out of the platforms.
+> 
+> So, the mapping already is set up at run-time at least during early
+> boot; __create_page_tables() in arch/arm/kernel/head.S calls addruart
+> and sets up an entry for it.
+> 
+> I suppose the implication here is that the virtual address that addruart
+> returns doesn't have to match anything that the machine later sets up
+> using iotable_init().
+> 
+> If that's true, then Tegra's debug-macro.S only needs to know the UART
+> physical address, and can make up almost any arbitrary virtual address
+> (perhaps even driven by the logic you mention in your next paragraph
+> below) and hence need not rely on Tegra's iomap.h. That said, we'd still
+> have to manually remember not to create conflicting virtual address
+> setups in the two places, which would still be easier with a shared header.
+> 
+> However, I then have two questions:
+> 
+> 1) How long do the page tables set up by __create_page_tables() last; do
+> they stick around forever, or at least as long as the macros from
+> debug-macro.S are used, or are they replaced sometime, on the assumption
+> that the machine's .map_io() will call iotable_init() and end up setting
+> up the same mapping?
 
-The Cardhu PMIC driver isn't enabled in tegra_defconfig in Thierry's
-branch. Do this:
+So answering my own question here after testing this:
 
-> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-> index c2a2f6e..90f4d5c 100644
-> --- a/arch/arm/configs/tegra_defconfig
-> +++ b/arch/arm/configs/tegra_defconfig
-> @@ -124,16 +124,19 @@ CONFIG_SPI_OCORES=m
->  CONFIG_GPIO_SYSFS=y
->  CONFIG_GPIO_ADNP=y
->  CONFIG_GPIO_TPS6586X=y
-> +CONFIG_GPIO_TPS65910=y
->  CONFIG_POWER_SUPPLY=y
->  CONFIG_BATTERY_SBS=y
->  CONFIG_SENSORS_LM90=y
-> -CONFIG_SENSORS_ADC081C=m
->  CONFIG_MFD_TPS6586X=y
-> +CONFIG_MFD_TPS65910=y
->  CONFIG_REGULATOR=y
->  CONFIG_REGULATOR_FIXED_VOLTAGE=y
->  CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
->  CONFIG_REGULATOR_GPIO=y
-> +CONFIG_REGULATOR_TPS62360=y
->  CONFIG_REGULATOR_TPS6586X=y
-> +CONFIG_REGULATOR_TPS65910=y
->  CONFIG_DRM=m
->  CONFIG_DRM_TEGRA=m
->  CONFIG_DRM_TEGRA_DEBUG=y
-> @@ -172,7 +175,7 @@ CONFIG_RTC_CLASS=y
->  CONFIG_RTC_INTF_SYSFS=y
->  CONFIG_RTC_INTF_PROC=y
->  CONFIG_RTC_INTF_DEV=y
-> -CONFIG_RTC_DRV_PCF8523=y
-> +CONFIG_RTC_DRV_TPS65910=y
->  CONFIG_RTC_DRV_TEGRA=y
->  CONFIG_DMADEVICES=y
->  CONFIG_TEGRA20_APB_DMA=y
+If I use a different (to iomap.h) virtual address in debug-macro.S, then
+the very very early output from earlyprintk does work:
 
-(That still doesn't make tegradrm work for me on Cardhu, but it does
-solve the regulator issue)
+> [    0.000000] Booting Linux on physical CPU 0
+> [    0.000000] Initializing cgroup subsys cpu
+> [    0.000000] Linux version 3.7.0-rc1-next-20121016-...
+> [    0.000000] CPU: ARMv7 Processor [411fc090] revision 0 (ARMv7), cr=10c5387d
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+> [    0.000000] Machine: nVidia Tegra20 (Flattened Device Tree), model: NVIDIA Tegra2 Harmony evaluation board
+> [    0.000000] bootconsole [earlycon0] enabled
+> [    0.000000] Memory policy: ECC disabled, Data cache writealloc
+
+However, the kernel either hangs or output simply stops working at that
+point. If I modify Tegra's iotable_init() call to add an entry to map
+the UART to the virtual address debug-macro.S assumes, then everything
+works again.
+
+That implies we really do need to keep the two pieces of code completely
+in sync, so a shared header is the right way to go. It also implies that
+having duplicate mappings of the same physical address doesn't cause any
+immediate obvious catastrophic problems.
+
+Ways we might avoid files in arch/arm/include/debug having to use
+relative include paths to pick up that header are:
+
+a) Move mach-${mach}/include/mach/iomap.h to iomap-${mach}.h in some
+standard include path.
+
+b) Rework debug-macro.S so that it isn't an include file, but rather a
+regular top-level file. In other words, rather than compiling
+arch/arm/kernel/debug.S, and having that #include DEBUG_LL_INCLUDE,
+instead compile DEBUG_LL_SOURCE (i.e. arch/arm/mach-${mach}/debug.S by
+default), and have that #include any common parts (e.g. implementation
+of printhex8). This has benefits of:
+
+b1) arch/arm/mach-${mach}/debug.S is in the mach directory that owns it,
+rather than having them all dumped into a common location.
+
+b2) Can use #include "iomap.h", a non-relative include, to pick up the
+shared header
+
+b3) Perhaps we can simplify the current debug.S e.g. have a common
+debug-semihosting.S that contains the semihosting stuff, and only
+include that from mach-*/debug.S if that machine uses semihosting, or
+similar?
+
+(b) seems like a lot of work. I don't see any advantage of (a) over just
+using the relative include.
