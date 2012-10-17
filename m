@@ -1,84 +1,114 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
-Date: Wed, 17 Oct 2012 10:22:15 -0600
-Message-ID: <507EDB37.1060102@wwwdotorg.org>
-References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org> <507EC303.1080000@gmail.com>
+From: Jon Mayo <jmayo-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: Tegra DRM with HDMI support (\o/)
+Date: Wed, 17 Oct 2012 11:04:05 -0700
+Message-ID: <D6C615D3E4730340AE82D5BD856631C0A1DA306B31@HQMAIL02.nvidia.com>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de>
+ <50775803.1010209@wwwdotorg.org>
+ <20121012050957.GA29881@avionic-0098.mockup.avionic-design.de>
+ <507888D0.1090103@wwwdotorg.org>
+ <20121016082827.GI3196@tbergstrom-lnx.Nvidia.com>
+ <20121017065547.GE21783@avionic-0098.mockup.avionic-design.de>
+ <507ECCCD.7000600@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <507EC303.1080000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <507ECCCD.7000600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/17/2012 08:38 AM, Rob Herring wrote:
-> On 10/15/2012 02:07 PM, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Move Tegra's debug-macro.S over to the common debug macro directory.
->>
->> Move Tegra's debug UART selection menu into ARM's Kconfig.debug, so that
->> all related options are selected in the same place.
->>
->> Tegra's uncompress.h is left in mach-tegra/include/mach; it will be
->> removed whenever Tegra is converted to multi-platform.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Rob, Arnd, Olof, I'd particularly like feedback on whether the following:
->>
->> #include "../../mach-tegra/iomap.h"
->>
->> in arch/arm/include/debug/tegra.S is acceptable. I'd really like to
->> continue to #include a header to share the defines to Tegra physical
->> memory layout and virtual based addresses with Tegra's io.c's struct
->> map_desc entries, so they can't get out of sync. So, the include can
->> either use the relative path as quoted above (which I don't think will
->> cause any significant maintenance issue), or Tegra's iomap.h would have
->> to be moved somewhere public so e.g. <tegra-iomap.h> could be included.
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Wednesday, October 17, 2012 8:21 AM
+> To: Thierry Reding; Jon Mayo
+> Cc: Peter De Schrijver; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Prashant Gaikwad;
+> Joseph Lo
+> Subject: Re: Tegra DRM with HDMI support (\o/)
 > 
-> We already have a way to get the phys and virt addresses at runtime with
-> addruart macro.
+> On 10/17/2012 12:55 AM, Thierry Reding wrote:
+> > On Tue, Oct 16, 2012 at 11:28:27AM +0300, Peter De Schrijver
+> > wrote:
+> >>>
+> >>> There are two ways this could work:
+> >>>
+> >>> 1)
+> >>>
+> >>> All clocks needed could be represented in the node of that
+> >>> device (or perhaps in the DC node?) For example, perhaps hdmi
+> >>> might contain:
+> >>>
+> >>> clocks = <&car TEGRA_CLK_PLL_D> <&car TEGRA_CLK_PLL_D_OUT_0>
+> >>> <&car TEGRA_CLK_HDMI> ...; clock-names = "pll_d",
+> >>> "pll_d_out_0", "hdmi", ...;
+> >>>
+> >>> That should work (I think) with pretty much no modification to
+> >>> the current code, other than calling clk_get(dev, "hdmi")
+> >>> rather than clk_get_sys(NULL, "hdmi").
+> >>>
+> >>> However, I'm not sure this is the best way or not; this still
+> >>> requires the HDMI driver to implement all the clocking policy
+> >>> (e.g. is the HDMI clock a child of PLL_D, PLL_C, PLL_P, ... and
+> >>> what rate should the parent PLL be set to, etc.)
+> >>>
 
-So this discussion is mainly about the implementation of addruart.
+the output setup for HDMI should do setparent on hdmi and dc to attach the proper pll and setup the divider (the divider is in the DC HW and not in the clock, one of the unusual cases). A default policy of always using pll_d2 / pll_d2_out_0 on T30 and later for HDMI is going to cover every case we have today. Then we can defer making it a configurable thing until someone actually needs to do the esoteric configuration. 
 
-> Couldn't we wrap this with a proper function and setup
-> the mapping at runtime. This would move it out of the platforms.
+On T30, HDMI will work with pll_d, but I'm tipping my hand and telling you that if you always use pll_d2 you won't have to mess with this code in the next few chips. :)
 
-So, the mapping already is set up at run-time at least during early
-boot; __create_page_tables() in arch/arm/kernel/head.S calls addruart
-and sets up an entry for it.
+for T20, you'll want to use pll_d for HDMI, unless you need DSI, then you'll have to use pll_c for HDMI. That might be where the configuration comes in handy. If you want, you can pretend that DSI-based T20 devices aren't important enough to support now.
 
-I suppose the implication here is that the virtual address that addruart
-returns doesn't have to match anything that the machine later sets up
-using iotable_init().
+> >>> For example, what if the clock frequency HDMI needs can be
+> >>> generated by PLL_C, so we make PLL_C the parent of HDMI (so as
+> >>> to save power by not running PLL_D, or to use PLL_D for a
+> >>> second display head), then something else comes along and /has/
+> >>> to use PLL_C. If the two childs' frequency requirements are the
+> >>> same, everything is fine. If the two child's frequency
+> >>> requirements are not compatible, we might need to spin up PLL_D
+> >>> and reparent HDMI onto it. More complex scenarios are possible
+> >>> where PLL_C needs to be reprogrammed, yet can be in a way that
+> >>> supports both HDMI and some other requirement, so we only need
+> >>> to temporarily move HDMI onto PLL_D, then reprogram PLL_C, then
+> >>> move HDMI back to it and spin PLL_D down. All these decisions
+> >>> should be made centrally in the Tegra clock driver, or at least
+> >>> some kind of centralized policy management point, and not by
+> >>> the HDMI driver:
+> >>>
+> >>
+> >> This assumes we can glitch free provide a new parent clock to eg.
+> >> HDMI, I doubt the hardware can do that.
+> >
+> > I think for starters it would be enough if the clock code was
+> > smart enough to choose an appropriate parent. We could start
+> > thinking about power optimizations later. I took a brief look at
+> > the current code and it seems like all the information is already
+> > there, so we just need an algorithm that figures out the proper
+> > parent that can provide the right frequency and select it as parent
+> > in clk_set_rate() automatically. Such an algorithm could be as
+> > simple as this:
+> >
+> > if (current parent supports frequency) { set parent frequency }
+> > else { foreach (parent clock) { if (clock supports frequency)
+> > select as new parent }
+> >
 
-If that's true, then Tegra's debug-macro.S only needs to know the UART
-physical address, and can make up almost any arbitrary virtual address
-(perhaps even driven by the logic you mention in your next paragraph
-below) and hence need not rely on Tegra's iomap.h. That said, we'd still
-have to manually remember not to create conflicting virtual address
-setups in the two places, which would still be easier with a shared header.
+> > if (no parent found) abort }
+> >
+> > Checking for frequency support of a new parent would also involve
+> > checking for conflicts with other children of that clock. For some
+> > rudimentary power saving it should be enough to prefer already
+> > enabled clocks when looking for a new parent, so that if a
+> > compatible match is found no new clocks need to be enabled.
+> >
+> > Does that sound reasonable?
+> 
+> At a high level it sounds OK to me. I'm sure there are many details.
+> Jon Mayo (now CC'd) (and other NVIDIA people already CC'd) should
+> chime in with any comments or objections though.
 
-However, I then have two questions:
 
-1) How long do the page tables set up by __create_page_tables() last; do
-they stick around forever, or at least as long as the macros from
-debug-macro.S are used, or are they replaced sometime, on the assumption
-that the machine's .map_io() will call iotable_init() and end up setting
-up the same mapping?
+Why bother trying to do some kind of best fit formula for clock frequencies? T30 and beyond have two PLLs dedicated to two DCs. 
 
-2) If the virtual address returned by addruart on Tegra is different
-than any virtual addresses set up by Tegra's .map_io(), and Tegra's
-.map_io() sets up a very broad mapping that covers all peripherals
-including the UART, and hence the UART physical registers get mapped
-into two virtual addresses, will this cause any problems? IIRC,
-duplicate mappings can cause some issues on ARM, but perhaps that only
-applies to memory-like mappings, and not completely uncached IO mappings?
-
-> I'd also like to make the virtual address the same on all platforms (but
-> different offsets within a 1MB section) and make the phys address a
-> kconfig option. This would also eliminate the need for the platform
-> include and potentially addruart for that matter.
+You will never get a general purpose setup working on T20 if you have DSI. You can only make DSI and HDMI work together if you carefully choose what pixelclocks you wish to support on HDMI, as you will be sharing a clock with other unrelated peripherials. If you have LVDS panel on your T20 device (harmony and ventana do), then using pll_p for the LCD and pll_d for HDMI give you the most flexibility. But you may have to underclock the LCD panel if pll_p doesn't divide to something optiminal for that panel.
