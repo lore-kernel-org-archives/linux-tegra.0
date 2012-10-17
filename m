@@ -1,115 +1,51 @@
-From: Inki Dae <daeinki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Linaro-mm-sig] [RFC 0/2] DMA-mapping & IOMMU - physically contiguous allocations
-Date: Wed, 17 Oct 2012 07:54:17 +0900
-Message-ID: <A52B7C89-16F2-44A0-A9FF-2EB599F4F074@gmail.com>
-References: <CAAQKjZMYFNMEnb2ue2aR+6AEbOixnQFyggbXrThBCW5VOznePg@mail.gmail.com> <20121016090434.7d5e088152a3e0b0606903c8@nvidia.com> <CAAQKjZNQFfxpr-7dFb4cgNB2Gkrxxrswds_fSrYgssxXaqRF7g@mail.gmail.com> <20121016.171338.1300372057637804407.hdoyu@nvidia.com>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra DRM with HDMI support (\o/)
+Date: Wed, 17 Oct 2012 09:32:49 +0800
+Message-ID: <507E0AC1.8020001@nvidia.com>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200> <507D856C.1070708@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121016.171338.1300372057637804407.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <507D856C.1070708-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org" <linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Hiroshi,
+On 10/17/2012 12:03 AM, Stephen Warren wrote:
+> On 10/16/2012 02:18 AM, Mark Zhang wrote:
+>> Hi,
+>>
+>> I've made this drm driver worked on Tegra 3(LVDS and HDMI both).
+>> But the code that Thierry
+>> hosts(git://gitorious.org/thierryreding/linux.git) doesn't work
+>> directly. If you build and run it, you'll get a white blank screen on
+>> Tegra 3. I didn't find the root cause but I think this is not caused by
+>> drm driver itself(maybe the PCIE codes?). The main symptom is: some
+>> regulators can't be inited all the time. I tried to build drm driver as
+>> kernel module, after kernel booted, modprobe the drm driver, and you'll
+>> find there are a lot of error prints like this:
+>>
+>> =========================================================
+>> [   21.383529] reg-fixed-voltage 1.regulator: Failed to find supply vin
+>> [   21.390299] reg-fixed-voltage 1.regulator: Failed to register
+>> regulator: -517
+>> [   21.397645] platform 1.regulator: Driver reg-fixed-voltage requests
+>> probe deferral
+>> [   21.405604] platform 2.regulator: Driver reg-fixed-voltage requests
+>> probe deferral
+>> =========================================================
+>
+> This is normal; it's probe deferral. You'll find that those regulators
+> initialize correctly later. Hopefully tegra-drm handles this correctly,
+> and passes that error code through as the result of its probe.
+>
 
-
-
-2012. 10. 16. =BF=C0=C8=C4 11:13 Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =C0=DB=
-=BC=BA:
-
-> Hi Inki,
->=20
-> Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote @ Tue, 16 Oct 2012 12:12:49 +02=
-00:
->=20
->> Hi Hiroshi,
->>=20
->> 2012/10/16 Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
->>> Hi Inki/Marek,
->>>=20
->>> On Tue, 16 Oct 2012 02:50:16 +0200
->>> Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>=20
->>>> 2012/10/15 Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
->>>>> Hello,
->>>>>=20
->>>>> Some devices, which have IOMMU, for some use cases might require =
-to
->>>>> allocate a buffers for DMA which is contiguous in physical memory=
-=2E Such
->>>>> use cases appears for example in DRM subsystem when one wants to =
-improve
->>>>> performance or use secure buffer protection.
->>>>>=20
->>>>> I would like to ask if adding a new attribute, as proposed in thi=
-s RFC
->>>>> is a good idea? I feel that it might be an attribute just for a s=
-ingle
->>>>> driver, but I would like to know your opinion. Should we look for=
- other
->>>>> solution?
->>>>>=20
->>>>=20
->>>> In addition, currently we have worked dma-mapping-based iommu supp=
-ort
->>>> for exynos drm driver with this patch set so this patch set has be=
-en
->>>> tested with iommu enabled exynos drm driver and worked fine. actua=
-lly,
->>>> this feature is needed for secure mode such as TrustZone. in case =
-of
->>>> Exynos SoC, memory region for secure mode should be physically
->>>> contiguous and also maybe OMAP but now dma-mapping framework doesn=
-'t
->>>> guarantee physically continuous memory allocation so this patch se=
-t
->>>> would make it possible.
->>>=20
->>> Agree that the contigous memory allocation is necessary for us too.
->>>=20
->>> In addition to those contiguous/discontiguous page allocation, is
->>> there any way to _import_ anonymous pages allocated by a process to=
- be
->>> used in dma-mapping API later?
->>>=20
->>> I'm considering the following scenario, an user process allocates a
->>> buffer by malloc() in advance, and then it asks some driver to conv=
-ert
->>> that buffer into IOMMU'able/DMA'able ones later. In this case, page=
-s
->>> are discouguous and even they may not be yet allocated at
->>> malloc()/mmap().
->>>=20
->>=20
->> I'm not sure I understand what you mean but we had already tried thi=
-s
->> way and for this, you can refer to below link,
->>               http://www.mail-archive.com/dri-devel-PD4FTy7X32lNgt0PjOBp9w@public.gmane.org=
-p.org/msg22555.html
->=20
-> The above patch doesn't seem to have so much platform/SoC specific
-> code but rather it could common over other SoC as well. Is there any
-> plan to make it more generic, which can be used by other DRM drivers?
->=20
-
-Right, the above patch has no any platform/SoC specific code but doesn'=
-t use dma-mapping API . Anyway we should refrain from using such thing =
-because gem object could still be used and shared with other processes =
-even if user process freed user region allocated by malloc()
-
-And our new patch in progress would resolve this issue and this way is =
-similar to drm-based via driver of mainline kernel. And this patch isn'=
-t considered for common use and is specific to platform/SoC so much. Th=
-e pages backed can be used only by 2d gpu's dma.
-
-Thanks,
-Inki Dae
-
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo-Bw31MaZKKs0EbZ0PF+XxCw@public.gmane.org  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=3Dmailto:"dont-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org"> email-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org </a>
+I don't think so. In normal scenario, the regulator will be inited 
+correctly finally. But in the scenario I described above, these 
+regulators will not be inited correctly all the time. Just as I 
+mentioned above, I tried to build drm driver as kernel module, that 
+means I will load drm driver after kernel booting finished. Besides, 
+during the loading of drm driver, these regulator probe error were still 
+be printed out. And I'm sure this is not the normal case.
