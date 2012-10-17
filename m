@@ -1,37 +1,84 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: correct bank for pingroup and drv pingroup
-Date: Wed, 17 Oct 2012 09:48:16 -0600
-Message-ID: <507ED340.8010703@wwwdotorg.org>
-References: <1350454897-18110-1-git-send-email-praithatha@nvidia.com>
+Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
+Date: Wed, 17 Oct 2012 10:22:15 -0600
+Message-ID: <507EDB37.1060102@wwwdotorg.org>
+References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org> <507EC303.1080000@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350454897-18110-1-git-send-email-praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <507EC303.1080000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/17/2012 12:21 AM, Pritesh Raithatha wrote:
-> Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 10/17/2012 08:38 AM, Rob Herring wrote:
+> On 10/15/2012 02:07 PM, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Move Tegra's debug-macro.S over to the common debug macro directory.
+>>
+>> Move Tegra's debug UART selection menu into ARM's Kconfig.debug, so that
+>> all related options are selected in the same place.
+>>
+>> Tegra's uncompress.h is left in mach-tegra/include/mach; it will be
+>> removed whenever Tegra is converted to multi-platform.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> Rob, Arnd, Olof, I'd particularly like feedback on whether the following:
+>>
+>> #include "../../mach-tegra/iomap.h"
+>>
+>> in arch/arm/include/debug/tegra.S is acceptable. I'd really like to
+>> continue to #include a header to share the defines to Tegra physical
+>> memory layout and virtual based addresses with Tegra's io.c's struct
+>> map_desc entries, so they can't get out of sync. So, the include can
+>> either use the relative path as quoted above (which I don't think will
+>> cause any significant maintenance issue), or Tegra's iomap.h would have
+>> to be moved somewhere public so e.g. <tegra-iomap.h> could be included.
+> 
+> We already have a way to get the phys and virt addresses at runtime with
+> addruart macro.
 
-(dropping stable from CC)
+So this discussion is mainly about the implementation of addruart.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Couldn't we wrap this with a proper function and setup
+> the mapping at runtime. This would move it out of the platforms.
 
-Linus, if you could add Cc: stable when you commit it, that'd be useful
-too. Thanks.
+So, the mapping already is set up at run-time at least during early
+boot; __create_page_tables() in arch/arm/kernel/head.S calls addruart
+and sets up an entry for it.
 
-I have no idea how I screwed this up so badly, or how it worked when
-programming completely bogus registers!
+I suppose the implication here is that the virtual address that addruart
+returns doesn't have to match anything that the machine later sets up
+using iotable_init().
 
-Adding a patch description would be useful especially for stable. A
-useful patch description might be:
+If that's true, then Tegra's debug-macro.S only needs to know the UART
+physical address, and can make up almost any arbitrary virtual address
+(perhaps even driven by the logic you mention in your next paragraph
+below) and hence need not rely on Tegra's iomap.h. That said, we'd still
+have to manually remember not to create conflicting virtual address
+setups in the two places, which would still be easier with a shared header.
 
-The bank numbers in the pinctrl driver must match the bank numbers in
-the device tree. Swap the bank numbers in the driver to ensure this.
-While we're at it, rename the #defines used for the bank base addresses
-so it's more obvious which is which, and add comments indicating which
-correspond to which device tree bank.
+However, I then have two questions:
+
+1) How long do the page tables set up by __create_page_tables() last; do
+they stick around forever, or at least as long as the macros from
+debug-macro.S are used, or are they replaced sometime, on the assumption
+that the machine's .map_io() will call iotable_init() and end up setting
+up the same mapping?
+
+2) If the virtual address returned by addruart on Tegra is different
+than any virtual addresses set up by Tegra's .map_io(), and Tegra's
+.map_io() sets up a very broad mapping that covers all peripherals
+including the UART, and hence the UART physical registers get mapped
+into two virtual addresses, will this cause any problems? IIRC,
+duplicate mappings can cause some issues on ARM, but perhaps that only
+applies to memory-like mappings, and not completely uncached IO mappings?
+
+> I'd also like to make the virtual address the same on all platforms (but
+> different offsets within a 1MB section) and make the phys address a
+> kconfig option. This would also eliminate the need for the platform
+> include and potentially addruart for that matter.
