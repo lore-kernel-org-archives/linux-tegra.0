@@ -1,37 +1,93 @@
-From: "devendra.aaru" <devendra.aaru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] arm: mach-tegra: check wether we have debugfs enabled or not
-Date: Wed, 17 Oct 2012 16:18:40 -0400
-Message-ID: <CAHdPZaPa9CNL91oYmCi1wdPcZYB3kEGV52RDsy04WCOhPUWfxA@mail.gmail.com>
-References: <1350501196-5632-1-git-send-email-devendra.aaru@gmail.com>
-	<20121017201244.GN21164@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Tegra DRM with HDMI support (\o/)
+Date: Wed, 17 Oct 2012 14:38:50 -0600
+Message-ID: <507F175A.3000406@wwwdotorg.org>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200> <507D856C.1070708@wwwdotorg.org> <507E0AC1.8020001@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121017201244.GN21164-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <507E0AC1.8020001-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 17, 2012 at 4:12 PM, Russell King - ARM Linux
-<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
->
-> So, you want to make this function hard-fail if a debugfs error occurs
-> _or_ debugfs is not configured?  That doesn't seem to be a clever thing
-> to do.
+On 10/16/2012 07:32 PM, Mark Zhang wrote:
+> On 10/17/2012 12:03 AM, Stephen Warren wrote:
+>> On 10/16/2012 02:18 AM, Mark Zhang wrote:
+>>> Hi,
+>>>
+>>> I've made this drm driver worked on Tegra 3(LVDS and HDMI both).
+>>> But the code that Thierry
+>>> hosts(git://gitorious.org/thierryreding/linux.git) doesn't work
+>>> directly. If you build and run it, you'll get a white blank screen on
+>>> Tegra 3. I didn't find the root cause but I think this is not caused by
+>>> drm driver itself(maybe the PCIE codes?). The main symptom is: some
+>>> regulators can't be inited all the time. I tried to build drm driver as
+>>> kernel module, after kernel booted, modprobe the drm driver, and you'll
+>>> find there are a lot of error prints like this:
+>>>
+>>> =========================================================
+>>> [   21.383529] reg-fixed-voltage 1.regulator: Failed to find supply vin
+>>> [   21.390299] reg-fixed-voltage 1.regulator: Failed to register
+>>> regulator: -517
+>>> [   21.397645] platform 1.regulator: Driver reg-fixed-voltage requests
+>>> probe deferral
+>>> [   21.405604] platform 2.regulator: Driver reg-fixed-voltage requests
+>>> probe deferral
+>>> =========================================================
+>>
+>> This is normal; it's probe deferral. You'll find that those regulators
+>> initialize correctly later. Hopefully tegra-drm handles this correctly,
+>> and passes that error code through as the result of its probe.
+>>
+> 
+> I don't think so. In normal scenario, the regulator will be inited
+> correctly finally. But in the scenario I described above, these
+> regulators will not be inited correctly all the time. Just as I
+> mentioned above, I tried to build drm driver as kernel module, that
+> means I will load drm driver after kernel booting finished. Besides,
+> during the loading of drm driver, these regulator probe error were still
+> be printed out. And I'm sure this is not the normal case.
 
+The Cardhu PMIC driver isn't enabled in tegra_defconfig in Thierry's
+branch. Do this:
 
-I was seeing some places where the check is only for the pointer null
-or valid one that is returned by
-the debugfs_create_file, and fixed it up using this macro by failing
-out even if we dont have debugfs
-enabled in kernel.
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index c2a2f6e..90f4d5c 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -124,16 +124,19 @@ CONFIG_SPI_OCORES=m
+>  CONFIG_GPIO_SYSFS=y
+>  CONFIG_GPIO_ADNP=y
+>  CONFIG_GPIO_TPS6586X=y
+> +CONFIG_GPIO_TPS65910=y
+>  CONFIG_POWER_SUPPLY=y
+>  CONFIG_BATTERY_SBS=y
+>  CONFIG_SENSORS_LM90=y
+> -CONFIG_SENSORS_ADC081C=m
+>  CONFIG_MFD_TPS6586X=y
+> +CONFIG_MFD_TPS65910=y
+>  CONFIG_REGULATOR=y
+>  CONFIG_REGULATOR_FIXED_VOLTAGE=y
+>  CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
+>  CONFIG_REGULATOR_GPIO=y
+> +CONFIG_REGULATOR_TPS62360=y
+>  CONFIG_REGULATOR_TPS6586X=y
+> +CONFIG_REGULATOR_TPS65910=y
+>  CONFIG_DRM=m
+>  CONFIG_DRM_TEGRA=m
+>  CONFIG_DRM_TEGRA_DEBUG=y
+> @@ -172,7 +175,7 @@ CONFIG_RTC_CLASS=y
+>  CONFIG_RTC_INTF_SYSFS=y
+>  CONFIG_RTC_INTF_PROC=y
+>  CONFIG_RTC_INTF_DEV=y
+> -CONFIG_RTC_DRV_PCF8523=y
+> +CONFIG_RTC_DRV_TPS65910=y
+>  CONFIG_RTC_DRV_TEGRA=y
+>  CONFIG_DMADEVICES=y
+>  CONFIG_TEGRA20_APB_DMA=y
 
-I am sure that i really dont' know any part of the ARM stuff, tried to
-fix this too, because this function
-also checks for the null pointer if debugfs_create_file failed to
-create a file in debugfs and fails out if
-it can't be able to create that, but it wont check for whether we have
-debugfs enabled in kernel.
-
-thanks,
+(That still doesn't make tegradrm work for me on Cardhu, but it does
+solve the regulator issue)
