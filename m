@@ -1,20 +1,31 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
-Date: Wed, 17 Oct 2012 14:03:27 +0000
-Message-ID: <201210171403.27535.arnd@arndb.de>
+Date: Wed, 17 Oct 2012 09:38:59 -0500
+Message-ID: <507EC303.1080000@gmail.com>
 References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1350328024-30485-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 15 October 2012, Stephen Warren wrote:
+On 10/15/2012 02:07 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Move Tegra's debug-macro.S over to the common debug macro directory.
+> 
+> Move Tegra's debug UART selection menu into ARM's Kconfig.debug, so that
+> all related options are selected in the same place.
+> 
+> Tegra's uncompress.h is left in mach-tegra/include/mach; it will be
+> removed whenever Tegra is converted to multi-platform.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 > Rob, Arnd, Olof, I'd particularly like feedback on whether the following:
 > 
 > #include "../../mach-tegra/iomap.h"
@@ -27,73 +38,13 @@ On Monday 15 October 2012, Stephen Warren wrote:
 > cause any significant maintenance issue), or Tegra's iomap.h would have
 > to be moved somewhere public so e.g. <tegra-iomap.h> could be included.
 
-I don't have a good answer for this unfortunately. I wouldn't want relative
-include paths to take over because they can paper over a lot of other
-problems when people get lazy.
+We already have a way to get the phys and virt addresses at runtime with
+addruart macro. Couldn't we wrap this with a proper function and setup
+the mapping at runtime. This would move it out of the platforms.
 
-> Second, is the Kconfig.debug change reasonable? I guess I could remove
-> the second choice menu I added, and just put all the options in the main
-> "Kernel low-level debugging port" choice. However, that would make the
-> "if" statements in "config DEBUG_LL_INCLUDE" rather more unwieldy.
+I'd also like to make the virtual address the same on all platforms (but
+different offsets within a 1MB section) and make the phys address a
+kconfig option. This would also eliminate the need for the platform
+include and potentially addruart for that matter.
 
-It looks ok to me in principle, but you could also solve this by making
-DEBUG_TEGRA_UART a silent option like this:
-
-@@ -345,6 +345,46 @@ choice
-                  Say Y here if you want kernel low-level debugging support
-                  on SOCFPGA based platforms.
-
-+       config DEBUG_TEGRA_UARTA
-+               depends on ARCH_TEGRA
-+		select DEBUG_TEGRA_UART
-+               bool "Use Tegra UARTA for low-level debug"
-+               help
-+                 Say Y here if you want kernel low-level debugging support
-+                 on Tegra based platforms.
-+
-+       config DEBUG_TEGRA_UARTB
-+               depends on ARCH_TEGRA
-+		select DEBUG_TEGRA_UART
-+               bool "Use Tegra UARTB for low-level debug"
-+               help
-+                 Say Y here if you want kernel low-level debugging support
-+                 on Tegra based platforms.
-+
-+       config DEBUG_TEGRA_UARTC
-+               depends on ARCH_TEGRA
-+		select DEBUG_TEGRA_UART
-+               bool "Use Tegra UARTC for low-level debug"
-+               help
-+                 Say Y here if you want kernel low-level debugging support
-+                 on Tegra based platforms.
-+
-+       config DEBUG_TEGRA_UARTD
-+               depends on ARCH_TEGRA
-+		select DEBUG_TEGRA_UART
-+               bool "Use Tegra UARTD for low-level debug"
-+               help
-+                 Say Y here if you want kernel low-level debugging support
-+                 on Tegra based platforms.
-+
-+       config DEBUG_TEGRA_UARTE
-+               depends on ARCH_TEGRA
-+		select DEBUG_TEGRA_UART
-+               bool "Use Tegra UARTE for low-level debug"
-+               help
-+                 Say Y here if you want kernel low-level debugging support
-+                 on Tegra based platforms.
-+
-        config DEBUG_VEXPRESS_UART0_DETECT
-                bool "Autodetect UART0 on Versatile Express Cortex-A core tiles"
-                depends on ARCH_VEXPRESS && CPU_CP15_MMU
-@@ -409,6 +416,36 @@ choice
- 
- endchoice
- 
-+config DEBUG_TEGRA_UART
-+	bool
-
-
-I don't have a strong preference either way.
-
-	ARnd
+Rob
