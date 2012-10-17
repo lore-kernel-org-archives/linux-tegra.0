@@ -1,110 +1,120 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Wed, 17 Oct 2012 08:46:40 +0200
-Message-ID: <20121017064640.GD21783@avionic-0098.mockup.avionic-design.de>
+Date: Wed, 17 Oct 2012 08:55:47 +0200
+Message-ID: <20121017065547.GE21783@avionic-0098.mockup.avionic-design.de>
 References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de>
  <50775803.1010209@wwwdotorg.org>
  <20121012050957.GA29881@avionic-0098.mockup.avionic-design.de>
  <507888D0.1090103@wwwdotorg.org>
- <20121013204223.GA24354@avionic-0098.mockup.avionic-design.de>
- <507C35C6.20705@wwwdotorg.org>
+ <20121016082827.GI3196@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
+	protocol="application/pgp-signature"; boundary="T6xhMxlHU34Bk0ad"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <507C35C6.20705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20121016082827.GI3196-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---EP0wieDxd4TSJjHq
+--T6xhMxlHU34Bk0ad
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 15, 2012 at 10:11:50AM -0600, Stephen Warren wrote:
-> On 10/13/2012 02:42 PM, Thierry Reding wrote:
-> > On Fri, Oct 12, 2012 at 03:17:04PM -0600, Stephen Warren wrote:
-> >> On 10/11/2012 11:09 PM, Thierry Reding wrote:
-> >>> On Thu, Oct 11, 2012 at 05:36:35PM -0600, Stephen Warren
-> >>> wrote:
-> > [...]
-> >>>> The code in clock.c uses lots of clk_get_sys() calls with=20
-> >>>> hard-coded clock names. We really should be using the common=20
-> >>>> clock DT bindings for this instead of hard-coding names. This
-> >>>> is especially true since the names differ on different SoCs,
-> >>>> so there's a ton of
-> >>>> of_device_is_compatible(output->dev->of_node,=20
-> >>>> "nvidia,tegra30-hdmi") in this code.
-> >>>=20
-> >>> I don't quite see how that is supposed to work. Wouldn't that
-> >>> mean that we needed to setup various entries in the clock
-> >>> tables to be able to look the clocks up by generic names? Like
-> >>> pll_d would need to be the "parent" clock of "tegra-hdmi" or
-> >>> similar. In that case we could call clk_get(hdmi->dev,
-> >>> "parent") instead. Is that what you had in mind?
-> >>=20
-> >> There are two ways this could work:
-> >>=20
-> >> 1)
-> >>=20
-> >> All clocks needed could be represented in the node of that device
-> >> (or perhaps in the DC node?) For example, perhaps hdmi might
-> >> contain:
-> >>=20
-> >> clocks =3D <&car TEGRA_CLK_PLL_D> <&car TEGRA_CLK_PLL_D_OUT_0>=20
-> >> <&car TEGRA_CLK_HDMI> ...; clock-names =3D "pll_d", "pll_d_out_0",
-> >> "hdmi", ...;
-> >>=20
-> >> That should work (I think) with pretty much no modification to
-> >> the current code, other than calling clk_get(dev, "hdmi") rather
-> >> than clk_get_sys(NULL, "hdmi").
+On Tue, Oct 16, 2012 at 11:28:27AM +0300, Peter De Schrijver wrote:
 > >=20
-> > I thought DT support didn't work for Tegra yet. If that works we
-> > should probably get rid of the DRM related entries in the clock
-> > tables and put the information in the DT regardless of which of the
-> > alternatives is implemented.
+> > There are two ways this could work:
+> >=20
+> > 1)
+> >=20
+> > All clocks needed could be represented in the node of that device (or
+> > perhaps in the DC node?) For example, perhaps hdmi might contain:
+> >=20
+> > clocks =3D <&car TEGRA_CLK_PLL_D>
+> >          <&car TEGRA_CLK_PLL_D_OUT_0>
+> >          <&car TEGRA_CLK_HDMI>
+> >          ...;
+> > clock-names =3D "pll_d", "pll_d_out_0", "hdmi", ...;
+> >=20
+> > That should work (I think) with pretty much no modification to the
+> > current code, other than calling clk_get(dev, "hdmi") rather than
+> > clk_get_sys(NULL, "hdmi").
+> >=20
+> > However, I'm not sure this is the best way or not; this still requires
+> > the HDMI driver to implement all the clocking policy (e.g. is the HDMI
+> > clock a child of PLL_D, PLL_C, PLL_P, ... and what rate should the
+> > parent PLL be set to, etc.)
+> >=20
+> > For example, what if the clock frequency HDMI needs can be generated
+> > by PLL_C, so we make PLL_C the parent of HDMI (so as to save power by
+> > not running PLL_D, or to use PLL_D for a second display head), then
+> > something else comes along and /has/ to use PLL_C. If the two childs'
+> > frequency requirements are the same, everything is fine. If the two
+> > child's frequency requirements are not compatible, we might need to
+> > spin up PLL_D and reparent HDMI onto it. More complex scenarios are
+> > possible where PLL_C needs to be reprogrammed, yet can be in a way
+> > that supports both HDMI and some other requirement, so we only need to
+> > temporarily move HDMI onto PLL_D, then reprogram PLL_C, then move HDMI
+> > back to it and spin PLL_D down. All these decisions should be made
+> > centrally in the Tegra clock driver, or at least some kind of
+> > centralized policy management point, and not by the HDMI driver:
+> >=20
 >=20
-> Certainly, the Tegra clock driver itself doesn't support DT, i.e.
-> isn't a DT clock provider. So, this won't work completely right now. I
-> believe Prashant had patches to implement this though. Prashant,
-> what's the status on those?
->=20
-> It looks like the core common clock DT support did make it into 3.7,
-> so any dependencies are probably contained within the Tegra tree.
->=20
-> Still, perhaps this is something we can clean up later; we'd probably
-> benefit more from having some form of tegra-drm in place earlier
-> rather than having it later with perfect clock usage, although DT
-> binding churn:-(
+> This assumes we can glitch free provide a new parent clock to eg. HDMI, I
+> doubt the hardware can do that.
 
-Yes, I agree. Unless of course if we can get the clock DT support ready
-soon, then we might yet be able to fold support into tegra-drm.
+I think for starters it would be enough if the clock code was smart
+enough to choose an appropriate parent. We could start thinking about
+power optimizations later. I took a brief look at the current code and
+it seems like all the information is already there, so we just need an
+algorithm that figures out the proper parent that can provide the right
+frequency and select it as parent in clk_set_rate() automatically. Such
+an algorithm could be as simple as this:
+
+	if (current parent supports frequency) {
+		set parent frequency
+	} else {
+		foreach (parent clock) {
+			if (clock supports frequency)
+				select as new parent
+		}
+
+		if (no parent found)
+			abort
+	}
+
+Checking for frequency support of a new parent would also involve
+checking for conflicts with other children of that clock. For some
+rudimentary power saving it should be enough to prefer already enabled
+clocks when looking for a new parent, so that if a compatible match is
+found no new clocks need to be enabled.
+
+Does that sound reasonable?
 
 Thierry
 
---EP0wieDxd4TSJjHq
+--T6xhMxlHU34Bk0ad
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQflRPAAoJEN0jrNd/PrOhZFIP/jaTO0sWlw3koCOlOwUR/39+
-MLoabN6Ed+P9c8E6jBDhju/nUbyyCc/FCO/J6/vcZzB9vDvKe1U3hITelIVDmjVV
-+RFuYmBinYNEwV3sWiSNZ8keI88zCUS6JpSOL1uiz8jEQFOOgMrgQXrHYLXsMEeY
-ODUvv2ErwrDWhPaijeUU8Y4DbF82lwFN0cvgVIEx0Z1UM+nHa3hiWs+buTMeZLM3
-dHcG08e1XGKNs8pT5kPPKKdrKWBDKGWgZ1ExmI0T619Ae4dI85/ONWJV4/ndHyUs
-z4X2oK0IR8K0WxtbHwXhHuVoRdlXtzgjd9k61isBW2SFQEN9hMWnPY2oCzRoY+v/
-yFOgDYq04SURKUkDwmTBylGQblY7LwxPzYCbkb+En0YVlJ8Mw1TBECsInlKnla6d
-YebTHyhgWgLPm7waWsf8Zruo1kGqO48E/a34y+1QqP28cDquDNT06ptj5tSKJFuA
-uhcGLgehBGypOXgMwfDwewPA3YNhFfg/j60T6LEj/IsIX52GEPdbvZlvoNeqps5G
-oDdRrFZgjqPYY4CWc1KWduUuHU3BiQonu3/y4wbEtz4uXoyGNaYUPnAaW0kM0mh7
-qLlKToOiW1Ckpa9g+GOOVqT4mYeozYDmF1b8NuTwlrQMAhTG269IUlTTbheBfoIn
-VkrCbqJ2MmtnhOZgMWrD
-=hIia
+iQIcBAEBAgAGBQJQflZzAAoJEN0jrNd/PrOhl+AQAK8m1d7bU/L9sAxuHa5tSStj
+SeH63PXWr3qwvooLuMPQYosgMBx+Hmsc5nDNBiog1eDBibFI5z+W1jacNDHtIlj2
+5TpCtiQdN6nOGie+9/y9XToljLkLIRc6vJfnfTVLVMDxrUld4Jh0PATQ4cr2tZqe
+ez0Cev7pM7zlRcGlX1tsvJJAJIqdTNLtrkM1NyYz10SVC8FlzYmyiesFSErtPgi1
+atG8hP5BwiLxPWDpW3b+xvdWo0E41FH9XGC3hDjJVPmcSzNyXSrM4h3wa4nXUeKa
+2KOIAt+FFwNuJb579hYeXBhpVGVnB3JhLDN4GM9zT+aDCxVehvBH0YU0cVdWPZZo
+NVAk4wabIQ69F8ESpjcvPc+UAbG188tc2N9NuJP70hGrmaI6MWWjUbfICnQ477qc
+9zelbZfmKbzPjaBDe8YLDTJXA+WxZ0M8O9ZSGDk04OJ5WpKiDuojwC0CI3K7l78W
+lmZ6SWrnPrR7wGQA5DWYqzcP6i637fz0gZ8DbRmRKoHxK9iTKEY9nwpAoAxQzST2
+fwmmBe17FNgmX4/d0ODvVfrRiQhf9Q79THXLVFWlgwGVBiwg+09W/D9kxDYlCUHU
+aDu+qLtoEH8Ua9E1Lz6wy9ngQMWxezefVgipWHLeyGErG+0u/KLdTXi3odWjl79m
+z8qDfiR3zUv5sNEY1+NB
+=qH0b
 -----END PGP SIGNATURE-----
 
---EP0wieDxd4TSJjHq--
+--T6xhMxlHU34Bk0ad--
