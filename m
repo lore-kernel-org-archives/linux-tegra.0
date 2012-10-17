@@ -1,38 +1,99 @@
-From: "R, Durgadoss" <durgadoss.r@intel.com>
-Subject: RE: How can I get the latest generic thermal framework
-Date: Wed, 17 Oct 2012 08:36:39 +0000
-Message-ID: <4D68720C2E767A4AA6A8796D42C8EB591E7D05@BGSMSX101.gar.corp.intel.com>
-References: <1342088573.27605.101.camel@tegra-chromium-2>
-  <4D68720C2E767A4AA6A8796D42C8EB5915287C@BGSMSX101.gar.corp.intel.com>
-  <1342144273.1682.237.camel@rui.sh.intel.com>
-  <1342164616.27605.129.camel@tegra-chromium-2>
- <1342165278.1682.259.camel@rui.sh.intel.com> <507E5B15.8040107@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
+Date: Wed, 17 Oct 2012 14:03:27 +0000
+Message-ID: <201210171403.27535.arnd@arndb.de>
+References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <507E5B15.8040107@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>, "Zhang, Rui" <rui.zhang@intel.com>, "Brown, Len" <len.brown@intel.com>
-Cc: "khali@linux-fr.org" <khali@linux-fr.org>, "joe@perches.com" <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@ger.kernel.org" <linux-tegra@ger.kernel.org>, Alex Courbot <acourbot@nvidia.com>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350328024-30485-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgV2VpLA0KDQpZb3UgY2FuIHB1bGwgdGhlIGxhdGVzdCBjaGFuZ2VzIGZyb20gUnVpJ3MgLW5l
-eHQgdHJlZSBoZXJlOg0KZ2l0IGNsb25lIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
-dXgva2VybmVsL2dpdC9yemhhbmcvbGludXguZ2l0DQoodXNlIC1uZXh0IGJyYW5jaCkNCg0KVGhh
-bmtzLA0KRHVyZ2ENCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBXZWkg
-TmkgW21haWx0bzp3bmlAbnZpZGlhLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDE3
-LCAyMDEyIDEyOjQ2IFBNDQo+IFRvOiBaaGFuZywgUnVpOyBSLCBEdXJnYWRvc3M7IEJyb3duLCBM
-ZW4NCj4gQ2M6IGtoYWxpQGxpbnV4LWZyLm9yZzsgam9lQHBlcmNoZXMuY29tOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC10ZWdyYUBnZXIua2VybmVsLm9yZzsgQWxleCBD
-b3VyYm90DQo+IFN1YmplY3Q6IEhvdyBjYW4gSSBnZXQgdGhlIGxhdGVzdCBnZW5lcmljIHRoZXJt
-YWwgZnJhbWV3b3JrDQo+IA0KPiBIaSwgYWxsDQo+IFNldmVyYWwgbW9udGhzIGFnbywgSSB0cmll
-ZCB0byB1c2UgdGhlIGdlbmVyaWMgdGhlcm1hbCBmcmFtZXdvcmsgdG8gd29yaw0KPiB3aXRoIHRo
-ZSBsbTkwIGRyaXZlciBvbiBvdXIgU09DLCBidXQgdGhpcyB3b3JrIHdhcyBub3QgY29tcGxldGVk
-LCBhbmQgaXQNCj4gd2FzIHBlbmRlZC4NCj4gTm93IEkgd2FudCB0byBzdGFydCBpdCBhZ2Fpbi4g
-SSBub3RpY2VkIHRoYXQgbWFueSBuZXcgcGF0Y2hlcyBvZiB0aGlzDQo+IGZyYW1ld29yayB3ZXJl
-IHN1Ym1pdHRlZCwgSSBjaGVja2VkIGxpbnV4LW5leHQuZ2l0LCBidXQgaXQgc2VlbXMgdGhleQ0K
-PiB3ZXJlIG5vdCBtZXJnZWQuDQo+IEhvdyBjYW4gSSBnZXQgdGhlIGxhdGVzdCBjb2RlcyBmb3Ig
-dGhpcyB0aGVybWFsIGZyYW1ld29yaz8gd2hpY2ggZ2l0DQo+IHJlcG9zaXRvcnkgc2hvdWxkIEkg
-dXNlPw0KPiANCj4gVGhhbmtzLg0KPiBXZWkuDQo=
+On Monday 15 October 2012, Stephen Warren wrote:
+> Rob, Arnd, Olof, I'd particularly like feedback on whether the following:
+> 
+> #include "../../mach-tegra/iomap.h"
+> 
+> in arch/arm/include/debug/tegra.S is acceptable. I'd really like to
+> continue to #include a header to share the defines to Tegra physical
+> memory layout and virtual based addresses with Tegra's io.c's struct
+> map_desc entries, so they can't get out of sync. So, the include can
+> either use the relative path as quoted above (which I don't think will
+> cause any significant maintenance issue), or Tegra's iomap.h would have
+> to be moved somewhere public so e.g. <tegra-iomap.h> could be included.
+
+I don't have a good answer for this unfortunately. I wouldn't want relative
+include paths to take over because they can paper over a lot of other
+problems when people get lazy.
+
+> Second, is the Kconfig.debug change reasonable? I guess I could remove
+> the second choice menu I added, and just put all the options in the main
+> "Kernel low-level debugging port" choice. However, that would make the
+> "if" statements in "config DEBUG_LL_INCLUDE" rather more unwieldy.
+
+It looks ok to me in principle, but you could also solve this by making
+DEBUG_TEGRA_UART a silent option like this:
+
+@@ -345,6 +345,46 @@ choice
+                  Say Y here if you want kernel low-level debugging support
+                  on SOCFPGA based platforms.
+
++       config DEBUG_TEGRA_UARTA
++               depends on ARCH_TEGRA
++		select DEBUG_TEGRA_UART
++               bool "Use Tegra UARTA for low-level debug"
++               help
++                 Say Y here if you want kernel low-level debugging support
++                 on Tegra based platforms.
++
++       config DEBUG_TEGRA_UARTB
++               depends on ARCH_TEGRA
++		select DEBUG_TEGRA_UART
++               bool "Use Tegra UARTB for low-level debug"
++               help
++                 Say Y here if you want kernel low-level debugging support
++                 on Tegra based platforms.
++
++       config DEBUG_TEGRA_UARTC
++               depends on ARCH_TEGRA
++		select DEBUG_TEGRA_UART
++               bool "Use Tegra UARTC for low-level debug"
++               help
++                 Say Y here if you want kernel low-level debugging support
++                 on Tegra based platforms.
++
++       config DEBUG_TEGRA_UARTD
++               depends on ARCH_TEGRA
++		select DEBUG_TEGRA_UART
++               bool "Use Tegra UARTD for low-level debug"
++               help
++                 Say Y here if you want kernel low-level debugging support
++                 on Tegra based platforms.
++
++       config DEBUG_TEGRA_UARTE
++               depends on ARCH_TEGRA
++		select DEBUG_TEGRA_UART
++               bool "Use Tegra UARTE for low-level debug"
++               help
++                 Say Y here if you want kernel low-level debugging support
++                 on Tegra based platforms.
++
+        config DEBUG_VEXPRESS_UART0_DETECT
+                bool "Autodetect UART0 on Versatile Express Cortex-A core tiles"
+                depends on ARCH_VEXPRESS && CPU_CP15_MMU
+@@ -409,6 +416,36 @@ choice
+ 
+ endchoice
+ 
++config DEBUG_TEGRA_UART
++	bool
+
+
+I don't have a strong preference either way.
+
+	ARnd
