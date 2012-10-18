@@ -1,26 +1,24 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: Tegra DRM with HDMI support (\o/)
-Date: Thu, 18 Oct 2012 15:05:11 +0800
-Message-ID: <507FAA27.4020703@nvidia.com>
-References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200> <507D856C.1070708@wwwdotorg.org> <20121017054224.GA21783@avionic-0098.mockup.avionic-design.de> <507F9BF5.20002@nvidia.com> <20121018063453.GD24637@avionic-0098.mockup.avionic-design.de>
+Date: Thu, 18 Oct 2012 16:43:01 +0800
+Message-ID: <507FC115.30605@nvidia.com>
+References: <20121011200705.GB27599@avionic-0098.mockup.avionic-design.de> <1350375538.2332.31.camel@markz-hp6200> <507D856C.1070708@wwwdotorg.org> <507E0AC1.8020001@nvidia.com> <507F175A.3000406@wwwdotorg.org> <20121018055518.GB24637@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121018063453.GD24637-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20121018055518.GB24637-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/18/2012 02:34 PM, Thierry Reding wrote:
+On 10/18/2012 01:55 PM, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 >
-> On Thu, Oct 18, 2012 at 02:04:37PM +0800, Mark Zhang wrote:
->> On 10/17/2012 01:42 PM, Thierry Reding wrote:
->>>> Old Signed by an unknown key
->>>
->>> On Tue, Oct 16, 2012 at 10:03:56AM -0600, Stephen Warren wrote:
+> On Wed, Oct 17, 2012 at 02:38:50PM -0600, Stephen Warren wrote:
+>> On 10/16/2012 07:32 PM, Mark Zhang wrote:
+>>> On 10/17/2012 12:03 AM, Stephen Warren wrote:
 >>>> On 10/16/2012 02:18 AM, Mark Zhang wrote:
 >>>>> Hi,
 >>>>>
@@ -47,38 +45,80 @@ On 10/18/2012 02:34 PM, Thierry Reding wrote:
 >>>> This is normal; it's probe deferral. You'll find that those regulators
 >>>> initialize correctly later. Hopefully tegra-drm handles this correctly,
 >>>> and passes that error code through as the result of its probe.
+>>>>
 >>>
->>> I presume those regulators are for the vdd and pll supplies of the HDMI
->>> output? Those should be properly handled by the tegra_hdmi_probe()
->>> function. Also the way tegra-drm works right now, unless all of the
->>> outputs are registered properly the DRM portion will never even be
->>> initialized.
->>>
+>>> I don't think so. In normal scenario, the regulator will be inited
+>>> correctly finally. But in the scenario I described above, these
+>>> regulators will not be inited correctly all the time. Just as I
+>>> mentioned above, I tried to build drm driver as kernel module, that
+>>> means I will load drm driver after kernel booting finished. Besides,
+>>> during the loading of drm driver, these regulator probe error were still
+>>> be printed out. And I'm sure this is not the normal case.
 >>
->> Not exactly. In hdmi driver, if I try to get/enable vdd & pll
->> regulators which HDMI needs, error occurs. So currently to make HDMI
->> working on Tegra 3, we need to temporarily remove these codes.
->> In fact, there are a lot of this kind of errors, I just pasted some
->> of them. So there is something in your changes which blocks these
->> regulators correctly inited cause this issue doesn't exist in
->> upstream codes.
+>> The Cardhu PMIC driver isn't enabled in tegra_defconfig in Thierry's
+>> branch. Do this:
 >
-> I don't understand. If you remove the code that enables the regulators,
-> how can HDMI work at all?
+> Yeah, I think my default configuration is pretty messed up by now. I'm
+> in the process of merging down patches and along the way I planned to
+> drop all the defconfig updates and do the from scratch so that these
+> issues will hopefully be gone.
 >
-> The code in tegra_hdmi_probe() tries to acquire the regulators and
-> should return an error if it can't. But if HDMI is enabled and the
-> driver can't access the resources for HDMI, then nothing will be
-> registered with the DRM core in the first place. That's actually what
-> the drm_clients list is used for. Basically this defers the DRM
-> registration until all clients are available.
+>>> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+>>> index c2a2f6e..90f4d5c 100644
+>>> --- a/arch/arm/configs/tegra_defconfig
+>>> +++ b/arch/arm/configs/tegra_defconfig
+>>> @@ -124,16 +124,19 @@ CONFIG_SPI_OCORES=m
+>>>   CONFIG_GPIO_SYSFS=y
+>>>   CONFIG_GPIO_ADNP=y
+>>>   CONFIG_GPIO_TPS6586X=y
+>>> +CONFIG_GPIO_TPS65910=y
+>>>   CONFIG_POWER_SUPPLY=y
+>>>   CONFIG_BATTERY_SBS=y
+>>>   CONFIG_SENSORS_LM90=y
+>>> -CONFIG_SENSORS_ADC081C=m
+>>>   CONFIG_MFD_TPS6586X=y
+>>> +CONFIG_MFD_TPS65910=y
+>>>   CONFIG_REGULATOR=y
+>>>   CONFIG_REGULATOR_FIXED_VOLTAGE=y
+>>>   CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
+>>>   CONFIG_REGULATOR_GPIO=y
+>>> +CONFIG_REGULATOR_TPS62360=y
+>>>   CONFIG_REGULATOR_TPS6586X=y
+>>> +CONFIG_REGULATOR_TPS65910=y
+>>>   CONFIG_DRM=m
+>>>   CONFIG_DRM_TEGRA=m
+>>>   CONFIG_DRM_TEGRA_DEBUG=y
+>>> @@ -172,7 +175,7 @@ CONFIG_RTC_CLASS=y
+>>>   CONFIG_RTC_INTF_SYSFS=y
+>>>   CONFIG_RTC_INTF_PROC=y
+>>>   CONFIG_RTC_INTF_DEV=y
+>>> -CONFIG_RTC_DRV_PCF8523=y
+>>> +CONFIG_RTC_DRV_TPS65910=y
+>>>   CONFIG_RTC_DRV_TEGRA=y
+>>>   CONFIG_DMADEVICES=y
+>>>   CONFIG_TEGRA20_APB_DMA=y
+>>
+>> (That still doesn't make tegradrm work for me on Cardhu, but it does
+>> solve the regulator issue)
+>
+> I think Mark had some other modifications that were required to get HDMI
+> working on CardHu. Something related to the clocks IIRC. Does LVDS work?
+>
+> Another thing I'm going to work into the cleaned up patches is support
+> for the video mode helpers by Steffen. I actually like the approach
+> better than the binary EDID blob, so I will probably replace the blob on
+> Medcom Wide in favour of a display mode entry in DT.
+>
+> By the way, it would be nice if we could start to collect the various DT
+> snippets for the different boards. For most of the NVIDIA designs these
+> are still missing, just like for AC100. As for the TrimSlice I'm not
+> sure if it works properly.
 >
 
-Stephen gave the answer. We need to enable TI TPS65910 and other related 
-regulator/gpio settings in kernel config. And I tested just now that it 
-worked and the HDMI regulator get/enble was OK as well.
-Sorry for the confusion.
+Yes, I have some DT snippets for Tegra 2 Ventana board. I'll send it to 
+you later.
 
+Mark
 > Thierry
 >
 > * Unknown Key
