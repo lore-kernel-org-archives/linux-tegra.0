@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/5] ARM: tegra: dts: add slink controller dt entry
-Date: Thu, 18 Oct 2012 16:26:32 +0530
-Message-ID: <1350557795-31487-3-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 1/5] ARM: tegra: Add slink controller base address
+Date: Thu, 18 Oct 2012 16:26:31 +0530
+Message-ID: <1350557795-31487-2-git-send-email-ldewangan@nvidia.com>
 References: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,136 +12,49 @@ To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoH
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add slink controller details in the dts file of
-Tegra20 and Tegra30.
+Add base address of all slink controller of Tegra20
+and tegra30.
 
 Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi |   40 ++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra30.dtsi |   60 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 100 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/include/mach/iomap.h |   22 ++++++++++++++--------
+ 1 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 6934bca..d12a310 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -186,6 +186,46 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
+index fee3a94..0f46765 100644
+--- a/arch/arm/mach-tegra/include/mach/iomap.h
++++ b/arch/arm/mach-tegra/include/mach/iomap.h
+@@ -206,17 +206,23 @@
+ #define TEGRA_DVC_BASE			0x7000D000
+ #define TEGRA_DVC_SIZE			SZ_512
  
-+	slink@7000d400 {
-+		compatible = "nvidia,tegra20-slink";
-+		reg = <0x7000d400 0x200>;
-+		interrupts = <0 59 0x04>;
-+		nvidia,dma-req-sel = <15>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000d600 {
-+		compatible = "nvidia,tegra20-slink";
-+		reg = <0x7000d600 0x200>;
-+		interrupts = <0 82 0x04>;
-+		nvidia,dma-req-sel = <16>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000d800 {
-+		compatible = "nvidia,tegra20-slink";
-+		reg = <0x7000d480 0x200>;
-+		interrupts = <0 83 0x04>;
-+		nvidia,dma-req-sel = <17>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000da00 {
-+		compatible = "nvidia,tegra20-slink";
-+		reg = <0x7000da00 0x200>;
-+		interrupts = <0 93 0x04>;
-+		nvidia,dma-req-sel = <18>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	pmc {
- 		compatible = "nvidia,tegra20-pmc";
- 		reg = <0x7000e400 0x400>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 81f5df4..f898911 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -191,6 +191,66 @@
- 		status = "disabled";
- 	};
+-#define TEGRA_SPI1_BASE			0x7000D400
+-#define TEGRA_SPI1_SIZE			SZ_512
++#define TEGRA_SLINK1_BASE		0x7000D400
++#define TEGRA_SLINK1_SIZE		SZ_512
  
-+	slink@7000d400 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000d400 0x200>;
-+		interrupts = <0 59 0x04>;
-+		nvidia,dma-req-sel = <15>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
+-#define TEGRA_SPI2_BASE			0x7000D600
+-#define TEGRA_SPI2_SIZE			SZ_512
++#define TEGRA_SLINK2_BASE		0x7000D600
++#define TEGRA_SLINK2_SIZE		SZ_512
+ 
+-#define TEGRA_SPI3_BASE			0x7000D800
+-#define TEGRA_SPI3_SIZE			SZ_512
++#define TEGRA_SLINK3_BASE		0x7000D800
++#define TEGRA_SLINK3_SIZE		SZ_512
+ 
+-#define TEGRA_SPI4_BASE			0x7000DA00
+-#define TEGRA_SPI4_SIZE			SZ_512
++#define TEGRA_SLINK4_BASE		0x7000DA00
++#define TEGRA_SLINK4_SIZE		SZ_512
 +
-+	slink@7000d600 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000d600 0x200>;
-+		interrupts = <0 82 0x04>;
-+		nvidia,dma-req-sel = <16>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
++#define TEGRA_SLINK5_BASE		0x7000DC00
++#define TEGRA_SLINK5_SIZE		SZ_512
 +
-+	slink@7000d800 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000d480 0x200>;
-+		interrupts = <0 83 0x04>;
-+		nvidia,dma-req-sel = <17>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000da00 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000da00 0x200>;
-+		interrupts = <0 93 0x04>;
-+		nvidia,dma-req-sel = <18>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000dc00 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000dc00 0x200>;
-+		interrupts = <0 94 0x04>;
-+		nvidia,dma-req-sel = <27>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	slink@7000de00 {
-+		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
-+		reg = <0x7000de00 0x200>;
-+		interrupts = <0 79 0x04>;
-+		nvidia,dma-req-sel = <28>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	pmc {
- 		compatible = "nvidia,tegra20-pmc", "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
++#define TEGRA_SLINK6_BASE		0x7000DE00
++#define TEGRA_SLINK6_SIZE		SZ_512
+ 
+ #define TEGRA_RTC_BASE			0x7000E000
+ #define TEGRA_RTC_SIZE			SZ_256
 -- 
 1.7.1.1
