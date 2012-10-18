@@ -1,179 +1,119 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 3/5] ARM: tegra: fix clock entry of slink controller
-Date: Thu, 18 Oct 2012 16:26:33 +0530
-Message-ID: <1350557795-31487-4-git-send-email-ldewangan@nvidia.com>
-References: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
+Date: Thu, 18 Oct 2012 08:47:56 -0500
+Message-ID: <5080088C.9090607@gmail.com>
+References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org> <507EC303.1080000@gmail.com> <507EDB37.1060102@wwwdotorg.org> <507F1F31.2060503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <507F1F31.2060503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix the driver name, connection name and clock name
-for slink controller clocks in clock table of
-Tegra20 and Tegra30.
+On 10/17/2012 04:12 PM, Stephen Warren wrote:
+> On 10/17/2012 10:22 AM, Stephen Warren wrote:
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- arch/arm/mach-tegra/board-dt-tegra20.c    |    8 ++++++
- arch/arm/mach-tegra/board-dt-tegra30.c    |   12 +++++++++
- arch/arm/mach-tegra/tegra20_clocks_data.c |   16 ++++++------
- arch/arm/mach-tegra/tegra30_clocks_data.c |   36 ++++++++++++++--------------
- 4 files changed, 46 insertions(+), 26 deletions(-)
+snip
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 2053f74..2d6915e 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -90,6 +90,10 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 		       &tegra_ehci3_pdata),
- 	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK1_BASE, "spi-tegra-slink.0", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK2_BASE, "spi-tegra-slink.1", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK3_BASE, "spi-tegra-slink.2", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK4_BASE, "spi-tegra-slink.3", NULL),
- 	{}
- };
+> That implies we really do need to keep the two pieces of code completely
+> in sync, so a shared header is the right way to go. It also implies that
+> having duplicate mappings of the same physical address doesn't cause any
+> immediate obvious catastrophic problems.
+> 
+> Ways we might avoid files in arch/arm/include/debug having to use
+> relative include paths to pick up that header are:
+> 
+> a) Move mach-${mach}/include/mach/iomap.h to iomap-${mach}.h in some
+> standard include path.
+> 
+
+Your goal should be to get rid of iomap.h though...
+
+> b) Rework debug-macro.S so that it isn't an include file, but rather a
+> regular top-level file. In other words, rather than compiling
+> arch/arm/kernel/debug.S, and having that #include DEBUG_LL_INCLUDE,
+> instead compile DEBUG_LL_SOURCE (i.e. arch/arm/mach-${mach}/debug.S by
+> default), and have that #include any common parts (e.g. implementation
+> of printhex8). This has benefits of:
+> 
+> b1) arch/arm/mach-${mach}/debug.S is in the mach directory that owns it,
+> rather than having them all dumped into a common location.
+> 
+> b2) Can use #include "iomap.h", a non-relative include, to pick up the
+> shared header
+> 
+> b3) Perhaps we can simplify the current debug.S e.g. have a common
+> debug-semihosting.S that contains the semihosting stuff, and only
+> include that from mach-*/debug.S if that machine uses semihosting, or
+> similar?
+> 
+> (b) seems like a lot of work. I don't see any advantage of (a) over just
+> using the relative include.
+
+Agreed.
+
+Here is what I mentioned previously. This removes the static mapping from 
+the platforms. This is untested and probably breaks on different DEBUG_LL 
+options. For now, platforms call debug_ll_io_init, but once all platforms 
+are converted, this can be called from devicemaps_init.
+
+diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
+index 195ac2f..2ece92c 100644
+--- a/arch/arm/include/asm/mach/map.h
++++ b/arch/arm/include/asm/mach/map.h
+@@ -40,6 +40,9 @@ extern void iotable_init(struct map_desc *, int);
+ extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
+ 				  void *caller);
  
-@@ -109,6 +113,10 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	{ "sdmmc1",	"pll_p",	48000000,	false},
- 	{ "sdmmc3",	"pll_p",	48000000,	false},
- 	{ "sdmmc4",	"pll_p",	48000000,	false},
-+	{ "slink1",	"pll_p",	100000000,	false },
-+	{ "slink2",	"pll_p",	100000000,	false },
-+	{ "slink3",	"pll_p",	100000000,	false },
-+	{ "slink4",	"pll_p",	100000000,	false },
- 	{ NULL,		NULL,		0,		0},
- };
++extern void debug_ll_addr(unsigned long *paddr, unsigned long *vaddr);
++extern void debug_ll_io_init(void);
++
+ struct mem_type;
+ extern const struct mem_type *get_mem_type(unsigned int type);
+ /*
+diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
+index 66f711b..93883ed 100644
+--- a/arch/arm/kernel/debug.S
++++ b/arch/arm/kernel/debug.S
+@@ -100,6 +100,13 @@ ENTRY(printch)
+ 		b	1b
+ ENDPROC(printch)
  
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index 9e6f79a..cf2defd 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -52,6 +52,12 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra30-ahub", 0x70080000, "tegra30-ahub", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-apbdma", 0x6000a000, "tegra-apbdma", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK1_BASE, "spi-tegra-slink.0", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK2_BASE, "spi-tegra-slink.1", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK3_BASE, "spi-tegra-slink.2", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK4_BASE, "spi-tegra-slink.3", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK5_BASE, "spi-tegra-slink.4", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-slink", TEGRA_SLINK6_BASE, "spi-tegra-slink.5", NULL),
- 	{}
- };
++ENTRY(debug_ll_addr)
++		addruart r2, r3, ip
++		str	r2, [r0]
++		str	r3, [r1]
++		mov	pc, lr
++ENDPROC(debug_ll_addr)
++
+ #else
  
-@@ -71,6 +77,12 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	{ "sdmmc1",	"pll_p",	48000000,	false},
- 	{ "sdmmc3",	"pll_p",	48000000,	false},
- 	{ "sdmmc4",	"pll_p",	48000000,	false},
-+	{ "slink1",	"pll_p",	100000000,	false},
-+	{ "slink2",	"pll_p",	100000000,	false},
-+	{ "slink3",	"pll_p",	100000000,	false},
-+	{ "slink4",	"pll_p",	100000000,	false},
-+	{ "slink5",	"pll_p",	100000000,	false},
-+	{ "slink6",	"pll_p",	100000000,	false},
- 	{ NULL,		NULL,		0,		0},
- };
+ ENTRY(printascii)
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index 941dfb9..1c8c7be 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -876,6 +876,20 @@ static void __init pci_reserve_io(void)
+ #define pci_reserve_io() do { } while (0)
+ #endif
  
-diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
-index 9615ee3..b23c99f 100644
---- a/arch/arm/mach-tegra/tegra20_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
-@@ -894,10 +894,10 @@ PERIPH_CLK(pwm,		"tegra-pwm",		NULL,	17,	0x110,	432000000, mux_pllp_pllc_audio_c
- PERIPH_CLK(spi,		"spi",			NULL,	43,	0x114,	40000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(xio,		"xio",			NULL,	45,	0x120,	150000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(twc,		"twc",			NULL,	16,	0x12c,	150000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
--PERIPH_CLK(sbc1,	"spi_tegra.0",		NULL,	41,	0x134,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
--PERIPH_CLK(sbc2,	"spi_tegra.1",		NULL,	44,	0x118,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
--PERIPH_CLK(sbc3,	"spi_tegra.2",		NULL,	46,	0x11c,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
--PERIPH_CLK(sbc4,	"spi_tegra.3",		NULL,	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
-+PERIPH_CLK(slink1,	"spi-tegra-slink.0",	"slink",	41,	0x134,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
-+PERIPH_CLK(slink2,	"spi-tegra-slink.1",	"slink",	44,	0x118,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
-+PERIPH_CLK(slink3,	"spi-tegra-slink.2",	"slink",	46,	0x11c,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
-+PERIPH_CLK(slink4,	"spi-tegra-slink.3",	"slink",	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(ide,		"ide",			NULL,	25,	0x144,	100000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71); /* requires min voltage */
- PERIPH_CLK(ndflash,	"tegra_nand",		NULL,	13,	0x160,	164000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71); /* scales with voltage */
- PERIPH_CLK(vfir,	"vfir",			NULL,	7,	0x168,	72000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
-@@ -960,10 +960,10 @@ static struct clk *tegra_list_clks[] = {
- 	&tegra_spi,
- 	&tegra_xio,
- 	&tegra_twc,
--	&tegra_sbc1,
--	&tegra_sbc2,
--	&tegra_sbc3,
--	&tegra_sbc4,
-+	&tegra_slink1,
-+	&tegra_slink2,
-+	&tegra_slink3,
-+	&tegra_slink4,
- 	&tegra_ide,
- 	&tegra_ndflash,
- 	&tegra_vfir,
-diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-index 3d2e553..8fe2da8 100644
---- a/arch/arm/mach-tegra/tegra30_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
-@@ -1046,12 +1046,12 @@ PERIPH_CLK(dam2,	"tegra30-dam.2",	NULL,	110,	0x3e0,	48000000,  mux_plla_pllc_pll
- PERIPH_CLK(hda,		"tegra30-hda",		"hda",	125,	0x428,	108000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(hda2codec_2x,	"tegra30-hda",	"hda2codec",	111,	0x3e4,	48000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(hda2hdmi,	"tegra30-hda",		"hda2hdmi",	128,	0,	48000000,  mux_clk_m,			0);
--PERIPH_CLK(sbc1,	"spi_tegra.0",		NULL,	41,	0x134,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
--PERIPH_CLK(sbc2,	"spi_tegra.1",		NULL,	44,	0x118,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
--PERIPH_CLK(sbc3,	"spi_tegra.2",		NULL,	46,	0x11c,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
--PERIPH_CLK(sbc4,	"spi_tegra.3",		NULL,	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
--PERIPH_CLK(sbc5,	"spi_tegra.4",		NULL,	104,	0x3c8,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
--PERIPH_CLK(sbc6,	"spi_tegra.5",		NULL,	105,	0x3cc,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink1,	"spi-tegra-slink.0",	"slink",	41,	0x134,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink2,	"spi-tegra-slink.1",	"slink",	44,	0x118,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink3,	"spi-tegra-slink.2",	"slink",	46,	0x11c,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink4,	"spi-tegra-slink.3",	"slink",	68,	0x1b4,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink5,	"spi-tegra-slink.4",	"slink",	104,	0x3c8,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
-+PERIPH_CLK(slink6,	"spi-tegra-slink.5",	"slink",	105,	0x3cc,	160000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB);
- PERIPH_CLK(sata_oob,	"tegra_sata_oob",	NULL,	123,	0x420,	216000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(sata,	"tegra_sata",		NULL,	124,	0x424,	216000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71);
- PERIPH_CLK(sata_cold,	"tegra_sata_cold",	NULL,	129,	0,	48000000,  mux_clk_m,			0);
-@@ -1163,12 +1163,12 @@ struct clk *tegra_list_clks[] = {
- 	&tegra_hda,
- 	&tegra_hda2codec_2x,
- 	&tegra_hda2hdmi,
--	&tegra_sbc1,
--	&tegra_sbc2,
--	&tegra_sbc3,
--	&tegra_sbc4,
--	&tegra_sbc5,
--	&tegra_sbc6,
-+	&tegra_slink1,
-+	&tegra_slink2,
-+	&tegra_slink3,
-+	&tegra_slink4,
-+	&tegra_slink5,
-+	&tegra_slink6,
- 	&tegra_sata_oob,
- 	&tegra_sata,
- 	&tegra_sata_cold,
-@@ -1271,12 +1271,12 @@ struct clk_duplicate tegra_clk_duplicates[] = {
- 	CLK_DUPLICATE("i2c3", "tegra-i2c-slave.2", NULL),
- 	CLK_DUPLICATE("i2c4", "tegra-i2c-slave.3", NULL),
- 	CLK_DUPLICATE("i2c5", "tegra-i2c-slave.4", NULL),
--	CLK_DUPLICATE("sbc1", "spi_slave_tegra.0", NULL),
--	CLK_DUPLICATE("sbc2", "spi_slave_tegra.1", NULL),
--	CLK_DUPLICATE("sbc3", "spi_slave_tegra.2", NULL),
--	CLK_DUPLICATE("sbc4", "spi_slave_tegra.3", NULL),
--	CLK_DUPLICATE("sbc5", "spi_slave_tegra.4", NULL),
--	CLK_DUPLICATE("sbc6", "spi_slave_tegra.5", NULL),
-+	CLK_DUPLICATE("slink1", "spi_slave_tegra.0", NULL),
-+	CLK_DUPLICATE("slink2", "spi_slave_tegra.1", NULL),
-+	CLK_DUPLICATE("slink3", "spi_slave_tegra.2", NULL),
-+	CLK_DUPLICATE("slink4", "spi_slave_tegra.3", NULL),
-+	CLK_DUPLICATE("slink5", "spi_slave_tegra.4", NULL),
-+	CLK_DUPLICATE("slink6", "spi_slave_tegra.5", NULL),
- 	CLK_DUPLICATE("twd", "smp_twd", NULL),
- 	CLK_DUPLICATE("vcp", "nvavp", "vcp"),
- 	CLK_DUPLICATE("i2s0", NULL, "i2s0"),
--- 
-1.7.1.1
++void __init debug_ll_io_init(void)
++{
++	struct map_desc map;
++
++	if (!IS_ENABLED(CONFIG_DEBUG_LL))
++		return;
++
++	debug_ll_addr(&map.pfn, &map.virtual);
++	map.pfn = __phys_to_pfn(map.pfn);
++	map.length = PAGE_SIZE;
++	map.type = MT_DEVICE;
++	create_mapping(&map);
++}
++
+ static void * __initdata vmalloc_min =
+ 	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
+ 
