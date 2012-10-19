@@ -1,232 +1,231 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra30: clocks: add AHB and APB clocks
-Date: Fri, 19 Oct 2012 14:38:13 +0800
-Message-ID: <1350628693-1190-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 1/7] ARM: tegra: cpuidle: separate cpuidle driver for different chips
+Date: Fri, 19 Oct 2012 16:48:40 +0800
+Message-ID: <1350636526-25920-2-git-send-email-josephl@nvidia.com>
+References: <1350636526-25920-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350636526-25920-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding the AHB and APB bus clock control interface for Tegra30.
+The different Tegra chips may have different CPU idle states and data.
+Individual CPU idle driver make it more easy to maintain.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/common.c              |    4 +
- arch/arm/mach-tegra/tegra30_clocks.c      |  106 +++++++++++++++++++++++++++++
- arch/arm/mach-tegra/tegra30_clocks.h      |    1 +
- arch/arm/mach-tegra/tegra30_clocks_data.c |   46 +++++++++++++
- 4 files changed, 157 insertions(+), 0 deletions(-)
+V2:
+* only remove the line of file name and path in the (c) header
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 0b0a5f5..177f164 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -104,6 +104,10 @@ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
- 	{ "clk_m",	NULL,		0,		true },
- 	{ "pll_p",	"clk_m",	408000000,	true },
- 	{ "pll_p_out1",	"pll_p",	9600000,	true },
-+	{ "pll_p_out4",	"pll_p",	102000000,	true },
-+	{ "sclk",	"pll_p_out4",	102000000,	true },
-+	{ "hclk",	"sclk",		102000000,	true },
-+	{ "pclk",	"hclk",		51000000,	true },
- 	{ NULL,		NULL,		0,		0},
- };
- #endif
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
-index e9de5df..875744f 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks.c
-@@ -792,6 +792,112 @@ struct clk_ops tegra30_twd_ops = {
- 	.recalc_rate = tegra30_twd_clk_recalc_rate,
- };
+ arch/arm/mach-tegra/Makefile                       |    6 +++
+ .../mach-tegra/{cpuidle.c => cpuidle-tegra20.c}    |    7 +--
+ .../mach-tegra/{cpuidle.c => cpuidle-tegra30.c}    |    7 +--
+ arch/arm/mach-tegra/cpuidle.c                      |   47 +++++--------------
+ arch/arm/mach-tegra/cpuidle.h                      |   32 +++++++++++++
+ 5 files changed, 55 insertions(+), 44 deletions(-)
+ copy arch/arm/mach-tegra/{cpuidle.c => cpuidle-tegra20.c} (91%)
+ copy arch/arm/mach-tegra/{cpuidle.c => cpuidle-tegra30.c} (91%)
+ create mode 100644 arch/arm/mach-tegra/cpuidle.h
+
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index e6929c6..9b80c1e 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -14,9 +14,15 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += tegra20_clocks_data.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= sleep-tegra20.o
++ifeq ($(CONFIG_CPU_IDLE),y)
++obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= cpuidle-tegra20.o
++endif
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= tegra30_clocks_data.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= sleep-tegra30.o
++ifeq ($(CONFIG_CPU_IDLE),y)
++obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= cpuidle-tegra30.o
++endif
+ obj-$(CONFIG_SMP)			+= platsmp.o headsmp.o
+ obj-$(CONFIG_SMP)                       += reset.o
+ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+similarity index 91%
+copy from arch/arm/mach-tegra/cpuidle.c
+copy to arch/arm/mach-tegra/cpuidle-tegra20.c
+index 4e0b07c..d32e8b0 100644
+--- a/arch/arm/mach-tegra/cpuidle.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -1,6 +1,4 @@
+ /*
+- * arch/arm/mach-tegra/cpuidle.c
+- *
+  * CPU idle driver for Tegra CPUs
+  *
+  * Copyright (c) 2010-2012, NVIDIA Corporation.
+@@ -27,7 +25,7 @@
  
-+/* bus clock functions */
-+static int tegra30_bus_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_tegra *c = to_clk_tegra(hw);
-+	u32 val = clk_readl(c->reg);
-+
-+	c->state = ((val >> c->reg_shift) & BUS_CLK_DISABLE) ? OFF : ON;
-+	return c->state;
-+}
-+
-+static int tegra30_bus_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_tegra *c = to_clk_tegra(hw);
-+	u32 val;
-+
-+	val = clk_readl(c->reg);
-+	val &= ~(BUS_CLK_DISABLE << c->reg_shift);
-+	clk_writel(val, c->reg);
-+
-+	return 0;
-+}
-+
-+static void tegra30_bus_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_tegra *c = to_clk_tegra(hw);
-+	u32 val;
-+
-+	val = clk_readl(c->reg);
-+	val |= BUS_CLK_DISABLE << c->reg_shift;
-+	clk_writel(val, c->reg);
-+}
-+
-+static unsigned long tegra30_bus_clk_recalc_rate(struct clk_hw *hw,
-+			unsigned long prate)
-+{
-+	struct clk_tegra *c = to_clk_tegra(hw);
-+	u32 val = clk_readl(c->reg);
-+	u64 rate = prate;
-+
-+	c->div = ((val >> c->reg_shift) & BUS_CLK_DIV_MASK) + 1;
-+	c->mul = 1;
-+
-+	if (c->mul != 0 && c->div != 0) {
-+		rate *= c->mul;
-+		rate += c->div - 1; /* round up */
-+		do_div(rate, c->div);
-+	}
-+	return rate;
-+}
-+
-+static int tegra30_bus_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_tegra *c = to_clk_tegra(hw);
-+	int ret = -EINVAL;
-+	u32 val;
-+	int i;
-+
-+	val = clk_readl(c->reg);
-+	for (i = 1; i <= 4; i++) {
-+		if (rate == parent_rate / i) {
-+			val &= ~(BUS_CLK_DIV_MASK << c->reg_shift);
-+			val |= (i - 1) << c->reg_shift;
-+			clk_writel(val, c->reg);
-+			c->div = i;
-+			c->mul = 1;
-+			ret = 0;
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static long tegra30_bus_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	s64 divider;
-+
-+	if (rate >= parent_rate)
-+		return rate;
-+
-+	divider = parent_rate;
-+	divider += rate - 1;
-+	do_div(divider, rate);
-+
-+	if (divider < 0)
-+		return divider;
-+
-+	if (divider > 4)
-+		divider = 4;
-+	do_div(parent_rate, divider);
-+
-+	return parent_rate;
-+}
-+
-+struct clk_ops tegra30_bus_ops = {
-+	.is_enabled = tegra30_bus_clk_is_enabled,
-+	.enable = tegra30_bus_clk_enable,
-+	.disable = tegra30_bus_clk_disable,
-+	.set_rate = tegra30_bus_clk_set_rate,
-+	.round_rate = tegra30_bus_clk_round_rate,
-+	.recalc_rate = tegra30_bus_clk_recalc_rate,
-+};
-+
- /* Blink output functions */
- static int tegra30_blink_clk_is_enabled(struct clk_hw *hw)
+ #include <asm/cpuidle.h>
+ 
+-struct cpuidle_driver tegra_idle_driver = {
++static struct cpuidle_driver tegra_idle_driver = {
+ 	.name = "tegra_idle",
+ 	.owner = THIS_MODULE,
+ 	.en_core_tk_irqen = 1,
+@@ -39,7 +37,7 @@ struct cpuidle_driver tegra_idle_driver = {
+ 
+ static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
+ 
+-static int __init tegra_cpuidle_init(void)
++int __init tegra20_cpuidle_init(void)
  {
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.h b/arch/arm/mach-tegra/tegra30_clocks.h
-index f2f88fe..7a34adb 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.h
-+++ b/arch/arm/mach-tegra/tegra30_clocks.h
-@@ -34,6 +34,7 @@ extern struct clk_ops tegra_clk_out_ops;
- extern struct clk_ops tegra30_super_ops;
- extern struct clk_ops tegra30_blink_clk_ops;
- extern struct clk_ops tegra30_twd_ops;
-+extern struct clk_ops tegra30_bus_ops;
- extern struct clk_ops tegra30_periph_clk_ops;
- extern struct clk_ops tegra30_dsib_clk_ops;
- extern struct clk_ops tegra_nand_clk_ops;
-diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-index 3d2e553..7bc8b1d 100644
---- a/arch/arm/mach-tegra/tegra30_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
-@@ -711,6 +711,50 @@ static struct clk tegra_clk_sclk = {
- 	.num_parents = ARRAY_SIZE(mux_sclk),
- };
+ 	int ret;
+ 	unsigned int cpu;
+@@ -66,4 +64,3 @@ static int __init tegra_cpuidle_init(void)
+ 	}
+ 	return 0;
+ }
+-device_initcall(tegra_cpuidle_init);
+diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+similarity index 91%
+copy from arch/arm/mach-tegra/cpuidle.c
+copy to arch/arm/mach-tegra/cpuidle-tegra30.c
+index 4e0b07c..37e7551 100644
+--- a/arch/arm/mach-tegra/cpuidle.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -1,6 +1,4 @@
+ /*
+- * arch/arm/mach-tegra/cpuidle.c
+- *
+  * CPU idle driver for Tegra CPUs
+  *
+  * Copyright (c) 2010-2012, NVIDIA Corporation.
+@@ -27,7 +25,7 @@
  
-+static const char *tegra_hclk_parent_names[] = {
-+	"tegra_sclk",
-+};
+ #include <asm/cpuidle.h>
+ 
+-struct cpuidle_driver tegra_idle_driver = {
++static struct cpuidle_driver tegra_idle_driver = {
+ 	.name = "tegra_idle",
+ 	.owner = THIS_MODULE,
+ 	.en_core_tk_irqen = 1,
+@@ -39,7 +37,7 @@ struct cpuidle_driver tegra_idle_driver = {
+ 
+ static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
+ 
+-static int __init tegra_cpuidle_init(void)
++int __init tegra30_cpuidle_init(void)
+ {
+ 	int ret;
+ 	unsigned int cpu;
+@@ -66,4 +64,3 @@ static int __init tegra_cpuidle_init(void)
+ 	}
+ 	return 0;
+ }
+-device_initcall(tegra_cpuidle_init);
+diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
+index 4e0b07c..d065139 100644
+--- a/arch/arm/mach-tegra/cpuidle.c
++++ b/arch/arm/mach-tegra/cpuidle.c
+@@ -23,47 +23,26 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/cpuidle.h>
+ 
+-#include <asm/cpuidle.h>
+-
+-struct cpuidle_driver tegra_idle_driver = {
+-	.name = "tegra_idle",
+-	.owner = THIS_MODULE,
+-	.en_core_tk_irqen = 1,
+-	.state_count = 1,
+-	.states = {
+-		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+-	},
+-};
+-
+-static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
++#include "fuse.h"
++#include "cpuidle.h"
+ 
+ static int __init tegra_cpuidle_init(void)
+ {
+ 	int ret;
+-	unsigned int cpu;
+-	struct cpuidle_device *dev;
+-	struct cpuidle_driver *drv = &tegra_idle_driver;
+ 
+-	ret = cpuidle_register_driver(&tegra_idle_driver);
+-	if (ret) {
+-		pr_err("CPUidle driver registration failed\n");
+-		return ret;
++	switch (tegra_chip_id) {
++	case TEGRA20:
++		ret = tegra20_cpuidle_init();
++		break;
++	case TEGRA30:
++		ret = tegra30_cpuidle_init();
++		break;
++	default:
++		ret = -ENODEV;
++		break;
+ 	}
+ 
+-	for_each_possible_cpu(cpu) {
+-		dev = &per_cpu(tegra_idle_device, cpu);
+-		dev->cpu = cpu;
+-
+-		dev->state_count = drv->state_count;
+-		ret = cpuidle_register_device(dev);
+-		if (ret) {
+-			pr_err("CPU%u: CPUidle device registration failed\n",
+-				cpu);
+-			return ret;
+-		}
+-	}
+-	return 0;
++	return ret;
+ }
+ device_initcall(tegra_cpuidle_init);
+diff --git a/arch/arm/mach-tegra/cpuidle.h b/arch/arm/mach-tegra/cpuidle.h
+new file mode 100644
+index 0000000..496204d
+--- /dev/null
++++ b/arch/arm/mach-tegra/cpuidle.h
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2012, NVIDIA Corporation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+static struct clk *tegra_hclk_parents[] = {
-+	&tegra_clk_sclk,
-+};
++#ifndef __MACH_TEGRA_CPUIDLE_H
++#define __MACH_TEGRA_CPUIDLE_H
 +
-+static struct clk tegra_hclk;
-+static struct clk_tegra tegra_hclk_hw = {
-+	.hw = {
-+		.clk = &tegra_hclk,
-+	},
-+	.flags = DIV_BUS,
-+	.reg = 0x30,
-+	.reg_shift = 4,
-+	.max_rate = 378000000,
-+	.min_rate = 12000000,
-+};
-+DEFINE_CLK_TEGRA(hclk, 0, &tegra30_bus_ops, 0, tegra_hclk_parent_names,
-+		tegra_hclk_parents, &tegra_clk_sclk);
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++int tegra20_cpuidle_init(void);
++#else
++static inline int tegra20_cpuidle_init(void) { return -ENODEV; }
++#endif
 +
-+static const char *tegra_pclk_parent_names[] = {
-+	"tegra_hclk",
-+};
++#ifdef CONFIG_ARCH_TEGRA_3x_SOC
++int tegra30_cpuidle_init(void);
++#else
++static inline int tegra30_cpuidle_init(void) { return -ENODEV; }
++#endif
 +
-+static struct clk *tegra_pclk_parents[] = {
-+	&tegra_hclk,
-+};
-+
-+static struct clk tegra_pclk;
-+static struct clk_tegra tegra_pclk_hw = {
-+	.hw = {
-+		.clk = &tegra_pclk,
-+	},
-+	.flags = DIV_BUS,
-+	.reg = 0x30,
-+	.reg_shift = 0,
-+	.max_rate = 167000000,
-+	.min_rate = 12000000,
-+};
-+DEFINE_CLK_TEGRA(pclk, 0, &tegra30_bus_ops, 0, tegra_pclk_parent_names,
-+		tegra_pclk_parents, &tegra_hclk);
-+
- static const char *mux_blink[] = {
- 	"clk_32k",
- };
-@@ -1325,6 +1369,8 @@ struct clk *tegra_ptr_clks[] = {
- 	&tegra_cml1,
- 	&tegra_pciex,
- 	&tegra_clk_sclk,
-+	&tegra_hclk,
-+	&tegra_pclk,
- 	&tegra_clk_blink,
- 	&tegra30_clk_twd,
- };
++#endif
 -- 
 1.7.0.4
