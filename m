@@ -1,44 +1,63 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v7 2/3] pwm_backlight: use power sequences
-Date: Fri, 19 Oct 2012 18:31:53 +0900
-Message-ID: <2048338.SjS64CMeN7@percival>
-References: <1350637589-7405-1-git-send-email-acourbot@nvidia.com> <1350637589-7405-3-git-send-email-acourbot@nvidia.com> <1350638436.3339.2.camel@gitbox>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
+Date: Fri, 19 Oct 2012 09:48:56 -0600
+Message-ID: <50817668.6020709@wwwdotorg.org>
+References: <1350626311-18131-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1350638436.3339.2.camel@gitbox>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Prisk <linux@prisktech.co.nz>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Simon Glass <sjg@chromium.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Leela Krishna Amudala <l.krishna@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350626311-18131-1-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 19 October 2012 17:20:36 Tony Prisk wrote:
-> On Fri, 2012-10-19 at 18:06 +0900, Alexandre Courbot wrote:
-> > +static void pwm_backlight_on(struct backlight_device *bl)
-> > +{
-> > +     struct pwm_bl_data *pb = dev_get_drvdata(&bl->dev);
-> > +     int ret;
-> > +
-> > +     if (pb->enabled)
-> > +             return;
-> > +
-> > +     if (pb->power_on_seq) {
-> > +             ret = power_seq_run(pb->power_on_seq);
-> > +             if (ret < 0) {
-> > +                     dev_err(&bl->dev, "cannot run power on
-> > sequence\n");
-> > +                     return;
-> > +             }
-> > +     } else {
-> > +             /* legacy framework */
-> > +             pwm_config(pb->pwm, 0, pb->period);
-> > +             pwm_disable(pb->pwm);
-> 
-> Is this right? pwm_disable() in the backlight_on function?
+On 10/18/2012 11:58 PM, Mark Zhang wrote:
+> Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
 
-Now everybody will notice that I never really tested the legacy interface. >_<
+> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
 
-Thanks, this was totally wrong indeed.
+> -			ddc {
+> -				nvidia,pins = "ddc", "owc", "spdi", "spdo",
+> -					"uac";
+> -				nvidia,function = "rsvd2";
+> -			};
 
-Alex.
+So that removes the entries for 5 pin groups, yet below, entries are
+only added for the ddc and pta pingroups, so the other 4 pin groups
+become unconfigured.
+
+> +
+> +		state_i2cmux_ddc: pinmux_i2cmux_ddc {
+> +			ddc {
+> +				nvidia,pins = "ddc";
+> +				nvidia,function = "i2c2";
+> +			};
+> +			pta {
+> +				nvidia,pins = "pta";
+> +				nvidia,function = "rsvd4";
+> +			};
+
+Does this actually work? The pta pingroup is configured by the "hog"
+pinctrl state of the pinctrl node itself, so this state should fail to
+be applied since it attempts to touch the same pingroup.
+
+> +	i2cmux {
+...
+> +		i2c@1 {
+> +			reg = <1>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			smart-battery@b {
+> +				compatible = "ti,bq24617", "smart-battery-1.1";
+> +				reg = <0xb>;
+> +				ti,i2c-retry-count = <2>;
+> +				ti,poll-retry-count = <10>;
+> +			};
+
+That wasn't there before. Does that device actually exist on Ventana?
+Adding it should be a separate patch if so, since this one is just about
+introducing the I2C mux, not adding an SBS device. Was this all just
+cut/paste from Seaboard without validation?
