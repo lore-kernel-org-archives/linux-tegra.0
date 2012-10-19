@@ -1,115 +1,96 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3 1/5] ARM: implement debug_ll_io_init()
-Date: Fri, 19 Oct 2012 16:41:43 -0600
-Message-ID: <1350686507-3022-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 4/5] ARM: tegra: don't include iomap.h from debug-macro.S
+Date: Fri, 19 Oct 2012 16:41:46 -0600
+Message-ID: <1350686507-3022-4-git-send-email-swarren@wwwdotorg.org>
+References: <1350686507-3022-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350686507-3022-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-When using DEBUG_LL, the UART's (or other HW's) registers are mapped
-into early page tables based on the results of assembly macro addruart.
-Later, when the page tables are replaced, the same virtual address must
-remain valid. Historically, this has been ensured by using defines from
-<mach/iomap.h> in both the implementation of addruart, and the machine's
-.map_io() function. However, with the move to single zImage, we wish to
-remove <mach/iomap.h>. To enable this, the macro addruart may be used
-when constructing the late page tables too; addruart is exposed as a
-C function debug_ll_addr(), and used to set up the required mapping in
-debug_ll_io_init(), which may called on an opt-in basis from a machine's
-.map_io() function.
+In order to move Tegra's debug-macro.S to a common location for single
+zImage, it must not rely on any machine-specific header files such as
+<mach/iomap.h>. Duplicate the few physical address definitions that
+debug-macro.S relies upon directly into the file.
 
-Signed-off-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-[swarren: Mask map.virtual with PAGE_MASK. Checked for NULL results from
- debug_ll_addr (e.g. when selected UART isn't valid). Fixed compile when
- either !CONFIG_DEBUG_LL or CONFIG_DEBUG_SEMIHOSTING.]
+To avoid tegra_io_desc[] requiring shared knowledge of the UART
+mapping's virtual address, use a virtual address outside the ranges
+in tegra_io_desc[]. Call debug_ll_io_init() to propagate the mapping
+beyond the early pages tables.
+
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-I assume this first patch should actually go into some arm-soc branch so
-that if others want to take advantage of it this kernel cycle, they can.
-
 v3: New patch.
 ---
- arch/arm/include/asm/mach/map.h |    7 +++++++
- arch/arm/kernel/debug.S         |   13 +++++++++++++
- arch/arm/mm/mmu.c               |   16 ++++++++++++++++
- 3 files changed, 36 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/include/mach/debug-macro.S |   24 +++++++++++++++++++-----
+ arch/arm/mach-tegra/io.c                       |    1 +
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
-index 195ac2f..2fe141f 100644
---- a/arch/arm/include/asm/mach/map.h
-+++ b/arch/arm/include/asm/mach/map.h
-@@ -40,6 +40,13 @@ extern void iotable_init(struct map_desc *, int);
- extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
- 				  void *caller);
+diff --git a/arch/arm/mach-tegra/include/mach/debug-macro.S b/arch/arm/mach-tegra/include/mach/debug-macro.S
+index d4c23d6..f67fd6d 100644
+--- a/arch/arm/mach-tegra/include/mach/debug-macro.S
++++ b/arch/arm/mach-tegra/include/mach/debug-macro.S
+@@ -26,10 +26,18 @@
  
-+#ifdef CONFIG_DEBUG_LL
-+extern void debug_ll_addr(unsigned long *paddr, unsigned long *vaddr);
-+extern void debug_ll_io_init(void);
-+#else
-+static inline void debug_ll_io_init(void) {}
-+#endif
+ #include <linux/serial_reg.h>
+ 
+-#include "../../iomap.h"
+-
+ #define UART_SHIFT 2
+ 
++/* Physical addresses */
++#define TEGRA_CLK_RESET_BASE		0x60006000
++#define TEGRA_APB_MISC_BASE		0x70000000
++#define TEGRA_UARTA_BASE		0x70006000
++#define TEGRA_UARTB_BASE		0x70006040
++#define TEGRA_UARTC_BASE		0x70006200
++#define TEGRA_UARTD_BASE		0x70006300
++#define TEGRA_UARTE_BASE		0x70006400
++#define TEGRA_PMC_BASE			0x7000e400
 +
- struct mem_type;
- extern const struct mem_type *get_mem_type(unsigned int type);
- /*
-diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
-index 66f711b..7525ce4 100644
---- a/arch/arm/kernel/debug.S
-+++ b/arch/arm/kernel/debug.S
-@@ -100,6 +100,13 @@ ENTRY(printch)
- 		b	1b
- ENDPROC(printch)
+ #define TEGRA_CLK_RST_DEVICES_L		(TEGRA_CLK_RESET_BASE + 0x04)
+ #define TEGRA_CLK_RST_DEVICES_H		(TEGRA_CLK_RESET_BASE + 0x08)
+ #define TEGRA_CLK_RST_DEVICES_U		(TEGRA_CLK_RESET_BASE + 0x0c)
+@@ -39,6 +47,12 @@
+ #define TEGRA_PMC_SCRATCH20		(TEGRA_PMC_BASE + 0xa0)
+ #define TEGRA_APB_MISC_GP_HIDREV	(TEGRA_APB_MISC_BASE + 0x804)
  
-+ENTRY(debug_ll_addr)
-+		addruart r2, r3, ip
-+		str	r2, [r0]
-+		str	r3, [r1]
-+		mov	pc, lr
-+ENDPROC(debug_ll_addr)
++/*
++ * Must be 1MB-aligned since a 1MB mapping is used early on.
++ * Must not overlap with regions in mach-tegra/io.c:tegra_io_desc[].
++ */
++#define UART_VIRTUAL_BASE		0xfe100000
 +
- #else
+ #define checkuart(rp, rv, lhu, bit, uart) \
+ 		/* Load address of CLK_RST register */ \
+ 		movw	rp, #TEGRA_CLK_RST_DEVICES_##lhu & 0xffff ; \
+@@ -139,10 +153,10 @@
+ 91:		str	\rp, [\tmp, #4]		@ Store in tegra_uart_phys
+ 		cmp	\rp, #0			@ Valid UART address?
+ 		bne	92f			@ Yes, go process it
+-		str	\rp, [\tmp, #8]		@ Store 0 in tegra_uart_phys
++		str	\rp, [\tmp, #8]		@ Store 0 in tegra_uart_virt
+ 		b	100f			@ Done
+-92:		sub	\rv, \rp, #IO_APB_PHYS	@ Calculate virt address
+-		add	\rv, \rv, #IO_APB_VIRT
++92:		and	\rv, \rp, #0xffffff	@ offset within 1MB section
++		add	\rv, \rv, #UART_VIRTUAL_BASE
+ 		str	\rv, [\tmp, #8]		@ Store in tegra_uart_virt
+ 		movw	\rv, #TEGRA_APB_MISC_GP_HIDREV & 0xffff
+ 		movt	\rv, #TEGRA_APB_MISC_GP_HIDREV >> 16
+diff --git a/arch/arm/mach-tegra/io.c b/arch/arm/mach-tegra/io.c
+index 7d09f30..bb9c9c2 100644
+--- a/arch/arm/mach-tegra/io.c
++++ b/arch/arm/mach-tegra/io.c
+@@ -59,5 +59,6 @@ static struct map_desc tegra_io_desc[] __initdata = {
  
- ENTRY(printascii)
-@@ -119,4 +126,10 @@ ENTRY(printch)
- 		mov	pc, lr
- ENDPROC(printch)
- 
-+ENTRY(debug_ll_addr)
-+		mov	r2, #0
-+		mov	r3, #0
-+		mov	pc, lr
-+ENDPROC(debug_ll_addr)
-+
- #endif
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index 941dfb9..39719bb 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -876,6 +876,22 @@ static void __init pci_reserve_io(void)
- #define pci_reserve_io() do { } while (0)
- #endif
- 
-+#ifdef CONFIG_DEBUG_LL
-+void __init debug_ll_io_init(void)
-+{
-+	struct map_desc map;
-+
-+	debug_ll_addr(&map.pfn, &map.virtual);
-+	if (!map.pfn || !map.virtual)
-+		return;
-+	map.pfn = __phys_to_pfn(map.pfn);
-+	map.virtual &= PAGE_MASK;
-+	map.length = PAGE_SIZE;
-+	map.type = MT_DEVICE;
-+	create_mapping(&map);
-+}
-+#endif
-+
- static void * __initdata vmalloc_min =
- 	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
- 
+ void __init tegra_map_common_io(void)
+ {
++	debug_ll_io_init();
+ 	iotable_init(tegra_io_desc, ARRAY_SIZE(tegra_io_desc));
+ }
 -- 
 1.7.0.4
