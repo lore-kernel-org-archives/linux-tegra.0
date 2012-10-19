@@ -1,37 +1,22 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/5] ARM: tegra: fix clock entry of slink controller
-Date: Fri, 19 Oct 2012 09:59:05 -0600
-Message-ID: <508178C9.9090504@wwwdotorg.org>
-References: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com> <1350557795-31487-4-git-send-email-ldewangan@nvidia.com> <5080862C.9030203@wwwdotorg.org> <508119CE.9070408@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v7 2/3] pwm_backlight: use power sequences
+Date: Fri, 19 Oct 2012 10:00:22 -0600
+Message-ID: <50817916.2060409@wwwdotorg.org>
+References: <1350637589-7405-1-git-send-email-acourbot@nvidia.com> <1350637589-7405-3-git-send-email-acourbot@nvidia.com> <1350638436.3339.2.camel@gitbox>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <508119CE.9070408-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1350638436.3339.2.camel@gitbox>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tony Prisk <linux@prisktech.co.nz>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-fbdev@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, linux-pm@vger.kernel.org, Leela Krishna Amudala <l.krishna@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <cbou@mail.ru>, linux-tegra@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, devicetree-discuss@lists.ozlabs.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/19/2012 03:13 AM, Laxman Dewangan wrote:
-> On Friday 19 October 2012 04:13 AM, Stephen Warren wrote:
+On 10/19/2012 03:20 AM, Tony Prisk wrote:
+> On Fri, 2012-10-19 at 18:06 +0900, Alexandre Courbot wrote:
+>> Make use of the power sequences specified in the device tree or platform
+>> data to control how the backlight is powered on and off.
 
->>> +    OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK1_BASE,
->>> "spi-tegra-slink.0", NULL),
->> Here, can't we just use the existing device names in the clock files...
->>
->> So we can completely drop the changes to these two files:
->
-> I want to name the driver as spi-tegra-slink. When we add the sflash spi
-> driver for tegra20, the driver name will be spi-tegra-sflash.
-> Also current name is "spi_tegra" I do not want to name with "_". So it
-> is require to convert as "-".
-
-The driver name is whatever you put into the driver file. The AUXDATA
-only affects the device name. There should be no conflict with the
-"sflash" driver, since that clock is set up to expect driver name "spi"
-which doesn't conflict with "spi_tegra.*".
-
-So, there's really no point in churning the clock names any more,
-especially since it's temporary. If you feel strongly about this, the
-best thing to do is help push Tegra's support of DT clock bindings forward.
+Tony, please do cut down the amount of the patch that you quote. If you
+don't, it's impossible to find your comments. Thanks.
