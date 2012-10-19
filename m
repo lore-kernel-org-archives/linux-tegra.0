@@ -1,116 +1,232 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
-Date: Fri, 19 Oct 2012 13:58:31 +0800
-Message-ID: <1350626311-18131-1-git-send-email-markz@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra30: clocks: add AHB and APB clocks
+Date: Fri, 19 Oct 2012 14:38:13 +0800
+Message-ID: <1350628693-1190-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
+Adding the AHB and APB bus clock control interface for Tegra30.
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-ventana.dts |   70 ++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/common.c              |    4 +
+ arch/arm/mach-tegra/tegra30_clocks.c      |  106 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/tegra30_clocks.h      |    1 +
+ arch/arm/mach-tegra/tegra30_clocks_data.c |   46 +++++++++++++
+ 4 files changed, 157 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index bec8bb2..b6b3af4 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -64,11 +64,6 @@
- 				nvidia,pins = "dap4";
- 				nvidia,function = "dap4";
- 			};
--			ddc {
--				nvidia,pins = "ddc", "owc", "spdi", "spdo",
--					"uac";
--				nvidia,function = "rsvd2";
--			};
- 			dta {
- 				nvidia,pins = "dta", "dtb", "dtc", "dtd", "dte";
- 				nvidia,function = "vi";
-@@ -248,6 +243,39 @@
- 				nvidia,slew-rate-falling = <3>;
- 			};
- 		};
-+
-+		state_i2cmux_ddc: pinmux_i2cmux_ddc {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "i2c2";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "rsvd4";
-+			};
-+		};
-+
-+		state_i2cmux_pta: pinmux_i2cmux_pta {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "rsvd4";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "i2c2";
-+			};
-+		};
-+
-+		state_i2cmux_idle: pinmux_i2cmux_idle {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "rsvd4";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "rsvd4";
-+			};
-+		};
- 	};
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 0b0a5f5..177f164 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -104,6 +104,10 @@ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
+ 	{ "clk_m",	NULL,		0,		true },
+ 	{ "pll_p",	"clk_m",	408000000,	true },
+ 	{ "pll_p_out1",	"pll_p",	9600000,	true },
++	{ "pll_p_out4",	"pll_p",	102000000,	true },
++	{ "sclk",	"pll_p_out4",	102000000,	true },
++	{ "hclk",	"sclk",		102000000,	true },
++	{ "pclk",	"hclk",		51000000,	true },
+ 	{ NULL,		NULL,		0,		0},
+ };
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
+index e9de5df..875744f 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.c
++++ b/arch/arm/mach-tegra/tegra30_clocks.c
+@@ -792,6 +792,112 @@ struct clk_ops tegra30_twd_ops = {
+ 	.recalc_rate = tegra30_twd_clk_recalc_rate,
+ };
  
- 	i2s@70002800 {
-@@ -291,6 +319,38 @@
- 		clock-frequency = <400000>;
- 	};
++/* bus clock functions */
++static int tegra30_bus_clk_is_enabled(struct clk_hw *hw)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	u32 val = clk_readl(c->reg);
++
++	c->state = ((val >> c->reg_shift) & BUS_CLK_DISABLE) ? OFF : ON;
++	return c->state;
++}
++
++static int tegra30_bus_clk_enable(struct clk_hw *hw)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	u32 val;
++
++	val = clk_readl(c->reg);
++	val &= ~(BUS_CLK_DISABLE << c->reg_shift);
++	clk_writel(val, c->reg);
++
++	return 0;
++}
++
++static void tegra30_bus_clk_disable(struct clk_hw *hw)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	u32 val;
++
++	val = clk_readl(c->reg);
++	val |= BUS_CLK_DISABLE << c->reg_shift;
++	clk_writel(val, c->reg);
++}
++
++static unsigned long tegra30_bus_clk_recalc_rate(struct clk_hw *hw,
++			unsigned long prate)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	u32 val = clk_readl(c->reg);
++	u64 rate = prate;
++
++	c->div = ((val >> c->reg_shift) & BUS_CLK_DIV_MASK) + 1;
++	c->mul = 1;
++
++	if (c->mul != 0 && c->div != 0) {
++		rate *= c->mul;
++		rate += c->div - 1; /* round up */
++		do_div(rate, c->div);
++	}
++	return rate;
++}
++
++static int tegra30_bus_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_tegra *c = to_clk_tegra(hw);
++	int ret = -EINVAL;
++	u32 val;
++	int i;
++
++	val = clk_readl(c->reg);
++	for (i = 1; i <= 4; i++) {
++		if (rate == parent_rate / i) {
++			val &= ~(BUS_CLK_DIV_MASK << c->reg_shift);
++			val |= (i - 1) << c->reg_shift;
++			clk_writel(val, c->reg);
++			c->div = i;
++			c->mul = 1;
++			ret = 0;
++			break;
++		}
++	}
++
++	return ret;
++}
++
++static long tegra30_bus_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	s64 divider;
++
++	if (rate >= parent_rate)
++		return rate;
++
++	divider = parent_rate;
++	divider += rate - 1;
++	do_div(divider, rate);
++
++	if (divider < 0)
++		return divider;
++
++	if (divider > 4)
++		divider = 4;
++	do_div(parent_rate, divider);
++
++	return parent_rate;
++}
++
++struct clk_ops tegra30_bus_ops = {
++	.is_enabled = tegra30_bus_clk_is_enabled,
++	.enable = tegra30_bus_clk_enable,
++	.disable = tegra30_bus_clk_disable,
++	.set_rate = tegra30_bus_clk_set_rate,
++	.round_rate = tegra30_bus_clk_round_rate,
++	.recalc_rate = tegra30_bus_clk_recalc_rate,
++};
++
+ /* Blink output functions */
+ static int tegra30_blink_clk_is_enabled(struct clk_hw *hw)
+ {
+diff --git a/arch/arm/mach-tegra/tegra30_clocks.h b/arch/arm/mach-tegra/tegra30_clocks.h
+index f2f88fe..7a34adb 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks.h
++++ b/arch/arm/mach-tegra/tegra30_clocks.h
+@@ -34,6 +34,7 @@ extern struct clk_ops tegra_clk_out_ops;
+ extern struct clk_ops tegra30_super_ops;
+ extern struct clk_ops tegra30_blink_clk_ops;
+ extern struct clk_ops tegra30_twd_ops;
++extern struct clk_ops tegra30_bus_ops;
+ extern struct clk_ops tegra30_periph_clk_ops;
+ extern struct clk_ops tegra30_dsib_clk_ops;
+ extern struct clk_ops tegra_nand_clk_ops;
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index 3d2e553..7bc8b1d 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -711,6 +711,50 @@ static struct clk tegra_clk_sclk = {
+ 	.num_parents = ARRAY_SIZE(mux_sclk),
+ };
  
-+	i2cmux {
-+		compatible = "i2c-mux-pinctrl";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++static const char *tegra_hclk_parent_names[] = {
++	"tegra_sclk",
++};
 +
-+		i2c-parent = <&{/i2c@7000c400}>;
++static struct clk *tegra_hclk_parents[] = {
++	&tegra_clk_sclk,
++};
 +
-+		pinctrl-names = "ddc", "pta", "idle";
-+		pinctrl-0 = <&state_i2cmux_ddc>;
-+		pinctrl-1 = <&state_i2cmux_pta>;
-+		pinctrl-2 = <&state_i2cmux_idle>;
++static struct clk tegra_hclk;
++static struct clk_tegra tegra_hclk_hw = {
++	.hw = {
++		.clk = &tegra_hclk,
++	},
++	.flags = DIV_BUS,
++	.reg = 0x30,
++	.reg_shift = 4,
++	.max_rate = 378000000,
++	.min_rate = 12000000,
++};
++DEFINE_CLK_TEGRA(hclk, 0, &tegra30_bus_ops, 0, tegra_hclk_parent_names,
++		tegra_hclk_parents, &tegra_clk_sclk);
 +
-+		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++static const char *tegra_pclk_parent_names[] = {
++	"tegra_hclk",
++};
 +
-+		i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++static struct clk *tegra_pclk_parents[] = {
++	&tegra_hclk,
++};
 +
-+			smart-battery@b {
-+				compatible = "ti,bq24617", "smart-battery-1.1";
-+				reg = <0xb>;
-+				ti,i2c-retry-count = <2>;
-+				ti,poll-retry-count = <10>;
-+			};
-+		};
-+	};
++static struct clk tegra_pclk;
++static struct clk_tegra tegra_pclk_hw = {
++	.hw = {
++		.clk = &tegra_pclk,
++	},
++	.flags = DIV_BUS,
++	.reg = 0x30,
++	.reg_shift = 0,
++	.max_rate = 167000000,
++	.min_rate = 12000000,
++};
++DEFINE_CLK_TEGRA(pclk, 0, &tegra30_bus_ops, 0, tegra_pclk_parent_names,
++		tegra_pclk_parents, &tegra_hclk);
 +
- 	i2c@7000c500 {
- 		status = "okay";
- 		clock-frequency = <400000>;
+ static const char *mux_blink[] = {
+ 	"clk_32k",
+ };
+@@ -1325,6 +1369,8 @@ struct clk *tegra_ptr_clks[] = {
+ 	&tegra_cml1,
+ 	&tegra_pciex,
+ 	&tegra_clk_sclk,
++	&tegra_hclk,
++	&tegra_pclk,
+ 	&tegra_clk_blink,
+ 	&tegra30_clk_twd,
+ };
 -- 
-1.7.9.5
+1.7.0.4
