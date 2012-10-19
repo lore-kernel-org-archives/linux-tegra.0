@@ -1,40 +1,224 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra: move debug-macro.S to include/debug
-Date: Fri, 19 Oct 2012 10:40:29 -0600
-Message-ID: <5081827D.9060906@wwwdotorg.org>
-References: <1350328024-30485-1-git-send-email-swarren@wwwdotorg.org> <1350328024-30485-3-git-send-email-swarren@wwwdotorg.org> <507EC303.1080000@gmail.com> <507EDB37.1060102@wwwdotorg.org> <507F1F31.2060503@wwwdotorg.org> <5080088C.9090607@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V3 2/5] ARM: tegra: simplify DEBUG_LL UART selection options
+Date: Fri, 19 Oct 2012 16:41:44 -0600
+Message-ID: <1350686507-3022-2-git-send-email-swarren@wwwdotorg.org>
+References: <1350686507-3022-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5080088C.9090607-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1350686507-3022-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/18/2012 07:47 AM, Rob Herring wrote:
-...
-> Here is what I mentioned previously. This removes the static mapping from 
-> the platforms. This is untested and probably breaks on different DEBUG_LL 
-> options. For now, platforms call debug_ll_io_init, but once all platforms 
-> are converted, this can be called from devicemaps_init.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+Delete CONFIG_TEGRA_DEBUG_UART_AUTO_SCRATCH; it's not useful any more:
+* No upstream bootloader currently or will ever support this option.
+* CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA is a much more direct alternative.
 
-> +void __init debug_ll_io_init(void)
-> +{
-> +	struct map_desc map;
-> +
-> +	if (!IS_ENABLED(CONFIG_DEBUG_LL))
-> +		return;
-> +
-> +	debug_ll_addr(&map.pfn, &map.virtual);
-> +	map.pfn = __phys_to_pfn(map.pfn);
-> +	map.length = PAGE_SIZE;
-> +	map.type = MT_DEVICE;
-> +	create_mapping(&map);
-> +}
+Merge the fixed and automatic UART selection menus into a single choice
+for simplicity; now you either pick AUTO_ODMDATA or a single fixed UART,
+rather than potentially having an AUTO option override whatever fixed
+option was chosen.
 
-OK, so I just call this new function from Tegra's tegra_map_common_io().
-That looks pretty neat. I'll give it a try.
+Remove TEGRA_DEBUG_UART_NONE; if you don't want a Tegra DEBUG_LL UART,
+simply don't turn on DEBUG_LL. NONE used to be the default option, so
+pick AUTO_ODMDATA as the new default.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v3: No change.
+v2: Remove redundant default selection in mach-tegra/Kconfig
+---
+ arch/arm/mach-tegra/Kconfig                   |   40 ++++---------------
+ arch/arm/mach-tegra/common.c                  |    5 +-
+ arch/arm/mach-tegra/include/mach/uncompress.h |   52 ++-----------------------
+ arch/arm/mach-tegra/iomap.h                   |   14 -------
+ 4 files changed, 15 insertions(+), 96 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 9ff6f6e..97fcd16 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -58,11 +58,16 @@ config TEGRA_AHB
+ 	  perfomance parameters(priority, prefech size).
+ 
+ choice
+-        prompt "Default low-level debug console UART"
+-        default TEGRA_DEBUG_UART_NONE
++        prompt "Low-level debug console UART"
+ 
+-config TEGRA_DEBUG_UART_NONE
+-        bool "None"
++config TEGRA_DEBUG_UART_AUTO_ODMDATA
++	bool "Via ODMDATA"
++	help
++	  Automatically determines which UART to use for low-level debug based
++	  on the ODMDATA value. This value is part of the BCT, and is written
++	  to the boot memory device using nvflash, or other flashing tool.
++	  When bits 19:18 are 3, then bits 17:15 indicate which UART to use;
++	  0/1/2/3/4 are UART A/B/C/D/E.
+ 
+ config TEGRA_DEBUG_UARTA
+         bool "UART-A"
+@@ -81,33 +86,6 @@ config TEGRA_DEBUG_UARTE
+ 
+ endchoice
+ 
+-choice
+-	prompt "Automatic low-level debug console UART"
+-	default TEGRA_DEBUG_UART_AUTO_NONE
+-
+-config TEGRA_DEBUG_UART_AUTO_NONE
+-	bool "None"
+-
+-config TEGRA_DEBUG_UART_AUTO_ODMDATA
+-	bool "Via ODMDATA"
+-	help
+-	  Automatically determines which UART to use for low-level debug based
+-	  on the ODMDATA value. This value is part of the BCT, and is written
+-	  to the boot memory device using nvflash, or other flashing tool.
+-	  When bits 19:18 are 3, then bits 17:15 indicate which UART to use;
+-	  0/1/2/3/4 are UART A/B/C/D/E.
+-
+-config TEGRA_DEBUG_UART_AUTO_SCRATCH
+-	bool "Via UART scratch register"
+-	help
+-	  Automatically determines which UART to use for low-level debug based
+-	  on the UART scratch register value. Some bootloaders put ASCII 'D'
+-	  in this register when they initialize their own console UART output.
+-	  Using this option allows the kernel to automatically pick the same
+-	  UART.
+-
+-endchoice
+-
+ config TEGRA_EMC_SCALING_ENABLE
+ 	bool "Enable scaling the memory frequency"
+ 
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index f688daa..b493d64 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -44,14 +44,13 @@
+  * kernel is loaded. The data is declared here rather than debug-macro.S so
+  * that multiple inclusions of debug-macro.S point at the same data.
+  */
+-#define TEGRA_DEBUG_UART_OFFSET (TEGRA_DEBUG_UART_BASE & 0xFFFF)
+ u32 tegra_uart_config[3] = {
+ 	/* Debug UART initialization required */
+ 	1,
+ 	/* Debug UART physical address */
+-	(u32)(IO_APB_PHYS + TEGRA_DEBUG_UART_OFFSET),
++	0,
+ 	/* Debug UART virtual address */
+-	(u32)(IO_APB_VIRT + TEGRA_DEBUG_UART_OFFSET),
++	0,
+ };
+ 
+ #ifdef CONFIG_OF
+diff --git a/arch/arm/mach-tegra/include/mach/uncompress.h b/arch/arm/mach-tegra/include/mach/uncompress.h
+index 2772575..4150c71 100644
+--- a/arch/arm/mach-tegra/include/mach/uncompress.h
++++ b/arch/arm/mach-tegra/include/mach/uncompress.h
+@@ -139,51 +139,19 @@ int auto_odmdata(void)
+ }
+ #endif
+ 
+-#ifdef CONFIG_TEGRA_DEBUG_UART_AUTO_SCRATCH
+-int auto_scratch(void)
+-{
+-	int i;
+-
+-	/*
+-	 * Look for the first UART that:
+-	 * a) Is not in reset.
+-	 * b) Is clocked.
+-	 * c) Has a 'D' in the scratchpad register.
+-	 *
+-	 * Note that on Tegra30, the first two conditions are required, since
+-	 * if not true, accesses to the UART scratch register will hang.
+-	 * Tegra20 doesn't have this issue.
+-	 *
+-	 * The intent is that the bootloader will tell the kernel which UART
+-	 * to use by setting up those conditions. If nothing found, we'll fall
+-	 * back to what's specified in TEGRA_DEBUG_UART_BASE.
+-	 */
+-	for (i = 0; i < ARRAY_SIZE(uarts); i++) {
+-		if (!uart_clocked(i))
+-			continue;
+-
+-		uart = (volatile u8 *)uarts[i].base;
+-		if (uart[UART_SCR << DEBUG_UART_SHIFT] != 'D')
+-			continue;
+-
+-		return i;
+-	}
+-
+-	return -1;
+-}
+-#endif
+-
+ /*
+  * Setup before decompression.  This is where we do UART selection for
+  * earlyprintk and init the uart_base register.
+  */
+ static inline void arch_decomp_setup(void)
+ {
+-	int uart_id, auto_uart_id;
++	int uart_id;
+ 	volatile u32 *apb_misc = (volatile u32 *)TEGRA_APB_MISC_BASE;
+ 	u32 chip, div;
+ 
+-#if defined(CONFIG_TEGRA_DEBUG_UARTA)
++#if defined(CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA)
++	uart_id = auto_odmdata();
++#elif defined(CONFIG_TEGRA_DEBUG_UARTA)
+ 	uart_id = 0;
+ #elif defined(CONFIG_TEGRA_DEBUG_UARTB)
+ 	uart_id = 1;
+@@ -193,19 +161,7 @@ static inline void arch_decomp_setup(void)
+ 	uart_id = 3;
+ #elif defined(CONFIG_TEGRA_DEBUG_UARTE)
+ 	uart_id = 4;
+-#else
+-	uart_id = -1;
+-#endif
+-
+-#if defined(CONFIG_TEGRA_DEBUG_UART_AUTO_ODMDATA)
+-	auto_uart_id = auto_odmdata();
+-#elif defined(CONFIG_TEGRA_DEBUG_UART_AUTO_SCRATCH)
+-	auto_uart_id = auto_scratch();
+-#else
+-	auto_uart_id = -1;
+ #endif
+-	if (auto_uart_id != -1)
+-		uart_id = auto_uart_id;
+ 
+ 	if (uart_id < 0 || uart_id >= ARRAY_SIZE(uarts) ||
+ 	    !uart_clocked(uart_id))
+diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
+index 5315103..db8be51 100644
+--- a/arch/arm/mach-tegra/iomap.h
++++ b/arch/arm/mach-tegra/iomap.h
+@@ -261,20 +261,6 @@
+ #define TEGRA_SDMMC4_BASE		0xC8000600
+ #define TEGRA_SDMMC4_SIZE		SZ_512
+ 
+-#if defined(CONFIG_TEGRA_DEBUG_UART_NONE)
+-# define TEGRA_DEBUG_UART_BASE 0
+-#elif defined(CONFIG_TEGRA_DEBUG_UARTA)
+-# define TEGRA_DEBUG_UART_BASE TEGRA_UARTA_BASE
+-#elif defined(CONFIG_TEGRA_DEBUG_UARTB)
+-# define TEGRA_DEBUG_UART_BASE TEGRA_UARTB_BASE
+-#elif defined(CONFIG_TEGRA_DEBUG_UARTC)
+-# define TEGRA_DEBUG_UART_BASE TEGRA_UARTC_BASE
+-#elif defined(CONFIG_TEGRA_DEBUG_UARTD)
+-# define TEGRA_DEBUG_UART_BASE TEGRA_UARTD_BASE
+-#elif defined(CONFIG_TEGRA_DEBUG_UARTE)
+-# define TEGRA_DEBUG_UART_BASE TEGRA_UARTE_BASE
+-#endif
+-
+ /* On TEGRA, many peripherals are very closely packed in
+  * two 256MB io windows (that actually only use about 64KB
+  * at the start of each).
+-- 
+1.7.0.4
