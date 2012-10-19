@@ -1,40 +1,116 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/5] ARM: tegra: fix clock entry of slink controller
-Date: Thu, 18 Oct 2012 16:43:56 -0600
-Message-ID: <5080862C.9030203@wwwdotorg.org>
-References: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com> <1350557795-31487-4-git-send-email-ldewangan@nvidia.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
+Date: Fri, 19 Oct 2012 13:58:31 +0800
+Message-ID: <1350626311-18131-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350557795-31487-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/18/2012 04:56 AM, Laxman Dewangan wrote:
-> Fix the driver name, connection name and clock name
-> for slink controller clocks in clock table of
-> Tegra20 and Tegra30.
+Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
 
-The patch subject isn't entirely accurate here; this patch isn't just
-about fixing clock entries.
+Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-ventana.dts |   70 ++++++++++++++++++++++++++++++---
+ 1 file changed, 65 insertions(+), 5 deletions(-)
 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-
-> @@ -90,6 +90,10 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
->  		       &tegra_ehci3_pdata),
->  	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
->  	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK1_BASE, "spi-tegra-slink.0", NULL),
-
-Here, can't we just use the existing device names in the clock files...
-
-So we can completely drop the changes to these two files:
-
-> diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
-> diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-
-The device names will hopefully be irrelevant once we're able to use
-DT-based clock lookups.
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index bec8bb2..b6b3af4 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -64,11 +64,6 @@
+ 				nvidia,pins = "dap4";
+ 				nvidia,function = "dap4";
+ 			};
+-			ddc {
+-				nvidia,pins = "ddc", "owc", "spdi", "spdo",
+-					"uac";
+-				nvidia,function = "rsvd2";
+-			};
+ 			dta {
+ 				nvidia,pins = "dta", "dtb", "dtc", "dtd", "dte";
+ 				nvidia,function = "vi";
+@@ -248,6 +243,39 @@
+ 				nvidia,slew-rate-falling = <3>;
+ 			};
+ 		};
++
++		state_i2cmux_ddc: pinmux_i2cmux_ddc {
++			ddc {
++				nvidia,pins = "ddc";
++				nvidia,function = "i2c2";
++			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "rsvd4";
++			};
++		};
++
++		state_i2cmux_pta: pinmux_i2cmux_pta {
++			ddc {
++				nvidia,pins = "ddc";
++				nvidia,function = "rsvd4";
++			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "i2c2";
++			};
++		};
++
++		state_i2cmux_idle: pinmux_i2cmux_idle {
++			ddc {
++				nvidia,pins = "ddc";
++				nvidia,function = "rsvd4";
++			};
++			pta {
++				nvidia,pins = "pta";
++				nvidia,function = "rsvd4";
++			};
++		};
+ 	};
+ 
+ 	i2s@70002800 {
+@@ -291,6 +319,38 @@
+ 		clock-frequency = <400000>;
+ 	};
+ 
++	i2cmux {
++		compatible = "i2c-mux-pinctrl";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2c-parent = <&{/i2c@7000c400}>;
++
++		pinctrl-names = "ddc", "pta", "idle";
++		pinctrl-0 = <&state_i2cmux_ddc>;
++		pinctrl-1 = <&state_i2cmux_pta>;
++		pinctrl-2 = <&state_i2cmux_idle>;
++
++		i2c@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		i2c@1 {
++			reg = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			smart-battery@b {
++				compatible = "ti,bq24617", "smart-battery-1.1";
++				reg = <0xb>;
++				ti,i2c-retry-count = <2>;
++				ti,poll-retry-count = <10>;
++			};
++		};
++	};
++
+ 	i2c@7000c500 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+-- 
+1.7.9.5
