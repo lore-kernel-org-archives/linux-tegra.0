@@ -1,128 +1,55 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] ARM: implement debug_ll_io_init()
-Date: Sat, 20 Oct 2012 08:36:51 -0500
-Message-ID: <5082A8F3.6070403@gmail.com>
-References: <1350686507-3022-1-git-send-email-swarren@wwwdotorg.org>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra30: clocks: add AHB and APB clocks
+Date: Mon, 22 Oct 2012 10:08:20 +0530
+Message-ID: <5084CDBC.2010106@nvidia.com>
+References: <1350628693-1190-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350686507-3022-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1350628693-1190-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/19/2012 05:41 PM, Stephen Warren wrote:
-> From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> When using DEBUG_LL, the UART's (or other HW's) registers are mapped
-> into early page tables based on the results of assembly macro addruart.
-> Later, when the page tables are replaced, the same virtual address must
-> remain valid. Historically, this has been ensured by using defines from
-> <mach/iomap.h> in both the implementation of addruart, and the machine's
-> .map_io() function. However, with the move to single zImage, we wish to
-> remove <mach/iomap.h>. To enable this, the macro addruart may be used
-> when constructing the late page tables too; addruart is exposed as a
-> C function debug_ll_addr(), and used to set up the required mapping in
-> debug_ll_io_init(), which may called on an opt-in basis from a machine's
-> .map_io() function.
-> 
-> Signed-off-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-> [swarren: Mask map.virtual with PAGE_MASK. Checked for NULL results from
->  debug_ll_addr (e.g. when selected UART isn't valid). Fixed compile when
->  either !CONFIG_DEBUG_LL or CONFIG_DEBUG_SEMIHOSTING.]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Friday 19 October 2012 12:08 PM, Joseph Lo wrote:
+> Adding the AHB and APB bus clock control interface for Tegra30.
+>
+> Signed-off-by: Joseph Lo<josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> I assume this first patch should actually go into some arm-soc branch so
-> that if others want to take advantage of it this kernel cycle, they can.
-> 
-> v3: New patch.
-> ---
->  arch/arm/include/asm/mach/map.h |    7 +++++++
->  arch/arm/kernel/debug.S         |   13 +++++++++++++
->  arch/arm/mm/mmu.c               |   16 ++++++++++++++++
->  3 files changed, 36 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
-> index 195ac2f..2fe141f 100644
-> --- a/arch/arm/include/asm/mach/map.h
-> +++ b/arch/arm/include/asm/mach/map.h
-> @@ -40,6 +40,13 @@ extern void iotable_init(struct map_desc *, int);
->  extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
->  				  void *caller);
->  
-> +#ifdef CONFIG_DEBUG_LL
-> +extern void debug_ll_addr(unsigned long *paddr, unsigned long *vaddr);
-> +extern void debug_ll_io_init(void);
-> +#else
-> +static inline void debug_ll_io_init(void) {}
-> +#endif
-> +
->  struct mem_type;
->  extern const struct mem_type *get_mem_type(unsigned int type);
->  /*
-> diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
-> index 66f711b..7525ce4 100644
-> --- a/arch/arm/kernel/debug.S
-> +++ b/arch/arm/kernel/debug.S
-> @@ -100,6 +100,13 @@ ENTRY(printch)
->  		b	1b
->  ENDPROC(printch)
->  
-> +ENTRY(debug_ll_addr)
-> +		addruart r2, r3, ip
-> +		str	r2, [r0]
-> +		str	r3, [r1]
-> +		mov	pc, lr
-> +ENDPROC(debug_ll_addr)
-> +
->  #else
->  
->  ENTRY(printascii)
-> @@ -119,4 +126,10 @@ ENTRY(printch)
->  		mov	pc, lr
->  ENDPROC(printch)
->  
-> +ENTRY(debug_ll_addr)
-> +		mov	r2, #0
-> +		mov	r3, #0
+>   arch/arm/mach-tegra/common.c              |    4 +
+>   arch/arm/mach-tegra/tegra30_clocks.c      |  106 +++++++++++++++++++++++++++++
+>   arch/arm/mach-tegra/tegra30_clocks.h      |    1 +
+>   arch/arm/mach-tegra/tegra30_clocks_data.c |   46 +++++++++++++
+>   4 files changed, 157 insertions(+), 0 deletions(-)
 
-Don't you want:
+<snip>
 
-mov r2, #0
-str r2, [r0]
-str r2, [r1]
-
-> +		mov	pc, lr
-> +ENDPROC(debug_ll_addr)
 > +
->  #endif
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> index 941dfb9..39719bb 100644
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -876,6 +876,22 @@ static void __init pci_reserve_io(void)
->  #define pci_reserve_io() do { } while (0)
->  #endif
->  
-> +#ifdef CONFIG_DEBUG_LL
-> +void __init debug_ll_io_init(void)
+> +static long tegra30_bus_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				unsigned long *prate)
 > +{
-> +	struct map_desc map;
+> +	unsigned long parent_rate = *prate;
+> +	s64 divider;
 > +
-> +	debug_ll_addr(&map.pfn, &map.virtual);
-> +	if (!map.pfn || !map.virtual)
-> +		return;
-> +	map.pfn = __phys_to_pfn(map.pfn);
-> +	map.virtual &= PAGE_MASK;
-> +	map.length = PAGE_SIZE;
-> +	map.type = MT_DEVICE;
-> +	create_mapping(&map);
+> +	if (rate>= parent_rate)
+> +		return rate;
+> +
+
+return parent_rate?
+
+> +	divider = parent_rate;
+> +	divider += rate - 1;
+> +	do_div(divider, rate);
+> +
+> +	if (divider<  0)
+> +		return divider;
+> +
+> +	if (divider>  4)
+> +		divider = 4;
+> +	do_div(parent_rate, divider);
+> +
+> +	return parent_rate;
 > +}
-> +#endif
-> +
->  static void * __initdata vmalloc_min =
->  	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
->  
-> 
+>
