@@ -1,72 +1,120 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
-Date: Mon, 22 Oct 2012 11:14:23 -0600
-Message-ID: <50857EEF.2070707@wwwdotorg.org>
-References: <1350626311-18131-1-git-send-email-markz@nvidia.com> <50817668.6020709@wwwdotorg.org> <5084F5D1.7050005@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V4] ARM: implement debug_ll_io_init()
+Date: Mon, 22 Oct 2012 11:42:54 -0600
+Message-ID: <1350927774-14020-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5084F5D1.7050005-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/22/2012 01:29 AM, Mark Zhang wrote:
-> On 10/19/2012 11:48 PM, Stephen Warren wrote:
->> On 10/18/2012 11:58 PM, Mark Zhang wrote:
->>> Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
->>
->>> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
->>
->>> -            ddc {
->>> -                nvidia,pins = "ddc", "owc", "spdi", "spdo",
->>> -                    "uac";
->>> -                nvidia,function = "rsvd2";
->>> -            };
->>
->> So that removes the entries for 5 pin groups, yet below, entries are
->> only added for the ddc and pta pingroups, so the other 4 pin groups
->> become unconfigured.
->>
-> 
-> Right. So I think it should be changed to:
-> 
->         owc {
->             nvidia,pins = "owc", "spdi", "spdo", "uac";
->             nvidia,function = "rsvd2";
->         };
-> 
-> Is this right?
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Looks correct, yes.
+When using DEBUG_LL, the UART's (or other HW's) registers are mapped
+into early page tables based on the results of assembly macro addruart.
+Later, when the page tables are replaced, the same virtual address must
+remain valid. Historically, this has been ensured by using defines from
+<mach/iomap.h> in both the implementation of addruart, and the machine's
+.map_io() function. However, with the move to single zImage, we wish to
+remove <mach/iomap.h>. To enable this, the macro addruart may be used
+when constructing the late page tables too; addruart is exposed as a
+C function debug_ll_addr(), and used to set up the required mapping in
+debug_ll_io_init(), which may called on an opt-in basis from a machine's
+.map_io() function.
 
->>> +
->>> +        state_i2cmux_ddc: pinmux_i2cmux_ddc {
->>> +            ddc {
->>> +                nvidia,pins = "ddc";
->>> +                nvidia,function = "i2c2";
->>> +            };
->>> +            pta {
->>> +                nvidia,pins = "pta";
->>> +                nvidia,function = "rsvd4";
->>> +            };
->>
->> Does this actually work? The pta pingroup is configured by the "hog"
->> pinctrl state of the pinctrl node itself, so this state should fail to
->> be applied since it attempts to touch the same pingroup.
-> 
-> I know little about kernel pinctrl subsystem. After reading some docs
-> and codes, I think what you mean is, in Ventana's pinmux configuration,
-> pta pingroup has been defined as "hdmi" function and this can't be
-> changed(non-dynamic pinmuxing).
-> So I want to know why we have defined pta pingroup as hdmi function?
-> Can we remove this definition to make the i2cmux above working?
+Signed-off-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+[swarren: Mask map.virtual with PAGE_MASK. Checked for NULL results from
+ debug_ll_addr (e.g. when selected UART isn't valid). Fixed compile when
+ either !CONFIG_DEBUG_LL or CONFIG_DEBUG_SEMIHOSTING.]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch is a dependency for the Tegra debug-macro.S rework. I assume it
+should go into some arm-soc branch so that if others want to take advantage
+of it this kernel cycle, they can.
 
-I don't recall why pta was defined to be HDMI. The issue isn't that this
-patch changes the pinmux selection for the pta pingroup, but simply that
-both the pinctrl node's state definition, and the new I2C mux node's
-state definition both attempt to configure pingroup pta. The solution is
-most likely to simply remove the pta configuration from the main pinctrl
-node.
+v4: Fix DEBUG_SEMIHOSTING's debug_ll_addr to actually fill in the "out"
+    parameters.
+v3: New patch.
+---
+ arch/arm/include/asm/mach/map.h |    7 +++++++
+ arch/arm/kernel/debug.S         |   14 ++++++++++++++
+ arch/arm/mm/mmu.c               |   16 ++++++++++++++++
+ 3 files changed, 37 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
+index 195ac2f..2fe141f 100644
+--- a/arch/arm/include/asm/mach/map.h
++++ b/arch/arm/include/asm/mach/map.h
+@@ -40,6 +40,13 @@ extern void iotable_init(struct map_desc *, int);
+ extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
+ 				  void *caller);
+ 
++#ifdef CONFIG_DEBUG_LL
++extern void debug_ll_addr(unsigned long *paddr, unsigned long *vaddr);
++extern void debug_ll_io_init(void);
++#else
++static inline void debug_ll_io_init(void) {}
++#endif
++
+ struct mem_type;
+ extern const struct mem_type *get_mem_type(unsigned int type);
+ /*
+diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
+index 66f711b..6809200 100644
+--- a/arch/arm/kernel/debug.S
++++ b/arch/arm/kernel/debug.S
+@@ -100,6 +100,13 @@ ENTRY(printch)
+ 		b	1b
+ ENDPROC(printch)
+ 
++ENTRY(debug_ll_addr)
++		addruart r2, r3, ip
++		str	r2, [r0]
++		str	r3, [r1]
++		mov	pc, lr
++ENDPROC(debug_ll_addr)
++
+ #else
+ 
+ ENTRY(printascii)
+@@ -119,4 +126,11 @@ ENTRY(printch)
+ 		mov	pc, lr
+ ENDPROC(printch)
+ 
++ENTRY(debug_ll_addr)
++		mov	r2, #0
++		str	r2, [r0]
++		str	r2, [r1]
++		mov	pc, lr
++ENDPROC(debug_ll_addr)
++
+ #endif
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index 941dfb9..39719bb 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -876,6 +876,22 @@ static void __init pci_reserve_io(void)
+ #define pci_reserve_io() do { } while (0)
+ #endif
+ 
++#ifdef CONFIG_DEBUG_LL
++void __init debug_ll_io_init(void)
++{
++	struct map_desc map;
++
++	debug_ll_addr(&map.pfn, &map.virtual);
++	if (!map.pfn || !map.virtual)
++		return;
++	map.pfn = __phys_to_pfn(map.pfn);
++	map.virtual &= PAGE_MASK;
++	map.length = PAGE_SIZE;
++	map.type = MT_DEVICE;
++	create_mapping(&map);
++}
++#endif
++
+ static void * __initdata vmalloc_min =
+ 	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
+ 
+-- 
+1.7.0.4
