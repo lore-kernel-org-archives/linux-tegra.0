@@ -1,120 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V4] ARM: implement debug_ll_io_init()
-Date: Mon, 22 Oct 2012 11:42:54 -0600
-Message-ID: <1350927774-14020-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra: add spi driver for SLINK controller
+Date: Mon, 22 Oct 2012 20:04:56 +0200
+Message-ID: <20121022180456.GA16735@avionic-0098.mockup.avionic-design.de>
+References: <1350557233-31234-1-git-send-email-ldewangan@nvidia.com>
+ <20121022122825.GD4477@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20121022122825.GD4477-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-When using DEBUG_LL, the UART's (or other HW's) registers are mapped
-into early page tables based on the results of assembly macro addruart.
-Later, when the page tables are replaced, the same virtual address must
-remain valid. Historically, this has been ensured by using defines from
-<mach/iomap.h> in both the implementation of addruart, and the machine's
-.map_io() function. However, with the move to single zImage, we wish to
-remove <mach/iomap.h>. To enable this, the macro addruart may be used
-when constructing the late page tables too; addruart is exposed as a
-C function debug_ll_addr(), and used to set up the required mapping in
-debug_ll_io_init(), which may called on an opt-in basis from a machine's
-.map_io() function.
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-[swarren: Mask map.virtual with PAGE_MASK. Checked for NULL results from
- debug_ll_addr (e.g. when selected UART isn't valid). Fixed compile when
- either !CONFIG_DEBUG_LL or CONFIG_DEBUG_SEMIHOSTING.]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This patch is a dependency for the Tegra debug-macro.S rework. I assume it
-should go into some arm-soc branch so that if others want to take advantage
-of it this kernel cycle, they can.
+On Mon, Oct 22, 2012 at 01:28:26PM +0100, Mark Brown wrote:
+> On Thu, Oct 18, 2012 at 04:17:13PM +0530, Laxman Dewangan wrote:
+[...]
+> > +static struct tegra_spi_platform_data *tegra_slink_parese_dt(
+> > +		struct platform_device *pdev)
+> > +{
+>=20
+> There doens't seem to be any binding documentation; binding
+> documentation is mandatory.
 
-v4: Fix DEBUG_SEMIHOSTING's debug_ll_addr to actually fill in the "out"
-    parameters.
-v3: New patch.
----
- arch/arm/include/asm/mach/map.h |    7 +++++++
- arch/arm/kernel/debug.S         |   14 ++++++++++++++
- arch/arm/mm/mmu.c               |   16 ++++++++++++++++
- 3 files changed, 37 insertions(+), 0 deletions(-)
+Also this should probably be renamed to tegra_slink_parse_dt().
 
-diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
-index 195ac2f..2fe141f 100644
---- a/arch/arm/include/asm/mach/map.h
-+++ b/arch/arm/include/asm/mach/map.h
-@@ -40,6 +40,13 @@ extern void iotable_init(struct map_desc *, int);
- extern void vm_reserve_area_early(unsigned long addr, unsigned long size,
- 				  void *caller);
- 
-+#ifdef CONFIG_DEBUG_LL
-+extern void debug_ll_addr(unsigned long *paddr, unsigned long *vaddr);
-+extern void debug_ll_io_init(void);
-+#else
-+static inline void debug_ll_io_init(void) {}
-+#endif
-+
- struct mem_type;
- extern const struct mem_type *get_mem_type(unsigned int type);
- /*
-diff --git a/arch/arm/kernel/debug.S b/arch/arm/kernel/debug.S
-index 66f711b..6809200 100644
---- a/arch/arm/kernel/debug.S
-+++ b/arch/arm/kernel/debug.S
-@@ -100,6 +100,13 @@ ENTRY(printch)
- 		b	1b
- ENDPROC(printch)
- 
-+ENTRY(debug_ll_addr)
-+		addruart r2, r3, ip
-+		str	r2, [r0]
-+		str	r3, [r1]
-+		mov	pc, lr
-+ENDPROC(debug_ll_addr)
-+
- #else
- 
- ENTRY(printascii)
-@@ -119,4 +126,11 @@ ENTRY(printch)
- 		mov	pc, lr
- ENDPROC(printch)
- 
-+ENTRY(debug_ll_addr)
-+		mov	r2, #0
-+		str	r2, [r0]
-+		str	r2, [r1]
-+		mov	pc, lr
-+ENDPROC(debug_ll_addr)
-+
- #endif
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index 941dfb9..39719bb 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -876,6 +876,22 @@ static void __init pci_reserve_io(void)
- #define pci_reserve_io() do { } while (0)
- #endif
- 
-+#ifdef CONFIG_DEBUG_LL
-+void __init debug_ll_io_init(void)
-+{
-+	struct map_desc map;
-+
-+	debug_ll_addr(&map.pfn, &map.virtual);
-+	if (!map.pfn || !map.virtual)
-+		return;
-+	map.pfn = __phys_to_pfn(map.pfn);
-+	map.virtual &= PAGE_MASK;
-+	map.length = PAGE_SIZE;
-+	map.type = MT_DEVICE;
-+	create_mapping(&map);
-+}
-+#endif
-+
- static void * __initdata vmalloc_min =
- 	(void *)(VMALLOC_END - (240 << 20) - VMALLOC_OFFSET);
- 
--- 
-1.7.0.4
+Thierry
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQhYrIAAoJEN0jrNd/PrOha2wQAKki4XBdCQf79grlXRu/crBA
+FmtQrnLcI6Gt+EOmT19Q39XCXb48OH05jBYuDWZZV0l/NJIdg5XSkZhxfobxdQXA
+wg5bHBFeiRHtUBqiC/b+Or+Jo4PVGtFETyvKVNNPBaLTj7NpyLP8ezFaJVfYDktq
+suDLxlBcNzQjn6D07kyQijXiSlmMQU7Ci7yk3/Tm3BwYzReUzfg43lR9RBI+ptP2
+DKnT4VdSzPxXGuarjV2CY43dABs13Gm5sNA1taNqleXsLmZbGTedqeKdo0E4sqF8
+qOCzkrocX//xeIISdqmZfG8eI3LvizjAi9BIhADN883y+lJv5KX6GRxUXI6jJWeC
+fMaJ1pEHhGg1R6IJJECKy2anz2D2H2NKJD7rKVLX7DAi2R8zcPq9Kr08N4tX9lJi
+T4pgjgWxBhUobr2dUjX2bp8xtIqjMh7W1UFZzlahK+J1zRav2A3uEXQL1mUrkm5f
+3UCmnLOadtD03tssFT2LBOc88LDe71e70Dl7DvNYLWuhCZuQRCR22YHy7EPsv+pa
+l9rBHt03KfJZ9eOTV+Ig3fDFkhqJMpdU35fIZrYyLzvQJEglGs11MMJtWkodGw2Q
+nYBA1k91Iw+gr5k58ePJu4aDVb5XpTc2BMDJV4OQHLtqVUwzkiGj1V87othrfT5j
+jwldxaskbirg7onkRwjt
+=Yv1o
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
