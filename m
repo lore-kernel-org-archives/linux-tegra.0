@@ -1,49 +1,72 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 3/5] ARM: tegra: decouple uncompress.h and debug-macro.S
-Date: Mon, 22 Oct 2012 10:24:32 -0600
-Message-ID: <50857340.4010403@wwwdotorg.org>
-References: <1350686507-3022-1-git-send-email-swarren@wwwdotorg.org> <1350686507-3022-3-git-send-email-swarren@wwwdotorg.org> <20121022081830.GH3196@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
+Date: Mon, 22 Oct 2012 11:14:23 -0600
+Message-ID: <50857EEF.2070707@wwwdotorg.org>
+References: <1350626311-18131-1-git-send-email-markz@nvidia.com> <50817668.6020709@wwwdotorg.org> <5084F5D1.7050005@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121022081830.GH3196-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <5084F5D1.7050005-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/22/2012 02:18 AM, Peter De Schrijver wrote:
->> +
->> +#define checkuart(rp, rv, lhu, bit, uart) \
->> +               /* Load address of CLK_RST register */ \
->> +               movw    rp, #TEGRA_CLK_RST_DEVICES_##lhu & 0xffff ; \
->> +               movt    rp, #TEGRA_CLK_RST_DEVICES_##lhu >> 16 ; \
->> +               /* Load value from CLK_RST register */ \
->> +               ldr     rp, [rp, #0] ; \
->> +               /* Test UART's reset bit */ \
->> +               tst     rp, #(1 << bit) ; \
->> +               /* If set, can't use UART; jump to save no UART */ \
->> +               bne     90f ; \
->> +               /* Load address of CLK_OUT_ENB register */ \
->> +               movw    rp, #TEGRA_CLK_OUT_ENB_##lhu & 0xffff ; \
->> +               movt    rp, #TEGRA_CLK_OUT_ENB_##lhu >> 16 ; \
->> +               /* Load value from CLK_OUT_ENB register */ \
->> +               ldr     rp, [rp, #0] ; \
->> +               /* Test UART's clock enable bit */ \
->> +               tst     rp, #(1 << bit) ; \
->> +               /* If clear, can't use UART; jump to save no UART */ \
->> +               beq     90f ; \
->> +               /* Passed all tests, load address of UART registers */ \
->> +               movw    rp, #TEGRA_UART##uart##_BASE & 0xffff ; \
->> +               movt    rp, #TEGRA_UART##uart##_BASE >> 16 ; \
->> +               /* Jump to save UART address */ \
->> +               b 91f
+On 10/22/2012 01:29 AM, Mark Zhang wrote:
+> On 10/19/2012 11:48 PM, Stephen Warren wrote:
+>> On 10/18/2012 11:58 PM, Mark Zhang wrote:
+>>> Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
+>>
+>>> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
+>>
+>>> -            ddc {
+>>> -                nvidia,pins = "ddc", "owc", "spdi", "spdo",
+>>> -                    "uac";
+>>> -                nvidia,function = "rsvd2";
+>>> -            };
+>>
+>> So that removes the entries for 5 pin groups, yet below, entries are
+>> only added for the ddc and pta pingroups, so the other 4 pin groups
+>> become unconfigured.
 >>
 > 
-> Maybe make this a subroutine?
+> Right. So I think it should be changed to:
+> 
+>         owc {
+>             nvidia,pins = "owc", "spdi", "spdo", "uac";
+>             nvidia,function = "rsvd2";
+>         };
+> 
+> Is this right?
 
-The addruart macro (which in turn uses the checkuart macro) is only
-allowed to use 3 registers; rp, rv, rtmp. I'm also not 100% sure if the
-stack is guaranteed to be set up when addruart is called either. So, I
-don't think making this a function is possible.
+Looks correct, yes.
+
+>>> +
+>>> +        state_i2cmux_ddc: pinmux_i2cmux_ddc {
+>>> +            ddc {
+>>> +                nvidia,pins = "ddc";
+>>> +                nvidia,function = "i2c2";
+>>> +            };
+>>> +            pta {
+>>> +                nvidia,pins = "pta";
+>>> +                nvidia,function = "rsvd4";
+>>> +            };
+>>
+>> Does this actually work? The pta pingroup is configured by the "hog"
+>> pinctrl state of the pinctrl node itself, so this state should fail to
+>> be applied since it attempts to touch the same pingroup.
+> 
+> I know little about kernel pinctrl subsystem. After reading some docs
+> and codes, I think what you mean is, in Ventana's pinmux configuration,
+> pta pingroup has been defined as "hdmi" function and this can't be
+> changed(non-dynamic pinmuxing).
+> So I want to know why we have defined pta pingroup as hdmi function?
+> Can we remove this definition to make the i2cmux above working?
+
+I don't recall why pta was defined to be HDMI. The issue isn't that this
+patch changes the pinmux selection for the pta pingroup, but simply that
+both the pinctrl node's state definition, and the new I2C mux node's
+state definition both attempt to configure pingroup pta. The solution is
+most likely to simply remove the pta configuration from the main pinctrl
+node.
