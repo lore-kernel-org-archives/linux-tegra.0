@@ -1,64 +1,88 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci: Defer probe if regulator_get fails
-Date: Tue, 23 Oct 2012 18:07:39 +0100
-Message-ID: <20121023170723.GD4477@opensource.wolfsonmicro.com>
-References: <1350976740-19284-1-git-send-email-pkunapuli@nvidia.com>
- <1350976740-19284-3-git-send-email-pkunapuli@nvidia.com>
- <1350979047.20572.6.camel@tellur>
- <5086C5F5.4070801@wwwdotorg.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: dt: tegra: Add sdhci regulators
+Date: Tue, 23 Oct 2012 20:07:59 +0200
+Message-ID: <4346406.Jy2o1pWcOR@ax5200p>
+References: <1350976740-19284-1-git-send-email-pkunapuli@nvidia.com> <1350976740-19284-2-git-send-email-pkunapuli@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kUmo4NyTJbuJZ752"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5086C5F5.4070801@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Lucas Stach <dev@lynxeye.de>, Pavan Kunapuli <pkunapuli@nvidia.com>, linux@arm.linux.org.uk, cjb@laptop.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1350976740-19284-2-git-send-email-pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Pavan,
 
---kUmo4NyTJbuJZ752
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tuesday 23 October 2012 12:48:59 Pavan Kunapuli wrote:
+> Adding vmmc and vmmcq supplies for sdhci nodes
+> in tegra dt files.
 
-On Tue, Oct 23, 2012 at 10:29:41AM -0600, Stephen Warren wrote:
-> On 10/23/2012 01:57 AM, Lucas Stach wrote:
+<...>
 
-> > Does this work with boards where we don't have any MMC supplies? Or are
-> > we just deferring the probe indefinitely there?
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> b/arch/arm/boot/dts/tegra20-paz00.dts index 6a93d14..e161b65 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -422,13 +422,17 @@
+>  		status = "okay";
+>  		cd-gpios = <&gpio 173 0>; /* gpio PV5 */
+>  		wp-gpios = <&gpio 57 0>;  /* gpio PH1 */
+> -		power-gpios = <&gpio 169 0>; /* gpio PV1 */
+>  		bus-width = <4>;
+> +		vmmc-supply = <&vddio_sd_reg>;
+> +		vqmmc-supply = <&vddio_sd_reg>;
+>  	};
+> 
+>  	sdhci@c8000600 {
+>  		status = "okay";
+>  		bus-width = <8>;
+> +		vmmc-supply = <&vddio_sdmmc_reg>;
+> +		vqmmc-supply = <&vddio_sdmmc_reg>;
 
-> > For boards that power MMC unconditionally, are we supposed to add dummy
-> > regulators to make them work with this patchset?
+to make it better, this should be:
 
-> I believe that dummy (fixed) regulators are supposed to be provided in
-> all cases where the platform doesn't actually have one. The fact that
-> everything worked OK without them before this patch was most likely a
-> mistake/accident.
+vmmc-supply = <&vcore_mmc_reg>; and
+vqmmc-supply = <&vddio_nand_reg>;
 
-That's the general idea; clearly there *are* supplies here, they're just
-not software controlled supplies.
+with vcore_mmc_reg is ldo5 and vddio_nand_reg is the fixed regulator below.
 
---kUmo4NyTJbuJZ752
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+By doing so, I get "sdhci-tegra sdhci-tegra.3: could not set regulator OCR 
+(-1)". MMC subsys wants to set ldo5 to 3.3V but it is fixed. I guess that's 
+harmless for now. 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+>  	};
+> 
+>  	gpio-keys {
+> @@ -465,6 +469,24 @@
+>  			regulator-max-microvolt = <5000000>;
+>  			regulator-always-on;
+>  		};
+> +
+> +		vddio_sd_reg: regulator@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +			regulator-name = "vddio_sd";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			enable-active-high;
+> +			gpio = <&gpio 169 0>; /* gpio PV1 */
+> +		};
+> +
+> +		vddio_sdmmc_reg: regulator@2 {
 
-iQIcBAEBAgAGBQJQhs7SAAoJELSic+t+oim9susP/0AssZKAu0Kc9VvmhgVgu3fo
-uP6TknKZf5pfa+U+Up9rlmjzxgmbOHIjGL1joJpUVpbL9iHuuYqqU9S4/sw/bOpy
-0yJTrJzrRYWdIK0bx5g+EW6F3RPcPWc7B2ZLPiSHcPFIe6jTSrgQAPCTqAnRYnDv
-GvDoy+Oya1Ztjim+uIMTuNDJ29t3xrdvwP+Ds7r/Dkz0P3fPCcbleS0NMhbctiNg
-hP6jOr+roHou+TRPwok5XAoN3j/C9/6riZGy+C1TpRzMR/YLNzuTcLShxG33Pm+l
-85PNQLzo27XQBn2ZOX1UyX1FKAkxK3JQ8UavR6TtkEjE5PeCiFP6sqtKdOb3gB+1
-kAvK8fbhf8O7JMREFjKNVhOssFQQWOCI5IMlOtAnfuBEl/P1b1S2RXZByUX3KsOu
-laI1Z3VfSMUfYiklbarHO5CCCzP1TUNpgqnboK3IJjWf0haIuLeTtUDro11lSP8V
-z+zUckY+AHDilo6IUN6lFRyL8cZU/ohZUE/Snw8NiFzKevubqDQ269usWvKR6kWh
-pZCisbrU29U0SYwnOH3Zf7VcpuVwjaEUjtinHrprsQhiOs0JvFcTemWYXrabhA8U
-xTb158lEF1AV9MuFiZe+RBTAiTVuF1ZNnQ3mWgIBoMI8mEv3weu4ncwBz5IC+1xh
-EVqnpeuK56wfTi+EMHfL
-=9GG4
------END PGP SIGNATURE-----
+       ^^ vddio_nand_reg acording to schematics
 
---kUmo4NyTJbuJZ752--
+> +			compatible = "regulator-fixed";
+> +			reg = <2>;
+> +			regulator-name  = "vddio_sdmmc";
+
+also here
+
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +		};
+>  	};
+> 
+>  	sound {
