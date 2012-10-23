@@ -1,88 +1,103 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dt: tegra: Add sdhci regulators
-Date: Tue, 23 Oct 2012 20:07:59 +0200
-Message-ID: <4346406.Jy2o1pWcOR@ax5200p>
-References: <1350976740-19284-1-git-send-email-pkunapuli@nvidia.com> <1350976740-19284-2-git-send-email-pkunapuli@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 2/3] ARM: tegra: enhance timer.c to get IO address from device tree
+Date: Tue, 23 Oct 2012 12:28:11 -0600
+Message-ID: <1351016892-21211-2-git-send-email-swarren@wwwdotorg.org>
+References: <1351016892-21211-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1350976740-19284-2-git-send-email-pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1351016892-21211-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Pavan,
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Tuesday 23 October 2012 12:48:59 Pavan Kunapuli wrote:
-> Adding vmmc and vmmcq supplies for sdhci nodes
-> in tegra dt files.
+Modify Tegra's timer code to parse the IO address from device tree,
+hence removing the dependency on <mach/iomap.h>. This will allow the
+driver to be moved to drivers/clocksource/.
 
-<...>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/timer.c |   32 ++++++++++++++++++++++++++++----
+ 1 files changed, 28 insertions(+), 4 deletions(-)
 
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
-> b/arch/arm/boot/dts/tegra20-paz00.dts index 6a93d14..e161b65 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -422,13 +422,17 @@
->  		status = "okay";
->  		cd-gpios = <&gpio 173 0>; /* gpio PV5 */
->  		wp-gpios = <&gpio 57 0>;  /* gpio PH1 */
-> -		power-gpios = <&gpio 169 0>; /* gpio PV1 */
->  		bus-width = <4>;
-> +		vmmc-supply = <&vddio_sd_reg>;
-> +		vqmmc-supply = <&vddio_sd_reg>;
->  	};
-> 
->  	sdhci@c8000600 {
->  		status = "okay";
->  		bus-width = <8>;
-> +		vmmc-supply = <&vddio_sdmmc_reg>;
-> +		vqmmc-supply = <&vddio_sdmmc_reg>;
-
-to make it better, this should be:
-
-vmmc-supply = <&vcore_mmc_reg>; and
-vqmmc-supply = <&vddio_nand_reg>;
-
-with vcore_mmc_reg is ldo5 and vddio_nand_reg is the fixed regulator below.
-
-By doing so, I get "sdhci-tegra sdhci-tegra.3: could not set regulator OCR 
-(-1)". MMC subsys wants to set ldo5 to 3.3V but it is fixed. I guess that's 
-harmless for now. 
-
->  	};
-> 
->  	gpio-keys {
-> @@ -465,6 +469,24 @@
->  			regulator-max-microvolt = <5000000>;
->  			regulator-always-on;
->  		};
-> +
-> +		vddio_sd_reg: regulator@1 {
-> +			compatible = "regulator-fixed";
-> +			reg = <1>;
-> +			regulator-name = "vddio_sd";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			enable-active-high;
-> +			gpio = <&gpio 169 0>; /* gpio PV1 */
-> +		};
-> +
-> +		vddio_sdmmc_reg: regulator@2 {
-
-       ^^ vddio_nand_reg acording to schematics
-
-> +			compatible = "regulator-fixed";
-> +			reg = <2>;
-> +			regulator-name  = "vddio_sdmmc";
-
-also here
-
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +		};
->  	};
-> 
->  	sound {
+diff --git a/arch/arm/mach-tegra/timer.c b/arch/arm/mach-tegra/timer.c
+index 026bad4..e4863f3 100644
+--- a/arch/arm/mach-tegra/timer.c
++++ b/arch/arm/mach-tegra/timer.c
+@@ -26,6 +26,7 @@
+ #include <linux/clocksource.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
++#include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ 
+ #include <asm/mach/time.h>
+@@ -33,8 +34,6 @@
+ #include <asm/sched_clock.h>
+ 
+ #include "board.h"
+-#include "clock.h"
+-#include "iomap.h"
+ 
+ #define RTC_SECONDS            0x08
+ #define RTC_SHADOW_SECONDS     0x0c
+@@ -52,8 +51,8 @@
+ #define TIMER_PTV 0x0
+ #define TIMER_PCR 0x4
+ 
+-static void __iomem *timer_reg_base = IO_ADDRESS(TEGRA_TMR1_BASE);
+-static void __iomem *rtc_base = IO_ADDRESS(TEGRA_RTC_BASE);
++static void __iomem *timer_reg_base;
++static void __iomem *rtc_base;
+ 
+ static struct timespec persistent_ts;
+ static u64 persistent_ms, last_persistent_ms;
+@@ -164,6 +163,11 @@ static const struct of_device_id timer_match[] __initconst = {
+ 	{}
+ };
+ 
++static const struct of_device_id rtc_match[] __initconst = {
++	{ .compatible = "nvidia,tegra20-rtc" },
++	{}
++};
++
+ static void __init tegra_init_timer(void)
+ {
+ 	struct device_node *np;
+@@ -177,6 +181,12 @@ static void __init tegra_init_timer(void)
+ 		BUG();
+ 	}
+ 
++	timer_reg_base = of_iomap(np, 0);
++	if (!timer_reg_base) {
++		pr_err("Can't map timer registers");
++		BUG();
++	}
++
+ 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
+ 	if (tegra_timer_irq.irq <= 0) {
+ 		pr_err("Failed to map timer IRQ\n");
+@@ -192,6 +202,20 @@ static void __init tegra_init_timer(void)
+ 		rate = clk_get_rate(clk);
+ 	}
+ 
++	of_node_put(np);
++
++	np = of_find_matching_node(NULL, rtc_match);
++	if (!np) {
++		pr_err("Failed to find RTC DT node\n");
++		BUG();
++	}
++
++	rtc_base = of_iomap(np, 0);
++	if (!rtc_base) {
++		pr_err("Can't map RTC registers");
++		BUG();
++	}
++
+ 	/*
+ 	 * rtc registers are used by read_persistent_clock, keep the rtc clock
+ 	 * enabled
+-- 
+1.7.0.4
