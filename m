@@ -1,94 +1,97 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: add spi driver for SLINK controller
-Date: Tue, 23 Oct 2012 10:17:13 +0100
-Message-ID: <20121023091713.GQ4477@opensource.wolfsonmicro.com>
-References: <1350557233-31234-1-git-send-email-ldewangan@nvidia.com>
- <5085A667.2000100@wwwdotorg.org>
+From: Philip Rakity <prakity-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] mmc: sdhci: Defer probe if regulator_get fails
+Date: Tue, 23 Oct 2012 15:21:58 +0200
+Message-ID: <4F1DF342-A2C4-434A-B878-A11374089E6E@nvidia.com>
+References: <1350976740-19284-1-git-send-email-pkunapuli@nvidia.com>
+ <1350976740-19284-3-git-send-email-pkunapuli@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="i/CQJCAqWP/GQJtX"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5085A667.2000100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1350976740-19284-3-git-send-email-pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org" <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---i/CQJCAqWP/GQJtX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 23 Oct 2012, at 09:19, Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-On Mon, Oct 22, 2012 at 02:02:47PM -0600, Stephen Warren wrote:
-> On 10/18/2012 04:47 AM, Laxman Dewangan wrote:
+> vmmc and vqmmc regulators control the voltage to
+> the host and device. Defer the probe if either of
+> them is not registered.
+> 
+> Signed-off-by: Pavan Kunapuli <pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> drivers/mmc/host/sdhci.c |   25 ++++++++++++++++++++++---
+> 1 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 7922adb..925c403 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2844,11 +2844,17 @@ int sdhci_add_host(struct sdhci_host *host)
+> 	    !(host->mmc->caps & MMC_CAP_NONREMOVABLE))
+> 		mmc->caps |= MMC_CAP_NEEDS_POLL;
+> 
+> -	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
+> +	/*
+> +	 * If vqmmc regulator and no 1.8V signalling, then there's no UHS.
+> +	 * vqmmc regulator should be present. If it's not present,
+> +	 * assume the regulator driver registration is not yet done and
+> +	 * defer the probe.
+> +	 */
+> 	host->vqmmc = regulator_get(mmc_dev(mmc), "vqmmc");
+> 	if (IS_ERR(host->vqmmc)) {
+> -		pr_info("%s: no vqmmc regulator found\n", mmc_hostname(mmc));
+> +		pr_err("%s: no vqmmc regulator found\n", mmc_hostname(mmc));
+> 		host->vqmmc = NULL;
+> +		return -EPROBE_DEFER;
 
-> > +	/* Read back register to make sure that register writes completed */
-> > +	if (reg !=3D SLINK_TX_FIFO)
-> > +		readl(tspi->base + SLINK_MAS_DATA);
+Some systems exist where vmmc regulator exists and vqmmc regulator does not.  The vmmc regular is fixed at 3.3v.  
+Deferring the probe will cause issues.
 
-> Is that really necessary on every single write, or only for certain
-> specific operations? This seems rather heavy-weight.
-
-I saw that myself - I figured that since SPI is (relatively) slow itself
-the simplicity gained from doing the flush unconditionally was
-reasonable, further optimisation can always be done later.
-
-> > +	val =3D tegra_slink_readl(tspi, SLINK_STATUS);
-
-> > +	/* Write 1 to clear status register */
-> > +	val_write =3D SLINK_RDY;
-> > +	val_write |=3D (val & SLINK_FIFO_ERROR);
-
-> Why not just always set SLINK_FIFO_ERROR; does it have to be set in the
-> write only if the status was previously asserted? If that is true, how
-> do you avoid a race condition where the bit gets set in SLINK_STATUS
-> after you read it but before you write to clear it?
-
-The whole point with this sort of interrupt scheme is usually that the
-interrupt is level triggered and will just continue to be asserted if
-some source within the interrupt isn't acked; the race is usually the
-other way around where you may ack a status you didn't see.
-
-> > +static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
->=20
-> > +		bits_per_word =3D t->bits_per_word ? t->bits_per_word :
-> > +						tspi->cur_spi->bits_per_word;
-
-> That logic is repeated a few times. Shouldn't there be a macro to avoid
-> cut/paste. Perhaps even in the SPI core rather than this driver.
-
-Yes, should be in the SPI core as this pattern exists for all SPI
-drivers.
-
-> Doesn't this function need to parse all the other standardized
-> properties from spi-bus.txt, or does the SPI core handle that?
-
-No, it doesn't.  But perhaps it should (see the thing above about the
-per-transfer max frequency too...).  In general SPI hasn't done much
-about factoring code out of drivers until very recently.
-
---i/CQJCAqWP/GQJtX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQhmB8AAoJELSic+t+oim9pL0P/ibamePbIB4gxsz2z6sJuj+F
-B0TQvAxe9efI0u+OVlxgx2092vKyQCNspo3ZQixrDXFugFNAdMOVaLyrBsZVUZAo
-3+NlHRzFYb3V/BwsTs5xfEA104TQk4e2b6CsNfqEooyZ5CwTK+utgLn6qClZdocg
-pgt6BdlM4XoiZxS7tkoxWGLE7J9L7p0i9OA7P32vBxQr/uHvNcLejq3bbUUHQ/bd
-si54ct21JCn6E7GVmbyLOvDo47eaxkFUiCjg4kQ0wrUF+WPwWvWIp6VBt+/aO2yv
-DT1u/HRo7bOAFTp7lPDROAZC2Ln64uRHhDdeoQNg2bLQofgF6A9HnsNikxwEeOWc
-vIXf2GEx9I6OkgjjQAMafyQwNKtey6OT+W2CfhxZKPjCR0JKcCgyoSkXgYi41zjc
-NcDdP1BiJTtsE0HBCDLWN7xHbduV6QJCLgkYt1Z9YQn+Ecse2Pvf9KzgjK04drW7
-h9RkrTGtQ122A0aB0HKmIiElfkPksgFauBaymqn1pVI4Spwn2NQ/csKk0l/Kynu6
-W/A89nxPa4XG4IS73CoUU7mnd6CWp+eEoH4mr56dCtAk6DAByhorzY1YK+w6Kp/r
-nAM73XOBPproolTyOBv0fh4Zad/fVckZkUWftBtXY6CpvBPz17S/OvwF5oWy6D6r
-h+zdJ1DsAzEPbCfxUoK6
-=t3eX
------END PGP SIGNATURE-----
-
---i/CQJCAqWP/GQJtX--
+> 	}
+> 	else if (regulator_is_supported_voltage(host->vqmmc, 1800000, 1800000))
+> 		regulator_enable(host->vqmmc);
+> @@ -2903,10 +2909,17 @@ int sdhci_add_host(struct sdhci_host *host)
+> 
+> 	ocr_avail = 0;
+> 
+> +	/*
+> +	 * vmmc regulator should be present. If it's not present,
+> +	 * assume the regulator driver registration is not yet done
+> +	 * and defer the probe.
+> +	 */
+> 	host->vmmc = regulator_get(mmc_dev(mmc), "vmmc");
+> 	if (IS_ERR(host->vmmc)) {
+> -		pr_info("%s: no vmmc regulator found\n", mmc_hostname(mmc));
+> +		pr_err("%s: no vmmc regulator found\n", mmc_hostname(mmc));
+> 		host->vmmc = NULL;
+> +		ret = -EPROBE_DEFER;
+> +		goto vmmc_err;
+> 	} else
+> 		regulator_enable(host->vmmc);
+> 
+> @@ -3121,7 +3134,13 @@ reset:
+> untasklet:
+> 	tasklet_kill(&host->card_tasklet);
+> 	tasklet_kill(&host->finish_tasklet);
+> +vmmc_err:
+> +	if (host->vqmmc) {
+> +		if (regulator_is_enabled(host->vqmmc))
+> +			regulator_disable(host->vqmmc);
+> 
+> +		regulator_put(host->vqmmc);
+> +	}
+> 	return ret;
+> }
+> 
+> -- 
+> 1.7.1.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
