@@ -1,65 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST] usb: host: tegra remove include of <mach/iomap.h>
-Date: Wed, 24 Oct 2012 13:29:01 -0600
-Message-ID: <1351106941-869-1-git-send-email-swarren@wwwdotorg.org>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH REPOST] usb: host: tegra remove include of <mach/iomap.h>
+Date: Wed, 24 Oct 2012 15:43:01 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1210241542040.1282-100000@iolanthe.rowland.org>
+References: <1351106941-869-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351106941-869-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, 24 Oct 2012, Stephen Warren wrote:
 
-Almost nothing from this file is used, and the file will hopefully be
-deleted soon. Copy the tiny portions that are used directly into
-ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
-our USB driver, and those cleanups will remove the need for these
-constants.
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Almost nothing from this file is used, and the file will hopefully be
+> deleted soon. Copy the tiny portions that are used directly into
+> ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
+> our USB driver, and those cleanups will remove the need for these
+> constants.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Felipe,
+> 
+> This patch is needed in the Tegra branch, since it's a dependency for
+> cleanup required to support single zImage.
+> 
+> However, I suspect/hope there will be significant improvements to the Tegra
+> USB driver in 3.8, and this change may merge-conflict with those. It may be
+> simplest if this patch can /also/ be taken through the PHY tree and so act
+> as a baseline for any Tegra PHY work.
+> 
+> As such, may I please request this patch be merged into a separate branch/tag
+> in the PHY tree, which is then merged into both the Tegra and PHY trees.
+> 
+> Note that this affects an EHCI driver rather than a PHY driver, but per
+> previous discussions, it sounds like the PHY branch will take any EHCI
+> changes required by Tegra's PHY driver cleanup, and hence the PHY branch
+> is the right place to merge this.
+> 
+> Thanks.
+> ---
+>  drivers/usb/host/ehci-tegra.c |    5 ++++-
+>  1 files changed, 4 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index 6223d17..2de0890 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -28,7 +28,10 @@
+>  #include <linux/pm_runtime.h>
+>  
+>  #include <linux/usb/tegra_usb_phy.h>
+> -#include <mach/iomap.h>
+> +
+> +#define TEGRA_USB_BASE			0xC5000000
+> +#define TEGRA_USB2_BASE			0xC5004000
+> +#define TEGRA_USB3_BASE			0xC5008000
+>  
+>  #define TEGRA_USB_DMA_ALIGN 32
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Felipe,
+You did make sure it still compiles, right?  :-)
 
-This patch is needed in the Tegra branch, since it's a dependency for
-cleanup required to support single zImage.
-
-However, I suspect/hope there will be significant improvements to the Tegra
-USB driver in 3.8, and this change may merge-conflict with those. It may be
-simplest if this patch can /also/ be taken through the PHY tree and so act
-as a baseline for any Tegra PHY work.
-
-As such, may I please request this patch be merged into a separate branch/tag
-in the PHY tree, which is then merged into both the Tegra and PHY trees.
-
-Note that this affects an EHCI driver rather than a PHY driver, but per
-previous discussions, it sounds like the PHY branch will take any EHCI
-changes required by Tegra's PHY driver cleanup, and hence the PHY branch
-is the right place to merge this.
-
-Thanks.
----
- drivers/usb/host/ehci-tegra.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 6223d17..2de0890 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -28,7 +28,10 @@
- #include <linux/pm_runtime.h>
- 
- #include <linux/usb/tegra_usb_phy.h>
--#include <mach/iomap.h>
-+
-+#define TEGRA_USB_BASE			0xC5000000
-+#define TEGRA_USB2_BASE			0xC5004000
-+#define TEGRA_USB3_BASE			0xC5008000
- 
- #define TEGRA_USB_DMA_ALIGN 32
- 
--- 
-1.7.0.4
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-usb" in
