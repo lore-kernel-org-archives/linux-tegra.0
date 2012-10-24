@@ -1,53 +1,40 @@
-From: Vinod Koul <vkoul-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 2/5] ARM: tegra: dts: add slink controller dt entry
-Date: Wed, 24 Oct 2012 08:56:29 +0530
-Message-ID: <1351049189.5263.13.camel@vkoul-udesk3>
-References: <1350557795-31487-1-git-send-email-ldewangan@nvidia.com>
-	 <1350557795-31487-3-git-send-email-ldewangan@nvidia.com>
-	 <50808595.8070505@wwwdotorg.org> <5081190D.50200@nvidia.com>
-	 <50817820.6010301@wwwdotorg.org>
+From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
+Date: Wed, 24 Oct 2012 17:01:21 +0200
+Message-ID: <20121024150121.GA2764@amd.com>
+References: <1350538510-28356-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50817820.6010301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1350538510-28356-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-10-19 at 09:56 -0600, Stephen Warren wrote:
-> On 10/19/2012 03:10 AM, Laxman Dewangan wrote:
-> > On Friday 19 October 2012 04:11 AM, Stephen Warren wrote:
-> >> On 10/18/2012 04:56 AM, Laxman Dewangan wrote:
-> >>> Add slink controller details in the dts file of
-> >>> Tegra20 and Tegra30.
-> >>> diff --git a/arch/arm/boot/dts/tegra20.dtsi
-> >>> b/arch/arm/boot/dts/tegra20.dtsi
-> >>> +    slink@7000d400 {
-> >>> +        compatible = "nvidia,tegra20-slink";
-> >>> +        reg =<0x7000d400 0x200>;
-> >>> +        interrupts =<0 59 0x04>;
-> >>> +        nvidia,dma-req-sel =<15>;
-> >
+On Thu, Oct 18, 2012 at 08:35:10AM +0300, Hiroshi Doyu wrote:
+> From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> (Oh, you need a space before and after the = in all the lines above)
+> Fix a deadly typo in macro definition.
 > 
-> >> I thought the common DT DMA bindings were going to be in 3.7, and hence
-> >> we could just use them here rather than inventing another custom
-> >> property for this purpose?
-> >
-> > Adding Vinod here.
-> > 
-> > I looked the dma devicetree bingind document and did not found the
-> > generic binding name. Howvere, for arm-pl330.txt, it is explained as ...
-> 
-> That's not the generic bindings. I guess they didn't get merged then. I
-> guess we can continue with custom bindings until they are.
-Yes they are in topic topic/dmaengine_dt in my tree. Will be merged once
-we sort out slave apis.
+> Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+Applied, thanks.
 
 -- 
-Vinod Koul
-Intel Corp.
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
