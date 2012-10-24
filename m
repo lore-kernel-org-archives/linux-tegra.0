@@ -1,40 +1,67 @@
-From: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
-Date: Wed, 24 Oct 2012 17:01:21 +0200
-Message-ID: <20121024150121.GA2764@amd.com>
-References: <1350538510-28356-1-git-send-email-hdoyu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1350538510-28356-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH REPOST] usb: host: tegra remove include of <mach/iomap.h>
+Date: Wed, 24 Oct 2012 13:29:01 -0600
+Message-ID: <1351106941-869-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 18, 2012 at 08:35:10AM +0300, Hiroshi Doyu wrote:
-> From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Fix a deadly typo in macro definition.
-> 
-> Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied, thanks.
+Almost nothing from this file is used, and the file will hopefully be
+deleted soon. Copy the tiny portions that are used directly into
+ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
+our USB driver, and those cleanups will remove the need for these
+constants.
 
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Felipe,
+
+This patch is needed in the Tegra branch, since it's a dependency for
+cleanup required to support single zImage.
+
+However, I suspect/hope there will be significant improvements to the Tegra
+USB driver in 3.8, and this change may merge-conflict with those. It may be
+simplest if this patch can /also/ be taken through the PHY tree and so act
+as a baseline for any Tegra PHY work.
+
+As such, may I please request this patch be merged into a separate branch/tag
+in the PHY tree, which is then merged into both the Tegra and PHY trees.
+
+Note that this affects an EHCI driver rather than a PHY driver, but per
+previous discussions, it sounds like the PHY branch will take any EHCI
+changes required by Tegra's PHY driver cleanup, and hence the PHY branch
+is the right place to merge this.
+
+Thanks.
+---
+ drivers/usb/host/ehci-tegra.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 6223d17..2de0890 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -28,7 +28,10 @@
+ #include <linux/pm_runtime.h>
+ 
+ #include <linux/usb/tegra_usb_phy.h>
+-#include <mach/iomap.h>
++
++#define TEGRA_USB_BASE			0xC5000000
++#define TEGRA_USB2_BASE			0xC5004000
++#define TEGRA_USB3_BASE			0xC5008000
+ 
+ #define TEGRA_USB_DMA_ALIGN 32
+ 
 -- 
-AMD Operating System Research Center
+1.7.0.4
 
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
