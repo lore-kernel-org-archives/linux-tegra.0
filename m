@@ -1,132 +1,44 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: dt: tegra: ventana: define pinmux for ddc
-Date: Thu, 25 Oct 2012 14:52:30 +0800
-Message-ID: <1351147951-19706-1-git-send-email-markz@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: Tegra DRM on AC100
+Date: Thu, 25 Oct 2012 09:34:56 +0200
+Message-ID: <1811357.kEBJ3Y56iK@fb07-iapwap2>
+References: <1351108489.16610.8.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351108489.16610.8.camel-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra 2's I2C2 controller can be routed to either the PTA
-or DDC pin group on Ventana. So:
-- Remove the HDMI function definition of pta pingroup
-- Define child i2c adapters(ddc & pta) for I2C2 controller
+Hi Thomas,
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-ventana.dts |   69 ++++++++++++++++++++++++++++++---
- 1 file changed, 63 insertions(+), 6 deletions(-)
+Am Mittwoch, 24. Oktober 2012, 21:54:49 schrieb Thomas Meyer:
+> Hi,
+> 
+> I'm trying to run Thierry's latest linux kernel
+> (git://gitorious.org/thierryreding/linux.git branch: tegra/next commit:
+> 1633170) which contains the Tegra DRM driver on my AC100, but without
+> success.
+> 
+> I did these steps:
+> 1.) Patch kernel with attached patches. One patch is to support the
+> native AC100 partition scheme, the other one is for the device tree.
+> 
+> 2.) Compile the kernel with the attached boot config.
+> 3.) attach the compiled device-tree file to the zImage via "cat zImage
+> tegra20-paz00 > zImage".
+> 4.) Use abootimg to create an android boot loader file
+> 
+> After a reboot all I get is a blank screen, no messages, no errors,
+> nothing. Sadly this device has no serial port, so any help is
+> appreciated!
+> 
+> What am I missing/doing wrong?
 
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index bec8bb2..1dde0d3 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -64,11 +64,6 @@
- 				nvidia,pins = "dap4";
- 				nvidia,function = "dap4";
- 			};
--			ddc {
--				nvidia,pins = "ddc", "owc", "spdi", "spdo",
--					"uac";
--				nvidia,function = "rsvd2";
--			};
- 			dta {
- 				nvidia,pins = "dta", "dtb", "dtc", "dtd", "dte";
- 				nvidia,function = "vi";
-@@ -98,7 +93,7 @@
- 				nvidia,function = "pcie";
- 			};
- 			hdint {
--				nvidia,pins = "hdint", "pta";
-+				nvidia,pins = "hdint";
- 				nvidia,function = "hdmi";
- 			};
- 			i2cp {
-@@ -129,6 +124,10 @@
- 					"lspi", "lvp1", "lvs";
- 				nvidia,function = "displaya";
- 			};
-+			owc {
-+				nvidia,pins = "owc", "spdi", "spdo", "uac";
-+				nvidia,function = "rsvd2";
-+			};
- 			pmc {
- 				nvidia,pins = "pmc";
- 				nvidia,function = "pwr_on";
-@@ -248,6 +247,39 @@
- 				nvidia,slew-rate-falling = <3>;
- 			};
- 		};
-+
-+		state_i2cmux_ddc: pinmux_i2cmux_ddc {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "i2c2";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "rsvd4";
-+			};
-+		};
-+
-+		state_i2cmux_pta: pinmux_i2cmux_pta {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "rsvd4";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "i2c2";
-+			};
-+		};
-+
-+		state_i2cmux_idle: pinmux_i2cmux_idle {
-+			ddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "rsvd4";
-+			};
-+			pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "rsvd4";
-+			};
-+		};
- 	};
- 
- 	i2s@70002800 {
-@@ -291,6 +323,31 @@
- 		clock-frequency = <400000>;
- 	};
- 
-+	i2cmux {
-+		compatible = "i2c-mux-pinctrl";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c-parent = <&{/i2c@7000c400}>;
-+
-+		pinctrl-names = "ddc", "pta", "idle";
-+		pinctrl-0 = <&state_i2cmux_ddc>;
-+		pinctrl-1 = <&state_i2cmux_pta>;
-+		pinctrl-2 = <&state_i2cmux_idle>;
-+
-+		i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+
- 	i2c@7000c500 {
- 		status = "okay";
- 		clock-frequency = <400000>;
--- 
-1.7.9.5
+this branch can not initialize the backlight yet. Just power off the machine 
+and let fastboot do the work for you.
+
+Marc
