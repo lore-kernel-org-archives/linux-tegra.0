@@ -1,119 +1,84 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
-Date: Thu, 25 Oct 2012 09:06:02 +0300
-Message-ID: <20121025090602.6361b51a5c334bf0009af006@nvidia.com>
-References: <1350538510-28356-1-git-send-email-hdoyu@nvidia.com>
-	<20121024150121.GA2764@amd.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
+Date: Thu, 25 Oct 2012 14:32:18 +0800
+Message-ID: <5088DCF2.7030000@nvidia.com>
+References: <1350626311-18131-1-git-send-email-markz@nvidia.com> <50817668.6020709@wwwdotorg.org> <5084F5D1.7050005@nvidia.com> <50857EEF.2070707@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9"
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20121024150121.GA2764-5C7GfCeVMHo@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50857EEF.2070707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+On 10/23/2012 01:14 AM, Stephen Warren wrote:
+> On 10/22/2012 01:29 AM, Mark Zhang wrote:
+>> On 10/19/2012 11:48 PM, Stephen Warren wrote:
+>>> On 10/18/2012 11:58 PM, Mark Zhang wrote:
+>>>> Define pinmux for DDC. The DDC pinmux in Ventana is 2 pins in I2C2.
+>>>
+>>>> +++ b/arch/arm/boot/dts/tegra20-ventana.dts
+>>>
+>>>> -            ddc {
+>>>> -                nvidia,pins = "ddc", "owc", "spdi", "spdo",
+>>>> -                    "uac";
+>>>> -                nvidia,function = "rsvd2";
+>>>> -            };
+>>>
+>>> So that removes the entries for 5 pin groups, yet below, entries are
+>>> only added for the ddc and pta pingroups, so the other 4 pin groups
+>>> become unconfigured.
+>>>
+>>
+>> Right. So I think it should be changed to:
+>>
+>>          owc {
+>>              nvidia,pins = "owc", "spdi", "spdo", "uac";
+>>              nvidia,function = "rsvd2";
+>>          };
+>>
+>> Is this right?
+>
+> Looks correct, yes.
+>
+>>>> +
+>>>> +        state_i2cmux_ddc: pinmux_i2cmux_ddc {
+>>>> +            ddc {
+>>>> +                nvidia,pins = "ddc";
+>>>> +                nvidia,function = "i2c2";
+>>>> +            };
+>>>> +            pta {
+>>>> +                nvidia,pins = "pta";
+>>>> +                nvidia,function = "rsvd4";
+>>>> +            };
+>>>
+>>> Does this actually work? The pta pingroup is configured by the "hog"
+>>> pinctrl state of the pinctrl node itself, so this state should fail to
+>>> be applied since it attempts to touch the same pingroup.
+>>
+>> I know little about kernel pinctrl subsystem. After reading some docs
+>> and codes, I think what you mean is, in Ventana's pinmux configuration,
+>> pta pingroup has been defined as "hdmi" function and this can't be
+>> changed(non-dynamic pinmuxing).
+>> So I want to know why we have defined pta pingroup as hdmi function?
+>> Can we remove this definition to make the i2cmux above working?
+>
+> I don't recall why pta was defined to be HDMI. The issue isn't that this
+> patch changes the pinmux selection for the pta pingroup, but simply that
+> both the pinctrl node's state definition, and the new I2C mux node's
+> state definition both attempt to configure pingroup pta. The solution is
+> most likely to simply remove the pta configuration from the main pinctrl
+> node.
+>
 
-On Wed, 24 Oct 2012 17:01:21 +0200
-Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org> wrote:
+Understood. I tried to remove the hdmi function definition of pta 
+pingroup yesterday then found HDMI can't work anymore. The EDID of HDMI 
+monitor can't be fetched. After some debugging, I have found that it's 
+caused by "i2c-mux-pinctrl" driver is loaded after drm driver. That 
+makes drm driver can't get EDID data via this i2c mux adapter because it 
+doesn't exist at that time. So I think we need to promote the load level 
+of "i2c-mux-pinctrl" driver. Any other ideas?
 
-> On Thu, Oct 18, 2012 at 08:35:10AM +0300, Hiroshi Doyu wrote:
-> > From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Fix a deadly typo in macro definition.
-> > 
-> > Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Applied, thanks.
-
-Putting stable@ on To:. The original ptach attached.
-
---Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
-Content-Type: message/rfc822
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
-
-MIME-Version: 1.0
-Received: from euowa.nvidia.com [10.21.70.99]
-	by oreo with IMAP (fetchmail-6.3.19)
-	for <hdoyu@localhost> (single-drop); Thu, 18 Oct 2012 09:07:18 +0300 (EEST)
-Received: from hqemhub02.nvidia.com (172.20.150.31) by deemhub02.nvidia.com
- (10.21.69.138) with Microsoft SMTP Server (TLS) id 8.3.264.0; Thu, 18 Oct
- 2012 07:35:29 +0200
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by hqemhub02.nvidia.com
- (172.20.150.31) with Microsoft SMTP Server id 8.3.264.0; Wed, 17 Oct 2012
- 22:35:26 -0700
-Received: from daphne.nvidia.com (Not Verified[172.16.212.96]) by
- hqnvemgw01.nvidia.com with MailMarshal (v6,7,2,8378)	id <B507f951f0000>; Wed,
- 17 Oct 2012 22:35:27 -0700
-Received: from oreo.Nvidia.com (dhcp-10-21-25-186.nvidia.com [10.21.25.186])
-	by daphne.nvidia.com (8.13.8+Sun/8.8.8) with ESMTP id q9I5ZNMb029324;	Wed, 17
- Oct 2012 22:35:24 -0700 (PDT)
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-To: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>,
-	"joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-CC: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hiro Sugawara
-	<hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Thu, 18 Oct 2012 07:35:10 +0200
-Subject: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
-Thread-Topic: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
-Thread-Index: Ac2s8mKRe5w9gx27TpeD1sxz0GCYmQ==
-Message-ID: <1350538510-28356-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Accept-Language: en-US, en-CA, fi-FI
-Content-Language: en-US
-X-MS-Exchange-Organization-AuthAs: Internal
-X-MS-Exchange-Organization-AuthMechanism: 10
-X-MS-Exchange-Organization-AuthSource: hqemhub02.nvidia.com
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Fix a deadly typo in macro definition.
-
-Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 94811fe..4167863 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -198,7 +198,7 @@ enum {
-=20
- #define SMMU_ADDR_TO_PFN(addr)	((addr) >> 12)
- #define SMMU_ADDR_TO_PDN(addr)	((addr) >> 22)
--#define SMMU_PDN_TO_ADDR(addr)	((pdn) << 22)
-+#define SMMU_PDN_TO_ADDR(pdn)	((pdn) << 22)
-=20
- #define _READABLE	(1 << SMMU_PTB_DATA_ASID_READABLE_SHIFT)
- #define _WRITABLE	(1 << SMMU_PTB_DATA_ASID_WRITABLE_SHIFT)
---=20
-1.7.5.4
-
-
---Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9--
+Mark
