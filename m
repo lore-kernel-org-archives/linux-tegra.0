@@ -1,61 +1,39 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra30: cpuidle: add LP2 driver for CPU0
-Date: Thu, 25 Oct 2012 17:08:45 +0300
-Message-ID: <20121025140844.GC1962@tbergstrom-lnx.Nvidia.com>
-References: <5074AA0E.2080508@wwwdotorg.org>
- <1349954685.19413.207.camel@jlo-ubuntu-64.nvidia.com>
- <5076F5CB.4020200@wwwdotorg.org>
- <1350025676.20241.82.camel@jlo-ubuntu-64.nvidia.com>
- <507885D4.10604@wwwdotorg.org>
- <1350287799.23354.23.camel@jlo-ubuntu-64.nvidia.com>
- <507C32E8.1040701@wwwdotorg.org>
- <20121016080634.GG3196@tbergstrom-lnx.Nvidia.com>
- <507D936F.70905@wwwdotorg.org>
- <20121018092440.GS3196@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
+Date: Thu, 25 Oct 2012 09:37:22 -0600
+Message-ID: <50895CB2.8040103@wwwdotorg.org>
+References: <1350626311-18131-1-git-send-email-markz@nvidia.com> <50817668.6020709@wwwdotorg.org> <5084F5D1.7050005@nvidia.com> <50857EEF.2070707@wwwdotorg.org> <5088DCF2.7030000@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20121018092440.GS3196-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <5088DCF2.7030000-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 18, 2012 at 11:24:40AM +0200, Peter De Schrijver wrote:
-> On Tue, Oct 16, 2012 at 07:03:43PM +0200, Stephen Warren wrote:
-> > On 10/16/2012 02:06 AM, Peter De Schrijver wrote:
-> > >>> Even though we have plan to use coupled cpuidle, I still prefer to go
-> > >>> with the LP2 driver first. Then adding one more patch to support coupled
-> > >>> cpuidle based on LP2 driver. This is good for history. And if there is
-> > >>> any issue, it's more easy to roll back to the stable one.
-> > >>
-> > >> I don't think that implementing it one way and then changing to a
-> > >> different way will benefit history at all. It'll make the history more
-> > >> complicated. What exactly is the problem with just using coupled cpuidle
-> > >> from the start? If we did merge this implementation now, then switch to
-> > >> coupled cpuidle later, when do you think the switch would happen?
-> > > 
-> > > Before we consider doing this, I think we should have some idea on how
-> > > frequently we run into the situation where CPU0 is idle but a secondary
-> > > core is not. Depending on that we can then decide how useful coupled cpuidle
-> > > would be for us.
-> > 
-> > Would it not be 75% of the time where we have 1 of 4 CPUs active? At
-> > least, that's assuming that all work is evenly distributed amongst CPUs,
-> > and hence it's random which CPU is the last to go idle, but perhaps
-> > that's not the case if CPU0 is somehow special workload-wise?
-> > 
+On 10/25/2012 12:32 AM, Mark Zhang wrote:
+> On 10/23/2012 01:14 AM, Stephen Warren wrote:
+...
+>> I don't recall why pta was defined to be HDMI. The issue isn't that this
+>> patch changes the pinmux selection for the pta pingroup, but simply that
+>> both the pinctrl node's state definition, and the new I2C mux node's
+>> state definition both attempt to configure pingroup pta. The solution is
+>> most likely to simply remove the pta configuration from the main pinctrl
+>> node.
 > 
-> Depends, at least it used to be possible to tune the scheduler to prefer
-> CPU0 if the workload can run on a single CPU.
-> 
+> Understood. I tried to remove the hdmi function definition of pta
+> pingroup yesterday then found HDMI can't work anymore. The EDID of HDMI
+> monitor can't be fetched. After some debugging, I have found that it's
+> caused by "i2c-mux-pinctrl" driver is loaded after drm driver. That
+> makes drm driver can't get EDID data via this i2c mux adapter because it
+> doesn't exist at that time. So I think we need to promote the load level
+> of "i2c-mux-pinctrl" driver. Any other ideas?
 
-I just noticed https://lwn.net/Articles/518834/. If we can configure this to
-prefer CPU0 in case all work can be done on a single core, we shouldn't
-hit the case were a secondary CPU is the only active CPU for a significant
-period of time.
+(BTW, your message that I'm replying to wasn't word-wrapped correctly)
 
-Cheers,
-
-Peter.
+No, i2c-mux-pinctrl shouldn't need to change. It sounds like tegra-drm
+isn't supporting deferred probe correctly; when it needs access to an
+I2C adapter that doesn't exist, it should defer its own probe until the
+I2C adapter does exist.
