@@ -1,39 +1,40 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: dt: tegra: ventana: define pinmux for ddc
-Date: Thu, 25 Oct 2012 09:37:22 -0600
-Message-ID: <50895CB2.8040103@wwwdotorg.org>
-References: <1350626311-18131-1-git-send-email-markz@nvidia.com> <50817668.6020709@wwwdotorg.org> <5084F5D1.7050005@nvidia.com> <50857EEF.2070707@wwwdotorg.org> <5088DCF2.7030000@nvidia.com>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
+Date: Thu, 25 Oct 2012 08:41:36 -0700
+Message-ID: <20121025154136.GA30431@kroah.com>
+References: <1350538510-28356-1-git-send-email-hdoyu@nvidia.com>
+ <20121024150121.GA2764@amd.com>
+ <20121025090602.6361b51a5c334bf0009af006@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5088DCF2.7030000-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20121025090602.6361b51a5c334bf0009af006-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/25/2012 12:32 AM, Mark Zhang wrote:
-> On 10/23/2012 01:14 AM, Stephen Warren wrote:
-...
->> I don't recall why pta was defined to be HDMI. The issue isn't that this
->> patch changes the pinmux selection for the pta pingroup, but simply that
->> both the pinctrl node's state definition, and the new I2C mux node's
->> state definition both attempt to configure pingroup pta. The solution is
->> most likely to simply remove the pta configuration from the main pinctrl
->> node.
+On Thu, Oct 25, 2012 at 09:06:02AM +0300, Hiroshi Doyu wrote:
+> On Wed, 24 Oct 2012 17:01:21 +0200
+> Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org> wrote:
 > 
-> Understood. I tried to remove the hdmi function definition of pta
-> pingroup yesterday then found HDMI can't work anymore. The EDID of HDMI
-> monitor can't be fetched. After some debugging, I have found that it's
-> caused by "i2c-mux-pinctrl" driver is loaded after drm driver. That
-> makes drm driver can't get EDID data via this i2c mux adapter because it
-> doesn't exist at that time. So I think we need to promote the load level
-> of "i2c-mux-pinctrl" driver. Any other ideas?
+> > On Thu, Oct 18, 2012 at 08:35:10AM +0300, Hiroshi Doyu wrote:
+> > > From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > 
+> > > Fix a deadly typo in macro definition.
+> > > 
+> > > Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Applied, thanks.
+> 
+> Putting stable@ on To:. The original ptach attached.
 
-(BTW, your message that I'm replying to wasn't word-wrapped correctly)
+<formletter>
 
-No, i2c-mux-pinctrl shouldn't need to change. It sounds like tegra-drm
-isn't supporting deferred probe correctly; when it needs access to an
-I2C adapter that doesn't exist, it should defer its own probe until the
-I2C adapter does exist.
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
+for how to do this properly.
+
+</formletter>
