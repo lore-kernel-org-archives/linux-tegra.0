@@ -1,68 +1,119 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH] usb: host: tegra remove include of <mach/iomap.h>
-Date: Wed, 24 Oct 2012 14:52:42 -0700
-Message-ID: <20121024215241.GA28384@kroah.com>
-References: <1349218165-3494-1-git-send-email-swarren@wwwdotorg.org>
- <20121024213759.GA5303@kroah.com>
- <5088613B.1030205@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
+Date: Thu, 25 Oct 2012 09:06:02 +0300
+Message-ID: <20121025090602.6361b51a5c334bf0009af006@nvidia.com>
+References: <1350538510-28356-1-git-send-email-hdoyu@nvidia.com>
+	<20121024150121.GA2764@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5088613B.1030205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: multipart/mixed;
+	boundary="Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9"
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20121024150121.GA2764-5C7GfCeVMHo@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 24, 2012 at 03:44:27PM -0600, Stephen Warren wrote:
-> On 10/24/2012 03:37 PM, Greg Kroah-Hartman wrote:
-> > On Tue, Oct 02, 2012 at 04:49:25PM -0600, Stephen Warren wrote:
-> >> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> Almost nothing from this file is used, and the file will hopefully be
-> >> deleted soon. Copy the tiny portions that are used directly into
-> >> ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
-> >> our USB driver, and those cleanups will remove the need for these
-> >> constants.
-> >>
-> >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >> Greg, if this patch can get into 3.7 (it's late, I know) at a point before
-> >> wherever you branch off your USB tree for 3.8, then that would be great.
-> >> If not, may I please request this patch be merged into a separate branch/tag
-> >> that is merged into both the Tegra and USB trees for 3.8, since I will
-> >> probably have cleanup patches in the Tegra tree that depend on this change,
-> >> and Venu will likely be sending patches through the USB tree that will need
-> >> to be merged with this too.
+--Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+
+On Wed, 24 Oct 2012 17:01:21 +0200
+Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org> wrote:
+
+> On Thu, Oct 18, 2012 at 08:35:10AM +0300, Hiroshi Doyu wrote:
+> > From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > 
-> > I don't know how you want to do this, but this, and the other tegra
-> > patch, are now in the usb-next branch of my usb.git tree.
+> > Fix a deadly typo in macro definition.
+> > 
+> > Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Aargh! Felipe has already applied the PHY patch to his branch. I believe
-> he was also going to apply the EHCI driver patch too.
+> Applied, thanks.
 
-That's ok, they will merge together just fine.
+Putting stable@ on To:. The original ptach attached.
 
-> Having this just be applied to a next branch rather than a topic branch
-> was exactly what I wanted to avoid; it's why I wrote the heads-up above...
-> 
-> > I would recommend just cherry-picking the thing into your tree if you
-> > want to do work on top of it, we can handle merge issues later on in
-> > 3.8-rc1.
-> 
-> If I just cherry-pick the change, then that will cause the same commit
-> to exist under different commit IDs in two different trees. Isn't that a
-> no-no? That's exactly why I wanted this in a topic branch so we could
-> both merge it rather than duplicating it.
+--Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
+Content-Type: message/rfc822
+Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-This is a 3 line patch, not a big deal either way if it's duplicated.  A
-whole different branch isn't really needed, I'm not insane like the arm
-development trees, I only have 2 branches :)
+MIME-Version: 1.0
+Received: from euowa.nvidia.com [10.21.70.99]
+	by oreo with IMAP (fetchmail-6.3.19)
+	for <hdoyu@localhost> (single-drop); Thu, 18 Oct 2012 09:07:18 +0300 (EEST)
+Received: from hqemhub02.nvidia.com (172.20.150.31) by deemhub02.nvidia.com
+ (10.21.69.138) with Microsoft SMTP Server (TLS) id 8.3.264.0; Thu, 18 Oct
+ 2012 07:35:29 +0200
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by hqemhub02.nvidia.com
+ (172.20.150.31) with Microsoft SMTP Server id 8.3.264.0; Wed, 17 Oct 2012
+ 22:35:26 -0700
+Received: from daphne.nvidia.com (Not Verified[172.16.212.96]) by
+ hqnvemgw01.nvidia.com with MailMarshal (v6,7,2,8378)	id <B507f951f0000>; Wed,
+ 17 Oct 2012 22:35:27 -0700
+Received: from oreo.Nvidia.com (dhcp-10-21-25-186.nvidia.com [10.21.25.186])
+	by daphne.nvidia.com (8.13.8+Sun/8.8.8) with ESMTP id q9I5ZNMb029324;	Wed, 17
+ Oct 2012 22:35:24 -0700 (PDT)
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>,
+	"joerg.roedel-5C7GfCeVMHo@public.gmane.org" <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+CC: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hiro Sugawara
+	<hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Thu, 18 Oct 2012 07:35:10 +0200
+Subject: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
+Thread-Topic: [PATCH 1/1] iommu/tegra: smmu: Fix deadly typo
+Thread-Index: Ac2s8mKRe5w9gx27TpeD1sxz0GCYmQ==
+Message-ID: <1350538510-28356-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Accept-Language: en-US, en-CA, fi-FI
+Content-Language: en-US
+X-MS-Exchange-Organization-AuthAs: Internal
+X-MS-Exchange-Organization-AuthMechanism: 10
+X-MS-Exchange-Organization-AuthSource: hqemhub02.nvidia.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Fix a deadly typo in macro definition.
+
+Signed-off-by: Hiro Sugawara <hsugawara-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/iommu/tegra-smmu.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 94811fe..4167863 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -198,7 +198,7 @@ enum {
+=20
+ #define SMMU_ADDR_TO_PFN(addr)	((addr) >> 12)
+ #define SMMU_ADDR_TO_PDN(addr)	((addr) >> 22)
+-#define SMMU_PDN_TO_ADDR(addr)	((pdn) << 22)
++#define SMMU_PDN_TO_ADDR(pdn)	((pdn) << 22)
+=20
+ #define _READABLE	(1 << SMMU_PTB_DATA_ASID_READABLE_SHIFT)
+ #define _WRITABLE	(1 << SMMU_PTB_DATA_ASID_WRITABLE_SHIFT)
+--=20
+1.7.5.4
+
+
+--Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--Multipart=_Thu__25_Oct_2012_09_06_02_+0300_WAG/Jq3Cxs78fXg9--
