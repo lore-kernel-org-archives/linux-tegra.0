@@ -1,452 +1,79 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 7/7] ARM: tegra30: cpuidle: add powered-down state for CPU0
-Date: Mon, 29 Oct 2012 18:28:21 +0800
-Message-ID: <1351506501-600-8-git-send-email-josephl@nvidia.com>
-References: <1351506501-600-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra: add spi driver for SLINK controller
+Date: Mon, 29 Oct 2012 09:17:54 -0600
+Message-ID: <508E9E22.6030201@wwwdotorg.org>
+References: <1350557233-31234-1-git-send-email-ldewangan@nvidia.com>
+	<5085A667.2000100@wwwdotorg.org> <508ADB1C.6040602@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351506501-600-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <508ADB1C.6040602-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is a power gating idle mode. It support power gating vdd_cpu rail
-after all cpu cores in "powered-down" status. For Tegra30, the CPU0 can
-enter this state only when all secondary CPU is offline. We need to take
-care and make sure whole secondary CPUs were offline and checking the
-CPU power gate status. After that, the CPU0 can go into "powered-down"
-state safely. Then shut off the CPU rail.
+On 10/26/2012 12:49 PM, Laxman Dewangan wrote:
+> Thanks Stephen for review.
+> I have taken care of almost all feedback. Some of having my below comments.
+> 
+> On Tuesday 23 October 2012 01:32 AM, Stephen Warren wrote:
+>> On 10/18/2012 04:47 AM, Laxman Dewangan wrote:
+>>> Tegra20/Tegra30 supports the spi interface through its SLINK
+>>> controller. Add spi driver for SLINK controller.
 
-Be aware of that, you may see the legacy power state "LP2" in the code
-which is exactly the same meaning of "CPU power down".
+>>> +     val_write = SLINK_RDY;
+>>> +     val_write |= (val&  SLINK_FIFO_ERROR);
+>> Why not just always set SLINK_FIFO_ERROR; does it have to be set in the
+>> write only if the status was previously asserted? If that is true, how
+>> do you avoid a race condition where the bit gets set in SLINK_STATUS
+>> after you read it but before you write to clear it?
+>
+> Status gets updated together. There is no steps of updating status.
 
-Base on the work by:
-Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sorry, I don't understand this answer.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
-* Fix the potential issue that will cause the CPU corruption when CPUs
-  doing LP2. All CPUs entering LP2 is not working. The CPU0 can enter
-  LP2 only when all secondary CPU is offline. This can be covered by
-  CPUquiet and cluster switching mechanism.
-* update the commit message
-* rename the funciton name from "tegra30_idle_enter_lp2_cpu_0" to
-  "tegra30_cpu_cluster_power_down"
-* remove the redundant "flush_cache_all" in "tegra_idle_lp2_last"
-  because the "cpu_suspend" already do that after save the CPU contexts
-V2:
-* refine the pclk usage in "set_power_timers"
----
- arch/arm/mach-tegra/cpuidle-tegra30.c |   44 +++++++++-
- arch/arm/mach-tegra/pm.c              |  144 +++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/pm.h              |    3 +
- arch/arm/mach-tegra/sleep-tegra30.S   |   44 ++++++++++
- arch/arm/mach-tegra/sleep.S           |   42 ++++++++++
- arch/arm/mach-tegra/sleep.h           |    2 +
- 6 files changed, 275 insertions(+), 4 deletions(-)
+>>> +     spin_lock_irqsave(&tspi->lock, flags);
+>>> +     if (err) {
+>>> +             dev_err(tspi->dev,
+>>> +                     "DmaXfer: ERROR bit set 0x%x\n",
+>>> tspi->status_reg);
+>>> +             dev_err(tspi->dev,
+>>> +                     "DmaXfer 0x%08x:0x%08x:0x%08x\n",
+>>> tspi->command_reg,
+>>> +                             tspi->command2_reg,
+>>> tspi->dma_control_reg);
+>>> +             tegra_periph_reset_assert(tspi->clk);
+>>> +             udelay(2);
+>>> +             tegra_periph_reset_deassert(tspi->clk);
+>> Do we /have/ to reset the SPI block; can't we just disable it in the
+>> control register, clear all status, and re-program it from scratch?
+>>
+>> If at all possible, I would like to avoid introducing any new use of
+>> tegra_periph_reset_{,de}assert, since that API has no standard subsystem
+>> equivalent (or if it does, isn't hooked into the standard subsystem
+>> yet), and hence means this driver relies on a header file currently in
+>> arch/arm/mach-tegra/include/mach, and we need to move or delete all such
+>> headers in order to support single zImage.
+> 
+> Is there a way to support the reset of controller. We will need this
+> functionality.
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index cc48d7f..5e8cbf5 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -32,6 +32,7 @@
- 
- #include "pm.h"
- #include "sleep.h"
-+#include "tegra_cpu_car.h"
- 
- #ifdef CONFIG_PM_SLEEP
- static int tegra30_idle_lp2(struct cpuidle_device *dev,
-@@ -67,6 +68,31 @@ static struct cpuidle_driver tegra_idle_driver = {
- static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
- 
- #ifdef CONFIG_PM_SLEEP
-+static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
-+					   struct cpuidle_driver *drv,
-+					   int index)
-+{
-+	struct cpuidle_state *state = &drv->states[index];
-+	u32 cpu_on_time = state->exit_latency;
-+	u32 cpu_off_time = state->target_residency - state->exit_latency;
-+
-+	/* All CPUs entering LP2 is not working.
-+	 * Don't let CPU0 enter LP2 when any secondary CPU is online.
-+	 */
-+	if (num_online_cpus() > 1 || !tegra_cpu_rail_off_ready()) {
-+		cpu_do_idle();
-+		return false;
-+	}
-+
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
-+
-+	tegra_idle_lp2_last(cpu_on_time, cpu_off_time);
-+
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
-+
-+	return true;
-+}
-+
- #ifdef CONFIG_SMP
- static bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
- 					struct cpuidle_driver *drv,
-@@ -101,16 +127,22 @@ static int __cpuinit tegra30_idle_lp2(struct cpuidle_device *dev,
- {
- 	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
- 	bool entered_lp2 = false;
-+	bool last_cpu;
- 
- 	local_fiq_disable();
- 
--	tegra_set_cpu_in_lp2(cpu);
-+	last_cpu = tegra_set_cpu_in_lp2(cpu);
- 	cpu_pm_enter();
- 
--	if (cpu == 0)
--		cpu_do_idle();
--	else
-+	if (cpu == 0) {
-+		if (last_cpu)
-+			entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv,
-+								     index);
-+		else
-+			cpu_do_idle();
-+	} else {
- 		entered_lp2 = tegra30_cpu_core_power_down(dev, drv, index);
-+	}
- 
- 	cpu_pm_exit();
- 	tegra_clear_cpu_in_lp2(cpu);
-@@ -130,6 +162,10 @@ int __init tegra30_cpuidle_init(void)
- 	struct cpuidle_device *dev;
- 	struct cpuidle_driver *drv = &tegra_idle_driver;
- 
-+#ifdef CONFIG_PM_SLEEP
-+	tegra_tear_down_cpu = tegra30_tear_down_cpu;
-+#endif
-+
- 	ret = cpuidle_register_driver(&tegra_idle_driver);
- 	if (ret) {
- 		pr_err("CPUidle driver registration failed\n");
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 39ee557..0d9e8b9 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -20,14 +20,37 @@
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/cpumask.h>
-+#include <linux/delay.h>
-+#include <linux/cpu_pm.h>
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+
-+#include <asm/smp_plat.h>
-+#include <asm/cacheflush.h>
-+#include <asm/suspend.h>
-+#include <asm/idmap.h>
-+#include <asm/proc-fns.h>
-+#include <asm/tlbflush.h>
- 
- #include <mach/iomap.h>
- 
- #include "reset.h"
-+#include "flowctrl.h"
-+#include "sleep.h"
-+#include "tegra_cpu_car.h"
-+
-+#define TEGRA_POWER_CPU_PWRREQ_OE	(1 << 16)  /* CPU pwr req enable */
-+
-+#define PMC_CTRL		0x0
-+#define PMC_CPUPWRGOOD_TIMER	0xc8
-+#define PMC_CPUPWROFF_TIMER	0xcc
- 
- #ifdef CONFIG_PM_SLEEP
- static unsigned int g_diag_reg;
- static DEFINE_SPINLOCK(tegra_lp2_lock);
-+static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
-+static struct clk *tegra_pclk;
-+void (*tegra_tear_down_cpu)(void);
- 
- void save_cpu_arch_register(void)
- {
-@@ -43,6 +66,89 @@ void restore_cpu_arch_register(void)
- 	return;
- }
- 
-+static void set_power_timers(unsigned long us_on, unsigned long us_off)
-+{
-+	unsigned long long ticks;
-+	unsigned long long pclk;
-+	unsigned long rate;
-+	static unsigned long tegra_last_pclk;
-+
-+	if (tegra_pclk == NULL) {
-+		tegra_pclk = clk_get_sys(NULL, "pclk");
-+		WARN_ON(IS_ERR(tegra_pclk));
-+	}
-+
-+	rate = clk_get_rate(tegra_pclk);
-+
-+	if (WARN_ON_ONCE(rate <= 0))
-+		pclk = 100000000;
-+	else
-+		pclk = rate;
-+
-+	if ((rate != tegra_last_pclk)) {
-+		ticks = (us_on * pclk) + 999999ull;
-+		do_div(ticks, 1000000);
-+		writel((unsigned long)ticks, pmc + PMC_CPUPWRGOOD_TIMER);
-+
-+		ticks = (us_off * pclk) + 999999ull;
-+		do_div(ticks, 1000000);
-+		writel((unsigned long)ticks, pmc + PMC_CPUPWROFF_TIMER);
-+		wmb();
-+	}
-+	tegra_last_pclk = pclk;
-+}
-+
-+/*
-+ * restore_cpu_complex
-+ *
-+ * restores cpu clock setting, clears flow controller
-+ *
-+ * Always called on CPU 0.
-+ */
-+static void restore_cpu_complex(void)
-+{
-+	int cpu = smp_processor_id();
-+
-+	BUG_ON(cpu != 0);
-+
-+#ifdef CONFIG_SMP
-+	cpu = cpu_logical_map(cpu);
-+#endif
-+
-+	/* Restore the CPU clock settings */
-+	tegra_cpu_clock_resume();
-+
-+	flowctrl_cpu_suspend_exit(cpu);
-+
-+	restore_cpu_arch_register();
-+}
-+
-+/*
-+ * suspend_cpu_complex
-+ *
-+ * saves pll state for use by restart_plls, prepares flow controller for
-+ * transition to suspend state
-+ *
-+ * Must always be called on cpu 0.
-+ */
-+static void suspend_cpu_complex(void)
-+{
-+	int cpu = smp_processor_id();
-+
-+	BUG_ON(cpu != 0);
-+
-+#ifdef CONFIG_SMP
-+	cpu = cpu_logical_map(cpu);
-+#endif
-+
-+	/* Save the CPU clock settings */
-+	tegra_cpu_clock_suspend();
-+
-+	flowctrl_cpu_suspend_enter(cpu);
-+
-+	save_cpu_arch_register();
-+}
-+
- void __cpuinit tegra_clear_cpu_in_lp2(int phy_cpu_id)
- {
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
-@@ -72,4 +178,42 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
- 	spin_unlock(&tegra_lp2_lock);
- 	return last_cpu;
- }
-+
-+static int tegra_sleep_cpu(unsigned long v2p)
-+{
-+	/* Switch to the identity mapping. */
-+	cpu_switch_mm(idmap_pgd, &init_mm);
-+
-+	/* Flush the TLB. */
-+	local_flush_tlb_all();
-+
-+	tegra_sleep_cpu_finish(v2p);
-+
-+	/* should never here */
-+	BUG();
-+
-+	return 0;
-+}
-+
-+void tegra_idle_lp2_last(u32 cpu_on_time, u32 cpu_off_time)
-+{
-+	u32 mode;
-+
-+	/* Only the last cpu down does the final suspend steps */
-+	mode = readl(pmc + PMC_CTRL);
-+	mode |= TEGRA_POWER_CPU_PWRREQ_OE;
-+	writel(mode, pmc + PMC_CTRL);
-+
-+	set_power_timers(cpu_on_time, cpu_off_time);
-+
-+	cpu_cluster_pm_enter();
-+	suspend_cpu_complex();
-+	outer_disable();
-+
-+	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-+
-+	outer_resume();
-+	restore_cpu_complex();
-+	cpu_cluster_pm_exit();
-+}
- #endif
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index bcfc45f..512345c 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -27,4 +27,7 @@ void restore_cpu_arch_register(void);
- void tegra_clear_cpu_in_lp2(int phy_cpu_id);
- bool tegra_set_cpu_in_lp2(int phy_cpu_id);
- 
-+void tegra_idle_lp2_last(u32 cpu_on_time, u32 cpu_off_time);
-+extern void (*tegra_tear_down_cpu)(void);
-+
- #endif /* _MACH_TEGRA_PM_H_ */
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 59984d7..562a8e7 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -124,4 +124,48 @@ ENTRY(tegra30_sleep_cpu_secondary_finish)
- 	mov	r0, #1                          @ never return here
- 	mov	pc, r7
- ENDPROC(tegra30_sleep_cpu_secondary_finish)
-+
-+/*
-+ * tegra30_tear_down_cpu
-+ *
-+ * Switches the CPU to enter sleep.
-+ */
-+ENTRY(tegra30_tear_down_cpu)
-+	mov32	r6, TEGRA_FLOW_CTRL_BASE
-+
-+	b	tegra30_enter_sleep
-+ENDPROC(tegra30_tear_down_cpu)
-+
-+/*
-+ * tegra30_enter_sleep
-+ *
-+ * uses flow controller to enter sleep state
-+ * executes from IRAM with SDRAM in selfrefresh when target state is LP0 or LP1
-+ * executes from SDRAM with target state is LP2
-+ * r6 = TEGRA_FLOW_CTRL_BASE
-+ */
-+tegra30_enter_sleep:
-+	cpu_id	r1
-+
-+	cpu_to_csr_reg	r2, r1
-+	ldr	r0, [r6, r2]
-+	orr	r0, r0, #FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
-+	orr	r0, r0, #FLOW_CTRL_CSR_ENABLE
-+	str	r0, [r6, r2]
-+
-+	mov	r0, #FLOW_CTRL_WAIT_FOR_INTERRUPT
-+	orr	r0, r0, #FLOW_CTRL_HALT_CPU_IRQ | FLOW_CTRL_HALT_CPU_FIQ
-+	cpu_to_halt_reg r2, r1
-+	str	r0, [r6, r2]
-+	dsb
-+	ldr	r0, [r6, r2] /* memory barrier */
-+
-+halted:
-+	isb
-+	dsb
-+	wfi	/* CPU should be power gated here */
-+
-+	/* !!!FIXME!!! Implement halt failure handler */
-+	b	halted
-+
- #endif
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index cba7a52..b7541e2 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -25,6 +25,7 @@
- #include <linux/linkage.h>
- 
- #include <asm/assembler.h>
-+#include <asm/cache.h>
- #include <asm/cp15.h>
- 
- #include <mach/iomap.h>
-@@ -59,4 +60,45 @@ ENTRY(tegra_disable_clean_inv_dcache)
- 	ldmfd	sp!, {r0, r4-r5, r7, r9-r11, pc}
- ENDPROC(tegra_disable_clean_inv_dcache)
- 
-+/*
-+ * tegra_sleep_cpu_finish(unsigned long v2p)
-+ *
-+ * enters suspend in LP2 by turning off the mmu and jumping to
-+ * tegra?_tear_down_cpu
-+ */
-+ENTRY(tegra_sleep_cpu_finish)
-+	/* Flush and disable the L1 data cache */
-+	bl	tegra_disable_clean_inv_dcache
-+
-+	mov32	r6, tegra_tear_down_cpu
-+	ldr	r1, [r6]
-+	add	r1, r1, r0
-+
-+	mov32	r3, tegra_shut_off_mmu
-+	add	r3, r3, r0
-+	mov	r0, r1
-+
-+	mov	pc, r3
-+ENDPROC(tegra_sleep_cpu_finish)
-+
-+/*
-+ * tegra_shut_off_mmu
-+ *
-+ * r0 = physical address to jump to with mmu off
-+ *
-+ * called with VA=PA mapping
-+ * turns off MMU, icache, dcache and branch prediction
-+ */
-+	.align	L1_CACHE_SHIFT
-+	.pushsection	.idmap.text, "ax"
-+ENTRY(tegra_shut_off_mmu)
-+	mrc	p15, 0, r3, c1, c0, 0
-+	movw	r2, #CR_I | CR_Z | CR_C | CR_M
-+	bic	r3, r3, r2
-+	dsb
-+	mcr	p15, 0, r3, c1, c0, 0
-+	isb
-+	mov	pc, r0
-+ENDPROC(tegra_shut_off_mmu)
-+	.popsection
- #endif
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 220fbd1..001920f 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -73,6 +73,7 @@
- .endm
- #else
- void tegra_resume(void);
-+int tegra_sleep_cpu_finish(unsigned long);
- 
- #ifdef CONFIG_HOTPLUG_CPU
- void tegra20_hotplug_init(void);
-@@ -83,6 +84,7 @@ static inline void tegra30_hotplug_init(void) {}
- #endif
- 
- int tegra30_sleep_cpu_secondary_finish(unsigned long);
-+void tegra30_tear_down_cpu(void);
- 
- #endif
- #endif
--- 
-1.7.0.4
+Why do we need to reset the controller at all; can't we simply program
+all the (few) configuration registers? Are there HW bugs that hang the
+controller and require a reset or something?
+
+------------------------------------------------------------------------------
+The Windows 8 Center - In partnership with Sourceforge
+Your idea - your app - 30 days.
+Get started!
+http://windows8center.sourceforge.net/
+what-html-developers-need-to-know-about-coding-windows-8-metro-style-apps/
