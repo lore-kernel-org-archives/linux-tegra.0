@@ -1,51 +1,19 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 3/4] ARM: tegra: dts: cardhu: enable SLINK4
-Date: Mon, 29 Oct 2012 22:49:39 +0530
-Message-ID: <1351531180-1652-4-git-send-email-ldewangan@nvidia.com>
-References: <1351531180-1652-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] ARM: tegra: dt: add L2 cache controller
+Date: Mon, 29 Oct 2012 11:23:59 -0600
+Message-ID: <508EBBAF.6060101@wwwdotorg.org>
+References: <1351506345-32524-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1351531180-1652-1-git-send-email-ldewangan@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
-Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351506345-32524-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable SLINK4 in Tegra30 based platform Cardhu.
-Setting maximum spi frequency to 25MHz.
+On 10/29/2012 04:25 AM, Joseph Lo wrote:
+> Add L2 cache controller binding into DT for Tegra.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-Changes from V1:
-rename the max freq prop to spi-max-frequency
- arch/arm/boot/dts/tegra30-cardhu.dtsi |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index b245e6c..1bd73ea 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -275,6 +275,11 @@
- 		};
- 	};
- 
-+	slink@7000da00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+	};
-+
- 	ahub {
- 		i2s@70080400 {
- 			status = "okay";
--- 
-1.7.1.1
+The series applied to Tegra's tree for 3.8. Thanks.
