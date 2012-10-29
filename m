@@ -1,79 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: add spi driver for SLINK controller
-Date: Mon, 29 Oct 2012 09:17:54 -0600
-Message-ID: <508E9E22.6030201@wwwdotorg.org>
-References: <1350557233-31234-1-git-send-email-ldewangan@nvidia.com>
-	<5085A667.2000100@wwwdotorg.org> <508ADB1C.6040602@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/2] dma: tegra20-apbdma: channel freeing correction
+Date: Mon, 29 Oct 2012 09:27:09 -0600
+Message-ID: <508EA04D.5050805@wwwdotorg.org>
+References: <1351433873-14082-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <508ADB1C.6040602-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1351433873-14082-1-git-send-email-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: vinod.koul@intel.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/26/2012 12:49 PM, Laxman Dewangan wrote:
-> Thanks Stephen for review.
-> I have taken care of almost all feedback. Some of having my below comments.
+On 10/28/2012 08:17 AM, Dmitry Osipenko wrote:
+> Fixed channel "lock" after free.
 > 
-> On Tuesday 23 October 2012 01:32 AM, Stephen Warren wrote:
->> On 10/18/2012 04:47 AM, Laxman Dewangan wrote:
->>> Tegra20/Tegra30 supports the spi interface through its SLINK
->>> controller. Add spi driver for SLINK controller.
-
->>> +     val_write = SLINK_RDY;
->>> +     val_write |= (val&  SLINK_FIFO_ERROR);
->> Why not just always set SLINK_FIFO_ERROR; does it have to be set in the
->> write only if the status was previously asserted? If that is true, how
->> do you avoid a race condition where the bit gets set in SLINK_STATUS
->> after you read it but before you write to clear it?
->
-> Status gets updated together. There is no steps of updating status.
-
-Sorry, I don't understand this answer.
-
->>> +     spin_lock_irqsave(&tspi->lock, flags);
->>> +     if (err) {
->>> +             dev_err(tspi->dev,
->>> +                     "DmaXfer: ERROR bit set 0x%x\n",
->>> tspi->status_reg);
->>> +             dev_err(tspi->dev,
->>> +                     "DmaXfer 0x%08x:0x%08x:0x%08x\n",
->>> tspi->command_reg,
->>> +                             tspi->command2_reg,
->>> tspi->dma_control_reg);
->>> +             tegra_periph_reset_assert(tspi->clk);
->>> +             udelay(2);
->>> +             tegra_periph_reset_deassert(tspi->clk);
->> Do we /have/ to reset the SPI block; can't we just disable it in the
->> control register, clear all status, and re-program it from scratch?
->>
->> If at all possible, I would like to avoid introducing any new use of
->> tegra_periph_reset_{,de}assert, since that API has no standard subsystem
->> equivalent (or if it does, isn't hooked into the standard subsystem
->> yet), and hence means this driver relies on a header file currently in
->> arch/arm/mach-tegra/include/mach, and we need to move or delete all such
->> headers in order to support single zImage.
+> Example: Channel 1 was allocated and prepared as slave_sg, used and freed. Now preparation of cyclic dma on channel 1 will fail with err "DMA
+> configuration conflict" because tdc->isr_handler still selected to handle_once_dma_done.
 > 
-> Is there a way to support the reset of controller. We will need this
-> functionality.
+> This happens because tegra_dma_abort_all() won't be called on channel freeing if pending list is empty.
 
-Why do we need to reset the controller at all; can't we simply program
-all the (few) configuration registers? Are there HW bugs that hang the
-controller and require a reset or something?
+That commit description isn't correctly wrapped.
 
-------------------------------------------------------------------------------
-The Windows 8 Center - In partnership with Sourceforge
-Your idea - your app - 30 days.
-Get started!
-http://windows8center.sourceforge.net/
-what-html-developers-need-to-know-about-coding-windows-8-metro-style-apps/
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+
+> @@ -1147,6 +1147,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+>  
+>  	if (tdc->busy)
+>  		tegra_dma_terminate_all(dc);
+> +	tdc->isr_handler = NULL;
+
+Should we remove that assignment from tegra_dma_abort_all(); perhaps it
+is redundant now?
+
+Actually, I wonder if the correct fix isn't to:
+
+a) Always call tegra_dma_terminate_all() from
+tegra_dma_free_chan_resources() irrespective of busy state.
+
+b) Make tegra_dma_terminate_all() always call tegra_dma_abort_all()
+irrespective of whether list_empty(&tdc->pending_sg_req).
+
+But then I wonder: should tdc->isr_handler get left set to non-NULL in
+the scenario mentioned in your commit description at all; should it be
+cleared as soon as the channel is idle in all cases, so that it doesn't
+need to be cleared when freeing the channel?
+
+I CC'd Laxman, the driver author, to comment here.
