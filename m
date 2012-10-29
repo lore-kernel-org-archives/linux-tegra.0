@@ -1,50 +1,32 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/2] dma: tegra20-apbdma: channel freeing correction
-Date: Mon, 29 Oct 2012 09:27:09 -0600
-Message-ID: <508EA04D.5050805@wwwdotorg.org>
-References: <1351433873-14082-1-git-send-email-digetx@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: dt: add L2 cache controller
+Date: Mon, 29 Oct 2012 09:28:36 -0600
+Message-ID: <508EA0A4.6000105@wwwdotorg.org>
+References: <1351247649-15859-1-git-send-email-josephl@nvidia.com>  <508AC294.7080506@wwwdotorg.org> <1351477701.2779.70.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351433873-14082-1-git-send-email-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: vinod.koul@intel.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351477701.2779.70.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/28/2012 08:17 AM, Dmitry Osipenko wrote:
-> Fixed channel "lock" after free.
+On 10/28/2012 08:28 PM, Joseph Lo wrote:
+> On Sat, 2012-10-27 at 01:04 +0800, Stephen Warren wrote:
+>> On 10/26/2012 04:34 AM, Joseph Lo wrote:
+>>> Add L2 cache controller binding into DT for Tegra.
+...
+>> Finally, is this series going to be a dependency for any of the cpuidle
+>> or other work you're submitting? I assume it's completely independent
+>> and hence I can throw it in any old branch in any order I feel like?
 > 
-> Example: Channel 1 was allocated and prepared as slave_sg, used and freed. Now preparation of cyclic dma on channel 1 will fail with err "DMA
-> configuration conflict" because tdc->isr_handler still selected to handle_once_dma_done.
-> 
-> This happens because tegra_dma_abort_all() won't be called on channel freeing if pending list is empty.
+> No. We need this before the "powered-down" cpuidle support. Because the
+> L2 init function didn't help to hook the resume API to "outer_cache_fns"
+> interface currently. If we don't apply this before the "powered-down"
+> cpuidle, we will lost L2 support after one successful powered-down
+> cpuidle sequence.
 
-That commit description isn't correctly wrapped.
-
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-
-> @@ -1147,6 +1147,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  
->  	if (tdc->busy)
->  		tegra_dma_terminate_all(dc);
-> +	tdc->isr_handler = NULL;
-
-Should we remove that assignment from tegra_dma_abort_all(); perhaps it
-is redundant now?
-
-Actually, I wonder if the correct fix isn't to:
-
-a) Always call tegra_dma_terminate_all() from
-tegra_dma_free_chan_resources() irrespective of busy state.
-
-b) Make tegra_dma_terminate_all() always call tegra_dma_abort_all()
-irrespective of whether list_empty(&tdc->pending_sg_req).
-
-But then I wonder: should tdc->isr_handler get left set to non-NULL in
-the scenario mentioned in your commit description at all; should it be
-cleared as soon as the channel is idle in all cases, so that it doesn't
-need to be cleared when freeing the channel?
-
-I CC'd Laxman, the driver author, to comment here.
+OK, please do mention dependencies like this when posting the patches.
+Thanks.
