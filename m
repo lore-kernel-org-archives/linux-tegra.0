@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/2] ARM: tegra: common: using OF api for L2 cache init
-Date: Mon, 29 Oct 2012 18:25:57 +0800
-Message-ID: <1351506357-32591-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V3 0/7] ARM: tegra30: cpuidle: add a powered-down state
+Date: Mon, 29 Oct 2012 18:28:14 +0800
+Message-ID: <1351506501-600-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -10,60 +10,72 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Moving L2 cache init to DT support.
+This adds a "powered-down" state for cpuidle. It's a power gating idle
+mode. It supports the secondary CPUs (i.e., CPU1-CPU3) to go into
+powered-down state independently. When any of the secondary CPUs go into
+this state, it can be power gated alone. There is a limitation on CPU0.
+The CPU0 can go into powered-down state only when all secondary CPU is
+offline. After CPU0 is in powered-down state, the CPU rail can be turned
+off.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+All CPUs entering powered-down state is not working. The CPU0 enters this
+state only when secondary CPU is offline. This can be coverd by CPUquiet
+and cluster switching mechanism.
+
+We also remove the ambiguous name of LP2 in the cpuidle state.
+
+Verified on Seaboard(Tegra20) and Cardhu(Tegra30).
+
+This patch set should depend on these patches:
+ARM: tegra: rename the file of "sleep-tXX" to "sleep-tegraXX"
+ARM: tegra30: clocks: add AHB and APB clocks
+ARM: tegra: dt: add L2 cache controller
+ARM: tegra: common: using OF api for L2 cache init
+
+Major changes:
+V3:
+* fix a potential issue that will cause CPU be corrupted
+* rename the LP2 state to powered-down state
 V2:
-* no changes
----
- arch/arm/mach-tegra/common.c |   11 ++++-------
- 1 files changed, 4 insertions(+), 7 deletions(-)
+* refine L1 cache maintenance function
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 177f164..d2d6dbb 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -113,20 +113,17 @@ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
- #endif
- 
- 
--static void __init tegra_init_cache(u32 tag_latency, u32 data_latency)
-+static void __init tegra_init_cache(void)
- {
- #ifdef CONFIG_CACHE_L2X0
- 	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
- 	u32 aux_ctrl, cache_type;
- 
--	writel_relaxed(tag_latency, p + L2X0_TAG_LATENCY_CTRL);
--	writel_relaxed(data_latency, p + L2X0_DATA_LATENCY_CTRL);
--
- 	cache_type = readl(p + L2X0_CACHE_TYPE);
- 	aux_ctrl = (cache_type & 0x700) << (17-8);
- 	aux_ctrl |= 0x6C000001;
- 
--	l2x0_init(p, aux_ctrl, 0x8200c3fe);
-+	l2x0_of_init(aux_ctrl, 0x8200c3fe);
- #endif
- 
- }
-@@ -138,7 +135,7 @@ void __init tegra20_init_early(void)
- 	tegra_init_fuse();
- 	tegra2_init_clocks();
- 	tegra_clk_init_from_table(tegra20_clk_init_table);
--	tegra_init_cache(0x331, 0x441);
-+	tegra_init_cache();
- 	tegra_pmc_init();
- 	tegra_powergate_init();
- 	tegra20_hotplug_init();
-@@ -151,7 +148,7 @@ void __init tegra30_init_early(void)
- 	tegra_init_fuse();
- 	tegra30_init_clocks();
- 	tegra_clk_init_from_table(tegra30_clk_init_table);
--	tegra_init_cache(0x441, 0x551);
-+	tegra_init_cache();
- 	tegra_pmc_init();
- 	tegra_powergate_init();
- 	tegra30_hotplug_init();
--- 
-1.7.0.4
+Previous work can be found at:
+V2:
+http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg06478.html
+V1:
+http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg06319.html
+
+Joseph Lo (7):
+  ARM: tegra: cpuidle: separate cpuidle driver for different chips
+  ARM: tegra: cpuidle: add CPU resume function
+  ARM: tegra30: cpuidle: add powered-down state for secondary CPUs
+  ARM: tegra30: common: enable csite clock
+  ARM: tegra30: clocks: add CPU low-power function into
+    tegra_cpu_car_ops
+  ARM: tegra30: flowctrl: add cpu_suspend_exter/exit function
+  ARM: tegra30: cpuidle: add powered-down state for CPU0
+
+ arch/arm/mach-tegra/Makefile                       |    7 +
+ arch/arm/mach-tegra/common.c                       |    1 +
+ .../mach-tegra/{cpuidle.c => cpuidle-tegra20.c}    |    7 +-
+ arch/arm/mach-tegra/cpuidle-tegra30.c              |  188 +++++++++++++++++
+ arch/arm/mach-tegra/cpuidle.c                      |   47 ++---
+ arch/arm/mach-tegra/cpuidle.h                      |   32 +++
+ arch/arm/mach-tegra/flowctrl.c                     |   47 +++++
+ arch/arm/mach-tegra/flowctrl.h                     |    8 +
+ arch/arm/mach-tegra/headsmp.S                      |   58 +++++
+ arch/arm/mach-tegra/pm.c                           |  219 ++++++++++++++++++++
+ arch/arm/mach-tegra/pm.h                           |   33 +++
+ arch/arm/mach-tegra/reset.c                        |    6 +
+ arch/arm/mach-tegra/reset.h                        |    9 +
+ arch/arm/mach-tegra/sleep-tegra30.S                |   66 ++++++
+ arch/arm/mach-tegra/sleep.S                        |   71 +++++++
+ arch/arm/mach-tegra/sleep.h                        |    5 +
+ arch/arm/mach-tegra/tegra30_clocks.c               |  107 ++++++++++
+ arch/arm/mach-tegra/tegra_cpu_car.h                |   37 ++++
+ 18 files changed, 909 insertions(+), 39 deletions(-)
+ copy arch/arm/mach-tegra/{cpuidle.c => cpuidle-tegra20.c} (91%)
+ create mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
+ create mode 100644 arch/arm/mach-tegra/cpuidle.h
+ create mode 100644 arch/arm/mach-tegra/pm.c
+ create mode 100644 arch/arm/mach-tegra/pm.h
