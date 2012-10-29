@@ -1,19 +1,96 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] ARM: tegra: dt: add L2 cache controller
-Date: Mon, 29 Oct 2012 11:23:59 -0600
-Message-ID: <508EBBAF.6060101@wwwdotorg.org>
-References: <1351506345-32524-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add speedo-based process identification
+Date: Mon, 29 Oct 2012 11:40:23 -0600
+Message-ID: <508EBF87.5080707@wwwdotorg.org>
+References: <1351495315-3282-1-git-send-email-dahuang@nvidia.com> <1351495315-3282-2-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351506345-32524-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1351495315-3282-2-git-send-email-dahuang@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Danny Huang <dahuang@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/2012 04:25 AM, Joseph Lo wrote:
-> Add L2 cache controller binding into DT for Tegra.
+On 10/29/2012 01:21 AM, Danny Huang wrote:
+> Detect CPU and core process ID by checking speedo corner tables.
+> This can provide a more accurate process ID.
 
-The series applied to Tegra's tree for 3.8. Thanks.
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+
+> @@ -114,6 +109,8 @@ void tegra_init_fuse(void)
+>  
+>  	tegra_revision = tegra_get_revision(id);
+>  
+> +	tegra20_init_speedo_data();
+
+This code executes on both Tegra20 and Tegra30. Calling a
+Tegra20-specific function unconditionally isn't correct. This is
+important because if someone does "git bisect" across this patch, patch
+1 might be applied, but patch 2 not.
+
+I think you need to add the switch statement from patch 2 here rather
+than later in patch 2. Also, I think you need to keep the following
+chunk of code in the Tegra30 case, and only remove it completely in patch 2
+
+-	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
+-	tegra_cpu_process_id = (reg >> 6) & 3;
+-
+-	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
+-	tegra_core_process_id = (reg >> 12) & 3;
+
+> diff --git a/arch/arm/mach-tegra/tegra20_speedo.c b/arch/arm/mach-tegra/tegra20_speedo.c
+
+> +static const u32 cpu_process_speedos[][PROCESS_CORNERS_NUM] = {
+> +	{315, 366, 420, UINT_MAX},
+> +	{303, 368, 419, UINT_MAX},
+> +	{316, 331, 383, UINT_MAX},
+> +};
+> +
+> +static const u32 core_process_speedos[][PROCESS_CORNERS_NUM] = {
+> +	{165, 195, 224, UINT_MAX},
+> +	{165, 195, 224, UINT_MAX},
+> +	{165, 195, 224, UINT_MAX},
+> +};
+> +
+> +void tegra20_init_speedo_data(void)
+> +{
+> +	u32 reg;
+> +	u32 val;
+> +	int i;
+> +
+> +	if (SPEEDO_ID_SELECT_0(tegra_revision))
+> +		tegra_soc_speedo_id = 0;
+> +	else if (SPEEDO_ID_SELECT_1(tegra_sku_id))
+> +		tegra_soc_speedo_id = 1;
+> +	else
+> +		tegra_soc_speedo_id = 2;
+> +
+> +	WARN_ON(tegra_soc_speedo_id >= ARRAY_SIZE(cpu_process_speedos));
+> +	WARN_ON(tegra_soc_speedo_id >= ARRAY_SIZE(core_process_speedos));
+
+Can this be a BUILD_BUG_ON() instead;
+
+#define SPEEDO_ID_0 0
+#define SPEEDO_ID_1 1
+#define SPEEDO_ID_2 2
+#define SPEEDO_ID_COUNT (SPEEDO_ID_2 + 1)
+BUILD_BUG_ON(ARRAY_SIZE(cpu_process_speedos) == SPEEDO_ID_COUNT)
+BUILD_BUG_ON(ARRAY_SIZE(core_process_speedos) == SPEEDO_ID_COUNT)
+
+and use those #defines in the assignments to tegra_soc_speedod_id above,
+rather than literals?
+
+Or even just the following without the BUILD_BUG_ONs:
+
+> static const u32 core_process_speedos[SPEEDO_ID_COUNT][PROCESS_CORNERS_NUM] = {
+
+> +	val = 0;
+> +	for (i = CPU_SPEEDO_MSBIT; i >= CPU_SPEEDO_LSBIT; i--) {
+> +		reg = tegra_spare_fuse(i) |
+> +			tegra_spare_fuse(i + CPU_SPEEDO_REDUND_OFFS);
+> +		val = (val << 1) | (reg & 0x1);
+
+Out of curiosity, why did the prototype of tegra_spare_fuse() change
+from returning a bool to an int, if only bit 0 is going to be used?
