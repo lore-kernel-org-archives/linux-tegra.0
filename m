@@ -1,97 +1,136 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] spi: tegra: add spi driver for SLINK controller
-Date: Mon, 29 Oct 2012 13:14:45 -0600
-Message-ID: <508ED5A5.3000703@wwwdotorg.org>
-References: <1351531104-1604-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351531104-1604-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH V2] dma: tegra: avoid channel lock up after free
+Date: Tue, 30 Oct 2012 03:20:33 +0400
+Message-ID: <1351552833-4132-1-git-send-email-digetx@gmail.com>
+References: <508EA04D.5050805@wwwdotorg.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <508EA04D.5050805@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: digetx@gmail.com, vinod.koul@intel.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/2012 11:18 AM, Laxman Dewangan wrote:
-> Tegra20/Tegra30 supports the spi interface through its SLINK
-> controller. Add spi driver for SLINK controller.
+Fixed channel "lock up" after free.
 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+Lock scenario: Channel 1 was allocated and prepared as slave_sg, used and freed.
+Now preparation of cyclic dma on channel 1 will fail with err "DMA configuration
+conflict" because tdc->isr_handler still selected to handle_once_dma_done.
 
-> +config SPI_TEGRA20_SLINK
-> +	tristate "Nvidia Tegra20/Tegra30 SLINK Controller"
-> +	depends on ARCH_TEGRA && TEGRA20_APB_DMA
+This happens because tegra_dma_abort_all() won't be called on channel freeing
+if pending list is empty or channel not busy. We need to clear isr_handler
+on channel freeing to avoid locking. Also I added small optimization to prepare
+functions, so current channel type checked before making allocations.
 
-I think it depends on DMAENGINE, not the specific driver now, doesn't it?
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/dma/tegra20-apb-dma.c | 60 ++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 35 deletions(-)
 
-> +static unsigned tegra_slink_fill_tx_fifo_from_client_txbuf(
-> +	struct tegra_slink_data *tspi, struct spi_transfer *t)
-
-> +	if (tspi->is_packed) {
-> +		fifo_words_left = tx_empty_count * tspi->words_per_32bit;
-> +		written_words = min(fifo_words_left, tspi->curr_dma_words);
-> +		nbytes = written_words * tspi->bytes_per_word;
-> +		max_n_32bit = DIV_ROUND_UP(nbytes, 4);
-> +		for (count = 0; count < max_n_32bit; count++) {
-> +			x = 0;
-> +			for (i = 0; (i < 4) && nbytes; i++, nbytes--)
-> +				x |= (*tx_buf++) << (i*8);
-> +			tegra_slink_writel(tspi, x, SLINK_TX_FIFO);
-> +		}
-> +	} else {
-> +		max_n_32bit = min(tspi->curr_dma_words,  tx_empty_count);
-> +		written_words = max_n_32bit;
-> +		nbytes = written_words * tspi->bytes_per_word;
-> +		for (count = 0; count < max_n_32bit; count++) {
-> +			x = 0;
-> +			for (i = 0; nbytes && (i < tspi->bytes_per_word);
-> +							i++, nbytes--)
-> +				x |= ((*tx_buf++) << i*8);
-> +			tegra_slink_writel(tspi, x, SLINK_TX_FIFO);
-> +		}
-> +	}
-
-The if and the else there are basically identical now. Can't the else
-branch simply be replaced by the if branch? At most I think the
-difference comes down to max_n_32bit v.s. fifo_words_left calculations
-being slight different; everything else is the same.
-
-I suppose this isn't a big deal though; we could clean it up later if
-necessary.
-
-> +static int tegra_slink_start_cpu_based_transfer(
-> +		struct tegra_slink_data *tspi, struct spi_transfer *t)
-
-> +	tspi->is_curr_dma_xfer = false;
-> +	if (tspi->is_packed) {
-> +		val |= SLINK_PACKED;
-> +		tegra_slink_writel(tspi, val, SLINK_DMA_CTL);
-> +		udelay(1);
-> +		wmb();
-
-Why the udelay() and wmb()?
-
-> +static int tegra_slink_runtime_suspend(struct device *dev)
-> +{
-> +	struct spi_master *master = dev_get_drvdata(dev);
-> +	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
-> +
-> +	tegra_slink_clk_unprepare(tspi);
-> +	return 0;
-> +}
-> +
-> +static int tegra_slink_runtime_resume(struct device *dev)
-> +{
-> +	struct spi_master *master = dev_get_drvdata(dev);
-> +	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
-> +
-> +	return tegra_slink_clk_prepare(tspi);
-> +}
-
-Why not move the body of tegra_slink_clk_{un,prepare} inside those
-functions, since they're only called from those functions?
-
-> +MODULE_ALIAS("platform:tegra_slink-slink");
-
-I think that's a typo.
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 4d816be..5a557af 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -681,11 +681,6 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
+ 	bool was_busy;
+ 
+ 	spin_lock_irqsave(&tdc->lock, flags);
+-	if (list_empty(&tdc->pending_sg_req)) {
+-		spin_unlock_irqrestore(&tdc->lock, flags);
+-		return;
+-	}
+-
+ 	if (!tdc->busy)
+ 		goto skip_dma_stop;
+ 
+@@ -896,6 +891,15 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		return NULL;
+ 	}
+ 
++	/*
++	 * Make sure that mode should not be conflicting with currently
++	 * configured mode.
++	 */
++	if (tdc->isr_handler && tdc->isr_handler != handle_once_dma_done) {
++		dev_err(tdc2dev(tdc), "DMA configured in cyclic mode\n");
++		return NULL;
++	}
++
+ 	ret = get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+ 				&burst_size, &slave_bw);
+ 	if (ret < 0)
+@@ -968,20 +972,9 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 	if (flags & DMA_CTRL_ACK)
+ 		dma_desc->txd.flags = DMA_CTRL_ACK;
+ 
+-	/*
+-	 * Make sure that mode should not be conflicting with currently
+-	 * configured mode.
+-	 */
+-	if (!tdc->isr_handler) {
+-		tdc->isr_handler = handle_once_dma_done;
+-		tdc->cyclic = false;
+-	} else {
+-		if (tdc->cyclic) {
+-			dev_err(tdc2dev(tdc), "DMA configured in cyclic mode\n");
+-			tegra_dma_desc_put(tdc, dma_desc);
+-			return NULL;
+-		}
+-	}
++
++	tdc->isr_handler = handle_once_dma_done;
++	tdc->cyclic = false;
+ 
+ 	return &dma_desc->txd;
+ }
+@@ -1024,6 +1017,16 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 	}
+ 
+ 	/*
++	 * Make sure that mode should not be conflicting with currently
++	 * configured mode.
++	 */
++	if (tdc->isr_handler &&
++			tdc->isr_handler != handle_cont_sngl_cycle_dma_done) {
++		dev_err(tdc2dev(tdc), "DMA configuration conflict\n");
++		return NULL;
++	}
++
++	/*
+ 	 * We only support cycle transfer when buf_len is multiple of
+ 	 * period_len.
+ 	 */
+@@ -1097,20 +1100,8 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 	sg_req->last_sg = true;
+ 	dma_desc->txd.flags = 0;
+ 
+-	/*
+-	 * Make sure that mode should not be conflicting with currently
+-	 * configured mode.
+-	 */
+-	if (!tdc->isr_handler) {
+-		tdc->isr_handler = handle_cont_sngl_cycle_dma_done;
+-		tdc->cyclic = true;
+-	} else {
+-		if (!tdc->cyclic) {
+-			dev_err(tdc2dev(tdc), "DMA configuration conflict\n");
+-			tegra_dma_desc_put(tdc, dma_desc);
+-			return NULL;
+-		}
+-	}
++	tdc->isr_handler = handle_cont_sngl_cycle_dma_done;
++	tdc->cyclic = true;
+ 
+ 	return &dma_desc->txd;
+ }
+@@ -1145,8 +1136,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+ 
+ 	dev_dbg(tdc2dev(tdc), "Freeing channel %d\n", tdc->id);
+ 
+-	if (tdc->busy)
+-		tegra_dma_terminate_all(dc);
++	tegra_dma_terminate_all(dc);
+ 
+ 	spin_lock_irqsave(&tdc->lock, flags);
+ 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
+-- 
+1.7.12
