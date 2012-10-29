@@ -1,50 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 2/4] ARM: tegra: Add OF_DEV_AUXDATA for SLINK driver
- in board dt
-Date: Mon, 29 Oct 2012 12:23:10 -0600
-Message-ID: <508EC98E.902@wwwdotorg.org>
-References: <1351531180-1652-1-git-send-email-ldewangan@nvidia.com> <1351531180-1652-3-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] spi: tegra: add spi driver for SLINK controller
+Date: Mon, 29 Oct 2012 12:55:29 -0600
+Message-ID: <508ED121.1050702@wwwdotorg.org>
+References: <1350557233-31234-1-git-send-email-ldewangan@nvidia.com> <5085A667.2000100@wwwdotorg.org> <508ADB1C.6040602@nvidia.com> <508E9E22.6030201@wwwdotorg.org> <508EAC61.4020400@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351531180-1652-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <508EAC61.4020400@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/2012 11:19 AM, Laxman Dewangan wrote:
-> Add OF_DEV_AUXDATA for slink driver for Tegra20 and Tegra30
-> board dt files.
-> Set the parent clock of slink controller to PLLP and configure
-> clock to 100MHz.
+On 10/29/2012 10:18 AM, Laxman Dewangan wrote:
+> On Monday 29 October 2012 08:47 PM, Stephen Warren wrote:
+>> On 10/26/2012 12:49 PM, Laxman Dewangan wrote:
+>>>>
+>>>> Why not just always set SLINK_FIFO_ERROR; does it have to be set in the
+>>>> write only if the status was previously asserted? If that is true, how
+>>>> do you avoid a race condition where the bit gets set in SLINK_STATUS
+>>>> after you read it but before you write to clear it?
+>>> Status gets updated together. There is no steps of updating status.
+>> Sorry, I don't understand this answer.
+> 
+> The status should be updated once by HW and so there is no race condition.
+> HW behavior is that if the tx or Rx error occurs, it updates the status,
+> generates interrupt and still continue transfer and later on, it
+> generates the ready.
+> In first isr, we read status, error status found and so in isr thread,
+> we reset controller to stop the transfer.
+> 
+> So in good state, only ready bit will be set and hence writing 1 to
+> clear it.
+> In error state, clearing error first in ISR and in isr thread resetting
+> the controller to stop the controller engine.
 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+OK, I see why there's no race. It still seems simply to me if
+tegra_slink_clear_status() just always writes all the status bits, but I
+suppose it isn't a correctness issue.
 
-> @@ -90,6 +90,10 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
->  		       &tegra_ehci3_pdata),
->  	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
->  	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK1_BASE, "spi_tegra.0", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK2_BASE, "spi_tegra.1", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK3_BASE, "spi_tegra.2", NULL),
-> +	OF_DEV_AUXDATA("nvidia,tegra20-slink", TEGRA_SLINK4_BASE, "spi_tegra.3", NULL),
+>>> Is there a way to support the reset of controller. We will need this
+>>> functionality.
+>>
+>> Why do we need to reset the controller at all; can't we simply program
+>> all the (few) configuration registers? Are there HW bugs that hang the
+>> controller and require a reset or something?
+> 
+> HW generates error,  then interrupt and still continue transfer and
+> later point of time it generates the transfer done.
+> We want to stop the transfer once error get detected. For this we need
+> to reset controller.
+> I did disabling rx and tx but still controller shows as busy.
 
-I would rather hard-code the addresses there (e.g. write literally
-0x7000d400), and hence not have to edit iomap.h;
-
-> diff --git a/arch/arm/mach-tegra/include/mach/iomap.h b/arch/arm/mach-tegra/include/mach/iomap.h
-
-> -#define TEGRA_SPI1_BASE			0x7000D400
-> -#define TEGRA_SPI1_SIZE			SZ_512
-> +#define TEGRA_SLINK1_BASE		0x7000D400
-> +#define TEGRA_SLINK1_SIZE		SZ_512
-
-As I wrote for V1:
-
-Lets not add [or change] anything to iomap.h; we're trying to remove it.
-Instead, just put the raw address in the AUXDATA; I assume that's the
-only place these defines end up being used...
-
-Aside from that, this series looks fine.
+Oh dear. Well, I guess it'll have to be OK then; we'll just have to find
+a way of decoupling this API from the mach-tegra directory later:-(
