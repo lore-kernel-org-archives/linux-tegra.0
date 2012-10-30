@@ -1,60 +1,31 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] spi: tegra: add spi driver for SLINK controller
-Date: Tue, 30 Oct 2012 15:14:51 +0000
-Message-ID: <20121030151451.GT4511@opensource.wolfsonmicro.com>
-References: <1351531104-1604-1-git-send-email-ldewangan@nvidia.com>
- <508ED5A5.3000703@wwwdotorg.org>
- <508F6906.7020704@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2] dma: tegra: avoid channel lock up after free
+Date: Tue, 30 Oct 2012 12:05:27 -0600
+Message-ID: <509016E7.800@wwwdotorg.org>
+References: <508EA04D.5050805@wwwdotorg.org> <1351552833-4132-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e9fMjeYs+GPci+mg"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <508F6906.7020704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1351552833-4132-1-git-send-email-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, ldewangan@nvidia.com
+Cc: vinod.koul@intel.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/29/2012 05:20 PM, Dmitry Osipenko wrote:
+> Fixed channel "lock up" after free.
+> 
+> Lock scenario: Channel 1 was allocated and prepared as slave_sg, used and freed.
+> Now preparation of cyclic dma on channel 1 will fail with err "DMA configuration
+> conflict" because tdc->isr_handler still selected to handle_once_dma_done.
+> 
+> This happens because tegra_dma_abort_all() won't be called on channel freeing
+> if pending list is empty or channel not busy. We need to clear isr_handler
+> on channel freeing to avoid locking. Also I added small optimization to prepare
+> functions, so current channel type checked before making allocations.
 
---e9fMjeYs+GPci+mg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 
-On Tue, Oct 30, 2012 at 11:13:34AM +0530, Laxman Dewangan wrote:
-> On Tuesday 30 October 2012 12:44 AM, Stephen Warren wrote:
-
-> >I think it depends on DMAENGINE, not the specific driver now, doesn't it?
-
-> Taking example from the mfd, we depends on particular driver, not
-> from the core driver.
-> I like to have this depends on Tegra20_apb_dma.
-
-The reason MFDs do this is that the function drivers usually directly
-reference the core driver in some way, for example by relying on data
-structures it sets up.  With DMA that should all be hidden behind the
-dmaengine API.
-
---e9fMjeYs+GPci+mg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQj+7JAAoJELSic+t+oim9cLEP/27j1SH9q3Pbc/epbs1hqYl9
-/klO4ftaYVHGxgs1v/cpUUEH9Q4hDIpMKilXhYoz4jDStC4HZF5N+TU1ZgdZRg/Z
-SH0sJwZzYr9aFBIc3nnJTsJ8/rWM77CArG9/LOugPrmvdALXesizZZkkVWv9IC5K
-sw7VuvimrbnmdPeqf3h7R5UF7nHCPWCNZYZKXwI4l3VmpvVtrKCLFrSErYZw6ySr
-kdRWfg2bTZA2O5oQ6sxplLUG5ZDjsBEoQHeDXTp6TmuXmU72zldkl3JG8EYNGIZn
-wJjFVMgKt1iXIhKw/1trU2CTgkji2mhoc96Y6gIFzuDE7cLXpuauzlV0oyIrqTG7
-q76CP46bsaSPGsXB/5jYBNvFdPGXM994lFbJlGSsXdOQCw/leeAch0Vg5UhtMtHT
-bYgYotaguzK1SUAjEzi9dHi3JFuSF4gzVbZaHiahUJlTC2mcBFTwjng5cpYWuTrw
-JXzxmXxIdt+CjHyR/A2CXYuUEU1/5Zd3pDY2nh2QgP0yV6tR5P0JizhoYJXqd9xO
-QavwUAj+/rfX2vnW69o36J6KnNQNu7m4JcxZwjlKPoAhftu9cRlPMpZVLmOLHZ/Q
-SAeVQ/71++3ZvwzcP8s6BrMuGZG2tUvTTGiiqKWMn3m1KDSlseHfdBufbj2jpFwu
-jf1hzEb6LEUuiTYxufaG
-=2lpI
------END PGP SIGNATURE-----
-
---e9fMjeYs+GPci+mg--
+I believe this looks OK. However, I would like Laxman to also ack/review
+this since he wrote the driver.
