@@ -1,38 +1,38 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 0/4] ARM: tegra: Enable SLINK controller driver
-Date: Tue, 30 Oct 2012 12:35:22 +0530
-Message-ID: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH] ASoC: tegra: update spdif tx_atn_lvl on hw_params()
+Date: Tue, 30 Oct 2012 18:23:59 +0400
+Message-ID: <1351607039-9027-1-git-send-email-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: swarren@nvidia.com
+Cc: digetx@gmail.com, tiwai@suse.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series modify the dts file to add the slink addresses,
-make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and 
-enable slink controller defconfig.
+This prevents playing sound with wrong speed.
 
-Changes from V1: 
-- Remove changes from clock tables.
-- Make the dma req dt property name to nvidia,dma-request-selector.
-- change the spi max frequency prop to spi-max-frequency.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+I'm using deep sleep on my tablet and faced with this bug when played sound via
+hdmi after suspend. I know that there is no deep sleep support in upstream kernel,
+but will be nice to see that bug fixed.
 
-Changes from V2:
-- make node name to spi.
-- get rid of iomap.h.
+ sound/soc/tegra/tegra20_spdif.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Laxman Dewangan (4):
-  ARM: tegra: dts: add slink controller dt entry
-  ARM: tegra: Add OF_DEV_AUXDATA for SLINK driver in board dt
-  ARM: tegra: dts: cardhu: enable SLINK4
-  ARM: tegra: config: enable spi driver for Tegra SLINK controller
-
- arch/arm/boot/dts/tegra20.dtsi         |   41 ++++++++++++++++++++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi  |    5 +++
- arch/arm/boot/dts/tegra30.dtsi         |   60 ++++++++++++++++++++++++++++++++
- arch/arm/configs/tegra_defconfig       |    2 +-
- arch/arm/mach-tegra/board-dt-tegra20.c |    8 ++++
- arch/arm/mach-tegra/board-dt-tegra30.c |   12 ++++++
- 6 files changed, 127 insertions(+), 1 deletions(-)
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index 3ebc867..24b46f1 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -114,6 +114,10 @@ static int tegra20_spdif_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
+ 
++	regmap_update_bits(spdif->regmap, TEGRA20_SPDIF_DATA_FIFO_CSR,
++			   TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_MASK,
++			   TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU4_WORD_FULL);
++
+ 	return 0;
+ }
+ 
+-- 
+1.7.12
