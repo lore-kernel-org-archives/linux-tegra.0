@@ -1,49 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 0/4] ARM: tegra: Enable SLINK controller driver
-Date: Tue, 30 Oct 2012 14:29:46 -0600
-Message-ID: <509038BA.30600@wwwdotorg.org>
-References: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
+From: Antti P Miettinen <ananaza-X3B1VOXEql0@public.gmane.org>
+Subject: Re: [PATCH 3/7] ARM: tegra30: cpuidle: add LP2 driver for secondary CPUs
+Date: Wed, 31 Oct 2012 00:03:48 +0200
+Message-ID: <87sj8vr517.fsf@amiettinen-lnx.nvidia.com>
+References: <1349691981-31038-1-git-send-email-josephl@nvidia.com>
+	<1349691981-31038-4-git-send-email-josephl@nvidia.com>
+	<5074A74A.8010803@wwwdotorg.org>
+	<1349946918.19413.130.camel@jlo-ubuntu-64.nvidia.com>
+	<5076F2AE.6030509@wwwdotorg.org>
+	<1350012099.20241.10.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/30/2012 01:05 AM, Laxman Dewangan wrote:
-> This series modify the dts file to add the slink addresses,
-> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and 
-> enable slink controller defconfig.
+Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+>> >>> +	writel(tegra_in_lp2.bits[0], tegra_cpu_lp2_mask);
 
-This series only instantiates the SPI controller, and not any SPI
-devices. I tried to solve this:
+BTW, writel_relaxed() would probably be more than enough? IRAM is mapped
+stronly ordered, isn't it? And there's an explicit dsb(). And the mask
+is observed and written only by CPUs. If there are coherence issues,
+they would be in the fabric? And then neither CPU barriers nor L2 sync
+would help, you'd need a readback, right?
 
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> index 700f0a3..3689853 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> @@ -278,6 +278,11 @@
->         spi@7000da00 {
->                 status = "okay";
->                 spi-max-frequency = <25000000>;
-> +               flash@0 {
-> +                       reg = <0>;
-> +                       compatible = "atmel,at25df321a";
-> +                       spi-max-frequency = <25000000>;
-> +               };
->         };
->  
->         ahub {
-
-However, this didn't work. Has the driver been tested? I'm seeing the
-exact same problems I saw with the old driver, namely that the SPI flash
-chip can't be identified; I think the ID bytes are read back as 0, and
-hence drivers/mtd/devices/m25p80.c falls back to identifying the device
-as mr25h256. Attempting to hexdump -C /dev/mtd0 gives me 32K of zeros,
-whereas the device is 4M and full of non-zero data according to U-Boot.
-
-Do you know what the problem is here? Can you please update the patch
-series so that the SPI flash is instantiated and works correctly?
+--
+Antti P Miettinen
+http://www.iki.fi/~ananaza/
