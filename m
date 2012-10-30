@@ -1,46 +1,154 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 3/4] ARM: tegra: dts: cardhu: enable SLINK4
-Date: Tue, 30 Oct 2012 12:35:25 +0530
-Message-ID: <1351580726-17350-4-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 1/4] ARM: tegra: dts: add slink controller dt entry
+Date: Tue, 30 Oct 2012 12:35:23 +0530
+Message-ID: <1351580726-17350-2-git-send-email-ldewangan@nvidia.com>
 References: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable SLINK4 in Tegra30 based platform Cardhu.
-Setting maximum spi frequency to 25MHz.
+Add slink controller details in the dts file of
+Tegra20 and Tegra30.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
 Changes from V1:
-- rename the max freq prop to spi-max-frequency
+-rename the dma request prop to nvidia,dma-request-selector.
 
 Changes from V2:
-- make node name to spi@
+- Make node name as spi@.
 
- arch/arm/boot/dts/tegra30-cardhu.dtsi |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi |   41 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi |   60 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 101 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index b245e6c..700f0a3 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -275,6 +275,11 @@
- 		};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 6934bca..ecd3b4f 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -186,6 +186,47 @@
+ 		status = "disabled";
  	};
  
-+	spi@7000da00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
++	spi@7000d400 {
++
++		compatible = "nvidia,tegra20-slink";
++		reg = <0x7000d400 0x200>;
++		interrupts = <0 59 0x04>;
++		nvidia,dma-request-selector = <&apbdma 15>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
 +	};
 +
- 	ahub {
- 		i2s@70080400 {
- 			status = "okay";
++	spi@7000d600 {
++		compatible = "nvidia,tegra20-slink";
++		reg = <0x7000d600 0x200>;
++		interrupts = <0 82 0x04>;
++		nvidia,dma-request-selector = <&apbdma 16>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000d800 {
++		compatible = "nvidia,tegra20-slink";
++		reg = <0x7000d480 0x200>;
++		interrupts = <0 83 0x04>;
++		nvidia,dma-request-selector = <&apbdma 17>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000da00 {
++		compatible = "nvidia,tegra20-slink";
++		reg = <0x7000da00 0x200>;
++		interrupts = <0 93 0x04>;
++		nvidia,dma-request-selector = <&apbdma 18>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
+ 	pmc {
+ 		compatible = "nvidia,tegra20-pmc";
+ 		reg = <0x7000e400 0x400>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 81f5df4..ab6cfb0 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -191,6 +191,66 @@
+ 		status = "disabled";
+ 	};
+ 
++	spi@7000d400 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000d400 0x200>;
++		interrupts = <0 59 0x04>;
++		nvidia,dma-request-selector = <&apbdma 15>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000d600 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000d600 0x200>;
++		interrupts = <0 82 0x04>;
++		nvidia,dma-request-selector = <&apbdma 16>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000d800 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000d480 0x200>;
++		interrupts = <0 83 0x04>;
++		nvidia,dma-request-selector = <&apbdma 17>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000da00 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000da00 0x200>;
++		interrupts = <0 93 0x04>;
++		nvidia,dma-request-selector = <&apbdma 18>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000dc00 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000dc00 0x200>;
++		interrupts = <0 94 0x04>;
++		nvidia,dma-request-selector = <&apbdma 27>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	spi@7000de00 {
++		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
++		reg = <0x7000de00 0x200>;
++		interrupts = <0 79 0x04>;
++		nvidia,dma-request-selector = <&apbdma 28>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
+ 	pmc {
+ 		compatible = "nvidia,tegra20-pmc", "nvidia,tegra30-pmc";
+ 		reg = <0x7000e400 0x400>;
 -- 
 1.7.1.1
