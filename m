@@ -1,38 +1,60 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH] ASoC: tegra: update spdif tx_atn_lvl on hw_params()
-Date: Tue, 30 Oct 2012 18:23:59 +0400
-Message-ID: <1351607039-9027-1-git-send-email-digetx@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@nvidia.com
-Cc: digetx@gmail.com, tiwai@suse.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V2] spi: tegra: add spi driver for SLINK controller
+Date: Tue, 30 Oct 2012 15:14:51 +0000
+Message-ID: <20121030151451.GT4511@opensource.wolfsonmicro.com>
+References: <1351531104-1604-1-git-send-email-ldewangan@nvidia.com>
+ <508ED5A5.3000703@wwwdotorg.org>
+ <508F6906.7020704@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="e9fMjeYs+GPci+mg"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <508F6906.7020704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This prevents playing sound with wrong speed.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
-I'm using deep sleep on my tablet and faced with this bug when played sound via
-hdmi after suspend. I know that there is no deep sleep support in upstream kernel,
-but will be nice to see that bug fixed.
+--e9fMjeYs+GPci+mg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- sound/soc/tegra/tegra20_spdif.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Tue, Oct 30, 2012 at 11:13:34AM +0530, Laxman Dewangan wrote:
+> On Tuesday 30 October 2012 12:44 AM, Stephen Warren wrote:
 
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index 3ebc867..24b46f1 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -114,6 +114,10 @@ static int tegra20_spdif_hw_params(struct snd_pcm_substream *substream,
- 		return ret;
- 	}
- 
-+	regmap_update_bits(spdif->regmap, TEGRA20_SPDIF_DATA_FIFO_CSR,
-+			   TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_MASK,
-+			   TEGRA20_SPDIF_DATA_FIFO_CSR_TX_ATN_LVL_TU4_WORD_FULL);
-+
- 	return 0;
- }
- 
--- 
-1.7.12
+> >I think it depends on DMAENGINE, not the specific driver now, doesn't it?
+
+> Taking example from the mfd, we depends on particular driver, not
+> from the core driver.
+> I like to have this depends on Tegra20_apb_dma.
+
+The reason MFDs do this is that the function drivers usually directly
+reference the core driver in some way, for example by relying on data
+structures it sets up.  With DMA that should all be hidden behind the
+dmaengine API.
+
+--e9fMjeYs+GPci+mg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQj+7JAAoJELSic+t+oim9cLEP/27j1SH9q3Pbc/epbs1hqYl9
+/klO4ftaYVHGxgs1v/cpUUEH9Q4hDIpMKilXhYoz4jDStC4HZF5N+TU1ZgdZRg/Z
+SH0sJwZzYr9aFBIc3nnJTsJ8/rWM77CArG9/LOugPrmvdALXesizZZkkVWv9IC5K
+sw7VuvimrbnmdPeqf3h7R5UF7nHCPWCNZYZKXwI4l3VmpvVtrKCLFrSErYZw6ySr
+kdRWfg2bTZA2O5oQ6sxplLUG5ZDjsBEoQHeDXTp6TmuXmU72zldkl3JG8EYNGIZn
+wJjFVMgKt1iXIhKw/1trU2CTgkji2mhoc96Y6gIFzuDE7cLXpuauzlV0oyIrqTG7
+q76CP46bsaSPGsXB/5jYBNvFdPGXM994lFbJlGSsXdOQCw/leeAch0Vg5UhtMtHT
+bYgYotaguzK1SUAjEzi9dHi3JFuSF4gzVbZaHiahUJlTC2mcBFTwjng5cpYWuTrw
+JXzxmXxIdt+CjHyR/A2CXYuUEU1/5Zd3pDY2nh2QgP0yV6tR5P0JizhoYJXqd9xO
+QavwUAj+/rfX2vnW69o36J6KnNQNu7m4JcxZwjlKPoAhftu9cRlPMpZVLmOLHZ/Q
+SAeVQ/71++3ZvwzcP8s6BrMuGZG2tUvTTGiiqKWMn3m1KDSlseHfdBufbj2jpFwu
+jf1hzEb6LEUuiTYxufaG
+=2lpI
+-----END PGP SIGNATURE-----
+
+--e9fMjeYs+GPci+mg--
