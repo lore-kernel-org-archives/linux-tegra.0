@@ -1,50 +1,49 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V3] spi: tegra: add spi driver for SLINK controller
-Date: Tue, 30 Oct 2012 18:38:54 +0000
-Message-ID: <20121030183854.GY4511@opensource.wolfsonmicro.com>
-References: <1351580645-17260-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 0/4] ARM: tegra: Enable SLINK controller driver
+Date: Tue, 30 Oct 2012 14:29:46 -0600
+Message-ID: <509038BA.30600@wwwdotorg.org>
+References: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eGyD7iWN192kf2IJ"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1351580645-17260-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/30/2012 01:05 AM, Laxman Dewangan wrote:
+> This series modify the dts file to add the slink addresses,
+> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and 
+> enable slink controller defconfig.
 
---eGyD7iWN192kf2IJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series only instantiates the SPI controller, and not any SPI
+devices. I tried to solve this:
 
-On Tue, Oct 30, 2012 at 12:34:05PM +0530, Laxman Dewangan wrote:
-> Tegra20/Tegra30 supports the spi interface through its SLINK
-> controller. Add spi driver for SLINK controller.
+> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> index 700f0a3..3689853 100644
+> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> @@ -278,6 +278,11 @@
+>         spi@7000da00 {
+>                 status = "okay";
+>                 spi-max-frequency = <25000000>;
+> +               flash@0 {
+> +                       reg = <0>;
+> +                       compatible = "atmel,at25df321a";
+> +                       spi-max-frequency = <25000000>;
+> +               };
+>         };
+>  
+>         ahub {
 
-Applied, thanks.
+However, this didn't work. Has the driver been tested? I'm seeing the
+exact same problems I saw with the old driver, namely that the SPI flash
+chip can't be identified; I think the ID bytes are read back as 0, and
+hence drivers/mtd/devices/m25p80.c falls back to identifying the device
+as mr25h256. Attempting to hexdump -C /dev/mtd0 gives me 32K of zeros,
+whereas the device is 4M and full of non-zero data according to U-Boot.
 
---eGyD7iWN192kf2IJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQkB61AAoJELSic+t+oim9EooP/0R/oRRf3wGWstupukKFYu3S
-vxM4fqK7QRgt+pYjBWjbAxtA+ImaA8BhigHi1r5lWTttme+xk7g4UAOiKMI7BylW
-2wmAZvHwNBg5mTts1ZwYWDpMUdtedP+sxQSv73YauDOrzsgibR20lTg+7VN4y3sR
-2hD/qYGwsJkFt+yYoZfbS7pYA0eUticOKwt+tOm+XwqdvIvP3Do5Rz/Y37QRAtIr
-USVmLpTtNMHMSGJRG0hTBLyEGECluh7GqqaMoIzFzwyGmdBBIpXZ70dhtx0fnde0
-SVGlb1MTivIH0qcLG/FP4YHXbf/stHtrPfqjcO9SB2YN+Rwi2bTOGgFcUT4J6/W2
-go870ZgXwKsFipF5gAxWTXIdGh6KKMK71xgKOxzPTOQh3qeu+figDw+rwyjH7oz/
-aUDi5E5M6hNIUXEo6lUDoshISdaA/pATAKo+ylL/1UQMRqOOwB8gdFX9QR2OSoC/
-ZbDvm9zH7y9XXP8zopUanJqioYZFUKERSo3bbwQrGWJZM0WFCnnEcX1nhYvHZJD+
-9uvvKHf38l2X54hdHq9h/utpLUDjC/lRhnoK7N8q9NcmNFMuyP8eUqWsdVBsvPLi
-By8bq+JzD7OPL3bcDzaisRbxauhw9XRjCTMQYXYnaJKhjYCH0OfjUhbQc2zv+qb+
-pIsIHdIn5NweegwrnorI
-=bNUq
------END PGP SIGNATURE-----
-
---eGyD7iWN192kf2IJ--
+Do you know what the problem is here? Can you please update the patch
+series so that the SPI flash is instantiated and works correctly?
