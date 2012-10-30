@@ -1,31 +1,20 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] dma: tegra: avoid channel lock up after free
-Date: Tue, 30 Oct 2012 12:05:27 -0600
-Message-ID: <509016E7.800@wwwdotorg.org>
-References: <508EA04D.5050805@wwwdotorg.org> <1351552833-4132-1-git-send-email-digetx@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3] spi: tegra: add spi driver for SLINK controller
+Date: Tue, 30 Oct 2012 12:08:24 -0600
+Message-ID: <50901798.1050507@wwwdotorg.org>
+References: <1351580645-17260-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351552833-4132-1-git-send-email-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, ldewangan@nvidia.com
-Cc: vinod.koul@intel.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351580645-17260-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/2012 05:20 PM, Dmitry Osipenko wrote:
-> Fixed channel "lock up" after free.
-> 
-> Lock scenario: Channel 1 was allocated and prepared as slave_sg, used and freed.
-> Now preparation of cyclic dma on channel 1 will fail with err "DMA configuration
-> conflict" because tdc->isr_handler still selected to handle_once_dma_done.
-> 
-> This happens because tegra_dma_abort_all() won't be called on channel freeing
-> if pending list is empty or channel not busy. We need to clear isr_handler
-> on channel freeing to avoid locking. Also I added small optimization to prepare
-> functions, so current channel type checked before making allocations.
+On 10/30/2012 01:04 AM, Laxman Dewangan wrote:
+> Tegra20/Tegra30 supports the spi interface through its SLINK
+> controller. Add spi driver for SLINK controller.
 
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
-
-I believe this looks OK. However, I would like Laxman to also ack/review
-this since he wrote the driver.
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
