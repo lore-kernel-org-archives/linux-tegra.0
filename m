@@ -1,36 +1,46 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 4/4] ARM: tegra: config: enable spi driver for Tegra SLINK controller
-Date: Tue, 30 Oct 2012 12:35:26 +0530
-Message-ID: <1351580726-17350-5-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 3/4] ARM: tegra: dts: cardhu: enable SLINK4
+Date: Tue, 30 Oct 2012 12:35:25 +0530
+Message-ID: <1351580726-17350-4-git-send-email-ldewangan@nvidia.com>
 References: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351580726-17350-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Enable SLINK4 in Tegra30 based platform Cardhu.
+Setting maximum spi frequency to 25MHz.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-No change from V1 and V2.
+Changes from V1:
+- rename the max freq prop to spi-max-frequency
 
- arch/arm/configs/tegra_defconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Changes from V2:
+- make node name to spi@
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index fb29680..60e1b2e 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -117,7 +117,7 @@ CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_TEGRA=y
- CONFIG_SPI=y
--CONFIG_SPI_TEGRA=y
-+CONFIG_SPI_TEGRA20_SLINK=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_TPS6586X=y
- CONFIG_GPIO_TPS65910=y
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index b245e6c..700f0a3 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -275,6 +275,11 @@
+ 		};
+ 	};
+ 
++	spi@7000da00 {
++		status = "okay";
++		spi-max-frequency = <25000000>;
++	};
++
+ 	ahub {
+ 		i2s@70080400 {
+ 			status = "okay";
 -- 
 1.7.1.1
