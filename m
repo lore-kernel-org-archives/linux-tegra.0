@@ -1,40 +1,40 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 0/7] ARM: tegra30: cpuidle: add a powered-down state
-Date: Wed, 31 Oct 2012 09:35:02 +0800
-Message-ID: <1351647302.5410.41.camel@jlo-ubuntu-64.nvidia.com>
-References: <1351506501-600-1-git-send-email-josephl@nvidia.com>
-	 <50905876.70108@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3] spi: tegra: add spi driver for SLINK controller
+Date: Wed, 31 Oct 2012 14:15:00 +0530
+Message-ID: <5090E50C.2090405@nvidia.com>
+References: <1351580645-17260-1-git-send-email-ldewangan@nvidia.com>
+	<20121030183854.GY4511@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50905876.70108-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <20121030183854.GY4511-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2012-10-31 at 06:45 +0800, Stephen Warren wrote:
-> On 10/29/2012 04:28 AM, Joseph Lo wrote:
-> > This adds a "powered-down" state for cpuidle. It's a power gating idle
-> > mode. It supports the secondary CPUs (i.e., CPU1-CPU3) to go into
-> > powered-down state independently. When any of the secondary CPUs go into
-> > this state, it can be power gated alone. There is a limitation on CPU0.
-> > The CPU0 can go into powered-down state only when all secondary CPU is
-> > offline. After CPU0 is in powered-down state, the CPU rail can be turned
-> > off.
-> 
-> This series doesn't seem to apply to Tegra's current for-next, nor
-> next-20121029. What is it based on?
-> 
-> Note: I did try merging "ARM: tegra: rename the file of "sleep-tXX" to
-> "sleep-tegraXX"" first, since I assume that's a dependency.
-
-Hi Stephen,
-
-This patch set were based on next-20121026. I saw the new update for
-moving some header files on the latest "next" branch. It may cause some
-conflicts. I will update a new one later.
+On Wednesday 31 October 2012 12:08 AM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Oct 30, 2012 at 12:34:05PM +0530, Laxman Dewangan wrote:
+>> Tegra20/Tegra30 supports the spi interface through its SLINK
+>> controller. Add spi driver for SLINK controller.
+> Applied, thanks.
+Thank you Mark and Stephen for quick review and merge.
 
 Thanks,
-Joseph
+Laxman
+
+------------------------------------------------------------------------------
+Everyone hates slow websites. So do we.
+Make your web apps faster with AppDynamics
+Download AppDynamics Lite for free today:
+http://p.sf.net/sfu/appdyn_sfd2d_oct
