@@ -1,235 +1,65 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 5/7] ARM: tegra30: clocks: add CPU low-power function into tegra_cpu_car_ops
-Date: Wed, 31 Oct 2012 17:41:19 +0800
-Message-ID: <1351676481-28425-6-git-send-email-josephl@nvidia.com>
-References: <1351676481-28425-1-git-send-email-josephl@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH REPOST] usb: host: tegra remove include of <mach/iomap.h>
+Date: Wed, 31 Oct 2012 14:51:31 +0200
+Message-ID: <20121031125131.GJ10998@arwen.pp.htv.fi>
+References: <1351106941-869-1-git-send-email-swarren@wwwdotorg.org>
+ <508EB654.8030502@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6iqOn7HZPWKXx18"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1351676481-28425-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <508EB654.8030502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
-functions were used for CPU powered-down state maintenance. One thing
-needs to notice the rail_off_ready API only availalbe for cpu_g cluster
-not cpu_lp cluster.
+--d6iqOn7HZPWKXx18
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V4:
-* rebased on next-20121031
-V3:
-* update the commit message
-V2:
-* no change
----
- arch/arm/mach-tegra/tegra30_clocks.c |  108 ++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/tegra_cpu_car.h  |   37 ++++++++++++
- 2 files changed, 145 insertions(+), 0 deletions(-)
+Hi,
 
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
-index f5b453f..efc000e 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks.c
-@@ -31,6 +31,8 @@
- 
- #include <asm/clkdev.h>
- 
-+#include <mach/powergate.h>
-+
- #include "clock.h"
- #include "fuse.h"
- #include "iomap.h"
-@@ -309,6 +311,31 @@
- #define CPU_CLOCK(cpu)	(0x1 << (8 + cpu))
- #define CPU_RESET(cpu)	(0x1111ul << (cpu))
- 
-+#define CLK_RESET_CCLK_BURST	0x20
-+#define CLK_RESET_CCLK_DIVIDER  0x24
-+#define CLK_RESET_PLLX_BASE	0xe0
-+#define CLK_RESET_PLLX_MISC	0xe4
-+
-+#define CLK_RESET_SOURCE_CSITE	0x1d4
-+
-+#define CLK_RESET_CCLK_BURST_POLICY_SHIFT	28
-+#define CLK_RESET_CCLK_RUN_POLICY_SHIFT		4
-+#define CLK_RESET_CCLK_IDLE_POLICY_SHIFT	0
-+#define CLK_RESET_CCLK_IDLE_POLICY		1
-+#define CLK_RESET_CCLK_RUN_POLICY		2
-+#define CLK_RESET_CCLK_BURST_POLICY_PLLX	8
-+
-+#ifdef CONFIG_PM_SLEEP
-+static struct cpu_clk_suspend_context {
-+	u32 pllx_misc;
-+	u32 pllx_base;
-+
-+	u32 cpu_burst;
-+	u32 clk_csite_src;
-+	u32 cclk_divider;
-+} tegra30_cpu_clk_sctx;
-+#endif
-+
- /**
- * Structure defining the fields for USB UTMI clocks Parameters.
- */
-@@ -2386,12 +2413,93 @@ static void tegra30_disable_cpu_clock(u32 cpu)
- 	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static bool tegra30_cpu_rail_off_ready(void)
-+{
-+	unsigned int cpu_rst_status;
-+	int cpu_pwr_status;
-+
-+	cpu_rst_status = readl(reg_clk_base +
-+			       TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
-+	cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
-+			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
-+			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
-+
-+	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
-+		return false;
-+
-+	return true;
-+}
-+
-+static void tegra30_cpu_clock_suspend(void)
-+{
-+	/* switch coresite to clk_m, save off original source */
-+	tegra30_cpu_clk_sctx.clk_csite_src =
-+				readl(reg_clk_base + CLK_RESET_SOURCE_CSITE);
-+	writel(3<<30, reg_clk_base + CLK_RESET_SOURCE_CSITE);
-+
-+	tegra30_cpu_clk_sctx.cpu_burst =
-+				readl(reg_clk_base + CLK_RESET_CCLK_BURST);
-+	tegra30_cpu_clk_sctx.pllx_base =
-+				readl(reg_clk_base + CLK_RESET_PLLX_BASE);
-+	tegra30_cpu_clk_sctx.pllx_misc =
-+				readl(reg_clk_base + CLK_RESET_PLLX_MISC);
-+	tegra30_cpu_clk_sctx.cclk_divider =
-+				readl(reg_clk_base + CLK_RESET_CCLK_DIVIDER);
-+}
-+
-+static void tegra30_cpu_clock_resume(void)
-+{
-+	unsigned int reg, policy;
-+
-+	/* Is CPU complex already running on PLLX? */
-+	reg = readl(reg_clk_base + CLK_RESET_CCLK_BURST);
-+	policy = (reg >> CLK_RESET_CCLK_BURST_POLICY_SHIFT) & 0xF;
-+
-+	if (policy == CLK_RESET_CCLK_IDLE_POLICY)
-+		reg = (reg >> CLK_RESET_CCLK_IDLE_POLICY_SHIFT) & 0xF;
-+	else if (policy == CLK_RESET_CCLK_RUN_POLICY)
-+		reg = (reg >> CLK_RESET_CCLK_RUN_POLICY_SHIFT) & 0xF;
-+	else
-+		BUG();
-+
-+	if (reg != CLK_RESET_CCLK_BURST_POLICY_PLLX) {
-+		/* restore PLLX settings if CPU is on different PLL */
-+		writel(tegra30_cpu_clk_sctx.pllx_misc,
-+					reg_clk_base + CLK_RESET_PLLX_MISC);
-+		writel(tegra30_cpu_clk_sctx.pllx_base,
-+					reg_clk_base + CLK_RESET_PLLX_BASE);
-+
-+		/* wait for PLL stabilization if PLLX was enabled */
-+		if (tegra30_cpu_clk_sctx.pllx_base & (1 << 30))
-+			udelay(300);
-+	}
-+
-+	/*
-+	 * Restore original burst policy setting for calls resulting from CPU
-+	 * LP2 in idle or system suspend.
-+	 */
-+	writel(tegra30_cpu_clk_sctx.cclk_divider,
-+					reg_clk_base + CLK_RESET_CCLK_DIVIDER);
-+	writel(tegra30_cpu_clk_sctx.cpu_burst,
-+					reg_clk_base + CLK_RESET_CCLK_BURST);
-+
-+	writel(tegra30_cpu_clk_sctx.clk_csite_src,
-+					reg_clk_base + CLK_RESET_SOURCE_CSITE);
-+}
-+#endif
-+
- static struct tegra_cpu_car_ops tegra30_cpu_car_ops = {
- 	.wait_for_reset	= tegra30_wait_cpu_in_reset,
- 	.put_in_reset	= tegra30_put_cpu_in_reset,
- 	.out_of_reset	= tegra30_cpu_out_of_reset,
- 	.enable_clock	= tegra30_enable_cpu_clock,
- 	.disable_clock	= tegra30_disable_cpu_clock,
-+#ifdef CONFIG_PM_SLEEP
-+	.rail_off_ready	= tegra30_cpu_rail_off_ready,
-+	.suspend	= tegra30_cpu_clock_suspend,
-+	.resume		= tegra30_cpu_clock_resume,
-+#endif
- };
- 
- void __init tegra30_cpu_car_ops_init(void)
-diff --git a/arch/arm/mach-tegra/tegra_cpu_car.h b/arch/arm/mach-tegra/tegra_cpu_car.h
-index 30d063a..9764d31 100644
---- a/arch/arm/mach-tegra/tegra_cpu_car.h
-+++ b/arch/arm/mach-tegra/tegra_cpu_car.h
-@@ -30,6 +30,12 @@
-  *	CPU clock un-gate
-  * disable_clock:
-  *	CPU clock gate
-+ * rail_off_ready:
-+ *	CPU is ready for rail off
-+ * suspend:
-+ *	save the clock settings when CPU go into low-power state
-+ * resume:
-+ *	restore the clock settings when CPU exit low-power state
-  */
- struct tegra_cpu_car_ops {
- 	void (*wait_for_reset)(u32 cpu);
-@@ -37,6 +43,11 @@ struct tegra_cpu_car_ops {
- 	void (*out_of_reset)(u32 cpu);
- 	void (*enable_clock)(u32 cpu);
- 	void (*disable_clock)(u32 cpu);
-+#ifdef CONFIG_PM_SLEEP
-+	bool (*rail_off_ready)(void);
-+	void (*suspend)(void);
-+	void (*resume)(void);
-+#endif
- };
- 
- extern struct tegra_cpu_car_ops *tegra_cpu_car_ops;
-@@ -81,6 +92,32 @@ static inline void tegra_disable_cpu_clock(u32 cpu)
- 	tegra_cpu_car_ops->disable_clock(cpu);
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static inline bool tegra_cpu_rail_off_ready(void)
-+{
-+	if (WARN_ON(!tegra_cpu_car_ops->rail_off_ready))
-+		return false;
-+
-+	return tegra_cpu_car_ops->rail_off_ready();
-+}
-+
-+static inline void tegra_cpu_clock_suspend(void)
-+{
-+	if (WARN_ON(!tegra_cpu_car_ops->suspend))
-+		return;
-+
-+	tegra_cpu_car_ops->suspend();
-+}
-+
-+static inline void tegra_cpu_clock_resume(void)
-+{
-+	if (WARN_ON(!tegra_cpu_car_ops->resume))
-+		return;
-+
-+	tegra_cpu_car_ops->resume();
-+}
-+#endif
-+
- void tegra20_cpu_car_ops_init(void);
- void tegra30_cpu_car_ops_init(void);
- 
--- 
-1.7.0.4
+On Mon, Oct 29, 2012 at 11:01:08AM -0600, Stephen Warren wrote:
+> On 10/24/2012 01:29 PM, Stephen Warren wrote:
+> > Almost nothing from this file is used, and the file will hopefully be
+> > deleted soon. Copy the tiny portions that are used directly into
+> > ehci-tegra.c. I believe that Venu Byravarasu is working on cleaning up
+> > our USB driver, and those cleanups will remove the need for these
+> > constants.
+>=20
+> Per suggestion from Greg, I have applied this to the Tegra tree for 3.8.
+
+so I need not take this patch in my tree, right ?
+
+just making sure.
+
+--=20
+balbi
+
+--d6iqOn7HZPWKXx18
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQkR7TAAoJEIaOsuA1yqREk6cP/jqFFqvDolOanIB1wDje6RGE
+xXOXEPoLHvIeI83xqz5iSV07aJxzKrrdFjF6VA4/himVIjWbZuI4Z1VYHxwln/9+
+uV2BI26TSNV/bnlwrghmx/8p38rYu3CqhVRQjqhsULAjwTySMk8dPFzn7a4OZRLQ
+YRgwqmiOsaSgAbKcq7q4GZMEAwa7V5iHgvroLPqvvtJahEycyQJ27gbtHz5iCTWl
+YlRcfJJvF4MsOoyzY1WbFFDJa9KsmdKWueyvbEssovCwU3Hqrz4sywzcxbz//+XB
+TWB6PzAIyQ+LdZlyhvUwjB8h0g0/dezR0yDoeIRl2STKTcP/c2dANT34E1+6tks7
+1EsnjVLD3pXC8ysOQQqsfxXw5F/XLtF2vt7dHDnR0CD/EleihVMMjYg+1sFgraXj
+mmbx5/iry+/jweQg68K8TvklP5BCxyk2I2Z/5t7M7iw14hDQT0x19EU8Vgk+usyY
+niqnLwpgUboMtVtykhqGyNMTQby9vBRR4YB7RiOzx+bTUFxxhwWnCS1vM1RyQi/B
+uIPONdONoaRaRlHburc+2whtE1v0DGnF+m1liDOhiEC56C755kfsm3e/1c6ZLZ5v
+RO75WIIOg/D75TV9Osj6G5M+YCfvdqfvrzPyBDnJPD2dJ88++Ek0kD/jBabbIa1I
+j7E/Y8/XDUwJJwAWM6cP
+=Faym
+-----END PGP SIGNATURE-----
+
+--d6iqOn7HZPWKXx18--
