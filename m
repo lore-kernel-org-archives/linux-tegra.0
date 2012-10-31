@@ -1,40 +1,69 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3] spi: tegra: add spi driver for SLINK controller
-Date: Wed, 31 Oct 2012 14:15:00 +0530
-Message-ID: <5090E50C.2090405@nvidia.com>
-References: <1351580645-17260-1-git-send-email-ldewangan@nvidia.com>
-	<20121030183854.GY4511@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V3 0/4] ARM: tegra: Enable SLINK controller driver
+Date: Wed, 31 Oct 2012 14:21:40 +0530
+Message-ID: <5090E69C.4080108@nvidia.com>
+References: <1351580726-17350-1-git-send-email-ldewangan@nvidia.com> <509038BA.30600@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <20121030183854.GY4511-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <509038BA.30600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 31 October 2012 12:08 AM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Wednesday 31 October 2012 01:59 AM, Stephen Warren wrote:
+> On 10/30/2012 01:05 AM, Laxman Dewangan wrote:
+>> This series modify the dts file to add the slink addresses,
+>> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and
+>> enable slink controller defconfig.
+> This series only instantiates the SPI controller, and not any SPI
+> devices. I tried to solve this:
 >
-> On Tue, Oct 30, 2012 at 12:34:05PM +0530, Laxman Dewangan wrote:
->> Tegra20/Tegra30 supports the spi interface through its SLINK
->> controller. Add spi driver for SLINK controller.
-> Applied, thanks.
-Thank you Mark and Stephen for quick review and merge.
+>> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+>> index 700f0a3..3689853 100644
+>> --- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
+>> +++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+>> @@ -278,6 +278,11 @@
+>>          spi@7000da00 {
+>>                  status = "okay";
+>>                  spi-max-frequency =<25000000>;
+>> +               flash@0 {
+>> +                       reg =<0>;
+>> +                       compatible = "atmel,at25df321a";
+>> +                       spi-max-frequency =<25000000>;
+>> +               };
+>>          };
+>>
+>>          ahub {
+> However, this didn't work. Has the driver been tested? I'm seeing the
+> exact same problems I saw with the old driver, namely that the SPI flash
+> chip can't be identified; I think the ID bytes are read back as 0, and
+> hence drivers/mtd/devices/m25p80.c falls back to identifying the device
+> as mr25h256. Attempting to hexdump -C /dev/mtd0 gives me 32K of zeros,
+> whereas the device is 4M and full of non-zero data according to U-Boot.
+>
+> Do you know what the problem is here? Can you please update the patch
+> series so that the SPI flash is instantiated and works correctly?
 
-Thanks,
-Laxman
+I will send the new patch series for taking care of the issue.
 
-------------------------------------------------------------------------------
-Everyone hates slow websites. So do we.
-Make your web apps faster with AppDynamics
-Download AppDynamics Lite for free today:
-http://p.sf.net/sfu/appdyn_sfd2d_oct
+In Cardhu, there is 2 different type of flash, Winbond and Atmel.
+There is hw rework require in Cardhu A02 to enable the serial flash and 
+it is already taken care in Cardhu A04. I will forward the hw rework 
+details to you in internal mail communication.
+
+Also Serial flash is in CS1, not in CS0. So even if you have hw rework, 
+above change will not work.
+
+I had tested on different way earlier (dynamic allocating master for 
+serial flash) and also tested on above method.
+For this I enable MTD, MTD_CHAR and MTD_M25P80.
+Debug prints as:
+[    1.279424] m25p_probe
+[    1.282536] m25p80 spi32766.1: w25q32 (4096 Kbytes)
+[    1.287418] mtd .name = spi32766.1, .size = 0x400000 (4MiB) 
+.erasesize = 0x00
+001000 (4KiB) .numeraseregions = 0
+[    1.298120] m25p_probe() returns 0
