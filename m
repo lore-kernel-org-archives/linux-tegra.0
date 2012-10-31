@@ -1,22 +1,51 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V4 0/4] ARM: tegra: Enable SLINK controller driver
-Date: Wed, 31 Oct 2012 10:29:55 -0600
-Message-ID: <50915203.8030505@wwwdotorg.org>
-References: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 3/4] ARM: tegra: dts: cardhu: enable SLINK4
+Date: Wed, 31 Oct 2012 10:44:19 -0600
+Message-ID: <50915563.40904@wwwdotorg.org>
+References: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com> <1351674176-20603-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351674176-20603-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 10/31/2012 03:02 AM, Laxman Dewangan wrote:
-> This series modify the dts file to add the slink addresses,
-> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and 
-> enable slink controller defconfig.
+> Enable SLINK4 and connected device in Tegra30 based
+> platform Cardhu.
+> Setting maximum spi frequency to 25MHz.
+> 
+> Spi serial flash is connected on CS1 of SLINK4 on
+> cardhu platform.
 
-I don't appear to have received patch 1/4 this time around. I'll assume
-it's identical to V3, since I don't think anything needed to change there...
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+
+> +winbond Winbond Electronics corp.
+
+That should really be a separate patch that goes through the devicetree
+branch. But I guess it's fairly trivial, so it's not a big deal.
+
+> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+
+> +		spi-flash@1 {
+> +			compatible = "winbond,w25q32";
+> +			spi-max-frequency = <20000000>;
+> +			reg = <1>;
+> +		};
+
+Since I have an Atmel flash on my board, I see:
+
+[    1.282958] m25p80 spi32766.1: found at25df321a, expected w25q32
+[    1.289103] m25p80 spi32766.1: at25df321a (4096 Kbytes)
+
+Is there any way around that (the first log line above)?
+
+I suppose the answer is that the DT should reflect the exact flash
+device that's on the board, and perhaps the bootloader should be
+adjusting the DT to reflect the correct value. That's probably complex.
+
+Do you have any idea whether Atmel or Winbond flash is more common, so
+we can at least minimize the number of times this message appears?
