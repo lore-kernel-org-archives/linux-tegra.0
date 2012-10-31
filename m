@@ -1,204 +1,356 @@
 From: Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: Flash Yocto-built kernel on Tegra2 T20?
-Date: Wed, 31 Oct 2012 18:46:51 -0400
-Message-ID: <CAMAb8ZN3m2Vj1o0gJaRSE5xbu2e2ih84YF_8UP1o-ztPfmj7KA@mail.gmail.com>
+Date: Wed, 31 Oct 2012 19:04:37 -0400
+Message-ID: <CAMAb8ZPpOQLgRo8OG06esDfYFPVqhONzi0Rx=p-wHuB6Ai_8tg@mail.gmail.com>
 References: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA@mail.gmail.com>
+	<CAMAb8ZN3m2Vj1o0gJaRSE5xbu2e2ih84YF_8UP1o-ztPfmj7KA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAMAb8ZN3m2Vj1o0gJaRSE5xbu2e2ih84YF_8UP1o-ztPfmj7KA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Still haven't solved this, but I've been able to gather some more clues.
-For comparison, I downloaded what is (as far as I can tell) the latest
-official version of nvflash from:
+For completeness, here are the contents of quickboot_nand_linux.cfg:
 
-  - http://developer.download.nvidia.com/devzone/tools/harmony_Tegra-Linux-R15.1.0_armel.tbz2
+----------
 
-It looks like this is intended to be run from a wrapper script named
-flash.sh.  The board support that came with the system I'd like to
-reflash has a wrapper script called burnflash.sh.  I added a couple
-'echo' statements to both wrapper scripts to see how they're invoking
-mkbootimg and nvflash.
+[device]
+type=nand
+instance=0
 
-The old system's burnflash.sh script is executing the following
-commands:
+[partition]
+name=BCT
+id=2
+type=boot_config_table
+allocation_policy=absolute
+start_location=0
+filesystem_type=basic
+size=3145728
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+#Reserve block will depends on the allocation policy
+# in case of absolute the difference in start of next partition -
+# start of current partition - size will be reserve block
+# in case relative
+# Max(4, PartitionSize*percent_reserve/100) will be spare area per-partition.
+percent_reserved=0
 
-nvflash/mkbootimg --kernel kernel/zImage --ramdisk NONE --kern_addr A00800 \
-  --cmdline "root=/dev/sda1 rw rootwait usbcore.old_scheme_first=1 \
-             mtdparts=tegra_nand:1024K@26752K(env),496000K@27776K(userspace)
-             init=/bin/systemd default.target=multi-user.target \
-             console=ttyS0,57600 " -o loadimg.img
+[partition]
+name=PT
+id=3
+type=partition_table
+allocation_policy=absolute
+start_location=3670016
+filesystem_type=basic
+size=131072
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
 
-sudo LD_LIBRARY_PATH=nvflash nvflash/nvflash \
-  --bct ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct \
-  --setbct --configfile ./quickboot_nand_linux.cfg --create --bl burnflash.bin \
-  --odmdata 0x3b0c0105  --go
+[partition]
+name=STAGE1_RECOVERY
+id=4
+type=bootloader
+allocation_policy=absolute
+start_location=4325376
+filesystem_type=basic
+size=1048576
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=quickboot1.bin
+
+[partition]
+name=STAGE2_RECOVERY
+id=5
+type=bootloader_stage2
+allocation_policy=absolute
+start_location=5898240
+filesystem_type=basic
+size=524288
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=cpu_stage2.bin
+
+[partition]
+name=STAGE1_PRIMARY
+id=6
+type=bootloader
+allocation_policy=absolute
+start_location=6946816
+filesystem_type=basic
+size=1048576
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=quickboot1.bin
+
+[partition]
+name=STAGE2_PRIMARY
+id=7
+type=bootloader_stage2
+allocation_policy=absolute
+start_location=8519680
+filesystem_type=basic
+size=524288
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=cpu_stage2.bin
+
+[partition]
+name=KERNEL_RECOVERY
+id=8
+type=os
+allocation_policy=absolute
+start_location=9568256
+filesystem_type=basic
+size=8388608
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=loadimg.img
+
+[partition]
+name=KERNEL_PRIMARY
+id=9
+type=os
+allocation_policy=absolute
+start_location=18481152
+filesystem_type=basic
+size=8388608
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+filename=loadimg.img
+
+[partition]
+name=ENV
+id=10
+type=data
+allocation_policy=absolute
+start_location=27394048
+filesystem_type=basic
+size=1048576
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=8
+percent_reserved=0
+
+[partition]
+name=APP
+id=11
+type=data
+allocation_policy=absolute
+start_location=28442624
+filesystem_type=yaffs2
+size=0xFFFFFFFFFFFFFFFF
+file_system_attribute=0
+partition_attribute=0
+allocation_attribute=0x10
+percent_reserved=0
 
 
-With the flash.sh script from NVIDIA, I'm seeing this:
-
-./mkbootimg --kernel /media/acme/Linux_for_Tegra/kernel/zImage \
-  --ramdisk initrd --board sda1 --output boot.img --cmdline "" > /dev/null 2>&1;
-
-LD_LIBRARY_PATH=. ./nvflash --bct flash.bct --setbct --configfile flash.cfg \
-  --create --bl fastboot.bin --odmdata 0x300d8011 --go;
-
-The differences that jump out are:
-
-mkboot invocation:
-1. burnflash.sh passes --kern_addr A00800 to mkbootimg while flash.sh does
-   not(!!)
-2. burnflash passes --ramdisk NONE, whereas flash.sh passes --ramdisk initrd
-3. flash.sh passes --board, burnflash.sh does not
-3. burnflash.sh passes a non-empty string for --cmdline, flash.sh passes ""
-
-nvflash invocation:
-4. diffs boils down to contents of .cfg and .bct files
-5. also pass different --odmdata args
-
-
-The fact that flashing the new kernel with burnflash.sh appears to
-succeed but I see nothing in the console makes me suspicious that either
-the '--kern_addr' or '--odmdata' args are to blame for this. It seems
-that the arguments being passed for these somehow do not match my new
-kernel.
-
-Is there any documentation available for nvflash/mkbootimg that explain
-what these parameters mean and how to choose proper values? Also, I'd
-really like to understand the contents of the cfg files and bct
-files--can I read about this somewhere?
-
-
-On Wed, Oct 31, 2012 at 2:29 PM, Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> I've inherited a Tegra2 T20-based system that I'd like to flash a new
-> kernel to. I built this kernel using OpenEmbedded/Yocto, and the kernel
-> sources from:
+On Wed, Oct 31, 2012 at 6:46 PM, Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Still haven't solved this, but I've been able to gather some more clues.
+> For comparison, I downloaded what is (as far as I can tell) the latest
+> official version of nvflash from:
 >
->   - http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=summary
+>   - http://developer.download.nvidia.com/devzone/tools/harmony_Tegra-Linux-R15.1.0_armel.tbz2
+>
+> It looks like this is intended to be run from a wrapper script named
+> flash.sh.  The board support that came with the system I'd like to
+> reflash has a wrapper script called burnflash.sh.  I added a couple
+> 'echo' statements to both wrapper scripts to see how they're invoking
+> mkbootimg and nvflash.
+>
+> The old system's burnflash.sh script is executing the following
+> commands:
+>
+> nvflash/mkbootimg --kernel kernel/zImage --ramdisk NONE --kern_addr A00800 \
+>   --cmdline "root=/dev/sda1 rw rootwait usbcore.old_scheme_first=1 \
+>              mtdparts=tegra_nand:1024K@26752K(env),496000K@27776K(userspace)
+>              init=/bin/systemd default.target=multi-user.target \
+>              console=ttyS0,57600 " -o loadimg.img
+>
+> sudo LD_LIBRARY_PATH=nvflash nvflash/nvflash \
+>   --bct ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct \
+>   --setbct --configfile ./quickboot_nand_linux.cfg --create --bl burnflash.bin \
+>   --odmdata 0x3b0c0105  --go
 >
 >
-> When I try to flash this kernel using the same command that has always
-> been used for this system, I get absolutely no output to the serial
-> console when I attempt to boot. It's like the bootloader (quickboot[?])
-> is jumping to the wrong address and getting lost.
+> With the flash.sh script from NVIDIA, I'm seeing this:
 >
-> Can anyone give me a hint as to what the problem might be, and how I can
-> flash this new kernel? I've never used quickboot before and the docs for
-> this system have long since been lost, so I'm kind of flying blind
-> here... `:-}
+> ./mkbootimg --kernel /media/acme/Linux_for_Tegra/kernel/zImage \
+>   --ramdisk initrd --board sda1 --output boot.img --cmdline "" > /dev/null 2>&1;
 >
-> In case it's helpful, the output from flashing the 'old' kernel is
-> appended below. (This is a 'straight', non-Android Linux build for an
-> infotainment system, by the way...)
+> LD_LIBRARY_PATH=. ./nvflash --bct flash.bct --setbct --configfile flash.cfg \
+>   --create --bl fastboot.bin --odmdata 0x300d8011 --go;
+>
+> The differences that jump out are:
+>
+> mkboot invocation:
+> 1. burnflash.sh passes --kern_addr A00800 to mkbootimg while flash.sh does
+>    not(!!)
+> 2. burnflash passes --ramdisk NONE, whereas flash.sh passes --ramdisk initrd
+> 3. flash.sh passes --board, burnflash.sh does not
+> 3. burnflash.sh passes a non-empty string for --cmdline, flash.sh passes ""
+>
+> nvflash invocation:
+> 4. diffs boils down to contents of .cfg and .bct files
+> 5. also pass different --odmdata args
 >
 >
-> NVidia_flashing_utilities_Production_1.0% sudo ./burnflash.sh -F -r sda1 -c \
+> The fact that flashing the new kernel with burnflash.sh appears to
+> succeed but I see nothing in the console makes me suspicious that either
+> the '--kern_addr' or '--odmdata' args are to blame for this. It seems
+> that the arguments being passed for these somehow do not match my new
+> kernel.
+>
+> Is there any documentation available for nvflash/mkbootimg that explain
+> what these parameters mean and how to choose proper values? Also, I'd
+> really like to understand the contents of the cfg files and bct
+> files--can I read about this somewhere?
+>
+>
+> On Wed, Oct 31, 2012 at 2:29 PM, Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> I've inherited a Tegra2 T20-based system that I'd like to flash a new
+>> kernel to. I built this kernel using OpenEmbedded/Yocto, and the kernel
+>> sources from:
+>>
+>>   - http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=summary
+>>
+>>
+>> When I try to flash this kernel using the same command that has always
+>> been used for this system, I get absolutely no output to the serial
+>> console when I attempt to boot. It's like the bootloader (quickboot[?])
+>> is jumping to the wrong address and getting lost.
+>>
+>> Can anyone give me a hint as to what the problem might be, and how I can
+>> flash this new kernel? I've never used quickboot before and the docs for
+>> this system have long since been lost, so I'm kind of flying blind
+>> here... `:-}
+>>
+>> In case it's helpful, the output from flashing the 'old' kernel is
+>> appended below. (This is a 'straight', non-Android Linux build for an
+>> infotainment system, by the way...)
+>>
+>>
+>> NVidia_flashing_utilities_Production_1.0% sudo ./burnflash.sh -F -r sda1 -c \
+>>>      "init=/bin/systemd default.target=multi-user.target \
+>> dquote>       console=ttyS0,57600" -S 13
+>> burnflash.sh for p852 board
+>> Root device set to sda1.
+>> If board is not ON, power it by moving switch S6 to ON position,
+>> then press the power button S4 for at least 2 seconds, then release it.
+>> Press Enter to continue
+>>
+>> Install "Force Recovery" jumper (J42) , then press and release
+>> the Reset Switch (S5).
+>> Press Enter to continue
+>>
+>> Flashing the bootloader...
+>> Creating Boot Image...
+>> Boot Image Created successfully
+>> Nvflash version 17.0018 started
+>> ^CError while flashing bootloader, exiting...
+>> NVidia_flashing_utilities_Production_1.0% sudo ./burnflash.sh -F -r sda1 -c \
 >>      "init=/bin/systemd default.target=multi-user.target \
-> dquote>       console=ttyS0,57600" -S 13
-> burnflash.sh for p852 board
-> Root device set to sda1.
-> If board is not ON, power it by moving switch S6 to ON position,
-> then press the power button S4 for at least 2 seconds, then release it.
-> Press Enter to continue
->
-> Install "Force Recovery" jumper (J42) , then press and release
-> the Reset Switch (S5).
-> Press Enter to continue
->
-> Flashing the bootloader...
-> Creating Boot Image...
-> Boot Image Created successfully
-> Nvflash version 17.0018 started
-> ^CError while flashing bootloader, exiting...
-> NVidia_flashing_utilities_Production_1.0% sudo ./burnflash.sh -F -r sda1 -c \
->      "init=/bin/systemd default.target=multi-user.target \
->       console=ttyS0,57600" -S 13
-> burnflash.sh for p852 board
-> Root device set to sda1.
-> If board is not ON, power it by moving switch S6 to ON position,
-> then press the power button S4 for at least 2 seconds, then release it.
-> Press Enter to continue
->
-> Install "Force Recovery" jumper (J42) , then press and release
-> the Reset Switch (S5).
-> Press Enter to continue
->
-> Flashing the bootloader...
-> Creating Boot Image...
-> Boot Image Created successfully
-> Nvflash version 17.0018 started
-> rcm version 0X20001
-> System Information:
->    chip name: t20
->    chip id: 0x20 major: 1 minor: 2
->    chip sku: 0x8
->    chip uid: 0x170061c241e02617
->    macrovision: disabled
->    hdcp: enabled
->    sbk burned: false
->    dk burned: false
->    boot device: nand
->    operating mode: 3
->    device config strap: 0
->    device config fuse: 0
->    sdram config strap: 0
->
-> sending file: ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct
-> - 4080/4080 bytes sent
-> ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct sent
-> successfully
-> odm data: 0x3b0c0105
-> downloading bootloader -- load address: 0x108000 entry point: 0x108000
-> sending file: burnflash.bin
-> | 949720/949720 bytes sent
-> burnflash.bin sent successfully
-> waiting for bootloader to initialize
-> bootloader downloaded successfully
-> setting device: 1 0
-> creating partition: BCT
-> creating partition: PT
-> creating partition: STAGE1_RECOVERY
-> creating partition: STAGE2_RECOVERY
-> creating partition: STAGE1_PRIMARY
-> creating partition: STAGE2_PRIMARY
-> creating partition: KERNEL_RECOVERY
-> creating partition: KERNEL_PRIMARY
-> creating partition: ENV
-> creating partition: APP
-> Formatting partition 2 BCT please wait.. done!
-> Formatting partition 3 PT please wait.. done!
-> Formatting partition 4 STAGE1_RECOVERY please wait.. done!
-> Formatting partition 5 STAGE2_RECOVERY please wait.. done!
-> Formatting partition 6 STAGE1_PRIMARY please wait.. done!
-> Formatting partition 7 STAGE2_PRIMARY please wait.. done!
-> Formatting partition 8 KERNEL_RECOVERY please wait.. done!
-> Formatting partition 9 KERNEL_PRIMARY please wait.. done!
-> Formatting partition 10 ENV please wait.. done!
-> Formatting partition 11 APP please wait.. done!
-> done!
-> sending file: quickboot1.bin
-> - 62128/62128 bytes sent
-> quickboot1.bin sent successfully
-> sending file: cpu_stage2.bin
-> - 31399/31399 bytes sent
-> cpu_stage2.bin sent successfully
-> sending file: quickboot1.bin
-> - 62128/62128 bytes sent
-> quickboot1.bin sent successfully
-> sending file: cpu_stage2.bin
-> - 31399/31399 bytes sent
-> cpu_stage2.bin sent successfully
-> sending file: loadimg.img
-> / 3667968/3667968 bytes sent
-> loadimg.img sent successfully
-> sending file: loadimg.img
-> / 3667968/3667968 bytes sent
-> loadimg.img sent successfully
-> Flashed the Bootloader successfully.
-> To boot, remove "Force Recovery" jumper (J42) and reset the board.
-> Flashed the kernel successfully
->
-> To boot, remove "Force Recovery" jumper (J42) and reset the board.
+>>       console=ttyS0,57600" -S 13
+>> burnflash.sh for p852 board
+>> Root device set to sda1.
+>> If board is not ON, power it by moving switch S6 to ON position,
+>> then press the power button S4 for at least 2 seconds, then release it.
+>> Press Enter to continue
+>>
+>> Install "Force Recovery" jumper (J42) , then press and release
+>> the Reset Switch (S5).
+>> Press Enter to continue
+>>
+>> Flashing the bootloader...
+>> Creating Boot Image...
+>> Boot Image Created successfully
+>> Nvflash version 17.0018 started
+>> rcm version 0X20001
+>> System Information:
+>>    chip name: t20
+>>    chip id: 0x20 major: 1 minor: 2
+>>    chip sku: 0x8
+>>    chip uid: 0x170061c241e02617
+>>    macrovision: disabled
+>>    hdcp: enabled
+>>    sbk burned: false
+>>    dk burned: false
+>>    boot device: nand
+>>    operating mode: 3
+>>    device config strap: 0
+>>    device config fuse: 0
+>>    sdram config strap: 0
+>>
+>> sending file: ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct
+>> - 4080/4080 bytes sent
+>> ./p852_12MHz_H5PS1G83EFR-S5I_333MHz_1GB_nand_MT29F4G08ABADA.bct sent
+>> successfully
+>> odm data: 0x3b0c0105
+>> downloading bootloader -- load address: 0x108000 entry point: 0x108000
+>> sending file: burnflash.bin
+>> | 949720/949720 bytes sent
+>> burnflash.bin sent successfully
+>> waiting for bootloader to initialize
+>> bootloader downloaded successfully
+>> setting device: 1 0
+>> creating partition: BCT
+>> creating partition: PT
+>> creating partition: STAGE1_RECOVERY
+>> creating partition: STAGE2_RECOVERY
+>> creating partition: STAGE1_PRIMARY
+>> creating partition: STAGE2_PRIMARY
+>> creating partition: KERNEL_RECOVERY
+>> creating partition: KERNEL_PRIMARY
+>> creating partition: ENV
+>> creating partition: APP
+>> Formatting partition 2 BCT please wait.. done!
+>> Formatting partition 3 PT please wait.. done!
+>> Formatting partition 4 STAGE1_RECOVERY please wait.. done!
+>> Formatting partition 5 STAGE2_RECOVERY please wait.. done!
+>> Formatting partition 6 STAGE1_PRIMARY please wait.. done!
+>> Formatting partition 7 STAGE2_PRIMARY please wait.. done!
+>> Formatting partition 8 KERNEL_RECOVERY please wait.. done!
+>> Formatting partition 9 KERNEL_PRIMARY please wait.. done!
+>> Formatting partition 10 ENV please wait.. done!
+>> Formatting partition 11 APP please wait.. done!
+>> done!
+>> sending file: quickboot1.bin
+>> - 62128/62128 bytes sent
+>> quickboot1.bin sent successfully
+>> sending file: cpu_stage2.bin
+>> - 31399/31399 bytes sent
+>> cpu_stage2.bin sent successfully
+>> sending file: quickboot1.bin
+>> - 62128/62128 bytes sent
+>> quickboot1.bin sent successfully
+>> sending file: cpu_stage2.bin
+>> - 31399/31399 bytes sent
+>> cpu_stage2.bin sent successfully
+>> sending file: loadimg.img
+>> / 3667968/3667968 bytes sent
+>> loadimg.img sent successfully
+>> sending file: loadimg.img
+>> / 3667968/3667968 bytes sent
+>> loadimg.img sent successfully
+>> Flashed the Bootloader successfully.
+>> To boot, remove "Force Recovery" jumper (J42) and reset the board.
+>> Flashed the kernel successfully
+>>
+>> To boot, remove "Force Recovery" jumper (J42) and reset the board.
