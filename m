@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 2/2] dma: tegra20-apbdma: channel freeing correction
-Date: Wed, 31 Oct 2012 20:18:16 +0530
-Message-ID: <50913A30.60802@nvidia.com>
+Date: Wed, 31 Oct 2012 20:18:31 +0530
+Message-ID: <50913A3F.7080001@nvidia.com>
 References: <1351433873-14082-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
@@ -23,6 +23,6 @@ On Sunday 28 October 2012 07:47 PM, Dmitry Osipenko wrote:
 >
 > Signed-off-by: Dmitry Osipenko<digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Looks good to me.
+Both patches looks good to me.
 
 Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
