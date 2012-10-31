@@ -1,12 +1,10 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
 Subject: [PATCH V4 0/4] ARM: tegra: Enable SLINK controller driver
-Date: Wed, 31 Oct 2012 14:32:56 +0530
-Message-ID: <1351674176-20603-5-git-send-email-ldewangan@nvidia.com>
-References: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com>
+Date: Wed, 31 Oct 2012 14:32:52 +0530
+Message-ID: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@wwwdotorg.org, linux@arm.linux.org.uk
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
