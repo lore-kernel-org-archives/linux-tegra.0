@@ -1,41 +1,39 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 3/7] ARM: tegra30: cpuidle: add powered-down state
- for secondary CPUs
-Date: Thu, 1 Nov 2012 09:51:19 +0800
-Message-ID: <1351734679.3231.64.camel@jlo-ubuntu-64.nvidia.com>
-References: <1351676481-28425-1-git-send-email-josephl@nvidia.com>
-	 <1351676481-28425-4-git-send-email-josephl@nvidia.com>
-	 <CAMbhsRRT60oyecsZqjf196Y=Cog209TwfMCPJ9nyLG+fwu7mqg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 0/4] ARM: tegra: Enable SLINK controller driver
+Date: Thu, 1 Nov 2012 09:15:58 +0530
+Message-ID: <5091F076.6030507@nvidia.com>
+References: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com> <50915203.8030505@wwwdotorg.org> <5091607D.8010907@nvidia.com> <5091791F.4080400@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRRT60oyecsZqjf196Y=Cog209TwfMCPJ9nyLG+fwu7mqg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <5091791F.4080400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2012-11-01 at 05:19 +0800, Colin Cross wrote:
-> On Wed, Oct 31, 2012 at 2:41 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > This supports power-gated idle on secondary CPUs for Tegra30. The
-> > secondary CPUs can go into powered-down state independently. When
-> > CPU goes into this state, it saves it's contexts and puts itself
-> > to flow controlled WFI state. After that, it will been power gated.
-> >
-> > Be aware of that, you may see the legacy power state "LP2" in the
-> > code which is exactly the same meaning of "CPU power down".
-> 
-> On Tegra20, LP2 included powering off the GIC.  Is that still the case
-> for Tegra30 individual secondary cpu power gating?  If so, how do IPIs
-> to an idle cpu wake it up?
+On Thursday 01 November 2012 12:46 AM, Stephen Warren wrote:
+> On 10/31/2012 11:31 AM, Laxman Dewangan wrote:
+>> On Wednesday 31 October 2012 09:59 PM, Stephen Warren wrote:
+>>> On 10/31/2012 03:02 AM, Laxman Dewangan wrote:
+>>>> This series modify the dts file to add the slink addresses,
+>>>> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and
+>>>> enable slink controller defconfig.
+>>> I don't appear to have received patch 1/4 this time around. I'll assume
+>>> it's identical to V3, since I don't think anything needed to change
+>>> there...
+>> Yes, it is identical to V3, no change on the 1/4.
+> OK, I have applied the series now. Thanks.
+>
+> BTW, I noticed that the Cardu board files sets the SPI controller's max
+> frequency to 25MHZ (which is consistent with the commit description) but
+> the SPI flash node's frequency to 20MHz. Was that intended, or should I
+> fix it up to be 25MHz?
+If device provide the max frequency then the spi communciation will on 
+this requested frequency.
+If device does not provide the max spi frequency then it will 
+communciate with the controller max frequency.
 
-Hi Colin,
-
-Thanks for your review.
-For Tegra30, the LP2 of secondary CPU didn't power gate GIC. Only when 4
-cores in LP2, the power of cpu cluster will be shut off that include
-GIC. For the LP2 of individual secondary CPU, it can be woke up by IPI.
-
-Thanks,
-Joseph
+In this case we provide the 20MHz for device and 25MHz for controller. 
+So spi communciation with this device will be always 20MHz.
