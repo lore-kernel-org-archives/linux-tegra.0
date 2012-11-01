@@ -1,37 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Flash Yocto-built kernel on Tegra2 T20?
-Date: Wed, 31 Oct 2012 17:06:12 -0600
-Message-ID: <5091AEE4.6080907@wwwdotorg.org>
-References: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA@mail.gmail.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 3/7] ARM: tegra30: cpuidle: add powered-down state
+ for secondary CPUs
+Date: Thu, 1 Nov 2012 09:51:19 +0800
+Message-ID: <1351734679.3231.64.camel@jlo-ubuntu-64.nvidia.com>
+References: <1351676481-28425-1-git-send-email-josephl@nvidia.com>
+	 <1351676481-28425-4-git-send-email-josephl@nvidia.com>
+	 <CAMbhsRRT60oyecsZqjf196Y=Cog209TwfMCPJ9nyLG+fwu7mqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAMbhsRRT60oyecsZqjf196Y=Cog209TwfMCPJ9nyLG+fwu7mqg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/31/2012 12:29 PM, Evade Flow wrote:
-> I've inherited a Tegra2 T20-based system that I'd like to flash a new
-> kernel to. I built this kernel using OpenEmbedded/Yocto, and the kernel
-> sources from:
+On Thu, 2012-11-01 at 05:19 +0800, Colin Cross wrote:
+> On Wed, Oct 31, 2012 at 2:41 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > This supports power-gated idle on secondary CPUs for Tegra30. The
+> > secondary CPUs can go into powered-down state independently. When
+> > CPU goes into this state, it saves it's contexts and puts itself
+> > to flow controlled WFI state. After that, it will been power gated.
+> >
+> > Be aware of that, you may see the legacy power state "LP2" in the
+> > code which is exactly the same meaning of "CPU power down".
 > 
->   - http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=summary
+> On Tegra20, LP2 included powering off the GIC.  Is that still the case
+> for Tegra30 individual secondary cpu power gating?  If so, how do IPIs
+> to an idle cpu wake it up?
 
-If you want to use existing SW stack that's on that board (quickboot,
-the flashing tools, etc.) I suggest getting support from wherever you
-obtained the board. I know nothing about it, and I imagine anyone else
-on this list is in the same boat. Any support you receive on this
-mailing this will be targeted at using public tools/SW like U-Boot (or
-just possible our more usual fastboot bootloader), the mainline kernel,
-and the flashing tools/scripts usually used with those.
+Hi Colin,
 
-> burnflash.sh for p852 board
+Thanks for your review.
+For Tegra30, the LP2 of secondary CPU didn't power gate GIC. Only when 4
+cores in LP2, the power of cpu cluster will be shut off that include
+GIC. For the LP2 of individual secondary CPU, it can be woke up by IPI.
 
-That board name and your mention of quickboot all imply some automotive
-board. It isn't one of the boards we support in mainline. The developer
-I spoke to was surprised people outside NVIDIA even had the board.
-
-Sorry I can't be any more help.
+Thanks,
+Joseph
