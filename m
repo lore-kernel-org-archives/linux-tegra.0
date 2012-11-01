@@ -1,173 +1,69 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: add suspend/resume support
-Date: Thu,  1 Nov 2012 19:53:06 +0400
-Message-ID: <1351785186-11431-1-git-send-email-digetx@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: add suspend/resume support
+Date: Thu, 01 Nov 2012 11:23:19 -0600
+Message-ID: <5092B007.7050609@wwwdotorg.org>
+References: <1351785186-11431-1-git-send-email-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1351785186-11431-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Added suspend/resume pm ops. We need to store current regs vals on suspend and
-restore them on resume.
+On 11/01/2012 09:53 AM, Dmitry Osipenko wrote:
+> Added suspend/resume pm ops. We need to store current regs vals on suspend and
+> restore them on resume.
 
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-Tested on my tablet.
+Interesting. Just literally a couple days ago, I was reviewing a patch
+to our internal kernel tree that implemented the same thing for the
+pinctrl driver, in almost the same way!
 
- drivers/pinctrl/pinctrl-tegra.c | 94 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 91 insertions(+), 3 deletions(-)
+> ---
+> Tested on my tablet.
 
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 7da0b37..03a3afb 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -41,6 +41,11 @@ struct tegra_pmx {
- 
- 	int nbanks;
- 	void __iomem **regs;
-+
-+	int *bank_size;
-+#ifdef CONFIG_PM_SLEEP
-+	u32 *regs_store;
-+#endif
- };
- 
- static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
-@@ -685,11 +690,72 @@ static struct pinctrl_desc tegra_pinctrl_desc = {
- 	.owner = THIS_MODULE,
- };
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra_pinctrl_suspend_noirq(struct device *dev)
-+{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	int store_offset = 0;
-+	int i, reg;
-+	u32 val;
-+
-+	if (!pmx)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pmx->nbanks; i++) {
-+
-+		for (reg = 0; reg < pmx->bank_size[i]; reg += 4) {
-+			val = pmx_readl(pmx, i, reg);
-+			pmx->regs_store[store_offset] = val;
-+			store_offset++;
-+
-+			dev_dbg(dev, "stored val: 0x%x bank: %d reg: 0x%x\n",
-+				val, i, reg);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_pinctrl_resume_noirq(struct device *dev)
-+{
-+	struct tegra_pmx *pmx = dev_get_drvdata(dev);
-+	int store_offset = 0;
-+	int i, reg;
-+	u32 val;
-+
-+	if (!pmx)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pmx->nbanks; i++) {
-+
-+		for (reg = 0; reg < pmx->bank_size[i]; reg += 4) {
-+			val = pmx->regs_store[store_offset];
-+			pmx_writel(pmx, val, i, reg);
-+			store_offset++;
-+
-+			dev_dbg(dev, "restored val: 0x%x bank: %d reg: 0x%x\n",
-+				val, i, reg);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops tegra_pinctrl_pm_ops = {
-+	.suspend_noirq = tegra_pinctrl_suspend_noirq,
-+	.resume_noirq = tegra_pinctrl_resume_noirq,
-+};
-+#define TEGRA_PINCTRL_PM	(&tegra_pinctrl_pm_ops)
-+#else
-+#define TEGRA_PINCTRL_PM	NULL
-+#endif
-+
- int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
- 			const struct tegra_pinctrl_soc_data *soc_data)
- {
- 	struct tegra_pmx *pmx;
- 	struct resource *res;
-+	int nregs = 0;
- 	int i;
- 
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
-@@ -712,6 +778,13 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
- 	}
- 	pmx->nbanks = i;
- 
-+	pmx->bank_size = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(int),
-+				      GFP_KERNEL);
-+	if (!pmx->bank_size) {
-+		dev_err(&pdev->dev, "Can't alloc banks sizes pointer\n");
-+		return -ENODEV;
-+	}
-+
- 	pmx->regs = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(*pmx->regs),
- 				 GFP_KERNEL);
- 	if (!pmx->regs) {
-@@ -726,22 +799,35 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
- 			return -ENODEV;
- 		}
- 
-+		pmx->bank_size[i] = resource_size(res);
-+
- 		if (!devm_request_mem_region(&pdev->dev, res->start,
--					    resource_size(res),
--					    dev_name(&pdev->dev))) {
-+					     pmx->bank_size[i],
-+					     dev_name(&pdev->dev))) {
- 			dev_err(&pdev->dev,
- 				"Couldn't request MEM resource %d\n", i);
- 			return -ENODEV;
- 		}
- 
- 		pmx->regs[i] = devm_ioremap(&pdev->dev, res->start,
--					    resource_size(res));
-+					    pmx->bank_size[i]);
- 		if (!pmx->regs[i]) {
- 			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n", i);
- 			return -ENODEV;
- 		}
-+
-+		nregs += pmx->bank_size[i] / 4;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
-+	pmx->regs_store = devm_kzalloc(&pdev->dev, nregs * sizeof(u32),
-+				       GFP_KERNEL);
-+	if (!pmx->regs_store) {
-+		dev_err(&pdev->dev, "Can't alloc regs store pointer\n");
-+		return -ENODEV;
-+	}
-+#endif
-+
- 	pmx->pctl = pinctrl_register(&tegra_pinctrl_desc, &pdev->dev, pmx);
- 	if (!pmx->pctl) {
- 		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
-@@ -752,6 +838,8 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
- 
- 	platform_set_drvdata(pdev, pmx);
- 
-+	pdev->dev.driver->pm = TEGRA_PINCTRL_PM;
-+
- 	dev_dbg(&pdev->dev, "Probed Tegra pinctrl driver\n");
- 
- 	return 0;
--- 
-1.7.12
+I'm curious how; in what environment. As far as I know, the Tegra
+support in the mainline kernel doesn't actually support suspend/resume.
+I assume you cherry-picked this pinctrl driver into some other kernel,
+and tested this patch there?
+
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra_pinctrl_suspend_noirq(struct device *dev)
+
+The one major different between this patch and the downstream patch I
+reviewed is how suspend/resume is triggered. This uses suspend_noirq,
+whereas the downstream patch registers the callbacks using
+register_syscore_ops(). Apparently the latter is required (at least in
+our downstream kernel) in order to ensure that pinctrl gets suspended
+after all other drivers.
+
+I Cc'd Pritesh to comment on this.
+
+Still, perhaps device probe ordering should ensure this upstream so
+using register_syscore_ops() might not be necessary, although that
+relies on drivers probing in the correct order, which they may not
+without explicitly pinctrl_get() calls... back to that same problem again!
+
+...
+> +static const struct dev_pm_ops tegra_pinctrl_pm_ops = {
+> +	.suspend_noirq = tegra_pinctrl_suspend_noirq,
+> +	.resume_noirq = tegra_pinctrl_resume_noirq,
+> +};
+> +#define TEGRA_PINCTRL_PM	(&tegra_pinctrl_pm_ops)
+> +#else
+> +#define TEGRA_PINCTRL_PM	NULL
+> +#endif
+
+I was going to suggest using something like SET_SYSTEM_SLEEP_PM_OPS, but
+I guess there's no equivalent for the _noirq variants.
+
+> @@ -752,6 +838,8 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+>  
+>  	platform_set_drvdata(pdev, pmx);
+>  
+> +	pdev->dev.driver->pm = TEGRA_PINCTRL_PM;
+
+That might be better done in the struct platform_driver initialization
+in pinctrl-tegra*.c?
