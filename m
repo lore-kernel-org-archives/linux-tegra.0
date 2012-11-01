@@ -1,39 +1,44 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 0/4] ARM: tegra: Enable SLINK controller driver
-Date: Thu, 1 Nov 2012 09:15:58 +0530
-Message-ID: <5091F076.6030507@nvidia.com>
-References: <1351674176-20603-1-git-send-email-ldewangan@nvidia.com> <50915203.8030505@wwwdotorg.org> <5091607D.8010907@nvidia.com> <5091791F.4080400@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Flash Yocto-built kernel on Tegra2 T20?
+Date: Wed, 31 Oct 2012 22:47:38 -0600
+Message-ID: <5091FEEA.3050905@wwwdotorg.org>
+References: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA@mail.gmail.com> <CAMAb8ZN3m2Vj1o0gJaRSE5xbu2e2ih84YF_8UP1o-ztPfmj7KA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5091791F.4080400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAMAb8ZN3m2Vj1o0gJaRSE5xbu2e2ih84YF_8UP1o-ztPfmj7KA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 01 November 2012 12:46 AM, Stephen Warren wrote:
-> On 10/31/2012 11:31 AM, Laxman Dewangan wrote:
->> On Wednesday 31 October 2012 09:59 PM, Stephen Warren wrote:
->>> On 10/31/2012 03:02 AM, Laxman Dewangan wrote:
->>>> This series modify the dts file to add the slink addresses,
->>>> make AUXDATA in board dt files, enable slink4 for tegra30-cardhu and
->>>> enable slink controller defconfig.
->>> I don't appear to have received patch 1/4 this time around. I'll assume
->>> it's identical to V3, since I don't think anything needed to change
->>> there...
->> Yes, it is identical to V3, no change on the 1/4.
-> OK, I have applied the series now. Thanks.
->
-> BTW, I noticed that the Cardu board files sets the SPI controller's max
-> frequency to 25MHZ (which is consistent with the commit description) but
-> the SPI flash node's frequency to 20MHz. Was that intended, or should I
-> fix it up to be 25MHz?
-If device provide the max frequency then the spi communciation will on 
-this requested frequency.
-If device does not provide the max spi frequency then it will 
-communciate with the controller max frequency.
+On 10/31/2012 04:46 PM, Evade Flow wrote:
+...
+> The old system's burnflash.sh script is executing the following
+> commands:
+...
+> With the flash.sh script from NVIDIA, I'm seeing this:
+...
+> The differences that jump out are:
+...
+> 4. diffs boils down to contents of .cfg and .bct files
+> 5. also pass different --odmdata args
 
-In this case we provide the 20MHz for device and 25MHz for controller. 
-So spi communciation with this device will be always 20MHz.
+BCT files and ODMDATA are board-specific. You should certainly use the
+values from the script that's specific to your board.
+
+Apart from that, all I can really suggest is to get the flashing process
+working with the exact kernel source for the kernel binary you have that
+already works. Then, once you've worked out those kinks, you could try
+using a different kernel source base.
+
+BTW, I have no idea if the L4T kernel you're trying to use has support
+for p852; did you check or explicitly add it? It doesn't seem that
+surprising it won't work, since the the L4T kernel is likely separate
+from any kernel used by the embedded/automotive team.
+
+My suggestion would be to try to get mainline U-Boot and Linux working
+instead. You would need board schematics for that (or a working kernel
+as a reference). If you have some specific need to run the downstream
+L4T kernel instead, it'd be best to talk to your support contacts at NVIDIA.
