@@ -1,53 +1,73 @@
-From: Evade Flow <evadeflow-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Flash Yocto-built kernel on Tegra2 T20?
-Date: Thu, 1 Nov 2012 17:24:08 -0400
-Message-ID: <CAMAb8ZNMYkbn=vqY8z3tzvR26OeRz_g3NZX70ApM=SHg7wPfiQ@mail.gmail.com>
-References: <CAMAb8ZNts=SB2rhD8BU+_wAQ84S3tOzwGazr5hnTveMt-BdwGA@mail.gmail.com>
-	<5091AEE4.6080907@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: add suspend/resume support
+Date: Thu, 01 Nov 2012 15:35:33 -0600
+Message-ID: <5092EB25.5020404@wwwdotorg.org>
+References: <1351785186-11431-1-git-send-email-digetx@gmail.com> <5092B007.7050609@wwwdotorg.org> <5092D6A5.5010401@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5091AEE4.6080907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5092D6A5.5010401-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks a lot for your feedback, it was helpful.
+On 11/01/2012 02:08 PM, Dmitry Osipenko wrote:
+> On 01.11.2012 21:23, Stephen Warren wrote:
+>> I'm curious how; in what environment. As far as I know, the Tegra
+>> support in the mainline kernel doesn't actually support suspend/resume.
+>> I assume you cherry-picked this pinctrl driver into some other kernel,
+>> and tested this patch there?
+> 
+> I added support for suspend/resume since 3.5-rc1, when actually started
+> updating kernel to mainline. The only differences from mainline 3.7 kernel now
+> are: custom clk framework from downstream's kernel with some modifications,
+> dvfs support, video, wifi and other specific drivers for my tablet. I will
+> continue posting patches in order to support suspending in mainline kernel.
+> Also will try to implement dvfs with common clk framework... have some thoughts
+> how better realise it.
 
-> If you want to use existing SW stack that's on that board (quickboot,
-> the flashing tools, etc.) I suggest getting support from wherever you
-> obtained the board.
+OK, it sounds like you'll make some very useful contributions. Thanks in
+advance.
 
-I wish this were an option, but our support contract with the original
-vendor has long since expired. I've been asked to do a quick-n-dirty
-demo using this hardware (which will be thrown away next year), and I
-wanted to have precise control over the image contents.  Now that I see
-how much work this would be, I think I'll just stick with the original
-board support and live with a slow boot time for this demo. `:-}
-
-
-
-On Wed, Oct 31, 2012 at 7:06 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 10/31/2012 12:29 PM, Evade Flow wrote:
->> I've inherited a Tegra2 T20-based system that I'd like to flash a new
->> kernel to. I built this kernel using OpenEmbedded/Yocto, and the kernel
->> sources from:
+>> The one major different between this patch and the downstream patch I
+>> reviewed is how suspend/resume is triggered. This uses suspend_noirq,
+>> whereas the downstream patch registers the callbacks using
+>> register_syscore_ops(). Apparently the latter is required (at least in
+>> our downstream kernel) in order to ensure that pinctrl gets suspended
+>> after all other drivers.
 >>
->>   - http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=summary
->
-> If you want to use existing SW stack that's on that board (quickboot,
-> the flashing tools, etc.) I suggest getting support from wherever you
-> obtained the board. I know nothing about it, and I imagine anyone else
-> on this list is in the same boat. Any support you receive on this
-> mailing this will be targeted at using public tools/SW like U-Boot (or
-> just possible our more usual fastboot bootloader), the mainline kernel,
-> and the flashing tools/scripts usually used with those.
->
->> burnflash.sh for p852 board
->
-> That board name and your mention of quickboot all imply some automotive
-> board. It isn't one of the boards we support in mainline. The developer
-> I spoke to was surprised people outside NVIDIA even had the board.
->
-> Sorry I can't be any more help.
+>> I Cc'd Pritesh to comment on this.
+>>
+>> Still, perhaps device probe ordering should ensure this upstream so
+>> using register_syscore_ops() might not be necessary, although that
+>> relies on drivers probing in the correct order, which they may not
+>> without explicitly pinctrl_get() calls... back to that same problem again!
+> 
+> I know about that difference. My first realisation used syscore_ops, but then
+> I thought that possibly may be more than one pinctrl device that uses tegra
+> driver and decided to use _noirq pm ops. From your msg I assume that we can
+> have only one device
+
+Yes, there certainly is only one pinmux device on Tegra. I agree it's a
+little icky to have to use global variables for syscore_ops, but I don't
+think it will actually cause any practical issue.
+
+> and besides current realisation needs some changes to
+> support more than one device. So should I send V2 or my patch will be useless
+> because Pritesh already realised it?
+
+I'd suggest that Pritesh posts his patch too, and you can both look at
+each-other's work and come up with a final solution.
+
+By the way, your mailer created a rather odd header:
+
+> In-Reply-To: <5092B007.7050609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+
+That makes sense, but:
+
+> Reply-To: 5092B007.7050609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+
+That looks like a botched In-Reply-To header. That text certainly isn't
+a valid email address, but rather a message ID.
