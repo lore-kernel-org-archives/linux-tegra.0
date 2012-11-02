@@ -1,73 +1,146 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: add suspend/resume support
-Date: Thu, 01 Nov 2012 15:35:33 -0600
-Message-ID: <5092EB25.5020404@wwwdotorg.org>
-References: <1351785186-11431-1-git-send-email-digetx@gmail.com> <5092B007.7050609@wwwdotorg.org> <5092D6A5.5010401@gmail.com>
+From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra: add suspend-resume support
+Date: Fri, 2 Nov 2012 16:42:01 +0530
+Message-ID: <1351854721-31295-1-git-send-email-praithatha@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5092D6A5.5010401-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/01/2012 02:08 PM, Dmitry Osipenko wrote:
-> On 01.11.2012 21:23, Stephen Warren wrote:
->> I'm curious how; in what environment. As far as I know, the Tegra
->> support in the mainline kernel doesn't actually support suspend/resume.
->> I assume you cherry-picked this pinctrl driver into some other kernel,
->> and tested this patch there?
-> 
-> I added support for suspend/resume since 3.5-rc1, when actually started
-> updating kernel to mainline. The only differences from mainline 3.7 kernel now
-> are: custom clk framework from downstream's kernel with some modifications,
-> dvfs support, video, wifi and other specific drivers for my tablet. I will
-> continue posting patches in order to support suspending in mainline kernel.
-> Also will try to implement dvfs with common clk framework... have some thoughts
-> how better realise it.
+Added suspend/resume with syscore_ops. syscore_ops ensures that the
+suspend is called after all non syscore peripheral's suspend and the resume
+is called before all non syscore peripheral's resume.
+During suspend we need to backup resisters and restore it on resume.
 
-OK, it sounds like you'll make some very useful contributions. Thanks in
-advance.
+Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra.c |   64 +++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 62 insertions(+), 2 deletions(-)
 
->> The one major different between this patch and the downstream patch I
->> reviewed is how suspend/resume is triggered. This uses suspend_noirq,
->> whereas the downstream patch registers the callbacks using
->> register_syscore_ops(). Apparently the latter is required (at least in
->> our downstream kernel) in order to ensure that pinctrl gets suspended
->> after all other drivers.
->>
->> I Cc'd Pritesh to comment on this.
->>
->> Still, perhaps device probe ordering should ensure this upstream so
->> using register_syscore_ops() might not be necessary, although that
->> relies on drivers probing in the correct order, which they may not
->> without explicitly pinctrl_get() calls... back to that same problem again!
-> 
-> I know about that difference. My first realisation used syscore_ops, but then
-> I thought that possibly may be more than one pinctrl device that uses tegra
-> driver and decided to use _noirq pm ops. From your msg I assume that we can
-> have only one device
-
-Yes, there certainly is only one pinmux device on Tegra. I agree it's a
-little icky to have to use global variables for syscore_ops, but I don't
-think it will actually cause any practical issue.
-
-> and besides current realisation needs some changes to
-> support more than one device. So should I send V2 or my patch will be useless
-> because Pritesh already realised it?
-
-I'd suggest that Pritesh posts his patch too, and you can both look at
-each-other's work and come up with a final solution.
-
-By the way, your mailer created a rather odd header:
-
-> In-Reply-To: <5092B007.7050609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-
-That makes sense, but:
-
-> Reply-To: 5092B007.7050609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-
-That looks like a botched In-Reply-To header. That text certainly isn't
-a valid email address, but rather a message ID.
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index ae52e4e..3fd791d 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -29,6 +29,7 @@
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/slab.h>
++#include <linux/syscore_ops.h>
+ 
+ #include <mach/pinconf-tegra.h>
+ 
+@@ -43,7 +44,11 @@ struct tegra_pmx {
+ 
+ 	int nbanks;
+ 	void __iomem **regs;
++	int *bank_size;
++
++	u32 *pg_data;
+ };
++static struct tegra_pmx *pmx;
+ 
+ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+ {
+@@ -687,12 +692,46 @@ static struct pinctrl_desc tegra_pinctrl_desc = {
+ 	.owner = THIS_MODULE,
+ };
+ 
++#ifdef CONFIG_PM_SLEEP
++
++static int pinctrl_suspend(void)
++{
++	int i, j;
++	u32 *pg_data = pmx->pg_data;
++	u32 *regs;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->bank_size[i]/4; j++)
++			*pg_data++ = readl(regs++);
++	}
++	return 0;
++}
++
++static void pinctrl_resume(void)
++{
++	int i, j;
++	u32 *pg_data = pmx->pg_data;
++	u32 *regs;
++
++	for (i = 0; i < pmx->nbanks; i++) {
++		regs = pmx->regs[i];
++		for (j = 0; j < pmx->bank_size[i]/4; j++)
++			writel(*pg_data++, regs++);
++	}
++}
++
++static struct syscore_ops pinctrl_syscore_ops = {
++	.suspend = pinctrl_suspend,
++	.resume = pinctrl_resume,
++};
++
++#endif
+ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data)
+ {
+-	struct tegra_pmx *pmx;
+ 	struct resource *res;
+-	int i;
++	int i, pg_data_size = 0;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx) {
+@@ -711,6 +750,7 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		if (!res)
+ 			break;
++		pg_data_size += resource_size(res);
+ 	}
+ 	pmx->nbanks = i;
+ 
+@@ -720,6 +760,20 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
+ 		return -ENODEV;
+ 	}
++#ifdef CONFIG_PM_SLEEP
++	pmx->bank_size = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(int),
++				 GFP_KERNEL);
++	if (!pmx->bank_size) {
++		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
++		return -ENODEV;
++	}
++
++	pmx->pg_data = devm_kzalloc(&pdev->dev, pg_data_size, GFP_KERNEL);
++	if (!pmx->pg_data) {
++		dev_err(&pdev->dev, "Can't alloc pingroup data pointer\n");
++		return -ENODEV;
++	}
++#endif
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+@@ -742,6 +796,9 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+ 			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n", i);
+ 			return -ENODEV;
+ 		}
++#ifdef CONFIG_PM_SLEEP
++		pmx->bank_size[i] = resource_size(res);
++#endif
+ 	}
+ 
+ 	pmx->pctl = pinctrl_register(&tegra_pinctrl_desc, &pdev->dev, pmx);
+@@ -754,6 +811,9 @@ int __devinit tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	platform_set_drvdata(pdev, pmx);
+ 
++#ifdef CONFIG_PM_SLEEP
++	register_syscore_ops(&pinctrl_syscore_ops);
++#endif
+ 	dev_dbg(&pdev->dev, "Probed Tegra pinctrl driver\n");
+ 
+ 	return 0;
+-- 
+1.7.1
