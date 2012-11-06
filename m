@@ -1,188 +1,28 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: retain L2 content over CPU suspend/resume
-Date: Tue, 6 Nov 2012 17:32:57 +0800
-Message-ID: <1352194377-6209-1-git-send-email-josephl@nvidia.com>
+From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3] pinctrl: tegra: add suspend/resume support
+Date: Tue, 6 Nov 2012 15:58:09 +0530
+Message-ID: <5098E639.1090403@nvidia.com>
+References: <5097F013.8070002@wwwdotorg.org> <1352165844-4837-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1352165844-4837-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The L2 RAM is in different power domain from the CPU cluster. So the
-L2 content can be retained over CPU suspend/resume. To do that, we
-need to disable L2 after the MMU is disabled, and enable L2 before
-the MMU is enabled. But the L2 controller is in the same power domain
-with the CPU cluster. We need to restore it's settings and re-enable
-it after the power be resumed.
+On Tuesday 06 November 2012 07:07 AM, Dmitry Osipenko wrote:
+> Added suspend/resume support using pm ops. We need to store current regs vals on
+> suspend and restore them on resume. Platform driver registering function moved to
+> core init level to ensure that device driver will be in the end of suspend and in
+> the beginning of resume lists.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Pritesh, what do you think about this patch?
+> 
+ It looks good.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/common.c  |    6 +++++-
- arch/arm/mach-tegra/headsmp.S |   11 +++++++++++
- arch/arm/mach-tegra/pm.c      |    2 --
- arch/arm/mach-tegra/pm.h      |    2 ++
- arch/arm/mach-tegra/sleep.S   |    7 +++++++
- arch/arm/mach-tegra/sleep.h   |   28 ++++++++++++++++++++++++++++
- 6 files changed, 53 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 35b7dd3..c25746e 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -36,6 +36,7 @@
- #include "pmc.h"
- #include "apbio.h"
- #include "sleep.h"
-+#include "pm.h"
- 
- /*
-  * Storage for debug-macro.S's state.
-@@ -117,6 +118,7 @@ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
- static void __init tegra_init_cache(void)
- {
- #ifdef CONFIG_CACHE_L2X0
-+	int ret;
- 	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
- 	u32 aux_ctrl, cache_type;
- 
-@@ -124,7 +126,9 @@ static void __init tegra_init_cache(void)
- 	aux_ctrl = (cache_type & 0x700) << (17-8);
- 	aux_ctrl |= 0x6C000001;
- 
--	l2x0_of_init(aux_ctrl, 0x8200c3fe);
-+	ret = l2x0_of_init(aux_ctrl, 0x8200c3fe);
-+	if (!ret)
-+		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
- #endif
- 
- }
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-index 82dc84b..4a317fa 100644
---- a/arch/arm/mach-tegra/headsmp.S
-+++ b/arch/arm/mach-tegra/headsmp.S
-@@ -2,6 +2,8 @@
- #include <linux/init.h>
- 
- #include <asm/cache.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/hardware/cache-l2x0.h>
- 
- #include "flowctrl.h"
- #include "iomap.h"
-@@ -113,10 +115,19 @@ ENTRY(tegra_resume)
- 	str	r1, [r0]
- #endif
- 
-+	/* L2 cache resume & re-enable */
-+	l2_cache_resume r0, r1, r2, l2x0_saved_regs_addr
-+
- 	b	cpu_resume
- ENDPROC(tegra_resume)
- #endif
- 
-+#ifdef CONFIG_CACHE_L2X0
-+	.globl	l2x0_saved_regs_addr
-+l2x0_saved_regs_addr:
-+	.long	0
-+#endif
-+
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler_start)
- 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 1460c3d..1b11707 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -207,11 +207,9 @@ void tegra_idle_lp2_last(u32 cpu_on_time, u32 cpu_off_time)
- 
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
--	outer_disable();
- 
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
--	outer_resume();
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
- }
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 512345c..787335c 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -21,6 +21,8 @@
- #ifndef _MACH_TEGRA_PM_H_
- #define _MACH_TEGRA_PM_H_
- 
-+extern unsigned long l2x0_saved_regs_addr;
-+
- void save_cpu_arch_register(void);
- void restore_cpu_arch_register(void);
- 
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index 88f4de9..26afa7c 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -27,6 +27,7 @@
- #include <asm/assembler.h>
- #include <asm/cache.h>
- #include <asm/cp15.h>
-+#include <asm/hardware/cache-l2x0.h>
- 
- #include "iomap.h"
- 
-@@ -98,6 +99,12 @@ ENTRY(tegra_shut_off_mmu)
- 	dsb
- 	mcr	p15, 0, r3, c1, c0, 0
- 	isb
-+#ifdef CONFIG_CACHE_L2X0
-+	/* Disable L2 cache */
-+	mov32	r4, TEGRA_ARM_PERIF_BASE + 0x3000
-+	mov	r5, #0
-+	str	r5, [r4, #L2X0_CTRL]
-+#endif
- 	mov	pc, r0
- ENDPROC(tegra_shut_off_mmu)
- 	.popsection
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 6e1b949..45d4d08 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -71,6 +71,34 @@
- 	str	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
- 	dsb
- .endm
-+
-+/* Macro to resume & re-enable L2 cache */
-+#ifdef CONFIG_CACHE_L2X0
-+.macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
-+	adr	\tmp1, \phys_l2x0_saved_regs
-+	ldr	\tmp1, [\tmp1]
-+	ldr	\tmp2, [\tmp1, #L2X0_R_PHY_BASE]
-+	ldr	\tmp3, [\tmp2, #L2X0_CTRL]
-+	tst	\tmp3, #L2X0_CTRL_EN
-+	bne	exit_l2_resume
-+	ldr	\tmp3, [\tmp1, #L2X0_R_TAG_LATENCY]
-+	str	\tmp3, [\tmp2, #L2X0_TAG_LATENCY_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_DATA_LATENCY]
-+	str	\tmp3, [\tmp2, #L2X0_DATA_LATENCY_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_PREFETCH_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_PREFETCH_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_PWR_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_POWER_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_AUX_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_AUX_CTRL]
-+	mov	\tmp3, #L2X0_CTRL_EN
-+	str	\tmp3, [\tmp2, #L2X0_CTRL]
-+exit_l2_resume:
-+.endm
-+#else /* CONFIG_CACHE_L2X0 */
-+.macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
-+.endm
-+#endif /* CONFIG_CACHE_L2X0 */
- #else
- void tegra_resume(void);
- int tegra_sleep_cpu_finish(unsigned long);
--- 
-1.7.0.4
+ Acked-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
