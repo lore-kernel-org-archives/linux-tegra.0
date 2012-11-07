@@ -1,39 +1,108 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] gpio: tegra: create irq mapping in gpio_to_irq
-Date: Wed, 7 Nov 2012 20:31:31 +0530
-Message-ID: <1352300492-24779-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 2/2] gpio: tegra: fix suspend/resume apis
+Date: Wed, 7 Nov 2012 20:31:32 +0530
+Message-ID: <1352300492-24779-2-git-send-email-ldewangan@nvidia.com>
+References: <1352300492-24779-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1352300492-24779-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, grant.likely@secretlab.ca
+Cc: swarren@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The gpio interrupts get mapped linearly and hence the mapping
-of irq need to be created by irq_create_mapping().
+Following are changes done to fix the suspend/resume
+functionality of tegra gpio driver:
+- Protect suspend/resume callbacks with CONFIG_PM_SLEEP
+  because CONFIG_PM doesn't actually enable any of the PM callbacks, it
+  only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
+  This means if CONFIG_PM is used to protect system sleep callbacks
+  then it may end up unreferenced if only runtime PM is enabled.
 
-The function gpio_to_irq() returns the irq by irq_find_mapping()
-and so returns 0 as there is no mapping created. Fix the function
-to create mapping when gpio_to_irq() get called.
+- Fix the suspend/resume APIs declaration as per callback prototype.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-tegra.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/gpio/gpio-tegra.c |   18 +++++++++++++-----
+ 1 files changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index c7c175a..6c08613 100644
+index 6c08613..9c1884b 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -156,7 +156,7 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+@@ -27,6 +27,7 @@
+ #include <linux/module.h>
+ #include <linux/irqdomain.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/pm.h>
  
- static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
--	return irq_find_mapping(irq_domain, offset);
-+	return irq_create_mapping(irq_domain, offset);
+ #include <asm/mach/irq.h>
+ 
+@@ -64,7 +65,7 @@ struct tegra_gpio_bank {
+ 	int bank;
+ 	int irq;
+ 	spinlock_t lvl_lock[4];
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	u32 cnf[4];
+ 	u32 out[4];
+ 	u32 oe[4];
+@@ -285,8 +286,8 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 
  }
  
- static struct gpio_chip tegra_gpio_chip = {
+-#ifdef CONFIG_PM
+-void tegra_gpio_resume(void)
++#ifdef CONFIG_PM_SLEEP
++static int  tegra_gpio_resume(struct device *dev)
+ {
+ 	unsigned long flags;
+ 	int b;
+@@ -308,9 +309,10 @@ void tegra_gpio_resume(void)
+ 	}
+ 
+ 	local_irq_restore(flags);
++	return 0;
+ }
+ 
+-void tegra_gpio_suspend(void)
++static int tegra_gpio_suspend(struct device *dev)
+ {
+ 	unsigned long flags;
+ 	int b;
+@@ -330,6 +332,7 @@ void tegra_gpio_suspend(void)
+ 		}
+ 	}
+ 	local_irq_restore(flags);
++	return 0;
+ }
+ 
+ static int tegra_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+@@ -345,11 +348,15 @@ static struct irq_chip tegra_gpio_irq_chip = {
+ 	.irq_mask	= tegra_gpio_irq_mask,
+ 	.irq_unmask	= tegra_gpio_irq_unmask,
+ 	.irq_set_type	= tegra_gpio_irq_set_type,
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	.irq_set_wake	= tegra_gpio_wake_enable,
+ #endif
+ };
+ 
++static const struct dev_pm_ops tegra_gpio_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
++};
++
+ struct tegra_gpio_soc_config {
+ 	u32 bank_stride;
+ 	u32 upper_offset;
+@@ -489,6 +496,7 @@ static struct platform_driver tegra_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-gpio",
+ 		.owner	= THIS_MODULE,
++		.pm	= &tegra_gpio_pm_ops,
+ 		.of_match_table = tegra_gpio_of_match,
+ 	},
+ 	.probe		= tegra_gpio_probe,
 -- 
 1.7.1.1
