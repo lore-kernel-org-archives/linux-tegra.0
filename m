@@ -1,32 +1,40 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 1/2] gpio: tegra: create irq mapping in gpio_to_irq
-Date: Thu, 8 Nov 2012 09:59:02 +0530
-Message-ID: <509B350E.5050105@nvidia.com>
-References: <1352300492-24779-1-git-send-email-ldewangan@nvidia.com> <509A9579.5090002@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] gpio: tegra: read output value when gpio is set in direction_out
+Date: Thu, 8 Nov 2012 11:57:27 +0530
+Message-ID: <1352356047-24817-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <509A9579.5090002@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 07 November 2012 10:38 PM, Stephen Warren wrote:
-> On 11/07/2012 08:01 AM, Laxman Dewangan wrote:
->> The gpio interrupts get mapped linearly and hence the mapping
->> of irq need to be created by irq_create_mapping().
->>
->> The function gpio_to_irq() returns the irq by irq_find_mapping()
->> and so returns 0 as there is no mapping created. Fix the function
->> to create mapping when gpio_to_irq() get called.
-> I'm not convinced this should be needed. tegra_gpio_probe() contains:
+Read the output value when gpio is set for the output mode for
+gpio_get_value(). Reading input value in direction out does not
+give correct value.
 
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpio/gpio-tegra.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-Oh, yes, I did not observe this code in my review. So this change is not 
-resolving any issue.
-
-
-I think we should move the mapping to gpio_to_irq() rather than doing 
-this in probe.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index c7c175a..0fb2ce7 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -135,6 +135,12 @@ static void tegra_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
++	int bit_val = BIT(GPIO_BIT(offset));
++
++	/* If gpio is in output mode then read from the out value */
++	if (tegra_gpio_readl(GPIO_OE(offset)) & bit_val)
++		return !!(tegra_gpio_readl(GPIO_OUT(offset)) & bit_val);
++
+ 	return (tegra_gpio_readl(GPIO_IN(offset)) >> GPIO_BIT(offset)) & 0x1;
+ }
+ 
+-- 
+1.7.1.1
