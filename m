@@ -1,40 +1,112 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] gpio: tegra: fix suspend/resume apis
-Date: Wed, 07 Nov 2012 10:11:41 -0700
-Message-ID: <509A964D.2050205@wwwdotorg.org>
-References: <1352300492-24779-1-git-send-email-ldewangan@nvidia.com> <1352300492-24779-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] gpio: tegra: fix suspend/resume apis
+Date: Thu, 8 Nov 2012 09:52:24 +0530
+Message-ID: <1352348544-24416-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352300492-24779-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/07/2012 08:01 AM, Laxman Dewangan wrote:
-> Following are changes done to fix the suspend/resume
-> functionality of tegra gpio driver:
-> - Protect suspend/resume callbacks with CONFIG_PM_SLEEP
->   because CONFIG_PM doesn't actually enable any of the PM callbacks, it
->   only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
->   This means if CONFIG_PM is used to protect system sleep callbacks
->   then it may end up unreferenced if only runtime PM is enabled.
-> 
-> - Fix the suspend/resume APIs declaration as per callback prototype.
+Following are changes done to fix the suspend/resume
+functionality of tegra gpio driver:
+- Protect suspend/resume callbacks with CONFIG_PM_SLEEP
+  because CONFIG_PM doesn't actually enable any of the PM callbacks, it
+  only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
+  This means if CONFIG_PM is used to protect system sleep callbacks
+  then it may end up unreferenced if only runtime PM is enabled.
 
-Seems plausible, so this patch,
+- Fix the suspend/resume APIs declaration as per callback prototype.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes from V1:
+- It was 2/2/ for prev patch and dropping 1/2.
+- nit cleanup in change.
+- Added ack from Stephen as it is acked in 2/2.
 
-I wonder why the suspend/resume functions weren't actually hooked up
-anywhere before. Oh well.
+ drivers/gpio/gpio-tegra.c |   18 +++++++++++++-----
+ 1 files changed, 13 insertions(+), 5 deletions(-)
 
-Just one very minor nit below:
-
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-
-> +#ifdef CONFIG_PM_SLEEP
-> +static int  tegra_gpio_resume(struct device *dev)
-
-There are two spaces after "int" there.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index c7c175a..da32754 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -27,6 +27,7 @@
+ #include <linux/module.h>
+ #include <linux/irqdomain.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/pm.h>
+ 
+ #include <asm/mach/irq.h>
+ 
+@@ -64,7 +65,7 @@ struct tegra_gpio_bank {
+ 	int bank;
+ 	int irq;
+ 	spinlock_t lvl_lock[4];
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	u32 cnf[4];
+ 	u32 out[4];
+ 	u32 oe[4];
+@@ -285,8 +286,8 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 
+ }
+ 
+-#ifdef CONFIG_PM
+-void tegra_gpio_resume(void)
++#ifdef CONFIG_PM_SLEEP
++static int tegra_gpio_resume(struct device *dev)
+ {
+ 	unsigned long flags;
+ 	int b;
+@@ -308,9 +309,10 @@ void tegra_gpio_resume(void)
+ 	}
+ 
+ 	local_irq_restore(flags);
++	return 0;
+ }
+ 
+-void tegra_gpio_suspend(void)
++static int tegra_gpio_suspend(struct device *dev)
+ {
+ 	unsigned long flags;
+ 	int b;
+@@ -330,6 +332,7 @@ void tegra_gpio_suspend(void)
+ 		}
+ 	}
+ 	local_irq_restore(flags);
++	return 0;
+ }
+ 
+ static int tegra_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+@@ -345,11 +348,15 @@ static struct irq_chip tegra_gpio_irq_chip = {
+ 	.irq_mask	= tegra_gpio_irq_mask,
+ 	.irq_unmask	= tegra_gpio_irq_unmask,
+ 	.irq_set_type	= tegra_gpio_irq_set_type,
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	.irq_set_wake	= tegra_gpio_wake_enable,
+ #endif
+ };
+ 
++static const struct dev_pm_ops tegra_gpio_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
++};
++
+ struct tegra_gpio_soc_config {
+ 	u32 bank_stride;
+ 	u32 upper_offset;
+@@ -489,6 +496,7 @@ static struct platform_driver tegra_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-gpio",
+ 		.owner	= THIS_MODULE,
++		.pm	= &tegra_gpio_pm_ops,
+ 		.of_match_table = tegra_gpio_of_match,
+ 	},
+ 	.probe		= tegra_gpio_probe,
+-- 
+1.7.1.1
