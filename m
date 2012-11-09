@@ -1,30 +1,22 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: retain L2 content over CPU suspend/resume
-Date: Fri, 09 Nov 2012 14:54:41 -0700
-Message-ID: <509D7BA1.506@wwwdotorg.org>
-References: <1352194377-6209-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 1/2] ARM: tegra: tamonten: Add DDC/PTA pinmux
+Date: Fri, 09 Nov 2012 14:56:29 -0700
+Message-ID: <509D7C0D.6010704@wwwdotorg.org>
+References: <1352466291-27333-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352194377-6209-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1352466291-27333-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/06/2012 02:32 AM, Joseph Lo wrote:
-> The L2 RAM is in different power domain from the CPU cluster. So the
-> L2 content can be retained over CPU suspend/resume. To do that, we
-> need to disable L2 after the MMU is disabled, and enable L2 before
-> the MMU is enabled. But the L2 controller is in the same power domain
-> with the CPU cluster. We need to restore it's settings and re-enable
-> it after the power be resumed.
+On 11/09/2012 06:04 AM, Thierry Reding wrote:
+> This commit allows the I2C2 controller on Tegra20 to be routed either to
+> the DDC or the PTA pin group at runtime. On Tamonten this allows the I2C
+> bus to be used for the DDC of the HDMI connector or to access I2C chips
+> on the carrier board.
 
-This doesn't compile:
-
-arch/arm/mach-tegra/headsmp.S: Assembler messages:
-arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
-used as an immediate value
-arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
-used as an immediate value
+Both patches applied to Tegra's for-3.8/dt branch. Thanks.
