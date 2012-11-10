@@ -1,43 +1,130 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] drm: Add NVIDIA Tegra20 support
-Date: Sat, 10 Nov 2012 20:04:26 +0200
-Message-ID: <509E972A.8020200@nvidia.com>
-References: <1352469579-3337-1-git-send-email-thierry.reding@avionic-design.de> <1352469579-3337-2-git-send-email-thierry.reding@avionic-design.de> <CAF6AEGs4bk3umkbQmJmB+Gf4UctKWa2Rj9GEi=DZSqU8MUd+9w@mail.gmail.com> <20121109160002.GA6474@avionic-0098.mockup.avionic-design.de> <CAF6AEGu0j1E96tzsTcJ91-FdTekAoWL7w1GBadRQ7p2h0smVDA@mail.gmail.com> <20121109210334.GA9023@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 2/2] drm: tegra: Add HDMI support
+Date: Sat, 10 Nov 2012 22:01:18 +0100
+Message-ID: <20121110210118.GA26809@avionic-0098.mockup.avionic-design.de>
+References: <1352469579-3337-1-git-send-email-thierry.reding@avionic-design.de>
+ <1352469579-3337-3-git-send-email-thierry.reding@avionic-design.de>
+ <CACna6rycZ=TGHP7KpVa_r0JSpc6c=PB89pijR9E_4A=bQ=74Bw@mail.gmail.com>
+ <509D28B6.3060207@vodafone.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121109210334.GA9023-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <509D28B6.3060207-ANTagKRnAhcb1SvskN2V4Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Christian =?utf-8?B?S8O2bmln?= <deathsimple-ANTagKRnAhcb1SvskN2V4Q@public.gmane.org>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09.11.2012 23:03, Thierry Reding wrote:
-> On Fri, Nov 09, 2012 at 10:26:27AM -0600, Rob Clark wrote:
->> hmm, are these values defined by the hw? They look like register 
->> offsets into the DC block? 
-> I don't think they are defined by the hardware. From what I gather these
-> can arbitrarily be assigned by software. If things actually work the way
-> I think they do, then eventually these values could be allocated by the
-> host1x_register_client() function and stored within the host1x_client
-> structure, so that each HW block can program them into the corresponding
-> register.
-These are host1x sync points. Sync points are used to synchronize work 
-between host1x, host1x client units (like DC, 2D, EPP, etc), and CPU. 
-Tegra2 TRM now contains chapters for HOST1X, 2D and EPP, so it has some 
-more details.
 
-The assignment of sync points is a software policy. Depending on 
-programming model of client unit, one or more sync points are used for 
-each. For example, for each DC we have one sync point assigned to 
-vblank, and one for each DC window. For 2D, we'd have one sync point, 
-and a choice of using the same of different sync point for EPP.
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We could either assign sync point registers by hard coding, or assign 
-them dynamically one per client unit, and possibly an additional one 
-depending on the programming model. Sync points are a scarce resource, 
-so we've so far preferred to do static assignment to catch 
-overallocation as early as possible.
+On Fri, Nov 09, 2012 at 05:00:54PM +0100, Christian K=C3=B6nig wrote:
+> On 09.11.2012 16:45, Rafa=C5=82 Mi=C5=82ecki wrote:
+> >2012/11/9 Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>:
+> >>+/* all fields little endian */
+> >>+struct hdmi_audio_infoframe {
+> >>+       /* PB0 */
+> >>+       u8 csum;
+> >>+
+> >>+       /* PB1 */
+> >>+       unsigned cc:3; /* channel count */
+> >>+       unsigned res1:1;
+> >>+       unsigned ct:4; /* coding type */
+> >>+
+> >>+       /* PB2 */
+> >>+       unsigned ss:2; /* sample size */
+> >>+       unsigned sf:3; /* sample frequency */
+> >>+       unsigned res2:3;
+> >>+
+> >>+       /* PB3 */
+> >>+       unsigned cxt:5; /* coding extention type */
+> >>+       unsigned res3:3;
+> >>+
+> >>+       /* PB4 */
+> >>+       u8 ca; /* channel/speaker allocation */
+> >>+
+> >>+       /* PB5 */
+> >>+       unsigned res5:3;
+> >>+       unsigned lsv:4; /* level shift value */
+> >>+       unsigned dm_inh:1; /* downmix inhibit */
+> >>+
+> >>+       /* PB6-10 reserved */
+> >>+       u8 res6;
+> >>+       u8 res7;
+> >>+       u8 res8;
+> >>+       u8 res9;
+> >>+       u8 res10;
+> >>+} __packed;
+> >I was told it won't work on different endian devices. See
+> >[RFC][PATCH] drm/radeon/hdmi: define struct for AVI infoframe
+> >http://lists.freedesktop.org/archives/dri-devel/2012-May/022544.html
+>=20
+> Yeah, that's indeed true. And honestly adding just another
+> implementation of the HDMI info frames sounds like somebody should
+> finally sit down and implement it in a common drm_hdmi.c
 
-Terje
+So I've been looking at what most other implementations do and it seems
+a lot just fill the AVI infoframe with zeroes while only a few actually
+try to put useful information in them. Still in order to plan for a
+generic solution, I thought maybe something like the below set of
+structures and functions could work:
+
+/*
+ * Structure that contains the infoframe fields in a form that allows them =
+to
+ * be easily accessed from C code.
+ */
+struct hdmi_avi_infoframe;
+
+/*
+ * DRM helper to fill a struct hdmi_avi_infoframe with information taken fr=
+om
+ * a struct drm_display_mode. Fields that cannot automatically be derived by
+ * looking at a struct drm_display_mode are set to the default values.
+ */
+int drm_hdmi_avi_infoframe_from_display_mode(struct hdmi_avi_infoframe *fra=
+me,
+					     struct drm_display_mode *mode);
+
+/*
+ * Packs the struct hdmi_avi_infoframe into a binary buffer that can be
+ * programmed to the hardware-specific registers.
+ */
+ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame,
+				void *buffer, size_t size);
+
+Such a scheme would allow DRM drivers to call the helper and tweak the
+fields in the structure if the want or need to and call the packing
+function to obtain a buffer that they can write to the controller.
+
+Does that sound at all reasonable?
+
+Thierry
+
+--cWoXeonUoKmBZSoM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQnsCeAAoJEN0jrNd/PrOh19YQAJ6NFDJs0Eo2FmvW43kYco/j
+IqH5wOVtigyoraJonY8HK76hXmE5FvovSQGbJRiPN2o0OcQ9xxC9mlDHn8Vewa8V
+PtNvkNODz5rTNz2qBawQeuPReomNqs80AXrmlCZ/ym6Dhm4hM36ZeDw3zGR6WLQB
+8Jg+9+8C5ahuve7DMKdbpFTp3bqwwDqKQTg4tg+OwMe+YvTBYIoOM0ZNnQGYBCsY
+bI4VgQfb9C6YcMtUysrGYlGj4DKEdQBB935T4kPO7W7SlS77sTiYvJNIID3lck4o
+qspdKYXjRtpatTfnwlyFcpxyfrejoDPYC0Wb8ZQ84lHu2kW+jKcorIxY+J11iM3y
+QSm9XH2fDoutKYw1QfZtKVrY2cnvhxcJjIPVzy95jbBJMgCtTmJgsHe8me3zaD+X
+MMgUJPCB4oPhN4I/SQBrg7iZJNV4xJQB+1V+OcaV9baTtEXvJA4ra89Mjg6QnqEJ
+XVHPkiuFK8HgMGV9W/3HGqhcFuzvSKr6QGnK2CPUMgIMWn1v0Ygr2NYOZf/liLgS
+TW6J36dwKjWB97mtPeGD2idzIdOGBY5QNf78ojdXv6U4u4QnVvxKnPdJJI/mI7D6
+g/6sgd5JFZcz2M7DuMnduTaOxkWU/3gmJQdE+YCqFn16+bw+B2tFrA4BeoAhKya2
+Kaa6RyX4aCt8EN7B+CyN
+=B3jL
+-----END PGP SIGNATURE-----
+
+--cWoXeonUoKmBZSoM--
