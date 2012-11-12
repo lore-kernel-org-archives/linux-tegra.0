@@ -1,41 +1,50 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: enable data prefetch on L2
-Date: Mon, 12 Nov 2012 09:19:53 -0700
-Message-ID: <50A121A9.9070101@wwwdotorg.org>
-References: <1352251597-2936-1-git-send-email-josephl@nvidia.com> <20121112121905.GI1962@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: retain L2 content over CPU suspend/resume
+Date: Mon, 12 Nov 2012 09:36:15 -0700
+Message-ID: <50A1257F.8090003@wwwdotorg.org>
+References: <1352194377-6209-1-git-send-email-josephl@nvidia.com>  <509D7BA1.506@wwwdotorg.org> <1352693437.19251.9.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121112121905.GI1962-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1352693437.19251.9.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/12/2012 05:19 AM, Peter De Schrijver wrote:
-> On Wed, Nov 07, 2012 at 02:26:37AM +0100, Joseph Lo wrote:
->> Enable the data prefetch on L2. The bit28 in aux ctrl register.
+On 11/11/2012 09:10 PM, Joseph Lo wrote:
+> On Sat, 2012-11-10 at 05:54 +0800, Stephen Warren wrote:
+>> On 11/06/2012 02:32 AM, Joseph Lo wrote:
+>>> The L2 RAM is in different power domain from the CPU cluster. So the
+>>> L2 content can be retained over CPU suspend/resume. To do that, we
+>>> need to disable L2 after the MMU is disabled, and enable L2 before
+>>> the MMU is enabled. But the L2 controller is in the same power domain
+>>> with the CPU cluster. We need to restore it's settings and re-enable
+>>> it after the power be resumed.
 >>
->> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm/mach-tegra/common.c |    2 +-
->>  1 files changed, 1 insertions(+), 1 deletions(-)
+>> This doesn't compile:
 >>
->> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
->> index c25746e..c3dee56 100644
->> --- a/arch/arm/mach-tegra/common.c
->> +++ b/arch/arm/mach-tegra/common.c
->> @@ -124,7 +124,7 @@ static void __init tegra_init_cache(void)
->>  
->>  	cache_type = readl(p + L2X0_CACHE_TYPE);
->>  	aux_ctrl = (cache_type & 0x700) << (17-8);
->> -	aux_ctrl |= 0x6C000001;
->> +	aux_ctrl |= 0x7C000001;
+>> arch/arm/mach-tegra/headsmp.S: Assembler messages:
+>> arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
+>> used as an immediate value
+>> arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
+>> used as an immediate value
 > 
-> Just found out that we should also set bit 22 as per
-> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=6395%2F1
+> Ah, sorry for mention that.
+> This patch was depended on "07bd005 ARM: 7547/1: cache-l2x0: add support
+> for Aurora L2 cache ctrl" and only showed up after "next-20121024". The
+> definition of "L2X0_CTRL_EN" was been introduced in that patch.
 > 
-> Stephen, should I send a seperate patch for that?
+> Should I re-send a patch that based on tegra "for-next" branch that will
+> change L2X0_CTRL_EN to 0x1? Sorry for inconvenience.
 
-Yes please; I've applied the patch in this thread already.
+That's probably simplest. Perhaps rather than just replacing the #define
+with a literal, do:
+
+#ifndef L2X0_CTRL_EN
+#define L2X0_CTRL_EN                   1
+#endif
+
+So that we can simply remove that ifdef block later once we know patch
+7547 is present.
