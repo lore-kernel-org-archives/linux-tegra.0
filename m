@@ -1,50 +1,64 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: retain L2 content over CPU suspend/resume
-Date: Mon, 12 Nov 2012 09:36:15 -0700
-Message-ID: <50A1257F.8090003@wwwdotorg.org>
-References: <1352194377-6209-1-git-send-email-josephl@nvidia.com>  <509D7BA1.506@wwwdotorg.org> <1352693437.19251.9.camel@jlo-ubuntu-64.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH v2 0/2] NVIDIA Tegra DRM driver
+Date: Mon, 12 Nov 2012 22:55:56 +0100
+Message-ID: <1352757358-14001-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352693437.19251.9.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/11/2012 09:10 PM, Joseph Lo wrote:
-> On Sat, 2012-11-10 at 05:54 +0800, Stephen Warren wrote:
->> On 11/06/2012 02:32 AM, Joseph Lo wrote:
->>> The L2 RAM is in different power domain from the CPU cluster. So the
->>> L2 content can be retained over CPU suspend/resume. To do that, we
->>> need to disable L2 after the MMU is disabled, and enable L2 before
->>> the MMU is enabled. But the L2 controller is in the same power domain
->>> with the CPU cluster. We need to restore it's settings and re-enable
->>> it after the power be resumed.
->>
->> This doesn't compile:
->>
->> arch/arm/mach-tegra/headsmp.S: Assembler messages:
->> arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
->> used as an immediate value
->> arch/arm/mach-tegra/headsmp.S:119: Error: undefined symbol L2X0_CTRL_EN
->> used as an immediate value
-> 
-> Ah, sorry for mention that.
-> This patch was depended on "07bd005 ARM: 7547/1: cache-l2x0: add support
-> for Aurora L2 cache ctrl" and only showed up after "next-20121024". The
-> definition of "L2X0_CTRL_EN" was been introduced in that patch.
-> 
-> Should I re-send a patch that based on tegra "for-next" branch that will
-> change L2X0_CTRL_EN to 0x1? Sorry for inconvenience.
+This second version of this patch series addresses all the comments
+received so far. Most notably it takes advantage of the debugfs helpers
+provided by the DRM core. Oddly enough this actually increases the line
+count, but that's because the helpers don't fit with the subdevices
+approach as implemented by this driver. However some quick discussions
+with Rob Clark showed that Tegra DRM is not special in this respect but
+other drivers may need the same functionality. Eventually the debugfs
+code could be reworked on top of helpers that are better suited at the
+design of embedded, multi-device DRM drivers.
 
-That's probably simplest. Perhaps rather than just replacing the #define
-with a literal, do:
+Other than that there is some removal of code that was actually supposed
+to go into a later patch because it has dependencies that haven't been
+merged yet and some moving around of #defines and the device tree
+bindings documentation. Finally the driver now uses the DRM core's
+drm_compat_ioctl() instead of a custom and unimplemented (!) version.
 
-#ifndef L2X0_CTRL_EN
-#define L2X0_CTRL_EN                   1
-#endif
+Thierry
 
-So that we can simply remove that ifdef block later once we know patch
-7547 is present.
+Thierry Reding (2):
+  drm: Add NVIDIA Tegra20 support
+  drm: tegra: Add HDMI support
+
+ .../bindings/gpu/nvidia,tegra20-host1x.txt         |  191 +++
+ drivers/gpu/drm/Kconfig                            |    2 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/tegra/Kconfig                      |   23 +
+ drivers/gpu/drm/tegra/Makefile                     |    7 +
+ drivers/gpu/drm/tegra/dc.c                         |  846 +++++++++++++
+ drivers/gpu/drm/tegra/dc.h                         |  388 ++++++
+ drivers/gpu/drm/tegra/drm.c                        |  115 ++
+ drivers/gpu/drm/tegra/drm.h                        |  233 ++++
+ drivers/gpu/drm/tegra/fb.c                         |   56 +
+ drivers/gpu/drm/tegra/hdmi.c                       | 1324 ++++++++++++++++++++
+ drivers/gpu/drm/tegra/hdmi.h                       |  575 +++++++++
+ drivers/gpu/drm/tegra/host1x.c                     |  321 +++++
+ drivers/gpu/drm/tegra/output.c                     |  262 ++++
+ drivers/gpu/drm/tegra/rgb.c                        |  200 +++
+ 15 files changed, 4544 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
+ create mode 100644 drivers/gpu/drm/tegra/Kconfig
+ create mode 100644 drivers/gpu/drm/tegra/Makefile
+ create mode 100644 drivers/gpu/drm/tegra/dc.c
+ create mode 100644 drivers/gpu/drm/tegra/dc.h
+ create mode 100644 drivers/gpu/drm/tegra/drm.c
+ create mode 100644 drivers/gpu/drm/tegra/drm.h
+ create mode 100644 drivers/gpu/drm/tegra/fb.c
+ create mode 100644 drivers/gpu/drm/tegra/hdmi.c
+ create mode 100644 drivers/gpu/drm/tegra/hdmi.h
+ create mode 100644 drivers/gpu/drm/tegra/host1x.c
+ create mode 100644 drivers/gpu/drm/tegra/output.c
+ create mode 100644 drivers/gpu/drm/tegra/rgb.c
+
+-- 
+1.8.0
