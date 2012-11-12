@@ -1,151 +1,238 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 2/2] drm: tegra: Add HDMI support
-Date: Mon, 12 Nov 2012 08:24:10 +0100
-Message-ID: <20121112072410.GA925@avionic-0098.mockup.avionic-design.de>
-References: <1352469579-3337-1-git-send-email-thierry.reding@avionic-design.de>
- <1352469579-3337-3-git-send-email-thierry.reding@avionic-design.de>
- <CACna6rycZ=TGHP7KpVa_r0JSpc6c=PB89pijR9E_4A=bQ=74Bw@mail.gmail.com>
- <509D28B6.3060207@vodafone.de>
- <20121110210118.GA26809@avionic-0098.mockup.avionic-design.de>
- <20121111144644.GK5854@phenom.ffwll.local>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra20 host1x support
+Date: Mon, 12 Nov 2012 17:39:11 +0800
+Message-ID: <50A0C3BF.90509@nvidia.com>
+References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de> <1352467202-27903-2-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20121111144644.GK5854-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+In-Reply-To: <1352467202-27903-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christian =?utf-8?B?S8O2bmln?= <deathsimple-ANTagKRnAhcb1SvskN2V4Q@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/09/2012 09:20 PM, Thierry Reding wrote:
+> This commit adds the host1x node along with its children to the Tegra20
+> DTSI. Furthermore the OF auxiliary data table is updated to have proper
+> names assigned to the platform devices instantiated from the device
+> tree. Moreover, the clocks required by host1x and the two display
+> controllers are initialized and the pll_d frequency table is completed
+> with a few entries to support common HDMI and LVDS display modes.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi            | 87 +++++++++++++++++++++++++++++++
+>  arch/arm/mach-tegra/board-dt-tegra20.c    |  9 ++++
+>  arch/arm/mach-tegra/tegra20_clocks_data.c | 23 ++++----
+>  3 files changed, 110 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 71a650d..2b4dec9 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -4,6 +4,93 @@
+>         compatible = "nvidia,tegra20";
+>         interrupt-parent = <&intc>;
+> 
+> +       host1x {
+> +               compatible = "nvidia,tegra20-host1x", "simple-bus";
+> +               reg = <0x50000000 0x00024000>;
+> +               interrupts = <0 65 0x04   /* mpcore syncpt */
+> +                             0 67 0x04>; /* mpcore general */
+> +
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +
+> +               ranges = <0x54000000 0x54000000 0x04000000>;
+> +
+> +               mpe {
+> +                       compatible = "nvidia,tegra20-mpe";
+> +                       reg = <0x54040000 0x00040000>;
+> +                       interrupts = <0 68 0x04>;
+> +               };
+> +
+> +               vi {
+> +                       compatible = "nvidia,tegra20-vi";
+> +                       reg = <0x54080000 0x00040000>;
+> +                       interrupts = <0 69 0x04>;
+> +               };
+> +
+> +               epp {
+> +                       compatible = "nvidia,tegra20-epp";
+> +                       reg = <0x540c0000 0x00040000>;
+> +                       interrupts = <0 70 0x04>;
+> +               };
+> +
+> +               isp {
+> +                       compatible = "nvidia,tegra20-isp";
+> +                       reg = <0x54100000 0x00040000>;
+> +                       interrupts = <0 71 0x04>;
+> +               };
+> +
+> +               gr2d {
+> +                       compatible = "nvidia,tegra20-gr2d";
+> +                       reg = <0x54140000 0x00040000>;
+> +                       interrupts = <0 72 0x04>;
+> +               };
+> +
+> +               gr3d {
+> +                       compatible = "nvidia,tegra20-gr3d";
+> +                       reg = <0x54180000 0x00040000>;
+> +               };
+> +
+> +               dc@54200000 {
+> +                       compatible = "nvidia,tegra20-dc";
+> +                       reg = <0x54200000 0x00040000>;
+> +                       interrupts = <0 73 0x04>;
+> +
+> +                       rgb {
+> +                               status = "disabled";
+> +                       };
+> +               };
+> +
+> +               dc@54240000 {
+> +                       compatible = "nvidia,tegra20-dc";
+> +                       reg = <0x54240000 0x00040000>;
+> +                       interrupts = <0 74 0x04>;
+> +
+> +                       rgb {
+> +                               status = "disabled";
+> +                       };
+> +               };
+> +
+> +               hdmi {
+> +                       compatible = "nvidia,tegra20-hdmi";
+> +                       reg = <0x54280000 0x00040000>;
+> +                       interrupts = <0 75 0x04>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               tvo {
+> +                       compatible = "nvidia,tegra20-tvo";
+> +                       reg = <0x542c0000 0x00040000>;
+> +                       interrupts = <0 76 0x04>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               dsi {
+> +                       compatible = "nvidia,tegra20-dsi";
+> +                       reg = <0x54300000 0x00040000>;
+> +                       status = "disabled";
+> +               };
+> +       };
+> +
+>         timer@50004600 {
+>                 compatible = "arm,cortex-a9-twd-timer";
+>                 reg = <0x50040600 0x20>;
+> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+> index 22f5a9b..1afbdd1 100644
+> --- a/arch/arm/mach-tegra/board-dt-tegra20.c
+> +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+> @@ -93,6 +93,12 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+>         OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D600, "spi_tegra.1", NULL),
+>         OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D800, "spi_tegra.2", NULL),
+>         OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000DA00, "spi_tegra.3", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-host1x", 0x50000000, "tegra-host1x", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54200000, "tegra-dc.0", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54240000, "tegra-dc.1", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-hdmi", 0x54280000, "tegra-hdmi", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-dsi", 0x54300000, "tegra-dsi", NULL),
+> +       OF_DEV_AUXDATA("nvidia,tegra20-tvo", 0x542c0000, "tegra-tvo", NULL),
+>         {}
+>  };
+> 
+> @@ -116,6 +122,9 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+>         { "sbc2",       "pll_p",        100000000,      false },
+>         { "sbc3",       "pll_p",        100000000,      false },
+>         { "sbc4",       "pll_p",        100000000,      false },
+> +       { "host1x",     "pll_c",        144000000,      false },
+> +       { "disp1",      "pll_p",        600000000,      false },
+> +       { "disp2",      "pll_p",        600000000,      false },
+>         { NULL,         NULL,           0,              0},
+>  };
+> 
+> diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
+> index 9615ee3..2e247f2 100644
+> --- a/arch/arm/mach-tegra/tegra20_clocks_data.c
+> +++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+> @@ -246,11 +246,16 @@ static struct clk_pll_freq_table tegra_pll_d_freq_table[] = {
+>         { 19200000, 216000000, 135, 12, 1, 3},
+>         { 26000000, 216000000, 216, 26, 1, 4},
+> 
+> +       { 12000000, 297000000,  99,  4, 1, 4 },
+> +       { 12000000, 339000000, 113,  4, 1, 4 },
+> +
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch is OK. I'm just curious about how you get the cpcon value
+here. According to Tegra 2's TRM, it's not very clear about how to
+calculate the cpcon value for pll_d(pll_d is type of CLKPLL1G_MIPI).
 
-On Sun, Nov 11, 2012 at 03:46:44PM +0100, Daniel Vetter wrote:
-> On Sat, Nov 10, 2012 at 10:01:18PM +0100, Thierry Reding wrote:
-> > On Fri, Nov 09, 2012 at 05:00:54PM +0100, Christian K=C3=B6nig wrote:
-> > > On 09.11.2012 16:45, Rafa=C5=82 Mi=C5=82ecki wrote:
-> > > >2012/11/9 Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>:
-> > > >>+/* all fields little endian */
-> > > >>+struct hdmi_audio_infoframe {
-> > > >>+       /* PB0 */
-> > > >>+       u8 csum;
-> > > >>+
-> > > >>+       /* PB1 */
-> > > >>+       unsigned cc:3; /* channel count */
-> > > >>+       unsigned res1:1;
-> > > >>+       unsigned ct:4; /* coding type */
-> > > >>+
-> > > >>+       /* PB2 */
-> > > >>+       unsigned ss:2; /* sample size */
-> > > >>+       unsigned sf:3; /* sample frequency */
-> > > >>+       unsigned res2:3;
-> > > >>+
-> > > >>+       /* PB3 */
-> > > >>+       unsigned cxt:5; /* coding extention type */
-> > > >>+       unsigned res3:3;
-> > > >>+
-> > > >>+       /* PB4 */
-> > > >>+       u8 ca; /* channel/speaker allocation */
-> > > >>+
-> > > >>+       /* PB5 */
-> > > >>+       unsigned res5:3;
-> > > >>+       unsigned lsv:4; /* level shift value */
-> > > >>+       unsigned dm_inh:1; /* downmix inhibit */
-> > > >>+
-> > > >>+       /* PB6-10 reserved */
-> > > >>+       u8 res6;
-> > > >>+       u8 res7;
-> > > >>+       u8 res8;
-> > > >>+       u8 res9;
-> > > >>+       u8 res10;
-> > > >>+} __packed;
-> > > >I was told it won't work on different endian devices. See
-> > > >[RFC][PATCH] drm/radeon/hdmi: define struct for AVI infoframe
-> > > >http://lists.freedesktop.org/archives/dri-devel/2012-May/022544.html
-> > >=20
-> > > Yeah, that's indeed true. And honestly adding just another
-> > > implementation of the HDMI info frames sounds like somebody should
-> > > finally sit down and implement it in a common drm_hdmi.c
-> >=20
-> > So I've been looking at what most other implementations do and it seems
-> > a lot just fill the AVI infoframe with zeroes while only a few actually
-> > try to put useful information in them. Still in order to plan for a
-> > generic solution, I thought maybe something like the below set of
-> > structures and functions could work:
-> >=20
-> > /*
-> >  * Structure that contains the infoframe fields in a form that allows t=
-hem to
-> >  * be easily accessed from C code.
-> >  */
-> > struct hdmi_avi_infoframe;
-> >=20
-> > /*
-> >  * DRM helper to fill a struct hdmi_avi_infoframe with information take=
-n from
-> >  * a struct drm_display_mode. Fields that cannot automatically be deriv=
-ed by
-> >  * looking at a struct drm_display_mode are set to the default values.
-> >  */
-> > int drm_hdmi_avi_infoframe_from_display_mode(struct hdmi_avi_infoframe =
-*frame,
-> > 					     struct drm_display_mode *mode);
-> >=20
-> > /*
-> >  * Packs the struct hdmi_avi_infoframe into a binary buffer that can be
-> >  * programmed to the hardware-specific registers.
-> >  */
-> > ssize_t hdmi_avi_infoframe_pack(struct hdmi_avi_infoframe *frame,
-> > 				void *buffer, size_t size);
-> >=20
-> > Such a scheme would allow DRM drivers to call the helper and tweak the
-> > fields in the structure if the want or need to and call the packing
-> > function to obtain a buffer that they can write to the controller.
-> >=20
-> > Does that sound at all reasonable?
->=20
-> Sounds good, especially the disdinction between the infoframe creation and
-> packing. E.g. on intel sdvo outputs we may not put in one of the ECC bytes
-> (since the hw creates it), so we need our own packing code there.
+I've skimmed the l4t codes as well, the cpcon is hardcode to 8 in the
+dynamic m/n/p calculating code blocks.
 
-Actually what I had in mind was a packed binary representation of
-infoframes as specified by HDMI 1.3a (I don't have access to 1.4, but I
-would think it doesn't differ in this respect) in section 5.3 and 5.3.5
-more specifically. According to the specification, the ECC bytes only
-come into play at a later stage, when data is actually transmitted on
-the TMDS link (Section 5.2.3). Tegra, nouveau and radeon also seem to be
-doing the checksumming in hardware, so I guess we don't need to compute
-the ECC bytes in software at all (for now).
+So, Peter or Prashant, could you help to take a look at this?
 
-Once we have this for the AVI infoframes I guess the same concept can be
-used for audio infoframes and for vendor-specific infoframes (for HDMI
-1.4 3D).
-
-Thierry
-
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQoKQaAAoJEN0jrNd/PrOhvWUP/1PaUFUAaXUBC4pa221xson6
-nQGg4XHJgKZ2HhhMj5SmpcfFPcPaCaZM7Qe/AZ8vISNhB2DQUsqsevlHuUaNe53I
-ESbIOsm8w7HQ9ricqJp4Rv4vdk5GQBQsNVqWlogNUPoAV/XOkiFWZJwm2Mx7N/O3
-nDx3GI0dULYaeG42/r8qR3eB80TzQR8+d3oQDJ3xCWAzjEV6wmapoxva0hnOS8hQ
-ngjgbG8yXPP/F+bxCdjs5wSR4UehoWIslB0SQE8dVUeHZPoa0A1odopcWlqBp0mU
-dBIBp8jJ+zl9h+RONDtHNk0QT6+/C30CyaJA4HfSN0g458UqXTAObQt2OYtVNoMZ
-X611GCVQRGD6lPN96pINqEkTxZ8MWWwMdEhtcOEtwsPvwKBO/VjCB3D95G5//A/F
-ZHqX7WxVmdM/zXjm9JK9li7V2x78MPiH9FvgWulXjcGRTNf6FGfkQHKqa7jGsnw+
-auOECCqApfhlCvA7PTK9o2bcg1iI2FePOfTbtQFFF+EbKKSrb15VRhOJoclr5RS3
-b/7A2YqYA0bKgHEipOGQUs8/xx2KI3VMtez+MsEStXUk0eIWrJJWsQYiNdFJwXWo
-hZ4y2VEAb3R4ndRMCwNAiKH6NKGCBkpuPlOqkr84+JErHxfmD5sqvdCX7rKeKJRO
-j8cyCc+ddGxIWKVfu3n8
-=yx68
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+>         { 12000000, 594000000, 594, 12, 1, 8},
+>         { 13000000, 594000000, 594, 13, 1, 8},
+>         { 19200000, 594000000, 495, 16, 1, 8},
+>         { 26000000, 594000000, 594, 26, 1, 8},
+> 
+> +       { 12000000, 616000000, 616, 12, 1, 8},
+> +
+>         { 12000000, 1000000000, 1000, 12, 1, 12},
+>         { 13000000, 1000000000, 1000, 13, 1, 12},
+>         { 19200000, 1000000000, 625,  12, 1, 8},
+> @@ -930,17 +935,17 @@ PERIPH_CLK(vi,            "tegra_camera",         "vi",   20,     0x148,  150000000, mux_pllm_pllc_pllp_
+>  PERIPH_CLK(vi_sensor,  "tegra_camera",         "vi_sensor",    20,     0x1a8,  150000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | PERIPH_NO_RESET); /* scales with voltage and process_id */
+>  PERIPH_CLK(epp,                "epp",                  NULL,   19,     0x16c,  300000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71); /* scales with voltage and process_id */
+>  PERIPH_CLK(mpe,                "mpe",                  NULL,   60,     0x170,  250000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71); /* scales with voltage and process_id */
+> -PERIPH_CLK(host1x,     "host1x",               NULL,   28,     0x180,  166000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71); /* scales with voltage and process_id */
+> +PERIPH_CLK(host1x,     "tegra-host1x",         NULL,   28,     0x180,  166000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71); /* scales with voltage and process_id */
+>  PERIPH_CLK(cve,                "cve",                  NULL,   49,     0x140,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> -PERIPH_CLK(tvo,                "tvo",                  NULL,   49,     0x188,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> -PERIPH_CLK(hdmi,       "hdmi",                 NULL,   51,     0x18c,  600000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> +PERIPH_CLK(tvo,                "tegra-tvo",            NULL,   49,     0x188,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> +PERIPH_CLK(hdmi,       "tegra-hdmi",           NULL,   51,     0x18c,  600000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+>  PERIPH_CLK(tvdac,      "tvdac",                NULL,   53,     0x194,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> -PERIPH_CLK(disp1,      "tegradc.0",            NULL,   27,     0x138,  600000000, mux_pllp_plld_pllc_clkm,     MUX); /* scales with voltage and process_id */
+> -PERIPH_CLK(disp2,      "tegradc.1",            NULL,   26,     0x13c,  600000000, mux_pllp_plld_pllc_clkm,     MUX); /* scales with voltage and process_id */
+> +PERIPH_CLK(disp1,      "tegra-dc.0",           NULL,   27,     0x138,  600000000, mux_pllp_plld_pllc_clkm,     MUX); /* scales with voltage and process_id */
+> +PERIPH_CLK(disp2,      "tegra-dc.1",           NULL,   26,     0x13c,  600000000, mux_pllp_plld_pllc_clkm,     MUX); /* scales with voltage and process_id */
+>  PERIPH_CLK(usbd,       "fsl-tegra-udc",        NULL,   22,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+>  PERIPH_CLK(usb2,       "tegra-ehci.1",         NULL,   58,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+>  PERIPH_CLK(usb3,       "tegra-ehci.2",         NULL,   59,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+> -PERIPH_CLK(dsi,                "dsi",                  NULL,   48,     0,      500000000, mux_plld,                    0); /* scales with voltage */
+> +PERIPH_CLK(dsi,                "tegra-dsi",            NULL,   48,     0,      500000000, mux_plld,                    0); /* scales with voltage */
+>  PERIPH_CLK(csi,                "tegra_camera",         "csi",  52,     0,      72000000,  mux_pllp_out3,               0);
+>  PERIPH_CLK(isp,                "tegra_camera",         "isp",  23,     0,      150000000, mux_clk_m,                   0); /* same frequency as VI */
+>  PERIPH_CLK(csus,       "tegra_camera",         "csus", 92,     0,      150000000, mux_clk_m,                   PERIPH_NO_RESET);
+> @@ -1036,9 +1041,6 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
+>         CLK_DUPLICATE("usbd",   "utmip-pad",    NULL),
+>         CLK_DUPLICATE("usbd",   "tegra-ehci.0", NULL),
+>         CLK_DUPLICATE("usbd",   "tegra-otg",    NULL),
+> -       CLK_DUPLICATE("hdmi",   "tegradc.0",    "hdmi"),
+> -       CLK_DUPLICATE("hdmi",   "tegradc.1",    "hdmi"),
+> -       CLK_DUPLICATE("host1x", "tegra_grhost", "host1x"),
+>         CLK_DUPLICATE("2d",     "tegra_grhost", "gr2d"),
+>         CLK_DUPLICATE("3d",     "tegra_grhost", "gr3d"),
+>         CLK_DUPLICATE("epp",    "tegra_grhost", "epp"),
+> @@ -1051,6 +1053,9 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.1", "fast-clk"),
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
+> +       CLK_DUPLICATE("pll_p", "tegra-dc.0", "parent"),
+> +       CLK_DUPLICATE("pll_p", "tegra-dc.1", "parent"),
+> +       CLK_DUPLICATE("pll_d_out0", "tegra-hdmi", "parent"),
+>  };
+> 
+>  #define CLK(dev, con, ck)      \
+> --
+> 1.8.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
