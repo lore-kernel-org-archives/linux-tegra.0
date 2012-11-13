@@ -1,46 +1,46 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/3] ARM: tegra: dts: add sflash controller dt entry
-Date: Tue, 13 Nov 2012 10:33:39 +0530
-Message-ID: <1352783021-25393-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/3] ARM: tegra: Add OF_DEV_AUXDATA for sflash driver in board dt
+Date: Tue, 13 Nov 2012 10:33:40 +0530
+Message-ID: <1352783021-25393-3-git-send-email-ldewangan@nvidia.com>
 References: <1352783021-25393-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1352783021-25393-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1352783021-25393-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Nvidia's Tegra20 have the SPI (SFLASH) controller to
-interface with spi flash device which is used for system
-boot. Add DT entry for this controller.
+Add OF_DEV_AUXDATA for sflash controller driver for Tegra20
+board dt files.
+Set the parent clock of sflash controller to PLLP and configure
+clock to 20MHz.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20.dtsi |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+ arch/arm/mach-tegra/board-dt-tegra20.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 71a650d..32cb09d 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -195,6 +195,16 @@
- 		status = "disabled";
- 	};
- 
-+	spi@7000c380 {
-+		compatible = "nvidia,tegra20-sflash";
-+		reg = <0x7000c380 0x80>;
-+		interrupts = <0 39 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 11>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	spi@7000d400 {
- 		compatible = "nvidia,tegra20-slink";
- 		reg = <0x7000d400 0x200>;
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 22f5a9b..1198e84 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -89,6 +89,7 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 		       &tegra_ehci3_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
++	OF_DEV_AUXDATA("nvidia,tegra20-sflash", 0x7000c380, "spi", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D400, "spi_tegra.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D600, "spi_tegra.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D800, "spi_tegra.2", NULL),
+@@ -112,6 +113,7 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+ 	{ "sdmmc1",	"pll_p",	48000000,	false},
+ 	{ "sdmmc3",	"pll_p",	48000000,	false},
+ 	{ "sdmmc4",	"pll_p",	48000000,	false},
++	{ "spi",	"pll_p",	20000000,	false },
+ 	{ "sbc1",	"pll_p",	100000000,	false },
+ 	{ "sbc2",	"pll_p",	100000000,	false },
+ 	{ "sbc3",	"pll_p",	100000000,	false },
 -- 
 1.7.1.1
