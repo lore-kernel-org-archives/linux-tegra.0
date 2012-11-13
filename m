@@ -1,65 +1,51 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 0/2] NVIDIA Tegra DRM driver
-Date: Tue, 13 Nov 2012 10:43:21 -0700
-Message-ID: <50A286B9.7050709@wwwdotorg.org>
-References: <1352757358-14001-1-git-send-email-thierry.reding@avionic-design.de>
- <50A1918E.1000809@wwwdotorg.org>
- <20121113064748.GB31443@avionic-0098.mockup.avionic-design.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra: add spi driver for sflash controller
+Date: Wed, 14 Nov 2012 00:12:17 +0530
+Message-ID: <50A29489.5090606@nvidia.com>
+References: <1352782854-25351-1-git-send-email-ldewangan@nvidia.com> <50A28299.6080809@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20121113064748.GB31443-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50A28299.6080809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/12/2012 11:47 PM, Thierry Reding wrote:
-> On Mon, Nov 12, 2012 at 05:17:18PM -0700, Stephen Warren wrote:
->> On 11/12/2012 02:55 PM, Thierry Reding wrote:
->>> This second version of this patch series addresses all the
->>> comments received so far. Most notably it takes advantage of
->>> the debugfs helpers provided by the DRM core. Oddly enough this
->>> actually increases the line count, but that's because the
->>> helpers don't fit with the subdevices approach as implemented
->>> by this driver. However some quick discussions with Rob Clark
->>> showed that Tegra DRM is not special in this respect but other
->>> drivers may need the same functionality. Eventually the
->>> debugfs code could be reworked on top of helpers that are
->>> better suited at the design of embedded, multi-device DRM
->>> drivers.
->>> 
->>> Other than that there is some removal of code that was actually
->>> supposed to go into a later patch because it has dependencies
->>> that haven't been merged yet and some moving around of #defines
->>> and the device tree bindings documentation. Finally the driver
->>> now uses the DRM core's drm_compat_ioctl() instead of a custom
->>> and unimplemented (!) version.
->> 
->> The series,
->> 
->> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> 
->> (on the Harmony board's HDMI output; I'll test other
->> boards/outputs later).
-> 
-> You also gave an Acked-by for the DT binding documentation in the
-> first version of this patchset, does it apply to the rest of the
-> patch as well? That is, can I add it to patch 1?
+On Tuesday 13 November 2012 10:55 PM, Stephen Warren wrote:
+> On 11/12/2012 10:00 PM, Laxman Dewangan wrote:
+>
+>> +static int tegra_sflash_resume(struct device *dev)
+>> +{
+>> +	struct spi_master *master = dev_get_drvdata(dev);
+>> +	struct tegra_sflash_data *tsd = spi_master_get_devdata(master);
+>> +	int ret;
+>> +
+>> +	ret = pm_runtime_get_sync(dev);
+>> +	if (ret<  0) {
+>> +		dev_err(dev, "pm runtime failed, e = %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +	tegra_sflash_writel(tsd, tsd->command_reg, SPI_COMMAND);
+>> +	pm_runtime_put(dev);
+> Can we avoid this whole function simply by programming SPI_COMMAND at
+> the start of each transaction? That seems simpler. I assume that
+> shouldn't e.g. leave any chip-selects in some bad state, or at least if
+> it does, that shouldn't be a problem, because before the driver probes()
+> at kernel boot, SPI_COMMAND won't have been programmed either.
+>
+> Aside from that,
 
-I didn't actually read the rest of the patch since there are many
-people much more familiar with the host1x/... code that will provide
-useful feedback.
+I am not sure about the side effect of moving this to transfer but I can 
+suspect:
+When client driver is active, it need the proper state of CS. If we move 
+this to transfer then probbaly CS is not in proper state until client 
+calls the transfer function and this is not correct. The CS should be 
+inactive state for all devices in non-transfer states.
 
-However, yes, I think it's fine to include my ack in the patch - it's
-common to ack only parts of patches I believe.
+> Acked-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks for testing. I will respin patch V2 for taking care of above 
+comments.
