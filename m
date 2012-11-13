@@ -1,196 +1,76 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: tegra: retain L2 content over CPU suspend/resume
-Date: Tue, 13 Nov 2012 10:04:48 +0800
-Message-ID: <1352772288-2290-1-git-send-email-josephl@nvidia.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: Add Tegra30 host1x support
+Date: Tue, 13 Nov 2012 12:37:18 +0800
+Message-ID: <50A1CE7E.2060707@nvidia.com>
+References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de> <1352467202-27903-3-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1352467202-27903-3-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The L2 RAM is in different power domain from the CPU cluster. So the
-L2 content can be retained over CPU suspend/resume. To do that, we
-need to disable L2 after the MMU is disabled, and enable L2 before
-the MMU is enabled. But the L2 controller is in the same power domain
-with the CPU cluster. We need to restore it's settings and re-enable
-it after the power be resumed.
+On 11/09/2012 09:20 PM, Thierry Reding wrote:
+> This commit adds the host1x node along with its children to the Tegra30
+> DTSI. Furthermore the OF auxiliary data table is updated to have proper
+> names assigned to the platform devices instantiated from the device
+> tree. Moreover, the clocks required by host1x and the two display
+> controllers are setup and initialized.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra30.dtsi            | 87 +++++++++++++++++++++++++++++++
+>  arch/arm/mach-tegra/board-dt-tegra30.c    | 10 ++++
+>  arch/arm/mach-tegra/tegra30_clocks_data.c | 11 ++--
+>  3 files changed, 104 insertions(+), 4 deletions(-)
+> 
+...
+> 
+> diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+> index 7bc8b1d..210b8a4 100644
+> --- a/arch/arm/mach-tegra/tegra30_clocks_data.c
+> +++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+> @@ -1132,14 +1132,14 @@ PERIPH_CLK(2d,          "2d",                   NULL,   21,     0x15c,  520000000, mux_pllm_pllc_pllp_plla,     MUX
+>  PERIPH_CLK(vi_sensor,  "tegra_camera",         "vi_sensor",    20,     0x1a8,  150000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | PERIPH_NO_RESET);
+>  PERIPH_CLK(epp,                "epp",                  NULL,   19,     0x16c,  520000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
+>  PERIPH_CLK(mpe,                "mpe",                  NULL,   60,     0x170,  520000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
+> -PERIPH_CLK(host1x,     "host1x",               NULL,   28,     0x180,  260000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
+> +PERIPH_CLK(host1x,     "tegra-host1x",         NULL,   28,     0x180,  260000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
+>  PERIPH_CLK(cve,                "cve",                  NULL,   49,     0x140,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+>  PERIPH_CLK(tvo,                "tvo",                  NULL,   49,     0x188,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+>  PERIPH_CLK(dtv,                "dtv",                  NULL,   79,     0x1dc,  250000000, mux_clk_m,                   0);
+> -PERIPH_CLK(hdmi,       "hdmi",                 NULL,   51,     0x18c,  148500000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8 | DIV_U71);
+> +PERIPH_CLK(hdmi,       "tegra-hdmi",                   NULL,   51,     0x18c,  148500000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8 | DIV_U71);
+>  PERIPH_CLK(tvdac,      "tvdac",                NULL,   53,     0x194,  220000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
+> -PERIPH_CLK(disp1,      "tegradc.0",            NULL,   27,     0x138,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
+> -PERIPH_CLK(disp2,      "tegradc.1",            NULL,   26,     0x13c,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
+> +PERIPH_CLK(disp1,      "tegra-dc.0",           NULL,   27,     0x138,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
+> +PERIPH_CLK(disp2,      "tegra-dc.1",           NULL,   26,     0x13c,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
+>  PERIPH_CLK(usbd,       "fsl-tegra-udc",        NULL,   22,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+>  PERIPH_CLK(usb2,       "tegra-ehci.1",         NULL,   58,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+>  PERIPH_CLK(usb3,       "tegra-ehci.2",         NULL,   59,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
+> @@ -1337,6 +1337,9 @@ struct clk_duplicate tegra_clk_duplicates[] = {
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
+>         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.4", "fast-clk"),
+> +       CLK_DUPLICATE("pll_p", "tegra-dc.0", "parent"),
+> +       CLK_DUPLICATE("pll_p", "tegra-dc.1", "parent"),
+> +       CLK_DUPLICATE("pll_d2_out0", "tegra-hdmi", "parent"),
+>  };
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V2:
-* fix the missing definition of L2X0_CTRL_EN
----
- arch/arm/mach-tegra/common.c  |    6 +++++-
- arch/arm/mach-tegra/headsmp.S |   11 +++++++++++
- arch/arm/mach-tegra/pm.c      |    2 --
- arch/arm/mach-tegra/pm.h      |    2 ++
- arch/arm/mach-tegra/sleep.S   |    7 +++++++
- arch/arm/mach-tegra/sleep.h   |   32 ++++++++++++++++++++++++++++++++
- 6 files changed, 57 insertions(+), 3 deletions(-)
+Why we need this? Set the parent of "tegra-dc.0" & "tegra-dc.1" to "pll_p"?
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 811770e..e635abb 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -36,6 +36,7 @@
- #include "pmc.h"
- #include "apbio.h"
- #include "sleep.h"
-+#include "pm.h"
- 
- /*
-  * Storage for debug-macro.S's state.
-@@ -118,6 +119,7 @@ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
- static void __init tegra_init_cache(void)
- {
- #ifdef CONFIG_CACHE_L2X0
-+	int ret;
- 	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
- 	u32 aux_ctrl, cache_type;
- 
-@@ -125,7 +127,9 @@ static void __init tegra_init_cache(void)
- 	aux_ctrl = (cache_type & 0x700) << (17-8);
- 	aux_ctrl |= 0x7C000001;
- 
--	l2x0_of_init(aux_ctrl, 0x8200c3fe);
-+	ret = l2x0_of_init(aux_ctrl, 0x8200c3fe);
-+	if (!ret)
-+		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
- #endif
- 
- }
-diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
-index 82dc84b..4a317fa 100644
---- a/arch/arm/mach-tegra/headsmp.S
-+++ b/arch/arm/mach-tegra/headsmp.S
-@@ -2,6 +2,8 @@
- #include <linux/init.h>
- 
- #include <asm/cache.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/hardware/cache-l2x0.h>
- 
- #include "flowctrl.h"
- #include "iomap.h"
-@@ -113,10 +115,19 @@ ENTRY(tegra_resume)
- 	str	r1, [r0]
- #endif
- 
-+	/* L2 cache resume & re-enable */
-+	l2_cache_resume r0, r1, r2, l2x0_saved_regs_addr
-+
- 	b	cpu_resume
- ENDPROC(tegra_resume)
- #endif
- 
-+#ifdef CONFIG_CACHE_L2X0
-+	.globl	l2x0_saved_regs_addr
-+l2x0_saved_regs_addr:
-+	.long	0
-+#endif
-+
- 	.align L1_CACHE_SHIFT
- ENTRY(__tegra_cpu_reset_handler_start)
- 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 1460c3d..1b11707 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -207,11 +207,9 @@ void tegra_idle_lp2_last(u32 cpu_on_time, u32 cpu_off_time)
- 
- 	cpu_cluster_pm_enter();
- 	suspend_cpu_complex();
--	outer_disable();
- 
- 	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
- 
--	outer_resume();
- 	restore_cpu_complex();
- 	cpu_cluster_pm_exit();
- }
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 512345c..787335c 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -21,6 +21,8 @@
- #ifndef _MACH_TEGRA_PM_H_
- #define _MACH_TEGRA_PM_H_
- 
-+extern unsigned long l2x0_saved_regs_addr;
-+
- void save_cpu_arch_register(void);
- void restore_cpu_arch_register(void);
- 
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index 88f4de9..26afa7c 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -27,6 +27,7 @@
- #include <asm/assembler.h>
- #include <asm/cache.h>
- #include <asm/cp15.h>
-+#include <asm/hardware/cache-l2x0.h>
- 
- #include "iomap.h"
- 
-@@ -98,6 +99,12 @@ ENTRY(tegra_shut_off_mmu)
- 	dsb
- 	mcr	p15, 0, r3, c1, c0, 0
- 	isb
-+#ifdef CONFIG_CACHE_L2X0
-+	/* Disable L2 cache */
-+	mov32	r4, TEGRA_ARM_PERIF_BASE + 0x3000
-+	mov	r5, #0
-+	str	r5, [r4, #L2X0_CTRL]
-+#endif
- 	mov	pc, r0
- ENDPROC(tegra_shut_off_mmu)
- 	.popsection
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 6e1b949..9821ee7 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -71,6 +71,38 @@
- 	str	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
- 	dsb
- .endm
-+
-+/* Macro to resume & re-enable L2 cache */
-+#ifndef L2X0_CTRL_EN
-+#define L2X0_CTRL_EN	1
-+#endif
-+
-+#ifdef CONFIG_CACHE_L2X0
-+.macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
-+	adr	\tmp1, \phys_l2x0_saved_regs
-+	ldr	\tmp1, [\tmp1]
-+	ldr	\tmp2, [\tmp1, #L2X0_R_PHY_BASE]
-+	ldr	\tmp3, [\tmp2, #L2X0_CTRL]
-+	tst	\tmp3, #L2X0_CTRL_EN
-+	bne	exit_l2_resume
-+	ldr	\tmp3, [\tmp1, #L2X0_R_TAG_LATENCY]
-+	str	\tmp3, [\tmp2, #L2X0_TAG_LATENCY_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_DATA_LATENCY]
-+	str	\tmp3, [\tmp2, #L2X0_DATA_LATENCY_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_PREFETCH_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_PREFETCH_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_PWR_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_POWER_CTRL]
-+	ldr	\tmp3, [\tmp1, #L2X0_R_AUX_CTRL]
-+	str	\tmp3, [\tmp2, #L2X0_AUX_CTRL]
-+	mov	\tmp3, #L2X0_CTRL_EN
-+	str	\tmp3, [\tmp2, #L2X0_CTRL]
-+exit_l2_resume:
-+.endm
-+#else /* CONFIG_CACHE_L2X0 */
-+.macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
-+.endm
-+#endif /* CONFIG_CACHE_L2X0 */
- #else
- void tegra_resume(void);
- int tegra_sleep_cpu_finish(unsigned long);
--- 
-1.7.0.4
+Mark
+> 
+>  struct clk *tegra_ptr_clks[] = {
+> --
+> 1.8.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
