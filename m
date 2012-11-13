@@ -1,199 +1,203 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: Add Tegra30 host1x support
-Date: Tue, 13 Nov 2012 15:45:52 +0800
-Message-ID: <50A1FAB0.8040700@nvidia.com>
-References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de> <1352467202-27903-3-git-send-email-thierry.reding@avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 1/2] drm: Add NVIDIA Tegra20 support
+Date: Tue, 13 Nov 2012 08:48:23 +0100
+Message-ID: <20121113074822.GA8409@avionic-0098.mockup.avionic-design.de>
+References: <1352757358-14001-1-git-send-email-thierry.reding@avionic-design.de>
+ <1352757358-14001-2-git-send-email-thierry.reding@avionic-design.de>
+ <50A1F3A3.40905@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1352467202-27903-3-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <50A1F3A3.40905@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Zhang <markz@nvidia.com>
+Cc: Dave Airlie <airlied@redhat.com>, Rob Clark <robdclark@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/09/2012 09:20 PM, Thierry Reding wrote:
-> This commit adds the host1x node along with its children to the Tegra30
-> DTSI. Furthermore the OF auxiliary data table is updated to have proper
-> names assigned to the platform devices instantiated from the device
-> tree. Moreover, the clocks required by host1x and the two display
-> controllers are setup and initialized.
-> 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra30.dtsi            | 87 +++++++++++++++++++++++++++++++
->  arch/arm/mach-tegra/board-dt-tegra30.c    | 10 ++++
->  arch/arm/mach-tegra/tegra30_clocks_data.c | 11 ++--
->  3 files changed, 104 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index b8e33c3..529fdb8 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -4,6 +4,93 @@
->         compatible = "nvidia,tegra30";
->         interrupt-parent = <&intc>;
-> 
-> +       host1x {
-> +               compatible = "nvidia,tegra30-host1x", "simple-bus";
-> +               reg = <0x50000000 0x00024000>;
-> +               interrupts = <0 65 0x04   /* mpcore syncpt */
-> +                             0 67 0x04>; /* mpcore general */
-> +
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +
-> +               ranges = <0x54000000 0x54000000 0x04000000>;
-> +
-> +               mpe {
-> +                       compatible = "nvidia,tegra30-mpe";
-> +                       reg = <0x54040000 0x00040000>;
-> +                       interrupts = <0 68 0x04>;
-> +               };
-> +
-> +               vi {
-> +                       compatible = "nvidia,tegra30-vi";
-> +                       reg = <0x54080000 0x00040000>;
-> +                       interrupts = <0 69 0x04>;
-> +               };
-> +
-> +               epp {
-> +                       compatible = "nvidia,tegra30-epp";
-> +                       reg = <0x540c0000 0x00040000>;
-> +                       interrupts = <0 70 0x04>;
-> +               };
-> +
-> +               isp {
-> +                       compatible = "nvidia,tegra30-isp";
-> +                       reg = <0x54100000 0x00040000>;
-> +                       interrupts = <0 71 0x04>;
-> +               };
-> +
-> +               gr2d {
-> +                       compatible = "nvidia,tegra30-gr2d";
-> +                       reg = <0x54140000 0x00040000>;
-> +                       interrupts = <0 72 0x04>;
-> +               };
-> +
-> +               gr3d {
-> +                       compatible = "nvidia,tegra30-gr3d";
-> +                       reg = <0x54180000 0x00040000>;
-> +               };
-> +
-> +               dc@54200000 {
-> +                       compatible = "nvidia,tegra30-dc";
-> +                       reg = <0x54200000 0x00040000>;
-> +                       interrupts = <0 73 0x04>;
-> +
-> +                       rgb {
-> +                               status = "disabled";
-> +                       };
-> +               };
-> +
-> +               dc@54240000 {
-> +                       compatible = "nvidia,tegra30-dc";
-> +                       reg = <0x54240000 0x00040000>;
-> +                       interrupts = <0 74 0x04>;
-> +
-> +                       rgb {
-> +                               status = "disabled";
-> +                       };
-> +               };
-> +
-> +               hdmi {
-> +                       compatible = "nvidia,tegra30-hdmi";
-> +                       reg = <0x54280000 0x00040000>;
-> +                       interrupts = <0 75 0x04>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               tvo {
-> +                       compatible = "nvidia,tegra30-tvo";
-> +                       reg = <0x542c0000 0x00040000>;
-> +                       interrupts = <0 76 0x04>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               dsi {
-> +                       compatible = "nvidia,tegra30-dsi";
-> +                       reg = <0x54300000 0x00040000>;
-> +                       status = "disabled";
-> +               };
-> +       };
-> +
->         timer@50004600 {
->                 compatible = "arm,cortex-a9-twd-timer";
->                 reg = <0x50040600 0x20>;
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-> index cd30338..ff21107 100644
-> --- a/arch/arm/mach-tegra/board-dt-tegra30.c
-> +++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-> @@ -57,6 +57,12 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
->         OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DA00, "spi_tegra.3", NULL),
->         OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DC00, "spi_tegra.4", NULL),
->         OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DE00, "spi_tegra.5", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-host1x", 0x50000000, "tegra-host1x", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54200000, "tegra-dc.0", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54240000, "tegra-dc.1", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-hdmi", 0x54280000, "tegra-hdmi", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-dsi", 0x54300000, "tegra-dsi", NULL),
-> +       OF_DEV_AUXDATA("nvidia,tegra30-tvo", 0x542c0000, "tegra-tvo", NULL),
->         {}
->  };
-> 
-> @@ -82,6 +88,10 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
->         { "sbc4",       "pll_p",        100000000,      false},
->         { "sbc5",       "pll_p",        100000000,      false},
->         { "sbc6",       "pll_p",        100000000,      false},
-> +       { "host1x",     "pll_c",        144000000,      false},
-> +       { "disp1",      "pll_p",        74000000,       false},
-> +       { "disp2",      "pll_d2_out0",  148500000,      false},
-> +       { "hdmi",       "pll_d2_out0",  148500000,      false},
->         { NULL,         NULL,           0,              0},
->  };
-> 
-> diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-> index 7bc8b1d..210b8a4 100644
-> --- a/arch/arm/mach-tegra/tegra30_clocks_data.c
-> +++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
-> @@ -1132,14 +1132,14 @@ PERIPH_CLK(2d,          "2d",                   NULL,   21,     0x15c,  520000000, mux_pllm_pllc_pllp_plla,     MUX
->  PERIPH_CLK(vi_sensor,  "tegra_camera",         "vi_sensor",    20,     0x1a8,  150000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | PERIPH_NO_RESET);
->  PERIPH_CLK(epp,                "epp",                  NULL,   19,     0x16c,  520000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
->  PERIPH_CLK(mpe,                "mpe",                  NULL,   60,     0x170,  520000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
-> -PERIPH_CLK(host1x,     "host1x",               NULL,   28,     0x180,  260000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
-> +PERIPH_CLK(host1x,     "tegra-host1x",         NULL,   28,     0x180,  260000000, mux_pllm_pllc_pllp_plla,     MUX | DIV_U71 | DIV_U71_INT);
->  PERIPH_CLK(cve,                "cve",                  NULL,   49,     0x140,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
->  PERIPH_CLK(tvo,                "tvo",                  NULL,   49,     0x188,  250000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
->  PERIPH_CLK(dtv,                "dtv",                  NULL,   79,     0x1dc,  250000000, mux_clk_m,                   0);
-> -PERIPH_CLK(hdmi,       "hdmi",                 NULL,   51,     0x18c,  148500000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8 | DIV_U71);
-> +PERIPH_CLK(hdmi,       "tegra-hdmi",                   NULL,   51,     0x18c,  148500000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8 | DIV_U71);
->  PERIPH_CLK(tvdac,      "tvdac",                NULL,   53,     0x194,  220000000, mux_pllp_plld_pllc_clkm,     MUX | DIV_U71); /* requires min voltage */
-> -PERIPH_CLK(disp1,      "tegradc.0",            NULL,   27,     0x138,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
-> -PERIPH_CLK(disp2,      "tegradc.1",            NULL,   26,     0x13c,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
-> +PERIPH_CLK(disp1,      "tegra-dc.0",           NULL,   27,     0x138,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
-> +PERIPH_CLK(disp2,      "tegra-dc.1",           NULL,   26,     0x13c,  600000000, mux_pllp_pllm_plld_plla_pllc_plld2_clkm,     MUX | MUX8);
->  PERIPH_CLK(usbd,       "fsl-tegra-udc",        NULL,   22,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
->  PERIPH_CLK(usb2,       "tegra-ehci.1",         NULL,   58,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
->  PERIPH_CLK(usb3,       "tegra-ehci.2",         NULL,   59,     0,      480000000, mux_clk_m,                   0); /* requires min voltage */
-> @@ -1337,6 +1337,9 @@ struct clk_duplicate tegra_clk_duplicates[] = {
->         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
->         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
->         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.4", "fast-clk"),
-> +       CLK_DUPLICATE("pll_p", "tegra-dc.0", "parent"),
-> +       CLK_DUPLICATE("pll_p", "tegra-dc.1", "parent"),
-> +       CLK_DUPLICATE("pll_d2_out0", "tegra-hdmi", "parent"),
->  };
 
-The tegra-dc.1's parent should be pll_d2_out0.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->  struct clk *tegra_ptr_clks[] = {
-> --
-> 1.8.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+On Tue, Nov 13, 2012 at 03:15:47PM +0800, Mark Zhang wrote:
+> On 11/13/2012 05:55 AM, Thierry Reding wrote:
+> > This commit adds a KMS driver for the Tegra20 SoC. This includes basic
+> > support for host1x and the two display controllers found on the Tegra20
+> > SoC. Each display controller can drive a separate RGB/LVDS output.
+> >=20
+> > Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+> > ---
+> > Changes in v2:
+> > - drop Linux-specific drm subdirectory for DT bindings documentation
+> > - remove display helper leftovers that belong in a later patch
+> > - reuse debugfs infrastructure provided by the DRM core
+> > - move vblank syncpoint defines to dc.h
+> > - use drm_compat_ioctl()
+> >=20
+> [...]
+> > diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kcon=
+fig
+> > new file mode 100644
+> > index 0000000..be1daf7
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/tegra/Kconfig
+> > @@ -0,0 +1,23 @@
+> > +config DRM_TEGRA
+> > +       tristate "NVIDIA Tegra DRM"
+> > +       depends on DRM && OF && ARCH_TEGRA
+> > +       select DRM_KMS_HELPER
+> > +       select DRM_GEM_CMA_HELPER
+> > +       select DRM_KMS_CMA_HELPER
+>=20
+> Just for curious, according to my testing, why the "CONFIG_CMA" is not
+> enabled while DRM_GEM_CMA_HELPER & DRM_KMS_CMA_HELPER are enabled here?
+
+The reason is that CMA doesn't actually provide any API for drivers to
+use and in fact unless you use very large buffers you could indeed run
+this code on top of a non-CMA kernel and it will likely even work.
+
+> > +static struct of_device_id tegra_dc_of_match[] =3D {
+> > +       { .compatible =3D "nvidia,tegra20-dc", },
+> > +       { .compatible =3D "nvidia,tegra30-dc", },
+>=20
+> If you don't want add Tegra 3 support in this patch set, remove
+> { .compatible =3D "nvidia,tegra30-dc", } here.
+
+Good catch! I'll move that into the Tegra30 support patch.
+
+> > +static int host1x_activate_drm_client(struct host1x *host1x,
+> > +                                     struct host1x_drm_client *drm,
+> > +                                     struct host1x_client *client)
+> > +{
+> > +       mutex_lock(&host1x->drm_clients_lock);
+> > +       list_del_init(&drm->list);
+> > +       list_add_tail(&drm->list, &host1x->drm_active);
+>=20
+> Why we need this "drm_active" list? We can combine this function and
+> function "host1x_remove_drm_client" and free the drm client just here.
+> It's useless after host1x clients registered themselves.
+
+The list is used to properly remove all clients and resources when the
+module is unloaded. Granted, this code isn't executed if you don't build
+the driver as a loadable module, but it should still be a supported use-
+case.
+
+> > +int host1x_unregister_client(struct host1x *host1x,
+> > +                            struct host1x_client *client)
+> > +{
+> > +       struct host1x_drm_client *drm, *tmp;
+> > +       int err;
+> > +
+> > +       list_for_each_entry_safe(drm, tmp, &host1x->drm_active, list) {
+> > +               if (drm->client =3D=3D client) {
+> > +                       err =3D host1x_drm_exit(host1x);
+>=20
+> Although this code works but I think it looks confusing.
+> "host1x_drm_exit" calls every client's "drm_exit" callback then free all
+> the host1x clients, but this function is placed inside a loop.
+>=20
+> I think the better way is, free this host1x_client first, then remove it
+> from host1x's "clients" list, finally free the host1x(call
+> host1x_drm_exit) when the "clients" list get empty.
+
+But that would be the same thing, only slightly more explicit. I find
+that the above reads quite well as: look through the list of active
+clients and if the client to be removed is in that list, teardown the
+DRM part.
+
+I suppose I could add a comment to explain this and avoid confusion.
+
+> > +int tegra_output_init(struct drm_device *drm, struct tegra_output *out=
+put)
+> > +{
+> > +       int connector, encoder, err;
+> > +       enum of_gpio_flags flags;
+> > +       struct device_node *ddc;
+> > +       size_t size;
+> > +
+> > +       if (!output->of_node)
+> > +               output->of_node =3D output->dev->of_node;
+> > +
+> > +       output->edid =3D of_get_property(output->of_node, "nvidia,edid"=
+, &size);
+> > +
+> > +       ddc =3D of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus",=
+ 0);
+> > +       if (ddc) {
+> > +               output->ddc =3D of_find_i2c_adapter_by_node(ddc);
+>=20
+> The i2c adapter may not be ready at this time. For Tegra 2, the I2C bus
+> for HDMI is not dedicated and we need the i2cmux driver loaded before
+> this i2c can be used. It proved that sometimes i2cmux driver loads after
+> drm driver.
+>=20
+> So we need to add some logics to support driver probe deferral here.
+> Anyway, I'm just want you know about this and we can improve this later.
+
+Good point. Unfortunately tegra_output_init() isn't always used from
+within .probe(), so it isn't quite easy to handle deferred probe here.
+I'll have to take a look at how to solve this properly.
+
+> > +int tegra_dc_rgb_init(struct drm_device *drm, struct tegra_dc *dc)
+> > +{
+> > +       struct device_node *np;
+> > +       struct tegra_rgb *rgb;
+> > +       int err;
+> > +
+> > +       np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
+> > +       if (!np || !of_device_is_available(np))
+> > +               return -ENODEV;
+> > +
+> > +       rgb =3D devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+> > +       if (!rgb)
+> > +               return -ENOMEM;
+> > +
+> > +       rgb->clk =3D devm_clk_get(dc->dev, NULL);
+> > +       if (IS_ERR_OR_NULL(rgb->clk))
+> > +               return PTR_ERR(rgb->clk);
+> > +
+> > +       rgb->clk_parent =3D devm_clk_get(dc->dev, "parent");
+> > +       if (IS_ERR_OR_NULL(rgb->clk_parent))
+> > +               return PTR_ERR(rgb->clk_parent);
+> > +
+> > +       err =3D clk_set_parent(rgb->clk, rgb->clk_parent);
+> > +       if (err < 0) {
+> > +               dev_err(dc->dev, "failed to set parent clock: %d\n", er=
+r);
+> > +               return err;
+> > +       }
+>=20
+> Okay, seems this works with the "CLK_DUPLICATE" in tegra20_clocks_data.c.
+> I think the purpose of all these is to make sure the dc has a correct
+> parent clock. Hm... But I feel this may bring confusing to do dc clock
+> settings in a drm output component.
+
+How do you think this would be confusing?
+
+Thierry
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQoftGAAoJEN0jrNd/PrOhwFQQAKKkqlzWjY370pXUcxNllDRW
+OWGHSWunnx75BeZMJK9XAMjNSLcT9CXdJbUu53HiSUrBZRyX5xX4i5EBD9nC77pf
+qDJbHvqXuI4BgINixZzpGAEzeZ//1dczdIwm6YGr2XNbyYt45QSJ+bDGSBf11sig
+AKSulhp0ECjjhJ7jm4o975clYVN3W6xxEoJLa0gJfbEU0f/CGS6eQ8UxSmMGbejq
+nm1mR+1NfP3WwGv2BSDrqjsErdFGUZHyns8f/pkhbpLAVFn9KgTBT2aQzBlytaHQ
+2NEl5h7gTstwjEBzAV5yKZYFvzLaDOrBJs8xqX9oTB6OHIDkrk+dQRCnUOTgE6J3
+jOi5w39g4pRNdI/X/ryJjhoeEUJczxT2AziM81h7esryo1RqQRmS36YR3t023OkT
+VlWQLS/FyhS7t+/knFfC992a/pvaHilaxXtu0/3b+dUmO2//hZKBlLJk5QqHJ15V
+2M5/eGFNwuPPF6QcD8H4s9/0Ok+045zWjMfCBTkG8xAG4tntlTsGt5V7ItP+248/
+yh+neYVHD3dtE4FZh3LwrWWSZpfIiD9i3QFA74Z/jKHEUj1dm6pYJT/fo1KdpTRZ
+xMcVmNmzPC9lbaOciBmnwhMDuOA2xPJH+jz6sBxJxfiNMH7LC6P2vWpHq6HJpIEG
++uMmtSYlxTBeKh/+6A+M
+=QCV3
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
