@@ -1,83 +1,64 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra20 host1x support
-Date: Tue, 13 Nov 2012 08:52:47 +0100
-Message-ID: <20121113075247.GB8409@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH 2/2] ARM: tegra: Add Tegra30 host1x support
+Date: Tue, 13 Nov 2012 08:53:48 +0100
+Message-ID: <20121113075348.GC8409@avionic-0098.mockup.avionic-design.de>
 References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de>
- <1352467202-27903-2-git-send-email-thierry.reding@avionic-design.de>
- <50A1FA7C.4010507@nvidia.com>
+ <1352467202-27903-3-git-send-email-thierry.reding@avionic-design.de>
+ <50A1FAB0.8040700@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
+	protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50A1FA7C.4010507-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50A1FAB0.8040700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---H1spWtNR+x+ondvy
+--/Uq4LBwYP4y1W6pO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 13, 2012 at 03:45:00PM +0800, Mark Zhang wrote:
+On Tue, Nov 13, 2012 at 03:45:52PM +0800, Mark Zhang wrote:
 > On 11/09/2012 09:20 PM, Thierry Reding wrote:
-> > @@ -116,6 +122,9 @@ static __initdata struct tegra_clk_init_table tegra=
-_dt_clk_init_table[] =3D {
-> >         { "sbc2",       "pll_p",        100000000,      false },
-> >         { "sbc3",       "pll_p",        100000000,      false },
-> >         { "sbc4",       "pll_p",        100000000,      false },
-> > +       { "host1x",     "pll_c",        144000000,      false },
-> > +       { "disp1",      "pll_p",        600000000,      false },
-> > +       { "disp2",      "pll_p",        600000000,      false },
->=20
-> I think here the parent of disp2 should be "pll_d_out0", not "pll_p".
-> Right now pll_p has not a proper clock setting to make 148.5MHz 1080p
-> HDMI happy. In addition, you add the 297MHz in pll_d frequency table
-> next and I think this is for disp2 has a proper clock rate to support HDM=
-I.
 [...]
-> > @@ -1051,6 +1053,9 @@ static struct clk_duplicate tegra_clk_duplicates[=
-] =3D {
-> >         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.1", "fast-clk"),
+> > @@ -1337,6 +1337,9 @@ struct clk_duplicate tegra_clk_duplicates[] =3D {
 > >         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
 > >         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
+> >         CLK_DUPLICATE("pll_p_out3", "tegra-i2c.4", "fast-clk"),
 > > +       CLK_DUPLICATE("pll_p", "tegra-dc.0", "parent"),
 > > +       CLK_DUPLICATE("pll_p", "tegra-dc.1", "parent"),
-> > +       CLK_DUPLICATE("pll_d_out0", "tegra-hdmi", "parent"),
+> > +       CLK_DUPLICATE("pll_d2_out0", "tegra-hdmi", "parent"),
 > >  };
 >=20
-> The same with my above comments, the tegra-dc.1's parent should be
-> pll_d_out0.
+> The tegra-dc.1's parent should be pll_d2_out0.
 
-The way this works is that for HDMI it is required that the DC and HDMI
-blocks have the same parent. So what really happens is that once you
-setup one of the DCs to work with HDMI, its clock will automatically be
-reparented to the HDMI parent clock, which in this case is "pll_d_out0".
+I've explained this my reply to the Tegra20 support patch.
 
 Thierry
 
---H1spWtNR+x+ondvy
+--/Uq4LBwYP4y1W6pO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQofxPAAoJEN0jrNd/PrOhDZUP/RE8Ruq8JfStjv+20FKyaJKu
-lPZ1BZINCA/VVsCcdgcpRBAAiPVs8uuwhWmh39baZsFacP+gMDaVUHq7uUkACE2H
-dqzPQBgcANkww5skQSfA2bY5NGR+GBaNFKNq2OLFsL2o+M4qBaLINihQxd2/IUTa
-WyBJliiQVMUuQQlvWTOGZm98EKGj6MrXZGLqwyi1ucmvpuAMxEnoXX2xKbJSfe9i
-d4kv/vl/mmzGhji/wY6BAGQMbfAGbk3VRRRR9eZR3z8K8BjAhAqW/R0nzpz2xHwe
-tFAoptOs+Cd93VbyxuYU7z/X4M8tTp/J0HzAng6zs/hLJEWHzo2leubGvEzzcUAp
-VNc5jbXFjbBrYS/NFMovDEAF2Uk8VB1YVX3dY9BOMfcI7BNEfancjvBydjVGs3ev
-CGP/p9lTeKSQk53QlbeLuXhVIc4tNpUjpFHBjGt6vIzRScu3X8CHsAGwtQGAxLIU
-/kwSwonEVr7dSLlyXlsFCqAsZV9OjCDW76Aj/xzPOfBqfnW+eGs9u7m9QGOJgmr0
-Dw6rPWgH69iEE26fg9Ua2CWGdNqvUzTPvQ4sCQqfeUpieIdtmgj0Fs0OaCLRlrxu
-I6KKF7AhUsD54WBOxDZGYkG0SGRO6FtNroSsDPME6r7bhPgZ8lEH5Kc0bm044kZJ
-hfnzIIZ+/WbJMuYXEXBk
-=Kd/y
+iQIcBAEBAgAGBQJQofyMAAoJEN0jrNd/PrOhvDYP/3CPS5KecOvh6oAUbb6dc8SH
+BrdqxKkj3YjXH/27xFG06m/XUIqcDGDQ9kyAxvYw4nAC7ydRPVBjfZViW3Zi+8dw
+Ihmy4TcawZR2oyVdxGJYetEKKxBTcGb8jBpJkJZr9kS9YJH5bqrJa+wKjdJtSIxG
+Ix57he97cn00CCfuxBGC9DepsAigeAx+VSGiVzvQKR84qx3J54eHntcYAVo8j9/c
+WA+FClBjvcn/BQw5Zt6akwQ6APWTYmCLfoyko7ApnH4cl48bT2h36XdfmPOufDVf
+6CaMi50SPCpTD378JHAG4ewNZ0Q1VzqodkQDxWMiEtSTjzx6H4Yft8eNjZONOSTY
+v/7f+6owVxNPXUYrnJxBb6W8JgfZJgo11/h1YPxidFHE8YGMOojHKLa0Nwf23+/B
+Whei1HU80W9tRhvJwuTorO46XsJalK4w3cKY8Df6GhM0Lmg4VO5y6iOqdBzY0YEo
+R373onKge2PATOcduPtw+MRa10P4jLLBysYV0250ebI1zy1I2fhUxV14+so9GnAv
+NO88ePLRWDLaHMJoojdumcX/JJIUQhHZD0ecClf0eBwSHi6qvs4U7ioHe2hfWdev
+FKgNd+Rp/dYhMcW0y7BX1XuhPHOqs6p1VhdYdud0q5wKJjk4qlbI8lFK71DP5CYk
+/2kGdRfewjzGaGwDmyl7
+=iIF1
 -----END PGP SIGNATURE-----
 
---H1spWtNR+x+ondvy--
+--/Uq4LBwYP4y1W6pO--
