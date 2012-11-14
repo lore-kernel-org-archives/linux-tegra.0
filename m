@@ -1,45 +1,51 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: tegra: retain L2 content over CPU
- suspend/resume
-Date: Wed, 14 Nov 2012 09:46:52 +0800
-Message-ID: <1352857612.3362.17.camel@jlo-ubuntu-64.nvidia.com>
-References: <1352772288-2290-1-git-send-email-josephl@nvidia.com>
-	 <20121113115809.GA18622@elf.ucw.cz>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH V2] spi: tegra: add spi driver for sflash controller
+Date: Wed, 14 Nov 2012 11:05:15 +0900
+Message-ID: <20121114020514.GI4415@opensource.wolfsonmicro.com>
+References: <1352852687-25514-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nO3oAMapP4dBpMZi"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121113115809.GA18622-I/5MKhXcvmPrBKCeMvbIDA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1352852687-25514-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-11-13 at 19:58 +0800, Pavel Machek wrote:
-> On Tue 2012-11-13 10:04:48, Joseph Lo wrote:
-> > The L2 RAM is in different power domain from the CPU cluster. So the
-> > L2 content can be retained over CPU suspend/resume. To do that, we
-> > need to disable L2 after the MMU is disabled, and enable L2 before
-> > the MMU is enabled. But the L2 controller is in the same power domain
-> > with the CPU cluster. We need to restore it's settings and re-enable
-> > it after the power be resumed.
-> 
-> Is it good idea to retain L2 over suspend? I guess this is
-> power-vs-speed balance...?
-> 
 
-Hi Pavel,
+--nO3oAMapP4dBpMZi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your review. Because one of the Tegra's CPU idle state will
-shut off the CPU power, it only contain CPU cluster, L1$, GIC and L2
-controller. The L2 ram is still powered. The L2 flush is a slow
-operation at low frequency. The CPU idle "power-down" state is likely to
-happen often at low frequency for low power use case (e.g. low power
-audio playback). So yes, it's power-vs-speed balance.
+On Wed, Nov 14, 2012 at 05:54:47AM +0530, Laxman Dewangan wrote:
+> NVIDIA's Tegra20 have the SPI (SFLASH) controller to
+> interface with spi flash device which is used for system
+> boot. Add the spi driver for this controller.
 
-For the system-wide sleep mode (i.e. suspend), the power of L2 RAM would
-be shut off at the deepest sleep mode. There would be different
-procedure to handle L2.
+Applied, thanks.
 
-Thanks,
-Joseph
+--nO3oAMapP4dBpMZi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQovxMAAoJELSic+t+oim9XCAP/iXVSbJxuOlG5825N81Wl6X9
+Cs+c+AMo29Mf9KSneRo6T7PvS0ly+dnjM652rJM1Tn0LVdABuV51CgNhe1xcWAmo
+3O7gpKIam0fQmeokkEJIKv7CLw49pOzCmS7gbeXucZLUQDRqp+xSxwlFOvnkrNv0
+Ny8AF9w95jgyRycMTb8wDuJOaBE5ZzFR6vmxP6DRS+bqYDXKWgoZaEjgR9XiUJKe
+QZib5X2pHReqxRw4Etu9PYaI2ISHMCJMLffYWrOISvG/k1XGZyNwbIe0GQp9GjFO
+JXYUiTFFx4/UE70su5apdVsQ5VkLzgpEqacukRpUV8L62aWs9fquslwIPrfzkNrQ
+IlJj6CVntmpY2NPBpR4SgusYSEp3Za2fqPUkKhB/mTokhSA2gvT+ZNY09DH3ybsW
+1jWSTzYFLkLGpeoqeELzlQes8rlUw7B9mDSRK3fDhQAJjH5V3v2Ofhyqlx3C+hQp
+XUgN6WuNrvLbZhF6vbfiPuIYFZc3sNe+sv5xVj/ICl4qAS+mw1pV8oCPNXx9+r13
+xBh94BgLdjx4Rq0/dl3Pplv0Tm+hUfFfBJqVjD/RXJaeYKCjfIsxxkwnp7iuumaD
+yNaI/uCnfNnzgtl7WuWrIif4q6yvTM1l7UAlsd8GWtrNzCNG3fne0rOxdSRpX/gS
+gpWvkBcQoQBsItwU8WMA
+=Orq+
+-----END PGP SIGNATURE-----
+
+--nO3oAMapP4dBpMZi--
