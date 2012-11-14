@@ -1,79 +1,66 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] tegra: ventana: display and backlight DT entries
-Date: Wed, 14 Nov 2012 09:09:48 -0700
-Message-ID: <50A3C24C.6090004@wwwdotorg.org>
-References: <1352802204-1740-1-git-send-email-acourbot@nvidia.com> <20121113123410.GA11202@avionic-0098.mockup.avionic-design.de> <50A2797C.9030807@wwwdotorg.org> <1393946.fMW2YXfOao@percival>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add Tegra20 host1x support
+Date: Wed, 14 Nov 2012 09:19:17 -0700
+Message-ID: <50A3C485.7080704@wwwdotorg.org>
+References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de> <1352467202-27903-2-git-send-email-thierry.reding@avionic-design.de> <50A357D3.9080002@nvidia.com> <20121114084931.GA31837@avionic-0098.mockup.avionic-design.de> <50A3712E.7000104@nvidia.com> <20121114105406.GA31455@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1393946.fMW2YXfOao@percival>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121114105406.GA31455@avionic-0098.mockup.avionic-design.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2012 10:36 PM, Alex Courbot wrote:
-> On Wednesday 14 November 2012 00:46:52 Stephen Warren wrote:
->> I do tend to think that we should use EDID where there is one.
->>
->> 1) If there is an EDID in the panel HW, and the panel's I2C is hooked
->> up to Tegra, we should read it out at runtime.
-> 
-> According to Ventana' platform design guide the LCD panel is hooked on I2C2. 
-> The panel's data sheet lists CLK_EDID and DATA_EDID pins, which I assume are 
-> for I2C, but there is no mention of an I2C address in both guides.
+On 11/14/2012 03:54 AM, Thierry Reding wrote:
+> On Wed, Nov 14, 2012 at 12:23:42PM +0200, Terje Bergstr=C3=B6m wrote:
+>> On 14.11.2012 10:49, Thierry Reding wrote:
+>>> Can you find out how the host1x clock is setup without this
+>>> change? I was told that freezes can occur when you try to
+>>> access the registers without the host1x clock being enabled.
+>>> However, the host1x driver should take care to properly setup
+>>> the clock.
+>>>=20
+>>> To find out if the non-running clock is the issue, can you try
+>>> to patch that line and make the final element true instead of
+>>> false? That should enable the clock on boot so that it should
+>>> always be running.
+>>=20
+>> I tried with fastboot and U-Boot, and whenever that line is
+>> there, kernel boot will halt at nvhost init. Same happens if I
+>> just change the false to true.
+>>=20
+>> nvhost will enable the clock and disable as it need. Also, part
+>> of host1x initialization did proceed, but it ended up hanging
+>> after a few registers were initialized. So it's not a case of
+>> host1x being off, but host1x hanging after a while.
+>>=20
+>> If I change this line to:
+>>=20
+>> { "host1x",     "pll_p",        216000000,      false },
+>>=20
+>> it will also work properly. It looks like we have some problem
+>> with pll_c in Tegra20, or clock configuration with your patch. In
+>> Tegra30, pll_c with 144MHz seems to work fine, but on Tegra20, it
+>> doesn't.
+>>=20
+>> In internal kernel, we use pll_c for host1x, so hardware
+>> shouldn't be the problem here.
+>=20
+> I suppose that if things work properly without this line, then we
+> should probably just drop it. Stephen, any objections?
 
-EDID would always be on I2C address 0x50.
+I'd rather initialize it explicitly. If setting it to 216MHz works
+fine as Terje indicated, we may as well just do that.
 
->> 2) Otherwise, if the panel's documentation provides an EDID, we should
->> use that, since it's the most canonical/common/standard representation
->> of the panel's properties.
-> 
-> Panel's documentation indeed provides full EDID specification in appendix. Mark 
-> sent me an EDID blob which works but I don't know where it comes from - Mark, 
-> could you tell us?
->
->> 3) Otherwise, use the videomode DT bindings.
->>
->> Another benefit of (2) is that we can actually support the panel
->> without waiting for the videomode DT bindings to be finalized and merged.
-> 
-> Is there another incentive for preferring (2) over (3)? EDID specs can easily 
-> be turned into videomode bindings, and it would also avoid introducing a new 
-> file into the kernel source.
+I suspect the issue with the original code:
 
-If there's an EDID, it is the canonical representation of the display's
-features. As such, we should use it directly rather than encoded it into
-a different format. Also, the EDID provides much more information than
-the display mode bindings, e.g. vendor/model name, serial number, IIRC
-perhaps some (limited?) color space information, etc.
+> { "host1x",     "pll_c",        144000000,      false },
 
->> Although if Ventana requires the power sequences helpers, that already
->> means we won't be able to support Ventana's panel in 3.8 unless the
->> power sequences code gets merged for 3.8; is that likely?
-> 
-> Likely, I don't know, possible - maybe. Power seqs work and I could push to 
-> get them merged, but the following points need to be considered:
-> - DT bindings are likely to change from their current form. I want to take 
-> advantage of the gpio API changes that are undergoing, and also probably of 
-> your preprocessor patch for dtc (not sure if that is already usable in the 
-> kernel?). Considering the feature is young I don't think a DT change would be 
-> a big deal, but the general consensus seems to be that DT bindings are 
-> immutable - maybe my perception is wrong?
-
-The DT bindings are certainly supposed to be fixed. I'm still not
-convinced that there is any mileage at all in changing the DT bindings
-for GPIOs as part of the power sequences or similar work; the GPIO
-bindings have been around for years and can't change.
-
-> - If I am to take maintainership of the feature, I guess I will have to get 
-> the patches sufficiently Ack'ed by enough people, and also have someone else 
-> pull from my tree (Linus? Or maybe some other power maintainer?). I am not 
-> familiar with the exact procedure here - moreover, my GPG key only has one 
-> signature from a trusted kernel dev, I am not sure if this is enough.
-
-It's probably best to go ask whoever maintains the rest of the code in
-the directory above where you placed it. See if they'll take your pull
-request. If not, you can try sending directly to Linus, CCing enough
-other known people to get acks (I think you already collected a few right?)
+=2E.. is that perhaps the requested 144MHz can't be generated from
+pll_c's 600MHz rate, since there's a simple U7.1 divider there (you
+could get 120, 133.333, 150), so the clock ends up being programmed to
+some incorrect value. In the pll_p/216MHz case, pll_p is programmed to
+generate 216MHz anyway, so requesting the same rate for host1x yields
+a divider of 1 exactly which works fine.
