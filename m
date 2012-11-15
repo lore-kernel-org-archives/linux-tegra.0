@@ -1,50 +1,36 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 2/6] ARM: tegra: Add AUXDATA for Tegra20 host1x
-Date: Thu, 15 Nov 2012 22:07:55 +0100
-Message-ID: <1353013679-16773-3-git-send-email-thierry.reding@avionic-design.de>
-References: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353013679-16773-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: [PATCH v2 0/6] Device tree updates for host1x support
+Date: Thu, 15 Nov 2012 22:07:53 +0100
+Message-ID: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the OF_DEV_AUXDATA table entries required to associate the proper
-names with host1x and its children. In turn, this allows the devices to
-find the required clocks.
+This second version of this patch series splits the patches up into more
+logical chunks as requested by Stephen. Instead of renaming the matching
+parameters in the clock driver, this version renames the AUXDATA entries
+to match what the clock driver expects. Furthermore the host1x clock is
+initialized to 150 MHz instead of the unsupported 144 MHz.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt-tegra20.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Thierry
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 1198e84..734d9cc 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -94,6 +94,12 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D600, "spi_tegra.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D800, "spi_tegra.2", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000DA00, "spi_tegra.3", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-host1x", 0x50000000, "host1x", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54200000, "tegradc.0", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54240000, "tegradc.1", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-hdmi", 0x54280000, "hdmi", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-dsi", 0x54300000, "dsi", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-tvo", 0x542c0000, "tvo", NULL),
- 	{}
- };
- 
-@@ -118,6 +124,9 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	{ "sbc2",	"pll_p",	100000000,	false },
- 	{ "sbc3",	"pll_p",	100000000,	false },
- 	{ "sbc4",	"pll_p",	100000000,	false },
-+	{ "host1x",	"pll_c",	150000000,	false },
-+	{ "disp1",	"pll_p",	600000000,	false },
-+	{ "disp2",	"pll_p",	600000000,	false },
- 	{ NULL,		NULL,		0,		0},
- };
- 
+Thierry Reding (6):
+  ARM: tegra: Add Tegra20 host1x support
+  ARM: tegra: Add AUXDATA for Tegra20 host1x
+  ARM: tegra: Add Tegra20 host1x clock support
+  ARM: tegra: Add Tegra30 host1x support
+  ARM: tegra: Add AUXDATA for Tegra30 host1x
+  ARM: tegra: Add Tegra30 host1x clock support
+
+ arch/arm/boot/dts/tegra20.dtsi            | 87 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi            | 87 +++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/board-dt-tegra20.c    |  9 ++++
+ arch/arm/mach-tegra/board-dt-tegra30.c    |  9 ++++
+ arch/arm/mach-tegra/tegra20_clocks_data.c | 11 ++--
+ arch/arm/mach-tegra/tegra30_clocks_data.c |  5 +-
+ 6 files changed, 203 insertions(+), 5 deletions(-)
+
 -- 
 1.8.0
