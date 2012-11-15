@@ -1,48 +1,109 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 RESEND] gpio: tegra: read output value when gpio is set in direction_out
-Date: Fri, 16 Nov 2012 04:34:06 +0530
-Message-ID: <1353020646-14867-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 2/2] ARM: tegra: trimslice: enable HDMI port
+Date: Thu, 15 Nov 2012 16:20:14 -0700
+Message-ID: <1353021614-29200-2-git-send-email-swarren@wwwdotorg.org>
+References: <1353021614-29200-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353021614-29200-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Read the output value when gpio is set for the output mode for
-gpio_get_value(). Reading input value in direction out does not
-give correct value.
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Enable host1x, and the HDMI output. Harmony also has a DVI port with an
+HDMI form-factor connector, driven by Tegra's LVDS output. This isn't
+enabled yet, due to potential issues with having multiple outputs enabled.
+
+Correct DDC I2C frequency to 100KHz.
+
+Add dummy/fixed regulators to satisfy the HDMI driver.
+
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+[swarren: add commit description, remove enable of DVI port]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes from V1:
-- Keep the if part implementation same the else part to have implementation
-  same kind.
+ arch/arm/boot/dts/tegra20-trimslice.dts |   44 ++++++++++++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 4 deletions(-)
 
-Not too old patchi but just resending in case of it is missed.
-Adding acked by Stephen as he acked this patch.
-
-
- drivers/gpio/gpio-tegra.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index c7c175a..1163cf1 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -135,6 +135,11 @@ static void tegra_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index f4e0428..b70b4cb 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -10,6 +10,18 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
  
- static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
-+	/* If gpio is in output mode then read from the out value */
-+	if ((tegra_gpio_readl(GPIO_OE(offset)) >> GPIO_BIT(offset)) & 1)
-+		return (tegra_gpio_readl(GPIO_OUT(offset)) >>
-+				GPIO_BIT(offset)) & 0x1;
++	host1x {
++		hdmi {
++			status = "okay";
 +
- 	return (tegra_gpio_readl(GPIO_IN(offset)) >> GPIO_BIT(offset)) & 0x1;
- }
++			vdd-supply = <&hdmi_vdd_reg>;
++			pll-supply = <&hdmi_pll_reg>;
++
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
++			nvidia,hpd-gpio = <&gpio 111 0>; /* PN7 */
++		};
++	};
++
+ 	pinmux {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -249,9 +261,9 @@
+ 		clock-frequency = <216000000>;
+ 	};
  
+-	i2c@7000c000 {
++	dvi_ddc: i2c@7000c000 {
+ 		status = "okay";
+-		clock-frequency = <400000>;
++		clock-frequency = <100000>;
+ 	};
+ 
+ 	spi@7000c380 {
+@@ -264,9 +276,9 @@
+ 		};
+ 	};
+ 
+-	i2c@7000c400 {
++	hdmi_ddc: i2c@7000c400 {
+ 		status = "okay";
+-		clock-frequency = <400000>;
++		clock-frequency = <100000>;
+ 	};
+ 
+ 	i2c@7000c500 {
+@@ -310,6 +322,30 @@
+ 		bus-width = <4>;
+ 	};
+ 
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hdmi_vdd_reg: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "avdd_hdmi";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-always-on;
++		};
++
++		hdmi_pll_reg: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "avdd_hdmi_pll";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++		};
++	};
++
+ 	sound {
+ 		compatible = "nvidia,tegra-audio-trimslice";
+ 		nvidia,i2s-controller = <&tegra_i2s1>;
 -- 
-1.7.1.1
+1.7.10.4
