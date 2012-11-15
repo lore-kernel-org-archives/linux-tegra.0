@@ -1,111 +1,31 @@
-From: Danny Huang <dahuang@nvidia.com>
-Subject: [PATCH V2 1/3] ARM: tegra: flexible spare fuse read function
-Date: Thu, 15 Nov 2012 15:42:32 +0800
-Message-ID: <1352965354-650-2-git-send-email-dahuang@nvidia.com>
-References: <1352965354-650-1-git-send-email-dahuang@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/2] Device tree updates for host1x support
+Date: Thu, 15 Nov 2012 13:51:46 +0530
+Message-ID: <50A4A61A.9090506@nvidia.com>
+References: <1352467202-27903-1-git-send-email-thierry.reding@avionic-design.de> <509D3EB1.8040703@wwwdotorg.org> <20121109184409.GB7663@avionic-0098.mockup.avionic-design.de> <509D7145.9000203@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1352965354-650-1-git-send-email-dahuang@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Danny Huang <dahuang@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <509D7145.9000203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Change the spare fuse base from a definition to a variable.
-It provides flexibilty to read spare fuse on different chip.
+On Saturday 10 November 2012 02:40 AM, Stephen Warren wrote:
+> On 11/09/2012 11:44 AM, Thierry Reding wrote:
+>> On Fri, Nov 09, 2012 at 10:34:41AM -0700, Stephen Warren wrote:
+> ...
+>>> I really hope soon that Tegra will support DT bindings for clocks
+>>> so we can get rid of the AUXDATA, but unfortunately I haven't
+>>> seen any movement towards this:-(
+>> Oh yes, please. We wouldn't have any of the above problem if we
+>> had proper DT bindings for this. Who needs to be prodded to speed
+>> this up?
+> I believe one of Peter De Schrijver or Prashant Gaikwad are supposed
+> to be working on this.
+I am working on it, will send patches soon.
 
-Signed-off-by: Danny Huang <dahuang@nvidia.com>
----
- arch/arm/mach-tegra/fuse.c | 19 ++++++++++++-------
- arch/arm/mach-tegra/fuse.h |  2 ++
- 2 files changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-index 6c752e8..bd19c2f 100644
---- a/arch/arm/mach-tegra/fuse.c
-+++ b/arch/arm/mach-tegra/fuse.c
-@@ -28,7 +28,8 @@
- #define FUSE_UID_LOW		0x108
- #define FUSE_UID_HIGH		0x10c
- #define FUSE_SKU_INFO		0x110
--#define FUSE_SPARE_BIT		0x200
-+
-+#define TEGRA20_FUSE_SPARE_BIT		0x200
- 
- int tegra_sku_id;
- int tegra_cpu_process_id;
-@@ -36,6 +37,8 @@ int tegra_core_process_id;
- int tegra_chip_id;
- enum tegra_revision tegra_revision;
- 
-+static int tegra_fuse_spare_bit;
-+
- /* The BCT to use at boot is specified by board straps that can be read
-  * through a APB misc register and decoded. 2 bits, i.e. 4 possible BCTs.
-  */
-@@ -56,14 +59,14 @@ static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_A04]     = "A04",
- };
- 
--static inline u32 tegra_fuse_readl(unsigned long offset)
-+u32 tegra_fuse_readl(unsigned long offset)
- {
- 	return tegra_apb_readl(TEGRA_FUSE_BASE + offset);
- }
- 
--static inline bool get_spare_fuse(int bit)
-+bool tegra_spare_fuse(int bit)
- {
--	return tegra_fuse_readl(FUSE_SPARE_BIT + bit * 4);
-+	return tegra_fuse_readl(tegra_fuse_spare_bit + bit * 4);
- }
- 
- static enum tegra_revision tegra_get_revision(u32 id)
-@@ -77,7 +80,7 @@ static enum tegra_revision tegra_get_revision(u32 id)
- 		return TEGRA_REVISION_A02;
- 	case 3:
- 		if (tegra_chip_id == TEGRA20 &&
--			(get_spare_fuse(18) || get_spare_fuse(19)))
-+			(tegra_spare_fuse(18) || tegra_spare_fuse(19)))
- 			return TEGRA_REVISION_A03p;
- 		else
- 			return TEGRA_REVISION_A03;
-@@ -99,10 +102,12 @@ void tegra_init_fuse(void)
- 	reg = tegra_fuse_readl(FUSE_SKU_INFO);
- 	tegra_sku_id = reg & 0xFF;
- 
--	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
-+	tegra_fuse_spare_bit = TEGRA20_FUSE_SPARE_BIT;
-+
-+	reg = tegra_fuse_readl(tegra_fuse_spare_bit);
- 	tegra_cpu_process_id = (reg >> 6) & 3;
- 
--	reg = tegra_fuse_readl(FUSE_SPARE_BIT);
-+	reg = tegra_fuse_readl(tegra_fuse_spare_bit);
- 	tegra_core_process_id = (reg >> 12) & 3;
- 
- 	reg = tegra_apb_readl(TEGRA_APB_MISC_BASE + STRAP_OPT);
-diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
-index d2107b2..aef1223 100644
---- a/arch/arm/mach-tegra/fuse.h
-+++ b/arch/arm/mach-tegra/fuse.h
-@@ -48,5 +48,7 @@ extern int tegra_bct_strapping;
- 
- unsigned long long tegra_chip_uid(void);
- void tegra_init_fuse(void);
-+bool tegra_spare_fuse(int bit);
-+u32 tegra_fuse_readl(unsigned long offset);
- 
- #endif
--- 
-1.8.0
+Thanks&  Regards,
+PrashantG
