@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH 3/3] ARM: tegra: Update default configuration (squashfs)
-Date: Thu, 15 Nov 2012 22:44:54 +0100
-Message-ID: <1353015894-20003-4-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH 1/3] ARM: tegra: Update default configuration (backlight)
+Date: Thu, 15 Nov 2012 22:44:52 +0100
+Message-ID: <1353015894-20003-2-git-send-email-thierry.reding@avionic-design.de>
 References: <1353015894-20003-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1353015894-20003-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,27 +10,29 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Enable SquashFS which is used as the root filesystem on boards based on
-the Tamonten processor module.
+Enable the pwm-backlight driver that is used to light up the display on
+many Tegra boards.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- arch/arm/configs/tegra_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/configs/tegra_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index e05ac6c..a7827fd 100644
+index 39107b1..4e910ec 100644
 --- a/arch/arm/configs/tegra_defconfig
 +++ b/arch/arm/configs/tegra_defconfig
-@@ -219,6 +219,9 @@ CONFIG_EXT4_FS=y
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_SQUASHFS=y
-+CONFIG_SQUASHFS_LZO=y
-+CONFIG_SQUASHFS_XZ=y
- CONFIG_NFS_FS=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
+@@ -143,6 +143,11 @@ CONFIG_MEDIA_SUPPORT=y
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+ CONFIG_USB_VIDEO_CLASS=m
++CONFIG_BACKLIGHT_LCD_SUPPORT=y
++# CONFIG_LCD_CLASS_DEVICE is not set
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++# CONFIG_BACKLIGHT_GENERIC is not set
++CONFIG_BACKLIGHT_PWM=y
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+ # CONFIG_SND_SUPPORT_OLD_API is not set
 -- 
 1.8.0
