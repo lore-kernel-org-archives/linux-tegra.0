@@ -1,28 +1,24 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] NVIDIA Tegra DRM driver
-Date: Thu, 15 Nov 2012 15:20:36 -0700
-Message-ID: <50A56AB4.70606@wwwdotorg.org>
-References: <1353014903-17429-1-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 0/6] Device tree updates for host1x support
+Date: Thu, 15 Nov 2012 15:26:30 -0700
+Message-ID: <50A56C16.3090009@wwwdotorg.org>
+References: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353014903-17429-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Rob Clark <rob-l0cyMroinI0@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/15/2012 02:28 PM, Thierry Reding wrote:
-> This third version of the patch series cleans up some minor issues that
-> were found in the previous versions, such as deferred probe not working
-> properly and the display remaining enabled after the driver is removed.
-> 
-> I've also put the two patches in this series into the tegra/drm/for-3.8
-> branch of my repository on gitorious[0].
+On 11/15/2012 02:07 PM, Thierry Reding wrote:
+> This second version of this patch series splits the patches up into more
+> logical chunks as requested by Stephen. Instead of renaming the matching
+> parameters in the clock driver, this version renames the AUXDATA entries
+> to match what the clock driver expects. Furthermore the host1x clock is
+> initialized to 150 MHz instead of the unsupported 144 MHz.
 
-The series,
-
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-(on Harmony, using the HDMI output)
+Thanks very much. I have applied the series; DT changes to for-3.8/dt,
+and the other changes to for-3.8/soc.
