@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: [PATCH v2 5/6] ARM: tegra: Add AUXDATA for Tegra30 host1x
-Date: Thu, 15 Nov 2012 22:07:58 +0100
-Message-ID: <1353013679-16773-6-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v2 3/6] ARM: tegra: Add Tegra20 host1x clock support
+Date: Thu, 15 Nov 2012 22:07:56 +0100
+Message-ID: <1353013679-16773-4-git-send-email-thierry.reding@avionic-design.de>
 References: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
@@ -10,41 +10,55 @@ To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the OF_DEV_AUXDATA table entries required to associate the proper
-names with host1x and its children. In turn, this allows the devices to
-find the required clocks.
+Extend the pll_d frequency table with a few entries to support common
+HDMI and LVDS display modes and setup the clock parents for the two
+display controllers and HDMI.
 
 Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 ---
- arch/arm/mach-tegra/board-dt-tegra30.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-tegra/tegra20_clocks_data.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index cd30338..6497d12 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -57,6 +57,12 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DA00, "spi_tegra.3", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DC00, "spi_tegra.4", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DE00, "spi_tegra.5", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-host1x", 0x50000000, "host1x", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54200000, "tegradc.0", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54240000, "tegradc.1", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-hdmi", 0x54280000, "hdmi", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-dsi", 0x54300000, "dsi", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-tvo", 0x542c0000, "tvo", NULL),
- 	{}
+diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
+index 9615ee3..a23a073 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+@@ -246,11 +246,16 @@ static struct clk_pll_freq_table tegra_pll_d_freq_table[] = {
+ 	{ 19200000, 216000000, 135, 12, 1, 3},
+ 	{ 26000000, 216000000, 216, 26, 1, 4},
+ 
++	{ 12000000, 297000000,  99,  4, 1, 4 },
++	{ 12000000, 339000000, 113,  4, 1, 4 },
++
+ 	{ 12000000, 594000000, 594, 12, 1, 8},
+ 	{ 13000000, 594000000, 594, 13, 1, 8},
+ 	{ 19200000, 594000000, 495, 16, 1, 8},
+ 	{ 26000000, 594000000, 594, 26, 1, 8},
+ 
++	{ 12000000, 616000000, 616, 12, 1, 8},
++
+ 	{ 12000000, 1000000000, 1000, 12, 1, 12},
+ 	{ 13000000, 1000000000, 1000, 13, 1, 12},
+ 	{ 19200000, 1000000000, 625,  12, 1, 8},
+@@ -1036,9 +1041,6 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("usbd",	"utmip-pad",	NULL),
+ 	CLK_DUPLICATE("usbd",	"tegra-ehci.0",	NULL),
+ 	CLK_DUPLICATE("usbd",	"tegra-otg",	NULL),
+-	CLK_DUPLICATE("hdmi",	"tegradc.0",	"hdmi"),
+-	CLK_DUPLICATE("hdmi",	"tegradc.1",	"hdmi"),
+-	CLK_DUPLICATE("host1x",	"tegra_grhost",	"host1x"),
+ 	CLK_DUPLICATE("2d",	"tegra_grhost",	"gr2d"),
+ 	CLK_DUPLICATE("3d",	"tegra_grhost",	"gr3d"),
+ 	CLK_DUPLICATE("epp",	"tegra_grhost",	"epp"),
+@@ -1051,6 +1053,9 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.1", "fast-clk"),
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.2", "fast-clk"),
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.3", "fast-clk"),
++	CLK_DUPLICATE("pll_p", "tegradc.0", "parent"),
++	CLK_DUPLICATE("pll_p", "tegradc.1", "parent"),
++	CLK_DUPLICATE("pll_d_out0", "hdmi", "parent"),
  };
  
-@@ -82,6 +88,9 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
- 	{ "sbc4",	"pll_p",	100000000,	false},
- 	{ "sbc5",	"pll_p",	100000000,	false},
- 	{ "sbc6",	"pll_p",	100000000,	false},
-+	{ "host1x",	"pll_c",	150000000,	false},
-+	{ "disp1",	"pll_p",	600000000,	false},
-+	{ "disp2",	"pll_p",	600000000,	false},
- 	{ NULL,		NULL,		0,		0},
- };
- 
+ #define CLK(dev, con, ck)	\
 -- 
 1.8.0
