@@ -1,23 +1,33 @@
-From: Federico Vaga <federico.vaga-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: How to correctly use spi_slave_tegra
-Date: Fri, 16 Nov 2012 00:37:37 +0100
-Message-ID: <1965751.keAgdXQKJI@number-5>
-References: <3877625.uASAU6TrGF@number-5> <2843691.9Zl65ZOxsQ@number-5> <50A57959.1040208@nvidia.com>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 0/2] NVIDIA Tegra DRM driver
+Date: Fri, 16 Nov 2012 12:36:36 +0900
+Message-ID: <1480191.1noyT4vz0N@percival>
+References: <1353014903-17429-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50A57959.1040208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1353014903-17429-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "a.sappia-197Af0g7QoUlk5EcyZIkJQ@public.gmane.org" <a.sappia-197Af0g7QoUlk5EcyZIkJQ@public.gmane.org>, "puria.nafisi-yFROiS3d6cY@public.gmane.org" <puria.nafisi-yFROiS3d6cY@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Rob Clark <rob-l0cyMroinI0@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> Aah, it is something written incorrectly. We had internal discussion to
-> remove this statement from TRM already. Please ignore the 1 cycle delay
-> statement.
+On Friday 16 November 2012 05:28:21 Thierry Reding wrote:
+> This third version of the patch series cleans up some minor issues that
+> were found in the previous versions, such as deferred probe not working
+> properly and the display remaining enabled after the driver is removed.
+> 
+> I've also put the two patches in this series into the tegra/drm/for-3.8
+> branch of my repository on gitorious[0].
 
-Thank you, this is a great news :)
+Pulled from your branch and tried to test on my Ventana, but for some reason 
+nothing ever gets displayed. The only DRM-related message I ever get in my log 
+is
 
--- 
-Federico Vaga
+[    0.820483] [drm] Initialized drm 1.1.0 20060810
+
+Things were working perfectly with v2 - has something changed with e.g. the DT 
+bindings?
+
+Alex.
