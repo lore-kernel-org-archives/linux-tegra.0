@@ -1,49 +1,32 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCH v8 1/3] Runtime Interpreted Power Sequences
-Date: Thu, 15 Nov 2012 23:26:43 -0800
-Message-ID: <20121116072642.GA22291@lizard>
-References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
- <1353047903-14363-2-git-send-email-acourbot@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 0/2] NVIDIA Tegra DRM driver
+Date: Fri, 16 Nov 2012 09:38:59 +0200
+Message-ID: <50A5ED93.5080107@nvidia.com>
+References: <1353014903-17429-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1353047903-14363-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353014903-17429-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Rob Clark <rob-l0cyMroinI0@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Alexandre,
+On 15.11.2012 23:28, Thierry Reding wrote:
+> This third version of the patch series cleans up some minor issues that
+> were found in the previous versions, such as deferred probe not working
+> properly and the display remaining enabled after the driver is removed.
+> 
+> I've also put the two patches in this series into the tegra/drm/for-3.8
+> branch of my repository on gitorious[0].
 
-The code looks neat, thanks for you work!
+Excellent work. Thanks a lot Thierry!
 
-Just a couple of comments...
+I tested this and the device tree patches on my Tegra20 board. For both:
 
-On Fri, Nov 16, 2012 at 03:38:21PM +0900, Alexandre Courbot wrote:
-[...]
-> +
-> +#include "power_seq_delay.c"
-> +#include "power_seq_regulator.c"
-> +#include "power_seq_pwm.c"
-> +#include "power_seq_gpio.c"
+Acked-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This is odd, although I remember you already explained why you have to
-include the .c files, instead of linking them separately. But I forgot the
-reason. :) I think this deserves a comment in the code.
-
-> +static int of_power_seq_parse_step(struct device *dev,
-> +				   struct device_node *node,
-> +				   struct power_seq *seq,
-> +				   unsigned int step_nbr,
-> +				   struct list_head *resources)
-> +{
-> +	struct power_seq_step *step = &seq->steps[step_nbr];
-> +	struct power_seq_resource res, *res2;
-> +	const char *type;
-> +	int i, err;
-
-nit: one variable declaration per line.
-
-Thanks,
-Anton.
+Best regards,
+Terje
