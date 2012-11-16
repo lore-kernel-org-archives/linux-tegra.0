@@ -1,70 +1,23 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: dt: tegra: cardhu: Add drm components
-Date: Fri, 16 Nov 2012 13:00:45 +0800
-Message-ID: <1353042045-3182-1-git-send-email-markz@nvidia.com>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/6] Device tree updates for host1x support
+Date: Fri, 16 Nov 2012 14:33:09 +0900
+Message-ID: <14124199.Y0kYNzoKpq@percival>
+References: <1353013679-16773-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353013679-16773-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds the rgb and hdmi nodes which are necessary for
-tegra drm driver.
+On Friday 16 November 2012 05:07:53 Thierry Reding wrote:
+> This second version of this patch series splits the patches up into more
+> logical chunks as requested by Stephen. Instead of renaming the matching
+> parameters in the clock driver, this version renames the AUXDATA entries
+> to match what the clock driver expects. Furthermore the host1x clock is
+> initialized to 150 MHz instead of the unsupported 144 MHz.
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra30-cardhu.dtsi |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index bdb2a66..9af6987 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -27,6 +27,25 @@
- 	model = "NVIDIA Tegra30 Cardhu evaluation board";
- 	compatible = "nvidia,cardhu", "nvidia,tegra30";
- 
-+	host1x {
-+		dc@54200000 {
-+			rgb {
-+				status = "okay";
-+				nvidia,ddc-i2c-bus = <&rgbddc>;
-+			};
-+		};
-+
-+		hdmi {
-+			status = "okay";
-+
-+			vdd-supply = <&sys_3v3_reg>;
-+			pll-supply = <&vio_reg>;
-+
-+			nvidia,hpd-gpio = <&gpio 111 0>; /* PN7 */
-+			nvidia,ddc-i2c-bus = <&hdmiddc>;
-+		};
-+	};
-+
- 	memory {
- 		reg = <0x80000000 0x40000000>;
- 	};
-@@ -114,7 +133,7 @@
- 		clock-frequency = <408000000>;
- 	};
- 
--	i2c@7000c000 {
-+	rgbddc: i2c@7000c000 {
- 		status = "okay";
- 		clock-frequency = <100000>;
- 	};
-@@ -137,7 +156,7 @@
- 		};
- 	};
- 
--	i2c@7000c700 {
-+	hdmiddc: i2c@7000c700 {
- 		status = "okay";
- 		clock-frequency = <100000>;
- 	};
--- 
-1.7.9.5
+Tested-and-acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
