@@ -1,110 +1,65 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCH v8 1/3] Runtime Interpreted Power Sequences
-Date: Fri, 16 Nov 2012 04:25:41 -0800
-Message-ID: <20121116122540.GA2198@lizard>
-References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
- <1353047903-14363-2-git-send-email-acourbot@nvidia.com>
- <20121116072642.GA22291@lizard>
- <50A60AF6.9080509@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: trimslice: enable HDMI port
+Date: Fri, 16 Nov 2012 16:27:24 +0100
+Message-ID: <20121116152723.GA28991@avionic-0098.mockup.avionic-design.de>
+References: <1353021614-29200-1-git-send-email-swarren@wwwdotorg.org>
+ <1353021614-29200-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50A60AF6.9080509@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+In-Reply-To: <1353021614-29200-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 16, 2012 at 06:44:22PM +0900, Alex Courbot wrote:
-> On 11/16/2012 04:26 PM, Anton Vorontsov wrote:
-> >>+#include "power_seq_delay.c"
-> >>+#include "power_seq_regulator.c"
-> >>+#include "power_seq_pwm.c"
-> >>+#include "power_seq_gpio.c"
-> >
-> >This is odd, although I remember you already explained why you have to
-> >include the .c files, instead of linking them separately. But I forgot the
-> >reason. :) I think this deserves a comment in the code.
-> 
-> This is because of the table right after these includes:
-> 
-> static const struct power_seq_res_ops power_seq_ops[POWER_SEQ_NUM_TYPES] = {
-> 	[POWER_SEQ_DELAY] = POWER_SEQ_DELAY_TYPE,
-> 	[POWER_SEQ_REGULATOR] = POWER_SEQ_REGULATOR_TYPE,
-> 	[POWER_SEQ_PWM] = POWER_SEQ_PWM_TYPE,
-> 	[POWER_SEQ_GPIO] = POWER_SEQ_GPIO_TYPE,
-> };
-> 
-> The POWER_SEQ_*_TYPE macros are defined in the C files. It's the
-> simplest way to initialize this table, and the code inside these C
-> files is short and simple enough that I thought I would be forgiven.
-> :)
 
-I think in the header file you could just write
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-extern ..... power_seq_delay_type;
-#ifndef ...
-#define power_seq_delay_type NULL
-#endif
+On Thu, Nov 15, 2012 at 04:20:14PM -0700, Stephen Warren wrote:
+> From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>=20
+> Enable host1x, and the HDMI output. Harmony also has a DVI port with an
+> HDMI form-factor connector, driven by Tegra's LVDS output. This isn't
+> enabled yet, due to potential issues with having multiple outputs enabled.
+>=20
+> Correct DDC I2C frequency to 100KHz.
+>=20
+> Add dummy/fixed regulators to satisfy the HDMI driver.
+>=20
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> [swarren: add commit description, remove enable of DVI port]
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-And then, in the .c file:
+Heh, I suppose I can't add a Reviewed-by to a patch that was originally
+my own, but this looks good to me.
 
-static const struct power_seq_res_ops power_seq_ops[POWER_SEQ_NUM_TYPES] = {
-	[POWER_SEQ_DELAY] = power_seq_delay_type,
-	...
-};
+Thierry
 
-And then you can stop including the .c files directly, and link them
-instead.
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature
 
-> At first everything was in power_seq.c and it was fine, then I
-> thought it would be better to move resource support code into their
-> own filesm and now everybody is asking. :P
-> 
-> But yeah, maybe it would be even better to not stop halfway and use
-> dynamic linking.
-> 
-> Comment added for the time being. ;)
-> 
-> >>+static int of_power_seq_parse_step(struct device *dev,
-> >>+				   struct device_node *node,
-> >>+				   struct power_seq *seq,
-> >>+				   unsigned int step_nbr,
-> >>+				   struct list_head *resources)
-> >>+{
-> >>+	struct power_seq_step *step = &seq->steps[step_nbr];
-> >>+	struct power_seq_resource res, *res2;
-> >>+	const char *type;
-> >>+	int i, err;
-> >
-> >nit: one variable declaration per line.
-> 
-> Fair enough - but is that a convention? checkpatch.pl was happy with these.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-It's not a rule, although there is a small passage about it in CodingStyle
-file when it describes commenting style. Though, some folks choose to
-ignore this suggestion quite frequently, especially if variables have no
-comments.
+iQIcBAEBAgAGBQJQpltbAAoJEN0jrNd/PrOh8z4QALczy4yVq7HzuS/y/GaibNkM
+vpfG/mVW5ZW0MHY8LOeFdO+fjdFEwb/h5RQjbS6gUyFtFahLnhpGvGgzkt4MX+p9
+rRrQF7MmYNmTjdlKXkHzQQ1TzQvgEujw+iRO0WlJ9LoQQ2CVkChwGg3quLCFDY8m
+eSyf1ilspGYf2t4g2v9f103fWf4eCVZVtLUC76A1LVZv6nLnz0MC/5cCSumrMxct
+0p0OiZOlol0nUa/+Ca9wDOtjEB0kxwem7JOrg3IMrmEySBtC6Ho+hZ9u07TuaDim
+ZWrk4z/2q9hqKx2MKl6zPzKWBA40gROJe6Mxn2rIWJyLPODr2/wOXRBSh9hYbKzB
+KeBGKI0VeDtulp7KVgg7Ds/Vf8P1eog1D/j0zQmzoN2dGdJSraqGvOYuKhL1jady
+KcyotdrewtlwSzIygKvkaHCEIKHSR8YwfNWJouwUUi2lFVJHcxa04Ooc72QVICmU
+4F5aa2WW5OwwfVSHJlN2ZYirQyDKeXbd0iQSuXvKfg+fY1hEnDUjaGKhDn95//tg
+W1BgIPaaInA4Wkpvgme2TSErwlsQRugAR/nfN4YK3caUT2LX4dfhi/RvpBNnHIY8
+eNM8PJIDZx/yOid1EytoJWyBaakQiubiOtXjQojxLMRgkDpYdC1Xa29+RXfh5JQn
+/ntMFmvfq/aDo4QnlzVe
+=xmYV
+-----END PGP SIGNATURE-----
 
-Often, the multiple declarations per line are used to hide ugly functions
-w/ tons of variables, or just to confuse the reader for the fun of it.
-
-There are exceptions, of course. E.g.
-
-	int i, j, k; /* Our iterators. */
-
-Is perfectly fine.
-
-But
-	int i, err;
-
-At least to me seems weird, this stuff is logically disjunct.
-
-Only human can truly differentiate when the stuff "looks better" together
-or apart, so that's why checkpatch doesn't complain. Personally, I use
-this rule of thumb: when in doubt, use just one declaration per line, it
-is always OK. :)
-
-Thanks,
-Anton.
+--VS++wcV0S1rZb1Fb--
