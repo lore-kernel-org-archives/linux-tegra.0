@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/6] ARM: tegra: cpuidle enhancements
-Date: Fri, 16 Nov 2012 12:43:55 -0700
-Message-ID: <1353095038-20031-3-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 6/6] ARM: tegra: defconfig update
+Date: Fri, 16 Nov 2012 12:43:58 -0700
+Message-ID: <1353095038-20031-6-git-send-email-swarren@wwwdotorg.org>
 References: <1353095038-20031-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1353095038-20031-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,66 +10,35 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A cpuidle state "LP2" is added, which power-gates the CPUs. Support for
-CPUs 1..n is essentially complete, although support for CPU0 could
-benefit from future use of coupled-cpuidle or similar techniques.
+Many new features are enabled in tegra_defconfig:
 
-A couple of very minor cleanups to cpuidle were included too.
-
-This pull request is based on tegra-for-3.8-soc.
+* BRCMFMAC: wlan driver, enable as module.
+* MTD, MTD_CHAR, MTD_M25P80, SPI_TEGRA20_SLINK, CONFIG_SPI_TEGRA20_SFLASH
+  to enable serial flash on Cardhu and TrimSlice.
+* PWM/backlight features for use with tegradrm.
+* tegradrm; Tegra's new display driver.
+* CMA, so that tegradrm can allocate large buffers.
+* SquashFS, which is used as the root filesystem on boards based on
+  the Tamonten processor module.
 
 ----------------------------------------------------------------
 
-The following changes since commit d1d3b978f67c2c000f9d91387cffa630e738d529:
+The following changes since commit 3d70f8c617a436c7146ecb81df2265b4626dfe89:
 
-  ARM: tegra: Add Tegra30 host1x clock support
+  Linux 3.7-rc4
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.8-cpuidle
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.8-defconfig
 
-for you to fetch changes up to 29a0e7beab8e05be53d5b9c050253a4dc417041e:
+for you to fetch changes up to 6254f95b7c22264622b6bd6515b609d9cf88393f:
 
-  ARM: tegra: retain L2 content over CPU suspend/resume
+  ARM: tegra: defconfig updates
 
 ----------------------------------------------------------------
 
-Joseph Lo (10):
-      ARM: tegra: cpuidle: replace LP3 with ARM_CPUIDLE_WFI_STATE
-      ARM: tegra: rename the file of "sleep-tXX" to "sleep-tegraXX"
-      ARM: tegra: cpuidle: separate cpuidle driver for different chips
-      ARM: tegra: cpuidle: add CPU resume function
-      ARM: tegra30: cpuidle: add powered-down state for secondary CPUs
-      ARM: tegra30: common: enable csite clock
-      ARM: tegra30: clocks: add CPU low-power function into tegra_cpu_car_ops
-      ARM: tegra30: flowctrl: add cpu_suspend_exter/exit function
-      ARM: tegra30: cpuidle: add powered-down state for CPU0
-      ARM: tegra: retain L2 content over CPU suspend/resume
+Stephen Warren (1):
+      ARM: tegra: defconfig updates
 
- arch/arm/mach-tegra/Makefile                    |   11 +-
- arch/arm/mach-tegra/common.c                    |    7 +-
- arch/arm/mach-tegra/cpuidle-tegra20.c           |   66 ++++++
- arch/arm/mach-tegra/cpuidle-tegra30.c           |  188 +++++++++++++++
- arch/arm/mach-tegra/cpuidle.c                   |   83 ++-----
- arch/arm/mach-tegra/cpuidle.h                   |   32 +++
- arch/arm/mach-tegra/flowctrl.c                  |   47 ++++
- arch/arm/mach-tegra/flowctrl.h                  |    8 +
- arch/arm/mach-tegra/headsmp.S                   |   71 ++++++
- arch/arm/mach-tegra/pm.c                        |  216 ++++++++++++++++++
- arch/arm/mach-tegra/pm.h                        |   35 +++
- arch/arm/mach-tegra/reset.c                     |    6 +
- arch/arm/mach-tegra/reset.h                     |    9 +
- .../mach-tegra/{sleep-t20.S => sleep-tegra20.S} |    0
- .../mach-tegra/{sleep-t30.S => sleep-tegra30.S} |   66 ++++++
- arch/arm/mach-tegra/sleep.S                     |   78 +++++++
- arch/arm/mach-tegra/sleep.h                     |   37 +++
- arch/arm/mach-tegra/tegra30_clocks.c            |  108 +++++++++
- arch/arm/mach-tegra/tegra_cpu_car.h             |   37 +++
- 19 files changed, 1032 insertions(+), 73 deletions(-)
- create mode 100644 arch/arm/mach-tegra/cpuidle-tegra20.c
- create mode 100644 arch/arm/mach-tegra/cpuidle-tegra30.c
- create mode 100644 arch/arm/mach-tegra/cpuidle.h
- create mode 100644 arch/arm/mach-tegra/pm.c
- create mode 100644 arch/arm/mach-tegra/pm.h
- rename arch/arm/mach-tegra/{sleep-t20.S => sleep-tegra20.S} (100%)
- rename arch/arm/mach-tegra/{sleep-t30.S => sleep-tegra30.S} (63%)
+ arch/arm/configs/tegra_defconfig |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
