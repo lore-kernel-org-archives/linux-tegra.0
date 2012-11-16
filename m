@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 4/6] ARM: tegra: device tree changes
-Date: Fri, 16 Nov 2012 12:43:56 -0700
-Message-ID: <1353095038-20031-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 2/6] ARM: tegra: core SoC code enhancements
+Date: Fri, 16 Nov 2012 12:43:54 -0700
+Message-ID: <1353095038-20031-2-git-send-email-swarren@wwwdotorg.org>
 References: <1353095038-20031-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1353095038-20031-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,78 +10,77 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-A wide variety of device tree additions are made across many Tegra
-boards:
+Various small clock initialization table and driver changes to support
+WiFi modules, SPI controllers, and host1x (graphics/display hardware).
 
-* WiFi is supported on Seaboard, Ventana, and Cardhu.
-* An I2C mux is added for Ventana, and Tamonten.
-* SPI flash is added to Cardhu, and TrimSlice.
-* Temperature sensors are added to Harmony, Tamonten, and Ventana.
-* host1x (graphics/display controller) is added to the SoC include files.
-* HDMI displays are enabled on Harmony, TrimSlice, Tamonten, Plutux, Tec,
-  and Whistler.
+Various AHB/APB-related clocks were added to the Tegra30 clock driver.
 
-This pull request is based on tegra-for-3.8-soc.
+The level 2 cache initialization is now driven by data from device tree,
+and the cache configuration tweaked.
+
+AUXDATA is added to support SPI controllers and host1x.
+
+Code to decode Tegra's "speedo" process identification fuses is added.
+
+This pull request is based on tegra-for-3.8-cleanup.
 
 ----------------------------------------------------------------
 
-The following changes since commit d1d3b978f67c2c000f9d91387cffa630e738d529:
+The following changes since commit bb1de8877c960b3b3e1c8337730df970b262fd44:
 
-  ARM: tegra: Add Tegra30 host1x clock support
+  ARM: tegra: move irammap.h to mach-tegra
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.8-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.8-soc
 
-for you to fetch changes up to 2658ef15b27e0fb166f4b7b997b027a223cd0793:
+for you to fetch changes up to d1d3b978f67c2c000f9d91387cffa630e738d529:
 
-  ARM: tegra: whistler: enable HDMI port
+  ARM: tegra: Add Tegra30 host1x clock support
 
 ----------------------------------------------------------------
 
-Laxman Dewangan (3):
-      ARM: tegra: dts: add slink controller dt entry
-      ARM: tegra: dts: cardhu: enable SLINK4
-      ARM: tegra: dts: add sflash controller dt entry
+Danny Huang (3):
+      ARM: tegra: flexible spare fuse read function
+      ARM: tegra: Add speedo-based process identification
+      ARM: tegra: Tegra30 speedo-based process identification
 
-Mark Zhang (1):
-      ARM: dt: tegra: ventana: define pinmux for ddc
+Joseph Lo (4):
+      ARM: tegra30: clocks: add AHB and APB clocks
+      ARM: tegra: dt: add L2 cache controller
+      ARM: tegra: common: using OF api for L2 cache init
+      ARM: tegra: enable data prefetch on L2
 
-Stephen Warren (3):
-      ARM: tegra: trimslice: enable SPI flash
-      ARM: tegra: harmony: enable HDMI port
-      ARM: tegra: whistler: enable HDMI port
+Laxman Dewangan (2):
+      ARM: tegra: Add OF_DEV_AUXDATA for SLINK driver in board dt
+      ARM: tegra: Add OF_DEV_AUXDATA for sflash driver in board dt
 
-Thierry Reding (11):
-      ARM: tegra: tamonten: Add DDC/PTA pinmux
-      ARM: tegra: tec: Remove redundant DT properties
-      ARM: tegra: harmony: Add ADT7641 temperature sensor
-      ARM: tegra: tamonten: Add NCT1008 temperature sensor
-      ARM: tegra: ventana: Add NCT1008 temperature sensor
-      ARM: tegra: Add Tegra20 host1x support
-      ARM: tegra: Add Tegra30 host1x support
-      ARM: tegra: trimslice: enable HDMI port
-      ARM: tegra: tamonten: Add host1x support
-      ARM: tegra: plutux: Enable HDMI output
-      ARM: tegra: tec: Enable HDMI output
+Peter De Schrijver (1):
+      ARM: tegra: Implement 6395/1 for Tegra
 
-Wei Ni (3):
-      ARM: dt: t20 seaboard: turn on the power for wlan
-      ARM: dt: t20 ventana: set pinmux and power for wlan
-      ARM: dt: t30 cardhu: set pinmux and power for wlan
+Thierry Reding (4):
+      ARM: tegra: Add AUXDATA for Tegra20 host1x
+      ARM: tegra: Add Tegra20 host1x clock support
+      ARM: tegra: Add AUXDATA for Tegra30 host1x
+      ARM: tegra: Add Tegra30 host1x clock support
 
- .../devicetree/bindings/vendor-prefixes.txt     |    1 +
- arch/arm/boot/dts/tegra20-harmony.dts           |   25 ++-
- arch/arm/boot/dts/tegra20-plutux.dts            |    6 +
- arch/arm/boot/dts/tegra20-seaboard.dts          |    6 +
- arch/arm/boot/dts/tegra20-tamonten.dtsi         |   88 ++++++++++-
- arch/arm/boot/dts/tegra20-tec.dts               |    9 +-
- arch/arm/boot/dts/tegra20-trimslice.dts         |   54 ++++++-
- arch/arm/boot/dts/tegra20-ventana.dts           |   90 ++++++++++-
- arch/arm/boot/dts/tegra20-whistler.dts          |   21 ++-
- arch/arm/boot/dts/tegra20.dtsi                  |  137 ++++++++++++++++
- arch/arm/boot/dts/tegra30-cardhu-a02.dts        |    6 +
- arch/arm/boot/dts/tegra30-cardhu-a04.dts        |    6 +
- arch/arm/boot/dts/tegra30-cardhu.dtsi           |   37 +++++
- arch/arm/boot/dts/tegra30.dtsi                  |  147 ++++++++++++++++++
- 14 files changed, 607 insertions(+), 26 deletions(-)
+Wei Ni (1):
+      ARM: tegra: set up wlan clocks for tegra dt
+
+ arch/arm/boot/dts/tegra20.dtsi            |    9 +
+ arch/arm/boot/dts/tegra30.dtsi            |    9 +
+ arch/arm/mach-tegra/Makefile              |    2 +
+ arch/arm/mach-tegra/board-dt-tegra20.c    |   23 ++
+ arch/arm/mach-tegra/board-dt-tegra30.c    |   25 ++
+ arch/arm/mach-tegra/common.c              |   17 +-
+ arch/arm/mach-tegra/fuse.c                |   49 +++-
+ arch/arm/mach-tegra/fuse.h                |   16 ++
+ arch/arm/mach-tegra/tegra20_clocks_data.c |   11 +-
+ arch/arm/mach-tegra/tegra20_speedo.c      |  109 +++++++++
+ arch/arm/mach-tegra/tegra30_clocks.c      |  106 +++++++++
+ arch/arm/mach-tegra/tegra30_clocks.h      |    1 +
+ arch/arm/mach-tegra/tegra30_clocks_data.c |   51 ++++-
+ arch/arm/mach-tegra/tegra30_speedo.c      |  292 ++++++++++++++++++++++++
+ 14 files changed, 696 insertions(+), 24 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/tegra20_speedo.c
+ create mode 100644 arch/arm/mach-tegra/tegra30_speedo.c
