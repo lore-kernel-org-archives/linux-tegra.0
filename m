@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v3 0/2] NVIDIA Tegra DRM driver
-Date: Fri, 16 Nov 2012 11:57:02 +0800
-Message-ID: <50A5B98E.8070002@nvidia.com>
+Date: Fri, 16 Nov 2012 12:00:46 +0800
+Message-ID: <50A5BA6E.2010109@nvidia.com>
 References: <1353014903-17429-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
@@ -13,20 +13,11 @@ To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane
 Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Rob Clark <rob-l0cyMroinI0@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Thierry,
 
-Thank you for your hard work.
-
-The series,
-
-Acked-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-On Ventana, LVDS and HDMI worked.
-PS: Alex's power sequence patch is needed to enable panel and backlight.
-    Also we need to define dc and hdmi nodes in tegra20-ventana.dts.
-    We may publish the patches for different boards next.
+By the way, when do you plan to send drm patches for Tegra 3?
+I'm wondering if you don't have a Tegra 3 board for testing, I can do
+that for you.
 
 Mark
 On 11/16/2012 05:28 AM, Thierry Reding wrote:
