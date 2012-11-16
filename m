@@ -1,189 +1,87 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: seaboard: enable internal LCD
-Date: Fri, 16 Nov 2012 11:55:14 -0700
-Message-ID: <1353092114-18410-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 4/6] ARM: tegra: device tree changes
+Date: Fri, 16 Nov 2012 12:43:56 -0700
+Message-ID: <1353095038-20031-4-git-send-email-swarren@wwwdotorg.org>
+References: <1353095038-20031-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353095038-20031-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+A wide variety of device tree additions are made across many Tegra
+boards:
 
-Enable host1x and add the rgb (LCD) output.
+* WiFi is supported on Seaboard, Ventana, and Cardhu.
+* An I2C mux is added for Ventana, and Tamonten.
+* SPI flash is added to Cardhu, and TrimSlice.
+* Temperature sensors are added to Harmony, Tamonten, and Ventana.
+* host1x (graphics/display controller) is added to the SoC include files.
+* HDMI displays are enabled on Harmony, TrimSlice, Tamonten, Plutux, Tec,
+  and Whistler.
 
-Also add the power sequence that controls the backlight and panel. The
-sequence strictly follows the order and timings of the panel
-specification.
+This pull request is based on tegra-for-3.8-soc.
 
-Currently the backlight device controls both backlight and panel, this
-needs to be fixed once the panel framework supports power sequences.
+----------------------------------------------------------------
 
-Based on (cut/paste) work for Ventana by Alexandre Courbot.
+The following changes since commit d1d3b978f67c2c000f9d91387cffa630e738d529:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-seaboard.dts |  127 +++++++++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 1 deletion(-)
+  ARM: tegra: Add Tegra30 host1x clock support
 
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index eafeca6..a999430 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -10,6 +10,16 @@
- 		reg = <0x00000000 0x40000000>;
- 	};
- 
-+	host1x {
-+		dc@54200000 {
-+			rgb {
-+				status = "okay";
-+				nvidia,ddc-i2c-bus = <&lcd_ddc>;
-+				backlight = <&backlight>;
-+			};
-+		};
-+	};
-+
- 	pinmux {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
-@@ -351,7 +361,7 @@
- 			#size-cells = <0>;
- 		};
- 
--		i2c@1 {
-+		lcd_ddc: i2c@1 {
- 			reg = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -600,6 +610,101 @@
- 		};
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
-+		default-brightness-level = <12>;
-+
-+		/* resources used by the power sequences */
-+		pwms = <&pwm 2 5000000>;
-+		pwm-names = "backlight";
-+		power-supply = <&vdd_bl_reg>;
-+		panel-supply = <&vdd_panel_reg>;
-+
-+		power-sequences {
-+			power-on {
-+				/*
-+				 * Panel power and LVDS enable.
-+				 * TODO: move into the panel device as soon as
-+				 * panel framework supports power sequences.
-+				 */
-+				step0 {
-+					type = "regulator";
-+					id = "panel";
-+					enable;
-+				};
-+				step1 {
-+					/* LVDS_SHTDN* */
-+					type = "gpio";
-+					gpio = <&gpio 10 0>; /* GPIO PC6 */ 
-+					value = <1>;
-+				};
-+				step2 {
-+					type = "delay";
-+					delay = <200000>;
-+				};
-+				/* Backlight sequence. This belongs here. */
-+				step3 {
-+					type = "regulator";
-+					id = "power";
-+					enable;
-+				};
-+				step4 {
-+					type = "delay";
-+					delay = <10000>;
-+				};
-+				step5 {
-+					type = "pwm";
-+					id = "backlight";
-+					enable;
-+				};
-+				step6 {
-+					/* LCD_BL_EN */
-+					type = "gpio";
-+					gpio = <&gpio 28 0>; /* GPIO PD4 */
-+					value = <1>;
-+				};
-+			};
-+
-+			power-off {
-+				step0 {
-+					type = "gpio";
-+					gpio = <&gpio 28 0>;
-+					value = <0>;
-+				};
-+				step1 {
-+					type = "pwm";
-+					id = "backlight";
-+					disable;
-+				};
-+				step2 {
-+					type = "delay";
-+					delay = <10000>;
-+				};
-+				step3 {
-+					type = "regulator";
-+					id = "power";
-+					disable;
-+				};
-+				/* This also belongs to the panel sequence */
-+				step4 {
-+					type = "delay";
-+					delay = <200000>;
-+				};
-+				step5 {
-+					type = "gpio";
-+					gpio = <&gpio 10 0>;
-+					value = <0>;
-+				};
-+				step6 {
-+					type = "regulator";
-+					id = "panel";
-+					disable;
-+				};
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -632,6 +737,26 @@
- 			gpio = <&pmic 1 0>;
- 			enable-active-high;
- 		};
-+
-+		vdd_panel_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "vdd_pnl";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpio 22 0>; /* gpio PC6 */
-+			enable-active-high;
-+		};
-+
-+		vdd_bl_reg: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "vdd_bl";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpio 176 0>; /* gpio PW0 */
-+			enable-active-high;
-+		};
- 	};
- 
- 	sound {
--- 
-1.7.10.4
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.8-dt
+
+for you to fetch changes up to 2658ef15b27e0fb166f4b7b997b027a223cd0793:
+
+  ARM: tegra: whistler: enable HDMI port
+
+----------------------------------------------------------------
+
+Laxman Dewangan (3):
+      ARM: tegra: dts: add slink controller dt entry
+      ARM: tegra: dts: cardhu: enable SLINK4
+      ARM: tegra: dts: add sflash controller dt entry
+
+Mark Zhang (1):
+      ARM: dt: tegra: ventana: define pinmux for ddc
+
+Stephen Warren (3):
+      ARM: tegra: trimslice: enable SPI flash
+      ARM: tegra: harmony: enable HDMI port
+      ARM: tegra: whistler: enable HDMI port
+
+Thierry Reding (11):
+      ARM: tegra: tamonten: Add DDC/PTA pinmux
+      ARM: tegra: tec: Remove redundant DT properties
+      ARM: tegra: harmony: Add ADT7641 temperature sensor
+      ARM: tegra: tamonten: Add NCT1008 temperature sensor
+      ARM: tegra: ventana: Add NCT1008 temperature sensor
+      ARM: tegra: Add Tegra20 host1x support
+      ARM: tegra: Add Tegra30 host1x support
+      ARM: tegra: trimslice: enable HDMI port
+      ARM: tegra: tamonten: Add host1x support
+      ARM: tegra: plutux: Enable HDMI output
+      ARM: tegra: tec: Enable HDMI output
+
+Wei Ni (3):
+      ARM: dt: t20 seaboard: turn on the power for wlan
+      ARM: dt: t20 ventana: set pinmux and power for wlan
+      ARM: dt: t30 cardhu: set pinmux and power for wlan
+
+ .../devicetree/bindings/vendor-prefixes.txt     |    1 +
+ arch/arm/boot/dts/tegra20-harmony.dts           |   25 ++-
+ arch/arm/boot/dts/tegra20-plutux.dts            |    6 +
+ arch/arm/boot/dts/tegra20-seaboard.dts          |    6 +
+ arch/arm/boot/dts/tegra20-tamonten.dtsi         |   88 ++++++++++-
+ arch/arm/boot/dts/tegra20-tec.dts               |    9 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts         |   54 ++++++-
+ arch/arm/boot/dts/tegra20-ventana.dts           |   90 ++++++++++-
+ arch/arm/boot/dts/tegra20-whistler.dts          |   21 ++-
+ arch/arm/boot/dts/tegra20.dtsi                  |  137 ++++++++++++++++
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts        |    6 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts        |    6 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi           |   37 +++++
+ arch/arm/boot/dts/tegra30.dtsi                  |  147 ++++++++++++++++++
+ 14 files changed, 607 insertions(+), 26 deletions(-)
