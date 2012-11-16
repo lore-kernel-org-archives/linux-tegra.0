@@ -1,59 +1,111 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: ventana: enable internal display
-Date: Fri, 16 Nov 2012 21:49:09 +0100
-Message-ID: <20121116204908.GA27317@avionic-0098.mockup.avionic-design.de>
-References: <1353051891-26725-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH 2/2] ARM: tegra: paz00: enable backlight
+Date: Fri, 16 Nov 2012 23:20:56 +0100
+Message-ID: <c43f84a16fe30e321167229f4a8c18ceecbf191b.1353104179.git.marvin24@gmx.de>
+References: <ae44d3c1f4ceecb0f6a486d569608eec3c892ba1.1353104179.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353051891-26725-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <ae44d3c1f4ceecb0f6a486d569608eec3c892ba1.1353104179.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <ae44d3c1f4ceecb0f6a486d569608eec3c892ba1.1353104179.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+References: <ae44d3c1f4ceecb0f6a486d569608eec3c892ba1.1353104179.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This enables backlight using power sequences.
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-paz00.dts |   72 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-On Fri, Nov 16, 2012 at 04:44:51PM +0900, Alexandre Courbot wrote:
-[...]
-> +	host1x {
-> +		dc@54200000 {
-> +			rgb {
-> +				status = "okay";
-> +				nvidia,edid = /incbin/("tegra20-ventana.edid");
-> +				backlight = <&backlight>;
-
-Note that the backlight property is actually named nvidia,backlight and
-needs to go into the rgb's display subnode. Also, to make this work a
-patch is required to hook up the backlight with tegra-drm, which hasn't
-gone into 3.8 yet, I think.
-
-Thierry
-
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQpqbEAAoJEN0jrNd/PrOhk94P/0dcfG+lh6Hzz2IosUN8DSiG
-0kiBVuap6szFhnnC5O57lhUcJ1m2Tv57Dqqd3n2V8u1USofslyDy0tiez1rknhX/
-DBLddYfPJ4Oq/kkUITem2fdlTAYDCrjAxacrE8gjVIvnVXxd9wAsgyvRJVUSD1NX
-tTJMC2hR+haskZ+u3WihFS41KCL6s9FR7K7OWybfnwuazN0+tnbSr1lxz0xnJAnr
-5bqXqK+9FZZjGpgMEZDv2JkyWp3mJSedeLKzMeGwCFhHepBd7zjXWUUtGOtrm6Mn
-5XLzgU8qh5Njl5Sb2OclCb+ORBVdF2QayRRaZI15zTCbEk4f8ycpDEImGQV4Qi0T
-q6bFKnw6GL/xOdsx2OyJTG48+e8LqXx58jTFBKVpz3MDb6+1EbpChuxf8ywq7SSK
-6cEDdMprHbLfVXh25+yLHKYe96V2L3DnJAVk8D28McTh/5lGU2oEvuII+1jl3w0F
-04FpF/19bGVTJGywZ2UOAQ3sCsDLuI3dwpHVzBgzyp4W8sR0pg7xNrVmJoZKNfDs
-eu6GSGDnq2M7EK+QUV2GhX8GGf6ydLgynyEkm8lKZwfhuFvSr9bVpO6at6u62ASl
-AieahoQGfTYMN8FVCublrlrazCRakeDLF9VHzU+9iwCYHRD8PzQxSY1v0TlC30ws
-MUxKtDTr0u3rV3HnZ6tU
-=Vb0T
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 3f7f5a2..76cfa5c 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -504,6 +504,10 @@
+ 			rgb {
+ 				status = "okay";
+ 				nvidia,ddc-i2c-bus = <&lvds_ddc>;
++
++				display {
++					nvidia,backlight = <&backlight>;
++				};
+ 			};
+ 		};
+ 
+@@ -535,4 +539,72 @@
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+ 		nvidia,spkr-en-gpios = <&paz00 0 0>;
+ 	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
++		default-brightness-level = <12>;
++
++		/* resources used by the power sequences */
++		pwms = <&pwm 0 5000000>;
++		pwm-names = "backlight";
++
++		power-sequences {
++			power-on {
++				step0 {
++					type = "pwm";
++					id = "backlight";
++					enable;
++				};
++				step1 {
++					type = "gpio";
++					gpio = <&gpio 4 0>;   /* gpio PA4, en_vdd_pnl  */
++					value = <1>;
++				};
++				step2 {
++					type = "gpio";
++					gpio = <&gpio 176 0>; /* gpio PW0, bl_vdd */
++					value = <1>;
++				};
++				step3 {
++					type = "gpio";
++					gpio = <&gpio 102 0>; /* gpio PM6, lvds_shdn */
++					value = <1>;
++				};
++				step4 {
++					type = "gpio";
++					gpio = <&gpio 164 0>; /* gpio PU4, bl_enb */
++					value = <1>;
++				};
++			};
++
++			power-off {
++				step4 {
++					type = "gpio";
++					gpio = <&gpio 164 0>; /* gpio PU4, bl_enb */
++					value = <0>;
++				};
++				step0 {
++					type = "gpio";
++					gpio = <&gpio 102 0>; /* gpio PM6, lvds_shdn */
++					value = <0>;
++				};
++				step1 {
++					type = "gpio";
++					gpio = <&gpio 176 0>; /* gpio PW0, bl_vdd */
++					value = <0>;
++				};
++				step2 {
++					type = "gpio";
++					gpio = <&gpio 4 0>;   /* gpio PA4, en_vdd_pnl  */
++					value = <0>;
++				};
++				step3 {
++					type = "pwm";
++					id = "backlight";
++					disable;
++				};
++			};
++		};
++	};
+ };
+-- 
+1.7.9.5
