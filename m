@@ -1,40 +1,59 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] NVIDIA Tegra DRM driver
-Date: Fri, 16 Nov 2012 13:34:34 +0900
-Message-ID: <8931573.Za4gdCbDYv@percival>
-References: <1353014903-17429-1-git-send-email-thierry.reding@avionic-design.de> <1480191.1noyT4vz0N@percival>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] drm: Add NVIDIA Tegra30 support
+Date: Fri, 16 Nov 2012 12:58:09 +0800
+Message-ID: <1353041889-3114-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1480191.1noyT4vz0N@percival>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Rob Clark <rob-l0cyMroinI0@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 16 November 2012 11:36:36 Alex Courbot wrote:
-> On Friday 16 November 2012 05:28:21 Thierry Reding wrote:
-> > This third version of the patch series cleans up some minor issues that
-> > were found in the previous versions, such as deferred probe not working
-> > properly and the display remaining enabled after the driver is removed.
-> > 
-> > I've also put the two patches in this series into the tegra/drm/for-3.8
-> > branch of my repository on gitorious[0].
-> 
-> Pulled from your branch and tried to test on my Ventana, but for some reason
-> nothing ever gets displayed. The only DRM-related message I ever get in my
-> log is
-> 
-> [    0.820483] [drm] Initialized drm 1.1.0 20060810
-> 
-> Things were working perfectly with v2 - has something changed with e.g. the
-> DT bindings?
+This patch is based on Thierry's drm patch for Tegra20:
+- [PATCH v2 0/6] Device tree updates for host1x support
+- [PATCH v3 0/2] NVIDIA Tegra DRM driver
 
-Argh, the patches that add host1x nodes into tegra20.dtsi were not into your 
-for-3.8 branch. Things are fine now, therefore this series is 
+It adds the support for NVIDIA Tegra30.
 
-Tested-and-acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c     |    1 +
+ drivers/gpu/drm/tegra/host1x.c |    3 +++
+ 2 files changed, 4 insertions(+)
 
-Thanks,
-Alex.
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 216cd0f..6e9f1b4 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -819,6 +819,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 
+ static struct of_device_id tegra_dc_of_match[] = {
+        { .compatible = "nvidia,tegra20-dc", },
++	{ .compatible = "nvidia,tegra30-dc", },
+        { },
+ };
+ 
+diff --git a/drivers/gpu/drm/tegra/host1x.c b/drivers/gpu/drm/tegra/host1x.c
+index 3d02554..07b7e27 100644
+--- a/drivers/gpu/drm/tegra/host1x.c
++++ b/drivers/gpu/drm/tegra/host1x.c
+@@ -68,6 +68,8 @@ static int host1x_parse_dt(struct host1x *host1x)
+        static const char * const compat[] = {
+                "nvidia,tegra20-dc",
+                "nvidia,tegra20-hdmi",
++		"nvidia,tegra30-dc",
++		"nvidia,tegra30-hdmi",
+        };
+        unsigned int i;
+        int err;
+@@ -269,6 +271,7 @@ int host1x_unregister_client(struct host1x *host1x,
+ 
+ static struct of_device_id tegra_host1x_of_match[] = {
+        { .compatible = "nvidia,tegra20-host1x", },
++	{ .compatible = "nvidia,tegra30-host1x", },
+        { },
+ };
+ MODULE_DEVICE_TABLE(of, tegra_host1x_of_match);
+-- 
+1.7.9.5
