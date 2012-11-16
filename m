@@ -1,23 +1,28 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/3] ARM: tegra: Enable HDMI on Tamonten carriers
-Date: Fri, 16 Nov 2012 09:18:14 -0700
-Message-ID: <50A66746.6090805@wwwdotorg.org>
-References: <1353081412-19448-1-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] drm: Add NVIDIA Tegra30 support
+Date: Fri, 16 Nov 2012 09:29:54 -0700
+Message-ID: <50A66A02.6030608@wwwdotorg.org>
+References: <1353041889-3114-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353081412-19448-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353041889-3114-1-git-send-email-markz@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Zhang <markz@nvidia.com>
+Cc: airlied@redhat.com, thierry.reding@avionic-design.de, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/16/2012 08:56 AM, Thierry Reding wrote:
-> The three patches in this series enable the HDMI output on Plutux and
-> TEC. The Medcom-Wide only has an LVDS output and the TEC has an LVDS
-> output as well, but since they depend on the videomode helpers and the
-> power-sequences patch series, they will only be enabled in subsequent
-> patches.
+On 11/15/2012 09:58 PM, Mark Zhang wrote:
+> This patch is based on Thierry's drm patch for Tegra20:
+> - [PATCH v2 0/6] Device tree updates for host1x support
+> - [PATCH v3 0/2] NVIDIA Tegra DRM driver
+> 
+> It adds the support for NVIDIA Tegra30.
 
-Thanks, I've applied the series to Tegra's for-3.8/dt branch.
+Mark, I tried to apply this for testing locally, but it doesn't apply.
+
+For some reason, all the whitespace in the context has been replaced
+with spaces. Are your local copies of dc.c and host1x.c indented with
+spaces for some reason, or did the MS Exchange server corrupt your patch
+as you sent it (I've previously only observed inbound corruption...)
