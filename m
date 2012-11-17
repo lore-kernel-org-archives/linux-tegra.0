@@ -1,61 +1,81 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] ARM: tegra: paz00: enable backlight
-Date: Sat, 17 Nov 2012 08:35:34 +0100
-Message-ID: <20121117073534.GD26391@avionic-0098.mockup.avionic-design.de>
-References: <138e6f406aef20f6257a8f90af45865bd9c88092.1353107865.git.marvin24@gmx.de>
- <4de446eaf895ffa01d397cf70cec02620e16f690.1353107865.git.marvin24@gmx.de>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH v8 1/3] Runtime Interpreted Power Sequences
+Date: Sat, 17 Nov 2012 19:12:45 +0900
+Message-ID: <CAAVeFuJ28=YFOx1Uvq+B33JQW2UxDYx2J8igUnVCbTEO0V-KKg@mail.gmail.com>
+References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
+ <1353047903-14363-2-git-send-email-acourbot@nvidia.com> <20121116072642.GA22291@lizard>
+ <50A60AF6.9080509@nvidia.com> <20121116122540.GA2198@lizard>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4de446eaf895ffa01d397cf70cec02620e16f690.1353107865.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121116122540.GA2198@lizard>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Nov 16, 2012 at 9:25 PM, Anton Vorontsov <cbouatmailru@gmail.com> wrote:
+>> The POWER_SEQ_*_TYPE macros are defined in the C files. It's the
+>> simplest way to initialize this table, and the code inside these C
+>> files is short and simple enough that I thought I would be forgiven.
+>> :)
+>
+> I think in the header file you could just write
+>
+> extern ..... power_seq_delay_type;
+> #ifndef ...
+> #define power_seq_delay_type NULL
+> #endif
+>
+> And then, in the .c file:
+>
+> static const struct power_seq_res_ops power_seq_ops[POWER_SEQ_NUM_TYPES] = {
+>         [POWER_SEQ_DELAY] = power_seq_delay_type,
+>         ...
+> };
+>
+> And then you can stop including the .c files directly, and link them
+> instead.
 
---llIrKcgUOe3dCx0c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have done something similar, but that avoids exporting resource ops
+into the header file. I am still not satisfied with it though - I'd
+rather have one init function per resource file that changes the
+pointer of the ops table from NULL to its own set of functions. That
+way the core could live without knowing anything about the different
+resources, and that would be nicer. Unfortunately modules only support
+one init function, so this is not doable here.
 
-On Sat, Nov 17, 2012 at 12:20:32AM +0100, Marc Dietrich wrote:
-[...]
-> +				step1 {
-> +					type = "gpio";
-> +					gpio = <&gpio 4 0>;   /* gpio PA4, en_vdd_pnl  */
-> +					value = <1>;
-> +				};
-> +				step2 {
-> +					type = "gpio";
-> +					gpio = <&gpio 176 0>; /* gpio PW0, bl_vdd */
-> +					value = <1>;
-> +				};
+>> >nit: one variable declaration per line.
+>>
+>> Fair enough - but is that a convention? checkpatch.pl was happy with these.
+>
+> It's not a rule, although there is a small passage about it in CodingStyle
+> file when it describes commenting style. Though, some folks choose to
+> ignore this suggestion quite frequently, especially if variables have no
+> comments.
+>
+> Often, the multiple declarations per line are used to hide ugly functions
+> w/ tons of variables, or just to confuse the reader for the fun of it.
+>
+> There are exceptions, of course. E.g.
+>
+>         int i, j, k; /* Our iterators. */
+>
+> Is perfectly fine.
+>
+> But
+>         int i, err;
+>
+> At least to me seems weird, this stuff is logically disjunct.
+>
+> Only human can truly differentiate when the stuff "looks better" together
+> or apart, so that's why checkpatch doesn't complain. Personally, I use
+> this rule of thumb: when in doubt, use just one declaration per line, it
+> is always OK. :)
 
-These look like regulators, so maybe they should be abstracted as such?
+That totally makes sense - thanks for the precision.
 
-Thierry
+Prepping another patchset with audience extended to linux-arm-kernel
+as Mark suggested.
 
---llIrKcgUOe3dCx0c
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQpz5GAAoJEN0jrNd/PrOhqWoP/RkdMeJmWbO11qdARVffG5+f
-Rgyk1ZMbjEGi9jaxhpOzSqKyyszLLwB7CaPFRtM91SUNP8Mb2VdXW4I6PWU9G4RD
-p5cVnzZbVLrkrWFiGyWi8GsvSgf9sKzGlBiwg104qb/RvegNASZf6wSmeVIa+uXv
-FsHg7PkMW4gWp607aMwSeRdcSS31YldVVbJZQTKibE92olm+vl1D2GOWl6rbyQOp
-paiRKPOseMz6xwlQ4se9QhtDY5XfcCO2EKikgytt5svhfB0RJ+qdjMoRKRwq76vf
-L+mYDb7vxAle2YD0KCmIer2ywv/d0KQ011pgL2djPSCkOKAf84r7R/WMNoH/0hbW
-8czjxwIK/XpgNNokH2ExigMghDTvJzUII9HRphUKuSlvWX7NS7kgC/FmBOcF6p6D
-9phnBAJIjXJfHj6kQbIh5+zyi3DsQ9cFauw59e+9/O1hlaOkrd+z20eFQ8cE5a1M
-ehFZPYaFJsVhtAfQJVtTf2kZzVm/wdAYRs/9UuLiBwOHgiuCJDMB2qnRQBwezI+v
-lJjnv1pIgZnN61cOeBKNNQE076uZSxLox07Z8jG9LcqGkZKAAlSLkv570VJxudQf
-ZAGdBSi/HmCrQP+o4WwngOiXxvnPuq1o6WPv6WtPweMwVYjEt8JmleIBt6SzsKNg
-e7TouQtmH4o6uYa7RJoq
-=yRYQ
------END PGP SIGNATURE-----
-
---llIrKcgUOe3dCx0c--
+Alex.
