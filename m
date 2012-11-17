@@ -1,81 +1,59 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v8 1/3] Runtime Interpreted Power Sequences
-Date: Sat, 17 Nov 2012 19:12:45 +0900
-Message-ID: <CAAVeFuJ28=YFOx1Uvq+B33JQW2UxDYx2J8igUnVCbTEO0V-KKg@mail.gmail.com>
-References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
- <1353047903-14363-2-git-send-email-acourbot@nvidia.com> <20121116072642.GA22291@lizard>
- <50A60AF6.9080509@nvidia.com> <20121116122540.GA2198@lizard>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCHv9 0/3] Runtime Interpreted Power Sequences
+Date: Sat, 17 Nov 2012 19:55:44 +0900
+Message-ID: <1353149747-31871-1-git-send-email-acourbot@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121116122540.GA2198@lizard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+To: Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 16, 2012 at 9:25 PM, Anton Vorontsov <cbouatmailru@gmail.com> wrote:
->> The POWER_SEQ_*_TYPE macros are defined in the C files. It's the
->> simplest way to initialize this table, and the code inside these C
->> files is short and simple enough that I thought I would be forgiven.
->> :)
->
-> I think in the header file you could just write
->
-> extern ..... power_seq_delay_type;
-> #ifndef ...
-> #define power_seq_delay_type NULL
-> #endif
->
-> And then, in the .c file:
->
-> static const struct power_seq_res_ops power_seq_ops[POWER_SEQ_NUM_TYPES] = {
->         [POWER_SEQ_DELAY] = power_seq_delay_type,
->         ...
-> };
->
-> And then you can stop including the .c files directly, and link them
-> instead.
+Apologies for sending two patchsets in two days - the main purpose
+of this new revision is to add the linux-arm-kernel list to the
+audience. A few suggestions from v8 have also been added.
 
-I have done something similar, but that avoids exporting resource ops
-into the header file. I am still not satisfied with it though - I'd
-rather have one init function per resource file that changes the
-pointer of the ops table from NULL to its own set of functions. That
-way the core could live without knowing anything about the different
-resources, and that would be nicer. Unfortunately modules only support
-one init function, so this is not doable here.
+Changelog from v8:
+- Compile resource support into different compilation units
+- Check that resource support is compiled in when resolving sequences
+- Now compilable as a module
+- Renamed source files to avoid repeated power_seq in their path
+- Add linux-arm-kernel list to audience as suggested by Mark Rutland
 
->> >nit: one variable declaration per line.
->>
->> Fair enough - but is that a convention? checkpatch.pl was happy with these.
->
-> It's not a rule, although there is a small passage about it in CodingStyle
-> file when it describes commenting style. Though, some folks choose to
-> ignore this suggestion quite frequently, especially if variables have no
-> comments.
->
-> Often, the multiple declarations per line are used to hide ugly functions
-> w/ tons of variables, or just to confuse the reader for the fun of it.
->
-> There are exceptions, of course. E.g.
->
->         int i, j, k; /* Our iterators. */
->
-> Is perfectly fine.
->
-> But
->         int i, err;
->
-> At least to me seems weird, this stuff is logically disjunct.
->
-> Only human can truly differentiate when the stuff "looks better" together
-> or apart, so that's why checkpatch doesn't complain. Personally, I use
-> this rule of thumb: when in doubt, use just one declaration per line, it
-> is always OK. :)
+Alexandre Courbot (3):
+  Runtime Interpreted Power Sequences
+  pwm_backlight: use power sequences
+  Take maintainership of power sequences
 
-That totally makes sense - thanks for the precision.
+ .../devicetree/bindings/power/power_seq.txt        | 121 +++++++
+ .../bindings/video/backlight/pwm-backlight.txt     |  63 +++-
+ Documentation/power/power_seq.txt                  | 253 ++++++++++++++
+ MAINTAINERS                                        |  10 +
+ drivers/power/Kconfig                              |   1 +
+ drivers/power/Makefile                             |   1 +
+ drivers/power/power_seq/Kconfig                    |   2 +
+ drivers/power/power_seq/Makefile                   |   2 +
+ drivers/power/power_seq/core.c                     | 362 +++++++++++++++++++++
+ drivers/power/power_seq/delay.c                    |  66 ++++
+ drivers/power/power_seq/gpio.c                     |  95 ++++++
+ drivers/power/power_seq/power_seq_priv.h           |  56 ++++
+ drivers/power/power_seq/pwm.c                      |  85 +++++
+ drivers/power/power_seq/regulator.c                |  87 +++++
+ drivers/video/backlight/Kconfig                    |   1 +
+ drivers/video/backlight/pwm_bl.c                   | 160 +++++++--
+ include/linux/power_seq.h                          | 203 ++++++++++++
+ include/linux/pwm_backlight.h                      |  18 +-
+ 18 files changed, 1546 insertions(+), 40 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/power_seq.txt
+ create mode 100644 Documentation/power/power_seq.txt
+ create mode 100644 drivers/power/power_seq/Kconfig
+ create mode 100644 drivers/power/power_seq/Makefile
+ create mode 100644 drivers/power/power_seq/core.c
+ create mode 100644 drivers/power/power_seq/delay.c
+ create mode 100644 drivers/power/power_seq/gpio.c
+ create mode 100644 drivers/power/power_seq/power_seq_priv.h
+ create mode 100644 drivers/power/power_seq/pwm.c
+ create mode 100644 drivers/power/power_seq/regulator.c
+ create mode 100644 include/linux/power_seq.h
 
-Prepping another patchset with audience extended to linux-arm-kernel
-as Mark suggested.
-
-Alex.
+-- 
+1.8.0
