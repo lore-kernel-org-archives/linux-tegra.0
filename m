@@ -1,122 +1,49 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH v5] ARM: tegra: paz00: enable backlight
-Date: Mon, 19 Nov 2012 23:28:22 +0100
-Message-ID: <ddcc6b35e30ed9913b1bad0ea2b8824ae3b3854d.1353363930.git.marvin24@gmx.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] of: Add vendor prefix for Asahi Kasei Corp.
+Date: Mon, 19 Nov 2012 15:34:43 -0700
+Message-ID: <1353364484-5741-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This enables backlight using power sequences.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Their stock ticker is 3407.T which wouldn't make a good DT vendor
+prefix. Use the company name initials instead.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V5:	- kill W0 gpio as it is not used on paz00
-	- use regulator for vdd_panel
+Both patches ought to merge through the DT tree OK. If not, patch 2
+could be taken through arm-soc.
 
- arch/arm/boot/dts/tegra20-paz00.dts |   75 +++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 8a14e1d..5e9fcb1 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -15,6 +15,10 @@
- 			rgb {
- 				status = "okay";
- 				nvidia,ddc-i2c-bus = <&lvds_ddc>;
-+
-+				display {
-+					nvidia,backlight = <&backlight>;
-+				};
- 			};
- 		};
- 	};
-@@ -461,6 +465,67 @@
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index deba8d0..05dc8eb 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -5,6 +5,7 @@ using them to avoid name-space collisions.
  
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
-+		default-brightness-level = <12>;
-+
-+		/* resources used by the power sequences */
-+		pwms = <&pwm 0 5000000>;
-+		pwm-names = "backlight";
-+		panel-supply = <&vdd_panel_reg>;
-+
-+		power-sequences {
-+			power-on {
-+				step0 {
-+					type = "regulator";
-+					id = "panel";
-+					enable;
-+				};
-+				step1 {
-+					/* LVDS_SHDN */
-+					type = "gpio";
-+					gpio = <&gpio 102 0>;
-+					value = <1>;
-+				};
-+				step2 {
-+					type = "pwm";
-+					id = "backlight";
-+					enable;
-+				};
-+				step3 {
-+					/* BL_EN */
-+					type = "gpio";
-+					gpio = <&gpio 164 0>;
-+					value = <1>;
-+				};
-+			};
-+
-+			power-off {
-+				step0 {
-+					type = "gpio";
-+					gpio = <&gpio 164 0>;
-+					value = <0>;
-+				};
-+				step1 {
-+					type = "pwm";
-+					id = "backlight";
-+					disable;
-+				};
-+				step2 {
-+					type = "gpio";
-+					gpio = <&gpio 102 0>;
-+					value = <0>;
-+				};
-+				step3 {
-+					type = "regulator";
-+					id = "panel";
-+					disable;
-+				};
-+			};
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -474,6 +539,16 @@
- 			regulator-max-microvolt = <5000000>;
- 			regulator-always-on;
- 		};
-+
-+		vdd_panel_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "+3VS,vdd_pnl";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpio 4 0>; /* gpio PA4 */
-+			enable-active-high;
-+		};
- 	};
- 
- 	sound {
+ ad	Avionic Design GmbH
+ adi	Analog Devices, Inc.
++ak	Asahi Kasei Corp.
+ amcc	Applied Micro Circuits Corporation (APM, formally AMCC)
+ apm	Applied Micro Circuits Corporation (APM)
+ arm	ARM Ltd.
 -- 
-1.7.9.5
+1.7.10.4
