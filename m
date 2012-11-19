@@ -1,34 +1,36 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: ventana: enable internal display
-Date: Mon, 19 Nov 2012 10:55:42 +0800
-Message-ID: <50A99FAE.3080207@nvidia.com>
-References: <1353051891-26725-1-git-send-email-acourbot@nvidia.com> <2481172.Lt8JIisq3X@percival>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [PATCH] drm: Add NVIDIA Tegra30 support
+Date: Mon, 19 Nov 2012 14:18:51 +0800
+Message-ID: <50A9CF4B.2040308@nvidia.com>
+References: <1353041889-3114-1-git-send-email-markz@nvidia.com> <50A66A02.6030608@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2481172.Lt8JIisq3X@percival>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50A66A02.6030608@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "airlied@redhat.com" <airlied@redhat.com>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Yep, I remember that I fetched EDID data by i2cget several months ago.
-But I'll try this again today to make sure.
+On 11/17/2012 12:29 AM, Stephen Warren wrote:
+> On 11/15/2012 09:58 PM, Mark Zhang wrote:
+>> This patch is based on Thierry's drm patch for Tegra20:
+>> - [PATCH v2 0/6] Device tree updates for host1x support
+>> - [PATCH v3 0/2] NVIDIA Tegra DRM driver
+>>
+>> It adds the support for NVIDIA Tegra30.
+> 
+> Mark, I tried to apply this for testing locally, but it doesn't apply.
+> 
+> For some reason, all the whitespace in the context has been replaced
+> with spaces. Are your local copies of dc.c and host1x.c indented with
+> spaces for some reason, or did the MS Exchange server corrupt your patch
+> as you sent it (I've previously only observed inbound corruption...)
+> 
 
-Mark
-On 11/16/2012 03:51 PM, Alex Courbot wrote:
-> On Friday 16 November 2012 15:44:51 Alexandre Courbot wrote:
->> Enable host1x and add the rgb output, providing EDID as a binary blob.
-> 
-> I would really prefer to have the EDID data fetched from DDC, but all my 
-> attempts have failed so far. I don't even see the DDC wires on the platform 
-> design guide. Mark, are you sure the EDID data you fetched with i2cget was 
-> actually on Ventana? I can see that the DDC lines of T2 are connected to the 
-> corresponding lines of the HDMI interface, but nothing similar regarding 
-> internal display.
-> 
-> Maybe we can work this out privately, on IRC?
-> 
-> Alex.
-> 
+I think that is because the whitespace in patch which Thierry sent:
+"[PATCH v3 1/2] drm: Add NVIDIA Tegra20 support" are all spaces, not tabs.
+
+P.S: I saved the patch mail into an eml file and use "git am <eml file>"
+to integrate it into my local tree.
