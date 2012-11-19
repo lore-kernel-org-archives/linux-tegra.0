@@ -1,38 +1,34 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
-Date: Sun, 18 Nov 2012 18:32:52 -0800
-Message-ID: <20121119023251.GA2131@lizard>
-References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com>
- <1353149747-31871-2-git-send-email-acourbot@nvidia.com>
- <20121117113849.GA5228@lizard>
- <8058793.mIXgB85Mso@percival>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: tegra: ventana: enable internal display
+Date: Mon, 19 Nov 2012 10:55:42 +0800
+Message-ID: <50A99FAE.3080207@nvidia.com>
+References: <1353051891-26725-1-git-send-email-acourbot@nvidia.com> <2481172.Lt8JIisq3X@percival>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8058793.mIXgB85Mso@percival>
-Sender: linux-pm-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2481172.Lt8JIisq3X@percival>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 19, 2012 at 11:29:05AM +0900, Alex Courbot wrote:
-> On Saturday 17 November 2012 19:38:50 Anton Vorontsov wrote:
-> > > +++ b/drivers/power/power_seq/Kconfig
-> > > @@ -0,0 +1,2 @@
-> > > +config POWER_SEQ
-> > > +	tristate
-> > 
-> > This really needs a proper Kconfig description and a help text, shortly
-> > describing the purpose of the subsystem.
+Yep, I remember that I fetched EDID data by i2cget several months ago.
+But I'll try this again today to make sure.
+
+Mark
+On 11/16/2012 03:51 PM, Alex Courbot wrote:
+> On Friday 16 November 2012 15:44:51 Alexandre Courbot wrote:
+>> Enable host1x and add the rgb output, providing EDID as a binary blob.
 > 
-> Does it? The current state makes power seqs automatically selected by drivers 
-> that need it, and they do not appear in the configuration menu. If we add a 
-> description they will then become a visible item, so the logic would be to 
-> make it user-selectable.
-
-Ah. OK, then yes, there is no need for the short description, but the help
-text would a good idea anyway.
-
-Thanks,
-Anton.
+> I would really prefer to have the EDID data fetched from DDC, but all my 
+> attempts have failed so far. I don't even see the DDC wires on the platform 
+> design guide. Mark, are you sure the EDID data you fetched with i2cget was 
+> actually on Ventana? I can see that the DDC lines of T2 are connected to the 
+> corresponding lines of the HDMI interface, but nothing similar regarding 
+> internal display.
+> 
+> Maybe we can work this out privately, on IRC?
+> 
+> Alex.
+> 
