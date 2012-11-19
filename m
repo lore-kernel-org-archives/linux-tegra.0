@@ -1,30 +1,175 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: ventana: enable internal display
-Date: Mon, 19 Nov 2012 18:35:53 +0900
-Message-ID: <4911534.ydU4D3qycf@percival>
-References: <1353051891-26725-1-git-send-email-acourbot@nvidia.com> <2481172.Lt8JIisq3X@percival> <50A672DF.1070003@wwwdotorg.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3] ARM: tegra: ventana: enable internal display
+Date: Mon, 19 Nov 2012 18:43:07 +0900
+Message-ID: <1353318187-26484-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50A672DF.1070003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 17 November 2012 01:07:43 Stephen Warren wrote:
-> That should be equivalent to something like:
-> 
-> 	nvidia,ddc-i2c-bus = <&lcd_ddc>;
-> 
-> with lcd_ddc pointing at /i2cmux/i2c@1
-> 
-> That seems to work fine for me; how about you?
+Enable host1x and add the rgb output.
 
-Yep, this is working! DC probing gets delayed probably because i2c is not 
-available when it first tries to initialize it, and as a result fb0 becomes 
-available 1 second later than when we feed the EDID data from the DT. But it 
-work and is the most elegant solution, so we should definitely do this.
+Also add the power sequence that controls the backlight and panel. The
+sequence strictly follows the order and timings of the panel
+specification.
 
-Alex.
+Currently the backlight device controls both backlight and panel, this
+needs to be fixed once the panel framework supports power sequences.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-ventana.dts | 108 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 105 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index adc4754..31c9c5c 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -10,6 +10,15 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	host1x {
++		dc@54200000 {
++			rgb {
++				status = "okay";
++				nvidia,ddc-i2c-bus = <&lcd_ddc>;
++			};
++		};
++	};
++
+ 	pinmux {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -341,7 +350,7 @@
+ 			#size-cells = <0>;
+ 		};
+ 
+-		i2c@1 {
++		lcd_ddc: i2c@1 {
+ 			reg = <1>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -516,6 +525,99 @@
+ 		bus-width = <8>;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
++		default-brightness-level = <12>;
++
++		/* resources used by the power sequences */
++		pwms = <&pwm 2 5000000>;
++		pwm-names = "backlight";
++		power-supply = <&vdd_bl_reg>;
++		panel-supply = <&vdd_panel_reg>;
++
++		power-sequences {
++			power-on {
++				/*
++				 * Panel power and LVDS enable.
++				 * TODO: move into the panel device as soon as
++				 * panel framework supports power sequences.
++				 */
++				step0 {
++					type = "regulator";
++					id = "panel";
++					enable;
++				};
++				step1 {
++					type = "gpio";
++					gpio = <&gpio 10 0>;
++					value = <1>;
++				};
++				step2 {
++					type = "delay";
++					delay = <200000>;
++				};
++				/* Backlight sequence. This belongs here. */
++				step3 {
++					type = "regulator";
++					id = "power";
++					enable;
++				};
++				step4 {
++					type = "delay";
++					delay = <10000>;
++				};
++				step5 {
++					type = "pwm";
++					id = "backlight";
++					enable;
++				};
++				step6 {
++					type = "gpio";
++					gpio = <&gpio 28 0>;
++					value = <1>;
++				};
++			};
++
++			power-off {
++				step0 {
++					type = "gpio";
++					gpio = <&gpio 28 0>;
++					value = <0>;
++				};
++				step1 {
++					type = "pwm";
++					id = "backlight";
++					disable;
++				};
++				step2 {
++					type = "delay";
++					delay = <10000>;
++				};
++				step3 {
++					type = "regulator";
++					id = "power";
++					disable;
++				};
++				/* This also belongs to the panel sequence */
++				step4 {
++					type = "delay";
++					delay = <200000>;
++				};
++				step5 {
++					type = "gpio";
++					gpio = <&gpio 10 0>;
++					value = <0>;
++				};
++				step6 {
++					type = "regulator";
++					id = "panel";
++					disable;
++				};
++			};
++		};
++	};
++
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -549,7 +651,7 @@
+ 			enable-active-high;
+ 		};
+ 
+-		regulator@3 {
++		vdd_panel_reg: regulator@3 {
+ 			compatible = "regulator-fixed";
+ 			reg = <3>;
+ 			regulator-name = "vdd_pnl";
+@@ -559,7 +661,7 @@
+ 			enable-active-high;
+ 		};
+ 
+-		regulator@4 {
++		vdd_bl_reg: regulator@4 {
+ 			compatible = "regulator-fixed";
+ 			reg = <4>;
+ 			regulator-name = "vdd_bl";
+-- 
+1.8.0
