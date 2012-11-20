@@ -1,55 +1,37 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: dt: tegra: cardhu: Add drm components
-Date: Tue, 20 Nov 2012 15:27:52 +0800
-Message-ID: <1353396472-24167-1-git-send-email-markz@nvidia.com>
+From: Sivaram Nair <sivaramn@nvidia.com>
+Subject: [PATCH 1/1] arm: tegra: select correct parent clk for pll_p
+Date: Tue, 20 Nov 2012 09:29:16 +0200
+Message-ID: <1353396556-7738-1-git-send-email-sivaramn@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Sivaram Nair <sivaramn@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds the rgb node which is needed by
-tegra drm driver.
+For Tegra30, pll_p clk's parent is wrongly specified as clk_m instead of
+pll_ref in the tegra30_clk_init_table and this is resulting in a
+boot-time warning. This patch fixes this by correcting the clk init
+table.
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Sivaram Nair <sivaramn@nvidia.com>
 ---
-Changes in V2:
-- Remove HDMI node in dts. Currently tegra drm driver doesn't 
-  work while RGB and HDMI are enabled simultaneously
+ arch/arm/mach-tegra/common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/tegra30-cardhu.dtsi |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index bdb2a66..20af79e 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -27,6 +27,15 @@
- 	model = "NVIDIA Tegra30 Cardhu evaluation board";
- 	compatible = "nvidia,cardhu", "nvidia,tegra30";
- 
-+	host1x {
-+		dc@54200000 {
-+			rgb {
-+				status = "okay";
-+				nvidia,ddc-i2c-bus = <&rgbddc>;
-+			};
-+		};
-+	};
-+
- 	memory {
- 		reg = <0x80000000 0x40000000>;
- 	};
-@@ -114,7 +123,7 @@
- 		clock-frequency = <408000000>;
- 	};
- 
--	i2c@7000c000 {
-+	rgbddc: i2c@7000c000 {
- 		status = "okay";
- 		clock-frequency = <100000>;
- 	};
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 0816562..d54cfc5 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -104,7 +104,7 @@ static __initdata struct tegra_clk_init_table tegra20_clk_init_table[] = {
+ static __initdata struct tegra_clk_init_table tegra30_clk_init_table[] = {
+ 	/* name		parent		rate		enabled */
+ 	{ "clk_m",	NULL,		0,		true },
+-	{ "pll_p",	"clk_m",	408000000,	true },
++	{ "pll_p",	"pll_ref",	408000000,	true },
+ 	{ "pll_p_out1",	"pll_p",	9600000,	true },
+ 	{ "pll_p_out4",	"pll_p",	102000000,	true },
+ 	{ "sclk",	"pll_p_out4",	102000000,	true },
 -- 
 1.7.9.5
