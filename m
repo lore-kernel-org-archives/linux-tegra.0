@@ -1,37 +1,51 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3] ARM: tegra: ventana: enable internal display
-Date: Tue, 20 Nov 2012 14:11:59 +0900
-Message-ID: <22957911.1AFMrLFltW@percival>
-References: <1353318187-26484-1-git-send-email-acourbot@nvidia.com> <6034130.4mMqBdPRel@percival> <50AB1044.5030704@wwwdotorg.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 270/493] arm: remove use of __devinit
+Date: Tue, 20 Nov 2012 15:47:17 +0900
+Message-ID: <20121120064715.GO10560@opensource.wolfsonmicro.com>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
+ <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50AB1044.5030704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GPOl6LAGMgeiWDic"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
+Sender: linux-omap-owner@vger.kernel.org
+To: Bill Pemberton <wfp5p@virginia.edu>
+Cc: gregkh@linuxfoundation.org, Kevin Hilman <khilman@ti.com>, Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, Eric Miao <eric.y.miao@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Tony Lindgren <tony@atomide.com>, linux-arm-msm@vger.kernel.org, Barry Song <baohua.song@csr.com>, Will Deacon <will.deacon@arm.com>, patches@opensource.wolfsonmicro.com, Haojian Zhuang <haojian.zhuang@gmail.com>, Bryan Huntsman <bryanh@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>, Daniel Walker <dwalker@fifo99.com>, linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, David Brown <davidb@codeaurora.org>, linux-omap@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 20 November 2012 13:08:20 Stephen Warren wrote:
-> On 11/19/2012 06:47 PM, Alex Courbot wrote:
-> > On Tuesday 20 November 2012 09:37:41 Mark Zhang wrote:
-> >> Great. So this means I2C2 is used for LCD and HDMI both. While HDMI is
-> >> not plugged, the EDID of LCD will be checked out, right?
-> > 
-> > Ahhh. So that's why the LCD DDC was not working during my previous tests -
-> > I had HDMI nodes in my DT as well as the HDMI cable plugged! Indeed,
-> > things seem to work as you described. I assumed the i2cmux node would set
-> > the right pin configuration according to whether we want to read the LCD
-> > or HDMI DDC, but apparently this is not totally working yet. Glad we
-> > figured it out. Adding the HDMI nodes to Ventana will probably require to
-> > fix this (along with other things, probably) first.
-> 
-> That is kinda the whole point of the I2C mux... If it really isn't
-> working, can you please investigate why. i2cdump or i2cget would be
-> useful tools for testing this.
 
-Keeping that on my TODO list. By the meantime, better not to add HDMI nodes on 
-Ventana. LCD should work ok with this patch though.
+--GPOl6LAGMgeiWDic
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Alex.
+On Mon, Nov 19, 2012 at 01:23:39PM -0500, Bill Pemberton wrote:
+> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
+> needed.
+
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+
+--GPOl6LAGMgeiWDic
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQqydpAAoJELSic+t+oim9QBgP/2b6jLtJBDcETxaH6p8Y6gXt
+5LeY06fU1ozPrjqWYNIoXmWT/eU4BMRY/twzLVutZn4dpufzHJHoCWHxtZENYgeq
+V6j42H6RtaUIG+9lZlQ2bG8u9a3lADzaIDymLX1braws11Osw442DC7C2hrAQ1Zy
+EYjOsPEfjehC7L5sG95Th0DoezMZobsIkfom0TwcdvUwMWTgZQtEscmo24e+YlqI
+jYbyxgz1ew2ibhI/WxwOOvrGvHe30dn32YuWCiW6u7GmQT4k4LS3ZJE6w2OPeMWs
+hKQ3uWrN36Zd1WYOI/ngpol8k2N9vcOmLolXxNFMtI7dHeJyLB1Cao8VPwgqcI1b
+UIc98+WQh+Vx+eu4bBf+spXEyX177TWQeAHhVxyg7GXHKYmgsNMWIvtQmLzygHPB
+ldL4KWbdzTq3MehPkFawkFA/k5sPMpD5N/CT8czHAt/gAiUz39JfUgs2Kx7lTPYU
+e5XvjPf6MmJJekkgkQ8pXBm2D78zbUOfadEop6xS/xvb+NJ/Vg63VrnkmB3TKBTJ
+M0Nuq0hR8GZdlR4BS+Rd++s7+8tv/4P51hzhtxolLjPoDIMl6rznp/eLTh3fMEtM
+zREq8bELlv7ZDEC5MNEpWi70r94lFfSKLU3AJmVleFkn+o5LazF4XgqfXUncIVEc
+HXFTmx4dWjijsqq9406q
+=ysdL
+-----END PGP SIGNATURE-----
+
+--GPOl6LAGMgeiWDic--
