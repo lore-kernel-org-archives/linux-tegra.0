@@ -1,59 +1,55 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] drm: Add NVIDIA Tegra30 support
-Date: Tue, 20 Nov 2012 15:26:16 +0800
-Message-ID: <1353396376-24121-1-git-send-email-markz@nvidia.com>
+Subject: [PATCH V2] ARM: dt: tegra: cardhu: Add drm components
+Date: Tue, 20 Nov 2012 15:27:52 +0800
+Message-ID: <1353396472-24167-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: airlied-cv59FeDIM0c@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch is based on Thierry's drm patch for Tegra20:
-- [PATCH v2 0/6] Device tree updates for host1x support
-- [PATCH v3 0/2] NVIDIA Tegra DRM driver
-
-It adds the support for NVIDIA Tegra30.
+This patch adds the rgb node which is needed by
+tegra drm driver.
 
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c     |    1 +
- drivers/gpu/drm/tegra/host1x.c |    3 +++
- 2 files changed, 4 insertions(+)
+Changes in V2:
+- Remove HDMI node in dts. Currently tegra drm driver doesn't 
+  work while RGB and HDMI are enabled simultaneously
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 53b9852..37bd759 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -818,6 +818,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
- }
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index bdb2a66..20af79e 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -27,6 +27,15 @@
+ 	model = "NVIDIA Tegra30 Cardhu evaluation board";
+ 	compatible = "nvidia,cardhu", "nvidia,tegra30";
  
- static struct of_device_id tegra_dc_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-dc", },
- 	{ .compatible = "nvidia,tegra20-dc", },
- 	{ },
- };
-diff --git a/drivers/gpu/drm/tegra/host1x.c b/drivers/gpu/drm/tegra/host1x.c
-index 1f728cd..28c28ac 100644
---- a/drivers/gpu/drm/tegra/host1x.c
-+++ b/drivers/gpu/drm/tegra/host1x.c
-@@ -66,6 +66,8 @@ static int host1x_remove_drm_client(struct host1x *host1x,
- static int host1x_parse_dt(struct host1x *host1x)
- {
- 	static const char * const compat[] = {
-+		"nvidia,tegra30-dc",
-+		"nvidia,tegra30-hdmi",
- 		"nvidia,tegra20-dc",
- 		"nvidia,tegra20-hdmi",
++	host1x {
++		dc@54200000 {
++			rgb {
++				status = "okay";
++				nvidia,ddc-i2c-bus = <&rgbddc>;
++			};
++		};
++	};
++
+ 	memory {
+ 		reg = <0x80000000 0x40000000>;
  	};
-@@ -268,6 +270,7 @@ int host1x_unregister_client(struct host1x *host1x,
- }
+@@ -114,7 +123,7 @@
+ 		clock-frequency = <408000000>;
+ 	};
  
- static struct of_device_id tegra_host1x_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-host1x", },
- 	{ .compatible = "nvidia,tegra20-host1x", },
- 	{ },
- };
+-	i2c@7000c000 {
++	rgbddc: i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <100000>;
+ 	};
 -- 
 1.7.9.5
