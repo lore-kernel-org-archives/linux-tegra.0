@@ -1,59 +1,154 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] ARM: tegra: move timer.c to drivers/clocksource/
-Date: Tue, 20 Nov 2012 11:58:38 -0700
-Message-ID: <50ABD2DE.6010601@wwwdotorg.org>
-References: <1353371237-2482-1-git-send-email-swarren@wwwdotorg.org> <1353371237-2482-2-git-send-email-swarren@wwwdotorg.org> <20121120005036.GA6280@kryptos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V3 1/2] clocksource: add common of_clksrc_init() function
+Date: Tue, 20 Nov 2012 12:20:05 -0700
+Message-ID: <1353439206-1654-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121120005036.GA6280@kryptos>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/19/2012 05:50 PM, Josh Cartwright wrote:
-> On Mon, Nov 19, 2012 at 05:27:17PM -0700, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Move arch/arm/mach-tegra/timer.c to drivers/clocksource/tegra20_timer.c
->> so that the code is co-located with other clocksource drivers, and to
->> reduce the size of the mach-tegra directory.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> v2: Rebase on ARM sys_timer rework, and addition of clocksource_of_init().
-> [..]
->> diff --git a/drivers/clocksource/clksrc-of.c b/drivers/clocksource/clksrc-of.c
->> index aeec8d2..328d18f 100644
->> --- a/drivers/clocksource/clksrc-of.c
->> +++ b/drivers/clocksource/clksrc-of.c
->> @@ -20,6 +20,10 @@
->>  #include "clksrc-of.h"
->>  
->>  static const struct of_device_id clksrc_of_match[] __initconst = {
->> +	{
->> +		.compatible = "nvidia,tegra20-timer",
->> +		.data = tegra20_init_timer,
->> +	},
-> 
-> Shouldn't this be wrapped in #if ARCH_TEGRA?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes.
+It is desirable to move all clocksource drivers to drivers/clocksource,
+yet each requires its own initialization function. We'd rather not
+pollute <linux/> with a header for each function. Instead, create a
+single of_clksrc_init() function which will determine which clocksource
+driver to initialize based on device tree.
 
-> I had suggested this with Thomas Petazzoni's consolidated irq_chip patch
-> as well:
-> 
-> It seems like it would be a bit cleaner/easier to maintain if we relied
-> on the linker to stitch together a clksrc_of_match table, based on what
-> clocksources are being built into the image.  With that approach, at
-> least, a public initialization header wouldn't have to be exposed, and
-> this central table wouldn't have to be maintained (as more clocksrcs are
-> added, I forsee [admittedly trivial] merge conflicts).
-> 
-> Thoughts?
+Inspired by a similar patch for drivers/irqchip by Thomas Petazzoni.
 
-I thought I'd wait for Thomas' revised patch and copy that, but it
-turned out to be easier that I figured to implement. So, new revision
-coming soon!
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v3: Use a linker section to replace manually maintained table.
+v2: New patch.
+
+This series is based on the ARM sys_timer rework that I reposted today.
+
+I hope that these patches can be taken through arm-soc tree for 3.9;
+I will repost them based on 3.8-rc1 at the appropriate time.
+---
+ drivers/clocksource/Kconfig       |    3 +++
+ drivers/clocksource/Makefile      |    1 +
+ drivers/clocksource/clksrc-of.c   |   41 +++++++++++++++++++++++++++++++++++++
+ include/asm-generic/vmlinux.lds.h |   10 +++++++++
+ include/linux/clocksource.h       |   10 +++++++++
+ 5 files changed, 65 insertions(+)
+ create mode 100644 drivers/clocksource/clksrc-of.c
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index c9f67de..4f300c5 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -1,3 +1,6 @@
++config CLKSRC_OF
++	bool
++
+ config CLKSRC_I8253
+ 	bool
+ 
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 24fb888..29017a3 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_CLKSRC_OF)	+= clksrc-of.o
+ obj-$(CONFIG_ATMEL_TCB_CLKSRC)	+= tcb_clksrc.o
+ obj-$(CONFIG_X86_CYCLONE_TIMER)	+= cyclone.o
+ obj-$(CONFIG_X86_PM_TIMER)	+= acpi_pm.o
+diff --git a/drivers/clocksource/clksrc-of.c b/drivers/clocksource/clksrc-of.c
+new file mode 100644
+index 0000000..04c7820
+--- /dev/null
++++ b/drivers/clocksource/clksrc-of.c
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/init.h>
++#include <linux/of.h>
++
++extern struct of_device_id *__start_clksrc_of_match_tables[];
++extern struct of_device_id *__stop_clksrc_of_match_tables[];
++
++void __init clocksource_of_init(void)
++{
++	struct of_device_id **table;
++	struct of_device_id **stop;
++	struct device_node *np;
++	const struct of_device_id *match;
++	void (*init_func)(void);
++
++	table = __start_clksrc_of_match_tables;
++	stop = __stop_clksrc_of_match_tables;
++
++	for ( ; table < stop; table++) {
++		for_each_matching_node(np, *table) {
++			match = of_match_node(*table, np);
++			init_func = match->data;
++			init_func();
++		}
++	}
++}
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index d1ea7ce..b17f793 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -149,6 +149,15 @@
+ #define TRACE_SYSCALLS()
+ #endif
+ 
++#ifdef CONFIG_CLKSRC_OF
++#define CLKSRC_OF_MATCH_TABLES() \
++		. = ALIGN(8);						\
++		VMLINUX_SYMBOL(__start_clksrc_of_match_tables) = .;	\
++		*(__clksrc_of_table)					\
++		VMLINUX_SYMBOL(__stop_clksrc_of_match_tables) = .;
++#else
++#define CLKSRC_OF_MATCH_TABLES()
++#endif
+ 
+ #define KERNEL_DTB()							\
+ 	STRUCT_ALIGN();							\
+@@ -490,6 +499,7 @@
+ 	*(.init.rodata)							\
+ 	FTRACE_EVENTS()							\
+ 	TRACE_SYSCALLS()						\
++	CLKSRC_OF_MATCH_TABLES()					\
+ 	DEV_DISCARD(init.rodata)					\
+ 	CPU_DISCARD(init.rodata)					\
+ 	MEM_DISCARD(init.rodata)					\
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 4dceaf8..3b0f30e 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -332,4 +332,14 @@ extern int clocksource_mmio_init(void __iomem *, const char *,
+ 
+ extern int clocksource_i8253_init(void);
+ 
++#ifdef CONFIG_CLKSRC_OF
++extern void clocksource_of_init(void);
++
++#define CLKSRC_OF_MATCH_TABLE(name, table)			\
++	static const struct of_device_id __used			\
++		__attribute__((section("__clksrc_of_table")))	\
++		*__p_clksrc_of_match_table_##name = table;
++
++#endif
++
+ #endif /* _LINUX_CLOCKSOURCE_H */
+-- 
+1.7.10.4
