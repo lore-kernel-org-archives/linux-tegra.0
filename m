@@ -1,47 +1,140 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] of: Add vendor prefix for Asahi Kasei Corp.
-Date: Mon, 19 Nov 2012 16:49:27 -0600
-Message-ID: <50AAB777.7060105@gmail.com>
-References: <1353364484-5741-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2 1/2] clocksource: add common of_clksrc_init() function
+Date: Mon, 19 Nov 2012 17:27:16 -0700
+Message-ID: <1353371237-2482-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353364484-5741-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/19/2012 04:34 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Their stock ticker is 3407.T which wouldn't make a good DT vendor
-> prefix. Use the company name initials instead.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Both patches ought to merge through the DT tree OK. If not, patch 2
-> could be taken through arm-soc.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied both for 3.8.
+It is desirable to move all clocksource drivers to drivers/clocksource,
+yet each requires its own initialization function. We'd rather not
+pollute <linux/> with a header for each function. Instead, create a
+single of_clksrc_init() function which will determine which clocksource
+driver to initialize based on device tree.
 
-Rob
+Based on a similar patch for drivers/irqchip by Thomas Petazzoni.
 
-> 
->  Documentation/devicetree/bindings/vendor-prefixes.txt |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index deba8d0..05dc8eb 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -5,6 +5,7 @@ using them to avoid name-space collisions.
->  
->  ad	Avionic Design GmbH
->  adi	Analog Devices, Inc.
-> +ak	Asahi Kasei Corp.
->  amcc	Applied Micro Circuits Corporation (APM, formally AMCC)
->  apm	Applied Micro Circuits Corporation (APM)
->  arm	ARM Ltd.
-> 
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: New patch.
+
+This series is based on the ARM sys_timer rework that I reposted today.
+
+I hope that these patches can be taken through arm-soc tree for 3.9;
+I will repost them based on 3.8-rc1 at the appropriate time.
+---
+ drivers/clocksource/Kconfig     |    3 +++
+ drivers/clocksource/Makefile    |    1 +
+ drivers/clocksource/clksrc-of.c |   37 +++++++++++++++++++++++++++++++++++++
+ drivers/clocksource/clksrc-of.h |   20 ++++++++++++++++++++
+ include/linux/clocksource.h     |    2 ++
+ 5 files changed, 63 insertions(+)
+ create mode 100644 drivers/clocksource/clksrc-of.c
+ create mode 100644 drivers/clocksource/clksrc-of.h
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index c9f67de..4f300c5 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -1,3 +1,6 @@
++config CLKSRC_OF
++	bool
++
+ config CLKSRC_I8253
+ 	bool
+ 
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 24fb888..29017a3 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_CLKSRC_OF)	+= clksrc-of.o
+ obj-$(CONFIG_ATMEL_TCB_CLKSRC)	+= tcb_clksrc.o
+ obj-$(CONFIG_X86_CYCLONE_TIMER)	+= cyclone.o
+ obj-$(CONFIG_X86_PM_TIMER)	+= acpi_pm.o
+diff --git a/drivers/clocksource/clksrc-of.c b/drivers/clocksource/clksrc-of.c
+new file mode 100644
+index 0000000..aeec8d2
+--- /dev/null
++++ b/drivers/clocksource/clksrc-of.c
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/init.h>
++#include <linux/of.h>
++
++#include "clksrc-of.h"
++
++static const struct of_device_id clksrc_of_match[] __initconst = {
++	{ }
++};
++
++void __init clocksource_of_init(void)
++{
++	struct device_node *np;
++	const struct of_device_id *match;
++	void (*init_func)(void);
++
++	for_each_matching_node(np, clksrc_of_match) {
++		match = of_match_node(clksrc_of_match, np);
++		init_func = match->data;
++		init_func();
++	}
++}
+diff --git a/drivers/clocksource/clksrc-of.h b/drivers/clocksource/clksrc-of.h
+new file mode 100644
+index 0000000..4e2191a
+--- /dev/null
++++ b/drivers/clocksource/clksrc-of.h
+@@ -0,0 +1,20 @@
++/*
++ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _CLKSRC_OF_H
++#define _CLKSRC_OF_H
++
++#endif
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 4dceaf8..a063b84 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -332,4 +332,6 @@ extern int clocksource_mmio_init(void __iomem *, const char *,
+ 
+ extern int clocksource_i8253_init(void);
+ 
++extern void clocksource_of_init(void);
++
+ #endif /* _LINUX_CLOCKSOURCE_H */
+-- 
+1.7.10.4
