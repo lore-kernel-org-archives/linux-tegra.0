@@ -1,59 +1,81 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Josh Cartwright <josh.cartwright@gmail.com>
 Subject: Re: [PATCH V3 1/2] clocksource: add common of_clksrc_init() function
-Date: Tue, 20 Nov 2012 12:45:51 -0700
-Message-ID: <50ABDDEF.10403@wwwdotorg.org>
-References: <1353439206-1654-1-git-send-email-swarren@wwwdotorg.org> <20121120203105.3c54e49f@skate>
+Date: Tue, 20 Nov 2012 14:10:26 -0600
+Message-ID: <20121120201026.GF6280@kryptos>
+References: <1353439206-1654-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121120203105.3c54e49f@skate>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1353439206-1654-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: John Stultz <johnstul@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2012 12:31 PM, Thomas Petazzoni wrote:
-> Stephen,
+On Tue, Nov 20, 2012 at 12:20:05PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
-> On Tue, 20 Nov 2012 12:20:05 -0700, Stephen Warren wrote:
+> It is desirable to move all clocksource drivers to drivers/clocksource,
+> yet each requires its own initialization function. We'd rather not
+> pollute <linux/> with a header for each function. Instead, create a
+> single of_clksrc_init() function which will determine which clocksource
+> driver to initialize based on device tree.
 > 
->> It is desirable to move all clocksource drivers to drivers/clocksource,
->> yet each requires its own initialization function. We'd rather not
->> pollute <linux/> with a header for each function. Instead, create a
->> single of_clksrc_init() function which will determine which clocksource
->> driver to initialize based on device tree.
-...
-> The way I did things for irqchip is a bit different: I used the
-> standard of_irq_init(), which requires a table that is terminated by a
-> sentinel. In order to guarantee that I have a sentinel, I did:
+> Inspired by a similar patch for drivers/irqchip by Thomas Petazzoni.
 > 
-> #define IRQCHIP_DECLARE(compstr,fn)                             \
->         static const struct of_device_id irqchip_of_match       \
->         __used __section(.init.irqchip)                         \
->         = { .compatible = compstr, .data = fn }
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> v3: Use a linker section to replace manually maintained table.
+> v2: New patch.
 > 
-> which is used to declare all irq drivers. But then in the main
-> irqchip.c file, I did:
-> 
-> static const struct of_device_id
-> irqchip_of_match_end __used __section(.init.irqchip.end);
-> 
-> and my linker script looks like:
-> 
->         .init.irqchip : {
->                 __irqchip_begin = .;
->                 *(.init.irqchip)
->                 *(.init.irqchip.end)
->         }
-> 
-> So I gather all the of_device_id definitions and then the special
-> sentinel of_device_id. I don't know if it is better than your solution,
-> or even if my solution is good at all.
+[..]
+> --- /dev/null
+> +++ b/drivers/clocksource/clksrc-of.c
+> @@ -0,0 +1,41 @@
+> +/*
+> + * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +
+> +extern struct of_device_id *__start_clksrc_of_match_tables[];
+> +extern struct of_device_id *__stop_clksrc_of_match_tables[];
+> +
+> +void __init clocksource_of_init(void)
+> +{
+> +	struct of_device_id **table;
+> +	struct of_device_id **stop;
+> +	struct device_node *np;
+> +	const struct of_device_id *match;
+> +	void (*init_func)(void);
+> +
+> +	table = __start_clksrc_of_match_tables;
+> +	stop = __stop_clksrc_of_match_tables;
+> +
+> +	for ( ; table < stop; table++) {
+> +		for_each_matching_node(np, *table) {
+> +			match = of_match_node(*table, np);
+> +			init_func = match->data;
+> +			init_func();
 
-That does have the advantage of constructing a single table for all
-irqchips, rather than the approach in my patch was to construct an array
-of pointers to those tables. Your approach is one less loop at runtime,
-and one less sentinel and pointer data item per irqchip. Perhaps I
-should convert mine to do the same thing, unless anyone gives feedback
-against it.
+Hmm.  Am I crazy, or does this for_each_matching_node()/of_match_node()
+pattern end up walking the match table twice, unnecessarily?
+
+I'm wondering if we can come up with a for_each_matching_node_id() macro
+that also provides a pointer to the matching of_device_id...
+
+   Josh
