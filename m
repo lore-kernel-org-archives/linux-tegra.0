@@ -1,30 +1,59 @@
-From: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 270/493] arm: remove use of __devinit
-Date: Tue, 20 Nov 2012 09:04:18 -0800
-Message-ID: <20121120170418.GD21706@codeaurora.org>
-References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu>
- <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 2/2] ARM: tegra: move timer.c to drivers/clocksource/
+Date: Tue, 20 Nov 2012 11:58:38 -0700
+Message-ID: <50ABD2DE.6010601@wwwdotorg.org>
+References: <1353371237-2482-1-git-send-email-swarren@wwwdotorg.org> <1353371237-2482-2-git-send-email-swarren@wwwdotorg.org> <20121120005036.GA6280@kryptos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353349642-3677-270-git-send-email-wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
+In-Reply-To: <20121120005036.GA6280@kryptos>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Walker <dwalker-zu3NM2574RrQT0dZR+AlfA@public.gmane.org>, Bryan Huntsman <bryanh-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 19, 2012 at 01:23:39PM -0500, Bill Pemberton wrote:
-> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
-> needed.
+On 11/19/2012 05:50 PM, Josh Cartwright wrote:
+> On Mon, Nov 19, 2012 at 05:27:17PM -0700, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Move arch/arm/mach-tegra/timer.c to drivers/clocksource/tegra20_timer.c
+>> so that the code is co-located with other clocksource drivers, and to
+>> reduce the size of the mach-tegra directory.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> v2: Rebase on ARM sys_timer rework, and addition of clocksource_of_init().
+> [..]
+>> diff --git a/drivers/clocksource/clksrc-of.c b/drivers/clocksource/clksrc-of.c
+>> index aeec8d2..328d18f 100644
+>> --- a/drivers/clocksource/clksrc-of.c
+>> +++ b/drivers/clocksource/clksrc-of.c
+>> @@ -20,6 +20,10 @@
+>>  #include "clksrc-of.h"
+>>  
+>>  static const struct of_device_id clksrc_of_match[] __initconst = {
+>> +	{
+>> +		.compatible = "nvidia,tegra20-timer",
+>> +		.data = tegra20_init_timer,
+>> +	},
 > 
-> Signed-off-by: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
-> ---
->  arch/arm/mach-msm/proc_comm.c                |  2 +-
->  arch/arm/mach-msm/smd.c                      |  2 +-
+> Shouldn't this be wrapped in #if ARCH_TEGRA?
 
-Acked-by: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Yes.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+> I had suggested this with Thomas Petazzoni's consolidated irq_chip patch
+> as well:
+> 
+> It seems like it would be a bit cleaner/easier to maintain if we relied
+> on the linker to stitch together a clksrc_of_match table, based on what
+> clocksources are being built into the image.  With that approach, at
+> least, a public initialization header wouldn't have to be exposed, and
+> this central table wouldn't have to be maintained (as more clocksrcs are
+> added, I forsee [admittedly trivial] merge conflicts).
+> 
+> Thoughts?
+
+I thought I'd wait for Thomas' revised patch and copy that, but it
+turned out to be easier that I figured to implement. So, new revision
+coming soon!
