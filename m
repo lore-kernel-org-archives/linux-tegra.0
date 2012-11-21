@@ -1,50 +1,165 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Alex Courbot <acourbot@nvidia.com>
 Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
-Date: Wed, 21 Nov 2012 10:56:36 +0900
-Message-ID: <4316169.5QXVzv7peZ@percival>
-References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <1353149747-31871-2-git-send-email-acourbot@nvidia.com> <50AB9832.90709@ti.com>
+Date: Wed, 21 Nov 2012 13:23:06 +0900
+Message-ID: <13540495.epaCf4JVn9@percival>
+References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <1353149747-31871-2-git-send-email-acourbot@nvidia.com> <20121120215429.B621F3E1821@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50AB9832.90709-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Cc: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121120215429.B621F3E1821@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Tomi,
+Hi Grant,
 
-On Tuesday 20 November 2012 22:48:18 Tomi Valkeinen wrote:
-> I guess there's a reason, but the above looks a bit inconsistent. For
-> gpio you define the gpio resource inside the step. For power and pwm the
-> resource is defined before the steps. Why wouldn't "pwm = <&pwm 2
-> 5000000>;" work in step2?
-
-That's mostly a framework issue. Most frameworks do not export a function that 
-allow to dereference a phandle - they expect resources to be declared right 
-under the device node and accessed by name through foo_get(device, name). So 
-using phandles in power sequences would require to export these additional 
-functions and also opens the door to some inconsistencies - for instance, your 
-PWM phandle could be referenced a second time in the sequence with a different 
-period - how do you know that these are actually referring the same PWM 
-device?
-
-> > +When a power sequence is run, its steps is executed one after the other
-> > until +one step fails or the end of the sequence is reached.
+On Wednesday 21 November 2012 05:54:29 Grant Likely wrote:
+> > With the advent of the device tree and of ARM kernels that are not
+> > board-tied, we cannot rely on these board-specific hooks anymore but
 > 
-> The document doesn't give any hint of what the driver should do if
-> running the power sequence fails. Run the "opposite" power sequence?
-> Will that work for all resources? I'm mainly thinking of a case where
-> each enable of the resource should be matched by a disable, i.e. you
-> can't call disable if no enable was called.
+> This isn't strictly true. It is still perfectly fine to have board
+> specific code when necessary. However, there is strong encouragement to
+> enable that code in device drivers as much as possible and new board
+> files need to have very strong justification.
 
-We discussed that issue already (around v5 I think) and the conclusion was 
-that it should be up to the driver. When we simply enable/disable resources it 
-is easy to revert, but in the future non-boolean properties will likely be 
-introduced, and these cannot easily be reverted. Moreover some drivers might 
-have more complex recovery needs. This deserves more discussion I think, as 
-I'd like to have some "generic" recovery mechanism that covers most of the 
-cases.
+But doesn't introducing board-specific code into the kernel just defeats the 
+purpose of the DT? If we extend this logic, we are heading straight back to 
+board-definition files. To a lesser extent than before I agree, but the problem 
+is fundamentally the same.
+
+> > need a way to implement these sequences in a portable manner. This patch
+> > introduces a simple interpreter that can execute such power sequences
+> > encoded either as platform data or within the device tree. It also
+> > introduces first support for regulator, GPIO and PWM resources.
+> 
+> This is where I start getting nervous. Up to now I've strongly resisted
+> adding any kind of interpreted code to the device tree. The model is to
+> identify hardware, but require the driver to know how to control it. (as
+> compared to ACPI which is entirely designed around executable
+> bytecode).
+> 
+> While the power sequences described here certainly cannot be confused
+> with a Turing complete bytecode, it is a step in that direction.
+
+Technically speaking power sequences are a step towards an interpreter, but it 
+is a very small one and it should not go much further than the current state. 
+I understand the concern of having "code" into the DT but I really think it 
+should be viewed from a different angle.
+
+Powering sequences are special in that they can be affected by the board design 
+or the devices variations. For instance hundreds of different panels with 
+backlights are currently compatible with the pwm-backlight driver. The only 
+thing that differenciates them is how the backlight is powered on and off. If 
+you are to build a kernel that is supposed to support all these panels, you 
+would need to embed all the powering sequences in the kernel even though only 
+one of them will be used by one specific board. Power sequences in the DT help 
+preventing that.
+
+With that stated, it is clear that we should not need to define more than the 
+short, simple sequences of actions that cannot be elegantly handled by the 
+driver. Anything beyond that should be handled by the driver itself. In 
+particular, here are a few things I do *not* want to see included in power 
+seqs:
+
+- conditionals/jumps (or it's not a sequence anymore).
+- direct access to hardware. Resources must at least be abstracted in some 
+way. You shall not e.g. access the address space directly.
+- support for non-power related resources - that is out of the special case of 
+powering sequences and should be done by the driver
+
+That should keep the "grammar" simple, and the sequences short enough to that 
+we can consider then as data belonging to the device, and not as code that is 
+interpreted.
+
+> I think this will get very verbose in a hurry. Already this simple
+> example is 45 lines long. Using the device tree structure to encode the
+> language doesn't look like a very good fit. Not to mention that the
+> order of operations is entirely based on the node name. Want to insert
+> an operation between step0 and step1? Need to rename step1, step2, and
+> step3 to do so.
+
+I don't like that steps numbering thing neither, but it seems to be the best 
+way to do it so far.
+
+As for the DT structure not being adapted for this - I would agree if we 
+wanted to implement a complete interpreter, but that's precisely not the case. 
+More about this later.
+
+> This implementation also isn't very consistent. The gpio is referenced
+> with a phandle in step3/step0, but the regulator and pwm are referenced
+> by id.
+
+Tomi made the same remark - the reason for using the phandle in GPIO is 
+because GPIO framework does not support referencing GPIOs by name yet. I 
+wanted to DT bindings to reflect the underlying framework as much as possible 
+until we have a function like gpio_get(device, id).
+
+However I agree that this makes things inconsistent at the moment and would 
+require a bindings change. And in the case of the DT this is actually easy to 
+implement (I did it in some previous versions). I'll make sure to do it.
+
+> As an alternative, what about something like the following?
+> 
+> 	backlight {
+> 		compatible = "pwm-backlight";
+> 		...
+> 
+> 		/* resources used by the power sequences */
+> 		pwms = <&pwm 2 5000000>;
+> 		pwm-names = "backlight";
+> 		regulators = <&backlight_reg>;
+> 		gpios = <&gpio 28 0>;
+> 
+> 		power-on-sequence = "r0e;d10000m;p0e;g0s";
+> 		power-off-sequence = "g0c;p0d;d10000m;r0d";
+> 	};
+
+Well, *now* it really looks like bytecode. :)
+
+> I'm thinking about the scripts as trivial-to-parse ascii strings that
+> have a very simple set of commands. The commands use resources already
+> defined in the node. ie. 'g0' refers to the first entry in the gpios
+> property. 'r0' for the regulator, 'p0' for the pwms, 'd' means delay. By
+> no means take this as the format to use, it is just an example off the
+> top of my head, but it is already way easier to work with than putting
+> each command into a node.
+
+I'd argue that this opens the door wide open towards having a complete 
+interpreter in the device tree. At least DT nodes restrict what we can do 
+conveniently.
+
+> The trick is still to define a syntax that doesn't fall apart when it
+> needs to be extended. I would also like to get opinions on whether or
+> not conditionals or loops should be supported (ie. loop waiting for a
+> status to change). If they should then we need to be a lot more careful
+> about the design (and due to my aforementioned nervousness, somebody may
+> need to get me therapy).
+
+That's IMHO the main argument in favor of using DT nodes here (the syntax 
+extension, not your therapy). They can be extended simply by adding properties 
+to them, and I was relying on this to make power seqs extensible while keeping 
+things consistent (and backward-compatible). For instance, when we want to 
+support voltage setting in regulators we can just add a "voltage" property for 
+that.
+
+So to sum up the pros of the current node-base representation:
+- give a "data like" representation of powering sequences (what they should 
+be, actually)
+- puts sanity barriers for not turning power seqs into a real code interpreter
+- easily extensible
+
+There are probably a few cons, the numbering of steps being one, but at least 
+we don't need to design a new DSL and care too much about extensibility which 
+is, in the nodes case, built-in and free.
+
+I also like to make it clear that I don't want to see this going out of 
+control and that any extension proposal would have to be thoroughly justified 
+and reviewed - and better not contradict any of the 3 points listed above.
+
+If that makes you feel better, maybe we can try and fix what is wrong with the 
+current bindings instead of introducing a new language that will be, by 
+nature, more complex to handle and difficult to extend without breaking things?
 
 Alex.
