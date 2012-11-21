@@ -1,47 +1,43 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH V4 1/3] of: introduce for_each_matching_node_and_match()
-Date: Wed, 21 Nov 2012 11:09:08 +0100
-Message-ID: <20121121110908.64bc74cd@skate>
-References: <1353453142-4973-1-git-send-email-swarren@wwwdotorg.org>
-	<201211210953.20552.arnd@arndb.de>
-	<CACxGe6u5UBqVPrBqwn9rhjuBx4uCuuHKU=FcvSp0GJ2G8ogSNQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 270/493] arm: remove use of __devinit
+Date: Wed, 21 Nov 2012 18:53:50 +0800
+Message-ID: <CAGsJ_4y2+o7HBH-TQWaanUs9ZgZHhXg3YpEUzd5-VoeZ9+wiMw@mail.gmail.com>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu> <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACxGe6u5UBqVPrBqwn9rhjuBx4uCuuHKU=FcvSp0GJ2G8ogSNQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Josh Cartwright <josh.cartwright@gmail.com>, Stephen Warren <swarren@nvidia.com>, John Stultz <johnstul@us.ibm.com>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1353349642-3677-270-git-send-email-wfp5p@virginia.edu>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Bill Pemberton <wfp5p@virginia.edu>
+Cc: gregkh@linuxfoundation.org, Russell King <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sascha Hauer <kernel@pengutronix.de>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@ti.com>, Barry Song <baohua.song@csr.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-tegra@vger.kernel.org, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>
 List-Id: linux-tegra@vger.kernel.org
 
+2012/11/20 Bill Pemberton <wfp5p@virginia.edu>:
+> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
+> needed.
+>
+> Signed-off-by: Bill Pemberton <wfp5p@virginia.edu>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: David Brown <davidb@codeaurora.org>
+> Cc: Daniel Walker <dwalker@fifo99.com>
+> Cc: Bryan Huntsman <bryanh@codeaurora.org>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kevin Hilman <khilman@ti.com>
+> Cc: Barry Song <baohua.song@csr.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: patches@opensource.wolfsonmicro.com
+> Cc: linux-tegra@vger.kernel.org
+> ---
 
-On Wed, 21 Nov 2012 10:06:16 +0000, Grant Likely wrote:
-> On Wed, Nov 21, 2012 at 9:53 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Tuesday 20 November 2012, Stephen Warren wrote:
-> >> However, this results in iterating over table twice; the second time
-> >> inside of_match_node(). The implementation of for_each_matching_node()
-> >> already found the match, so this is redundant. Invent new function
-> >> of_find_matching_node_and_match() and macro
-> >> for_each_matching_node_and_match() to remove the double iteration,
-> >> thus transforming the above code to:
-> >>
-> >>     for_each_matching_node_and_match(np, table, &match)
-> >>
-> >> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> >
-> > This look useful, but I wonder if the interface would make more sense if you
-> > make the last argument to the macro a normal pointer, rather than a
-> > pointer-to-pointer. You can take the reference as part of the macro.
-> 
-> To me that makes for harder to understand code. It *looks* like an
-> argument to a normal function call, but it gets changed by the caller.
-
-Agreed. Too much magic is too much.
-
-Thomas
--- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Acked-by: Barry Song <baohua.song@csr.com>
