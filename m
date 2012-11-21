@@ -1,90 +1,81 @@
-From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
-Date: Wed, 21 Nov 2012 10:48:45 +0200
-Message-ID: <50AC956D.7020303@ti.com>
-References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <4316169.5QXVzv7peZ@percival> <50AC8D3B.6040300@ti.com> <1699753.ZQsWMHINxd@percival>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enigFEB2DE46DC00D8FE6C54AF30"
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH] drm: tegra: Add Tegra30 support
+Date: Wed, 21 Nov 2012 09:50:41 +0100
+Message-ID: <1353487841-25955-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1699753.ZQsWMHINxd@percival>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---------------enigFEB2DE46DC00D8FE6C54AF30
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Add support for host1x, the display controllers and HDMI on the Tegra30
+SoC.
 
-On 2012-11-21 10:32, Alex Courbot wrote:
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi David,
 
->> Ok. I'll need to dig up the conversation
->=20
-> IIRC it was somewhere around here:
->=20
-> https://lkml.org/lkml/2012/9/7/662
->=20
-> See the parent messages too.
+I've rebased this on top of you drm-next branch as you requested. The
+change in hdmi.c looks a bit odd, but that's due to the fact that the
+nvidia,tegra30-hdmi line was already part of a prior patch where it
+shouldn't have been introduced yet. This patch merely adjusts its
+sorting order as currently required by the OF code.
 
-Thanks.
+Thierry
 
->> Did you consider any examples
->> of how some driver could handle the error cases?
->=20
-> For all the (limited) use cases I considered, playing the power-off seq=
-uence=20
-> when power-on fails just works. If power-off also fails you are potenti=
-ally in=20
-> more trouble though. Maybe we could have another "run" function that do=
-es not=20
-> stop on errors for handling such cases where you want to "stop everythi=
-ng you=20
-> can".
+ drivers/gpu/drm/tegra/dc.c     | 1 +
+ drivers/gpu/drm/tegra/hdmi.c   | 2 +-
+ drivers/gpu/drm/tegra/host1x.c | 3 +++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-If the power-off sequence disables a regulator that was supposed to be
-enabled by the power-on sequence (but wasn't enabled because of an
-error), the regulator_disable is still called when the driver runs the
-power-off sequence, isn't it? Regulator enables and disables are ref
-counted, and the enables should match the disables.
-
-> Failures might be better handled if sequences have some "recovery polic=
-y"=20
-> about what to do when they fail, as mentioned in the link above. As you=
-=20
-> pointed out, the driver might not always know enough about the resource=
-s=20
-> involved to do the right thing.
-
-Yes, I think such recovery policy would be needed.
-
- Tomi
-
-
-
---------------enigFEB2DE46DC00D8FE6C54AF30
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJQrJVtAAoJEPo9qoy8lh71Lu8QAKQYKO3s8JapnGwTRpDb95V/
-ZESzJ5RqPbWBAOzP9+8RBME/FMJ/jXdophNmbvt0IMGfrHpWdGLzBy1AoPD9O5H8
-AHsx4Zfu/NOkLlv7yCI8LePgV/VnJiE1KN6MJXRuR/Rlb76Wj5/AEgstj3KQP6Od
-CrwOmJPd2pQwPRk6QMBatIXiNrWl4FcH6iuAQU1cvCO5gcLlXVXRKG/hVcHS/Ddl
-lCkkfeKGveV4h9z1o/ubilirovPqUmW/o1YdOJOKv0NUFBow8CdhUv43lQ8apqZq
-UZFJ609hSRUU8vYyoG/uoJm72G9b6a+QQ5BVSvgppNVRxV/CgXpZBonon1FvunnH
-we2w8DG/JO5SSoaYA0ZN5iyXDMxIeIEyhX8hQePZzFEde83wd2akoPFrK5z5NGSK
-J5s3a0mopE4cj5Ps0VI00cJlr71mPA8DOCXR0KvssS2R17rgyJaNuisIu/46wvfq
-ANAqkJ61LP3rvf/nH8TJvFapAjIMFOESW3jmJJGaq7GItxpwbTRCJ+kokAZMp7tn
-j4ZFT7xQhN3nj0Hxzwv+gl7jxjC6OvU4xUaKwSZDfHQs1HaDkzXS2m2oaBIoSGRc
-ex6Dkdh8bvSyFh+6tTrXgGPTMUkGjmuHoRPnXjethQbpAlL7gklG9wsRpQVckgDn
-nss1T0JvMISh1HZEAL2W
-=gaYE
------END PGP SIGNATURE-----
-
---------------enigFEB2DE46DC00D8FE6C54AF30--
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 53b9852..37bd759 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -818,6 +818,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ }
+ 
+ static struct of_device_id tegra_dc_of_match[] = {
++	{ .compatible = "nvidia,tegra30-dc", },
+ 	{ .compatible = "nvidia,tegra20-dc", },
+ 	{ },
+ };
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 58f55dc..ab40164 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1318,8 +1318,8 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
+ }
+ 
+ static struct of_device_id tegra_hdmi_of_match[] = {
+-	{ .compatible = "nvidia,tegra20-hdmi", },
+ 	{ .compatible = "nvidia,tegra30-hdmi", },
++	{ .compatible = "nvidia,tegra20-hdmi", },
+ 	{ },
+ };
+ 
+diff --git a/drivers/gpu/drm/tegra/host1x.c b/drivers/gpu/drm/tegra/host1x.c
+index 1f728cd..bdb97a564 100644
+--- a/drivers/gpu/drm/tegra/host1x.c
++++ b/drivers/gpu/drm/tegra/host1x.c
+@@ -68,6 +68,8 @@ static int host1x_parse_dt(struct host1x *host1x)
+ 	static const char * const compat[] = {
+ 		"nvidia,tegra20-dc",
+ 		"nvidia,tegra20-hdmi",
++		"nvidia,tegra30-dc",
++		"nvidia,tegra30-hdmi",
+ 	};
+ 	unsigned int i;
+ 	int err;
+@@ -268,6 +270,7 @@ int host1x_unregister_client(struct host1x *host1x,
+ }
+ 
+ static struct of_device_id tegra_host1x_of_match[] = {
++	{ .compatible = "nvidia,tegra30-host1x", },
+ 	{ .compatible = "nvidia,tegra20-host1x", },
+ 	{ },
+ };
+-- 
+1.8.0
