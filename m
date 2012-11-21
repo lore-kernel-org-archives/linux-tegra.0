@@ -1,33 +1,49 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH V4 1/3] of: introduce for_each_matching_node_and_match()
-Date: Wed, 21 Nov 2012 09:53:20 +0000
-Message-ID: <201211210953.20552.arnd@arndb.de>
-References: <1353453142-4973-1-git-send-email-swarren@wwwdotorg.org>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
+Date: Wed, 21 Nov 2012 19:00:32 +0900
+Message-ID: <4275468.QAmZy3xUK6@percival>
+References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <1699753.ZQsWMHINxd@percival> <50AC956D.7020303@ti.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353453142-4973-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50AC956D.7020303@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 20 November 2012, Stephen Warren wrote:
-> However, this results in iterating over table twice; the second time
-> inside of_match_node(). The implementation of for_each_matching_node()
-> already found the match, so this is redundant. Invent new function
-> of_find_matching_node_and_match() and macro
-> for_each_matching_node_and_match() to remove the double iteration,
-> thus transforming the above code to:
-> 
->     for_each_matching_node_and_match(np, table, &match)
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wednesday 21 November 2012 16:48:45 Tomi Valkeinen wrote:
+> If the power-off sequence disables a regulator that was supposed to be
+> enabled by the power-on sequence (but wasn't enabled because of an
+> error), the regulator_disable is still called when the driver runs the
+> power-off sequence, isn't it? Regulator enables and disables are ref
+> counted, and the enables should match the disables.
 
-This look useful, but I wonder if the interface would make more sense if you
-make the last argument to the macro a normal pointer, rather than a
-pointer-to-pointer. You can take the reference as part of the macro.
+And there collapses my theory.
 
-	Arnd
+> > Failures might be better handled if sequences have some "recovery policy"
+> > about what to do when they fail, as mentioned in the link above. As you
+> > pointed out, the driver might not always know enough about the resources
+> > involved to do the right thing.
+> 
+> Yes, I think such recovery policy would be needed.
+
+Indeed, from your last paragraph this makes even more sense now.
+
+Oh, and I noticed I forgot to reply to this:
+
+> This I didn't understand. Doesn't "<&pwm 2 xyz>" point to a single
+> device, no matter where and how many times it's used?
+
+That's true - however when dereferencing the phandle, the underlying framework 
+will try to acquire the PWM, which will result in failure if the same resource 
+is referenced several times.
+
+One could compare the phandles to avoid this, but in your example you must 
+know that for PWMs the "xyz" part is not relevant for comparison.
+
+This makes referencing of resources by name much easier to implement and more 
+elegant with respect to frameworks leveraging.
+
+Alex.
