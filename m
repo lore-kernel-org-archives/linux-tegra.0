@@ -1,39 +1,54 @@
-From: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] arm: tegra: fix comment in dsib clk set_parent
-Date: Wed, 21 Nov 2012 13:42:27 +0200
-Message-ID: <1353498147-14574-1-git-send-email-sivaramn@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 218/493] amba: remove use of __devinit
+Date: Wed, 21 Nov 2012 11:56:56 +0000
+Message-ID: <20121121115655.GH3290@n2100.arm.linux.org.uk>
+References: <1353349642-3677-1-git-send-email-wfp5p@virginia.edu> <1353349642-3677-218-git-send-email-wfp5p@virginia.edu>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1353349642-3677-218-git-send-email-wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Since the clk framework has already taken necessary locks before calling
-into the arch clk ops code, no further locks are needed while setting
-the parent of dsib clk. This patch removes a comment that indicated
-otherwise, and yet did not take any locks.
+On Mon, Nov 19, 2012 at 01:22:47PM -0500, Bill Pemberton wrote:
+> CONFIG_HOTPLUG is going away as an option so __devinit is no longer
+> needed.
+> 
+> Signed-off-by: Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>
+> Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> 
 
-Signed-off-by: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/tegra30_clocks.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Nope, I don't speak for this driver; it's the Tegra people you want.
 
-diff --git a/arch/arm/mach-tegra/tegra30_clocks.c b/arch/arm/mach-tegra/tegra30_clocks.c
-index efc000e..d714777 100644
---- a/arch/arm/mach-tegra/tegra30_clocks.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks.c
-@@ -2045,9 +2045,7 @@ struct clk_ops tegra30_periph_clk_ops = {
- static int tegra30_dsib_clk_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk *d = clk_get_sys(NULL, "pll_d");
--	/* The DSIB parent selection bit is in PLLD base
--	   register - can not do direct r-m-w, must be
--	   protected by PLLD lock */
-+	/* The DSIB parent selection bit is in PLLD base register */
- 	tegra_clk_cfg_ex(
- 		d, TEGRA_CLK_PLLD_MIPI_MUX_SEL, index);
- 
--- 
-1.7.9.5
+TEGRA SUPPORT
+M:      Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+L:      linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Q:      http://patchwork.ozlabs.org/project/linux-tegra/list/
+T:      git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+S:      Supported
+F:      arch/arm/mach-tegra
+F:      arch/arm/boot/dts/tegra*
+F:      arch/arm/configs/tegra_defconfig
+
+> ---
+>  drivers/amba/tegra-ahb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+> index bd5de08..b7517ca 100644
+> --- a/drivers/amba/tegra-ahb.c
+> +++ b/drivers/amba/tegra-ahb.c
+> @@ -241,7 +241,7 @@ static void tegra_ahb_gizmo_init(struct tegra_ahb *ahb)
+>  	gizmo_writel(ahb, val, AHB_MEM_PREFETCH_CFG4);
+>  }
+>  
+> -static int __devinit tegra_ahb_probe(struct platform_device *pdev)
+> +static int tegra_ahb_probe(struct platform_device *pdev)
+>  {
+>  	struct resource *res;
+>  	struct tegra_ahb *ahb;
+> -- 
+> 1.8.0
+> 
