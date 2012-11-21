@@ -1,81 +1,33 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH] drm: tegra: Add Tegra30 support
-Date: Wed, 21 Nov 2012 09:50:41 +0100
-Message-ID: <1353487841-25955-1-git-send-email-thierry.reding@avionic-design.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V4 1/3] of: introduce for_each_matching_node_and_match()
+Date: Wed, 21 Nov 2012 09:53:20 +0000
+Message-ID: <201211210953.20552.arnd@arndb.de>
+References: <1353453142-4973-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353453142-4973-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for host1x, the display controllers and HDMI on the Tegra30
-SoC.
+On Tuesday 20 November 2012, Stephen Warren wrote:
+> However, this results in iterating over table twice; the second time
+> inside of_match_node(). The implementation of for_each_matching_node()
+> already found the match, so this is redundant. Invent new function
+> of_find_matching_node_and_match() and macro
+> for_each_matching_node_and_match() to remove the double iteration,
+> thus transforming the above code to:
+> 
+>     for_each_matching_node_and_match(np, table, &match)
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Hi David,
+This look useful, but I wonder if the interface would make more sense if you
+make the last argument to the macro a normal pointer, rather than a
+pointer-to-pointer. You can take the reference as part of the macro.
 
-I've rebased this on top of you drm-next branch as you requested. The
-change in hdmi.c looks a bit odd, but that's due to the fact that the
-nvidia,tegra30-hdmi line was already part of a prior patch where it
-shouldn't have been introduced yet. This patch merely adjusts its
-sorting order as currently required by the OF code.
-
-Thierry
-
- drivers/gpu/drm/tegra/dc.c     | 1 +
- drivers/gpu/drm/tegra/hdmi.c   | 2 +-
- drivers/gpu/drm/tegra/host1x.c | 3 +++
- 3 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 53b9852..37bd759 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -818,6 +818,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
- }
- 
- static struct of_device_id tegra_dc_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-dc", },
- 	{ .compatible = "nvidia,tegra20-dc", },
- 	{ },
- };
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 58f55dc..ab40164 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -1318,8 +1318,8 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
- }
- 
- static struct of_device_id tegra_hdmi_of_match[] = {
--	{ .compatible = "nvidia,tegra20-hdmi", },
- 	{ .compatible = "nvidia,tegra30-hdmi", },
-+	{ .compatible = "nvidia,tegra20-hdmi", },
- 	{ },
- };
- 
-diff --git a/drivers/gpu/drm/tegra/host1x.c b/drivers/gpu/drm/tegra/host1x.c
-index 1f728cd..bdb97a564 100644
---- a/drivers/gpu/drm/tegra/host1x.c
-+++ b/drivers/gpu/drm/tegra/host1x.c
-@@ -68,6 +68,8 @@ static int host1x_parse_dt(struct host1x *host1x)
- 	static const char * const compat[] = {
- 		"nvidia,tegra20-dc",
- 		"nvidia,tegra20-hdmi",
-+		"nvidia,tegra30-dc",
-+		"nvidia,tegra30-hdmi",
- 	};
- 	unsigned int i;
- 	int err;
-@@ -268,6 +270,7 @@ int host1x_unregister_client(struct host1x *host1x,
- }
- 
- static struct of_device_id tegra_host1x_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-host1x", },
- 	{ .compatible = "nvidia,tegra20-host1x", },
- 	{ },
- };
--- 
-1.8.0
+	Arnd
