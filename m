@@ -1,35 +1,87 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH] drm: tegra: Use framebuffer pitch as line stride
-Date: Thu, 22 Nov 2012 20:37:17 +0100
-Message-ID: <1353613037-15808-1-git-send-email-thierry.reding@avionic-design.de>
+From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 4/6] gpu: drm: tegra: Free platform data on remove
+Date: Thu, 22 Nov 2012 14:16:52 +0200
+Message-ID: <1353586614-7308-5-git-send-email-tbergstrom@nvidia.com>
+References: <1353586614-7308-1-git-send-email-tbergstrom@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353586614-7308-1-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of using the stride derived from the display mode, use the pitch
-associated with the currently active framebuffer. This fixes a bug where
-the LCD display content would be skewed when enabling HDMI with a video
-mode different from that of the LCD.
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Platform data was not freed in device removal. This patch adds
+missing devm_kfree() calls.
+
+Change-Id: Id00fd1940e786dbc80c7ac5a1bd4d6a4c18720a1
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/dc.c   |    3 +++
+ drivers/gpu/drm/tegra/dsi.c  |    3 +++
+ drivers/gpu/drm/tegra/hdmi.c |    3 +++
+ drivers/gpu/drm/tegra/tvo.c  |    3 +++
+ 4 files changed, 12 insertions(+)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 94686e5..41cde76 100644
+index 5ccb809..b9e5a79 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -218,7 +218,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
+@@ -818,6 +818,9 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(dc->clk);
+ 
++	platform_set_drvdata(pdev, NULL);
++	devm_kfree(&pdev->dev, dc);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 4f4c709..bba1c61 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -149,6 +149,9 @@ static int tegra_dsi_remove(struct platform_device *pdev)
+ 		return err;
  	}
  
- 	bpp = crtc->fb->bits_per_pixel / 8;
--	win.stride = win.outw * bpp;
-+	win.stride = crtc->fb->pitches[0];
++	platform_set_drvdata(pdev, NULL);
++	devm_kfree(&pdev->dev, dsi);
++
+ 	return 0;
+ }
  
- 	/* program window registers */
- 	value = tegra_dc_readl(dc, DC_CMD_DISPLAY_WINDOW_HEADER);
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index b2b8e58..72032e8 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -1312,6 +1312,9 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
+ 	clk_unprepare(hdmi->clk_parent);
+ 	clk_unprepare(hdmi->clk);
+ 
++	platform_set_drvdata(pdev, NULL);
++	devm_kfree(&pdev->dev, hdmi);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/tegra/tvo.c b/drivers/gpu/drm/tegra/tvo.c
+index 01ac356..c6219b3 100644
+--- a/drivers/gpu/drm/tegra/tvo.c
++++ b/drivers/gpu/drm/tegra/tvo.c
+@@ -159,6 +159,9 @@ static int tegra_tvo_remove(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	platform_set_drvdata(pdev, NULL);
++	devm_kfree(&pdev->dev, tvo);
++
+ 	return 0;
+ }
+ 
 -- 
-1.8.0
+1.7.9.5
