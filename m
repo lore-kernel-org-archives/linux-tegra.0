@@ -1,198 +1,161 @@
 From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/6] ARM: tegra: Add auxiliary data for nvhost
-Date: Thu, 22 Nov 2012 14:16:50 +0200
-Message-ID: <1353586614-7308-3-git-send-email-tbergstrom@nvidia.com>
-References: <1353586614-7308-1-git-send-email-tbergstrom@nvidia.com>
+Subject: [PATCH 0/6] Support for Tegra 2D hardware
+Date: Thu, 22 Nov 2012 11:47:58 +0200
+Message-ID: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353586614-7308-1-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add SoC specific auxiliary data to host1x and gr2d. nvhost uses
-this data.
+This set of patches adds support for Tegra20 and Tegra30 host1x and
+2D. It is based on Thierry Reding's tegra/next branch.
 
-Change-Id: Idb04b262c8b6432e56cffb6c7ed64cf7ef4545b3
-Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt-tegra20.c    |   38 ++++++++++++++++++++++++++++-
- arch/arm/mach-tegra/board-dt-tegra30.c    |   38 ++++++++++++++++++++++++++++-
- arch/arm/mach-tegra/tegra20_clocks_data.c |    8 +++---
- arch/arm/mach-tegra/tegra30_clocks_data.c |    2 ++
- 4 files changed, 80 insertions(+), 6 deletions(-)
+nvhost is the driver that controls host1x hardware. It supports
+host1x command channels, synchronization, run-time power management
+and memory management.
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 1d30eac..c695392 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -33,6 +33,7 @@
- #include <linux/i2c.h>
- #include <linux/i2c-tegra.h>
- #include <linux/usb/tegra_usb_phy.h>
-+#include <linux/nvhost.h>
- 
- #include <asm/hardware/gic.h>
- #include <asm/mach-types.h>
-@@ -45,6 +46,38 @@
- #include "common.h"
- #include "iomap.h"
- 
-+static const char *host1x_syncpt_names[32] = {
-+	[0] = "gfx_host",
-+	[NVSYNCPT_2D_0] = "2d_0",
-+	[NVSYNCPT_2D_1] = "2d_1",
-+	[NVSYNCPT_VBLANK0] = "vblank0",
-+	[NVSYNCPT_VBLANK1] = "vblank1",
-+};
-+
-+static struct host1x_device_info host1x_info = {
-+	.nb_channels	= 8,
-+	.nb_pts		= 32,
-+	.nb_mlocks	= 16,
-+	.nb_bases	= 8,
-+	.syncpt_names	= host1x_syncpt_names,
-+	.client_managed	= NVSYNCPTS_CLIENT_MANAGED,
-+};
-+
-+static struct nvhost_device_data tegra_host1x_info = {
-+	.clocks = { {"host1x", UINT_MAX} },
-+	NVHOST_MODULE_NO_POWERGATE_IDS,
-+	.private_data = &host1x_info,
-+};
-+
-+static struct nvhost_device_data tegra_gr2d_info = {
-+	.index		= 2,
-+	.syncpts	= BIT(NVSYNCPT_2D_0) | BIT(NVSYNCPT_2D_1),
-+	.clocks		= { {"gr2d", UINT_MAX, true}, {"epp", UINT_MAX, true} },
-+	NVHOST_MODULE_NO_POWERGATE_IDS,
-+	.clockgate_delay = 0,
-+	.serialize	= true,
-+};
-+
- struct tegra_ehci_platform_data tegra_ehci1_pdata = {
- 	.operating_mode = TEGRA_USB_OTG,
- 	.power_down_on_bus_suspend = 1,
-@@ -94,13 +127,16 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D600, "spi_tegra.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000D800, "spi_tegra.2", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-slink", 0x7000DA00, "spi_tegra.3", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra20-host1x", 0x50000000, "host1x", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-host1x", 0x50000000, "host1x",
-+			&tegra_host1x_info),
- 	OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54200000, "tegradc.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-dc", 0x54240000, "tegradc.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-hdmi", 0x54280000, "hdmi", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-dsi", 0x54300000, "dsi", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-tvo", 0x542c0000, "tvo", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-nand", 0x70008000, "tegra-nand", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra20-gr2d", 0x54140000, "tegra-gr2d",
-+		       &tegra_gr2d_info),
- 	{}
- };
- 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index 6497d12..1afa68b 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -29,6 +29,7 @@
- #include <linux/of_fdt.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
-+#include <linux/nvhost.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -38,6 +39,38 @@
- #include "common.h"
- #include "iomap.h"
- 
-+static const char *host1x_syncpt_names[32] = {
-+	[0] = "gfx_host",
-+	[NVSYNCPT_2D_0] = "2d_0",
-+	[NVSYNCPT_2D_1] = "2d_1",
-+	[NVSYNCPT_VBLANK0] = "vblank0",
-+	[NVSYNCPT_VBLANK1] = "vblank1",
-+};
-+
-+static struct host1x_device_info host1x_info = {
-+	.nb_channels	= 8,
-+	.nb_pts		= 32,
-+	.nb_mlocks	= 16,
-+	.nb_bases	= 8,
-+	.syncpt_names	= host1x_syncpt_names,
-+	.client_managed	= NVSYNCPTS_CLIENT_MANAGED,
-+};
-+
-+static struct nvhost_device_data tegra_host1x_info = {
-+	.clocks = { {"host1x", UINT_MAX} },
-+	NVHOST_MODULE_NO_POWERGATE_IDS,
-+	.private_data = &host1x_info,
-+};
-+
-+static struct nvhost_device_data tegra_gr2d_info = {
-+	.index		= 2,
-+	.syncpts	= BIT(NVSYNCPT_2D_0) | BIT(NVSYNCPT_2D_1),
-+	.clocks		= { {"gr2d", UINT_MAX, true}, {"epp", UINT_MAX, true} },
-+	NVHOST_MODULE_NO_POWERGATE_IDS,
-+	.clockgate_delay = 0,
-+	.serialize	= true,
-+};
-+
- struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
-@@ -57,12 +90,15 @@ struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DA00, "spi_tegra.3", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DC00, "spi_tegra.4", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DE00, "spi_tegra.5", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra30-host1x", 0x50000000, "host1x", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-host1x", 0x50000000, "host1x",
-+			&tegra_host1x_info),
- 	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54200000, "tegradc.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54240000, "tegradc.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-hdmi", 0x54280000, "hdmi", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-dsi", 0x54300000, "dsi", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra30-tvo", 0x542c0000, "tvo", NULL),
-+	OF_DEV_AUXDATA("nvidia,tegra30-gr2d", 0x54140000, "gr2d",
-+		       &tegra_gr2d_info),
- 	{}
- };
- 
-diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-tegra/tegra20_clocks_data.c
-index 7f049ac..3314e50 100644
---- a/arch/arm/mach-tegra/tegra20_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
-@@ -1041,10 +1041,10 @@ static struct clk_duplicate tegra_clk_duplicates[] = {
- 	CLK_DUPLICATE("usbd",	"utmip-pad",	NULL),
- 	CLK_DUPLICATE("usbd",	"tegra-ehci.0",	NULL),
- 	CLK_DUPLICATE("usbd",	"tegra-otg",	NULL),
--	CLK_DUPLICATE("2d",	"tegra_grhost",	"gr2d"),
--	CLK_DUPLICATE("3d",	"tegra_grhost",	"gr3d"),
--	CLK_DUPLICATE("epp",	"tegra_grhost",	"epp"),
--	CLK_DUPLICATE("mpe",	"tegra_grhost",	"mpe"),
-+	CLK_DUPLICATE("2d",	NULL,		"gr2d"),
-+	CLK_DUPLICATE("3d",	NULL,		"gr3d"),
-+	CLK_DUPLICATE("epp",	NULL,		"epp"),
-+	CLK_DUPLICATE("mpe",	NULL,		"mpe"),
- 	CLK_DUPLICATE("cop",	"tegra-avp",	"cop"),
- 	CLK_DUPLICATE("vde",	"tegra-aes",	"vde"),
- 	CLK_DUPLICATE("cclk",	NULL,		"cpu"),
-diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-index 6942c7a..f30bd54 100644
---- a/arch/arm/mach-tegra/tegra30_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
-@@ -1338,6 +1338,8 @@ struct clk_duplicate tegra_clk_duplicates[] = {
- 	CLK_DUPLICATE("pll_p", "tegradc.0", "parent"),
- 	CLK_DUPLICATE("pll_p", "tegradc.1", "parent"),
- 	CLK_DUPLICATE("pll_d2_out0", "hdmi", "parent"),
-+	CLK_DUPLICATE("2d", NULL, "gr2d"),
-+	CLK_DUPLICATE("epp", NULL, "epp"),
- };
- 
- struct clk *tegra_ptr_clks[] = {
+The patch set removes responsibility of host1x from tegradrm. At the
+same time, it moves all drm related infrastructure in host1x.c to
+other files.
+
+The patch set also adds user space API to tegradrm for accessing
+features provided by nvhost to tegradrm. We have prepared also
+patches to libdrm, but they are not yet ready for sending out.
+
+Please note that IOMMU support has effectively been disabled in this
+patch. The problem with IOMMU is that we should put all host1x
+devices under the same address space, but we haven't found a nice way
+of doing that in case of multiple drivers.
+
+Arto Merilainen (3):
+  gpu: drm: tegra: Remove redundant host1x
+  gpu: drm: tegra: Free platform data on remove
+  gpu: drm: tegra: Prime support
+
+Terje Bergstrom (3):
+  video: tegra: Add nvhost driver
+  ARM: tegra: Add auxiliary data for nvhost
+  drm: tegra: Add gr2d device
+
+ arch/arm/mach-tegra/board-dt-tegra20.c             |   38 +-
+ arch/arm/mach-tegra/board-dt-tegra30.c             |   38 +-
+ arch/arm/mach-tegra/tegra20_clocks_data.c          |    8 +-
+ arch/arm/mach-tegra/tegra30_clocks_data.c          |    2 +
+ drivers/gpu/drm/tegra/Kconfig                      |    8 +-
+ drivers/gpu/drm/tegra/Makefile                     |    4 +-
+ drivers/gpu/drm/tegra/dc.c                         |   25 +-
+ drivers/gpu/drm/tegra/dmabuf.c                     |  150 ++++++
+ drivers/gpu/drm/tegra/drm.c                        |  444 ++++++++++++++--
+ drivers/gpu/drm/tegra/drm.h                        |   89 ++--
+ drivers/gpu/drm/tegra/dsi.c                        |   27 +-
+ drivers/gpu/drm/tegra/fb.c                         |   26 +-
+ drivers/gpu/drm/tegra/gr2d.c                       |  225 +++++++++
+ drivers/gpu/drm/tegra/hdmi.c                       |   27 +-
+ drivers/gpu/drm/tegra/host1x.c                     |  343 -------------
+ drivers/gpu/drm/tegra/tvo.c                        |   36 +-
+ drivers/video/Kconfig                              |    2 +
+ drivers/video/Makefile                             |    2 +
+ drivers/video/tegra/host/Kconfig                   |   20 +
+ drivers/video/tegra/host/Makefile                  |   21 +
+ drivers/video/tegra/host/bus_client.c              |  101 ++++
+ drivers/video/tegra/host/bus_client.h              |   32 ++
+ drivers/video/tegra/host/chip_support.c            |   68 +++
+ drivers/video/tegra/host/chip_support.h            |  179 +++++++
+ drivers/video/tegra/host/debug.c                   |  255 ++++++++++
+ drivers/video/tegra/host/debug.h                   |   50 ++
+ drivers/video/tegra/host/dev.c                     |  104 ++++
+ drivers/video/tegra/host/dev.h                     |   33 ++
+ drivers/video/tegra/host/dmabuf.c                  |  151 ++++++
+ drivers/video/tegra/host/dmabuf.h                  |   51 ++
+ drivers/video/tegra/host/host1x/Makefile           |    6 +
+ drivers/video/tegra/host/host1x/host1x.c           |  320 ++++++++++++
+ drivers/video/tegra/host/host1x/host1x.h           |   97 ++++
+ .../video/tegra/host/host1x/host1x01_hardware.h    |  157 ++++++
+ drivers/video/tegra/host/host1x/host1x_cdma.c      |  488 ++++++++++++++++++
+ drivers/video/tegra/host/host1x/host1x_cdma.h      |   39 ++
+ drivers/video/tegra/host/host1x/host1x_channel.c   |  157 ++++++
+ drivers/video/tegra/host/host1x/host1x_debug.c     |  405 +++++++++++++++
+ drivers/video/tegra/host/host1x/host1x_intr.c      |  263 ++++++++++
+ drivers/video/tegra/host/host1x/host1x_syncpt.c    |  170 +++++++
+ .../video/tegra/host/host1x/hw_host1x01_channel.h  |  182 +++++++
+ drivers/video/tegra/host/host1x/hw_host1x01_sync.h |  398 +++++++++++++++
+ .../video/tegra/host/host1x/hw_host1x01_uclass.h   |  474 +++++++++++++++++
+ drivers/video/tegra/host/nvhost_acm.c              |  532 ++++++++++++++++++++
+ drivers/video/tegra/host/nvhost_acm.h              |   49 ++
+ drivers/video/tegra/host/nvhost_cdma.c             |  473 +++++++++++++++++
+ drivers/video/tegra/host/nvhost_cdma.h             |  116 +++++
+ drivers/video/tegra/host/nvhost_channel.c          |  129 +++++
+ drivers/video/tegra/host/nvhost_channel.h          |   65 +++
+ drivers/video/tegra/host/nvhost_intr.c             |  391 ++++++++++++++
+ drivers/video/tegra/host/nvhost_intr.h             |  110 ++++
+ drivers/video/tegra/host/nvhost_job.c              |  398 +++++++++++++++
+ drivers/video/tegra/host/nvhost_memmgr.c           |  252 ++++++++++
+ drivers/video/tegra/host/nvhost_memmgr.h           |   66 +++
+ drivers/video/tegra/host/nvhost_syncpt.c           |  453 +++++++++++++++++
+ drivers/video/tegra/host/nvhost_syncpt.h           |  148 ++++++
+ drivers/video/tegra/host/t20/Makefile              |    6 +
+ drivers/video/tegra/host/t20/t20.c                 |   78 +++
+ drivers/video/tegra/host/t20/t20.h                 |   29 ++
+ drivers/video/tegra/host/t30/Makefile              |    6 +
+ drivers/video/tegra/host/t30/t30.c                 |   80 +++
+ drivers/video/tegra/host/t30/t30.h                 |   29 ++
+ include/drm/tegra_drm.h                            |  129 +++++
+ include/linux/nvhost.h                             |  302 +++++++++++
+ include/trace/events/nvhost.h                      |  249 +++++++++
+ 65 files changed, 9295 insertions(+), 510 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/dmabuf.c
+ create mode 100644 drivers/gpu/drm/tegra/gr2d.c
+ delete mode 100644 drivers/gpu/drm/tegra/host1x.c
+ create mode 100644 drivers/video/tegra/host/Kconfig
+ create mode 100644 drivers/video/tegra/host/Makefile
+ create mode 100644 drivers/video/tegra/host/bus_client.c
+ create mode 100644 drivers/video/tegra/host/bus_client.h
+ create mode 100644 drivers/video/tegra/host/chip_support.c
+ create mode 100644 drivers/video/tegra/host/chip_support.h
+ create mode 100644 drivers/video/tegra/host/debug.c
+ create mode 100644 drivers/video/tegra/host/debug.h
+ create mode 100644 drivers/video/tegra/host/dev.c
+ create mode 100644 drivers/video/tegra/host/dev.h
+ create mode 100644 drivers/video/tegra/host/dmabuf.c
+ create mode 100644 drivers/video/tegra/host/dmabuf.h
+ create mode 100644 drivers/video/tegra/host/host1x/Makefile
+ create mode 100644 drivers/video/tegra/host/host1x/host1x.c
+ create mode 100644 drivers/video/tegra/host/host1x/host1x.h
+ create mode 100644 drivers/video/tegra/host/host1x/host1x01_hardware.h
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_cdma.c
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_cdma.h
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_channel.c
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_debug.c
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_intr.c
+ create mode 100644 drivers/video/tegra/host/host1x/host1x_syncpt.c
+ create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_channel.h
+ create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_sync.h
+ create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_uclass.h
+ create mode 100644 drivers/video/tegra/host/nvhost_acm.c
+ create mode 100644 drivers/video/tegra/host/nvhost_acm.h
+ create mode 100644 drivers/video/tegra/host/nvhost_cdma.c
+ create mode 100644 drivers/video/tegra/host/nvhost_cdma.h
+ create mode 100644 drivers/video/tegra/host/nvhost_channel.c
+ create mode 100644 drivers/video/tegra/host/nvhost_channel.h
+ create mode 100644 drivers/video/tegra/host/nvhost_intr.c
+ create mode 100644 drivers/video/tegra/host/nvhost_intr.h
+ create mode 100644 drivers/video/tegra/host/nvhost_job.c
+ create mode 100644 drivers/video/tegra/host/nvhost_memmgr.c
+ create mode 100644 drivers/video/tegra/host/nvhost_memmgr.h
+ create mode 100644 drivers/video/tegra/host/nvhost_syncpt.c
+ create mode 100644 drivers/video/tegra/host/nvhost_syncpt.h
+ create mode 100644 drivers/video/tegra/host/t20/Makefile
+ create mode 100644 drivers/video/tegra/host/t20/t20.c
+ create mode 100644 drivers/video/tegra/host/t20/t20.h
+ create mode 100644 drivers/video/tegra/host/t30/Makefile
+ create mode 100644 drivers/video/tegra/host/t30/t30.c
+ create mode 100644 drivers/video/tegra/host/t30/t30.h
+ create mode 100644 include/drm/tegra_drm.h
+ create mode 100644 include/linux/nvhost.h
+ create mode 100644 include/trace/events/nvhost.h
+
 -- 
 1.7.9.5
