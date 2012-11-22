@@ -1,73 +1,64 @@
-From: Grant Likely <grant.likely@secretlab.ca>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
-Date: Wed, 21 Nov 2012 16:44:04 +0000
-Message-ID: <20121121164404.E04EF3E0AE2@localhost>
-References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <1353149747-31871-2-git-send-email-acourbot@nvidia.com> <20121120215429.B621F3E1821@localhost> <20121121013133.GE4673@opensource.wolfsonmicro.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20121121013133.GE4673@opensource.wolfsonmicro.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
+Date: Thu, 22 Nov 2012 11:01:34 +0900
+Message-ID: <CAAVeFuK_V6nb874bygioi35mFNxaWuveKOedLT=YYsP4JfVqgA@mail.gmail.com>
+References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com>
+ <1353149747-31871-2-git-send-email-acourbot@nvidia.com>
+ <20121120215429.B621F3E1821@localhost>
+ <13540495.epaCf4JVn9@percival> <50ACB59B.4090404@iki.fi>
+ <20121121114018.GA31576@avionic-0098.adnet.avionic-design.de>
+ <50ACC341.3090204@ti.com>
+ <20121121130039.GA12191@avionic-0098.adnet.avionic-design.de>
+ <50ACD7DC.5060405@ti.com>
+ <CAAVeFuJofYwj926=3v0ApBCq_vNhCdC1PnzDc-B3d=LL_L40Uw@mail.gmail.com>
+ <20121121151209.GA4048@avionic-0098.adnet.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20121121151209.GA4048@avionic-0098.adnet.avionic-design.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Mark Zhang <markz@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Tomi Valkeinen <tomba@iki.fi>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Anton Vorontsov <cbouatmailru@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 21 Nov 2012 10:31:34 +0900, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-> On Tue, Nov 20, 2012 at 09:54:29PM +0000, Grant Likely wrote:
-> > On Sat, 17 Nov 2012 19:55:45 +0900, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> 
-> > > With the advent of the device tree and of ARM kernels that are not
-> > > board-tied, we cannot rely on these board-specific hooks anymore but
-> 
-> > This isn't strictly true. It is still perfectly fine to have board
-> > specific code when necessary. However, there is strong encouragement to
-> > enable that code in device drivers as much as possible and new board
-> > files need to have very strong justification.
-> 
-> This isn't the message that's gone over, and even for device drivers
-> everyone seems to be taking the whole device tree thing as a move to
-> pull all data out of the kernel.  In some cases there are some real
-> practical advantages to doing this but a lot of the people making these
-> changes seem to view having things in DT as a goal in itself.
+On Thu, Nov 22, 2012 at 12:12 AM, Thierry Reding
+<thierry.reding@avionic-design.de> wrote:
+> On Thu, Nov 22, 2012 at 12:02:47AM +0900, Alexandre Courbot wrote:
+>> Mmmm so maybe I am misinterpreting things, but it looks like we
+>> have just buried the power sequences here, haven't we?
+>
+> I don't think so. In fact I was just starting to think that maybe for
+> Tegra we could have a generic panel driver which used power sequences
+> to abstract away the pin differences for powering up the panel. Since
+> most likely that will be where the differences are there is a lot of
+> potential to factor things out into sequences.
+>
+> Perhaps what we may want to postpone for now is the DT representation
+> since that's what Tomi and Grant seem to be mostly opposed to.
 
-I know, and I do apologize for my part in not communicating and
-shepherding enough. For anyone reading; please be pragmatic on putting
-things into the DT. If a binding starts to look really complex, ask
-whether or not it helps things.
+The thing I don't understand here is why would anyone want power
+sequences without the DT representation. Guys, that's the whole point! :)
 
-> > I'm thinking about the scripts as trivial-to-parse ascii strings that
-> > have a very simple set of commands. The commands use resources already
-> > defined in the node. ie. 'g0' refers to the first entry in the gpios
-> > property. 'r0' for the regulator, 'p0' for the pwms, 'd' means delay. By
-> > no means take this as the format to use, it is just an example off the
-> > top of my head, but it is already way easier to work with than putting
-> > each command into a node.
-> 
-> It does appear to have some legibility challenges, especially with using
-> the indexes into the arrays of resources.  On the other hand the arrays
-> should be fairly small.
+If we are to implement things into drivers, then callback functions
+are going to serve us just as well - even better, for they are more
+flexible. All we need to do is define a dedicated ops structure and
+have the driver plug the right callback functions depending on the
+"compatible" property of the DT device node. We don't need a framework
+for that.
 
-This is merely an example off the top of my head. I'm in no way wed to
-the syntax.
+And if we are not going to use power seqs that's probably what we
+should do in order to get panels to work on Tegra boards for now. Then
+see how things turn out with the panel framework and whether there is
+a use for power seqs in it. But by the meantime, I don't see any
+motivation to merge power seqs sans DT support.
 
-> > > +Platform Data Format
-> > > +--------------------
-> > > +All relevant data structures for declaring power sequences are located in
-> > > +include/linux/power_seq.h.
-> 
-> > Hmm... If sequences are switched to a string instead, then platform_data
-> > should also use it. The power sequence data structures can be created at
-> > runtime by parsing the string.
-> 
-> Seems like a step backwards to me - why not let people store the more
-> parsed version of the data?  It's going to be less convenient for users
-> on non-DT systems.
-> 
-> As I said in my earlier reviews I think this is a useful thing to have
-> as a utility library for drivers independantly of the DT bindings, it
-> would allow drivers to become more data driven.  Perhaps we can rework
-> the series so that the DT bindings are added as a final patch?  All the
-> rest of the code seems OK.
-
-I'm fine with that if the bindings don't get merged yet.
-
-g.
-
+Alex.
