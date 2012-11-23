@@ -1,65 +1,34 @@
-From: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/6] gpu: drm: tegra: Remove redundant host1x
-Date: Fri, 23 Nov 2012 10:24:04 +0200
-Message-ID: <20121123082404.GA10090@sivaramn-lnx>
-References: <1353586614-7308-1-git-send-email-tbergstrom@nvidia.com>
- <1353586614-7308-4-git-send-email-tbergstrom@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra30: clocks: Make tegra_clk_duplicates private
+Date: Fri, 23 Nov 2012 11:21:04 +0200
+Message-ID: <1353662464-29037-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353586614-7308-4-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 22, 2012 at 01:16:51PM +0100, Terje Bergstrom wrote:
-> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+No need to be public.
 
-<snip>
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +int tegra_drm_unregister_client(struct tegra_drm_client *client)
-> +{
-> +       int ret = 0;
-> +
-> +       list_for_each_entry(client, &tegra_drm_subdrv_list, list) {
-> +
-> +               struct platform_device *pdev = to_platform_device(client->dev);
-> +
-> +               if (client->ops && client->ops->drm_exit) {
-> +                       int err = client->ops->drm_exit(client);
-
-Shadow error variable err (ret is not used)
-
-> +                       if (err < 0)
-> +                               dev_dbg(client->dev, "drm_exit() failed for %s: %d\n",
-> +                                       dev_name(client->dev), err);
-> +               }
-> +
-> +               /* if this is the last device, unregister the drm driver */
-> +               if (client->list.next == &tegra_drm_subdrv_list)
-> +                       drm_platform_exit(&tegra_drm_driver, pdev);
-> +
-> +               list_del_init(&client->list);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
-> +{
-> +       struct tegra_drm_client *client;
-> +       int err;
-> +
-> +       drm_mode_config_init(drm);
-> +
-> +       list_for_each_entry(client, &tegra_drm_subdrv_list, list) {
-> +               if (client->ops && client->ops->drm_init) {
-> +                       int err = client->ops->drm_init(client, drm);
-
-Shadow variable
-
--Sivaram
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index 7bc8b1d..c96e1dd 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -1289,7 +1289,7 @@ struct clk *tegra_list_clks[] = {
+  * configuration.  List those here to register them twice in the clock lookup
+  * table under two names.
+  */
+-struct clk_duplicate tegra_clk_duplicates[] = {
++static struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("uarta",  "serial8250.0", NULL),
+ 	CLK_DUPLICATE("uartb",  "serial8250.1", NULL),
+ 	CLK_DUPLICATE("uartc",  "serial8250.2", NULL),
+-- 
+1.7.9.5
