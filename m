@@ -1,56 +1,58 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
-Date: Fri, 23 Nov 2012 10:44:44 +0900
-Message-ID: <20121123014443.GD4385@opensource.wolfsonmicro.com>
-References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com>
- <1353149747-31871-2-git-send-email-acourbot@nvidia.com>
- <20121120215429.B621F3E1821@localhost>
- <20121121013133.GE4673@opensource.wolfsonmicro.com>
- <CACRpkdaNmBpfONDpt7zFqLaqfiGm+ELpO-v5gZmM0rEi_AzijQ@mail.gmail.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] drm: tegra: Use framebuffer pitch as line stride
+Date: Fri, 23 Nov 2012 07:54:03 +0200
+Message-ID: <50AF0F7B.7080601@nvidia.com>
+References: <1353613037-15808-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jL2BoiuKMElzg3CS"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaNmBpfONDpt7zFqLaqfiGm+ELpO-v5gZmM0rEi_AzijQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Alexandre Courbot <acourbot@nvidia.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-pm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Ola LILJA2 <ola.o.lilja@stericsson.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353613037-15808-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 22.11.2012 21:37, Thierry Reding wrote:
+> Instead of using the stride derived from the display mode, use the pitch
+> associated with the currently active framebuffer. This fixes a bug where
+> the LCD display content would be skewed when enabling HDMI with a video
+> mode different from that of the LCD.
 
---jL2BoiuKMElzg3CS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi
 
-On Thu, Nov 22, 2012 at 09:57:22AM +0100, Linus Walleij wrote:
+This might fix the issue we had with the stride when doing our 2D
+blitting on frame buffer. I'll test with your patch instead. We were
+using a different stride due to limitations of 2D unit, so we hacked
+this into our code:
 
-> Is it correct to assume that this library will be useful also for ALSA
-> SoC type of devices?
+diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
+b/drivers/gpu/drm/drm_fb_cma_he
+index fd9d0af..65b12ba 100644
+--- a/drivers/gpu/drm/drm_fb_cma_helper.c
++++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+@@ -214,7 +214,7 @@ static int drm_fbdev_cma_create(struct drm_fb_helper
+*helper
 
-ASoC has facilities for autogenerating the bulk of the sequences which
-with modern devices is all that you really need.
+        mode_cmd.width = sizes->surface_width;
+        mode_cmd.height = sizes->surface_height;
+-       mode_cmd.pitches[0] = sizes->surface_width * bytes_per_pixel;
++       mode_cmd.pitches[0] = roundup(sizes->surface_width *
+bytes_per_pixel, 32);
+        mode_cmd.pixel_format =
+drm_mode_legacy_fb_format(sizes->surface_bpp,
+                sizes->surface_depth);
 
---jL2BoiuKMElzg3CS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index b9e5a79..d70c488 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -219,7 +219,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
+        }
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+        bpp = crtc->fb->bits_per_pixel / 8;
+-       win.stride = win.outw * bpp;
++       win.stride = roundup(win.outw * bpp, 32);
 
-iQIcBAEBAgAGBQJQrtUFAAoJELSic+t+oim9or0P/jeRd4BYe3ocqxtkm+e8e60Y
-blALWfdQExTsYg1gmoEASiBFm5vhQg9TDcmM1MdojCRV0+IfPem+a/Zo8DuLinqO
-QqNNY5pw/j7KLM2FflzoiFPtwz5w4Tg85eMZD9nsmmAUw//t+hlB1uCI6qo1RAQ7
-GAR4L6jCTNqe9q7osV5ydEw3rrKKTqo99MMO0inZ788wp+xzSCHcP5wljRwHZwSI
-3Q8vL3dQw+IGa6/XJM9pMAOd/IFwW8+5QCl89Z6hRLza9V+K9Ax7/Xgj4uv/E2CG
-ASe9HZ4hInv6kwJX0yUN4dQJPt5CH+ABnuRnB9WBEhxZ5EIeYDy3JIHfCBxevGiN
-j8g8mLQ8ihXQ3GcLHgHk6cXtxI/5EZhaOWDCN13sZ3FTnxKfm1xDQ9iQoEx/CTgR
-oirZajqnKJyVBI2j431JLtzwzsI37dS9gS12MLtudXTCMuuib/RZ1CtpqvUfV0Hq
-mTUaKqiUXl67Pu+nbbIlwUuvicPugTjMBJepjhQlXlrDwvOXGj6p2rX0ZHEJYel4
-/mzD0ZIlwhcHgfh7RUQefuDldbr2DLJSDveAi6mWPnS1/GuNn4KIKwJuKgRqNGgW
-dQvoKBvH5qEQvZpwEehl7HAt7UQ5blr8zcWMz4iQxv9q3WY4G3SmmgUIYLH9E+Qw
-31wJ1bVSScBxeHLbdGqf
-=yrHA
------END PGP SIGNATURE-----
-
---jL2BoiuKMElzg3CS--
+        /* program window registers */
+        value = tegra_dc_readl(dc, DC_CMD_DISPLAY_WINDOW_HEADER);
