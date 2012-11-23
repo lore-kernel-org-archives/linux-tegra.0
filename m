@@ -1,178 +1,166 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/6] video: tegra: Add nvhost driver
-Date: Sat, 24 Nov 2012 00:38:55 +0100
-Message-ID: <20121123233855.GD21555@avionic-0098.adnet.avionic-design.de>
+Subject: Re: [PATCH 2/6] ARM: tegra: Add auxiliary data for nvhost
+Date: Sat, 24 Nov 2012 00:45:27 +0100
+Message-ID: <20121123234527.GE21555@avionic-0098.adnet.avionic-design.de>
 References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com>
- <1353577684-7896-2-git-send-email-tbergstrom@nvidia.com>
+ <1353577684-7896-3-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
+	protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1353577684-7896-2-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1353577684-7896-3-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---d01dLTUuW90fS44H
+--sfyO1m2EN8ZOtJL6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 22, 2012 at 11:47:59AM +0200, Terje Bergstrom wrote:
-> Add nvhost, the driver for host1x and 2D, which is a client device
-> for host1x.
+On Thu, Nov 22, 2012 at 11:48:00AM +0200, Terje Bergstrom wrote:
+> Add SoC specific auxiliary data to host1x and gr2d. nvhost uses
+> this data.
 >=20
-> Change-Id: Id93a28491dc2d54049e0adce4ad287c5985b2bca
+> Change-Id: Idb04b262c8b6432e56cffb6c7ed64cf7ef4545b3
 > Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/video/Kconfig                              |    2 +
->  drivers/video/Makefile                             |    2 +
->  drivers/video/tegra/host/Kconfig                   |   20 +
->  drivers/video/tegra/host/Makefile                  |   21 +
->  drivers/video/tegra/host/bus_client.c              |  101 ++++
->  drivers/video/tegra/host/bus_client.h              |   32 ++
->  drivers/video/tegra/host/chip_support.c            |   68 +++
->  drivers/video/tegra/host/chip_support.h            |  179 +++++++
->  drivers/video/tegra/host/debug.c                   |  255 ++++++++++
->  drivers/video/tegra/host/debug.h                   |   50 ++
->  drivers/video/tegra/host/dev.c                     |  104 ++++
->  drivers/video/tegra/host/dev.h                     |   33 ++
->  drivers/video/tegra/host/dmabuf.c                  |  151 ++++++
->  drivers/video/tegra/host/dmabuf.h                  |   51 ++
->  drivers/video/tegra/host/host1x/Makefile           |    6 +
->  drivers/video/tegra/host/host1x/host1x.c           |  320 ++++++++++++
->  drivers/video/tegra/host/host1x/host1x.h           |   97 ++++
->  .../video/tegra/host/host1x/host1x01_hardware.h    |  157 ++++++
->  drivers/video/tegra/host/host1x/host1x_cdma.c      |  488 ++++++++++++++=
-++++
->  drivers/video/tegra/host/host1x/host1x_cdma.h      |   39 ++
->  drivers/video/tegra/host/host1x/host1x_channel.c   |  157 ++++++
->  drivers/video/tegra/host/host1x/host1x_debug.c     |  405 +++++++++++++++
->  drivers/video/tegra/host/host1x/host1x_intr.c      |  263 ++++++++++
->  drivers/video/tegra/host/host1x/host1x_syncpt.c    |  170 +++++++
->  .../video/tegra/host/host1x/hw_host1x01_channel.h  |  182 +++++++
->  drivers/video/tegra/host/host1x/hw_host1x01_sync.h |  398 +++++++++++++++
->  .../video/tegra/host/host1x/hw_host1x01_uclass.h   |  474 ++++++++++++++=
-+++
->  drivers/video/tegra/host/nvhost_acm.c              |  532 ++++++++++++++=
-++++++
->  drivers/video/tegra/host/nvhost_acm.h              |   49 ++
->  drivers/video/tegra/host/nvhost_cdma.c             |  473 ++++++++++++++=
-+++
->  drivers/video/tegra/host/nvhost_cdma.h             |  116 +++++
->  drivers/video/tegra/host/nvhost_channel.c          |  129 +++++
->  drivers/video/tegra/host/nvhost_channel.h          |   65 +++
->  drivers/video/tegra/host/nvhost_intr.c             |  391 ++++++++++++++
->  drivers/video/tegra/host/nvhost_intr.h             |  110 ++++
->  drivers/video/tegra/host/nvhost_job.c              |  398 +++++++++++++++
->  drivers/video/tegra/host/nvhost_memmgr.c           |  252 ++++++++++
->  drivers/video/tegra/host/nvhost_memmgr.h           |   66 +++
->  drivers/video/tegra/host/nvhost_syncpt.c           |  453 ++++++++++++++=
-+++
->  drivers/video/tegra/host/nvhost_syncpt.h           |  148 ++++++
->  drivers/video/tegra/host/t20/Makefile              |    6 +
->  drivers/video/tegra/host/t20/t20.c                 |   78 +++
->  drivers/video/tegra/host/t20/t20.h                 |   29 ++
->  drivers/video/tegra/host/t30/Makefile              |    6 +
->  drivers/video/tegra/host/t30/t30.c                 |   80 +++
->  drivers/video/tegra/host/t30/t30.h                 |   29 ++
->  include/linux/nvhost.h                             |  302 +++++++++++
->  include/trace/events/nvhost.h                      |  249 +++++++++
->  48 files changed, 8186 insertions(+)
->  create mode 100644 drivers/video/tegra/host/Kconfig
->  create mode 100644 drivers/video/tegra/host/Makefile
->  create mode 100644 drivers/video/tegra/host/bus_client.c
->  create mode 100644 drivers/video/tegra/host/bus_client.h
->  create mode 100644 drivers/video/tegra/host/chip_support.c
->  create mode 100644 drivers/video/tegra/host/chip_support.h
->  create mode 100644 drivers/video/tegra/host/debug.c
->  create mode 100644 drivers/video/tegra/host/debug.h
->  create mode 100644 drivers/video/tegra/host/dev.c
->  create mode 100644 drivers/video/tegra/host/dev.h
->  create mode 100644 drivers/video/tegra/host/dmabuf.c
->  create mode 100644 drivers/video/tegra/host/dmabuf.h
->  create mode 100644 drivers/video/tegra/host/host1x/Makefile
->  create mode 100644 drivers/video/tegra/host/host1x/host1x.c
->  create mode 100644 drivers/video/tegra/host/host1x/host1x.h
->  create mode 100644 drivers/video/tegra/host/host1x/host1x01_hardware.h
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_cdma.c
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_cdma.h
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_channel.c
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_debug.c
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_intr.c
->  create mode 100644 drivers/video/tegra/host/host1x/host1x_syncpt.c
->  create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_channel.h
->  create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_sync.h
->  create mode 100644 drivers/video/tegra/host/host1x/hw_host1x01_uclass.h
->  create mode 100644 drivers/video/tegra/host/nvhost_acm.c
->  create mode 100644 drivers/video/tegra/host/nvhost_acm.h
->  create mode 100644 drivers/video/tegra/host/nvhost_cdma.c
->  create mode 100644 drivers/video/tegra/host/nvhost_cdma.h
->  create mode 100644 drivers/video/tegra/host/nvhost_channel.c
->  create mode 100644 drivers/video/tegra/host/nvhost_channel.h
->  create mode 100644 drivers/video/tegra/host/nvhost_intr.c
->  create mode 100644 drivers/video/tegra/host/nvhost_intr.h
->  create mode 100644 drivers/video/tegra/host/nvhost_job.c
->  create mode 100644 drivers/video/tegra/host/nvhost_memmgr.c
->  create mode 100644 drivers/video/tegra/host/nvhost_memmgr.h
->  create mode 100644 drivers/video/tegra/host/nvhost_syncpt.c
->  create mode 100644 drivers/video/tegra/host/nvhost_syncpt.h
->  create mode 100644 drivers/video/tegra/host/t20/Makefile
->  create mode 100644 drivers/video/tegra/host/t20/t20.c
->  create mode 100644 drivers/video/tegra/host/t20/t20.h
->  create mode 100644 drivers/video/tegra/host/t30/Makefile
->  create mode 100644 drivers/video/tegra/host/t30/t30.c
->  create mode 100644 drivers/video/tegra/host/t30/t30.h
->  create mode 100644 include/linux/nvhost.h
->  create mode 100644 include/trace/events/nvhost.h
+>  arch/arm/mach-tegra/board-dt-tegra20.c    |   38 +++++++++++++++++++++++=
++++++-
+>  arch/arm/mach-tegra/board-dt-tegra30.c    |   38 +++++++++++++++++++++++=
++++++-
+>  arch/arm/mach-tegra/tegra20_clocks_data.c |    8 +++---
+>  arch/arm/mach-tegra/tegra30_clocks_data.c |    2 ++
+>  4 files changed, 80 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra=
+/board-dt-tegra20.c
+> index 1d30eac..c695392 100644
+> --- a/arch/arm/mach-tegra/board-dt-tegra20.c
+> +++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/i2c.h>
+>  #include <linux/i2c-tegra.h>
+>  #include <linux/usb/tegra_usb_phy.h>
+> +#include <linux/nvhost.h>
+> =20
+>  #include <asm/hardware/gic.h>
+>  #include <asm/mach-types.h>
+> @@ -45,6 +46,38 @@
+>  #include "common.h"
+>  #include "iomap.h"
+> =20
+> +static const char *host1x_syncpt_names[32] =3D {
+> +	[0] =3D "gfx_host",
+> +	[NVSYNCPT_2D_0] =3D "2d_0",
+> +	[NVSYNCPT_2D_1] =3D "2d_1",
+> +	[NVSYNCPT_VBLANK0] =3D "vblank0",
+> +	[NVSYNCPT_VBLANK1] =3D "vblank1",
+> +};
 
-Okay, there's a huge amount of code here. From a quick look this seems
-like the whole nvhost implementation as found in the L4T kernel. It'll
-obviously take quite a bit of time to go through all of it.
+I think I remember a discussion about this back when we designed the DT
+bindings. The result I seem to remember was that since syncpoints can be
+arbitrarily assigned they wouldn't have to be statically allocated at
+compile time.
 
-I would really like this to be phased in in more manageable chunks. For
-instance syncpoints could be added on top of the existing host1x
-infrastructure (the display controllers can make use of it for VBLANK
-reporting, right?), followed by channel support for command submission.
+Instead we could just have them allocated when a host1x client registers
+with host1x. Or have each client request its required syncpoints
+explicitly. The latter would make it trivial to associate a label with
+it.
 
-While VBLANK reporting is already rudimentarily supported using the
-display controllers' VBLANK interrupts, adding syncpt based support
-should be easy to do.
+> +
+> +static struct host1x_device_info host1x_info =3D {
+> +	.nb_channels	=3D 8,
+> +	.nb_pts		=3D 32,
+> +	.nb_mlocks	=3D 16,
+> +	.nb_bases	=3D 8,
+> +	.syncpt_names	=3D host1x_syncpt_names,
+> +	.client_managed	=3D NVSYNCPTS_CLIENT_MANAGED,
+> +};
+> +
+> +static struct nvhost_device_data tegra_host1x_info =3D {
+> +	.clocks =3D { {"host1x", UINT_MAX} },
+> +	NVHOST_MODULE_NO_POWERGATE_IDS,
+> +	.private_data =3D &host1x_info,
+> +};
+> +
+> +static struct nvhost_device_data tegra_gr2d_info =3D {
+> +	.index		=3D 2,
+> +	.syncpts	=3D BIT(NVSYNCPT_2D_0) | BIT(NVSYNCPT_2D_1),
+> +	.clocks		=3D { {"gr2d", UINT_MAX, true}, {"epp", UINT_MAX, true} },
+> +	NVHOST_MODULE_NO_POWERGATE_IDS,
+> +	.clockgate_delay =3D 0,
+> +	.serialize	=3D true,
+> +};
 
-Last but not least, I'd really appreciate it if we could settle on one
-name for this component. One place calls it graphics host, another one
-refers to it as host1x and now we have an nvhost driver for it. The TRM
-isn't very consistent either, unfortunately, but a number of chapters
-refer to it as host1x and the clock that drives the block is also named
-host1x. Those are pretty much the reasons why I chose to call the DT
-node and the driver host1x and I would like to suggest we stay with it
-to keep things less confusing.
+Again, this doesn't seem like it should be statically configured in the
+board data.
+
+The same comments apply to the Tegra30 hunk that I've left out.
+
+> diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-te=
+gra/tegra20_clocks_data.c
+> index 7f049ac..3314e50 100644
+> --- a/arch/arm/mach-tegra/tegra20_clocks_data.c
+> +++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+> @@ -1041,10 +1041,10 @@ static struct clk_duplicate tegra_clk_duplicates[=
+] =3D {
+>  	CLK_DUPLICATE("usbd",	"utmip-pad",	NULL),
+>  	CLK_DUPLICATE("usbd",	"tegra-ehci.0",	NULL),
+>  	CLK_DUPLICATE("usbd",	"tegra-otg",	NULL),
+> -	CLK_DUPLICATE("2d",	"tegra_grhost",	"gr2d"),
+> -	CLK_DUPLICATE("3d",	"tegra_grhost",	"gr3d"),
+> -	CLK_DUPLICATE("epp",	"tegra_grhost",	"epp"),
+> -	CLK_DUPLICATE("mpe",	"tegra_grhost",	"mpe"),
+> +	CLK_DUPLICATE("2d",	NULL,		"gr2d"),
+> +	CLK_DUPLICATE("3d",	NULL,		"gr3d"),
+> +	CLK_DUPLICATE("epp",	NULL,		"epp"),
+> +	CLK_DUPLICATE("mpe",	NULL,		"mpe"),
+
+Are these actually required here?
+
+>  	CLK_DUPLICATE("cop",	"tegra-avp",	"cop"),
+>  	CLK_DUPLICATE("vde",	"tegra-aes",	"vde"),
+>  	CLK_DUPLICATE("cclk",	NULL,		"cpu"),
+> diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-te=
+gra/tegra30_clocks_data.c
+> index 6942c7a..f30bd54 100644
+> --- a/arch/arm/mach-tegra/tegra30_clocks_data.c
+> +++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+> @@ -1338,6 +1338,8 @@ struct clk_duplicate tegra_clk_duplicates[] =3D {
+>  	CLK_DUPLICATE("pll_p", "tegradc.0", "parent"),
+>  	CLK_DUPLICATE("pll_p", "tegradc.1", "parent"),
+>  	CLK_DUPLICATE("pll_d2_out0", "hdmi", "parent"),
+> +	CLK_DUPLICATE("2d", NULL, "gr2d"),
+> +	CLK_DUPLICATE("epp", NULL, "epp"),
+
+Same here.
 
 Thierry
 
---d01dLTUuW90fS44H
+--sfyO1m2EN8ZOtJL6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQsAkPAAoJEN0jrNd/PrOhbCIP/0tFk3Py7sbtTvftg4fN73Qs
-8mlesJGgYkLqDxNK3bcasyQH8Nz1ROVWrV4FkgaXfc3w6d40x0uIa1ZePQPrW/kH
-/R9i3Zp4pRb3vBiOffzXNu9F8XAJFJShmjz9b+RMkF8tqqipSPWeqRYmcg0pGUhd
-qtqzdAL41KPbdfsm8V0K8OhGjiLjbB1Ogdq9dxK3o2AjJ+N0FvsjD2Aqz2p06jxR
-j6sfGL41RUKfJKcKvqjwrMb8p85tON5bwThRXJMOxPTqsB2pAKlkY+nHY8J0pW7T
-icRSif8L91DK6zCxkRc+eRFBcu/jhti/g3LCrrn2j6Dhmfo7WlvRk7bhpE6A+OX2
-wKNUaSSE8wHHHGnPciiRYSLY/UEUNA81lq1xEC8AiH/GHNnb8U5fUz61Z73orT7n
-ircW3uvDDtlllaAVmSslHqTwnLDFHY/blNnZuhVgMchwRwJsMdDTak2NH5hoV3K3
-7uhD4B3nnvUmycVUWnjaoe9pb8wvbOAFYqY2FFdVMKVdHYw/Fk2nvEmZOV6PZFxj
-QBppWBlbY1t+R1yag3uUSP4Iw6Eo398iWtHy6+WsqvgmpMMJQDe0NcqzvOaRHyi3
-Hn8BeS9NXKxiTfuemVxUQQkao+twGJHrOA95m8iFu72DkyvruZbEC0ilBIBdjhCI
-eBf2o6FGV50WZ4wvpNxq
-=pKvX
+iQIcBAEBAgAGBQJQsAqXAAoJEN0jrNd/PrOhl2wP/3/jHghYRii2U+Y2vxTS95jX
+K6LdI1GrW7d4cgjKrCYHyKT5blOEsXMJzuWyokw1QUMfbCQ9WWFTi3AknNnlC92T
+NfJGaTTXJrZ9wx0nXbq6ippoKxnDSpsAKy485ndw3ps+b9A8joxFRAySeJHbhKl6
+blse4Bx4t+AgUoFtcSX3UjYW3irEh6c0DgmExXDSrzgMZA2kxyelSLHvAPUiKK8B
+yty94mDqsHgcInH9FNUcvxgnO4HA4peZrk3pX6JAumP3zG4UE2kUpRI8qgQf1SEY
+hkNnyg3malTLqsK+1iPpWJj8dKuKYzmIvkFU7q/lYSDs9F4QAb/92ULHDgLBj17Y
+J7n6QToZJOWtbuHXRZisMLHiuBv6DYL8WJvvzMQDhXO0E/Wb47gG2YQ+GUsGKKKq
+Vh54kcpHl5qH1ClpvWhOF2Ncxyc4Z1h5mutGPc9/4dK3T8H+Lw3Zz4oGpQ8onAHT
+XXGcSwR5wynpfLjU9Qe29EOaelhUOyvs6XlgbGiqTDpa3loGoQ3/xKaQn/rVMung
+x6El2D8ssI6xbxB46E0XN+bU8uu5rLztaHD+LWeraUWrhnvduvFj8MKzZmtNPDM2
+a8K4HkAOhoiCuEE3OaxaiSKSk08+QNeLEaNHFfv6DYzRoJz+e9obzTPUFX5a2T74
+Vzya6mby1g5//V/dOsWc
+=HWPk
 -----END PGP SIGNATURE-----
 
---d01dLTUuW90fS44H--
+--sfyO1m2EN8ZOtJL6--
