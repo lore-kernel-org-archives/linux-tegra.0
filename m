@@ -1,72 +1,52 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: xf86-video-tegra or xf86-video-modesetting?
-Date: Sun, 25 Nov 2012 14:40:33 +0100
-Message-ID: <20121125134033.GB30264@avionic-0098.adnet.avionic-design.de>
-References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de>
- <CAOMqctTQGzhu3gU5hdJWKOCU0Dyk1vxCjE918PMa7aR+o1pTiQ@mail.gmail.com>
+Date: Sun, 25 Nov 2012 17:47:32 +0200
+Message-ID: <50B23D94.8070604@nvidia.com>
+References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de> <1353797672.1479.17.camel@tellur>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOMqctTQGzhu3gU5hdJWKOCU0Dyk1vxCjE918PMa7aR+o1pTiQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1353797672.1479.17.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michal Suchanek <hramrach-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org" <xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org>, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 25.11.2012 00:54, Lucas Stach wrote:
+> As much as I dislike to say this, but forking the modesetting driver to
+> bring in the Tegra specific 2D accel might be the best way to go for
+> now. Especially looking at the very limited resources available to
+> tegradrm development and NVIDIAs expressed desire to do as few changes
+> as possible to their downstream work.
 
---gj572EiMnwbLXET9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Which changes to downstream work would these be? What changes would help
+in getting the acceleration support into mode setting driver?
 
-On Sun, Nov 25, 2012 at 12:45:07PM +0100, Michal Suchanek wrote:
-> Hello,
->=20
-> On 24 November 2012 22:09, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
->=20
-> > However, that has all the usual drawbacks of a fork so I thought maybe
-> > it would be better to write some code to xf86-video-modesetting to add
-> > GPU-specific acceleration on top. Such code could be leveraged by other
-> > drivers as well and all of them could share a common base for the
-> > functionality provided through the standard DRM IOCTLs.
-> >
-> > That approach has some disadvantages of its own, like the potential
-> > bloat if many GPUs do the same. It would also be a bit of a step back
-> > to the old monolithic days of X.
-> >
->=20
-> You can always make the tegra part a submodule if you think putting it
-> into the driver directly is too monolithic.
+We've done quite a lot of changes in downstream nvhost to help
+upstreaming, and I'll keep downstream nvhost as close to upstream as
+possible when/if nvhost wiggles its way into upstream. But you might be
+talking about something else.
 
-Good point. I suppose it could also be made selectable at compile time,
-similar to how things are done in libdrm. I'm not particularly worried
-about the monolithic aspect, but I wanted to bring it up for discussion
-and see what other people think.
+> We don't have any standard DRM IOCTLs for doing acceleration today. The
+> single fact that we are stitching together command streams in userspace
+> for execution by the GPU renders a common interface unusable. We don't
 
-Thierry
+Command streams for Tegra 2D are easiest to stitch together in user
+space. We have discussed the possibility to implement some simple
+operations in kernel, too, f.ex. using 2D to clear or copy a memory
+region. But in the end there are not too many reasons to implement that
+in kernel versus doing it in user space.
 
---gj572EiMnwbLXET9
-Content-Type: application/pgp-signature
+Do we have to even attempt standardizing the IOCTLs? The standardization
+could happen in libdrm level. We've already implemented some common 2D
+operations for Tegra 2D, but we haven't yet solved the question that
+where should we put the code in - in our internal tree it's now inside
+libdrm. None of the other GPUs supported by libdrm implement
+acceleration inside libdrm, so if we follow that, we'll just provide
+libtegradrm with the 2D operations. That'll require a Tegra specific
+modesetting driver.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Path of least resistance?
 
-iQIcBAEBAgAGBQJQsh/RAAoJEN0jrNd/PrOhuRoQAMH5UFeAc0oJLpzKCPHAYRkE
-8/2Q5I5U2b9+UJN9N17lODuDnqPlm4JcmDkzjXPQLQCtw/SjuBMvuKB9CUVp4Nxg
-YR1t051Ax608CyvlkAZpxFvJJrQJ4ze59i7TBPVLNgqTB39zgNSfxfIF+3T2wlQ3
-XA9qORDVhytO+fRT3Wz+UMAIKLyO7K3tgkxsmvgPJkuVkbOCLPAN6UuGUG1fw3y7
-A/otfHx/153FxTDLxGZijyosvzntbF+q1/3PJfBTTk8UqY9vThyA16B64ZLVQY6g
-o/DyIdfxEiSwyKcbSY0idLit4VblYUHrP2o8weoAVQnHPJAc/XDd4xOM6KpjYvEl
-KCON52h5yD+87vXw4HXtg8o40n+QMeYuh5+pJQH6CSCcXhzQWe53cEoNnmzV+jke
-pcN0FRFtSXTPegjoDIG0ykncvKG3xb0WikXOn+h0Bctuk8KBPfg9JzU/Qn5DlY/O
-C84ahsYr3X18rKa6JDL0p2pKP6hKAfelcEqN1GeJ02Q7f1EOpq9LILJ26o9eOTlZ
-ePcogm/2x7G1bKgDQ0wXLV4cBq3sO0/Kd2hAJhtCko0KQJ0rlx0yDD4D7W2ykDhr
-Wq98CKL9iN3oio7PLumgkzRY8WN3GMzAq5Bd2AxZmJspKDtCFYwHyd5vrERY88Mn
-m7FByzylxEL9tSwMl13E
-=FW1r
------END PGP SIGNATURE-----
-
---gj572EiMnwbLXET9--
+Terje
