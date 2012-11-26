@@ -1,80 +1,57 @@
-From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: xf86-video-tegra or xf86-video-modesetting?
-Date: Mon, 26 Nov 2012 09:01:26 -0500
-Message-ID: <CADnq5_PwR1P6HDZSD-UeoaKUdQzFhK3cdQ4jhEWtR9Lgb-P2hQ@mail.gmail.com>
-References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de>
-	<1353797672.1479.17.camel@tellur>
-	<20121125133759.GA30264@avionic-0098.adnet.avionic-design.de>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
+Date: Mon, 26 Nov 2012 15:34:53 +0000
+Message-ID: <20121126153453.2AA023E1AAA@localhost>
+References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com>
+ <1353149747-31871-2-git-send-email-acourbot@nvidia.com>
+ <20121120215429.B621F3E1821@localhost> <13540495.epaCf4JVn9@percival>
+ <20121122133941.24B883E129E@localhost>
+ <20121122214021.GA14771@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121125133759.GA30264-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20121122214021.GA14771@avionic-0098.adnet.avionic-design.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Mark Zhang <markz@nvidia.com>, Rob Herring <rob.herring@calxeda.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alex Courbot <acourbot@nvidia.com>, Anton Vorontsov <cbouatmailru@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Nov 25, 2012 at 8:37 AM, Thierry Reding
-<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> On Sat, Nov 24, 2012 at 11:54:32PM +0100, Lucas Stach wrote:
->> Am Samstag, den 24.11.2012, 22:09 +0100 schrieb Thierry Reding:
->> > Hi,
->> >
->> > With tegra-drm going into Linux 3.8 and NVIDIA posting initial patches
->> > for 2D acceleration on top of it, I've been looking at the various ways
->> > how this can best be leveraged.
->> >
->> > The most obvious choice would be to start work on an xf86-video-tegra
->> > driver that uses the code currently in the works to implement the EXA
->> > callbacks that allow some of the rendering to be offloaded to the GPU.
->> > The way I would go about this is to fork xf86-video-modesetting, do some
->> > rebranding and add the various bits required to offload rendering.
->> >
->> As much as I dislike to say this, but forking the modesetting driver to
->> bring in the Tegra specific 2D accel might be the best way to go for
->> now. Especially looking at the very limited resources available to
->> tegradrm development and NVIDIAs expressed desire to do as few changes
->> as possible to their downstream work.
->
-> So true. But I'm not sure if it's a good excuse to not do things the
-> right way, even if it ends up being more work. If the general situation
-> can be improved then I think it's worth the effort.
->
->> > However, that has all the usual drawbacks of a fork so I thought maybe
->> > it would be better to write some code to xf86-video-modesetting to add
->> > GPU-specific acceleration on top. Such code could be leveraged by other
->> > drivers as well and all of them could share a common base for the
->> > functionality provided through the standard DRM IOCTLs.
->> >
->> We don't have any standard DRM IOCTLs for doing acceleration today. The
->> single fact that we are stitching together command streams in userspace
->> for execution by the GPU renders a common interface unusable. We don't
->> even have a common interface to allocate GPU resources suitable for
->> acceleration: the dumb IOCTLs are only guaranteed to give you a buffer
->> the display engine can scan out from, nothing in there let's you set up
->> more fancy things like tiling etc, which might be needed to operate on
->> the buffer with other engines in some way.
->
-> With the common base that could be shared I meant all the modesetting
-> code and framebuffer setup that xf86-video-modesetting already does.
-> I've been wanting to add support for planes as well, which comes with
-> another set of standard IOCTLs in DRM.
->
-> Rewriting all of that in different drivers doesn't seem very desirable
-> to me and sounds like a lot of wasted effort. And that's not couting the
-> maintenance burden to keep up with the latest changes in the generic
-> modesetting driver.
->
+On Thu, 22 Nov 2012 22:40:21 +0100, Thierry Reding <thierry.reding@avionic-design.de> wrote:
+> On Thu, Nov 22, 2012 at 01:39:41PM +0000, Grant Likely wrote:
+> [...]
+> > I do think that each sequence should be contained within a single
+> > property, but I'm open to other suggestions.
+> 
+> IIRC a very early prototype did implement something like that. However
+> because of the resource issues this had to be string based, so that the
+> sequences looked somewhat like (Alex, correct me if I'm wrong):
+> 
+> 	power-on = <"REGULATOR", "power", 1, "GPIO", "enable", 1>;
+> 
+> Instead we could possibly have something like:
+> 
+> 	power-on = <0 &reg 1,
+> 		    1 &gpio 42 0 1>;
 
-You don't really end up rewriting it, most people just copy the
-modesetting driver, change the name, and start adding acceleration; in
-which case, the work is already done.  Also, the generic code doesn't
-change much.  Based on other ddxes, you rarely have to change the
-modesetting and framebuffer code.  Most of the work ends up being the
-device specific acceleration and memory management code.
-Also, depending on what hardware is available, I'm not sure
-traditional 2D engines will gain much over shadowfb other than hw
-accelerated buffer swaps for GL.  In my opinion something like glamor
-is the best bet for mapping legacy X APIs on to modern GL hw.
+Yes, that would work, although I still think it would be a good idea to
+split the used resources off into the gpios/pwms/regs/etc properties.
 
-Alex
+> Where the first cell in each entry defines the type (0 = regulator, 1 =
+> GPIO) and the rest would be a regular OF specifier for the given type of
+> resource along with some defined parameter such as enable/disable,
+> voltage, delay in ms, ... I don't know if that sounds any better. It
+> looks sort of cryptic but it is more "in the spirit of" DT, right Grant?
+
+It is still kind of a ham-handed approach, but it does fit better with
+existing conventions than the hierarchy of nodes does.
+
+g.
