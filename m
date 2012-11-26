@@ -1,42 +1,53 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/6] video: tegra: Add nvhost driver
-Date: Mon, 26 Nov 2012 10:21:36 +0200
-Message-ID: <50B32690.7020102@nvidia.com>
-References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com> <1353577684-7896-2-git-send-email-tbergstrom@nvidia.com> <20121123233855.GD21555@avionic-0098.adnet.avionic-design.de> <50B07084.40707@nvidia.com> <20121124190416.GC26154@avionic-0098.adnet.avionic-design.de>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 4/6] gpu: drm: tegra: Free platform data on remove
+Date: Mon, 26 Nov 2012 08:33:55 +0100
+Message-ID: <7DC9167CA73B39468DFA1D07FF67A6A85150E61DDC@DEMAIL01.nvidia.com>
+References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com>
+ <1353577684-7896-5-git-send-email-tbergstrom@nvidia.com>,<20121123215305.GA21555@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121124190416.GC26154-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <20121123215305.GA21555-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 24.11.2012 21:04, Thierry Reding wrote:
->>> I would really like this to be phased in in more manageable chunks. For
->>> instance syncpoints could be added on top of the existing host1x
->>> infrastructure (the display controllers can make use of it for VBLANK
->>> reporting, right?), followed by channel support for command submission.
+Thank you for your comments, I will drop this patch.
 
-I staged nvhost into 4 patches that each add some functionality:
- * Add driver with API to read and increment sync point values
- * Add syncpt wait and interrupt infrastructure
- * Add channel and client support and related infrastructure (jobs, memmgr)
- * Add debug support
+- Arto
+________________________________________
+From: Thierry Reding [thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org]
+Sent: Friday, November 23, 2012 11:53 PM
+To: Terje Bergstrom
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Arto Merilainen
+Subject: Re: [PATCH 4/6] gpu: drm: tegra: Free platform data on remove
 
-I hope that helps in reviews.
+* PGP Signed by an unknown key
 
-> I'm all for reusing your code. My concern is that the structure of this
-> is quite different from what can be found in the L4T downstream kernels
-> and therefore some rethinking may be required.
+On Thu, Nov 22, 2012 at 11:48:02AM +0200, Terje Bergstrom wrote:
+> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Platform data was not freed in device removal. This patch adds
+> missing devm_kfree() calls.
+>
+> Change-Id: Id00fd1940e786dbc80c7ac5a1bd4d6a4c18720a1
+> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/dc.c   |    3 +++
+>  drivers/gpu/drm/tegra/dsi.c  |    3 +++
+>  drivers/gpu/drm/tegra/hdmi.c |    3 +++
+>  drivers/gpu/drm/tegra/tvo.c  |    3 +++
+>  4 files changed, 12 insertions(+)
 
-As long as I can keep nvhost as a separate entity, I can port changes
-from upstream to downstream and vice versa and there's no architectural
-reason why we couldn't gradually move in downstream kernel to using
-tegradrm.
+All of this is unnecessary. The reason for using the managed allocations
+in the first place is because the memory is automatically freed when the
+device is removed.
 
-If we merge host1x management code to tegradrm, there's no logical way
-of taking tegradrm into use in downstream.
+Thierry
 
-Terje
+* Unknown Key
+* 0x7F3EB3A1
