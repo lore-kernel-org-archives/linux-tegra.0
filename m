@@ -1,121 +1,43 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: xf86-video-tegra or xf86-video-modesetting?
-Date: Mon, 26 Nov 2012 09:13:21 +0100
-Message-ID: <20121126081321.GC17600@avionic-0098.adnet.avionic-design.de>
-References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de>
- <CADnq5_P1D7mwL6iYYbJSEBt8Ub5ejQmsMbupMNUU74d5==+gTw@mail.gmail.com>
- <20121126073234.GA17600@avionic-0098.adnet.avionic-design.de>
- <CAPM=9tzfjtUVC5PrRLA3Y659ausf1j=uXp-zfMZFUXz-ir67FA@mail.gmail.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 5/6] gpu: drm: tegra: Prime support
+Date: Mon, 26 Nov 2012 08:33:39 +0100
+Message-ID: <7DC9167CA73B39468DFA1D07FF67A6A85150E61DDB@DEMAIL01.nvidia.com>
+References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com>
+ <1353577684-7896-6-git-send-email-tbergstrom@nvidia.com>
+ <20121123215528.GB21555@avionic-0098.adnet.avionic-design.de>
+ <50B0733D.4040002@nvidia.com>
+ <20121124191445.GE26154@avionic-0098.adnet.avionic-design.de>,<50B12724.7020503@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JgQwtEuHJzHdouWu"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAPM=9tzfjtUVC5PrRLA3Y659ausf1j=uXp-zfMZFUXz-ir67FA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <50B12724.7020503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The code can be revived if necessary. I still think this code should be kept tegra specific because the current implementation IMO does not work in generic case... and the generic case solution would not suit well for our needs.
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Our implementation assumes that both source and target devices share the same address space and thus there is no need to actually do buffer mapping when the target device wishes to access a buffer. The code just creates a scattertable for already mapped pages. Currently we wish to share buffers only between host1x devices and therefore this restriction does not cause any issues. However, in generic case the target and source devices can be in different address spaces and hence the code actually _should_ map the buffer to the target device's address space.
 
-On Mon, Nov 26, 2012 at 05:45:38PM +1000, Dave Airlie wrote:
-> On Mon, Nov 26, 2012 at 5:32 PM, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > On Sun, Nov 25, 2012 at 09:51:46PM -0500, Alex Deucher wrote:
-> >> On Sat, Nov 24, 2012 at 4:09 PM, Thierry Reding
-> >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> >> > going into Linux 3.8 and NVIDIA posting initial patches
-> >> > for 2D acceleration on top of it, I've been looking at the various w=
-ays
-> >> > how this can best be leveraged.
-> >> >
-> >> > The most obvious choice would be to start work on an xf86-video-tegra
-> >> > driver that uses the code currently in the works to implement the EXA
-> >> > callbacks that allow some of the rendering to be offloaded to the GP=
-U.
-> >> > The way I would go about this is to fork xf86-video-modesetting, do =
-some
-> >> > rebranding and add the various bits required to offload rendering.
-> >> >
-> >> > However, that has all the usual drawbacks of a fork so I thought may=
-be
-> >> > it would be better to write some code to xf86-video-modesetting to a=
-dd
-> >> > GPU-specific acceleration on top. Such code could be leveraged by ot=
-her
-> >> > drivers as well and all of them could share a common base for the
-> >> > functionality provided through the standard DRM IOCTLs.
-> >> >
-> >> > That approach has some disadvantages of its own, like the potential
-> >> > bloat if many GPUs do the same. It would also be a bit of a step back
-> >> > to the old monolithic days of X.
-> >>
-> >> Just fork and fill in your own GPU specific bits.  Most accel stuff
-> >> ends up being very GPU specific.
-> >
-> > That doesn't exclude the alternative that I described. Maybe I didn't
-> > express what I had in mind very clearly. What I propose is to add some
-> > code to the modesetting driver that would allow GPU-specific code to be
-> > called if matching hardware is detected (perhaps as stupidly as looking
-> > at the DRM driver name/version). Such code could perhaps be called from
-> > the DDX' .ScreenInit and call the GPU-specific function to register an
-> > EXA driver.
-> >
-> > That would allow a large body of code (modesetting, VT switching, ...)
-> > to be shared among a number of drivers instead of duplicating the code
-> > for each one and having to keep merging updates from the modesetting
-> > driver as it evolves. So the GPU-specific acceleration would just sit on
-> > top of the existing code and only be activated on specific hardware.
-> > What I'm *not* proposing is to create an abstraction layer for
-> > acceleration.
-> >
->=20
-> vmware kinda did something like that initially with modesetting, it
-> was a bit messier, it would be nice though to just plug in stuff like
-> glamor and things, but you still need to deal with pixmap allocation
-> on a per-gpu basis.
+AFAIK dma-mapping API is not smart enough to determine whether a given buffer is already mapped to some address space. It just maps and potentially creates duplicates (please correct me if I am wrong). Therefore, if the "generic case solution" is applied to our "specific case", there will always be duplicates and I do not think that is a good practice. I also considered doing a smart optimisation here, but dma-mapping API did not seem to support querying of the address space of a certain device.
 
-I'm still very new to this game and I probably have a lot of catching up
-to do. However I would expect it to be possible to override pixmap
-allocation with GPU specific implementations. I've been looking at some
-implementations of DDX drivers and I seem to remember that pixmap
-management was done in the EXA driver, in which case it would be part of
-the GPU specific code anyway.
+- Arto
+________________________________________
+From: Terje Bergstrom
+Sent: Saturday, November 24, 2012 9:59 PM
+To: Thierry Reding
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Arto Merilainen
+Subject: Re: [PATCH 5/6] gpu: drm: tegra: Prime support
 
-> I'd rather make the modesetting code into a library, either separate
-> or in the X server, but i've also investigated that and found it was
-> too much effort for me at the time also.
+On 24.11.2012 21:14, Thierry Reding wrote:
+> I still don't see how that's relevant here. IOMMU support has explicitly
+> been removed as you mentioned in your introductory email and none of the
+> functionality in this patch is in any way specific to Tegra. Right?
 
-That idea occurred to me as well. Given my lack of experience I'm not
-sure I'd be very well suited for the job if you already judged it to be
-too much effort...
+You're right - my point became moot once we disabled IOMMU. Arto, can we
+revive the generic code?
 
-Thierry
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQsyShAAoJEN0jrNd/PrOhkxcQAJgjefrSmJKz1hgI++JEr+xJ
-PMSXpBR1CXyID4YTEBDUzh/5lD0tLQPZgwRAp/4qPf5fujCchTfrgpuApgXbydMu
-APgY2DumLXa08/0Oa7tRxem54monMV2aRl7RJ8Ob55klwLvfMFEPvD73PZKC9YB/
-JeE8uLq1vJFh+tpWFrahBkTo5A18XoeyTiDbEl/UDuui0kfP2IiEXttbT87FDRz8
-rRuDPkrCVTbCBuJgr1hUATw0VJAlUA7WDIJC+z+eXPt/8UGvynFwy0fH4g17lmBr
-RsjcMOdpNUd9k5gHkJl5npGHhz6+ZOZADj30Bz7iR6+cLX+kVPIFfCAHv/Of2ORI
-ZkM+LjDsX0dFlyvEzPtw8iyarrs4VmrxoDsI49TRA//vLjUzBYRKBN5GuN33i96g
-iXNIqOTpkzWZEPSOrDi9J/eY5WTaPHuQ0zM271sNMue4qa8VpV6rlEVa0S2Wb5h9
-kKW2bbRKnLpTbPr/TBD8ws7iLBMveznIJzc86fyo1Qh91ZHF8PHosnochleSiNxN
-X5SubZVPOc7X5cpbfGeYGUDpIWIMtHgdz9cHn6Y+D5D8LchBbCNSo3mqnRs4GYvh
-N26VUhvZM5P3LlUE5A6AyiYCO/zhnvkCYC84mfoeTVGvqlfmWcMboi2tXGYP9rg7
-27/eNPFAfdYQj4NBkq3j
-=OlM5
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+Terje
