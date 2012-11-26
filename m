@@ -1,22 +1,21 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] arm: tegra: fix comment in dsib clk set_parent
-Date: Mon, 26 Nov 2012 14:00:28 -0700
-Message-ID: <50B3D86C.40104@wwwdotorg.org>
-References: <1353498147-14574-1-git-send-email-sivaramn@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/1] amba: tegra-ahb: Fix warning w/o PM_SLEEP
+Date: Mon, 26 Nov 2012 14:01:15 -0700
+Message-ID: <50B3D89B.8090607@wwwdotorg.org>
+References: <1353501697-25345-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353498147-14574-1-git-send-email-sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1353501697-25345-1-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/21/2012 04:42 AM, Sivaram Nair wrote:
-> Since the clk framework has already taken necessary locks before calling
-> into the arch clk ops code, no further locks are needed while setting
-> the parent of dsib clk. This patch removes a comment that indicated
-> otherwise, and yet did not take any locks.
+On 11/21/2012 05:41 AM, Hiroshi Doyu wrote:
+> Fix build warning w/o PM_SLEEP.
+> 
+> Change-Id: Id5b7d089de835025b5708fa345a75990fd976363
 
-Thanks, applied.
+Thanks, applied, with commit description fixed up to remove the Change-Id.
