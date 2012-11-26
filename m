@@ -1,43 +1,42 @@
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 5/6] gpu: drm: tegra: Prime support
-Date: Mon, 26 Nov 2012 08:33:39 +0100
-Message-ID: <7DC9167CA73B39468DFA1D07FF67A6A85150E61DDB@DEMAIL01.nvidia.com>
-References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com>
- <1353577684-7896-6-git-send-email-tbergstrom@nvidia.com>
- <20121123215528.GB21555@avionic-0098.adnet.avionic-design.de>
- <50B0733D.4040002@nvidia.com>
- <20121124191445.GE26154@avionic-0098.adnet.avionic-design.de>,<50B12724.7020503@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/6] video: tegra: Add nvhost driver
+Date: Mon, 26 Nov 2012 10:21:36 +0200
+Message-ID: <50B32690.7020102@nvidia.com>
+References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com> <1353577684-7896-2-git-send-email-tbergstrom@nvidia.com> <20121123233855.GD21555@avionic-0098.adnet.avionic-design.de> <50B07084.40707@nvidia.com> <20121124190416.GC26154@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B12724.7020503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20121124190416.GC26154-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The code can be revived if necessary. I still think this code should be kept tegra specific because the current implementation IMO does not work in generic case... and the generic case solution would not suit well for our needs.
+On 24.11.2012 21:04, Thierry Reding wrote:
+>>> I would really like this to be phased in in more manageable chunks. For
+>>> instance syncpoints could be added on top of the existing host1x
+>>> infrastructure (the display controllers can make use of it for VBLANK
+>>> reporting, right?), followed by channel support for command submission.
 
-Our implementation assumes that both source and target devices share the same address space and thus there is no need to actually do buffer mapping when the target device wishes to access a buffer. The code just creates a scattertable for already mapped pages. Currently we wish to share buffers only between host1x devices and therefore this restriction does not cause any issues. However, in generic case the target and source devices can be in different address spaces and hence the code actually _should_ map the buffer to the target device's address space.
+I staged nvhost into 4 patches that each add some functionality:
+ * Add driver with API to read and increment sync point values
+ * Add syncpt wait and interrupt infrastructure
+ * Add channel and client support and related infrastructure (jobs, memmgr)
+ * Add debug support
 
-AFAIK dma-mapping API is not smart enough to determine whether a given buffer is already mapped to some address space. It just maps and potentially creates duplicates (please correct me if I am wrong). Therefore, if the "generic case solution" is applied to our "specific case", there will always be duplicates and I do not think that is a good practice. I also considered doing a smart optimisation here, but dma-mapping API did not seem to support querying of the address space of a certain device.
+I hope that helps in reviews.
 
-- Arto
-________________________________________
-From: Terje Bergstrom
-Sent: Saturday, November 24, 2012 9:59 PM
-To: Thierry Reding
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Arto Merilainen
-Subject: Re: [PATCH 5/6] gpu: drm: tegra: Prime support
+> I'm all for reusing your code. My concern is that the structure of this
+> is quite different from what can be found in the L4T downstream kernels
+> and therefore some rethinking may be required.
 
-On 24.11.2012 21:14, Thierry Reding wrote:
-> I still don't see how that's relevant here. IOMMU support has explicitly
-> been removed as you mentioned in your introductory email and none of the
-> functionality in this patch is in any way specific to Tegra. Right?
+As long as I can keep nvhost as a separate entity, I can port changes
+from upstream to downstream and vice versa and there's no architectural
+reason why we couldn't gradually move in downstream kernel to using
+tegradrm.
 
-You're right - my point became moot once we disabled IOMMU. Arto, can we
-revive the generic code?
+If we merge host1x management code to tegradrm, there's no logical way
+of taking tegradrm into use in downstream.
 
 Terje
