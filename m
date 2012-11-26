@@ -1,40 +1,58 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/6] ARM: tegra: Add auxiliary data for nvhost
-Date: Mon, 26 Nov 2012 11:40:02 +0200
-Message-ID: <50B338F2.5060501@nvidia.com>
-References: <1353577684-7896-1-git-send-email-tbergstrom@nvidia.com> <1353577684-7896-3-git-send-email-tbergstrom@nvidia.com> <20121123234527.GE21555@avionic-0098.adnet.avionic-design.de> <50B07297.3090001@nvidia.com> <20121124191103.GD26154@avionic-0098.adnet.avionic-design.de>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv9 1/3] Runtime Interpreted Power Sequences
+Date: Mon, 26 Nov 2012 20:49:53 +0900
+Message-ID: <3319894.UD2L7QhyVv@percival>
+References: <1353149747-31871-1-git-send-email-acourbot@nvidia.com> <20121122133941.24B883E129E@localhost> <20121122214021.GA14771@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121124191103.GD26154-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <20121122214021.GA14771-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 24.11.2012 21:11, Thierry Reding wrote:
-> On Sat, Nov 24, 2012 at 09:09:11AM +0200, Terje Bergstr=C3=B6m wrote:
->> The host1x specifics (number of channels, pts etc) are description o=
-f
->> hardware, so they could go to a device tree binding.
->=20
-> I'm not sure that's even required. The number of syncpoints and chann=
-els
-> should be static for a particular version of SoC, right? In that case=
- it
-> can be derived from the DT compatible property, can't it?
+On Friday 23 November 2012 05:40:21 Thierry Reding wrote:
+> On Thu, Nov 22, 2012 at 01:39:41PM +0000, Grant Likely wrote:
+> [...]
+> 
+> > I do think that each sequence should be contained within a single
+> > property, but I'm open to other suggestions.
+> 
+> IIRC a very early prototype did implement something like that. However
+> because of the resource issues this had to be string based, so that the
+> sequences looked somewhat like (Alex, correct me if I'm wrong):
+> 
+> 	power-on = <"REGULATOR", "power", 1, "GPIO", "enable", 1>;
 
-I might be a bit confused here about the purpose of device trees.
+You're right. Back when the burning sun of July was beating down a little bit 
+too hard on my head.
 
-The register aperture, irqs and enumerated list of devices could also b=
-e
-derived from the information about host1x compatibility properly. They
-don't change within SoC version. Why do we have them in device tree?
+https://lkml.org/lkml/2012/7/9/30
 
-I have considered device trees to be the alternative to being able to
-query hardware. As we can't ask the hardware the number of sync points
-and channels, we should have them in device trees in the same way as we
-have IO apertures and list of client modules.
+> Instead we could possibly have something like:
+> 
+> 	power-on = <0 &reg 1,
+> 		    1 &gpio 42 0 1>;
+> 
+> Where the first cell in each entry defines the type (0 = regulator, 1 =
+> GPIO) and the rest would be a regular OF specifier for the given type of
+> resource along with some defined parameter such as enable/disable,
+> voltage, delay in ms, ... I don't know if that sounds any better. It
+> looks sort of cryptic but it is more "in the spirit of" DT, right Grant?
+> 
+> Writing this down, it seems to me like even that proposal was already
+> discussed at some point. Again, Alex may remember better.
 
-Terje
+The idea that we had was to use preprocessor support in DTC to use macros 
+instead of strings for the step type. We also thought about using phandles 
+directly in there as well, but this would require some more API support.
+
+Anyway, at the current point we are not even sure whether we want or need 
+power seqs in the DT - so let's keep this topic on hold for a while. We can 
+still introduce the feature without DT support, and if it eventually turns out 
+during this winter that expressing power seqs in the DT makes sense, we will 
+have plenty of archives to read in front of the fire.
+
+Alex.
