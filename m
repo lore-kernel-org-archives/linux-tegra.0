@@ -1,72 +1,47 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: slink: do not prepare dma transfer with
-	DMA_CTRL_ACK flag
-Date: Tue, 27 Nov 2012 04:30:30 +0530
-Message-ID: <50B3F48E.4040705@nvidia.com>
-References: <1353662559-26515-1-git-send-email-ldewangan@nvidia.com>
-	<50B3E72B.6020003@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: xf86-video-tegra or xf86-video-modesetting?
+Date: Mon, 26 Nov 2012 16:14:15 -0700
+Message-ID: <50B3F7C7.6040602@wwwdotorg.org>
+References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de> <1353797672.1479.17.camel@tellur> <20121125133759.GA30264@avionic-0098.adnet.avionic-design.de> <CADnq5_PwR1P6HDZSD-UeoaKUdQzFhK3cdQ4jhEWtR9Lgb-P2hQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <50B3E72B.6020003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CADnq5_PwR1P6HDZSD-UeoaKUdQzFhK3cdQ4jhEWtR9Lgb-P2hQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 27 November 2012 03:33 AM, Stephen Warren wrote:
-> On 11/23/2012 02:22 AM, Laxman Dewangan wrote:
->> Spi starts transfer using dma with DMA_CTRL_ACK which is not require
->> becasue spi driver does not use completed dma_desc after transfer
->> done and so it does not ack the dma descriptor. Removing the
->> DMA_CTRL_ACK flag to avoid memory leak in dma driver.
-> I'm not quite sure, but isn't this the opposite of what's wanted. I
-> think that setting this flag in prep() means that the SPI driver need
-> not explicitly ack it later?
->
-> At least, tegra_dma_desc_get() returns an allocated descriptor if one
-> exists and async_tx_test_ack()==true for it, and it's true when the
-> DMA_CTRL_ACK flag is set, which happens either due to calling
-> async_tx_ack(), or because tegra_dma_prep_slave_sg() was called with
-> DMA_CTRL_ACK in flags.
+On 11/26/2012 07:01 AM, Alex Deucher wrote:
+> On Sun, Nov 25, 2012 at 8:37 AM, Thierry Reding
+> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+...
+>> With the common base that could be shared I meant all the modesetting
+>> code and framebuffer setup that xf86-video-modesetting already does.
+>> I've been wanting to add support for planes as well, which comes with
+>> another set of standard IOCTLs in DRM.
+>>
+>> Rewriting all of that in different drivers doesn't seem very desirable
+>> to me and sounds like a lot of wasted effort. And that's not couting the
+>> maintenance burden to keep up with the latest changes in the generic
+>> modesetting driver.
+>>
+> 
+> You don't really end up rewriting it, most people just copy the
+> modesetting driver, change the name, and start adding acceleration; in
+> which case, the work is already done.  Also, the generic code doesn't
+> change much.  Based on other ddxes, you rarely have to change the
+> modesetting and framebuffer code.  Most of the work ends up being the
+> device specific acceleration and memory management code.
+> Also, depending on what hardware is available, I'm not sure
+> traditional 2D engines will gain much over shadowfb other than hw
+> accelerated buffer swaps for GL.  In my opinion something like glamor
+> is the best bet for mapping legacy X APIs on to modern GL hw.
 
-I think DMA_CTRL_ACK flag is require if we want to free/reuse desc only 
-when client ack it.
-
-Although some part of implementation is wrong in the tegra20-apb-dma.c.
-
-static struct tegra_dma_desc *tegra_dma_desc_get(
-                 struct tegra_dma_channel *tdc)
-{
-         struct tegra_dma_desc *dma_desc;
-         unsigned long flags;
-
-         spin_lock_irqsave(&tdc->lock, flags);
-
-         /* Do not allocate if desc are waiting for ack */
-         list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
-                 if (async_tx_test_ack(&dma_desc->txd)) {
-                         list_del(&dma_desc->node);
-:::::::::::::::
-
-}
-
-In above it should be if (!async_tx_test_ack())
-
-And when client done with the desc, then it can say as async_tx_clear_ack().
-
-
-------------------------------------------------------------------------------
-Monitor your physical, virtual and cloud infrastructure from a single
-web console. Get in-depth insight into apps, servers, databases, vmware,
-SAP, cloud infrastructure, etc. Download 30-day Free Trial.
-Pricing starts from $795 for 25 servers or applications!
-http://p.sf.net/sfu/zoho_dev2dev_nov
+Rather than have every driver cut/paste the modesetting code, can't the
+modesetting core of the DDX be pulled out into a utility library or
+similar, so that it can just be compiled/linked into all the DDXs
+without actually duplicating the code? That way there's no code
+duplication, but each DDX can still be flexible about all the
+HW-specific code without making a monolithic DDX.
