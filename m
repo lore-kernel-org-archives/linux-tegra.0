@@ -1,48 +1,31 @@
-From: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Mon, 26 Nov 2012 15:59:37 -0600
-Message-ID: <CAF6AEGu629qj-pgd5gaJEpo2QqqUZYXyDJk14c5rgdAwh-wMPg@mail.gmail.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	<1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra: slink: do not prepare dma transfer with DMA_CTRL_ACK
+ flag
+Date: Mon, 26 Nov 2012 15:03:23 -0700
+Message-ID: <50B3E72B.6020003@wwwdotorg.org>
+References: <1353662559-26515-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353935954-13763-9-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1353662559-26515-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 26, 2012 at 7:19 AM, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> +struct tegra_drm_submit_args {
-> +       void *context;
+On 11/23/2012 02:22 AM, Laxman Dewangan wrote:
+> Spi starts transfer using dma with DMA_CTRL_ACK which is not require
+> becasue spi driver does not use completed dma_desc after transfer
+> done and so it does not ack the dma descriptor. Removing the
+> DMA_CTRL_ACK flag to avoid memory leak in dma driver.
 
-Just a quick comment..
+I'm not quite sure, but isn't this the opposite of what's wanted. I
+think that setting this flag in prep() means that the SPI driver need
+not explicitly ack it later?
 
-You shouldn't really use ptr here, but instead use a 64bit type so
-that you don't run into issues later for armv8/64bit.  Same comment
-applies in a few other places too.
-
-I'll try and spend a bit more time going through this in more detail
-in the coming days
-
-BR,
--R
-
-> +       __u32 num_syncpt_incrs;
-> +       __u32 num_cmdbufs;
-> +       __u32 num_relocs;
-> +       __u32 submit_version;
-> +       __u32 num_waitchks;
-> +       __u32 waitchk_mask;
-> +       __u32 timeout;
-> +       struct tegra_drm_syncpt_incrs *syncpt_incrs;
-> +       struct tegra_drm_cmdbuf *cmdbufs;
-> +       struct tegra_drm_reloc *relocs;
-> +       struct tegra_drm_waitchk *waitchks;
-> +
-> +       __u32 pad[5];           /* future expansion */
-> +       __u32 fence;            /* Return value */
-> +};
-> +
+At least, tegra_dma_desc_get() returns an allocated descriptor if one
+exists and async_tx_test_ack()==true for it, and it's true when the
+DMA_CTRL_ACK flag is set, which happens either due to calling
+async_tx_ack(), or because tegra_dma_prep_slave_sg() was called with
+DMA_CTRL_ACK in flags.
