@@ -1,120 +1,33 @@
-From: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Tue, 27 Nov 2012 08:15:06 +1000
-Message-ID: <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	<1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] drm: tegra: Use framebuffer pitch as line stride
+Date: Mon, 26 Nov 2012 15:37:29 -0700
+Message-ID: <50B3EF29.6000308@wwwdotorg.org>
+References: <1353613037-15808-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353935954-13763-9-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1353613037-15808-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
->  static int tegra_drm_open(struct drm_device *drm, struct drm_file *filp)
->  {
-> -       return 0;
-> +       struct tegra_drm_fpriv *fpriv;
-> +       int err = 0;
-> +
-> +       fpriv = kzalloc(sizeof(*fpriv), GFP_KERNEL);
-> +       if (!fpriv)
-> +               return -ENOMEM;
-> +
-> +       INIT_LIST_HEAD(&fpriv->contexts);
-> +       filp->driver_priv = fpriv;
-> +
+On 11/22/2012 12:37 PM, Thierry Reding wrote:
+> Instead of using the stride derived from the display mode, use the pitch
+> associated with the currently active framebuffer. This fixes a bug where
+> the LCD display content would be skewed when enabling HDMI with a video
+> mode different from that of the LCD.
 
-who frees this?
-> +struct tegra_drm_syncpt_incr_args {
-> +       __u32 id;
-> +};
+This patch certainly doesn't cause any additional issues for me, so:
 
-add 32-bits of padding here
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +
-> +struct tegra_drm_syncpt_wait_args {
-> +       __u32 id;
-> +       __u32 thresh;
-> +       __s32 timeout;
-> +       __u32 value;
-> +};
-> +
-> +#define DRM_TEGRA_NO_TIMEOUT   (-1)
-> +
-> +struct tegra_drm_open_channel_args {
-> +       __u32 class;
-> +       void *context;
+Howwever, it still doesn't allow both Cardhu's LCD panel and external
+HDMI port (1080p) to be active at once. If I boot with both enabled, or
+boot with just the LCD enabled and hot-plug HDMI, as soon as both heads
+are active, then some kind of display corruption starts; it looks like a
+clocking issue or perhaps memory underflow.
 
-no pointers use u64, align them to 64-bits, so 32-bits of padding,
-
-> +};
-> +
-> +struct tegra_drm_get_channel_param_args {
-> +       void *context;
-> +       __u32 value;
-
-Same padding + uint64_t for void *
-
-> +};
-> +
-> +struct tegra_drm_syncpt_incr {
-> +       __u32 syncpt_id;
-> +       __u32 syncpt_incrs;
-> +};
-> +
-> +struct tegra_drm_cmdbuf {
-> +       __u32 mem;
-> +       __u32 offset;
-> +       __u32 words;
-> +};
-
-add padding
-> +
-> +struct tegra_drm_reloc {
-> +       __u32 cmdbuf_mem;
-> +       __u32 cmdbuf_offset;
-> +       __u32 target;
-> +       __u32 target_offset;
-> +       __u32 shift;
-> +};
-
-add padding
-
-> +
-> +struct tegra_drm_waitchk {
-> +       __u32 mem;
-> +       __u32 offset;
-> +       __u32 syncpt_id;
-> +       __u32 thresh;
-> +};
-> +
-> +struct tegra_drm_submit_args {
-> +       void *context;
-> +       __u32 num_syncpt_incrs;
-> +       __u32 num_cmdbufs;
-> +       __u32 num_relocs;
-> +       __u32 submit_version;
-> +       __u32 num_waitchks;
-> +       __u32 waitchk_mask;
-> +       __u32 timeout;
-> +       struct tegra_drm_syncpt_incrs *syncpt_incrs;
-> +       struct tegra_drm_cmdbuf *cmdbufs;
-> +       struct tegra_drm_reloc *relocs;
-> +       struct tegra_drm_waitchk *waitchks;
-> +
-> +       __u32 pad[5];           /* future expansion */
-> +       __u32 fence;            /* Return value */
-> +};
-
-lose all the pointers for 64-bit aligned uint64_t.
-
-Probably should align all of these on __u64 and __u32 usage if possible.
-
-i'll look at the rest of the patches, but I need to know what commands
-can be submitted via this interface and what are the security
-implications of it.
-
-Dave.
+Mark, can you please investigate this. I haven't tested to see if the
+issue is Tegra30-specific, or also happens on Tegra20.
