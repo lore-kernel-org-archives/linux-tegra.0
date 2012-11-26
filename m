@@ -1,52 +1,40 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: xf86-video-tegra or xf86-video-modesetting?
-Date: Sun, 25 Nov 2012 17:47:32 +0200
-Message-ID: <50B23D94.8070604@nvidia.com>
-References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de> <1353797672.1479.17.camel@tellur>
+Date: Sun, 25 Nov 2012 21:51:46 -0500
+Message-ID: <CADnq5_P1D7mwL6iYYbJSEBt8Ub5ejQmsMbupMNUU74d5==+gTw@mail.gmail.com>
+References: <20121124210916.GB27042@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353797672.1479.17.camel@tellur>
+In-Reply-To: <20121124210916.GB27042-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org" <xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org>, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 25.11.2012 00:54, Lucas Stach wrote:
-> As much as I dislike to say this, but forking the modesetting driver to
-> bring in the Tegra specific 2D accel might be the best way to go for
-> now. Especially looking at the very limited resources available to
-> tegradrm development and NVIDIAs expressed desire to do as few changes
-> as possible to their downstream work.
+On Sat, Nov 24, 2012 at 4:09 PM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> going into Linux 3.8 and NVIDIA posting initial patches
+> for 2D acceleration on top of it, I've been looking at the various ways
+> how this can best be leveraged.
+>
+> The most obvious choice would be to start work on an xf86-video-tegra
+> driver that uses the code currently in the works to implement the EXA
+> callbacks that allow some of the rendering to be offloaded to the GPU.
+> The way I would go about this is to fork xf86-video-modesetting, do some
+> rebranding and add the various bits required to offload rendering.
+>
+> However, that has all the usual drawbacks of a fork so I thought maybe
+> it would be better to write some code to xf86-video-modesetting to add
+> GPU-specific acceleration on top. Such code could be leveraged by other
+> drivers as well and all of them could share a common base for the
+> functionality provided through the standard DRM IOCTLs.
+>
+> That approach has some disadvantages of its own, like the potential
+> bloat if many GPUs do the same. It would also be a bit of a step back
+> to the old monolithic days of X.
 
-Which changes to downstream work would these be? What changes would help
-in getting the acceleration support into mode setting driver?
+Just fork and fill in your own GPU specific bits.  Most accel stuff
+ends up being very GPU specific.
 
-We've done quite a lot of changes in downstream nvhost to help
-upstreaming, and I'll keep downstream nvhost as close to upstream as
-possible when/if nvhost wiggles its way into upstream. But you might be
-talking about something else.
-
-> We don't have any standard DRM IOCTLs for doing acceleration today. The
-> single fact that we are stitching together command streams in userspace
-> for execution by the GPU renders a common interface unusable. We don't
-
-Command streams for Tegra 2D are easiest to stitch together in user
-space. We have discussed the possibility to implement some simple
-operations in kernel, too, f.ex. using 2D to clear or copy a memory
-region. But in the end there are not too many reasons to implement that
-in kernel versus doing it in user space.
-
-Do we have to even attempt standardizing the IOCTLs? The standardization
-could happen in libdrm level. We've already implemented some common 2D
-operations for Tegra 2D, but we haven't yet solved the question that
-where should we put the code in - in our internal tree it's now inside
-libdrm. None of the other GPUs supported by libdrm implement
-acceleration inside libdrm, so if we follow that, we'll just provide
-libtegradrm with the 2D operations. That'll require a Tegra specific
-modesetting driver.
-
-Path of least resistance?
-
-Terje
+Alex
