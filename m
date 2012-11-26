@@ -1,45 +1,31 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC v2 5/8] ARM: tegra: Add auxiliary data for nvhost
-Date: Mon, 26 Nov 2012 16:39:56 -0700
-Message-ID: <50B3FDCC.7080709@wwwdotorg.org>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-6-git-send-email-tbergstrom@nvidia.com>
+From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 1/1] memory: tegra30: Fix warning w/o PM_SLEEP
+Date: Mon, 26 Nov 2012 15:47:29 -0800
+Message-ID: <20121126234729.GA19416@kroah.com>
+References: <1353501740-25420-1-git-send-email-hdoyu@nvidia.com>
+ <50B3C426.4020605@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353935954-13763-6-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50B3C426.4020605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Axel Lin <axel.lin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/26/2012 06:19 AM, Terje Bergstrom wrote:
-> Add SoC specific auxiliary data to host1x and gr2d. nvhost uses
-> this data.
+On Mon, Nov 26, 2012 at 12:33:58PM -0700, Stephen Warren wrote:
+> On 11/21/2012 05:42 AM, Hiroshi Doyu wrote:
+> > Fix build warning w/o PM_SLEEP.
 > 
-> Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> I assume Greg will take this through his tree.
 
-Arto's S-o-b really should be first and yours last since you're (Terje)
-the one who touched the patches last.
+If so, someone better resend it...
 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+> > Change-Id: I713f7dd697f1ad9fb1fee56b389b0d6c45bb540c
+> 
+> But that shouldn't be there though...
 
-I think none of the changes the board-dt-tegra*.c should be made.
-
-AUXDATA is a temporary measure to keep things working during the
-transition to device tree. We want to remove entries from the AUXDATA
-tables rather than add them. The only thing that's stopping us from
-doing so right now is the lack of DT-based clock lookups, which hence
-require devices to have a specific name.
-
-> +static struct nvhost_device_data tegra_host1x_info = {
-> +	.clocks = { {"host1x", UINT_MAX} },
-
-> +static struct nvhost_device_data tegra_gr2d_info = {
-> +	.clocks		= { {"gr2d", UINT_MAX, true}, {"epp", UINT_MAX, true} },
-
-Clock names shouldn't be passed in platform data; instead, clk_get()
-should be passed the device object and device-relative (i.e. not global)
-clock name. I expect if the driver is fixed to make this change, the
-changes to tegra*_clocks_data.c won't be needed either.
+Agreed, that's not ok.
