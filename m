@@ -1,52 +1,96 @@
 From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 5/8] ARM: tegra: Add auxiliary data for nvhost
-Date: Tue, 27 Nov 2012 08:33:12 +0200
-Message-ID: <50B45EA8.7000502@nvidia.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-6-git-send-email-tbergstrom@nvidia.com> <50B3FDCC.7080709@wwwdotorg.org>
+Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
+Date: Tue, 27 Nov 2012 08:52:38 +0200
+Message-ID: <50B46336.8030605@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-9-git-send-email-tbergstrom@nvidia.com> <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B3FDCC.7080709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 27.11.2012 01:39, Stephen Warren wrote:
-> Clock names shouldn't be passed in platform data; instead, clk_get()
-> should be passed the device object and device-relative (i.e. not global)
-> clock name. I expect if the driver is fixed to make this change, the
-> changes to tegra*_clocks_data.c won't be needed either.
+On 27.11.2012 00:15, Dave Airlie wrote:
+>>  static int tegra_drm_open(struct drm_device *drm, struct drm_file *filp)
+>>  {
+>> -       return 0;
+>> +       struct tegra_drm_fpriv *fpriv;
+>> +       int err = 0;
+>> +
+>> +       fpriv = kzalloc(sizeof(*fpriv), GFP_KERNEL);
+>> +       if (!fpriv)
+>> +               return -ENOMEM;
+>> +
+>> +       INIT_LIST_HEAD(&fpriv->contexts);
+>> +       filp->driver_priv = fpriv;
+>> +
+> 
+> who frees this?
 
-Isn't this code doing exactly that - getting a device relative clock,
-nvhost_module_init() in nvhost.acm.c:
+Probably nobody. Will fix.
 
-(...)
-	/* initialize clocks to known state */
-	while (pdata->clocks[i].name && i < NVHOST_MODULE_MAX_CLOCKS) {
-		long rate = pdata->clocks[i].default_rate;
-		struct clk *c;
+>> +struct tegra_drm_syncpt_incr_args {
+>> +       __u32 id;
+>> +};
+> 
+> add 32-bits of padding here
+> 
+>> +
+>> +struct tegra_drm_syncpt_wait_args {
+>> +       __u32 id;
+>> +       __u32 thresh;
+>> +       __s32 timeout;
+>> +       __u32 value;
+>> +};
+>> +
+>> +#define DRM_TEGRA_NO_TIMEOUT   (-1)
+>> +
+>> +struct tegra_drm_open_channel_args {
+>> +       __u32 class;
+>> +       void *context;
+> 
+> no pointers use u64, align them to 64-bits, so 32-bits of padding,
 
-		c = devm_clk_get(&dev->dev, pdata->clocks[i].name);
-		if (IS_ERR_OR_NULL(c)) {
-			dev_err(&dev->dev, "Cannot get clock %s\n",
-					pdata->clocks[i].name);
-			return -ENODEV;
-		}
+I'll add the paddings and change pointers to u64's to all of the structs
+in this file.
 
-		rate = clk_round_rate(c, rate);
-		clk_prepare_enable(c);
-		clk_set_rate(c, rate);
-		clk_disable_unprepare(c);
-		pdata->clk[i] = c;
-		i++;
-	}
-(...)
+> i'll look at the rest of the patches, but I need to know what commands
+> can be submitted via this interface and what are the security
+> implications of it.
 
-Without the clock changes, the clocks in board files are now assigned to
-devid "tegra_grhost". I guess the correct way to do this would be to
-assign them to "tegra-gr2d" (2d, epp) and "host1x" - except if we also
-want to drop "tegra-" from the device name.
+All of the commands are memory operations (copy, clear, rotate, etc)
+involving either one or two memory regions that are defined via dmabuf
+fd's and offsets. The commands can also contain plain device virtual
+addresses and 2D would be happy to oblige as long as the memory is
+mapped to it.
+
+There are a few ways to help the situation. None of them are perfect.
+
+On Tegra30 we could allocate an address space per process. This would
+mean that max 3 processes would be able to use the 2D unit at one time,
+assuming that other devices are find using the one remaining address
+space. On Tegra20 this is not an option.
+
+Second would be using device permissions - only allow selected processes
+to access 2D.
+
+Third would be having a firewall in 2D driver checking the stream and
+ensuring all registers that accept addresses are written by values
+derived from dmabufs. I haven't tried implementing this, but it'd
+involve a lookup table in kernel and CPU reading through the command
+stream. Offsets and sizes would also need to be validated. There would
+be a performance hit.
+
+Fourth would be to move the creation of streams to kernel space. That'd
+mean moving the whole 2D driver and host1x command stream handling to
+kernel space and quite a lot of time spent in kernel. I'm not too keen
+on this for obvious reasons.
+
+Other ideas are obviously welcome.
+
+Thanks!
 
 Terje
