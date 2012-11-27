@@ -1,98 +1,147 @@
-From: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: moving stuff away from mach/clk.h
-Date: Tue, 27 Nov 2012 08:59:13 +0200
-Message-ID: <1353999553-5196-2-git-send-email-sivaramn@nvidia.com>
-References: <1353999553-5196-1-git-send-email-sivaramn@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra: Make variables static
+Date: Tue, 27 Nov 2012 09:15:14 +0200
+Message-ID: <1354000514-29159-1-git-send-email-hdoyu@nvidia.com>
+References: <50B3C36D.9030501@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353999553-5196-1-git-send-email-sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50B3C36D.9030501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch moves some stuff away from mach/clk.h to other mach-tegra
-files. This is part of the efforts to get rid of mach/clk.h which in
-turn will help to enable single zImage.
+No need to be public. Checked with:
+  $ touch arch/arm/mach-tegra/*[ch] && make C=1
 
-Signed-off-by: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/clock.c            |    1 +
- arch/arm/mach-tegra/clock.h            |   12 ++++++++++--
- arch/arm/mach-tegra/include/mach/clk.h |   11 -----------
- 3 files changed, 11 insertions(+), 13 deletions(-)
+ arch/arm/mach-tegra/apbio.c               |    2 +-
+ arch/arm/mach-tegra/board-dt-tegra20.c    |   10 +++++-----
+ arch/arm/mach-tegra/board-dt-tegra30.c    |    2 +-
+ arch/arm/mach-tegra/flowctrl.c            |    4 ++--
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    6 +++---
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/clock.c b/arch/arm/mach-tegra/clock.c
-index 867bf8b..4440626 100644
---- a/arch/arm/mach-tegra/clock.c
-+++ b/arch/arm/mach-tegra/clock.c
-@@ -26,6 +26,7 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-+#include <mach/clk.h>
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index d091675..d7aa52e 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -38,7 +38,7 @@ static void tegra_apb_writel_direct(u32 value, unsigned long offset);
+ static struct dma_chan *tegra_apb_dma_chan;
+ static struct dma_slave_config dma_sconfig;
  
- #include "board.h"
- #include "clock.h"
-diff --git a/arch/arm/mach-tegra/clock.h b/arch/arm/mach-tegra/clock.h
-index 2aa37f5..e6685d4 100644
---- a/arch/arm/mach-tegra/clock.h
-+++ b/arch/arm/mach-tegra/clock.h
-@@ -25,8 +25,6 @@
- #include <linux/clkdev.h>
- #include <linux/list.h>
+-bool tegra_apb_dma_init(void)
++static bool tegra_apb_dma_init(void)
+ {
+ 	dma_cap_mask_t mask;
  
--#include <mach/clk.h>
--
- #define DIV_BUS			(1 << 0)
- #define DIV_U71			(1 << 1)
- #define DIV_U71_FIXED		(1 << 2)
-@@ -70,6 +68,15 @@ struct clk_pll_freq_table {
- 	u8		cpcon;
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 0bee85a..bd37515 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -46,31 +46,31 @@
+ #include "common.h"
+ #include "iomap.h"
+ 
+-struct tegra_ehci_platform_data tegra_ehci1_pdata = {
++static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+ 	.operating_mode = TEGRA_USB_OTG,
+ 	.power_down_on_bus_suspend = 1,
+ 	.vbus_gpio = -1,
  };
  
-+enum tegra_clk_ex_param {
-+	TEGRA_CLK_VI_INP_SEL,
-+	TEGRA_CLK_DTV_INVERT,
-+	TEGRA_CLK_NAND_PAD_DIV2_ENB,
-+	TEGRA_CLK_PLLD_CSI_OUT_ENB,
-+	TEGRA_CLK_PLLD_DSI_OUT_ENB,
-+	TEGRA_CLK_PLLD_MIPI_MUX_SEL,
-+};
-+
- enum clk_state {
- 	UNINITIALIZED = 0,
- 	ON,
-@@ -149,5 +156,6 @@ void tegra2_init_clocks(void);
- void tegra30_init_clocks(void);
- struct clk *tegra_get_clock_by_name(const char *name);
- void tegra_clk_init_from_table(struct tegra_clk_init_table *table);
-+int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting);
+-struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
++static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
+ 	.reset_gpio = -1,
+ 	.clk = "cdev2",
+ };
  
- #endif
-diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
-index 64d2657..6338652 100644
---- a/arch/arm/mach-tegra/include/mach/clk.h
-+++ b/arch/arm/mach-tegra/include/mach/clk.h
-@@ -22,18 +22,7 @@
+-struct tegra_ehci_platform_data tegra_ehci2_pdata = {
++static struct tegra_ehci_platform_data tegra_ehci2_pdata = {
+ 	.phy_config = &tegra_ehci2_ulpi_phy_config,
+ 	.operating_mode = TEGRA_USB_HOST,
+ 	.power_down_on_bus_suspend = 1,
+ 	.vbus_gpio = -1,
+ };
  
- struct clk;
+-struct tegra_ehci_platform_data tegra_ehci3_pdata = {
++static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
+ 	.operating_mode = TEGRA_USB_HOST,
+ 	.power_down_on_bus_suspend = 1,
+ 	.vbus_gpio = -1,
+ };
  
--enum tegra_clk_ex_param {
--	TEGRA_CLK_VI_INP_SEL,
--	TEGRA_CLK_DTV_INVERT,
--	TEGRA_CLK_NAND_PAD_DIV2_ENB,
--	TEGRA_CLK_PLLD_CSI_OUT_ENB,
--	TEGRA_CLK_PLLD_DSI_OUT_ENB,
--	TEGRA_CLK_PLLD_MIPI_MUX_SEL,
--};
--
- void tegra_periph_reset_deassert(struct clk *c);
- void tegra_periph_reset_assert(struct clk *c);
+-struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
++static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC2_BASE, "sdhci-tegra.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC3_BASE, "sdhci-tegra.2", NULL),
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index a2b6cf1..ef98400 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -39,7 +39,7 @@
+ #include "common.h"
+ #include "iomap.h"
  
--int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting);
--
- #endif
+-struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
++static struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000400, "sdhci-tegra.2", NULL),
+diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
+index a2250dd..5393eb2 100644
+--- a/arch/arm/mach-tegra/flowctrl.c
++++ b/arch/arm/mach-tegra/flowctrl.c
+@@ -26,14 +26,14 @@
+ #include "flowctrl.h"
+ #include "iomap.h"
+ 
+-u8 flowctrl_offset_halt_cpu[] = {
++static u8 flowctrl_offset_halt_cpu[] = {
+ 	FLOW_CTRL_HALT_CPU0_EVENTS,
+ 	FLOW_CTRL_HALT_CPU1_EVENTS,
+ 	FLOW_CTRL_HALT_CPU1_EVENTS + 8,
+ 	FLOW_CTRL_HALT_CPU1_EVENTS + 16,
+ };
+ 
+-u8 flowctrl_offset_cpu_csr[] = {
++static u8 flowctrl_offset_cpu_csr[] = {
+ 	FLOW_CTRL_CPU0_CSR,
+ 	FLOW_CTRL_CPU1_CSR,
+ 	FLOW_CTRL_CPU1_CSR + 8,
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index 7bc8b1d..116f5c3 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -1183,7 +1183,7 @@ static struct clk tegra_dsib = {
+ 	.num_parents = ARRAY_SIZE(mux_plld_out0_plld2_out0),
+ };
+ 
+-struct clk *tegra_list_clks[] = {
++static struct clk *tegra_list_clks[] = {
+ 	&tegra_apbdma,
+ 	&tegra_rtc,
+ 	&tegra_kbc,
+@@ -1289,7 +1289,7 @@ struct clk *tegra_list_clks[] = {
+  * configuration.  List those here to register them twice in the clock lookup
+  * table under two names.
+  */
+-struct clk_duplicate tegra_clk_duplicates[] = {
++static struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("uarta",  "serial8250.0", NULL),
+ 	CLK_DUPLICATE("uartb",  "serial8250.1", NULL),
+ 	CLK_DUPLICATE("uartc",  "serial8250.2", NULL),
+@@ -1339,7 +1339,7 @@ struct clk_duplicate tegra_clk_duplicates[] = {
+ 	CLK_DUPLICATE("pll_p_out3", "tegra-i2c.4", "fast-clk"),
+ };
+ 
+-struct clk *tegra_ptr_clks[] = {
++static struct clk *tegra_ptr_clks[] = {
+ 	&tegra_clk_32k,
+ 	&tegra_clk_m,
+ 	&tegra_clk_m_div2,
 -- 
 1.7.9.5
