@@ -1,44 +1,34 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] drm: tegra: Use framebuffer pitch as line stride
-Date: Tue, 27 Nov 2012 11:16:38 +0800
-Message-ID: <50B43096.4060302@nvidia.com>
-References: <1353613037-15808-1-git-send-email-thierry.reding@avionic-design.de> <50B3EF29.6000308@wwwdotorg.org>
+From: Mark Zhang <markz@nvidia.com>
+Subject: Re: [PATCH V2] ARM: dt: tegra: cardhu: Add drm components
+Date: Tue, 27 Nov 2012 11:22:45 +0800
+Message-ID: <50B43205.8020604@nvidia.com>
+References: <1353396472-24167-1-git-send-email-markz@nvidia.com> <50B3F886.3090701@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B3EF29.6000308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50B3F886.3090701@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/27/2012 06:37 AM, Stephen Warren wrote:
-> On 11/22/2012 12:37 PM, Thierry Reding wrote:
->> Instead of using the stride derived from the display mode, use the pitch
->> associated with the currently active framebuffer. This fixes a bug where
->> the LCD display content would be skewed when enabling HDMI with a video
->> mode different from that of the LCD.
+On 11/27/2012 07:17 AM, Stephen Warren wrote:
+> On 11/20/2012 12:27 AM, Mark Zhang wrote:
+>> This patch adds the rgb node which is needed by
+>> tegra drm driver.
 > 
-> This patch certainly doesn't cause any additional issues for me, so:
+> This doesn't seem to include all the GPIOs/regulators/... required to
+> enable the panel and backlight.
 > 
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Howwever, it still doesn't allow both Cardhu's LCD panel and external
-> HDMI port (1080p) to be active at once. If I boot with both enabled, or
-> boot with just the LCD enabled and hot-plug HDMI, as soon as both heads
-> are active, then some kind of display corruption starts; it looks like a
-> clocking issue or perhaps memory underflow.
->
 
-I haven't observed this issue. What kind of display corruption you mean?
-Did it recover after some seconds or the display in LVDS panel was
-always corrupted?
+Yep. Actually I don't know much about panel & backlight stuffs and I
+don't submit these patches.
 
-During my testing, I connected HDMI while booting cardhu and I can see
-the LVDS and HDMI working with no corruptions.
+For panel supporting, seems right now the "Generic Panel Framework" has
+been changed to version 2 and be renamed as "Common Display Framework";
+For backlight, Alex's power sequence patch is on the way.
 
+So my patch just adds the rgb node in the dts.
 
-> Mark, can you please investigate this. I haven't tested to see if the
-> issue is Tegra30-specific, or also happens on Tegra20.
-> 
+Mark
