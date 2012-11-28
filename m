@@ -1,49 +1,96 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Wed, 28 Nov 2012 09:24:21 -0700
-Message-ID: <50B63AB5.4090801@wwwdotorg.org>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>   <1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>   <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>   <50B46336.8030605@nvidia.com>   <CAPM=9txCuPJcFAfD7Hu5o2BVFK=pVah7B8HhG0ctLCyFPwNEnA@mail.gmail.com>   <50B476E1.4070403@nvidia.com>   <CAPM=9tysiK6LgnQdAwGSYfxnQfgcfRm0+X2tPSAEDxUPt-QZGA@mail.gmail.com>   <50B47DA8.60609@nvidia.com>	<1354011776.1479.31.camel@tellur>   <20121127103739.GA3329@avionic-0098.adnet.avionic-design.de>   <50B4A483.8030305@nvidia.com>   <CAPM=9tz=_0Drx3=Me3EQdPgBvYVGzs6Gnqaw6RBaTLsCG24RAg@mail.gmail.com>   <50B60EFF.1050703@nvidia.com> <1354109602.1479.66.camel@tellur>  <50B61845.6060102@nvidia.com> <1354111565.1479.73.camel@tellur> <50B6237B.8010808@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices(was:
+ How to specify IOMMU'able devices in DT)
+Date: Wed, 28 Nov 2012 11:07:46 -0700
+Message-ID: <50B652F2.5050407@wwwdotorg.org>
+References: <20120924124452.41070ed2ee9944d930cffffc@nvidia.com><054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com><20120924.145014.1452596970914043018.hdoyu@nvidia.com> <20121128.154832.539666140149950229.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50B6237B.8010808@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
-Cc: Lucas Stach <dev@lynxeye.de>, Dave Airlie <airlied@gmail.com>, Thierry Reding <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121128.154832.539666140149950229.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "James.Bottomley-d9PhHud1JfjCXq6kfMZ53/egYHeGw8Jk@public.gmane.org" <James.Bottomley-d9PhHud1JfjCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org" <linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWOunwaRDDq4rA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/28/2012 07:45 AM, Terje Bergstr=C3=B6m wrote:
-> On 28.11.2012 16:06, Lucas Stach wrote:
->> Why do even need/use dma-buf for this use case? This is all one DRM
->> device, even if we separate host1x and gr2d as implementation module=
-s.
->=20
-> I didn't want to implement dependency to drm gem objects in nvhost, b=
-ut
-> we have thought about doing that. dma-buf brings quite a lot of
-> overhead, so implementing support for gem buffers would make the
-> sequence a bit leaner.
->=20
-> nvhost already has infra to support multiple memory managers.
->=20
->> So standard way of doing this is:
->> 1. create gem object for pushbuffer
->> 2. create fake mmap offset for gem obj
->> 3. map pushbuf using the fake offset on the drm device
->> 4. at submit time zap the mapping
+On 11/28/2012 06:48 AM, Hiroshi Doyu wrote:
+> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 24 Sep 2012 14:50:14 +0300 (EEST):
+> ...
+>>>>> On Mon, 2012-09-24 at 12:04 +0300, Hiroshi Doyu wrote:
+>>>>>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+>>>>>> index a1a7225..9eae3be 100644
+>>>>>> --- a/drivers/base/platform.c
+>>>>>> +++ b/drivers/base/platform.c
+>>>>>> @@ -21,6 +21,8 @@
+>>>>>>  #include <linux/slab.h>
+>>>>>>  #include <linux/pm_runtime.h>
+>>>>>>
+>>>>>> +#include <asm/dma-iommu.h>
+>>>>>> +
+>>>>>>  #include "base.h"
+>>>>>>
+>>>>>>  #define to_platform_driver(drv)        (container_of((drv), struct
+>>>>>> platform_driver, \
+>>>>>> @@ -305,8 +307,19 @@ int platform_device_add(struct platform_device
+>>>>>> *pdev)
+>>>>>>                  dev_name(&pdev->dev), dev_name(pdev->dev.parent));
+>>>>>>
+>>>>>>         ret = device_add(&pdev->dev);
+>>>>>> -       if (ret == 0)
+>>>>>> -               return ret;
+>>>>>> +       if (ret)
+>>>>>> +               goto failed;
+>>>>>> +
+>>>>>> +#ifdef CONFIG_PLATFORM_ENABLE_IOMMU
+>>>>>> +       if (platform_bus_type.map && !pdev->dev.archdata.mapping) {
+>>>>>> +               ret = arm_iommu_attach_device(&pdev->dev,
+>>>>>> +                                             platform_bus_type.map);
+>>>>>> +               if (ret)
+>>>>>> +                       goto failed;
+>>>>>
+>>>>> This is horrible ... you're adding an architecture specific callback
+>>>>> into our generic code; that's really a no-no.  If the concept of
+>>>>> CONFIG_PLATFORM_ENABE_IOMMU is useful to more than just arm, then this
+>>>>> could become a generic callback.
+>>>>
+>>>> As mentioned in the original, this is a heck to explain what is
+>>>> needed. I am looking for some generic solution for how to specify
+>>>> IOMMU info for each platform devices. I'm guessing that some other SoC
+>>>> may have the similar requirements on the above. As you mentioned, this
+>>>> solution should be a generic, not arch specific.
+>>>
+>>> Please read more about bus notifiers. IMHO a good example is provided in 
+>>> the following thread:
+>>> http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12238.html
 >>
->> You need this logic anyway, as normally we don't rely on userspace t=
-o
->> sync gpu and cpu, but use the kernel to handle the concurrency issue=
-s.
->=20
-> Taking a step back - 2D streams are actually very short, in the order=
- of
-> <100 bytes. Just copying them to kernel space would actually be faste=
-r
-> than doing MMU operations.
+>> This bus notifier seems enough flexible to afford the variation of
+>> IOMMU map info, like Tegra ASID, which could be platform-specific, and
+>> the other could be common too. There's already iommu_bus_notifier
+>> too. I'll try to implement something base on this.
+> 
+> Experimentally implemented as below. With the followig patch, each
+> device could specify its own map in DT, and automatically the device
+> would be attached to the map.
+> 
+> There is a case that some devices share a map. This patch doesn't
+> suppor such case yet.
+> 
+> From 8cb75bb6f3a8535a077e0e85265f87c1f1289bfd Mon Sep 17 00:00:00 2001
+> From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date: Wed, 28 Nov 2012 14:47:04 +0200
+> Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
+> 
+> platform_bus notifier registers IOMMU devices if dma-window is
+> specified.
+> 
+> Its format is:
+>   dma-window = <"start" "size">;
+> ex)
+>   dma-window = <0x12345000 0x8000>;
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++++++++
 
-I'm not sure it's a good idea to have one buffer submission mechanism
-for the 2D class and another for the 3D/... class, nor to bet that 2D
-streams will always be short.
+Shouldn't this patch be to the IOMMU driver itself, not the core Tegra code?
