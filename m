@@ -1,63 +1,170 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Wed, 28 Nov 2012 14:33:22 +0100
-Message-ID: <1354109602.1479.66.camel@tellur>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	 <1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>
-	 <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>
-	 <50B46336.8030605@nvidia.com>
-	 <CAPM=9txCuPJcFAfD7Hu5o2BVFK=pVah7B8HhG0ctLCyFPwNEnA@mail.gmail.com>
-	 <50B476E1.4070403@nvidia.com>
-	 <CAPM=9tysiK6LgnQdAwGSYfxnQfgcfRm0+X2tPSAEDxUPt-QZGA@mail.gmail.com>
-	 <50B47DA8.60609@nvidia.com>	<1354011776.1479.31.camel@tellur>
-	 <20121127103739.GA3329@avionic-0098.adnet.avionic-design.de>
-	 <50B4A483.8030305@nvidia.com>
-	 <CAPM=9tz=_0Drx3=Me3EQdPgBvYVGzs6Gnqaw6RBaTLsCG24RAg@mail.gmail.com>
-	 <50B60EFF.1050703@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices(was:
+	How to specify IOMMU'able devices in DT)
+Date: Wed, 28 Nov 2012 14:48:32 +0100
+Message-ID: <20121128.154832.539666140149950229.hdoyu@nvidia.com>
+References: <20120924124452.41070ed2ee9944d930cffffc@nvidia.com><054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com><20120924.145014.1452596970914043018.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B60EFF.1050703-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20120924.145014.1452596970914043018.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org" <linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org>, "chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "James.Bottomley-d9PhHud1JfjCXq6kfMZ53/egYHeGw8Jk@public.gmane.org" <James.Bottomley-d9PhHud1JfjCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, "minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <minchan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 28.11.2012, 15:17 +0200 schrieb Terje Bergstr=C3=B6m:
-> On 28.11.2012 01:00, Dave Airlie wrote:
-> > We  generally aim for the first, to stop the gpu from reading/writi=
-ng
-> > any memory it hasn't been granted access to,
-> > the second is nice to have though, but really requires a GPU with V=
-M
-> > to implement properly.
->=20
-> I wonder if we should aim at root only access on Tegra20, and force
-> IOMMU on Tegra30 and fix the remaining issues we have with IOMMU. The
-> firewall turns out to be more complicated than I wished.
->=20
-> Biggest problem is that we aim at zero-copy for everything possible,
-> including command streams. Kernel gets a handle to a command stream, =
-but
-> the command stream is allocated by the user space process. So the use=
-r
-> space can tamper with the stream once it's been written to the host1x=
- 2D
-> channel.
->=20
-So this is obviously wrong. Userspace has to allocate a pushbuffer from
-the kernel just as every other buffer, then map it into it's own addres=
-s
-space to push in commands. At submit time of the pushbuf kernel has to
-make sure that userspace is not able to access the memory any more, i.e=
-=2E
-kernel shoots down the vma or pagetable of the vma. To keep overhead lo=
-w
-and not do any blocking you can just keep some pushbufs around for one
-channel and switch over the pagetable entries to the next free buffer,
-just make sure that userspace is never able to tamper with a buffer as
-long as the gpu isn't done with it.
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 24 Sep 2012 14:50:14 +0300 (EEST):
+...
+> > > > On Mon, 2012-09-24 at 12:04 +0300, Hiroshi Doyu wrote:
+> > > > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > > > > index a1a7225..9eae3be 100644
+> > > > > --- a/drivers/base/platform.c
+> > > > > +++ b/drivers/base/platform.c
+> > > > > @@ -21,6 +21,8 @@
+> > > > >  #include <linux/slab.h>
+> > > > >  #include <linux/pm_runtime.h>
+> > > > >
+> > > > > +#include <asm/dma-iommu.h>
+> > > > > +
+> > > > >  #include "base.h"
+> > > > >
+> > > > >  #define to_platform_driver(drv)        (container_of((drv), struct
+> > > > > platform_driver, \
+> > > > > @@ -305,8 +307,19 @@ int platform_device_add(struct platform_device
+> > > > > *pdev)
+> > > > >                  dev_name(&pdev->dev), dev_name(pdev->dev.parent));
+> > > > >
+> > > > >         ret = device_add(&pdev->dev);
+> > > > > -       if (ret == 0)
+> > > > > -               return ret;
+> > > > > +       if (ret)
+> > > > > +               goto failed;
+> > > > > +
+> > > > > +#ifdef CONFIG_PLATFORM_ENABLE_IOMMU
+> > > > > +       if (platform_bus_type.map && !pdev->dev.archdata.mapping) {
+> > > > > +               ret = arm_iommu_attach_device(&pdev->dev,
+> > > > > +                                             platform_bus_type.map);
+> > > > > +               if (ret)
+> > > > > +                       goto failed;
+> > > >
+> > > > This is horrible ... you're adding an architecture specific callback
+> > > > into our generic code; that's really a no-no.  If the concept of
+> > > > CONFIG_PLATFORM_ENABE_IOMMU is useful to more than just arm, then this
+> > > > could become a generic callback.
+> > > 
+> > > As mentioned in the original, this is a heck to explain what is
+> > > needed. I am looking for some generic solution for how to specify
+> > > IOMMU info for each platform devices. I'm guessing that some other SoC
+> > > may have the similar requirements on the above. As you mentioned, this
+> > > solution should be a generic, not arch specific.
+> > 
+> > Please read more about bus notifiers. IMHO a good example is provided in 
+> > the following thread:
+> > http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12238.html
+> 
+> This bus notifier seems enough flexible to afford the variation of
+> IOMMU map info, like Tegra ASID, which could be platform-specific, and
+> the other could be common too. There's already iommu_bus_notifier
+> too. I'll try to implement something base on this.
 
-Regards,
-Lucas
+Experimentally implemented as below. With the followig patch, each
+device could specify its own map in DT, and automatically the device
+would be attached to the map.
+
+There is a case that some devices share a map. This patch doesn't
+suppor such case yet.
+
+From 8cb75bb6f3a8535a077e0e85265f87c1f1289bfd Mon Sep 17 00:00:00 2001
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Wed, 28 Nov 2012 14:47:04 +0200
+Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
+
+platform_bus notifier registers IOMMU devices if dma-window is
+specified.
+
+Its format is:
+  dma-window = <"start" "size">;
+ex)
+  dma-window = <0x12345000 0x8000>;
+
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index a2b6cf1..570d718 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -30,9 +30,11 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
++#include <linux/of_iommu.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
++#include <asm/dma-iommu.h>
+ 
+ #include "board.h"
+ #include "clock.h"
+@@ -86,10 +88,48 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+ 	{ NULL,		NULL,		0,		0},
+ };
+ 
++#ifdef CONFIG_ARM_DMA_USE_IOMMU
++static int tegra_iommu_device_notifier(struct notifier_block *nb,
++				       unsigned long event, void *_dev)
++{
++	struct dma_iommu_mapping *map = NULL;
++	struct device *dev = _dev;
++	dma_addr_t base;
++	size_t size;
++	int err;
++
++	switch (event) {
++	case BUS_NOTIFY_ADD_DEVICE:
++		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
++					&size);
++		if (!err)
++			map = arm_iommu_create_mapping(&platform_bus_type,
++						       base, size, 0);
++		if (IS_ERR_OR_NULL(map))
++			break;
++		if (arm_iommu_attach_device(dev, map))
++			dev_err(dev, "Failed to attach %s\n", dev_name(dev));
++		dev_dbg(dev, "Attached %s to map %p\n", dev_name(dev), map);
++		break;
++	}
++	return NOTIFY_DONE;
++}
++#else
++#define tegra_iommu_device_notifier NULL
++#endif
++
++static struct notifier_block tegra_iommu_device_nb = {
++	.notifier_call = tegra_iommu_device_notifier,
++};
++
+ static void __init tegra30_dt_init(void)
+ {
+ 	tegra_clk_init_from_table(tegra_dt_clk_init_table);
+ 
++	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
++		bus_register_notifier(&platform_bus_type,
++				      &tegra_iommu_device_nb);
++
+ 	of_platform_populate(NULL, of_default_bus_match_table,
+ 				tegra30_auxdata_lookup, NULL);
+ }
+-- 
+1.7.9.5
