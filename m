@@ -1,209 +1,234 @@
-From: Mark Zhang <nvmarkzhang@gmail.com>
-Subject: Re: [RFC,v2,1/8] video: tegra: Add nvhost driver
-Date: Thu, 29 Nov 2012 17:10:46 +0800
-Message-ID: <50B72696.3030205@gmail.com>
-References: <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC,v2,3/8] video: tegra: host: Add channel and client support
+Date: Thu, 29 Nov 2012 18:01:03 +0800
+Message-ID: <50B7325F.20002@gmail.com>
+References: <1353935954-13763-4-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1353935954-13763-4-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTEvMjYvMjAxMiAwOToxOSBQTSwgVGVyamUgQmVyZ3N0csO2bSA8dGJlcmdzdHJvbUBudmlk
-aWEuY29tPiB3cm90ZToKPiBBZGQgbnZob3N0LCB0aGUgZHJpdmVyIGZvciBob3N0MXguIFRoaXMg
-cGF0Y2ggYWRkcyBzdXBwb3J0IGZvciByZWFkaW5nIGFuZAo+IGluY3JlbWVudGluZyBzeW5jIHBv
-aW50cyBhbmQgZHluYW1pYyBwb3dlciBtYW5hZ2VtZW50Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRl
-cmplIEJlcmdzdHJvbSA8dGJlcmdzdHJvbUBudmlkaWEuY29tPgo+IAo+IC0tLQo+IGRyaXZlcnMv
-dmlkZW8vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgMiArCj4gIGRy
-aXZlcnMvdmlkZW8vTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgMiAr
-Cj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9LY29uZmlnICAgICAgICAgICAgICAgICAgIHwg
-ICAgNSArCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9NYWtlZmlsZSAgICAgICAgICAgICAg
-ICAgIHwgICAxMCArCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9jaGlwX3N1cHBvcnQuYyAg
-ICAgICAgICAgIHwgICA0OCArKwo+ICBkcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9zdXBw
-b3J0LmggICAgICAgICAgICB8ICAgNTIgKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9k
-ZXYuYyAgICAgICAgICAgICAgICAgICAgIHwgICA5NiArKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVn
-cmEvaG9zdC9ob3N0MXgvTWFrZWZpbGUgICAgICAgICAgIHwgICAgNyArCj4gIGRyaXZlcnMvdmlk
-ZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9zdDF4LmMgICAgICAgICAgIHwgIDIwNCArKysrKysrKysK
-PiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9ob3N0MXguaCAgICAgICAgICAgfCAg
-IDc4ICsrKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9ob3N0MXgwMS5jICAg
-ICAgICAgfCAgIDM3ICsrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9zdDF4
-MDEuaCAgICAgICAgIHwgICAyOSArKwo+ICAuLi4vdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9z
-dDF4MDFfaGFyZHdhcmUuaCAgICB8ICAgMzYgKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0
-L2hvc3QxeC9ob3N0MXhfc3luY3B0LmMgICAgfCAgMTU2ICsrKysrKysKPiAgZHJpdmVycy92aWRl
-by90ZWdyYS9ob3N0L2hvc3QxeC9od19ob3N0MXgwMV9zeW5jLmggfCAgMzk4ICsrKysrKysrKysr
-KysrKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L252aG9zdF9hY20uYyAgICAgICAgICAg
-ICAgfCAgNDgxICsrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9z
-dC9udmhvc3RfYWNtLmggICAgICAgICAgICAgIHwgICA0NSArKwo+ICBkcml2ZXJzL3ZpZGVvL3Rl
-Z3JhL2hvc3QvbnZob3N0X3N5bmNwdC5jICAgICAgICAgICB8ICAzMzMgKysrKysrKysrKysrKysK
-PiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L252aG9zdF9zeW5jcHQuaCAgICAgICAgICAgfCAg
-MTM2ICsrKysrKwo+ICBpbmNsdWRlL2xpbnV4L252aG9zdC5oICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICB8ICAxNDMgKysrKysrCj4gIDIwIGZpbGVzIGNoYW5nZWQsIDIyOTggaW5zZXJ0aW9u
-cygrKQpbLi4uXQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9z
-dXBwb3J0LmMgYi9kcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9zdXBwb3J0LmMKPiArI2lu
-Y2x1ZGUgImNoaXBfc3VwcG9ydC5oIgo+ICsjaW5jbHVkZSAiaG9zdDF4L2hvc3QxeDAxLmgiCj4g
-Kwo+ICtzdHJ1Y3QgbnZob3N0X2NoaXBfc3VwcG9ydCAqbnZob3N0X2NoaXBfb3BzOwo+ICsKPiAr
-c3RydWN0IG52aG9zdF9jaGlwX3N1cHBvcnQgKm52aG9zdF9nZXRfY2hpcF9vcHModm9pZCkKPiAr
-ewo+ICsJcmV0dXJuIG52aG9zdF9jaGlwX29wczsKPiArfQoKSWYgeW91IHdhbm5hIGhpZGUgIm52
-aG9zdF9jaGlwX29wcyIgZnJvbSBvdGhlciBzb3VyY2UgZmlsZXMsIGRlY2xhcmUgaXQKYXMgInN0
-YXRpYyIuIFNvIHRoaXMgaXMgbm90IGEgc3RhdGljIG1lbWJlciB3aGljaCBtZWFucyBvdGhlciBm
-aWxlcyBpcwphYmxlIHRvIHRvdWNoIGl0IGJ5ICJleHRlcm4iIGJ1dCB3ZSBhbHNvIGRlZmluZSBh
-IGZ1bmN0aW9uIHRvIGdldCBpdCwKYW5kIHRoaXMgbG9va3MgcmVkdW5kYW50LgoKWy4uLl0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9NYWtlZmlsZSBiL2Ry
-aXZlcnMvdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvTWFrZWZpbGUKPiBuZXcgZmlsZSBtb2RlIDEw
-MDY0NAo+IGluZGV4IDAwMDAwMDAuLjMzMGQ1MDcKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvZHJp
-dmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9NYWtlZmlsZQo+IEBAIC0wLDAgKzEsNyBAQAo+
-ICtjY2ZsYWdzLXkgPSAtSWRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdAo+ICsKPiArbnZob3N0LWhv
-c3QxeC1vYmpzICA9IFwKPiArCWhvc3QxeC5vIFwKPiArCWhvc3QxeDAxLm8KCkNhbiB3ZSByZW5h
-bWUgdGhpcyAiaG9zdDF4MDEuYyI/IEkganVzdCByZWFsbHkgZG9uJ3QgbGlrZSB0aGlzIGtpbmQg
-b2YKdmFyaWFibGVzL2ZpbGVzLCBJIG1lYW4sIEkgY2FuJ3QgaW1hZ2luZSB0aGUgcHVycG9zZSBv
-ZiB0aGUgZmlsZQphY2NvcmRpbmcgdG8gaXQncyBuYW1lLi4uCgpbLi4uXQo+ICsKPiArc3RhdGlj
-IGludCBfX2RldmluaXQgbnZob3N0X2FsbG9jX3Jlc291cmNlcyhzdHJ1Y3QgbnZob3N0X21hc3Rl
-ciAqaG9zdCkKPiArewo+ICsJaW50IGVycjsKPiArCj4gKwllcnIgPSBudmhvc3RfaW5pdF9jaGlw
-X3N1cHBvcnQoaG9zdCk7Cj4gKwlpZiAoZXJyKQo+ICsJCXJldHVybiBlcnI7Cj4gKwo+ICsJcmV0
-dXJuIDA7Cj4gK30KCkp1c3QgInJldHVybiBudmhvc3RfaW5pdF9jaGlwX3N1cHBvcnQoaG9zdCki
-IGlzIGVub3VnaC4gSWYgc28sIGRvIHdlCnN0aWxsIG5lZWQgdGhpcyBmdW5jdGlvbj8KClsuLi5d
-Cj4gKwo+ICtzdGF0aWMgaW50IF9fZGV2aW5pdCBudmhvc3RfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqZGV2KQo+ICsKWy4uLl0KPiArCWRldl9pbmZvKCZkZXYtPmRldiwgImluaXRpYWxp
-emVkXG4iKTsKPiArCj4gKwlyZXR1cm4gMDsKPiArCj4gK2ZhaWw6CgpBZGQgbW9yZSAiZnJlZSIg
-Y29kZXMgaGVyZS4gQWN0dWFsbHksICJudmhvc3RfZnJlZV9yZXNvdXJjZXMiIGZyZWVzIHRoZQpo
-b3N0LT5pbnRyLnN5bmNwdCB3aGljaCBpcyBub3QgbmVlZGVkIHRvIGZyZWUgbWFudWFsbHkuClNl
-ZW1zIGF0IGxlYXN0IHdlIG5lZWQgdG8gYWRkICJudmhvc3Rfc3luY3B0X2RlaW5pdCIgaGVyZS4K
-ClsuLi5dCj4gKwo+ICtzdGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBob3N0MXhfbWF0Y2hbXSBf
-X2RldmluaXRkYXRhID0gewo+ICsJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEyMC1ob3N0
-MXgiLCB9LAo+ICsJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEzMC1ob3N0MXgiLCB9LAoK
-QWdhaW4sIHBsYWNlIHRlZ3JhMzAtaG9zdDF4IGJlZm9yZSB0ZWdyYTIwLWhvc3QxeC4KClsuLi5d
-Cj4gKwo+ICsvKioKPiArICogV3JpdGUgYSBjcHUgc3luY3BvaW50IGluY3JlbWVudCB0byB0aGUg
-aGFyZHdhcmUsIHdpdGhvdXQgdG91Y2hpbmcKPiArICogdGhlIGNhY2hlLiBDYWxsZXIgaXMgcmVz
-cG9uc2libGUgZm9yIGhvc3QgYmVpbmcgcG93ZXJlZC4KPiArICovCj4gK3N0YXRpYyB2b2lkIGhv
-c3QxeF9zeW5jcHRfY3B1X2luY3Ioc3RydWN0IG52aG9zdF9zeW5jcHQgKnNwLCB1MzIgaWQpCj4g
-K3sKPiArCXN0cnVjdCBudmhvc3RfbWFzdGVyICpkZXYgPSBzeW5jcHRfdG9fZGV2KHNwKTsKPiAr
-CXUzMiByZWdfb2Zmc2V0ID0gaWQgLyAzMjsKPiArCj4gKwlpZiAoIW52aG9zdF9tb2R1bGVfcG93
-ZXJlZChkZXYtPmRldikpIHsKPiArCQlkZXZfZXJyKCZzeW5jcHRfdG9fZGV2KHNwKS0+ZGV2LT5k
-ZXYsCj4gKwkJCSJUcnlpbmcgdG8gYWNjZXNzIGhvc3QxeCB3aGVuIGl0J3Mgb2ZmIik7Cj4gKwkJ
-cmV0dXJuOwo+ICsJfQo+ICsKPiArCWlmICghbnZob3N0X3N5bmNwdF9jbGllbnRfbWFuYWdlZChz
-cCwgaWQpCj4gKwkJCSYmIG52aG9zdF9zeW5jcHRfbWluX2VxX21heChzcCwgaWQpKSB7Cj4gKwkJ
-ZGV2X2Vycigmc3luY3B0X3RvX2RldihzcCktPmRldi0+ZGV2LAo+ICsJCQkiVHJ5aW5nIHRvIGlu
-Y3JlbWVudCBzeW5jcG9pbnQgaWQgJWQgYmV5b25kIG1heFxuIiwKPiArCQkJaWQpOwo+ICsJCXJl
-dHVybjsKPiArCX0KPiArCXdyaXRlbChCSVRfTUFTSyhpZCksIGRldi0+c3luY19hcGVydHVyZSAr
-Cj4gKwkJCWhvc3QxeF9zeW5jX3N5bmNwdF9jcHVfaW5jcl9yKCkgKyByZWdfb2Zmc2V0ICogNCk7
-CgpJIGhhdmUgYSBzdHVwaWQgcXVlc3Rpb246IEFjY29yZGluZyB0byB0aGUgbmFtZSBhbmQgdGhl
-IGNvbnRleHQgb2YgdGhpcwpmdW5jdGlvbiwgc2VlbXMgaXQgaW5jcmVhc2VzIHRoZSBzeW5jcHQg
-dmFsdWUgd2hpY2ggc3BlY2lmaWVkIGJ5IHBhcmFtCiJpZCIuIFNvIGhvdyBkb2VzIHRoaXMgIndy
-aXRlbCIgaW5jcmVhc2UgdGhlIHZhbHVlPyBJIGRvbid0IGtub3cgbXVjaAphYm91dCBob3N0MXgv
-c3luY3B0IHJlZyBvcGVyYXRpb25zLCBzbyBjb3VsZCB5b3UgZXhwbGFpbiBhIGxpdHRsZSBiaXQg
-b3IKSSBqdXN0IGNvbXBsZXRlbHkgaGF2ZSBhIHdyb25nIHVuZGVyc3RhbmRpbmc/CgpbLi4uXQo+
-ICsKPiArc3RhdGljIHNzaXplX3QgcG93ZXJnYXRlX2RlbGF5X3N0b3JlKHN0cnVjdCBrb2JqZWN0
-ICprb2JqLAo+ICsJc3RydWN0IGtvYmpfYXR0cmlidXRlICphdHRyLCBjb25zdCBjaGFyICpidWYs
-IHNpemVfdCBjb3VudCkKPiArewo+ICsJaW50IHBvd2VyZ2F0ZV9kZWxheSA9IDAsIHJldCA9IDA7
-Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9wb3dlcl9hdHRyICpwb3dlcl9hdHRyaWJ1dGUgPQo+
-ICsJCWNvbnRhaW5lcl9vZihhdHRyLCBzdHJ1Y3QgbnZob3N0X2RldmljZV9wb3dlcl9hdHRyLAo+
-ICsJCQlwb3dlcl9hdHRyW05WSE9TVF9QT1dFUl9TWVNGU19BVFRSSUJfUE9XRVJHQVRFX0RFTEFZ
-XSk7Cj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYgPSBwb3dlcl9hdHRyaWJ1dGUtPm5k
-ZXY7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9IHBsYXRmb3JtX2dldF9k
-cnZkYXRhKGRldik7Cj4gKwo+ICsJaWYgKCFwZGF0YS0+Y2FuX3Bvd2VyZ2F0ZSkgewo+ICsJCWRl
-dl9pbmZvKCZkZXYtPmRldiwgImRvZXMgbm90IHN1cHBvcnQgcG93ZXItZ2F0aW5nXG4iKTsKPiAr
-CQlyZXR1cm4gY291bnQ7Cj4gKwl9Cj4gKwo+ICsJbXV0ZXhfbG9jaygmcGRhdGEtPmxvY2spOwo+
-ICsJcmV0ID0gc3NjYW5mKGJ1ZiwgIiVkIiwgJnBvd2VyZ2F0ZV9kZWxheSk7Cj4gKwlpZiAocmV0
-ID09IDEgJiYgcG93ZXJnYXRlX2RlbGF5ID49IDApCj4gKwkJcGRhdGEtPnBvd2VyZ2F0ZV9kZWxh
-eSA9IHBvd2VyZ2F0ZV9kZWxheTsKPiArCWVsc2UKPiArCQlkZXZfZXJyKCZkZXYtPmRldiwgIklu
-dmFsaWQgcG93ZXJnYXRlIGRlbGF5XG4iKTsKPiArCW11dGV4X3VubG9jaygmcGRhdGEtPmxvY2sp
-Owo+ICsKPiArCXJldHVybiBjb3VudDsKCldoeSB3ZSBuZWVkIHRvIHJldHVybiBhbiB1bmNoYW5n
-ZWQgcGFyYW0/IFNlZW1zIHBhcmFtICJjb3VudCIgZG9lc24ndAptYWtlIHNlbnNlIGhlcmUuCgpb
-Li4uXQo+ICsKPiAraW50IG52aG9zdF9tb2R1bGVfaW5pdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpkZXYpCj4gK3sKPiArCWludCBpID0gMCwgZXJyID0gMDsKPiArCXN0cnVjdCBrb2JqX2F0dHJp
-YnV0ZSAqYXR0ciA9IE5VTEw7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9
-IHBsYXRmb3JtX2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJLyogaW5pdGlhbGl6ZSBjbG9ja3Mg
-dG8ga25vd24gc3RhdGUgKi8KPiArCXdoaWxlIChwZGF0YS0+Y2xvY2tzW2ldLm5hbWUgJiYgaSA8
-IE5WSE9TVF9NT0RVTEVfTUFYX0NMT0NLUykgewo+ICsJCWxvbmcgcmF0ZSA9IHBkYXRhLT5jbG9j
-a3NbaV0uZGVmYXVsdF9yYXRlOwo+ICsJCXN0cnVjdCBjbGsgKmM7Cj4gKwo+ICsJCWMgPSBkZXZt
-X2Nsa19nZXQoJmRldi0+ZGV2LCBwZGF0YS0+Y2xvY2tzW2ldLm5hbWUpOwo+ICsJCWlmIChJU19F
-UlJfT1JfTlVMTChjKSkgewo+ICsJCQlkZXZfZXJyKCZkZXYtPmRldiwgIkNhbm5vdCBnZXQgY2xv
-Y2sgJXNcbiIsCj4gKwkJCQkJcGRhdGEtPmNsb2Nrc1tpXS5uYW1lKTsKPiArCQkJcmV0dXJuIC1F
-Tk9ERVY7Cj4gKwkJfQo+ICsKPiArCQlyYXRlID0gY2xrX3JvdW5kX3JhdGUoYywgcmF0ZSk7Cj4g
-KwkJY2xrX3ByZXBhcmVfZW5hYmxlKGMpOwo+ICsJCWNsa19zZXRfcmF0ZShjLCByYXRlKTsKPiAr
-CQljbGtfZGlzYWJsZV91bnByZXBhcmUoYyk7Cj4gKwkJcGRhdGEtPmNsa1tpXSA9IGM7Cj4gKwkJ
-aSsrOwo+ICsJfQo+ICsJcGRhdGEtPm51bV9jbGtzID0gaTsKPiArCj4gKwltdXRleF9pbml0KCZw
-ZGF0YS0+bG9jayk7Cj4gKwlpbml0X3dhaXRxdWV1ZV9oZWFkKCZwZGF0YS0+aWRsZV93cSk7Cj4g
-KwlJTklUX0RFTEFZRURfV09SSygmcGRhdGEtPnBvd2Vyc3RhdGVfZG93biwgcG93ZXJzdGF0ZV9k
-b3duX2hhbmRsZXIpOwo+ICsKPiArCS8qIHBvd2VyIGdhdGUgdW5pdHMgdGhhdCB3ZSBjYW4gcG93
-ZXIgZ2F0ZSAqLwo+ICsJaWYgKHBkYXRhLT5jYW5fcG93ZXJnYXRlKSB7Cj4gKwkJZG9fcG93ZXJn
-YXRlX2xvY2tlZChwZGF0YS0+cG93ZXJnYXRlX2lkc1swXSk7Cj4gKwkJZG9fcG93ZXJnYXRlX2xv
-Y2tlZChwZGF0YS0+cG93ZXJnYXRlX2lkc1sxXSk7CgpTZWVtcyB3ZSBkb24ndCBzZXQgdGhlc2Ug
-MiBwb3dlcmdhdGVfaWRzLiBEb2VzIHRoaXMgbWVhbiB3ZSBoYXZlIG5vdAplbmFibGVkIHBvd2Vy
-IG1hbmFnZW1lbnQgZmVhdHVyZSBpbiB0aGlzIHZlcnNpb24/CgpbLi4uXQo+ICsKPiAraW50IG52
-aG9zdF9tb2R1bGVfc3VzcGVuZChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYpCj4gK3sKPiAr
-CWludCByZXQ7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9IHBsYXRmb3Jt
-X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJcmV0ID0gd2FpdF9ldmVudF90aW1lb3V0KHBkYXRh
-LT5pZGxlX3dxLCBpc19tb2R1bGVfaWRsZShkZXYpLAo+ICsJCQlBQ01fU1VTUEVORF9XQUlUX0ZP
-Ul9JRExFX1RJTUVPVVQpOwo+ICsJaWYgKHJldCA9PSAwKSB7Cj4gKwkJZGV2X2luZm8oJmRldi0+
-ZGV2LCAiJXMgcHJldmVudGVkIHN1c3BlbmRcbiIsCj4gKwkJCQlkZXZfbmFtZSgmZGV2LT5kZXYp
-KTsKPiArCQlyZXR1cm4gLUVCVVNZOwo+ICsJfQo+ICsKCkknbSBub3Qgc3VyZSB3aGV0aGVyIHRo
-ZXJlIGlzIGEgcmFjZSBjb25kaXRpb24gaGVyZS4gV2Ugd2FpdCB1bnRpbCB0aGlzCm1vZHVsZSBp
-cyBpZGxlKHJlZmNvdW50ID09IDApLCB0aGVuIHRyeSB0byBwb3dlcmdhdGUgaXQgbmV4dC4gQnV0
-IHRoZQp3YWl0IHF1ZXVlIGZ1bmN0aW9uICJwb3dlcnN0YXRlX2Rvd25faGFuZGxlciIgbWlnaHQg
-YWxyZWFkeSBwb3dlcmdhdGUKaXQuIFNvIHdlIG5lZWQgdG8gZWl0aGVyICAiY2FuY2VsX2RlbGF5
-ZWRfd29yaygmcGRhdGUtPnBvd2Vyc3RhdGVfZG93bikiCmJlZm9yZSB3YWl0aW5nIHRoZSBtb2R1
-bGUgdG8gaWRsZSBzdGF0ZSBvciBhZGQgc29tZSBwcm90ZWN0aW9uIGNvZGVzIGluCiJ0b19zdGF0
-ZV9wb3dlcmdhdGVkX2xvY2tlZCIuCgo+ICsJbXV0ZXhfbG9jaygmcGRhdGEtPmxvY2spOwo+ICsJ
-Y2FuY2VsX2RlbGF5ZWRfd29yaygmcGRhdGEtPnBvd2Vyc3RhdGVfZG93bik7Cj4gKwl0b19zdGF0
-ZV9wb3dlcmdhdGVkX2xvY2tlZChkZXYpOwo+ICsJbXV0ZXhfdW5sb2NrKCZwZGF0YS0+bG9jayk7
-Cj4gKwo+ICsJaWYgKHBkYXRhLT5zdXNwZW5kX25kZXYpCj4gKwkJcGRhdGEtPnN1c3BlbmRfbmRl
-dihkZXYpOwo+ICsKPiArCXJldHVybiAwOwo+ICt9Cj4gKwpbLi4uXQo+ICsKPiAraW50IG52aG9z
-dF9zeW5jcHRfaW5pdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYsCj4gKwkJc3RydWN0IG52
-aG9zdF9zeW5jcHQgKnNwKQo+ICt7Cj4gKwlpbnQgaTsKPiArCXN0cnVjdCBudmhvc3RfbWFzdGVy
-ICpob3N0ID0gc3luY3B0X3RvX2RldihzcCk7Cj4gKwlpbnQgZXJyID0gMDsKPiArCj4gKwkvKiBB
-bGxvY2F0ZSBzdHJ1Y3RzIGZvciBtaW4sIG1heCBhbmQgYmFzZSB2YWx1ZXMgKi8KPiArCXNwLT5t
-aW5fdmFsID0ga3phbGxvYyhzaXplb2YoYXRvbWljX3QpICogbnZob3N0X3N5bmNwdF9uYl9wdHMo
-c3ApLAo+ICsJCQlHRlBfS0VSTkVMKTsKPiArCXNwLT5tYXhfdmFsID0ga3phbGxvYyhzaXplb2Yo
-YXRvbWljX3QpICogbnZob3N0X3N5bmNwdF9uYl9wdHMoc3ApLAo+ICsJCQlHRlBfS0VSTkVMKTsK
-PiArCXNwLT5iYXNlX3ZhbCA9IGt6YWxsb2Moc2l6ZW9mKHUzMikgKiBudmhvc3Rfc3luY3B0X25i
-X2Jhc2VzKHNwKSwKPiArCQkJR0ZQX0tFUk5FTCk7Cj4gKwlzcC0+bG9ja19jb3VudHMgPQo+ICsJ
-CWt6YWxsb2Moc2l6ZW9mKGF0b21pY190KSAqIG52aG9zdF9zeW5jcHRfbmJfbWxvY2tzKHNwKSwK
-PiArCQkJR0ZQX0tFUk5FTCk7Cj4gKwo+ICsJaWYgKCEoc3AtPm1pbl92YWwgJiYgc3AtPm1heF92
-YWwgJiYgc3AtPmJhc2VfdmFsICYmIHNwLT5sb2NrX2NvdW50cykpIHsKPiArCQkvKiBmcmVlcyBo
-YXBwZW4gaW4gdGhlIGRlaW5pdCAqLwo+ICsJCWVyciA9IC1FTk9NRU07Cj4gKwkJZ290byBmYWls
-Owo+ICsJfQo+ICsKPiArCXNwLT5rb2JqID0ga29iamVjdF9jcmVhdGVfYW5kX2FkZCgic3luY3B0
-IiwgJmRldi0+ZGV2LmtvYmopOwo+ICsJaWYgKCFzcC0+a29iaikgewo+ICsJCWVyciA9IC1FSU87
-Cj4gKwkJZ290byBmYWlsOwo+ICsJfQo+ICsKPiArCS8qIEFsbG9jYXRlIHR3byBhdHRyaWJ1dGVz
-IGZvciBlYWNoIHN5bmMgcG9pbnQ6IG1pbiBhbmQgbWF4ICovCj4gKwlzcC0+c3luY3B0X2F0dHJz
-ID0ga3phbGxvYyhzaXplb2YoKnNwLT5zeW5jcHRfYXR0cnMpCj4gKwkJCSogbnZob3N0X3N5bmNw
-dF9uYl9wdHMoc3ApICogMiwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIXNwLT5zeW5jcHRfYXR0cnMp
-IHsKPiArCQllcnIgPSAtRU5PTUVNOwo+ICsJCWdvdG8gZmFpbDsKPiArCX0KPiArCj4gKwkvKiBG
-aWxsIGluIHRoZSBhdHRyaWJ1dGVzICovCj4gKwlmb3IgKGkgPSAwOyBpIDwgbnZob3N0X3N5bmNw
-dF9uYl9wdHMoc3ApOyBpKyspIHsKPiArCQljaGFyIG5hbWVbTUFYX1NZTkNQVF9MRU5HVEhdOwo+
-ICsJCXN0cnVjdCBrb2JqZWN0ICprb2JqOwo+ICsJCXN0cnVjdCBudmhvc3Rfc3luY3B0X2F0dHIg
-Km1pbiA9ICZzcC0+c3luY3B0X2F0dHJzW2kqMl07Cj4gKwkJc3RydWN0IG52aG9zdF9zeW5jcHRf
-YXR0ciAqbWF4ID0gJnNwLT5zeW5jcHRfYXR0cnNbaSoyKzFdOwo+ICsKPiArCQkvKiBDcmVhdGUg
-b25lIGRpcmVjdG9yeSBwZXIgc3luYyBwb2ludCAqLwo+ICsJCXNucHJpbnRmKG5hbWUsIHNpemVv
-ZihuYW1lKSwgIiVkIiwgaSk7Cj4gKwkJa29iaiA9IGtvYmplY3RfY3JlYXRlX2FuZF9hZGQobmFt
-ZSwgc3AtPmtvYmopOwoKV2hlcmUgZG8gd2UgImtvYmplY3RfcHV0IiB0aGlzIGtvYmo/CgpbLi4u
-XQo+ICsJCWlmICgha29iaikgewo+ICsJCQllcnIgPSAtRUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4g
-KwkJfQo+ICsKPiArCQltaW4tPmlkID0gaTsKPiArCQltaW4tPmhvc3QgPSBob3N0Owo+ICsJCW1p
-bi0+YXR0ci5hdHRyLm5hbWUgPSBtaW5fbmFtZTsKPiArCQltaW4tPmF0dHIuYXR0ci5tb2RlID0g
-U19JUlVHTzsKPiArCQltaW4tPmF0dHIuc2hvdyA9IHN5bmNwdF9taW5fc2hvdzsKPiArCQlpZiAo
-c3lzZnNfY3JlYXRlX2ZpbGUoa29iaiwgJm1pbi0+YXR0ci5hdHRyKSkgewo+ICsJCQllcnIgPSAt
-RUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4gKwkJfQo+ICsKPiArCQltYXgtPmlkID0gaTsKPiArCQlt
-YXgtPmhvc3QgPSBob3N0Owo+ICsJCW1heC0+YXR0ci5hdHRyLm5hbWUgPSBtYXhfbmFtZTsKPiAr
-CQltYXgtPmF0dHIuYXR0ci5tb2RlID0gU19JUlVHTzsKPiArCQltYXgtPmF0dHIuc2hvdyA9IHN5
-bmNwdF9tYXhfc2hvdzsKPiArCQlpZiAoc3lzZnNfY3JlYXRlX2ZpbGUoa29iaiwgJm1heC0+YXR0
-ci5hdHRyKSkgewo+ICsJCQllcnIgPSAtRUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4gKwkJfQo+ICsJ
-fQo+ICsKPiArCXJldHVybiBlcnI7Cj4gKwo+ICtmYWlsOgo+ICsJbnZob3N0X3N5bmNwdF9kZWlu
-aXQoc3ApOwo+ICsJcmV0dXJuIGVycjsKPiArfQo+ICsKWy4uLl0KPiArLyogcHVibGljIGhvc3Qx
-eCBzeW5jLXBvaW50IG1hbmFnZW1lbnQgQVBJcyAqLwo+ICt1MzIgaG9zdDF4X3N5bmNwdF9pbmNy
-X21heCh1MzIgaWQsIHUzMiBpbmNycyk7Cj4gK3ZvaWQgaG9zdDF4X3N5bmNwdF9pbmNyKHUzMiBp
-ZCk7Cj4gK3UzMiBob3N0MXhfc3luY3B0X3JlYWQodTMyIGlkKTsKPiArCj4gKyNlbmRpZgo+IApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 11/26/2012 09:19 PM, Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wr=
+ote:
+> Add support for host1x client modules, and host1x channels to submit
+> work to the clients. The work is submitted in dmabuf buffers, so add
+> support for dmabuf memory management, too.
+[...]
+> diff --git a/drivers/video/tegra/host/bus_client.c b/drivers/video/te=
+gra/host/bus_client.c
+[...]
+> +int nvhost_client_device_init(struct platform_device *dev)
+> +{
+> +	int err;
+> +	struct nvhost_master *nvhost_master =3D nvhost_get_host(dev);
+> +	struct nvhost_channel *ch;
+> +	struct nvhost_device_data *pdata =3D platform_get_drvdata(dev);
+> +
+> +	ch =3D nvhost_alloc_channel(dev);
+> +	if (ch =3D=3D NULL)
+> +		return -ENODEV;
+> +
+> +	/* store the pointer to this device for channel */
+> +	ch->dev =3D dev;
+> +
+> +	err =3D nvhost_channel_init(ch, nvhost_master, pdata->index);
+> +	if (err)
+> +		goto fail;
+> +
+> +	err =3D nvhost_module_init(dev);
+> +	if (err)
+> +		goto fail;
+> +
+> +	err =3D nvhost_device_list_add(dev);
+> +	if (err)
+> +		goto fail;
+> +
+> +	dev_info(&dev->dev, "initialized\n");
+> +
+> +	return 0;
+> +
+> +fail:
+> +	/* Add clean-up */
+
+Yes, add "nvhost_module_deinit" here?
+
+> +	nvhost_free_channel(ch);
+> +	return err;
+> +}
+> +EXPORT_SYMBOL(nvhost_client_device_init);
+> +
+> +int nvhost_client_device_suspend(struct platform_device *dev)
+> +{
+> +	int ret =3D 0;
+> +	struct nvhost_device_data *pdata =3D platform_get_drvdata(dev);
+> +
+> +	ret =3D nvhost_channel_suspend(pdata->channel);
+> +	dev_info(&dev->dev, "suspend status: %d\n", ret);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return ret;
+
+Minor issue: just "return ret" is OK. That "if" doesn't make sense.
+
+> +}
+> +EXPORT_SYMBOL(nvhost_client_device_suspend);
+> diff --git a/drivers/video/tegra/host/chip_support.c b/drivers/video/=
+tegra/host/chip_support.c
+> index 5a44147..8765c83 100644
+> --- a/drivers/video/tegra/host/chip_support.c
+> +++ b/drivers/video/tegra/host/chip_support.c
+> @@ -25,7 +25,7 @@
+>  #include "chip_support.h"
+>  #include "host1x/host1x01.h"
+> =20
+> -struct nvhost_chip_support *nvhost_chip_ops;
+> +static struct nvhost_chip_support *nvhost_chip_ops;
+> =20
+
+All right, already fixed here. Sorry, so just ignore what I said about
+this in my reply to your patch 1.
+
+[...]
+> +
+> +struct mem_handle *nvhost_dmabuf_get(u32 id, struct platform_device =
+*dev)
+> +{
+> +	struct mem_handle *h;
+> +	struct dma_buf *buf;
+> +
+> +	buf =3D dma_buf_get(to_dmabuf_fd(id));
+> +	if (IS_ERR_OR_NULL(buf))
+> +		return (struct mem_handle *)buf;
+> +
+> +	h =3D (struct mem_handle *)dma_buf_attach(buf, &dev->dev);
+> +	if (IS_ERR_OR_NULL(h))
+> +		dma_buf_put(buf);
+
+Return an error here.
+
+> +
+> +	return (struct mem_handle *) ((u32)h | mem_mgr_type_dmabuf);
+> +}
+> +
+[...]
+>  int nvhost_init_host1x01_support(struct nvhost_master *host,
+>  	struct nvhost_chip_support *op)
+>  {
+> +	op->channel =3D host1x_channel_ops;
+> +	op->cdma =3D host1x_cdma_ops;
+> +	op->push_buffer =3D host1x_pushbuffer_ops;
+>  	host->sync_aperture =3D host->aperture + HOST1X_CHANNEL_SYNC_REG_BA=
+SE;
+>  	op->syncpt =3D host1x_syncpt_ops;
+>  	op->intr =3D host1x_intr_ops;
+> =20
+> +	op->nvhost_dev.alloc_nvhost_channel =3D t20_alloc_nvhost_channel;
+> +	op->nvhost_dev.free_nvhost_channel =3D t20_free_nvhost_channel;
+> +
+
+I recall in previous version, there is t30-related alloc_nvhost_channel
+& free_nvhost_channel. Why remove them?
+
+>  	return 0;
+>  }
+[...]
+> +static int push_buffer_init(struct push_buffer *pb)
+> +{
+> +	struct nvhost_cdma *cdma =3D pb_to_cdma(pb);
+> +	struct nvhost_master *master =3D cdma_to_dev(cdma);
+> +	pb->mapped =3D NULL;
+> +	pb->phys =3D 0;
+> +	pb->handle =3D NULL;
+> +
+> +	cdma_pb_op().reset(pb);
+> +
+> +	/* allocate and map pushbuffer memory */
+> +	pb->mapped =3D dma_alloc_writecombine(&master->dev->dev,
+> +			PUSH_BUFFER_SIZE + 4, &pb->phys, GFP_KERNEL);
+> +	if (IS_ERR_OR_NULL(pb->mapped)) {
+> +		pb->mapped =3D NULL;
+> +		goto fail;
+
+Return directly here. "goto fail" makes "push_buffer_destroy" get calle=
+d.
+
+> +	}
+> +
+> +	/* memory for storing mem client and handles for each opcode pair *=
+/
+> +	pb->handle =3D kzalloc(NVHOST_GATHER_QUEUE_SIZE *
+> +				sizeof(struct mem_handle *),
+> +			GFP_KERNEL);
+> +	if (!pb->handle)
+> +		goto fail;
+> +
+> +	/* put the restart at the end of pushbuffer memory */
+
+Just for curious, why "pb->mapped + 1K" is the end of a 4K pushbuffer?
+
+> +	*(pb->mapped + (PUSH_BUFFER_SIZE >> 2)) =3D
+> +		nvhost_opcode_restart(pb->phys);
+> +
+> +	return 0;
+> +
+> +fail:
+> +	push_buffer_destroy(pb);
+> +	return -ENOMEM;
+> +}
+> +
+[...]
+> +
+> +/**
+> + * Sleep (if necessary) until the requested event happens
+> + *   - CDMA_EVENT_SYNC_QUEUE_EMPTY : sync queue is completely empty.
+> + *     - Returns 1
+> + *   - CDMA_EVENT_PUSH_BUFFER_SPACE : there is space in the push buf=
+fer
+> + *     - Return the amount of space (> 0)
+> + * Must be called with the cdma lock held.
+> + */
+> +unsigned int nvhost_cdma_wait_locked(struct nvhost_cdma *cdma,
+> +		enum cdma_event event)
+> +{
+> +	for (;;) {
+> +		unsigned int space =3D cdma_status_locked(cdma, event);
+> +		if (space)
+> +			return space;
+> +
+> +		/* If somebody has managed to already start waiting, yield */
+> +		if (cdma->event !=3D CDMA_EVENT_NONE) {
+> +			mutex_unlock(&cdma->lock);
+> +			schedule();
+> +			mutex_lock(&cdma->lock);
+> +			continue;
+> +		}
+> +		cdma->event =3D event;
+> +
+> +		mutex_unlock(&cdma->lock);
+> +		down(&cdma->sem);
+> +		mutex_lock(&cdma->lock);
+
+I'm newbie of nvhost but I feel here is very tricky, about the lock and
+unlock of this mutex: cdma->lock. Does it require this mutex is locked
+before calling this function? And do we need to unlock it before the
+code: "return space;" above? IMHO, this is not a good design and can we
+find out a better solution?
+
+> +	}
+> +	return 0;
+> +}
+[...]
+
+> +/*
+> + * Dump contents of job to debug output.
+> + */
+> +void nvhost_job_dump(struct device *dev, struct nvhost_job *job);
+> +
+>  #endif
+>=20
