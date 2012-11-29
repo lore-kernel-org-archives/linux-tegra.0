@@ -1,137 +1,277 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU
- devices(was: How to specify IOMMU'able devices in DT)
-Date: Thu, 29 Nov 2012 11:17:29 +0100
-Message-ID: <20121129101729.GA6150@avionic-0098.adnet.avionic-design.de>
-References: <20120924124452.41070ed2ee9944d930cffffc@nvidia.com>
- <054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com>
- <20120924.145014.1452596970914043018.hdoyu@nvidia.com>
- <20121128.154832.539666140149950229.hdoyu@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 2/8] video: tegra: Add syncpoint wait and interrupts
+Date: Thu, 29 Nov 2012 12:39:23 +0200
+Message-ID: <50B73B5B.8030008@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-3-git-send-email-tbergstrom@nvidia.com> <20121129084400.GA28781@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20121128.154832.539666140149950229.hdoyu@nvidia.com>
-Sender: owner-linux-mm@kvack.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "joro@8bytes.org" <joro@8bytes.org>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "arnd@arndb.de" <arnd@arndb.de>, Krishna Reddy <vdumpa@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "minchan@kernel.org" <minchan@kernel.org>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.ch>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121129084400.GA28781-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 29.11.2012 10:44, Thierry Reding wrote:
+>> diff --git a/drivers/video/tegra/host/dev.c b/drivers/video/tegra/host/dev.c
+>> index 98c9c9f..025a820 100644
+>> --- a/drivers/video/tegra/host/dev.c
+>> +++ b/drivers/video/tegra/host/dev.c
+>> @@ -43,6 +43,13 @@ u32 host1x_syncpt_read(u32 id)
+>>  }
+>>  EXPORT_SYMBOL(host1x_syncpt_read);
+>>
+>> +int host1x_syncpt_wait(u32 id, u32 thresh, u32 timeout, u32 *value)
+> 
+> The choice of data types is odd here. id refers to a syncpt so a better
+> choice would have been unsigned int because the size of the variable
+> doesn't actually matter. But as I already said in my reply to patch 1,
+> these are resources and should therefore better be abstracted through an
+> opaque pointer anyway.
+> 
+> timeout is usually signed long, so this function should reflect that. As
+> for the value this is probably fine as it will effectively be set from a
+> register value. Though you also cache them in software using atomics.
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+32-bits is an architectural limit for the sync point id, so that's why I
+used it here. But you're right - it doesn't really matter and could be
+changed to unsigned long.
 
-On Wed, Nov 28, 2012 at 02:48:32PM +0100, Hiroshi Doyu wrote:
-[...]
-> From: Hiroshi Doyu <hdoyu@nvidia.com>
-> Date: Wed, 28 Nov 2012 14:47:04 +0200
-> Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
->=20
-> platform_bus notifier registers IOMMU devices if dma-window is
-> specified.
->=20
-> Its format is:
->   dma-window =3D <"start" "size">;
-> ex)
->   dma-window =3D <0x12345000 0x8000>;
->=20
-> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> ---
->  arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++=
-++++++
->  1 file changed, 40 insertions(+)
->=20
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra=
-/board-dt-tegra30.c
-> index a2b6cf1..570d718 100644
-> --- a/arch/arm/mach-tegra/board-dt-tegra30.c
-> +++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-> @@ -30,9 +30,11 @@
->  #include <linux/of_fdt.h>
->  #include <linux/of_irq.h>
->  #include <linux/of_platform.h>
-> +#include <linux/of_iommu.h>
-> =20
->  #include <asm/mach/arch.h>
->  #include <asm/hardware/gic.h>
-> +#include <asm/dma-iommu.h>
-> =20
->  #include "board.h"
->  #include "clock.h"
-> @@ -86,10 +88,48 @@ static __initdata struct tegra_clk_init_table tegra_d=
-t_clk_init_table[] =3D {
->  	{ NULL,		NULL,		0,		0},
->  };
-> =20
-> +#ifdef CONFIG_ARM_DMA_USE_IOMMU
-> +static int tegra_iommu_device_notifier(struct notifier_block *nb,
-> +				       unsigned long event, void *_dev)
-> +{
-> +	struct dma_iommu_mapping *map =3D NULL;
-> +	struct device *dev =3D _dev;
-> +	dma_addr_t base;
-> +	size_t size;
-> +	int err;
-> +
-> +	switch (event) {
-> +	case BUS_NOTIFY_ADD_DEVICE:
-> +		err =3D of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
-> +					&size);
-> +		if (!err)
-> +			map =3D arm_iommu_create_mapping(&platform_bus_type,
-> +						       base, size, 0);
-> +		if (IS_ERR_OR_NULL(map))
-> +			break;
-> +		if (arm_iommu_attach_device(dev, map))
-> +			dev_err(dev, "Failed to attach %s\n", dev_name(dev));
-> +		dev_dbg(dev, "Attached %s to map %p\n", dev_name(dev), map);
-> +		break;
-> +	}
-> +	return NOTIFY_DONE;
-> +}
-> +#else
-> +#define tegra_iommu_device_notifier NULL
-> +#endif
-> +
-> +static struct notifier_block tegra_iommu_device_nb =3D {
-> +	.notifier_call =3D tegra_iommu_device_notifier,
-> +};
+thresh and *value reflects that sync point value is 32-bit, and I'd keep
+that as is.
 
-You don't need this extra protection since you use IS_ENABLED below and
-these are all static variables. The whole point of IS_ENABLED is to
-allow full compile coverage while leaving it up to the compiler to
-eliminate dead code.
+Timeout should be unsigned long, yes.
 
-Thierry
+>> diff --git a/drivers/video/tegra/host/host1x/host1x_intr.c b/drivers/video/tegra/host/host1x/host1x_intr.c
+> [...]
+>> +#include <linux/interrupt.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/io.h>
+>> +#include <asm/mach/irq.h>
+>> +
+>> +#include "nvhost_intr.h"
+>> +#include "host1x/host1x.h"
+>> +
+>> +/* Spacing between sync registers */
+>> +#define REGISTER_STRIDE 4
+> 
+> Erm... no. The usual way you should be doing this is either make the
+> register definitions account for the stride or use accessors that apply
+> the stride. You should be doing the latter anyway to make accesses. For
+> example:
+> 
+>         static inline void host1x_syncpt_writel(struct host1x *host1x,
+>                                                 unsigned long value,
+>                                                 unsigned long offset)
+>         {
+>                 writel(value, host1x->regs + SYNCPT_BASE + offset);
+>         }
+> 
+>         static inline unsigned long host1x_syncpt_readl(struct host1x *host1x,
+>                                                         unsigned long offset)
+>         {
+>                 return readl(host1x->regs + SYNCPT_BASE + offset);
+>         }
+> 
+> Alternatively, if you want to pass the register index instead of the
+> offset, you can use just multiply the offset in that function:
+>
+>         writel(value, host1x->regs + SYNCPT_BASE + (offset << 2));
+>
+> The same can also be done with the non-syncpt registers.
 
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature
+The register number has a stride of 4 when doing writes, and 1 when
+adding to command streams. This is why I've kept the register
+definitions as is.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+I could add helper functions. Just as a side note, the sync register
+space has other definitions than just the syncpt registers, so the
+naming should be changed a bit.
 
-iQIcBAEBAgAGBQJQtzY5AAoJEN0jrNd/PrOhuzMP/iJ18BF54Mt6oyjkj7L4SDsE
-BHtFAOgoS6H6ZE4gDkJcmXotmEb1qSP4dhM6kox7XtEwfQ2QQ19btFNfsvyZrrZF
-S7oRehteLuY9f9UeattSzMW7p/vLp4ca15krNuS2zMLonsvfARY3+zKshvp95i4w
-u13XLVCCz8qFqMI+hTC1mG6J38yUX3OE8MatP213sO23gR+M+k2W2hGdShoIkLca
-FjaeWw8XqapGQNAM7M95IkdWalIZGGQ7VUcWU7J+dYnb1yNS0fIiDPyc+PMXlcDc
-rRseaEPAjeRKcx+gu7mTf0tZOo+oiwQFy7eRVtj1o/9KteIvL7BE5ePd7pnNQM5v
-U9zBJ3mTt4suST5xFK0tTnJElbZFMtNA75ZC6mrHfyVFo1HcQd3gx2CN5qxWL709
-Sgr8Gr0hrWyodLxiDE+a3q+k4deB5BxYccp1swZMrrlkH4MYVESCrgJ6TyZPjihr
-OtpJyH4myC+GqBBdyxQ5phNLq13UdgmtiurnXDaKIgqq46yNR5TaUuo4B/bTDK6s
-2PmMFziZYyCmnWiMb8JU42J/VHSQrQkv7EC3V9w6BKhkynPvh6CLMcsD7A2Ub+Ta
-rZKyuy89z0wuGKhyJgpIGXRpjyROIorlHcsWpP9MPGb3V8Hec6hmBbVGFsSrxPqw
-Io+pFSTddkjReGRA/agl
-=uArM
------END PGP SIGNATURE-----
+>> +static irqreturn_t syncpt_thresh_cascade_isr(int irq, void *dev_id)
+>> +{
+>> +     struct nvhost_master *dev = dev_id;
+>> +     void __iomem *sync_regs = dev->sync_aperture;
+>> +     struct nvhost_intr *intr = &dev->intr;
+>> +     unsigned long reg;
+>> +     int i, id;
+>> +
+>> +     for (i = 0; i < dev->info.nb_pts / BITS_PER_LONG; i++) {
+>> +             reg = readl(sync_regs +
+>> +                             host1x_sync_syncpt_thresh_cpu0_int_status_r() +
+>> +                             i * REGISTER_STRIDE);
+>> +             for_each_set_bit(id, &reg, BITS_PER_LONG) {
+>> +                     struct nvhost_intr_syncpt *sp =
+>> +                             intr->syncpt + (i * BITS_PER_LONG + id);
+>> +                     host1x_intr_syncpt_thresh_isr(sp);
+>> +                     queue_work(intr->wq, &sp->work);
+>> +             }
+>> +     }
+>> +
+>> +     return IRQ_HANDLED;
+>> +}
+> 
+> Maybe it would be better to call the syncpt handlers in interrupt
+> context and let them schedule work if they want to. I'm thinking about
+> the display controllers which may want to use syncpoints for VBLANK
+> support.
 
---vkogqOf2sHV7VnPd--
+Display controller can use the APIs to read, increment and wait for sync
+point.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+We could do more in isr, but then again, we've noticed that the current
+design already gives pretty good latency, so we haven't seen the need to
+move code from thread to isr.
+
+>> +static void host1x_intr_init_host_sync(struct nvhost_intr *intr)
+>> +{
+>> +     struct nvhost_master *dev = intr_to_dev(intr);
+>> +     void __iomem *sync_regs = dev->sync_aperture;
+>> +     int i, err, irq;
+>> +
+>> +     writel(0xffffffffUL,
+>> +             sync_regs + host1x_sync_syncpt_thresh_int_disable_r());
+>> +     writel(0xffffffffUL,
+>> +             sync_regs + host1x_sync_syncpt_thresh_cpu0_int_status_r());
+>> +
+>> +     for (i = 0; i < dev->info.nb_pts; i++)
+>> +             INIT_WORK(&intr->syncpt[i].work, syncpt_thresh_cascade_fn);
+>> +
+>> +     irq = platform_get_irq(dev->dev, 0);
+>> +     WARN_ON(IS_ERR_VALUE(irq));
+>> +     err = devm_request_irq(&dev->dev->dev, irq,
+>> +                             syncpt_thresh_cascade_isr,
+>> +                             IRQF_SHARED, "host_syncpt", dev);
+>> +     WARN_ON(IS_ERR_VALUE(err));
+> 
+> You should be handling this properly and propagate these errors to the
+> corresponding .probe().
+
+Yes, will do. And the strange part is that nvhost_intr actually already
+contains the irq number, so actually there's no need to retrieve it from
+platform_device.
+
+>> +/**
+>> + * Sync point threshold interrupt service function
+>> + * Handles sync point threshold triggers, in interrupt context
+>> + */
+>> +static void host1x_intr_syncpt_thresh_isr(struct nvhost_intr_syncpt *syncpt)
+>> +{
+>> +     unsigned int id = syncpt->id;
+>> +     struct nvhost_intr *intr = intr_syncpt_to_intr(syncpt);
+>> +
+>> +     void __iomem *sync_regs = intr_to_dev(intr)->sync_aperture;
+>> +
+>> +     u32 reg = BIT_WORD(id) * REGISTER_STRIDE;
+>> +
+>> +     writel(BIT_MASK(id), sync_regs +
+>> +             host1x_sync_syncpt_thresh_int_disable_r() + reg);
+>> +     writel(BIT_MASK(id), sync_regs +
+>> +             host1x_sync_syncpt_thresh_cpu0_int_status_r() + reg);
+>> +}
+> 
+> So this disables all interrupts and is called from the syncpt interrupt
+> handler. Where are the interrupts reenabled? Do host1x clients have to
+> do that manually?
+
+The thread re-enables once it's done. It checks the next value we're
+interested in, and programs that to host1x syncpt threshold.
+
+
+>> +     /* enable extra interrupt sources IP_READ_INT and IP_WRITE_INT */
+>> +     writel(BIT(30) | BIT(31), sync_regs + host1x_sync_hintmask_ext_r());
+>> +
+>> +     /* enable extra interrupt sources */
+>> +     writel(BIT(12) | BIT(31), sync_regs + host1x_sync_hintmask_r());
+>> +
+>> +     /* enable host module interrupt to CPU0 */
+>> +     writel(BIT(0), sync_regs + host1x_sync_intc0mask_r());
+>> +
+>> +     /* master enable for general (not syncpt) host interrupts */
+>> +     writel(BIT(0), sync_regs + host1x_sync_intmask_r());
+>> +
+>> +     return err;
+>> +}
+> 
+> You should add defines for these bits, which will likely make the
+> comments redundant.
+
+I'm actually thinking that I might just remove the generic interrupts.
+We have no use for it in upstream kernel.
+
+> Okay, so this is where syncpoint interrupts are reenabled. The rest of
+> this whole wait queue code looks overly complex. I'll need to go through
+> that separately and more thoroughly.
+
+Thanks.
+
+>> +void *nvhost_intr_alloc_waiter()
+>> +{
+>> +     return kzalloc(sizeof(struct nvhost_waitlist),
+>> +                     GFP_KERNEL|__GFP_REPEAT);
+>> +}
+> 
+> I don't think we need __GFP_REPEAT here.
+
+This used to be called from code where failed alloc was fatal, but not
+anymore, so __GFP_REPEAT isn't needed anymore.
+
+>> +/*** Init & shutdown ***/
+>> +
+>> +int nvhost_intr_init(struct nvhost_intr *intr, u32 irq_gen, u32 irq_sync)
+> 
+> Again, using u32 for interrupt numbers is unusual.
+
+Ok.
+
+>> +     mutex_init(&intr->mutex);
+>> +     intr->host_syncpt_irq_base = irq_sync;
+>> +     intr->wq = create_workqueue("host_syncpt");
+> 
+> What if create_workqueue() fails?
+
+Hmm, we panic? Not good.
+
+> 
+>> +     intr_op().init_host_sync(intr);
+>> +     intr->host_general_irq = irq_gen;
+>> +     intr_op().request_host_general_irq(intr);
+>> +
+>> +     for (id = 0, syncpt = intr->syncpt;
+>> +          id < nb_pts;
+>> +          ++id, ++syncpt) {
+> 
+> This fits perfectly well on a single line, no need to wrap it. Also you
+> could instead of incrementing syncpt, move it into the loop and assign
+> it based on id.
+> 
+>         for (id = 0; id < nb_pts; id++) {
+>                 struct nvhost_intr_syncpt *syncpt = &intr->syncpt[id];
+>                 ...
+>         }
+
+Looks better, yes.
+
+>> +void nvhost_intr_start(struct nvhost_intr *intr, u32 hz)
+>> +{
+>> +     mutex_lock(&intr->mutex);
+>> +
+>> +     intr_op().init_host_sync(intr);
+>> +     intr_op().set_host_clocks_per_usec(intr,
+>> +                                            (hz + 1000000 - 1)/1000000);
+> 
+> DIV_ROUND_UP(hz)?
+
+Yes, that's what we should use. I didn't know we have that.
+
+>> +#define NVHOST_NO_TIMEOUT                    (-1)
+> 
+> Couldn't you reuse MAX_SCHEDULE_TIMEOUT instead? You already use it as
+> the value for the timeout parameter in nvhost_syncpt_wait().
+
+I guess NVHOST_NO_TIMEOUT is anyway a bad idea, and I could just remove
+it. The caller can just pass LONG_MAX if it wants to wait for a _really_
+long time, but having no timeout is not good.
+
+Terje
