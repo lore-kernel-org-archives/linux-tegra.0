@@ -1,42 +1,65 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: remove unused functions in mach/clk.h
-Date: Thu, 29 Nov 2012 11:50:29 +0530
-Message-ID: <50B6FEAD.9070401@nvidia.com>
-References: <1353999553-5196-1-git-send-email-sivaramn@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU
+ devices(was: How to specify IOMMU'able devices in DT)
+Date: Thu, 29 Nov 2012 08:45:15 +0200
+Message-ID: <20121129084515.8a818bf4793e0d4bb3305c36@nvidia.com>
+References: <20120924124452.41070ed2ee9944d930cffffc@nvidia.com>
+	<054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com>
+	<20120924.145014.1452596970914043018.hdoyu@nvidia.com>
+	<20121128.154832.539666140149950229.hdoyu@nvidia.com>
+	<50B652F2.5050407@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1353999553-5196-1-git-send-email-sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <50B652F2.5050407@wwwdotorg.org>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "joro@8bytes.org" <joro@8bytes.org>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "arnd@arndb.de" <arnd@arndb.de>, Krishna Reddy <vdumpa@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "minchan@kernel.org" <minchan@kernel.org>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.o
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 27 November 2012 12:29 PM, Sivaram Nair wrote:
-> This is a cleaning up patch that removes couple of functions in
-> mach/clk.h that are no longer used and does not have any body.
->
-> Signed-off-by: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   arch/arm/mach-tegra/include/mach/clk.h |    5 -----
->   1 file changed, 5 deletions(-)
->
-> diff --git a/arch/arm/mach-tegra/include/mach/clk.h b/arch/arm/mach-tegra/include/mach/clk.h
-> index 95f3a54..64d2657 100644
-> --- a/arch/arm/mach-tegra/include/mach/clk.h
-> +++ b/arch/arm/mach-tegra/include/mach/clk.h
-> @@ -34,11 +34,6 @@ enum tegra_clk_ex_param {
->   void tegra_periph_reset_deassert(struct clk *c);
->   void tegra_periph_reset_assert(struct clk *c);
->   
-> -#ifndef CONFIG_COMMON_CLK
-> -unsigned long clk_get_rate_all_locked(struct clk *c);
-> -#endif
-> -
-> -void tegra2_sdmmc_tap_delay(struct clk *c, int delay);
->   int tegra_clk_cfg_ex(struct clk *c, enum tegra_clk_ex_param p, u32 setting);
->   
->   #endif
+On Wed, 28 Nov 2012 19:07:46 +0100
+Stephen Warren <swarren@wwwdotorg.org> wrote:
+......
+> >>> Please read more about bus notifiers. IMHO a good example is provided in 
+> >>> the following thread:
+> >>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12238.html
+> >>
+> >> This bus notifier seems enough flexible to afford the variation of
+> >> IOMMU map info, like Tegra ASID, which could be platform-specific, and
+> >> the other could be common too. There's already iommu_bus_notifier
+> >> too. I'll try to implement something base on this.
+> > 
+> > Experimentally implemented as below. With the followig patch, each
+> > device could specify its own map in DT, and automatically the device
+> > would be attached to the map.
+> > 
+> > There is a case that some devices share a map. This patch doesn't
+> > suppor such case yet.
+> > 
+> > From 8cb75bb6f3a8535a077e0e85265f87c1f1289bfd Mon Sep 17 00:00:00 2001
+> > From: Hiroshi Doyu <hdoyu@nvidia.com>
+> > Date: Wed, 28 Nov 2012 14:47:04 +0200
+> > Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
+> > 
+> > platform_bus notifier registers IOMMU devices if dma-window is
+> > specified.
+> > 
+> > Its format is:
+> >   dma-window = <"start" "size">;
+> > ex)
+> >   dma-window = <0x12345000 0x8000>;
+> > 
+> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> > ---
+> >  arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++++++++
+> 
+> Shouldn't this patch be to the IOMMU driver itself, not the core Tegra code?
 
-Reviewed-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+That could be possible and cleaner. I'll check if it works.
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
