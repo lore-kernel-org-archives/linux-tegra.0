@@ -1,277 +1,153 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 2/8] video: tegra: Add syncpoint wait and interrupts
-Date: Thu, 29 Nov 2012 12:39:23 +0200
-Message-ID: <50B73B5B.8030008@nvidia.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-3-git-send-email-tbergstrom@nvidia.com> <20121129084400.GA28781@avionic-0098.adnet.avionic-design.de>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC,v2,3/8] video: tegra: host: Add channel and client support
+Date: Thu, 29 Nov 2012 12:46:54 +0200
+Message-ID: <50B73D1E.5090600@nvidia.com>
+References: <1353935954-13763-4-git-send-email-tbergstrom@nvidia.com> <50B7325F.20002@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121129084400.GA28781-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <50B7325F.20002-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 29.11.2012 10:44, Thierry Reding wrote:
->> diff --git a/drivers/video/tegra/host/dev.c b/drivers/video/tegra/host/dev.c
->> index 98c9c9f..025a820 100644
->> --- a/drivers/video/tegra/host/dev.c
->> +++ b/drivers/video/tegra/host/dev.c
->> @@ -43,6 +43,13 @@ u32 host1x_syncpt_read(u32 id)
->>  }
->>  EXPORT_SYMBOL(host1x_syncpt_read);
->>
->> +int host1x_syncpt_wait(u32 id, u32 thresh, u32 timeout, u32 *value)
+On 29.11.2012 12:01, Mark Zhang wrote:
+>> +fail:
+>> +	/* Add clean-up */
 > 
-> The choice of data types is odd here. id refers to a syncpt so a better
-> choice would have been unsigned int because the size of the variable
-> doesn't actually matter. But as I already said in my reply to patch 1,
-> these are resources and should therefore better be abstracted through an
-> opaque pointer anyway.
-> 
-> timeout is usually signed long, so this function should reflect that. As
-> for the value this is probably fine as it will effectively be set from a
-> register value. Though you also cache them in software using atomics.
+> Yes, add "nvhost_module_deinit" here?
 
-32-bits is an architectural limit for the sync point id, so that's why I
-used it here. But you're right - it doesn't really matter and could be
-changed to unsigned long.
+Sounds good.
 
-thresh and *value reflects that sync point value is 32-bit, and I'd keep
-that as is.
-
-Timeout should be unsigned long, yes.
-
->> diff --git a/drivers/video/tegra/host/host1x/host1x_intr.c b/drivers/video/tegra/host/host1x/host1x_intr.c
-> [...]
->> +#include <linux/interrupt.h>
->> +#include <linux/irq.h>
->> +#include <linux/io.h>
->> +#include <asm/mach/irq.h>
->> +
->> +#include "nvhost_intr.h"
->> +#include "host1x/host1x.h"
->> +
->> +/* Spacing between sync registers */
->> +#define REGISTER_STRIDE 4
-> 
-> Erm... no. The usual way you should be doing this is either make the
-> register definitions account for the stride or use accessors that apply
-> the stride. You should be doing the latter anyway to make accesses. For
-> example:
-> 
->         static inline void host1x_syncpt_writel(struct host1x *host1x,
->                                                 unsigned long value,
->                                                 unsigned long offset)
->         {
->                 writel(value, host1x->regs + SYNCPT_BASE + offset);
->         }
-> 
->         static inline unsigned long host1x_syncpt_readl(struct host1x *host1x,
->                                                         unsigned long offset)
->         {
->                 return readl(host1x->regs + SYNCPT_BASE + offset);
->         }
-> 
-> Alternatively, if you want to pass the register index instead of the
-> offset, you can use just multiply the offset in that function:
->
->         writel(value, host1x->regs + SYNCPT_BASE + (offset << 2));
->
-> The same can also be done with the non-syncpt registers.
-
-The register number has a stride of 4 when doing writes, and 1 when
-adding to command streams. This is why I've kept the register
-definitions as is.
-
-I could add helper functions. Just as a side note, the sync register
-space has other definitions than just the syncpt registers, so the
-naming should be changed a bit.
-
->> +static irqreturn_t syncpt_thresh_cascade_isr(int irq, void *dev_id)
+>> +int nvhost_client_device_suspend(struct platform_device *dev)
 >> +{
->> +     struct nvhost_master *dev = dev_id;
->> +     void __iomem *sync_regs = dev->sync_aperture;
->> +     struct nvhost_intr *intr = &dev->intr;
->> +     unsigned long reg;
->> +     int i, id;
+>> +	int ret = 0;
+>> +	struct nvhost_device_data *pdata = platform_get_drvdata(dev);
 >> +
->> +     for (i = 0; i < dev->info.nb_pts / BITS_PER_LONG; i++) {
->> +             reg = readl(sync_regs +
->> +                             host1x_sync_syncpt_thresh_cpu0_int_status_r() +
->> +                             i * REGISTER_STRIDE);
->> +             for_each_set_bit(id, &reg, BITS_PER_LONG) {
->> +                     struct nvhost_intr_syncpt *sp =
->> +                             intr->syncpt + (i * BITS_PER_LONG + id);
->> +                     host1x_intr_syncpt_thresh_isr(sp);
->> +                     queue_work(intr->wq, &sp->work);
->> +             }
->> +     }
+>> +	ret = nvhost_channel_suspend(pdata->channel);
+>> +	dev_info(&dev->dev, "suspend status: %d\n", ret);
+>> +	if (ret)
+>> +		return ret;
 >> +
->> +     return IRQ_HANDLED;
->> +}
+>> +	return ret;
 > 
-> Maybe it would be better to call the syncpt handlers in interrupt
-> context and let them schedule work if they want to. I'm thinking about
-> the display controllers which may want to use syncpoints for VBLANK
-> support.
+> Minor issue: just "return ret" is OK. That "if" doesn't make sense.
 
-Display controller can use the APIs to read, increment and wait for sync
-point.
+Yes, must be some snafu when doing changes in code.
 
-We could do more in isr, but then again, we've noticed that the current
-design already gives pretty good latency, so we haven't seen the need to
-move code from thread to isr.
+>> -struct nvhost_chip_support *nvhost_chip_ops;
+>> +static struct nvhost_chip_support *nvhost_chip_ops;
+>>  
+> 
+> All right, already fixed here. Sorry, so just ignore what I said about
+> this in my reply to your patch 1.
 
->> +static void host1x_intr_init_host_sync(struct nvhost_intr *intr)
+I was wondering about this, because I thought I did make it static. But
+it looks like I added that to the wrong commit. Anyway, this needs
+rethinking.
+
+>> +struct mem_handle *nvhost_dmabuf_get(u32 id, struct platform_device *dev)
 >> +{
->> +     struct nvhost_master *dev = intr_to_dev(intr);
->> +     void __iomem *sync_regs = dev->sync_aperture;
->> +     int i, err, irq;
+>> +	struct mem_handle *h;
+>> +	struct dma_buf *buf;
 >> +
->> +     writel(0xffffffffUL,
->> +             sync_regs + host1x_sync_syncpt_thresh_int_disable_r());
->> +     writel(0xffffffffUL,
->> +             sync_regs + host1x_sync_syncpt_thresh_cpu0_int_status_r());
+>> +	buf = dma_buf_get(to_dmabuf_fd(id));
+>> +	if (IS_ERR_OR_NULL(buf))
+>> +		return (struct mem_handle *)buf;
 >> +
->> +     for (i = 0; i < dev->info.nb_pts; i++)
->> +             INIT_WORK(&intr->syncpt[i].work, syncpt_thresh_cascade_fn);
->> +
->> +     irq = platform_get_irq(dev->dev, 0);
->> +     WARN_ON(IS_ERR_VALUE(irq));
->> +     err = devm_request_irq(&dev->dev->dev, irq,
->> +                             syncpt_thresh_cascade_isr,
->> +                             IRQF_SHARED, "host_syncpt", dev);
->> +     WARN_ON(IS_ERR_VALUE(err));
+>> +	h = (struct mem_handle *)dma_buf_attach(buf, &dev->dev);
+>> +	if (IS_ERR_OR_NULL(h))
+>> +		dma_buf_put(buf);
 > 
-> You should be handling this properly and propagate these errors to the
-> corresponding .probe().
+> Return an error here.
 
-Yes, will do. And the strange part is that nvhost_intr actually already
-contains the irq number, so actually there's no need to retrieve it from
-platform_device.
+Will do.
 
->> +/**
->> + * Sync point threshold interrupt service function
->> + * Handles sync point threshold triggers, in interrupt context
->> + */
->> +static void host1x_intr_syncpt_thresh_isr(struct nvhost_intr_syncpt *syncpt)
+>> +	op->nvhost_dev.alloc_nvhost_channel = t20_alloc_nvhost_channel;
+>> +	op->nvhost_dev.free_nvhost_channel = t20_free_nvhost_channel;
+>> +
+> 
+> I recall in previous version, there is t30-related alloc_nvhost_channel
+> & free_nvhost_channel. Why remove them?
+
+I could actually refactor these all into one alloc channel. We already
+store the number of channels in a data type, so a generic channel
+allocator would be better than having a chip specific one.
+
+>> +static int push_buffer_init(struct push_buffer *pb)
 >> +{
->> +     unsigned int id = syncpt->id;
->> +     struct nvhost_intr *intr = intr_syncpt_to_intr(syncpt);
+>> +	struct nvhost_cdma *cdma = pb_to_cdma(pb);
+>> +	struct nvhost_master *master = cdma_to_dev(cdma);
+>> +	pb->mapped = NULL;
+>> +	pb->phys = 0;
+>> +	pb->handle = NULL;
 >> +
->> +     void __iomem *sync_regs = intr_to_dev(intr)->sync_aperture;
+>> +	cdma_pb_op().reset(pb);
 >> +
->> +     u32 reg = BIT_WORD(id) * REGISTER_STRIDE;
->> +
->> +     writel(BIT_MASK(id), sync_regs +
->> +             host1x_sync_syncpt_thresh_int_disable_r() + reg);
->> +     writel(BIT_MASK(id), sync_regs +
->> +             host1x_sync_syncpt_thresh_cpu0_int_status_r() + reg);
->> +}
+>> +	/* allocate and map pushbuffer memory */
+>> +	pb->mapped = dma_alloc_writecombine(&master->dev->dev,
+>> +			PUSH_BUFFER_SIZE + 4, &pb->phys, GFP_KERNEL);
+>> +	if (IS_ERR_OR_NULL(pb->mapped)) {
+>> +		pb->mapped = NULL;
+>> +		goto fail;
 > 
-> So this disables all interrupts and is called from the syncpt interrupt
-> handler. Where are the interrupts reenabled? Do host1x clients have to
-> do that manually?
+> Return directly here. "goto fail" makes "push_buffer_destroy" get called.
 
-The thread re-enables once it's done. It checks the next value we're
-interested in, and programs that to host1x syncpt threshold.
+Will do.
 
-
->> +     /* enable extra interrupt sources IP_READ_INT and IP_WRITE_INT */
->> +     writel(BIT(30) | BIT(31), sync_regs + host1x_sync_hintmask_ext_r());
->> +
->> +     /* enable extra interrupt sources */
->> +     writel(BIT(12) | BIT(31), sync_regs + host1x_sync_hintmask_r());
->> +
->> +     /* enable host module interrupt to CPU0 */
->> +     writel(BIT(0), sync_regs + host1x_sync_intc0mask_r());
->> +
->> +     /* master enable for general (not syncpt) host interrupts */
->> +     writel(BIT(0), sync_regs + host1x_sync_intmask_r());
->> +
->> +     return err;
->> +}
 > 
-> You should add defines for these bits, which will likely make the
-> comments redundant.
+>> +	}
+>> +
+>> +	/* memory for storing mem client and handles for each opcode pair */
+>> +	pb->handle = kzalloc(NVHOST_GATHER_QUEUE_SIZE *
+>> +				sizeof(struct mem_handle *),
+>> +			GFP_KERNEL);
+>> +	if (!pb->handle)
+>> +		goto fail;
+>> +
+>> +	/* put the restart at the end of pushbuffer memory */
+> 
+> Just for curious, why "pb->mapped + 1K" is the end of a 4K pushbuffer?
 
-I'm actually thinking that I might just remove the generic interrupts.
-We have no use for it in upstream kernel.
+pb->mapped is u32 *, so compiler will take care of multiplying by
+sizeof(u32).
 
-> Okay, so this is where syncpoint interrupts are reenabled. The rest of
-> this whole wait queue code looks overly complex. I'll need to go through
-> that separately and more thoroughly.
-
-Thanks.
-
->> +void *nvhost_intr_alloc_waiter()
+>> +unsigned int nvhost_cdma_wait_locked(struct nvhost_cdma *cdma,
+>> +		enum cdma_event event)
 >> +{
->> +     return kzalloc(sizeof(struct nvhost_waitlist),
->> +                     GFP_KERNEL|__GFP_REPEAT);
->> +}
-> 
-> I don't think we need __GFP_REPEAT here.
-
-This used to be called from code where failed alloc was fatal, but not
-anymore, so __GFP_REPEAT isn't needed anymore.
-
->> +/*** Init & shutdown ***/
+>> +	for (;;) {
+>> +		unsigned int space = cdma_status_locked(cdma, event);
+>> +		if (space)
+>> +			return space;
 >> +
->> +int nvhost_intr_init(struct nvhost_intr *intr, u32 irq_gen, u32 irq_sync)
-> 
-> Again, using u32 for interrupt numbers is unusual.
-
-Ok.
-
->> +     mutex_init(&intr->mutex);
->> +     intr->host_syncpt_irq_base = irq_sync;
->> +     intr->wq = create_workqueue("host_syncpt");
-> 
-> What if create_workqueue() fails?
-
-Hmm, we panic? Not good.
-
-> 
->> +     intr_op().init_host_sync(intr);
->> +     intr->host_general_irq = irq_gen;
->> +     intr_op().request_host_general_irq(intr);
+>> +		/* If somebody has managed to already start waiting, yield */
+>> +		if (cdma->event != CDMA_EVENT_NONE) {
+>> +			mutex_unlock(&cdma->lock);
+>> +			schedule();
+>> +			mutex_lock(&cdma->lock);
+>> +			continue;
+>> +		}
+>> +		cdma->event = event;
 >> +
->> +     for (id = 0, syncpt = intr->syncpt;
->> +          id < nb_pts;
->> +          ++id, ++syncpt) {
+>> +		mutex_unlock(&cdma->lock);
+>> +		down(&cdma->sem);
+>> +		mutex_lock(&cdma->lock);
 > 
-> This fits perfectly well on a single line, no need to wrap it. Also you
-> could instead of incrementing syncpt, move it into the loop and assign
-> it based on id.
-> 
->         for (id = 0; id < nb_pts; id++) {
->                 struct nvhost_intr_syncpt *syncpt = &intr->syncpt[id];
->                 ...
->         }
+> I'm newbie of nvhost but I feel here is very tricky, about the lock and
+> unlock of this mutex: cdma->lock. Does it require this mutex is locked
+> before calling this function? And do we need to unlock it before the
+> code: "return space;" above? IMHO, this is not a good design and can we
+> find out a better solution?
 
-Looks better, yes.
+Yeah, it's not perfect and good solutions are welcome.
+cdma_status_locked() must be called with a mutex. But, what we generally
+wait for is for space in push buffer. The cleanup code cannot run if we
+keep cdma->lock, so I release it.
 
->> +void nvhost_intr_start(struct nvhost_intr *intr, u32 hz)
->> +{
->> +     mutex_lock(&intr->mutex);
->> +
->> +     intr_op().init_host_sync(intr);
->> +     intr_op().set_host_clocks_per_usec(intr,
->> +                                            (hz + 1000000 - 1)/1000000);
-> 
-> DIV_ROUND_UP(hz)?
-
-Yes, that's what we should use. I didn't know we have that.
-
->> +#define NVHOST_NO_TIMEOUT                    (-1)
-> 
-> Couldn't you reuse MAX_SCHEDULE_TIMEOUT instead? You already use it as
-> the value for the timeout parameter in nvhost_syncpt_wait().
-
-I guess NVHOST_NO_TIMEOUT is anyway a bad idea, and I could just remove
-it. The caller can just pass LONG_MAX if it wants to wait for a _really_
-long time, but having no timeout is not good.
+The two ways to loop are because there was a race between two processes
+waiting for space. One of them set cdma->event to indicate what it's
+waiting for and can go to sleep, but the other has to keep spinning.
 
 Terje
