@@ -1,170 +1,209 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Thu, 29 Nov 2012 10:09:13 +0100
-Message-ID: <1354180153.1479.162.camel@tellur>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	     <1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>
-	     <CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>
-	     <50B46336.8030605@nvidia.com>
-	     <CAPM=9txCuPJcFAfD7Hu5o2BVFK=pVah7B8HhG0ctLCyFPwNEnA@mail.gmail.com>
-	     <50B476E1.4070403@nvidia.com>
-	     <CAPM=9tysiK6LgnQdAwGSYfxnQfgcfRm0+X2tPSAEDxUPt-QZGA@mail.gmail.com>
-	     <50B47DA8.60609@nvidia.com>	<1354011776.1479.31.camel@tellur>
-	     <20121127103739.GA3329@avionic-0098.adnet.avionic-design.de>
-	     <50B4A483.8030305@nvidia.com>
-	     <CAPM=9tz=_0Drx3=Me3EQdPgBvYVGzs6Gnqaw6RBaTLsCG24RAg@mail.gmail.com>
-	     <50B60EFF.1050703@nvidia.com> <1354109602.1479.66.camel@tellur>
-	    <50B61845.6060102@nvidia.com> <1354111565.1479.73.camel@tellur>
-	   <50B6237B.8010808@nvidia.com> <1354115609.1479.91.camel@tellur>
-	  <50B63A70.8020107@nvidia.com> <1354128408.1479.137.camel@tellur>
-	 <50B71A28.5060807@nvidia.com>
+From: Mark Zhang <nvmarkzhang@gmail.com>
+Subject: Re: [RFC,v2,1/8] video: tegra: Add nvhost driver
+Date: Thu, 29 Nov 2012 17:10:46 +0800
+Message-ID: <50B72696.3030205@gmail.com>
+References: <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B71A28.5060807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Terje Bergstrom <tbergstrom@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 29.11.2012, 10:17 +0200 schrieb Terje Bergstr=C3=B6m=
-:
-> On 28.11.2012 20:46, Lucas Stach wrote:
-> > Am Mittwoch, den 28.11.2012, 18:23 +0200 schrieb Terje Bergstr=C3=B6=
-m:
-> >> Sorry. I promised in another thread a write-up explaining the desi=
-gn. I
-> >> still owe you guys that.
-> > That would be really nice to have. I'm also particularly interested=
- in
-> > how you plan to do synchronization of command streams to different
-> > engines working together, if that's not too much to ask for now. Li=
-ke
-> > userspace uploading a texture in a buffer, 2D engine doing mipmap
-> > generation, 3D engine using mipmapped texture.
->=20
-> I can briefly explain (and then copy-paste to a coherent text once I =
-get
-> to it) how inter-engine synchronization is done. It's not specificall=
-y
-> for 2D or 3D, but generic to any host1x client.
-[...]
-Thanks for that.
-[...]
-
-> > 2. Move the exposed DRM interface more in line with other DRM drive=
-rs.
-> > Please take a look at how for example the GEM_EXECBUF ioctl works o=
-n
-> > other drivers to get a feeling of what I'm talking about. Everythin=
-g
-> > using the display, 2D and maybe later on the 3D engine should only =
-deal
-> > with GEM handles. I really don't like the idea of having a single
-> > userspace application, which uses engines with similar and known
-> > requirements (DDX) dealing with dma-buf handles or other similar hi=
-gh
-> > overhead stuff to do the most basic tasks.
-> > If we move down the allocator into nvhost we can use buffers alloca=
-ted
-> > from this to back GEM or V4L2 buffers transparently. The ioctl to
-> > allocate a GEM buffer shouldn't do much more than wrapping the nvho=
-st
-> > buffer.
->=20
-> Ok, this is actually what we do downstream. We use dma-buf handles on=
-ly
-> for purposes where they're really needed (in fact, none yet), and use
-> our downstream allocator handles for the rest. I did this, because
-> benchmarks were showing that memory management overhead shoot through
-> the roof if I tried doing everything via dma-buf.
->=20
-> We can move support for allocating GEM handles to nvhost, and GEM
-> handles can be treated just as another memory handle type in nvhost.
-> tegradrm would then call nvhost for allocation.
->=20
-We should aim for a clean split here. GEM handles are something which i=
-s
-really specific to how DRM works and as such should be constructed by
-tegradrm. nvhost should really just manage allocations/virtual address
-space and provide something that is able to back all the GEM handle
-operations.
-
-nvhost has really no reason at all to even know about GEM handles. If
-you back a GEM object by a nvhost object you can just peel out the
-nvhost handles from the GEM wrapper in the tegradrm submit ioctl handle=
-r
-and queue the job to nvhost using it's native handles.
-
-This way you would also be able to construct different handles (like GE=
-M
-obj or V4L2 buffers) from the same backing nvhost object. Note that I'm
-not sure how useful this would be, but it seems like a reasonable desig=
-n
-to me being able to do so.
-
-> > This may also solve your problem with having multiple mappings of t=
-he
-> > same buffer into the very same address space, as nvhost is the sing=
-le
-> > instance that manages all host1x client address spaces. If the buff=
-er is
-> > originating from there you can easily check if it's already mapped.=
- For
-> > Tegra 3 to do things in an efficient way we likely have to move awa=
-y
-> > from dealing with the DMA API to dealing with the IOMMU API, this g=
-ets a
-> > _lot_ easier_ if you have a single point where you manage memory
-> > allocation and address space.
->=20
-> Yep, this would definitely simplify our IOMMU problem. But, I thought
-> the canonical way of dealing with device memory is DMA API, and you'r=
-e
-> saying that we should just bypass it and call IOMMU directly?
->=20
-This is true for all standard devices. But we should not consider this
-as something set in stone and then building some crufty design around
-it. If we can manage to make our design a lot cleaner by managing DMA
-memory and the corresponding IOMMU address spaces for the host1x device=
-s
-ourselves, I think this is the way to go. All other graphics drivers in
-the Linux kernel have to deal with their GTT in some way, we just happe=
-n
-to do so by using a shared system IOMMU and not something that is
-exclusive to the graphics devices.
-
-This is more work on the side of nvhost, but IMHO the benefits make it
-look worthwhile.
-
-What we should avoid is something that completely escapes the standard
-ways of dealing with memory used in the Linux kernel, like using
-carveout areas, but I think this is already consensus among us all.
-
-[...]
-> > This an implementation detail. Whether you shoot down the old pushb=
-uf
-> > mapping and insert a new one pointing to free backing memory (which=
- may
-> > be the way to go for 3D) or do an immediate copy of the channel pus=
-hbuf
-> > contents to the host1x pushbuf (which may be beneficial for very sm=
-all
-> > pushs) is all the same. Both methods implicitly guarantee that the
-> > memory mapped by userspace always points to a location the CPU can =
-write
-> > to without interfering with the GPU.
->=20
-> Ok. Based on this, I propose the way to go for cases without IOMMU
-> support and all Tegra20 cases (as Tegra20's GART can't provide memory
-> protection) is to copy the stream to host1x push buffer. In Tegra30 w=
-ith
-> IOMMU support we can just reference the buffer. This way we don't hav=
-e
-> to do expensive MMU operations.
->=20
-Sounds like a plan.
-
-Regards,
-Lucas
+T24gMTEvMjYvMjAxMiAwOToxOSBQTSwgVGVyamUgQmVyZ3N0csO2bSA8dGJlcmdzdHJvbUBudmlk
+aWEuY29tPiB3cm90ZToKPiBBZGQgbnZob3N0LCB0aGUgZHJpdmVyIGZvciBob3N0MXguIFRoaXMg
+cGF0Y2ggYWRkcyBzdXBwb3J0IGZvciByZWFkaW5nIGFuZAo+IGluY3JlbWVudGluZyBzeW5jIHBv
+aW50cyBhbmQgZHluYW1pYyBwb3dlciBtYW5hZ2VtZW50Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRl
+cmplIEJlcmdzdHJvbSA8dGJlcmdzdHJvbUBudmlkaWEuY29tPgo+IAo+IC0tLQo+IGRyaXZlcnMv
+dmlkZW8vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgMiArCj4gIGRy
+aXZlcnMvdmlkZW8vTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgMiAr
+Cj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9LY29uZmlnICAgICAgICAgICAgICAgICAgIHwg
+ICAgNSArCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9NYWtlZmlsZSAgICAgICAgICAgICAg
+ICAgIHwgICAxMCArCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9jaGlwX3N1cHBvcnQuYyAg
+ICAgICAgICAgIHwgICA0OCArKwo+ICBkcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9zdXBw
+b3J0LmggICAgICAgICAgICB8ICAgNTIgKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9k
+ZXYuYyAgICAgICAgICAgICAgICAgICAgIHwgICA5NiArKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVn
+cmEvaG9zdC9ob3N0MXgvTWFrZWZpbGUgICAgICAgICAgIHwgICAgNyArCj4gIGRyaXZlcnMvdmlk
+ZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9zdDF4LmMgICAgICAgICAgIHwgIDIwNCArKysrKysrKysK
+PiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9ob3N0MXguaCAgICAgICAgICAgfCAg
+IDc4ICsrKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9ob3N0MXgwMS5jICAg
+ICAgICAgfCAgIDM3ICsrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9zdDF4
+MDEuaCAgICAgICAgIHwgICAyOSArKwo+ICAuLi4vdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvaG9z
+dDF4MDFfaGFyZHdhcmUuaCAgICB8ICAgMzYgKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0
+L2hvc3QxeC9ob3N0MXhfc3luY3B0LmMgICAgfCAgMTU2ICsrKysrKysKPiAgZHJpdmVycy92aWRl
+by90ZWdyYS9ob3N0L2hvc3QxeC9od19ob3N0MXgwMV9zeW5jLmggfCAgMzk4ICsrKysrKysrKysr
+KysrKysKPiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L252aG9zdF9hY20uYyAgICAgICAgICAg
+ICAgfCAgNDgxICsrKysrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvdmlkZW8vdGVncmEvaG9z
+dC9udmhvc3RfYWNtLmggICAgICAgICAgICAgIHwgICA0NSArKwo+ICBkcml2ZXJzL3ZpZGVvL3Rl
+Z3JhL2hvc3QvbnZob3N0X3N5bmNwdC5jICAgICAgICAgICB8ICAzMzMgKysrKysrKysrKysrKysK
+PiAgZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L252aG9zdF9zeW5jcHQuaCAgICAgICAgICAgfCAg
+MTM2ICsrKysrKwo+ICBpbmNsdWRlL2xpbnV4L252aG9zdC5oICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8ICAxNDMgKysrKysrCj4gIDIwIGZpbGVzIGNoYW5nZWQsIDIyOTggaW5zZXJ0aW9u
+cygrKQpbLi4uXQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9z
+dXBwb3J0LmMgYi9kcml2ZXJzL3ZpZGVvL3RlZ3JhL2hvc3QvY2hpcF9zdXBwb3J0LmMKPiArI2lu
+Y2x1ZGUgImNoaXBfc3VwcG9ydC5oIgo+ICsjaW5jbHVkZSAiaG9zdDF4L2hvc3QxeDAxLmgiCj4g
+Kwo+ICtzdHJ1Y3QgbnZob3N0X2NoaXBfc3VwcG9ydCAqbnZob3N0X2NoaXBfb3BzOwo+ICsKPiAr
+c3RydWN0IG52aG9zdF9jaGlwX3N1cHBvcnQgKm52aG9zdF9nZXRfY2hpcF9vcHModm9pZCkKPiAr
+ewo+ICsJcmV0dXJuIG52aG9zdF9jaGlwX29wczsKPiArfQoKSWYgeW91IHdhbm5hIGhpZGUgIm52
+aG9zdF9jaGlwX29wcyIgZnJvbSBvdGhlciBzb3VyY2UgZmlsZXMsIGRlY2xhcmUgaXQKYXMgInN0
+YXRpYyIuIFNvIHRoaXMgaXMgbm90IGEgc3RhdGljIG1lbWJlciB3aGljaCBtZWFucyBvdGhlciBm
+aWxlcyBpcwphYmxlIHRvIHRvdWNoIGl0IGJ5ICJleHRlcm4iIGJ1dCB3ZSBhbHNvIGRlZmluZSBh
+IGZ1bmN0aW9uIHRvIGdldCBpdCwKYW5kIHRoaXMgbG9va3MgcmVkdW5kYW50LgoKWy4uLl0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9NYWtlZmlsZSBiL2Ry
+aXZlcnMvdmlkZW8vdGVncmEvaG9zdC9ob3N0MXgvTWFrZWZpbGUKPiBuZXcgZmlsZSBtb2RlIDEw
+MDY0NAo+IGluZGV4IDAwMDAwMDAuLjMzMGQ1MDcKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvZHJp
+dmVycy92aWRlby90ZWdyYS9ob3N0L2hvc3QxeC9NYWtlZmlsZQo+IEBAIC0wLDAgKzEsNyBAQAo+
+ICtjY2ZsYWdzLXkgPSAtSWRyaXZlcnMvdmlkZW8vdGVncmEvaG9zdAo+ICsKPiArbnZob3N0LWhv
+c3QxeC1vYmpzICA9IFwKPiArCWhvc3QxeC5vIFwKPiArCWhvc3QxeDAxLm8KCkNhbiB3ZSByZW5h
+bWUgdGhpcyAiaG9zdDF4MDEuYyI/IEkganVzdCByZWFsbHkgZG9uJ3QgbGlrZSB0aGlzIGtpbmQg
+b2YKdmFyaWFibGVzL2ZpbGVzLCBJIG1lYW4sIEkgY2FuJ3QgaW1hZ2luZSB0aGUgcHVycG9zZSBv
+ZiB0aGUgZmlsZQphY2NvcmRpbmcgdG8gaXQncyBuYW1lLi4uCgpbLi4uXQo+ICsKPiArc3RhdGlj
+IGludCBfX2RldmluaXQgbnZob3N0X2FsbG9jX3Jlc291cmNlcyhzdHJ1Y3QgbnZob3N0X21hc3Rl
+ciAqaG9zdCkKPiArewo+ICsJaW50IGVycjsKPiArCj4gKwllcnIgPSBudmhvc3RfaW5pdF9jaGlw
+X3N1cHBvcnQoaG9zdCk7Cj4gKwlpZiAoZXJyKQo+ICsJCXJldHVybiBlcnI7Cj4gKwo+ICsJcmV0
+dXJuIDA7Cj4gK30KCkp1c3QgInJldHVybiBudmhvc3RfaW5pdF9jaGlwX3N1cHBvcnQoaG9zdCki
+IGlzIGVub3VnaC4gSWYgc28sIGRvIHdlCnN0aWxsIG5lZWQgdGhpcyBmdW5jdGlvbj8KClsuLi5d
+Cj4gKwo+ICtzdGF0aWMgaW50IF9fZGV2aW5pdCBudmhvc3RfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
+X2RldmljZSAqZGV2KQo+ICsKWy4uLl0KPiArCWRldl9pbmZvKCZkZXYtPmRldiwgImluaXRpYWxp
+emVkXG4iKTsKPiArCj4gKwlyZXR1cm4gMDsKPiArCj4gK2ZhaWw6CgpBZGQgbW9yZSAiZnJlZSIg
+Y29kZXMgaGVyZS4gQWN0dWFsbHksICJudmhvc3RfZnJlZV9yZXNvdXJjZXMiIGZyZWVzIHRoZQpo
+b3N0LT5pbnRyLnN5bmNwdCB3aGljaCBpcyBub3QgbmVlZGVkIHRvIGZyZWUgbWFudWFsbHkuClNl
+ZW1zIGF0IGxlYXN0IHdlIG5lZWQgdG8gYWRkICJudmhvc3Rfc3luY3B0X2RlaW5pdCIgaGVyZS4K
+ClsuLi5dCj4gKwo+ICtzdGF0aWMgc3RydWN0IG9mX2RldmljZV9pZCBob3N0MXhfbWF0Y2hbXSBf
+X2RldmluaXRkYXRhID0gewo+ICsJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEyMC1ob3N0
+MXgiLCB9LAo+ICsJeyAuY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEzMC1ob3N0MXgiLCB9LAoK
+QWdhaW4sIHBsYWNlIHRlZ3JhMzAtaG9zdDF4IGJlZm9yZSB0ZWdyYTIwLWhvc3QxeC4KClsuLi5d
+Cj4gKwo+ICsvKioKPiArICogV3JpdGUgYSBjcHUgc3luY3BvaW50IGluY3JlbWVudCB0byB0aGUg
+aGFyZHdhcmUsIHdpdGhvdXQgdG91Y2hpbmcKPiArICogdGhlIGNhY2hlLiBDYWxsZXIgaXMgcmVz
+cG9uc2libGUgZm9yIGhvc3QgYmVpbmcgcG93ZXJlZC4KPiArICovCj4gK3N0YXRpYyB2b2lkIGhv
+c3QxeF9zeW5jcHRfY3B1X2luY3Ioc3RydWN0IG52aG9zdF9zeW5jcHQgKnNwLCB1MzIgaWQpCj4g
+K3sKPiArCXN0cnVjdCBudmhvc3RfbWFzdGVyICpkZXYgPSBzeW5jcHRfdG9fZGV2KHNwKTsKPiAr
+CXUzMiByZWdfb2Zmc2V0ID0gaWQgLyAzMjsKPiArCj4gKwlpZiAoIW52aG9zdF9tb2R1bGVfcG93
+ZXJlZChkZXYtPmRldikpIHsKPiArCQlkZXZfZXJyKCZzeW5jcHRfdG9fZGV2KHNwKS0+ZGV2LT5k
+ZXYsCj4gKwkJCSJUcnlpbmcgdG8gYWNjZXNzIGhvc3QxeCB3aGVuIGl0J3Mgb2ZmIik7Cj4gKwkJ
+cmV0dXJuOwo+ICsJfQo+ICsKPiArCWlmICghbnZob3N0X3N5bmNwdF9jbGllbnRfbWFuYWdlZChz
+cCwgaWQpCj4gKwkJCSYmIG52aG9zdF9zeW5jcHRfbWluX2VxX21heChzcCwgaWQpKSB7Cj4gKwkJ
+ZGV2X2Vycigmc3luY3B0X3RvX2RldihzcCktPmRldi0+ZGV2LAo+ICsJCQkiVHJ5aW5nIHRvIGlu
+Y3JlbWVudCBzeW5jcG9pbnQgaWQgJWQgYmV5b25kIG1heFxuIiwKPiArCQkJaWQpOwo+ICsJCXJl
+dHVybjsKPiArCX0KPiArCXdyaXRlbChCSVRfTUFTSyhpZCksIGRldi0+c3luY19hcGVydHVyZSAr
+Cj4gKwkJCWhvc3QxeF9zeW5jX3N5bmNwdF9jcHVfaW5jcl9yKCkgKyByZWdfb2Zmc2V0ICogNCk7
+CgpJIGhhdmUgYSBzdHVwaWQgcXVlc3Rpb246IEFjY29yZGluZyB0byB0aGUgbmFtZSBhbmQgdGhl
+IGNvbnRleHQgb2YgdGhpcwpmdW5jdGlvbiwgc2VlbXMgaXQgaW5jcmVhc2VzIHRoZSBzeW5jcHQg
+dmFsdWUgd2hpY2ggc3BlY2lmaWVkIGJ5IHBhcmFtCiJpZCIuIFNvIGhvdyBkb2VzIHRoaXMgIndy
+aXRlbCIgaW5jcmVhc2UgdGhlIHZhbHVlPyBJIGRvbid0IGtub3cgbXVjaAphYm91dCBob3N0MXgv
+c3luY3B0IHJlZyBvcGVyYXRpb25zLCBzbyBjb3VsZCB5b3UgZXhwbGFpbiBhIGxpdHRsZSBiaXQg
+b3IKSSBqdXN0IGNvbXBsZXRlbHkgaGF2ZSBhIHdyb25nIHVuZGVyc3RhbmRpbmc/CgpbLi4uXQo+
+ICsKPiArc3RhdGljIHNzaXplX3QgcG93ZXJnYXRlX2RlbGF5X3N0b3JlKHN0cnVjdCBrb2JqZWN0
+ICprb2JqLAo+ICsJc3RydWN0IGtvYmpfYXR0cmlidXRlICphdHRyLCBjb25zdCBjaGFyICpidWYs
+IHNpemVfdCBjb3VudCkKPiArewo+ICsJaW50IHBvd2VyZ2F0ZV9kZWxheSA9IDAsIHJldCA9IDA7
+Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9wb3dlcl9hdHRyICpwb3dlcl9hdHRyaWJ1dGUgPQo+
+ICsJCWNvbnRhaW5lcl9vZihhdHRyLCBzdHJ1Y3QgbnZob3N0X2RldmljZV9wb3dlcl9hdHRyLAo+
+ICsJCQlwb3dlcl9hdHRyW05WSE9TVF9QT1dFUl9TWVNGU19BVFRSSUJfUE9XRVJHQVRFX0RFTEFZ
+XSk7Cj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYgPSBwb3dlcl9hdHRyaWJ1dGUtPm5k
+ZXY7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9IHBsYXRmb3JtX2dldF9k
+cnZkYXRhKGRldik7Cj4gKwo+ICsJaWYgKCFwZGF0YS0+Y2FuX3Bvd2VyZ2F0ZSkgewo+ICsJCWRl
+dl9pbmZvKCZkZXYtPmRldiwgImRvZXMgbm90IHN1cHBvcnQgcG93ZXItZ2F0aW5nXG4iKTsKPiAr
+CQlyZXR1cm4gY291bnQ7Cj4gKwl9Cj4gKwo+ICsJbXV0ZXhfbG9jaygmcGRhdGEtPmxvY2spOwo+
+ICsJcmV0ID0gc3NjYW5mKGJ1ZiwgIiVkIiwgJnBvd2VyZ2F0ZV9kZWxheSk7Cj4gKwlpZiAocmV0
+ID09IDEgJiYgcG93ZXJnYXRlX2RlbGF5ID49IDApCj4gKwkJcGRhdGEtPnBvd2VyZ2F0ZV9kZWxh
+eSA9IHBvd2VyZ2F0ZV9kZWxheTsKPiArCWVsc2UKPiArCQlkZXZfZXJyKCZkZXYtPmRldiwgIklu
+dmFsaWQgcG93ZXJnYXRlIGRlbGF5XG4iKTsKPiArCW11dGV4X3VubG9jaygmcGRhdGEtPmxvY2sp
+Owo+ICsKPiArCXJldHVybiBjb3VudDsKCldoeSB3ZSBuZWVkIHRvIHJldHVybiBhbiB1bmNoYW5n
+ZWQgcGFyYW0/IFNlZW1zIHBhcmFtICJjb3VudCIgZG9lc24ndAptYWtlIHNlbnNlIGhlcmUuCgpb
+Li4uXQo+ICsKPiAraW50IG52aG9zdF9tb2R1bGVfaW5pdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpkZXYpCj4gK3sKPiArCWludCBpID0gMCwgZXJyID0gMDsKPiArCXN0cnVjdCBrb2JqX2F0dHJp
+YnV0ZSAqYXR0ciA9IE5VTEw7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9
+IHBsYXRmb3JtX2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJLyogaW5pdGlhbGl6ZSBjbG9ja3Mg
+dG8ga25vd24gc3RhdGUgKi8KPiArCXdoaWxlIChwZGF0YS0+Y2xvY2tzW2ldLm5hbWUgJiYgaSA8
+IE5WSE9TVF9NT0RVTEVfTUFYX0NMT0NLUykgewo+ICsJCWxvbmcgcmF0ZSA9IHBkYXRhLT5jbG9j
+a3NbaV0uZGVmYXVsdF9yYXRlOwo+ICsJCXN0cnVjdCBjbGsgKmM7Cj4gKwo+ICsJCWMgPSBkZXZt
+X2Nsa19nZXQoJmRldi0+ZGV2LCBwZGF0YS0+Y2xvY2tzW2ldLm5hbWUpOwo+ICsJCWlmIChJU19F
+UlJfT1JfTlVMTChjKSkgewo+ICsJCQlkZXZfZXJyKCZkZXYtPmRldiwgIkNhbm5vdCBnZXQgY2xv
+Y2sgJXNcbiIsCj4gKwkJCQkJcGRhdGEtPmNsb2Nrc1tpXS5uYW1lKTsKPiArCQkJcmV0dXJuIC1F
+Tk9ERVY7Cj4gKwkJfQo+ICsKPiArCQlyYXRlID0gY2xrX3JvdW5kX3JhdGUoYywgcmF0ZSk7Cj4g
+KwkJY2xrX3ByZXBhcmVfZW5hYmxlKGMpOwo+ICsJCWNsa19zZXRfcmF0ZShjLCByYXRlKTsKPiAr
+CQljbGtfZGlzYWJsZV91bnByZXBhcmUoYyk7Cj4gKwkJcGRhdGEtPmNsa1tpXSA9IGM7Cj4gKwkJ
+aSsrOwo+ICsJfQo+ICsJcGRhdGEtPm51bV9jbGtzID0gaTsKPiArCj4gKwltdXRleF9pbml0KCZw
+ZGF0YS0+bG9jayk7Cj4gKwlpbml0X3dhaXRxdWV1ZV9oZWFkKCZwZGF0YS0+aWRsZV93cSk7Cj4g
+KwlJTklUX0RFTEFZRURfV09SSygmcGRhdGEtPnBvd2Vyc3RhdGVfZG93biwgcG93ZXJzdGF0ZV9k
+b3duX2hhbmRsZXIpOwo+ICsKPiArCS8qIHBvd2VyIGdhdGUgdW5pdHMgdGhhdCB3ZSBjYW4gcG93
+ZXIgZ2F0ZSAqLwo+ICsJaWYgKHBkYXRhLT5jYW5fcG93ZXJnYXRlKSB7Cj4gKwkJZG9fcG93ZXJn
+YXRlX2xvY2tlZChwZGF0YS0+cG93ZXJnYXRlX2lkc1swXSk7Cj4gKwkJZG9fcG93ZXJnYXRlX2xv
+Y2tlZChwZGF0YS0+cG93ZXJnYXRlX2lkc1sxXSk7CgpTZWVtcyB3ZSBkb24ndCBzZXQgdGhlc2Ug
+MiBwb3dlcmdhdGVfaWRzLiBEb2VzIHRoaXMgbWVhbiB3ZSBoYXZlIG5vdAplbmFibGVkIHBvd2Vy
+IG1hbmFnZW1lbnQgZmVhdHVyZSBpbiB0aGlzIHZlcnNpb24/CgpbLi4uXQo+ICsKPiAraW50IG52
+aG9zdF9tb2R1bGVfc3VzcGVuZChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYpCj4gK3sKPiAr
+CWludCByZXQ7Cj4gKwlzdHJ1Y3QgbnZob3N0X2RldmljZV9kYXRhICpwZGF0YSA9IHBsYXRmb3Jt
+X2dldF9kcnZkYXRhKGRldik7Cj4gKwo+ICsJcmV0ID0gd2FpdF9ldmVudF90aW1lb3V0KHBkYXRh
+LT5pZGxlX3dxLCBpc19tb2R1bGVfaWRsZShkZXYpLAo+ICsJCQlBQ01fU1VTUEVORF9XQUlUX0ZP
+Ul9JRExFX1RJTUVPVVQpOwo+ICsJaWYgKHJldCA9PSAwKSB7Cj4gKwkJZGV2X2luZm8oJmRldi0+
+ZGV2LCAiJXMgcHJldmVudGVkIHN1c3BlbmRcbiIsCj4gKwkJCQlkZXZfbmFtZSgmZGV2LT5kZXYp
+KTsKPiArCQlyZXR1cm4gLUVCVVNZOwo+ICsJfQo+ICsKCkknbSBub3Qgc3VyZSB3aGV0aGVyIHRo
+ZXJlIGlzIGEgcmFjZSBjb25kaXRpb24gaGVyZS4gV2Ugd2FpdCB1bnRpbCB0aGlzCm1vZHVsZSBp
+cyBpZGxlKHJlZmNvdW50ID09IDApLCB0aGVuIHRyeSB0byBwb3dlcmdhdGUgaXQgbmV4dC4gQnV0
+IHRoZQp3YWl0IHF1ZXVlIGZ1bmN0aW9uICJwb3dlcnN0YXRlX2Rvd25faGFuZGxlciIgbWlnaHQg
+YWxyZWFkeSBwb3dlcmdhdGUKaXQuIFNvIHdlIG5lZWQgdG8gZWl0aGVyICAiY2FuY2VsX2RlbGF5
+ZWRfd29yaygmcGRhdGUtPnBvd2Vyc3RhdGVfZG93bikiCmJlZm9yZSB3YWl0aW5nIHRoZSBtb2R1
+bGUgdG8gaWRsZSBzdGF0ZSBvciBhZGQgc29tZSBwcm90ZWN0aW9uIGNvZGVzIGluCiJ0b19zdGF0
+ZV9wb3dlcmdhdGVkX2xvY2tlZCIuCgo+ICsJbXV0ZXhfbG9jaygmcGRhdGEtPmxvY2spOwo+ICsJ
+Y2FuY2VsX2RlbGF5ZWRfd29yaygmcGRhdGEtPnBvd2Vyc3RhdGVfZG93bik7Cj4gKwl0b19zdGF0
+ZV9wb3dlcmdhdGVkX2xvY2tlZChkZXYpOwo+ICsJbXV0ZXhfdW5sb2NrKCZwZGF0YS0+bG9jayk7
+Cj4gKwo+ICsJaWYgKHBkYXRhLT5zdXNwZW5kX25kZXYpCj4gKwkJcGRhdGEtPnN1c3BlbmRfbmRl
+dihkZXYpOwo+ICsKPiArCXJldHVybiAwOwo+ICt9Cj4gKwpbLi4uXQo+ICsKPiAraW50IG52aG9z
+dF9zeW5jcHRfaW5pdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYsCj4gKwkJc3RydWN0IG52
+aG9zdF9zeW5jcHQgKnNwKQo+ICt7Cj4gKwlpbnQgaTsKPiArCXN0cnVjdCBudmhvc3RfbWFzdGVy
+ICpob3N0ID0gc3luY3B0X3RvX2RldihzcCk7Cj4gKwlpbnQgZXJyID0gMDsKPiArCj4gKwkvKiBB
+bGxvY2F0ZSBzdHJ1Y3RzIGZvciBtaW4sIG1heCBhbmQgYmFzZSB2YWx1ZXMgKi8KPiArCXNwLT5t
+aW5fdmFsID0ga3phbGxvYyhzaXplb2YoYXRvbWljX3QpICogbnZob3N0X3N5bmNwdF9uYl9wdHMo
+c3ApLAo+ICsJCQlHRlBfS0VSTkVMKTsKPiArCXNwLT5tYXhfdmFsID0ga3phbGxvYyhzaXplb2Yo
+YXRvbWljX3QpICogbnZob3N0X3N5bmNwdF9uYl9wdHMoc3ApLAo+ICsJCQlHRlBfS0VSTkVMKTsK
+PiArCXNwLT5iYXNlX3ZhbCA9IGt6YWxsb2Moc2l6ZW9mKHUzMikgKiBudmhvc3Rfc3luY3B0X25i
+X2Jhc2VzKHNwKSwKPiArCQkJR0ZQX0tFUk5FTCk7Cj4gKwlzcC0+bG9ja19jb3VudHMgPQo+ICsJ
+CWt6YWxsb2Moc2l6ZW9mKGF0b21pY190KSAqIG52aG9zdF9zeW5jcHRfbmJfbWxvY2tzKHNwKSwK
+PiArCQkJR0ZQX0tFUk5FTCk7Cj4gKwo+ICsJaWYgKCEoc3AtPm1pbl92YWwgJiYgc3AtPm1heF92
+YWwgJiYgc3AtPmJhc2VfdmFsICYmIHNwLT5sb2NrX2NvdW50cykpIHsKPiArCQkvKiBmcmVlcyBo
+YXBwZW4gaW4gdGhlIGRlaW5pdCAqLwo+ICsJCWVyciA9IC1FTk9NRU07Cj4gKwkJZ290byBmYWls
+Owo+ICsJfQo+ICsKPiArCXNwLT5rb2JqID0ga29iamVjdF9jcmVhdGVfYW5kX2FkZCgic3luY3B0
+IiwgJmRldi0+ZGV2LmtvYmopOwo+ICsJaWYgKCFzcC0+a29iaikgewo+ICsJCWVyciA9IC1FSU87
+Cj4gKwkJZ290byBmYWlsOwo+ICsJfQo+ICsKPiArCS8qIEFsbG9jYXRlIHR3byBhdHRyaWJ1dGVz
+IGZvciBlYWNoIHN5bmMgcG9pbnQ6IG1pbiBhbmQgbWF4ICovCj4gKwlzcC0+c3luY3B0X2F0dHJz
+ID0ga3phbGxvYyhzaXplb2YoKnNwLT5zeW5jcHRfYXR0cnMpCj4gKwkJCSogbnZob3N0X3N5bmNw
+dF9uYl9wdHMoc3ApICogMiwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIXNwLT5zeW5jcHRfYXR0cnMp
+IHsKPiArCQllcnIgPSAtRU5PTUVNOwo+ICsJCWdvdG8gZmFpbDsKPiArCX0KPiArCj4gKwkvKiBG
+aWxsIGluIHRoZSBhdHRyaWJ1dGVzICovCj4gKwlmb3IgKGkgPSAwOyBpIDwgbnZob3N0X3N5bmNw
+dF9uYl9wdHMoc3ApOyBpKyspIHsKPiArCQljaGFyIG5hbWVbTUFYX1NZTkNQVF9MRU5HVEhdOwo+
+ICsJCXN0cnVjdCBrb2JqZWN0ICprb2JqOwo+ICsJCXN0cnVjdCBudmhvc3Rfc3luY3B0X2F0dHIg
+Km1pbiA9ICZzcC0+c3luY3B0X2F0dHJzW2kqMl07Cj4gKwkJc3RydWN0IG52aG9zdF9zeW5jcHRf
+YXR0ciAqbWF4ID0gJnNwLT5zeW5jcHRfYXR0cnNbaSoyKzFdOwo+ICsKPiArCQkvKiBDcmVhdGUg
+b25lIGRpcmVjdG9yeSBwZXIgc3luYyBwb2ludCAqLwo+ICsJCXNucHJpbnRmKG5hbWUsIHNpemVv
+ZihuYW1lKSwgIiVkIiwgaSk7Cj4gKwkJa29iaiA9IGtvYmplY3RfY3JlYXRlX2FuZF9hZGQobmFt
+ZSwgc3AtPmtvYmopOwoKV2hlcmUgZG8gd2UgImtvYmplY3RfcHV0IiB0aGlzIGtvYmo/CgpbLi4u
+XQo+ICsJCWlmICgha29iaikgewo+ICsJCQllcnIgPSAtRUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4g
+KwkJfQo+ICsKPiArCQltaW4tPmlkID0gaTsKPiArCQltaW4tPmhvc3QgPSBob3N0Owo+ICsJCW1p
+bi0+YXR0ci5hdHRyLm5hbWUgPSBtaW5fbmFtZTsKPiArCQltaW4tPmF0dHIuYXR0ci5tb2RlID0g
+U19JUlVHTzsKPiArCQltaW4tPmF0dHIuc2hvdyA9IHN5bmNwdF9taW5fc2hvdzsKPiArCQlpZiAo
+c3lzZnNfY3JlYXRlX2ZpbGUoa29iaiwgJm1pbi0+YXR0ci5hdHRyKSkgewo+ICsJCQllcnIgPSAt
+RUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4gKwkJfQo+ICsKPiArCQltYXgtPmlkID0gaTsKPiArCQlt
+YXgtPmhvc3QgPSBob3N0Owo+ICsJCW1heC0+YXR0ci5hdHRyLm5hbWUgPSBtYXhfbmFtZTsKPiAr
+CQltYXgtPmF0dHIuYXR0ci5tb2RlID0gU19JUlVHTzsKPiArCQltYXgtPmF0dHIuc2hvdyA9IHN5
+bmNwdF9tYXhfc2hvdzsKPiArCQlpZiAoc3lzZnNfY3JlYXRlX2ZpbGUoa29iaiwgJm1heC0+YXR0
+ci5hdHRyKSkgewo+ICsJCQllcnIgPSAtRUlPOwo+ICsJCQlnb3RvIGZhaWw7Cj4gKwkJfQo+ICsJ
+fQo+ICsKPiArCXJldHVybiBlcnI7Cj4gKwo+ICtmYWlsOgo+ICsJbnZob3N0X3N5bmNwdF9kZWlu
+aXQoc3ApOwo+ICsJcmV0dXJuIGVycjsKPiArfQo+ICsKWy4uLl0KPiArLyogcHVibGljIGhvc3Qx
+eCBzeW5jLXBvaW50IG1hbmFnZW1lbnQgQVBJcyAqLwo+ICt1MzIgaG9zdDF4X3N5bmNwdF9pbmNy
+X21heCh1MzIgaWQsIHUzMiBpbmNycyk7Cj4gK3ZvaWQgaG9zdDF4X3N5bmNwdF9pbmNyKHUzMiBp
+ZCk7Cj4gK3UzMiBob3N0MXhfc3luY3B0X3JlYWQodTMyIGlkKTsKPiArCj4gKyNlbmRpZgo+IApf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
