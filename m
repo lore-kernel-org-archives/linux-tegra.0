@@ -1,427 +1,532 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC v2 3/8] video: tegra: host: Add channel and client support
-Date: Thu, 29 Nov 2012 11:04:05 +0100
-Message-ID: <20121129100405.GB28781@avionic-0098.adnet.avionic-design.de>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
- <1353935954-13763-4-git-send-email-tbergstrom@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
+Date: Thu, 29 Nov 2012 12:21:04 +0200
+Message-ID: <50B73710.2040102@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353935954-13763-4-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20121128212301.GA25531-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 28.11.2012 23:23, Thierry Reding wrote:
+> This could be problematic. Since drivers/video and drivers/gpu/drm are
+> separate trees, this would entail a continuous burden on keeping both
+> trees synchronized. While I realize that eventually it might be better
+> to put the host1x driver in a separate place to accomodate for its use
+> by other subsystems, I'm not sure moving it here right away is the best
+> approach.
 
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I understand your point, but I hope also that we'd end up with something
+that can be used as basis for the downstream kernel to migrate to
+upstream stack.
 
-On Mon, Nov 26, 2012 at 03:19:09PM +0200, Terje Bergstrom wrote:
+The key point here is to make the API between nvhost and tegradrm as
+small and robust to changes as possible.
 
-I've skipped a lot of code here that I need more time to review.
+> I'm not sure drivers/video is the best location either. Perhaps
+> drivers/bus would be better? Or maybe we need a new subdirectory for
+> this kind of device.
 
-[...]
-> diff --git a/drivers/video/tegra/host/nvhost_intr.c b/drivers/video/tegra=
-/host/nvhost_intr.c
-[...]
-> +static void action_submit_complete(struct nvhost_waitlist *waiter)
-> +{
-> +	struct nvhost_channel *channel =3D waiter->data;
-> +	int nr_completed =3D waiter->count;
-> +
-> +	nvhost_cdma_update(&channel->cdma);
-> +	nvhost_module_idle_mult(channel->dev, nr_completed);
-> +}
-> =20
->  static void action_wakeup(struct nvhost_waitlist *waiter)
->  {
-> @@ -125,6 +145,7 @@ static void action_wakeup_interruptible(struct nvhost=
-_waitlist *waiter)
->  typedef void (*action_handler)(struct nvhost_waitlist *waiter);
-> =20
->  static action_handler action_handlers[NVHOST_INTR_ACTION_COUNT] =3D {
-> +	action_submit_complete,
->  	action_wakeup,
->  	action_wakeup_interruptible,
->  };
-[...]
-> diff --git a/drivers/video/tegra/host/nvhost_intr.h b/drivers/video/tegra=
-/host/nvhost_intr.h
-[...]
->  enum nvhost_intr_action {
->  	/**
-> +	 * Perform cleanup after a submit has completed.
-> +	 * 'data' points to a channel
-> +	 */
-> +	NVHOST_INTR_ACTION_SUBMIT_COMPLETE =3D 0,
-> +
-> +	/**
->  	 * Wake up a  task.
->  	 * 'data' points to a wait_queue_head_t
->  	 */
+This is a question I don't have an answer to. I'm perfectly ok moving it
+wherever the public opinion leads it to.
 
-Looking some more at how this is used, I'm starting to think that it
-might be easier to export the various handlers and allow them to be
-passed to the nvhost_intr_add_action() explicitly.
+> I think the general nowadays is to no longer use filenames in comments.
 
-> diff --git a/drivers/video/tegra/host/nvhost_job.c b/drivers/video/tegra/=
-host/nvhost_job.c
-[...]
-> +/* Magic to use to fill freed handle slots */
-> +#define BAD_MAGIC 0xdeadbeef
+Ok, I hadn't noticed that. I'll remove them. It's redundant information
+anyway.
 
-This isn't currently used.
+>> +struct nvhost_chip_support *nvhost_chip_ops;
+>> +
+>> +struct nvhost_chip_support *nvhost_get_chip_ops(void)
+>> +{
+>> +     return nvhost_chip_ops;
+>> +}
+> 
+> This seems like it should be more tightly coupled to the host1x device.
+> And it shouldn't be a global variable.
 
-> +static size_t job_size(u32 num_cmdbufs, u32 num_relocs, u32 num_waitchks)
-> +{
-> +	u32 num_unpins =3D num_cmdbufs + num_relocs;
-> +	s64 total;
-> +
-> +	if (num_relocs < 0 || num_waitchks < 0 || num_cmdbufs < 0)
-> +		return 0;
-> +
-> +	total =3D sizeof(struct nvhost_job)
-> +			+ num_relocs * sizeof(struct nvhost_reloc)
-> +			+ num_unpins * sizeof(struct nvhost_job_unpin_data)
-> +			+ num_waitchks * sizeof(struct nvhost_waitchk)
-> +			+ num_cmdbufs * sizeof(struct nvhost_job_gather);
-> +
-> +	if (total > ULONG_MAX)
-> +		return 0;
-> +	return (size_t)total;
-> +}
-> +
-> +
-> +static void init_fields(struct nvhost_job *job,
-> +		u32 num_cmdbufs, u32 num_relocs, u32 num_waitchks)
-> +{
-> +	u32 num_unpins =3D num_cmdbufs + num_relocs;
-> +	void *mem =3D job;
-> +
-> +	/* First init state to zero */
-> +
-> +	/*
-> +	 * Redistribute memory to the structs.
-> +	 * Overflows and negative conditions have
-> +	 * already been checked in job_alloc().
-> +	 */
-> +	mem +=3D sizeof(struct nvhost_job);
-> +	job->relocarray =3D num_relocs ? mem : NULL;
-> +	mem +=3D num_relocs * sizeof(struct nvhost_reloc);
-> +	job->unpins =3D num_unpins ? mem : NULL;
-> +	mem +=3D num_unpins * sizeof(struct nvhost_job_unpin_data);
-> +	job->waitchk =3D num_waitchks ? mem : NULL;
-> +	mem +=3D num_waitchks * sizeof(struct nvhost_waitchk);
-> +	job->gathers =3D num_cmdbufs ? mem : NULL;
-> +	mem +=3D num_cmdbufs * sizeof(struct nvhost_job_gather);
-> +	job->addr_phys =3D (num_cmdbufs || num_relocs) ? mem : NULL;
-> +
-> +	job->reloc_addr_phys =3D job->addr_phys;
-> +	job->gather_addr_phys =3D &job->addr_phys[num_relocs];
-> +}
+Yeah, I will figure out a better way to handle the chip ops. I'm not too
+happy with it. Give me a bit of time to come up with a good solution.
 
-I wouldn't bother splitting out the above two functions.
+>> +struct output;
+> 
+> What's this? It doesn't seem to be used anywhere.
 
-> +
-> +struct nvhost_job *nvhost_job_alloc(struct nvhost_channel *ch,
-> +		int num_cmdbufs, int num_relocs, int num_waitchks)
-> +{
-> +	struct nvhost_job *job =3D NULL;
-> +	size_t size =3D job_size(num_cmdbufs, num_relocs, num_waitchks);
-> +
-> +	if (!size)
-> +		return NULL;
-> +	job =3D vzalloc(size);
+It's just a mistake. The struct is used in debug code, but not referred
+to in this file so the forward declaration is not needed.
 
-Why vzalloc()?
+>> +struct nvhost_master;
+> 
+> Why do you suffix this with _master? The whole point of host1x is to be
+> the "master" so you can just as well call it nvhost, right? Ideally
+> you'd call it host1x, but I'm repeating myself. =)
 
-> +void nvhost_job_add_gather(struct nvhost_job *job,
-> +		u32 mem_id, u32 words, u32 offset)
-> +{
-> +	struct nvhost_job_gather *cur_gather =3D
-> +			&job->gathers[job->num_gathers];
-> +
-> +	cur_gather->words =3D words;
-> +	cur_gather->mem_id =3D mem_id;
-> +	cur_gather->offset =3D offset;
-> +	job->num_gathers +=3D 1;
+Yes, the name is just a historic relict and I'm blind to them as I've
+been staring at the code for so long. I think "host1x" would be a good
+name for the struct.
 
-job->num_gathers++
+>> +struct nvhost_syncpt_ops {
+>> +     void (*reset)(struct nvhost_syncpt *, u32 id);
+>> +     void (*reset_wait_base)(struct nvhost_syncpt *, u32 id);
+>> +     void (*read_wait_base)(struct nvhost_syncpt *, u32 id);
+>> +     u32 (*update_min)(struct nvhost_syncpt *, u32 id);
+>> +     void (*cpu_incr)(struct nvhost_syncpt *, u32 id);
+>> +     void (*debug)(struct nvhost_syncpt *);
+>> +     const char * (*name)(struct nvhost_syncpt *, u32 id);
+>> +};
+> 
+> Why are these even defined as ops structure? Tegra20 and Tegra30 seem to
+> be compatible when it comes to handling syncpoints. I thought they would
+> even be compatible in all other aspects as well, so why even have this?
 
-> +static int pin_job_mem(struct nvhost_job *job)
-> +{
-> +	int i;
-> +	int count =3D 0;
-> +	int result;
-> +	long unsigned *ids =3D
-> +			kmalloc(sizeof(u32 *) *
-> +				(job->num_relocs + job->num_gathers),
-> +				GFP_KERNEL);
+Tegra20 and Tegra30 are compatible, but future chips are not. I was
+hoping we would be ready in upstream kernel for future chips.
 
-Maybe this should be allocated along with the nvhost_job and the other
-fields to avoid having to allocate, and potentially fail, here?
+>> +#define syncpt_op()          (nvhost_get_chip_ops()->syncpt)
+> 
+> You really shouldn't be doing this, but rather use explicit accesses for
+> these structures. If you're design doesn't scatter these definitions
+> across several files then it isn't difficult to obtain the correct
+> pointers and you don't need these "shortcuts".
 
-> +static int do_relocs(struct nvhost_job *job,
-> +		u32 cmdbuf_mem, struct mem_handle *h)
-> +{
-> +	int i =3D 0;
-> +	int last_page =3D -1;
-> +	void *cmdbuf_page_addr =3D NULL;
-> +
-> +	/* pin & patch the relocs for one gather */
-> +	while (i < job->num_relocs) {
-> +		struct nvhost_reloc *reloc =3D &job->relocarray[i];
-> +
-> +		/* skip all other gathers */
-> +		if (cmdbuf_mem !=3D reloc->cmdbuf_mem) {
-> +			i++;
-> +			continue;
-> +		}
-> +
-> +		if (last_page !=3D reloc->cmdbuf_offset >> PAGE_SHIFT) {
-> +			if (cmdbuf_page_addr)
-> +				nvhost_memmgr_kunmap(h, last_page, cmdbuf_page_addr);
-> +
-> +			cmdbuf_page_addr =3D nvhost_memmgr_kmap(h,
-> +					reloc->cmdbuf_offset >> PAGE_SHIFT);
-> +			last_page =3D reloc->cmdbuf_offset >> PAGE_SHIFT;
-> +
-> +			if (unlikely(!cmdbuf_page_addr)) {
-> +				pr_err("Couldn't map cmdbuf for relocation\n");
-> +				return -ENOMEM;
-> +			}
-> +		}
-> +
-> +		__raw_writel(
-> +			(job->reloc_addr_phys[i] +
-> +				reloc->target_offset) >> reloc->shift,
-> +			(cmdbuf_page_addr +
-> +				(reloc->cmdbuf_offset & ~PAGE_MASK)));
+Do you mean that I would move the ops to be part of f.ex. nvhost_syncpt
+or nvhost_intr structs?
 
-You're not writing to I/O memory, so you shouldn't be using
-__raw_writel() here.
+> This API looks odd. Should syncpoints not be considered as regular
+> resources, much like interrupts? In that case it would be easier to
+> abstract them away behind an opaque type. It looks like you already use
+> the struct nvhost_syncpt to refer to the set of syncpoints associated
+> with a host1x device.
+> 
+> How about you use nvhost/host1x_syncpt to refer to individual syncpoints
+> instead. You could export an array of those from your host1x device and
+> implement a basic resource allocation mechanism on top, similar to how
+> other resources are handled in the kernel.
+> 
+> So a host1x client device could call host1x_request_syncpt() to allocate
+> a syncpoint from it's host1x parent dynamically along with passing a
+> name and a syncpoint handler to it.
 
-> +int nvhost_job_pin(struct nvhost_job *job, struct platform_device *pdev)
-> +{
-> +	int err =3D 0, i =3D 0, j =3D 0;
-> +	struct nvhost_syncpt *sp =3D &nvhost_get_host(pdev)->syncpt;
-> +	unsigned long waitchk_mask[nvhost_syncpt_nb_pts(sp) / BITS_PER_LONG];
+That might work. I'll think about that - thanks.
 
-You should use a bitmap instead. See DECLARE_BITMAP in linux/types.h...
+>> +bool host1x_powered(struct platform_device *dev)
+>> +{
+> [...]
+>> +}
+>> +EXPORT_SYMBOL(host1x_powered);
+>> +
+>> +void host1x_busy(struct platform_device *dev)
+>> +{
+> [...]
+>> +}
+>> +EXPORT_SYMBOL(host1x_busy);
+>> +
+>> +void host1x_idle(struct platform_device *dev)
+>> +{
+> [...]
+>> +}
+>> +EXPORT_SYMBOL(host1x_idle);
+> 
+> These look like a reimplementation of the runtime power-management
+> framework.
 
-> +
-> +	memset(&waitchk_mask[0], 0, sizeof(waitchk_mask));
+Yes, we at some point tried to move to use runtime PM. The first attempt
+was thwarted by runtime PM and system suspend conflicting with each
+other. I believe this is pretty much fixed in later versions of kernel.
 
-and run bitmap_zero() here...
+Also, the problem was that runtime PM doesn't support multiple power
+states. In downstream kernel, we support clock gating and power gating.
+When we moved to runtime PM and implemented power gating on top of that,
+we ended up with more code than just using the current ACM code.
 
-> +	for (i =3D 0; i < job->num_waitchk; i++) {
-> +		u32 syncpt_id =3D job->waitchk[i].syncpt_id;
-> +		if (syncpt_id < nvhost_syncpt_nb_pts(sp))
-> +			waitchk_mask[BIT_WORD(syncpt_id)] |=3D
-> +				BIT_MASK(syncpt_id);
+I have a developer starting to look into how we could take runtime PM
+again into use with proper power gating support. It'll take a while to
+get that right. It might be best to rip the dynamic power management out
+from this patch set, and introduce it later when we have a proper
+runtime PM solution.
 
-and use _set_bit here.
+I'll skip the other comments about ACM because of this.
 
-> +	}
-> +
-> +	/* get current syncpt values for waitchk */
-> +	for_each_set_bit(i, &waitchk_mask[0], sizeof(waitchk_mask))
-> +		nvhost_syncpt_update_min(sp, i);
+>> diff --git a/drivers/video/tegra/host/host1x/host1x.c b/drivers/video/tegra/host/host1x/host1x.c
+> [...]
+>> +struct nvhost_master *nvhost;
+> Bad habbit. I know that this is a popular shortcut. However this also
+> leads to very bad designs because you're allowed to reuse this pointer
+> from wherever you like.
+> 
+> When I wrote the tegra-drm code I explicitly made sure to not use any
+> such global variable. In the end it forces you to clean up the driver
+> design.
+> 
+> As a bonus you automatically get support for any number of host1x
+> devices on the same SoC. Now you will probably tell me that this is
+> never going to happen. People also used to think that a computers would
+> never use more than a single CPU...
 
-Or since you only use the mask here, why not move the
-nvhost_syncpt_update_min() into the above loop?
+I think this might get cleaned up at the same time with cleaning up the
+auxdata/chip_ops design. We used to have this struct set as driver
+private data, but as we started using that for another purpose, we moved
+this variable out.
 
-> +	/* patch gathers */
-> +	for (i =3D 0; i < job->num_gathers; i++) {
-> +		struct nvhost_job_gather *g =3D &job->gathers[i];
-> +
-> +		/* process each gather mem only once */
-> +		if (!g->ref) {
-> +			g->ref =3D nvhost_memmgr_get(g->mem_id, job->ch->dev);
-> +			if (IS_ERR(g->ref)) {
-> +				err =3D PTR_ERR(g->ref);
-> +				g->ref =3D NULL;
-> +				break;
-> +			}
-> +
-> +			g->mem_base =3D job->gather_addr_phys[i];
-> +
-> +			for (j =3D 0; j < job->num_gathers; j++) {
-> +				struct nvhost_job_gather *tmp =3D
-> +					&job->gathers[j];
-> +				if (!tmp->ref && tmp->mem_id =3D=3D g->mem_id) {
-> +					tmp->ref =3D g->ref;
-> +					tmp->mem_base =3D g->mem_base;
-> +				}
-> +			}
-> +			err =3D do_relocs(job, g->mem_id,  g->ref);
-> +			if (!err)
-> +				err =3D do_waitchks(job, sp,
-> +						g->mem_id, g->ref);
-> +			nvhost_memmgr_put(g->ref);
-> +			if (err)
-> +				break;
-> +		}
-> +	}
-> +fail:
-> +	wmb();
+>> +
+>> +static void nvhost_free_resources(struct nvhost_master *host)
+>> +{
+>> +}
+> 
+> This should be removed since it's empty.
 
-What do you need this write barrier for?
+True. I wonder how that happened - there was content since recently, but
+I guess I deleted the code without noticing that the function needs to
+go, too.
 
-> diff --git a/drivers/video/tegra/host/nvhost_memmgr.c b/drivers/video/teg=
-ra/host/nvhost_memmgr.c
-> new file mode 100644
-> index 0000000..bdceb74
-> --- /dev/null
-> +++ b/drivers/video/tegra/host/nvhost_memmgr.c
-> @@ -0,0 +1,160 @@
-> +/*
-> + * drivers/video/tegra/host/nvhost_memmgr.c
-> + *
-> + * Tegra host1x Memory Management Abstraction
-> + *
-> + * Copyright (c) 2012, NVIDIA Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +
-> +#include "nvhost_memmgr.h"
-> +#include "dmabuf.h"
-> +#include "chip_support.h"
-> +
-> +struct mem_handle *nvhost_memmgr_alloc(size_t size, size_t align, int fl=
-ags)
-> +{
-> +	struct mem_handle *h =3D NULL;
-> +	h =3D nvhost_dmabuf_alloc(size, align, flags);
-> +
-> +	return h;
-> +}
-> +
-> +struct mem_handle *nvhost_memmgr_get(u32 id, struct platform_device *dev)
-> +{
-> +	struct mem_handle *h =3D NULL;
-> +
-> +	switch (nvhost_memmgr_type(id)) {
-> +	case mem_mgr_type_dmabuf:
-> +		h =3D (struct mem_handle *) nvhost_dmabuf_get(id, dev);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return h;
-> +}
+>> +     regs = platform_get_resource(dev, IORESOURCE_MEM, 0);
+>> +     intr0 = platform_get_resource(dev, IORESOURCE_IRQ, 0);
+>> +     intr1 = platform_get_resource(dev, IORESOURCE_IRQ, 1);
+>> +
+>> +     if (!regs || !intr0 || !intr1) {
+> 
+> I prefer to have these checked for explicitly, one by one for
+> readability and potentially more useful diagnostics.
 
-Heh, this would actually be a case where I'd argue in favour of an ops
-structure. But Lucas already mentioned that we may want to revise how
-the memory manager works and ideally we'd only have a single type of
-buffers anyway so this would largely become obsolete anyway.
+Can do.
 
-> diff --git a/include/linux/nvhost.h b/include/linux/nvhost.h
-[...]
-> +#define NVSYNCPT_2D_0		(18)
-> +#define NVSYNCPT_2D_1		(19)
-> +#define NVSYNCPT_VBLANK0	(26)
-> +#define NVSYNCPT_VBLANK1	(27)
->=20
-> +/* sync points that are wholly managed by the client */
-> +#define NVSYNCPTS_CLIENT_MANAGED (\
-> +	BIT(NVSYNCPT_VBLANK0) | \
-> +	BIT(NVSYNCPT_VBLANK1) | \
-> +	BIT(NVSYNCPT_2D_1))
-> +
-> +#define NVWAITBASE_2D_0 (1)
-> +#define NVWAITBASE_2D_1 (2)
+> Also you should be using platform_get_irq() for interrupts. Furthermore
+> the host1x DT node (and the TRM) name the interrupts "syncpt" and
+> "general", so maybe those would be more useful variable names than
+> "intr0" and "intr1".
+> 
+> But since you don't use them anyway they shouldn't be part of this
+> patch.
 
-I think we already agreed that we want to do dynamic allocation of
-syncpoints so these definitions can go away.
+True. I might also as well delete the general interrupt altogether, as
+we don't use it for any real purpose.
 
->  enum nvhost_power_sysfs_attributes {
->  	NVHOST_POWER_SYSFS_ATTRIB_CLOCKGATE_DELAY =3D 0,
->  	NVHOST_POWER_SYSFS_ATTRIB_POWERGATE_DELAY,
-> @@ -142,4 +157,138 @@ void host1x_syncpt_incr(u32 id);
->  u32 host1x_syncpt_read(u32 id);
->  int host1x_syncpt_wait(u32 id, u32 thresh, u32 timeout, u32 *value);
-> =20
-> +/* Register device */
-> +int nvhost_client_device_init(struct platform_device *dev);
+>> +     /* Copy host1x parameters. The private_data gets replaced
+>> +      * by nvhost_master later */
+> 
+> Multiline comments should be in this format:
+> 
+>         /*
+>          * foo
+>          */
 
-Again, I think this should be made easier on the clients. Ideally
-there'd be a single call to register a client with host1x which would
-already initialize the appropriate fields. There can be other, separate
-functions for resource allocations such as syncpoints and channels,
-though.
+Ok.
 
-> +int nvhost_client_device_suspend(struct platform_device *dev);
+>> +     host->aperture = devm_request_and_ioremap(&dev->dev, regs);
+>> +     if (!host->aperture) {
+> 
+> aperture is confusing as it is typically used for GTT-type memory
+> regions, so it may be mistaken for the GART found on Tegra 2. Why not
+> call it "regs" instead?
 
-Again, I think this should be handled via runtime PM.
+Can do.
 
-> +struct nvhost_channel *nvhost_getchannel(struct nvhost_channel *ch);
-> +void nvhost_putchannel(struct nvhost_channel *ch);
+> 
+>> +             dev_err(&dev->dev, "failed to remap host registers\n");
+> 
+> This is unnecessary. devm_request_and_ioremap() already prints an error
+> message on failure.
 
-These are oddly named. Better names would be nvhost_channel_get() or
-nvhost_channel_put().
+I'll remove that, thanks.
 
-> +int nvhost_channel_submit(struct nvhost_job *job);
-> +
-> +enum host1x_class {
-> +	NV_HOST1X_CLASS_ID		=3D 0x1,
-> +	NV_GRAPHICS_2D_CLASS_ID		=3D 0x51,
-> +};
+> 
+>> +     for (i = 0; i < pdata->num_clks; i++)
+>> +             clk_prepare_enable(pdata->clk[i]);
+>> +     nvhost_syncpt_reset(&host->syncpt);
+>> +     for (i = 0; i < pdata->num_clks; i++)
+>> +             clk_disable_unprepare(pdata->clk[i]);
+> 
+> Stephen already hinted at this when discussing the AUXDATA. You should
+> explicitly request the clocks.
 
-Maybe this enumeration should be made more consistent, somewhat along
-the lines of:
+I'm not too happy about that idea. The clock management code is generic
+for all modules, and that's why it's driven by a data structure. Now
+Stephen and you ask me to unroll the loops and make copies of the code
+to facilitate different modules and different SoCs.
 
-	enum host1x_class {
-		HOST1X_CLASS_HOST1X =3D 0x01,
-		HOST1X_CLASS_2D =3D 0x51,
-	};
+>> +static int __exit nvhost_remove(struct platform_device *dev)
+> 
+> This should really be __devexit to allow the driver to be built as a
+> module. However, __dev* are deprecated and in the process of being
+> removed so you can just drop __exit as well.
+>> +static struct of_device_id host1x_match[] __devinitdata = {
+>
+> __devinitdata can be dropped.
+>> +     { .compatible = "nvidia,tegra20-host1x", },
+>> +     { .compatible = "nvidia,tegra30-host1x", },
+>> +     { },
+>> +};
+>> +
+>> +static struct platform_driver platform_driver = {
+>> +     .probe = nvhost_probe,
+>> +     .remove = __exit_p(nvhost_remove),
+>
+> __exit_p also.
 
-Again, I'll need more time to go over the rest of the code but the good
-news is that I'm starting to form a better picture of how things work.
+Ok.
 
-Thierry
+>> +             .of_match_table = of_match_ptr(host1x_match),
+> 
+> No need for of_match_ptr().
 
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature
+Will remove.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+>> +module_init(nvhost_mod_init);
+>> +module_exit(nvhost_mod_exit);
+> 
+> Use module_platform_driver().
 
-iQIcBAEBAgAGBQJQtzMVAAoJEN0jrNd/PrOhA9wP/iYLJp+LVdpz4g56ahu5adfz
-ckdaxdoJ9UGIxBL4zUkxiF652pXbuuSncCJjOnfzrTJwu7eIePGJWAE0CHbYmUga
-ZsSbJSEfvIK0ZMut57K3KDoXNVRl5ad861To1YrJrGaW6NG2kJ3N/0lH6eCdmsY4
-CjvqLKgeneTSjg1p9GW/rAVBm+o1rt/GTnjlvbaVrMtAMstIfVsbRvGZkqjVMWn6
-yNUKFLhfAF0aeLYAnrZAl9siKxu1VU19gUjdJohaufyxXdW8MXAmc2nb9gKJNMAB
-oCFX8dHpyfIfSoF0Hd94BhLMDyifnlyj/fBImX/1boR552g2SS6ovgxz6+iSGQmF
-JROzp+2S6rksqjQdioHyO2DsGGLvcaZKDi0LukE8t1wnczqdrWoxkZVGtthqe2HH
-tdq50ndbBCM1sr5n55Q/TDb2pe0U3Tyg22euRvuaFIs8PpyBvS2Kh6AB39LraOg9
-R9cQ5zY7cie0XNGZjPbaR5abvR+Vs03IgybSccUblsuU0YYqUYNCLHwz5VQe8jHN
-ENwcpXuazXVfN0bTZYG9cwzCGbWw4B+XZS7xAHEY3+JTxYsHeNNGiYqX5iYIbtli
-VVtYI0nVDV9j/c2xOnz1jxLqhvdPBLowSL4z5lJo4NufioGJlPgCFxqCFgqLzYNw
-vo9yVOlhKmy2iEqlkzcS
-=IWBL
------END PGP SIGNATURE-----
+Ok.
 
---+pHx0qQiF2pBVqBT--
+> 
+>> diff --git a/drivers/video/tegra/host/host1x/host1x.h b/drivers/video/tegra/host/host1x/host1x.h
+> [...]
+>> +#define TRACE_MAX_LENGTH     128U
+>> +#define IFACE_NAME           "nvhost"
+> 
+> None of these seem to be used.
+
+Will remove.
+
+>> +static inline void *nvhost_get_private_data(struct platform_device *_dev)
+>> +{
+>> +     struct nvhost_device_data *pdata =
+>> +             (struct nvhost_device_data *)platform_get_drvdata(_dev);
+>> +     WARN_ON(!pdata);
+>> +     return (pdata && pdata->private_data) ? pdata->private_data : NULL;
+>> +}
+>> +
+>> +static inline void nvhost_set_private_data(struct platform_device *_dev,
+>> +     void *priv_data)
+>> +{
+>> +     struct nvhost_device_data *pdata =
+>> +             (struct nvhost_device_data *)platform_get_drvdata(_dev);
+>> +     WARN_ON(!pdata);
+>> +     if (pdata)
+>> +             pdata->private_data = priv_data;
+>> +}
+> 
+> You should need none of these. Instead put all the data you need into
+> you struct host1x and associate that with the platform device using
+> platform_set_drvdata().
+
+I need to actually find a way to do this for both host1x itself, and the
+2D module. But as said, I'll try to remove the auxdata and come up with
+something better.
+
+>> +static inline
+>> +struct nvhost_master *nvhost_get_host(struct platform_device *_dev)
+>> +{
+>> +     struct platform_device *pdev;
+>> +
+>> +     if (_dev->dev.parent) {
+>> +             pdev = to_platform_device(_dev->dev.parent);
+>> +             return nvhost_get_private_data(pdev);
+>> +     } else
+>> +             return nvhost_get_private_data(_dev);
+>> +}
+>> +
+>> +static inline
+>> +struct platform_device *nvhost_get_parent(struct platform_device *_dev)
+>> +{
+>> +     return _dev->dev.parent ? to_platform_device(_dev->dev.parent) : NULL;
+>> +}
+> 
+> These don't seem to be used.
+
+nvhost_get_host() is used in a subsequent patch, but getting parent
+doesn't seem to be.
+
+> Usually you don't keep separate variables for subregions. This can
+> equally well be done with just adding a corresponding offset.
+
+Hmm, ok, I could do that, but it just sounds logical to have only one
+piece of code that finds the sync reg base. I don't really understand
+why it needs to be duplicate for every access.
+
+>> +static void host1x_syncpt_debug(struct nvhost_syncpt *sp)
+>> +{
+>> +     u32 i;
+>> +     for (i = 0; i < nvhost_syncpt_nb_pts(sp); i++) {
+>> +             u32 max = nvhost_syncpt_read_max(sp, i);
+>> +             u32 min = nvhost_syncpt_update_min(sp, i);
+>> +             if (!max && !min)
+>> +                     continue;
+>> +             dev_info(&syncpt_to_dev(sp)->dev->dev,
+>> +                     "id %d (%s) min %d max %d\n",
+>> +                     i, syncpt_op().name(sp, i),
+>> +                     min, max);
+>> +
+>> +     }
+>> +
+>> +     for (i = 0; i < nvhost_syncpt_nb_bases(sp); i++) {
+>> +             u32 base_val;
+>> +             host1x_syncpt_read_wait_base(sp, i);
+>> +             base_val = sp->base_val[i];
+>> +             if (base_val)
+>> +                     dev_info(&syncpt_to_dev(sp)->dev->dev,
+>> +                                     "waitbase id %d val %d\n",
+>> +                                     i, base_val);
+>> +
+>> +     }
+>> +}
+> 
+> This should probably be integrated with debugfs.
+
+I could move this to debug.c, but it's debugging aid when a command
+stream is misbehaving and it spews this to UART when sync point wait is
+timing out. So not debugfs stuff.
+
+>> diff --git a/drivers/video/tegra/host/host1x/hw_host1x01_sync.h b/drivers/video/tegra/host/host1x/hw_host1x01_sync.h
+> 
+> Autogenerated files are generally not acceptable. And I already
+> mentioned before that you should be using #define instead of static
+> inline functions for register and bit definitions.
+
+What's the root cause for autogenerated files not being acceptable? I'm
+autogenerating them from definitions I get from hardware, which makes
+the results reliable.
+
+I like static inline because I get the benefit of compiler type
+checking, and gcov shows me which register definitions have been used in
+different tests.
+
+#defines are always messy and I pretty much hate them. But if the
+general request is to use #define's, even though I don't agree, I can
+accommodate. It's simple to write a sed script to do the conversion.
+
+> This is a very funky way of creating sysfs attributes. What you probably
+> want here are device attributes. See Documentation/filesystems/sysfs.txt
+> and include/linux/sysfs.h.
+
+Thanks for the pointers, looks like device attributes could be used.
+
+>> +bool nvhost_syncpt_is_expired(
+>> +     struct nvhost_syncpt *sp,
+>> +     u32 id,
+>> +     u32 thresh)
+>> +{
+>> +     u32 current_val;
+>> +     u32 future_val;
+>> +     smp_rmb();
+> 
+> What do you need a read memory barrier for?
+
+I'll test without that. I can't see any valid reason, and I have a
+couple of other similar problems.
+
+>> +/* Displays the current value of the sync point via sysfs */
+>> +static ssize_t syncpt_min_show(struct kobject *kobj,
+>> +             struct kobj_attribute *attr, char *buf)
+>> +{
+>> +     struct nvhost_syncpt_attr *syncpt_attr =
+>> +             container_of(attr, struct nvhost_syncpt_attr, attr);
+>> +
+>> +     return snprintf(buf, PAGE_SIZE, "%u",
+>> +                     nvhost_syncpt_read(&syncpt_attr->host->syncpt,
+>> +                             syncpt_attr->id));
+>> +}
+>> +
+>> +static ssize_t syncpt_max_show(struct kobject *kobj,
+>> +             struct kobj_attribute *attr, char *buf)
+>> +{
+>> +     struct nvhost_syncpt_attr *syncpt_attr =
+>> +             container_of(attr, struct nvhost_syncpt_attr, attr);
+>> +
+>> +     return snprintf(buf, PAGE_SIZE, "%u",
+>> +                     nvhost_syncpt_read_max(&syncpt_attr->host->syncpt,
+>> +                             syncpt_attr->id));
+>> +}
+> 
+> This looks like it belongs in debugfs.
+
+This is actually the only interface to read the max value to user space,
+which can be useful for doing some comparisons that take wrapping into
+account. But we could just add IOCTLs and remove the sysfs entries.
+
+>> diff --git a/include/linux/nvhost.h b/include/linux/nvhost.h
+> [...]
+>> +struct host1x_device_info {
+>> +     int             nb_channels;    /* host1x: num channels supported */
+>> +     int             nb_pts;         /* host1x: num syncpoints supported */
+>> +     int             nb_bases;       /* host1x: num syncpoints supported */
+>> +     u32             client_managed; /* host1x: client managed syncpts */
+>> +     int             nb_mlocks;      /* host1x: number of mlocks */
+>> +     const char      **syncpt_names; /* names of sync points */
+>> +};
+>> +
+>> +struct nvhost_device_data {
+>> +     int             version;        /* ip version number of device */
+>> +     int             id;             /* Separates clients of same hw */
+>> +     int             index;          /* Hardware channel number */
+>> +     void __iomem    *aperture;      /* Iomem mapped to kernel */
+>> +
+>> +     u32             syncpts;        /* Bitfield of sync points used */
+>> +     u32             modulemutexes;  /* Bit field of module mutexes */
+>> +
+>> +     u32             class;          /* Device class */
+>> +     bool            serialize;      /* Serialize submits in the channel */
+>> +
+>> +     int             powergate_ids[NVHOST_MODULE_MAX_POWERGATE_IDS];
+>> +     bool            can_powergate;  /* True if module can be power gated */
+>> +     int             clockgate_delay;/* Delay before clock gated */
+>> +     int             powergate_delay;/* Delay before power gated */
+>> +     struct nvhost_clock clocks[NVHOST_MODULE_MAX_CLOCKS];/* Clock names */
+>> +
+>> +     struct delayed_work powerstate_down;/* Power state management */
+>> +     int             num_clks;       /* Number of clocks opened for dev */
+>> +     struct clk      *clk[NVHOST_MODULE_MAX_CLOCKS];
+>> +     struct mutex    lock;           /* Power management lock */
+>> +     int             powerstate;     /* Current power state */
+>> +     int             refcount;       /* Number of tasks active */
+>> +     wait_queue_head_t idle_wq;      /* Work queue for idle */
+>> +
+>> +     struct nvhost_channel *channel; /* Channel assigned for the module */
+>> +     struct kobject *power_kobj;     /* kobj to hold power sysfs entries */
+>> +     struct nvhost_device_power_attr *power_attrib;  /* sysfs attributes */
+>> +     struct dentry *debugfs;         /* debugfs directory */
+>> +
+>> +     void *private_data;             /* private platform data */
+>> +     struct platform_device *pdev;   /* owner platform_device */
+>> +
+>> +     /* Finalize power on. Can be used for context restore. */
+>> +     void (*finalize_poweron)(struct platform_device *dev);
+>> +
+>> +     /* Device is busy. */
+>> +     void (*busy)(struct platform_device *);
+>> +
+>> +     /* Device is idle. */
+>> +     void (*idle)(struct platform_device *);
+>> +
+>> +     /* Device is going to be suspended */
+>> +     void (*suspend_ndev)(struct platform_device *);
+>> +
+>> +     /* Device is initialized */
+>> +     void (*init)(struct platform_device *dev);
+>> +
+>> +     /* Device is de-initialized. */
+>> +     void (*deinit)(struct platform_device *dev);
+>> +
+>> +     /* Preparing for power off. Used for context save. */
+>> +     int (*prepare_poweroff)(struct platform_device *dev);
+>> +
+>> +     /* Clock gating callbacks */
+>> +     int (*prepare_clockoff)(struct platform_device *dev);
+>> +     void (*finalize_clockon)(struct platform_device *dev);
+>> +};
+> 
+> A lot of this can be removed if you use existing infrastructure and
+> simplify the design a bit. Most of it can probably move into the main
+> struct host1x to avoid needless indirections that make the code hard to
+> follow and maintain.
+
+Actually, this struct is generic for host1x and host1x clients, so they
+cannot be moved to host1x. I do also realize that I'm not using them in
+the patch sets I sent for 2D.
+
+Terje
