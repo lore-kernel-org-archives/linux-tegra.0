@@ -1,70 +1,50 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Thu, 29 Nov 2012 11:34:14 -0700
-Message-ID: <50B7AAA6.70702@wwwdotorg.org>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com>
+Date: Thu, 29 Nov 2012 11:38:11 -0700
+Message-ID: <50B7AB93.5060207@wwwdotorg.org>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50B73710.2040102-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20121129114704.GB6150-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/29/2012 03:21 AM, Terje Bergstr=F6m wrote:
-> On 28.11.2012 23:23, Thierry Reding wrote:
-=2E..
->>> +     regs =3D platform_get_resource(dev, IORESOURCE_MEM, 0);
->>> +     intr0 =3D platform_get_resource(dev, IORESOURCE_IRQ, 0);
->>> +     intr1 =3D platform_get_resource(dev, IORESOURCE_IRQ, 1);
->>> +
->>> +     if (!regs || !intr0 || !intr1) {
->>
->> I prefer to have these checked for explicitly, one by one for
->> readability and potentially more useful diagnostics.
+On 11/29/2012 04:47 AM, Thierry Reding wrote:
+> On Thu, Nov 29, 2012 at 12:21:04PM +0200, Terje Bergstr=C3=B6m wrote:
+>> On 28.11.2012 23:23, Thierry Reding wrote:
+>>> This could be problematic. Since drivers/video and
+>>> drivers/gpu/drm are separate trees, this would entail a
+>>> continuous burden on keeping both trees synchronized. While I
+>>> realize that eventually it might be better to put the host1x
+>>> driver in a separate place to accomodate for its use by other
+>>> subsystems, I'm not sure moving it here right away is the best=20
+>>> approach.
+>>=20
+>> I understand your point, but I hope also that we'd end up with
+>> something that can be used as basis for the downstream kernel to
+>> migrate to upstream stack.
+>>=20
+>> The key point here is to make the API between nvhost and tegradrm
+>> as small and robust to changes as possible.
 >=20
-> Can do.
+> I agree. But I also fear that there will be changes eventually and=20
+> having both go in via different tree requires those trees to be
+> merged in a specific order to avoid breakage should the API change.
+> This will be particularly ugly in linux-next.
 >=20
->> Also you should be using platform_get_irq() for interrupts. Furtherm=
-ore
->> the host1x DT node (and the TRM) name the interrupts "syncpt" and
->> "general", so maybe those would be more useful variable names than
->> "intr0" and "intr1".
->>
->> But since you don't use them anyway they shouldn't be part of this
->> patch.
->=20
-> True. I might also as well delete the general interrupt altogether, a=
-s
-> we don't use it for any real purpose.
+> That's why I explicitly proposed to take this into
+> drivers/gpu/drm/tegra for the time being, until we can be
+> reasonably sure that the API is fixed. Then I'm fine with moving it
+> wherever seems the best fit. Even then there might be the
+> occasional dependency, but they should get fewer and fewer as the
+> code matures.
 
-Do make sure the interrupts still are part of the DT binding though, so
-that the binding fully describes the HW, and the interrupt is available
-to retrieve if we ever do use it in the future.
-
->>> +     for (i =3D 0; i < pdata->num_clks; i++)
->>> +             clk_prepare_enable(pdata->clk[i]);
->>> +     nvhost_syncpt_reset(&host->syncpt);
->>> +     for (i =3D 0; i < pdata->num_clks; i++)
->>> +             clk_disable_unprepare(pdata->clk[i]);
->>
->> Stephen already hinted at this when discussing the AUXDATA. You shou=
-ld
->> explicitly request the clocks.
->=20
-> I'm not too happy about that idea. The clock management code is gener=
-ic
-> for all modules, and that's why it's driven by a data structure. Now
-> Stephen and you ask me to unroll the loops and make copies of the cod=
-e
-> to facilitate different modules and different SoCs.
-
-You can still create tables of clocks inside the driver and loop over
-them. So, loop unrolling isn't related to my comments at least. It's
-just that clk_get() shouldn't take its parameters from platform data.
-
-But if these are clocks for (arbitrary) child modules (that may or may
-not exist dynamically), why aren't the drivers for the child modules
-managing them?
+It is acceptable for one maintainer to ack patches, and another
+maintainer to merge a series that touches both "their own" code and
+code owned by another tree. This should of course only be needed when
+inter-module APIs change; changes to code within a module shouldn't
+require this.
