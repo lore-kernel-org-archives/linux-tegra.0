@@ -1,57 +1,109 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Fri, 30 Nov 2012 08:53:05 +0100
-Message-ID: <1354261985.1479.179.camel@tellur>
-References: <50B60EFF.1050703@nvidia.com> <1354109602.1479.66.camel@tellur>
-	 <50B61845.6060102@nvidia.com> <1354111565.1479.73.camel@tellur>
-	 <50B6237B.8010808@nvidia.com> <1354115609.1479.91.camel@tellur>
-	 <50B63A70.8020107@nvidia.com> <1354128408.1479.137.camel@tellur>
-	 <50B71A28.5060807@nvidia.com> <1354180153.1479.162.camel@tellur>
-	 <20121129121430.GA3846@avionic-0098.adnet.avionic-design.de>
-	 <50B863E4.50700@nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [RFC v2 2/8] video: tegra: Add syncpoint wait and interrupts
+Date: Fri, 30 Nov 2012 08:23:57 +0100
+Message-ID: <20121130072357.GF26474@avionic-0098.adnet.avionic-design.de>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
+	<1353935954-13763-3-git-send-email-tbergstrom@nvidia.com>
+	<20121129084400.GA28781@avionic-0098.adnet.avionic-design.de>
+	<50B7AC6E.4050906@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50B863E4.50700@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Dave Airlie <airlied@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
+Content-Type: multipart/mixed; boundary="===============1740257122=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <50B7AC6E.4050906@wwwdotorg.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 30.11.2012, 09:44 +0200 schrieb Terje Bergstr=C3=B6m:
-> On 29.11.2012 14:14, Thierry Reding wrote:
-> > On Thu, Nov 29, 2012 at 10:09:13AM +0100, Lucas Stach wrote:
-> >> This way you would also be able to construct different handles (li=
-ke GEM
-> >> obj or V4L2 buffers) from the same backing nvhost object. Note tha=
-t I'm
-> >> not sure how useful this would be, but it seems like a reasonable =
-design
-> >> to me being able to do so.
+
+--===============1740257122==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
+Content-Disposition: inline
+
+
+--L2Brqb15TUChFOBK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 29, 2012 at 11:41:50AM -0700, Stephen Warren wrote:
+> On 11/29/2012 01:44 AM, Thierry Reding wrote:
+> > On Mon, Nov 26, 2012 at 03:19:08PM +0200, Terje Bergstrom wrote:
+>=20
+> >> diff --git a/drivers/video/tegra/host/host1x/host1x_intr.c
+> >> b/drivers/video/tegra/host/host1x/host1x_intr.c
+> > [...]
+> >> +/* Spacing between sync registers */ +#define REGISTER_STRIDE 4
 > >=20
-> > Wouldn't that be useful for sharing buffers between DRM and V4L2 us=
-ing
-> > dma-buf? I'm not very familiar with how exactly importing and expor=
-ting
-> > work with dma-buf, so maybe I need to read up some more.
+> > Erm... no. The usual way you should be doing this is either make
+> > the register definitions account for the stride or use accessors
+> > that apply the stride. You should be doing the latter anyway to
+> > make accesses. For example:
+> >=20
+> > static inline void host1x_syncpt_writel(struct host1x *host1x,=20
+> > unsigned long value, unsigned long offset) { writel(value,
+> > host1x->regs + SYNCPT_BASE + offset); }
+> >=20
+> > static inline unsigned long host1x_syncpt_readl(struct host1x
+> > *host1x, unsigned long offset) { return readl(host1x->regs +
+> > SYNCPT_BASE + offset); }
+> >=20
+> > Alternatively, if you want to pass the register index instead of
+> > the offset, you can use just multiply the offset in that function:
+> >=20
+> > writel(value, host1x->regs + SYNCPT_BASE + (offset << 2));
+> >=20
+> > The same can also be done with the non-syncpt registers.
 >=20
-> I would still preserve the dma-buf support, for exactly this purpose.
->=20
-dma-buf is useful and should be preserved, as some userspace like
-gstreamer might rely on us being able to import/export dma-buf handles
-at some time. At the very latest we'll need it if someone wants to run =
-a
-UDL device to scanout a buffer rendered to by the internal GPU.
+> It seems like reasonable documentation to replace "<< 2" with "*
+> REGISTER_STRIDE" here.
 
-What I'm saying is just that with a common allocator we could cut down =
-a
-lot on the usage of dma-buf, where not really necessary. Also you might
-be able to do some optimisations based on the fact that a dma-buf handl=
-e
-exported for some V4L2 buffer, which gets imported into DRM to construc=
-t
-a GEM object, is the very same nvhost object in the end.
+Given that it is a very common pattern, << 2 seems enough documentation
+to me, but sure, if you prefer to be extra explicit that's fine with me.
 
-Regards,
-Lucas
+Thierry
+
+--L2Brqb15TUChFOBK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQuF8NAAoJEN0jrNd/PrOhhAgP/0dsjWCTylvnvrbB60Xfy0NH
+veT4LTrEabepeQRz6VaRb4kC0Xbh9jJe6HDFgTrTrBRkTsOJYIXFmcdyLpOOAApZ
+HM3W9b9FPZHzLIqdwhJwl3hEO0IziAGyGfux7Jt0saSEcLSDXaspwEoSORYUh/wN
+ERdBd6FRNuIWxNrENI1ian9NWWSI8UeaPTzn/CrM8nh5NmM1iP9wt0Ssb1bdZtLK
+B9eHnE8KdBj1qTXnHXiPfm29NNq3KFqE0PR4STD7+8Pwjo01hC4mWKOMUoodBLA1
+Ph3vSQYB0IyI2BY5KwPNRqI68fY0j723/zUG7ix6z0spjl+zMUfwn6ZtBXb2uZPl
+3/35lNFzlCfkmhvr65usS9oXQ+ivd7SbjLt9FEVvaSG6njuMrexMvXZVuKRgmDkX
+rmaRMcvDbO6mRQUXAYgt7BboiQQDXQ7kecilT2JHzvB6Mv6hvpqNX8fpV1urAMU9
+3pEJyPzfrWQqt/vh5OhmeL1NZF9VAubC0HAgUa1sbRKB9TxfktUiynzt7jalOyDk
+vj+Ot7g9SdjQMCRttqbPoGhTp9AsbWgbku/7alkoqYb4W1iqWhlZinLEYTEyhMzN
+TLBpMhTOCDpvxn3EdQTDeqKpwIM22bwsZQCSWAD9CkT+sXWInlB6VMzg0mf+HSVc
+h+StfsAYls5sOrifLVSi
+=BhV8
+-----END PGP SIGNATURE-----
+
+--L2Brqb15TUChFOBK--
+
+--===============1740257122==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1740257122==--
