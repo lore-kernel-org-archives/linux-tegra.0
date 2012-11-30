@@ -1,16 +1,18 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Fri, 30 Nov 2012 07:53:58 +0100
-Message-ID: <20121130065358.GD26474@avionic-0098.adnet.avionic-design.de>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	<1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
-	<20121128212301.GA25531@avionic-0098.adnet.avionic-design.de>
-	<50B73710.2040102@nvidia.com> <50B7AAA6.70702@wwwdotorg.org>
-	<50B85828.4090405@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
+Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
+Date: Fri, 30 Nov 2012 09:44:36 +0200
+Message-ID: <50B863E4.50700@nvidia.com>
+References: <50B60EFF.1050703@nvidia.com> <1354109602.1479.66.camel@tellur>
+	<50B61845.6060102@nvidia.com> <1354111565.1479.73.camel@tellur>
+	<50B6237B.8010808@nvidia.com> <1354115609.1479.91.camel@tellur>
+	<50B63A70.8020107@nvidia.com> <1354128408.1479.137.camel@tellur>
+	<50B71A28.5060807@nvidia.com> <1354180153.1479.162.camel@tellur>
+	<20121129121430.GA3846@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0113074982=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <50B85828.4090405@nvidia.com>
+In-Reply-To: <20121129121430.GA3846@avionic-0098.adnet.avionic-design.de>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
 	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,97 +22,21 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
 Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Stephen Warren <swarren@wwwdotorg.org>
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 29.11.2012 14:14, Thierry Reding wrote:
+> On Thu, Nov 29, 2012 at 10:09:13AM +0100, Lucas Stach wrote:
+>> This way you would also be able to construct different handles (like GEM
+>> obj or V4L2 buffers) from the same backing nvhost object. Note that I'm
+>> not sure how useful this would be, but it seems like a reasonable design
+>> to me being able to do so.
+> 
+> Wouldn't that be useful for sharing buffers between DRM and V4L2 using
+> dma-buf? I'm not very familiar with how exactly importing and exporting
+> work with dma-buf, so maybe I need to read up some more.
 
---===============0113074982==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
-Content-Disposition: inline
+I would still preserve the dma-buf support, for exactly this purpose.
 
-
---YToU2i3Vx8H2dn7O
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 30, 2012 at 08:54:32AM +0200, Terje Bergstr=C3=B6m wrote:
-> On 29.11.2012 20:34, Stephen Warren wrote:
-> > On 11/29/2012 03:21 AM, Terje Bergstr=C3=B6m wrote:
-> >> True. I might also as well delete the general interrupt altogether, as
-> >> we don't use it for any real purpose.
-> >=20
-> > Do make sure the interrupts still are part of the DT binding though, so
-> > that the binding fully describes the HW, and the interrupt is available
-> > to retrieve if we ever do use it in the future.
->=20
-> Sure, I will just not use the generic irq in DT, but it won't require
-> any changes in DT bindings.
->=20
-> > You can still create tables of clocks inside the driver and loop over
-> > them. So, loop unrolling isn't related to my comments at least. It's
-> > just that clk_get() shouldn't take its parameters from platform data.
-> >=20
-> > But if these are clocks for (arbitrary) child modules (that may or may
-> > not exist dynamically), why aren't the drivers for the child modules
-> > managing them?
->=20
-> There are actually two things here that I mixed, and because of that I
-> probably confused everybody else.
->=20
-> Let's rip out the ACM. ACM is generic to all modules, and in nvhost owns
-> the clocks. That's why list of clocks and their frequency policies have
-> been part of the device description in nvhost. ACM is being replaced
-> with runtime PM in downstream kernel, but it still requires rigorous
-> testing and analysis of power profile before we can move to it.
->=20
-> Then, the second thing is that nvhost_probe() has had its own loop to go
-> through the clocks of host1x module. It's copy-paste of what ACM did,
-> which is just bad design. That's easily replaceable with static code, as
-> nvhost_probe() is just for host1x. I'll do that, and as I rip out the
-> generic power management code, I'll also make 2D and host1x drivers
-> enable the clocks at probe with static code.
->=20
-> So I think we have a solution that resonates with all proposals.
-
-Yes, that sounds good to me.
-
-Thierry
-
---YToU2i3Vx8H2dn7O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQuFgGAAoJEN0jrNd/PrOhD/sP/2p008KhKvNhnBwVMguB3D9L
-2ZCli8RZXDj2kIy/oDihHHM0HEG2DC6WwHXYqQZs8+i8MPr6rz83Ur7gB8uv8mXo
-oT4wVOSssXME4BKu1pXFZv16TgGY5I2A5n57H3MqHp0dB/DvVFwqBLqKRSXzGBHY
-xVxBFpX1KyDPraZYrDHWHMBO9vc6NBKD4eEyB6PBsJrXS+NFPjHLFLAwv/plKvit
-Uvli/atIUJHAq+gJZOJ1IjsVcJExKnVtE44NLst1N2/XPR5WCwghiwbWjEMjLzi3
-HcnNa22gBuvqqIaeaSzdTyb2KOz5nM8YW86X7zN2ROscfwB0Rcv745I2dta8cDqg
-OwHEGfYDRFstTAETmLmEes0hND6YemSv4gvs2fqzMgzePaMfzYS9nAvi9u8pSbhU
-9cuDXOfGTjZh/uu/Gwi0aO4v4zJyINuKHMxgKbaotSPYCCThwq69HuehiJNFxpsw
-0h+PdfdOp6YIPcEnyWrehZLDULUIeP0oeDvMDU/f2Gc+xmHglSL31x0k21E49j+1
-WCSMWbIiwFjYPKWIXyw2h/iX6X/OXCH/Tx17MJ9pU24hG0wCVjDtkF64T92RekBJ
-oaj/4f3/ZOp/Q2UD3OLcLPSnVCP4TEKyhX4B0zph9lYFsLynk3VjVGnLvK8HZuBr
-D58NVB4MYJw+PLQwRvWR
-=bXaS
------END PGP SIGNATURE-----
-
---YToU2i3Vx8H2dn7O--
-
---===============0113074982==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0113074982==--
+Terje
