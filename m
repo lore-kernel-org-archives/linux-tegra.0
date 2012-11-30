@@ -1,176 +1,157 @@
-From: Mark Zhang <nvmarkzhang@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices(was:
- How to specify IOMMU'able devices in DT)
-Date: Fri, 30 Nov 2012 12:59:32 +0800
-Message-ID: <50B83D34.2030006@gmail.com>
-References: <20120924124452.41070ed2ee9944d930cffffc@nvidia.com><054901cd9a45$db1a7ea0$914f7be0$%szyprowski@samsung.com><20120924.145014.1452596970914043018.hdoyu@nvidia.com>
- <20121128.154832.539666140149950229.hdoyu@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
+Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
+Date: Fri, 30 Nov 2012 10:56:39 +0200
+Message-ID: <50B874C7.5030208@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
+	<1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
+	<20121128212301.GA25531@avionic-0098.adnet.avionic-design.de>
+	<50B73710.2040102@nvidia.com>
+	<20121129114704.GB6150@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20121128.154832.539666140149950229.hdoyu@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "minchan@kernel.org" <minchan@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/28/2012 09:48 PM, Hiroshi Doyu wrote:
-> Hiroshi Doyu <hdoyu@nvidia.com> wrote @ Mon, 24 Sep 2012 14:50:14 +0300 (EEST):
-> ...
->>>>> On Mon, 2012-09-24 at 12:04 +0300, Hiroshi Doyu wrote:
->>>>>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
->>>>>> index a1a7225..9eae3be 100644
->>>>>> --- a/drivers/base/platform.c
->>>>>> +++ b/drivers/base/platform.c
->>>>>> @@ -21,6 +21,8 @@
->>>>>>  #include <linux/slab.h>
->>>>>>  #include <linux/pm_runtime.h>
->>>>>>
->>>>>> +#include <asm/dma-iommu.h>
->>>>>> +
->>>>>>  #include "base.h"
->>>>>>
->>>>>>  #define to_platform_driver(drv)        (container_of((drv), struct
->>>>>> platform_driver, \
->>>>>> @@ -305,8 +307,19 @@ int platform_device_add(struct platform_device
->>>>>> *pdev)
->>>>>>                  dev_name(&pdev->dev), dev_name(pdev->dev.parent));
->>>>>>
->>>>>>         ret = device_add(&pdev->dev);
->>>>>> -       if (ret == 0)
->>>>>> -               return ret;
->>>>>> +       if (ret)
->>>>>> +               goto failed;
->>>>>> +
->>>>>> +#ifdef CONFIG_PLATFORM_ENABLE_IOMMU
->>>>>> +       if (platform_bus_type.map && !pdev->dev.archdata.mapping) {
->>>>>> +               ret = arm_iommu_attach_device(&pdev->dev,
->>>>>> +                                             platform_bus_type.map);
->>>>>> +               if (ret)
->>>>>> +                       goto failed;
->>>>>
->>>>> This is horrible ... you're adding an architecture specific callback
->>>>> into our generic code; that's really a no-no.  If the concept of
->>>>> CONFIG_PLATFORM_ENABE_IOMMU is useful to more than just arm, then this
->>>>> could become a generic callback.
->>>>
->>>> As mentioned in the original, this is a heck to explain what is
->>>> needed. I am looking for some generic solution for how to specify
->>>> IOMMU info for each platform devices. I'm guessing that some other SoC
->>>> may have the similar requirements on the above. As you mentioned, this
->>>> solution should be a generic, not arch specific.
->>>
->>> Please read more about bus notifiers. IMHO a good example is provided in 
->>> the following thread:
->>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12238.html
->>
->> This bus notifier seems enough flexible to afford the variation of
->> IOMMU map info, like Tegra ASID, which could be platform-specific, and
->> the other could be common too. There's already iommu_bus_notifier
->> too. I'll try to implement something base on this.
-> 
-> Experimentally implemented as below. With the followig patch, each
-> device could specify its own map in DT, and automatically the device
-> would be attached to the map.
-> 
-> There is a case that some devices share a map. This patch doesn't
-> suppor such case yet.
-> 
-> From 8cb75bb6f3a8535a077e0e85265f87c1f1289bfd Mon Sep 17 00:00:00 2001
-> From: Hiroshi Doyu <hdoyu@nvidia.com>
-> Date: Wed, 28 Nov 2012 14:47:04 +0200
-> Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
-> 
-> platform_bus notifier registers IOMMU devices if dma-window is
-> specified.
-> 
-> Its format is:
->   dma-window = <"start" "size">;
-> ex)
->   dma-window = <0x12345000 0x8000>;
-> 
-> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> ---
->  arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-> index a2b6cf1..570d718 100644
-> --- a/arch/arm/mach-tegra/board-dt-tegra30.c
-> +++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-> @@ -30,9 +30,11 @@
->  #include <linux/of_fdt.h>
->  #include <linux/of_irq.h>
->  #include <linux/of_platform.h>
-> +#include <linux/of_iommu.h>
->  
->  #include <asm/mach/arch.h>
->  #include <asm/hardware/gic.h>
-> +#include <asm/dma-iommu.h>
->  
->  #include "board.h"
->  #include "clock.h"
-> @@ -86,10 +88,48 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
->  	{ NULL,		NULL,		0,		0},
->  };
->  
-> +#ifdef CONFIG_ARM_DMA_USE_IOMMU
-> +static int tegra_iommu_device_notifier(struct notifier_block *nb,
-> +				       unsigned long event, void *_dev)
-> +{
-> +	struct dma_iommu_mapping *map = NULL;
-> +	struct device *dev = _dev;
-> +	dma_addr_t base;
-> +	size_t size;
-> +	int err;
-> +
-> +	switch (event) {
-> +	case BUS_NOTIFY_ADD_DEVICE:
-> +		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
-> +					&size);
-> +		if (!err)
-> +			map = arm_iommu_create_mapping(&platform_bus_type,
-> +						       base, size, 0);
-> +		if (IS_ERR_OR_NULL(map))
-> +			break;
-> +		if (arm_iommu_attach_device(dev, map))
-
-Add "arm_iommu_release_mapping" here.
-
-And finally we see this patch, that's great. :)
-
-> +			dev_err(dev, "Failed to attach %s\n", dev_name(dev));
-> +		dev_dbg(dev, "Attached %s to map %p\n", dev_name(dev), map);
-> +		break;
-> +	}
-> +	return NOTIFY_DONE;
-> +}
-> +#else
-> +#define tegra_iommu_device_notifier NULL
-> +#endif
-> +
-> +static struct notifier_block tegra_iommu_device_nb = {
-> +	.notifier_call = tegra_iommu_device_notifier,
-> +};
-> +
->  static void __init tegra30_dt_init(void)
->  {
->  	tegra_clk_init_from_table(tegra_dt_clk_init_table);
->  
-> +	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
-> +		bus_register_notifier(&platform_bus_type,
-> +				      &tegra_iommu_device_nb);
-> +
->  	of_platform_populate(NULL, of_default_bus_match_table,
->  				tegra30_auxdata_lookup, NULL);
->  }
-> 
+T24gMjkuMTEuMjAxMiAxMzo0NywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gVGh1LCBOb3Yg
+MjksIDIwMTIgYXQgMTI6MjE6MDRQTSArMDIwMCwgVGVyamUgQmVyZ3N0csO2bSB3cm90ZToKPj4g
+VGVncmEyMCBhbmQgVGVncmEzMCBhcmUgY29tcGF0aWJsZSwgYnV0IGZ1dHVyZSBjaGlwcyBhcmUg
+bm90LiBJIHdhcwo+PiBob3Bpbmcgd2Ugd291bGQgYmUgcmVhZHkgaW4gdXBzdHJlYW0ga2VybmVs
+IGZvciBmdXR1cmUgY2hpcHMuCj4gCj4gSSB0aGluayB3ZSBzaG91bGQgaWdub3JlIHRoYXQgcHJv
+YmxlbSBmb3Igbm93LiBHZW5lcmFsbHkgcGxhbm5pbmcgZm9yCj4gYW55IHBvc3NpYmxlIGNvbWJp
+bmF0aW9uIG9mIGluY29tcGF0aWJpbGl0aWVzIGxlYWRzIHRvIG92ZXJnZW5lcmFsaXplZAo+IGRl
+c2lnbnMgdGhhdCByZXF1aXJlIHByZWNpc2VseSB0aGVzZSBraW5kcyBvZiBpbmRpcmVjdGlvbnMu
+Cj4gCj4gT25jZSBzb21lIGRvY3VtZW50YXRpb24gZm9yIFRlZ3JhIDQwIG1hdGVyaWFsaXplcyB3
+ZSBjYW4gc3RhcnQgdGhpbmtpbmcKPiBhYm91dCBob3cgdG8gZW5jYXBzdWxhdGUgdGhlIGluY29t
+cGF0aWJsZSBjb2RlLgoKSSB0aGluayBoZXJlIG91ciBwZXJzcGVjdGl2ZXMgZGlmZmVyIGEgbG90
+LiBUaGF0IGlzIG5hdHVyYWwgY29uc2lkZXJpbmcKdGhlIGNvbXBhbnkgSSB3b3JrIGZvciBhbmQg
+Y29tcGFueSB5b3Ugd29yayBmb3IsIHNvIGxldCdzIHRyeSB0byBzeW5jCnRoZSBwZXJzcGVjdGl2
+ZS4KCkluIG15IHJlYWxpdHksIHdoYXRldmVyIGlzIGluIG1hcmtldCBpcyBvbGQgbmV3cyBhbmQg
+SSBiYXJlbHkgd29yayBvbgp0aGVtIGFueW1vcmUuIFVwc3RyZWFtaW5nIGFjdGl2aXR5IGlzIHRo
+ZSBleGNlcHRpb24uIDkwJSBvZiBteSB0aW1lIGlzCnNwZW50IGRlYWxpbmcgd2l0aCBmdXR1cmUg
+Y2hpcHMgd2hpY2ggSSBrbm93IGNhbm5vdCBiZSBoYW5kbGVkIHdpdGhvdXQKdGhpcyBzcGxpdCB0
+byBsb2dpY2FsIGFuZCBwaHlzaWNhbCBkcml2ZXIgcGFydHMuCgpGb3IgeW91LCBUZWdyYTIgYW5k
+IFRlZ3JhMyBhcmUgdGhlIHJlYWxpdHkuCgpJZiB3ZSBtb3ZlIG52aG9zdCBpbiB1cHN0cmVhbSBh
+IGJpdCBpbmNvbXBhdGlibGUsIHRoYXQncyBmaW5lLCBsaWtlCnJpcHBpbmcgb3V0IGZlYXR1cmVz
+IG9yIGFkZGluZyBuZXcgbmV3IHN0dWZmLCBsaWtlIGEgbmV3IG1lbW9yeSB0eXBlLgpBbGwgb2Yg
+dGhpcyBJIGNhbiBzdXBwb3J0IHdpdGggYSBnb29kIGRpZmYgdG9vbCB0byBnZXQgYWxsIHRoZSBw
+YXRjaGVzCmZsb3dpbmcgYmV0d2VlbiB1cHN0cmVhbSBhbmQgZG93bnN0cmVhbS4KCklmIHdlIGRv
+IGZ1bmRhbWVudGFsIGNoYW5nZXMgdGhhdCBwcmV2ZW50IGJyaW5naW5nIHRoZSBjb2RlIGJhY2sg
+dG8KZG93bnN0cmVhbSwgbGlrZSByZW1vdmluZyB0aGlzIGFic3RyYWN0aW9uLCB0aGUgd2hvbGUg
+cHJvY2VzcyBvZgp1cHN0cmVhbSBhbmQgZG93bnN0cmVhbSBjb252ZXJnaW5nIGhpdHMgYSBicmlj
+ayB3YWxsLiBXZSB3b3VsZG4ndCBoYXZlCnByb3BlciBjb250aW51aW5nIGNvLW9wZXJhdGlvbiwg
+YnV0IGp1c3QgcHVzaGluZyBjb2RlIG91dCBhbmQgYmVpbmcgZG9uZQp3aXRoIGl0LgoKPiBJIG5v
+dGljZWQgdGhhdCBpdCB3YXMgZmlsbGVkIHdpdGggY29udGVudCBpbiBvbmUgb2YgdGhlIHN1YnNl
+cXVlbnQKPiBwYXRjaGVzLiBEZXBlbmRpbmcgb24gaG93IHRoaXMgZ2V0cyBtZXJnZWQgZXZlbnR1
+YWxseSB5b3UgY291bGQgcG9zdHBvbmUKPiBhZGRpbmcgdGhlIGZ1bmN0aW9uIHVudGlsIHRoZSBs
+YXRlciBwYXRjaC4gQnV0IHBlcmhhcHMgb25jZSB0aGUgY29kZSBoYXMKPiBiZWVuIHByb3Blcmx5
+IHJldmlld2VkIHdlIGNhbiBqdXN0IHNxdWFzaCB0aGUgcGF0Y2hlcyBhZ2Fpbi4gV2UnbGwgc2Vl
+LgoKT2ssIHRoYW5rcy4KCj4+IFRydWUuIEkgbWlnaHQgYWxzbyBhcyB3ZWxsIGRlbGV0ZSB0aGUg
+Z2VuZXJhbCBpbnRlcnJ1cHQgYWx0b2dldGhlciwgYXMKPj4gd2UgZG9uJ3QgdXNlIGl0IGZvciBh
+bnkgcmVhbCBwdXJwb3NlLgo+IAo+IEkgdGhpbmsgaXQgbWlnaHQgc3RpbGwgYmUgdXNlZnVsIGZv
+ciBkaWFnbm9zdGljcy4gSXQgc2VlbXMgdG8gYmUgdXNlZAo+IHdoZW4gd3JpdGVzIHRpbWUgb3V0
+LiBUaGF0IGNvdWxkIHN0aWxsIGJlIGhlbHBmdWwgaW5mb3JtYXRpb24gd2hlbgo+IGRlYnVnZ2lu
+ZyBwcm9ibGVtcy4KCkl0J3MgYWN0dWFsbHkgYSBzdGFsZSBjb21tZW50LiBUaGUgY2xpZW50IHVu
+aXRzIGFyZSBub3Qgc2lnbmFsaW5nCmFueXRoaW5nIHVzZWZ1bCB3aXRoIHRoZSBpbnRlcnJ1cHQu
+IFRoZXJlJ3MgdXNlIGZvciBpdCBpbiBkb3duc3RyZWFtLApidXQgdGhhdCdzIGlycmVsZXZhbnQg
+aGVyZS4KCj4gTWFraW5nIHRoaXMgZ2VuZXJpYyBmb3IgYWxsIG1vZHVsZXMgbWF5IG5vdCBiZSB3
+aGF0IHdlIHdhbnQgYXMgaXQKPiBkb2Vzbid0IGFsbG93IGRldmljZXMgdG8gaGFuZGxlIHRoaW5n
+cyB0aGVtc2VsdmVzIGlmIG5lY2Vzc2FyeS4gQ2xvY2sKPiBtYW5hZ2VtZW50IGlzIGp1c3QgcGFy
+dCBvZiB0aGUgYm9pbGVyIHBsYXRlIHRoYXQgZXZlcnkgZHJpdmVyIGlzCj4gc3VwcG9zZWQgdG8g
+Y29wZSB3aXRoLiBBbHNvIHRoZSBudW1iZXIgb2YgY2xvY2tzIGlzIHVzdWFsbHkgbm90IGhpZ2hl
+cgo+IHRoYW4gMiBvciAzLCBzbyB0aGUgcGFpbiBpcyBtYW5hZ2VhYmxlLiA9KQo+IAo+IEZ1cnRo
+ZXJtb3JlIGRvaW5nIHRoaXMgaW4gbG9vcHMgbWF5IG5vdCB3b3JrIGZvciBhbGwgbW9kdWxlcy4g
+U29tZSBtYXkKPiByZXF1aXJlIGFkZGl0aW9uYWwgZGVsYXlzIGJldHdlZW4gZW5hYmxpbmcgdGhl
+IGNsb2Nrcywgb3RoZXJzIG1heSBiZQo+IGFibGUgdG8gc2VsZWN0aXZlbHkgZGlzYWJsZSBvbmUg
+Y2xvY2sgYnV0IG5vdCB0aGUgb3RoZXIocykuCgpZZXMsIGJ1dCBJJ2xsIGp1c3QgcmlwIHRoZSBw
+b3dlciBtYW5hZ2VtZW50IGNvZGUgb3V0LCBzbyB3ZSBjYW4gcG9zdHBvbmUKdGhpcyB1bnRpbCB3
+ZSBoYXZlIHZhbGlkYXRlZCBhbmQgdmVyaWZpZWQgdGhlIHJ1bnRpbWUgUE0gbWVjaGFuaXNtCmRv
+d25zdHJlYW0uCgo+PiBJIGNvdWxkIG1vdmUgdGhpcyB0byBkZWJ1Zy5jLCBidXQgaXQncyBkZWJ1
+Z2dpbmcgYWlkIHdoZW4gYSBjb21tYW5kCj4+IHN0cmVhbSBpcyBtaXNiZWhhdmluZyBhbmQgaXQg
+c3Bld3MgdGhpcyB0byBVQVJUIHdoZW4gc3luYyBwb2ludCB3YWl0IGlzCj4+IHRpbWluZyBvdXQu
+IFNvIG5vdCBkZWJ1Z2ZzIHN0dWZmLgo+IAo+IE9rYXksIGluIHRoYXQgY2FzZSBpdCBzaG91bGQg
+c3RheSBpbi4gUGVyaGFwcyBjb252ZXJ0IGRldl9pbmZvKCkgdG8KPiBkZXZfZGJnKCkuIFBlcmhh
+cHMgd3JhcHBpbmcgaXQgaW4gc29tZSAjaWZkZWYgQ09ORklHX1RFR1JBX0hPU1QxWF9ERUJVRwo+
+IGd1YXJkcyB3b3VsZCBhbHNvIGJlIHVzZWZ1bC4gTWF5YmUgbm90LgoKSSBjb3VsZCBkbyB0aGF0
+IGZvciB1cHN0cmVhbS4gSW4gZG93bnN0cmVhbSBpdCBjYW5ub3QgZGVwZW5kIG9uIERFQlVHCmZs
+YWcsIGFzIHRoZXNlIHNwZXdzIGFyZSBhbiBpbXBvcnRhbnQgcGFydCBvZiBob3cgd2UgZGVidWcg
+cHJvYmxlbXMgd2l0aApjdXN0b21lciBkZXZpY2VzIGFuZCB0aGUgREVCVUcgZmxhZyBpcyBuZXZl
+ciBvbiBpbiBjdXN0b21lciBidWlsZHMuCgo+IFRoZSBwcm9ibGVtIGlzIG5vdCB3aXRoIGF1dG9n
+ZW5lcmF0ZWQgZmlsZXMgaW4gZ2VuZXJhbC4gVGhlIG1lYW5zIGJ5Cj4gd2hpY2ggdGhleSBhcmUg
+Z2VuZXJhdGVkIGFyZSBsZXNzIGltcG9ydGFudC4gSG93ZXZlciwgYXV0b2dlbmVyYXRlZAo+IGZp
+bGVzIG9mdGVuIGNvbnRhaW4gYSBsb3Qgb2YgdW5uZWVkZWQgZGVmaW5pdGlvbnMgYW5kIGNvbnRh
+aW4gdGhpbmdzCj4gc3VjaCBhcyAiYXV0b2dlbmVyYXRlZCAtIGRvIG5vdCBlZGl0IiBsaW5lcy4K
+PiAKPiBTbyBnZW5lcmFsbHkgaWYgeW91IGdlbmVyYXRlIHRoZSBjb250ZW50IHVzaW5nIHNvbWUg
+c2NyaXB0cyB0byBtYWtlIHN1cmUKPiBpdCBjb3JyZXNwb25kcyB0byB3aGF0IGVuZ2luZWVyaW5n
+IGdhdmUgeW91LCB0aGF0J3Mgb2theSBhcyBsb25nIGFzIHlvdQo+IG1ha2Ugc3VyZSBpdCBoYXMg
+dGhlIGNvcnJlY3QgZm9ybSBhbmQgZG9lc24ndCBjb250YWluIGFueSBjcnVmdC4KCkkgY2FuIHJl
+bW92ZSB0aGUgYm9pbGVycGxhdGUsIHRoYXQncyBub3QgYSBwcm9ibGVtLiBJbiBnZW5lcmFsLCB3
+ZSBoYXZlCnRyaWVkIHRvIGJlIHZlcnkgc2VsZWN0aXZlIGFib3V0IHdoYXQgd2UgZ2VuZXJhdGUs
+IHNvIHRoYXQgaXQgbWF0Y2hlcwp3aGF0IHdlJ3JlIHVzaW5nLgoKPj4gSSBsaWtlIHN0YXRpYyBp
+bmxpbmUgYmVjYXVzZSBJIGdldCB0aGUgYmVuZWZpdCBvZiBjb21waWxlciB0eXBlCj4+IGNoZWNr
+aW5nLCBhbmQgZ2NvdiBzaG93cyBtZSB3aGljaCByZWdpc3RlciBkZWZpbml0aW9ucyBoYXZlIGJl
+ZW4gdXNlZCBpbgo+PiBkaWZmZXJlbnQgdGVzdHMuCj4gCj4gVHlwZSBjaGVja2luZyBzaG91bGRu
+J3QgYmUgbmVjZXNzYXJ5IGZvciBzaW1wbGUgZGVmaW5lcy4gQW5kIEkgd2Fzbid0Cj4gYXdhcmUg
+dGhhdCB5b3UgY291bGQgZ2V0IHRoZSBMaW51eCBrZXJuZWwgdG8gd3JpdGUgb3V0IGRhdGEgdG8g
+YmUgZmVkIHRvCj4gZ2Nvdi4KPiAKPj4gI2RlZmluZXMgYXJlIGFsd2F5cyBtZXNzeSBhbmQgSSBw
+cmV0dHkgbXVjaCBoYXRlIHRoZW0uIEJ1dCBpZiB0aGUKPj4gZ2VuZXJhbCByZXF1ZXN0IGlzIHRv
+IHVzZSAjZGVmaW5lJ3MsIGV2ZW4gdGhvdWdoIEkgZG9uJ3QgYWdyZWUsIEkgY2FuCj4+IGFjY29t
+bW9kYXRlLiBJdCdzIHNpbXBsZSB0byB3cml0ZSBhIHNlZCBzY3JpcHQgdG8gZG8gdGhlIGNvbnZl
+cnNpb24uCj4gCj4gVGhlcmUgYXJlIGEgbG90IG9mIG9wcG9ydHVuaXRpZXMgdG8gYWJ1c2UgI2Rl
+ZmluZXMgYnV0IHRoZXkgYXJlIGhhcm1sZXNzCj4gZm9yIHJlZ2lzdGVyIGRlZmluaXRpb25zLiBU
+aGUgTGludXgga2VybmVsIGlzIGZ1bGwgb2YgdGhlbSBhbmQgSSBoYXZlbid0Cj4geWV0IHNlZW4g
+YW55IGNvZGUgdGhhdCB1c2VzIHN0YXRpYyBpbmxpbmUgZnVuY3Rpb25zIGZvciB0aGlzIHB1cnBv
+c2UuCgpNeSBwcm9ibGVtIGlzIGp1c3QgdGhhdCBJIGtub3cgdGhhdCB0aGUgY29kZSBnZW5lcmF0
+ZWQgaXMgdGhlIHNhbWUuIFdoYXQKd2UncmUgdGFsa2luZyBhYm91dCBpcyB0aGF0IHNob3VsZCB3
+ZSBsZXQgdGhlIHByZXByb2Nlc3NvciBvciBjb21waWxlcgp0YWtlIGNhcmUgb2YgdGhpcy4KCk15
+IHRha2UgaXMgdGhhdCB1c2luZyBwcmVwcm9jZXNzb3IgaXMgbm90IHdpc2UgLSBpdCdzIHRoZSBs
+YXN0IHJlc29ydCBpZgp0aGVyZSdzIG5vIG90aGVyIHByb3BlciB3YXkgb2YgZG9pbmcgdGhpbmdz
+LiBQcmVwcm9jZXNzb3IgcmVxdWlyZXMgYWxsCnNvcnRzIG9mIGV4dHJhIHBhcmVudGhlc2lzIHRv
+IHByb3RlY3QgYWdhaW5zdCBpdHMgZGVmaWNpZW5jaWVzLCBhbmQgaXQKaXQgbWVyZWx5IGEgdG9v
+bCB0byBkbyBzZWFyY2gtYW5kLXJlcGxhY2UuIEV2ZW4gbXVsdGktbGluZSBuZWVkcyBzcGVjaWFs
+CnRyZWF0bWVudC4KCj4gV2hhdCB5b3UgbmVlZCB0byBjb25zaWRlciBhcyB3ZWxsIGlzIHRoYXQg
+bWFueSBwZW9wbGUgdGhhdCB3b3JrIHdpdGggdGhlCj4gTGludXgga2VybmVsIGV4cGVjdCBjb2Rl
+IHRvIGJlIGluIGEgY2VydGFpbiBzdHlsZS4gUmVnaXN0ZXIgYWNjZXNzZXMgb2YKPiB0aGUgZm9y
+bQo+IAo+ICAgICAgICAgd3JpdGVsKHZhbHVlLCBiYXNlICsgT0ZGU0VUKTsKPiAKPiBhcmUgdmVy
+eSBjb21tb24gYW5kIGV4cGVjdGVkIHRvIGxvb2sgYSBjZXJ0YWluIHdheSwgc28gaWYgeW91IHdy
+aXRlIGNvZGUKPiB0aGF0IGRvZXNuJ3QgY29tcGx5IHdpdGggdGhlc2UgZ3VpZGVsaW5lcyB5b3Ug
+bWFrZSBpdCBleHRyYSBoYXJkIGZvcgo+IHBlb3BsZSB0byByZWFkIHRoZSBjb2RlLiBBbmQgdGhh
+dCdsbCBjb3N0IGV4dHJhIHRpbWUsIHdoaWNoIHBlb3BsZSBkb24ndAo+IHVzdWFsbHkgaGF2ZSBp
+biBleGNlc3MuCgpCdXQgdGhpcyBoYXMgbm90aGluZyB0byBkbyB3aXRoIHN0YXRpYyBpbmxpbmUg
+dnMuICNkZWZpbmUgYW55bW9yZSwgcmlnaHQ/Cgo+IE1heWJlIHlvdSBjYW4gZXhwbGFpbiB0aGUg
+dXNlZnVsbmVzcyBvZiB0aGlzIHNvbWUgbW9yZS4gV2h5IHdvdWxkIGl0IGJlCj4gZWFzaWVyIHRv
+IGxvb2sgYXQgdGhlbSBpbiBzeXNmcyB0aGFuIGluIGRlYnVnZnM/IFlvdSBjb3VsZCBiZSBwcm92
+aWRpbmcKPiBhIHNpbXBsZSBsaXN0IG9mIHN5bmNwb2ludHMgYWxvbmcgd2l0aCBtaW4vbWF4LCBu
+YW1lLCByZXF1ZXN0ZWQgc3RhdHVzLAo+IGV0Yy4gaW4gZGVidWdmcyBhbmQgaXQgc2hvdWxkIGJl
+IGFzIGVhc3kgdG8gcGFyc2UgZm9yIGJvdGggaHVtYW5zIGFuZAo+IG1hY2hpbmVzIGFzIHN5c2Zz
+LiBJIGRvbid0IHRoaW5rIElPQ1RMcyB3b3VsZCBiZSBhbnkgZ2FpbiBhcyB0aGV5IHRlbmQKPiB0
+byBoYXZlIGhpZ2hlciBBQkkgc3RhYmlsaXR5IHJlcXVpcmVtZW50cyB0aGFuIGRlYnVnZnMgKHdo
+aWNoIGRvZXNuJ3QKPiBoYXZlIHZlcnkgc3Ryb25nIHJlcXVpcmVtZW50cykgb3Igc3lzZnMgKHdo
+aWNoIGlzIG9mdGVuIGNvbnNpZGVyZWQgYXMgYQo+IHB1YmxpYyBBQkkgYXMgd2VsbCBhbmQgdGhl
+cmVmb3JlIG5lZWRzIHRvIGJlIHN0YWJsZSkuCgpkZWJ1Z2ZzIGlzIGp1c3QgYSBkZWJ1Z2dpbmcg
+dG9vbCwgYW5kIHVzZXIgc3BhY2UgY2Fubm90IHJlbHkgb24gaXQuIE9ubHkKZGV2ZWxvcGVycyBj
+YW4gcmVseSBvbiBleGlzdGVuY2Ugb2YgZGVidWdmcywgYXMgdGhleSBoYXZlIHRoZSBtZWFucyB0
+bwplbmFibGUgaXQuCgpzeXNmcyBpcyBhIHBsYWNlIGZvciBhY3R1YWwgQVBJcyBhcyB5b3UgbWVu
+dGlvbiwgYW5kIHVzZXIgc3BhY2UgY2FuIHJlbHkKb24gdGhlbSBhcyBwcm9wZXIgQVBJcy4gVGhh
+dCdzIHdoYXQgdGhlIHZhbHVlcyB3ZXJlIGV4cG9ydGVkIGZvci4KCj4gSSd2ZSBzYWlkIHRoaXMg
+YmVmb3JlLCBhbmQgSSB0aGluayB0aGF0IHRoaXMgdHJpZXMgdG8gYmUgb3Zlcmx5IGdlbmVyaWMu
+Cj4gRGlzcGxheSBjb250cm9sbGVycyBmb3IgaW5zdGFuY2Ugd29yayBxdWl0ZSB3ZWxsIHdpdGhv
+dXQgYW4gYXR0YWNoZWQKPiBudmhvc3RfY2hhbm5lbC4KClllcywgdGhlc2Ugc3RydWN0dXJlcyBh
+cmVuJ3QgbWVhbnQgdG8gYmUgdXNlZCBieSBhbnl0aGluZyBlbHNlIHRoYW4KdW5pdHMgdGhhdCBh
+cmUgY29udHJvbGxlZCBieSB0aGUgaG9zdDF4IGRyaXZlci4gREMsIGZvciBleGFtcGxlLAp3b3Vs
+ZG4ndCBoYXZlIHRoaXMuCgpUZXJqZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
