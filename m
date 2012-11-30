@@ -1,119 +1,145 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC v2 3/8] video: tegra: host: Add channel and client support
-Date: Fri, 30 Nov 2012 08:46:58 +0100
-Message-ID: <20121130074658.GG26474@avionic-0098.adnet.avionic-design.de>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
- <1353935954-13763-4-git-send-email-tbergstrom@nvidia.com>
- <20121129100405.GB28781@avionic-0098.adnet.avionic-design.de>
- <50B74058.9020904@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
+Date: Fri, 30 Nov 2012 09:06:25 +0100
+Message-ID: <20121130.100625.755725517856599433.hdoyu@nvidia.com>
+References: <20120924.145014.1452596970914043018.hdoyu@nvidia.com><20121128.154832.539666140149950229.hdoyu@nvidia.com><50B83D34.2030006@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="reI/iBAAp9kzkmX4"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50B74058.9020904-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50B83D34.2030006@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "nvmarkzhang@gmail.com" <nvmarkzhang@gmail.com>
+Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "joro@8bytes.org" <joro@8bytes.org>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "arnd@arndb.de" <arnd@arndb.de>, Krishna Reddy <vdumpa@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "minchan@kernel.org" <minchan@kernel.org>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "subashrp@gmail.com" <subashrp@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "pullip.cho@samsung.com" <pullip.>
 List-Id: linux-tegra@vger.kernel.org
 
+Mark Zhang <nvmarkzhang@gmail.com> wrote @ Fri, 30 Nov 2012 05:59:32 +0100:
 
---reI/iBAAp9kzkmX4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 11/28/2012 09:48 PM, Hiroshi Doyu wrote:
+> > Hiroshi Doyu <hdoyu@nvidia.com> wrote @ Mon, 24 Sep 2012 14:50:14 +0300 (EEST):
+> > ...
+> >>>>> On Mon, 2012-09-24 at 12:04 +0300, Hiroshi Doyu wrote:
+> >>>>>> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> >>>>>> index a1a7225..9eae3be 100644
+> >>>>>> --- a/drivers/base/platform.c
+> >>>>>> +++ b/drivers/base/platform.c
+> >>>>>> @@ -21,6 +21,8 @@
+> >>>>>>  #include <linux/slab.h>
+> >>>>>>  #include <linux/pm_runtime.h>
+> >>>>>>
+> >>>>>> +#include <asm/dma-iommu.h>
+> >>>>>> +
+> >>>>>>  #include "base.h"
+> >>>>>>
+> >>>>>>  #define to_platform_driver(drv)        (container_of((drv), struct
+> >>>>>> platform_driver, \
+> >>>>>> @@ -305,8 +307,19 @@ int platform_device_add(struct platform_device
+> >>>>>> *pdev)
+> >>>>>>                  dev_name(&pdev->dev), dev_name(pdev->dev.parent));
+> >>>>>>
+> >>>>>>         ret = device_add(&pdev->dev);
+> >>>>>> -       if (ret == 0)
+> >>>>>> -               return ret;
+> >>>>>> +       if (ret)
+> >>>>>> +               goto failed;
+> >>>>>> +
+> >>>>>> +#ifdef CONFIG_PLATFORM_ENABLE_IOMMU
+> >>>>>> +       if (platform_bus_type.map && !pdev->dev.archdata.mapping) {
+> >>>>>> +               ret = arm_iommu_attach_device(&pdev->dev,
+> >>>>>> +                                             platform_bus_type.map);
+> >>>>>> +               if (ret)
+> >>>>>> +                       goto failed;
+> >>>>>
+> >>>>> This is horrible ... you're adding an architecture specific callback
+> >>>>> into our generic code; that's really a no-no.  If the concept of
+> >>>>> CONFIG_PLATFORM_ENABE_IOMMU is useful to more than just arm, then this
+> >>>>> could become a generic callback.
+> >>>>
+> >>>> As mentioned in the original, this is a heck to explain what is
+> >>>> needed. I am looking for some generic solution for how to specify
+> >>>> IOMMU info for each platform devices. I'm guessing that some other SoC
+> >>>> may have the similar requirements on the above. As you mentioned, this
+> >>>> solution should be a generic, not arch specific.
+> >>>
+> >>> Please read more about bus notifiers. IMHO a good example is provided in 
+> >>> the following thread:
+> >>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12238.html
+> >>
+> >> This bus notifier seems enough flexible to afford the variation of
+> >> IOMMU map info, like Tegra ASID, which could be platform-specific, and
+> >> the other could be common too. There's already iommu_bus_notifier
+> >> too. I'll try to implement something base on this.
+> > 
+> > Experimentally implemented as below. With the followig patch, each
+> > device could specify its own map in DT, and automatically the device
+> > would be attached to the map.
+> > 
+> > There is a case that some devices share a map. This patch doesn't
+> > suppor such case yet.
+> > 
+> > From 8cb75bb6f3a8535a077e0e85265f87c1f1289bfd Mon Sep 17 00:00:00 2001
+> > From: Hiroshi Doyu <hdoyu@nvidia.com>
+> > Date: Wed, 28 Nov 2012 14:47:04 +0200
+> > Subject: [PATCH 1/1] ARM: tegra: bus_notifier registers IOMMU devices
+> > 
+> > platform_bus notifier registers IOMMU devices if dma-window is
+> > specified.
+> > 
+> > Its format is:
+> >   dma-window = <"start" "size">;
+> > ex)
+> >   dma-window = <0x12345000 0x8000>;
+> > 
+> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> > ---
+> >  arch/arm/mach-tegra/board-dt-tegra30.c |   40 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> > 
+> > diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+> > index a2b6cf1..570d718 100644
+> > --- a/arch/arm/mach-tegra/board-dt-tegra30.c
+> > +++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+> > @@ -30,9 +30,11 @@
+> >  #include <linux/of_fdt.h>
+> >  #include <linux/of_irq.h>
+> >  #include <linux/of_platform.h>
+> > +#include <linux/of_iommu.h>
+> >  
+> >  #include <asm/mach/arch.h>
+> >  #include <asm/hardware/gic.h>
+> > +#include <asm/dma-iommu.h>
+> >  
+> >  #include "board.h"
+> >  #include "clock.h"
+> > @@ -86,10 +88,48 @@ static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+> >  	{ NULL,		NULL,		0,		0},
+> >  };
+> >  
+> > +#ifdef CONFIG_ARM_DMA_USE_IOMMU
+> > +static int tegra_iommu_device_notifier(struct notifier_block *nb,
+> > +				       unsigned long event, void *_dev)
+> > +{
+> > +	struct dma_iommu_mapping *map = NULL;
+> > +	struct device *dev = _dev;
+> > +	dma_addr_t base;
+> > +	size_t size;
+> > +	int err;
+> > +
+> > +	switch (event) {
+> > +	case BUS_NOTIFY_ADD_DEVICE:
+> > +		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
+> > +					&size);
+> > +		if (!err)
+> > +			map = arm_iommu_create_mapping(&platform_bus_type,
+> > +						       base, size, 0);
+> > +		if (IS_ERR_OR_NULL(map))
+> > +			break;
+> > +		if (arm_iommu_attach_device(dev, map))
+> 
+> Add "arm_iommu_release_mapping" here.
 
-On Thu, Nov 29, 2012 at 01:00:40PM +0200, Terje Bergstr=C3=B6m wrote:
-> On 29.11.2012 12:04, Thierry Reding wrote:
-> > Looking some more at how this is used, I'm starting to think that it
-> > might be easier to export the various handlers and allow them to be
-> > passed to the nvhost_intr_add_action() explicitly.
->=20
-> Oh, so you mean like "nvhost_intr_add_action(intr, id, threshold,
-> nvhost_intr_action_submit_complete, channel, waiter, priv), and
-> nvhost_intr_action_submit_complete is the function pointer?
->=20
-> There's one case to take care of: we merge the waits for the jobs into
-> one waiter to save us from having too many irq calls. Perhaps that could
-> be handled by a flag, or something like that.
+Yes.
 
-Yes, something like ACTION_MERGE or something should work fine.
-Alternatively you could handle it by providing two public functions, one
-which adds to the list of jobs that can be merged, the other that adds
-to the list that cannot be merged.
+> And finally we see this patch, that's great. :)
 
-> >> +struct nvhost_job *nvhost_job_alloc(struct nvhost_channel *ch,
-> >> +             int num_cmdbufs, int num_relocs, int num_waitchks)
-> >> +{
-> >> +     struct nvhost_job *job =3D NULL;
-> >> +     size_t size =3D job_size(num_cmdbufs, num_relocs, num_waitchks);
-> >> +
-> >> +     if (!size)
-> >> +             return NULL;
-> >> +     job =3D vzalloc(size);
-> >=20
-> > Why vzalloc()?
->=20
-> I guess it's basically moot, but we tried that when we had some memory
-> fragmentation issues and it was left even though we did find out it's
-> not needed.
-
-I think kzalloc() would be a better choice here. Also, while at it you
-may want to make the num_* parameters unsigned.
-
-> >> +     }
-> >> +
-> >> +     /* get current syncpt values for waitchk */
-> >> +     for_each_set_bit(i, &waitchk_mask[0], sizeof(waitchk_mask))
-> >> +             nvhost_syncpt_update_min(sp, i);
-> >=20
-> > Or since you only use the mask here, why not move the
-> > nvhost_syncpt_update_min() into the above loop?
->=20
-> I want to call nvhost_syncpt_update_min() only once per syncpt register.
-> If the job has 100 sync point increments for 2D sync point, I'd read the
-> value from hardware 100 times, which is expensive.
-
-Right, hadn't thought about the fact that you can have multiple waits
-for a single syncpoint in the job.
-
-Looking at the code again, I see that you use sizeof(waitchk_mask) as
-the third parameter to the for_each_set_bit() macro. However the size
-parameter is to be specified in bits, not bytes.
-
-Also the name nvhost_syncpt_update_min() has had me confused. So say it
-is used to update the value that you've cached in software from the real
-value in the register. However I interpret update_min() as "update the
-minimum value in the register". Maybe something like *_load_min() would
-be clearer.
-
-> Thanks. I've collected a massive amount of feedback already. v3 will
-> take quite a while to appear after we've finished all the reviews of v2.
-
-Yes, that should keep you busy for quite a while. =3D) But I also think
-we've made good progress so far.
-
-Thierry
-
---reI/iBAAp9kzkmX4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQuGRyAAoJEN0jrNd/PrOh4VwP/0ftQPQkOhyBEjqodU/A8tyM
-n8GyYOiXBMw9C5GOs4KbVb+U9xKy+Q+2EDu2ra74rd0ypAwA63vyIDKccpIZHys1
-8SJegy/VS3RAJpaRgWKFkXVUgBYB42cQxj6Lu7d2FAqhxcCMniXtIz6lT+Xkqx+b
-30J+ff+zUrCsT3Q8PZEm8upfSGqem+KuwuyrZtpcortmK8p7Uo8YAulZc9UOotww
-OZtzc5iwumbQy2FAK51jj2/7U/mh/oP8sYAl/sWwkhQuIdabqjxgYVP9v9gQhs/K
-07Y6CqPBlJDSlBsjzvbSJLePrhBABUp0iwwQtpOL0hV5s4SmCqf66lLX+Z0FHfF0
-B29rl2HMXRYO0oX4EoYL1w8rUnchUiRomRHWcWPNfJqn1HZ1krZFxHJxVW+aikOL
-kHndO/h0dbsmnwVNwKPZdZspejp7cJtmBvxFZzPWIuR1tPPVaZBazD+AYNjV7vtj
-C+YHbOqFXaUBhPtjb4clZQLb4+NitRlEYmz5r8a+x5bdBCABXG/8TFkefxp7IGKQ
-NgnvmdYQaBD6GibkJN7Hu4sGHLQek7mu3JWTc5ZiLt7TBo6Op25xXSwPZToRanU5
-9268aQUNo0OhMyFSzegjeprfWoR/PYanIPacC3RuEVoWrgcrGy8nx9bMxxUT8PmQ
-rRSzOpWZagrMz+P1bF3j
-=68BK
------END PGP SIGNATURE-----
-
---reI/iBAAp9kzkmX4--
+I'll move the location of patch to drivers/iommu/tegra-smmu.c and repost.
