@@ -1,142 +1,106 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Sat, 1 Dec 2012 15:58:14 +0100
-Message-ID: <20121201145814.GB18209@avionic-0098.adnet.avionic-design.de>
+Date: Sat, 1 Dec 2012 16:10:20 +0100
+Message-ID: <20121201151020.GC18209@avionic-0098.adnet.avionic-design.de>
 References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
  <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
  <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de>
  <50B73710.2040102@nvidia.com>
  <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de>
- <50B874C7.5030208@nvidia.com>
- <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de>
- <50B9EA76.10803@nvidia.com>
+ <50B7AB93.5060207@wwwdotorg.org>
+ <1354265429.1479.187.camel@tellur>
+ <50B9EDA9.2000500@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
+	protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50B9EA76.10803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50B9EDA9.2000500-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---St7VIuEGZ6dlpu13
+--qtZFehHsKgwS5rPz
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 01, 2012 at 01:31:02PM +0200, Terje Bergstr=C3=B6m wrote:
-> On 30.11.2012 12:38, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> > The above implies that when you submit code it shouldn't contain pieces
-> > that prepare for possible future extensions which may or may not be
-> > submitted (the exception being if such changes are part of a series
-> > where subsequent patches actually use them). The outcome is that the
-> > amount of cruft in the mainline kernel is kept to a minimum. And that's
-> > a very good thing.
->=20
-> We're now talking about actually a separation of logical and physical
-> driver. I can't see why that's a bad thing. Especially considering that
-> it's standard practice in well written drivers. Let's try to find a
-> technical clean solution instead of debating politics. The latter should
-> never be part of Linux kernel reviews.
-
-I don't know where you see politics in what I said. All I'm saying is
-that we shouldn't be making things needlessly complex. In my experience
-the technically cleanest solution is usually the one with the least
-complexity.
-
-> > Okay, so what you're sayingCan here is that a huge number of people hav=
-en't
-> > been wise in using the preprocessor for register definitions all these
-> > years. That's a pretty bold statement. Now I obviously haven't looked at
-> > every single line in the kernel, but I have never come across this usage
-> > for static inline functions used for this. So, to be honest, I don't
-> > think this is really up for discussion. Of course if you come up with an
-> > example where this is done in a similar way I could be persuaded
-> > otherwise.
->=20
-> We must've talked about a bit different things. For pure register defs,
-> I can accommodate changing to #defines. We'd lose the code coverage
-> analysis, though, but if the parentheses are a make-or-break question to
-> upstreaming, I can change.
->=20
-> I was thinking of definitions like this:
->=20
-> static inline u32 host1x_sync_cfpeek_ctrl_cfpeek_addr_f(u32 v)
-> {
-> 	return (v & 0x1ff) << 0;
-> }
->=20
-> versus
->=20
-> #define host1x_sync_cfpeek_ctrl_cfpeek_addr_f(v) ((v) >> 16) & 0x3ff
->=20
-> Both of these produce the same machine code and have same usage, but the
-> latter has type checking and code coverage analysis and the former is
-> (in my eyes) clearer. In both of these cases the usage is like this:
->=20
-> writel(host1x_sync_cfpeek_ctrl_cfpeek_ena_f(1)
-> 		| host1x_sync_cfpeek_ctrl_cfpeek_channr_f(chid)
-> 		| host1x_sync_cfpeek_ctrl_cfpeek_addr_f(rd_ptr),
-> 	m->sync_aperture + host1x_sync_cfpeek_ctrl_r());
-
-Again there's no precedent for doing this with static inline functions.
-You can do the same with macros. Type checking isn't an issue in these
-cases since we're talking about bitfields for which no proper type
-exists.
-
-Two other things about the examples above: the definitions should be all
-caps and it would be nice if they could be made a bit shorter.
-
-> > But I don't see how that's relevant here. Let me quote what you said
-> > originally:
+On Sat, Dec 01, 2012 at 01:44:41PM +0200, Terje Bergstr=C3=B6m wrote:
+> On 30.11.2012 10:50, Lucas Stach wrote:
+> > I'm with Thierry here. I think there is a fair chance that we won't get
+> > the API right from the start, even when trying to come up with something
+> > that sounds sane to everyone. It's also not desirable to delay gr2d
+> > going into mainline until we are all completely satisfied with the API.
 > >=20
-> >> This is actually the only interface to read the max value to user spac=
-e,
-> >> which can be useful for doing some comparisons that take wrapping into
-> >> account. But we could just add IOCTLs and remove the sysfs entries.
-> >=20
-> > To me that sounded like it was only used for debugging purposes. If you
-> > actually need to access this from a userspace driver then, as opposed to
-> > what I said earlier, this should be handled by some IOCTL.
+> > I also fail to see how host1x module being in the DRM directory hinders
+> > any downstream development. So I'm in favour of keeping host1x besides
+> > the other DRM components to lower the burden for API changes and move it
+> > out into some more generic directory, once we feel confident that the
+> > API is reasonable stable.
 >=20
-> There's a use for production code to know both the max and min, but I
-> think we can just scope that use out from this patch sest.
->=20
-> User space can use these two for checking if one of their fences has
-> already passed by comparing if the current value is between min and
-> fence, taking wrapping into account. In these cases user space can f.ex.
-> leave a host1x wait out from a command stream.
+> host1x module being in DRM directory hinders using nvhost from anywhere
+> outside DRM in both upstream and downstream.
 
-But you already have extra code in the kernel to patch out expired sync-
-points. Is it really worth the added effort to burden userspace with
-this? If so I still think some kind of generic IOCTL to retrieve
-information about a syncpoint would be better than a sysfs interface.
+That's not true. Nothing keeps the rest of the kernel from using an API
+exported by the tegra-drm driver.
+
+> I also don't like first putting the driver in one place, and then
+> moving it with a huge commit to another place.
+
+Hehe, you're doing exactly that in this patch series. =3D)
+
+> We'd just postpone exactly the problems that were indicated earlier:
+> we'd need to synchronize two trees to remove code in one and add in
+> another at the same time so that there wouldn't be conflicting host1x
+> drivers. I'd rather just add it in final place once, and be done with
+> it.
+
+Yes, there would be a certain amount of synchronization needed, but as
+Stephen correctly pointed out we could do that move through one tree
+with the Acked-by of the other maintainer. The point is that we need to
+do this once instead of everytime the API changes.
+
+> But if it's a make-it-or-brake-it for upstreaming, I can move it to be a
+> subdirectory under drivers/gpu/drm/tegra. Would this mean that we'd
+> modify the MAINTAINER's file so that the tegradrm entry excludes host1x
+> sub-directory, and I'd add another one which included only the host1x
+> sub-directory? The host1x part would be Supported, whereas rest of
+> tegradrm is Maintained.
+
+An entry for drivers/gpu/drm/tegra/host1x would override an entry for
+drivers/gpu/drm/tegra so no need to exclude it. That said, there's no
+way to exclude an subdirectory in MAINTAINERS that I know of.
+
+My main point for keeping host1x within tegra-drm for now was that it
+could possibly help speed up the inclusion of the host1x code. Seeing
+that there's still a substantial amount of work to be done and a need
+for discussion I'm not sure if rushing this is the best way. In that
+case there may be justification for putting it in a separate location
+=66rom the start.
 
 Thierry
 
---St7VIuEGZ6dlpu13
+--qtZFehHsKgwS5rPz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQuhsGAAoJEN0jrNd/PrOh7JkP/0OZP0t+TvsT38FBxELUVKDM
-jcvApx8OaDa6I78YKsOWFtZLEw5u0w+J6t2DglRu/4n47Gtue0NMfWsnTRep5A4V
-9nzdlFuuHYfBlKIL8avUux8jSYHO7F77ap4lS4iiMpa5PzYqcN3dQcXk/Oxf/H8j
-LXU0W0UuyOw51z0uMz8G1H8TJ6SSq2ixcFHAKPX+n0R8HYcQqmp8HSe7vVqyzrcI
-VA3NxXGA8YGbfNfKzkj8dAs8jhpGtDJPmXVeJnWhCBJc9iNephnPxhKkzPj3Q+uH
-o7zS1W1TX557GSwc2hOLFM4034QZ0uxMh4IAp72+aBJkv2dJVePeID3MOSMS509K
-nOVYrPZszM2imGLuw1COdoi15sPUpDHO4Sa7jBqhQMBX0P6fAbK8fgQTRR3N8zxU
-X6uh8M3XiSRqApUbeqQkU5CZKvwO71XYly4ZsKh1oGO8bYfRAzLHWsfFYO7k1Vl2
-I6lF1tUf+NL8IuklF3Wq8d4JPSJnTbFLr8YuRWRffTxrqwioQJqRelXt7eNfz0Ee
-LFMyrUYlhc+CVVp1vDGW8TsoirR8xdFvJnm4mGJw5HJhnOYK7q6df8eS2+/pP0aL
-JQOPSpBsUBxggz6MFOUCm1VPm+G/l2fyNl5/76RvKxUiocMWHxcM3U2M5fb9KhTp
-iLkmcjp7Wb43YDl3VNYp
-=W1HG
+iQIcBAEBAgAGBQJQuh3cAAoJEN0jrNd/PrOhK0wQALMgpGjr0xCldidQzYzoX0Xx
+kf3OmyOnA2W+WVyYCdDRKjuyoamtmrjDYNKqbOqEK4Ri87nEgd6WoAyzsrBxNGjD
+NWJt1TXszOgy0vYZcGE80QiEoqDAjSfTE530LSKkaSA1L/yjPQ0DmYcIWHs1AYnS
+WEgN4uVcGOQisA1GxzUYu3D7LvIMxc84bH637QYOx1VYZZyBzqggOz3auzNITypB
+XKhZHzi9ox60yNjKS5B9SSt7ZMyWJa+lz4em9v4suPDQWGl68GTmsaP8fjkJ45Ot
+EOVDgI8UfRaC0pQC6DrDd/mjEPFrnpDpBJozqvFi5wJ8r0cJwzcO0WNI+qCFunuk
+OZPjR+q1OSSa5rqkvhNf3/FiC+lxYRBJmGxwtMlZNIk52FCw9s3LT1txp/tqt5sg
+ZQ8afztUH7/bFRz7xDZbrsA3FwdGt68bVswITW3Yz6cP3Z4IKBl5OradTVWZUfaO
+D04GlDKa4p9xlbk04MJiiWbziC+uo1/PSTn9aiIho5R2+YXRM/z5tbvfoBf2kkNN
+NwvvslzE7WvRVIylClryIojRsITci8WWl7mXjjY52igUqqlTa6RbY1v9SGCDIiqD
+enJiEUzD/nRqrdRJniXAezIxnfTqhN5EhlwKJF1YzettW4ECvWFJnLyM643rSksY
+11kNtHedMyAEJh+juJYa
+=E6Dd
 -----END PGP SIGNATURE-----
 
---St7VIuEGZ6dlpu13--
+--qtZFehHsKgwS5rPz--
