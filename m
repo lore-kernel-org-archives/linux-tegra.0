@@ -1,72 +1,99 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Sun, 2 Dec 2012 13:24:13 +0200
-Message-ID: <50BB3A5D.6070304@nvidia.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B7AB93.5060207@wwwdotorg.org>	<1354265429.1479.187.camel@tellur> <50B9EDA9.2000500@nvidia.com> <20121201151020.GC18209@avionic-0098.adnet.avionic-design.de> <50BA3668.1010504@nvidia.com>	<1354383291.1503.25.camel@tellur> <50BA5AB2.8000604@nvidia.com> <CAPM=9tzUYkMZhwReSDLxvMYvgDmXukajm8EMqtzqmcNeD+oMAw@mail.gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/1] ARM: tegra: bus_notifier registers platform IOMMU
+ devices
+Date: Sun, 2 Dec 2012 14:03:38 +0100
+Message-ID: <20121202130338.GL30633@8bytes.org>
+References: <1354277991-21254-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPM=9tzUYkMZhwReSDLxvMYvgDmXukajm8EMqtzqmcNeD+oMAw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1354277991-21254-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01.12.2012 23:42, Dave Airlie wrote:
-> Guys I think you guys might be overthniking things here.
+On Fri, Nov 30, 2012 at 02:19:51PM +0200, Hiroshi Doyu wrote:
+> Most of platform devices are IOMMU'able in Tegra30 SoC. Registering
+> all IOMMU'able devices manually isn't nice. This patch allows
+> platform bus_notifier to register IOMMU devices. Map info can be
+> passed from DT. Info format is:
 > 
-> I know you have some sort of upstream/downstream split, but really in
-> the upstream kernel, we don't care about that, so don't make it our
-> problem.
-
-I am not trying to make anything your problem. Most of the issues we
-have already worked out with a good solution that all active
-participants have agreed with. We have only a couple of disagreements
-with Thierry.
-
-My goal is to get a good open source co-operation and trying to prevent
-a code fork while still maintaining good design. That way everybody
-wins. The way to do that is to base our BSP on upstream kernel.
-
-I'm not trying to here throw code over the fence and flee. This is a
-genuine attempt to work together. I want to prevent the "we" (kernel
-community excluding NVIDIA) and "you" (NVIDIA) that a split code base
-would cause in the long run. I'd like to just talk about "we" including
-NVIDIA.
-
-> There is no need for any sort of stable API between host1x and the sub
-> drivers, we change APIs in the kernel the whole time it isn't a
-> problem.
+>   dma-window = <0 0x40000000>;
 > 
-> If you need to change the API, submit a single patch changing it
-> across all the drivers in the tree, collecting Acks or not as needed.
-> We do this the whole time, I've never had or seen a problem with it.
+> TODO:
+> A map can be shared with mutiple devices. This info also could be
+> passed from DT or default map can be set in advance.
 > 
-> We don't do separate subsystems APIs set in stone bullshit, and all
-> subsystem maintainers are used to dealing with these sort of issues.
-> You get an ack from one maintainer and the other one sticks it in his
-> tree with a note to Linus.
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/iommu/tegra-smmu.c |   45 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 1 deletion(-)
 > 
-> You can put the code where you want, maybe just under drivers/gpu
-> instead of drivers/video or drivers/gpu/drm, just make sure you have a
-> path for it into the kernel.
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 25c1210..1c49af9 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -38,6 +38,7 @@
+>  
+>  #include <asm/page.h>
+>  #include <asm/cacheflush.h>
+> +#include <asm/dma-iommu.h>
+>  
+>  enum smmu_hwgrp {
+>  	HWGRP_AFI,
+> @@ -1273,9 +1274,51 @@ static struct platform_driver tegra_smmu_driver = {
+>  	},
+>  };
+>  
+> +static int tegra_smmu_device_notifier(struct notifier_block *nb,
+> +				      unsigned long event, void *_dev)
+> +{
+> +	struct dma_iommu_mapping *map = NULL;
+> +	struct device *dev = _dev;
+> +	dma_addr_t base;
+> +	size_t size;
+> +	int err;
+> +
+> +	switch (event) {
+> +	case BUS_NOTIFY_ADD_DEVICE:
+> +		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
+> +					&size);
+> +		if (!err)
+> +			map = arm_iommu_create_mapping(&platform_bus_type,
+> +						       base, size, 0);
+> +		if (IS_ERR_OR_NULL(map))
+> +			break;
+> +		if (arm_iommu_attach_device(dev, map)) {
+> +			arm_iommu_release_mapping(map);
+> +			dev_err(dev, "Failed to attach %s\n", dev_name(dev));
+> +		}
+> +		dev_dbg(dev, "Attached %s to map %p\n", dev_name(dev), map);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block tegra_smmu_device_nb = {
+> +	.notifier_call = tegra_smmu_device_notifier,
+> +};
+> +
+>  static int __devinit tegra_smmu_init(void)
+>  {
+> -	return platform_driver_register(&tegra_smmu_driver);
+> +	int err;
+> +
+> +	err = platform_driver_register(&tegra_smmu_driver);
+> +	if (err)
+> +		return err;
+> +	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
+> +		bus_register_notifier(&platform_bus_type,
+> +				      &tegra_smmu_device_nb);
 
-Follows exactly my thinking, as the location of host1x driver has no
-practical consequence to me.
+Where do you call the bus_unregister_notifier?
 
-Thierry proposed drivers/gpu/host1x. I'd like to see a couple of
-comments on that proposal, and if it sticks, follow that.
 
-Thierry, did you mean that host1x driver would be in drivers/gpu/host1x,
-and tegradrm in drivers/gpu/drm/tegra, or would we put both in same
-directory?
-
-> And I have an non-upstream precedent for v4l sitting on drm, some
-> radeon GPUs have capture tuners, and the only way to implement that
-> would be to stick a v4l driver in the radeon drm driver. Not a
-> problem, just never finished writing the code.
-
-Yes, I just mentioned that as awkward, but I have no problem with any path.
-
-Terje
+	Joerg
