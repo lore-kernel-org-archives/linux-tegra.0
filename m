@@ -1,122 +1,41 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for powered-down mode
-Date: Mon, 3 Dec 2012 11:00:07 +0800
-Message-ID: <1354503607-13707-6-git-send-email-josephl@nvidia.com>
-References: <1354503607-13707-1-git-send-email-josephl@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
+Date: Mon, 3 Dec 2012 08:26:44 +0200
+Message-ID: <50BC4624.4050707@nvidia.com>
+References: <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B7AB93.5060207@wwwdotorg.org> <1354265429.1479.187.camel@tellur> <50B9EDA9.2000500@nvidia.com> <20121201151020.GC18209@avionic-0098.adnet.avionic-design.de> <50BA3668.1010504@nvidia.com> <1354383291.1503.25.camel@tellur> <50BA5AB2.8000604@nvidia.com> <CAPM=9tzUYkMZhwReSDLxvMYvgDmXukajm8EMqtzqmcNeD+oMAw@mail.gmail.com> <50BB3A5D.6070304@nvidia.com> <20121202205527.GA22086@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354503607-13707-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20121202205527.GA22086-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
-core to go into this mode before other core. The coupled cpuidle framework
-can help to sync the MPCore to coupled state then go into "powered-down"
-idle mode together. The driver can just assume the MPCore come into
-"powered-down" mode at the same time. No need to take care if the CPU_0
-goes into this mode along and only can put it into safe idle mode (WFI).
+On 02.12.2012 22:55, Thierry Reding wrote:
+> FWIW I'm convinced that you're genuinely trying to make this work and
+> nobody welcomes this more than me. However it is only natural if you
+> dump such a large body of code on the community that people will
+> disagree with some of the design decisions.
+> 
+> So when I comment on the design or patches in general, it is not my
+> intention to exclude you or NVIDIA in any way. All I'm trying to do is
+> spot problematic or unclear parts that will make working with the code
+> any more difficult than it has to be.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig           |    1 +
- arch/arm/mach-tegra/cpuidle-tegra20.c |   37 +++++++++++++++++----------------
- 2 files changed, 20 insertions(+), 18 deletions(-)
+Thanks, I know it'a a large dump and you've made great comments about
+the code, and hit most of the sore spots I've had with the driver, too.
+I appreciate your effort - this process is making the driver better.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index e426d1b..e07241a 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -4,6 +4,7 @@ comment "NVIDIA Tegra options"
- 
- config ARCH_TEGRA_2x_SOC
- 	bool "Enable support for Tegra20 family"
-+	select ARCH_NEEDS_CPU_IDLE_COUPLED
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_ERRATA_720789
- 	select ARM_ERRATA_742230
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index 9371a00..02b2cf7 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -37,9 +37,10 @@
- #include "flowctrl.h"
- 
- #ifdef CONFIG_PM_SLEEP
--static int tegra20_idle_lp2(struct cpuidle_device *dev,
--			    struct cpuidle_driver *drv,
--			    int index);
-+static atomic_t abort_barrier;
-+static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
-+				    struct cpuidle_driver *drv,
-+				    int index);
- #endif
- 
- static struct cpuidle_driver tegra_idle_driver = {
-@@ -55,11 +56,12 @@ static struct cpuidle_driver tegra_idle_driver = {
- 		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
- #ifdef CONFIG_PM_SLEEP
- 		[1] = {
--			.enter			= tegra20_idle_lp2,
-+			.enter			= tegra20_idle_lp2_coupled,
- 			.exit_latency		= 5000,
- 			.target_residency	= 10000,
- 			.power_usage		= 0,
--			.flags			= CPUIDLE_FLAG_TIME_VALID,
-+			.flags			= CPUIDLE_FLAG_TIME_VALID |
-+						  CPUIDLE_FLAG_COUPLED,
- 			.name			= "powered-down",
- 			.desc			= "CPU power gated",
- 		},
-@@ -204,28 +206,24 @@ static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
- }
- #endif
- 
--static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
--				      struct cpuidle_driver *drv,
--				      int index)
-+static int __cpuinit tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
-+					      struct cpuidle_driver *drv,
-+					      int index)
- {
- 	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
- 	bool entered_lp2 = false;
--	bool last_cpu;
-+
-+	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
- 
- 	local_fiq_disable();
- 
--	last_cpu =  tegra_set_cpu_in_lp2(cpu);
-+	tegra_set_cpu_in_lp2(cpu);
- 	cpu_pm_enter();
- 
--	if (cpu == 0) {
--		if (last_cpu)
--			entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv,
--								     index);
--		else
--			cpu_do_idle();
--	} else {
-+	if (cpu == 0)
-+		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
-+	else
- 		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
--	}
- 
- 	cpu_pm_exit();
- 	tegra_clear_cpu_in_lp2(cpu);
-@@ -258,6 +256,9 @@ int __init tegra20_cpuidle_init(void)
- 	for_each_possible_cpu(cpu) {
- 		dev = &per_cpu(tegra_idle_device, cpu);
- 		dev->cpu = cpu;
-+#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
-+		dev->coupled_cpus = *cpu_online_mask;
-+#endif
- 
- 		dev->state_count = drv->state_count;
- 		ret = cpuidle_register_device(dev);
--- 
-1.7.0.4
+It's good to hear that our goals are aligned. So now that we got that
+out of the system, let's get back to business. :-)
+
+> Since tegra-drm is a DRM driver it should stay in drivers/gpu/drm. I can
+> also live with the host1x driver staying in drivers/video, but I don't
+> think it's the proper location and drivers/gpu/host1x seems like a much
+> better fit.
+
+That sounds like a plan to me.
+
+Terje
