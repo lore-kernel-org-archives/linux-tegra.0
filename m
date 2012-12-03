@@ -1,45 +1,166 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Mon, 03 Dec 2012 12:23:32 -0700
-Message-ID: <50BCFC34.5030203@wwwdotorg.org>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B874C7.5030208@nvidia.com> <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de> <50B9EA76.10803@nvidia.com> <20121201145814.GB18209@avionic-0098.adnet.avionic-design.de>
+Date: Mon, 3 Dec 2012 22:03:29 +0100
+Message-ID: <20121203210328.GA20884@avionic-0098.adnet.avionic-design.de>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
+ <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com>
+ <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de>
+ <50B73710.2040102@nvidia.com>
+ <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de>
+ <50B874C7.5030208@nvidia.com>
+ <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de>
+ <50BCFB7E.4020007@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121201145814.GB18209-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <50BCFB7E.4020007@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/01/2012 07:58 AM, Thierry Reding wrote:
-> On Sat, Dec 01, 2012 at 01:31:02PM +0200, Terje Bergstr=C3=B6m wrote:
-=2E..
->> I was thinking of definitions like this:
->>=20
->> static inline u32 host1x_sync_cfpeek_ctrl_cfpeek_addr_f(u32 v) {=20
->> return (v & 0x1ff) << 0; }
->>=20
->> versus
->>=20
->> #define host1x_sync_cfpeek_ctrl_cfpeek_addr_f(v) ((v) >> 16) &
->> 0x3ff
->>=20
->> Both of these produce the same machine code and have same usage,
->> but the latter has type checking and code coverage analysis and
->> the former is (in my eyes) clearer. In both of these cases the
->> usage is like this:
->>=20
->> writel(host1x_sync_cfpeek_ctrl_cfpeek_ena_f(1) |
->> host1x_sync_cfpeek_ctrl_cfpeek_channr_f(chid) |
->> host1x_sync_cfpeek_ctrl_cfpeek_addr_f(rd_ptr), m->sync_aperture +
->> host1x_sync_cfpeek_ctrl_r());
->=20
-> Again there's no precedent for doing this with static inline
-> functions. You can do the same with macros. Type checking isn't an
-> issue in these cases since we're talking about bitfields for which
-> no proper type exists.
 
-I suspect the inline functions could encode signed-vs-unsigned fields,
-perhaps catch u8 variables when they should have been u32, etc.?
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 03, 2012 at 12:20:30PM -0700, Stephen Warren wrote:
+> On 11/30/2012 03:38 AM, Thierry Reding wrote:
+> > On Fri, Nov 30, 2012 at 10:56:39AM +0200, Terje Bergstr=C3=B6m wrote:
+> >> On 29.11.2012 13:47, Thierry Reding wrote:
+> >>> On Thu, Nov 29, 2012 at 12:21:04PM +0200, Terje Bergstr=C3=B6m
+> >>> wrote:
+> >>>> Tegra20 and Tegra30 are compatible, but future chips are not.
+> >>>> I was hoping we would be ready in upstream kernel for future
+> >>>> chips.
+> >>>=20
+> >>> I think we should ignore that problem for now. Generally
+> >>> planning for any possible combination of incompatibilities
+> >>> leads to overgeneralized designs that require precisely these
+> >>> kinds of indirections.
+> >>>=20
+> >>> Once some documentation for Tegra 40 materializes we can start
+> >>> thinking about how to encapsulate the incompatible code.
+> >>=20
+> >> I think here our perspectives differ a lot. That is natural
+> >> considering the company I work for and company you work for, so
+> >> let's try to sync the perspective.
+> >>=20
+> >> In my reality, whatever is in market is old news and I barely
+> >> work on them anymore. Upstreaming activity is the exception. 90%
+> >> of my time is spent dealing with future chips which I know cannot
+> >> be handled without this split to logical and physical driver
+> >> parts.
+> >>=20
+> >> For you, Tegra2 and Tegra3 are the reality.
+> >=20
+> > To be fair, Tegra2 and Tegra3 are the reality for *everyone*
+> > *outside* NVIDIA.
+> >=20
+> > It's great that you spend most of your time working with future
+> > chips, but unless you submit the code for inclusion or review
+> > nobody upstream needs to be concerned about the implications. Most
+> > people don't have time to waste so we naturally try to keep the
+> > maintenance burden to a minimum.
+> >=20
+> > The above implies that when you submit code it shouldn't contain
+> > pieces that prepare for possible future extensions which may or may
+> > not be submitted (the exception being if such changes are part of a
+> > series where subsequent patches actually use them). The outcome is
+> > that the amount of cruft in the mainline kernel is kept to a
+> > minimum. And that's a very good thing.
+>=20
+> I think there's room for letting Terje's complete knowledge of future
+> chips guide the design of the current code that's sent upstream.
+> Certainly we shouldn't add a ton of unnecessary abstraction layers
+> right now that aren't needed for Tegra20/30, but if there's some
+> decision that doesn't affect the bloat, opaqueness, ... of the current
+> code but one choice is better for future development without serious
+> negatives for the current code, it's pretty reasonable to make that
+> decision rather than the other.
+
+The original point was that the current design stashes every function of
+host1x into an ops structure and you have to go through those ops to get
+at the functionality. I can understand the need to add an ops structure
+to cope with incompatibilities between versions, but as you say there
+should to be a reason for them being introduced. If such reasons exists,
+then I think they at least warrant a comment somewhere.
+
+Furthermore this is usually best handled by wrapping the ops accesses in
+a public API, so that the ops structure can be hidden within the driver.
+For example, submitting a job to a channel should have a public API such
+as:
+
+	int host1x_channel_submit(struct host1x_channel *channel,
+				  struct host1x_job *job)
+	{
+		...
+	}
+
+An initial implementation would just add the code into this function. If
+it turns out some future version requires special incantations to submit
+a job, only then should we introduce an ops structure, with only the one
+function:
+
+	struct host1x_channel_ops {
+		int (*submit)(struct host1x_channel *channel,
+			      struct host1x_job *job);
+	};
+
+But since only the public API above has been used, access to the special
+implementation can be hidden from the user. So the public function could
+be modified in this way:
+
+	int host1x_channel_submit(struct hostx1_channel *channel,
+				  struct host1x_job *job)
+	{
+		if (channel->ops && channel->ops->submit)
+			return channel->ops->submit(channel, job);
+
+		...
+	}
+
+And then you have two choices: either you keep the code for previous
+generations after the if block or you provide a separate ops structure
+for older generations as well and handle them via the same code path.
+
+One other thing that such a design can help with is refactoring common
+code or parameterizing code. Maybe newer generations are not compatible
+but can easily be made to work with existing code by introducing a
+variable such as register stride or something.
+
+What's really difficult to follow is if an ops structure is accessed via
+some global macro. It also breaks encapsulation because you have a
+global ops structure. That may even work fine for now, but it will break
+once you have more than a single host1x in a system. I know this will
+never happen, but all of a sudden it happens anyway and the code breaks.
+Doing this right isn't very hard and it will lead to a better design and
+is less likely to break at some point.
+
+Thierry
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQvROgAAoJEN0jrNd/PrOhKGQQAJdr9SXX0eMGb1zpAKJbbeTg
+A4KgIRBHEwLX5cNPsA1CrXm0o53UDrkiSrcusj+G1Yib8kKlwCDGU6gkzx9NGpxf
+uIugVvO9Fjb5WjtvZ+k66nBOVZsxs7AHzT17omh6ODpxAtkr7ysbltDtFTUeuUPd
+gyl2tsZXBorj7eWbanuZD8SJ6WjjJWB4hiK/qiT0X0LPUZiQQiHZ2jpOAjf26uD1
+nTPBfEBNIC9c/3Vn2MTHWr6ZlmL30ynLwJIrRNxebmjcWdn4jcfkhX4wdwj2OMIb
+qVKKidkDdq0EfgsVTY9SRGiB7qAvGL1Lo3x5k4d0vQVqbHlsMXVNjcp/StrryEKG
+NAJGa+8scDkLuX+DoGoWLp0aYngZRp3dAKDrN6XLZWLnNT4y6NXbgIqMe4w72Xjm
+F9GLJnlKPWsU2EjHVQl6Qcr9zGxmOQMFFlV5/QhV941dKb+VRyVE50yyrgXQYauL
+j3+ofZRfKfbhpkzkINxnDhPaG2Rq33F2Cu0X0k33W9YtvPrFn3QGHz7HTnqQeGkk
+POfk9Qf2Zw4BBcJDoP77ML50ty2rDLk192MuL5wZ5ogKJDV/eE+MtAk+XCwifULR
+RJoUXi/edSP1oHeAsMPUutyT0KeStM3kIgVkjrc3nUyi0ZtidwKz+2bv/+9t336Y
+uTDGFIL25CBV+zr66X2I
+=q8Ew
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
