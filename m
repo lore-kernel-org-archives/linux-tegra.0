@@ -1,66 +1,76 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for
- powered-down mode
-Date: Mon, 03 Dec 2012 11:52:40 -0700
-Message-ID: <50BCF4F8.60606@wwwdotorg.org>
-References: <1354503607-13707-1-git-send-email-josephl@nvidia.com> <1354503607-13707-6-git-send-email-josephl@nvidia.com>
+Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
+Date: Mon, 03 Dec 2012 12:20:30 -0700
+Message-ID: <50BCFB7E.4020007@wwwdotorg.org>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B874C7.5030208@nvidia.com> <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354503607-13707-6-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20121130103850.GA28367-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/02/2012 08:00 PM, Joseph Lo wrote:
-> The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
-> core to go into this mode before other core. The coupled cpuidle framework
-> can help to sync the MPCore to coupled state then go into "powered-down"
-> idle mode together. The driver can just assume the MPCore come into
-> "powered-down" mode at the same time. No need to take care if the CPU_0
-> goes into this mode along and only can put it into safe idle mode (WFI).
+On 11/30/2012 03:38 AM, Thierry Reding wrote:
+> On Fri, Nov 30, 2012 at 10:56:39AM +0200, Terje Bergstr=C3=B6m wrote:
+>> On 29.11.2012 13:47, Thierry Reding wrote:
+>>> On Thu, Nov 29, 2012 at 12:21:04PM +0200, Terje Bergstr=C3=B6m
+>>> wrote:
+>>>> Tegra20 and Tegra30 are compatible, but future chips are not.
+>>>> I was hoping we would be ready in upstream kernel for future
+>>>> chips.
+>>>=20
+>>> I think we should ignore that problem for now. Generally
+>>> planning for any possible combination of incompatibilities
+>>> leads to overgeneralized designs that require precisely these
+>>> kinds of indirections.
+>>>=20
+>>> Once some documentation for Tegra 40 materializes we can start
+>>> thinking about how to encapsulate the incompatible code.
+>>=20
+>> I think here our perspectives differ a lot. That is natural
+>> considering the company I work for and company you work for, so
+>> let's try to sync the perspective.
+>>=20
+>> In my reality, whatever is in market is old news and I barely
+>> work on them anymore. Upstreaming activity is the exception. 90%
+>> of my time is spent dealing with future chips which I know cannot
+>> be handled without this split to logical and physical driver
+>> parts.
+>>=20
+>> For you, Tegra2 and Tegra3 are the reality.
+>=20
+> To be fair, Tegra2 and Tegra3 are the reality for *everyone*
+> *outside* NVIDIA.
+>=20
+> It's great that you spend most of your time working with future
+> chips, but unless you submit the code for inclusion or review
+> nobody upstream needs to be concerned about the implications. Most
+> people don't have time to waste so we naturally try to keep the
+> maintenance burden to a minimum.
+>=20
+> The above implies that when you submit code it shouldn't contain
+> pieces that prepare for possible future extensions which may or may
+> not be submitted (the exception being if such changes are part of a
+> series where subsequent patches actually use them). The outcome is
+> that the amount of cruft in the mainline kernel is kept to a
+> minimum. And that's a very good thing.
 
-I wonder if it wouldn't be simpler to squash this patch into one of the
-earlier patches, and just use coupled cpuidle from the very start?
+I think there's room for letting Terje's complete knowledge of future
+chips guide the design of the current code that's sent upstream.
+Certainly we shouldn't add a ton of unnecessary abstraction layers
+right now that aren't needed for Tegra20/30, but if there's some
+decision that doesn't affect the bloat, opaqueness, ... of the current
+code but one choice is better for future development without serious
+negatives for the current code, it's pretty reasonable to make that
+decision rather than the other.
 
-> +static int __cpuinit tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
-> +					      struct cpuidle_driver *drv,
-> +					      int index)
+(That all said, I haven't really followed the details of this
+particular point, so I can't say how my comment applies to any
+decisions being made right now - just that we shouldn't blanket reject
+future knowledge when making decisions)
 
-> -	if (cpu == 0) {
-> -		if (last_cpu)
-> -			entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv,
-> -								     index);
-> -		else
-> -			cpu_do_idle();
-> -	} else {
-> +	if (cpu == 0)
-> +		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
-> +	else
->  		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
-> -	}
-
-So I assume that coupled cpuidle only calls this function on CPU 0 once
-it has guaranteed that CPU n are all in this same idle state. What does
-CPU 0 do now, when it wants to enter LP2 but can't because CPU n aren't
-in LP2? Do we need to explicitly provide some kind of function to
-implement this waiting state, or does coupled cpuidle ensure the LP3 is
-entered, or implement WFI itself, or ...?
-
-> @@ -258,6 +256,9 @@ int __init tegra20_cpuidle_init(void)
-
-> +#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
-> +		dev->coupled_cpus = *cpu_online_mask;
-> +#endif
-
-What if that changes; I assume couple cpuidle handles that by
-registering a notifier?
-
-Is there any way that the kernel can boot with only CPU 0 "plugged in",
-but later have the other CPU hotplugged in? In other words, should that
-hard-code a mask (3?) that describes the HW, rather than relying on the
-runtime hotplug status? (think about what happens when this idle code is
-moved into drivers/cpuidle/ and built as a module, and hence could be
-initialized with only 1 CPU hotplugged in).
+After all, making the right decision now will reduce the number/size
+of patches later, and hence reduce code churn and reviewer load.
