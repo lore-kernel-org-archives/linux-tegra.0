@@ -1,36 +1,43 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC v2 8/8] drm: tegra: Add gr2d device
-Date: Mon, 3 Dec 2012 10:40:10 +0100
-Message-ID: <CAKMK7uF-sQ-HzA2Zek4VzWky=69LA3JqJR_+kyRQEO-JgwPQXQ@mail.gmail.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
-	<1353935954-13763-9-git-send-email-tbergstrom@nvidia.com>
-	<CAPM=9tzvt3J6D3zLPV97w629q62CNhAxX8V+_JZ6kmXxxz5fVg@mail.gmail.com>
-	<50BC7118.9060407@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: tegra20: cpuidle: add powered-down state for
+ secondary CPU
+Date: Mon, 03 Dec 2012 11:18:49 -0700
+Message-ID: <50BCED09.4040700@wwwdotorg.org>
+References: <1354503607-13707-1-git-send-email-josephl@nvidia.com> <1354503607-13707-2-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50BC7118.9060407@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Zhang <nvmarkzhang@gmail.com>
-Cc: Dave Airlie <airlied@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1354503607-13707-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 3, 2012 at 10:30 AM, Mark Zhang <nvmarkzhang@gmail.com> wrote:
-> I'm new in kernel development. Could you tell me or give me some
-> materials to read that why we need to align the size of IOCTL structures
-> to 64bit? I can understand if we're working in a 64bit kernel but why we
-> need to do this if we're in a 32bit arm kernel? Besides, why the
-> pointers in IOCTL structure should be declared as u64?
+On 12/02/2012 08:00 PM, Joseph Lo wrote:
+> The powered-down state of Tegra20 requires power gating both CPU cores.
+> When the secondary CPU requests to enter powered-down state, it saves
+> its own contexts and then enters WFI. The Tegra20 had a limition to
+> power down both CPU cores. The secondary CPU must waits for CPU0 in
+> powered-down state too. If the secondary CPU be woken up before CPU0
+> entering powered-down state, then it needs to restore its CPU states
+> and waits for next chance.
+> 
+> Be aware of that, you may see the legacy power state "LP2" in the code
+> which is exactly the same meaning of "CPU power down".
 
-Because in a few years/months you'll have arm64, but still the same
-driver with the same ioctls ... and if the ioctls are not _exactly_
-the same you get to write compat ioctl code which copies the old 32bit
-struct into the 64bit struct the kernel understands. Hence your ioctl
-must be laid out exactly the same for both 32bit and 64bit, which
-happens if you naturally align/pad everything to 64bits and only use
-fixed-sized integers and no pointers.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>  arch/arm/mach-tegra/sleep-tegra20.S   |  145 +++++++++++++++++++++++++++++++++
+
+Is it actually necessary to implement those parts of the code in
+assembly? It looks like it's mostly just memory read/write and a few
+barriers, all of which can be coded in regular C or invoked from C.
+
+The reason I ask is that we eventually want to remove all hard-coded
+virtual memory addresses, such as TEGRA_PMC_VIRT, and it'll be a lot
+easier to access memory relative to a variable base address from C than
+assembly.
+
+Now, perhaps we can solve this later; when we actually try to get this
+code into drivers/cpuidle/ and remove the hard-coded virtual memory
+addresses. Still, it'd be great if we didn't have to re-write the code
+as much (from .S->.c) when making those changes...
