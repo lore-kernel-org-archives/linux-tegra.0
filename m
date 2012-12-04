@@ -1,22 +1,22 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 1/5] ARM: tegra20: cpuidle: add powered-down state for
  secondary CPU
-Date: Tue, 4 Dec 2012 14:47:02 +0800
-Message-ID: <1354603622.30563.12.camel@jlo-ubuntu-64.nvidia.com>
+Date: Tue, 4 Dec 2012 15:05:12 +0800
+Message-ID: <1354604712.30563.31.camel@jlo-ubuntu-64.nvidia.com>
 References: <1354503607-13707-1-git-send-email-josephl@nvidia.com>
 	 <1354503607-13707-2-git-send-email-josephl@nvidia.com>
-	 <50BCED09.4040700@wwwdotorg.org>
+	 <50BCF01E.4070504@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50BCED09.4040700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50BCF01E.4070504-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-12-04 at 02:18 +0800, Stephen Warren wrote:
+On Tue, 2012-12-04 at 02:31 +0800, Stephen Warren wrote:
 > On 12/02/2012 08:00 PM, Joseph Lo wrote:
 > > The powered-down state of Tegra20 requires power gating both CPU cores.
 > > When the secondary CPU requests to enter powered-down state, it saves
@@ -29,23 +29,47 @@ On Tue, 2012-12-04 at 02:18 +0800, Stephen Warren wrote:
 > > Be aware of that, you may see the legacy power state "LP2" in the code
 > > which is exactly the same meaning of "CPU power down".
 > 
-> >  arch/arm/mach-tegra/sleep-tegra20.S   |  145 +++++++++++++++++++++++++++++++++
+> > diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
 > 
-> Is it actually necessary to implement those parts of the code in
-> assembly? It looks like it's mostly just memory read/write and a few
-> barriers, all of which can be coded in regular C or invoked from C.
+> > +/*
+> > + * tegra_pen_lock
+> > + *
+> > + * spinlock implementation with no atomic test-and-set and no coherence
+> > + * using Peterson's algorithm on strongly-ordered registers
+> > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
+> > + *
+> > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
 > 
-> The reason I ask is that we eventually want to remove all hard-coded
-> virtual memory addresses, such as TEGRA_PMC_VIRT, and it'll be a lot
-> easier to access memory relative to a variable base address from C than
-> assembly.
+> A link to a description of that algorithm would be useful.
 > 
-> Now, perhaps we can solve this later; when we actually try to get this
-> code into drivers/cpuidle/ and remove the hard-coded virtual memory
-> addresses. Still, it'd be great if we didn't have to re-write the code
-> as much (from .S->.c) when making those changes...
+This algorithm was very famous. It can be very easy to find on the
+internet. But if you want the link of the paper, it may not be
+available. It usually need to access the paper as a member.
 
-OK. Let me think how to do this for both Tegra20 and Tegra30.
+Can you accept a link from wikipedia?
+http://en.wikipedia.org/wiki/Peterson's_algorithm#cite_ref-1
+
+> > + * on cpu 0:
+> > + * SCRATCH38 = r2 = flag[0]
+> > + * SCRATCH39 = r3 = flag[1]
+> > + * on cpu1:
+> > + * SCRATCH39 = r2 = flag[1]
+> > + * SCRATCH38 = r3 = flag[0]
+> 
+> That implies that r2/r3 are used for different purposes on the 2 CPUs,
+> and/or shadow the values of different registers. However, I see nothing
+> in the code which is conditional on cpu ID.
+
+here:
++       cpu_id  r0
++       add     r1, r3, #PMC_SCRATCH37
++       cmp     r0, #0
++       addeq   r2, r3, #PMC_SCRATCH38
++       addeq   r3, r3, #PMC_SCRATCH39
++       addne   r2, r3, #PMC_SCRATCH39
++       addne   r3, r3, #PMC_SCRATCH38
+It's proper to say that the SCRATCH38/SCRATCH39 are used for dedicate
+cpu lock flag on the 2 CPUs.
 
 Thanks,
 Joseph
