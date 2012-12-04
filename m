@@ -1,71 +1,94 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/5] ARM: tegra20: cpuidle: add powered-down state for
- CPU0
-Date: Tue, 4 Dec 2012 15:25:20 +0800
-Message-ID: <1354605920.30563.38.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for
+ powered-down mode
+Date: Tue, 4 Dec 2012 18:20:08 +0800
+Message-ID: <1354616408.14447.66.camel@jlo-ubuntu-64.nvidia.com>
 References: <1354503607-13707-1-git-send-email-josephl@nvidia.com>
-	 <1354503607-13707-5-git-send-email-josephl@nvidia.com>
-	 <50BCF226.1080501@wwwdotorg.org>
+	 <1354503607-13707-6-git-send-email-josephl@nvidia.com>
+	 <50BCF4F8.60606@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50BCF226.1080501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50BCF4F8.60606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-12-04 at 02:40 +0800, Stephen Warren wrote:
+On Tue, 2012-12-04 at 02:52 +0800, Stephen Warren wrote:
 > On 12/02/2012 08:00 PM, Joseph Lo wrote:
-> > The powered-down state of Tegra20 requires power gating both CPU cores.
-> > When the secondary CPU requests to enter powered-down state, it saves
-> > its own contexts and then enters WFI for waiting CPU0 in the same state.
-> > When the CPU0 requests powered-down state, it attempts to put the secondary
-> > CPU into reset to prevent it from waking up. Then power down both CPUs
-> > together and power off the cpu rail.
-> > 
-> > Be aware of that, you may see the legacy power state "LP2" in the code
-> > which is exactly the same meaning of "CPU power down".
+> > The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
+> > core to go into this mode before other core. The coupled cpuidle framework
+> > can help to sync the MPCore to coupled state then go into "powered-down"
+> > idle mode together. The driver can just assume the MPCore come into
+> > "powered-down" mode at the same time. No need to take care if the CPU_0
+> > goes into this mode along and only can put it into safe idle mode (WFI).
 > 
-> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> I wonder if it wouldn't be simpler to squash this patch into one of the
+> earlier patches, and just use coupled cpuidle from the very start?
 > 
-> > +static int tegra20_reset_sleeping_cpu(int cpu)
-> > +{
-> > +	int ret = 0;
-> > +
-> > +	BUG_ON(cpu == 0);
-> > +	BUG_ON(cpu == smp_processor_id());
-> 
-> Will this code ever be used on anything other than Tegra20? I assume not
-> since it's in a Tegra20-specific file. Given that, it seems much of the
-> code could be made a lot simpler, e.g. by removing the "cpu" parameter
-> here, which would avoid requiring those BUG()s. You'd probably want to
-> rename the function e.g. tegra20_reset_cpu_1_sleeping().
-> 
-Good idea. Will follow your suggestion to refine this.
+OK. I can do this. And I want to add one more patch that can cover the
+IPI miss handling issue in coupled cpuidle framework. I will prepare
+that for V2. And it means that after V2, you don't need to consider the
+fix that I purposed for coupled cpuidle framework. You can merge it if
+it pass your review.
 
-> 
-> > diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-> > diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-> 
-> Similar comments about C-vs-assembly here as before, for at least some
-> of the functions.
-> 
-OK. I will think about this. Will do it later (maybe after LP1/LP0
-suspend code be ready). I need to confirm whole the scenario here first.
+I won't squash this in V2 for you to check what difference. If you think
+that is ok, I will squash this in V3.
 
-> > +/*
-> > + * tegra_cpu_pllp
-> > + *
-> > + * In LP2 the normal cpu clock pllx will be turned off. Switch the CPU to pllp
-> > + */
-> > +ENTRY(tegra_cpu_pllp)
-> 
-> There's no verb in that function name. tegra_switch_cpu_to_pllp() might
-> be a better name.
 
-OK. Will fix.
+> > +static int __cpuinit tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+> > +					      struct cpuidle_driver *drv,
+> > +					      int index)
+> 
+> > -	if (cpu == 0) {
+> > -		if (last_cpu)
+> > -			entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv,
+> > -								     index);
+> > -		else
+> > -			cpu_do_idle();
+> > -	} else {
+> > +	if (cpu == 0)
+> > +		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
+> > +	else
+> >  		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
+> > -	}
+> 
+> So I assume that coupled cpuidle only calls this function on CPU 0 once
+> it has guaranteed that CPU n are all in this same idle state. What does
+> CPU 0 do now, when it wants to enter LP2 but can't because CPU n aren't
+> in LP2? Do we need to explicitly provide some kind of function to
+> implement this waiting state, or does coupled cpuidle ensure the LP3 is
+> entered, or implement WFI itself, or ...?
+> 
+Indeed, this is important for CPU0. For Tegra30, we definitely need a
+loop to sync CPUn to power down status first. For Tegra20, the CPU0 only
+need to put CPU1 in reset. And we handle these procedure when CPU0 going
+to LP2.
+
+> > @@ -258,6 +256,9 @@ int __init tegra20_cpuidle_init(void)
+> 
+> > +#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
+> > +		dev->coupled_cpus = *cpu_online_mask;
+> > +#endif
+> 
+> What if that changes; I assume couple cpuidle handles that by
+> registering a notifier?
+> 
+Yes. This was used for the coupled driver initialization. It need to
+know how many CPUs need to be coupled when registration. It also use the
+notifier for updating the mask.
+
+> Is there any way that the kernel can boot with only CPU 0 "plugged in",
+> but later have the other CPU hotplugged in? In other words, should that
+> hard-code a mask (3?) that describes the HW, rather than relying on the
+> runtime hotplug status? (think about what happens when this idle code is
+> moved into drivers/cpuidle/ and built as a module, and hence could be
+> initialized with only 1 CPU hotplugged in).
+Hmmm. Currently it can't get these info from HW. The procedure is just
+like above. Syncing the cpu online mask to know how many CPUs need to be
+coupled and updating the mask by notifier.
 
 Thanks,
 Joseph
