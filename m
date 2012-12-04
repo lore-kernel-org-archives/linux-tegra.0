@@ -1,29 +1,51 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
-Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
-Date: Tue, 4 Dec 2012 08:17:23 +0200
-Message-ID: <50BD9573.2080802@nvidia.com>
-References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B874C7.5030208@nvidia.com> <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de> <50BCFB7E.4020007@wwwdotorg.org> <20121203210328.GA20884@avionic-0098.adnet.avionic-design.de>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: tegra20: cpuidle: add powered-down state for
+ secondary CPU
+Date: Tue, 4 Dec 2012 14:47:02 +0800
+Message-ID: <1354603622.30563.12.camel@jlo-ubuntu-64.nvidia.com>
+References: <1354503607-13707-1-git-send-email-josephl@nvidia.com>
+	 <1354503607-13707-2-git-send-email-josephl@nvidia.com>
+	 <50BCED09.4040700@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20121203210328.GA20884@avionic-0098.adnet.avionic-design.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50BCED09.4040700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03.12.2012 23:03, Thierry Reding wrote:
-> What's really difficult to follow is if an ops structure is accessed via
-> some global macro. It also breaks encapsulation because you have a
-> global ops structure. That may even work fine for now, but it will break
-> once you have more than a single host1x in a system. I know this will
-> never happen, but all of a sudden it happens anyway and the code breaks.
-> Doing this right isn't very hard and it will lead to a better design and
-> is less likely to break at some point.
+On Tue, 2012-12-04 at 02:18 +0800, Stephen Warren wrote:
+> On 12/02/2012 08:00 PM, Joseph Lo wrote:
+> > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > When the secondary CPU requests to enter powered-down state, it saves
+> > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > powered-down state too. If the secondary CPU be woken up before CPU0
+> > entering powered-down state, then it needs to restore its CPU states
+> > and waits for next chance.
+> > 
+> > Be aware of that, you may see the legacy power state "LP2" in the code
+> > which is exactly the same meaning of "CPU power down".
+> 
+> >  arch/arm/mach-tegra/sleep-tegra20.S   |  145 +++++++++++++++++++++++++++++++++
+> 
+> Is it actually necessary to implement those parts of the code in
+> assembly? It looks like it's mostly just memory read/write and a few
+> barriers, all of which can be coded in regular C or invoked from C.
+> 
+> The reason I ask is that we eventually want to remove all hard-coded
+> virtual memory addresses, such as TEGRA_PMC_VIRT, and it'll be a lot
+> easier to access memory relative to a variable base address from C than
+> assembly.
+> 
+> Now, perhaps we can solve this later; when we actually try to get this
+> code into drivers/cpuidle/ and remove the hard-coded virtual memory
+> addresses. Still, it'd be great if we didn't have to re-write the code
+> as much (from .S->.c) when making those changes...
 
-I agree that the chip ops access goes through too much indirection and
-macro magic (which I already declared I hate), so we're going to design
-something simpler.
+OK. Let me think how to do this for both Tegra20 and Tegra30.
 
-Terje
+Thanks,
+Joseph
