@@ -1,47 +1,29 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/5] ARM: tegra20: clocks: add CPU low-power function
- into tegra_cpu_car_ops
-Date: Tue, 4 Dec 2012 13:25:07 +0800
-Message-ID: <1354598707.30563.10.camel@jlo-ubuntu-64.nvidia.com>
-References: <1354503607-13707-1-git-send-email-josephl@nvidia.com>
-	 <1354503607-13707-3-git-send-email-josephl@nvidia.com>
-	 <50BD8646.6070608@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
+Subject: Re: [RFC v2 1/8] video: tegra: Add nvhost driver
+Date: Tue, 4 Dec 2012 08:17:23 +0200
+Message-ID: <50BD9573.2080802@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-2-git-send-email-tbergstrom@nvidia.com> <20121128212301.GA25531@avionic-0098.adnet.avionic-design.de> <50B73710.2040102@nvidia.com> <20121129114704.GB6150@avionic-0098.adnet.avionic-design.de> <50B874C7.5030208@nvidia.com> <20121130103850.GA28367@avionic-0098.adnet.avionic-design.de> <50BCFB7E.4020007@wwwdotorg.org> <20121203210328.GA20884@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50BD8646.6070608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20121203210328.GA20884@avionic-0098.adnet.avionic-design.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-12-04 at 13:12 +0800, Prashant Gaikwad wrote:
-> On Monday 03 December 2012 08:30 AM, Joseph Lo wrote:
-> > Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
-> > functions were used for CPU powered-down state maintenance.
-> >
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >   arch/arm/mach-tegra/tegra20_clocks.c |  102 ++++++++++++++++++++++++++++++++++
-> >   1 files changed, 102 insertions(+), 0 deletions(-)
-> 
-> I have a concern here, I am working on removing these ops and replacing 
-> it with clock.
-> Adding suspend/resume to these will make it more difficult to remove.
-> 
-> Any other way to implement this?
-> 
+On 03.12.2012 23:03, Thierry Reding wrote:
+> What's really difficult to follow is if an ops structure is accessed via
+> some global macro. It also breaks encapsulation because you have a
+> global ops structure. That may even work fine for now, but it will break
+> once you have more than a single host1x in a system. I know this will
+> never happen, but all of a sudden it happens anyway and the code breaks.
+> Doing this right isn't very hard and it will lead to a better design and
+> is less likely to break at some point.
 
-Prashant,
+I agree that the chip ops access goes through too much indirection and
+macro magic (which I already declared I hate), so we're going to design
+something simpler.
 
-Thanks for remind.
-Actually the "tegra_cpu_car_ops" is more like reset & suspend/resume
-handling, it's not really related to clock framework. So it's more like
-some functions for CPU power management control. Maybe I can move them
-(Tegra20 & Tegra30) to another pm related file later.
-
-How do you think, Stephen?
-
-Thanks,
-Joseph
+Terje
