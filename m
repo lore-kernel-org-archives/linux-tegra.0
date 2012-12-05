@@ -1,87 +1,82 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC libdrm] Add NVIDIA Tegra support
-Date: Wed, 5 Dec 2012 08:46:29 +0100
-Message-ID: <20121205074629.GA13386@avionic-0098.adnet.avionic-design.de>
-References: <1354634032-9986-1-git-send-email-thierry.reding@avionic-design.de>
- <1354634032-9986-2-git-send-email-thierry.reding@avionic-design.de>
- <50BEFA1F.5090907@nvidia.com>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Wed, 5 Dec 2012 09:33:35 +0100
+Message-ID: <20121205083335.GA20984@avionic-0098.adnet.avionic-design.de>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
+ <1353935954-13763-7-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+	protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50BEFA1F.5090907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1353935954-13763-7-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---+HP7ph2BbKc20aGI
+--6c2NcOVqGQ03X4Wi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 05, 2012 at 09:39:11AM +0200, Arto Merilainen wrote:
-> On 12/04/2012 05:13 PM, Thierry Reding wrote:
-> >+int drm_tegra_open(const char *path, struct drm_tegra **devicep)
-> >+{
-> >+       struct drm_tegra *device;
-> >+       int err;
-> >+
-> >+       if (!path || !devicep)
-> >+               return -EINVAL;
-> >+
-> >+       device =3D calloc(1, sizeof(*device));
-> >+       if (!device)
-> >+               return -ENOMEM;
-> >+
-> >+       DRMINITLISTHEAD(&device->bo_list);
-> >+
-> >+       device->fd =3D open(path, O_RDWR);
-> >+       if (device->fd < 0) {
-> >+               err =3D -errno;
-> >+               free(device);
-> >+               return err;
-> >+       }
-> >+
-> >+       *devicep =3D device;
-> >+
-> >+       return 0;
-> >+}
+On Mon, Nov 26, 2012 at 03:19:12PM +0200, Terje Bergstrom wrote:
+> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> I think you shouldn't ask the path from the application (=3DDDX) here,
-> but use drmOpen() that automatically finds the correct device for
-> you.
+> This patch removes the redundant host1x driver from tegradrm and
+> makes necessary bindings to the separate host driver.
 >=20
-> I'd also prefer letting the application open and close the device
-> and modify drm_tegra_open() to take the fd as a parameter. That way
-> the DDX could easily access also all generic libdrm functions.
+> This modification introduces a regression: Because there is no
+> general framework for attaching separate devices into the
+> same address space, this patch removes the ability to use IOMMU
+> in tegradrm.
+>=20
+> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Good points, I'll take those into account.
+I've been thinking about this some more and came to the conclusion that
+since we will already have a tight coupling between host1x and tegra-drm
+we may just as well keep the client registration code in host1x. The way
+I imagine this to work would be to export a public API from tegra-drm,
+say tegra_drm_init() and tegra_drm_exit(), that could be called in place
+of drm_platform_init() and drm_platform_exit() in the current code.
 
-Thanks,
+tegra_drm_init() could then be passed the host1x platform device to bind
+to. The only thing that would need to be done is move the fields in the
+host1x structure specific to DRM into a separate structure. host1x would
+have to export host1x_drm_init/exit() which the DRM can invoke to have
+all DRM clients register to the DRM subsystem.
+
+=46rom a hierarchical point of view this makes sense, with host1x being
+the parent of all DRM subdevices. It allows us to reuse the current code
+=66rom tegra-drm that has been tested and works properly even for module
+unload/reload. We also get to keep the proper encapsulation and the
+switch to the separate host1x driver will require a much smaller patch.
+
+Does anybody see a disadvantage in this approach?
+
 Thierry
 
---+HP7ph2BbKc20aGI
+--6c2NcOVqGQ03X4Wi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQvvvVAAoJEN0jrNd/PrOhfe0QALB6wTlifJbjF60iAHgcznSa
-YIHlJ5pF5kMithP9UfyK00+OjDKM6mgbL29+eGKLh5dJ52ixr7K5z3AITxT9vq71
-UijWCFaxkBz9xWI4LnCZXuUpD7JhMHPiUFF/5j8Q+4n3ekxl/FS02xvRVTpAZXHr
-xWiOq2PrHrfb5MqFg3Kba9vLFjhK7X/uA+vniMduUV2nXEkmlYnC+kUMWCiraC4w
-HX25xms5/hDPNemtlvRLu4ZfjQYPbgRmMsrHyTi33pPA4HeiyqEbQb8T9lSXuf7a
-LdguQNPvi4GUtpBeqGsaEflaG1xVVZ3IW3ylGMoqSKDnvCSuSFXA7+8V12Fma1tk
-AVhZeHoHds9Sge92N8bktKryK2l/VqtQRAMhBvKrtZlHjqwLN9mTPSKi2XzFDVcD
-5ZLLuLDH3nHmKYaJDTysHsoNsQ4oaiz0AnrYJQsEmjDVsUzo+ypKuyVeiBlSSNvY
-kQg135uw5HwDUeYDgLg4JVuK6uDoXrCDJyQlm6ZQ+bNfM4IYiD1rzzRpTB8JJ7uF
-QLjREFdffIi9yC8i6DFgOAsWDIs1PydQtVT+PK1kWzJNT/iCfjTgkVeQfT7LmCGw
-04p6YzWRuTJUFYoQzBM/k/SpVIxU7qKxNPZmWiQxaqXtar85zMCp9WgjzTyZaROy
-fYVx5fhAUz/Yi7Cb/ZYq
-=nfgo
+iQIcBAEBAgAGBQJQvwbfAAoJEN0jrNd/PrOhAqcQALD4a0Cvs13j3n66ps530oAy
+C8J7BJAGtFWsya95r0QiRB60KThVKooEzdu2H26yoNrqDiHBVXOiISuLuI51lkGY
+lFk/CI2yswL5vXyR+r+HflePIo2QyHQJEu+GfntK2Y77ugCc/EZFt+1H4z+t6m3k
+afsXi/IxQxjD8QYwGMUwaOreNFzp4L8kP/3LiCtv2vXSEopyzFLo+tD+VpXCxmu2
+Bspql8/bF9mW2c05o5QKj1mF1Wq06LL2Zy1ZmoYPKRF4Z4ikP42h8ztBdvpHFNAK
+4i55XfcwQLRdO+EFkPP+c1iMXEWX/Ee+2Q1WdOT8jE0tZURVQ+KRu50g1m081EQ2
+gfrn14kdhJmAEdStWIakeekIa5x6iU0E6GPOz1FOQ28+9z/HVXX1ZNRmwFEHxG/z
+ybTcJ5S99FQL1ilmMGZdgPLRZG6Q7SpwpPeGtt/a2uK8U4GoGR+SoVQ600IAn51u
+2YEmbt57KhqZH7Qndhec2bpqjA9MMf5CeTOi0euybdjOjsD5oMk2is26mnKSwEQM
+JfRy6VsBHQZ1HchLwZUGN6hZ3JAKRCEf9IKo0TcGaOBJxOp/ywTdry/bcN9lJl7g
+3i7Lz2UauhdY6hL2U4JiSBW+iOrcLTVZI/spqgB1bqDhPA1z5LRaQhmMCcX3mWlB
+tTHLTpobuWSu6WUPdTOg
+=rqJ3
 -----END PGP SIGNATURE-----
 
---+HP7ph2BbKc20aGI--
+--6c2NcOVqGQ03X4Wi--
