@@ -1,185 +1,64 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 6/6] ARM: tegra20: cpuidle: apply coupled cpuidle for powered-down mode
-Date: Wed, 5 Dec 2012 18:01:55 +0800
-Message-ID: <1354701715-24150-9-git-send-email-josephl@nvidia.com>
-References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Wed, 5 Dec 2012 12:10:50 +0200
+Message-ID: <50BF1DAA.8030805@nvidia.com>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com> <1353935954-13763-7-git-send-email-tbergstrom@nvidia.com> <20121205083335.GA20984@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354701715-24150-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20121205083335.GA20984-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
- config ARCH_TEGRA_3x_SOC
- 	bool "Enable support for Tegra30 family"
-+	select ARCH_NEEDS_CPU_IDLE_COUPLED
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_ERRATA_743622
- 	select ARM_ERRATA_751472
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index 5e8cbf5..f880350 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -23,6 +23,7 @@
- #include <linux/module.h>
- #include <linux/cpuidle.h>
- #include <linux/cpu_pm.h>
-+#include <linux/cpumask.h>
- #include <linux/clockchips.h>
- 
- #include <asm/cpuidle.h>
-@@ -30,14 +31,18 @@
- #include <asm/suspend.h>
- #include <asm/smp_plat.h>
- 
-+#include "irq.h"
- #include "pm.h"
- #include "sleep.h"
- #include "tegra_cpu_car.h"
- 
- #ifdef CONFIG_PM_SLEEP
--static int tegra30_idle_lp2(struct cpuidle_device *dev,
--			    struct cpuidle_driver *drv,
--			    int index);
-+static bool abort_flag;
-+static atomic_t abort_barrier;
-+static cpumask_t cpus_out_lp2;
-+static int tegra30_idle_lp2_coupled(struct cpuidle_device *dev,
-+				    struct cpuidle_driver *drv,
-+				    int index);
- #endif
- 
- static struct cpuidle_driver tegra_idle_driver = {
-@@ -53,11 +58,12 @@ static struct cpuidle_driver tegra_idle_driver = {
- 		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
- #ifdef CONFIG_PM_SLEEP
- 		[1] = {
--			.enter			= tegra30_idle_lp2,
-+			.enter			= tegra30_idle_lp2_coupled,
- 			.exit_latency		= 2000,
- 			.target_residency	= 2200,
- 			.power_usage		= 0,
--			.flags			= CPUIDLE_FLAG_TIME_VALID,
-+			.flags			= CPUIDLE_FLAG_TIME_VALID |
-+						  CPUIDLE_FLAG_COUPLED,
- 			.name			= "powered-down",
- 			.desc			= "CPU power gated",
- 		},
-@@ -79,8 +85,8 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
- 	/* All CPUs entering LP2 is not working.
- 	 * Don't let CPU0 enter LP2 when any secondary CPU is online.
- 	 */
--	if (num_online_cpus() > 1 || !tegra_cpu_rail_off_ready()) {
--		cpu_do_idle();
-+	if (num_online_cpus() > 1 && !tegra_cpu_rail_off_ready()) {
-+//		cpu_do_idle();
- 		return false;
- 	}
- 
-@@ -94,6 +100,13 @@ static bool tegra30_cpu_cluster_power_down(struct cpuidle_device *dev,
- }
- 
- #ifdef CONFIG_SMP
-+static void tegra30_wake_up_secondary_cpus(u32 cpu)
-+{
-+//	if (!cpumask_test_cpu(cpu, &cpus_out_lp2))
-+		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+//		gic_raise_softirq(cpumask_of(cpu), 0);
-+}                                       
-+
- static bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
- 					struct cpuidle_driver *drv,
- 					int index)
-@@ -113,6 +126,11 @@ static bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
- 	return true;
- }
- #else
-+static inline void tegra30_wake_up_secondary_cpus(u32 cpu)
-+{
-+	return;
-+}
-+
- static inline bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
- 					       struct cpuidle_driver *drv,
- 					       int index)
-@@ -121,36 +139,56 @@ static inline bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
- }
- #endif
- 
--static int __cpuinit tegra30_idle_lp2(struct cpuidle_device *dev,
--				      struct cpuidle_driver *drv,
--				      int index)
-+static int __cpuinit tegra30_idle_lp2_coupled(struct cpuidle_device *dev,
-+					      struct cpuidle_driver *drv,
-+					      int index)
- {
- 	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
- 	bool entered_lp2 = false;
--	bool last_cpu;
-+int i;
-+	abort_flag = tegra_pending_irq();
-+	cpumask_clear(&cpus_out_lp2);
-+	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
-+//printk(KERN_EMERG "cpu %d in\n", cpu);
-+	if (abort_flag)
-+		return -EINTR;
- 
- 	local_fiq_disable();
- 
--	last_cpu = tegra_set_cpu_in_lp2(cpu);
-+	tegra_set_cpu_in_lp2(cpu);
- 	cpu_pm_enter();
- 
- 	if (cpu == 0) {
--		if (last_cpu)
--			entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv,
--								     index);
--		else
--			cpu_do_idle();
-+		while (num_online_cpus() > 1 && !tegra_cpu_rail_off_ready()) {
-+			cpu_relax();
-+			
-+//			if (!cpumask_empty(&cpus_out_lp2))
-+//				goto out;
-+		}
-+		entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv, index);
-+
-+out:
-+//		if (!entered_lp2) {
-+//			int i;
-+			for_each_online_cpu(i)
-+				if (i != cpu)
-+					tegra30_wake_up_secondary_cpus(i);
-+//		}
- 	} else {
- 		entered_lp2 = tegra30_cpu_core_power_down(dev, drv, index);
-+		cpumask_set_cpu(cpu, &cpus_out_lp2);
- 	}
- 
-+
- 	cpu_pm_exit();
- 	tegra_clear_cpu_in_lp2(cpu);
--
-+//
-+//
- 	local_fiq_enable();
- 
- 	smp_rmb();
--
-+//printk(KERN_EMERG "cpu %d out\n", cpu);
-+cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
- 	return (entered_lp2) ? index : 0;
- }
- #endif
-@@ -175,6 +213,9 @@ int __init tegra30_cpuidle_init(void)
- 	for_each_possible_cpu(cpu) {
- 		dev = &per_cpu(tegra_idle_device, cpu);
- 		dev->cpu = cpu;
-+#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
-+		dev->coupled_cpus = *cpu_online_mask;
-+#endif
- 
- 		dev->state_count = drv->state_count;
- 		ret = cpuidle_register_device(dev);
+On 05.12.2012 10:33, Thierry Reding wrote:
+> I've been thinking about this some more and came to the conclusion that
+> since we will already have a tight coupling between host1x and tegra-drm
+> we may just as well keep the client registration code in host1x. The way
+> I imagine this to work would be to export a public API from tegra-drm,
+> say tegra_drm_init() and tegra_drm_exit(), that could be called in place
+> of drm_platform_init() and drm_platform_exit() in the current code.
+> 
+> tegra_drm_init() could then be passed the host1x platform device to bind
+> to. The only thing that would need to be done is move the fields in the
+> host1x structure specific to DRM into a separate structure. host1x would
+> have to export host1x_drm_init/exit() which the DRM can invoke to have
+> all DRM clients register to the DRM subsystem.
+> 
+> From a hierarchical point of view this makes sense, with host1x being
+> the parent of all DRM subdevices. It allows us to reuse the current code
+> from tegra-drm that has been tested and works properly even for module
+> unload/reload. We also get to keep the proper encapsulation and the
+> switch to the separate host1x driver will require a much smaller patch.
+> 
+> Does anybody see a disadvantage in this approach?
+
+I'm a bit confused about the scope. You mention host1x several times,
+but I'm not sure if you mean the file drivers/gpu/drm/tegra/host1x.c or
+the host1x driver. So I might be babbling when I answer this. Could you
+please clarify that?
+
+host1x hardware access must be encapsulated in host1x driver
+(drivers/gpu/host1x if that's the location we prefer). As for the
+management of the list of DRM clients, we proposed the move to drm.c,
+because host1x hardware would anyway be controlled by a different
+driver. Having file called host1x.c in tegradrm didn't sound logical, as
+its not really controlling host1x, and its probe wouldn't be called.
+
+If your proposal is that we'd move the management of the list of host1x
+devices from tegradrm to host1x driver, we'd have a tight circular
+dependency between two drivers and that's almost always a bad idea. So
+far all ideas have revolved around tegradrm calling host1x, and host1x
+calling a bit of DRM (for CMA, would be fixed in later version) but not
+host1x calling tegradrm.
+
+host1x driver itself has only little use for the list of clients.
+Basically we need only a list of channels, and platform devices
+associated with channels, to be able to dump host1x channel state.
+
+Mind you, I believe nvhost driver as part of our BSP has had quite many
+more hours of runtime than tegradrm. :-)
+
+Terje
