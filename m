@@ -1,67 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v3 1/1] iommu/tegra: smmu: bus_notifier registers platform IOMMU
- devices
-Date: Wed, 05 Dec 2012 14:11:40 -0700
-Message-ID: <50BFB88C.8080901@wwwdotorg.org>
-References: <1354646264-12126-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH V2 1/6] ARM: tegra: add pending SGI checking API
+Date: Wed, 05 Dec 2012 15:09:09 -0700
+Message-ID: <50BFC605.3000402@wwwdotorg.org>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com> <1354701715-24150-2-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354646264-12126-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1354701715-24150-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/04/2012 11:37 AM, Hiroshi Doyu wrote:
-> Most of platform devices are IOMMU'able in Tegra30 SoC. Registering
-> all IOMMU'able devices manually isn't nice. This patch allows
-> platform bus_notifier to register IOMMU devices. Map info can be
-> passed from DT. Info format is:
+On 12/05/2012 03:01 AM, Joseph Lo wrote:
+> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
+> include the power of GIC. That caused the SGI (Software Generated
+> Interrupt) been lost. Because the SGI can't wake up the CPU that in
+> the "powered-down" CPU idle mode. We need to check if there is any
+> pending SGI when go into "powered-down" CPU idle mode. This is important
+> especially when applying the coupled cpuidle framework into "power-down"
+> cpuidle dirver. Because the coupled cpuidle framework may have the
+> chance that misses IPI_SINGLE_FUNC handling sometimes.
 > 
->   dma-window = <0 0x40000000>;
-> 
-> TODO:
-> A map can be shared with mutiple devices. This info also could be
-> passed from DT or default map can be set in advance.
+> For the PPI or SPI, something like the legacy peripheral interrupt. It
+> still can be maintained by Tegra legacy interrupt controller. If there
+> is any pending PPI or SPI when CPU in "powered-down" CPU idle mode. The
+> CPU can be woken up immediately. So we don't need to take care the same
+> situation for PPI or SPI.
 
-> +static int tegra_smmu_device_notifier(struct notifier_block *nb,
-> +				      unsigned long event, void *_dev)
+Is this feature something that can/should be added to the core GIC
+driver, rather than something custom in the Tegra code?
 
-> +	switch (event) {
-> +	case BUS_NOTIFY_ADD_DEVICE:
-> +		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
-> +					&size);
-> +		if (!err)
-> +			map = arm_iommu_create_mapping(&platform_bus_type,
-> +						       base, size, 0);
+Part of the reason I ask is that I'd like to avoid any more:
 
-So, this ends up attempting to hook up the Tegra SMMU for /any/ node on
-a platform bus that has a dma-window property. That seems a little
-dangerous. I guess it's not true for Tegra30, but what if there are
-multiple buses on the SoC, each with a separate IOMMU - using this
-approach would mean the two IOMMU drivers end up fighting to register
-mappings for devices on each-others buses.
+static void __iomem *distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
 
-I think the solution here is one of:
-
-a) Explicitly represent the bus structure in DT (something we don't do
-on Tegra at present), and have the bus itself indicate which IOMMU
-device is the IOMMU for that bus.
-
-b) Add another property to each device that has a dma-window, containing
-the phandle of the IOMMU that handles its accesses. The code above could
-then validate that it was the IOMMU for each device as it was registered.
-
-Probably, devices should not be registered until the IOMMU that serves
-them is available. Otherwise, can't a device probe, start making IO
-accesses using a physical/bus memory map, and then later have that
-yanked out and replaced by the IOMMU'd memory map. How is that
-co-ordinated? That somewhat argues for each device explicitly setting up
-the IOMMU registration, or the driver core handling the dependencies.
-
-Finally, what is the implication of the TODO above? Given the limited
-number of ASIDs on Tegra30, isn't that something we need to solve before
-deploying this patch. Presumably solving it requires a DT binding to be
-designed and reviewed?
+since that requires static page tables to be set up, whereas I'd like to
+reduce, as much as possible, the set of pages Tegra maps statically.
