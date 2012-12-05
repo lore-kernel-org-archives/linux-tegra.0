@@ -1,352 +1,116 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state for
- secondary CPU
-Date: Wed, 5 Dec 2012 10:50:15 +0000
-Message-ID: <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
-References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
- <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Wed, 5 Dec 2012 12:13:32 +0100
+Message-ID: <20121205111332.GA25676@avionic-0098.adnet.avionic-design.de>
+References: <1353935954-13763-1-git-send-email-tbergstrom@nvidia.com>
+ <1353935954-13763-7-git-send-email-tbergstrom@nvidia.com>
+ <20121205083335.GA20984@avionic-0098.adnet.avionic-design.de>
+ <50BF1DAA.8030805@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354701715-24150-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <50BF1DAA.8030805-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
-> The powered-down state of Tegra20 requires power gating both CPU cores.
-> When the secondary CPU requests to enter powered-down state, it saves
-> its own contexts and then enters WFI. The Tegra20 had a limition to
-> power down both CPU cores. The secondary CPU must waits for CPU0 in
-> powered-down state too. If the secondary CPU be woken up before CPU0
-> entering powered-down state, then it needs to restore its CPU states
-> and waits for next chance.
-> 
-> Be aware of that, you may see the legacy power state "LP2" in the code
-> which is exactly the same meaning of "CPU power down".
-> 
-> Based on the work by:
-> Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
-> * no change
-> ---
->  arch/arm/mach-tegra/cpuidle-tegra20.c |   84 +++++++++++++++++++
->  arch/arm/mach-tegra/pm.c              |    2 +
->  arch/arm/mach-tegra/sleep-tegra20.S   |  145 +++++++++++++++++++++++++++++++++
->  arch/arm/mach-tegra/sleep.h           |   23 +++++
->  4 files changed, 254 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> index d32e8b0..9d59a46 100644
-> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> @@ -22,21 +22,105 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/cpuidle.h>
-> +#include <linux/cpu_pm.h>
-> +#include <linux/clockchips.h>
-> 
->  #include <asm/cpuidle.h>
-> +#include <asm/proc-fns.h>
-> +#include <asm/suspend.h>
-> +#include <asm/smp_plat.h>
-> +
-> +#include "pm.h"
-> +#include "sleep.h"
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int tegra20_idle_lp2(struct cpuidle_device *dev,
-> +                           struct cpuidle_driver *drv,
-> +                           int index);
-> +#endif
-> 
->  static struct cpuidle_driver tegra_idle_driver = {
->         .name = "tegra_idle",
->         .owner = THIS_MODULE,
->         .en_core_tk_irqen = 1,
-> +#ifdef CONFIG_PM_SLEEP
-> +       .state_count = 2,
-> +#else
->         .state_count = 1,
-> +#endif
 
-These hardcoded values are not nice.
+--0OAP2g/MAC+5xKAE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->         .states = {
->                 [0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
-> +#ifdef CONFIG_PM_SLEEP
-> +               [1] = {
-> +                       .enter                  = tegra20_idle_lp2,
-> +                       .exit_latency           = 5000,
-> +                       .target_residency       = 10000,
-> +                       .power_usage            = 0,
-> +                       .flags                  = CPUIDLE_FLAG_TIME_VALID,
-> +                       .name                   = "powered-down",
-> +                       .desc                   = "CPU power gated",
-> +               },
-> +#endif
->         },
->  };
-> 
->  static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
-> 
-> +#ifdef CONFIG_PM_SLEEP
-> +#ifdef CONFIG_SMP
-> +static bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
-> +                                        struct cpuidle_driver *drv,
-> +                                        int index)
-> +{
-> +       clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
-> +
-> +       smp_wmb();
+On Wed, Dec 05, 2012 at 12:10:50PM +0200, Terje Bergstr=C3=B6m wrote:
+> On 05.12.2012 10:33, Thierry Reding wrote:
+> > I've been thinking about this some more and came to the conclusion that
+> > since we will already have a tight coupling between host1x and tegra-drm
+> > we may just as well keep the client registration code in host1x. The way
+> > I imagine this to work would be to export a public API from tegra-drm,
+> > say tegra_drm_init() and tegra_drm_exit(), that could be called in place
+> > of drm_platform_init() and drm_platform_exit() in the current code.
+> >=20
+> > tegra_drm_init() could then be passed the host1x platform device to bind
+> > to. The only thing that would need to be done is move the fields in the
+> > host1x structure specific to DRM into a separate structure. host1x would
+> > have to export host1x_drm_init/exit() which the DRM can invoke to have
+> > all DRM clients register to the DRM subsystem.
+> >=20
+> > From a hierarchical point of view this makes sense, with host1x being
+> > the parent of all DRM subdevices. It allows us to reuse the current code
+> > from tegra-drm that has been tested and works properly even for module
+> > unload/reload. We also get to keep the proper encapsulation and the
+> > switch to the separate host1x driver will require a much smaller patch.
+> >=20
+> > Does anybody see a disadvantage in this approach?
+>=20
+> I'm a bit confused about the scope. You mention host1x several times,
+> but I'm not sure if you mean the file drivers/gpu/drm/tegra/host1x.c or
+> the host1x driver. So I might be babbling when I answer this. Could you
+> please clarify that?
 
-Can you explain to me the need for this barrier ?
+What I propose is to move the client registration code that is currently
+in drivers/gpu/drm/tegra/host1x.c to the host1x driver, which may or may
+not end up in drivers/gpu/host1x.
 
-> +
-> +       cpu_suspend(0, tegra20_sleep_cpu_secondary_finish);
-> +
-> +       tegra20_cpu_clear_resettable();
-> +
-> +       clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
-> +
-> +       return true;
-> +}
-> +#else
-> +static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
-> +                                               struct cpuidle_driver *drv,
-> +                                               int index)
-> +{
-> +       return true;
-> +}
-> +#endif
-> +
-> +static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
-> +                                     struct cpuidle_driver *drv,
-> +                                     int index)
-> +{
-> +       u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
-> +       bool entered_lp2 = false;
-> +
-> +       local_fiq_disable();
-> +
-> +       tegra_set_cpu_in_lp2(cpu);
-> +       cpu_pm_enter();
-> +
-> +       if (cpu == 0)
-> +               cpu_do_idle();
-> +       else
-> +               entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
-> +
-> +       cpu_pm_exit();
-> +       tegra_clear_cpu_in_lp2(cpu);
-> +
-> +       local_fiq_enable();
-> +
-> +       smp_rmb();
-> +
-> +       return (entered_lp2) ? index : 0;
-> +}
-> +#endif
-> +
->  int __init tegra20_cpuidle_init(void)
->  {
->         int ret;
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-> index 1b11707..db72ea9 100644
-> --- a/arch/arm/mach-tegra/pm.c
-> +++ b/arch/arm/mach-tegra/pm.c
-> @@ -173,6 +173,8 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
-> 
->         if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
->                 last_cpu = true;
-> +       else if (phy_cpu_id == 1)
-> +               tegra20_cpu_set_resettable_soon();
-> 
->         spin_unlock(&tegra_lp2_lock);
->         return last_cpu;
-> diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-> index 72ce709..dfb2be5 100644
-> --- a/arch/arm/mach-tegra/sleep-tegra20.S
-> +++ b/arch/arm/mach-tegra/sleep-tegra20.S
-> @@ -21,6 +21,8 @@
->  #include <linux/linkage.h>
-> 
->  #include <asm/assembler.h>
-> +#include <asm/proc-fns.h>
-> +#include <asm/cp15.h>
-> 
->  #include "sleep.h"
->  #include "flowctrl.h"
-> @@ -78,3 +80,146 @@ ENTRY(tegra20_cpu_shutdown)
->         mov     pc, lr
->  ENDPROC(tegra20_cpu_shutdown)
->  #endif
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +/*
-> + * tegra_pen_lock
-> + *
-> + * spinlock implementation with no atomic test-and-set and no coherence
-> + * using Peterson's algorithm on strongly-ordered registers
-> + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
-> + *
-> + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
-> + * on cpu 0:
-> + * SCRATCH38 = r2 = flag[0]
-> + * SCRATCH39 = r3 = flag[1]
-> + * on cpu1:
-> + * SCRATCH39 = r2 = flag[1]
-> + * SCRATCH38 = r3 = flag[0]
-> + *
-> + * must be called with MMU on
-> + * corrupts r0-r3, r12
-> + */
-> +ENTRY(tegra_pen_lock)
-> +       mov32   r3, TEGRA_PMC_VIRT
-> +       cpu_id  r0
-> +       add     r1, r3, #PMC_SCRATCH37
-> +       cmp     r0, #0
-> +       addeq   r2, r3, #PMC_SCRATCH38
-> +       addeq   r3, r3, #PMC_SCRATCH39
-> +       addne   r2, r3, #PMC_SCRATCH39
-> +       addne   r3, r3, #PMC_SCRATCH38
-> +
-> +       mov     r12, #1
-> +       str     r12, [r2]               @ flag[cpu] = 1
-> +       dsb
-> +       str     r12, [r1]               @ !turn = cpu
-> +1:     dsb
-> +       ldr     r12, [r3]
-> +       cmp     r12, #1                 @ flag[!cpu] == 1?
-> +       ldreq   r12, [r1]
-> +       cmpeq   r12, r0                 @ !turn == cpu?
-> +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
-> +
-> +       mov     pc, lr                  @ locked
-> +ENDPROC(tegra_pen_lock)
-> +
-> +ENTRY(tegra_pen_unlock)
-> +       dsb
-> +       mov32   r3, TEGRA_PMC_VIRT
-> +       cpu_id  r0
-> +       cmp     r0, #0
-> +       addeq   r2, r3, #PMC_SCRATCH38
-> +       addne   r2, r3, #PMC_SCRATCH39
-> +       mov     r12, #0
-> +       str     r12, [r2]
-> +       mov     pc, lr
-> +ENDPROC(tegra_pen_unlock)
+> host1x hardware access must be encapsulated in host1x driver
+> (drivers/gpu/host1x if that's the location we prefer). As for the
+> management of the list of DRM clients, we proposed the move to drm.c,
+> because host1x hardware would anyway be controlled by a different
+> driver. Having file called host1x.c in tegradrm didn't sound logical, as
+> its not really controlling host1x, and its probe wouldn't be called.
 
-There is an ongoing work to make this locking scheme for MMU/coherency off
-paths ARM generic, and we do not want to merge yet another platform specific
-locking mechanism. I will point you to the patchset when it hits LAK.
+Oh well, at the time nobody from NVIDIA was involved so I wrote that
+code in preparation for proper host1x support that I thought I would
+have to add myself at some point. I'm more than glad that I don't have
+to do this all by myself. However the patch proposed in this series
+breaks a number of requirements such as proper encapsulation, which I
+already mentioned in more detail in another mail.
 
-> +
-> +/*
-> + * tegra20_cpu_clear_resettable(void)
-> + *
-> + * Called to clear the "resettable soon" flag in PMC_SCRATCH41 when
-> + * it is expected that the secondary CPU will be idle soon.
-> + */
-> +ENTRY(tegra20_cpu_clear_resettable)
-> +       mov32   r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
-> +       mov     r12, #CPU_NOT_RESETTABLE
-> +       str     r12, [r1]
-> +       mov     pc, lr
-> +ENDPROC(tegra20_cpu_clear_resettable)
-> +
-> +/*
-> + * tegra20_cpu_set_resettable_soon(void)
-> + *
-> + * Called to set the "resettable soon" flag in PMC_SCRATCH41 when
-> + * it is expected that the secondary CPU will be idle soon.
-> + */
-> +ENTRY(tegra20_cpu_set_resettable_soon)
-> +       mov32   r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
-> +       mov     r12, #CPU_RESETTABLE_SOON
-> +       str     r12, [r1]
-> +       mov     pc, lr
-> +ENDPROC(tegra20_cpu_set_resettable_soon)
-> +
-> +/*
-> + * tegra20_sleep_cpu_secondary_finish(unsigned long v2p)
-> + *
-> + * Enters WFI on secondary CPU by exiting coherency.
-> + */
-> +ENTRY(tegra20_sleep_cpu_secondary_finish)
-> +       mrc     p15, 0, r11, c1, c0, 1  @ save actlr before exiting coherency
-> +
-> +       /* Flush and disable the L1 data cache */
-> +       bl      tegra_disable_clean_inv_dcache
-> +
-> +       mov32   r0, TEGRA_PMC_VIRT + PMC_SCRATCH41
-> +       mov     r3, #CPU_RESETTABLE
-> +       str     r3, [r0]
-> +
-> +       bl      cpu_do_idle
-> +
-> +       /*
-> +        * cpu may be reset while in wfi, which will return through
-> +        * tegra_resume to cpu_resume
-> +        * or interrupt may wake wfi, which will return here
-> +        * cpu state is unchanged - MMU is on, cache is on, coherency
-> +        * is off, and the data cache is off
-> +        *
-> +        * r11 contains the original actlr
-> +        */
-> +
-> +       bl      tegra_pen_lock
-> +
-> +       mov32   r3, TEGRA_PMC_VIRT
-> +       add     r0, r3, #PMC_SCRATCH41
-> +       mov     r3, #CPU_NOT_RESETTABLE
-> +       str     r3, [r0]
-> +
-> +       bl      tegra_pen_unlock
-> +
-> +       /* Re-enable the data cache */
-> +       mrc     p15, 0, r10, c1, c0, 0
-> +       orr     r10, r10, #CR_C
-> +       mcr     p15, 0, r10, c1, c0, 0
-> +       isb
-> +
-> +       mcr     p15, 0, r11, c1, c0, 1  @ reenable coherency
-> +
-> +       /* Invalidate the TLBs & BTAC */
-> +       mov     r1, #0
-> +       mcr     p15, 0, r1, c8, c3, 0   @ invalidate shared TLBs
-> +       mcr     p15, 0, r1, c7, c1, 6   @ invalidate shared BTAC
-> +       dsb
-> +       isb
-> +
-> +       /* the cpu was running with coherency disabled,
-> +        * caches may be out of date */
-> +       bl      v7_flush_kern_cache_louis
-> +
-> +       ldmia   sp!, {r1 - r3}          @ pop phys pgd, virt SP, phys resume fn
-> +       mov     r0, #0                  @ return success
-> +       mov     sp, r2                  @ sp is stored in r2 by __cpu_suspend
+> If your proposal is that we'd move the management of the list of host1x
+> devices from tegradrm to host1x driver, we'd have a tight circular
+> dependency between two drivers and that's almost always a bad idea. So
+> far all ideas have revolved around tegradrm calling host1x, and host1x
+> calling a bit of DRM (for CMA, would be fixed in later version) but not
+> host1x calling tegradrm.
 
-This is not true. sp is retrieved from the r2 value popped above.
-Anyway, all this code is a copy'n'paste from __cpu_suspend. Now if I got
-what you want to do right, all you want to do is return to cpu_suspend
-with r0 == 0.
+The problem that this solves is that the DRM driver needs to be bound to
+a specific platform device. None of the DRM subdevices are suitable
+because they are only part of the whole DRM device. I think that host1x
+is the only device that fits here.
 
-(1) You should not rely on the register layout of __cpu_suspend since if
-    it changes we have to patch this code as well. Do not rely on that.
-(2) Why do you want to return with r0 == 0 ? To me that's a mistery.
-    Is that because you want cpu_suspend to restore the page table
-    pointer ? Even in that case I am afraid I am against this code.
-    Usage of cpu_suspend must be consistent and you *must* not use it as a
-    plaster or rely on any specific register layout, it has to be used
-    for the purpose it has been designed for.
+Note that this is only an administrative problem. It shouldn't interfere
+with the way host1x works. The goal is that the DRM device is registered
+at the proper hierarchical location.
 
-Lorenzo
+The circular dependency is indeed a problem, though. Quite frankly I
+have no idea how to solve this. However the approach taken in the
+current patch will break several other requirements as I already
+explained.
+
+Thierry
+
+--0OAP2g/MAC+5xKAE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQvyxcAAoJEN0jrNd/PrOh6PgP/16pT2/qV9KJQutd4zMAUai0
+hFsIEOJcK8ZXaknE9/3D5CYwSJFSN+wOxbSjnMw7C0SqoW0IYPfmwLESQspaQKgd
+o2QfIsnGOSVhLbTUWECoZF5c+oFrHYcEOjGCeSsoszSXZxqaW5q34XgmKVv6Aih+
+WNXzQ0xaJ19OZFb2SZ66r1UbD1nkcvm6uR5t90wII6ED5IFywgQEmRBf6KvVFlWo
+zeU3TSSTKW55wTY6WwxA8VV+0CyHeVjF92QwZyzXeinvA6sPmfKGpidpMZpmEN6w
+/3789gfEEopX0RhPaNKXQb/vSL2n2cPqRxz2+dKR6HveLLEN6fzxafwLNY5pHX/D
+IBBGZh2VH0aA1ruf9p+nVyxAWLUp3PyA1XdL9QYVL8PeG3ehsjLguGpE343+aGMF
+73BKaVGFhlSdAu6m4l4eXi9+mcTtZHQ7+lrOYo+5R66w3CRBKRwLy3idaaCMNt7p
+pgU93TuiDeqU8RQKch/hMm8J/M9/myA7UGO2AgkwyQme9Y6mjs9c3MJuZe752rPE
+BOcYCGzYnH05CEYPGJb4etwWlo8lDov4Yi5z1yoHqUFBsNBmn+9KEOxlPMVqFO22
+rN0Pyksq0CvgLNx0mzKEt9YSOq1e2GJx8gD6SFISB9ndiR4IR/GAGfYEvcaU6H0k
+7LfVedglw3k3DUEewMe6
+=bW0l
+-----END PGP SIGNATURE-----
+
+--0OAP2g/MAC+5xKAE--
