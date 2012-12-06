@@ -1,69 +1,62 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: First version of host1x intro
-Date: Thu, 06 Dec 2012 11:46:12 -0700
-Message-ID: <50C0E7F4.2090802@wwwdotorg.org>
-References: <50BF1831.3060606@nvidia.com> <50C0440D.3000702@gmail.com>  <1354778441.1503.92.camel@tellur> <50C04E1D.1050702@gmail.com> <1354780836.1503.102.camel@tellur> <50C053AD.2000802@gmail.com>
+Subject: Re: [PATCH V2 1/6] ARM: tegra: add pending SGI checking API
+Date: Thu, 06 Dec 2012 11:52:53 -0700
+Message-ID: <50C0E985.2020604@wwwdotorg.org>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>  <1354701715-24150-2-git-send-email-josephl@nvidia.com>  <50BFC605.3000402@wwwdotorg.org> <1354777471.13857.9.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50C053AD.2000802-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1354777471.13857.9.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/06/2012 01:13 AM, Mark Zhang wrote:
-> On 12/06/2012 04:00 PM, Lucas Stach wrote:
->> Am Donnerstag, den 06.12.2012, 15:49 +0800 schrieb Mark Zhang:
-> [...]
+On 12/06/2012 12:04 AM, Joseph Lo wrote:
+> On Thu, 2012-12-06 at 06:09 +0800, Stephen Warren wrote:
+>> On 12/05/2012 03:01 AM, Joseph Lo wrote:
+>>> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
+>>> include the power of GIC. That caused the SGI (Software Generated
+>>> Interrupt) been lost. Because the SGI can't wake up the CPU that in
+>>> the "powered-down" CPU idle mode. We need to check if there is any
+>>> pending SGI when go into "powered-down" CPU idle mode. This is important
+>>> especially when applying the coupled cpuidle framework into "power-down"
+>>> cpuidle dirver. Because the coupled cpuidle framework may have the
+>>> chance that misses IPI_SINGLE_FUNC handling sometimes.
 >>>
->>> OK. So these relocation addresses are used to let userspace tells kernel
->>> which buffers mentioned in the command should be relocated to addresses
->>> which host1x clients able to reach.
->>>
->> Yep, preferably all buffers referenced by a command stream should
->> already be set up in such a position (CMA with Tegra2) or the relocation
->> should be nothing more than setting up IOMMU page tables (Tegra3).
+>>> For the PPI or SPI, something like the legacy peripheral interrupt. It
+>>> still can be maintained by Tegra legacy interrupt controller. If there
+>>> is any pending PPI or SPI when CPU in "powered-down" CPU idle mode. The
+>>> CPU can be woken up immediately. So we don't need to take care the same
+>>> situation for PPI or SPI.
 >>
->>> I'm also wondering that, if our driver understands the stuffs in the
->>> commands, maybe we can find out all addresses in the command, in that
->>> way, we will not need userspace tells us which are the addresses need to
->>> be relocated, right?
+>> Is this feature something that can/should be added to the core GIC
+>> driver, rather than something custom in the Tegra code?
 >>
->> No. How will the kernel ever know which buffer gets referenced in a
->> command stream? All the kernel sees is is a command stream with
->> something like "blit data to address 0xADDR" in it. The only info that
->> you can gather from that is that there must be some buffer to blit into.
->> Neither do you know which buffer the stuff should be going to, nor can
->> you know if you blit to offset zero in this buffer. It's perfectly valid
->> to only use a subregion of a buffer.
+> This function is SoC specific code not a generic common code even I
+> modify it to more generic for checking the pending irq (SGI, PPI and
+> SPI). Different SoC had different design about it. For ex, some SoC only
+> put CPU core to power saving mode not include GIC, or there is another
+> irq controller can handle the case when CPU go into power saving mode.
+> Differenc SoC had different usage here (some need to check all pending
+> irq, some need to check SGI only and some even no need to consider
+> this).
+
+Hmmm. OK.
+
+>> Part of the reason I ask is that I'd like to avoid any more:
 >>
->> Or maybe I'm misunderstanding you and you mean it the other way around.
->> You don't let userspace dictate the addresses, the relocation
->> information just tells the kernel to find the addresses of the
->> referenced buffers for you and insert them, instead of the dummy
->> information, into the command stream.
+>> static void __iomem *distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
+>>
+>> since that requires static page tables to be set up, whereas I'd like to
+>> reduce, as much as possible, the set of pages Tegra maps statically.
 > 
-> Yes, I think this is what I mean. No dummy information in the command
-> stream, userspace just fills the address which it uses(actually this is
-> cpu address of the buffer) in the command stream, and our driver must
-> have a HashTable or something which contains the buffer address pair --
-> (cpu address, dma address), so our driver can find the dma addresses for
-> every buffer then modify the addresses in the command stream.
+> I can move this into the function as a temp variable.
 
-Typically there would be no CPU address; there's no need in most cases
-to ever map most buffers to the CPU.
-
-Automatically parsing the buffer sounds like an interesting idea, but
-then the kernel relocation code would have to know the meaning of every
-single register or command-stream "method" in order to know which of
-them take a buffer address as an argument. I am not familiar with this
-HW specifically, so perhaps it's much more regular than I think and it's
-actually easy to do that, but I imagine it'd be a PITA to implement that
-(although perhaps we have to for the command-stream validation stuff
-anyway?). Also, it'd be a lot quicker at least for larger command
-buffers to go straight to the few locations in the command stream where
-a buffer is referenced (i.e. use the side-band metadata for relocation)
-rather than having the CPU re-read the entire command stream in the
-kernel to parse it.
+Well, the issue here is use of the IO_ADDRESS() macro at all; ioremap()
+at run-time would be better, which I imagine is what the core GIC driver
+does when intialized from DT. Still, I suppose there are many instance
+of IO_ADDRESS() in the mach-tegra directory right now, so adding one
+more won't hurt too much; we still need to do a big pass to get rid of
+them sometime if possible.
