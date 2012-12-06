@@ -1,54 +1,78 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: First version of host1x intro
-Date: Thu, 06 Dec 2012 08:20:41 +0100
-Message-ID: <1354778441.1503.92.camel@tellur>
-References: <50BF1831.3060606@nvidia.com> <50C0440D.3000702@gmail.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Thu, 6 Dec 2012 15:22:56 +0800
+Message-ID: <1354778576.13857.19.camel@jlo-ubuntu-64.nvidia.com>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+	 <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+	 <50BFC826.1020705@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50C0440D.3000702-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <50BFC826.1020705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 06.12.2012, 15:06 +0800 schrieb Mark Zhang:
-[...]
-> > First action taken is taking a reference to all buffers in the command
-> > stream. This includes the command stream buffers themselves, but also
-> > the target buffers. We also map each buffer to target hardware to get a
-> > device virtual address.
+On Thu, 2012-12-06 at 06:18 +0800, Stephen Warren wrote:
+> On 12/05/2012 03:01 AM, Joseph Lo wrote:
+> > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > When the secondary CPU requests to enter powered-down state, it saves
+> > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > powered-down state too. If the secondary CPU be woken up before CPU0
+> > entering powered-down state, then it needs to restore its CPU states
+> > and waits for next chance.
 > > 
-> > After this, relocation information is processed. Each reference to
-> > target buffers in command stream are replaced with device virtual
-> > addresses. The relocation information contains the reference to target
-> > buffer, and to command stream to be able to do this.
+> > Be aware of that, you may see the legacy power state "LP2" in the code
+> > which is exactly the same meaning of "CPU power down".
 > 
-> Could you explain more about this "relocation information"? I assume the
-> "target buffers" here mentioned are some memory saving, e.g, textures,
-> compressed video data which need to be decoded...
-> But the userspace should already allocate the memory to save them, why
-> we need to relocate?
+> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
 > 
-"Relocation" is the term used to express the fixup of addresses in the
-command buffer. You are right, the memory is allocated and stays the
-same, but userspace can not know where in the GPU address space a
-specific buffer is bound (maybe it's even unbound at the time, when
-userspace stitches together the pushbuf). So userspace dumps some kind
-of dummy information into the command stream instead of a real buffer
-address. With the relocation information (which is kind of a sideband
-buffer to the commandbuf) it then tells the kernel to insert real GPU
-virtual addresses in the locations of the dummy info. For the kernel to
-do so, it needs to know:
-1. where in the command stream is a dummy address
-2. which buffers address should be inserted instead
-3. which offset into this buffer should be added to the address to be
-inserted
+> > +static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
+> 
+> > +	return (entered_lp2) ? index : 0;
+> 
+> No need for the brackets there.
+> 
+OK. Will fix.
 
-So while processing a reloc, kernel pins buffers in memory (makes pages
-non-movable and bind them into gpu address space) and substitute all
-dummy information with real gpu virt addresses in the commandbuf.
+> BTW, could you Cc Colin Cross on any future revisions of these patches;
+> it'd be good to get his take on them.
+> 
+OK. The next version will directly support coupled cpuidle. I will add
+Colin into Cc.
 
-Regards,
-Lucas
+> > diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
+> 
+> > +/*
+> > + * tegra_pen_lock
+> 
+> > + * on cpu 0:
+> > + * SCRATCH38 = r2 = flag[0]
+> > + * SCRATCH39 = r3 = flag[1]
+> 
+> It would be slightly clearer if that was written:
+> 
+> * r2 = flag[0] (in SCRATCH38)
+> * r3 = flag[1] (in SCRATCH39)
+> 
+> since the meaning of r2/r3 is what's being selected.
+> 
+OK. Will fix.
+
+> > +	mov	r12, #1
+> > +	str	r12, [r2]		@ flag[cpu] = 1
+> > +	dsb
+> > +	str	r12, [r1]		@ !turn = cpu
+> 
+> Should that be "str r0, [r1]"? Otherwise, you're always writing 1 there,
+> not writing the CPU ID as expected.
+
+The CPU_ID was not used to lock or un-lock the flag. Wriging 1 to lock
+and 0 to release.
+
+Thanks,
+Joseph
