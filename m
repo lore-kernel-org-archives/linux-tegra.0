@@ -1,92 +1,72 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v3 1/1] iommu/tegra: smmu: bus_notifier registers platform
- IOMMU devices
-Date: Fri, 7 Dec 2012 11:12:05 +0100
-Message-ID: <20121207.121205.1712068640752315024.hdoyu@nvidia.com>
-References: <1354646264-12126-1-git-send-email-hdoyu@nvidia.com><50BFB88C.8080901@wwwdotorg.org>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: i915 freakout with latest 3.7 git
+Date: Fri, 7 Dec 2012 22:08:13 +0100
+Message-ID: <CAKMK7uEd_KY+FS9UKqRcFnKuUo5_8TnWnAVgLm7ogtbKU7OVNg@mail.gmail.com>
+References: <20121203173951.GA25384@fancy-poultry.org>
+	<CAKMK7uEGTWgPO-wf7aNLC+y9zLYPyy6f_djn6D-Gx-n6bFqcJA@mail.gmail.com>
+	<20121204123522.GA32419@fritha.org>
+	<1498848.rM1KKK5er8@al>
+	<CAKMK7uHH8U64w5kWVp1oOnhTHkStGoJHJx1KazCQ2-gaCAm0Sg@mail.gmail.com>
+	<20121207170704.GA24395@fancy-poultry.org>
+	<CAKMK7uHNn9b1TdUaUn=4DFhF=zBtZToOtF2uSRf2doVCTOdzaQ@mail.gmail.com>
+	<20121207204406.GA26309@fritha.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50BFB88C.8080901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20121207204406.GA26309-iEI8Y0CNJBYdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Heinz Diehl <htd-iEI8Y0CNJBYdnm+yROfE0A@public.gmane.org>
+Cc: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, intel-gfx <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 5 Dec 2012 22:11:40 +0100:
-
-> On 12/04/2012 11:37 AM, Hiroshi Doyu wrote:
-> > Most of platform devices are IOMMU'able in Tegra30 SoC. Registering
-> > all IOMMU'able devices manually isn't nice. This patch allows
-> > platform bus_notifier to register IOMMU devices. Map info can be
-> > passed from DT. Info format is:
-> >
-> >   dma-window = <0 0x40000000>;
-> >
-> > TODO:
-> > A map can be shared with mutiple devices. This info also could be
-> > passed from DT or default map can be set in advance.
+On Fri, Dec 7, 2012 at 9:44 PM, Heinz Diehl <htd-iEI8Y0CNJBYdnm+yROfE0A@public.gmane.org> wrote:
+> On 07.12.2012, Daniel Vetter wrote:
+>> > I think I can reliably reproduce the hang on my machine now. I have to
+>> > try some HD-videos on Youtube while writing a big file with dd. The
+>> > hang often occurs withing max. 5 min.
 >
-> > +static int tegra_smmu_device_notifier(struct notifier_block *nb,
-> > +				      unsigned long event, void *_dev)
+>> That sounds pretty awesome: Just to check, is this already with rc6
+>> disable? Also, which gpu chip?
 >
-> > +	switch (event) {
-> > +	case BUS_NOTIFY_ADD_DEVICE:
-> > +		err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base,
-> > +					&size);
-> > +		if (!err)
-> > +			map = arm_iommu_create_mapping(&platform_bus_type,
-> > +						       base, size, 0);
+> This is with latest 3.7-git and i915.i915_enable_rc6=0.
+> Attached is a logfile/dmesg after booting with debug options on which
+> hopefully shows you the gpu chip.
 >
-> So, this ends up attempting to hook up the Tegra SMMU for /any/ node on
-> a platform bus that has a dma-window property. That seems a little
-> dangerous. I guess it's not true for Tegra30, but what if there are
-> multiple buses on the SoC, each with a separate IOMMU - using this
-> approach would mean the two IOMMU drivers end up fighting to register
-> mappings for devices on each-others buses.
+>> Sure, always glad to help excellent bug reporters along. My usual
+>> kernel bisect howto is:
+>> http://www.reactivated.net/weblog/archives/2006/01/using-git-bisect-to-find-buggy-kernel-patches/
+>> It seems to server rather well thus far.
+
+ilk with rc6 disabled, and the two hangs you've attached both die on
+the MI_FLUSH in between a 3D primitive and a 2D blit, like all the
+other non-rc6 hangs we've seen thus far that indicate that 3.7
+regressed. This A looks _very_ good. I'm adding lists again so that
+people are updated and can check whether I've analyzed the
+error_states correctly. For reference I've uploaded your dmesg and
+error_states at
+
+http://people.freedesktop.org/~danvet/stuff/gpu-hang.tar.bz2
+
+> Thanks, I've read it and think that will be pretty easy (technically).
+> Am I right to download Linus' tree first, and so compile an 3.7.0-rc1,
+> and if I can reproduce the bug with it, it should be a little bit of a
+> shorter way to get the offending patch bisected?
 >
-> I think the solution here is one of:
+>> Good luck with the exams!
 >
-> a) Explicitly represent the bus structure in DT (something we don't do
-> on Tegra at present), and have the bus itself indicate which IOMMU
-> device is the IOMMU for that bus.
+> Thanks! :-)
+>
+>> Yeah, something in 3.7 seems to have blown up - we have a few reports
+>> all claiming that 3.6 is solid, while 3.7 is not :(
+>
+> I'll try my very best to detect the offending patch. So stay tuned ;-)
 
-AHB/APB/PPSB bus don't do much currently. New bus drivers for them
-would be used just for device registration. I'm not so sure if this
-direction is right or not. Could they live with the existing
-platfrom_driver? Any example would be appreciated if any.
+Yeah, this would be very good information to move forward with this bug.
 
-> b) Add another property to each device that has a dma-window, containing
-> the phandle of the IOMMU that handles its accesses. The code above could
-> then validate that it was the IOMMU for each device as it was registered.
+Thanks a lot for your hard work in helping with reproducing this bug.
 
-This sounds reasonably flexible because its only between dt and
-bus_notifier.
-
-> Probably, devices should not be registered until the IOMMU that serves
-> them is available. Otherwise, can't a device probe, start making IO
-> accesses using a physical/bus memory map, and then later have that
-> yanked out and replaced by the IOMMU'd memory map. How is that
-> co-ordinated? That somewhat argues for each device explicitly setting up
-> the IOMMU registration, or the driver core handling the
-> dependencies.
-
-I think that enabling/disabling IOMMU _tranparently_ to drivers may be
-beneficial basically because we don't want to deal with drivers with
-IOMMU enabled separately from the normal case.
-
-For dynamic enabling/disabling of IOMMU, *dma_ops in struct
-dev_archdata will be overwritten, and there may be inconsistency for
-the type of dma allocated buffers. Has there been other arch/platfrom
-to handle dynamic enabling/disalbing IOMMU this already, even for each
-drivers?
-
-> Finally, what is the implication of the TODO above? Given the limited
-> number of ASIDs on Tegra30, isn't that something we need to solve before
-> deploying this patch. Presumably solving it requires a DT binding to be
-> designed and reviewed?
-
-I sent this to merge already becuase additional phandle to a map could
-handle those TODO list flexibly. I'll post some examples for phandle
-to a map/a iommu if no objections for this direction.
+Yours, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
