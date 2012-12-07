@@ -1,65 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
- for secondary CPU
-Date: Thu, 06 Dec 2012 11:59:05 -0700
-Message-ID: <50C0EAF9.1080807@wwwdotorg.org>
-References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>  <1354701715-24150-3-git-send-email-josephl@nvidia.com>  <50BFC826.1020705@wwwdotorg.org> <1354778576.13857.19.camel@jlo-ubuntu-64.nvidia.com>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: First version of host1x intro
+Date: Fri, 07 Dec 2012 13:26:41 +0800
+Message-ID: <50C17E11.5060403@gmail.com>
+References: <50BF1831.3060606@nvidia.com> <50C0440D.3000702@gmail.com>   <1354778441.1503.92.camel@tellur> <50C04E1D.1050702@gmail.com>  <1354780836.1503.102.camel@tellur> <50C053AD.2000802@gmail.com> <1354792628.1503.107.camel@tellur>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1354778576.13857.19.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <1354792628.1503.107.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/06/2012 12:22 AM, Joseph Lo wrote:
-> On Thu, 2012-12-06 at 06:18 +0800, Stephen Warren wrote:
->> On 12/05/2012 03:01 AM, Joseph Lo wrote:
->>> The powered-down state of Tegra20 requires power gating both CPU cores.
->>> When the secondary CPU requests to enter powered-down state, it saves
->>> its own contexts and then enters WFI. The Tegra20 had a limition to
->>> power down both CPU cores. The secondary CPU must waits for CPU0 in
->>> powered-down state too. If the secondary CPU be woken up before CPU0
->>> entering powered-down state, then it needs to restore its CPU states
->>> and waits for next chance.
+On 12/06/2012 07:17 PM, Lucas Stach wrote:
+> Am Donnerstag, den 06.12.2012, 16:13 +0800 schrieb Mark Zhang:
+>> On 12/06/2012 04:00 PM, Lucas Stach wrote:
+> [...]
 >>>
->>> Be aware of that, you may see the legacy power state "LP2" in the code
->>> which is exactly the same meaning of "CPU power down".
-
->>> diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
+>>> Or maybe I'm misunderstanding you and you mean it the other way around.
+>>> You don't let userspace dictate the addresses, the relocation
+>>> information just tells the kernel to find the addresses of the
+>>> referenced buffers for you and insert them, instead of the dummy
+>>> information, into the command stream.
 >>
->>> +/*
->>> + * tegra_pen_lock
+>> Yes, I think this is what I mean. No dummy information in the command
+>> stream, userspace just fills the address which it uses(actually this is
+>> cpu address of the buffer) in the command stream, and our driver must
+>> have a HashTable or something which contains the buffer address pair --
+>> (cpu address, dma address), so our driver can find the dma addresses for
+>> every buffer then modify the addresses in the command stream.
 >>
->>> + * on cpu 0:
->>> + * SCRATCH38 = r2 = flag[0]
->>> + * SCRATCH39 = r3 = flag[1]
+>> Hope I explain that clear.
 >>
->> It would be slightly clearer if that was written:
->>
->> * r2 = flag[0] (in SCRATCH38)
->> * r3 = flag[1] (in SCRATCH39)
->>
->> since the meaning of r2/r3 is what's being selected.
->>
-> OK. Will fix.
 > 
->>> +	mov	r12, #1
->>> +	str	r12, [r2]		@ flag[cpu] = 1
-
-So here I can see we should hard-code the value that's written
-
->>> +	dsb
->>> +	str	r12, [r1]		@ !turn = cpu
-
-But here we're also writing "1" always, whereas the comment says it's
-writing "cpu", and given the algorithm description, I would expect to
-write "cpu" here not "1".
-
->> Should that be "str r0, [r1]"? Otherwise, you're always writing 1 there,
->> not writing the CPU ID as expected.
+> And to do so we would have to hold an unfortunately large table in
+> kernel, as a buffer can be mapped by different userspace processes at
+> different locations. Also you would have to match against some variably
+> sized ranges to find the correct buffer, as the userspace would have to
+> pack bufferbaseaddress and offset into same value.
 > 
-> The CPU_ID was not used to lock or un-lock the flag. Wriging 1 to lock
-> and 0 to release.
+> I really don't think it's worth the hassle and it's the right way to use
+> the proven scheme of a sidebandbuffer to pass in the reloc informations.
+> 
+
+Yep, agree. Thanks for the explanation.
+
+Mark
+> Regards,
+> Lucas
+> 
