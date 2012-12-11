@@ -1,77 +1,37 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: =?UTF-8?q?=5BPATCH=5D=20drm=3A=20tegra=3A=20fix=20front=5Fporch=20=3C-=3E=20back=5Fporch=20mixup?=
-Date: Tue, 11 Dec 2012 21:51:41 +0100
-Message-ID: <1355259101-17815-1-git-send-email-dev@lynxeye.de>
+From: Timur <timur.mehrvarz-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Subject: ehci-tegra issue with deep sleep
+Date: Tue, 11 Dec 2012 23:23:12 +0100
+Message-ID: <50C7B250.7020409@riseup.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-=46ixes wrong picture offset observed when using HDMI output with a
-Technisat HD TV.
+Hi. I discovered a problem with USB host mode on a Nexus 7 running 
+Android 4.2.x: USB slave devices will become undetectable ("not 
+accepting address xx, error -71") after the host goes through a deep 
+sleep cycle (60+ seconds loss of external power; running on battery). In 
+this situation the methods tegra_ehci_suspend() and tegra_ehci_resume() 
+are being called. I am _not_ experiencing this issue at all, when the 
+host only goes through a light sleep cycle (less than 20 seconds of 
+power loss). During light sleep, the methods tegra_ehci_suspend() and 
+tegra_ehci_resume() are _not_ being called.
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
-Captions are a bit confusing here. As the porch is always relative to
-the sync pulse, the left picture margin is actually the back_porch.
----
- drivers/gpu/drm/tegra/dc.c   | 8 ++++----
- drivers/gpu/drm/tegra/hdmi.c | 6 +++---
- 2 Dateien ge=C3=A4ndert, 7 Zeilen hinzugef=C3=BCgt(+), 7 Zeilen entfer=
-nt(-)
+The slave device (a USB DAC; many different products have been tested) 
+is loosing power in both cases. But this does not seem to be the 
+problem, because slave devices stays accessible, when the host (N7) only 
+goes through light sleep.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 0744103..54683e4 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -102,12 +102,12 @@ static int tegra_dc_set_timings(struct tegra_dc *=
-dc,
- 		((mode->hsync_end - mode->hsync_start) <<  0);
- 	tegra_dc_writel(dc, value, DC_DISP_SYNC_WIDTH);
-=20
--	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
--		((mode->hsync_start - mode->hdisplay) <<  0);
--	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
--
- 	value =3D ((mode->vtotal - mode->vsync_end) << 16) |
- 		((mode->htotal - mode->hsync_end) <<  0);
-+	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
-+
-+	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
-+		((mode->hsync_start - mode->hdisplay) <<  0);
- 	tegra_dc_writel(dc, value, DC_DISP_FRONT_PORCH);
-=20
- 	value =3D (mode->vdisplay << 16) | mode->hdisplay;
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.=
-c
-index ab40164..81ea934 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -479,7 +479,7 @@ static void tegra_hdmi_setup_avi_infoframe(struct t=
-egra_hdmi *hdmi,
- 		return;
- 	}
-=20
--	h_front_porch =3D mode->htotal - mode->hsync_end;
-+	h_front_porch =3D mode->hsync_start - mode->hdisplay;
- 	memset(&frame, 0, sizeof(frame));
- 	frame.r =3D HDMI_AVI_R_SAME;
-=20
-@@ -634,8 +634,8 @@ static int tegra_output_hdmi_enable(struct tegra_ou=
-tput *output)
-=20
- 	pclk =3D mode->clock * 1000;
- 	h_sync_width =3D mode->hsync_end - mode->hsync_start;
--	h_front_porch =3D mode->htotal - mode->hsync_end;
--	h_back_porch =3D mode->hsync_start - mode->hdisplay;
-+	h_back_porch =3D mode->htotal - mode->hsync_end;
-+	h_front_porch =3D mode->hsync_start - mode->hdisplay;
-=20
- 	err =3D regulator_enable(hdmi->vdd);
- 	if (err < 0) {
---=20
-1.7.11.7
+Is anyone aware of this problem? Has it been fixed since 3.1.10?
+Thank you.
+
+Timur
+
+Project on github:
+http://mehrvarz.github.com/usb-host-mode-power-management-nexus7
+
+Discussion: "Can you charge & USB Host mode simultaneously?"
+http://rootzwiki.com/forum/512-nexus-7
