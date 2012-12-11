@@ -1,41 +1,77 @@
-From: Heinz Diehl <htd-iEI8Y0CNJBYdnm+yROfE0A@public.gmane.org>
-Subject: Re: i915 freakout with latest 3.7 git
-Date: Tue, 11 Dec 2012 17:11:21 +0100
-Message-ID: <20121211161121.GA1889@fritha.org>
-References: <CAKMK7uEGTWgPO-wf7aNLC+y9zLYPyy6f_djn6D-Gx-n6bFqcJA@mail.gmail.com>
- <20121204123522.GA32419@fritha.org>
- <1498848.rM1KKK5er8@al>
- <CAKMK7uHH8U64w5kWVp1oOnhTHkStGoJHJx1KazCQ2-gaCAm0Sg@mail.gmail.com>
- <20121207170704.GA24395@fancy-poultry.org>
- <CAKMK7uHNn9b1TdUaUn=4DFhF=zBtZToOtF2uSRf2doVCTOdzaQ@mail.gmail.com>
- <20121207204406.GA26309@fritha.org>
- <CAKMK7uEd_KY+FS9UKqRcFnKuUo5_8TnWnAVgLm7ogtbKU7OVNg@mail.gmail.com>
- <20121208130648.GA3311@fritha.org>
- <20121211102225.GP11556@phenom.ffwll.local>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: =?UTF-8?q?=5BPATCH=5D=20drm=3A=20tegra=3A=20fix=20front=5Fporch=20=3C-=3E=20back=5Fporch=20mixup?=
+Date: Tue, 11 Dec 2012 21:51:41 +0100
+Message-ID: <1355259101-17815-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20121211102225.GP11556-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, intel-gfx <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.12.2012, Daniel Vetter wrote: 
+=46ixes wrong picture offset observed when using HDMI output with a
+Technisat HD TV.
 
-> Can you please test the patch at
-> 
-> https://bugs.freedesktop.org/attachment.cgi?id=70111
-> 
-> That one should disable all effects of the unbound tracking, since a
-> revert of the below commit conflicts.
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+Captions are a bit confusing here. As the porch is always relative to
+the sync pulse, the left picture margin is actually the back_porch.
+---
+ drivers/gpu/drm/tegra/dc.c   | 8 ++++----
+ drivers/gpu/drm/tegra/hdmi.c | 6 +++---
+ 2 Dateien ge=C3=A4ndert, 7 Zeilen hinzugef=C3=BCgt(+), 7 Zeilen entfer=
+nt(-)
 
-I applied this patch to Linus' git from today. "Boom" after about 1
-min.
-
-The errorstate file is here:
-
-http://www.fritha.org/i915/errorstate3.tar.bz2
-
-Heinz
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 0744103..54683e4 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -102,12 +102,12 @@ static int tegra_dc_set_timings(struct tegra_dc *=
+dc,
+ 		((mode->hsync_end - mode->hsync_start) <<  0);
+ 	tegra_dc_writel(dc, value, DC_DISP_SYNC_WIDTH);
+=20
+-	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
+-		((mode->hsync_start - mode->hdisplay) <<  0);
+-	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
+-
+ 	value =3D ((mode->vtotal - mode->vsync_end) << 16) |
+ 		((mode->htotal - mode->hsync_end) <<  0);
++	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
++
++	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
++		((mode->hsync_start - mode->hdisplay) <<  0);
+ 	tegra_dc_writel(dc, value, DC_DISP_FRONT_PORCH);
+=20
+ 	value =3D (mode->vdisplay << 16) | mode->hdisplay;
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.=
+c
+index ab40164..81ea934 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -479,7 +479,7 @@ static void tegra_hdmi_setup_avi_infoframe(struct t=
+egra_hdmi *hdmi,
+ 		return;
+ 	}
+=20
+-	h_front_porch =3D mode->htotal - mode->hsync_end;
++	h_front_porch =3D mode->hsync_start - mode->hdisplay;
+ 	memset(&frame, 0, sizeof(frame));
+ 	frame.r =3D HDMI_AVI_R_SAME;
+=20
+@@ -634,8 +634,8 @@ static int tegra_output_hdmi_enable(struct tegra_ou=
+tput *output)
+=20
+ 	pclk =3D mode->clock * 1000;
+ 	h_sync_width =3D mode->hsync_end - mode->hsync_start;
+-	h_front_porch =3D mode->htotal - mode->hsync_end;
+-	h_back_porch =3D mode->hsync_start - mode->hdisplay;
++	h_back_porch =3D mode->htotal - mode->hsync_end;
++	h_front_porch =3D mode->hsync_start - mode->hdisplay;
+=20
+ 	err =3D regulator_enable(hdmi->vdd);
+ 	if (err < 0) {
+--=20
+1.7.11.7
