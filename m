@@ -1,66 +1,48 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCHv3 0/7] Support for Tegra 2D hardware
-Date: Thu, 13 Dec 2012 16:03:11 +0100
-Message-ID: <1355410991.11327.12.camel@selen>
-References: <1355407484-28904-1-git-send-email-tbergstrom@nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: Tegra3 ehci_suspend and ehci_resume
+Date: Thu, 13 Dec 2012 10:04:18 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1212130959400.1415-100000@iolanthe.rowland.org>
+References: <50C999D8.4090507@riseup.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355407484-28904-1-git-send-email-tbergstrom@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: thierry.reding@avionic-design.de, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50C999D8.4090507-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Timur <timur.mehrvarz-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Terje,
+On Thu, 13 Dec 2012, Timur wrote:
 
-Am Donnerstag, den 13.12.2012, 16:04 +0200 schrieb Terje Bergstrom:
-> This set of patches adds support for Tegra20 and Tegra30 host1x and
-> 2D. It is based on linux-next.
+> On 12/12/2012 07:34 PM, Alan Stern wrote:
 > 
-> The third version has too many changes to list all of them. Here are
-> highlights:
->  * Renamed to host1x, and moved to drivers/gpu/host1x
->  * Greatly simplified the inner workings between physical and logical
->    driver
->  * Does not use AUXDATA for passing data to driver
->  * Runtime power management removed - will replace with runtime PM
->    later
->  * IOCTLs padded and use __64 for passing pointers
->  * DMABUF support removed, replaced with GEM CMA support
-
-You are still doing the allocation the IMHO wrong way around. I thought
-we agreed to do all the allocations in host1x, which obviously means not
-using the cma_gem_helpers anymore, but introducing a new native host1x
-object to back GEM/V4L/whatever objects. IMHO the current approach is a
-clear layering violation and makes proper IOMMU support a lot harder. It
-would also allow to get rid of all the indirections and ifdefs in host1x
-memmgr, as host1x would only have to deal with it's native objects.
-
-All the complexity of converting host1x to GEM objects should be located
-in tegradrm and not be scattered between different modules.
-
-Did you leave this out on purpose in this version of the patchset?
-
->  * host1x driver validates command streams and copies them to kernel
->    owned buffer
->  * Generic interrupt support removed - only syncpt irq remains
->  * Sync points are allocated now dynamically
->  * IO register space handling rewritten to use helper functions
->  * Other numerous fixes and simplifications to code
+> > Okay.  Then how about this: Unplug both the power connector and the
+> > slave connector.  After the N7 goes into deep sleep, plug the power
+> > connector back in but leave the slave unplugged.  Then a few seconds
+> > later, plug in the slave.
 > 
-> Some of the issues left open:
->  * Register definitions still use static inline. There has been a
->    debate about code style versus ability to use compiler type
->    checking and code coverage analysis. There was no conclusion, so
->    I left it as was.
->  * tegradrm has a global variable. Plan was to hide that behind a
->    virtual device, and use that as DRM root device. That plan went
->    bad once the FB CMA helper used the device for trying to allocate
->    memory.
-See above, we should get rid of the helpers and do all allocations
-within host1x.
+> This always fails (-71 / SET_ADDRESS). The issues can then only be 
+> solved, by unplugging the "OTG" adapter. In other words, by switching to 
+> peripheral mode (and back).
+> 
+> > Also try doing the same thing, but don't wait for the N7 to go into
+> > deep sleep.  If this works but the other test doesn't, then clearly the
+> > slave is working correctly and the problem lies in the host controller.
+> 
+> This works well most of the time. Some issues in a few cases, not sure 
+> why. (It is possible to debug over WiFi. But doing so would prevent LP0.)
 
-Regards,
-Lucas
+So it seems clear that the problem is the deep sleep implementation in 
+ehci-tegra.  That implementation is very non-standard in the 3.7 
+kernel.
+
+To fix it will require assistance from the people responsible for the 
+ehci-tegra driver.  I can be of only limited help because I don't have 
+any Tegra hardware and I don't know how it's supposed to work.
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
