@@ -1,50 +1,66 @@
 From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: =?UTF-8?q?=5BPATCH=200/3=5D=20Tegra=20EMC=20clock=20scaling=20API?=
-Date: Fri, 14 Dec 2012 21:14:43 +0100
-Message-ID: <1355516086-11116-1-git-send-email-dev@lynxeye.de>
+Subject: =?UTF-8?q?=5BPATCH=202/3=5D=20ARM=3A=20tegra=3A=20use=20new=20EMC=20clock=20scaling=20API=20in=20CPUfreq=20driver?=
+Date: Fri, 14 Dec 2012 21:14:45 +0100
+Message-ID: <1355516086-11116-3-git-send-email-dev@lynxeye.de>
+References: <1355516086-11116-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1355516086-11116-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series is more of a RFC, but is working pretty well already.
+The CPUfreq driver should not take control of EMC clock directly, but
+rather let the EMC driver know about the CPUs memory performance demand=
+s
+using the new EMC clock scaling API.
 
-It adds a new API to control EMC performance. There are two new
-functions added, to provide memory clients with a way to
-communicate their memory performance demands to the EMC.
-Documentation can be found inline.
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+ arch/arm/mach-tegra/cpu-tegra.c | 15 ++++++++-------
+ 1 Datei ge=C3=A4ndert, 8 Zeilen hinzugef=C3=BCgt(+), 7 Zeilen entfernt=
+(-)
 
-I've tested this on my Colibri T20 with a memory config with the
-following DDR clock rates: 88.25MHz, 133.2MHz, 166.5MHz, 333MHz.
-
-I've verified that CPU clock changes toggle EMC clock changes, just
-like before the change. Also with a 1080p display attached DDR
-clock rate stays at 133,2MHz to satisfy the bandwidth demand of
-the scanout.
-
-With the series applied I no longer see display corruption caused
-by FIFO underflow, while keeping the ability to demand scale the
-EMC clockrate.
-
-Lucas Stach (3):
-  ARM: tegra: add EMC clock scaling API
-  ARM: tegra: use new EMC clock scaling API in CPUfreq driver
-  ARM: tegra: drm: use new EMC clock scaling API to reserve DC
-    bandwidth
-
- arch/arm/mach-tegra/cpu-tegra.c        | 15 +++---
- arch/arm/mach-tegra/tegra2_emc.c       | 84 ++++++++++++++++++++++++++=
-++++++--
- drivers/gpu/drm/tegra/dc.c             | 11 +++++
- include/memory/tegra_emc_performance.h | 79 ++++++++++++++++++++++++++=
-++++++
- 4 Dateien ge=C3=A4ndert, 179 Zeilen hinzugef=C3=BCgt(+), 10 Zeilen ent=
-fernt(-)
- create mode 100644 include/memory/tegra_emc_performance.h
-
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-=
+tegra.c
+index a74d3c7..8908e32 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -29,6 +29,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/suspend.h>
++#include <memory/tegra_emc_performance.h>
+=20
+ /* Frequency table index must be sequential starting at 0 */
+ static struct cpufreq_frequency_table freq_table[] =3D {
+@@ -117,16 +118,16 @@ static int tegra_update_cpu_speed(unsigned long r=
+ate)
+ 	if (freqs.old =3D=3D freqs.new)
+ 		return ret;
+=20
+-	/*
+-	 * Vote on memory bus frequency based on cpu frequency
+-	 * This sets the minimum frequency, display or avp may request higher
+-	 */
++	/* Boost memory bus frequency based on CPU frequency */
+ 	if (rate >=3D 816000)
+-		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
++		tegra_emc_request_perf_level(TEGRA_EMC_SC_MPCORE,
++					     TEGRA_EMC_PL_HIGH);
+ 	else if (rate >=3D 456000)
+-		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
++		tegra_emc_request_perf_level(TEGRA_EMC_SC_MPCORE,
++					     TEGRA_EMC_PL_MID);
+ 	else
+-		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
++		tegra_emc_request_perf_level(TEGRA_EMC_SC_MPCORE,
++					     TEGRA_EMC_PL_LOW);
+=20
+ 	for_each_online_cpu(freqs.cpu)
+ 		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
 --=20
 1.7.11.7
