@@ -1,29 +1,47 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/2] usb: tegra: modifying port reset based on instance number
-Date: Fri, 14 Dec 2012 12:29:06 +0530
-Message-ID: <1355468348-8821-1-git-send-email-vbyravarasu@nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: [PATCH 1/2] arm: tegra: Add new DT property to USB node.
+Date: Fri, 14 Dec 2012 12:29:07 +0530
+Message-ID: <1355468348-8821-2-git-send-email-vbyravarasu@nvidia.com>
+References: <1355468348-8821-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355468348-8821-1-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: grant.likely@secretlab.ca, rob.herring@calxeda.com, rob@landley.net, swarren@wwwdotorg.org, linux@arm.linux.org.uk, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, sjg@chromium.org, olof@lixom.net
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra USB host driver is using port instance number,
-to handle some of the hardware issues on SOC e.g. reset PORT0
-twice etc. As instance number based handling looks ugly,
-added a new property to USB DT node for this purpose.
-Modified host driver to make use of the information passed
-through DT to reset the port second time.
+As Tegra USB host driver is using instance number for resetting
+PORT0 twice, adding a new DT property for handling this.
 
-
-Venu Byravarasu (2):
-  arm: tegra: Add new DT property to USB node.
-  usb: host: tegra: Resetting PORT0 based on information received via
-    DT.
-
+Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+---
  .../bindings/usb/nvidia,tegra20-ehci.txt           |    2 ++
  arch/arm/boot/dts/tegra20.dtsi                     |    1 +
- drivers/usb/host/ehci-tegra.c                      |    6 +++++-
- 3 files changed, 8 insertions(+), 1 deletions(-)
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+index e9b005d..443a2b4 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+@@ -27,3 +27,5 @@ Optional properties:
+     registers are accessed through the APB_MISC base address instead of
+     the USB controller. Since this is a legacy issue it probably does not
+     warrant a compatible string of its own.
++  - nvidia,needs-double-reset : boolean is to be set for some of the Tegra2
++    USB ports, which need reset twice due to hardware issues.
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index b8effa1..3ebbd0c 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -364,6 +364,7 @@
+ 		phy_type = "utmi";
+ 		nvidia,has-legacy-mode;
+ 		status = "disabled";
++		nvidia,needs-double-reset;
+ 	};
+ 
+ 	usb@c5004000 {
+-- 
+1.7.0.4
