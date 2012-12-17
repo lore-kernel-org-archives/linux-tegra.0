@@ -1,68 +1,36 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] serial: tegra: add serial driver
-Date: Mon, 17 Dec 2012 14:55:21 -0700
-Message-ID: <50CF94C9.2050907@wwwdotorg.org>
-References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: add EMC clock scaling API
+Date: Mon, 17 Dec 2012 14:57:24 -0700
+Message-ID: <50CF9544.2090108@wwwdotorg.org>
+References: <1355516086-11116-1-git-send-email-dev@lynxeye.de>  <1355516086-11116-2-git-send-email-dev@lynxeye.de>  <50CF8D51.6020208@wwwdotorg.org> <1355780639.1490.22.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: alan@linux.intel.com, gregkh@linuxfoundation.org, jslaby@suse.cz, grant.likely@secretlab.ca, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1355780639.1490.22.camel@tellur>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/17/2012 05:10 AM, Laxman Dewangan wrote:
-> Nvidia's Tegra has multiple uart controller which supports:
-> - APB dma based controller fifo read/write.
-> - End Of Data interrupt in incoming data to know whether end
->   of frame achieve or not.
-> - Hw controlled RTS and CTS flow control to reduce SW overhead.
-> 
-> Add serial driver to use all above feature.
+On 12/17/2012 02:43 PM, Lucas Stach wrote:
+> Am Montag, den 17.12.2012, 14:23 -0700 schrieb Stephen Warren:
+>> On 12/14/2012 01:14 PM, Lucas Stach wrote:
+>>> This allows memory clients to collaboratively control the EMC
+>>> performance.
+>>> Each client may set its performance demands. EMC driver then tries to
+>>> find a DRAM performance level which is able to statisfy all those
+>>> demands.
 
-> diff --git a/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt b/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt
+>>> +static void tegra_emc_scale_clock(void)
+>>
+>>> +	clock_rate = bandwidth_floor >> 2; /* 4byte/clock */
+>>
+>> That assumes a 32-bit SDRAM interface. I'm sure that won't always be
+>> true. Perhaps we should invent a #define for this so it stands out
+>> slightly more if/when this needs to change later.
+>>
+> Hm, maybe we can add a DT property within the EMC node for this.
 
-> +Required properties:
-> +- compatible : should be "nvidia,tegra20-hsuart", "nvidia,tegra30-hsuart".
-
-I think you want ", or" not just "," there. If both are specified,
-"tegra30" should come before "tegra20", so you might want to re-order
-that. That said, other bindings say something like
-"nvidia,tegra<chip>-hsuart" so avoid having to spell out all the
-supported Tegra versions.
-
-> diff --git a/drivers/tty/serial/serial_tegra.c b/drivers/tty/serial/serial_tegra.c
-
-> +struct tegra_uart_chip_data tegra20_uart_chip_data = {
-> +	.tx_fifo_full_status		= false,
-> +	.allow_txfifo_reset_fifo_mode	= true,
-> +	.support_clk_src_div		= false,
-> +};
-> +
-> +struct tegra_uart_chip_data tegra30_uart_chip_data = {
-> +	.tx_fifo_full_status		= true,
-> +	.allow_txfifo_reset_fifo_mode	= false,
-> +	.support_clk_src_div		= true,
-> +};
-
-Nit: Perhaps it'd be nice to move those right before
-tegra_uart_of_match[] - i.e. right where they're used.
-
-> +static struct tegra_uart_platform_data *tegra_uart_parse_dt(
-
-> +	if (of_get_property(np, "nvidia,enable-modem-interrupt", NULL))
-> +		pdata->enable_modem_interrupt = 1;
-
-That should use of_property_read_bool().
-
-> +static int __devinit tegra_uart_probe(struct platform_device *pdev)
-
-> +	if (pdev->dev.of_node) {
-
-That will always be true these days.
-
-I didn't review the body of the UART implementation since I'm not
-familiar with drivers/tty/serial nor too much about our UART HW beyond
-basic 8250 usage.
+I expect you can derive the memory bus width from a combination of the
+HW version and current register settings.
