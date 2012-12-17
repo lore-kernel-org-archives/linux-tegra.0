@@ -1,56 +1,99 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 1/2] arm: tegra: Add new DT property to USB node.
-Date: Mon, 17 Dec 2012 13:18:18 -0800
-Message-ID: <20121217211818.GA20835@kroah.com>
-References: <1355468348-8821-1-git-send-email-vbyravarasu@nvidia.com>
- <1355468348-8821-2-git-send-email-vbyravarasu@nvidia.com>
- <50CF89AF.3000308@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: add EMC clock scaling API
+Date: Mon, 17 Dec 2012 14:23:29 -0700
+Message-ID: <50CF8D51.6020208@wwwdotorg.org>
+References: <1355516086-11116-1-git-send-email-dev@lynxeye.de> <1355516086-11116-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50CF89AF.3000308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1355516086-11116-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 17, 2012 at 02:07:59PM -0700, Stephen Warren wrote:
-> On 12/13/2012 11:59 PM, Venu Byravarasu wrote:
-> > As Tegra USB host driver is using instance number for resetting
-> > PORT0 twice, adding a new DT property for handling this.
-> 
-> Alan, Greg, Felip,e
-> 
-> This series looks fine to me.
-> 
-> I'd like to take all the Tegra-related USB patches through the Tegra
-> tree for 3.9 if possible (so I'm looking for your acks here). I believe
-> Venu plans to significantly clean up the EHCI/PHY driver split for
-> Tegra, rework the drivers, and add support for Tegra30 in addition to
-> Tegra20. Some of this requires changes to some Tegra board files and
-> device trees to maintain "git bisect" I don't know for sure yet, but I
-> believe that rework may also end up conflicting with other clock-related
-> rework that will show up for Tegra in 3.9. Are you OK with this? I'll
-> certainly look for your review/acks on the patches before picking them
-> up though.
+On 12/14/2012 01:14 PM, Lucas Stach wrote:
+> This allows memory clients to collaboratively control the EMC
+> performance.
+> Each client may set its performance demands. EMC driver then tries to
+> find a DRAM performance level which is able to statisfy all those
+> demands.
 
-You can't pick anything up for 3.9 until after 3.8-rc1 is out, according
-to the rules of linux-next, so please wait until that kernel is out
-before doing anything.  Given the timing of 3.8-rc1, and my current
-vacation schedule, I'm not going to be able to do _any_ code review for
-the rest of the year, sorry.
+> diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
 
-After that, I'll be glad to review this.
+> +struct emc_superclient_constraint {
 
-greg k-h
+Why "superclient" not just "client"?
+
+> +static struct emc_superclient_constraint constraints[TEGRA_EMC_SC_NUM];
+
+This way, the EMC driver must know all the possible clients. Wouldn't it
+be better to maintain some kind of dynamic list/... so drivers can just
+add/remove to/from this list. I'm not familiar with other
+perf/constraints APIs already in the kernel, but I /think/ that's how
+they tend to work. This would also mean not having to update the EMC
+driver for new Tegra SoCs if all that changed was the set of clients
+attached to the EMC.
+
+> +static void tegra_emc_scale_clock(void)
+
+> +	clock_rate = bandwidth_floor >> 2; /* 4byte/clock */
+
+That assumes a 32-bit SDRAM interface. I'm sure that won't always be
+true. Perhaps we should invent a #define for this so it stands out
+slightly more if/when this needs to change later.
+
+> +	switch (highest_level) {
+> +	case TEGRA_EMC_PL_MID:
+> +		clock_rate += 300000000;
+> +		break;
+> +	case TEGRA_EMC_PL_HIGH:
+> +		clock_rate += 600000000;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	/* cap clock_rate at 600MHz, enough to select highest rate table */
+> +	clock_rate = min(600000000UL, clock_rate);
+
+I think we should parameterize the 600MHz max clock rate, and perhaps
+even get it from some kind of clk_get_max_rate() API; this 600MHz value
+is highly unlikely to be invariant across SoC versions.
+
+> +void tegra_emc_request_bandwidth(enum tegra_emc_superclient client,
+> +				 int bandwidth)
+> +{
+> +	constraints[client].bandwidth = bandwidth;
+> +
+> +	tegra_emc_scale_clock();
+
+Locking?
+
+> +void tegra_emc_request_perf_level(enum tegra_emc_superclient client,
+> +				  enum tegra_emc_perf_level level)
+> +{
+> +	constraints[client].perf_level = level;
+> +
+> +	tegra_emc_scale_clock();
+
+Locking?
+
+>  static struct tegra_emc_pdata __devinit *tegra_emc_fill_pdata(struct platform_device *pdev)
+
+> +	emc_clk = clk_get_sys(NULL, "emc");
+
+Is there a devm_clk_get_sys()? That would avoid the need to add
+tegra_emc_remove().
+
+Can we use (devm_)clk_get() instead, so we don't have to hard-code clock
+names? That will help when clocks are in DT.
+
+> diff --git a/include/memory/tegra_emc_performance.h b/include/memory/tegra_emc_performance.h
+
+tegra_emc.h seems a better/shorter name.
+
+BTW, did you check our downstream Android kernel to see what we already
+have for EMC scaling constraints? It might provide some useful
+ideas/background.
