@@ -1,28 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Mon, 17 Dec 2012 13:55:45 -0700
-Message-ID: <50CF86D1.7090303@wwwdotorg.org>
-References: <50BF345A.8050201@nvidia.com> <20121205120429.GA29943@avionic-0098.adnet.avionic-design.de> <50C5CAB5.3040000@nvidia.com> <20121212160829.GA30278@avionic-0098.adnet.avionic-design.de> <50C99677.6090306@nvidia.com> <20121213085750.GA14740@avionic-0098.adnet.avionic-design.de> <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50CDF8C4.4070108@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] arm: tegra: Add new DT property to USB node.
+Date: Mon, 17 Dec 2012 14:07:59 -0700
+Message-ID: <50CF89AF.3000308@wwwdotorg.org>
+References: <1355468348-8821-1-git-send-email-vbyravarasu@nvidia.com> <1355468348-8821-2-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50CDF8C4.4070108-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1355468348-8821-2-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, Felipe Balbi <balbi@ti.com>
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, rob@landley.net, linux@arm.linux.org.uk, sjg@chromium.org, olof@lixom.net, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/16/2012 09:37 AM, Terje Bergstr=C3=B6m wrote:
-=2E..
-> ... Sure we could tell DC to ask its parent
-> (host1x), and call host1x driver with platform_device pointer found t=
-hat
-> way, and host1x would return a pointer to tegradrm's data. Hanging th=
-e
-> data onto host1x driver is just a more complicated way of implementin=
-g
-> global data
+On 12/13/2012 11:59 PM, Venu Byravarasu wrote:
+> As Tegra USB host driver is using instance number for resetting
+> PORT0 twice, adding a new DT property for handling this.
 
-No it's not; at that point, the data is no longer global, but specific
-to the driver instance.
+Alan, Greg, Felip,e
+
+This series looks fine to me.
+
+I'd like to take all the Tegra-related USB patches through the Tegra
+tree for 3.9 if possible (so I'm looking for your acks here). I believe
+Venu plans to significantly clean up the EHCI/PHY driver split for
+Tegra, rework the drivers, and add support for Tegra30 in addition to
+Tegra20. Some of this requires changes to some Tegra board files and
+device trees to maintain "git bisect" I don't know for sure yet, but I
+believe that rework may also end up conflicting with other clock-related
+rework that will show up for Tegra in 3.9. Are you OK with this? I'll
+certainly look for your review/acks on the patches before picking them
+up though.
+
+Thanks.
