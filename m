@@ -1,41 +1,58 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: =?UTF-8?q?=5BPATCH=5D=20drm=3A=20tegra=3A=20check=20HDMI=20sink=20capability?=
-Date: Mon, 17 Dec 2012 18:59:23 +0100
-Message-ID: <1355767163-5423-1-git-send-email-dev@lynxeye.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] serial: tegra: add serial driver
+Date: Mon, 17 Dec 2012 18:23:43 +0000
+Message-ID: <20121217182343.37324522@pyramind.ukuu.org.uk>
+References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: alan@linux.intel.com, gregkh@linuxfoundation.org, jslaby@suse.cz, grant.likely@secretlab.ca, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org
 List-Id: linux-tegra@vger.kernel.org
 
-Check if sink is HDMI capable when enabling an output. This disables
-HDMI audio/infoframes if we are talking to a plain DVI sink. All things
-except this check are already in place.
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
- drivers/gpu/drm/tegra/hdmi.c | 3 +++
- 1 Datei ge=C3=A4ndert, 3 Zeilen hinzugef=C3=BCgt(+)
 
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.=
-c
-index ab40164..32ea7d4 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -673,6 +673,9 @@ static int tegra_output_hdmi_enable(struct tegra_ou=
-tput *output)
- 	usleep_range(1000, 2000);
- 	tegra_periph_reset_deassert(hdmi->clk);
-=20
-+	/* if the connected sink is not HDMI capable fall back to plain DVI *=
-/
-+	hdmi->dvi =3D !drm_detect_hdmi_monitor((struct edid *)output->edid);
-+
- 	tegra_dc_writel(dc, VSYNC_H_POSITION(1),
- 			DC_DISP_DISP_TIMING_OPTIONS);
- 	tegra_dc_writel(dc, DITHER_CONTROL_DISABLE | BASE_COLOR_SIZE888,
---=20
-1.7.11.7
+> +
+> +static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup, i=
+nt count)
+> +{
+> +	int copied;
+> +
+> +	tup->uport.icount.rx +=3D count;
+> +	dma_sync_single_for_cpu(tup->uport.dev, tup->rx_dma_buf_phys,
+> +				TEGRA_UART_RX_DMA_BUFFER_SIZE, DMA_FROM_DEVICE);
+> +	copied =3D tty_insert_flip_string(tup->uport.state->port.tty,
+
+Reference needed and port.tty can go to NULL
+(good rule of thumb - any use of port.tty directly is probably wrong)
+
+=E2=80=8E
+> +	tty_flip_buffer_push(u->state->port.tty);
+
+Ditto (and elsewhere)
+
+> +	if ((c_cflag & PARENB) =3D=3D PARENB) {
+> +		symb_bit++;
+> +		if ((c_cflag & CMSPAR) =3D=3D CMSPAR) {
+> +			dev_err(tup->uport.dev, "Space parity not supported\n");
+> +			return;
+
+No - this is out of spec and lets user tasks spam the log. Just clear t=
+he
+flag if not supported.
+
+
+> +	/* Baud rate. */
+> +	baud =3D uart_get_baud_rate(u, termios, oldtermios, 200, 4000000);
+> +	spin_unlock_irqrestore(&u->lock, flags);
+> +	tegra_set_baudrate(tup, baud);
+> +	spin_lock_irqsave(&u->lock, flags);
+
+I think you need to use the helpers to put the actual baud it got into =
+the
+termios if not B0 - see 8250.c ?
+
+Alan
