@@ -1,11 +1,13 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
 Subject: [PATCH] spi: remove check for bits_per_word on transfer
-Date: Mon, 17 Dec 2012 23:21:57 +0530
-Message-ID: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
+Date: Mon, 17 Dec 2012 23:21:58 +0530
+Message-ID: <1355766718-2040-2-git-send-email-ldewangan@nvidia.com>
+References: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com
 Cc: ben-linux@fluff.org, kgene.kim@samsung.com, baohua.song@csr.com, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonas.gorski@gmail.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
