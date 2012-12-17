@@ -1,39 +1,36 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [PATCH 3/4] ARM: dt: tegra30.dtsi: Add SCU node
-Date: Mon, 17 Dec 2012 08:18:03 +0200
-Message-ID: <1355725087-11363-3-git-send-email-hdoyu@nvidia.com>
-References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] cloclsource: tegra: cosmetic: Fix error message
+Date: Mon, 17 Dec 2012 08:33:24 +0200
+Message-ID: <1355726004-16137-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Snoop Control Unit(SCU) node for Cortex A9 MP.
+Add missing \n.
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra30.dtsip |    5 +++++
- 1 file changed, 5 insertions(+)
+Based on Stephen's arm_timer_rework tree
+---
+ drivers/clocksource/tegra20_timer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsip b/arch/arm/boot/dts/tegra30.dtsip
-index 8feba6d..84a41c2 100644
---- a/arch/arm/boot/dts/tegra30.dtsip
-+++ b/arch/arm/boot/dts/tegra30.dtsip
-@@ -91,6 +91,11 @@
- 		};
- 	};
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 3b2f947..5bc1429 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -179,7 +179,7 @@ static void __init tegra20_init_timer(void)
  
-+	scu {
-+		compatible = "arm,cortex-a9-scu";
-+		reg = <0x50040000 0x58>;
-+	};
-+
- 	timer@50004600 {
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0x50040600 0x20>;
+ 	timer_reg_base = of_iomap(np, 0);
+ 	if (!timer_reg_base) {
+-		pr_err("Can't map timer registers");
++		pr_err("Can't map timer registers\n");
+ 		BUG();
+ 	}
+ 
 -- 
 1.7.9.5
