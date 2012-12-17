@@ -1,243 +1,190 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] spi: remove check for bits_per_word on transfer
-Date: Mon, 17 Dec 2012 23:21:58 +0530
-Message-ID: <1355766718-2040-2-git-send-email-ldewangan@nvidia.com>
-References: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: =?UTF-8?q?=5BPATCH=5D=20ARM=3A=20tegra=3A=20dynamically=20calculate=20pll=5Fd=20parameters?=
+Date: Mon, 17 Dec 2012 18:58:23 +0100
+Message-ID: <1355767103-5303-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1355766718-2040-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, baohua.song@csr.com, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonas.gorski@gmail.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When spi client does the spi transfer and does not sets
-the bits_per_word for each transfer then set it as default
-of spi device in spi core before calling low level transfer.
+Calculate PLL_D parameters in a dynamically instead of using a fixed
+table. This allows TegraDRM to drive outputs with CVT compliant modes.
 
-Removing the similar code from different low level drivers as
-it its duplicate checks and it is no more require.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 ---
-This is the continuation of feedback got from Jonas on
-change
-spi: make sure all transfer has bits_per_word set
-where I made the change in only tegra slink driver.
-This patch remove the similar code form all drivers.
+Maybe we can generalize this a bit and reuse this for other PLLs. But
+for now the calculation is specific to PLL_D. To make this useable for
+other PLLs we need to push cpcon and valid P values into the structure
+that defines a PLL.
+---
+ arch/arm/mach-tegra/tegra20_clocks.c      | 88 +++++++++++++++++++++++=
+++++++++
+ arch/arm/mach-tegra/tegra20_clocks.h      |  1 +
+ arch/arm/mach-tegra/tegra20_clocks_data.c | 28 +---------
+ 3 Dateien ge=C3=A4ndert, 91 Zeilen hinzugef=C3=BCgt(+), 26 Zeilen entf=
+ernt(-)
 
- drivers/spi/spi-altera.c        |    2 +-
- drivers/spi/spi-bfin-sport.c    |    3 +--
- drivers/spi/spi-bfin5xx.c       |    3 +--
- drivers/spi/spi-bitbang.c       |    6 +++---
- drivers/spi/spi-clps711x.c      |    2 +-
- drivers/spi/spi-coldfire-qspi.c |    3 +--
- drivers/spi/spi-ep93xx.c        |    2 +-
- drivers/spi/spi-s3c64xx.c       |    2 +-
- drivers/spi/spi-sirf.c          |    3 +--
- drivers/spi/spi-tegra20-slink.c |    9 +++------
- drivers/spi/spi-txx9.c          |    6 ++----
- 11 files changed, 16 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/spi/spi-altera.c b/drivers/spi/spi-altera.c
-index 5e7314a..a537f8d 100644
---- a/drivers/spi/spi-altera.c
-+++ b/drivers/spi/spi-altera.c
-@@ -134,7 +134,7 @@ static int altera_spi_txrx(struct spi_device *spi, struct spi_transfer *t)
- 	hw->tx = t->tx_buf;
- 	hw->rx = t->rx_buf;
- 	hw->count = 0;
--	hw->bytes_per_word = (t->bits_per_word ? : spi->bits_per_word) / 8;
-+	hw->bytes_per_word = t->bits_per_word / 8;
- 	hw->len = t->len / hw->bytes_per_word;
- 
- 	if (hw->irq >= 0) {
-diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
-index ac7ffca..39b0d17 100644
---- a/drivers/spi/spi-bfin-sport.c
-+++ b/drivers/spi/spi-bfin-sport.c
-@@ -416,8 +416,7 @@ bfin_sport_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0)
- 		drv_data->ops = &bfin_sport_transfer_ops_u16;
- 	else
-diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
-index 0429d83..7d7c991 100644
---- a/drivers/spi/spi-bfin5xx.c
-+++ b/drivers/spi/spi-bfin5xx.c
-@@ -642,8 +642,7 @@ static void bfin_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0) {
- 		drv_data->n_bytes = bits_per_word/8;
- 		drv_data->len = (transfer->len) >> 1;
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index 8b3d8ef..61beaec 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -69,7 +69,7 @@ static unsigned bitbang_txrx_8(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u8		*tx = t->tx_buf;
- 	u8			*rx = t->rx_buf;
-@@ -95,7 +95,7 @@ static unsigned bitbang_txrx_16(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u16		*tx = t->tx_buf;
- 	u16			*rx = t->rx_buf;
-@@ -121,7 +121,7 @@ static unsigned bitbang_txrx_32(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u32		*tx = t->tx_buf;
- 	u32			*rx = t->rx_buf;
-diff --git a/drivers/spi/spi-clps711x.c b/drivers/spi/spi-clps711x.c
-index 1366c46..a11cbf0 100644
---- a/drivers/spi/spi-clps711x.c
-+++ b/drivers/spi/spi-clps711x.c
-@@ -68,7 +68,7 @@ static int spi_clps711x_setup_xfer(struct spi_device *spi,
- 				   struct spi_transfer *xfer)
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra=
+/tegra20_clocks.c
+index 4eb6bc8..04b0ff59 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -894,6 +894,94 @@ struct clk_ops tegra_plle_ops =3D {
+ 	.round_rate =3D tegra20_pll_clk_round_rate,
+ };
+=20
++static int tegra20_plld_clk_set_rate(struct clk_hw *hw, unsigned long =
+rate,
++		unsigned long parent_rate)
++{
++	struct clk_tegra *c =3D to_clk_tegra(hw);
++	unsigned long input_rate =3D parent_rate;
++	u64 n =3D 0;
++	int m_max, m_min, m =3D 0;
++	u32 val, rem =3D 0;
++	u8 cpcon =3D 0;
++
++	m_max =3D input_rate / c->u.pll.cf_min;
++	m_min =3D (input_rate / c->u.pll.cf_max) + 1;
++
++	for (m =3D m_min; m <=3D m_max; m++) {
++		n =3D (u64)rate * m;
++		rem =3D do_div(n, input_rate);
++		if (!rem)
++			break;
++	}
++
++	if (rem)
++		return -EINVAL;
++
++	c->mul =3D n;
++	c->div =3D n;
++
++	val =3D clk_readl(c->reg + PLL_BASE);
++	val &=3D ~(PLL_BASE_DIVP_MASK | PLL_BASE_DIVN_MASK |
++		 PLL_BASE_DIVM_MASK);
++	val |=3D (m << PLL_BASE_DIVM_SHIFT) | (n << PLL_BASE_DIVN_SHIFT);
++	clk_writel(val, c->reg + PLL_BASE);
++
++	if (n <=3D 50)
++		cpcon =3D 2;
++	else if (n <=3D 300)
++		cpcon =3D 4;
++	else if (n <=3D 600)
++		cpcon =3D 8;
++	else if (n <=3D 1000)
++		cpcon =3D 12;
++
++	val =3D clk_readl(c->reg + PLL_MISC(c));
++	val &=3D ~PLL_MISC_CPCON_MASK;
++	val |=3D cpcon << PLL_MISC_CPCON_SHIFT;
++	clk_writel(val, c->reg + PLL_MISC(c));
++
++
++	if (c->state =3D=3D ON)
++		tegra20_pll_clk_enable(hw);
++
++	return 0;
++}
++
++static long tegra20_plld_clk_round_rate(struct clk_hw *hw, unsigned lo=
+ng rate,
++				unsigned long *prate)
++{
++	struct clk_tegra *c =3D to_clk_tegra(hw);
++	unsigned long input_rate =3D *prate;
++	u64 n;
++	u32 rem;
++	int m_max, m_min, m;
++
++	if (rate < c->u.pll.vco_min || rate > c->u.pll.vco_max)
++		return -EINVAL;
++
++	m_max =3D input_rate / c->u.pll.cf_min;
++	m_min =3D (input_rate / c->u.pll.cf_max) + 1;
++
++	/* check if we can find an matching integer N */
++	for (m =3D m_min; m <=3D m_max; m++) {
++		n =3D (u64)rate * m;
++		rem =3D do_div(n, input_rate);
++		if (!rem)
++			return rate;
++	}
++
++	return -EINVAL;
++}
++
++struct clk_ops tegra_plld_ops =3D {
++	.is_enabled =3D tegra20_pll_clk_is_enabled,
++	.enable =3D tegra20_pll_clk_enable,
++	.disable =3D tegra20_pll_clk_disable,
++	.set_rate =3D tegra20_plld_clk_set_rate,
++	.recalc_rate =3D tegra20_pll_clk_recalc_rate,
++	.round_rate =3D tegra20_plld_clk_round_rate,
++};
++
+ /* Clock divider ops */
+ static int tegra20_pll_div_clk_is_enabled(struct clk_hw *hw)
  {
- 	u32 speed = xfer->speed_hz ? : spi->max_speed_hz;
--	u8 bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+	u8 bpw = xfer->bits_per_word;
- 	struct spi_clps711x_data *hw = spi_master_get_devdata(spi->master);
- 
- 	if (bpw != 8) {
-diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
-index 58466b8..7b5cc9e 100644
---- a/drivers/spi/spi-coldfire-qspi.c
-+++ b/drivers/spi/spi-coldfire-qspi.c
-@@ -329,8 +329,7 @@ static int mcfqspi_transfer_one_message(struct spi_master *master,
- 		mcfqspi_cs_select(mcfqspi, spi->chip_select, cs_high);
- 
- 		mcfqspi_wr_qir(mcfqspi, MCFQSPI_QIR_SPIFE);
--		if ((t->bits_per_word ? t->bits_per_word :
--					spi->bits_per_word) == 8)
-+		if (t->bits_per_word == 8)
- 			mcfqspi_transfer_msg8(mcfqspi, t->len, t->tx_buf,
- 					t->rx_buf);
- 		else
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index acb1e19..aecbff1 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -446,7 +446,7 @@ static inline int bits_per_word(const struct ep93xx_spi *espi)
- 	struct spi_message *msg = espi->current_msg;
- 	struct spi_transfer *t = msg->state;
- 
--	return t->bits_per_word ? t->bits_per_word : msg->spi->bits_per_word;
-+	return t->bits_per_word;
- }
- 
- static void ep93xx_do_write(struct ep93xx_spi *espi, struct spi_transfer *t)
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 4dd7b7c..ab0c0e4 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -697,7 +697,7 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
- 		INIT_COMPLETION(sdd->xfer_completion);
- 
- 		/* Only BPW and Speed may change across transfers */
--		bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+		bpw = xfer->bits_per_word;
- 		speed = xfer->speed_hz ? : spi->max_speed_hz;
- 
- 		if (xfer->len % (bpw / 8)) {
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index e0f43a5..7506667 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -382,8 +382,7 @@ spi_sirfsoc_setup_transfer(struct spi_device *spi, struct spi_transfer *t)
- 
- 	sspi = spi_master_get_devdata(spi->master);
- 
--	bits_per_word = t && t->bits_per_word ? t->bits_per_word :
--		spi->bits_per_word;
-+	bits_per_word = (t) ? t->bits_per_word : spi->bits_per_word;
- 	hz = t && t->speed_hz ? t->speed_hz : spi->max_speed_hz;
- 
- 	/* Enable IO mode for RX, TX */
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 651167f..7a95bdd 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -284,8 +284,7 @@ static unsigned tegra_slink_calculate_curr_xfer_param(
- 	unsigned max_len;
- 	unsigned total_fifo_words;
- 
--	bits_per_word = t->bits_per_word ? t->bits_per_word :
--						spi->bits_per_word;
-+	bits_per_word = t->bits_per_word;
- 	tspi->bytes_per_word = (bits_per_word - 1) / 8 + 1;
- 
- 	if (bits_per_word == 8 || bits_per_word == 16) {
-@@ -378,8 +377,7 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
- 	} else {
- 		unsigned int bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		for (count = 0; count < rx_full_count; count++) {
- 			x = tegra_slink_readl(tspi, SLINK_RX_FIFO);
- 			for (i = 0; (i < tspi->bytes_per_word); i++)
-@@ -444,8 +442,7 @@ static void tegra_slink_copy_spi_rxbuf_to_client_rxbuf(
- 		unsigned int x;
- 		unsigned int rx_mask, bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		rx_mask = (1 << bits_per_word) - 1;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			x = tspi->rx_dma_buf[count];
-diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
-index d5a3cbb..550b5f4 100644
---- a/drivers/spi/spi-txx9.c
-+++ b/drivers/spi/spi-txx9.c
-@@ -189,9 +189,8 @@ static void txx9spi_work_one(struct txx9spi *c, struct spi_message *m)
- 		unsigned int len = t->len;
- 		unsigned int wsize;
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		wsize = bits_per_word >> 3; /* in bytes */
- 
- 		if (prev_speed_hz != speed_hz
-@@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
- 	/* check each transfer's parameters */
- 	list_for_each_entry (t, &m->transfers, transfer_list) {
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		if (!t->tx_buf && !t->rx_buf && t->len)
- 			return -EINVAL;
- 		if (bits_per_word != 8 && bits_per_word != 16)
--- 
-1.7.1.1
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.h b/arch/arm/mach-tegra=
+/tegra20_clocks.h
+index 8bfd31b..b7bfe87 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.h
++++ b/arch/arm/mach-tegra/tegra20_clocks.h
+@@ -21,6 +21,7 @@ extern struct clk_ops tegra_clk_32k_ops;
+ extern struct clk_ops tegra_pll_ops;
+ extern struct clk_ops tegra_clk_m_ops;
+ extern struct clk_ops tegra_pll_div_ops;
++extern struct clk_ops tegra_plld_ops;
+ extern struct clk_ops tegra_pllx_ops;
+ extern struct clk_ops tegra_plle_ops;
+ extern struct clk_ops tegra_clk_double_ops;
+diff --git a/arch/arm/mach-tegra/tegra20_clocks_data.c b/arch/arm/mach-=
+tegra/tegra20_clocks_data.c
+index a23a073..5a190ec 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra20_clocks_data.c
+@@ -240,33 +240,9 @@ DEFINE_PLL(pll_a, PLL_HAS_CPCON, 0xb0, 73728000, 2=
+000000, 31000000, 1000000,
+ DEFINE_PLL_OUT(pll_a_out0, DIV_U71, 0xb4, 0, 73728000,
+ 		tegra_pll_div_ops, pll_a, 0);
+=20
+-static struct clk_pll_freq_table tegra_pll_d_freq_table[] =3D {
+-	{ 12000000, 216000000, 216, 12, 1, 4},
+-	{ 13000000, 216000000, 216, 13, 1, 4},
+-	{ 19200000, 216000000, 135, 12, 1, 3},
+-	{ 26000000, 216000000, 216, 26, 1, 4},
+-
+-	{ 12000000, 297000000,  99,  4, 1, 4 },
+-	{ 12000000, 339000000, 113,  4, 1, 4 },
+-
+-	{ 12000000, 594000000, 594, 12, 1, 8},
+-	{ 13000000, 594000000, 594, 13, 1, 8},
+-	{ 19200000, 594000000, 495, 16, 1, 8},
+-	{ 26000000, 594000000, 594, 26, 1, 8},
+-
+-	{ 12000000, 616000000, 616, 12, 1, 8},
+-
+-	{ 12000000, 1000000000, 1000, 12, 1, 12},
+-	{ 13000000, 1000000000, 1000, 13, 1, 12},
+-	{ 19200000, 1000000000, 625,  12, 1, 8},
+-	{ 26000000, 1000000000, 1000, 26, 1, 12},
+-
+-	{ 0, 0, 0, 0, 0, 0 },
+-};
+-
+ DEFINE_PLL(pll_d, PLL_HAS_CPCON | PLLD, 0xd0, 1000000000, 2000000, 400=
+00000,
+-		1000000, 6000000, 40000000, 1000000000, tegra_pll_d_freq_table,
+-		1000, tegra_pll_ops, 0, clk_m);
++		1000000, 6000000, 40000000, 1000000000, NULL,
++		1000, tegra_plld_ops, 0, clk_m);
+=20
+ DEFINE_PLL_OUT(pll_d_out0, DIV_2 | PLLD, 0, 0, 500000000,
+ 		tegra_pll_div_ops, pll_d, CLK_SET_RATE_PARENT);
+--=20
+1.7.11.7
