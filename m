@@ -1,36 +1,65 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: add EMC clock scaling API
-Date: Mon, 17 Dec 2012 14:57:24 -0700
-Message-ID: <50CF9544.2090108@wwwdotorg.org>
-References: <1355516086-11116-1-git-send-email-dev@lynxeye.de>  <1355516086-11116-2-git-send-email-dev@lynxeye.de>  <50CF8D51.6020208@wwwdotorg.org> <1355780639.1490.22.camel@tellur>
+From: Mitch Bradley <wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH] serial: tegra: add serial driver
+Date: Mon, 17 Dec 2012 11:58:24 -1000
+Message-ID: <50CF9580.4050300@firmworks.com>
+References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com>
+ <50CF9043.8030308@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1355780639.1490.22.camel@tellur>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <50CF9043.8030308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jslaby-AlSwsSmVLrQ@public.gmane.org, alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/17/2012 02:43 PM, Lucas Stach wrote:
-> Am Montag, den 17.12.2012, 14:23 -0700 schrieb Stephen Warren:
->> On 12/14/2012 01:14 PM, Lucas Stach wrote:
->>> This allows memory clients to collaboratively control the EMC
->>> performance.
->>> Each client may set its performance demands. EMC driver then tries to
->>> find a DRAM performance level which is able to statisfy all those
->>> demands.
+On 12/17/2012 11:36 AM, Stephen Warren wrote:
+> On 12/17/2012 05:10 AM, Laxman Dewangan wrote:
+>> Nvidia's Tegra has multiple uart controller which supports:
+>> - APB dma based controller fifo read/write.
+>> - End Of Data interrupt in incoming data to know whether end
+>>   of frame achieve or not.
+>> - Hw controlled RTS and CTS flow control to reduce SW overhead.
+> 
+>> diff --git a/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt b/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt
+> 
+>> +NVIDIA Tegra20/Tegra30 high speed (dma based) UART controller driver.
+>> +
+>> +Required properties:
+>> +- compatible : should be "nvidia,tegra20-hsuart", "nvidia,tegra30-hsuart".
+> 
+> One question that isn't addressed here is:
+> 
+> Tegra has 5 UARTs. All of them can use the existing 8250.c by specifying
+> compatible = "nvidia,tegra20-uart".
 
->>> +static void tegra_emc_scale_clock(void)
->>
->>> +	clock_rate = bandwidth_floor >> 2; /* 4byte/clock */
->>
->> That assumes a 32-bit SDRAM interface. I'm sure that won't always be
->> true. Perhaps we should invent a #define for this so it stands out
->> slightly more if/when this needs to change later.
->>
-> Hm, maybe we can add a DT property within the EMC node for this.
+The way it is supposed to work is that the compatible property should
+list "nvidia,tegra30-hsuart" first, followed by a fallback name that
+refers to the generic 8250 compatibility.  Having the 8250.c driver bind
+to the more-specific tegra30-hsuart name is wrong.
 
-I expect you can derive the memory bus width from a combination of the
-HW version and current register settings.
+ However, the 8250.c driver doesn't
+> support the DMA features of this driver. This driver is an alternate
+> driver for the same HW that allows DMA to be used with it, etc.
+> 
+> Since DT is supposed to describe the HW, modifying the DT to change the
+> compatible value in order to select a different driver in Linux doesn't
+> seem correct, or is it? Is there any kind of precedent for how to select
+> different drivers for the same HW at run-time? I'd wondered about using
+> the sysfs bind/unbind "methods" from user-space as the driver selection
+> mechanism...
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
+> 
