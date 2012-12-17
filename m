@@ -1,37 +1,109 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 4/7] gpu: host1x: Add debug support
-Date: Mon, 17 Dec 2012 16:01:09 +0200
-Message-ID: <50CF25A5.2050803@nvidia.com>
-References: <1355407484-28904-1-git-send-email-tbergstrom@nvidia.com>  <1355407484-28904-5-git-send-email-tbergstrom@nvidia.com> <1355412191.12036.2.camel@joe-AO722>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from
+ DT
+Date: Mon, 17 Dec 2012 08:00:46 -0600
+Message-ID: <50CF258E.2080207@gmail.com>
+References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com> <1355725087-11363-4-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1355412191.12036.2.camel@joe-AO722>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org" <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1355725087-11363-4-git-send-email-hdoyu@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Landley <rob@landley.net>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13.12.2012 17:23, Joe Perches wrote:
-> On Thu, 2012-12-13 at 16:04 +0200, Terje Bergstrom wrote:
->> Add support for host1x debugging. Adds debugfs entries, and dumps
->> channel state to UART in case of stuck job.
+On 12/17/2012 12:18 AM, Hiroshi Doyu wrote:
+> Set Snoop Control Unit(SCU) register base address dynamically from DT.
 > 
-> trivial note:
+> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> ---
+>  arch/arm/mach-tegra/platsmp.c |   23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
 > 
-> []
-> 
->> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
-> []
->> +void host1x_debug_output(struct output *o, const char *fmt, ...);
-> 
-> This should be marked __printf(2, 3)
-> so the compiler verifies format and argument types.
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index 1b926df..45c0b79 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -18,6 +18,8 @@
+>  #include <linux/jiffies.h>
+>  #include <linux/smp.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/gic.h>
+> @@ -36,7 +38,7 @@
+>  
+>  extern void tegra_secondary_startup(void);
+>  
+> -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+> +static void __iomem *scu_base;
+>  
+>  #define EVP_CPU_RESET_VECTOR \
+>  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+> @@ -143,14 +145,28 @@ done:
+>  	return status;
+>  }
+>  
+> +static const struct of_device_id cortex_a9_scu_match[] __initconst = {
+> +	{ .compatible = "arm,cortex-a9-scu", },
+> +	{}
+> +};
+> +
+>  /*
+>   * Initialise the CPU possible map early - this describes the CPUs
+>   * which may be present or become present in the system.
+>   */
+>  static void __init tegra_smp_init_cpus(void)
+>  {
+> -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> +	struct device_node *np;
+> +	unsigned int i, ncores = 1;
+> +
+> +	np = of_find_matching_node(NULL, cortex_a9_scu_match);
+> +	if (!np)
+> +		return;
+> +	scu_base = of_iomap(np, 0);
 
-Thanks, I didn't know of this "trick". I'll apply it in the next version.
+Did you actually test this? Unless something changed, ioremap does not
+work this early. The only reason to have it mapped this early is to get
+the core count, but that doesn't work on A15 or A7. So we really need to
+get core count/mask in a standard way. At least some work to get core
+count from DT went into 3.8.
 
-Considering the amount of feedback I've received from the patches, they
-must be top notch quality!
+BTW, you can get the scu address on the A9 by reading cp15 register:
 
-Terje
+	/* Get SCU base */
+	asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (base));
+
+It's still probably good to have the DT node, but the reg property can
+be optional in this case.
+
+We need to move away from having the DT matching code within the
+platforms. This should all be moved to the scu code in a scu_of_init
+function that could be called from common code.
+
+Rob
+
+> +	if (!scu_base)
+> +		return;
+>  
+> +	ncores = scu_get_core_count(scu_base);
+>  	if (ncores > nr_cpu_ids) {
+>  		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
+>  			ncores, nr_cpu_ids);
+> @@ -166,7 +182,8 @@ static void __init tegra_smp_init_cpus(void)
+>  static void __init tegra_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+>  	tegra_cpu_reset_handler_init();
+> -	scu_enable(scu_base);
+> +	if (scu_base)
+> +		scu_enable(scu_base);
+>  }
+>  
+>  struct smp_operations tegra_smp_ops __initdata = {
+> 
+
