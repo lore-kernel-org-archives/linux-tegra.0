@@ -1,38 +1,100 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dynamically calculate pll_d parameters
-Date: Tue, 18 Dec 2012 10:19:36 +0100
-Message-ID: <1355822376.1490.55.camel@tellur>
-References: <1355767103-5303-1-git-send-email-dev@lynxeye.de>
-	 <50D02B0F.4020307@gmail.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from DT
+Date: Tue, 18 Dec 2012 10:21:29 +0100
+Message-ID: <20121218.112129.1344593225772728837.hdoyu@nvidia.com>
+References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com><1355725087-11363-4-git-send-email-hdoyu@nvidia.com><50CF258E.2080207@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D02B0F.4020307-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <50CF258E.2080207@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: "robherring2@gmail.com" <robherring2@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob@landley.net" <rob@landley.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag, den 18.12.2012, 16:36 +0800 schrieb Mark Zhang:
-> I think we don't need to define a pll_ops for every individual pll.
-> That'll be redundant. Just use one pll_ops(with parameter dynamically
-> calculating) which is able to serve several plls is OK. Refer to
-> tegra30_clocks_data.c, it has already implemented this.
+Hi Rob,
+
+Rob Herring <robherring2@gmail.com> wrote @ Mon, 17 Dec 2012 15:00:46 +0100:
+
+> On 12/17/2012 12:18 AM, Hiroshi Doyu wrote:
+> > Set Snoop Control Unit(SCU) register base address dynamically from DT.
+> > 
+> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+> > ---
+> >  arch/arm/mach-tegra/platsmp.c |   23 ++++++++++++++++++++---
+> >  1 file changed, 20 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> > index 1b926df..45c0b79 100644
+> > --- a/arch/arm/mach-tegra/platsmp.c
+> > +++ b/arch/arm/mach-tegra/platsmp.c
+> > @@ -18,6 +18,8 @@
+> >  #include <linux/jiffies.h>
+> >  #include <linux/smp.h>
+> >  #include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> >  
+> >  #include <asm/cacheflush.h>
+> >  #include <asm/hardware/gic.h>
+> > @@ -36,7 +38,7 @@
+> >  
+> >  extern void tegra_secondary_startup(void);
+> >  
+> > -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+> > +static void __iomem *scu_base;
+> >  
+> >  #define EVP_CPU_RESET_VECTOR \
+> >  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+> > @@ -143,14 +145,28 @@ done:
+> >  	return status;
+> >  }
+> >  
+> > +static const struct of_device_id cortex_a9_scu_match[] __initconst = {
+> > +	{ .compatible = "arm,cortex-a9-scu", },
+> > +	{}
+> > +};
+> > +
+> >  /*
+> >   * Initialise the CPU possible map early - this describes the CPUs
+> >   * which may be present or become present in the system.
+> >   */
+> >  static void __init tegra_smp_init_cpus(void)
+> >  {
+> > -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> > +	struct device_node *np;
+> > +	unsigned int i, ncores = 1;
+> > +
+> > +	np = of_find_matching_node(NULL, cortex_a9_scu_match);
+> > +	if (!np)
+> > +		return;
+> > +	scu_base = of_iomap(np, 0);
 > 
-This would be the right thing to do in the long run. But PLL_D requires
-a lot less complexity than others to compute the PLL values, because of
-the constraints that could be applied. That's why I started doing a
-simple function to only make PLL_D dynamic.
+> Did you actually test this? Unless something changed, ioremap does not
+> work this early. The only reason to have it mapped this early is to get
+> the core count, but that doesn't work on A15 or A7. So we really need to
+> get core count/mask in a standard way. At least some work to get core
+> count from DT went into 3.8.
+> 
+> BTW, you can get the scu address on the A9 by reading cp15 register:
+> 
+> 	/* Get SCU base */
+> 	asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (base));
+> 
+> It's still probably good to have the DT node, but the reg property can
+> be optional in this case.
 
-I could certainly go ahead and come up with something which applies to
-all PLLs, but I imagine this might be even a bigger validation hassle
-for NVidia.
+I'm simply wondering, if the above cp15 works with Cortex-A9, do we
+still need SCU DT node? At least from Cortex-A15 TRM, it seems that
+SCU is tighly integrated into CPU core and it doesn't have any user
+control. So Cortex-A15 doesn't seem to need to configure SCU. For
+Cortex-A7, I haven't yet found S/W configurable register definitions
+in TRM. So if neither of A15/A7 need SCU base, would the above cp15
+intructions be enough?
 
-Also I'm still not sure how much this patch collides with the clock
-rework. I don't know how far this rework has progressed already and I
-would like to avoid doing redundant work. Prashant could you please
-clarify?
+> We need to move away from having the DT matching code within the
+> platforms. This should all be moved to the scu code in a scu_of_init
+> function that could be called from common code.
 
-Regards,
-Lucas
+True if SCU DT node is still necessary.
