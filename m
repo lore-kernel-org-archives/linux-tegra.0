@@ -1,64 +1,30 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm: tegra: remove USB address related macros from iomap.h
-Date: Tue, 18 Dec 2012 10:01:01 +0530
-Message-ID: <1355805061-22789-1-git-send-email-vbyravarasu@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: dynamically calculate pll_d parameters
+Date: Tue, 18 Dec 2012 11:15:45 +0530
+Message-ID: <50D00309.1080308@nvidia.com>
+References: <1355767103-5303-1-git-send-email-dev@lynxeye.de> <50CF963E.7020506@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50CF963E.7020506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-USB register base address and sizes defined in iomap.h
-are not used in any files other than board-dt-tegra20.c.
-Hence removed those defines from header file and using
-the absolute values in board files.
+On Tuesday 18 December 2012 03:31 AM, Stephen Warren wrote:
+> On 12/17/2012 10:58 AM, Lucas Stach wrote:
+>> Calculate PLL_D parameters in a dynamically instead of using a fixed
+>> table. This allows TegraDRM to drive outputs with CVT compliant modes.
+> Prashant, can you please review this, and comment on the best approach
+> for dealing with the conflict this has with your clock driver rework.
+> Thanks.
+>
+> Lucas, I assume this algorithm generates the same cpcon values (and
+> indeed M/N/P values) as were in the fixed pll_d_freq_table before?
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt-tegra20.c |    6 +++---
- arch/arm/mach-tegra/iomap.h            |    9 ---------
- 2 files changed, 3 insertions(+), 12 deletions(-)
+Stephen,
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 734d9cc..aae399b 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -81,11 +81,11 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra20-i2s.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra20-i2s.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra20-das", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB_BASE, "tegra-ehci.0",
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5000000, "tegra-ehci.0",
- 		       &tegra_ehci1_pdata),
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB2_BASE, "tegra-ehci.1",
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5004000, "tegra-ehci.1",
- 		       &tegra_ehci2_pdata),
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5008000, "tegra-ehci.2",
- 		       &tegra_ehci3_pdata),
- 	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index db8be51..399fbca 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -240,15 +240,6 @@
- #define TEGRA_CSITE_BASE		0x70040000
- #define TEGRA_CSITE_SIZE		SZ_256K
- 
--#define TEGRA_USB_BASE			0xC5000000
--#define TEGRA_USB_SIZE			SZ_16K
--
--#define TEGRA_USB2_BASE			0xC5004000
--#define TEGRA_USB2_SIZE			SZ_16K
--
--#define TEGRA_USB3_BASE			0xC5008000
--#define TEGRA_USB3_SIZE			SZ_16K
--
- #define TEGRA_SDMMC1_BASE		0xC8000000
- #define TEGRA_SDMMC1_SIZE		SZ_512
- 
--- 
-1.7.0.4
+My clock driver rework includes automatic rate calculation if expected 
+entry is not found in tables.
