@@ -1,40 +1,49 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Tue, 18 Dec 2012 12:15:48 +0200
-Message-ID: <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH V3 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle
+ for powered-down mode
+Date: Tue, 18 Dec 2012 12:18:19 +0200
+Message-ID: <20121218101819.GP19258@tbergstrom-lnx.Nvidia.com>
 References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
- <1355797861-12759-2-git-send-email-josephl@nvidia.com>
- <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com>
+ <1355797861-12759-6-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1355797861-12759-6-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
-> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
-> > include the power of GIC. That caused the SGI (Software Generated
-> > Interrupt) been lost. Because the SGI can't wake up the CPU that in
-> > the "powered-down" CPU idle mode. We need to check if there is any
-> > pending SGI when go into "powered-down" CPU idle mode. This is important
-> > especially when applying the coupled cpuidle framework into "power-down"
-> > cpuidle dirver. Because the coupled cpuidle framework may have the
-> > chance that misses IPI_SINGLE_FUNC handling sometimes.
+On Tue, Dec 18, 2012 at 03:31:01AM +0100, Joseph Lo wrote:
+> The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
+> core to go into this mode before other core. The coupled cpuidle framework
+> can help to sync the MPCore to coupled state then go into "powered-down"
+> idle mode together. The driver can just assume the MPCore come into
+> "powered-down" mode at the same time. No need to take care if the CPU_0
+> goes into this mode along and only can put it into safe idle mode (WFI).
 > 
-> This problem exists for any GIC-based SoC, and needs to be fixed in
-> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
+> The powered-down state of Tegra20 requires power gating both CPU cores.
+> When the secondary CPU requests to enter powered-down state, it saves
+> its own contexts and then enters WFI for waiting CPU0 in the same state.
+> When the CPU0 requests powered-down state, it attempts to put the secondary
+> CPU into reset to prevent it from waking up. Then power down both CPUs
+> together and power off the cpu rail.
+> 
+> Be aware of that, you may see the legacy power state "LP2" in the code
+> which is exactly the same meaning of "CPU power down".
+> 
+> Based on the work by:
+> Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V3:
+> * sqash last two patch in previous version to support coupled cpuidle
+>   directly
 
-Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
-cluster is railgated, including the GIC. This causes a pending IPI to be lost.
-But for example on OMAP4, only the actual CPU cores are powergated. The GIC
-stays alive until also the core domain hits idle. By that time a potential
-pending IPI has long woken up the target CPU again, so no additional
-checks are needed for functional correct behavior.
+nitpick - it should be 'squash'.
 
 Cheers,
 
