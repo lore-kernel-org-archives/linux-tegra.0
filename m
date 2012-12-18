@@ -1,30 +1,43 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dynamically calculate pll_d parameters
-Date: Tue, 18 Dec 2012 11:15:45 +0530
-Message-ID: <50D00309.1080308@nvidia.com>
-References: <1355767103-5303-1-git-send-email-dev@lynxeye.de> <50CF963E.7020506@wwwdotorg.org>
+Subject: Re: [PATCH 1/4] ARM: tegra30: Add support for Uart clock source divider
+ as 15.1
+Date: Tue, 18 Dec 2012 11:44:56 +0530
+Message-ID: <50D009E0.3050409@nvidia.com>
+References: <1355746101-15291-1-git-send-email-ldewangan@nvidia.com> <1355746101-15291-2-git-send-email-ldewangan@nvidia.com> <50CF91F7.5010402@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50CF963E.7020506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50CF91F7.5010402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 18 December 2012 03:31 AM, Stephen Warren wrote:
-> On 12/17/2012 10:58 AM, Lucas Stach wrote:
->> Calculate PLL_D parameters in a dynamically instead of using a fixed
->> table. This allows TegraDRM to drive outputs with CVT compliant modes.
-> Prashant, can you please review this, and comment on the best approach
-> for dealing with the conflict this has with your clock driver rework.
-> Thanks.
+On Tuesday 18 December 2012 03:13 AM, Stephen Warren wrote:
+> On 12/17/2012 05:08 AM, Laxman Dewangan wrote:
+>> Tegra20 uart clock source have the 15.1 clock divider in place of
+> That says Tegra20, but ...
 >
-> Lucas, I assume this algorithm generates the same cpcon values (and
-> indeed M/N/P values) as were in the fixed pll_d_freq_table before?
+>> 7.1. Add support for 15.1 clock divider and change the uart clock divider
+>> flag to DIV_U151.
+>>   arch/arm/mach-tegra/clock.h               |    3 +-
+>>   arch/arm/mach-tegra/tegra30_clocks.c      |   70 ++++++++++++++++++++++------
+>>   arch/arm/mach-tegra/tegra30_clocks_data.c |   10 ++--
+> ... the patch only modifies Tegra30. Do both Tegra20 and Tegra30 have
+> this feature; should both clock drivers be updated?
+>
+> BTW, Prashant is reworking the Tegra clock support to be modular, rather
+> than having a single monolithic "Tegra clock" type, and also moving the
+> code to drivers/clk. This patch will conflict signifcantly with that.
+> Please work with him to integrate this patch into his rework series,
+> either before or after his changes, and have him include the patch when
+> he posts his series. You'll also need to think about whether/how your
+> and his series depend on each-other.
+>
+> ... but: Is this a pure bug-fix? If so, I guess this patch should be
+> applied before Prashant's patches, and this patch also Cc: stable?
 
-Stephen,
-
-My clock driver rework includes automatic rate calculation if expected 
-entry is not found in tables.
+My clock driver rework includes this fix. Divider supports both DIVU71 
+and DIVU151.
+UART divider is set to DIVU151.
