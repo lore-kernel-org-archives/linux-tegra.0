@@ -1,106 +1,50 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: dynamically calculate pll_d parameters
-Date: Tue, 18 Dec 2012 07:58:57 +0100
-Message-ID: <20121218065857.GA5151@avionic-0098.adnet.avionic-design.de>
-References: <1355767103-5303-1-git-send-email-dev@lynxeye.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: tegra: Add OF_DEV_AUXDATA for uart driver in
+ board dt
+Date: Tue, 18 Dec 2012 12:30:41 +0530
+Message-ID: <50D01499.1010004@nvidia.com>
+References: <1355746101-15291-1-git-send-email-ldewangan@nvidia.com> <1355746101-15291-4-git-send-email-ldewangan@nvidia.com> <50CF92D5.6090805@wwwdotorg.org> <50D00AB9.8090800@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1355767103-5303-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <50D00AB9.8090800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday 18 December 2012 11:48 AM, Prashant Gaikwad wrote:
+> On Tuesday 18 December 2012 03:17 AM, Stephen Warren wrote:
+>> On 12/17/2012 05:08 AM, Laxman Dewangan wrote:
+>>> Add OF_DEV_AUXDATA for high speed uart controller driver for
+>>> Tegra20/Tegra30 board dt files.
+>>> Set the parent clock of uart controller to PLLP.
+>>> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+>>> @@ -94,6 +94,11 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+>>> +	OF_DEV_AUXDATA("nvidia,tegra20-hsuart", 0x70006000, "tegra-uart.0", NULL),
+>>> +	OF_DEV_AUXDATA("nvidia,tegra20-hsuart", 0x70006040, "tegra-uart.1", NULL),
+>>> +	OF_DEV_AUXDATA("nvidia,tegra20-hsuart", 0x70006200, "tegra-uart.2", NULL),
+>>> +	OF_DEV_AUXDATA("nvidia,tegra20-hsuart", 0x70006300, "tegra-uart.3", NULL),
+>>> +	OF_DEV_AUXDATA("nvidia,tegra20-hsuart", 0x70006400, "tegra-uart.4", NULL),
+>> Instead, can we simply get the clocks from device tree? Prashant, how
+>> much effort will that be once your clock patches are checked in, or is
+>> it already part of those patches?
+> It is not part of rework patches, but I will send a patch for it
+> immediately after those patches are accepted upstream.
+>
+>>> @@ -106,7 +111,10 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+>>>    static __initdata struct tegra_clk_init_table tegra_dt_clk_init_table[] = {
+>>>    	/* name		parent		rate		enabled */
+>>>    	{ "uarta",	"pll_p",	216000000,	true },
+>>> +	{ "uartb",	"pll_p",	216000000,	false },
+>>> +	{ "uartc",	"pll_p",	216000000,	false },
+>>>    	{ "uartd",	"pll_p",	216000000,	true },
+>>> +	{ "uarte",	"pll_p",	216000000,	false },
+>> Prashant's clock patches remove this table. Please work with him to work
+>> out how to deal with that.
+> Laxman,
+>
+> If you want I can include these entries in current tables.
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Dec 17, 2012 at 06:58:23PM +0100, Lucas Stach wrote:
-[...]
-> +static int tegra20_plld_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +		unsigned long parent_rate)
-> +{
-> +	struct clk_tegra *c = to_clk_tegra(hw);
-> +	unsigned long input_rate = parent_rate;
-> +	u64 n = 0;
-> +	int m_max, m_min, m = 0;
-> +	u32 val, rem = 0;
-> +	u8 cpcon = 0;
-> +
-> +	m_max = input_rate / c->u.pll.cf_min;
-> +	m_min = (input_rate / c->u.pll.cf_max) + 1;
-> +
-> +	for (m = m_min; m <= m_max; m++) {
-> +		n = (u64)rate * m;
-> +		rem = do_div(n, input_rate);
-> +		if (!rem)
-> +			break;
-> +	}
-> +
-> +	if (rem)
-> +		return -EINVAL;
-
-This code is common to both .round_rate() and .set_rate() so maybe you
-should factor it out.
-
-> +
-> +	c->mul = n;
-> +	c->div = n;
-> +
-> +	val = clk_readl(c->reg + PLL_BASE);
-> +	val &= ~(PLL_BASE_DIVP_MASK | PLL_BASE_DIVN_MASK |
-> +		 PLL_BASE_DIVM_MASK);
-> +	val |= (m << PLL_BASE_DIVM_SHIFT) | (n << PLL_BASE_DIVN_SHIFT);
-> +	clk_writel(val, c->reg + PLL_BASE);
-> +
-> +	if (n <= 50)
-> +		cpcon = 2;
-> +	else if (n <= 300)
-> +		cpcon = 4;
-> +	else if (n <= 600)
-> +		cpcon = 8;
-> +	else if (n <= 1000)
-> +		cpcon = 12;
-> +
-> +	val = clk_readl(c->reg + PLL_MISC(c));
-> +	val &= ~PLL_MISC_CPCON_MASK;
-> +	val |= cpcon << PLL_MISC_CPCON_SHIFT;
-> +	clk_writel(val, c->reg + PLL_MISC(c));
-> +
-> +
-
-There's a gratuitous blank line here.
-
-Other than that this algorithm looks pretty much like what I came up
-with in an earlier prototype. One difference is that I used an
-additional outer loop for the p-divider. Taking that into account should
-allow even more frequencies to be matched.
-
-Thierry
-
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ0BQxAAoJEN0jrNd/PrOhnqMQAJ0lfIOs5O1ACApKlzH9Ovr9
-mAmgacMhKj+P9WQCn/4rxhmPyc/Fgp21K30zsKZNtX5I61wZfmr/8coY5b2Yjpn6
-UHOl78HtI/KBeEkgvknMMEBhlHe+Sxdf35eM009+rpTlt/9fkqq6gMrUuZ159gBc
-gh2tOIHzx5veg4ACgiW9GgH0OP3OAe88Eanx37MfZkVhd92OC84DBOiQ0UvUUCDv
-LcAwibrmmiG1LXdqSckXrByAGcZiENRSb9NRN0P6/3rryAa6rruv2R/B9cp3Ob9e
-qiACikWTrpQjXsSjwLqXsXsa4EQeEFDlK7ysTD2pTxy+OTMGmT68QeXb6oeKBF8P
-iBcUkRaXep6O6yejRYHEESDRyTI01tTQjmG0pV97MMiuEyI3KHbaGndYUB1WYspE
-GyoyNfyFtGeuLXx8Zxn5Qdkn+iExEub1UjzFBtAgeZYrC+e4rwT/gj/FixXBqQen
-ADU1uqPBCq8/dOFDEujSCrc8PwRXO8Z9blg7wOW9vVylulTpdHHUTJAERWfKgHWI
-KRhaFzXML4cZ2K2vDwbj79smtJBREUjDq79I+bSaHzZzf2XWbgqyuom8GTA+RMxD
-hFPL+1AnrCr4g1saqgs1NUBdYlpsP+JvVOCES0KsfMHSO6RdCXVKO9g0ZTNorS7P
-l0Iwd4xWnmk513ENTzpq
-=DT/W
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
+No issue, you can add this in your change.
