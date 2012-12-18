@@ -1,14 +1,15 @@
 From: Colin Cross <ccross@android.com>
-Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Mon, 17 Dec 2012 18:42:24 -0800
-Message-ID: <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com>
+Subject: Re: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state for
+ secondary CPU
+Date: Mon, 17 Dec 2012 18:46:26 -0800
+Message-ID: <CAMbhsRTLo6jS_7hqVVtgaa8_ZweAwicrgghaaFWfnzHpc6f1Pg@mail.gmail.com>
 References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
- <1355797861-12759-2-git-send-email-josephl@nvidia.com>
+ <1355797861-12759-3-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1355797861-12759-2-git-send-email-josephl@nvidia.com>
+In-Reply-To: <1355797861-12759-3-git-send-email-josephl@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,97 +24,161 @@ Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen W
 List-Id: linux-tegra@vger.kernel.org
 
 On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl@nvidia.com> wrote:
-> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
-> include the power of GIC. That caused the SGI (Software Generated
-> Interrupt) been lost. Because the SGI can't wake up the CPU that in
-> the "powered-down" CPU idle mode. We need to check if there is any
-> pending SGI when go into "powered-down" CPU idle mode. This is important
-> especially when applying the coupled cpuidle framework into "power-down"
-> cpuidle dirver. Because the coupled cpuidle framework may have the
-> chance that misses IPI_SINGLE_FUNC handling sometimes.
-
-This problem exists for any GIC-based SoC, and needs to be fixed in
-gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
-
-> For the PPI or SPI, something like the legacy peripheral interrupt. It
-> still can be maintained by Tegra legacy interrupt controller. If there
-> is any pending PPI or SPI when CPU in "powered-down" CPU idle mode. The
-> CPU can be woken up immediately. So we don't need to take care the same
-> situation for PPI or SPI.
+> The powered-down state of Tegra20 requires power gating both CPU cores.
+> When the secondary CPU requests to enter powered-down state, it saves
+> its own contexts and then enters WFI. The Tegra20 had a limition to
+> power down both CPU cores. The secondary CPU must waits for CPU0 in
+> powered-down state too. If the secondary CPU be woken up before CPU0
+> entering powered-down state, then it needs to restore its CPU states
+> and waits for next chance.
+>
+> Be aware of that, you may see the legacy power state "LP2" in the code
+> which is exactly the same meaning of "CPU power down".
+>
+> Based on the work by:
+> Colin Cross <ccross@android.com>
+> Gary King <gking@nvidia.com>
 >
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
 > V3:
-> * move the static mapping of GIC addr into tegra_pending_sgi
+> * dynamic checking of the number of the state counts
+> * fix the code sequence for aborting cpu_suspend in
+>   tegra20_sleep_cpu_secondary_finish
 > V2:
-> * new in V2
+> * no change
 > ---
->  arch/arm/mach-tegra/irq.c |   15 +++++++++++++++
->  arch/arm/mach-tegra/irq.h |   22 ++++++++++++++++++++++
->  2 files changed, 37 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-tegra/irq.h
+>  arch/arm/mach-tegra/cpuidle-tegra20.c |   94 ++++++++++++++++++++-
+>  arch/arm/mach-tegra/pm.c              |    2 +
+>  arch/arm/mach-tegra/sleep-tegra20.S   |  147 +++++++++++++++++++++++++++++++++
+>  arch/arm/mach-tegra/sleep.h           |   23 +++++
+>  4 files changed, 261 insertions(+), 5 deletions(-)
 >
-> diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-> index b7886f1..c9976e3 100644
-> --- a/arch/arm/mach-tegra/irq.c
-> +++ b/arch/arm/mach-tegra/irq.c
-> @@ -45,6 +45,8 @@
+> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> index d32e8b0..716aef3 100644
+> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
+> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> @@ -22,28 +22,112 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/cpuidle.h>
+> +#include <linux/cpu_pm.h>
+> +#include <linux/clockchips.h>
 >
->  #define FIRST_LEGACY_IRQ 32
->
-> +#define SGI_MASK 0xFFFF
+>  #include <asm/cpuidle.h>
+> +#include <asm/proc-fns.h>
+> +#include <asm/suspend.h>
+> +#include <asm/smp_plat.h>
 > +
->  static int num_ictlrs;
+> +#include "pm.h"
+> +#include "sleep.h"
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra20_idle_lp2(struct cpuidle_device *dev,
+> +                           struct cpuidle_driver *drv,
+> +                           int index);
+> +#endif
+> +
+> +static struct cpuidle_state tegra_idle_states[] = {
+> +       [0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+> +#ifdef CONFIG_PM_SLEEP
+> +       [1] = {
+> +               .enter                  = tegra20_idle_lp2,
+> +               .exit_latency           = 5000,
+> +               .target_residency       = 10000,
+> +               .power_usage            = 0,
+> +               .flags                  = CPUIDLE_FLAG_TIME_VALID,
+> +               .name                   = "powered-down",
+> +               .desc                   = "CPU power gated",
+> +       },
+> +#endif
+> +};
 >
->  static void __iomem *ictlr_reg_base[] = {
-> @@ -55,6 +57,19 @@ static void __iomem *ictlr_reg_base[] = {
->         IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
+>  static struct cpuidle_driver tegra_idle_driver = {
+>         .name = "tegra_idle",
+>         .owner = THIS_MODULE,
+>         .en_core_tk_irqen = 1,
+> -       .state_count = 1,
+> -       .states = {
+> -               [0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+> -       },
 >  };
 >
-> +bool tegra_pending_sgi(void)
-> +{
-> +       u32 pending_set;
-> +       void __iomem *distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
-> +
-> +       pending_set = readl_relaxed(distbase + GIC_DIST_PENDING_SET);
-> +
-> +       if (pending_set & SGI_MASK)
-> +               return true;
-> +
-> +       return false;
-> +}
-> +
->  static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
->  {
->         void __iomem *base;
-> diff --git a/arch/arm/mach-tegra/irq.h b/arch/arm/mach-tegra/irq.h
-> new file mode 100644
-> index 0000000..5142649
-> --- /dev/null
-> +++ b/arch/arm/mach-tegra/irq.h
-> @@ -0,0 +1,22 @@
-> +/*
-> + * Copyright (c) 2012, NVIDIA Corporation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#ifndef __TEGRA_IRQ_H
-> +#define __TEGRA_IRQ_H
-> +
-> +bool tegra_pending_sgi(void);
-> +
-> +#endif
-> --
-> 1.7.0.4
+>  static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
 >
+> +#ifdef CONFIG_PM_SLEEP
+> +#ifdef CONFIG_SMP
+> +static bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
+> +                                        struct cpuidle_driver *drv,
+> +                                        int index)
+> +{
+> +       clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+> +
+> +       cpu_suspend(0, tegra20_sleep_cpu_secondary_finish);
+> +
+> +       tegra20_cpu_clear_resettable();
+> +
+> +       clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+> +
+> +       return true;
+> +}
+> +#else
+> +static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
+> +                                               struct cpuidle_driver *drv,
+> +                                               int index)
+> +{
+> +       return true;
+> +}
+> +#endif
+> +
+> +static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
+> +                                     struct cpuidle_driver *drv,
+> +                                     int index)
+> +{
+> +       u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
+> +       bool entered_lp2 = false;
+> +
+> +       local_fiq_disable();
+> +
+> +       tegra_set_cpu_in_lp2(cpu);
+> +       cpu_pm_enter();
+
+You must check the return value from cpu_pm_enter and synchronize and
+abort both cpus.
+
+> +
+> +       if (cpu == 0)
+> +               cpu_do_idle();
+> +       else
+> +               entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
+> +
+> +       cpu_pm_exit();
+> +       tegra_clear_cpu_in_lp2(cpu);
+> +
+> +       local_fiq_enable();
+> +
+> +       smp_rmb();
+> +
+> +       return entered_lp2 ? index : 0;
+> +}
+> +#endif
+> +
+>  int __init tegra20_cpuidle_init(void)
+>  {
+> -       int ret;
+> +       int ret, i;
+>         unsigned int cpu;
+>         struct cpuidle_device *dev;
+>         struct cpuidle_driver *drv = &tegra_idle_driver;
+>
+> +       drv->state_count = sizeof(tegra_idle_states) /
+> +                          sizeof(struct cpuidle_state);
+> +       for (i = 0; i < drv->state_count; i++)
+> +               memcpy(&drv->states[i], &tegra_idle_states[i],
+> +                      sizeof(struct cpuidle_state));
+> +
+>         ret = cpuidle_register_driver(&tegra_idle_driver);
+>         if (ret) {
+>                 pr_err("CPUidle driver registration failed\n");
+
+Is there a call to cpu_cluster_pm_enter/exit somewhere else?
