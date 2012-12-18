@@ -1,54 +1,29 @@
-From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: ftrace doesn't work - 1211 upstream kernel
-Date: Tue, 18 Dec 2012 19:31:55 +0800
-Message-ID: <50D0542B.9060407@gmail.com>
-References: <50C86A0D.9060009@gmail.com> <50C877EE.60507@nvidia.com> <50C93A27.8080002@gmail.com> <87bodspaqu.fsf@amiettinen-lnx.nvidia.com>
+From: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH V2] serial: tegra: add serial driver
+Date: Tue, 18 Dec 2012 11:34:59 +0000
+Message-ID: <20121218113459.5ce6f4a5@bob.linux.org.uk>
+References: <1355813993-24867-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87bodspaqu.fsf-sS3DoGclAPwgdTl23f3CEMVPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1355813993-24867-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Antti P Miettinen <ananaza-X3B1VOXEql0@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jslaby-AlSwsSmVLrQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, wmb-D5eQfiDGL7eakBO8gow8eQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/2012 06:36 AM, Antti P Miettinen wrote:
-> Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->> Terje, did yo test the ToT(1211) kernel?
->>
->> Could you tell me which ftrace configs you enabled?
->> And what is your kernel command line?
->>
->> Mark
+On Tue, 18 Dec 2012 12:29:53 +0530
+Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+
+> Nvidia's Tegra has multiple uart controller which supports:
+> - APB dma based controller fifo read/write.
+> - End Of Data interrupt in incoming data to know whether end
+>   of frame achieve or not.
+> - Hw controlled RTS and CTS flow control to reduce SW overhead.
 > 
-> Mark - what frequency are you running at? What's your CONFIG_HZ? Did
-> this work earlier?
->
-
-root@tegra-ubuntu:~# cat /proc/cpuinfo
-processor       : 0
-model name      : ARMv7 Processor rev 9 (v7l)
-BogoMIPS        : 1993.93
-Features        : swp half thumb fastmult vfp edsp vfpv3 tls
-CPU implementer : 0x41
-CPU architecture: 7
-CPU variant     : 0x2
-CPU part        : 0xc09
-CPU revision    : 9
-[...]
-
-CONFIG_HZ=100
-
-No idea whether it works before. Recently I'm facing some bugs so I
-wanna use ftrace to find out the call stack easily.
-
-> --
-> Antti P Miettinen
-> http://www.iki.fi/~ananaza/
+> Add serial driver to use all above feature.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Acked-by: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
