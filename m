@@ -1,37 +1,46 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: add connection name for uart clock table
-Date: Tue, 18 Dec 2012 09:55:17 -0700
-Message-ID: <50D09FF5.7050901@wwwdotorg.org>
-References: <1355746101-15291-1-git-send-email-ldewangan@nvidia.com> <1355746101-15291-3-git-send-email-ldewangan@nvidia.com> <50CF9233.3010506@wwwdotorg.org> <50D015B5.8050805@nvidia.com>
+From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
+Date: Tue, 18 Dec 2012 11:36:05 -0800
+Message-ID: <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
+	<1355797861-12759-2-git-send-email-josephl@nvidia.com>
+	<CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com>
+	<20121218101548.GO19258@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50D015B5.8050805@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121218101548.GO19258-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/2012 12:05 AM, Laxman Dewangan wrote:
-> On Tuesday 18 December 2012 03:14 AM, Stephen Warren wrote:
->> On 12/17/2012 05:08 AM, Laxman Dewangan wrote:
->>> Add connection name "uart-clk" for the uart clock information.
+On Tue, Dec 18, 2012 at 2:15 AM, Peter De Schrijver
+<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
+>> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> > The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
+>> > include the power of GIC. That caused the SGI (Software Generated
+>> > Interrupt) been lost. Because the SGI can't wake up the CPU that in
+>> > the "powered-down" CPU idle mode. We need to check if there is any
+>> > pending SGI when go into "powered-down" CPU idle mode. This is important
+>> > especially when applying the coupled cpuidle framework into "power-down"
+>> > cpuidle dirver. Because the coupled cpuidle framework may have the
+>> > chance that misses IPI_SINGLE_FUNC handling sometimes.
 >>
->> Does the UART receive more than one clock, so that it actually cares
->> what the clock connection name is? If not, can we just drop this patch?
-> 
-> I like to have this patch because:
-> - In future, I want to also get the name of the clock source and set
-> parent of uart clock properly.
+>> This problem exists for any GIC-based SoC, and needs to be fixed in
+>> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
+>
+> Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
+> cluster is railgated, including the GIC. This causes a pending IPI to be lost.
+> But for example on OMAP4, only the actual CPU cores are powergated. The GIC
+> stays alive until also the core domain hits idle. By that time a potential
+> pending IPI has long woken up the target CPU again, so no additional
+> checks are needed for functional correct behavior.
 
-I don't understand that; drivers should not care about the names of
-clocks; the names will be entirely irrelevant once we get clocks from DT.
-
-> - I want to switch the parent clock source dynamically between CLKM and
-> PLLP to achieve more power optimization i.e. use CLKM wherever possible..
-
-I'd prefer to defer that until after we get clocks from DT. Otherwise,
-we're just adding more churn to the old clock driver first. It'd be
-better to just switch to the new clock driver, put all the clocks in DT,
-and then build on that.
+I'm not sure that is correct for OMAP4.  C2 and C3 will put the power
+rail for the GIC in retention, and I don't think an IPI will wake it
+up.  I believe the same problem also exists for Exynos5.  In any case,
+checking for an IPI early during idle and aborting won't hurt those
+platforms, so I still think it should be in the GIC driver and not by
+mapping the GIC registers into a separate driver.
