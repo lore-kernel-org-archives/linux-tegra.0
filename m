@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Tue, 18 Dec 2012 10:30:57 +0800
-Message-ID: <1355797861-12759-2-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V3 3/5] ARM: tegra20: clocks: add CPU low-power function into tegra_cpu_car_ops
+Date: Tue, 18 Dec 2012 10:30:59 +0800
+Message-ID: <1355797861-12759-4-git-send-email-josephl@nvidia.com>
 References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,93 +12,141 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
-include the power of GIC. That caused the SGI (Software Generated
-Interrupt) been lost. Because the SGI can't wake up the CPU that in
-the "powered-down" CPU idle mode. We need to check if there is any
-pending SGI when go into "powered-down" CPU idle mode. This is important
-especially when applying the coupled cpuidle framework into "power-down"
-cpuidle dirver. Because the coupled cpuidle framework may have the
-chance that misses IPI_SINGLE_FUNC handling sometimes.
-
-For the PPI or SPI, something like the legacy peripheral interrupt. It
-still can be maintained by Tegra legacy interrupt controller. If there
-is any pending PPI or SPI when CPU in "powered-down" CPU idle mode. The
-CPU can be woken up immediately. So we don't need to take care the same
-situation for PPI or SPI.
+Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
+functions were used for CPU powered-down state maintenance.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V3:
-* move the static mapping of GIC addr into tegra_pending_sgi
+* no change
 V2:
-* new in V2
+* refine the code sequence in "tegra20_cpu_rail_off_ready"
 ---
- arch/arm/mach-tegra/irq.c |   15 +++++++++++++++
- arch/arm/mach-tegra/irq.h |   22 ++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-tegra/irq.h
+ arch/arm/mach-tegra/tegra20_clocks.c |   99 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 99 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index b7886f1..c9976e3 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -45,6 +45,8 @@
+diff --git a/arch/arm/mach-tegra/tegra20_clocks.c b/arch/arm/mach-tegra/tegra20_clocks.c
+index 4eb6bc8..1780268 100644
+--- a/arch/arm/mach-tegra/tegra20_clocks.c
++++ b/arch/arm/mach-tegra/tegra20_clocks.c
+@@ -159,6 +159,31 @@
+ #define CPU_CLOCK(cpu)	(0x1 << (8 + cpu))
+ #define CPU_RESET(cpu)	(0x1111ul << (cpu))
  
- #define FIRST_LEGACY_IRQ 32
- 
-+#define SGI_MASK 0xFFFF
++#define CLK_RESET_CCLK_BURST	0x20
++#define CLK_RESET_CCLK_DIVIDER  0x24
++#define CLK_RESET_PLLX_BASE	0xe0
++#define CLK_RESET_PLLX_MISC	0xe4
 +
- static int num_ictlrs;
++#define CLK_RESET_SOURCE_CSITE	0x1d4
++
++#define CLK_RESET_CCLK_BURST_POLICY_SHIFT	28
++#define CLK_RESET_CCLK_RUN_POLICY_SHIFT		4
++#define CLK_RESET_CCLK_IDLE_POLICY_SHIFT	0
++#define CLK_RESET_CCLK_IDLE_POLICY		1
++#define CLK_RESET_CCLK_RUN_POLICY		2
++#define CLK_RESET_CCLK_BURST_POLICY_PLLX	8
++
++#ifdef CONFIG_PM_SLEEP
++static struct cpu_clk_suspend_context {
++	u32 pllx_misc;
++	u32 pllx_base;
++
++	u32 cpu_burst;
++	u32 clk_csite_src;
++	u32 cclk_divider;
++} tegra20_cpu_clk_sctx;
++#endif
++
+ static void __iomem *reg_clk_base = IO_ADDRESS(TEGRA_CLK_RESET_BASE);
+ static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
  
- static void __iomem *ictlr_reg_base[] = {
-@@ -55,6 +57,19 @@ static void __iomem *ictlr_reg_base[] = {
- 	IO_ADDRESS(TEGRA_QUINARY_ICTLR_BASE),
- };
+@@ -1609,12 +1634,86 @@ static void tegra20_disable_cpu_clock(u32 cpu)
+ 	       reg_clk_base + TEGRA_CLK_RST_CONTROLLER_CLK_CPU_CMPLX);
+ }
  
-+bool tegra_pending_sgi(void)
++#ifdef CONFIG_PM_SLEEP
++static bool tegra20_cpu_rail_off_ready(void)
 +{
-+	u32 pending_set;
-+	void __iomem *distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
++	unsigned int cpu_rst_status;
 +
-+	pending_set = readl_relaxed(distbase + GIC_DIST_PENDING_SET);
++	cpu_rst_status = readl(reg_clk_base +
++			       TEGRA_CLK_RST_CONTROLLER_RST_CPU_CMPLX_SET);
 +
-+	if (pending_set & SGI_MASK)
-+		return true;
-+
-+	return false;
++	return !!(cpu_rst_status & 0x2);
 +}
 +
- static inline void tegra_irq_write_mask(unsigned int irq, unsigned long reg)
- {
- 	void __iomem *base;
-diff --git a/arch/arm/mach-tegra/irq.h b/arch/arm/mach-tegra/irq.h
-new file mode 100644
-index 0000000..5142649
---- /dev/null
-+++ b/arch/arm/mach-tegra/irq.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2012, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
++static void tegra20_cpu_clock_suspend(void)
++{
++	/* switch coresite to clk_m, save off original source */
++	tegra20_cpu_clk_sctx.clk_csite_src =
++				readl(reg_clk_base + CLK_RESET_SOURCE_CSITE);
++	writel(3<<30, reg_clk_base + CLK_RESET_SOURCE_CSITE);
 +
-+#ifndef __TEGRA_IRQ_H
-+#define __TEGRA_IRQ_H
++	tegra20_cpu_clk_sctx.cpu_burst =
++				readl(reg_clk_base + CLK_RESET_CCLK_BURST);
++	tegra20_cpu_clk_sctx.pllx_base =
++				readl(reg_clk_base + CLK_RESET_PLLX_BASE);
++	tegra20_cpu_clk_sctx.pllx_misc =
++				readl(reg_clk_base + CLK_RESET_PLLX_MISC);
++	tegra20_cpu_clk_sctx.cclk_divider =
++				readl(reg_clk_base + CLK_RESET_CCLK_DIVIDER);
++}
 +
-+bool tegra_pending_sgi(void);
++static void tegra20_cpu_clock_resume(void)
++{
++	unsigned int reg, policy;
 +
++	/* Is CPU complex already running on PLLX? */
++	reg = readl(reg_clk_base + CLK_RESET_CCLK_BURST);
++	policy = (reg >> CLK_RESET_CCLK_BURST_POLICY_SHIFT) & 0xF;
++
++	if (policy == CLK_RESET_CCLK_IDLE_POLICY)
++		reg = (reg >> CLK_RESET_CCLK_IDLE_POLICY_SHIFT) & 0xF;
++	else if (policy == CLK_RESET_CCLK_RUN_POLICY)
++		reg = (reg >> CLK_RESET_CCLK_RUN_POLICY_SHIFT) & 0xF;
++	else
++		BUG();
++
++	if (reg != CLK_RESET_CCLK_BURST_POLICY_PLLX) {
++		/* restore PLLX settings if CPU is on different PLL */
++		writel(tegra20_cpu_clk_sctx.pllx_misc,
++					reg_clk_base + CLK_RESET_PLLX_MISC);
++		writel(tegra20_cpu_clk_sctx.pllx_base,
++					reg_clk_base + CLK_RESET_PLLX_BASE);
++
++		/* wait for PLL stabilization if PLLX was enabled */
++		if (tegra20_cpu_clk_sctx.pllx_base & (1 << 30))
++			udelay(300);
++	}
++
++	/*
++	 * Restore original burst policy setting for calls resulting from CPU
++	 * LP2 in idle or system suspend.
++	 */
++	writel(tegra20_cpu_clk_sctx.cclk_divider,
++					reg_clk_base + CLK_RESET_CCLK_DIVIDER);
++	writel(tegra20_cpu_clk_sctx.cpu_burst,
++					reg_clk_base + CLK_RESET_CCLK_BURST);
++
++	writel(tegra20_cpu_clk_sctx.clk_csite_src,
++					reg_clk_base + CLK_RESET_SOURCE_CSITE);
++}
 +#endif
++
+ static struct tegra_cpu_car_ops tegra20_cpu_car_ops = {
+ 	.wait_for_reset	= tegra20_wait_cpu_in_reset,
+ 	.put_in_reset	= tegra20_put_cpu_in_reset,
+ 	.out_of_reset	= tegra20_cpu_out_of_reset,
+ 	.enable_clock	= tegra20_enable_cpu_clock,
+ 	.disable_clock	= tegra20_disable_cpu_clock,
++#ifdef CONFIG_PM_SLEEP
++	.rail_off_ready = tegra20_cpu_rail_off_ready,
++	.suspend	= tegra20_cpu_clock_suspend,
++	.resume		= tegra20_cpu_clock_resume,
++#endif
+ };
+ 
+ void __init tegra20_cpu_car_ops_init(void)
 -- 
 1.7.0.4
