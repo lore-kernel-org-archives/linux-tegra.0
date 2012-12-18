@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state for secondary CPU
-Date: Tue, 18 Dec 2012 10:30:58 +0800
-Message-ID: <1355797861-12759-3-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V3 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for powered-down mode
+Date: Tue, 18 Dec 2012 10:31:01 +0800
+Message-ID: <1355797861-12759-6-git-send-email-josephl@nvidia.com>
 References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,13 +12,19 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
+core to go into this mode before other core. The coupled cpuidle framework
+can help to sync the MPCore to coupled state then go into "powered-down"
+idle mode together. The driver can just assume the MPCore come into
+"powered-down" mode at the same time. No need to take care if the CPU_0
+goes into this mode along and only can put it into safe idle mode (WFI).
+
 The powered-down state of Tegra20 requires power gating both CPU cores.
 When the secondary CPU requests to enter powered-down state, it saves
-its own contexts and then enters WFI. The Tegra20 had a limition to
-power down both CPU cores. The secondary CPU must waits for CPU0 in
-powered-down state too. If the secondary CPU be woken up before CPU0
-entering powered-down state, then it needs to restore its CPU states
-and waits for next chance.
+its own contexts and then enters WFI for waiting CPU0 in the same state.
+When the CPU0 requests powered-down state, it attempts to put the secondary
+CPU into reset to prevent it from waking up. Then power down both CPUs
+together and power off the cpu rail.
 
 Be aware of that, you may see the legacy power state "LP2" in the code
 which is exactly the same meaning of "CPU power down".
@@ -30,360 +36,345 @@ Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V3:
-* dynamic checking of the number of the state counts
-* fix the code sequence for aborting cpu_suspend in
-  tegra20_sleep_cpu_secondary_finish
+* sqash last two patch in previous version to support coupled cpuidle
+  directly
 V2:
-* no change
+* refine the cpu control function that dedicate for CPU_1
+* rename "tegra_cpu_pllp" to "tegra_switch_cpu_to_pllp"
 ---
- arch/arm/mach-tegra/cpuidle-tegra20.c |   94 ++++++++++++++++++++-
- arch/arm/mach-tegra/pm.c              |    2 +
- arch/arm/mach-tegra/sleep-tegra20.S   |  147 +++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/sleep.h           |   23 +++++
- 4 files changed, 261 insertions(+), 5 deletions(-)
+ arch/arm/mach-tegra/Kconfig           |    1 +
+ arch/arm/mach-tegra/cpuidle-tegra20.c |  125 ++++++++++++++++++++++++++++++---
+ arch/arm/mach-tegra/sleep-tegra20.S   |   53 ++++++++++++++
+ arch/arm/mach-tegra/sleep.S           |   19 +++++
+ arch/arm/mach-tegra/sleep.h           |    3 +
+ 5 files changed, 192 insertions(+), 9 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index b442f15..b46ff2e 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -4,6 +4,7 @@ comment "NVIDIA Tegra options"
+ 
+ config ARCH_TEGRA_2x_SOC
+ 	bool "Enable support for Tegra20 family"
++	select ARCH_NEEDS_CPU_IDLE_COUPLED
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_ERRATA_720789
+ 	select ARM_ERRATA_742230
 diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index d32e8b0..716aef3 100644
+index 716aef3..7c7bb3f 100644
 --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
 +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -22,28 +22,112 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/cpuidle.h>
-+#include <linux/cpu_pm.h>
-+#include <linux/clockchips.h>
+@@ -32,22 +32,29 @@
  
- #include <asm/cpuidle.h>
-+#include <asm/proc-fns.h>
-+#include <asm/suspend.h>
-+#include <asm/smp_plat.h>
+ #include "pm.h"
+ #include "sleep.h"
++#include "iomap.h"
++#include "irq.h"
++#include "tegra_cpu_car.h"
++#include "flowctrl.h"
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int tegra20_idle_lp2(struct cpuidle_device *dev,
+-			    struct cpuidle_driver *drv,
+-			    int index);
++static atomic_t abort_flag;
++static atomic_t abort_barrier;
++static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
++				    struct cpuidle_driver *drv,
++				    int index);
+ #endif
+ 
+ static struct cpuidle_state tegra_idle_states[] = {
+ 	[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
+ #ifdef CONFIG_PM_SLEEP
+ 	[1] = {
+-		.enter			= tegra20_idle_lp2,
++		.enter			= tegra20_idle_lp2_coupled,
+ 		.exit_latency		= 5000,
+ 		.target_residency	= 10000,
+ 		.power_usage		= 0,
+-		.flags			= CPUIDLE_FLAG_TIME_VALID,
++		.flags			= CPUIDLE_FLAG_TIME_VALID |
++					  CPUIDLE_FLAG_COUPLED,
+ 		.name			= "powered-down",
+ 		.desc			= "CPU power gated",
+ 	},
+@@ -64,6 +71,88 @@ static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
+ 
+ #ifdef CONFIG_PM_SLEEP
+ #ifdef CONFIG_SMP
++static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
 +
-+#include "pm.h"
-+#include "sleep.h"
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra20_idle_lp2(struct cpuidle_device *dev,
-+			    struct cpuidle_driver *drv,
-+			    int index);
-+#endif
-+
-+static struct cpuidle_state tegra_idle_states[] = {
-+	[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
-+#ifdef CONFIG_PM_SLEEP
-+	[1] = {
-+		.enter			= tegra20_idle_lp2,
-+		.exit_latency		= 5000,
-+		.target_residency	= 10000,
-+		.power_usage		= 0,
-+		.flags			= CPUIDLE_FLAG_TIME_VALID,
-+		.name			= "powered-down",
-+		.desc			= "CPU power gated",
-+	},
-+#endif
-+};
- 
- static struct cpuidle_driver tegra_idle_driver = {
- 	.name = "tegra_idle",
- 	.owner = THIS_MODULE,
- 	.en_core_tk_irqen = 1,
--	.state_count = 1,
--	.states = {
--		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
--	},
- };
- 
- static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
- 
-+#ifdef CONFIG_PM_SLEEP
-+#ifdef CONFIG_SMP
-+static bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
-+					 struct cpuidle_driver *drv,
-+					 int index)
++static int tegra20_reset_sleeping_cpu_1(void)
 +{
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
++	int ret = 0;
 +
-+	cpu_suspend(0, tegra20_sleep_cpu_secondary_finish);
++	tegra_pen_lock();
++
++	if (readl(pmc + PMC_SCRATCH41) == CPU_RESETTABLE)
++		tegra20_cpu_shutdown(1);
++	else
++		ret = -EINVAL;
++
++	tegra_pen_unlock();
++
++	return ret;
++}
++
++static void tegra20_wake_reset_cpu_1(void)
++{
++	tegra_pen_lock();
 +
 +	tegra20_cpu_clear_resettable();
 +
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
++	/* enable cpu clock on cpu */
++	tegra_enable_cpu_clock(1);
 +
-+	return true;
++	/* take the CPU out of reset */
++	tegra_cpu_out_of_reset(1);
++
++	/* unhalt the cpu */
++	flowctrl_write_cpu_halt(1, 0);
++
++	tegra_pen_unlock();
++}
++
++static int tegra20_reset_cpu_1(void)
++{
++	if (!cpu_online(1) || !tegra20_reset_sleeping_cpu_1())
++		return 0;
++
++	tegra20_wake_reset_cpu_1();
++	return -EBUSY;
 +}
 +#else
-+static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
-+						struct cpuidle_driver *drv,
-+						int index)
++static inline void tegra20_wake_reset_cpu_1(void)
 +{
++}
++
++static inline int tegra20_reset_cpu_1(void)
++{
++	return 0;
++}
++#endif
++
++static bool tegra20_cpu_cluster_power_down(struct cpuidle_device *dev,
++					   struct cpuidle_driver *drv,
++					   int index)
++{
++	struct cpuidle_state *state = &drv->states[index];
++	u32 cpu_on_time = state->exit_latency;
++	u32 cpu_off_time = state->target_residency - state->exit_latency;
++
++	while (tegra20_cpu_is_resettable_soon())
++		cpu_relax();
++
++	if (tegra20_reset_cpu_1() || !tegra_cpu_rail_off_ready())
++		return false;
++
++	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
++
++	tegra_idle_lp2_last(cpu_on_time, cpu_off_time);
++
++	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
++
++	if (cpu_online(1))
++		tegra20_wake_reset_cpu_1();
++
 +	return true;
 +}
-+#endif
 +
-+static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
-+				      struct cpuidle_driver *drv,
-+				      int index)
-+{
-+	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
-+	bool entered_lp2 = false;
-+
-+	local_fiq_disable();
-+
-+	tegra_set_cpu_in_lp2(cpu);
-+	cpu_pm_enter();
-+
-+	if (cpu == 0)
-+		cpu_do_idle();
-+	else
-+		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
-+
-+	cpu_pm_exit();
-+	tegra_clear_cpu_in_lp2(cpu);
-+
-+	local_fiq_enable();
-+
-+	smp_rmb();
-+
-+	return entered_lp2 ? index : 0;
-+}
-+#endif
-+
- int __init tegra20_cpuidle_init(void)
++#ifdef CONFIG_SMP
+ static bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
+ 					 struct cpuidle_driver *drv,
+ 					 int index)
+@@ -87,20 +176,31 @@ static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
+ }
+ #endif
+ 
+-static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
+-				      struct cpuidle_driver *drv,
+-				      int index)
++static int __cpuinit tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
++					      struct cpuidle_driver *drv,
++					      int index)
  {
--	int ret;
-+	int ret, i;
- 	unsigned int cpu;
+ 	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
+ 	bool entered_lp2 = false;
+ 
++	if (tegra_pending_sgi())
++		atomic_inc(&abort_flag);
++
++	cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
++
++	if (atomic_read(&abort_flag) > 0) {
++		cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
++		atomic_set(&abort_flag, 0);	/* clean flag for next coming */
++		return -EINTR;
++	}
++
+ 	local_fiq_disable();
+ 
+ 	tegra_set_cpu_in_lp2(cpu);
+ 	cpu_pm_enter();
+ 
+ 	if (cpu == 0)
+-		cpu_do_idle();
++		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
+ 	else
+ 		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
+ 
+@@ -122,6 +222,10 @@ int __init tegra20_cpuidle_init(void)
  	struct cpuidle_device *dev;
  	struct cpuidle_driver *drv = &tegra_idle_driver;
  
-+	drv->state_count = sizeof(tegra_idle_states) /
-+			   sizeof(struct cpuidle_state);
-+	for (i = 0; i < drv->state_count; i++)
-+		memcpy(&drv->states[i], &tegra_idle_states[i],
-+		       sizeof(struct cpuidle_state));
++#ifdef CONFIG_PM_SLEEP
++	tegra_tear_down_cpu = tegra20_tear_down_cpu;
++#endif
 +
- 	ret = cpuidle_register_driver(&tegra_idle_driver);
- 	if (ret) {
- 		pr_err("CPUidle driver registration failed\n");
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 1b11707..db72ea9 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -173,6 +173,8 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
+ 	drv->state_count = sizeof(tegra_idle_states) /
+ 			   sizeof(struct cpuidle_state);
+ 	for (i = 0; i < drv->state_count; i++)
+@@ -137,6 +241,9 @@ int __init tegra20_cpuidle_init(void)
+ 	for_each_possible_cpu(cpu) {
+ 		dev = &per_cpu(tegra_idle_device, cpu);
+ 		dev->cpu = cpu;
++#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
++		dev->coupled_cpus = *cpu_online_mask;
++#endif
  
- 	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
- 		last_cpu = true;
-+	else if (phy_cpu_id == 1)
-+		tegra20_cpu_set_resettable_soon();
- 
- 	spin_unlock(&tegra_lp2_lock);
- 	return last_cpu;
+ 		dev->state_count = drv->state_count;
+ 		ret = cpuidle_register_device(dev);
 diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-index 72ce709..d04693b 100644
+index d04693b..d57aea0 100644
 --- a/arch/arm/mach-tegra/sleep-tegra20.S
 +++ b/arch/arm/mach-tegra/sleep-tegra20.S
-@@ -21,6 +21,8 @@
- #include <linux/linkage.h>
+@@ -60,6 +60,9 @@ ENDPROC(tegra20_hotplug_shutdown)
+ ENTRY(tegra20_cpu_shutdown)
+ 	cmp	r0, #0
+ 	moveq	pc, lr			@ must not be called for CPU 0
++	mov32	r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
++	mov	r12, #CPU_RESETTABLE
++	str	r12, [r1]
  
- #include <asm/assembler.h>
-+#include <asm/proc-fns.h>
-+#include <asm/cp15.h>
+ 	cpu_to_halt_reg r1, r0
+ 	ldr	r3, =TEGRA_FLOW_CTRL_VIRT
+@@ -166,6 +169,21 @@ ENTRY(tegra20_cpu_set_resettable_soon)
+ ENDPROC(tegra20_cpu_set_resettable_soon)
  
- #include "sleep.h"
- #include "flowctrl.h"
-@@ -78,3 +80,148 @@ ENTRY(tegra20_cpu_shutdown)
- 	mov	pc, lr
- ENDPROC(tegra20_cpu_shutdown)
+ /*
++ * tegra20_cpu_is_resettable_soon(void)
++ *
++ * Returns true if the "resettable soon" flag in PMC_SCRATCH41 has been
++ * set because it is expected that the secondary CPU will be idle soon.
++ */
++ENTRY(tegra20_cpu_is_resettable_soon)
++	mov32	r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
++	ldr	r12, [r1]
++	cmp	r12, #CPU_RESETTABLE_SOON
++	moveq	r0, #1
++	movne	r0, #0
++	mov	pc, lr
++ENDPROC(tegra20_cpu_is_resettable_soon)
++
++/*
+  * tegra20_sleep_cpu_secondary_finish(unsigned long v2p)
+  *
+  * Enters WFI on secondary CPU by exiting coherency.
+@@ -224,4 +242,39 @@ ENTRY(tegra20_sleep_cpu_secondary_finish)
+ 
+ 	ldmfd	sp!, {r4 - r11, pc}
+ ENDPROC(tegra20_sleep_cpu_secondary_finish)
++
++/*
++ * tegra20_tear_down_cpu
++ *
++ * Switches the CPU cluster to PLL-P and enters sleep.
++ */
++ENTRY(tegra20_tear_down_cpu)
++	bl	tegra_switch_cpu_to_pllp
++	b	tegra20_enter_sleep
++ENDPROC(tegra20_tear_down_cpu)
++
++/*
++ * tegra20_enter_sleep
++ *
++ * uses flow controller to enter sleep state
++ * executes from IRAM with SDRAM in selfrefresh when target state is LP0 or LP1
++ * executes from SDRAM with target state is LP2
++ */
++tegra20_enter_sleep:
++	mov32   r6, TEGRA_FLOW_CTRL_BASE
++
++	mov     r0, #FLOW_CTRL_WAIT_FOR_INTERRUPT
++	orr	r0, r0, #FLOW_CTRL_HALT_CPU_IRQ | FLOW_CTRL_HALT_CPU_FIQ
++	cpu_id	r1
++	cpu_to_halt_reg r1, r1
++	str	r0, [r6, r1]
++	dsb
++	ldr	r0, [r6, r1] /* memory barrier */
++
++halted:
++	dsb
++	wfe	/* CPU should be power gated here */
++	isb
++	b	halted
++
  #endif
+diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
+index 26afa7c..bbda6e9 100644
+--- a/arch/arm/mach-tegra/sleep.S
++++ b/arch/arm/mach-tegra/sleep.S
+@@ -34,6 +34,9 @@
+ #include "flowctrl.h"
+ #include "sleep.h"
+ 
++#define CLK_RESET_CCLK_BURST	0x20
++#define CLK_RESET_CCLK_DIVIDER  0x24
 +
-+#ifdef CONFIG_PM_SLEEP
-+/*
-+ * tegra_pen_lock
-+ *
-+ * spinlock implementation with no atomic test-and-set and no coherence
-+ * using Peterson's algorithm on strongly-ordered registers
-+ * used to synchronize a cpu waking up from wfi with entering lp2 on idle
-+ *
-+ * The reference link of Peterson's algorithm:
-+ * http://en.wikipedia.org/wiki/Peterson's_algorithm
-+ *
-+ * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
-+ * on cpu 0:
-+ * r2 = flag[0] (in SCRATCH38)
-+ * r3 = flag[1] (in SCRATCH39)
-+ * on cpu1:
-+ * r2 = flag[1] (in SCRATCH39)
-+ * r3 = flag[0] (in SCRATCH38)
-+ *
-+ * must be called with MMU on
-+ * corrupts r0-r3, r12
-+ */
-+ENTRY(tegra_pen_lock)
-+	mov32	r3, TEGRA_PMC_VIRT
-+	cpu_id	r0
-+	add	r1, r3, #PMC_SCRATCH37
-+	cmp	r0, #0
-+	addeq	r2, r3, #PMC_SCRATCH38
-+	addeq	r3, r3, #PMC_SCRATCH39
-+	addne	r2, r3, #PMC_SCRATCH39
-+	addne	r3, r3, #PMC_SCRATCH38
-+
-+	mov	r12, #1
-+	str	r12, [r2]		@ flag[cpu] = 1
-+	dsb
-+	str	r12, [r1]		@ !turn = cpu
-+1:	dsb
-+	ldr	r12, [r3]
-+	cmp	r12, #1			@ flag[!cpu] == 1?
-+	ldreq	r12, [r1]
-+	cmpeq	r12, r0			@ !turn == cpu?
-+	beq	1b			@ while !turn == cpu && flag[!cpu] == 1
-+
-+	mov	pc, lr			@ locked
-+ENDPROC(tegra_pen_lock)
-+
-+ENTRY(tegra_pen_unlock)
-+	dsb
-+	mov32	r3, TEGRA_PMC_VIRT
-+	cpu_id	r0
-+	cmp	r0, #0
-+	addeq	r2, r3, #PMC_SCRATCH38
-+	addne	r2, r3, #PMC_SCRATCH39
-+	mov	r12, #0
-+	str	r12, [r2]
-+	mov     pc, lr
-+ENDPROC(tegra_pen_unlock)
+ #ifdef CONFIG_PM_SLEEP
+ /*
+  * tegra_disable_clean_inv_dcache
+@@ -108,4 +111,20 @@ ENTRY(tegra_shut_off_mmu)
+ 	mov	pc, r0
+ ENDPROC(tegra_shut_off_mmu)
+ 	.popsection
 +
 +/*
-+ * tegra20_cpu_clear_resettable(void)
++ * tegra_switch_cpu_to_pllp
 + *
-+ * Called to clear the "resettable soon" flag in PMC_SCRATCH41 when
-+ * it is expected that the secondary CPU will be idle soon.
++ * In LP2 the normal cpu clock pllx will be turned off. Switch the CPU to pllp
 + */
-+ENTRY(tegra20_cpu_clear_resettable)
-+	mov32	r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
-+	mov	r12, #CPU_NOT_RESETTABLE
-+	str	r12, [r1]
++ENTRY(tegra_switch_cpu_to_pllp)
++	/* in LP2 idle (SDRAM active), set the CPU burst policy to PLLP */
++	mov32	r5, TEGRA_CLK_RESET_BASE
++	mov	r0, #(2 << 28)			@ burst policy = run mode
++	orr	r0, r0, #(4 << 4)		@ use PLLP in run mode burst
++	str	r0, [r5, #CLK_RESET_CCLK_BURST]
++	mov	r0, #0
++	str	r0, [r5, #CLK_RESET_CCLK_DIVIDER]
 +	mov	pc, lr
-+ENDPROC(tegra20_cpu_clear_resettable)
-+
-+/*
-+ * tegra20_cpu_set_resettable_soon(void)
-+ *
-+ * Called to set the "resettable soon" flag in PMC_SCRATCH41 when
-+ * it is expected that the secondary CPU will be idle soon.
-+ */
-+ENTRY(tegra20_cpu_set_resettable_soon)
-+	mov32	r1, TEGRA_PMC_VIRT + PMC_SCRATCH41
-+	mov	r12, #CPU_RESETTABLE_SOON
-+	str	r12, [r1]
-+	mov	pc, lr
-+ENDPROC(tegra20_cpu_set_resettable_soon)
-+
-+/*
-+ * tegra20_sleep_cpu_secondary_finish(unsigned long v2p)
-+ *
-+ * Enters WFI on secondary CPU by exiting coherency.
-+ */
-+ENTRY(tegra20_sleep_cpu_secondary_finish)
-+	stmfd	sp!, {r4-r11, lr}
-+
-+	mrc	p15, 0, r11, c1, c0, 1  @ save actlr before exiting coherency
-+
-+	/* Flush and disable the L1 data cache */
-+	bl	tegra_disable_clean_inv_dcache
-+
-+	mov32	r0, TEGRA_PMC_VIRT + PMC_SCRATCH41
-+	mov	r3, #CPU_RESETTABLE
-+	str	r3, [r0]
-+
-+	bl	cpu_do_idle
-+
-+	/*
-+	 * cpu may be reset while in wfi, which will return through
-+	 * tegra_resume to cpu_resume
-+	 * or interrupt may wake wfi, which will return here
-+	 * cpu state is unchanged - MMU is on, cache is on, coherency
-+	 * is off, and the data cache is off
-+	 *
-+	 * r11 contains the original actlr
-+	 */
-+
-+	bl	tegra_pen_lock
-+
-+	mov32	r3, TEGRA_PMC_VIRT
-+	add	r0, r3, #PMC_SCRATCH41
-+	mov	r3, #CPU_NOT_RESETTABLE
-+	str	r3, [r0]
-+
-+	bl	tegra_pen_unlock
-+
-+	/* Re-enable the data cache */
-+	mrc	p15, 0, r10, c1, c0, 0
-+	orr	r10, r10, #CR_C
-+	mcr	p15, 0, r10, c1, c0, 0
-+	isb
-+
-+	mcr	p15, 0, r11, c1, c0, 1	@ reenable coherency
-+
-+	/* Invalidate the TLBs & BTAC */
-+	mov	r1, #0
-+	mcr	p15, 0, r1, c8, c3, 0	@ invalidate shared TLBs
-+	mcr	p15, 0, r1, c7, c1, 6	@ invalidate shared BTAC
-+	dsb
-+	isb
-+
-+	/* the cpu was running with coherency disabled,
-+	 * caches may be out of date */
-+	bl	v7_flush_kern_cache_louis
-+
-+	ldmfd	sp!, {r4 - r11, pc}
-+ENDPROC(tegra20_sleep_cpu_secondary_finish)
-+#endif
++ENDPROC(tegra_switch_cpu_to_pllp)
+ #endif
 diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 9821ee7..a02f71a 100644
+index a02f71a..4d2b173 100644
 --- a/arch/arm/mach-tegra/sleep.h
 +++ b/arch/arm/mach-tegra/sleep.h
-@@ -25,6 +25,19 @@
- 					+ IO_PPSB_VIRT)
- #define TEGRA_CLK_RESET_VIRT (TEGRA_CLK_RESET_BASE - IO_PPSB_PHYS \
- 					+ IO_PPSB_VIRT)
-+#define TEGRA_PMC_VIRT	(TEGRA_PMC_BASE - IO_APB_PHYS + IO_APB_VIRT)
-+
-+/* PMC_SCRATCH37-39 and 41 are used for tegra_pen_lock and idle */
-+#define PMC_SCRATCH37	0x130
-+#define PMC_SCRATCH38	0x134
-+#define PMC_SCRATCH39	0x138
-+#define PMC_SCRATCH41	0x140
-+
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+#define CPU_RESETTABLE		2
-+#define CPU_RESETTABLE_SOON	1
-+#define CPU_NOT_RESETTABLE	0
-+#endif
- 
- #ifdef __ASSEMBLY__
- /* returns the offset of the flow controller halt register for a cpu */
-@@ -104,6 +117,8 @@ exit_l2_resume:
- .endm
- #endif /* CONFIG_CACHE_L2X0 */
- #else
-+void tegra_pen_lock(void);
-+void tegra_pen_unlock(void);
- void tegra_resume(void);
- int tegra_sleep_cpu_finish(unsigned long);
- 
-@@ -115,6 +130,14 @@ static inline void tegra20_hotplug_init(void) {}
+@@ -130,6 +130,8 @@ static inline void tegra20_hotplug_init(void) {}
  static inline void tegra30_hotplug_init(void) {}
  #endif
  
-+void tegra20_cpu_clear_resettable(void);
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+void tegra20_cpu_set_resettable_soon(void);
-+#else
-+static inline void tegra20_cpu_set_resettable_soon(void) {}
-+#endif
-+
-+int tegra20_sleep_cpu_secondary_finish(unsigned long);
++void tegra20_cpu_shutdown(int cpu);
++int tegra20_cpu_is_resettable_soon(void);
+ void tegra20_cpu_clear_resettable(void);
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ void tegra20_cpu_set_resettable_soon(void);
+@@ -138,6 +140,7 @@ static inline void tegra20_cpu_set_resettable_soon(void) {}
+ #endif
+ 
+ int tegra20_sleep_cpu_secondary_finish(unsigned long);
++void tegra20_tear_down_cpu(void);
  int tegra30_sleep_cpu_secondary_finish(unsigned long);
  void tegra30_tear_down_cpu(void);
  
