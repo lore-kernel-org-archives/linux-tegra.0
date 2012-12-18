@@ -1,40 +1,124 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 1/4] ARM: tegra30: Add support for Uart clock source divider
- as 15.1
-Date: Tue, 18 Dec 2012 18:35:37 +0530
-Message-ID: <50D06A21.2000102@nvidia.com>
-References: <1355746101-15291-1-git-send-email-ldewangan@nvidia.com> <1355746101-15291-2-git-send-email-ldewangan@nvidia.com> <50CF91F7.5010402@wwwdotorg.org> <50D009E0.3050409@nvidia.com> <50D00C1D.9090100@nvidia.com> <50D0163F.3030806@nvidia.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from DT
+Date: Tue, 18 Dec 2012 07:46:36 -0600
+Message-ID: <50D073BC.3040607@gmail.com>
+References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com><1355725087-11363-4-git-send-email-hdoyu@nvidia.com><50CF258E.2080207@gmail.com>
+ <20121218.112129.1344593225772728837.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50D0163F.3030806@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20121218.112129.1344593225772728837.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 18 December 2012 12:37 PM, Prashant Gaikwad wrote:
-> On Tuesday 18 December 2012 11:54 AM, Laxman Dewangan wrote:
->> On Tuesday 18 December 2012 11:44 AM, Prashant Gaikwad wrote:
+On 12/18/2012 03:21 AM, Hiroshi Doyu wrote:
+> Hi Rob,
+> 
+> Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Mon, 17 Dec 2012 15:00:46 +0100:
+> 
+>> On 12/17/2012 12:18 AM, Hiroshi Doyu wrote:
+>>> Set Snoop Control Unit(SCU) register base address dynamically from DT.
 >>>
->>> My clock driver rework includes this fix. Divider supports both DIVU71
->>> and DIVU151.
->>> UART divider is set to DIVU151.
->> Prashant,
->> I like to go this patch as first patch towards bug fixes rather than
->> after moving the clock. The reason is that we will pull this change in
->> our downstream and will be available in our K3.7 code.
-> Laxman,
->
-> We are not going to use ccf in our downstream kernel port to K3.7. How
-> does that help pushing in upstream?
+>>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  arch/arm/mach-tegra/platsmp.c |   23 ++++++++++++++++++++---
+>>>  1 file changed, 20 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+>>> index 1b926df..45c0b79 100644
+>>> --- a/arch/arm/mach-tegra/platsmp.c
+>>> +++ b/arch/arm/mach-tegra/platsmp.c
+>>> @@ -18,6 +18,8 @@
+>>>  #include <linux/jiffies.h>
+>>>  #include <linux/smp.h>
+>>>  #include <linux/io.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/of_address.h>
+>>>  
+>>>  #include <asm/cacheflush.h>
+>>>  #include <asm/hardware/gic.h>
+>>> @@ -36,7 +38,7 @@
+>>>  
+>>>  extern void tegra_secondary_startup(void);
+>>>  
+>>> -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+>>> +static void __iomem *scu_base;
+>>>  
+>>>  #define EVP_CPU_RESET_VECTOR \
+>>>  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+>>> @@ -143,14 +145,28 @@ done:
+>>>  	return status;
+>>>  }
+>>>  
+>>> +static const struct of_device_id cortex_a9_scu_match[] __initconst = {
+>>> +	{ .compatible = "arm,cortex-a9-scu", },
+>>> +	{}
+>>> +};
+>>> +
+>>>  /*
+>>>   * Initialise the CPU possible map early - this describes the CPUs
+>>>   * which may be present or become present in the system.
+>>>   */
+>>>  static void __init tegra_smp_init_cpus(void)
+>>>  {
+>>> -	unsigned int i, ncores = scu_get_core_count(scu_base);
+>>> +	struct device_node *np;
+>>> +	unsigned int i, ncores = 1;
+>>> +
+>>> +	np = of_find_matching_node(NULL, cortex_a9_scu_match);
+>>> +	if (!np)
+>>> +		return;
+>>> +	scu_base = of_iomap(np, 0);
+>>
+>> Did you actually test this? Unless something changed, ioremap does not
+>> work this early. The only reason to have it mapped this early is to get
+>> the core count, but that doesn't work on A15 or A7. So we really need to
+>> get core count/mask in a standard way. At least some work to get core
+>> count from DT went into 3.8.
+>>
+>> BTW, you can get the scu address on the A9 by reading cp15 register:
+>>
+>> 	/* Get SCU base */
+>> 	asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (base));
+>>
+>> It's still probably good to have the DT node, but the reg property can
+>> be optional in this case.
+> 
+> I'm simply wondering, if the above cp15 works with Cortex-A9, do we
+> still need SCU DT node? At least from Cortex-A15 TRM, it seems that
+> SCU is tighly integrated into CPU core and it doesn't have any user
+> control. So Cortex-A15 doesn't seem to need to configure SCU. For
+> Cortex-A7, I haven't yet found S/W configurable register definitions
+> in TRM. So if neither of A15/A7 need SCU base, would the above cp15
+> intructions be enough?
 
-Ok, as per our internal discussion, I am going to drop first three 
-patches. I will relookinto these patches once your series get applied 
-and will work if there is any missing items.
+The A15/A7 still have the register for the other peripherals like the
+GIC, but there are no SCU registers or other way to get a core count
+from the h/w.
 
+The DT node could be used to determine if you have an SCU or not. I just
+used the cpu node compatible value to determine that.
 
-Stephen,
-I will respin the 4th patch based on how the discussion on serial driver 
-goes. I will send the new patch for 4th change.
+>> We need to move away from having the DT matching code within the
+>> platforms. This should all be moved to the scu code in a scu_of_init
+>> function that could be called from common code.
+> 
+> True if SCU DT node is still necessary.
+
+Well, reading the cp15 register and mapping the registers could be
+common code independent of DT. I'm not sure if there are non-A9
+implementations of the SCU which don't have the cp15 register.
+
+Rob
