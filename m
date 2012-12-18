@@ -1,115 +1,64 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state
- for secondary CPU
-Date: Tue, 18 Dec 2012 11:06:45 +0800
-Message-ID: <1355800005.16185.14.camel@jlo-ubuntu-64.nvidia.com>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
-	 <1355797861-12759-3-git-send-email-josephl@nvidia.com>
-	 <CAMbhsRTLo6jS_7hqVVtgaa8_ZweAwicrgghaaFWfnzHpc6f1Pg@mail.gmail.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm: tegra: remove USB address related macros from iomap.h
+Date: Tue, 18 Dec 2012 10:01:01 +0530
+Message-ID: <1355805061-22789-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRTLo6jS_7hqVVtgaa8_ZweAwicrgghaaFWfnzHpc6f1Pg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2012-12-18 at 10:46 +0800, Colin Cross wrote:
-> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > The powered-down state of Tegra20 requires power gating both CPU cores.
-> > When the secondary CPU requests to enter powered-down state, it saves
-> > its own contexts and then enters WFI. The Tegra20 had a limition to
-> > power down both CPU cores. The secondary CPU must waits for CPU0 in
-> > powered-down state too. If the secondary CPU be woken up before CPU0
-> > entering powered-down state, then it needs to restore its CPU states
-> > and waits for next chance.
-> >
-> > Be aware of that, you may see the legacy power state "LP2" in the code
-> > which is exactly the same meaning of "CPU power down".
-> >
-> > Based on the work by:
-> > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V3:
-> > * dynamic checking of the number of the state counts
-> > * fix the code sequence for aborting cpu_suspend in
-> >   tegra20_sleep_cpu_secondary_finish
-> > V2:
-> > * no change
-> > ---
-> >  arch/arm/mach-tegra/cpuidle-tegra20.c |   94 ++++++++++++++++++++-
-> >  arch/arm/mach-tegra/pm.c              |    2 +
-> >  arch/arm/mach-tegra/sleep-tegra20.S   |  147 +++++++++++++++++++++++++++++++++
-> >  arch/arm/mach-tegra/sleep.h           |   23 +++++
-> >  4 files changed, 261 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > index d32e8b0..716aef3 100644
-> > --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > +static int __cpuinit tegra20_idle_lp2(struct cpuidle_device *dev,
-> > +                                     struct cpuidle_driver *drv,
-> > +                                     int index)
-> > +{
-> > +       u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
-> > +       bool entered_lp2 = false;
-> > +
-> > +       local_fiq_disable();
-> > +
-> > +       tegra_set_cpu_in_lp2(cpu);
-> > +       cpu_pm_enter();
-> 
-> You must check the return value from cpu_pm_enter and synchronize and
-> abort both cpus.
-> 
-Please check the sequence in last patch. Although it used the API that
-be provided by patch 1 to check the pending sgi. 
+USB register base address and sizes defined in iomap.h
+are not used in any files other than board-dt-tegra20.c.
+Hence removed those defines from header file and using
+the absolute values in board files.
 
-> > +
-> > +       if (cpu == 0)
-> > +               cpu_do_idle();
-> > +       else
-> > +               entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
-> > +
-> > +       cpu_pm_exit();
-> > +       tegra_clear_cpu_in_lp2(cpu);
-> > +
-> > +       local_fiq_enable();
-> > +
-> > +       smp_rmb();
-> > +
-> > +       return entered_lp2 ? index : 0;
-> > +}
-> > +#endif
-> > +
-> >  int __init tegra20_cpuidle_init(void)
-> >  {
-> > -       int ret;
-> > +       int ret, i;
-> >         unsigned int cpu;
-> >         struct cpuidle_device *dev;
-> >         struct cpuidle_driver *drv = &tegra_idle_driver;
-> >
-> > +       drv->state_count = sizeof(tegra_idle_states) /
-> > +                          sizeof(struct cpuidle_state);
-> > +       for (i = 0; i < drv->state_count; i++)
-> > +               memcpy(&drv->states[i], &tegra_idle_states[i],
-> > +                      sizeof(struct cpuidle_state));
-> > +
-> >         ret = cpuidle_register_driver(&tegra_idle_driver);
-> >         if (ret) {
-> >                 pr_err("CPUidle driver registration failed\n");
-> 
-> Is there a call to cpu_cluster_pm_enter/exit somewhere else?
+Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra20.c |    6 +++---
+ arch/arm/mach-tegra/iomap.h            |    9 ---------
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
-Yes, there is. Please check the fuction "tegra_idle_lp2_last" in "pm.c",
-because it's a common code of "powered-down" idle state for CPU0 on
-Tegra20 & Tegra30.
-
-Thanks,
-Joseph
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+index 734d9cc..aae399b 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra20.c
++++ b/arch/arm/mach-tegra/board-dt-tegra20.c
+@@ -81,11 +81,11 @@ struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S1_BASE, "tegra20-i2s.0", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-i2s", TEGRA_I2S2_BASE, "tegra20-i2s.1", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-das", TEGRA_APB_MISC_DAS_BASE, "tegra20-das", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB_BASE, "tegra-ehci.0",
++	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5000000, "tegra-ehci.0",
+ 		       &tegra_ehci1_pdata),
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB2_BASE, "tegra-ehci.1",
++	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5004000, "tegra-ehci.1",
+ 		       &tegra_ehci2_pdata),
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
++	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5008000, "tegra-ehci.2",
+ 		       &tegra_ehci3_pdata),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", TEGRA_APB_DMA_BASE, "tegra-apbdma", NULL),
+ 	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
+index db8be51..399fbca 100644
+--- a/arch/arm/mach-tegra/iomap.h
++++ b/arch/arm/mach-tegra/iomap.h
+@@ -240,15 +240,6 @@
+ #define TEGRA_CSITE_BASE		0x70040000
+ #define TEGRA_CSITE_SIZE		SZ_256K
+ 
+-#define TEGRA_USB_BASE			0xC5000000
+-#define TEGRA_USB_SIZE			SZ_16K
+-
+-#define TEGRA_USB2_BASE			0xC5004000
+-#define TEGRA_USB2_SIZE			SZ_16K
+-
+-#define TEGRA_USB3_BASE			0xC5008000
+-#define TEGRA_USB3_SIZE			SZ_16K
+-
+ #define TEGRA_SDMMC1_BASE		0xC8000000
+ #define TEGRA_SDMMC1_SIZE		SZ_512
+ 
+-- 
+1.7.0.4
