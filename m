@@ -1,245 +1,80 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2] spi: remove check for bits_per_word on transfer from low level driver
-Date: Tue, 18 Dec 2012 14:25:43 +0530
-Message-ID: <1355820943-25228-1-git-send-email-ldewangan@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: add EMC clock scaling API
+Date: Tue, 18 Dec 2012 10:11:52 +0100
+Message-ID: <1355821912.1490.48.camel@tellur>
+References: <1355516086-11116-1-git-send-email-dev@lynxeye.de>
+	  <1355516086-11116-2-git-send-email-dev@lynxeye.de>
+	  <50CEFD28.7080601@gmail.com> <1355743334.1490.7.camel@tellur>
+	 <50D024B7.400@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, baohua.song@csr.com, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jonas.gorski@gmail.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50D024B7.400-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The spi core make sure that each transfer structure have the proper
-setting for bits_per_word before calling low level transfer APIs.
+Am Dienstag, den 18.12.2012, 16:09 +0800 schrieb Mark Zhang:
+[...]
+> >> Why don't you put this file into the directory which "tegra_emc.h"
+> >> resides? I think that'll be easy to find and understand.
+> >>
+> > Because my understanding is that mach-tegra is not the right place for
+> > include files that are used by normal drivers and not just the platform
+> > code.
+> > 
+> 
+> Tegra emc driver is not "normal" driver, it's highly tegra related.
+> "tegra_emc_performance.h" is also tegra related so I think it's not good
+> to put it into a generic directory, just like "include/memory" here.
+> 
+In fact it is a normal device driver. There is nothing specific to the
+platform in there. Citing from [1]: "Device drivers for things, even if
+they are only found on the ARM architecture, or even only on your
+machine, do not go in these directories, but in the relevant parts of
+the main tree; usually linux/drivers/, but sometimes linux/fs
+or /linux/net if there are filesystems, partition types or network
+protocols specific to your device."
 
-Hence it is no more require to check again in low level driver for
-this field whether this is set correct or not. Removing such code
-from low level driver.
+So honestly I don't even know why the EMC driver is located in
+mach-tegra. This may have been historically the right place, as EMC was
+intertwined with CPUfreq, which is in fact platform specific. But that
+point is moot now.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-This is the continuation of feedback got from Jonas on
-change
-spi: make sure all transfer has bits_per_word set
-where I made the change in only tegra slink driver.
-This patch remove the similar code form all drivers.
+[...]
+> >>
+> >> Get confused here. Why we add all bandwidth up? We should loop all the
+> >> bandwidth requests in "constraints" array, find out the largest one,
+> >> compare with emc table then finally write the registers and set the emc
+> >> clock, isn't it?
+> >>
+> > No, bandwidth constraints add up. Imagine two display clients scanning
+> > out at the same time. Both on their own may be satisfied with 83MHz DRAM
+> > clock, but if they are running at the same time you have to account for
+> > that and maybe bump DRAM freq to 133MHz.
+> 
+> Ah, yes, this is correct for dc. I skimmed the downstream kernel codes
+> and found that there are different logics for different clients. For DC,
+> their bandwidth request should be added up. For other clients, e.g: USB,
+> set to max bandwidth request is OK.
+> 
+> So we may do more works on this part later, to write a more accurate
+> algorithms to get the final emc rate. For now, it's OK.
+> 
+I don't see how there could be any difference at the EMC level. You
+always want the EMC to deliver enough bandwidth for all registered
+clients. You certainly don't want to risk display corruptions just
+because USB also demands it's share. This might be a bad example as the
+high priority of the DC transaction may kick out USB, but still.
 
-Changes from V1:
-- No change in code.
-- Description is rewritten to match with the change.
+There might be different ways on how clients compute their needed
+bandwidth, maybe USB only request bandwidth for one high speed port even
+if three ports are connected. But that's the clients decision, not the
+EMCs.
 
- drivers/spi/spi-altera.c        |    2 +-
- drivers/spi/spi-bfin-sport.c    |    3 +--
- drivers/spi/spi-bfin5xx.c       |    3 +--
- drivers/spi/spi-bitbang.c       |    6 +++---
- drivers/spi/spi-clps711x.c      |    2 +-
- drivers/spi/spi-coldfire-qspi.c |    3 +--
- drivers/spi/spi-ep93xx.c        |    2 +-
- drivers/spi/spi-s3c64xx.c       |    2 +-
- drivers/spi/spi-sirf.c          |    3 +--
- drivers/spi/spi-tegra20-slink.c |    9 +++------
- drivers/spi/spi-txx9.c          |    6 ++----
- 11 files changed, 16 insertions(+), 25 deletions(-)
+Regards,
+Lucas
 
-diff --git a/drivers/spi/spi-altera.c b/drivers/spi/spi-altera.c
-index 5e7314a..a537f8d 100644
---- a/drivers/spi/spi-altera.c
-+++ b/drivers/spi/spi-altera.c
-@@ -134,7 +134,7 @@ static int altera_spi_txrx(struct spi_device *spi, struct spi_transfer *t)
- 	hw->tx = t->tx_buf;
- 	hw->rx = t->rx_buf;
- 	hw->count = 0;
--	hw->bytes_per_word = (t->bits_per_word ? : spi->bits_per_word) / 8;
-+	hw->bytes_per_word = t->bits_per_word / 8;
- 	hw->len = t->len / hw->bytes_per_word;
- 
- 	if (hw->irq >= 0) {
-diff --git a/drivers/spi/spi-bfin-sport.c b/drivers/spi/spi-bfin-sport.c
-index ac7ffca..39b0d17 100644
---- a/drivers/spi/spi-bfin-sport.c
-+++ b/drivers/spi/spi-bfin-sport.c
-@@ -416,8 +416,7 @@ bfin_sport_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0)
- 		drv_data->ops = &bfin_sport_transfer_ops_u16;
- 	else
-diff --git a/drivers/spi/spi-bfin5xx.c b/drivers/spi/spi-bfin5xx.c
-index 0429d83..7d7c991 100644
---- a/drivers/spi/spi-bfin5xx.c
-+++ b/drivers/spi/spi-bfin5xx.c
-@@ -642,8 +642,7 @@ static void bfin_spi_pump_transfers(unsigned long data)
- 	drv_data->cs_change = transfer->cs_change;
- 
- 	/* Bits per word setup */
--	bits_per_word = transfer->bits_per_word ? :
--		message->spi->bits_per_word ? : 8;
-+	bits_per_word = transfer->bits_per_word;
- 	if (bits_per_word % 16 == 0) {
- 		drv_data->n_bytes = bits_per_word/8;
- 		drv_data->len = (transfer->len) >> 1;
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index 8b3d8ef..61beaec 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -69,7 +69,7 @@ static unsigned bitbang_txrx_8(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u8		*tx = t->tx_buf;
- 	u8			*rx = t->rx_buf;
-@@ -95,7 +95,7 @@ static unsigned bitbang_txrx_16(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u16		*tx = t->tx_buf;
- 	u16			*rx = t->rx_buf;
-@@ -121,7 +121,7 @@ static unsigned bitbang_txrx_32(
- 	unsigned		ns,
- 	struct spi_transfer	*t
- ) {
--	unsigned		bits = t->bits_per_word ? : spi->bits_per_word;
-+	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u32		*tx = t->tx_buf;
- 	u32			*rx = t->rx_buf;
-diff --git a/drivers/spi/spi-clps711x.c b/drivers/spi/spi-clps711x.c
-index 1366c46..a11cbf0 100644
---- a/drivers/spi/spi-clps711x.c
-+++ b/drivers/spi/spi-clps711x.c
-@@ -68,7 +68,7 @@ static int spi_clps711x_setup_xfer(struct spi_device *spi,
- 				   struct spi_transfer *xfer)
- {
- 	u32 speed = xfer->speed_hz ? : spi->max_speed_hz;
--	u8 bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+	u8 bpw = xfer->bits_per_word;
- 	struct spi_clps711x_data *hw = spi_master_get_devdata(spi->master);
- 
- 	if (bpw != 8) {
-diff --git a/drivers/spi/spi-coldfire-qspi.c b/drivers/spi/spi-coldfire-qspi.c
-index 58466b8..7b5cc9e 100644
---- a/drivers/spi/spi-coldfire-qspi.c
-+++ b/drivers/spi/spi-coldfire-qspi.c
-@@ -329,8 +329,7 @@ static int mcfqspi_transfer_one_message(struct spi_master *master,
- 		mcfqspi_cs_select(mcfqspi, spi->chip_select, cs_high);
- 
- 		mcfqspi_wr_qir(mcfqspi, MCFQSPI_QIR_SPIFE);
--		if ((t->bits_per_word ? t->bits_per_word :
--					spi->bits_per_word) == 8)
-+		if (t->bits_per_word == 8)
- 			mcfqspi_transfer_msg8(mcfqspi, t->len, t->tx_buf,
- 					t->rx_buf);
- 		else
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index acb1e19..aecbff1 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -446,7 +446,7 @@ static inline int bits_per_word(const struct ep93xx_spi *espi)
- 	struct spi_message *msg = espi->current_msg;
- 	struct spi_transfer *t = msg->state;
- 
--	return t->bits_per_word ? t->bits_per_word : msg->spi->bits_per_word;
-+	return t->bits_per_word;
- }
- 
- static void ep93xx_do_write(struct ep93xx_spi *espi, struct spi_transfer *t)
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 4dd7b7c..ab0c0e4 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -697,7 +697,7 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
- 		INIT_COMPLETION(sdd->xfer_completion);
- 
- 		/* Only BPW and Speed may change across transfers */
--		bpw = xfer->bits_per_word ? : spi->bits_per_word;
-+		bpw = xfer->bits_per_word;
- 		speed = xfer->speed_hz ? : spi->max_speed_hz;
- 
- 		if (xfer->len % (bpw / 8)) {
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index e0f43a5..7506667 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -382,8 +382,7 @@ spi_sirfsoc_setup_transfer(struct spi_device *spi, struct spi_transfer *t)
- 
- 	sspi = spi_master_get_devdata(spi->master);
- 
--	bits_per_word = t && t->bits_per_word ? t->bits_per_word :
--		spi->bits_per_word;
-+	bits_per_word = (t) ? t->bits_per_word : spi->bits_per_word;
- 	hz = t && t->speed_hz ? t->speed_hz : spi->max_speed_hz;
- 
- 	/* Enable IO mode for RX, TX */
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 651167f..7a95bdd 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -284,8 +284,7 @@ static unsigned tegra_slink_calculate_curr_xfer_param(
- 	unsigned max_len;
- 	unsigned total_fifo_words;
- 
--	bits_per_word = t->bits_per_word ? t->bits_per_word :
--						spi->bits_per_word;
-+	bits_per_word = t->bits_per_word;
- 	tspi->bytes_per_word = (bits_per_word - 1) / 8 + 1;
- 
- 	if (bits_per_word == 8 || bits_per_word == 16) {
-@@ -378,8 +377,7 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
- 	} else {
- 		unsigned int bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		for (count = 0; count < rx_full_count; count++) {
- 			x = tegra_slink_readl(tspi, SLINK_RX_FIFO);
- 			for (i = 0; (i < tspi->bytes_per_word); i++)
-@@ -444,8 +442,7 @@ static void tegra_slink_copy_spi_rxbuf_to_client_rxbuf(
- 		unsigned int x;
- 		unsigned int rx_mask, bits_per_word;
- 
--		bits_per_word = t->bits_per_word ? t->bits_per_word :
--						tspi->cur_spi->bits_per_word;
-+		bits_per_word = t->bits_per_word;
- 		rx_mask = (1 << bits_per_word) - 1;
- 		for (count = 0; count < tspi->curr_dma_words; count++) {
- 			x = tspi->rx_dma_buf[count];
-diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
-index d5a3cbb..550b5f4 100644
---- a/drivers/spi/spi-txx9.c
-+++ b/drivers/spi/spi-txx9.c
-@@ -189,9 +189,8 @@ static void txx9spi_work_one(struct txx9spi *c, struct spi_message *m)
- 		unsigned int len = t->len;
- 		unsigned int wsize;
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		wsize = bits_per_word >> 3; /* in bytes */
- 
- 		if (prev_speed_hz != speed_hz
-@@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
- 	/* check each transfer's parameters */
- 	list_for_each_entry (t, &m->transfers, transfer_list) {
- 		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
--		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-+		u8 bits_per_word = t->bits_per_word;
- 
--		bits_per_word = bits_per_word ? : 8;
- 		if (!t->tx_buf && !t->rx_buf && t->len)
- 			return -EINVAL;
- 		if (bits_per_word != 8 && bits_per_word != 16)
--- 
-1.7.1.1
+[1] http://www.linux-arm.org/pub/LinuxKernel/WebHome/aleph-porting.pdf
