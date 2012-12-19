@@ -1,7 +1,7 @@
 From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: =?UTF-8?q?=5BPATCH=202/6=5D=20drm=3A=20tegra=3A=20don=27t=20leave=20clients=20host1x=20member=20uninitialized?=
-Date: Wed, 19 Dec 2012 22:38:53 +0100
-Message-ID: <1355953137-31563-3-git-send-email-dev@lynxeye.de>
+Subject: =?UTF-8?q?=5BPATCH=201/6=5D=20drm=3A=20tegra=3A=20fix=20front=5Fporch=20=3C-=3E=20back=5Fporch=20mixup?=
+Date: Wed, 19 Dec 2012 22:38:52 +0100
+Message-ID: <1355953137-31563-2-git-send-email-dev@lynxeye.de>
 References: <1355953137-31563-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,28 +13,69 @@ To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-No real problem for now, as nothing is using this, but leaving it
-unitialized is asking for trouble later on.
+=46ixes wrong picture offset observed when using HDMI output with a
+Technisat HD TV.
 
 Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Acked-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/host1x.c | 2 ++
- 1 Datei ge=C3=A4ndert, 2 Zeilen hinzugef=C3=BCgt(+)
+Captions are a bit confusing here. As the porch is always relative to
+the sync pulse, the left picture margin is actually the back_porch.
+---
+ drivers/gpu/drm/tegra/dc.c   | 8 ++++----
+ drivers/gpu/drm/tegra/hdmi.c | 6 +++---
+ 2 Dateien ge=C3=A4ndert, 7 Zeilen hinzugef=C3=BCgt(+), 7 Zeilen entfer=
+nt(-)
 
-diff --git a/drivers/gpu/drm/tegra/host1x.c b/drivers/gpu/drm/tegra/hos=
-t1x.c
-index bdb97a5..5d17b11 100644
---- a/drivers/gpu/drm/tegra/host1x.c
-+++ b/drivers/gpu/drm/tegra/host1x.c
-@@ -239,6 +239,8 @@ int host1x_register_client(struct host1x *host1x, s=
-truct host1x_client *client)
- 		}
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 0744103..54683e4 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -102,12 +102,12 @@ static int tegra_dc_set_timings(struct tegra_dc *=
+dc,
+ 		((mode->hsync_end - mode->hsync_start) <<  0);
+ 	tegra_dc_writel(dc, value, DC_DISP_SYNC_WIDTH);
+=20
+-	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
+-		((mode->hsync_start - mode->hdisplay) <<  0);
+-	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
+-
+ 	value =3D ((mode->vtotal - mode->vsync_end) << 16) |
+ 		((mode->htotal - mode->hsync_end) <<  0);
++	tegra_dc_writel(dc, value, DC_DISP_BACK_PORCH);
++
++	value =3D ((mode->vsync_start - mode->vdisplay) << 16) |
++		((mode->hsync_start - mode->hdisplay) <<  0);
+ 	tegra_dc_writel(dc, value, DC_DISP_FRONT_PORCH);
+=20
+ 	value =3D (mode->vdisplay << 16) | mode->hdisplay;
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.=
+c
+index ab40164..81ea934 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -479,7 +479,7 @@ static void tegra_hdmi_setup_avi_infoframe(struct t=
+egra_hdmi *hdmi,
+ 		return;
  	}
 =20
-+	client->host1x =3D host1x;
-+
- 	return 0;
- }
+-	h_front_porch =3D mode->htotal - mode->hsync_end;
++	h_front_porch =3D mode->hsync_start - mode->hdisplay;
+ 	memset(&frame, 0, sizeof(frame));
+ 	frame.r =3D HDMI_AVI_R_SAME;
 =20
+@@ -634,8 +634,8 @@ static int tegra_output_hdmi_enable(struct tegra_ou=
+tput *output)
+=20
+ 	pclk =3D mode->clock * 1000;
+ 	h_sync_width =3D mode->hsync_end - mode->hsync_start;
+-	h_front_porch =3D mode->htotal - mode->hsync_end;
+-	h_back_porch =3D mode->hsync_start - mode->hdisplay;
++	h_back_porch =3D mode->htotal - mode->hsync_end;
++	h_front_porch =3D mode->hsync_start - mode->hdisplay;
+=20
+ 	err =3D regulator_enable(hdmi->vdd);
+ 	if (err < 0) {
 --=20
 1.7.11.7
