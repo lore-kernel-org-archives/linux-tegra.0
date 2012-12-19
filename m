@@ -1,189 +1,45 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: dts: add aliases and DMA requestor for serial controller
-Date: Wed, 19 Dec 2012 12:01:11 +0530
-Message-ID: <1355898671-3960-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH] serial: tegra: add serial driver
+Date: Wed, 19 Dec 2012 13:01:51 +0000
+Message-ID: <20121219130151.F29CA3E0AD7@localhost>
+References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com> <20121217171027.6AE573E0BDD@localhost> <50CF8F36.2030309@wwwdotorg.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <50CF8F36.2030309@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, alan@linux.intel.com, gregkh@linuxfoundation.org, jslaby@suse.cz, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add APB DMA requestor and serial aliases for serial controller.
-There will be two serial driver i.e. 8250 based simple serial driver
-and APB DMA based serial driver for higher baudrate and performace.
+On Mon, 17 Dec 2012 14:31:34 -0700, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 12/17/2012 10:10 AM, Grant Likely wrote:
+> > On Mon, 17 Dec 2012 17:40:49 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> >> Nvidia's Tegra has multiple uart controller which supports:
+> >> - APB dma based controller fifo read/write.
+> >> - End Of Data interrupt in incoming data to know whether end
+> >>   of frame achieve or not.
+> >> - Hw controlled RTS and CTS flow control to reduce SW overhead.
+> 
+> >> +static int __devinit tegra_uart_probe(struct platform_device *pdev)
+> >> +{
+> >> +	struct tegra_uart_port *tup;
+> >> +	struct uart_port *u;
+> >> +	struct tegra_uart_platform_data *pdata = pdev->dev.platform_data;
+> > 
+> > Since this is a new driver, and all new board support will use device
+> > tree, when would this platform_data pointer get set? Can you drop the
+> > platform_data support code entirely?
+> 
+> Aren't we still supposed to support platform data so that it can
+> override what's in DT in order to fix up bad DTs? Or, has that
+> requirement been dropped. If it has, we can drop a bunch of code from a
+> variety of Tegra-specific drivers, I expect.
 
-The simple serial driver get enabled with compatible nvidia,tegra20-uart
-and APB DMA based driver will get enabled with compatible
-nvidia,tegra20-hsuart.
+Do you have an actual user for this? If not, then don't borrow trouble.
+Just drop it. Things like platform_data can always be added later only
+if it is needed.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20.dtsi |   30 +++++++++++++++++++++++++-----
- arch/arm/boot/dts/tegra30.dtsi |   31 ++++++++++++++++++++++++++-----
- 2 files changed, 51 insertions(+), 10 deletions(-)
+g.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index b8effa1..fe35c72 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -4,6 +4,14 @@
- 	compatible = "nvidia,tegra20";
- 	interrupt-parent = <&intc>;
- 
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartb;
-+		serial2 = &uartc;
-+		serial3 = &uartd;
-+		serial4 = &uarte;
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -194,43 +202,55 @@
- 		status = "disabled";
- 	};
- 
--	serial@70006000 {
-+	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra20-uart" and to enable the APB DMA based serial
-+	 * driver, the comptible is "nvidia,tegra20-hsuart".
-+	 */
-+	uarta: serial@70006000 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 8>;
- 		status = "disabled";
- 	};
- 
--	serial@70006040 {
-+	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 9>;
- 		status = "disabled";
- 	};
- 
--	serial@70006200 {
-+	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 10>;
- 		status = "disabled";
- 	};
- 
--	serial@70006300 {
-+	uartd: serial@70006300 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 19>;
- 		status = "disabled";
- 	};
- 
--	serial@70006400 {
-+	uarte: serial@70006400 {
- 		compatible = "nvidia,tegra20-uart";
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 91 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 20>;
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 529fdb8..80a0edf 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -4,6 +4,14 @@
- 	compatible = "nvidia,tegra30";
- 	interrupt-parent = <&intc>;
- 
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartb;
-+		serial2 = &uartc;
-+		serial3 = &uartd;
-+		serial4 = &uarte;
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra30-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -190,43 +198,56 @@
- 		       0x70003000 0x3e4>; /* Mux registers */
- 	};
- 
--	serial@70006000 {
-+	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra30-uart", "nvidia,tegra20-uart" and to enable
-+	 * the APB DMA based serial driver, the comptible is
-+	 * "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart".
-+	 */
-+	uarta: serial@70006000 {
- 		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 8>;
- 		status = "disabled";
- 	};
- 
--	serial@70006040 {
-+	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 9>;
- 		status = "disabled";
- 	};
- 
--	serial@70006200 {
-+	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 10>;
- 		status = "disabled";
- 	};
- 
--	serial@70006300 {
-+	uartd: serial@70006300 {
- 		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 19>;
- 		status = "disabled";
- 	};
- 
--	serial@70006400 {
-+	uarte: serial@70006400 {
- 		compatible = "nvidia,tegra30-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006400 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 91 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 20>;
- 		status = "disabled";
- 	};
- 
 -- 
-1.7.1.1
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies, Ltd.
