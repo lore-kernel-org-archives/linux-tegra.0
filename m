@@ -1,23 +1,45 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] rtc: tegra: convert to DT driver
-Date: Wed, 19 Dec 2012 10:09:21 -0700
-Message-ID: <50D1F4C1.7060207@wwwdotorg.org>
-References: <1355885237-4448-1-git-send-email-josephl@nvidia.com>
+Subject: tegra_cpu_die() dead code?
+Date: Wed, 19 Dec 2012 11:11:05 -0700
+Message-ID: <50D20339.4090402@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1355885237-4448-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/2012 07:47 PM, Joseph Lo wrote:
-> After Kernel 3.7, the Tegra device will only support booting with DT. The
-> legacy Tegra RTC platform driver will not work anymore. This patch convert
-> the driver to support DT.
+Joseph,
 
-I think Andrew Morton usually ends up picking up drivers/rtc/ patches
-since Alessandro hasn't been active recently. But since Andrew wasn't
-Cc'd, I'd be happy to take this through the Tegra tree for 3.9.
+In next-20121217, I see:
+
+void __ref tegra_cpu_die(unsigned int cpu)
+{
+        cpu = cpu_logical_map(cpu);
+
+        /* Flush the L1 data cache. */
+        flush_cache_all();
+
+        /* Shut down the current CPU. */
+        tegra_hotplug_shutdown();
+
+        /* Clock gate the CPU */
+        tegra_wait_cpu_in_reset(cpu);
+        tegra_disable_cpu_clock(cpu);
+	
+        /* Should never return here. */
+        BUG();
+
+Given that both implementations (Tegra20/30) of tegra_hotplug_shutdown
+include:
+
+        bl      tegra20_cpu_shutdown
+        mov     pc, lr                  @ should never get here
+
+why does tegra_cpu_die() include the calls to tegra_wait_cpu_in_reset()
+and tegra_disable_cpu_clock() after calling tegra_hotplug_shutdown()?
+(and how can a CPU wait for itself to be in reset anyway)?
+
+Perhaps this is fixed by the various patches you've posted but are
+awaiting being applied?
