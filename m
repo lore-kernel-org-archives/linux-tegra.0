@@ -1,58 +1,37 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] dma: tegra: implement flags parameters for cyclic transfer
-Date: Wed, 19 Dec 2012 19:10:34 +0530
-Message-ID: <1355924434-7930-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] serial: tegra: add serial driver
+Date: Wed, 19 Dec 2012 19:45:35 +0530
+Message-ID: <50D1CC07.6070506@nvidia.com>
+References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com> <20121217171027.6AE573E0BDD@localhost> <50CF8F36.2030309@wwwdotorg.org> <20121219130151.F29CA3E0AD7@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: djbw@fb.com, vinod.koul@intel.com
-Cc: linux-kernel@vger.kernel.org, swarren@nvidia.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20121219130151.F29CA3E0AD7@localhost>
+Sender: linux-doc-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "alan@linux.intel.com" <alan@linux.intel.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "jslaby@suse.cz" <jslaby@suse.cz>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The flag parameter is added in the cyclic transfer request.
-Use the flag option of:
-- DMA_PREP_INTERRUPT for enabling interrupt.
-- DMA_CTRL_ACK for deciding whether ack is requred or not for
-  descriptor.
+On Wednesday 19 December 2012 06:31 PM, Grant Likely wrote:
+> On Mon, 17 Dec 2012 14:31:34 -0700, Stephen Warren<swarren@wwwdotorg.org>  wrote:
+>> On 12/17/2012 10:10 AM, Grant Likely wrote:
+>>> On Mon, 17 Dec 2012 17:40:49 +0530, Laxman Dewangan<ldewangan@nvidia.com>  wrote:
+>>
+>> Aren't we still supposed to support platform data so that it can
+>> override what's in DT in order to fix up bad DTs? Or, has that
+>> requirement been dropped. If it has, we can drop a bunch of code from a
+>> variety of Tegra-specific drivers, I expect.
+> Do you have an actual user for this? If not, then don't borrow trouble.
+> Just drop it. Things like platform_data can always be added later only
+> if it is needed.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/dma/tegra20-apb-dma.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
+Currently all our board supports DT. we are not using any driver 
+instantiated by board files.
+I will remove the platform data for current patch and if it is require 
+then will add later with reasoning.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index efdfffa..bf58bb8 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -266,6 +266,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
- 		if (async_tx_test_ack(&dma_desc->txd)) {
- 			list_del(&dma_desc->node);
- 			spin_unlock_irqrestore(&tdc->lock, flags);
-+			dma_desc->txd.flags = 0;
- 			return dma_desc;
- 		}
- 	}
-@@ -1050,7 +1051,9 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_FLOW | TEGRA_APBDMA_CSR_IE_EOC;
-+	csr |= TEGRA_APBDMA_CSR_FLOW;
-+	if (flags & DMA_PREP_INTERRUPT)
-+		csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
-@@ -1095,7 +1098,8 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		mem += len;
- 	}
- 	sg_req->last_sg = true;
--	dma_desc->txd.flags = 0;
-+	if (flags & DMA_CTRL_ACK)
-+		dma_desc->txd.flags = DMA_CTRL_ACK;
- 
- 	/*
- 	 * Make sure that mode should not be conflicting with currently
--- 
-1.7.1.1
+Hope this will be fine with Stephen also so that  this basic patch can 
+be included into tree soon.
+
+
