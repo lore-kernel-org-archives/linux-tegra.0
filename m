@@ -1,61 +1,58 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] serial: tegra: add serial driver
-Date: Wed, 19 Dec 2012 13:03:05 +0000
-Message-ID: <20121219130307.B8FCB3E0AD7@localhost>
-References: <1355746249-15347-1-git-send-email-ldewangan@nvidia.com> <50CF9043.8030308@wwwdotorg.org> <50CF9580.4050300@firmworks.com> <50CF96D4.6010705@wwwdotorg.org> <50CF99EC.1050509@firmworks.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <50CF99EC.1050509@firmworks.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mitch Bradley <wmb@firmworks.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, rob.herring@calxeda.com, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, jslaby@suse.cz, alan@linux.intel.com
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] dma: tegra: implement flags parameters for cyclic transfer
+Date: Wed, 19 Dec 2012 19:10:34 +0530
+Message-ID: <1355924434-7930-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: djbw@fb.com, vinod.koul@intel.com
+Cc: linux-kernel@vger.kernel.org, swarren@nvidia.com, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 17 Dec 2012 12:17:16 -1000, Mitch Bradley <wmb@firmworks.com> wrote:
-> On 12/17/2012 12:04 PM, Stephen Warren wrote:
-> > On 12/17/2012 02:58 PM, Mitch Bradley wrote:
-> >> On 12/17/2012 11:36 AM, Stephen Warren wrote:
-> >>> On 12/17/2012 05:10 AM, Laxman Dewangan wrote:
-> >>>> Nvidia's Tegra has multiple uart controller which supports:
-> >>>> - APB dma based controller fifo read/write.
-> >>>> - End Of Data interrupt in incoming data to know whether end
-> >>>>   of frame achieve or not.
-> >>>> - Hw controlled RTS and CTS flow control to reduce SW overhead.
-> >>>
-> >>>> diff --git a/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt b/Documentation/devicetree/bindings/serial/nvidia,serial-tegra.txt
-> >>>
-> >>>> +NVIDIA Tegra20/Tegra30 high speed (dma based) UART controller driver.
-> >>>> +
-> >>>> +Required properties:
-> >>>> +- compatible : should be "nvidia,tegra20-hsuart", "nvidia,tegra30-hsuart".
-> >>>
-> >>> One question that isn't addressed here is:
-> >>>
-> >>> Tegra has 5 UARTs. All of them can use the existing 8250.c by specifying
-> >>> compatible = "nvidia,tegra20-uart".
-> >>
-> >> The way it is supposed to work is that the compatible property should
-> >> list "nvidia,tegra30-hsuart" first, followed by a fallback name that
-> >> refers to the generic 8250 compatibility.  Having the 8250.c driver bind
-> >> to the more-specific tegra30-hsuart name is wrong.
-> > 
-> > 8250.c binds to nvidia,tegra20-uart, so that aspect is fine.
-> > 
-> > However, the real issue is that we probably want 4 of the 5 ports to use
-> > the plain old 8250.c (so as not to use up too many DMA channels), but
-> > just 1 of the ports to use the DMA-capable high-performance driver (e.g.
-> > the one that a particular board has hooked up to a Bluetooth radio). The
-> > only way to do that with DT that I know of would be to specify different
-> > subsets of legal compatible values for each UART in the per-board .dts file.
-> 
-> 
-> That's an okay way to do it.  The whole purpose of the compatible
-> property is to support driver binding.  The mantra to "describe the
-> hardware" is good, but shouldn't be taken to extremes.
-> 
-> It would be a good idea to comment the .dts file to explain why the
-> compatible property differs between the otherwise-identical nodes.
+The flag parameter is added in the cyclic transfer request.
+Use the flag option of:
+- DMA_PREP_INTERRUPT for enabling interrupt.
+- DMA_CTRL_ACK for deciding whether ack is requred or not for
+  descriptor.
 
-+1
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/dma/tegra20-apb-dma.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-g.
-
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index efdfffa..bf58bb8 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -266,6 +266,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+ 		if (async_tx_test_ack(&dma_desc->txd)) {
+ 			list_del(&dma_desc->node);
+ 			spin_unlock_irqrestore(&tdc->lock, flags);
++			dma_desc->txd.flags = 0;
+ 			return dma_desc;
+ 		}
+ 	}
+@@ -1050,7 +1051,9 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+ 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
+ 
+-	csr |= TEGRA_APBDMA_CSR_FLOW | TEGRA_APBDMA_CSR_IE_EOC;
++	csr |= TEGRA_APBDMA_CSR_FLOW;
++	if (flags & DMA_PREP_INTERRUPT)
++		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+ 	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+@@ -1095,7 +1098,8 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		mem += len;
+ 	}
+ 	sg_req->last_sg = true;
+-	dma_desc->txd.flags = 0;
++	if (flags & DMA_CTRL_ACK)
++		dma_desc->txd.flags = DMA_CTRL_ACK;
+ 
+ 	/*
+ 	 * Make sure that mode should not be conflicting with currently
+-- 
+1.7.1.1
