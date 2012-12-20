@@ -1,72 +1,127 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
-Date: Thu, 20 Dec 2012 14:55:07 +0200
-Message-ID: <20121220125507.GB6819@tbergstrom-lnx.Nvidia.com>
-References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com>
- <1355996654-6579-6-git-send-email-hdoyu@nvidia.com>
- <50D2EFFB.8030702@arm.com>
- <20121220.135758.1347753620353343245.hdoyu@nvidia.com>
- <50D2FF19.4060600@arm.com>
- <20121220122246.GA6819@tbergstrom-lnx.Nvidia.com>
- <50D305A6.2080904@arm.com>
+Date: Thu, 20 Dec 2012 14:25:44 +0100
+Message-ID: <20121220.152544.2281355586046026239.hdoyu@nvidia.com>
+References: <50D2EFFB.8030702@arm.com><20121220.135758.1347753620353343245.hdoyu@nvidia.com><50D2FF19.4060600@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50D305A6.2080904-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: "andrew-g2DYL2Zd6BY@public.gmane.org" <andrew-g2DYL2Zd6BY@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org" <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org" <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50D2FF19.4060600-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "andrew-g2DYL2Zd6BY@public.gmane.org" <andrew-g2DYL2Zd6BY@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org" <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org" <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 20, 2012 at 01:33:42PM +0100, Marc Zyngier wrote:
-> On 20/12/12 12:22, Peter De Schrijver wrote:
-> >>>>> +
-> >>>>> +	/* CNTFRQ */
-> >>>>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
-> >>>>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
-> >>>>> +	BUG_ON(val != freq);
-> >>>>
-> >>>> This is scary. CNTFRQ is only writable from secure mode, and will
-> >>>> explode in any other situation.
-> >>>>
-> >>>> Also, writing to CNTFRQ doesn't change the timer frequency! This is just
-> >>>> a way for secure mode to tell the rest of the world the frequency the
-> >>>> timer is ticking at. Unless you've wired the input clock to be able to
-> >>>> change the frequency?
-> >>>
-> >>> ATM, our upstream kernel is expected in secure mode. This situation
-> >>> may be changed later, though....
-> >>
-> >> I appreciate this. But I expect this kernel to be also used on the
-> >> non-secure side if someone tried to run KVM with it. And this would go
-> >> bang right away.
-> >>
+Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote @ Thu, 20 Dec 2012 13:05:45 +0100:
+
+> On 20/12/12 11:57, Hiroshi Doyu wrote:
+> > Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote @ Thu, 20 Dec 2012 12:01:15 +0100:
 > > 
-> > But the guest wouldn't necessarily have this peripheral, or any other Tegra114
-> > peripheral for that matter?
+> >> On 20/12/12 09:44, Hiroshi Doyu wrote:
+> >>> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+> >>> timer than TMR0. If it's available, it will be used for clock source
+> >>> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+> >>> necessary for clock event.
+> >>>
+> >>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>> ---
+> >>>  .../bindings/arm/tegra/nvidia,tegra114-tsc.txt     |   11 ++++
+> >>>  drivers/clocksource/tegra20_timer.c                |   64 +++++++++++++++++++-
+> >>>  2 files changed, 74 insertions(+), 1 deletion(-)
+> >>>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> >>> new file mode 100644
+> >>> index 0000000..9de936a
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> >>> @@ -0,0 +1,11 @@
+> >>> +NVIDIA Tegra Timer Stamp Counter(TSC)
+> >>> +
+> >>> +Required properties:
+> >>> +- compatible : "nvidia,tegra114-tsc
+> >>> +- reg : Should contain 1 register ranges(address and length)
+> >>> +
+> >>> +Example:
+> >>> +	tsc {
+> >>> +		compatible = "nvidia,tegra114-tsc";
+> >>> +		reg = <0x700f0000 0x20000>;
+> >>> +	};
+> >>> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+> >>> index 1d25de8..285a6f1 100644
+> >>> --- a/drivers/clocksource/tegra20_timer.c
+> >>> +++ b/drivers/clocksource/tegra20_timer.c
+> >>> @@ -30,6 +30,7 @@
+> >>>  #include <asm/mach/time.h>
+> >>>  #include <asm/smp_twd.h>
+> >>>  #include <asm/sched_clock.h>
+> >>> +#include <asm/arch_timer.h>
+> >>>  
+> >>>  #define RTC_SECONDS            0x08
+> >>>  #define RTC_SHADOW_SECONDS     0x0c
+> >>> @@ -271,10 +272,71 @@ static void __init tegra20_init_tmr(void)
+> >>>  	clockevents_register_device(&tegra_clockevent);
+> >>>  }
+> >>>  
+> >>> +#define TSC_CNTCR		0		/* TSC control registers */
+> >>> +#define TSC_CNTCR_ENABLE	(1 << 0)	/* Enable */
+> >>> +#define TSC_CNTCR_HDBG		(1 << 1)	/* Halt on debug */
+> >>> +
+> >>> +#define TSC_CNTCV0		0x8		/* TSC counter (LSW) */
+> >>> +#define TSC_CNTCV1		0xc		/* TSC counter (MSW) */
+> >>> +#define TSC_CNTFID0		0x20		/* TSC freq id 0 */
+> >>> +
+> >>> +static const struct of_device_id tegra_tsc_match[] __initconst = {
+> >>> +	{ .compatible = "nvidia,tegra114-tsc" },
+> >>> +	{}
+> >>> +};
+> >>> +
+> >>> +static int tegra_arch_timer_init(void)
+> >>> +{
+> >>> +	int err;
+> >>> +	struct device_node *np;
+> >>> +	struct clk *clk;
+> >>> +	void __iomem *tsc_base;
+> >>> +	u32 freq, val;
+> >>> +
+> >>> +	np = of_find_matching_node(NULL, tegra_tsc_match);
+> >>> +	if (!np)
+> >>> +		return -ENODEV;
+> >>> +
+> >>> +	tsc_base = of_iomap(np, 0);
+> >>> +	if (!tsc_base)
+> >>> +		return -ENODEV;
+> >>> +
+> >>> +	clk = clk_get_sys("clk_m", NULL);
+> >>> +	if (IS_ERR(clk)) {
+> >>> +		freq = 12000000;
+> >>> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
+> >>> +	} else {
+> >>> +		freq = clk_get_rate(clk);
+> >>> +		clk_put(clk);
+> >>> +	}
+> >>> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
+> >>> +
+> >>> +	/* CNTFRQ */
+> >>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+> >>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+> >>> +	BUG_ON(val != freq);
+> >>
+> >> This is scary. CNTFRQ is only writable from secure mode, and will
+> >> explode in any other situation.
+> >>
+> >> Also, writing to CNTFRQ doesn't change the timer frequency! This is just
+> >> a way for secure mode to tell the rest of the world the frequency the
+> >> timer is ticking at. Unless you've wired the input clock to be able to
+> >> change the frequency?
+> > 
+> > ATM, our upstream kernel is expected in secure mode. This situation
+> > may be changed later, though....
 > 
-> The problem is not so much the guest but the host. The host has to be
-> booted in non-secure, so just saying "we do not support non-secure" is
-> not a very convincing argument.
-> 
-> Unless of course you've already decided that you don't want to support
-> KVM on this SoC...
-> 
+> I appreciate this. But I expect this kernel to be also used on the
+> non-secure side if someone tried to run KVM with it. And this would go
+> bang right away.
 
-I guess that means we can't support KVM yet. Tegra does not have a secure
-monitor by default. It all depends on what that system integrator does.
-
-Cheers,
-
-Peter.
+What is the common way to make the above code selective at run
+time(secure or non-secure path)?
