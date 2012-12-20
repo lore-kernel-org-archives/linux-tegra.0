@@ -1,71 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state
- for secondary CPU
-Date: Thu, 20 Dec 2012 10:43:04 -0700
-Message-ID: <50D34E28.5000208@wwwdotorg.org>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com> <1355797861-12759-3-git-send-email-josephl@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Thu, 20 Dec 2012 19:46:40 +0200
+Message-ID: <50D34F00.4080308@nvidia.com>
+References: <50BF345A.8050201@nvidia.com> <20121205120429.GA29943@avionic-0098.adnet.avionic-design.de> <50C5CAB5.3040000@nvidia.com> <20121212160829.GA30278@avionic-0098.adnet.avionic-design.de> <50C99677.6090306@nvidia.com> <20121213085750.GA14740@avionic-0098.adnet.avionic-design.de> <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1355797861-12759-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50D34775.5010606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/17/2012 07:30 PM, Joseph Lo wrote:
-> The powered-down state of Tegra20 requires power gating both CPU cores.
-> When the secondary CPU requests to enter powered-down state, it saves
-> its own contexts and then enters WFI. The Tegra20 had a limition to
-> power down both CPU cores. The secondary CPU must waits for CPU0 in
-> powered-down state too. If the secondary CPU be woken up before CPU0
-> entering powered-down state, then it needs to restore its CPU states
-> and waits for next chance.
+On 20.12.2012 19:14, Stephen Warren wrote:
+> I'm not sure that sounds right. drvdata is something that a driver
+> should manage itself.
 > 
-> Be aware of that, you may see the legacy power state "LP2" in the code
-> which is exactly the same meaning of "CPU power down".
+> What's wrong with just having each device ask the host1x (its parent)
+> for a pointer to the (dummy) tegradrm device. That seems extremely
+> simple, and doesn't require abusing existing stuff like drvdata for
+> non-standard purposes.
 
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+This is tegradrm's own data, and it's tegradrm which accesses the
+pointer. So it's entirely something that the driver takes care of itself.
 
->  int __init tegra20_cpuidle_init(void)
+It's simplest if tegradrm takes care of its own data. That way there's
+no chance of confusion of ownership or lifecycle of the data. The only
+places which needs this access are the probe functions, and adding an
+API contract between two components just for these few calls sounds too
+much. All code after that anyway access drm_device->dev_private to get
+the pointer.
 
-> +	drv->state_count = sizeof(tegra_idle_states) /
-> +			   sizeof(struct cpuidle_state);
-
-Use ARRAY_SIZE() there?
-
-
-> +	for (i = 0; i < drv->state_count; i++)
-> +		memcpy(&drv->states[i], &tegra_idle_states[i],
-> +		       sizeof(struct cpuidle_state));
-
-Can't you call memcpy() once:
-
-memcpy(drv->states, tegra_idle_states,
-		drv->state_count * sizeof(drv->states[0]));
-
-... although I personally much preferred when all this was just static
-initialization directly in tegra_idle_driver, rather than all this messy
-copying. Really, struct cpuidle_driver should point at the array, rather
-than including it.
-
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-
-> @@ -173,6 +173,8 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
->  
->  	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
->  		last_cpu = true;
-> +	else if (phy_cpu_id == 1)
-> +		tegra20_cpu_set_resettable_soon();
->  
->  	spin_unlock(&tegra_lp2_lock);
->  	return last_cpu;
-
-Shouldn't the code in that else branch have a run-time check for whether
-it's running on Tegra20? When compiled without Tegra20 support,
-tegra20_cpu_set_resettable_soon() is a dummy static inline, but when
-both Tegra20 and Tegra30 are compiled in, isn't that code going to run
-when it shouldn't; pm.c being a common file.
-
-(Peter again, can you please review/ack this series. Thanks)
+Terje
