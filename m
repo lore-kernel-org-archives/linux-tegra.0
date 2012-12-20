@@ -1,34 +1,57 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Thu, 20 Dec 2012 17:36:35 +0530
-Message-ID: <50D2FF4B.5010401@ti.com>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com> <1355797861-12759-2-git-send-email-josephl@nvidia.com> <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com> <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com> <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com> <50D2BB51.9000109@ti.com> <20121220093412.GE19258@tbergstrom-lnx.Nvidia.com> <50D2DF45.1000305@ti.com> <20121220095951.GG19258@tbergstrom-lnx.Nvidia.com> <50D2E76C.7050309@ti.com> <20121220111409.GH19258@tbergstrom-lnx.Nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Thu, 20 Dec 2012 14:22:46 +0200
+Message-ID: <20121220122246.GA6819@tbergstrom-lnx.Nvidia.com>
+References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com>
+ <1355996654-6579-6-git-send-email-hdoyu@nvidia.com>
+ <50D2EFFB.8030702@arm.com>
+ <20121220.135758.1347753620353343245.hdoyu@nvidia.com>
+ <50D2FF19.4060600@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121220111409.GH19258-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50D2FF19.4060600-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: "andrew-g2DYL2Zd6BY@public.gmane.org" <andrew-g2DYL2Zd6BY@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org" <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org" <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 20 December 2012 04:44 PM, Peter De Schrijver wrote:
->>>
->>> So why does OMAP4 have working coupled idle without the SGI check then?
->>>
->> Because whenever the OMAP4 CPUs enter into any power states apart from
->> ON, clock-domain force wakeup method us being used to wakeup
->> secondary CPUs. And secondly CPU RET is not supported on purpose because
->> of some known IP block issues.
->>
->
-> Aha. That explains indeed why you don't need the check.
->
-Just for the information on OMAP5 SOC, CPU RET is supported and the
-couple idle works on it without IPI. As I mentioned, we do use
-clock-domain force wakeup method for wakeup. Code is out of the
-tree hence i didn't mention that in first place.
+> >>> +
+> >>> +	/* CNTFRQ */
+> >>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+> >>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+> >>> +	BUG_ON(val != freq);
+> >>
+> >> This is scary. CNTFRQ is only writable from secure mode, and will
+> >> explode in any other situation.
+> >>
+> >> Also, writing to CNTFRQ doesn't change the timer frequency! This is just
+> >> a way for secure mode to tell the rest of the world the frequency the
+> >> timer is ticking at. Unless you've wired the input clock to be able to
+> >> change the frequency?
+> > 
+> > ATM, our upstream kernel is expected in secure mode. This situation
+> > may be changed later, though....
+> 
+> I appreciate this. But I expect this kernel to be also used on the
+> non-secure side if someone tried to run KVM with it. And this would go
+> bang right away.
+> 
 
-Regards
-Santosh
+But the guest wouldn't necessarily have this peripheral, or any other Tegra114
+peripheral for that matter?
+
+Cheers,
+
+Peter.
