@@ -1,30 +1,50 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra30: tegra30 gpio is not compatible with tegra20
- gpio
-Date: Thu, 20 Dec 2012 11:46:57 +0530
-Message-ID: <50D2AD59.8070901@nvidia.com>
-References: <1355929032-26549-1-git-send-email-ldewangan@nvidia.com> <50D1F385.7000506@wwwdotorg.org>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
+Date: Thu, 20 Dec 2012 12:46:33 +0530
+Message-ID: <50D2BB51.9000109@ti.com>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com> <1355797861-12759-2-git-send-email-josephl@nvidia.com> <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com> <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com> <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D1F385.7000506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 19 December 2012 10:34 PM, Stephen Warren wrote:
-> On 12/19/2012 07:57 AM, Laxman Dewangan wrote:
->> tegra30 gpio controller is not compatible with the tegra20 due to
->> their bank stride i.e. Tegra20 bank stride is 0x80 where Tegra30
->> bank stride is 0x100.
-> Thanks, I've been meaning to clean this up for a while, but never got
-> around to it. I can apply after the merge window is closed; I don't
-> think it's important enough to warrant going into 3.8 or earlier, since
-> it doesn't cause any active problems.
+On Wednesday 19 December 2012 01:06 AM, Colin Cross wrote:
+> On Tue, Dec 18, 2012 at 2:15 AM, Peter De Schrijver
+> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
+>>> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
+>>>> include the power of GIC. That caused the SGI (Software Generated
+>>>> Interrupt) been lost. Because the SGI can't wake up the CPU that in
+>>>> the "powered-down" CPU idle mode. We need to check if there is any
+>>>> pending SGI when go into "powered-down" CPU idle mode. This is important
+>>>> especially when applying the coupled cpuidle framework into "power-down"
+>>>> cpuidle dirver. Because the coupled cpuidle framework may have the
+>>>> chance that misses IPI_SINGLE_FUNC handling sometimes.
+>>>
+>>> This problem exists for any GIC-based SoC, and needs to be fixed in
+>>> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
+>>
+>> Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
+>> cluster is railgated, including the GIC. This causes a pending IPI to be lost.
+>> But for example on OMAP4, only the actual CPU cores are powergated. The GIC
+>> stays alive until also the core domain hits idle. By that time a potential
+>> pending IPI has long woken up the target CPU again, so no additional
+>> checks are needed for functional correct behavior.
 >
-> Have you checked all the other devices to make sure they're all correct to?
+> I'm not sure that is correct for OMAP4.  C2 and C3 will put the power
+> rail for the GIC in retention, and I don't think an IPI will wake it
+> up.  I believe the same problem also exists for Exynos5.  In any case,
+> checking for an IPI early during idle and aborting won't hurt those
+> platforms, so I still think it should be in the GIC driver and not by
+> mapping the GIC registers into a separate driver.
+>
+I second Colin on the GIC power states on OMAP.
 
-Not yet, I  am going one by one for finding if anything we are missing 
-on IO drivers or not and then came across this.
+Regards
+Santosh
