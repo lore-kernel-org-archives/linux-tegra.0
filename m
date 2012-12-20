@@ -1,96 +1,57 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Thu, 20 Dec 2012 22:50:08 +0100
-Message-ID: <20121220215008.GA30491@avionic-0098.adnet.avionic-design.de>
-References: <50CB5205.1030303@wwwdotorg.org>
- <50CB850F.9090704@nvidia.com>
- <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de>
- <50D2D792.1050401@nvidia.com>
- <50D34775.5010606@wwwdotorg.org>
- <50D34F00.4080308@nvidia.com>
- <50D3511F.2090308@wwwdotorg.org>
- <50D35287.3040509@nvidia.com>
- <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de>
- <50D38462.3060302@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Fri, 21 Dec 2012 00:13:48 +0200
+Message-ID: <20121220221348.GB19766@tbergstrom-lnx.Nvidia.com>
+References: <50D305A6.2080904@arm.com>
+ <20121220125507.GB6819@tbergstrom-lnx.Nvidia.com>
+ <50D31365.9000009@arm.com>
+ <20121220.164230.292625215885249791.hdoyu@nvidia.com>
+ <50D34630.9020708@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50D38462.3060302-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50D34630.9020708-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: "andrew-g2DYL2Zd6BY@public.gmane.org" <andrew-g2DYL2Zd6BY@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org" <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org" <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org" <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+> > 
+> > "tegra114.dtsi" has the folloiwng "tsc" entry. So can we consider that
+> > if dts has this entry, CNTFRQ is not set, which implies it's in secure
+> > mode. kernel should set it up by itself? Otherwise, skip this setup
+> > and use it. For example:
+> > 
+> >  	tsc {
+> >  		compatible = "nvidia,tegra114-tsc";
+> >  		reg = <0x700f0000 0x20000>;
+> > +		setup-cntfrq;
+> >  	};
+> > 
+> > Is this what you explained in the above?
+> > At least, kernel can survive without bootloader/firmware support, ATM.
+> 
+> No. The DT should only describe the hardware, and not something that is
+> Linux specific.
+> 
+> Just use the "clock-frequency" attribute in the timer arch-timer node,
+> and get rid of this CNTFRQ setting. The driver already knows how to deal
+> with this situation if this attribute is set.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The frequency is probed at boottime by the kernel though. It will not
+necessarily be the same for every board.
 
-On Thu, Dec 20, 2012 at 11:34:26PM +0200, Terje Bergstr=C3=B6m wrote:
-> On 20.12.2012 22:30, Thierry Reding wrote:
-> > The problem with your proposed solution is that, even any of Stephen's
-> > valid objections aside, it won't work. Once the tegra-drm module is
-> > unloaded, the driver's data will be left in the current state and the
-> > link to the dummy device will be lost.
->=20
-> The dummy device is created by tegradrm's module init, because it's used
-> only by tegradrm. When tegradrm is unloaded, all the tegradrm devices
-> and drivers are unloaded and freed, including the dummy one.
+Cheers,
 
-No, the children platform devices of host1x are not freed, so their
-driver data will still contain the data set by the previous call to
-their driver's .probe() function.
-
-But reading what you said again, you were proposing to set the children
-driver data from the tegra-drm dummy device's .probe(). In that case it
-would probably work.
-
-> > And quite frankly given how all the various host1x components are
-> > interlinked I think having a single function that gets the DRM dummy
-> > device for DRM-related clients isn't that bad.
->=20
-> I like clear responsibilities. tegradrm is responsible for the DRM
-> interface, and host1x driver is responsible for host1x. tegradrm owns
-> its data, and can pass its pointers to the functions that need it.
->=20
-> But fine, I still don't like it, but I'll add host1x_set_tegradrm() and
-> host1x_get_tegradrm(), which act as setter and getter for tegradrm's
-> global data. I still think it's a solution to a problem we don't have,
-> but we've wasted an order of magnitude more time debating it than it
-> takes to implement.
-
-As Stephen already pointed out, since the host1x driver will already
-instantiate the dummy device, there's no point in adding a function to
-set the pointer to that device.
-
-Adding a getter should be enough. And it should return a pointer to the
-dummy platform devices .dev field. Calling it host1x_get_drm_device()
-may make it more obvious about what it returns.
-
-Thierry
-
---KsGdsel6WgEHnImy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ04gQAAoJEN0jrNd/PrOhbYMQAJUjaTAI7SgC0p0mbwcXRDrb
-c7jtdTG9cMrWmVNguAxMcuJyRVERoxK6sXT9y7RKlOAPpFq3UpllY4lC1c6mjCMo
-y+hFx1Z2Ac9K3NGDolfhi6VWY0MvO1jfxix8MywPPfPUMxr2K58OfUqI2uQktr7W
-e1e2SI7nRPgcM0uMLNHGa0H4f5KMWVyHh18OZ5k8aDzNSvWjLur1NoaQKPcTIl7Y
-3BsAbvk+whu4si3QNhRx5Hkx5eimm3x6rhf7HFXrAp2NdCNLxevppJKPuFamY/Dv
-BhIAGRXdBxYpwuT2ZaAZ/U5iTpCCYEmFK2Vz31pbqyCuo6X6Y1Y6Io3IjluN/We5
-JWqx0+1eKjXOPJGlI0myzWDlDjHCH9C/KlHGZfVz2qs5MooFQ/0kskHZWYP+9qlt
-tntjf+lQxudU6ZXveAcu/iuvYLBUy41UwpBkb/iQUcs+3cROjvIHC8GkudJRCN1B
-NsLVhlD2YsJWUsumUtYhaSs/ORYZwROYFREl9/C49fMdH83T90r8lOsyCba53Llw
-Vtl+N346ZOxsqRSseiZPPfPRIHj/vFtS51deHympefo6Ln71oxP/l06kyDUp4CnW
-tH0HObJjveeuqIudTLnojZ0M1DZJ37KZl3mZgu3uNg/Al5z0No7p0856GiJUWnlE
-u1oENt0rG8hxv85WZXOK
-=gqLj
------END PGP SIGNATURE-----
-
---KsGdsel6WgEHnImy--
+Peter.
