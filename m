@@ -1,65 +1,51 @@
-From: ebiederm-aS9lmoZGLiVWk0Htik3J/w@public.gmane.org (Eric W. Biederman)
-Subject: Re: [PATCH] kexec: disable non-boot CPUs
-Date: Wed, 19 Dec 2012 15:55:36 -0800
-Message-ID: <87mwx9y4uf.fsf@xmission.com>
-References: <1355960681-32015-1-git-send-email-swarren@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: tegra_cpu_die() dead code?
+Date: Thu, 20 Dec 2012 08:40:16 +0800
+Message-ID: <1355964016.1682.6.camel@jlo-ubuntu-64.nvidia.com>
+References: <50D20339.4090402@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1355960681-32015-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-	(Stephen Warren's message of "Wed, 19 Dec 2012 16:44:41 -0700")
+In-Reply-To: <50D20339.4090402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
+On Thu, 2012-12-20 at 02:11 +0800, Stephen Warren wrote:
+> Joseph,
+> 
+> In next-20121217, I see:
+> 
+> void __ref tegra_cpu_die(unsigned int cpu)
+> {
+>         cpu = cpu_logical_map(cpu);
+> 
+>         /* Flush the L1 data cache. */
+>         flush_cache_all();
+> 
+>         /* Shut down the current CPU. */
+>         tegra_hotplug_shutdown();
+> 
+>         /* Clock gate the CPU */
+>         tegra_wait_cpu_in_reset(cpu);
+>         tegra_disable_cpu_clock(cpu);
+> 	
+>         /* Should never return here. */
+>         BUG();
+> 
+> Given that both implementations (Tegra20/30) of tegra_hotplug_shutdown
+> include:
+> 
+>         bl      tegra20_cpu_shutdown
+>         mov     pc, lr                  @ should never get here
+> 
+> why does tegra_cpu_die() include the calls to tegra_wait_cpu_in_reset()
+> and tegra_disable_cpu_clock() after calling tegra_hotplug_shutdown()?
+> (and how can a CPU wait for itself to be in reset anyway)?
+> 
+Indeed, I had a patch to fix this. Will update to here today.
 
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Both the regular reboot and shutdown paths do this. It seems reasonable
-> for kexec to work the same way.
->
-> On the Tegra ARM SoC at least, this change allows kexec to work with SMP
-> enabled. ARM's machine_shutdown() simply puts all CPUs into a loop. If
-> the code of that loop is over-written, the CPUs may crash, and cause the
-> kexec'd kernel not to be able to initialize them. In practice, this
-> causes the kexec'd kernel to hang and/or crash. The intended way to
-> solve this is for ARM machines to provide a cpu_kill SMP operation to
-> e.g. power down the CPUs, or place them in reset. However, at least on
-> Tegra, the implementation of that function would simply be duplicating
-> the hotplug code that already exists, so it seems simpler to just call
-> disable_nonboot_cpus() for the kexec path, just like reboot/shutdown.
-
-I would like to ack this but I think this is one of those differences
-for which there is a reason.
-
-On x86 this happens in machine_shutdown.
-
-Before this can be merged someone needs to look into the history and
-see why we don't share this code path.
-
-My hunch is because it was duplication of effort and the stop machine
-code has historically been fragile.
-
-Eric
-
-
-
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  kernel/kexec.c |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/kexec.c b/kernel/kexec.c
-> index 5e4bd78..6fe74d3 100644
-> --- a/kernel/kexec.c
-> +++ b/kernel/kexec.c
-> @@ -1570,6 +1570,7 @@ int kernel_kexec(void)
->  #endif
->  	{
->  		kernel_restart_prepare(NULL);
-> +		disable_nonboot_cpus();
->  		printk(KERN_EMERG "Starting new kernel\n");
->  		machine_shutdown();
->  	}
+Thanks,
+Joseph
