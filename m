@@ -1,81 +1,72 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Thu, 20 Dec 2012 21:30:59 +0100
-Message-ID: <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de>
-References: <50CA175F.60002@wwwdotorg.org>
- <50CAC2AC.1010704@nvidia.com>
- <50CB5205.1030303@wwwdotorg.org>
- <50CB850F.9090704@nvidia.com>
- <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de>
- <50D2D792.1050401@nvidia.com>
- <50D34775.5010606@wwwdotorg.org>
- <50D34F00.4080308@nvidia.com>
- <50D3511F.2090308@wwwdotorg.org>
- <50D35287.3040509@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH 5/7] ASoC: tegra: add ac97 host driver
+Date: Thu, 20 Dec 2012 21:32:31 +0100
+Message-ID: <1356035551.1490.103.camel@tellur>
+References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
+	  <1355959056-6009-5-git-send-email-dev@lynxeye.de>
+	  <50D36A98.7090204@wwwdotorg.org> <1356034241.1490.98.camel@tellur>
+	 <50D372DF.2080600@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50D35287.3040509-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50D372DF.2080600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Am Donnerstag, den 20.12.2012, 13:19 -0700 schrieb Stephen Warren:
+> On 12/20/2012 01:10 PM, Lucas Stach wrote:
+> > Am Donnerstag, den 20.12.2012, 12:44 -0700 schrieb Stephen Warren:
+> >> On 12/19/2012 04:17 PM, Lucas Stach wrote:
+> >>> This adds the driver for the Tegra 2x AC97 host controller.
+> 
+> >>> +static void tegra20_ac97_codec_warm_reset(struct snd_ac97 *ac97)
+> >>> +{
+> >>> +	u32 readback;
+> >>> +	unsigned long timeout;
+> >>> +
+> >>> +	/*
+> >>> +	 * although sync line is driven by the DAC pad group warm reset using
+> >>> +	 * the controller cmd is not working, have to toggle sync line
+> >>> +	 * manually.
+> >>> +	 */
+> >>> +	gpio_request(workdata->sync_gpio, "codec-sync");
+> >>
+> >> Hmm. There's an AC'97 command to reset the CODEC and we don't implement
+> >> it? Uggh.
+> >
+> > As far as I could figure from the downstream register doc there is a
+> > command implemented in the host controller that's supposed to do the
+> > warm reset, but in my testing it didn't work. Sadly I have not received
+> > any documentation about the host controller from NVIDIA up until now, so
+> > I don't now if we could make this work somehow. Bug Submission ID#:
+> > 196075
+> 
+> What system was that bug submitted into? It's not a regular NVIDIA
+> internal bug number. I'll see who I can ask about this feature...
+> 
+Submitted through the Tegra Registered Developer Program webpage. I got
+a reply from someone saying they are looking if they can get anything
+out, but haven't heard back until now.
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Dec 20, 2012 at 08:01:43PM +0200, Terje Bergstr=C3=B6m wrote:
-> On 20.12.2012 19:55, Stephen Warren wrote:
-> > So it's fine for the tegradrm driver to manipulate the tegradrm
-> > (virtual) device's drvdata pointer.
-> >=20
-> > It's not fine for tegradrm to manipulate the drvdata pointer of other
-> > devices; the host1x children. The drvdata pointer for other devices is
-> > reserved for those devices' driver's use only.
->=20
-> They're all tegradrm drivers, so tegradrm can manipulate its drvdata.
-> The other simple way is global pointer. Let's aim now for a simple
-> solution, and if later we find out it causes problems, let's fix it then.
-
-The problem with your proposed solution is that, even any of Stephen's
-valid objections aside, it won't work. Once the tegra-drm module is
-unloaded, the driver's data will be left in the current state and the
-link to the dummy device will be lost.
-
-I don't think waiting for things to fail is the right option here. If we
-can make out this problem now, then now is the time to fix it. No
-excuses.
-
-And quite frankly given how all the various host1x components are
-interlinked I think having a single function that gets the DRM dummy
-device for DRM-related clients isn't that bad.
-
-Thierry
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ03WDAAoJEN0jrNd/PrOh1WgQAK/rL1FnYmQuGqGMjtHjNjWQ
-kWygOKJ6T4HZB9KvjANxpmdDUNvPxexJM00UPExzwmDDv5K86wGx+1nwSazyvIag
-VBRli2Wiv04F2JzM6jjnLPLfYb59E+eczrMljfaBTx/wXPUbTkrEbAXb50pyZF1K
-NMjOF+PT2ToYGIdPN1ZVQFjkq/KDxTC1XuNSjtRZQtkdZmG+SAiFUUPM8I8VA4y+
-FOhYLDvznTijtQgMZcUxyut2Jg/TqcMHk0N2Phbbdl+lqZDrCwoS4ZxvmCLWc8MI
-NAfBYjREcH+w8GactIjS4G93ZfNTKuZ/wRGcRHE592q/wjsEH+UNaPmHpJ3CQk8L
-yZ98JmeIdUAz+2NW05VOL/80GRlPRJK0OkteLgJDzCBmADjqmh9bfMsa8RomHaNH
-UOpah/uKSGwEin5UhDF9ptJfs+Jyoe2XRGd8wczK6dxp6t9wYEy0JEwnLfyBIqBs
-Yb70sLGqIHPrd/fixYbYtyn1BiKVSenUm6DfZWBjs6n319UzGkBxTPsh9FywPpHg
-2pWEOGVAyAtDIZI8VbhBkx6HDEOXDRsHnMsuWuqg7xXZZobP+VZChIyiE8pjA4GZ
-rDblnVJMTUDcNCQMwFUvFmGHuVcGYFreQB9LtNElLriVFcY25u/G5B5YmposDB8x
-e3NDGLxbIPIEfWs2muCd
-=w19B
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+> >>> +	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+> >>> +					    "nvidia,codec-sync-gpio", 0);
+> >>> +	if (!gpio_is_valid(ac97->sync_gpio)) {
+> >>> +		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
+> >>> +		goto err_clk_put;
+> >>> +	}
+> >>
+> >> I don't know what this is, so I'll ask if it's strictly required too.
+> >
+> > Until we manage to get the host controller warm reset command working
+> > this is fixed to be the _FS line of the DAP connected to the codec, so
+> > strictly required.
+> 
+> I'd like to investigate whether the warm reset command can be made to
+> work before actually committing to a DT binding that requires this GPIO
+> to be specified; the DT binding is supposed to be basically static.
+> 
+Ok with me. We still have plenty of time left for the 3.9 merge window
+and that's what I'm targeting with those patches.
