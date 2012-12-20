@@ -1,77 +1,143 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Thu, 20 Dec 2012 11:59:51 +0200
-Message-ID: <20121220095951.GG19258@tbergstrom-lnx.Nvidia.com>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
- <1355797861-12759-2-git-send-email-josephl@nvidia.com>
- <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com>
- <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com>
- <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com>
- <50D2BB51.9000109@ti.com>
- <20121220093412.GE19258@tbergstrom-lnx.Nvidia.com>
- <50D2DF45.1000305@ti.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
+ HAVE_ARM_SCU
+Date: Thu, 20 Dec 2012 12:06:25 +0200
+Message-ID: <20121220100625.GB24693@arwen.pp.htv.fi>
+References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com>
+ <1355996654-6579-4-git-send-email-hdoyu@nvidia.com>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50D2DF45.1000305-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1535155531249463354=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1355996654-6579-4-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 20, 2012 at 10:49:57AM +0100, Santosh Shilimkar wrote:
-> On Thursday 20 December 2012 03:04 PM, Peter De Schrijver wrote:
-> > On Thu, Dec 20, 2012 at 08:16:33AM +0100, Santosh Shilimkar wrote:
-> >> On Wednesday 19 December 2012 01:06 AM, Colin Cross wrote:
-> >>> On Tue, Dec 18, 2012 at 2:15 AM, Peter De Schrijver
-> >>> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> >>>> On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
-> >>>>> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> >>>>>> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
-> >>>>>> include the power of GIC. That caused the SGI (Software Generated
-> >>>>>> Interrupt) been lost. Because the SGI can't wake up the CPU that in
-> >>>>>> the "powered-down" CPU idle mode. We need to check if there is any
-> >>>>>> pending SGI when go into "powered-down" CPU idle mode. This is important
-> >>>>>> especially when applying the coupled cpuidle framework into "power-down"
-> >>>>>> cpuidle dirver. Because the coupled cpuidle framework may have the
-> >>>>>> chance that misses IPI_SINGLE_FUNC handling sometimes.
-> >>>>>
-> >>>>> This problem exists for any GIC-based SoC, and needs to be fixed in
-> >>>>> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
-> >>>>
-> >>>> Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
-> >>>> cluster is railgated, including the GIC. This causes a pending IPI to be lost.
-> >>>> But for example on OMAP4, only the actual CPU cores are powergated. The GIC
-> >>>> stays alive until also the core domain hits idle. By that time a potential
-> >>>> pending IPI has long woken up the target CPU again, so no additional
-> >>>> checks are needed for functional correct behavior.
-> >>>
-> >>> I'm not sure that is correct for OMAP4.  C2 and C3 will put the power
-> >>> rail for the GIC in retention, and I don't think an IPI will wake it
-> >>> up.  I believe the same problem also exists for Exynos5.  In any case,
-> >>> checking for an IPI early during idle and aborting won't hurt those
-> >>> platforms, so I still think it should be in the GIC driver and not by
-> >>> mapping the GIC registers into a separate driver.
-> >>>
-> >> I second Colin on the GIC power states on OMAP.
-> >
-> > But even then PRCM will only trigger the transition to retention voltage after
-> > both CPUs hit off mode. I guess a pending IPI will wakeup the core before the
-> > PRCM starts the transition.
-> >
-> No it won't. You are talking about the voltage domain retention while
-> the point is SGI becomes useless once CPU power domain transition to
-> low power state. And btw, voltage transition also can not happen just
-> with two CPU's in retention. It does have dependency like cluster power 
-> state to hit retention.
-> 
-> CPUs have their own power domain state and once they enter into any low
-> power state apart from ON power state, SGI doesn't work. hope this is
-> clear.
+--===============1535155531249463354==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Disposition: inline
 
-So why does OMAP4 have working coupled idle without the SGI check then?
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
+Hi,
 
-Peter.
+On Thu, Dec 20, 2012 at 11:44:01AM +0200, Hiroshi Doyu wrote:
+> The method to detect the number of CPU cores on Cortex-A9 MPCore and
+> Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
+> information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
+> have to read it from the system coprocessor(CP15), because the SCU on
+> Cortex-A15 MPCore does not have software readable registers. This
+> patch selects the correct method at runtime based on the CPU ID.
+>=20
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/platsmp.c |   31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index 1b926df..68e76ef 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -23,6 +23,7 @@
+>  #include <asm/hardware/gic.h>
+>  #include <asm/mach-types.h>
+>  #include <asm/smp_scu.h>
+> +#include <asm/cputype.h>
+> =20
+>  #include <mach/powergate.h>
+> =20
+> @@ -34,9 +35,13 @@
+>  #include "common.h"
+>  #include "iomap.h"
+> =20
+> +#define CPU_MASK		0xff0ffff0
+> +#define CPU_CORTEX_A9		0x410fc090
+> +#define CPU_CORTEX_A15		0x410fc0f0
+> +
+>  extern void tegra_secondary_startup(void);
+> =20
+> -static void __iomem *scu_base =3D IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+> +static void __iomem *scu_base;
+> =20
+>  #define EVP_CPU_RESET_VECTOR \
+>  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+> @@ -149,7 +154,26 @@ done:
+>   */
+>  static void __init tegra_smp_init_cpus(void)
+>  {
+> -	unsigned int i, ncores =3D scu_get_core_count(scu_base);
+> +	unsigned int i, cpu_id, ncores;
+> +	u32 l2ctlr;
+> +	phys_addr_t pa;
+> +
+> +	cpu_id =3D read_cpuid(CPUID_ID) & CPU_MASK;
+> +	switch (cpu_id) {
+> +	case CPU_CORTEX_A15:
+> +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=3Dr" (l2ctlr));
+> +		ncores =3D ((l2ctlr >> 24) & 3) + 1;
+> +		break;
+> +	case CPU_CORTEX_A9:
+> +		/* Get SCU physical base */
+> +		asm("mrc p15, 4, %0, c15, c0, 0" : "=3Dr" (pa));
+> +		scu_base =3D IO_ADDRESS(pa);
+> +		ncores =3D scu_get_core_count(scu_base);
+> +		break;
+> +	default:
+> +		BUG();
+
+instead of bugging out, how about setting ncores to 1 instead ?
+
+--=20
+balbi
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ0uMhAAoJEIaOsuA1yqRE/G0P/j/wRzPw1pqokYea51C+P7Jb
+Cp3qsO6Bp00pvVubctCbhYYwR+yh4SBn3UT6R247qOFJBRmdFtYukGQB1V23Q9BP
+ZJeuKumgpJTIDge6MX+MPaE5SqaB7BBUyOWnQhRyH7KEIbxKBDoBHftoVT3SgnHk
+YVx5qhieYtE3oou6WpMpu/+hdh/lE6YHhRCpw3ZnPP3x9u+hviFbjM5AvgHsHMIC
+X+dmvxm8cMsWEqrLrwqT2kSfstR01cBSGnsdeST7GpNghtfcrtC7TpOm9Je1hRGR
+2+TldBJNALQBbfb1kUW/7Q0GyAo5om1+XrEOLAb6mrTZeaGzm5JOHvnuPgNKEZo9
+WtBEKaAh8Ogv1BdOIG8tIEDBgIH2rTchof+8CUZQrso94SU23JZVwYAQqe6tguV4
+s8oxtSFFqlaY19sN2glYVrpBSNyY0jGrKShrskkWh8qCP2e9In6L7+64NcmLFJnb
+TKLXD05Ynv9ssgRlvz7g+nRN+PoFX41j/c1Wiu6lKrR62oW26VOrAz0y+eBBPw+u
+d7I7T/U5m5+fs88uNziXnMAtVbBQuEho3OO0Ba6VPvqkiG6TUSlg8WN72bvHN4us
+uZXe1Vij0jrFSBGncz8kglkBdTnlkwx5Q7DzBOvrQDvxXYTj7waw2Gophld9NUUi
+5YwNo2yMpqDEpi6syuCj
+=yaO7
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
+
+--===============1535155531249463354==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============1535155531249463354==--
