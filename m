@@ -1,86 +1,81 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 5/7] ASoC: tegra: add ac97 host driver
-Date: Thu, 20 Dec 2012 20:23:51 +0000
-Message-ID: <20121220202350.GB26183@opensource.wolfsonmicro.com>
-References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
- <1355959056-6009-5-git-send-email-dev@lynxeye.de>
- <50D36A98.7090204@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Thu, 20 Dec 2012 21:30:59 +0100
+Message-ID: <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de>
+References: <50CA175F.60002@wwwdotorg.org>
+ <50CAC2AC.1010704@nvidia.com>
+ <50CB5205.1030303@wwwdotorg.org>
+ <50CB850F.9090704@nvidia.com>
+ <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de>
+ <50D2D792.1050401@nvidia.com>
+ <50D34775.5010606@wwwdotorg.org>
+ <50D34F00.4080308@nvidia.com>
+ <50D3511F.2090308@wwwdotorg.org>
+ <50D35287.3040509@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50D36A98.7090204-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50D35287.3040509-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---jq0ap7NbKX2Kqbes
-Content-Type: text/plain; charset=us-ascii
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 20, 2012 at 12:44:24PM -0700, Stephen Warren wrote:
-> On 12/19/2012 04:17 PM, Lucas Stach wrote:
+On Thu, Dec 20, 2012 at 08:01:43PM +0200, Terje Bergstr=C3=B6m wrote:
+> On 20.12.2012 19:55, Stephen Warren wrote:
+> > So it's fine for the tegradrm driver to manipulate the tegradrm
+> > (virtual) device's drvdata pointer.
+> >=20
+> > It's not fine for tegradrm to manipulate the drvdata pointer of other
+> > devices; the host1x children. The drvdata pointer for other devices is
+> > reserved for those devices' driver's use only.
+>=20
+> They're all tegradrm drivers, so tegradrm can manipulate its drvdata.
+> The other simple way is global pointer. Let's aim now for a simple
+> solution, and if later we find out it causes problems, let's fix it then.
 
-> > +	/* reset line is not driven by DAC pad group, have to toggle GPIO */
-> > +	gpio_set_value(workdata->reset_gpio, 0);
-> > +	udelay(2);
+The problem with your proposed solution is that, even any of Stephen's
+valid objections aside, it won't work. Once the tegra-drm module is
+unloaded, the driver's data will be left in the current state and the
+link to the dummy device will be lost.
 
-> I'm not quite sure what that implies. Might some (Tegra) HW designs use
-> a dedicated signal from the AC'97 HW to reset the CODEC and others not?
-> That would make the GPIO optional. Or, does the comment mean that Tegra
-> doesn't ever have a dedicated CODEC reset signal, so we always have to
-> use a GPIO? If so, this comment might be more appropriate inside probe()
-> where I asked my related questions.
+I don't think waiting for things to fail is the right option here. If we
+can make out this problem now, then now is the time to fix it. No
+excuses.
 
-The traditional approach, pioneered by almost everyone who made an AC'97
-controller, is to fill the thing with bugs.  Failing to drive the reset
-line correctly is just one of the common bugs.
+And quite frankly given how all the various host1x components are
+interlinked I think having a single function that gets the DRM dummy
+device for DRM-related clients isn't that bad.
 
-> > +static const struct snd_soc_dai_ops tegra20_ac97_dai_ops = {
-> > +	.trigger	= tegra20_ac97_trigger,
-> > +};
+Thierry
 
-> No .set_fmt or .hw_params? Does the AC'97 ASoC core code handle that
-> somehow? I guess that's what soc_ac97_ops is for?
-
-There should be no controller side configurations for these things.
-AC'97 defines the clocking format completely and variable sample rates
-are done by the CODEC flagging when data is present in a given timeslot.
-
-> > +	ac97->reset_gpio = of_get_named_gpio(pdev->dev.of_node,
-> > +					     "nvidia,codec-reset-gpio", 0);
-> > +	if (gpio_is_valid(ac97->reset_gpio)) {
-> > +		ret = devm_gpio_request_one(&pdev->dev, ac97->reset_gpio,
-> > +					    GPIOF_OUT_INIT_HIGH, "codec-reset");
-
-> Shouldn't this get the flags from the GPIO specifier, and deal with
-> active-high/active-low resets, or is the polarity set by the AC'97 spec?
-
-Spec.
-
---jq0ap7NbKX2Kqbes
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ03POAAoJELSic+t+oim9R9EP/Ro/O+tNTtoLcJukfX4pC8H3
-/0f4bhLukbDtk/G0P7DUYnwUqys0WyuaJ9waMrlnuiRE61EAkb86S5iEUbJPRXeI
-mY0KKisWik7HIWsm9CawLtZeIP05JtWfDrTpEAxewYHVSRul6s9viJ9GYU7epc1z
-qtTs5zLXhpnwCQG113cj+mEn9OFHtwhQSF/MClCtA1UE1xtetVHjsdte94wpsILV
-MTNJjxx4o44T35tF0/5++I/uuely43+tyKtxepoWm7B9YPaXmG6Kao7ABzTdFBob
-nVOlRBXo0Z3Z0ShkJ5rmorHirU/DNIXObXFKL2f6oeJr87chJmNDeVdLOtaR3zVh
-AZgT0hvV4iH2AbmtUCaqeuE5/OPI8MrXt1Ce3QvbtnkMA9biPHpmJXLwgu6e7+wz
-5ZhvYRT/wJOM5fGOK+hJiuTpM1mfmM+6a3796+vRH8vq/8NmfFV8g4oD/o/Zm+RA
-2oV6Ygnygur7KCjMNxOMKf/vVYwjdcHi1ya1hx9SyFBSL0fs9rCTmtXJEebZGETu
-C1xIJsd8Jg1cP7VWXlv3zLyU3hLKqgwEfpAncRQTPp9Xsho8AebCoCnssldRDO+m
-dVQeOhbDyO+fyZVqXg2mZ1lDUuHhmEDnB5sUBb30EhsgHc34ZbZU/wZJFxdI2NAd
-4rxUs/VG22rlBI4EgCVs
-=rl2H
+iQIcBAEBAgAGBQJQ03WDAAoJEN0jrNd/PrOh1WgQAK/rL1FnYmQuGqGMjtHjNjWQ
+kWygOKJ6T4HZB9KvjANxpmdDUNvPxexJM00UPExzwmDDv5K86wGx+1nwSazyvIag
+VBRli2Wiv04F2JzM6jjnLPLfYb59E+eczrMljfaBTx/wXPUbTkrEbAXb50pyZF1K
+NMjOF+PT2ToYGIdPN1ZVQFjkq/KDxTC1XuNSjtRZQtkdZmG+SAiFUUPM8I8VA4y+
+FOhYLDvznTijtQgMZcUxyut2Jg/TqcMHk0N2Phbbdl+lqZDrCwoS4ZxvmCLWc8MI
+NAfBYjREcH+w8GactIjS4G93ZfNTKuZ/wRGcRHE592q/wjsEH+UNaPmHpJ3CQk8L
+yZ98JmeIdUAz+2NW05VOL/80GRlPRJK0OkteLgJDzCBmADjqmh9bfMsa8RomHaNH
+UOpah/uKSGwEin5UhDF9ptJfs+Jyoe2XRGd8wczK6dxp6t9wYEy0JEwnLfyBIqBs
+Yb70sLGqIHPrd/fixYbYtyn1BiKVSenUm6DfZWBjs6n319UzGkBxTPsh9FywPpHg
+2pWEOGVAyAtDIZI8VbhBkx6HDEOXDRsHnMsuWuqg7xXZZobP+VZChIyiE8pjA4GZ
+rDblnVJMTUDcNCQMwFUvFmGHuVcGYFreQB9LtNElLriVFcY25u/G5B5YmposDB8x
+e3NDGLxbIPIEfWs2muCd
+=w19B
 -----END PGP SIGNATURE-----
 
---jq0ap7NbKX2Kqbes--
+--ReaqsoxgOBHFXBhH--
