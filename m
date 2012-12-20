@@ -1,60 +1,61 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/7] ASoC: allow wolfson wm9712 codec to be instantiated
- using device tree
-Date: Thu, 20 Dec 2012 09:32:14 +0000
-Message-ID: <20121220093214.GZ4985@opensource.wolfsonmicro.com>
-References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
- <1355959056-6009-2-git-send-email-dev@lynxeye.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
+Date: Thu, 20 Dec 2012 11:34:12 +0200
+Message-ID: <20121220093412.GE19258@tbergstrom-lnx.Nvidia.com>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
+ <1355797861-12759-2-git-send-email-josephl@nvidia.com>
+ <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com>
+ <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com>
+ <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com>
+ <50D2BB51.9000109@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lBR2yNlwcY132B3M"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1355959056-6009-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <50D2BB51.9000109-l0cyMroinI0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Dec 20, 2012 at 08:16:33AM +0100, Santosh Shilimkar wrote:
+> On Wednesday 19 December 2012 01:06 AM, Colin Cross wrote:
+> > On Tue, Dec 18, 2012 at 2:15 AM, Peter De Schrijver
+> > <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> >> On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
+> >>> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> >>>> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
+> >>>> include the power of GIC. That caused the SGI (Software Generated
+> >>>> Interrupt) been lost. Because the SGI can't wake up the CPU that in
+> >>>> the "powered-down" CPU idle mode. We need to check if there is any
+> >>>> pending SGI when go into "powered-down" CPU idle mode. This is important
+> >>>> especially when applying the coupled cpuidle framework into "power-down"
+> >>>> cpuidle dirver. Because the coupled cpuidle framework may have the
+> >>>> chance that misses IPI_SINGLE_FUNC handling sometimes.
+> >>>
+> >>> This problem exists for any GIC-based SoC, and needs to be fixed in
+> >>> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
+> >>
+> >> Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
+> >> cluster is railgated, including the GIC. This causes a pending IPI to be lost.
+> >> But for example on OMAP4, only the actual CPU cores are powergated. The GIC
+> >> stays alive until also the core domain hits idle. By that time a potential
+> >> pending IPI has long woken up the target CPU again, so no additional
+> >> checks are needed for functional correct behavior.
+> >
+> > I'm not sure that is correct for OMAP4.  C2 and C3 will put the power
+> > rail for the GIC in retention, and I don't think an IPI will wake it
+> > up.  I believe the same problem also exists for Exynos5.  In any case,
+> > checking for an IPI early during idle and aborting won't hurt those
+> > platforms, so I still think it should be in the GIC driver and not by
+> > mapping the GIC registers into a separate driver.
+> >
+> I second Colin on the GIC power states on OMAP.
 
---lBR2yNlwcY132B3M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+But even then PRCM will only trigger the transition to retention voltage after
+both CPUs hit off mode. I guess a pending IPI will wakeup the core before the
+PRCM starts the transition.
 
-On Thu, Dec 20, 2012 at 12:17:31AM +0100, Lucas Stach wrote:
+Cheers,
 
->  static struct platform_driver wm9712_codec_driver = {
->  	.driver = {
->  		.name = "wm9712-codec",
->  		.owner = THIS_MODULE,
-> +		.of_match_table = wm9712_of_match,
->  	},
-
-No, this is really not a sane way of handling AC'97 at all.  They're not
-platform devices, there is no sane reason why they should appear in the
-device tree as such.  Really we ought to be just hotplugging them, AC'97
-is perfectly enumerable.
-
---lBR2yNlwcY132B3M
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ0tsWAAoJELSic+t+oim9nMkQAJHeRB8CdTLbTJsYt51sbva4
-ZvGyqmC8zpSx9cTYVGTsX5DWlMZjtxQkgIFJ2HA+6IRVaUyVfCioufgsgvZNw9GL
-I2fcXnvzYCVX0z1voip3EG3y86x/ffcVeoNiIbV5xuUD02bXqNzO18kdcy18BAET
-95uMFX+9FtSjsf1ILtOJLwrdAEjxmttTx30xi3rtcQorkYhMcFPxA8NsaGHtsTGm
-FitLKX6XvECZM/7wOARgYlOUSHx0BpJ/YkzqtHOyfjrp6Ue1GaT/zFuy16GZEmP1
-pGKb5PvkrXlnaY/YHGB2XVwm9EWSAfs7O9ZNKleZ2oQB6wSR3NK2B3EUqNf8QVlW
-ATtt66Bef0xttkMhA3vEirlC1W0ji1ObktZf1mXgCqdvFRwby9LMRCHsDPCS4SBr
-WyCldOa12vN3+RM+oxoRt8f6JfP3QC8pz935iJvtNd6sY2taWfYNOVVWQ0yWDxyN
-dwJWU6f2uEeSEWRfsel94jwhceparmUlv5alCHhgkveS4O4juf3l/wzbwteA1fGp
-pKIO34CJqYaBL8To9sag7id7ITRy9MMRPNlAn3n/uNFh3niBVk64CJBcqLUdFTxE
-d7Ck+nRf6Wfqb7THEqeeH3sS0PP1TcJ6ndqgHs5zHiYEDgt+Xo4Kmj67GW9IoVpS
-jCGl+xne1Ux0w0/9Xefh
-=xNjf
------END PGP SIGNATURE-----
-
---lBR2yNlwcY132B3M--
+Peter.
