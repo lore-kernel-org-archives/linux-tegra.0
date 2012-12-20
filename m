@@ -1,102 +1,121 @@
 From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [PATCH 3/9] ARM: tegra: # of CPU cores detection w/ & w/o HAVE_ARM_SCU
-Date: Thu, 20 Dec 2012 11:44:01 +0200
-Message-ID: <1355996654-6579-4-git-send-email-hdoyu@nvidia.com>
+Subject: [PATCH 6/9] ARM: dt: tegra114: Add new SoC base, Tegra 114 SoC
+Date: Thu, 20 Dec 2012 11:44:04 +0200
+Message-ID: <1355996654-6579-7-git-send-email-hdoyu@nvidia.com>
 References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
 In-Reply-To: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-doc-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, John Stultz <johnstul@us.ibm.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Landley <rob@landley.net>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, John Stultz <johnstul@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The method to detect the number of CPU cores on Cortex-A9 MPCore and
-Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
-information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
-have to read it from the system coprocessor(CP15), because the SCU on
-Cortex-A15 MPCore does not have software readable registers. This
-patch selects the correct method at runtime based on the CPU ID.
+Initial support for Tegra 114 SoC. This is expected to be included in
+the board DTS files, Tegra 114 SoC based evaluation board family.
 
 Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
 ---
- arch/arm/mach-tegra/platsmp.c |   31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |   89 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra114.dtsi
 
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 1b926df..68e76ef 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -23,6 +23,7 @@
- #include <asm/hardware/gic.h>
- #include <asm/mach-types.h>
- #include <asm/smp_scu.h>
-+#include <asm/cputype.h>
- 
- #include <mach/powergate.h>
- 
-@@ -34,9 +35,13 @@
- #include "common.h"
- #include "iomap.h"
- 
-+#define CPU_MASK		0xff0ffff0
-+#define CPU_CORTEX_A9		0x410fc090
-+#define CPU_CORTEX_A15		0x410fc0f0
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+new file mode 100644
+index 0000000..a5b7330
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -0,0 +1,89 @@
++/include/ "skeleton.dtsi"
 +
- extern void tegra_secondary_startup(void);
- 
--static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
-+static void __iomem *scu_base;
- 
- #define EVP_CPU_RESET_VECTOR \
- 	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
-@@ -149,7 +154,26 @@ done:
-  */
- static void __init tegra_smp_init_cpus(void)
- {
--	unsigned int i, ncores = scu_get_core_count(scu_base);
-+	unsigned int i, cpu_id, ncores;
-+	u32 l2ctlr;
-+	phys_addr_t pa;
++/ {
++	compatible = "nvidia,tegra114";
++	interrupt-parent = <&gic>;
 +
-+	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-+	switch (cpu_id) {
-+	case CPU_CORTEX_A15:
-+		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-+		ncores = ((l2ctlr >> 24) & 3) + 1;
-+		break;
-+	case CPU_CORTEX_A9:
-+		/* Get SCU physical base */
-+		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
-+		scu_base = IO_ADDRESS(pa);
-+		ncores = scu_get_core_count(scu_base);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
- 
- 	if (ncores > nr_cpu_ids) {
- 		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
-@@ -166,7 +190,8 @@ static void __init tegra_smp_init_cpus(void)
- static void __init tegra_smp_prepare_cpus(unsigned int max_cpus)
- {
- 	tegra_cpu_reset_handler_init();
--	scu_enable(scu_base);
-+	if (scu_base)
-+		scu_enable(scu_base);
- }
- 
- struct smp_operations tegra_smp_ops __initdata = {
++	gic: interrupt-controller {
++		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
++		reg = <0x50041000 0x1000
++		       0x50042000 0x1000>;
++		interrupt-controller;
++		#interrupt-cells = <3>;
++	};
++
++	timer@60005000 {
++		compatible = "nvidia,tegra114-timer", "nvidia,tegra20-timer";
++		reg = <0x60005000 0x400>;
++		interrupts = <0 0 0x04
++			      0 1 0x04
++			      0 41 0x04
++			      0 42 0x04
++			      0 121 0x04
++			      0 122 0x04>;
++	};
++
++	serial@70006000 {
++		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
++		reg = <0x70006000 0x40>;
++		reg-shift = <2>;
++		interrupts = <0 36 0x04>;
++		status = "disabled";
++	};
++
++	serial@70006040 {
++		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
++		reg = <0x70006040 0x40>;
++		reg-shift = <2>;
++		interrupts = <0 37 0x04>;
++		status = "disabled";
++	};
++
++	serial@70006200 {
++		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
++		reg = <0x70006200 0x100>;
++		reg-shift = <2>;
++		interrupts = <0 46 0x04>;
++		status = "disabled";
++	};
++
++	serial@70006300 {
++		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
++		reg = <0x70006300 0x100>;
++		reg-shift = <2>;
++		interrupts = <0 90 0x04>;
++		status = "disabled";
++	};
++
++	serial@70006400 {
++		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
++		reg = <0x70006400 0x100>;
++		reg-shift = <2>;
++		interrupts = <0 91 0x04>;
++		status = "disabled";
++	};
++
++	rtc {
++		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
++		reg = <0x7000e000 0x100>;
++		interrupts = <0 2 0x04>;
++	};
++
++	pmc {
++		compatible = "nvidia,tegra114-pmc", "nvidia,tegra20-pmc";
++		reg = <0x7000e400 0x400>;
++	};
++
++	tsc {
++		compatible = "nvidia,tegra114-tsc";
++		reg = <0x700f0000 0x20000>;
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <1 13 0xf08>,
++			     <1 14 0xf08>,
++			     <1 11 0xf08>,
++			     <1 10 0xf08>;
++	};
++};
 -- 
 1.7.9.5
+
