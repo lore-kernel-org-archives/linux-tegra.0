@@ -1,75 +1,50 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH V3 1/5] ARM: tegra: add pending SGI checking API
-Date: Thu, 20 Dec 2012 15:54:44 +0530
-Message-ID: <50D2E76C.7050309@ti.com>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com> <1355797861-12759-2-git-send-email-josephl@nvidia.com> <CAMbhsRSorDf-BebFn+t39zOK4VX4N0Fu0iPrM7XpKZcssTgX9A@mail.gmail.com> <20121218101548.GO19258@tbergstrom-lnx.Nvidia.com> <CAMbhsRSDwSoHoEs93NZhDchCS28-vQCuW2p+kqfNKeqLygL2sQ@mail.gmail.com> <50D2BB51.9000109@ti.com> <20121220093412.GE19258@tbergstrom-lnx.Nvidia.com> <50D2DF45.1000305@ti.com> <20121220095951.GG19258@tbergstrom-lnx.Nvidia.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] kexec: disable non-boot CPUs
+Date: Thu, 20 Dec 2012 10:49:45 +0000
+Message-ID: <20121220104945.GC16887@mudshark.cambridge.arm.com>
+References: <1355960681-32015-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121220095951.GG19258-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1355960681-32015-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
+ <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/kexec/>
+List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
+ <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Eric Biederman <ebiederm-aS9lmoZGLiVWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 20 December 2012 03:29 PM, Peter De Schrijver wrote:
-> On Thu, Dec 20, 2012 at 10:49:57AM +0100, Santosh Shilimkar wrote:
->> On Thursday 20 December 2012 03:04 PM, Peter De Schrijver wrote:
->>> On Thu, Dec 20, 2012 at 08:16:33AM +0100, Santosh Shilimkar wrote:
->>>> On Wednesday 19 December 2012 01:06 AM, Colin Cross wrote:
->>>>> On Tue, Dec 18, 2012 at 2:15 AM, Peter De Schrijver
->>>>> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>>> On Tue, Dec 18, 2012 at 03:42:24AM +0100, Colin Cross wrote:
->>>>>>> On Mon, Dec 17, 2012 at 6:30 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>>>>> The "powered-down" CPU idle mode of Tegra cut off the vdd_cpu rail, it
->>>>>>>> include the power of GIC. That caused the SGI (Software Generated
->>>>>>>> Interrupt) been lost. Because the SGI can't wake up the CPU that in
->>>>>>>> the "powered-down" CPU idle mode. We need to check if there is any
->>>>>>>> pending SGI when go into "powered-down" CPU idle mode. This is important
->>>>>>>> especially when applying the coupled cpuidle framework into "power-down"
->>>>>>>> cpuidle dirver. Because the coupled cpuidle framework may have the
->>>>>>>> chance that misses IPI_SINGLE_FUNC handling sometimes.
->>>>>>>
->>>>>>> This problem exists for any GIC-based SoC, and needs to be fixed in
->>>>>>> gic_cpu_save or gic_dist_save, whichever one loses the interrupt.
->>>>>>
->>>>>> Not necessarily. It depends on the SoC design. On Tegra20, the entire CPU
->>>>>> cluster is railgated, including the GIC. This causes a pending IPI to be lost.
->>>>>> But for example on OMAP4, only the actual CPU cores are powergated. The GIC
->>>>>> stays alive until also the core domain hits idle. By that time a potential
->>>>>> pending IPI has long woken up the target CPU again, so no additional
->>>>>> checks are needed for functional correct behavior.
->>>>>
->>>>> I'm not sure that is correct for OMAP4.  C2 and C3 will put the power
->>>>> rail for the GIC in retention, and I don't think an IPI will wake it
->>>>> up.  I believe the same problem also exists for Exynos5.  In any case,
->>>>> checking for an IPI early during idle and aborting won't hurt those
->>>>> platforms, so I still think it should be in the GIC driver and not by
->>>>> mapping the GIC registers into a separate driver.
->>>>>
->>>> I second Colin on the GIC power states on OMAP.
->>>
->>> But even then PRCM will only trigger the transition to retention voltage after
->>> both CPUs hit off mode. I guess a pending IPI will wakeup the core before the
->>> PRCM starts the transition.
->>>
->> No it won't. You are talking about the voltage domain retention while
->> the point is SGI becomes useless once CPU power domain transition to
->> low power state. And btw, voltage transition also can not happen just
->> with two CPU's in retention. It does have dependency like cluster power
->> state to hit retention.
->>
->> CPUs have their own power domain state and once they enter into any low
->> power state apart from ON power state, SGI doesn't work. hope this is
->> clear.
->
-> So why does OMAP4 have working coupled idle without the SGI check then?
->
-Because whenever the OMAP4 CPUs enter into any power states apart from
-ON, clock-domain force wakeup method us being used to wakeup
-secondary CPUs. And secondly CPU RET is not supported on purpose because
-of some known IP block issues.
+Hi Stephen,
 
-Regards
-Santosh
+On Wed, Dec 19, 2012 at 11:44:41PM +0000, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Both the regular reboot and shutdown paths do this. It seems reasonable
+> for kexec to work the same way.
+> 
+> On the Tegra ARM SoC at least, this change allows kexec to work with SMP
+> enabled. ARM's machine_shutdown() simply puts all CPUs into a loop. If
+> the code of that loop is over-written, the CPUs may crash, and cause the
+> kexec'd kernel not to be able to initialize them. In practice, this
+> causes the kexec'd kernel to hang and/or crash. The intended way to
+> solve this is for ARM machines to provide a cpu_kill SMP operation to
+> e.g. power down the CPUs, or place them in reset. However, at least on
+> Tegra, the implementation of that function would simply be duplicating
+> the hotplug code that already exists, so it seems simpler to just call
+> disable_nonboot_cpus() for the kexec path, just like reboot/shutdown.
+
+If you do manage to get this merged, please can you follow up with a patch
+to remove the smp_kill_cpus bits from arch/arm/kernel/smp.c please? It only
+exists as a hook to do exactly this and currently nobody is using it afaict.
+
+Cheers,
+
+Will
