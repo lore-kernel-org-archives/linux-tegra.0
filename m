@@ -1,58 +1,61 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 7/7] ASoC: tegra: add machine driver using wm9712 codec
-Date: Thu, 20 Dec 2012 20:16:13 +0000
-Message-ID: <20121220201613.GA26183@opensource.wolfsonmicro.com>
-References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
- <1355959056-6009-7-git-send-email-dev@lynxeye.de>
- <50D36D3B.7080309@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 5/7] ASoC: tegra: add ac97 host driver
+Date: Thu, 20 Dec 2012 13:19:43 -0700
+Message-ID: <50D372DF.2080600@wwwdotorg.org>
+References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>  <1355959056-6009-5-git-send-email-dev@lynxeye.de>  <50D36A98.7090204@wwwdotorg.org> <1356034241.1490.98.camel@tellur>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50D36D3B.7080309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1356034241.1490.98.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/20/2012 01:10 PM, Lucas Stach wrote:
+> Am Donnerstag, den 20.12.2012, 12:44 -0700 schrieb Stephen Warren:
+>> On 12/19/2012 04:17 PM, Lucas Stach wrote:
+>>> This adds the driver for the Tegra 2x AC97 host controller.
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>>> +static void tegra20_ac97_codec_warm_reset(struct snd_ac97 *ac97)
+>>> +{
+>>> +	u32 readback;
+>>> +	unsigned long timeout;
+>>> +
+>>> +	/*
+>>> +	 * although sync line is driven by the DAC pad group warm reset using
+>>> +	 * the controller cmd is not working, have to toggle sync line
+>>> +	 * manually.
+>>> +	 */
+>>> +	gpio_request(workdata->sync_gpio, "codec-sync");
+>>
+>> Hmm. There's an AC'97 command to reset the CODEC and we don't implement
+>> it? Uggh.
+>
+> As far as I could figure from the downstream register doc there is a
+> command implemented in the host controller that's supposed to do the
+> warm reset, but in my testing it didn't work. Sadly I have not received
+> any documentation about the host controller from NVIDIA up until now, so
+> I don't now if we could make this work somehow. Bug Submission ID#:
+> 196075
 
-On Thu, Dec 20, 2012 at 12:55:39PM -0700, Stephen Warren wrote:
-> On 12/19/2012 04:17 PM, Lucas Stach wrote:
+What system was that bug submitted into? It's not a regular NVIDIA
+internal bug number. I'll see who I can ask about this feature...
 
-> > +	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
+>>> +	ac97->sync_gpio = of_get_named_gpio(pdev->dev.of_node,
+>>> +					    "nvidia,codec-sync-gpio", 0);
+>>> +	if (!gpio_is_valid(ac97->sync_gpio)) {
+>>> +		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
+>>> +		goto err_clk_put;
+>>> +	}
+>>
+>> I don't know what this is, so I'll ask if it's strictly required too.
+>
+> Until we manage to get the host controller warm reset command working
+> this is fixed to be the _FS line of the DAP connected to the codec, so
+> strictly required.
 
-> Hmm. I guess that potentially ties this driver to whichever CODECs
-> actually expose a widget with that exact name...
-
-Yes, embedded AC'97 systems are often but not always generic - another
-thing you can do is have a PLL in the CODEC rather than having a MCLK at
-the right frequency, and there's things like external components.
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ03HhAAoJELSic+t+oim96lEP/iy39dwGsDe7w5wagJFYId/T
-98IvPO+O7b4xsBKGJJy9Euvvr0xLufVSHHV93MBBwEb98WUE/D5wussfkU7hkfmp
-wfaMbRbeyI6o3uhjuubKx8lQhmXPp8N7di69nJAPVPdhQzobonJFd6azFcOromfG
-E4JUy9OrjYFas7BFxY2MClQ36q6N8Lj3zGd31YcOQavmow2O8AHx+Ke3MnysC8FD
-uxQMNfYPJQ0WfxCnGXiXSDXHMMTg7sJLPsabgafNtdY6bfd8jU7ZXusbSMXEKp3F
-khPlAYhmAtQvpiM0+1T+5BYqEWymPj5S7pzzv/xT4lCEATPPfbo51kemWgDGO4Aq
-O0ZUfQqhX1/xK7Q38ECKUiYjxO5AuBnwZGeO20rbf/T9Rs+QYxARdYQcZOf+6gUU
-WoqcEgvsSssZmpy9CqfwpYnImRjUgeVqqd3z9BxwDkLVp5HTFCQZb9UC/FtsyHz3
-4Fn9oaB8UtGbgay8yWGCHT2GmKYfWGUsxY1QedZlAGdqX1ykhuQ0SuPgc/fp89Aw
-0pHv/g5hPsGo/yezIOLvVeQ5wq5Dn6291L/uh2BtpBC61Q8EtW1/epdw9MgJDKy0
-dopTY+L+gLpKYI7mRyRTR8B7P0lZzNTqulkjR/vU+y2CiG6FNsJHhTRjT3NY/DoJ
-55f8OHC5GJIyWFmCc2Ml
-=CTuJ
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+I'd like to investigate whether the warm reset command can be made to
+work before actually committing to a DT binding that requires this GPIO
+to be specified; the DT binding is supposed to be basically static.
