@@ -1,47 +1,71 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: implement flags parameters for cyclic transfer
-Date: Fri, 21 Dec 2012 13:53:54 -0700
-Message-ID: <50D4CC62.6080304@wwwdotorg.org>
-References: <1355924434-7930-1-git-send-email-ldewangan@nvidia.com> <50D1F33D.1050709@wwwdotorg.org> <50D2ABF7.8090308@nvidia.com> <50D340E1.7040600@wwwdotorg.org> <50D3E44F.4060007@nvidia.com>
+Subject: Re: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Fri, 21 Dec 2012 14:04:29 -0700
+Message-ID: <50D4CEDD.3070206@wwwdotorg.org>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>  <1355797861-12759-3-git-send-email-josephl@nvidia.com>  <50D34E28.5000208@wwwdotorg.org> <1356071804.26029.34.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D3E44F.4060007-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1356071804.26029.34.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "djbw-b10kYP2dOMg@public.gmane.org" <djbw-b10kYP2dOMg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2012 09:23 PM, Laxman Dewangan wrote:
-> On Thursday 20 December 2012 10:16 PM, Stephen Warren wrote:
->> On 12/19/2012 11:11 PM, Laxman Dewangan wrote:
->>> On Wednesday 19 December 2012 10:32 PM, Stephen Warren wrote:
->>>> On 12/19/2012 06:40 AM, Laxman Dewangan wrote:
->>>>> The flag parameter is added in the cyclic transfer request.
->>>>> Use the flag option of:
->>>>> - DMA_PREP_INTERRUPT for enabling interrupt.
->>>>> - DMA_CTRL_ACK for deciding whether ack is requred or not for
->>>>>     descriptor.
->>>> Do the relevant drivers that use Tegra's DMA engine already set flags
->>>> correctly, so that this change won't cause any regressions?
+On 12/20/2012 11:36 PM, Joseph Lo wrote:
+> On Fri, 2012-12-21 at 01:43 +0800, Stephen Warren wrote:
+>> On 12/17/2012 07:30 PM, Joseph Lo wrote:
+>>> The powered-down state of Tegra20 requires power gating both CPU cores.
+>>> When the secondary CPU requests to enter powered-down state, it saves
+>>> its own contexts and then enters WFI. The Tegra20 had a limition to
+>>> power down both CPU cores. The secondary CPU must waits for CPU0 in
+>>> powered-down state too. If the secondary CPU be woken up before CPU0
+>>> entering powered-down state, then it needs to restore its CPU states
+>>> and waits for next chance.
 >>>
->>> Currently, the sound soc driver uses the cyclic mode of dma transfer and
->>> it has already enable the proper flags. This was done recently after
->>> adding flags in cyclic api.
->>> Also, there was bug in our dma driver for not setting DMA_CTRL_ACK by
->>> default for cyclic case.
->>> This will fix the issue.
+>>> Be aware of that, you may see the legacy power state "LP2" in the code
+>>> which is exactly the same meaning of "CPU power down".
+
+>>> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+
+[ code to set up the idle state array]
+
+>> ... although I personally much preferred when all this was just static
+>> initialization directly in tegra_idle_driver, rather than all this messy
+>> copying. Really, struct cpuidle_driver should point at the array, rather
+>> than including it.
 >>
->> OK. I assume "This was done recently after adding flags in cyclic api."
->> was a patch that went into 3.8?  So, this patch is a bug-fix that should
->> be included in 3.8 then?
+> I think so. If you strongly prefer the original style, I can rollback to
+> the previous version here.
+
+I suppose there's little point changing it back; I know others objected
+to the original code:-(
+
+>>> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+>>
+>>> @@ -173,6 +173,8 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
+>>>  
+>>>  	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
+>>>  		last_cpu = true;
+>>> +	else if (phy_cpu_id == 1)
+>>> +		tegra20_cpu_set_resettable_soon();
+>>>  
+>>>  	spin_unlock(&tegra_lp2_lock);
+>>>  	return last_cpu;
+>>
+>> Shouldn't the code in that else branch have a run-time check for whether
+>> it's running on Tegra20? When compiled without Tegra20 support,
+>> tegra20_cpu_set_resettable_soon() is a dummy static inline, but when
+>> both Tegra20 and Tegra30 are compiled in, isn't that code going to run
+>> when it shouldn't; pm.c being a common file.
 >
-> I can see this in Linux 3.7 tag.
+> Because the code didn't hurt Tegra30, so I didn't add a runtime
+> detection there. If you have concern, I can add runtime detection there.
 
-So I assume that means that when Vinod applies *this* patch, it should
-be Cc: stable for 3.7 and up?
-
-> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=history;f=drivers/dma/tegra20-apb-dma.c;h=528c62dd4b00e1b52928ff66f3a54e7ae206680f;hb=29594404d7fe73cd80eaa4ee8c43dcc53970c60e
-
-I don't think that points where you want; it just shows a log of 3.7 for me.
+The only issue I see that could happen is that
+tegra20_cpu_set_resettable_soon() writes to some location to maintain
+the CPU resettable state. Since I assume that location isn't used for
+that purpose on Tegra30, could this cause some conflict? It seems best
+to add the check to make sure there's no issue here.
