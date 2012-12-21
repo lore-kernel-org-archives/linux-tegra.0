@@ -1,51 +1,94 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: moving the clock gating procedure to
- tegra_cpu_kill
-Date: Fri, 21 Dec 2012 17:58:17 +0800
-Message-ID: <1356083897.26029.187.camel@jlo-ubuntu-64.nvidia.com>
-References: <1355970519-28200-1-git-send-email-josephl@nvidia.com>
-	 <1355970519-28200-2-git-send-email-josephl@nvidia.com>
-	 <50D34467.9000006@wwwdotorg.org>
+From: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function tegra_cpu_init/exit
+Date: Fri, 21 Dec 2012 10:09:55 +0000
+Message-ID: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D34467.9000006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-12-21 at 01:01 +0800, Stephen Warren wrote:
-> On 12/19/2012 07:28 PM, Joseph Lo wrote:
-> > The tegra_cpu_die was be executed by the CPU itslf. So the clock gating
-> > procedure won't be executed after the CPU hardware shutdown code. Moving
-> > the clock gating procedure to tegra_cpu_kill that will be run by another
-> > CPU after the CPU died.
-> 
-> Hmmm. I wonder if this is enough to make kexec-on-Tegra-with-SMP-enabled
-> work without explicitly hot-unplugging all the CPUs first... An
-> implementation of cpu_kill() was a major part of what was missing. I
-> thought an implementation of cpu_kill() would require a bunch of code
-> from cpu_die() too. Does this patch assume cpu_die() has executed first,
-> and only then cpu_kill() will work, or can cpu_kill() be used on its own?
-> 
-Yes, the tegra_cpu_die must be run first then tegra_cpu_kill. Because
-the tegra_cpu_die shutdown the CPU by itself, then we can clock gate the
-CPU in tegra_cpu_kill. If the tegra_cpu_kill be run itself, the system
-will be hung in wait_for_reset(CPU).
+tegra_cpu_init/exit will be called every time one cpu core is online or
+offline. And all cpu cores share same clocks, redundant clk_get/put
+wast time,  so I move them out.
 
-About the kexec issue, it's complicate. Your solution should be the
-right solution. And we should implement the hardware shutdown code in
-cpu_die not cpu_kill. I suspect this issue can be reproduced on all ARM
-platform. Because the smp_send_stop can't really shutdown the secondary
-CPU core if just call machine_shutdown without disable_nonboot_cpu. And
-in platform_shutdown and platform_reboot case, the secondary CPU already
-been offlined and killed before this function be called. Does any other
-ARM SMP platform can run kexec without any issue?
+Signed-off-by: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/mach-tegra/cpu-tegra.c |   40 +++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-(I will check if we can do some HW shutdown in tegra_cpu_kill. For ex,
-just clock gate the CPU without wait_for_reset.)
-
-Thanks,
-Joseph
+diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
+index 627bf0f..4faa3c6 100644
+--- a/arch/arm/mach-tegra/cpu-tegra.c
++++ b/arch/arm/mach-tegra/cpu-tegra.c
+@@ -217,24 +217,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
+ 	if (policy->cpu >= NUM_CPUS)
+ 		return -EINVAL;
+ 
+-	cpu_clk = clk_get_sys(NULL, "cpu");
+-	if (IS_ERR(cpu_clk))
+-		return PTR_ERR(cpu_clk);
+-
+-	pll_x_clk = clk_get_sys(NULL, "pll_x");
+-	if (IS_ERR(pll_x_clk))
+-		return PTR_ERR(pll_x_clk);
+-
+-	pll_p_clk = clk_get_sys(NULL, "pll_p");
+-	if (IS_ERR(pll_p_clk))
+-		return PTR_ERR(pll_p_clk);
+-
+-	emc_clk = clk_get_sys("cpu", "emc");
+-	if (IS_ERR(emc_clk)) {
+-		clk_put(cpu_clk);
+-		return PTR_ERR(emc_clk);
+-	}
+-
+ 	clk_prepare_enable(emc_clk);
+ 	clk_prepare_enable(cpu_clk);
+ 
+@@ -259,8 +241,6 @@ static int tegra_cpu_exit(struct cpufreq_policy *policy)
+ {
+ 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
+ 	clk_disable_unprepare(emc_clk);
+-	clk_put(emc_clk);
+-	clk_put(cpu_clk);
+ 	return 0;
+ }
+ 
+@@ -281,12 +261,32 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
+ 
+ static int __init tegra_cpufreq_init(void)
+ {
++	cpu_clk = clk_get_sys(NULL, "cpu");
++	if (IS_ERR(cpu_clk))
++		return PTR_ERR(cpu_clk);
++
++	pll_x_clk = clk_get_sys(NULL, "pll_x");
++	if (IS_ERR(pll_x_clk))
++		return PTR_ERR(pll_x_clk);
++
++	pll_p_clk = clk_get_sys(NULL, "pll_p");
++	if (IS_ERR(pll_p_clk))
++		return PTR_ERR(pll_p_clk);
++
++	emc_clk = clk_get_sys("cpu", "emc");
++	if (IS_ERR(emc_clk)) {
++		clk_put(cpu_clk);
++		return PTR_ERR(emc_clk);
++	}
++
+ 	return cpufreq_register_driver(&tegra_cpufreq_driver);
+ }
+ 
+ static void __exit tegra_cpufreq_exit(void)
+ {
+         cpufreq_unregister_driver(&tegra_cpufreq_driver);
++	clk_put(emc_clk);
++	clk_put(cpu_clk);
+ }
+ 
+ 
+-- 
+1.7.9.5
