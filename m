@@ -1,38 +1,56 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: implement flags parameters for cyclic transfer
-Date: Fri, 21 Dec 2012 09:53:43 +0530
-Message-ID: <50D3E44F.4060007@nvidia.com>
-References: <1355924434-7930-1-git-send-email-ldewangan@nvidia.com> <50D1F33D.1050709@wwwdotorg.org> <50D2ABF7.8090308@nvidia.com> <50D340E1.7040600@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 3/5] ARM: tegra20: clocks: add CPU low-power
+ function into tegra_cpu_car_ops
+Date: Fri, 21 Dec 2012 13:02:11 +0800
+Message-ID: <1356066131.26029.26.camel@jlo-ubuntu-64.nvidia.com>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
+	 <1355797861-12759-4-git-send-email-josephl@nvidia.com>
+	 <50D34F12.9080801@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D340E1.7040600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50D34F12.9080801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "djbw-b10kYP2dOMg@public.gmane.org" <djbw-b10kYP2dOMg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 20 December 2012 10:16 PM, Stephen Warren wrote:
-> On 12/19/2012 11:11 PM, Laxman Dewangan wrote:
->> On Wednesday 19 December 2012 10:32 PM, Stephen Warren wrote:
->>> On 12/19/2012 06:40 AM, Laxman Dewangan wrote:
->>>> The flag parameter is added in the cyclic transfer request.
->>>> Use the flag option of:
->>>> - DMA_PREP_INTERRUPT for enabling interrupt.
->>>> - DMA_CTRL_ACK for deciding whether ack is requred or not for
->>>>     descriptor.
->>> Do the relevant drivers that use Tegra's DMA engine already set flags
->>> correctly, so that this change won't cause any regressions?
->>>
->> Currently, the sound soc driver uses the cyclic mode of dma transfer and
->> it has already enable the proper flags. This was done recently after
->> adding flags in cyclic api.
->> Also, there was bug in our dma driver for not setting DMA_CTRL_ACK by
->> default for cyclic case.
->> This will fix the issue.
-> OK. I assume "This was done recently after adding flags in cyclic api."
-> was a patch that went into 3.8?  So, this patch is a bug-fix that should
-> be included in 3.8 then?
-I can see this in Linux 3.7 tag.
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=history;f=drivers/dma/tegra20-apb-dma.c;h=528c62dd4b00e1b52928ff66f3a54e7ae206680f;hb=29594404d7fe73cd80eaa4ee8c43dcc53970c60e
+On Fri, 2012-12-21 at 01:46 +0800, Stephen Warren wrote:
+> On 12/17/2012 07:30 PM, Joseph Lo wrote:
+> > Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
+> > functions were used for CPU powered-down state maintenance.
+> 
+> I think this isn't adding those functions into tegra_cpu_car_ops, but
+> rather implementing the already existing function pointers for Tegra20,
+> right?
+> 
+Yes, exactly.
+
+> This patch touches the clock driver and Prashant will soon be posting
+> patches that significantly rework the clock driver. Those will conflict.
+> How have you worked with Prashant to resolve the conflicts? Will
+> Prashant's patches be based on top of this series? Please explicitly
+> describe the dependencies and resolution of conflicts when you post the
+> next version. (below the ---, along with the changelog)
+> 
+Yes, there are many patch series may have dependency each other
+recently. We also want to know what the sequence you expect to merge the
+patch series to your tree. Evan my own patch series had dependency too.
+For ex, hotplug enhancement, cpuidle, SMP works on UP and
+suspend/resume. Currently, I think we are all work the the top of
+linux-next tree. If we can't expect the sequence of the patch series to
+be merged, we will always have some conflicts with each other.
+
+Depend on the timing, I think it should be better to know which patch
+series should be going first or recently and which should go later and
+depend on which series. Then we can rearrange our patches on top of it.
+And reducing the job to fix conflict on your side.
+
+What do you think, Prashant? If your rework of clock driver will show up
+soon and Stephen also expect that will be merged first, I am fine to
+re-base on it and re-send my next version after new clock driver be
+done.
+
+Thanks,
+Joseph
