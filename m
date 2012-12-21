@@ -1,77 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: moving the clock gating procedure to
- tegra_cpu_kill
-Date: Fri, 21 Dec 2012 14:23:17 -0700
-Message-ID: <50D4D345.6030804@wwwdotorg.org>
-References: <1355970519-28200-1-git-send-email-josephl@nvidia.com>  <1355970519-28200-2-git-send-email-josephl@nvidia.com>  <50D34467.9000006@wwwdotorg.org> <1356083897.26029.187.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function
+ tegra_cpu_init/exit
+Date: Fri, 21 Dec 2012 14:27:43 -0700
+Message-ID: <50D4D44F.2080203@wwwdotorg.org>
+References: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1356083897.26029.187.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <1356084595-17800-1-git-send-email-linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/21/2012 02:58 AM, Joseph Lo wrote:
-> On Fri, 2012-12-21 at 01:01 +0800, Stephen Warren wrote:
->> On 12/19/2012 07:28 PM, Joseph Lo wrote:
->>> The tegra_cpu_die was be executed by the CPU itslf. So the clock gating
->>> procedure won't be executed after the CPU hardware shutdown code. Moving
->>> the clock gating procedure to tegra_cpu_kill that will be run by another
->>> CPU after the CPU died.
->>
->> Hmmm. I wonder if this is enough to make kexec-on-Tegra-with-SMP-enabled
->> work without explicitly hot-unplugging all the CPUs first... An
->> implementation of cpu_kill() was a major part of what was missing. I
->> thought an implementation of cpu_kill() would require a bunch of code
->> from cpu_die() too. Does this patch assume cpu_die() has executed first,
->> and only then cpu_kill() will work, or can cpu_kill() be used on its own?
->>
-> Yes, the tegra_cpu_die must be run first then tegra_cpu_kill. Because
-> the tegra_cpu_die shutdown the CPU by itself, then we can clock gate the
-> CPU in tegra_cpu_kill. If the tegra_cpu_kill be run itself, the system
-> will be hung in wait_for_reset(CPU).
-> 
-> About the kexec issue, it's complicate. Your solution should be the
-> right solution. And we should implement the hardware shutdown code in
-> cpu_die not cpu_kill. I suspect this issue can be reproduced on all ARM
-> platform. Because the smp_send_stop can't really shutdown the secondary
-> CPU core if just call machine_shutdown without disable_nonboot_cpu. And
-> in platform_shutdown and platform_reboot case, the secondary CPU already
-> been offlined and killed before this function be called. Does any other
-> ARM SMP platform can run kexec without any issue?
-> 
-> (I will check if we can do some HW shutdown in tegra_cpu_kill. For ex,
-> just clock gate the CPU without wait_for_reset.)
+On 12/21/2012 03:09 AM, Richard Zhao wrote:
+> tegra_cpu_init/exit will be called every time one cpu core is online or
+> offline. And all cpu cores share same clocks, redundant clk_get/put
+> wast time,  so I move them out.
 
-Will, Joseph's thoughts above pretty much match mine re: kexec. In the
-kexec thread I started earlier, I talked about replacing:
+I think this is reasonable.
 
-void machine_shutdown(void)
-{
-#ifdef CONFIG_SMP
-	smp_send_stop();
-#endif
-}
+Prashant, Peter, any comments?
 
-with something like:
-
-void machine_shutdown(void)
-{
-#ifdef CONFIG_HOTPLUG_CPU
- 	disable_nonboot_cpus();
-#elifdef CONFIG_SMP
-	smp_send_stop();
-#endif
-}
-
-and you'd responded "I think you're better off using what we currently
-have and hanging your code off platform_cpu_kill.".
-
-What exactly did you mean by "what we currently have"; did you mean that
-cpu_kill() should work without cpu_die() having executed on the target
-CPU itself first, so Tegra should simply implement cpu_kill()? As Joseph
-says above, I'm not sure that will work. Any more detailed thoughts you
-have here would be greatly appreciated. Thanks.
+Is any other work in tegra_cpu_init() redundant? Is tegra_cpu_init()
+supposed to be called due to hotplug, or is that a bug in the cpufreq core?
