@@ -1,41 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Thu, 20 Dec 2012 15:29:42 -0700
-Message-ID: <50D39156.7010600@wwwdotorg.org>
-References: <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D34F00.4080308@nvidia.com> <50D3511F.2090308@wwwdotorg.org> <50D35287.3040509@nvidia.com> <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de> <50D38462.3060302@nvidia.com> <20121220215008.GA30491@avionic-0098.adnet.avionic-design.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: dts: add aliases and DMA requestor for serial
+ controller
+Date: Fri, 21 Dec 2012 09:48:40 +0530
+Message-ID: <50D3E320.2090804@nvidia.com>
+References: <1355898671-3960-1-git-send-email-ldewangan@nvidia.com> <50D1F2CB.3090206@wwwdotorg.org> <50D2AD02.6060101@nvidia.com> <50D344E9.70305@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121220215008.GA30491-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <50D344E9.70305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2012 02:50 PM, Thierry Reding wrote:
-> On Thu, Dec 20, 2012 at 11:34:26PM +0200, Terje Bergstr=C3=B6m wrote:
->> On 20.12.2012 22:30, Thierry Reding wrote:
->>> The problem with your proposed solution is that, even any of
->>> Stephen's valid objections aside, it won't work. Once the
->>> tegra-drm module is unloaded, the driver's data will be left in
->>> the current state and the link to the dummy device will be
->>> lost.
->>=20
->> The dummy device is created by tegradrm's module init, because
->> it's used only by tegradrm. When tegradrm is unloaded, all the
->> tegradrm devices and drivers are unloaded and freed, including
->> the dummy one.
->=20
-> No, the children platform devices of host1x are not freed, so
-> their driver data will still contain the data set by the previous
-> call to their driver's .probe() function.
->=20
-> But reading what you said again, you were proposing to set the
-> children driver data from the tegra-drm dummy device's .probe(). In
-> that case it would probably work.
+On Thursday 20 December 2012 10:33 PM, Stephen Warren wrote:
+> On 12/19/2012 11:15 PM, Laxman Dewangan wrote:
+>> On Wednesday 19 December 2012 10:30 PM, Stephen Warren wrote:
+>>> On 12/18/2012 11:31 PM, Laxman Dewangan wrote:
+>>>> Add APB DMA requestor and serial aliases for serial controller.
+>>>> There will be two serial driver i.e. 8250 based simple serial driver
+>>>> and APB DMA based serial driver for higher baudrate and performace.
+>>>>
+>>>> The simple serial driver get enabled with compatible nvidia,tegra20-uart
+>>>> and APB DMA based driver will get enabled with compatible
+>>>> nvidia,tegra20-hsuart.
+>>> This patch seems to do two things:
+>>>
+>>> 1) Add a comment describing how to select the basic or DMA-based driver.
+>>> I can see why this is useful.
+>>>
+>>> 2) Add aliases for the serial ports. I have no idea why this is useful.
+>> Serial aliases are added because we want to get the port number like
+>> /dev/ttyTHS0,  /d/ttyTHS2 etc. The uarta should be /dev/ttyTHS0 and
+>> uartc should be /dev/ttyTHS2. The port number can be found using aliases
+>> and of_alias_get_id() in driver file:
+>>
+>> port_number = of_alias_get_id(np, "serial");
+> Oh, I see. I guess the aliases make sense then.
+>
+> But, wouldn't you only add aliases for the specific UARTs that are in
+> use on a particular board (so put them in tegraNN-board.dts) rather than
+> all UARTs on Tegra (i.e. the current patch which puts them into
+> tegraNN.dtsi)?
 
-Many things would work, but since tegradrm isn't (or at least should
-not be) the driver for the platform devices which are host1x's
-children, it shouldn't be randomly screwing around with those devices'
-drvdata fields.
+I like to have this in tegraN N.dtsi file becasue:
+- This policy is not going to change the board to board. For high speed 
+driver the uarta will be ttyTHS0 and uartb ttyTHS1.
+- In board file I will only enable driver and make compatible, not worry 
+about the making aliases.
+
+This approach will simplify the instantiation. This will also avoid 
+confusion like the aliases get added or not when we create board dts file.
+This will be on same line we have with board files where pdev->id is 
+fixed for all board in common place i.e. device.c which decide the 
+port-number.
