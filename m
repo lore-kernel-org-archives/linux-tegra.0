@@ -1,42 +1,82 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Fri, 21 Dec 2012 08:31:18 +0200
-Message-ID: <50D40236.9080403@nvidia.com>
-References: <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D34F00.4080308@nvidia.com> <50D3511F.2090308@wwwdotorg.org> <50D35287.3040509@nvidia.com> <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de> <50D38462.3060302@nvidia.com> <50D39122.3060401@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 2/5] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Fri, 21 Dec 2012 14:36:44 +0800
+Message-ID: <1356071804.26029.34.camel@jlo-ubuntu-64.nvidia.com>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
+	 <1355797861-12759-3-git-send-email-josephl@nvidia.com>
+	 <50D34E28.5000208@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D39122.3060401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50D34E28.5000208-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21.12.2012 00:28, Stephen Warren wrote:
-> On 12/20/2012 02:34 PM, Terje Bergstr=C3=B6m wrote:
->> On 20.12.2012 22:30, Thierry Reding wrote:
->>> The problem with your proposed solution is that, even any of Stephe=
-n's
->>> valid objections aside, it won't work. Once the tegra-drm module is
->>> unloaded, the driver's data will be left in the current state and t=
-he
->>> link to the dummy device will be lost.
->>
->> The dummy device is created by tegradrm's module init, because it's =
-used
->=20
-> No, the tegradrm driver object might be registered by tegradrm's modu=
-le
-> init, but the dummy tegradrm platform device would need to be
-> created/registered by host1x's probe. Otherwise, the device would get
-> created even if there was no host1x/... in the system (disabled for s=
-ome
-> reason, multi-SoC kernel, ...)
+On Fri, 2012-12-21 at 01:43 +0800, Stephen Warren wrote:
+> On 12/17/2012 07:30 PM, Joseph Lo wrote:
+> > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > When the secondary CPU requests to enter powered-down state, it saves
+> > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > powered-down state too. If the secondary CPU be woken up before CPU0
+> > entering powered-down state, then it needs to restore its CPU states
+> > and waits for next chance.
+> > 
+> > Be aware of that, you may see the legacy power state "LP2" in the code
+> > which is exactly the same meaning of "CPU power down".
+> 
+> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+> 
+> >  int __init tegra20_cpuidle_init(void)
+> 
+> > +	drv->state_count = sizeof(tegra_idle_states) /
+> > +			   sizeof(struct cpuidle_state);
+> 
+> Use ARRAY_SIZE() there?
+> 
+OK.
+> 
+> > +	for (i = 0; i < drv->state_count; i++)
+> > +		memcpy(&drv->states[i], &tegra_idle_states[i],
+> > +		       sizeof(struct cpuidle_state));
+> 
+> Can't you call memcpy() once:
+> 
+> memcpy(drv->states, tegra_idle_states,
+> 		drv->state_count * sizeof(drv->states[0]));
+> 
+> ... although I personally much preferred when all this was just static
+> initialization directly in tegra_idle_driver, rather than all this messy
+> copying. Really, struct cpuidle_driver should point at the array, rather
+> than including it.
+> 
+I think so. If you strongly prefer the original style, I can rollback to
+the previous version here.
 
-Oh. I was all the time thinking that dummy device needs to be created b=
-y
-tegradrm, because it's only used by tegradrm.  But as we're mixing the
-responsibilities, we might then just as well go all the way.
+> > diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> 
+> > @@ -173,6 +173,8 @@ bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
+> >  
+> >  	if ((phy_cpu_id == 0) && cpumask_equal(cpu_lp2_mask, cpu_online_mask))
+> >  		last_cpu = true;
+> > +	else if (phy_cpu_id == 1)
+> > +		tegra20_cpu_set_resettable_soon();
+> >  
+> >  	spin_unlock(&tegra_lp2_lock);
+> >  	return last_cpu;
+> 
+> Shouldn't the code in that else branch have a run-time check for whether
+> it's running on Tegra20? When compiled without Tegra20 support,
+> tegra20_cpu_set_resettable_soon() is a dummy static inline, but when
+> both Tegra20 and Tegra30 are compiled in, isn't that code going to run
+> when it shouldn't; pm.c being a common file.
+> 
+Because the code didn't hurt Tegra30, so I didn't add a runtime
+detection there. If you have concern, I can add runtime detection there.
 
-Terje
+Thanks,
+Joseph
