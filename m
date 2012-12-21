@@ -1,94 +1,166 @@
-From: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function tegra_cpu_init/exit
-Date: Fri, 21 Dec 2012 10:09:55 +0000
-Message-ID: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
+From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv4 0/8] Support for Tegra 2D hardware
+Date: Fri, 21 Dec 2012 13:39:16 +0200
+Message-ID: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-tegra_cpu_init/exit will be called every time one cpu core is online or
-offline. And all cpu cores share same clocks, redundant clk_get/put
-wast time,  so I move them out.
+This set of patches adds support for Tegra20 and Tegra30 host1x and
+2D. It is based on linux-next-20121220.
 
-Signed-off-by: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- arch/arm/mach-tegra/cpu-tegra.c |   40 +++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+The fourth version has only few changes compared to previous version:
+ * Fixed some sparse warnings
+ * Fixed host1x Makefile to allow building as module
+ * Fixed host1x module unload
+ * Fixed tegradrm unload sequence
+ * host1x creates DRM dummy device and tegradrm uses it for storing
+   DRM related data.
 
-diff --git a/arch/arm/mach-tegra/cpu-tegra.c b/arch/arm/mach-tegra/cpu-tegra.c
-index 627bf0f..4faa3c6 100644
---- a/arch/arm/mach-tegra/cpu-tegra.c
-+++ b/arch/arm/mach-tegra/cpu-tegra.c
-@@ -217,24 +217,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	if (policy->cpu >= NUM_CPUS)
- 		return -EINVAL;
- 
--	cpu_clk = clk_get_sys(NULL, "cpu");
--	if (IS_ERR(cpu_clk))
--		return PTR_ERR(cpu_clk);
--
--	pll_x_clk = clk_get_sys(NULL, "pll_x");
--	if (IS_ERR(pll_x_clk))
--		return PTR_ERR(pll_x_clk);
--
--	pll_p_clk = clk_get_sys(NULL, "pll_p");
--	if (IS_ERR(pll_p_clk))
--		return PTR_ERR(pll_p_clk);
--
--	emc_clk = clk_get_sys("cpu", "emc");
--	if (IS_ERR(emc_clk)) {
--		clk_put(cpu_clk);
--		return PTR_ERR(emc_clk);
--	}
--
- 	clk_prepare_enable(emc_clk);
- 	clk_prepare_enable(cpu_clk);
- 
-@@ -259,8 +241,6 @@ static int tegra_cpu_exit(struct cpufreq_policy *policy)
- {
- 	cpufreq_frequency_table_cpuinfo(policy, freq_table);
- 	clk_disable_unprepare(emc_clk);
--	clk_put(emc_clk);
--	clk_put(cpu_clk);
- 	return 0;
- }
- 
-@@ -281,12 +261,32 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
- 
- static int __init tegra_cpufreq_init(void)
- {
-+	cpu_clk = clk_get_sys(NULL, "cpu");
-+	if (IS_ERR(cpu_clk))
-+		return PTR_ERR(cpu_clk);
-+
-+	pll_x_clk = clk_get_sys(NULL, "pll_x");
-+	if (IS_ERR(pll_x_clk))
-+		return PTR_ERR(pll_x_clk);
-+
-+	pll_p_clk = clk_get_sys(NULL, "pll_p");
-+	if (IS_ERR(pll_p_clk))
-+		return PTR_ERR(pll_p_clk);
-+
-+	emc_clk = clk_get_sys("cpu", "emc");
-+	if (IS_ERR(emc_clk)) {
-+		clk_put(cpu_clk);
-+		return PTR_ERR(emc_clk);
-+	}
-+
- 	return cpufreq_register_driver(&tegra_cpufreq_driver);
- }
- 
- static void __exit tegra_cpufreq_exit(void)
- {
-         cpufreq_unregister_driver(&tegra_cpufreq_driver);
-+	clk_put(emc_clk);
-+	clk_put(cpu_clk);
- }
- 
- 
+Some of the issues left open:
+ * Register definitions still use static inline. There has been a
+   debate about code style versus ability to use compiler type
+   checking and code coverage analysis. There was no conclusion, so
+   I left it as was.
+ * Uses still CMA helpers. IOMMU support will replace CMA with host1x
+   specific allocator.
+
+host1x is the driver that controls host1x hardware. It supports
+host1x command channels, synchronization, and memory management. It
+is sectioned into logical driver under drivers/gpu/host1x and
+physical driver under drivers/host1x/hw. The physical driver is
+compiled with the hardware headers of the particular host1x version.
+
+The hardware units are described (briefly) in the Tegra2 TRM. Wiki
+page https://gitorious.org/linux-tegra-drm/pages/Host1xIntroduction
+also contains a short description of the functionality.
+
+The patch set removes responsibility of host1x from tegradrm. At the
+same time, it moves all drm related infrastructure in
+drivers/gpu/drm/tegra/host1x.c to drm.c. To replace the host1x
+central device, host1x creates a dummy device for tegradrm to hang
+global data to. This is a break in responsibility split of tegradrm
+taking care of DRM and host1x driver taking care of host1x and
+clients, but this structure was insisted. I've kept creation of dummy
+device as a separate patch to illustrate the alternatives. It can be
+later squashed into other patches.
+
+The patch set adds 2D driver to tegradrm, which uses host1x for
+communicating with host1x to access sync points and channels. We
+expect to use the same infrastructure for other host1x clients, so
+we have kept host1x and tegradrm separate.
+
+The patch set also adds user space API to tegradrm for accessing
+host1x and 2D.
+
+Arto Merilainen (1):
+  drm: tegra: Remove redundant host1x
+
+Terje Bergstrom (7):
+  gpu: host1x: Add host1x driver
+  gpu: host1x: Add syncpoint wait and interrupts
+  gpu: host1x: Add channel support
+  gpu: host1x: Add debug support
+  ARM: tegra: Add board data and 2D clocks
+  drm: tegra: Add gr2d device
+  gpu: host1x: Register DRM dummy device
+
+ arch/arm/mach-tegra/board-dt-tegra20.c      |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c      |    1 +
+ arch/arm/mach-tegra/tegra20_clocks_data.c   |    2 +-
+ arch/arm/mach-tegra/tegra30_clocks_data.c   |    1 +
+ drivers/gpu/Makefile                        |    1 +
+ drivers/gpu/drm/tegra/Kconfig               |    2 +-
+ drivers/gpu/drm/tegra/Makefile              |    2 +-
+ drivers/gpu/drm/tegra/dc.c                  |   26 +-
+ drivers/gpu/drm/tegra/drm.c                 |  433 ++++++++++++++++++-
+ drivers/gpu/drm/tegra/drm.h                 |   72 ++--
+ drivers/gpu/drm/tegra/fb.c                  |   17 +-
+ drivers/gpu/drm/tegra/gr2d.c                |  309 ++++++++++++++
+ drivers/gpu/drm/tegra/hdmi.c                |   30 +-
+ drivers/gpu/drm/tegra/host1x.c              |  325 --------------
+ drivers/gpu/host1x/Kconfig                  |   28 ++
+ drivers/gpu/host1x/Makefile                 |   17 +
+ drivers/gpu/host1x/cdma.c                   |  475 ++++++++++++++++++++
+ drivers/gpu/host1x/cdma.h                   |  107 +++++
+ drivers/gpu/host1x/channel.c                |  137 ++++++
+ drivers/gpu/host1x/channel.h                |   64 +++
+ drivers/gpu/host1x/cma.c                    |  117 +++++
+ drivers/gpu/host1x/cma.h                    |   43 ++
+ drivers/gpu/host1x/debug.c                  |  207 +++++++++
+ drivers/gpu/host1x/debug.h                  |   49 +++
+ drivers/gpu/host1x/dev.c                    |  242 +++++++++++
+ drivers/gpu/host1x/dev.h                    |  167 ++++++++
+ drivers/gpu/host1x/drm.c                    |   51 +++
+ drivers/gpu/host1x/drm.h                    |   25 ++
+ drivers/gpu/host1x/hw/Makefile              |    6 +
+ drivers/gpu/host1x/hw/cdma_hw.c             |  480 +++++++++++++++++++++
+ drivers/gpu/host1x/hw/cdma_hw.h             |   37 ++
+ drivers/gpu/host1x/hw/channel_hw.c          |  147 +++++++
+ drivers/gpu/host1x/hw/debug_hw.c            |  399 +++++++++++++++++
+ drivers/gpu/host1x/hw/host1x01.c            |   46 ++
+ drivers/gpu/host1x/hw/host1x01.h            |   25 ++
+ drivers/gpu/host1x/hw/host1x01_hardware.h   |  150 +++++++
+ drivers/gpu/host1x/hw/hw_host1x01_channel.h |   98 +++++
+ drivers/gpu/host1x/hw/hw_host1x01_sync.h    |  179 ++++++++
+ drivers/gpu/host1x/hw/hw_host1x01_uclass.h  |  130 ++++++
+ drivers/gpu/host1x/hw/intr_hw.c             |  178 ++++++++
+ drivers/gpu/host1x/hw/syncpt_hw.c           |  157 +++++++
+ drivers/gpu/host1x/intr.c                   |  377 ++++++++++++++++
+ drivers/gpu/host1x/intr.h                   |  106 +++++
+ drivers/gpu/host1x/job.c                    |  618 +++++++++++++++++++++++++++
+ drivers/gpu/host1x/memmgr.c                 |  174 ++++++++
+ drivers/gpu/host1x/memmgr.h                 |   53 +++
+ drivers/gpu/host1x/syncpt.c                 |  398 +++++++++++++++++
+ drivers/gpu/host1x/syncpt.h                 |  134 ++++++
+ drivers/video/Kconfig                       |    2 +
+ include/drm/tegra_drm.h                     |  131 ++++++
+ include/linux/host1x.h                      |  217 ++++++++++
+ include/trace/events/host1x.h               |  296 +++++++++++++
+ 52 files changed, 7095 insertions(+), 394 deletions(-)
+ create mode 100644 drivers/gpu/drm/tegra/gr2d.c
+ delete mode 100644 drivers/gpu/drm/tegra/host1x.c
+ create mode 100644 drivers/gpu/host1x/Kconfig
+ create mode 100644 drivers/gpu/host1x/Makefile
+ create mode 100644 drivers/gpu/host1x/cdma.c
+ create mode 100644 drivers/gpu/host1x/cdma.h
+ create mode 100644 drivers/gpu/host1x/channel.c
+ create mode 100644 drivers/gpu/host1x/channel.h
+ create mode 100644 drivers/gpu/host1x/cma.c
+ create mode 100644 drivers/gpu/host1x/cma.h
+ create mode 100644 drivers/gpu/host1x/debug.c
+ create mode 100644 drivers/gpu/host1x/debug.h
+ create mode 100644 drivers/gpu/host1x/dev.c
+ create mode 100644 drivers/gpu/host1x/dev.h
+ create mode 100644 drivers/gpu/host1x/drm.c
+ create mode 100644 drivers/gpu/host1x/drm.h
+ create mode 100644 drivers/gpu/host1x/hw/Makefile
+ create mode 100644 drivers/gpu/host1x/hw/cdma_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/cdma_hw.h
+ create mode 100644 drivers/gpu/host1x/hw/channel_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_channel.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_uclass.h
+ create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
+ create mode 100644 drivers/gpu/host1x/intr.c
+ create mode 100644 drivers/gpu/host1x/intr.h
+ create mode 100644 drivers/gpu/host1x/job.c
+ create mode 100644 drivers/gpu/host1x/memmgr.c
+ create mode 100644 drivers/gpu/host1x/memmgr.h
+ create mode 100644 drivers/gpu/host1x/syncpt.c
+ create mode 100644 drivers/gpu/host1x/syncpt.h
+ create mode 100644 include/drm/tegra_drm.h
+ create mode 100644 include/linux/host1x.h
+ create mode 100644 include/trace/events/host1x.h
+
 -- 
 1.7.9.5
