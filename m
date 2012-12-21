@@ -1,56 +1,42 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 3/5] ARM: tegra20: clocks: add CPU low-power
- function into tegra_cpu_car_ops
-Date: Fri, 21 Dec 2012 13:02:11 +0800
-Message-ID: <1356066131.26029.26.camel@jlo-ubuntu-64.nvidia.com>
-References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
-	 <1355797861-12759-4-git-send-email-josephl@nvidia.com>
-	 <50D34F12.9080801@wwwdotorg.org>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Fri, 21 Dec 2012 08:31:18 +0200
+Message-ID: <50D40236.9080403@nvidia.com>
+References: <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D34F00.4080308@nvidia.com> <50D3511F.2090308@wwwdotorg.org> <50D35287.3040509@nvidia.com> <20121220203059.GA12977@avionic-0098.adnet.avionic-design.de> <50D38462.3060302@nvidia.com> <50D39122.3060401@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50D34F12.9080801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50D39122.3060401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2012-12-21 at 01:46 +0800, Stephen Warren wrote:
-> On 12/17/2012 07:30 PM, Joseph Lo wrote:
-> > Add suspend, resume and rail_off_ready API into tegra_cpu_car_ops. These
-> > functions were used for CPU powered-down state maintenance.
-> 
-> I think this isn't adding those functions into tegra_cpu_car_ops, but
-> rather implementing the already existing function pointers for Tegra20,
-> right?
-> 
-Yes, exactly.
+On 21.12.2012 00:28, Stephen Warren wrote:
+> On 12/20/2012 02:34 PM, Terje Bergstr=C3=B6m wrote:
+>> On 20.12.2012 22:30, Thierry Reding wrote:
+>>> The problem with your proposed solution is that, even any of Stephe=
+n's
+>>> valid objections aside, it won't work. Once the tegra-drm module is
+>>> unloaded, the driver's data will be left in the current state and t=
+he
+>>> link to the dummy device will be lost.
+>>
+>> The dummy device is created by tegradrm's module init, because it's =
+used
+>=20
+> No, the tegradrm driver object might be registered by tegradrm's modu=
+le
+> init, but the dummy tegradrm platform device would need to be
+> created/registered by host1x's probe. Otherwise, the device would get
+> created even if there was no host1x/... in the system (disabled for s=
+ome
+> reason, multi-SoC kernel, ...)
 
-> This patch touches the clock driver and Prashant will soon be posting
-> patches that significantly rework the clock driver. Those will conflict.
-> How have you worked with Prashant to resolve the conflicts? Will
-> Prashant's patches be based on top of this series? Please explicitly
-> describe the dependencies and resolution of conflicts when you post the
-> next version. (below the ---, along with the changelog)
-> 
-Yes, there are many patch series may have dependency each other
-recently. We also want to know what the sequence you expect to merge the
-patch series to your tree. Evan my own patch series had dependency too.
-For ex, hotplug enhancement, cpuidle, SMP works on UP and
-suspend/resume. Currently, I think we are all work the the top of
-linux-next tree. If we can't expect the sequence of the patch series to
-be merged, we will always have some conflicts with each other.
+Oh. I was all the time thinking that dummy device needs to be created b=
+y
+tegradrm, because it's only used by tegradrm.  But as we're mixing the
+responsibilities, we might then just as well go all the way.
 
-Depend on the timing, I think it should be better to know which patch
-series should be going first or recently and which should go later and
-depend on which series. Then we can rearrange our patches on top of it.
-And reducing the job to fix conflict on your side.
-
-What do you think, Prashant? If your rework of clock driver will show up
-soon and Stephen also expect that will be merged first, I am fine to
-re-base on it and re-send my next version after new clock driver be
-done.
-
-Thanks,
-Joseph
+Terje
