@@ -1,53 +1,64 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH V2] spi: remove check for bits_per_word on transfer from low level driver
-Date: Sat, 22 Dec 2012 09:54:04 +0000
-Message-ID: <20121222095404.420FC3E08BE@localhost>
-References: <1355820943-25228-1-git-send-email-ldewangan@nvidia.com> <20121219162433.1E1E43E0BCF@localhost> <50D2AA43.8050106@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50D2AA43.8050106@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "baohua.song@csr.com" <baohua.song@csr.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jonas.gorski@gmail.com" <jonas.gorski@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: dts: add aliases and DMA requestor for serial
+ controller
+Date: Sun, 23 Dec 2012 01:45:21 +0530
+Message-ID: <50D614D9.8020106@nvidia.com>
+References: <1355898671-3960-1-git-send-email-ldewangan@nvidia.com> <50D1F2CB.3090206@wwwdotorg.org> <50D2AD02.6060101@nvidia.com> <50D344E9.70305@wwwdotorg.org> <50D3E320.2090804@nvidia.com> <50D4CBB0.7080603@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50D4CBB0.7080603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 20 Dec 2012 11:33:47 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> On Wednesday 19 December 2012 09:54 PM, Grant Likely wrote:
-> > On Tue, 18 Dec 2012 14:25:43 +0530, Laxman Dewangan<ldewangan@nvidia.com>  wrote:
-> >> The spi core make sure that each transfer structure have the proper
-> >> setting for bits_per_word before calling low level transfer APIs.
-> >>
-> >> Hence it is no more require to check again in low level driver for
-> >> this field whether this is set correct or not. Removing such code
-> >> from low level driver.
-> >>
-> >> Signed-off-by: Laxman Dewangan<ldewangan@nvidia.com>
-> > [...]
-> >> */
-> >>
-> >>   		if (prev_speed_hz != speed_hz
-> >> @@ -316,9 +315,8 @@ static int txx9spi_transfer(struct spi_device *spi, struct spi_message *m)
-> >>   	/* check each transfer's parameters */
-> >>   	list_for_each_entry (t,&m->transfers, transfer_list) {
-> >>   		u32 speed_hz = t->speed_hz ? : spi->max_speed_hz;
-> >> -		u8 bits_per_word = t->bits_per_word ? : spi->bits_per_word;
-> >> +		u8 bits_per_word = t->bits_per_word;
-> >>
-> >> -		bits_per_word = bits_per_word ? : 8;
-> > Have you verified here that bits_per_word can never be '0' here? What is
-> > the path that ensures spi->bits_per_word (and hence t->bits_per_word) is
-> > set to 8 here?
-> >
-> > Otherwise the patch looks good. Thanks for doing this work.
-> 
-> 
-> When we do the spi_add_device(), the spi_setup() get called.
-> In spi_setup, it make  sure that spi->bits_per_word is not zero.
-> 
-> in spi_setup(spi.c)
-> 
-> if (!spi->bits_per_word)
->                  spi->bits_per_word = 8;
+On Saturday 22 December 2012 02:20 AM, Stephen Warren wrote:
+> On 12/20/2012 09:18 PM, Laxman Dewangan wrote:
+>> On Thursday 20 December 2012 10:33 PM, Stephen Warren wrote:
+>>> On 12/19/2012 11:15 PM, Laxman Dewangan wrote:
+>>>> On Wednesday 19 December 2012 10:30 PM, Stephen Warren wrote:
+>>>>> On 12/18/2012 11:31 PM, Laxman Dewangan wrote:
+>>>>>> Add APB DMA requestor and serial aliases for serial controller.
+>>>>>> There will be two serial driver i.e. 8250 based simple serial driver
+>>>>>> and APB DMA based serial driver for higher baudrate and performace.
+> ...
+>>>>> This patch seems to do two things:
+> ...
+>>>>> 2) Add aliases for the serial ports. I have no idea why this is useful.
+>>>> Serial aliases are added because we want to get the port number like
+>>>> /dev/ttyTHS0,  /d/ttyTHS2 etc. The uarta should be /dev/ttyTHS0 and
+>>>> uartc should be /dev/ttyTHS2. The port number can be found using aliases
+>>>> and of_alias_get_id() in driver file:
+>>>>
+>>>> port_number = of_alias_get_id(np, "serial");
+>>> Oh, I see. I guess the aliases make sense then.
+>>>
+>>> But, wouldn't you only add aliases for the specific UARTs that are in
+>>> use on a particular board (so put them in tegraNN-board.dts) rather than
+>>> all UARTs on Tegra (i.e. the current patch which puts them into
+>>> tegraNN.dtsi)?
+>> I like to have this in tegraN N.dtsi file becasue:
+>> - This policy is not going to change the board to board. For high speed
+>> driver the uarta will be ttyTHS0 and uartb ttyTHS1.
+> Sure it is. Since the board files select which UARTs use the low-speed
+> driver vs. the high-speed driver by overriding the compatible value,
+> each board will have a different subset of UARTs which use the high
+> speed driver and hence which use the aliases. Don't you want to end up
+> with /dev/ttyHS0 on each board, rather than ending up with a "random"
+> device node name depending on which UART the board designer picked for
+> the high speed device?
 
-Applied, thanks.
+We had this in past where we started the high speed driver always from 0 
+like in one board uartc become ttyHS0 and another board uarta become 
+ttyHS0 and uartc become ttyHS1.
+This confused more to other team (BT and modem team) as they need to 
+know all uart instance and their corresponding driver.  So we kept uarta 
+will be always 0 and uartc will be always 2. This way it is straight 
+forward for the uart user to directly see the uart instance on board and 
+decide the port number rather than going to what are other uart and 
+their corresponding driver.
 
-g.
+
+So we kept the
