@@ -1,34 +1,30 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: config: Add TPS6586X RTC config
-Date: Sun, 23 Dec 2012 02:23:05 +0530
-Message-ID: <1356209585-6506-1-git-send-email-ldewangan@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function
+ tegra_cpu_init/exit
+Date: Sun, 23 Dec 2012 16:05:26 +0530
+Message-ID: <50D6DE6E.4060106@nvidia.com>
+References: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com> <50D4D44F.2080203@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50D4D44F.2080203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-enable CONFIG_RTC_DRV_TPS6586X to have RTC driver support for
-ventana, harmony etc.
+On Saturday 22 December 2012 02:57 AM, Stephen Warren wrote:
+> On 12/21/2012 03:09 AM, Richard Zhao wrote:
+>> tegra_cpu_init/exit will be called every time one cpu core is online or
+>> offline. And all cpu cores share same clocks, redundant clk_get/put
+>> wast time,  so I move them out.
+> I think this is reasonable.
+>
+> Prashant, Peter, any comments?
+>
+> Is any other work in tegra_cpu_init() redundant? Is tegra_cpu_init()
+> supposed to be called due to hotplug, or is that a bug in the cpufreq core?
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/configs/tegra_defconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a7827fd..b88ec5a 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -186,6 +186,7 @@ CONFIG_RTC_INTF_SYSFS=y
- CONFIG_RTC_INTF_PROC=y
- CONFIG_RTC_INTF_DEV=y
- CONFIG_RTC_DRV_MAX8907=y
-+CONFIG_RTC_DRV_TPS6586X=y
- CONFIG_RTC_DRV_TPS65910=y
- CONFIG_RTC_DRV_EM3027=y
- CONFIG_RTC_DRV_TEGRA=y
--- 
-1.7.1.1
+Looks good. Also, instead of array we can use single variable for 
+target_cpu_speed.
