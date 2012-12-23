@@ -1,108 +1,268 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 00/11] Migrate Tegra to common clock framework
-Date: Sun, 23 Dec 2012 16:35:40 +0530
-Message-ID: <1356260751-3667-1-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH 03/11] ARM: tegra: Define Tegra20 CAR binding
+Date: Sun, 23 Dec 2012 16:35:43 +0530
+Message-ID: <1356260751-3667-4-git-send-email-pgaikwad@nvidia.com>
+References: <1356260751-3667-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1356260751-3667-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset does following:
-1. Decompose single tegra clock structure into multiple clocks.
-2. Try to use standard clock types supported by common clock framework.
-3. Use dynamic initialization.
-4. Move all clock code to drivers/clk/tegra from mach-tegra.
-5. Add device tree support for Tegra20 and Tegra30 clocks.
-6. Remove all legacy clock code from mach-tegra.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tested on Ventana (Tegra20) and Cardhu (Tegra30).
+The Tegra20 CAR (Clock And Reset) Controller controls most aspects of
+most clocks within Tegra20. The device tree binding models this as a
+single monolithic clock provider, which exports many clocks. This reduces
+the number of nodes needed in device tree to represent these clocks.
 
-Prashant Gaikwad (10):
-  clk: tegra: Add tegra specific clocks
-  arm: tegra: Move tegra_cpu_car.h to linux/clk/tegra.h
-  ARM: Tegra: Define Tegra30 CAR binding
-  ARM: dt: tegra30: Add device node for APB MISC
-  ARM: dt: tegra20: Add device node for APB MISC
-  clk: tegra: add clock support for tegra20
-  clk: tegra: add clock support for tegra30
-  clk: tegra: add dt support
-  arm: tegra: Migrate to new clock code
-  arm: tegra: Remove legacy clock code
+This binding is only useful for Tegra20; the set of clocks that exists on
+Tegra30 is sufficiently different to merit its own binding.
 
-Stephen Warren (1):
-  ARM: tegra: Define Tegra20 CAR binding
-
- .../bindings/clock/nvidia,tegra20-car.txt          |  209 ++
- .../bindings/clock/nvidia,tegra30-car.txt          |  282 +++
- arch/arm/boot/dts/tegra20.dtsi                     |   11 +
- arch/arm/boot/dts/tegra30.dtsi                     |   11 +
- arch/arm/mach-tegra/Makefile                       |    5 -
- arch/arm/mach-tegra/board-dt-tegra20.c             |   18 -
- arch/arm/mach-tegra/board-dt-tegra30.c             |   18 -
- arch/arm/mach-tegra/clock.c                        |  168 --
- arch/arm/mach-tegra/clock.h                        |  153 --
- arch/arm/mach-tegra/common.c                       |   39 +-
- arch/arm/mach-tegra/cpu-tegra.c                    |    5 +-
- arch/arm/mach-tegra/hotplug.c                      |    2 +-
- arch/arm/mach-tegra/include/mach/clk.h             |   44 -
- arch/arm/mach-tegra/pcie.c                         |    2 +-
- arch/arm/mach-tegra/platsmp.c                      |    3 +-
- arch/arm/mach-tegra/powergate.c                    |    2 +-
- arch/arm/mach-tegra/tegra20_clocks.c               | 1624 --------------
- arch/arm/mach-tegra/tegra20_clocks.h               |   42 -
- arch/arm/mach-tegra/tegra20_clocks_data.c          | 1140 ----------
- arch/arm/mach-tegra/tegra30_clocks.c               | 2293 --------------------
- arch/arm/mach-tegra/tegra30_clocks.h               |   53 -
- arch/arm/mach-tegra/tegra30_clocks_data.c          | 1378 ------------
- arch/arm/mach-tegra/timer.c                        |    1 -
- drivers/clk/Makefile                               |    1 +
- drivers/clk/tegra/Makefile                         |   11 +
- drivers/clk/tegra/clk-audio-sync.c                 |   89 +
- drivers/clk/tegra/clk-divider.c                    |  188 ++
- drivers/clk/tegra/clk-periph-gate.c                |  183 ++
- drivers/clk/tegra/clk-periph.c                     |  232 ++
- drivers/clk/tegra/clk-pll-out.c                    |  124 ++
- drivers/clk/tegra/clk-pll.c                        |  674 ++++++
- drivers/clk/tegra/clk-super.c                      |  154 ++
- drivers/clk/tegra/clk-tegra20.c                    | 1269 +++++++++++
- drivers/clk/tegra/clk-tegra30.c                    | 1961 +++++++++++++++++
- drivers/clk/tegra/clk.c                            |   97 +
- drivers/clk/tegra/clk.h                            |  493 +++++
- drivers/crypto/tegra-aes.c                         |    2 -
- drivers/dma/tegra20-apb-dma.c                      |    2 +-
- drivers/i2c/busses/i2c-tegra.c                     |    3 +-
- drivers/input/keyboard/tegra-kbc.c                 |    2 +-
- drivers/staging/nvec/nvec.c                        |    2 +-
- .../tegra_cpu_car.h => include/linux/clk/tegra.h   |   11 +-
- sound/soc/tegra/tegra30_ahub.c                     |    2 +-
- 43 files changed, 6009 insertions(+), 6994 deletions(-)
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+[pgaikwad: Added mux clk ids and sorted CAR node]
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../bindings/clock/nvidia,tegra20-car.txt          |  209 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |    6 +
+ 2 files changed, 215 insertions(+), 0 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
- delete mode 100644 arch/arm/mach-tegra/clock.c
- delete mode 100644 arch/arm/mach-tegra/clock.h
- delete mode 100644 arch/arm/mach-tegra/include/mach/clk.h
- delete mode 100644 arch/arm/mach-tegra/tegra20_clocks.c
- delete mode 100644 arch/arm/mach-tegra/tegra20_clocks.h
- delete mode 100644 arch/arm/mach-tegra/tegra20_clocks_data.c
- delete mode 100644 arch/arm/mach-tegra/tegra30_clocks.c
- delete mode 100644 arch/arm/mach-tegra/tegra30_clocks.h
- delete mode 100644 arch/arm/mach-tegra/tegra30_clocks_data.c
- create mode 100644 drivers/clk/tegra/Makefile
- create mode 100644 drivers/clk/tegra/clk-audio-sync.c
- create mode 100644 drivers/clk/tegra/clk-divider.c
- create mode 100644 drivers/clk/tegra/clk-periph-gate.c
- create mode 100644 drivers/clk/tegra/clk-periph.c
- create mode 100644 drivers/clk/tegra/clk-pll-out.c
- create mode 100644 drivers/clk/tegra/clk-pll.c
- create mode 100644 drivers/clk/tegra/clk-super.c
- create mode 100644 drivers/clk/tegra/clk-tegra20.c
- create mode 100644 drivers/clk/tegra/clk-tegra30.c
- create mode 100644 drivers/clk/tegra/clk.c
- create mode 100644 drivers/clk/tegra/clk.h
- rename arch/arm/mach-tegra/tegra_cpu_car.h => include/linux/clk/tegra.h (89%)
 
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+new file mode 100644
+index 0000000..dc9f2bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+@@ -0,0 +1,209 @@
++NVIDIA Tegra20 Clock And Reset Controller
++
++This binding uses the common clock binding:
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
++for muxing and gating Tegra's clocks, and setting their rates.
++
++Required properties :
++- compatible : Should be "nvidia,tegra20-car"
++- reg : Should contain CAR registers location and length
++- clocks : Should contain phandle and clock specifiers for two clocks:
++  the 32 KHz "32k_in", and the board-specific oscillator "osc".
++- #clock-cells : Should be 1.
++  In clock consumers, this cell represents the clock ID exposed by the CAR.
++
++  The first 96 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
++  registers. These IDs often match those in the CAR's RST_DEVICES registers,
++  but not in all cases. Some bits in CLK_OUT_ENB affect multiple clocks. In
++  this case, those clocks are assigned IDs above 95 in order to highlight
++  this issue. Implementations that interpret these clock IDs as bit values
++  within the CLK_OUT_ENB or RST_DEVICES registers should be careful to
++  explicitly handle these special cases.
++
++  The balance of the clocks controlled by the CAR are assigned IDs of 96 and
++  above.
++
++  0	cpu
++  1	unassigned
++  2	unassigned
++  3	ac97
++  4	rtc
++  5	tmr
++  6	uart1
++  7	unassigned	(register bit affects uart2 and vfir)
++  8	gpio
++  9	sdmmc2
++  10	unassigned	(register bit affects spdif_in and spdif_out)
++  11	i2s1
++  12	i2c1
++  13	ndflash
++  14	sdmmc1
++  15	sdmmc4
++  16	twc
++  17	pwm
++  18	i2s2
++  19	epp
++  20	unassigned	(register bit affects vi and vi_sensor)
++  21	2d
++  22	usbd
++  23	isp
++  24	3d
++  25	ide
++  26	disp2
++  27	disp1
++  28	host1x
++  29	vcp
++  30	unassigned
++  31	cache2
++
++  32	mem
++  33	ahbdma
++  34	apbdma
++  35	unassigned
++  36	kbc
++  37	stat_mon
++  38	pmc
++  39	fuse
++  40	kfuse
++  41	sbc1
++  42	snor
++  43	spi1
++  44	sbc2
++  45	xio
++  46	sbc3
++  47	dvc
++  48	dsi
++  49	unassigned	(register bit affects tvo and cve)
++  50	mipi
++  51	hdmi
++  52	csi
++  53	tvdac
++  54	i2c2
++  55	uart3
++  56	unassigned
++  57	emc
++  58	usb2
++  59	usb3
++  60	mpe
++  61	vde
++  62	bsea
++  63	bsev
++
++  64	speedo
++  65	uart4
++  66	uart5
++  67	i2c3
++  68	sbc4
++  69	sdmmc3
++  70	pcie
++  71	owr
++  72	afi
++  73	csite
++  74	unassigned
++  75	avpucq
++  76	la
++  77	unassigned
++  78	unassigned
++  79	unassigned
++  80	unassigned
++  81	unassigned
++  82	unassigned
++  83	unassigned
++  84	irama
++  85	iramb
++  86	iramc
++  87	iramd
++  88	cram2
++  89	audio_2x	a/k/a audio_2x_sync_clk
++  90	clk_d
++  91	unassigned
++  92	sus
++  93	cdev1
++  94	cdev2
++  95	unassigned
++
++  96	uart2
++  97	vfir
++  98	spdif_in
++  99	spdif_out
++  100	vi
++  101	vi_sensor
++  102	tvo
++  103	cve
++  104	osc
++  105	clk_32k		a/k/a clk_s
++  106	clk_m
++  107	sclk
++  108	cclk
++  109	hclk
++  110	pclk
++  111	blink
++  112	pll_a
++  113	pll_a_out0
++  114	pll_c
++  115	pll_c_out1
++  116	pll_d
++  117	pll_d_out0
++  118	pll_e
++  119	pll_m
++  120	pll_m_out1
++  121	pll_p
++  122	pll_p_out1
++  123	pll_p_out2
++  124	pll_p_out3
++  125	pll_p_out4
++  126	pll_s
++  127	pll_u
++  128	pll_x
++  129	cop		a/k/a avp
++  130	audio		a/k/a audio_sync_clk
++  131	pll_ref
++  132	twd
++
++Mux clocks
++
++  200	audio_mux
++
++Example SoC include file:
++
++/ {
++	tegra_car: clock {
++		compatible = "nvidia,tegra20-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	usb@c5004000 {
++		clocks = <&tegra_car 58>; /* usb2 */
++	};
++};
++
++Example board file:
++
++/ {
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		osc: clock@0 {
++			compatible = "fixed-clock";
++			reg = <0>;
++			#clock-cells = <0>;
++			clock-frequency = <12000000>;
++		};
++
++		clk_32k: clock@1 {
++			compatible = "fixed-clock";
++			reg = <1>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
++	&tegra_car {
++		clocks = <&clk_32k> <&osc>;
++	};
++};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index f3a09d0..b26ac95 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -12,6 +12,12 @@
+ 		#interrupt-cells = <3>;
+ 	};
+ 
++	tegra_car: clock {
++		compatible = "nvidia,tegra20-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	apbdma: dma {
+ 		compatible = "nvidia,tegra20-apbdma";
+ 		reg = <0x6000a000 0x1200>;
 -- 
 1.7.4.1
