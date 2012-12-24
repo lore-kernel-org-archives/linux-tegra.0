@@ -1,58 +1,52 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: moving the clock gating procedure to
- tegra_cpu_kill
-Date: Sun, 23 Dec 2012 12:12:31 +0000
-Message-ID: <20121223121231.GA16580@mudshark.cambridge.arm.com>
-References: <1355970519-28200-1-git-send-email-josephl@nvidia.com>
- <1355970519-28200-2-git-send-email-josephl@nvidia.com>
- <50D34467.9000006@wwwdotorg.org>
- <1356083897.26029.187.camel@jlo-ubuntu-64.nvidia.com>
- <50D4D345.6030804@wwwdotorg.org>
- <20121223112540.GF16237@mudshark.cambridge.arm.com>
+From: Richard Zhao <linuxzsc@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function
+ tegra_cpu_init/exit
+Date: Mon, 24 Dec 2012 10:26:25 +0800
+Message-ID: <CANg6MZjXWLJdnZiaJ=7=ONLoyyhWHAofnHZ7CZCDR06vER7ZDg@mail.gmail.com>
+References: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
+ <50D4D44F.2080203@wwwdotorg.org> <50D6DE6E.4060106@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20121223112540.GF16237-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <50D6DE6E.4060106@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Dec 23, 2012 at 11:25:40AM +0000, Will Deacon wrote:
-> On Fri, Dec 21, 2012 at 09:23:17PM +0000, Stephen Warren wrote:
-> > What exactly did you mean by "what we currently have"; did you mean that
-> > cpu_kill() should work without cpu_die() having executed on the target
-> > CPU itself first, so Tegra should simply implement cpu_kill()? As Joseph
-> > says above, I'm not sure that will work. Any more detailed thoughts you
-> > have here would be greatly appreciated. Thanks.
-> 
-> I guess this comes down to the different between cpu_die/cpu_kill and
-> whether you actually need cpu_die if you're not planning on returning to
-> the same kernel that you left. If you really need to call cpu_die, then we
-> need to figure out a way to do that whilst ensuring that only one CPU is
-> left standing at the time we start copying the new kernel into place.
+On Sun, Dec 23, 2012 at 6:35 PM, Prashant Gaikwad <pgaikwad@nvidia.com> wrote:
+> On Saturday 22 December 2012 02:57 AM, Stephen Warren wrote:
+>>
+>> On 12/21/2012 03:09 AM, Richard Zhao wrote:
+>>>
+>>> tegra_cpu_init/exit will be called every time one cpu core is online or
+>>> offline. And all cpu cores share same clocks, redundant clk_get/put
+>>> wast time,  so I move them out.
+>>
+>> I think this is reasonable.
+>>
+>> Prashant, Peter, any comments?
+>>
+>> Is any other work in tegra_cpu_init() redundant? Is tegra_cpu_init()
+>> supposed to be called due to hotplug, or is that a bug in the cpufreq
+>> core?
+When cpu goes offline, kernel don't know whether it'll come back.
+Sounds reasonable.
+>
+>
+> Looks good. Also, instead of array we can use single variable for
+> target_cpu_speed.
+I think yes. If one day the cores support rate changing independently,
+we can create another driver. It supposed to be another patch to do it.
 
-I took a closer look at the code to try and figure out a way to solve
-this...
-
-First of all, disable_nonboot_cpus *does* actually wait for the secondaries
-to get out of the way, because it calls __cpu_die and we end up waiting on a
-completion. The problem is that we IPI the secondaries in smp_send_stop,
-which puts then into a while(1) cpu_relax(); loop with interrupts disabled,
-so that completion won't be able to finish (the cores won't pass through
-idle and call cpu_die() themselves).
-
-This means we must call disable_nonboot_cpus before sending the IPI. My
-first attempt was to make a hotplug-aware smp_send_stop, using
-disable_nonboot_cpus and smp_kill_cpus but this is also problematic because
-it's called by panic, where the simpler IPI-based code is probably a lot
-better.
-
-The best bet is probably to call disable_nonboot_cpus in machine shutdown,
-before sending the stop and subsequent kill. It's very similar to your
-initial suggestion, but without the #elif.
-
-Does that work for you?
-
-Will
+Thanks
+Richard
