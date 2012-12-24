@@ -1,52 +1,50 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 4/7] ASoC: tegra: add function to set ac97 rate
-Date: Mon, 24 Dec 2012 16:00:12 +0000
-Message-ID: <20121224160011.GN30837@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/7] ASoC: tegra: setup DAP3<->DAC3 connection by default
+Date: Mon, 24 Dec 2012 16:01:13 +0000
+Message-ID: <20121224160113.GO30837@opensource.wolfsonmicro.com>
 References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
- <1355959056-6009-4-git-send-email-dev@lynxeye.de>
+ <1355959056-6009-3-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0aF+6pWUK5w8WdCh"
+	protocol="application/pgp-signature"; boundary="8N0TQpGUCeEQshoq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1355959056-6009-4-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1355959056-6009-3-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---0aF+6pWUK5w8WdCh
+--8N0TQpGUCeEQshoq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Dec 20, 2012 at 12:17:33AM +0100, Lucas Stach wrote:
-> AC97 uses a fixed rate, unrelated to the sample rate. Add a function to
-> make the setup more trivial.
+On Thu, Dec 20, 2012 at 12:17:32AM +0100, Lucas Stach wrote:
+> This connection is used by the AC97 controller.
 
-Applied, though the above isn't strictly true - a number of later AC'97
-CODECs had PLLs which allowed them to use non-standard AC'97 MCLKs.
+Applied, thanks.
 
---0aF+6pWUK5w8WdCh
+--8N0TQpGUCeEQshoq
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ2HwCAAoJELSic+t+oim9524QAId1598ELwH4jiSLr1i/znqk
-ND/EP9VJG/ERFTD3FPbykV29iEdMAPB/N4B2xGhYiutBMLrORmGvWv9lRKo7kcEC
-bHyKH3Vv3RYpTNiycNlEaBjQkFFzVI0eti4WmVkiMDN1pRItk66D7q9RwvSF+xDo
-CZnJzxMIwsS9gD1AQgsJoX9sZpe1eDa3ReBSxwWHoVVfv6Ii4sF6I+iumE1Ok6Gf
-VkCpdLt5sZYOBRQEXhmxyPgwpBLDIwF+d7QvF/yhb4lv+XNhNu1d8I4oDLWaZ/d9
-agpAmTCDIRcfsuELuod7xh3n/tBNH6yw3cvKLrV5+dn9ZsBSjJs2mvkxq/VSBAPZ
-GLHUasZ+50gne/zaGERCxWAeb0e1KFQ3drlE7McigCZhWdUfTsMsQapFnlCpcAkV
-iCOvinzV40Dg6TE5n6iW44hrimKGnYLJmZCozO82kMz+j9WJ3ByDOzsPUUUxNye3
-KgA/T971ixDGlbNzW2toPTHUWQvqAESTEcsOxUSGJXu16w4CDu4IA4IBR9S07jj8
-9cZHQ/bDA4feI95AVDg1uD9VK2EVxmSrjNLlkP6Tg6ljCbHLB1vybiF3tSO8Zjl8
-lHtilSyN0cU4KpzD06uCLz+7t26U4ApqWg3K8bCqczcwogAnMw+L/iDTfJ50SeJH
-tHveDvKqdnxqP0m69R3W
-=nhxM
+iQIcBAEBAgAGBQJQ2Hw/AAoJELSic+t+oim9NRIQAJeLwpu+GJaJLwZfnn14ca0B
+/CC/7gw6DW0eXXmhZf/27ZQMuoOGswcNVZJOFvvsNt/aF0FwvzTMxwSK89Uyp2Oc
+gevDnmLp9cH3qSqeJgGOKIUxhd88inDjN5/vfwanYwUNVHBXRYNfvYcBMvT7Cxyt
+a0YFQlgpZn/Zi7yruoOmaEjRWLFJa2AjSQAmk6h5Jtd5vL/ofWCAVFBFun94l/LC
+70FJxzpx/5DQ0PYHhiUTlvaNvL/dNp2NxJqkETZ3x4WXN4HM/1C81LCp2W+9MG99
+KxMrbaIcwQGGMzZMCvyaIGUYYpiVAyt9ZhuO+r42QL9S47/Jxdt9xhG+xZFx6YQ3
+xLFKunmJ8IovssX0g3FFDMQXViekwFG8tpDB/O0M2Kz3ssSTbE2pMzh56uDQxWYc
++cTkDMT2M1t5RxBuJVWrn9rxXNn+W0yqjOHU8uZs17WR5NnN2YPW8h9DnbN40RyD
+8ceaz3MFvsqSRJLf3YiaK3lgs/WECefFbl2jI4h7fSl58sWUIwNzy1tEixnQTjX7
+BU5+oqMgMXrgTI7Q04W6m+NhghySxljMslAxXMxkKEgP9eUObxN1EFWQoWfmxw8S
+GRiitDeKqyNu5YMRJVUC0W6FjclKLrwmUN0RR9mpV9zZZmdTmnQNbT39/udfnIN7
+b2+s7mdoceQYlqNVKMNe
+=XL8v
 -----END PGP SIGNATURE-----
 
---0aF+6pWUK5w8WdCh--
+--8N0TQpGUCeEQshoq--
