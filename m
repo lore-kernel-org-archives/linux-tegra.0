@@ -1,50 +1,52 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 3/7] ASoC: tegra: setup DAP3<->DAC3 connection by default
-Date: Mon, 24 Dec 2012 16:01:13 +0000
-Message-ID: <20121224160113.GO30837@opensource.wolfsonmicro.com>
-References: <1355959056-6009-1-git-send-email-dev@lynxeye.de>
- <1355959056-6009-3-git-send-email-dev@lynxeye.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv4 5/8] drm: tegra: Remove redundant host1x
+Date: Mon, 24 Dec 2012 22:25:00 -0700
+Message-ID: <50D938AC.50001@wwwdotorg.org>
+References: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com> <1356089964-5265-6-git-send-email-tbergstrom@nvidia.com> <20121221143614.GA16167@avionic-0098.adnet.avionic-design.de> <50D55820.7030302@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8N0TQpGUCeEQshoq"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1355959056-6009-3-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <50D55820.7030302-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org" <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/21/2012 11:50 PM, Terje Bergstr=F6m wrote:
+> On 21.12.2012 16:36, Thierry Reding wrote:
+>> On Fri, Dec 21, 2012 at 01:39:21PM +0200, Terje Bergstrom wrote:
+>>> +static struct platform_driver tegra_drm_platform_driver =3D {
+>>> +	.driver =3D {
+>>> +		.name =3D "tegradrm",
+>>
+>> This should be "tegra-drm" to match the module name.
+>=20
+> We've actually created two problems.
+>=20
+> First is that the device name should match driver name which should
+> match module name. But host1x doesn't know the module name of tegradr=
+m.
 
---8N0TQpGUCeEQshoq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+There's no hard requirement for the device/driver name to match the
+module name. It's good thing to do, but nothing will blow up if it don'=
+t
+(modules can use MODULE_ALIAS() to declare which drivers they expose).
 
-On Thu, Dec 20, 2012 at 12:17:32AM +0100, Lucas Stach wrote:
-> This connection is used by the AC97 controller.
+But, what's the problem with host1x knowing the driver name; the host1x
+driver and tegradrm driver are both part of the same code-base, so this
+seems trivial to achieve.
 
-Applied, thanks.
+> Second problem is that host1x driver creates tegradrm device even if
+> tegradrm isn't loaded to system.
 
---8N0TQpGUCeEQshoq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+That's fine. If there's no driver, the device simply won't be probe()d.
+That's just like a device node existing in device tree, but the driver
+for it not being enabled in the kernel, or the relevant module not bein=
+g
+inserted.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+> These mean that the device has to be created in tegra-drm module to h=
+ave
 
-iQIcBAEBAgAGBQJQ2Hw/AAoJELSic+t+oim9NRIQAJeLwpu+GJaJLwZfnn14ca0B
-/CC/7gw6DW0eXXmhZf/27ZQMuoOGswcNVZJOFvvsNt/aF0FwvzTMxwSK89Uyp2Oc
-gevDnmLp9cH3qSqeJgGOKIUxhd88inDjN5/vfwanYwUNVHBXRYNfvYcBMvT7Cxyt
-a0YFQlgpZn/Zi7yruoOmaEjRWLFJa2AjSQAmk6h5Jtd5vL/ofWCAVFBFun94l/LC
-70FJxzpx/5DQ0PYHhiUTlvaNvL/dNp2NxJqkETZ3x4WXN4HM/1C81LCp2W+9MG99
-KxMrbaIcwQGGMzZMCvyaIGUYYpiVAyt9ZhuO+r42QL9S47/Jxdt9xhG+xZFx6YQ3
-xLFKunmJ8IovssX0g3FFDMQXViekwFG8tpDB/O0M2Kz3ssSTbE2pMzh56uDQxWYc
-+cTkDMT2M1t5RxBuJVWrn9rxXNn+W0yqjOHU8uZs17WR5NnN2YPW8h9DnbN40RyD
-8ceaz3MFvsqSRJLf3YiaK3lgs/WECefFbl2jI4h7fSl58sWUIwNzy1tEixnQTjX7
-BU5+oqMgMXrgTI7Q04W6m+NhghySxljMslAxXMxkKEgP9eUObxN1EFWQoWfmxw8S
-GRiitDeKqyNu5YMRJVUC0W6FjclKLrwmUN0RR9mpV9zZZmdTmnQNbT39/udfnIN7
-b2+s7mdoceQYlqNVKMNe
-=XL8v
------END PGP SIGNATURE-----
-
---8N0TQpGUCeEQshoq--
+I definitely disagree here.
