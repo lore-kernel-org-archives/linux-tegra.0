@@ -1,278 +1,46 @@
-From: Mark Zhang <nvmarkzhang@gmail.com>
-Subject: Re: [PATCHv4 0/8] Support for Tegra 2D hardware
-Date: Fri, 28 Dec 2012 17:14:57 +0800
-Message-ID: <50DD6311.9000002@gmail.com>
-References: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC,libdrm 1/3] tegra: Add stream library
+Date: Fri, 28 Dec 2012 11:20:03 +0200
+Message-ID: <50DD6443.1060300@nvidia.com>
+References: <1355407268-32381-1-git-send-email-amerilainen@nvidia.com> <1355407268-32381-2-git-send-email-amerilainen@nvidia.com> <50DD407B.3030306@gmail.com> <50DD4E2C.2070104@nvidia.com> <50DD50E1.80006@gmail.com> <50DD5D6D.3090504@nvidia.com> <50DD6098.60900@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: thierry.reding@avionic-design.de, airlied@linux.ie, dev@lynxeye.de, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50DD6098.60900-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Francis Hart <fhart-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Terje,
+On 12/28/2012 11:04 AM, Mark Zhang wrote:
+> On 12/28/2012 04:50 PM, Arto Merilainen wrote:
+>>
+>> In my opinion asking tegra_stream_begin() to put a bad fence into the
+>> stream is a case we should never be. assert() kills the application
+>> immediately (in debug builds) and usually this helps the programmer for
+>> 1) finding bugs 2) not doing bad code.
+>>
+>
+> Yep, I agree. But in release builds, assert does nothing. So this
+> checking doesn't make sense and also a wrong fence will be pushed into
+> command buffer silently. And we always use release version in real
+> products, so we can't count on this "assert".
 
-Here is the second part comments. I admit I still haven't finished
-reading the codes... really too many codes. :)
-Anyway I'll keep doing this when I have free slots.
+The only pro of using assert is low (=no :-) ) overhead in release builds.
 
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index a936902..c3ded60 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -131,6 +131,14 @@ static int gr2d_submit(struct tegra_drm_context
-*context,
-                if (err)
-                        goto fail;
+>
+>> "Silencing" is not a good solution especially in this case:
+>> tegra_stream_flush() returns an invalid fence when flushing fails. If
+>> the application chains submits (i.e. do a blit and then do another using
+>> the output of the first blit) it is crucial to be sure the first submit
+>> has been performed before starting the second one.
+>>
+>
+> Yes. So I suggest doing fence checking at the beginning of the
+> "tegra_stream_begin", if invalid fence found, return an error.
+>
 
-+               /* We define CMA as an temporary solution in host1x driver.
-+                  That's also why we have a CMA kernel config in it.
-+                  But seems here, in tegradrm, we hardcode the CMA here.
-+                  So what do you do when host1x change to IOMMU?
-+                  Do we also need to define a CMA config in tegradrm
-driver,
-+                  then after host1x changes to IOMMU, we add another IOMMU
-+                  config in tegradrm? Or we should invent another more
-+                  generic wrapper layer here? */
-                cmdbuf.mem = handle_cma_to_host1x(drm, file_priv,
-cmdbuf.mem);
-                if (!cmdbuf.mem)
-                        goto fail;
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index cc8ca2f..0867b72 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -82,6 +82,26 @@ struct host1x_job *host1x_job_alloc(struct
-host1x_channel *ch,
-        mem += num_unpins * sizeof(dma_addr_t);
-        job->pin_ids = num_unpins ? mem : NULL;
+This sounds reasonable.
 
-+       /* I think this is a somewhat ugly design.
-+          Actually "addr_phys" is consisted by "reloc_addr_phys" and
-+          "gather_addr_phys".
-+          Why don't we just declare "reloc_addr_phys" and
-"gather_addr_phys"?
-+          In current design, let's say if one nvhost newbie changes the
-order
-+          of these 2 blocks of code in function "pin_job_mem":
-+
-+          for (i = 0; i < job->num_relocs; i++) {
-+               struct host1x_reloc *reloc = &job->relocarray[i];
-+               job->pin_ids[count] = reloc->target;
-+               count++;
-+          }
-+
-+          for (i = 0; i < job->num_gathers; i++) {
-+               struct host1x_job_gather *g = &job->gathers[i];
-+               job->pin_ids[count] = g->mem_id;
-+               count++;
-+          }
-+
-+          Then likely something weird occurs... */
-        job->reloc_addr_phys = job->addr_phys;
-        job->gather_addr_phys = &job->addr_phys[num_relocs];
-
-@@ -252,6 +272,10 @@ static int do_relocs(struct host1x_job *job,
-                        }
-                }
-
-+               /* I have question here. Does this mean the address info
-+                  which need to be relocated(according to the libdrm codes,
-+                  seems this address is "0xDEADBEEF") always staying at the
-+                  beginning of a page? */
-                __raw_writel(
-                        (job->reloc_addr_phys[i] +
-                                reloc->target_offset) >> reloc->shift,
-@@ -565,6 +589,7 @@ int host1x_job_pin(struct host1x_job *job, struct
-platform_device *pdev)
-                }
-        }
-
-+       /* if (host1x_firewall && !err) { */
-        if (host1x_firewall) {
-                err = copy_gathers(job, pdev);
-                if (err) {
-@@ -573,6 +598,9 @@ int host1x_job_pin(struct host1x_job *job, struct
-platform_device *pdev)
-                }
-        }
-
-+/* Rename this label to "out" or something else.
-+   Because if everything goes right, the codes under this label also
-+   get executed. */
- fail:
-        wmb();
-
-diff --git a/drivers/gpu/host1x/memmgr.c b/drivers/gpu/host1x/memmgr.c
-index f3954f7..bb5763d 100644
---- a/drivers/gpu/host1x/memmgr.c
-+++ b/drivers/gpu/host1x/memmgr.c
-@@ -156,6 +156,9 @@ int host1x_memmgr_pin_array_ids(struct
-platform_device *dev,
-                        count, &unpin_data[pin_count],
-                        phys_addr);
-
-+               /* I don't think the current "host1x_cma_pin_array_ids"
-+                  is able to return a negative value. So this "if" doesn't
-+                  make sense...*/
-                if (cma_count < 0) {
-                        /* clean up previous handles */
-                        while (pin_count) {
-
-Mark
-On 12/21/2012 07:39 PM, Terje Bergstrom wrote:
-> This set of patches adds support for Tegra20 and Tegra30 host1x and
-> 2D. It is based on linux-next-20121220.
-> 
-> The fourth version has only few changes compared to previous version:
->  * Fixed some sparse warnings
->  * Fixed host1x Makefile to allow building as module
->  * Fixed host1x module unload
->  * Fixed tegradrm unload sequence
->  * host1x creates DRM dummy device and tegradrm uses it for storing
->    DRM related data.
-> 
-> Some of the issues left open:
->  * Register definitions still use static inline. There has been a
->    debate about code style versus ability to use compiler type
->    checking and code coverage analysis. There was no conclusion, so
->    I left it as was.
->  * Uses still CMA helpers. IOMMU support will replace CMA with host1x
->    specific allocator.
-> 
-> host1x is the driver that controls host1x hardware. It supports
-> host1x command channels, synchronization, and memory management. It
-> is sectioned into logical driver under drivers/gpu/host1x and
-> physical driver under drivers/host1x/hw. The physical driver is
-> compiled with the hardware headers of the particular host1x version.
-> 
-> The hardware units are described (briefly) in the Tegra2 TRM. Wiki
-> page https://gitorious.org/linux-tegra-drm/pages/Host1xIntroduction
-> also contains a short description of the functionality.
-> 
-> The patch set removes responsibility of host1x from tegradrm. At the
-> same time, it moves all drm related infrastructure in
-> drivers/gpu/drm/tegra/host1x.c to drm.c. To replace the host1x
-> central device, host1x creates a dummy device for tegradrm to hang
-> global data to. This is a break in responsibility split of tegradrm
-> taking care of DRM and host1x driver taking care of host1x and
-> clients, but this structure was insisted. I've kept creation of dummy
-> device as a separate patch to illustrate the alternatives. It can be
-> later squashed into other patches.
-> 
-> The patch set adds 2D driver to tegradrm, which uses host1x for
-> communicating with host1x to access sync points and channels. We
-> expect to use the same infrastructure for other host1x clients, so
-> we have kept host1x and tegradrm separate.
-> 
-> The patch set also adds user space API to tegradrm for accessing
-> host1x and 2D.
-> 
-> Arto Merilainen (1):
->   drm: tegra: Remove redundant host1x
-> 
-> Terje Bergstrom (7):
->   gpu: host1x: Add host1x driver
->   gpu: host1x: Add syncpoint wait and interrupts
->   gpu: host1x: Add channel support
->   gpu: host1x: Add debug support
->   ARM: tegra: Add board data and 2D clocks
->   drm: tegra: Add gr2d device
->   gpu: host1x: Register DRM dummy device
-> 
->  arch/arm/mach-tegra/board-dt-tegra20.c      |    1 +
->  arch/arm/mach-tegra/board-dt-tegra30.c      |    1 +
->  arch/arm/mach-tegra/tegra20_clocks_data.c   |    2 +-
->  arch/arm/mach-tegra/tegra30_clocks_data.c   |    1 +
->  drivers/gpu/Makefile                        |    1 +
->  drivers/gpu/drm/tegra/Kconfig               |    2 +-
->  drivers/gpu/drm/tegra/Makefile              |    2 +-
->  drivers/gpu/drm/tegra/dc.c                  |   26 +-
->  drivers/gpu/drm/tegra/drm.c                 |  433 ++++++++++++++++++-
->  drivers/gpu/drm/tegra/drm.h                 |   72 ++--
->  drivers/gpu/drm/tegra/fb.c                  |   17 +-
->  drivers/gpu/drm/tegra/gr2d.c                |  309 ++++++++++++++
->  drivers/gpu/drm/tegra/hdmi.c                |   30 +-
->  drivers/gpu/drm/tegra/host1x.c              |  325 --------------
->  drivers/gpu/host1x/Kconfig                  |   28 ++
->  drivers/gpu/host1x/Makefile                 |   17 +
->  drivers/gpu/host1x/cdma.c                   |  475 ++++++++++++++++++++
->  drivers/gpu/host1x/cdma.h                   |  107 +++++
->  drivers/gpu/host1x/channel.c                |  137 ++++++
->  drivers/gpu/host1x/channel.h                |   64 +++
->  drivers/gpu/host1x/cma.c                    |  117 +++++
->  drivers/gpu/host1x/cma.h                    |   43 ++
->  drivers/gpu/host1x/debug.c                  |  207 +++++++++
->  drivers/gpu/host1x/debug.h                  |   49 +++
->  drivers/gpu/host1x/dev.c                    |  242 +++++++++++
->  drivers/gpu/host1x/dev.h                    |  167 ++++++++
->  drivers/gpu/host1x/drm.c                    |   51 +++
->  drivers/gpu/host1x/drm.h                    |   25 ++
->  drivers/gpu/host1x/hw/Makefile              |    6 +
->  drivers/gpu/host1x/hw/cdma_hw.c             |  480 +++++++++++++++++++++
->  drivers/gpu/host1x/hw/cdma_hw.h             |   37 ++
->  drivers/gpu/host1x/hw/channel_hw.c          |  147 +++++++
->  drivers/gpu/host1x/hw/debug_hw.c            |  399 +++++++++++++++++
->  drivers/gpu/host1x/hw/host1x01.c            |   46 ++
->  drivers/gpu/host1x/hw/host1x01.h            |   25 ++
->  drivers/gpu/host1x/hw/host1x01_hardware.h   |  150 +++++++
->  drivers/gpu/host1x/hw/hw_host1x01_channel.h |   98 +++++
->  drivers/gpu/host1x/hw/hw_host1x01_sync.h    |  179 ++++++++
->  drivers/gpu/host1x/hw/hw_host1x01_uclass.h  |  130 ++++++
->  drivers/gpu/host1x/hw/intr_hw.c             |  178 ++++++++
->  drivers/gpu/host1x/hw/syncpt_hw.c           |  157 +++++++
->  drivers/gpu/host1x/intr.c                   |  377 ++++++++++++++++
->  drivers/gpu/host1x/intr.h                   |  106 +++++
->  drivers/gpu/host1x/job.c                    |  618 +++++++++++++++++++++++++++
->  drivers/gpu/host1x/memmgr.c                 |  174 ++++++++
->  drivers/gpu/host1x/memmgr.h                 |   53 +++
->  drivers/gpu/host1x/syncpt.c                 |  398 +++++++++++++++++
->  drivers/gpu/host1x/syncpt.h                 |  134 ++++++
->  drivers/video/Kconfig                       |    2 +
->  include/drm/tegra_drm.h                     |  131 ++++++
->  include/linux/host1x.h                      |  217 ++++++++++
->  include/trace/events/host1x.h               |  296 +++++++++++++
->  52 files changed, 7095 insertions(+), 394 deletions(-)
->  create mode 100644 drivers/gpu/drm/tegra/gr2d.c
->  delete mode 100644 drivers/gpu/drm/tegra/host1x.c
->  create mode 100644 drivers/gpu/host1x/Kconfig
->  create mode 100644 drivers/gpu/host1x/Makefile
->  create mode 100644 drivers/gpu/host1x/cdma.c
->  create mode 100644 drivers/gpu/host1x/cdma.h
->  create mode 100644 drivers/gpu/host1x/channel.c
->  create mode 100644 drivers/gpu/host1x/channel.h
->  create mode 100644 drivers/gpu/host1x/cma.c
->  create mode 100644 drivers/gpu/host1x/cma.h
->  create mode 100644 drivers/gpu/host1x/debug.c
->  create mode 100644 drivers/gpu/host1x/debug.h
->  create mode 100644 drivers/gpu/host1x/dev.c
->  create mode 100644 drivers/gpu/host1x/dev.h
->  create mode 100644 drivers/gpu/host1x/drm.c
->  create mode 100644 drivers/gpu/host1x/drm.h
->  create mode 100644 drivers/gpu/host1x/hw/Makefile
->  create mode 100644 drivers/gpu/host1x/hw/cdma_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/cdma_hw.h
->  create mode 100644 drivers/gpu/host1x/hw/channel_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/host1x01.c
->  create mode 100644 drivers/gpu/host1x/hw/host1x01.h
->  create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_channel.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_uclass.h
->  create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
->  create mode 100644 drivers/gpu/host1x/intr.c
->  create mode 100644 drivers/gpu/host1x/intr.h
->  create mode 100644 drivers/gpu/host1x/job.c
->  create mode 100644 drivers/gpu/host1x/memmgr.c
->  create mode 100644 drivers/gpu/host1x/memmgr.h
->  create mode 100644 drivers/gpu/host1x/syncpt.c
->  create mode 100644 drivers/gpu/host1x/syncpt.h
->  create mode 100644 include/drm/tegra_drm.h
->  create mode 100644 include/linux/host1x.h
->  create mode 100644 include/trace/events/host1x.h
-> 
+- Arto
