@@ -1,96 +1,32 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCHv4 5/8] drm: tegra: Remove redundant host1x
-Date: Fri, 28 Dec 2012 22:21:25 +0100
-Message-ID: <20121228212125.GA4615@avionic-0098.adnet.avionic-design.de>
-References: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com>
- <1356089964-5265-6-git-send-email-tbergstrom@nvidia.com>
- <20121221143614.GA16167@avionic-0098.adnet.avionic-design.de>
- <50D55820.7030302@nvidia.com>
- <50D938AC.50001@wwwdotorg.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Tegra30 Beaver board support
+Date: Fri, 28 Dec 2012 16:54:46 -0700
+Message-ID: <50DE3146.6090001@nvidia.com>
+References: <1356032489-27619-1-git-send-email-pengw@nvidia.com> <50DDC743.2080606@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <50D938AC.50001@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, "airlied@linux.ie" <airlied@linux.ie>, "dev@lynxeye.de" <dev@lynxeye.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50DDC743.2080606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/28/2012 09:22 AM, Rob Herring wrote:
+> On 12/20/2012 01:41 PM, Bryan Wu wrote:
+>> This patch adds support for Tegra30 Beaver board in upstream kernel.
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
 
-On Mon, Dec 24, 2012 at 10:25:00PM -0700, Stephen Warren wrote:
-> On 12/21/2012 11:50 PM, Terje Bergstr=C3=B6m wrote:
-> > On 21.12.2012 16:36, Thierry Reding wrote:
-> >> On Fri, Dec 21, 2012 at 01:39:21PM +0200, Terje Bergstrom wrote:
-> >>> +static struct platform_driver tegra_drm_platform_driver =3D {
-> >>> +	.driver =3D {
-> >>> +		.name =3D "tegradrm",
-> >>
-> >> This should be "tegra-drm" to match the module name.
-> >=20
-> > We've actually created two problems.
-> >=20
-> > First is that the device name should match driver name which should
-> > match module name. But host1x doesn't know the module name of tegradrm.
->=20
-> There's no hard requirement for the device/driver name to match the
-> module name. It's good thing to do, but nothing will blow up if it don't
-> (modules can use MODULE_ALIAS() to declare which drivers they expose).
->=20
-> But, what's the problem with host1x knowing the driver name; the host1x
-> driver and tegradrm driver are both part of the same code-base, so this
-> seems trivial to achieve.
+>> +/ {
+>> +	model = "NVIDIA Tegra30 Beaver evaluation board";
+>> +	compatible = "nvidia,beaver", "nvidia,tegra30";
+> 
+> nvidia,beaver needs to be documented.
 
-Indeed. If we define the name to match the tegra-drm module name, then
-just changing the above line is fine. This doesn't need to be automatic.
-Making sure that both strings match in both drivers is enough.
-
-> > Second problem is that host1x driver creates tegradrm device even if
-> > tegradrm isn't loaded to system.
->=20
-> That's fine. If there's no driver, the device simply won't be probe()d.
-> That's just like a device node existing in device tree, but the driver
-> for it not being enabled in the kernel, or the relevant module not being
-> inserted.
->=20
-> > These mean that the device has to be created in tegra-drm module to have
->=20
-> I definitely disagree here.
-
-Instead of going over this back and forth, I've decided to rewrite this
-patch from scratch the way I think it should be done. Maybe that'll make
-things clearer. I haven't tested it on real hardware yet because I don't
-have access over the holidays, but I'll post the patch once I've
-verified that it actually works. The code is based on patches 1-4 of
-this series and is meant to replace patch 5.
-
-Thierry
-
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ3g1VAAoJEN0jrNd/PrOhdNYP+QF1RmnARufjikZWLFir28f2
-loifaKJIkJAljifL+reDZdPzMRi6EZ2PYp6Sxllf2Yq6LJvH5JHkfjW7iME9DRT9
-RBg/bZm6lxX2yBjY3z1gCEO0E/iBoXaYfBRc6GmbqPjjbsn5ntBscDsJTt9uo2GQ
-2qlv+X6M3yyWOooFanGfTteLqn6ERXmIo1OEgzHaouNlFTsf8IzJ7sMn9oq0fefh
-BnYKT/bFIbJxLCS+D3jWyXxxDpuqlG+8nbpTwmAp/oR6j6swDYyUrfq3GKjfhOMi
-+LY9a/McBMRVMe7mfZlBO/RC+sjoVBM003Z7JxAADjR3MkgWfuYLI3WRu3rl2P9b
-2nbSwAhdO9+Xchz82lD1TkBkOEQm87huSrxH/yqm7tJSbsbnLBReFYE5iBFth6OH
-IG+dF3ShTVh6KgUN1zH2ienyvwP1j+7KW1yDTu8ZVilMnmiJ72Yx+yh41NeMPgOE
-c/Rh20+JwV32rNf4iXkOpKdQtimph0X0kax+baW4QD5S5IF0/2Caf/VHDwdspXza
-paBGQLeLWGoUz0wONFobuUKJ+l3lOJ1TKW/RLLPcm1yEOGHRXSMCidI4J9VqD9Lm
-Tivj/mjTqpTXI1sf0LyVco5D2VuE3dYGVeRjr66ZRor7KmJxKP+7Ibl8YE57Jb3o
-Gt3AkB1Ps1xvi3Ve9gP9
-=qjEI
------END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
+Hmmm. I guess we've managed not to document /any/ of the Tegra
+board-level compatible values. Bryan, could you make a separate patch to
+add all the existing board compatible values to
+Documentation/devicetree/bindings/arm/tegra.txt. The Beaver addition to
+that file can still be part of the Beaver-specific patch though.
