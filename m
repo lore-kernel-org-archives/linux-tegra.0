@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 1/3] ARM: tegra: seaboard: enable HDMI port
-Date: Wed,  2 Jan 2013 11:49:00 -0700
-Message-ID: <1357152542-5982-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/3] ARM: tegra: ventana: enable HDMI port
+Date: Wed,  2 Jan 2013 11:49:01 -0700
+Message-ID: <1357152542-5982-2-git-send-email-swarren@wwwdotorg.org>
+References: <1357152542-5982-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1357152542-5982-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,13 +14,13 @@ From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-seaboard.dts |   18 +++++++++++++++---
+ arch/arm/boot/dts/tegra20-ventana.dts |   18 +++++++++++++++---
  1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 4204598..f9e3ad4 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index adc4754..2ccb26c 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
 @@ -10,6 +10,18 @@
  		reg = <0x00000000 0x40000000>;
  	};
@@ -38,7 +40,7 @@ index 4204598..f9e3ad4 100644
  	pinmux {
  		pinctrl-names = "default";
  		pinctrl-0 = <&state_default>;
-@@ -345,7 +357,7 @@
+@@ -335,7 +347,7 @@
  		pinctrl-1 = <&state_i2cmux_pta>;
  		pinctrl-2 = <&state_i2cmux_idle>;
  
@@ -47,7 +49,7 @@ index 4204598..f9e3ad4 100644
  			reg = <0>;
  			#address-cells = <1>;
  			#size-cells = <0>;
-@@ -463,13 +475,13 @@
+@@ -446,13 +458,13 @@
  					regulator-max-microvolt = <1800000>;
  				};
  
