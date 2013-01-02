@@ -1,44 +1,54 @@
-From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC,libdrm 1/3] tegra: Add stream library
-Date: Wed, 02 Jan 2013 10:44:58 +0800
-Message-ID: <50E39F2A.1000405@gmail.com>
-References: <1355407268-32381-1-git-send-email-amerilainen@nvidia.com> <1355407268-32381-2-git-send-email-amerilainen@nvidia.com> <50DD407B.3030306@gmail.com> <50DD4E2C.2070104@nvidia.com> <20121228204847.GA4309@avionic-0098.adnet.avionic-design.de> <50E12F1A.3000803@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Wed, 2 Jan 2013 07:41:50 +0200
+Message-ID: <50E3C89E.3070505@nvidia.com>
+References: <50BF345A.8050201@nvidia.com> <20121205120429.GA29943@avionic-0098.adnet.avionic-design.de> <50C5CAB5.3040000@nvidia.com> <20121212160829.GA30278@avionic-0098.adnet.avionic-design.de> <50C99677.6090306@nvidia.com> <20121213085750.GA14740@avionic-0098.adnet.avionic-design.de> <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D42486.7080901@nvidia.com> <50D4D25B.7030506@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E12F1A.3000803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50D4D25B.7030506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Francis Hart <fhart-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/31/2012 02:22 PM, Terje Bergstr=F6m wrote:
-> On 28.12.2012 22:48, Thierry Reding wrote:
->> I disagree. We shouldn't be hiding this kind of detail behind an #if=
-def.
->> Instead it should be detected at runtime. Otherwise you'll need to b=
-uild
->> different versions of libdrm for every generation of Tegra. That may=
- be
->> fine for NVIDIA provided BSPs, but distributions would have a very h=
-ard
->> time dealing with that. What we want is software that works unmodifi=
-ed
->> on as many generations of Tegra as possible.
->=20
-> I agree. The fences will be rejected by kernel and kernel knows about
-> number of sync points in each host1x revision. So, we could just subm=
-it
-> and look at return code.
->
+On 21.12.2012 23:19, Stephen Warren wrote:
+> * There's host1x hardware.
+> 
+> * There's a low-level driver just for host1x itself; the host1x driver.
+> 
+> * There's a high-level driver for the entire host1x complex of devices.
+> That is tegradrm. There may be more high-level drivers in the future
+> (e.g. v4l2 camera driver if it needs to aggregate a bunch of host1x
+> sub-devices liek tegradrm does).
 
-Agree. If we are able to do something dynamically, normally that'll be
-better.
+tegradrm is a driver for a couple of the host1x clients, namely DC and
+HDMI, and now adding 2D.
 
-Terje, we can get the Tegra version in FUSE. I think we don't need this
-kind of try-catch logics.
+> * The presence of the host1x DT node logically implies that both the two
+> drivers in the previous two points should be instantiated.
+> 
+> * Linux instantiates a single device per DT node.
+> 
+> * So, it's host1x's responsibility to instantiate the other device(s). I
+> think it's reasonable for the host1x driver to know exactly what
+> features the host1x HW complex supports; raw host1x access being one,
+> and the higher level concept of a tegradrm being another. So, it's
+> reasonable for host1x to trigger the instantiation of tegradrm.
 
-Mark
-> Terje
->=20
+tegradrm has drivers for each device that it controls, so tegradrm via
+kernel device-driver model instantiates them. host1x driver doesn't need
+to do that.
+
+> * If DRM core didn't stomp on the device object's drvdata (or whichever
+> field it is), I would recommend not creating a dummy device at all, but
+> rather having the host1x driver directly implement multiple driver
+> interfaces. There are many examples like this already in the kernel,
+> e.g. combined GPIO+IRQ driver, combined GPIO+IRQ+pinctrl driver, etc.
+
+This is the architecture that would imply host1x instantiating
+everything, and DRM being a subcomponent of host1x driver. But we didn't
+choose to go there. We agreed to have tegradrm and host1x drivers separate.
+
+Terje
