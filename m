@@ -1,40 +1,47 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function
- tegra_cpu_init/exit
-Date: Wed, 2 Jan 2013 14:30:14 +0200
-Message-ID: <20130102123014.GU19766@tbergstrom-lnx.Nvidia.com>
-References: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
- <50D4D44F.2080203@wwwdotorg.org>
+From: Peng Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Tegra30 Beaver board support
+Date: Wed, 2 Jan 2013 10:13:03 -0800
+Message-ID: <50E478AF.2040406@nvidia.com>
+References: <1356032489-27619-1-git-send-email-pengw@nvidia.com> <50DDC743.2080606@gmail.com>	<50DE3146.6090001@nvidia.com> <CAOesGMgW890K4Wo2-SFE4YFn5f8T950BTZ82rkCQfwpV+bsRyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50D4D44F.2080203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAOesGMgW890K4Wo2-SFE4YFn5f8T950BTZ82rkCQfwpV+bsRyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Dec 21, 2012 at 10:27:43PM +0100, Stephen Warren wrote:
-> On 12/21/2012 03:09 AM, Richard Zhao wrote:
-> > tegra_cpu_init/exit will be called every time one cpu core is online or
-> > offline. And all cpu cores share same clocks, redundant clk_get/put
-> > wast time,  so I move them out.
-> 
-> I think this is reasonable.
-> 
-> Prashant, Peter, any comments?
-> 
-> Is any other work in tegra_cpu_init() redundant? Is tegra_cpu_init()
-> supposed to be called due to hotplug, or is that a bug in the cpufreq core?
+On 12/28/2012 08:43 PM, Olof Johansson wrote:
+> On Fri, Dec 28, 2012 at 3:54 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 12/28/2012 09:22 AM, Rob Herring wrote:
+>>> On 12/20/2012 01:41 PM, Bryan Wu wrote:
+>>>> This patch adds support for Tegra30 Beaver board in upstream kernel.
+>>>> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+>>>> +/ {
+>>>> +    model = "NVIDIA Tegra30 Beaver evaluation board";
+>>>> +    compatible = "nvidia,beaver", "nvidia,tegra30";
+>>> nvidia,beaver needs to be documented.
+>> Hmmm. I guess we've managed not to document /any/ of the Tegra
+>> board-level compatible values. Bryan, could you make a separate patch to
+>> add all the existing board compatible values to
+>> Documentation/devicetree/bindings/arm/tegra.txt. The Beaver addition to
+>> that file can still be part of the Beaver-specific patch though.
+> Does it need to be documented? Then the "support a new platform only
+> through DTS update" is no longer true. :)
+>
+> In the past, I don't think we've strictly documented all derivative
+> platform compatible values, just some of the reference ones?
+>
+>
+> -Olof
 
-I think we want to keep target_cpu_speed[] as a possible input for the
-(to be upstreamed) cluster switching logic. Yes, tegra_cpu_init() should be
-called due to hotplug. Some systems might need specific initialization for
-cpufreq when a new CPU comes online. Also the available frequencies might
-be different per CPU. So this information needs to be provided for each
-CPU.
+Actually in every Tegra board dts file, there is a model string to 
+describe this machine as well as a compatible board string, just like 
+the "nvidia,beaver". So do we still need put this duplicated information 
+in a document file? Or if this is the requirement of DeviceTree. I will 
+do that. I think we have 12 boards need to add such document currently.
 
-Cheers,
-
-Peter.
+Thanks and happy new year.
+-Bryan
