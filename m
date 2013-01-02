@@ -1,30 +1,32 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv4 3/8] gpu: host1x: Add channel support
-Date: Wed, 2 Jan 2013 11:43:51 +0200
-Message-ID: <50E40157.9070902@nvidia.com>
-References: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com> <1356089964-5265-4-git-send-email-tbergstrom@nvidia.com> <50E3E45A.5050003@gmail.com> <50E3FE8C.8000309@nvidia.com> <50E3FE57.5070702@gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra30: fix power up sequence for boot_secondary
+Date: Wed, 2 Jan 2013 14:15:43 +0200
+Message-ID: <20130102121543.GS19766@tbergstrom-lnx.Nvidia.com>
+References: <1355970603-28531-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E3FE57.5070702-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1355970603-28531-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org" <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02.01.2013 11:31, Mark Zhang wrote:
-> On 01/02/2013 05:31 PM, Terje Bergstr=F6m wrote:
->> That's intentional. Writing a job to channel is atomic, so lock is t=
-aken
->> from host1x_cdma_begin() until host1x_cdma_end().
->>
->=20
-> Okay. So can we consider that lock and unlock this mutex in the funct=
-ion
-> which calls host1x_cdma_begin and host1x_cdma_end, that means, in
-> current implementation, function "channel_submit"?
+On Thu, Dec 20, 2012 at 03:30:03AM +0100, Joseph Lo wrote:
+> The power up sequence is different on the cold boot CPU and the CPU
+> that resumed from the hotplug. For the cold boot CPU, it was been power
+> gated as default. To power up the cold boot CPU, the power should be
+> un-gated by un toggling the power gate register manually.
+> 
+> For the CPU that resumed from the hotplug, after un-halted the CPU. The
+> flow controller will un-gate the power of the CPU. No need to manually
+> control, just wait the power be resumed and continue the power up
+> sequence after the CPU power is ready.
+> 
+> Based on the work by:
+> Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yes, exactly.
-
-Terje
+Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
