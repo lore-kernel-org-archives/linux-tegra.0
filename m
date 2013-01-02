@@ -1,22 +1,31 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from
- DT
-Date: Wed, 02 Jan 2013 12:02:53 -0700
-Message-ID: <50E4845D.6020809@wwwdotorg.org>
-References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com> <1355725087-11363-4-git-send-email-hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 0/5] ARM: tegra20: cpuidle: add power-down state
+Date: Wed, 02 Jan 2013 12:05:17 -0700
+Message-ID: <50E484ED.90108@wwwdotorg.org>
+References: <1355797861-12759-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1355725087-11363-4-git-send-email-hdoyu@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1355797861-12759-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/16/2012 11:18 PM, Hiroshi Doyu wrote:
-> Set Snoop Control Unit(SCU) register base address dynamically from DT.
+On 12/17/2012 07:30 PM, Joseph Lo wrote:
+> This adds a "powered-down" state in cpuidle for Tegra20. It requires power
+> gating both CPU cores. When the CPU1 requests to enter "powered-down"
+> state, it saves its own state and then enters WFI. When the CPU0 requests
+> the same state, it attempts to put the CPU1 into reset to prevent it from
+> waking up. Then power down both CPUs together and turn off the CPU rail.
+> 
+> If the CPU1 be woken up before CPU0 entering powered-down state, then it
+> needs to restore it's CPU state and waits for next chance.
 
-Hiroshi, what's the status on this patch series? I think Rob had
-comments/objections on patch 4; are you going to post an updated series,
-or is this series replaced by patch 3 in your Tegra114 series?
+Joseph,
+
+What's the status of this series? It looks like there are quite a few
+comments on V3; I assume you'll post a new version to address those.
+Will you base the new version on top of Prashant's common clock cleanup
+to remove the conflicts with that?
