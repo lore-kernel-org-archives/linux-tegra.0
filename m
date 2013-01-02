@@ -1,32 +1,41 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra30: fix power up sequence for boot_secondary
-Date: Wed, 2 Jan 2013 14:15:43 +0200
-Message-ID: <20130102121543.GS19766@tbergstrom-lnx.Nvidia.com>
-References: <1355970603-28531-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: cpufreq: move clk_get/put out of function
+ tegra_cpu_init/exit
+Date: Wed, 2 Jan 2013 14:20:46 +0200
+Message-ID: <20130102122046.GT19766@tbergstrom-lnx.Nvidia.com>
+References: <1356084595-17800-1-git-send-email-linuxzsc@gmail.com>
+ <50D4D44F.2080203@wwwdotorg.org>
+ <50D6DE6E.4060106@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1355970603-28531-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50D6DE6E.4060106-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 20, 2012 at 03:30:03AM +0100, Joseph Lo wrote:
-> The power up sequence is different on the cold boot CPU and the CPU
-> that resumed from the hotplug. For the cold boot CPU, it was been power
-> gated as default. To power up the cold boot CPU, the power should be
-> un-gated by un toggling the power gate register manually.
+On Sun, Dec 23, 2012 at 11:35:26AM +0100, Prashant Gaikwad wrote:
+> On Saturday 22 December 2012 02:57 AM, Stephen Warren wrote:
+> > On 12/21/2012 03:09 AM, Richard Zhao wrote:
+> >> tegra_cpu_init/exit will be called every time one cpu core is online or
+> >> offline. And all cpu cores share same clocks, redundant clk_get/put
+> >> wast time,  so I move them out.
+> > I think this is reasonable.
+> >
+> > Prashant, Peter, any comments?
+> >
+> > Is any other work in tegra_cpu_init() redundant? Is tegra_cpu_init()
+> > supposed to be called due to hotplug, or is that a bug in the cpufreq core?
 > 
-> For the CPU that resumed from the hotplug, after un-halted the CPU. The
-> flow controller will un-gate the power of the CPU. No need to manually
-> control, just wait the power be resumed and continue the power up
-> sequence after the CPU power is ready.
+> Looks good. Also, instead of array we can use single variable for 
+> target_cpu_speed.
 > 
-> Based on the work by:
-> Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+No. The target_cpu_speed becomes useful once we have clusterswitching. We can
+use it to determine if we want to switch to the other cluster.
+
+Cheers,
+
+Peter.
