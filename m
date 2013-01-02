@@ -1,31 +1,83 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 00/11] Migrate Tegra to common clock framework
-Date: Wed, 02 Jan 2013 15:09:58 -0700
-Message-ID: <50E4B036.6080205@wwwdotorg.org>
-References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com>
+From: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] ARM: DT: tegra: Add board leaver compatible properties
+Date: Wed, 2 Jan 2013 14:50:24 -0800
+Message-ID: <1357167025-6167-1-git-send-email-pengw@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Prashant Gaikwad <pgaikwad@nvidia.com>, mturquette@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/27/2012 07:47 AM, Prashant Gaikwad wrote:
-> This patchset does following:
-> 1. Decompose single tegra clock structure into multiple clocks.
-> 2. Try to use standard clock types supported by common clock framework.
-> 3. Use dynamic initialization.
-> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
-> 5. Add device tree support for Tegra20 and Tegra30 clocks.
-> 6. Remove all legacy clock code from mach-tegra.
+Signed-off-by: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/devicetree/bindings/arm/tegra.txt |   51 ++++++++++++++++++++---
+ 1 file changed, 45 insertions(+), 6 deletions(-)
 
-Mike,
-
-Aside from a couple of small issues I just pointed out, this series
-looks reasonable to me. I'd like to take it through the Tegra tree since
-it might open up opportunities for other cleanup, and it has far more
-dependencies-on/conflicts-with other changes there than the drivers/clk
-tree. So, I'm looking for your ack when you can. Thanks.
+diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+index 6e69d2e..ff9199a 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.txt
++++ b/Documentation/devicetree/bindings/arm/tegra.txt
+@@ -1,14 +1,53 @@
+ NVIDIA Tegra device tree bindings
+ -------------------------------------------
+ 
+-Boards with the tegra20 SoC shall have the following properties:
++- Boards with the tegra20 SoC shall have the following properties:
++  Required root node property:
++  compatible = "nvidia,tegra20";
+ 
+-Required root node property:
++- Boards with the tegra30 SoC shall have the following properties:
++  Required root node property:
++  compatible = "nvidia,tegra30";
+ 
+-compatible = "nvidia,tegra20";
++Boards
++-------------------------------------------
++
++- NVIDIA Tegra20 Harmony evaluation board:
++  compatible = "nvidia,harmony", "nvidia,tegra20";
++
++- Avionic Design Medcom-Wide board:
++  compatible = "ad,medcom-wide", "ad,tamonten", "nvidia,tegra20";
++
++- Toshiba AC100 / Dynabook AZ;
++  compatible = "compal,paz00", "nvidia,tegra20";
++
++- Avionic Design Plutux board:
++  compatible = "ad,plutux", "ad,tamonten", "nvidia,tegra20";
++
++- NVIDIA Seaboard:
++  compatible = "nvidia,seaboard", "nvidia,tegra20";
++
++- Avionic Design Tamonten SOM:
++  compatible = "ad,tamonten", "nvidia,tegra20";
++
++- Avionic Design Tamonten Evaluation Carrier:
++  compatible = "ad,tec", "ad,tamonten", "nvidia,tegra20";
++
++- Compulab TrimSlice board:
++  compatible = "compulab,trimslice", "nvidia,tegra20";
++
++- NVIDIA Tegra20 Ventana evaluation board:
++  compatible = "nvidia,ventana", "nvidia,tegra20";
++
++- NVIDIA Tegra20 Whistler evaluation board:
++  compatible = "nvidia,whistler", "nvidia,tegra20";
++
++- NVIDIA Tegra30 Cardhu evaluation board:
++  compatible = "nvidia,cardhu", "nvidia,tegra30";
+ 
+-Boards with the tegra30 SoC shall have the following properties:
++- NVIDIA Tegra30 Cardhu A02 evaluation board:
++  compatible = "nvidia,cardhu-a02", "nvidia,cardhu", "nvidia,tegra30";
+ 
+-Required root node property:
++- NVIDIA Tegra30 Cardhu A04 (A05, A06, A07) evaluation board:
++  compatible = "nvidia,cardhu-a04", "nvidia,cardhu", "nvidia,tegra30";
+ 
+-compatible = "nvidia,tegra30";
+-- 
+1.7.10.4
