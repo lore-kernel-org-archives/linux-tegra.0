@@ -1,47 +1,29 @@
-From: Peng Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Tegra30 Beaver board support
-Date: Wed, 2 Jan 2013 10:13:03 -0800
-Message-ID: <50E478AF.2040406@nvidia.com>
-References: <1356032489-27619-1-git-send-email-pengw@nvidia.com> <50DDC743.2080606@gmail.com>	<50DE3146.6090001@nvidia.com> <CAOesGMgW890K4Wo2-SFE4YFn5f8T950BTZ82rkCQfwpV+bsRyQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 2/3] clocksource: add common of_clksrc_init() function
+Date: Wed, 02 Jan 2013 11:16:19 -0700
+Message-ID: <50E47973.9040401@wwwdotorg.org>
+References: <1353453142-4973-1-git-send-email-swarren@wwwdotorg.org> <1353453142-4973-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMgW890K4Wo2-SFE4YFn5f8T950BTZ82rkCQfwpV+bsRyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1353453142-4973-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Josh Cartwright <josh.cartwright-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/28/2012 08:43 PM, Olof Johansson wrote:
-> On Fri, Dec 28, 2012 at 3:54 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On 12/28/2012 09:22 AM, Rob Herring wrote:
->>> On 12/20/2012 01:41 PM, Bryan Wu wrote:
->>>> This patch adds support for Tegra30 Beaver board in upstream kernel.
->>>> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
->>>> +/ {
->>>> +    model = "NVIDIA Tegra30 Beaver evaluation board";
->>>> +    compatible = "nvidia,beaver", "nvidia,tegra30";
->>> nvidia,beaver needs to be documented.
->> Hmmm. I guess we've managed not to document /any/ of the Tegra
->> board-level compatible values. Bryan, could you make a separate patch to
->> add all the existing board compatible values to
->> Documentation/devicetree/bindings/arm/tegra.txt. The Beaver addition to
->> that file can still be part of the Beaver-specific patch though.
-> Does it need to be documented? Then the "support a new platform only
-> through DTS update" is no longer true. :)
->
-> In the past, I don't think we've strictly documented all derivative
-> platform compatible values, just some of the reference ones?
->
->
-> -Olof
+On 11/20/2012 04:12 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> It is desirable to move all clocksource drivers to drivers/clocksource,
+> yet each requires its own initialization function. We'd rather not
+> pollute <linux/> with a header for each function. Instead, create a
+> single of_clksrc_init() function which will determine which clocksource
+> driver to initialize based on device tree.
+> 
+> Based on a similar patch for drivers/irqchip by Thomas Petazzoni.
 
-Actually in every Tegra board dts file, there is a model string to 
-describe this machine as well as a compatible board string, just like 
-the "nvidia,beaver". So do we still need put this duplicated information 
-in a document file? Or if this is the requirement of DeviceTree. I will 
-do that. I think we have 12 boards need to add such document currently.
-
-Thanks and happy new year.
--Bryan
+I have applied this one patch to Tegra's for-3.9/arm-timer-rework branch
+since. I'll send a pull request to include this is arm-soc in the next
+day or two, so that others can build changes on top of it.
