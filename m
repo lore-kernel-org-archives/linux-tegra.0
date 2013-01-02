@@ -1,40 +1,44 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCH 6/9] ARM: dt: tegra114: Add new SoC base, Tegra 114 SoC
-Date: Mon, 31 Dec 2012 08:12:05 +0100
-Message-ID: <20121231.091205.1954307462967637866.hdoyu@nvidia.com>
-References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com><1355996654-6579-7-git-send-email-hdoyu@nvidia.com><20121229063913.GA13620@quad.lixom.net>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC,libdrm 1/3] tegra: Add stream library
+Date: Wed, 02 Jan 2013 10:44:58 +0800
+Message-ID: <50E39F2A.1000405@gmail.com>
+References: <1355407268-32381-1-git-send-email-amerilainen@nvidia.com> <1355407268-32381-2-git-send-email-amerilainen@nvidia.com> <50DD407B.3030306@gmail.com> <50DD4E2C.2070104@nvidia.com> <20121228204847.GA4309@avionic-0098.adnet.avionic-design.de> <50E12F1A.3000803@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20121229063913.GA13620@quad.lixom.net>
-Sender: linux-doc-owner@vger.kernel.org
-To: "olof@lixom.net" <olof@lixom.net>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "johnstul@us.ibm.com" <johnstul@us.ibm.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "jason@lakedaemon.net" <jason@lakedaemon.net>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "andrew@lunn.ch" <andrew@lunn.ch>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50E12F1A.3000803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Francis Hart <fhart-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Olof,
+On 12/31/2012 02:22 PM, Terje Bergstr=F6m wrote:
+> On 28.12.2012 22:48, Thierry Reding wrote:
+>> I disagree. We shouldn't be hiding this kind of detail behind an #if=
+def.
+>> Instead it should be detected at runtime. Otherwise you'll need to b=
+uild
+>> different versions of libdrm for every generation of Tegra. That may=
+ be
+>> fine for NVIDIA provided BSPs, but distributions would have a very h=
+ard
+>> time dealing with that. What we want is software that works unmodifi=
+ed
+>> on as many generations of Tegra as possible.
+>=20
+> I agree. The fences will be rejected by kernel and kernel knows about
+> number of sync points in each host1x revision. So, we could just subm=
+it
+> and look at return code.
+>
 
-Olof Johansson <olof@lixom.net> wrote @ Sat, 29 Dec 2012 07:39:13 +0100:
+Agree. If we are able to do something dynamically, normally that'll be
+better.
 
-> On Thu, Dec 20, 2012 at 11:44:04AM +0200, Hiroshi Doyu wrote:
-> > Initial support for Tegra 114 SoC. This is expected to be included in
-> > the board DTS files, Tegra 114 SoC based evaluation board family.
-> > 
-> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> 
-> Hi,
-> 
-> I think it could be a good idea to start documenting the cpu configuration in
-> the device tree on some of these larger platforms as well, i.e. include a cpus/
-> hierarchy. Would you mind adding those, please?
+Terje, we can get the Tegra version in FUSE. I think we don't need this
+kind of try-catch logics.
 
-Ok, I'll.
-
-> It would give you the flexibility of switching over to using device
-> tree to probe the number of cpus in case the platform grows yet another
-> way to figure out the number of cores in the future, without having to
-> update the device-trees at that time. :)
-> 
-> 
-> -Olof
+Mark
+> Terje
+>=20
