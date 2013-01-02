@@ -1,42 +1,69 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix Kconfig warnings when !SMP
-Date: Wed,  2 Jan 2013 14:34:15 -0700
-Message-ID: <1357162455-24043-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V2 1/3] ARM: tegra: seaboard: enable HDMI port
+Date: Wed,  2 Jan 2013 14:53:20 -0700
+Message-ID: <1357163602-10777-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Fix:
-
-warning: (ARCH_TEGRA_2x_SOC) selects ARM_ERRATA_754327 which has unmet direct dependencies (CPU_V7 && SMP)
-warning: (ARCH_TEGRA_2x_SOC) selects ARM_ERRATA_742230 which has unmet direct dependencies (CPU_V7 && SMP)
-
-by selecting options only if SMP.
-
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2: No change.
+---
+ arch/arm/boot/dts/tegra20-seaboard.dts |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index b442f15..1ec7f80 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -6,9 +6,9 @@ config ARCH_TEGRA_2x_SOC
- 	bool "Enable support for Tegra20 family"
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_742230
-+	select ARM_ERRATA_742230 if SMP
- 	select ARM_ERRATA_751472
--	select ARM_ERRATA_754327
-+	select ARM_ERRATA_754327 if SMP
- 	select ARM_ERRATA_764369 if SMP
- 	select ARM_GIC
- 	select CPU_FREQ_TABLE if CPU_FREQ
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 4204598..f9e3ad4 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -10,6 +10,18 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	host1x {
++		hdmi {
++			status = "okay";
++
++			vdd-supply = <&hdmi_vdd_reg>;
++			pll-supply = <&hdmi_pll_reg>;
++
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
++			nvidia,hpd-gpio = <&gpio 111 0>; /* PN7 */
++		};
++	};
++
+ 	pinmux {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -345,7 +357,7 @@
+ 		pinctrl-1 = <&state_i2cmux_pta>;
+ 		pinctrl-2 = <&state_i2cmux_idle>;
+ 
+-		i2c@0 {
++		hdmi_ddc: i2c@0 {
+ 			reg = <0>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -463,13 +475,13 @@
+ 					regulator-max-microvolt = <1800000>;
+ 				};
+ 
+-				ldo7 {
++				hdmi_vdd_reg: ldo7 {
+ 					regulator-name = "vdd_ldo7,avdd_hdmi,vdd_fuse";
+ 					regulator-min-microvolt = <3300000>;
+ 					regulator-max-microvolt = <3300000>;
+ 				};
+ 
+-				ldo8 {
++				hdmi_pll_reg: ldo8 {
+ 					regulator-name = "vdd_ldo8,avdd_hdmi_pll";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
 -- 
 1.7.10.4
