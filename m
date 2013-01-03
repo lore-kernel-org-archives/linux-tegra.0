@@ -1,50 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 05/11] ARM: dt: tegra30: Add device node for APB MISC
-Date: Thu, 03 Jan 2013 09:11:18 -0700
-Message-ID: <50E5ADA6.1070904@wwwdotorg.org>
-References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com> <1356619644-18565-6-git-send-email-pgaikwad@nvidia.com> <50E4AE19.1060503@wwwdotorg.org> <50E520FC.4070805@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 9/9] ARM: tegra: Add initial support for Tegra 114 SoC.
+Date: Thu, 3 Jan 2013 16:28:19 +0000
+Message-ID: <201301031628.19743.arnd@arndb.de>
+References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com> <1355996654-6579-10-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E520FC.4070805-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1355996654-6579-10-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, linux-tegra@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, John Stultz <johnstul@us.ibm.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Landley <rob@landley.net>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/02/2013 11:11 PM, Prashant Gaikwad wrote:
-> On Thursday 03 January 2013 03:30 AM, Stephen Warren wrote:
->> On 12/27/2012 07:47 AM, Prashant Gaikwad wrote:
->>> APB misc contains multiple registers required by different modules
->>> such as CAR.
->> I don't see a DT binding document that describes what
->> nvidia,tegra30-apbmisc means. Also, the register range for this new node
->> overlaps that for the pinmux node, so they can't both "request" their
->> register region. You may need multiple entries in the apbmisc reg
->> property to avoid this.
-> 
-> apbmisc reg for Tegra30 can be divided into following entries:
-> 
-> strap registers
-> jtag configuration registers
-> pull_up/pull_down control registers
-> vclk control registers
-> tvdac registers
-> chip id revision registers
-> pad control registers
-> 
-> This list is not same for Tegra20 and Tegra30.
+On Thursday 20 December 2012, Hiroshi Doyu wrote:
+> +
+> +DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
+> +       .smp            = smp_ops(tegra_smp_ops),
+> +       .map_io         = tegra_map_common_io,
+> +       .init_early     = tegra30_init_early,
+> +       .init_irq       = tegra_dt_init_irq,
+> +       .handle_irq     = gic_handle_irq,
+> +       .init_time      = clocksource_of_init,
+> +       .init_machine   = tegra114_dt_init,
+> +       .init_late      = tegra_init_late,
+> +       .restart        = tegra_assert_system_reset,
+> +       .dt_compat      = tegra114_dt_board_compat,
+> +MACHINE_END
 
-OK. It sounds like we need a true APB MISC driver then, to abstract the
-differences; the clock driver really shouldn't be touching the APB MISC
-registers in all likelihood, unless a subset of the sections you mention
-above are truly dedicated to clock functionality.
+This one is so similar to Tegra30 that I wonder if it's actually worth keeping
+them separate still. The only difference I see is the clock initialization.
+Maybe that can be factored out to keep this the same as Tegra30.
 
-> OR
-> 
-> another way is to add chip id revision register region to CAR node as
-> done for pinmux node and remove apb misc node.
+Or are you planning to add more SoC specific here that would make this harder?
 
-The pinmux controller doesn't have a reg entry for the chip ID register.
-I don't understand what you mean here.
+	Arnd
