@@ -1,70 +1,44 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add kexec support to defconfig
-Date: Thu, 3 Jan 2013 22:05:41 +0100
-Message-ID: <20130103210541.GB4412@avionic-0098.adnet.avionic-design.de>
-References: <1357161141-26430-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 0/9] ARM: Initial support for Tegra 114 SoC.
+Date: Thu, 03 Jan 2013 14:16:41 -0700
+Message-ID: <50E5F539.8060600@wwwdotorg.org>
+References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com> <20130103210036.GA4412@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1357161141-26430-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20130103210036.GA4412@avionic-0098.adnet.avionic-design.de>
+Sender: linux-doc-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Andrew Lunn <andrew@lunn.ch>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, John Stultz <johnstul@us.ibm.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Rob Landley <rob@landley.net>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/03/2013 02:00 PM, Thierry Reding wrote:
+> On Thu, Dec 20, 2012 at 11:43:58AM +0200, Hiroshi Doyu wrote:
+>> Hi,
+>> 
+>> This patchset adds initial support for the NVIDIA's new Tegra
+>> 114 SoC (T114) based on the ARM Cortex-A15 MP. It has the minimal
+>> support to allow the kernel to boot up into shell console. This
+>> can be used as a basis for adding other device drivers for this
+>> SoC. Currently there are 2 evaluation boards available, "Dalmore"
+>> and "Pluto".
+>> 
+>> This patchset is against Stephen Warren's linux-next_common
+>> branch:
+>> 
+>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6
+>> linux-next_common
+>> 
+>> For those who want to try:
+>> 
+>> $ make ARCH=arm tegra_defconfig $ scripts/config -e
+>> ARCH_TEGRA_114_SOC -d DRM -d SUSPEND \ -d PM_RUNTIME -d CPU_FREQ
+>> -d CPU_IDLE
+> 
+> I wonder, what's the reason for disabling DRM? And while on the
+> topic, are there any plans to release a Tegra114 TRM?
 
---rJwd6BRFiFCcLxzm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 02, 2013 at 02:12:21PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/configs/tegra_defconfig |    1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_de=
-fconfig
-> index 742dc41..e621603 100644
-> --- a/arch/arm/configs/tegra_defconfig
-> +++ b/arch/arm/configs/tegra_defconfig
-> @@ -34,6 +34,7 @@ CONFIG_AEABI=3Dy
->  CONFIG_HIGHMEM=3Dy
->  CONFIG_ZBOOT_ROM_TEXT=3D0x0
->  CONFIG_ZBOOT_ROM_BSS=3D0x0
-> +CONFIG_KEXEC=3Dy
->  CONFIG_CPU_FREQ=3Dy
->  CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
->  CONFIG_CPU_IDLE=3Dy
-
-Interesting. What do you plan to use this for? kdump?
-
-Thierry
-
---rJwd6BRFiFCcLxzm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ5fKlAAoJEN0jrNd/PrOhkSMQAKOIwWsR5yHPhMQbXcJGdcy1
-Anx2Q0RH2fFDmJ0pUFajHVt1+w4VjdjP2Z7i6/xTJSKZ+rnki0HYJtb07TaFN9Ci
-f2wd57RU4y7WaI7jfGTyw8nXS6CIWUG4a6lT2TIzfKbEc7PMDQgRj+2g/PdTQYPp
-v3RwJkTQXimbBXt3tYJb4tAF6ZnrDCzr/+klUON/9CY3cAI2GmSOZdQOQ0bcnzS5
-Gv0cNe8jx5+LEdWv2vIBwxCIoLomzKQS6YiDilEsQF1/GzE0LhotU/M7QKmXpTgV
-1zW+nksJTEIVb4CfgqCZSvK5YX+y7laR2wUrmgBWk32IJnL4qSA6JOIKr3kiZykm
-3JbCsUefFJN9XbDfugNTWFU42VMpvuTvkzh7+5Ao52WMv92P28wEwiVSGRd/C06g
-rMAt7Oc84dXOq+z98eToDA45J6uVn4vqSYHR+AVgevQOQoocdDDUmg6LgF0j82QD
-6ZXst0YE/R9nL72jY2vMI2gbWyeAYbQdtfjMilHv26/SjLxebvuJbDrU7ejuiKzR
-6yrJcl69O9TkYarYl5g24yNWcR6pE9kqEthwpdJIOD2micCBgi5DUd4m+7PNH2w5
-EFzKlaLyH5Rmm5zZ36gHn6kSGwKgkQIHCw88pwWYG6YjEXyJ/zoQIzUcQ55uHo6U
-UKPwNouUaJhwER1f0c8t
-=xCGo
------END PGP SIGNATURE-----
-
---rJwd6BRFiFCcLxzm--
+AFAIK, the HW is basically compatible with previous chips, so I expect
+to see a DRM driver for it show up once all the various more basic
+devices are supported.
