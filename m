@@ -1,95 +1,128 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/2] ARM: tegra: moving the clock gating procedure to tegra_cpu_kill
-Date: Thu, 3 Jan 2013 14:43:00 +0800
-Message-ID: <1357195380-5494-2-git-send-email-josephl@nvidia.com>
-References: <1357195380-5494-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2] ARM: tegra30: fix power up sequence for boot_secondary
+Date: Thu, 3 Jan 2013 15:31:31 +0800
+Message-ID: <1357198291-16500-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357195380-5494-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra_cpu_die was be executed by the CPU itslf. So the clock gating
-procedure won't be executed after the CPU hardware shutdown code. Moving
-the clock gating procedure to tegra_cpu_kill that will be run by another
-CPU after the CPU died.
+The power up sequence is different on the cold boot CPU and the CPU
+that resumed from the hotplug. For the cold boot CPU, it was been power
+gated as default. To power up the cold boot CPU, the power should be
+un-gated by un toggling the power gate register manually.
+
+For the CPU that resumed from the hotplug, after un-halted the CPU. The
+flow controller will un-gate the power of the CPU. No need to manually
+control, just wait the power be resumed and continue the power up
+sequence after the CPU power is ready.
+
+Based on the work by:
+Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V2:
-* remove the redundant cpu_logical_map call in tegra_cpu_die when moving
-  the clock gating code to tegra_cpu_kill
+v2:
+* rewriting the commnet of power up sequence for cold boot & warm boot CPU
 ---
- arch/arm/mach-tegra/common.h  |  1 +
- arch/arm/mach-tegra/hotplug.c | 17 +++++++++++------
- arch/arm/mach-tegra/platsmp.c |  1 +
- 3 files changed, 13 insertions(+), 6 deletions(-)
+ arch/arm/mach-tegra/platsmp.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/common.h b/arch/arm/mach-tegra/common.h
-index 02f71b4..32f8eb3 100644
---- a/arch/arm/mach-tegra/common.h
-+++ b/arch/arm/mach-tegra/common.h
-@@ -1,4 +1,5 @@
- extern struct smp_operations tegra_smp_ops;
- 
-+extern int tegra_cpu_kill(unsigned int cpu);
- extern void tegra_cpu_die(unsigned int cpu);
- extern int tegra_cpu_disable(unsigned int cpu);
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index ad95041..a599f6e 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -19,6 +19,17 @@
- 
- static void (*tegra_hotplug_shutdown)(void);
- 
-+int tegra_cpu_kill(unsigned cpu)
-+{
-+	cpu = cpu_logical_map(cpu);
-+
-+	/* Clock gate the CPU */
-+	tegra_wait_cpu_in_reset(cpu);
-+	tegra_disable_cpu_clock(cpu);
-+
-+	return 1;
-+}
-+
- /*
-  * platform-specific code to shutdown a CPU
-  *
-@@ -26,18 +37,12 @@ static void (*tegra_hotplug_shutdown)(void);
-  */
- void __ref tegra_cpu_die(unsigned int cpu)
- {
--	cpu = cpu_logical_map(cpu);
--
- 	/* Clean L1 data cache */
- 	tegra_disable_clean_inv_dcache();
- 
- 	/* Shut down the current CPU. */
- 	tegra_hotplug_shutdown();
- 
--	/* Clock gate the CPU */
--	tegra_wait_cpu_in_reset(cpu);
--	tegra_disable_cpu_clock(cpu);
--
- 	/* Should never return here. */
- 	BUG();
- }
 diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index dec6704..cdf5faa 100644
+index cdf5faa..c60812c 100644
 --- a/arch/arm/mach-tegra/platsmp.c
 +++ b/arch/arm/mach-tegra/platsmp.c
-@@ -175,6 +175,7 @@ struct smp_operations tegra_smp_ops __initdata = {
- 	.smp_secondary_init	= tegra_secondary_init,
- 	.smp_boot_secondary	= tegra_boot_secondary,
- #ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_kill		= tegra_cpu_kill,
- 	.cpu_die		= tegra_cpu_die,
- 	.cpu_disable		= tegra_cpu_disable,
- #endif
+@@ -24,6 +24,7 @@
+ #include <asm/hardware/gic.h>
+ #include <asm/mach-types.h>
+ #include <asm/smp_scu.h>
++#include <asm/smp_plat.h>
+ 
+ #include <mach/powergate.h>
+ 
+@@ -36,6 +37,7 @@
+ 
+ extern void tegra_secondary_startup(void);
+ 
++static cpumask_t tegra_cpu_init_mask;
+ static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+ 
+ #define EVP_CPU_RESET_VECTOR \
+@@ -50,6 +52,7 @@ static void __cpuinit tegra_secondary_init(unsigned int cpu)
+ 	 */
+ 	gic_secondary_init(0);
+ 
++	cpumask_set_cpu(cpu, &tegra_cpu_init_mask);
+ }
+ 
+ static int tegra20_power_up_cpu(unsigned int cpu)
+@@ -72,7 +75,35 @@ static int tegra30_power_up_cpu(unsigned int cpu)
+ 	if (pwrgateid < 0)
+ 		return pwrgateid;
+ 
+-	/* If this is the first boot, toggle powergates directly. */
++	/*
++	 * The power up sequence of cold boot CPU and warm boot CPU
++	 * was different.
++	 *
++	 * For warm boot CPU that was resumed from CPU hotplug, the
++	 * power will be resumed automatically after un-halting the
++	 * flow controller of the warm boot CPU. We need to wait for
++	 * the confirmaiton that the CPU is powered then removing
++	 * the IO clamps.
++	 * For cold boot CPU, do not wait. After the cold boot CPU be
++	 * booted, it will run to tegra_secondary_init() and set
++	 * tegra_cpu_init_mask which influences what tegra30_power_up_cpu()
++	 * next time around.
++	 */
++	if (cpumask_test_cpu(cpu, &tegra_cpu_init_mask)) {
++		timeout = jiffies + 5*HZ;
++		do {
++			if (!tegra_powergate_is_powered(pwrgateid))
++				goto remove_clamps;
++			udelay(10);
++		} while (time_before(jiffies, timeout));
++	}
++
++	/*
++	 * The power status of the cold boot CPU is power gated as
++	 * default. To power up the cold boot CPU, the power should
++	 * be un-gated by un-toggling the power gate register
++	 * manually.
++	 */
+ 	if (!tegra_powergate_is_powered(pwrgateid)) {
+ 		ret = tegra_powergate_power_on(pwrgateid);
+ 		if (ret)
+@@ -87,6 +118,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
+ 		}
+ 	}
+ 
++remove_clamps:
+ 	/* CPU partition is powered. Enable the CPU clock. */
+ 	tegra_enable_cpu_clock(cpu);
+ 	udelay(10);
+@@ -105,6 +137,8 @@ static int __cpuinit tegra_boot_secondary(unsigned int cpu, struct task_struct *
+ {
+ 	int status;
+ 
++	cpu = cpu_logical_map(cpu);
++
+ 	/*
+ 	 * Force the CPU into reset. The CPU must remain in reset when the
+ 	 * flow controller state is cleared (which will cause the flow
+@@ -165,6 +199,9 @@ static void __init tegra_smp_init_cpus(void)
+ 
+ static void __init tegra_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	/* Always mark the boot CPU (CPU0) as initialized. */
++	cpumask_set_cpu(0, &tegra_cpu_init_mask);
++
+ 	tegra_cpu_reset_handler_init();
+ 	scu_enable(scu_base);
+ }
 -- 
 1.8.0.3
