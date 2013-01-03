@@ -1,58 +1,43 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
-Subject: Re: [PATCHv4 0/8] Support for Tegra 2D hardware
-Date: Thu, 3 Jan 2013 08:14:06 +0200
-Message-ID: <50E521AE.2030500@nvidia.com>
-References: <1356089964-5265-1-git-send-email-tbergstrom@nvidia.com>
-	<1356097818.1490.109.camel@tellur>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 05/11] ARM: dt: tegra30: Add device node for APB MISC
+Date: Thu, 3 Jan 2013 11:41:08 +0530
+Message-ID: <50E520FC.4070805@nvidia.com>
+References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com> <1356619644-18565-6-git-send-email-pgaikwad@nvidia.com> <50E4AE19.1060503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1356097818.1490.109.camel@tellur>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Lucas Stach <dev@lynxeye.de>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50E4AE19.1060503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21.12.2012 15:50, Lucas Stach wrote:
-> Am Freitag, den 21.12.2012, 13:39 +0200 schrieb Terje Bergstrom:
->> Some of the issues left open:
->>  * Register definitions still use static inline. There has been a
->>    debate about code style versus ability to use compiler type
->>    checking and code coverage analysis. There was no conclusion, so
->>    I left it as was.
-> This has to be resolved before merging. Personally I'm in favour of
-> keeping reg access patterns close to what is done in other parts of the
-> kernel.
+On Thursday 03 January 2013 03:30 AM, Stephen Warren wrote:
+> On 12/27/2012 07:47 AM, Prashant Gaikwad wrote:
+>> APB misc contains multiple registers required by different modules
+>> such as CAR.
+> I don't see a DT binding document that describes what
+> nvidia,tegra30-apbmisc means. Also, the register range for this new node
+> overlaps that for the pinmux node, so they can't both "request" their
+> register region. You may need multiple entries in the apbmisc reg
+> property to avoid this.
 
-How about if I define inline functions, and #defines to proxy to them?
-Something like:
+apbmisc reg for Tegra30 can be divided into following entries:
 
-static inline u32 host1x_sync_cfpeek_ctrl_r(void)
-{
-	return 0x74c;
-}
-#define HOST1X_SYNC_CFPEEK_CTRL \
-	host1x_sync_cfpeek_ctrl_r()
+strap registers
+jtag configuration registers
+pull_up/pull_down control registers
+vclk control registers
+tvdac registers
+chip id revision registers
+pad control registers
 
-static inline u32 host1x_sync_cfpeek_ctrl_cfpeek_ena_f(u32 v)
-{
-	return (v & 0x1) << 31;
-}
-#define HOST1X_SYNC_CFPEEK_CTRL_CFPEEK_ENA_F(v) \
-	host1x_sync_cfpeek_ctrl_cfpeek_ena_f(v)
+This list is not same for Tegra20 and Tegra30.
 
-I'd use the macros in .c files. That way the references will look
-familiar to reader of .c files, but we can still get the benefits of
-compiler processing (type checking, better error codes etc) and gcov
-coverage tracking.
+OR
 
-Terje
+another way is to add chip id revision register region to CAR node as 
+done for pinmux node and remove apb misc node.
+
+What is preferred?
