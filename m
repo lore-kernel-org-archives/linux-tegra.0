@@ -1,37 +1,47 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] ARM: tegra: update the cache maintenance order
- for CPU shutdown
-Date: Thu, 3 Jan 2013 12:48:44 +0200
-Message-ID: <20130103104844.GV19766@tbergstrom-lnx.Nvidia.com>
-References: <1357195380-5494-1-git-send-email-josephl@nvidia.com>
+From: Timur <timur.mehrvarz-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Subject: Re: ehci-tegra issue with deep sleep
+Date: Thu, 03 Jan 2013 12:52:17 +0100
+Message-ID: <50E570F1.4030706@riseup.net>
+References: <50C7B250.7020409@riseup.net> <50C8C47A.1080809@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1357195380-5494-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50C8C47A.1080809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 03, 2013 at 07:42:59AM +0100, Joseph Lo wrote:
-> Updating the cache maintenance order before CPU shutdown when doing CPU
-> hotplug.
-> The old order:
-> * clean L1 by flush_cache_all
-> * exit SMP
-> * CPU shutdown
-> Adapt to:
-> * disable L1 data cache by clear C bit
-> * clean L1 by v7_flush_dcache_louis
-> * exit SMP
-> * CPU shutdown
-> 
-> For CPU hotplug case, it's no need to do "flush_cache_all". And we should
-> disable L1 data cache before clean L1 data cache. Then leaving the SMP
-> coherency.
-> 
+On 12.12.2012 18:52, Stephen Warren wrote:
+> On 12/11/2012 03:23 PM, Timur wrote:
+>> Hi. I discovered a problem with USB host mode on a Nexus 7 running
+>> Android 4.2.x:
+>
+> Timur,
+>
+> This mailing list is intended for discussion of the mainline Linux
+> kernel, rather than NVIDIA's modified (and older) downstream kernel, as
+> used on shipping Android devices.
+>
+> Your best bet for support is to report the issue to
+> linux-tegra-bugs-DDmLM1+adcqXj1p+fO2waQ@public.gmane.org It may help if you've tried the Ubuntu/L4T
+> install described at:
+>
+> https://wiki.ubuntu.com/Nexus7
+>
+> ... and reproduced the issue there too; at least some people working on
+> the downstream kernel do have access to Nexus 7s with that software setup.
 
-Both patches
+Hi Stephen,
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+maybe you remember this brief conversation in December. I found the root 
+cause of the reported issue (tegra specific) and I can provide a patch. 
+The outcome is stable, externally powered USB host mode for Nexus 7.
+
+Do you happen to know anyone responsible for the Ubuntu Nexus7 kernel? I 
+would like to contribute the fix, as I think it would be beneficial to 
+that implementation.
+
+Thank you.
+Timur
