@@ -1,149 +1,29 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 1/1] ARM: tegra: Make variables static
-Date: Thu, 3 Jan 2013 08:27:05 +0200
-Message-ID: <1357194425-18614-1-git-send-email-hdoyu@nvidia.com>
-References: <50E482AF.6040607@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from DT
+Date: Thu, 3 Jan 2013 07:38:48 +0100
+Message-ID: <20130103.083848.1533296860718294309.hdoyu@nvidia.com>
+References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com><1355725087-11363-4-git-send-email-hdoyu@nvidia.com><50E4845D.6020809@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E482AF.6040607-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <50E4845D.6020809@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-No need to be public. Checked with:
-  $ touch arch/arm/mach-tegra/*[ch] && make C=1
+Stephen Warren <swarren@wwwdotorg.org> wrote @ Wed, 2 Jan 2013 20:02:53 +0100:
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: Rebased against for-3.9/cleanup
----
- arch/arm/mach-tegra/apbio.c               |    2 +-
- arch/arm/mach-tegra/board-dt-tegra20.c    |   10 +++++-----
- arch/arm/mach-tegra/board-dt-tegra30.c    |    2 +-
- arch/arm/mach-tegra/flowctrl.c            |    4 ++--
- arch/arm/mach-tegra/tegra30_clocks_data.c |    6 +++---
- 5 files changed, 12 insertions(+), 12 deletions(-)
+> On 12/16/2012 11:18 PM, Hiroshi Doyu wrote:
+> > Set Snoop Control Unit(SCU) register base address dynamically from DT.
+> 
+> Hiroshi, what's the status on this patch series? I think Rob had
+> comments/objections on patch 4; are you going to post an updated series,
+> or is this series replaced by patch 3 in your Tegra114 series?
 
-diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
-index d091675..d7aa52e 100644
---- a/arch/arm/mach-tegra/apbio.c
-+++ b/arch/arm/mach-tegra/apbio.c
-@@ -38,7 +38,7 @@ static void tegra_apb_writel_direct(u32 value, unsigned long offset);
- static struct dma_chan *tegra_apb_dma_chan;
- static struct dma_slave_config dma_sconfig;
- 
--bool tegra_apb_dma_init(void)
-+static bool tegra_apb_dma_init(void)
- {
- 	dma_cap_mask_t mask;
- 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index 8e35aae..e1f87dd 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -46,31 +46,31 @@
- #include "common.h"
- #include "iomap.h"
- 
--struct tegra_ehci_platform_data tegra_ehci1_pdata = {
-+static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
- 	.operating_mode = TEGRA_USB_OTG,
- 	.power_down_on_bus_suspend = 1,
- 	.vbus_gpio = -1,
- };
- 
--struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
-+static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
- 	.reset_gpio = -1,
- 	.clk = "cdev2",
- };
- 
--struct tegra_ehci_platform_data tegra_ehci2_pdata = {
-+static struct tegra_ehci_platform_data tegra_ehci2_pdata = {
- 	.phy_config = &tegra_ehci2_ulpi_phy_config,
- 	.operating_mode = TEGRA_USB_HOST,
- 	.power_down_on_bus_suspend = 1,
- 	.vbus_gpio = -1,
- };
- 
--struct tegra_ehci_platform_data tegra_ehci3_pdata = {
-+static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
- 	.operating_mode = TEGRA_USB_HOST,
- 	.power_down_on_bus_suspend = 1,
- 	.vbus_gpio = -1,
- };
- 
--struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
-+static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC1_BASE, "sdhci-tegra.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC2_BASE, "sdhci-tegra.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", TEGRA_SDMMC3_BASE, "sdhci-tegra.2", NULL),
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index a9ed15d..cfe5fc0 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -39,7 +39,7 @@
- #include "common.h"
- #include "iomap.h"
- 
--struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
-+static struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
- 	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000400, "sdhci-tegra.2", NULL),
-diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
-index a2250dd..5393eb2 100644
---- a/arch/arm/mach-tegra/flowctrl.c
-+++ b/arch/arm/mach-tegra/flowctrl.c
-@@ -26,14 +26,14 @@
- #include "flowctrl.h"
- #include "iomap.h"
- 
--u8 flowctrl_offset_halt_cpu[] = {
-+static u8 flowctrl_offset_halt_cpu[] = {
- 	FLOW_CTRL_HALT_CPU0_EVENTS,
- 	FLOW_CTRL_HALT_CPU1_EVENTS,
- 	FLOW_CTRL_HALT_CPU1_EVENTS + 8,
- 	FLOW_CTRL_HALT_CPU1_EVENTS + 16,
- };
- 
--u8 flowctrl_offset_cpu_csr[] = {
-+static u8 flowctrl_offset_cpu_csr[] = {
- 	FLOW_CTRL_CPU0_CSR,
- 	FLOW_CTRL_CPU1_CSR,
- 	FLOW_CTRL_CPU1_CSR + 8,
-diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
-index 6942c7a..741d264 100644
---- a/arch/arm/mach-tegra/tegra30_clocks_data.c
-+++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
-@@ -1183,7 +1183,7 @@ static struct clk tegra_dsib = {
- 	.num_parents = ARRAY_SIZE(mux_plld_out0_plld2_out0),
- };
- 
--struct clk *tegra_list_clks[] = {
-+static struct clk *tegra_list_clks[] = {
- 	&tegra_apbdma,
- 	&tegra_rtc,
- 	&tegra_kbc,
-@@ -1289,7 +1289,7 @@ struct clk *tegra_list_clks[] = {
-  * configuration.  List those here to register them twice in the clock lookup
-  * table under two names.
-  */
--struct clk_duplicate tegra_clk_duplicates[] = {
-+static struct clk_duplicate tegra_clk_duplicates[] = {
- 	CLK_DUPLICATE("uarta",  "serial8250.0", NULL),
- 	CLK_DUPLICATE("uartb",  "serial8250.1", NULL),
- 	CLK_DUPLICATE("uartc",  "serial8250.2", NULL),
-@@ -1340,7 +1340,7 @@ struct clk_duplicate tegra_clk_duplicates[] = {
- 	CLK_DUPLICATE("pll_d2_out0", "hdmi", "parent"),
- };
- 
--struct clk *tegra_ptr_clks[] = {
-+static struct clk *tegra_ptr_clks[] = {
- 	&tegra_clk_32k,
- 	&tegra_clk_m,
- 	&tegra_clk_m_div2,
--- 
-1.7.9.5
+As Rob suggested, at least, SCU base address should be detected in
+common code, scu_of_init() even if DT /cpus is the primary way to
+detect # of cores. I'll repost later.
+
+This patch can be done independent of Tegra114 series.
