@@ -1,65 +1,82 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 05/11] ARM: dt: tegra30: Add device node for APB MISC
-Date: Fri, 04 Jan 2013 12:57:06 -0700
-Message-ID: <50E73412.1040404@wwwdotorg.org>
-References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com> <1356619644-18565-6-git-send-email-pgaikwad@nvidia.com> <50E4AE19.1060503@wwwdotorg.org> <50E520FC.4070805@nvidia.com> <50E5ADA6.1070904@wwwdotorg.org> <50E634D0.6080702@nvidia.com> <50E6470E.8090206@wwwdotorg.org> <50E64B18.8060806@nvidia.com> <50E653E3.5060901@wwwdotorg.org> <50E6C37C.5050605@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add kexec support to defconfig
+Date: Fri, 4 Jan 2013 21:08:20 +0100
+Message-ID: <20130104200820.GC4577@avionic-0098.adnet.avionic-design.de>
+References: <1357161141-26430-1-git-send-email-swarren@wwwdotorg.org>
+ <20130103210541.GB4412@avionic-0098.adnet.avionic-design.de>
+ <50E5F5A3.1060507@wwwdotorg.org>
+ <20130103212903.GA27749@avionic-0098.adnet.avionic-design.de>
+ <50E5FBDE.90804@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f+W+jCU1fRNres8c"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E6C37C.5050605-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50E5FBDE.90804-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/04/2013 04:56 AM, Laxman Dewangan wrote:
-> On Friday 04 January 2013 09:30 AM, Stephen Warren wrote:
->> On 01/03/2013 08:23 PM, Prashant Gaikwad wrote:
->>> On Friday 04 January 2013 08:35 AM, Stephen Warren wrote:
->>>> On 01/03/2013 06:48 PM, Prashant Gaikwad wrote:
->>>>> On Thursday 03 January 2013 09:41 PM, Stephen Warren wrote:
->> ...
->>>>>> OK. It sounds like we need a true APB MISC driver then, to
->>>>>> abstract the
->>>>>> differences; the clock driver really shouldn't be touching the APB
->>>>>> MISC
->>>>>> registers in all likelihood, unless a subset of the sections you
->>>>>> mention
->>>>>> above are truly dedicated to clock functionality.
->>>>> I don't think it is a good idea to create a driver for APB MISC, all
->>>>> registers are used by different drivers.
->>>> Well, it's even worse to have a bunch of other drivers randomly trample
->>>> on a set of registers they don't own.
->>>>
->>>>> Only chip id revision registers are used in clock driver.
->>>> There are already global variables exposed by the Tegra fuse driver;
->>>> can
->>>> you just read those?
->>> It is not about variables or some value, we have to read some apb
->>> register to flush the write operation in apb bus before we disable
->>> peripheral clock.
->>> We are using chip id revision register for this purpose.
->> Ah. That's definitely not something the clock driver should be doing
->> directly. It's probably OK to add a custom Tegra-specific function to
->> some file in arch/arm/mach-tegra to implement this. Even better would be
->> a full bus driver for the APB bus, but that's probably too much bloat
->> for now.
-> 
-> I think individual driver should take care of flushing the write
-> operation inplace of clock driver.
-> Atleast I moved flushing to i2c and spi for these drivers. Polluting
-> clock driver here does not make sense here.
 
-That does seem like a reasonable assertion.
+--f+W+jCU1fRNres8c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Still, I believe the clock driver currently does this already today, so
-removing it might be a regression. I think we want to:
+On Thu, Jan 03, 2013 at 02:45:02PM -0700, Stephen Warren wrote:
+> On 01/03/2013 02:29 PM, Thierry Reding wrote:
+> > On Thu, Jan 03, 2013 at 02:18:27PM -0700, Stephen Warren wrote:
+> >> On 01/03/2013 02:05 PM, Thierry Reding wrote:
+> >>> On Wed, Jan 02, 2013 at 02:12:21PM -0700, Stephen Warren
+> >>> wrote:
+> >>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>=20
+> >>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> ---=20
+> >>>> arch/arm/configs/tegra_defconfig |    1 + 1 file changed, 1=20
+> >>>> insertion(+)
+> >>>>=20
+> >>>> diff --git a/arch/arm/configs/tegra_defconfig=20
+> >>>> b/arch/arm/configs/tegra_defconfig index 742dc41..e621603
+> >>>> 100644 --- a/arch/arm/configs/tegra_defconfig +++=20
+> >>>> b/arch/arm/configs/tegra_defconfig @@ -34,6 +34,7 @@=20
+> >>>> CONFIG_AEABI=3Dy CONFIG_HIGHMEM=3Dy CONFIG_ZBOOT_ROM_TEXT=3D0x0=20
+> >>>> CONFIG_ZBOOT_ROM_BSS=3D0x0 +CONFIG_KEXEC=3Dy CONFIG_CPU_FREQ=3Dy=20
+> >>>> CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy CONFIG_CPU_IDLE=3Dy
+> >>>=20
+> >>> Interesting. What do you plan to use this for? kdump?
+> >>=20
+> >> I plan to burn a kernel (and a small stub, and a DTB) into flash=20
+> >> instead of U-Boot, and hence not have to rely on any bootloader.
+> >=20
+> > Why does that require kexec support?
+>=20
+> Because I'd be using that kernel plus an initrd to download the "real"
+> kernel over e.g. TFTP and kexec it.
 
-a) Maintain this feature in the clock driver rework for now.
-b) Audit and fix any device drivers.
-c) Remove the feature from the clock driver.
+Right, that makes sense. Thanks for explaining.
 
-Of course, if (b) is so easy to do that you don't need to do (a) or (c)
-at all, that's fine too, but I believe Prashant is under time pressure
-to get the common clock rework done before his vacation.
+Thierry
+
+--f+W+jCU1fRNres8c
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ5za0AAoJEN0jrNd/PrOh8QwQAKCKLR0l4Pi+LDJbLMCfmbw7
+eoXRIuBbm2MSLBj5Ga8TdvON5Qf0ABfWd0Ea8Z2vJKF+rR89SiP+Q7V8Qdypj/Gj
+TRO5qlFpCLBEQD0Qzkbb2zYMIJhzcUtOyU6q+YUqtTEAyX76JcphpTy/EsROvmFQ
+MBMLjLnt0fNNOXzmYDZbFna+kde60vNsLYsF8jXmHQzGMF2m5G1frVizgm75EpYV
+PQ07xgcn0Jez2I5F415277WONxJKq7AJ7N8T1erUnbszv8KN7fuvf39CZ75kWgyc
+R/m4a6UjTOc7CFYrCwDB/bJiDGrVquxlARChCpRgckjhxReMmqBS7ypKnhNLuj4g
+MoIkYyolTWmjRitg9Mr//wWCyZ7vwdTpfCAbdq9gzyKhuWfftnZRx/LlZ5ABXwI9
+o0gHq/xYN5oI9Qvb2NEBwKfK6jWi7CqD2Ra5rOtWZAogmCAsFGHAU9jocyTvQd1X
+vMxMAcxdfKXtSLKoVjiDsOcMrU9T/2MfCx7IPZ/0dWt9M3X/NVSf/eUSnz1g87Sd
+4xYn8cxj9KKD9whsB1i0xW6Fsa0svEvzJiyTBjtinNoNSspBjxBUbCGDDzEA+XbY
+wLOgopaxhvK6Tc/YMm41wOwDEZa8/x08GdP9mUPkzKhKvDFadXCEb8jmhmmp1lY3
+VOHEU96rjKZGhoIwScLT
+=p6HF
+-----END PGP SIGNATURE-----
+
+--f+W+jCU1fRNres8c--
