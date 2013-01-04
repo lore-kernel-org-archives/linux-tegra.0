@@ -1,48 +1,35 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v2 05/11] ARM: dt: tegra30: Add device node for APB MISC
-Date: Fri, 4 Jan 2013 17:26:44 +0530
-Message-ID: <50E6C37C.5050605@nvidia.com>
-References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com> <1356619644-18565-6-git-send-email-pgaikwad@nvidia.com> <50E4AE19.1060503@wwwdotorg.org> <50E520FC.4070805@nvidia.com> <50E5ADA6.1070904@wwwdotorg.org> <50E634D0.6080702@nvidia.com> <50E6470E.8090206@wwwdotorg.org> <50E64B18.8060806@nvidia.com> <50E653E3.5060901@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: ehci-tegra issue with deep sleep
+Date: Fri, 04 Jan 2013 10:33:38 -0700
+Message-ID: <50E71272.5090107@wwwdotorg.org>
+References: <50C7B250.7020409@riseup.net> <50C8C47A.1080809@wwwdotorg.org> <50E570F1.4030706@riseup.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50E653E3.5060901@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50E570F1.4030706-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Timur <timur.mehrvarz-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 04 January 2013 09:30 AM, Stephen Warren wrote:
-> On 01/03/2013 08:23 PM, Prashant Gaikwad wrote:
->> On Friday 04 January 2013 08:35 AM, Stephen Warren wrote:
->>> On 01/03/2013 06:48 PM, Prashant Gaikwad wrote:
->>>> On Thursday 03 January 2013 09:41 PM, Stephen Warren wrote:
-> ...
->>>>> OK. It sounds like we need a true APB MISC driver then, to abstract the
->>>>> differences; the clock driver really shouldn't be touching the APB MISC
->>>>> registers in all likelihood, unless a subset of the sections you
->>>>> mention
->>>>> above are truly dedicated to clock functionality.
->>>> I don't think it is a good idea to create a driver for APB MISC, all
->>>> registers are used by different drivers.
->>> Well, it's even worse to have a bunch of other drivers randomly trample
->>> on a set of registers they don't own.
->>>
->>>> Only chip id revision registers are used in clock driver.
->>> There are already global variables exposed by the Tegra fuse driver; can
->>> you just read those?
->> It is not about variables or some value, we have to read some apb
->> register to flush the write operation in apb bus before we disable
->> peripheral clock.
->> We are using chip id revision register for this purpose.
-> Ah. That's definitely not something the clock driver should be doing
-> directly. It's probably OK to add a custom Tegra-specific function to
-> some file in arch/arm/mach-tegra to implement this. Even better would be
-> a full bus driver for the APB bus, but that's probably too much bloat
-> for now.
+On 01/03/2013 04:52 AM, Timur wrote:
+...
+> maybe you remember this brief conversation in December. I found the root
+> cause of the reported issue (tegra specific) and I can provide a patch.
+> The outcome is stable, externally powered USB host mode for Nexus 7.
 
-I think individual driver should take care of flushing the write 
-operation inplace of clock driver.
-Atleast I moved flushing to i2c and spi for these drivers. Polluting 
-clock driver here does not make sense here.
+Isn't USB host mode by definition internally powered, and USB device
+mode by definition externally powered? An externally powered USB host
+mode sounds quite non-standard. If you allow that mode, how does the
+system know whether it should be a host or a device when external power
+is applied; it sounds like this new mode completely breaks the ability
+to connect the tablet to a PC and use it for Android application
+development, or MTP (Media Transfer Protocol) to download pictures/movies.
+
+> Do you happen to know anyone responsible for the Ubuntu Nexus7 kernel? I
+> would like to contribute the fix, as I think it would be beneficial to
+> that implementation.
+
+Sorry, I don't know what kernel they're using; the best place to ask
+would be the Ubuntu project itself.
