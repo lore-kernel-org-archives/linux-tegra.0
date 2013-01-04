@@ -1,57 +1,98 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH 6/7] clk: tegra20: remove unused TEGRA_CLK_DUPLICATE()s
-Date: Fri, 4 Jan 2013 15:16:42 +0530
-Message-ID: <1357292803-28604-6-git-send-email-pgaikwad@nvidia.com>
-References: <1357292803-28604-1-git-send-email-pgaikwad@nvidia.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Fri, 4 Jan 2013 12:09:45 +0200
+Message-ID: <50E6AA69.4030001@nvidia.com>
+References: <50BF345A.8050201@nvidia.com>
+	<20121205120429.GA29943@avionic-0098.adnet.avionic-design.de>
+	<50C5CAB5.3040000@nvidia.com>
+	<20121212160829.GA30278@avionic-0098.adnet.avionic-design.de>
+	<50C99677.6090306@nvidia.com>
+	<20121213085750.GA14740@avionic-0098.adnet.avionic-design.de>
+	<50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com>
+	<50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com>
+	<20121216121603.GA31780@avionic-0098.adnet.avionic-design.de>
+	<50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org>
+	<50D42486.7080901@nvidia.com> <50D4D25B.7030506@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1357292803-28604-1-git-send-email-pgaikwad@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <50D4D25B.7030506@wwwdotorg.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-With device tree support added for Tegra clocks look up is done from
-device tree, remove unused TEGRA_CLK_DUPLICATE()s.
+On 21.12.2012 23:19, Stephen Warren wrote:
+> I see the situation more like:
+> 
+> * There's host1x hardware.
+> 
+> * There's a low-level driver just for host1x itself; the host1x driver.
+> 
+> * There's a high-level driver for the entire host1x complex of devices.
+> That is tegradrm. There may be more high-level drivers in the future
+> (e.g. v4l2 camera driver if it needs to aggregate a bunch of host1x
+> sub-devices liek tegradrm does).
+> 
+> * The presence of the host1x DT node logically implies that both the two
+> drivers in the previous two points should be instantiated.
+> 
+> * Linux instantiates a single device per DT node.
+> 
+> * So, it's host1x's responsibility to instantiate the other device(s). I
+> think it's reasonable for the host1x driver to know exactly what
+> features the host1x HW complex supports; raw host1x access being one,
+> and the higher level concept of a tegradrm being another. So, it's
+> reasonable for host1x to trigger the instantiation of tegradrm.
+> 
+> * If DRM core didn't stomp on the device object's drvdata (or whichever
+> field it is), I would recommend not creating a dummy device at all, but
+> rather having the host1x driver directly implement multiple driver
+> interfaces. There are many examples like this already in the kernel,
+> e.g. combined GPIO+IRQ driver, combined GPIO+IRQ+pinctrl driver, etc.
 
-Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
----
- drivers/clk/tegra/clk-tegra20.c |   17 -----------------
- 1 files changed, 0 insertions(+), 17 deletions(-)
+We had a phone call with Stephen yesterday, and I finally understood why
+unbroken chain from DT to tegra-drm is important. The goals are to be
+able to modprobe tegra-drm without ill effects, and to auto-load
+tegra-drm module. I had been chasing a totally different goal.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index bb94556..92c1190 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1164,28 +1164,11 @@ static __initdata struct tegra_clk_init_table init_table[] = {
-  * table under two names.
-  */
- static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
--	TEGRA_CLK_DUPLICATE(uarta,  "serial8250.0", NULL),
--	TEGRA_CLK_DUPLICATE(uartb,  "serial8250.1", NULL),
--	TEGRA_CLK_DUPLICATE(uartc,  "serial8250.2", NULL),
--	TEGRA_CLK_DUPLICATE(uartd,  "serial8250.3", NULL),
--	TEGRA_CLK_DUPLICATE(uarte,  "serial8250.4", NULL),
- 	TEGRA_CLK_DUPLICATE(usbd,   "utmip-pad",    NULL),
- 	TEGRA_CLK_DUPLICATE(usbd,   "tegra-ehci.0", NULL),
- 	TEGRA_CLK_DUPLICATE(usbd,   "tegra-otg",    NULL),
--	TEGRA_CLK_DUPLICATE(hdmi,   "tegradc.0",    "hdmi"),
--	TEGRA_CLK_DUPLICATE(hdmi,   "tegradc.1",    "hdmi"),
--	TEGRA_CLK_DUPLICATE(host1x, "tegra_grhost", "host1x"),
--	TEGRA_CLK_DUPLICATE(gr2d,   "tegra_grhost", "gr2d"),
--	TEGRA_CLK_DUPLICATE(gr3d,   "tegra_grhost", "gr3d"),
--	TEGRA_CLK_DUPLICATE(epp,    "tegra_grhost", "epp"),
--	TEGRA_CLK_DUPLICATE(mpe,    "tegra_grhost", "mpe"),
--	TEGRA_CLK_DUPLICATE(vde,    "tegra-aes",    "vde"),
- 	TEGRA_CLK_DUPLICATE(cclk,   NULL,           "cpu"),
- 	TEGRA_CLK_DUPLICATE(twd,    "smp_twd",      NULL),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.0", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.1", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.2", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.3", "fast-clk"),
- 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* Must be the last entry */
- };
- 
--- 
-1.7.4.1
+Sorry about all the churn.
+
+I think we have now two ways to go forward with cons and pros:
+ 1) Keep host1x and tegra-drm as separate driver
+   + Code almost done
+   - we need dummy device and dummy driver
+   - extra code and API when host1x creates dummy device and its passed
+to tegra-drm
+   - tegra-drm device would need to be a child of host1x device. Having
+virtual and real devices as host1x children sounds weird.
+
+ 2) Merge host1x and tegra-drm into one module. drm is a subcomponent,
+and whatever other personalities we wish would also be subcomponents of
+host1x. host1x calls tegra-drm directly to handle preparation for drm
+initialization. As they're in the same module, circular dependency is ok.
+   + Simpler conceptually (no dummy device/driver)
+   + Less code
+   - Proposal doesn't yet exist
+
+Thierry, what do you think? I'd prefer option 2, as that keeps things
+simple and still fulfills the requirements. We probably would redo the
+patch "Remove redundant host1x" to actually move drm under host1x, and
+adds calls from host1x to parse_dt() directly. We'd probably leave the
+code otherwise mostly as it is now, so we'll drop whatever modifications
+we've done so far in my proposals. You can later pick up some things
+from our proposals if you want, but it's then up to you.
+
+We could also later think about generalizing some of the list management
+to belong to host1x, but that'd be a follow-up and we can decide that later.
+
+Terje
