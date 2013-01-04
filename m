@@ -1,40 +1,83 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCH 9/9] ARM: tegra: Add initial support for Tegra 114 SoC.
-Date: Fri, 4 Jan 2013 08:16:07 +0100
-Message-ID: <20130104.091607.1562807518754570421.hdoyu@nvidia.com>
-References: <1355996654-6579-1-git-send-email-hdoyu@nvidia.com><1355996654-6579-10-git-send-email-hdoyu@nvidia.com><201301031628.19743.arnd@arndb.de>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] ARM: tegra: clean up the CPUINIT section
+Date: Fri, 4 Jan 2013 17:32:21 +0800
+Message-ID: <1357291942-32433-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <201301031628.19743.arnd@arndb.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: "arnd@arndb.de" <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "andrew@lunn.ch" <andrew@lunn.ch>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "jason@lakedaemon.net" <jason@lakedaemon.net>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "johnstul@us.ibm.com" <johnstul@us.ibm.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob@landley.net" <rob@landley.net>, "olof@lixom.net" <olof@lixom.net>, "tglx@linutronix.de" <tglx@linutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "plagnioj@jcrosoft.com" <plagnioj@jcroso>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote @ Thu, 3 Jan 2013 17:28:19 +0100:
+There are some redundant codes in the CPUINIT section that was caused by
+some codes not be organized well in "headsmp.S". Currently all the codes
+in "headsmp.S" were put into CPUINIT section. But actually it doesn't
+need to be loacted in CPUINIT section. There is no fuction access them
+in CPUINIT section and we will relocate them to IRAM.
 
-> On Thursday 20 December 2012, Hiroshi Doyu wrote:
-> > +
-> > +DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
-> > +       .smp            = smp_ops(tegra_smp_ops),
-> > +       .map_io         = tegra_map_common_io,
-> > +       .init_early     = tegra30_init_early,
-> > +       .init_irq       = tegra_dt_init_irq,
-> > +       .handle_irq     = gic_handle_irq,
-> > +       .init_time      = clocksource_of_init,
-> > +       .init_machine   = tegra114_dt_init,
-> > +       .init_late      = tegra_init_late,
-> > +       .restart        = tegra_assert_system_reset,
-> > +       .dt_compat      = tegra114_dt_board_compat,
-> > +MACHINE_END
-> 
-> This one is so similar to Tegra30 that I wonder if it's actually worth keeping
-> them separate still. The only difference I see is the clock initialization.
-> Maybe that can be factored out to keep this the same as Tegra30.
-> 
-> Or are you planning to add more SoC specific here that would make this harder?
+These codes also caused some unnecessary functions that access these
+codes been put into CPUINIT section too. This patch clean it up and put
+them into normal text section.
 
-That was the original plan, but I'll consider if your proposal works
-or not once again. Thanks.
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/cpuidle-tegra30.c | 6 +++---
+ arch/arm/mach-tegra/headsmp.S         | 2 --
+ arch/arm/mach-tegra/pm.c              | 4 ++--
+ 3 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index 5e8cbf5..82530bd 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -121,9 +121,9 @@ static inline bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
+ }
+ #endif
+ 
+-static int __cpuinit tegra30_idle_lp2(struct cpuidle_device *dev,
+-				      struct cpuidle_driver *drv,
+-				      int index)
++static int tegra30_idle_lp2(struct cpuidle_device *dev,
++			    struct cpuidle_driver *drv,
++			    int index)
+ {
+ 	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
+ 	bool entered_lp2 = false;
+diff --git a/arch/arm/mach-tegra/headsmp.S b/arch/arm/mach-tegra/headsmp.S
+index 4a317fa..23f487d 100644
+--- a/arch/arm/mach-tegra/headsmp.S
++++ b/arch/arm/mach-tegra/headsmp.S
+@@ -16,8 +16,6 @@
+ #define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
+ 
+         .section ".text.head", "ax"
+-	__CPUINIT
+-
+ /*
+  * Tegra specific entry point for secondary CPUs.
+  *   The secondary kernel init calls v7_flush_dcache_all before it enables
+diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+index 1b11707..498d70b 100644
+--- a/arch/arm/mach-tegra/pm.c
++++ b/arch/arm/mach-tegra/pm.c
+@@ -148,7 +148,7 @@ static void suspend_cpu_complex(void)
+ 	save_cpu_arch_register();
+ }
+ 
+-void __cpuinit tegra_clear_cpu_in_lp2(int phy_cpu_id)
++void tegra_clear_cpu_in_lp2(int phy_cpu_id)
+ {
+ 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
+ 
+@@ -160,7 +160,7 @@ void __cpuinit tegra_clear_cpu_in_lp2(int phy_cpu_id)
+ 	spin_unlock(&tegra_lp2_lock);
+ }
+ 
+-bool __cpuinit tegra_set_cpu_in_lp2(int phy_cpu_id)
++bool tegra_set_cpu_in_lp2(int phy_cpu_id)
+ {
+ 	bool last_cpu = false;
+ 	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
+-- 
+1.8.0.3
