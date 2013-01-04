@@ -1,43 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add kexec support to defconfig
-Date: Thu, 03 Jan 2013 14:45:02 -0700
-Message-ID: <50E5FBDE.90804@wwwdotorg.org>
-References: <1357161141-26430-1-git-send-email-swarren@wwwdotorg.org> <20130103210541.GB4412@avionic-0098.adnet.avionic-design.de> <50E5F5A3.1060507@wwwdotorg.org> <20130103212903.GA27749@avionic-0098.adnet.avionic-design.de>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 05/11] ARM: dt: tegra30: Add device node for APB MISC
+Date: Fri, 4 Jan 2013 07:18:00 +0530
+Message-ID: <50E634D0.6080702@nvidia.com>
+References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com> <1356619644-18565-6-git-send-email-pgaikwad@nvidia.com> <50E4AE19.1060503@wwwdotorg.org> <50E520FC.4070805@nvidia.com> <50E5ADA6.1070904@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130103212903.GA27749-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <50E5ADA6.1070904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/03/2013 02:29 PM, Thierry Reding wrote:
-> On Thu, Jan 03, 2013 at 02:18:27PM -0700, Stephen Warren wrote:
->> On 01/03/2013 02:05 PM, Thierry Reding wrote:
->>> On Wed, Jan 02, 2013 at 02:12:21PM -0700, Stephen Warren
->>> wrote:
->>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> 
->>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> --- 
->>>> arch/arm/configs/tegra_defconfig |    1 + 1 file changed, 1 
->>>> insertion(+)
->>>> 
->>>> diff --git a/arch/arm/configs/tegra_defconfig 
->>>> b/arch/arm/configs/tegra_defconfig index 742dc41..e621603
->>>> 100644 --- a/arch/arm/configs/tegra_defconfig +++ 
->>>> b/arch/arm/configs/tegra_defconfig @@ -34,6 +34,7 @@ 
->>>> CONFIG_AEABI=y CONFIG_HIGHMEM=y CONFIG_ZBOOT_ROM_TEXT=0x0 
->>>> CONFIG_ZBOOT_ROM_BSS=0x0 +CONFIG_KEXEC=y CONFIG_CPU_FREQ=y 
->>>> CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y CONFIG_CPU_IDLE=y
->>> 
->>> Interesting. What do you plan to use this for? kdump?
->> 
->> I plan to burn a kernel (and a small stub, and a DTB) into flash 
->> instead of U-Boot, and hence not have to rely on any bootloader.
-> 
-> Why does that require kexec support?
+On Thursday 03 January 2013 09:41 PM, Stephen Warren wrote:
+> On 01/02/2013 11:11 PM, Prashant Gaikwad wrote:
+>> On Thursday 03 January 2013 03:30 AM, Stephen Warren wrote:
+>>> On 12/27/2012 07:47 AM, Prashant Gaikwad wrote:
+>>>> APB misc contains multiple registers required by different modules
+>>>> such as CAR.
+>>> I don't see a DT binding document that describes what
+>>> nvidia,tegra30-apbmisc means. Also, the register range for this new node
+>>> overlaps that for the pinmux node, so they can't both "request" their
+>>> register region. You may need multiple entries in the apbmisc reg
+>>> property to avoid this.
+>> apbmisc reg for Tegra30 can be divided into following entries:
+>>
+>> strap registers
+>> jtag configuration registers
+>> pull_up/pull_down control registers
+>> vclk control registers
+>> tvdac registers
+>> chip id revision registers
+>> pad control registers
+>>
+>> This list is not same for Tegra20 and Tegra30.
+> OK. It sounds like we need a true APB MISC driver then, to abstract the
+> differences; the clock driver really shouldn't be touching the APB MISC
+> registers in all likelihood, unless a subset of the sections you mention
+> above are truly dedicated to clock functionality.
 
-Because I'd be using that kernel plus an initrd to download the "real"
-kernel over e.g. TFTP and kexec it.
+I don't think it is a good idea to create a driver for APB MISC, all 
+registers are used by different drivers.
+Only chip id revision registers are used in clock driver.
+
+>> OR
+>>
+>> another way is to add chip id revision register region to CAR node as
+>> done for pinmux node and remove apb misc node.
+> The pinmux controller doesn't have a reg entry for the chip ID register.
+> I don't understand what you mean here.
+
+I mean as we have separate entry for PAD control registers region in 
+pinmux node we can have also have separate entry for chid id revision 
+register region in CAR node.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
