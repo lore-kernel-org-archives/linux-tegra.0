@@ -1,35 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: ehci-tegra issue with deep sleep
-Date: Fri, 04 Jan 2013 10:33:38 -0700
-Message-ID: <50E71272.5090107@wwwdotorg.org>
-References: <50C7B250.7020409@riseup.net> <50C8C47A.1080809@wwwdotorg.org> <50E570F1.4030706@riseup.net>
+Subject: Re: [PATCH 1/2] ARM: tegra: clean up the CPUINIT section
+Date: Fri, 04 Jan 2013 12:35:15 -0700
+Message-ID: <50E72EF3.5020200@wwwdotorg.org>
+References: <1357291942-32433-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E570F1.4030706-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
+In-Reply-To: <1357291942-32433-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Timur <timur.mehrvarz-sGOZH3hwPm2sTnJN9+BGXg@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/03/2013 04:52 AM, Timur wrote:
-...
-> maybe you remember this brief conversation in December. I found the root
-> cause of the reported issue (tegra specific) and I can provide a patch.
-> The outcome is stable, externally powered USB host mode for Nexus 7.
+On 01/04/2013 02:32 AM, Joseph Lo wrote:
+> There are some redundant codes in the CPUINIT section that was caused by
+> some codes not be organized well in "headsmp.S". Currently all the codes
+> in "headsmp.S" were put into CPUINIT section. But actually it doesn't
+> need to be loacted in CPUINIT section. There is no fuction access them
+> in CPUINIT section and we will relocate them to IRAM.
+> 
+> These codes also caused some unnecessary functions that access these
+> codes been put into CPUINIT section too. This patch clean it up and put
+> them into normal text section.
 
-Isn't USB host mode by definition internally powered, and USB device
-mode by definition externally powered? An externally powered USB host
-mode sounds quite non-standard. If you allow that mode, how does the
-system know whether it should be a host or a device when external power
-is applied; it sounds like this new mode completely breaks the ability
-to connect the tablet to a PC and use it for Android application
-development, or MTP (Media Transfer Protocol) to download pictures/movies.
-
-> Do you happen to know anyone responsible for the Ubuntu Nexus7 kernel? I
-> would like to contribute the fix, as I think it would be beneficial to
-> that implementation.
-
-Sorry, I don't know what kernel they're using; the best place to ask
-would be the Ubuntu project itself.
+Applied to Tegra's for-3.9/soc branch.
