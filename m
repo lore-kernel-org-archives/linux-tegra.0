@@ -1,13 +1,11 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 4/4] input: keyboard: tegra: remove default key mapping
-Date: Sat, 5 Jan 2013 17:11:51 +0530
-Message-ID: <1357386111-19971-5-git-send-email-ldewangan@nvidia.com>
-References: <1357386111-19971-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 1/2] pinctrl: tegra: add support for rcv-sel and drive type
+Date: Sat, 5 Jan 2013 17:32:54 +0530
+Message-ID: <1357387375-25919-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1357386111-19971-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -18,202 +16,235 @@ List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
 Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Sender: "devicetree-discuss"
  <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra KBC driver have the default key mapping for 16x8 configuration.
-The key mapping can be provided through platform data or through DT
-and the mapping varies from platform to platform, hence this default
-mapping is not so useful. Remove the default mapping to reduce the code
-lines of the driver.
+From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+NVIDIA's Tegra114 added two more configuration parameter in pinmux i.e.
+rcv-sel and drive type.
+
+rcv-sel: Select between High and Normal VIL/VIH receivers.
+	RCVR_SEL=1: High VIL/VIH
+	RCVR_SEL=0: Normal VIL/VIH
+
+drv_type: Ouptput drive type:
+	33-50 ohm driver: 0x1
+	66-100ohm driver: 0x0
+
+Add support of these parameters to be configure from DTS file.
+
+Tegra20 and Tegra30 does not support this configuration and hence initialize their
+pinmux structure with reg = -1.
+
+Originally written by Pritesh Raithatha.
+Changes by ldewangan:
+	- remove drvtype_width as it is always 2.
+	- Better describe the change.
+
+Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes from V1 and V2: None.
+ drivers/pinctrl/pinctrl-tegra.c   |   14 ++++++++++++++
+ drivers/pinctrl/pinctrl-tegra.h   |   16 ++++++++++++++++
+ drivers/pinctrl/pinctrl-tegra20.c |    6 ++++++
+ drivers/pinctrl/pinctrl-tegra30.c |    4 ++++
+ 4 files changed, 40 insertions(+), 0 deletions(-)
 
- drivers/input/keyboard/tegra-kbc.c |  156 +-----------------------------------
- 1 files changed, 1 insertions(+), 155 deletions(-)
-
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index eeb9dbc..5d5b227 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -87,147 +87,6 @@ struct tegra_kbc {
- 	struct clk *clk;
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index ae1e4bb..f195d77 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -201,6 +201,7 @@ static const struct cfg_param {
+ 	{"nvidia,open-drain",		TEGRA_PINCONF_PARAM_OPEN_DRAIN},
+ 	{"nvidia,lock",			TEGRA_PINCONF_PARAM_LOCK},
+ 	{"nvidia,io-reset",		TEGRA_PINCONF_PARAM_IORESET},
++	{"nvidia,rcv-sel",		TEGRA_PINCONF_PARAM_RCV_SEL},
+ 	{"nvidia,high-speed-mode",	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE},
+ 	{"nvidia,schmitt",		TEGRA_PINCONF_PARAM_SCHMITT},
+ 	{"nvidia,low-power-mode",	TEGRA_PINCONF_PARAM_LOW_POWER_MODE},
+@@ -208,6 +209,7 @@ static const struct cfg_param {
+ 	{"nvidia,pull-up-strength",	TEGRA_PINCONF_PARAM_DRIVE_UP_STRENGTH},
+ 	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
+ 	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
++	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
  };
  
--static const u32 tegra_kbc_default_keymap[] = {
--	KEY(0, 2, KEY_W),
--	KEY(0, 3, KEY_S),
--	KEY(0, 4, KEY_A),
--	KEY(0, 5, KEY_Z),
--	KEY(0, 7, KEY_FN),
--
--	KEY(1, 7, KEY_LEFTMETA),
--
--	KEY(2, 6, KEY_RIGHTALT),
--	KEY(2, 7, KEY_LEFTALT),
--
--	KEY(3, 0, KEY_5),
--	KEY(3, 1, KEY_4),
--	KEY(3, 2, KEY_R),
--	KEY(3, 3, KEY_E),
--	KEY(3, 4, KEY_F),
--	KEY(3, 5, KEY_D),
--	KEY(3, 6, KEY_X),
--
--	KEY(4, 0, KEY_7),
--	KEY(4, 1, KEY_6),
--	KEY(4, 2, KEY_T),
--	KEY(4, 3, KEY_H),
--	KEY(4, 4, KEY_G),
--	KEY(4, 5, KEY_V),
--	KEY(4, 6, KEY_C),
--	KEY(4, 7, KEY_SPACE),
--
--	KEY(5, 0, KEY_9),
--	KEY(5, 1, KEY_8),
--	KEY(5, 2, KEY_U),
--	KEY(5, 3, KEY_Y),
--	KEY(5, 4, KEY_J),
--	KEY(5, 5, KEY_N),
--	KEY(5, 6, KEY_B),
--	KEY(5, 7, KEY_BACKSLASH),
--
--	KEY(6, 0, KEY_MINUS),
--	KEY(6, 1, KEY_0),
--	KEY(6, 2, KEY_O),
--	KEY(6, 3, KEY_I),
--	KEY(6, 4, KEY_L),
--	KEY(6, 5, KEY_K),
--	KEY(6, 6, KEY_COMMA),
--	KEY(6, 7, KEY_M),
--
--	KEY(7, 1, KEY_EQUAL),
--	KEY(7, 2, KEY_RIGHTBRACE),
--	KEY(7, 3, KEY_ENTER),
--	KEY(7, 7, KEY_MENU),
--
--	KEY(8, 4, KEY_RIGHTSHIFT),
--	KEY(8, 5, KEY_LEFTSHIFT),
--
--	KEY(9, 5, KEY_RIGHTCTRL),
--	KEY(9, 7, KEY_LEFTCTRL),
--
--	KEY(11, 0, KEY_LEFTBRACE),
--	KEY(11, 1, KEY_P),
--	KEY(11, 2, KEY_APOSTROPHE),
--	KEY(11, 3, KEY_SEMICOLON),
--	KEY(11, 4, KEY_SLASH),
--	KEY(11, 5, KEY_DOT),
--
--	KEY(12, 0, KEY_F10),
--	KEY(12, 1, KEY_F9),
--	KEY(12, 2, KEY_BACKSPACE),
--	KEY(12, 3, KEY_3),
--	KEY(12, 4, KEY_2),
--	KEY(12, 5, KEY_UP),
--	KEY(12, 6, KEY_PRINT),
--	KEY(12, 7, KEY_PAUSE),
--
--	KEY(13, 0, KEY_INSERT),
--	KEY(13, 1, KEY_DELETE),
--	KEY(13, 3, KEY_PAGEUP),
--	KEY(13, 4, KEY_PAGEDOWN),
--	KEY(13, 5, KEY_RIGHT),
--	KEY(13, 6, KEY_DOWN),
--	KEY(13, 7, KEY_LEFT),
--
--	KEY(14, 0, KEY_F11),
--	KEY(14, 1, KEY_F12),
--	KEY(14, 2, KEY_F8),
--	KEY(14, 3, KEY_Q),
--	KEY(14, 4, KEY_F4),
--	KEY(14, 5, KEY_F3),
--	KEY(14, 6, KEY_1),
--	KEY(14, 7, KEY_F7),
--
--	KEY(15, 0, KEY_ESC),
--	KEY(15, 1, KEY_GRAVE),
--	KEY(15, 2, KEY_F5),
--	KEY(15, 3, KEY_TAB),
--	KEY(15, 4, KEY_F1),
--	KEY(15, 5, KEY_F2),
--	KEY(15, 6, KEY_CAPSLOCK),
--	KEY(15, 7, KEY_F6),
--
--	/* Software Handled Function Keys */
--	KEY(20, 0, KEY_KP7),
--
--	KEY(21, 0, KEY_KP9),
--	KEY(21, 1, KEY_KP8),
--	KEY(21, 2, KEY_KP4),
--	KEY(21, 4, KEY_KP1),
--
--	KEY(22, 1, KEY_KPSLASH),
--	KEY(22, 2, KEY_KP6),
--	KEY(22, 3, KEY_KP5),
--	KEY(22, 4, KEY_KP3),
--	KEY(22, 5, KEY_KP2),
--	KEY(22, 7, KEY_KP0),
--
--	KEY(27, 1, KEY_KPASTERISK),
--	KEY(27, 3, KEY_KPMINUS),
--	KEY(27, 4, KEY_KPPLUS),
--	KEY(27, 5, KEY_KPDOT),
--
--	KEY(28, 5, KEY_VOLUMEUP),
--
--	KEY(29, 3, KEY_HOME),
--	KEY(29, 4, KEY_END),
--	KEY(29, 5, KEY_BRIGHTNESSDOWN),
--	KEY(29, 6, KEY_VOLUMEDOWN),
--	KEY(29, 7, KEY_BRIGHTNESSUP),
--
--	KEY(30, 0, KEY_NUMLOCK),
--	KEY(30, 1, KEY_SCROLLLOCK),
--	KEY(30, 2, KEY_MUTE),
--
--	KEY(31, 4, KEY_HELP),
--};
--
--static const
--struct matrix_keymap_data tegra_kbc_default_keymap_data = {
--	.keymap		= tegra_kbc_default_keymap,
--	.keymap_size	= ARRAY_SIZE(tegra_kbc_default_keymap),
--};
--
- static void tegra_kbc_report_released_keys(struct input_dev *input,
- 					   unsigned short old_keycodes[],
- 					   unsigned int old_num_keys,
-@@ -703,26 +562,13 @@ static int tegra_kbd_setup_keymap(struct tegra_kbc *kbc)
- 	const struct tegra_kbc_platform_data *pdata = kbc->pdata;
- 	const struct matrix_keymap_data *keymap_data = pdata->keymap_data;
- 	unsigned int keymap_rows = KBC_MAX_KEY;
--	int retval;
+ static int tegra_pinctrl_dt_subnode_to_map(struct device *dev,
+@@ -450,6 +452,12 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
+ 		*bit = g->ioreset_bit;
+ 		*width = 1;
+ 		break;
++	case TEGRA_PINCONF_PARAM_RCV_SEL:
++		*bank = g->rcv_sel_bank;
++		*reg = g->rcv_sel_reg;
++		*bit = g->rcv_sel_bit;
++		*width = 1;
++		break;
+ 	case TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE:
+ 		*bank = g->drv_bank;
+ 		*reg = g->drv_reg;
+@@ -492,6 +500,12 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
+ 		*bit = g->slwr_bit;
+ 		*width = g->slwr_width;
+ 		break;
++	case TEGRA_PINCONF_PARAM_DRIVE_TYPE:
++		*bank = g->drvtype_bank;
++		*reg = g->drvtype_reg;
++		*bit = g->drvtype_bit;
++		*width = 2;
++		break;
+ 	default:
+ 		dev_err(pmx->dev, "Invalid config param %04x\n", param);
+ 		return -ENOTSUPP;
+diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+index 62e3809..817f706 100644
+--- a/drivers/pinctrl/pinctrl-tegra.h
++++ b/drivers/pinctrl/pinctrl-tegra.h
+@@ -30,6 +30,8 @@ enum tegra_pinconf_param {
+ 	/* argument: Boolean */
+ 	TEGRA_PINCONF_PARAM_IORESET,
+ 	/* argument: Boolean */
++	TEGRA_PINCONF_PARAM_RCV_SEL,
++	/* argument: Boolean */
+ 	TEGRA_PINCONF_PARAM_HIGH_SPEED_MODE,
+ 	/* argument: Boolean */
+ 	TEGRA_PINCONF_PARAM_SCHMITT,
+@@ -43,6 +45,8 @@ enum tegra_pinconf_param {
+ 	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING,
+ 	/* argument: Integer, range is HW-dependant */
+ 	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING,
++	/* argument: Integer, range is HW-dependant */
++	TEGRA_PINCONF_PARAM_DRIVE_TYPE,
+ };
  
- 	if (keymap_data && pdata->use_fn_map)
- 		keymap_rows *= 2;
+ enum tegra_pinconf_pull {
+@@ -95,6 +99,9 @@ struct tegra_function {
+  * @ioreset_reg:	IO reset register offset. -1 if unsupported.
+  * @ioreset_bank:	IO reset register bank. 0 if unsupported.
+  * @ioreset_bit:	IO reset register bit. 0 if unsupported.
++ * @rcv_sel_reg:	Receiver select offset. -1 if unsupported.
++ * @rcv_sel_bank:	Receiver select bank. 0 if unsupported.
++ * @rcv_sel_bit:	Receiver select bit. 0 if unsupported.
+  * @drv_reg:		Drive fields register offset. -1 if unsupported.
+  *			This register contains the hsm, schmitt, lpmd, drvdn,
+  *			drvup, slwr, and slwf parameters.
+@@ -110,6 +117,9 @@ struct tegra_function {
+  * @slwr_width:		Slew Rising field width. 0 if unsupported.
+  * @slwf_bit:		Slew Falling register bit. 0 if unsupported.
+  * @slwf_width:		Slew Falling field width. 0 if unsupported.
++ * @drvtype_reg:	Drive type fields register offset. -1 if unsupported.
++ * @drvtype_bank:	Drive type fields register bank. 0 if unsupported.
++ * @drvtype_bit:	Drive type register bit. 0 if unsupported.
+  *
+  * A representation of a group of pins (possibly just one pin) in the Tegra
+  * pin controller. Each group allows some parameter or parameters to be
+@@ -131,15 +141,19 @@ struct tegra_pingroup {
+ 	s16 odrain_reg;
+ 	s16 lock_reg;
+ 	s16 ioreset_reg;
++	s16 rcv_sel_reg;
+ 	s16 drv_reg;
++	s16 drvtype_reg;
+ 	u32 mux_bank:2;
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+ 	u32 einput_bank:2;
+ 	u32 odrain_bank:2;
+ 	u32 ioreset_bank:2;
++	u32 rcv_sel_bank:2;
+ 	u32 lock_bank:2;
+ 	u32 drv_bank:2;
++	u32 drvtype_bank:2;
+ 	u32 mux_bit:5;
+ 	u32 pupd_bit:5;
+ 	u32 tri_bit:5;
+@@ -147,6 +161,7 @@ struct tegra_pingroup {
+ 	u32 odrain_bit:5;
+ 	u32 lock_bit:5;
+ 	u32 ioreset_bit:5;
++	u32 rcv_sel_bit:5;
+ 	u32 hsm_bit:5;
+ 	u32 schmitt_bit:5;
+ 	u32 lpmd_bit:5;
+@@ -154,6 +169,7 @@ struct tegra_pingroup {
+ 	u32 drvup_bit:5;
+ 	u32 slwr_bit:5;
+ 	u32 slwf_bit:5;
++	u32 drvtype_bit:5;
+ 	u32 drvdn_width:6;
+ 	u32 drvup_width:6;
+ 	u32 slwr_width:6;
+diff --git a/drivers/pinctrl/pinctrl-tegra20.c b/drivers/pinctrl/pinctrl-tegra20.c
+index e848189..fcfb7d0 100644
+--- a/drivers/pinctrl/pinctrl-tegra20.c
++++ b/drivers/pinctrl/pinctrl-tegra20.c
+@@ -2624,7 +2624,9 @@ static const struct tegra_function tegra20_functions[] = {
+ 		.odrain_reg = -1,				\
+ 		.lock_reg = -1,					\
+ 		.ioreset_reg = -1,				\
++		.rcv_sel_reg = -1,				\
+ 		.drv_reg = -1,					\
++		.drvtype_reg = -1,				\
+ 	}
  
--	retval = matrix_keypad_build_keymap(keymap_data, NULL,
-+	return matrix_keypad_build_keymap(keymap_data, NULL,
- 					    keymap_rows, KBC_MAX_COL,
- 					    kbc->keycode, kbc->idev);
--	if (retval == -ENOSYS || retval == -ENOENT) {
--		/*
--		 * If there is no OF support in kernel or keymap
--		 * property is missing, use default keymap.
--		 */
--		retval = matrix_keypad_build_keymap(
--					&tegra_kbc_default_keymap_data, NULL,
--					keymap_rows, KBC_MAX_COL,
--					kbc->keycode, kbc->idev);
--	}
--
--	return retval;
- }
+ /* Pin groups with only pull up and pull down control */
+@@ -2642,7 +2644,9 @@ static const struct tegra_function tegra20_functions[] = {
+ 		.odrain_reg = -1,				\
+ 		.lock_reg = -1,					\
+ 		.ioreset_reg = -1,				\
++		.rcv_sel_reg = -1,				\
+ 		.drv_reg = -1,					\
++		.drvtype_reg = -1,				\
+ 	}
  
- static int tegra_kbc_probe(struct platform_device *pdev)
+ /* Pin groups for drive strength registers (configurable version) */
+@@ -2660,6 +2664,7 @@ static const struct tegra_function tegra20_functions[] = {
+ 		.odrain_reg = -1,				\
+ 		.lock_reg = -1,					\
+ 		.ioreset_reg = -1,				\
++		.rcv_sel_reg = -1,				\
+ 		.drv_reg = ((r) - PINGROUP_REG_A),		\
+ 		.drv_bank = 3,					\
+ 		.hsm_bit = hsm_b,				\
+@@ -2673,6 +2678,7 @@ static const struct tegra_function tegra20_functions[] = {
+ 		.slwr_width = slwr_w,				\
+ 		.slwf_bit = slwf_b,				\
+ 		.slwf_width = slwf_w,				\
++		.drvtype_reg = -1,				\
+ 	}
+ 
+ /* Pin groups for drive strength registers (simple version) */
+diff --git a/drivers/pinctrl/pinctrl-tegra30.c b/drivers/pinctrl/pinctrl-tegra30.c
+index 9ad87ea..2300deb 100644
+--- a/drivers/pinctrl/pinctrl-tegra30.c
++++ b/drivers/pinctrl/pinctrl-tegra30.c
+@@ -3384,7 +3384,9 @@ static const struct tegra_function tegra30_functions[] = {
+ 		.ioreset_reg = PINGROUP_REG_##ior(r),		\
+ 		.ioreset_bank = 1,				\
+ 		.ioreset_bit = 8,				\
++		.rcv_sel_reg = -1,				\
+ 		.drv_reg = -1,					\
++		.drvtype_reg = -1,				\
+ 	}
+ 
+ #define DRV_PINGROUP(pg_name, r, hsm_b, schmitt_b, lpmd_b,	\
+@@ -3401,6 +3403,7 @@ static const struct tegra_function tegra30_functions[] = {
+ 		.odrain_reg = -1,				\
+ 		.lock_reg = -1,					\
+ 		.ioreset_reg = -1,				\
++		.rcv_sel_reg = -1,				\
+ 		.drv_reg = ((r) - DRV_PINGROUP_REG_A),		\
+ 		.drv_bank = 0,					\
+ 		.hsm_bit = hsm_b,				\
+@@ -3414,6 +3417,7 @@ static const struct tegra_function tegra30_functions[] = {
+ 		.slwr_width = slwr_w,				\
+ 		.slwf_bit = slwf_b,				\
+ 		.slwf_width = slwf_w,				\
++		.drvtype_reg = -1,				\
+ 	}
+ 
+ static const struct tegra_pingroup tegra30_groups[] = {
 -- 
 1.7.1.1
