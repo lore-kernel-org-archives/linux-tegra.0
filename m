@@ -1,81 +1,76 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
-Date: Mon, 7 Jan 2013 10:20:03 +0200
-Message-ID: <50EA8533.3020109@nvidia.com>
-References: <50BF345A.8050201@nvidia.com> <20121205120429.GA29943@avionic-0098.adnet.avionic-design.de> <50C5CAB5.3040000@nvidia.com> <20121212160829.GA30278@avionic-0098.adnet.avionic-design.de> <50C99677.6090306@nvidia.com> <20121213085750.GA14740@avionic-0098.adnet.avionic-design.de> <50CA175F.60002@wwwdotorg.org> <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D42486.7080901@nvidia.com> <50D4D25B.7030506@wwwdotorg.org> <50E6AA69.4030001@nvidia.com> <50E73AA2.7090500@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 01/11] clk: tegra: Add tegra specific clocks
+Date: Mon, 7 Jan 2013 14:13:47 +0200
+Message-ID: <20130107121347.GG26066@tbergstrom-lnx.Nvidia.com>
+References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com>
+ <1356619644-18565-2-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50E73AA2.7090500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1356619644-18565-2-git-send-email-pgaikwad@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.01.2013 22:25, Stephen Warren wrote:
-> On 01/04/2013 03:09 AM, Terje Bergstr=C3=B6m wrote:
-> ...
->> I think we have now two ways to go forward with cons and pros:
->>  1) Keep host1x and tegra-drm as separate driver
->>    + Code almost done
->>    - we need dummy device and dummy driver
->>    - extra code and API when host1x creates dummy device and its pas=
-sed
->> to tegra-drm
->=20
-> Just to play devil's advocate:
->=20
-> I suspect that's only a few lines of code.
+On Thu, Dec 27, 2012 at 03:47:14PM +0100, Prashant Gaikwad wrote:
+> Add tegra specific clocks, pll, pll_out, peripheral,
+> frac_divider, super.
+> 
 
-Yes, that's true. There's some overhead, but there's not too many actua=
-l
-code lines.
+...
 
->>    - tegra-drm device would need to be a child of host1x device. Hav=
-ing
->> virtual and real devices as host1x children sounds weird.
->=20
-> And I doubt that would cause problems.
+> diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+> new file mode 100644
+> index 0000000..60a117b
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-pll-out.c
+> @@ -0,0 +1,124 @@
+> +/*
+> + * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/io.h>
+> +#include <linux/err.h>
+> +#include <linux/delay.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +
+> +#include "clk.h"
+> +
+> +#define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
+> +
+> +#define pll_out_enb(p) (BIT(p->enb_bit_idx))
+> +#define pll_out_rst(p) (BIT(p->rst_bit_idx))
+> +
 
-True. It could become a problem if the driver just assumed that all
-host1x children are actual hardware, but we could avoid that.
+Given that these 2 are always consecutive bits, wouldn't it make more sense to
+specify the bit offset once and then add 1 for the enable bit?
 
->>  2) Merge host1x and tegra-drm into one module. drm is a subcomponen=
-t,
->> and whatever other personalities we wish would also be subcomponents=
- of
->> host1x. host1x calls tegra-drm directly to handle preparation for dr=
-m
->> initialization. As they're in the same module, circular dependency i=
-s ok.
->>    + Simpler conceptually (no dummy device/driver)
->>    + Less code
->>    - Proposal doesn't yet exist
->=20
-> But that said, I agree this approach would be very reasonable; it see=
-ms
-> to me that host1x really is the main HW behind a DRM driver or a V4L2
-> driver or ... As such, it seems quite reasonable for a single struct
-> device to exist that represents host1x, and for the driver for that
-> device to register both a DRM and a V4L2 driver etc. The code could
-> physically be organized into separate modules, and under different
-> Kconfig options for configurability etc.
->=20
-> But either way, I'll let you (Thierry and Terje) work out which way t=
-o go.
+Cheers,
 
-If we want separate modules, we'd need the dummy device & dummy driver
-binding between them. We could also just put them in the same module.
-It'd make DRM a requirement to host1x driver, but given the current
-structure, I think that'd be reasonable. We could later make it more
-configurable if needed. Does this now make tegra-drm and host1x too
-dependent on each other? I'm not sure.
-
-I also like the fact that we don't have to export APIs to include, but
-we can (if we so choose) keep all tegra-drm-host1x-APIs in local header
-files. As we have noted, the two drivers are tightly interconnected,
-changing the APIs is easier if we can just work on the same directory
-hierarchy.
-
-Terje
+Peter.
