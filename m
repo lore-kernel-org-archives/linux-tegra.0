@@ -1,76 +1,47 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 01/11] clk: tegra: Add tegra specific clocks
-Date: Mon, 7 Jan 2013 14:13:47 +0200
-Message-ID: <20130107121347.GG26066@tbergstrom-lnx.Nvidia.com>
-References: <1356619644-18565-1-git-send-email-pgaikwad@nvidia.com>
- <1356619644-18565-2-git-send-email-pgaikwad@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] dma: tegra: implement flags parameters for cyclic transfer
+Date: Mon, 7 Jan 2013 19:22:07 +0530
+Message-ID: <50EAD307.9040604@nvidia.com>
+References: <1355924434-7930-1-git-send-email-ldewangan@nvidia.com> <50D1F33D.1050709@wwwdotorg.org> <50D2ABF7.8090308@nvidia.com> <50D340E1.7040600@wwwdotorg.org> <50D3E44F.4060007@nvidia.com> <50D4CC62.6080304@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1356619644-18565-2-git-send-email-pgaikwad@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50D4CC62.6080304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "djbw-b10kYP2dOMg@public.gmane.org" <djbw-b10kYP2dOMg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 27, 2012 at 03:47:14PM +0100, Prashant Gaikwad wrote:
-> Add tegra specific clocks, pll, pll_out, peripheral,
-> frac_divider, super.
-> 
+On Saturday 22 December 2012 02:23 AM, Stephen Warren wrote:
+> On 12/20/2012 09:23 PM, Laxman Dewangan wrote:
+>> On Thursday 20 December 2012 10:16 PM, Stephen Warren wrote:
+>>> On 12/19/2012 11:11 PM, Laxman Dewangan wrote:
+>>>> On Wednesday 19 December 2012 10:32 PM, Stephen Warren wrote:
+>>>>> On 12/19/2012 06:40 AM, Laxman Dewangan wrote:
+>>>>>> The flag parameter is added in the cyclic transfer request.
+>>>>>> Use the flag option of:
+>>>>>> - DMA_PREP_INTERRUPT for enabling interrupt.
+>>>>>> - DMA_CTRL_ACK for deciding whether ack is requred or not for
+>>>>>>      descriptor.
+>>>>> Do the relevant drivers that use Tegra's DMA engine already set flags
+>>>>> correctly, so that this change won't cause any regressions?
+>>>> Currently, the sound soc driver uses the cyclic mode of dma transfer and
+>>>> it has already enable the proper flags. This was done recently after
+>>>> adding flags in cyclic api.
+>>>> Also, there was bug in our dma driver for not setting DMA_CTRL_ACK by
+>>>> default for cyclic case.
+>>>> This will fix the issue.
+>>> OK. I assume "This was done recently after adding flags in cyclic api."
+>>> was a patch that went into 3.8?  So, this patch is a bug-fix that should
+>>> be included in 3.8 then?
+>> I can see this in Linux 3.7 tag.
+> So I assume that means that when Vinod applies *this* patch, it should
+> be Cc: stable for 3.7 and up?
+>
+>> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=history;f=drivers/dma/tegra20-apb-dma.c;h=528c62dd4b00e1b52928ff66f3a54e7ae206680f;hb=29594404d7fe73cd80eaa4ee8c43dcc53970c60e
+> I don't think that points where you want; it just shows a log of 3.7 for me.
 
-...
-
-> diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
-> new file mode 100644
-> index 0000000..60a117b
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-pll-out.c
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/io.h>
-> +#include <linux/err.h>
-> +#include <linux/delay.h>
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +
-> +#include "clk.h"
-> +
-> +#define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
-> +
-> +#define pll_out_enb(p) (BIT(p->enb_bit_idx))
-> +#define pll_out_rst(p) (BIT(p->rst_bit_idx))
-> +
-
-Given that these 2 are always consecutive bits, wouldn't it make more sense to
-specify the bit offset once and then add 1 for the enable bit?
-
-Cheers,
-
-Peter.
+Oops, I just wanted to say that 3.7 branch and history of 
+drivers/dma/tegra20-apb-dma.c shows the above change of inclusion of flags.
+Seems link is messed up.
