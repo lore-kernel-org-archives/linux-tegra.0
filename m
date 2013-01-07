@@ -1,58 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
- allocation
-Date: Sun, 6 Jan 2013 11:57:48 -0800
-Message-ID: <20130106195748.GA28212@core.coreip.homeip.net>
-References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
- <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
- <20130105080658.GA1315@core.coreip.homeip.net>
- <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra30: make the wait time of CPU power up to proportional to HZ
+Date: Mon, 7 Jan 2013 10:56:14 +0800
+Message-ID: <1357527374-31055-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
-Sender: linux-input-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
-> On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wrote:
-> > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan wrote:
-> [...]
-> > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct platform_device *pdev)
-> > >  	spin_lock_init(&kbc->lock);
-> > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long)kbc);
-> > >  
-> > > -	res = request_mem_region(res->start, resource_size(res), pdev->name);
-> > > -	if (!res) {
-> > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
-> > > -		err = -EBUSY;
-> > > -		goto err_free_mem;
-> > > -	}
-> > > -
-> > > -	kbc->mmio = ioremap(res->start, resource_size(res));
-> > > +	kbc->mmio = devm_request_and_ioremap(&pdev->dev, res);
-> > >  	if (!kbc->mmio) {
-> > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
-> > > -		err = -ENXIO;
-> > > -		goto err_free_mem_region;
-> > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap address\n");
-> > > +		return -EADDRNOTAVAIL;
-> > 
-> > Erm, no, -EBUSY please.
-> 
-> EADDRNOTAVAIL is the canonical error for devm_request_and_ioremap()
-> failure. The kerneldoc comment in lib/devres.c even gives a short
-> example that uses this error code.
+It would rather to use the API of time_to_jiffies than a constant number
+of jiffies for the wait time of CPU power up.
 
-I am sorry, but I do not consider a function that was added a little
-over a year ago as a canon. If you look at the uses of EADDRNOTAVAIL it
-is used predominantly in networking code to indicate that attempted
-_network_ address is not available.
+Based on the work by:
+Sang-Hun Lee <sanlee-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks.
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/platsmp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index 60daf9f..6867030 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -90,7 +90,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
+ 	 * next time around.
+ 	 */
+ 	if (cpumask_test_cpu(cpu, &tegra_cpu_init_mask)) {
+-		timeout = jiffies + 5*HZ;
++		timeout = jiffies + msecs_to_jiffies(50);
+ 		do {
+ 			if (!tegra_powergate_is_powered(pwrgateid))
+ 				goto remove_clamps;
+@@ -110,7 +110,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
+ 			return ret;
+ 
+ 		/* Wait for the power to come up. */
+-		timeout = jiffies + 10*HZ;
++		timeout = jiffies + msecs_to_jiffies(100);
+ 		while (tegra_powergate_is_powered(pwrgateid)) {
+ 			if (time_after(jiffies, timeout))
+ 				return -ETIMEDOUT;
 -- 
-Dmitry
+1.8.0.3
