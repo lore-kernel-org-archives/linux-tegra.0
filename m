@@ -1,65 +1,33 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
-Date: Tue, 08 Jan 2013 15:41:42 -0700
-Message-ID: <50ECA0A6.4090307@wwwdotorg.org>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com> <1357649263-1098-6-git-send-email-hdoyu@nvidia.com> <50EC444B.5060206@arm.com>
+Subject: Re: [v2 6/9] ARM: dt: tegra114: Add new SoC base, Tegra 114 SoC
+Date: Tue, 08 Jan 2013 15:49:27 -0700
+Message-ID: <50ECA277.5050907@wwwdotorg.org>
+References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com> <1357649263-1098-7-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50EC444B.5060206-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1357649263-1098-7-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/08/2013 09:07 AM, Marc Zyngier wrote:
-> On 08/01/13 12:47, Hiroshi Doyu wrote:
->> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
->> timer than TMR0. If it's available, it will be used for clock source
->> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
->> necessary for clock event.
+On 01/08/2013 05:47 AM, Hiroshi Doyu wrote:
+> Initial support for Tegra 114 SoC. This is expected to be included in
+> the board DTS files, Tegra 114 SoC based evaluation board family.
 
->> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
 
->> +/* FIXME: only secure mode is supported. */
-> 
-> And this is a bug, as far as I'm concerned.
-> 
->> +static int tegra_arch_timer_init(void)
+> +	gic: interrupt-controller {
+> +		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+> +		reg = <0x50041000 0x1000
+> +		       0x50042000 0x1000>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <3>;
+> +	};
 
->> +	clk = clk_get_sys("clk_m", NULL);
->> +	if (IS_ERR(clk)) {
->> +		freq = 12000000;
->> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
->> +	} else {
->> +		freq = clk_get_rate(clk);
->> +		clk_put(clk);
->> +	}
->> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
->> +
->> +	/* CNTFRQ */
->> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
->> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
->> +	BUG_ON(val != freq);
-> 
-> No, not again! Like I said last year, this won't fly. So instead of
-> trying to work around a broken firmware, let's do the right thing.
+Last time around, Marc Zyngier asked:
 
-OK, so I understand you want to firmware/bootloader/... to write the
-value into that register instead, so this all works in non-secure mode
-(which sounds like a fine objection), but ...
-
->> +
->> +	val = readl_relaxed(tsc_base + TSC_CNTCR);
->> +	val |= TSC_CNTCR_ENABLE | TSC_CNTCR_HDBG;
->> +	writel_relaxed(val, tsc_base + TSC_CNTCR);
->> +
->> +	err = arch_timer_of_register();
-> 
-> What about adding an optional property to the binding, pointing to the
-> required clock? That would solve the above problem in a sensible way,
-> and your kernel wouldn't go bust.
-
-... I'm not sure how the comment about adding a clock to the DT binding
-is related to that. Sorry for not following the plot!
+> If this is indeed an A15 GIC, how about adding the GICH and GICV
+> regions, as well as the VGIC maintenance interrupt?
