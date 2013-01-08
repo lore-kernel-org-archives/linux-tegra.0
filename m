@@ -1,126 +1,159 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 9/9] ARM: tegra: Add initial support for Tegra 114 SoC.
-Date: Tue, 8 Jan 2013 14:47:43 +0200
-Message-ID: <1357649263-1098-10-git-send-email-hdoyu@nvidia.com>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
+Date: Tue, 8 Jan 2013 18:49:15 +0530
+Message-ID: <50EC1CD3.3070308@nvidia.com>
+References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357649263-1098-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50EB6403.5090300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add new Tegra 114 SoC support.
+On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
+> On 01/04/2013 10:22 AM, Stephen Warren wrote:
+>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
+>>> This patchset does following:
+>>> 1. Decompose single tegra clock structure into multiple clocks.
+>>> 2. Try to use standard clock types supported by common clock framework.
+>>> 3. Use dynamic initialization.
+>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
+>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
+>>> 6. Remove all legacy clock code from mach-tegra.
+>> I think there are bugs here. I applied all your clock patches on top of
+>> Tegra's for-next (see list below), and found that the following don't
+>> work on Springbank:
+>>
+>> * HDMI display
+>> * Audio playback
+>> * WiFi
+> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@ instead...)
+>
+> Prashant, some updated testing results based off the "dev/ccf" branch
+> you sent me on our internal git server:
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig             |   10 +++++++
- arch/arm/mach-tegra/Makefile            |    1 +
- arch/arm/mach-tegra/board-dt-tegra114.c |   48 +++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/common.c            |    1 +
- 4 files changed, 60 insertions(+)
- create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
+Stephen, thanks a lot for the extensive testing and fix!!
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index dd8ff7b..f2f9be1 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -61,6 +61,16 @@ config ARCH_TEGRA_3x_SOC
- 	  Support for NVIDIA Tegra T30 processor family, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
- 
-+config ARCH_TEGRA_114_SOC
-+	bool "Enable support for Tegra114 family"
-+	select ARM_GIC
-+	select CPU_V7
-+	select ARM_L1_CACHE_SHIFT_6
-+	select ARM_ARCH_TIMER
-+	help
-+	  Support for NVIDIA Tegra T114 processor family, based on the
-+	  ARM CortexA15MP CPU
-+
- config TEGRA_PCI
- 	bool "PCI Express support"
- 	depends on ARCH_TEGRA_2x_SOC
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 8a108ef..3d6f645 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
- 
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-dt-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
-+obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= board-dt-tegra114.o
- 
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
- 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra114.c b/arch/arm/mach-tegra/board-dt-tegra114.c
-new file mode 100644
-index 0000000..4c36dd0
---- /dev/null
-+++ b/arch/arm/mach-tegra/board-dt-tegra114.c
-@@ -0,0 +1,48 @@
-+/*
-+ * NVIDIA Tegra114 device tree board support
-+ *
-+ * Copyright (C) 2012 NVIDIA Corporation
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/clocksource.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/hardware/gic.h>
-+
-+#include "board.h"
-+#include "common.h"
-+
-+static void __init tegra114_dt_init(void)
-+{
-+	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-+}
-+
-+static const char * const tegra114_dt_board_compat[] = {
-+	"nvidia,tegra114",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
-+	.smp		= smp_ops(tegra_smp_ops),
-+	.map_io		= tegra_map_common_io,
-+	.init_early	= tegra30_init_early,
-+	.init_irq	= tegra_dt_init_irq,
-+	.handle_irq	= gic_handle_irq,
-+	.init_time	= clocksource_of_init,
-+	.init_machine	= tegra114_dt_init,
-+	.init_late	= tegra_init_late,
-+	.restart	= tegra_assert_system_reset,
-+	.dt_compat	= tegra114_dt_board_compat,
-+MACHINE_END
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index d54cfc5..debcaf4 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -59,6 +59,7 @@ u32 tegra_uart_config[4] = {
- #ifdef CONFIG_OF
- static const struct of_device_id tegra_dt_irq_match[] __initconst = {
- 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init },
-+	{ .compatible = "arm,cortex-a15-gic", .data = gic_of_init },
- 	{ }
- };
- 
--- 
-1.7.9.5
+> The following work, on both Tegra20/30 unless otherwise specified:
+>
+> * MMC/SD, I2C, audio, HDMI display (Tegra20 only; on Springbank), USB
+> (Tegra20 only; not implemented on Tegra30).
+>
+> I didn't test the following yet:
+>
+> * LCD display on Tegra20.
+>
+> The following are broken:
+>
+> 1)
+>
+> SPI on either chip. This is because the SPI drivers call clk_get() with
+> a specific clock name, and the DT patches you created don't have a
+> clk-names property for any of the SPI nodes, hence this fails. However,
+> since there's only a single clock to the SPI controllers, I think the
+> drivers should be fixed not to request a specific clock name. The
+> following makes SPI work on TrimSlice (Tegra20) and Cardhu (Tegra30):
+>
+>> diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
+>> index 02feaa5..e5dce91 100644
+>> --- a/drivers/spi/spi-tegra20-sflash.c
+>> +++ b/drivers/spi/spi-tegra20-sflash.c
+>> @@ -525,7 +525,7 @@ static int tegra_sflash_probe(struct platform_device *pdev)
+>>                  goto exit_free_master;
+>>          }
+>>   
+>> -       tsd->clk = devm_clk_get(&pdev->dev, "spi");
+>> +       tsd->clk = devm_clk_get(&pdev->dev, NULL);
+>>          if (IS_ERR(tsd->clk)) {
+>>                  dev_err(&pdev->dev, "can not get clock\n");
+>>                  ret = PTR_ERR(tsd->clk);
+>> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+>> index fa208a5..e255e7a 100644
+>> --- a/drivers/spi/spi-tegra20-slink.c
+>> +++ b/drivers/spi/spi-tegra20-slink.c
+>> @@ -1191,7 +1191,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+>>                  goto exit_free_master;
+>>          }
+>>   
+>> -       tspi->clk = devm_clk_get(&pdev->dev, "slink");
+>> +       tspi->clk = devm_clk_get(&pdev->dev, NULL);
+>>          if (IS_ERR(tspi->clk)) {
+>>                  dev_err(&pdev->dev, "can not get clock\n");
+>>                  ret = PTR_ERR(tspi->clk);
+> I think you should include that in your series before the patches which
+> add clocks into the DT.
+
+Included.
+
+> 2)
+>
+> HDMI and LCD display are both broken on Cardhu/Tegra30.
+>
+> I found that the DT lists the HDMI clock's parent as pll_d2_out0, yet
+> the clock driver lists pll_d2 as a valid parent. I think the following
+> patch fixes this correctly?
+>
+>> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+>> index a52b80c..661b9e1 100644
+>> --- a/drivers/clk/tegra/clk-tegra30.c
+>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>> @@ -1385,8 +1385,8 @@ static const char *mux_pllpc_clkm_clk32k[] = { "pll_p", "pll_c", "clk_m",
+>>   static const char *mux_pllmcpa[] = { "pll_m", "pll_c", "pll_p", "pll_a" };
+>>   static const char *mux_pllpdc_clkm[] = { "pll_p", "pll_d", "pll_c", "clk_m" };
+>>   static const char *mux_pllp_clkm[] = { "pll_p", "unused", "unused", "clk_m" };
+>> -static const char *mux_pllpmdacd2_clkm[] = { "pll_p", "pll_m", "pll_d",
+>> -                                            "pll_a", "pll_c", "pll_d2",
+>> +static const char *mux_pllpmdacd2_clkm[] = { "pll_p", "pll_m", "pll_d_out0",
+>> +                                            "pll_a", "pll_c", "pll_d2_out0",
+>>                                               "clk_m" };
+>>   static const char *mux_plla_clk32k_pllp_clkm_plle[] = { "pll_a_out0",
+>>                                                          "clk_32k", "pll_p",
+> (are there any other similar problems in the code?)
+
+Included fix and reviewed code for more instances. There were some.
+
+> After that, if I comment out:
+>
+> late_initcall(clk_disable_unused);
+>
+> ... then either HDMI or LCD output on Cardhu work OK (or rather in
+> HDMI's case, as well as can be expected due incorrect memory controller
+> programming and hence display underflow at the moment). I haven't had a
+> chance to investigate why that initcall is causing problems (the problem
+> being a HW hang during boot in the HDMI case, and simply no visible
+> output in the LCD case, but the system otherwise works OK).
+>
+> For reference, the patches to enable LCD/HDMI on Cardhu can be found in:
+>
+> git://nv-tegra.nvidia.com/user/swarren/linux-2.6 linux-next_common
+
+Not able to test LCD/HDMI even using above branch. Not sure what is missing.
+In kernel log I can see that Tegra DRM is initialized properly. Tried 
+"dmesg > /dev/fb0".
+
+> 3)
+>
+> WiFi doesn't work on either chip (Springbank or Cardhu, but I expect
+> Ventana has the same issue). I haven't been able to investigate why yet.
+
+Probable fix included, can not test.
+
+> 4)
+>
+> I noticed that the PCIe driver (on Trimslice/Tegra20) was complaining
+> about clk_get() failing or similar. I haven't been able to investigate
+> why yet.
+
+Fix included, pcie_xclk clock was missing
+
+> For reference, all of these problems are all introduced by your commit
+> "arm: tegra: Migrate to new clock code"; everything works immediately
+> before that.
+>
+> Let me know if you find any solutions to these; I guess just update your
+> branch. Otherwise, I'll keep investigating tomorrow.
+
+I have updated the internal branch with all the above mentioned fixes.
