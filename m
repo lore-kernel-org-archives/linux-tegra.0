@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 6/9] ARM: dt: tegra114: Add new SoC base, Tegra 114 SoC
-Date: Tue, 8 Jan 2013 14:47:40 +0200
-Message-ID: <1357649263-1098-7-git-send-email-hdoyu@nvidia.com>
+Subject: [v2 4/9] clocksource: tegra: Reorganize funcs by clock functionarities
+Date: Tue, 8 Jan 2013 14:47:38 +0200
+Message-ID: <1357649263-1098-5-git-send-email-hdoyu@nvidia.com>
 References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,138 +12,232 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Initial support for Tegra 114 SoC. This is expected to be included in
-the board DTS files, Tegra 114 SoC based evaluation board family.
+Relocate functions by clock functionarities{RTC, TMR}. Also created
+some new functions as helper.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114.dtsi |  118 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra114.dtsi
+ drivers/clocksource/tegra20_timer.c |  160 +++++++++++++++++++----------------
+ 1 file changed, 86 insertions(+), 74 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-new file mode 100644
-index 0000000..b7ba7c3
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -0,0 +1,118 @@
-+/include/ "skeleton.dtsi"
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 5bc1429..1d25de8 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -35,6 +35,83 @@
+ #define RTC_SHADOW_SECONDS     0x0c
+ #define RTC_MILLISECONDS       0x10
+ 
++static void __iomem *rtc_base;
++static struct timespec persistent_ts;
++static u64 persistent_ms, last_persistent_ms;
 +
-+/ {
-+	compatible = "nvidia,tegra114";
-+	interrupt-parent = <&gic>;
++/*
++ * tegra_rtc_read - Reads the Tegra RTC registers
++ * Care must be taken that this funciton is not called while the
++ * tegra_rtc driver could be executing to avoid race conditions
++ * on the RTC shadow register
++ */
++static u64 tegra_rtc_read_ms(void)
++{
++	u32 ms = readl(rtc_base + RTC_MILLISECONDS);
++	u32 s = readl(rtc_base + RTC_SHADOW_SECONDS);
++	return (u64)s * MSEC_PER_SEC + ms;
++}
 +
-+	gic: interrupt-controller {
-+		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
-+		reg = <0x50041000 0x1000
-+		       0x50042000 0x1000>;
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+	};
++/*
++ * tegra_read_persistent_clock -  Return time from a persistent clock.
++ *
++ * Reads the time from a source which isn't disabled during PM, the
++ * 32k sync timer.  Convert the cycles elapsed since last read into
++ * nsecs and adds to a monotonically increasing timespec.
++ * Care must be taken that this funciton is not called while the
++ * tegra_rtc driver could be executing to avoid race conditions
++ * on the RTC shadow register
++ */
++static void tegra_read_persistent_clock(struct timespec *ts)
++{
++	u64 delta;
++	struct timespec *tsp = &persistent_ts;
 +
-+	timer@60005000 {
-+		compatible = "nvidia,tegra114-timer", "nvidia,tegra20-timer";
-+		reg = <0x60005000 0x400>;
-+		interrupts = <0 0 0x04
-+			      0 1 0x04
-+			      0 41 0x04
-+			      0 42 0x04
-+			      0 121 0x04
-+			      0 122 0x04>;
-+	};
++	last_persistent_ms = persistent_ms;
++	persistent_ms = tegra_rtc_read_ms();
++	delta = persistent_ms - last_persistent_ms;
 +
-+	serial@70006000 {
-+		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <0 36 0x04>;
-+		status = "disabled";
-+	};
++	timespec_add_ns(tsp, delta * NSEC_PER_MSEC);
++	*ts = *tsp;
++}
 +
-+	serial@70006040 {
-+		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <0 37 0x04>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x100>;
-+		reg-shift = <2>;
-+		interrupts = <0 46 0x04>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x100>;
-+		reg-shift = <2>;
-+		interrupts = <0 90 0x04>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x100>;
-+		reg-shift = <2>;
-+		interrupts = <0 91 0x04>;
-+		status = "disabled";
-+	};
-+
-+	rtc {
-+		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
-+		reg = <0x7000e000 0x100>;
-+		interrupts = <0 2 0x04>;
-+	};
-+
-+	pmc {
-+		compatible = "nvidia,tegra114-pmc", "nvidia,tegra20-pmc";
-+		reg = <0x7000e400 0x400>;
-+	};
-+
-+	tsc {
-+		compatible = "nvidia,tegra114-tsc";
-+		reg = <0x700f0000 0x20000>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <2>;
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <3>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <1 13 0xf08>,
-+			     <1 14 0xf08>,
-+			     <1 11 0xf08>,
-+			     <1 10 0xf08>;
-+	};
++static const struct of_device_id rtc_match[] __initconst = {
++	{ .compatible = "nvidia,tegra20-rtc" },
++	{}
 +};
++
++static void __init tegra20_init_rtc(void)
++{
++	struct device_node *np;
++	struct clk *clk;
++
++	np = of_find_matching_node(NULL, rtc_match);
++	if (!np) {
++		pr_err("Failed to find RTC DT node\n");
++		BUG();
++	}
++
++	rtc_base = of_iomap(np, 0);
++	if (!rtc_base) {
++		pr_err("Can't map RTC registers");
++		BUG();
++	}
++
++	/*
++	 * rtc registers are used by read_persistent_clock, keep the rtc clock
++	 * enabled
++	 */
++	clk = clk_get_sys("rtc-tegra", NULL);
++	if (IS_ERR(clk))
++		pr_warn("Unable to get rtc-tegra clock\n");
++	else
++		clk_prepare_enable(clk);
++
++	of_node_put(np);
++
++	register_persistent_clock(NULL, tegra_read_persistent_clock);
++}
++
+ #define TIMERUS_CNTR_1US 0x10
+ #define TIMERUS_USEC_CFG 0x14
+ #define TIMERUS_CNTR_FREEZE 0x4c
+@@ -48,10 +125,6 @@
+ #define TIMER_PCR 0x4
+ 
+ static void __iomem *timer_reg_base;
+-static void __iomem *rtc_base;
+-
+-static struct timespec persistent_ts;
+-static u64 persistent_ms, last_persistent_ms;
+ 
+ #define timer_writel(value, reg) \
+ 	__raw_writel(value, timer_reg_base + (reg))
+@@ -103,46 +176,10 @@ static u32 notrace tegra_read_sched_clock(void)
+ 	return timer_readl(TIMERUS_CNTR_1US);
+ }
+ 
+-/*
+- * tegra_rtc_read - Reads the Tegra RTC registers
+- * Care must be taken that this funciton is not called while the
+- * tegra_rtc driver could be executing to avoid race conditions
+- * on the RTC shadow register
+- */
+-static u64 tegra_rtc_read_ms(void)
+-{
+-	u32 ms = readl(rtc_base + RTC_MILLISECONDS);
+-	u32 s = readl(rtc_base + RTC_SHADOW_SECONDS);
+-	return (u64)s * MSEC_PER_SEC + ms;
+-}
+-
+-/*
+- * tegra_read_persistent_clock -  Return time from a persistent clock.
+- *
+- * Reads the time from a source which isn't disabled during PM, the
+- * 32k sync timer.  Convert the cycles elapsed since last read into
+- * nsecs and adds to a monotonically increasing timespec.
+- * Care must be taken that this funciton is not called while the
+- * tegra_rtc driver could be executing to avoid race conditions
+- * on the RTC shadow register
+- */
+-static void tegra_read_persistent_clock(struct timespec *ts)
+-{
+-	u64 delta;
+-	struct timespec *tsp = &persistent_ts;
+-
+-	last_persistent_ms = persistent_ms;
+-	persistent_ms = tegra_rtc_read_ms();
+-	delta = persistent_ms - last_persistent_ms;
+-
+-	timespec_add_ns(tsp, delta * NSEC_PER_MSEC);
+-	*ts = *tsp;
+-}
+-
+ static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
+ {
+ 	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
+-	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
++	timer_writel(1 << 30, TIMER3_BASE + TIMER_PCR);
+ 	evt->event_handler(evt);
+ 	return IRQ_HANDLED;
+ }
+@@ -159,12 +196,7 @@ static const struct of_device_id timer_match[] __initconst = {
+ 	{}
+ };
+ 
+-static const struct of_device_id rtc_match[] __initconst = {
+-	{ .compatible = "nvidia,tegra20-rtc" },
+-	{}
+-};
+-
+-static void __init tegra20_init_timer(void)
++static void __init tegra20_init_tmr(void)
+ {
+ 	struct device_node *np;
+ 	struct clk *clk;
+@@ -200,30 +232,6 @@ static void __init tegra20_init_timer(void)
+ 
+ 	of_node_put(np);
+ 
+-	np = of_find_matching_node(NULL, rtc_match);
+-	if (!np) {
+-		pr_err("Failed to find RTC DT node\n");
+-		BUG();
+-	}
+-
+-	rtc_base = of_iomap(np, 0);
+-	if (!rtc_base) {
+-		pr_err("Can't map RTC registers");
+-		BUG();
+-	}
+-
+-	/*
+-	 * rtc registers are used by read_persistent_clock, keep the rtc clock
+-	 * enabled
+-	 */
+-	clk = clk_get_sys("rtc-tegra", NULL);
+-	if (IS_ERR(clk))
+-		pr_warn("Unable to get rtc-tegra clock\n");
+-	else
+-		clk_prepare_enable(clk);
+-
+-	of_node_put(np);
+-
+ 	switch (rate) {
+ 	case 12000000:
+ 		timer_writel(0x000b, TIMERUS_USEC_CFG);
+@@ -241,8 +249,6 @@ static void __init tegra20_init_timer(void)
+ 		WARN(1, "Unknown clock rate");
+ 	}
+ 
+-	setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
+-
+ 	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+ 		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
+ 		pr_err("Failed to register clocksource\n");
+@@ -263,10 +269,16 @@ static void __init tegra20_init_timer(void)
+ 	tegra_clockevent.cpumask = cpu_all_mask;
+ 	tegra_clockevent.irq = tegra_timer_irq.irq;
+ 	clockevents_register_device(&tegra_clockevent);
++}
++
++static void __init tegra20_init_timer(void)
++{
++	tegra20_init_tmr();
++	setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
++	tegra20_init_rtc();
+ #ifdef CONFIG_HAVE_ARM_TWD
+ 	twd_local_timer_of_register();
+ #endif
+-	register_persistent_clock(NULL, tegra_read_persistent_clock);
+ }
+ CLOCKSOURCE_OF_DECLARE(tegra20, "nvidia,tegra20-timer", tegra20_init_timer);
+ 
 -- 
 1.7.9.5
