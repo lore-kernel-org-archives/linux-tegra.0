@@ -1,20 +1,24 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
-	HAVE_ARM_SCU
-Date: Tue, 8 Jan 2013 14:26:51 +0000
-Message-ID: <20130108142651.GB3931@n2100.arm.linux.org.uk>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com> <1357649263-1098-4-git-send-email-hdoyu@nvidia.com>
+ HAVE_ARM_SCU
+Date: Tue, 8 Jan 2013 14:28:28 +0000
+Message-ID: <20130108142828.GD2718@e106331-lin.cambridge.arm.com>
+References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com>
+ <1357649263-1098-4-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
 In-Reply-To: <1357649263-1098-4-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 08, 2013 at 02:47:37PM +0200, Hiroshi Doyu wrote:
+Hello,
+
+On Tue, Jan 08, 2013 at 12:47:37PM +0000, Hiroshi Doyu wrote:
 > The method to detect the number of CPU cores on Cortex-A9 MPCore and
 > Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
 > information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
@@ -46,7 +50,36 @@ On Tue, Jan 08, 2013 at 02:47:37PM +0200, Hiroshi Doyu wrote:
 > +#define CPU_MASK		0xff0ffff0
 > +#define CPU_CORTEX_A9		0x410fc090
 > +#define CPU_CORTEX_A15		0x410fc0f0
+> +
+>  extern void tegra_secondary_startup(void);
+>  
+> -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+> +static void __iomem *scu_base;
+>  
+>  #define EVP_CPU_RESET_VECTOR \
+>  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+> @@ -149,7 +154,26 @@ done:
+>   */
+>  static void __init tegra_smp_init_cpus(void)
+>  {
+> -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> +	unsigned int i, cpu_id, ncores;
+> +	u32 l2ctlr;
+> +	phys_addr_t pa;
+> +
+> +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
+> +	switch (cpu_id) {
+> +	case CPU_CORTEX_A15:
+> +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
+> +		ncores = ((l2ctlr >> 24) & 3) + 1;
+> +		break;
 
-NAK. There's some patches around to make this stuff generic, we don't
-need more ifdefs springing up.  We need to get those generic patches
-in.
+[...]
+
+As mentioned last time [1], you should get this information from the dt
+instead.
+
+Thanks,
+Mark.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2012-December/138319.html
