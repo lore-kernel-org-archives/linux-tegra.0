@@ -1,69 +1,62 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Tue, 8 Jan 2013 17:11:03 +0000
-Message-ID: <20130108171103.GA7417@e102568-lin.cambridge.arm.com>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com>
- <1357649263-1098-4-git-send-email-hdoyu@nvidia.com>
- <20130108142828.GD2718@e106331-lin.cambridge.arm.com>
- <20130108.165342.1996373920678167735.hdoyu@nvidia.com>
- <20130108162056.GA28618@e106331-lin.cambridge.arm.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
+Date: Tue, 08 Jan 2013 11:49:27 -0700
+Message-ID: <50EC6A37.4000206@wwwdotorg.org>
+References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130108162056.GA28618-NuALmloUBlrZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <50EC1CD3.3070308-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 08, 2013 at 04:21:38PM +0000, Mark Rutland wrote:
-> On Tue, Jan 08, 2013 at 02:53:42PM +0000, Hiroshi Doyu wrote:
+On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
+> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
+>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
+>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
+>>>> This patchset does following:
+>>>> 1. Decompose single tegra clock structure into multiple clocks.
+>>>> 2. Try to use standard clock types supported by common clock framework.
+>>>> 3. Use dynamic initialization.
+>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
+>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
+>>>> 6. Remove all legacy clock code from mach-tegra.
+>>> I think there are bugs here. I applied all your clock patches on top of
+>>> Tegra's for-next (see list below), and found that the following don't
+>>> work on Springbank:
+>>>
+>>> * HDMI display
+>>> * Audio playback
+>>> * WiFi
+>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@ instead...)
+>>
+>> Prashant, some updated testing results based off the "dev/ccf" branch
+>> you sent me on our internal git server:
+...
+> I have updated the internal branch with all the above mentioned fixes.
 
-[...]
+WiFi and SPI now work on both Tegra20/30.
 
-> > > >  static void __init tegra_smp_init_cpus(void)
-> > > >  {
-> > > > -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> > > > +	unsigned int i, cpu_id, ncores;
-> > > > +	u32 l2ctlr;
-> > > > +	phys_addr_t pa;
-> > > > +
-> > > > +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-> > > > +	switch (cpu_id) {
-> > > > +	case CPU_CORTEX_A15:
-> > > > +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-> > > > +		ncores = ((l2ctlr >> 24) & 3) + 1;
-> > > > +		break;
-> > > 
-> > > [...]
-> > > 
-> > > As mentioned last time [1], you should get this information from the dt
-> > > instead.
-> > 
-> > Most of platsmp.c:.smp_init_cpus() implementations seem just to
-> > overwrite # of cores by SCU/MRC detection. Is there any implementation
-> > to use the DT's # and skip SCU/MRC detection in .smp_init_cpus()?
-> 
-> As far as I can see, there's no other platform which just relies on
-> arm_dt_init_cpu_maps. Until recently, it didn't exist, so that makes some
-> sense. As far as I can see, for the Tegra 114 you only need your smp_init_cpus
-> to call set_smp_cross_call(gic_raise_softirq). Everything else you do seems to
-> be handled by arm_dt_init_cpus.
-> 
-> I think the best option would be to have a separate smp_ops for your dt
-> platforms where we know cpu nodes are populated (e.g. Tegra 114), where
-> smp_init_cpus is different to that for non-dt platforms. That way non dt
-> platforms can keep the SCU hack for now, and won't be broken, and the dt
-> platforms are far removed from the SCU hack and just use common infrastructure.
-> 
-> Maybe someone else has a better idea?
+PCIe still doesn't work on Tegra20. The reason is that
+clk_plle_enable()'s call to _get_table_rate() fails, since
+pll->fixed_rate is 0, and hence there's no matching table entry.
 
-Have a look at mach-vexpress/platsmp.c (keeping in mind that the
-GENERIC_SCU case will be refactored/removed since arm_dt_init_cpu_maps() is
-doing most of the required steps), please let me know what you think.
+I simply commented out that call, and the later code that uses its
+results to configure the PLL rate, and then everything worked - or at
+least PCIe device enumeration and hence lspci worked, which is as much
+as works right now with PCIe on Tegra...
 
-Thanks,
-Lorenzo
+Is the solution here to fix clk-tegra20.c's call to tegra_clk_plle() to
+specify a valid fixed rate?
+
+However, I'm puzzled why clk_plle_enable() is even touching the dividers
+though; shouldn't clk_plle_set_rate() be setting up the rate, and
+clk_plle_enable() /just/ be enabling/disabling the PLL? The old clock
+driver appears to work the way I expect, and use the standard PLL
+set_rate op for this clock, and has a very simple custom enable op for PLLe.
+
+The remaining item is the display issue on Tegra30, which I'll go look
+at now.
