@@ -1,86 +1,126 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Tue, 8 Jan 2013 15:53:42 +0100
-Message-ID: <20130108.165342.1996373920678167735.hdoyu@nvidia.com>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com><1357649263-1098-4-git-send-email-hdoyu@nvidia.com><20130108142828.GD2718@e106331-lin.cambridge.arm.com>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Tue, 08 Jan 2013 16:07:39 +0000
+Message-ID: <50EC444B.5060206@arm.com>
+References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com> <1357649263-1098-6-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130108142828.GD2718-NuALmloUBlrZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+In-Reply-To: <1357649263-1098-6-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
-
-Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 15:28:28 +0100:
-
-> Hello,
+On 08/01/13 12:47, Hiroshi Doyu wrote:
+> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+> timer than TMR0. If it's available, it will be used for clock source
+> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+> necessary for clock event.
 > 
-> On Tue, Jan 08, 2013 at 12:47:37PM +0000, Hiroshi Doyu wrote:
-> > The method to detect the number of CPU cores on Cortex-A9 MPCore and
-> > Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
-> > information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
-> > have to read it from the system coprocessor(CP15), because the SCU on
-> > Cortex-A15 MPCore does not have software readable registers. This
-> > patch selects the correct method at runtime based on the CPU ID.
-> > 
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/mach-tegra/platsmp.c |   31 ++++++++++++++++++++++++++++---
-> >  1 file changed, 28 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-> > index 1b926df..68e76ef 100644
-> > --- a/arch/arm/mach-tegra/platsmp.c
-> > +++ b/arch/arm/mach-tegra/platsmp.c
-> > @@ -23,6 +23,7 @@
-> >  #include <asm/hardware/gic.h>
-> >  #include <asm/mach-types.h>
-> >  #include <asm/smp_scu.h>
-> > +#include <asm/cputype.h>
-> >  
-> >  #include <mach/powergate.h>
-> >  
-> > @@ -34,9 +35,13 @@
-> >  #include "common.h"
-> >  #include "iomap.h"
-> >  
-> > +#define CPU_MASK		0xff0ffff0
-> > +#define CPU_CORTEX_A9		0x410fc090
-> > +#define CPU_CORTEX_A15		0x410fc0f0
-> > +
-> >  extern void tegra_secondary_startup(void);
-> >  
-> > -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
-> > +static void __iomem *scu_base;
-> >  
-> >  #define EVP_CPU_RESET_VECTOR \
-> >  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
-> > @@ -149,7 +154,26 @@ done:
-> >   */
-> >  static void __init tegra_smp_init_cpus(void)
-> >  {
-> > -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> > +	unsigned int i, cpu_id, ncores;
-> > +	u32 l2ctlr;
-> > +	phys_addr_t pa;
-> > +
-> > +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-> > +	switch (cpu_id) {
-> > +	case CPU_CORTEX_A15:
-> > +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-> > +		ncores = ((l2ctlr >> 24) & 3) + 1;
-> > +		break;
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra114-tsc.txt     |   11 ++++
+>  drivers/clocksource/tegra20_timer.c                |   65 +++++++++++++++++++-
+>  2 files changed, 75 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
 > 
-> [...]
-> 
-> As mentioned last time [1], you should get this information from the dt
-> instead.
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> new file mode 100644
+> index 0000000..9de936a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> @@ -0,0 +1,11 @@
+> +NVIDIA Tegra Timer Stamp Counter(TSC)
+> +
+> +Required properties:
+> +- compatible : "nvidia,tegra114-tsc
+> +- reg : Should contain 1 register ranges(address and length)
+> +
+> +Example:
+> +	tsc {
+> +		compatible = "nvidia,tegra114-tsc";
+> +		reg = <0x700f0000 0x20000>;
+> +	};
+> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+> index 1d25de8..564266d 100644
+> --- a/drivers/clocksource/tegra20_timer.c
+> +++ b/drivers/clocksource/tegra20_timer.c
+> @@ -30,6 +30,7 @@
+>  #include <asm/mach/time.h>
+>  #include <asm/smp_twd.h>
+>  #include <asm/sched_clock.h>
+> +#include <asm/arch_timer.h>
+>  
+>  #define RTC_SECONDS            0x08
+>  #define RTC_SHADOW_SECONDS     0x0c
+> @@ -271,10 +272,72 @@ static void __init tegra20_init_tmr(void)
+>  	clockevents_register_device(&tegra_clockevent);
+>  }
+>  
+> +#define TSC_CNTCR		0		/* TSC control registers */
+> +#define TSC_CNTCR_ENABLE	(1 << 0)	/* Enable */
+> +#define TSC_CNTCR_HDBG		(1 << 1)	/* Halt on debug */
+> +
+> +#define TSC_CNTCV0		0x8		/* TSC counter (LSW) */
+> +#define TSC_CNTCV1		0xc		/* TSC counter (MSW) */
+> +#define TSC_CNTFID0		0x20		/* TSC freq id 0 */
+> +
+> +static const struct of_device_id tegra_tsc_match[] __initconst = {
+> +	{ .compatible = "nvidia,tegra114-tsc" },
+> +	{}
+> +};
+> +
+> +/* FIXME: only secure mode is supported. */
 
-Most of platsmp.c:.smp_init_cpus() implementations seem just to
-overwrite # of cores by SCU/MRC detection. Is there any implementation
-to use the DT's # and skip SCU/MRC detection in .smp_init_cpus()?
+And this is a bug, as far as I'm concerned.
+
+> +static int tegra_arch_timer_init(void)
+> +{
+> +	int err;
+> +	struct device_node *np;
+> +	struct clk *clk;
+> +	void __iomem *tsc_base;
+> +	u32 freq, val;
+> +
+> +	np = of_find_matching_node(NULL, tegra_tsc_match);
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	tsc_base = of_iomap(np, 0);
+> +	if (!tsc_base)
+> +		return -ENODEV;
+> +
+> +	clk = clk_get_sys("clk_m", NULL);
+> +	if (IS_ERR(clk)) {
+> +		freq = 12000000;
+> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
+> +	} else {
+> +		freq = clk_get_rate(clk);
+> +		clk_put(clk);
+> +	}
+> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
+> +
+> +	/* CNTFRQ */
+> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+> +	BUG_ON(val != freq);
+
+No, not again! Like I said last year, this won't fly. So instead of
+trying to work around a broken firmware, let's do the right thing.
+
+> +
+> +	val = readl_relaxed(tsc_base + TSC_CNTCR);
+> +	val |= TSC_CNTCR_ENABLE | TSC_CNTCR_HDBG;
+> +	writel_relaxed(val, tsc_base + TSC_CNTCR);
+> +
+> +	err = arch_timer_of_register();
+
+What about adding an optional property to the binding, pointing to the
+required clock? That would solve the above problem in a sensible way,
+and your kernel wouldn't go bust.
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
