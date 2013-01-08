@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 1/9] ARM: tegra: fuse: Add chipid TEGRA114 0x35
-Date: Tue, 8 Jan 2013 14:47:35 +0200
-Message-ID: <1357649263-1098-2-git-send-email-hdoyu@nvidia.com>
+Subject: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Tue, 8 Jan 2013 14:47:39 +0200
+Message-ID: <1357649263-1098-6-git-send-email-hdoyu@nvidia.com>
 References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,24 +12,120 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add tegra_chip_id TEGRA114 0x35
+Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+timer than TMR0. If it's available, it will be used for clock source
+and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+necessary for clock event.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/fuse.h |    1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/arm/tegra/nvidia,tegra114-tsc.txt     |   11 ++++
+ drivers/clocksource/tegra20_timer.c                |   65 +++++++++++++++++++-
+ 2 files changed, 75 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
 
-diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
-index ff1383d..da78434 100644
---- a/arch/arm/mach-tegra/fuse.h
-+++ b/arch/arm/mach-tegra/fuse.h
-@@ -37,6 +37,7 @@ enum tegra_revision {
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+new file mode 100644
+index 0000000..9de936a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+@@ -0,0 +1,11 @@
++NVIDIA Tegra Timer Stamp Counter(TSC)
++
++Required properties:
++- compatible : "nvidia,tegra114-tsc
++- reg : Should contain 1 register ranges(address and length)
++
++Example:
++	tsc {
++		compatible = "nvidia,tegra114-tsc";
++		reg = <0x700f0000 0x20000>;
++	};
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 1d25de8..564266d 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -30,6 +30,7 @@
+ #include <asm/mach/time.h>
+ #include <asm/smp_twd.h>
+ #include <asm/sched_clock.h>
++#include <asm/arch_timer.h>
  
- #define TEGRA20		0x20
- #define TEGRA30		0x30
-+#define TEGRA114	0x35
+ #define RTC_SECONDS            0x08
+ #define RTC_SHADOW_SECONDS     0x0c
+@@ -271,10 +272,72 @@ static void __init tegra20_init_tmr(void)
+ 	clockevents_register_device(&tegra_clockevent);
+ }
  
- extern int tegra_sku_id;
- extern int tegra_cpu_process_id;
++#define TSC_CNTCR		0		/* TSC control registers */
++#define TSC_CNTCR_ENABLE	(1 << 0)	/* Enable */
++#define TSC_CNTCR_HDBG		(1 << 1)	/* Halt on debug */
++
++#define TSC_CNTCV0		0x8		/* TSC counter (LSW) */
++#define TSC_CNTCV1		0xc		/* TSC counter (MSW) */
++#define TSC_CNTFID0		0x20		/* TSC freq id 0 */
++
++static const struct of_device_id tegra_tsc_match[] __initconst = {
++	{ .compatible = "nvidia,tegra114-tsc" },
++	{}
++};
++
++/* FIXME: only secure mode is supported. */
++static int tegra_arch_timer_init(void)
++{
++	int err;
++	struct device_node *np;
++	struct clk *clk;
++	void __iomem *tsc_base;
++	u32 freq, val;
++
++	np = of_find_matching_node(NULL, tegra_tsc_match);
++	if (!np)
++		return -ENODEV;
++
++	tsc_base = of_iomap(np, 0);
++	if (!tsc_base)
++		return -ENODEV;
++
++	clk = clk_get_sys("clk_m", NULL);
++	if (IS_ERR(clk)) {
++		freq = 12000000;
++		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
++	} else {
++		freq = clk_get_rate(clk);
++		clk_put(clk);
++	}
++	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
++
++	/* CNTFRQ */
++	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
++	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
++	BUG_ON(val != freq);
++
++	val = readl_relaxed(tsc_base + TSC_CNTCR);
++	val |= TSC_CNTCR_ENABLE | TSC_CNTCR_HDBG;
++	writel_relaxed(val, tsc_base + TSC_CNTCR);
++
++	err = arch_timer_of_register();
++	if (!err)
++		err = arch_timer_sched_clock_init();
++	if (err)
++		pr_err("Failed to register ARM arch_timer(TSC)\n");
++	return err;
++}
++
+ static void __init tegra20_init_timer(void)
+ {
++	int err = -ENODEV;
++
+ 	tegra20_init_tmr();
+-	setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
++	if (IS_ENABLED(CONFIG_ARM_ARCH_TIMER))
++		err = tegra_arch_timer_init();
++	if (err)
++		setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
+ 	tegra20_init_rtc();
+ #ifdef CONFIG_HAVE_ARM_TWD
+ 	twd_local_timer_of_register();
 -- 
 1.7.9.5
