@@ -1,62 +1,73 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
-Date: Tue, 08 Jan 2013 14:01:59 -0700
-Message-ID: <50EC8947.4080704@wwwdotorg.org>
-References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org>
+Subject: Re: [PATCH v2 1/3] ASoC: tegra: add ac97 host driver
+Date: Tue, 08 Jan 2013 15:10:27 -0700
+Message-ID: <50EC9953.1000107@wwwdotorg.org>
+References: <1357348725-32139-1-git-send-email-dev@lynxeye.de> <1357348725-32139-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50EC6A37.4000206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1357348725-32139-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/08/2013 11:49 AM, Stephen Warren wrote:
-> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
->> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
->>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
->>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
->>>>> This patchset does following:
->>>>> 1. Decompose single tegra clock structure into multiple clocks.
->>>>> 2. Try to use standard clock types supported by common clock framework.
->>>>> 3. Use dynamic initialization.
->>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
->>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
->>>>> 6. Remove all legacy clock code from mach-tegra.
->>>> I think there are bugs here. I applied all your clock patches on top of
->>>> Tegra's for-next (see list below), and found that the following don't
->>>> work on Springbank:
->>>>
->>>> * HDMI display
->>>> * Audio playback
->>>> * WiFi
->>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@ instead...)
->>>
->>> Prashant, some updated testing results based off the "dev/ccf" branch
->>> you sent me on our internal git server:
-> ...
->> I have updated the internal branch with all the above mentioned fixes.
-...
-> The remaining item is the display issue on Tegra30, which I'll go look
-> at now.
+On 01/04/2013 06:18 PM, Lucas Stach wrote:
+> This adds the driver for the Tegra 2x AC97 host controller.
+> 
+> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 
-The USB3 clock, which isn't used by any drivers on Tegra30, and hence
-was disabled at boot, was set up incorrectly and ended up mapping to the
-disp1 clock, and hence turned off the display. The following fixes it:
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
 
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index f2f526e..0bac07c 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1541,7 +1541,7 @@ static void __init tegra30_periph_clk_init(void)
->  
->  	/* usb3 */
->  	clk = tegra_clk_periph_gate("usb3", "clk_m", 0, clk_base, 0, 59,
-> -				    &periph_l_regs, periph_clk_enb_refcnt);
-> +				    &periph_h_regs, periph_clk_enb_refcnt);
->  	clk_register_clkdev(clk, NULL, "tegra-ehci.2");
->  	clks[usb3] = clk;
+> +- nvidia,codec-sync-gpio : The Tegra GPIO controller's phandle and the number
+> +  of the GPIO corresponding with the AC97 DAP _FS line
+> +Example:
 
-I wonder if there are any other similar issues?
+If you have to repost for any reason, you probably want a blank line
+before the "Example:" line.
+
+> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+
+> +static void tegra20_ac97_codec_warm_reset(struct snd_ac97 *ac97)
+> +{
+> +	u32 readback;
+> +	unsigned long timeout;
+> +
+> +	/*
+> +	 * although sync line is driven by the DAC pad group warm reset using
+> +	 * the controller cmd is not working, have to toggle sync line
+> +	 * manually.
+> +	 */
+> +	gpio_request(workdata->sync_gpio, "codec-sync");
+> +
+> +	gpio_direction_output(workdata->sync_gpio, 1);
+
+Would it make sense to just request the GPIO during probe()? Or, is the
+sync signal used as part of the AC'97 protocol at other times?
+
+> +static inline void tegra20_ac97_start_playback(struct tegra20_ac97 *ac97)
+> +{
+> +	regmap_update_bits(ac97->regmap, TEGRA20_AC97_FIFO1_SCR,
+> +			   TEGRA20_AC97_FIFO_SCR_PB_QRT_MT_EN,
+> +			   TEGRA20_AC97_FIFO_SCR_PB_QRT_MT_EN);
+> +
+> +	regmap_update_bits(ac97->regmap, TEGRA20_AC97_CTRL,
+> +			   TEGRA20_AC97_CTRL_PCM_DAC_EN |
+> +			   TEGRA20_AC97_CTRL_STM_EN,
+> +			   TEGRA20_AC97_CTRL_PCM_DAC_EN |
+> +			   TEGRA20_AC97_CTRL_STM_EN);
+> +}
+
+That sets both PCM_DAC_EN and STM_EN, but ...
+
+> +static inline void tegra20_ac97_stop_playback(struct tegra20_ac97 *ac97)
+> +{
+> +	regmap_update_bits(ac97->regmap, TEGRA20_AC97_FIFO1_SCR,
+> +			   TEGRA20_AC97_FIFO_SCR_PB_QRT_MT_EN, 0);
+> +
+> +	regmap_update_bits(ac97->regmap, TEGRA20_AC97_CTRL,
+> +			   TEGRA20_AC97_CTRL_PCM_DAC_EN, 0);
+> +}
+
+... that only clears DAC_EN. Should it clear STM_EN too?
