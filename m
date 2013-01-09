@@ -1,106 +1,79 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Wed, 9 Jan 2013 18:07:13 +0000
-Message-ID: <20130109180713.GC30931@e102568-lin.cambridge.arm.com>
-References: <20130108.165342.1996373920678167735.hdoyu@nvidia.com>
- <20130108162056.GA28618@e106331-lin.cambridge.arm.com>
- <50EC7450.4070806@wwwdotorg.org>
- <20130109.074946.1167125688535781408.hdoyu@nvidia.com>
- <20130109113432.GA22147@e102568-lin.cambridge.arm.com>
- <50ED980B.9060909@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH 03/14] of/pci: Add of_pci_get_bus() function
+Date: Wed,  9 Jan 2013 21:43:03 +0100
+Message-ID: <1357764194-12677-4-git-send-email-thierry.reding@avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50ED980B.9060909-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1357764194-12677-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 09, 2013 at 04:17:15PM +0000, Stephen Warren wrote:
-> On 01/09/2013 04:34 AM, Lorenzo Pieralisi wrote:
-> > On Wed, Jan 09, 2013 at 05:49:46AM +0000, Hiroshi Doyu wrote:
-> >> Hi,
-> >>
-> >> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 8 Jan 2013 20:32:32 +0100:
-> >>
-> >>> On 01/08/2013 09:21 AM, Mark Rutland wrote:
-> >>>> On Tue, Jan 08, 2013 at 02:53:42PM +0000, Hiroshi Doyu wrote:
-> >>>>> Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 15:28:28 +0100:
-> >>>>>> On Tue, Jan 08, 2013 at 12:47:37PM +0000, Hiroshi Doyu wrote:
-> >>>>>>> The method to detect the number of CPU cores on Cortex-A9 MPCore and
-> >>>>>>> Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
-> >>>>>>> information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
-> >>>>>>> have to read it from the system coprocessor(CP15), because the SCU on
-> >>>>>>> Cortex-A15 MPCore does not have software readable registers. This
-> >>>>>>> patch selects the correct method at runtime based on the CPU ID.
-> >>> ...
-> >>>>>>>  static void __init tegra_smp_init_cpus(void)
-> >>>>>>>  {
-> >>>>>>> -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> >>>>>>> +	unsigned int i, cpu_id, ncores;
-> >>>>>>> +	u32 l2ctlr;
-> >>>>>>> +	phys_addr_t pa;
-> >>>>>>> +
-> >>>>>>> +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-> >>>>>>> +	switch (cpu_id) {
-> >>>>>>> +	case CPU_CORTEX_A15:
-> >>>>>>> +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-> >>>>>>> +		ncores = ((l2ctlr >> 24) & 3) + 1;
-> >>>>>>> +		break;
-> >>>>>>
-> >>>>>> [...]
-> >>>>>>
-> >>>>>> As mentioned last time [1], you should get this information from the dt
-> >>>>>> instead.
-> >>>>>
-> >>>>> Most of platsmp.c:.smp_init_cpus() implementations seem just to
-> >>>>> overwrite # of cores by SCU/MRC detection. Is there any implementation
-> >>>>> to use the DT's # and skip SCU/MRC detection in .smp_init_cpus()?
-> >>>>
-> >>>> As far as I can see, there's no other platform which just relies on
-> >>>> arm_dt_init_cpu_maps. Until recently, it didn't exist, so that makes some
-> >>>> sense. As far as I can see, for the Tegra 114 you only need your smp_init_cpus
-> >>>> to call set_smp_cross_call(gic_raise_softirq). Everything else you do seems to
-> >>>> be handled by arm_dt_init_cpus.
-> >>
-> >> True.
-> >>
-> >>>> I think the best option would be to have a separate smp_ops for your dt
-> >>>> platforms where we know cpu nodes are populated (e.g. Tegra 114), where
-> >>>> smp_init_cpus is different to that for non-dt platforms. That way non dt
-> >>>> platforms can keep the SCU hack for now, and won't be broken, and the dt
-> >>>> platforms are far removed from the SCU hack and just use common
-> >>>> infrastructure.
-> >>>
-> >>> Tegra doesn't have any non-DT support now.
-> >>
-> >> What about falling down to SCU/MRC hack only when DT detection fails
-> >> or no /cpus entry in DT?
-> >>
-> >> Can arm_dt_init_cpu_maps() return if it suceeds or not?
-> > 
-> > I think the best solution to this problem consists in /me adding a
-> > function, say, arm_dt_nb_cores(), that returns an error if DT probing
-> > failed and the number of cores if it succeeded.
-> 
-> Well, if the primary mechanism needs to be DT-based going forward, I'd
-> say just require the DT nodes to be present to use the new function, and
-> outright fail if they aren't. That way, everything always works one way.
-> It shouldn't be hard to add the CPU nodes for Tegra, right?
+This function can be used to parse the number of a device's parent PCI
+bus from a standard 5-cell PCI resource.
 
-Adding /cpu nodes to DT is trivial, but I would like to keep a fall back
-mechanism in place for existing platforms to carry out the transition
-as smoothly as possible (eg people using new kernels with old DTS).
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+ drivers/of/of_pci.c    | 21 +++++++++++++++++++++
+ include/linux/of_pci.h |  1 +
+ 2 files changed, 22 insertions(+)
 
-/cpu nodes will have priority over HW based probing for cores counting.
-
-As discussed with Hiroshi I will post a patch to provide platforms with
-a DT cpu map validity check so that the fall back mechanism can be
-triggered properly.
-
-Thank you very much,
-Lorenzo
+diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
+index 0dd52df..7d5d2c3 100644
+--- a/drivers/of/of_pci.c
++++ b/drivers/of/of_pci.c
+@@ -43,6 +43,27 @@ struct device_node *of_pci_find_child_device(struct device_node *parent,
+ EXPORT_SYMBOL_GPL(of_pci_find_child_device);
+ 
+ /**
++ * of_pci_get_bus() - Get bus number for a device node
++ * @np: device node
++ *
++ * Parses a standard 5-cell PCI resource and returns the 8-bit bus number of
++ * the device's parent PCI bus. On error a negative error code is returned.
++ */
++int of_pci_get_bus(struct device_node *np)
++{
++	unsigned int size;
++	const __be32 *reg;
++
++	reg = of_get_property(np, "reg", &size);
++
++	if (!reg || size < 5 * sizeof(__be32))
++		return -EINVAL;
++
++	return (be32_to_cpup(reg) >> 16) & 0xff;
++}
++EXPORT_SYMBOL_GPL(of_pci_get_bus);
++
++/**
+  * of_pci_get_devfn() - Get device and function numbers for a device node
+  * @np: device node
+  *
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index 91ec484..9118321 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -10,6 +10,7 @@ int of_irq_map_pci(const struct pci_dev *pdev, struct of_irq *out_irq);
+ struct device_node;
+ struct device_node *of_pci_find_child_device(struct device_node *parent,
+ 					     unsigned int devfn);
++int of_pci_get_bus(struct device_node *np);
+ int of_pci_get_devfn(struct device_node *np);
+ 
+ #endif
+-- 
+1.8.1
