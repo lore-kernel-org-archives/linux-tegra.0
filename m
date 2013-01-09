@@ -1,95 +1,76 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Wed, 9 Jan 2013 12:46:41 +0100
-Message-ID: <20130109.134641.1582472136842052082.hdoyu@nvidia.com>
-References: <20130108.165342.1996373920678167735.hdoyu@nvidia.com><20130108162056.GA28618@e106331-lin.cambridge.arm.com><20130108171103.GA7417@e102568-lin.cambridge.arm.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RESEND] dma: tegra: implement flags parameters for
+ cyclic transfer
+Date: Wed, 9 Jan 2013 05:30:53 -0800
+Message-ID: <20130109133053.GM19691@intel.com>
+References: <1357725382-25780-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130108171103.GA7417-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1357725382-25780-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: djbw-b10kYP2dOMg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lorenzo,
-
-Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 18:11:03 +0100:
-
-> On Tue, Jan 08, 2013 at 04:21:38PM +0000, Mark Rutland wrote:
-> > On Tue, Jan 08, 2013 at 02:53:42PM +0000, Hiroshi Doyu wrote:
+On Wed, Jan 09, 2013 at 03:26:22PM +0530, Laxman Dewangan wrote:
+> The flag parameter is added in the cyclic transfer request.
+> Use the flag option of:
+> - DMA_PREP_INTERRUPT for enabling interrupt.
+> - DMA_CTRL_ACK for deciding whether ack is requred or not for
+>   descriptor.
 > 
-> [...]
-> 
-> > > > >  static void __init tegra_smp_init_cpus(void)
-> > > > >  {
-> > > > > -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> > > > > +	unsigned int i, cpu_id, ncores;
-> > > > > +	u32 l2ctlr;
-> > > > > +	phys_addr_t pa;
-> > > > > +
-> > > > > +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-> > > > > +	switch (cpu_id) {
-> > > > > +	case CPU_CORTEX_A15:
-> > > > > +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-> > > > > +		ncores = ((l2ctlr >> 24) & 3) + 1;
-> > > > > +		break;
-> > > > 
-> > > > [...]
-> > > > 
-> > > > As mentioned last time [1], you should get this information from the dt
-> > > > instead.
-> > > 
-> > > Most of platsmp.c:.smp_init_cpus() implementations seem just to
-> > > overwrite # of cores by SCU/MRC detection. Is there any implementation
-> > > to use the DT's # and skip SCU/MRC detection in .smp_init_cpus()?
-> > 
-> > As far as I can see, there's no other platform which just relies on
-> > arm_dt_init_cpu_maps. Until recently, it didn't exist, so that makes some
-> > sense. As far as I can see, for the Tegra 114 you only need your smp_init_cpus
-> > to call set_smp_cross_call(gic_raise_softirq). Everything else you do seems to
-> > be handled by arm_dt_init_cpus.
-> > 
-> > I think the best option would be to have a separate smp_ops for your dt
-> > platforms where we know cpu nodes are populated (e.g. Tegra 114), where
-> > smp_init_cpus is different to that for non-dt platforms. That way non dt
-> > platforms can keep the SCU hack for now, and won't be broken, and the dt
-> > platforms are far removed from the SCU hack and just use common infrastructure.
-> > 
-> > Maybe someone else has a better idea?
-> 
-> Have a look at mach-vexpress/platsmp.c (keeping in mind that the
-> GENERIC_SCU case will be refactored/removed since arm_dt_init_cpu_maps() is
-> doing most of the required steps), please let me know what you think.
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Applied thanks
 
-In tegra, we don't support non-DT. What about falling back SCU/MRC
-based detection only when arm_dt_init_cpu_maps() fails?
-
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 68e76ef..51d24ae 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -152,7 +152,7 @@ done:
-  * Initialise the CPU possible map early - this describes the CPUs
-  * which may be present or become present in the system.
-  */
--static void __init tegra_smp_init_cpus(void)
-+static void __init tegra_smp_detect_cores(void)
- {
- 	unsigned int i, cpu_id, ncores;
- 	u32 l2ctlr;
-@@ -183,6 +183,12 @@ static void __init tegra_smp_init_cpus(void)
- 
- 	for (i = 0; i < ncores; i++)
- 		set_cpu_possible(i, true);
-+}
-+
-+static void __init tegra_smp_init_cpus(void)
-+{
-+	if (!num_possible_cpus())
-+		tegra_smp_detect_cores();
- 
- 	set_smp_cross_call(gic_raise_softirq);
- }
+--
+~Vinod
+> ---
+> Vinod,
+> This patch was sent before holiday and may be it is missed in you radar.
+> You have already applied my other patches on dma which was sent later so
+> resending this patch.
+> Stephen wanted this to be part of stable branch also.
+> This is against bug fixes and new feature added in K3.7 for cyclic transfer without
+> interrupt.
+> 
+>  drivers/dma/tegra20-apb-dma.c |    8 ++++++--
+>  1 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index efdfffa..bf58bb8 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -266,6 +266,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+>  		if (async_tx_test_ack(&dma_desc->txd)) {
+>  			list_del(&dma_desc->node);
+>  			spin_unlock_irqrestore(&tdc->lock, flags);
+> +			dma_desc->txd.flags = 0;
+>  			return dma_desc;
+>  		}
+>  	}
+> @@ -1050,7 +1051,9 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>  					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+>  	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
+>  
+> -	csr |= TEGRA_APBDMA_CSR_FLOW | TEGRA_APBDMA_CSR_IE_EOC;
+> +	csr |= TEGRA_APBDMA_CSR_FLOW;
+> +	if (flags & DMA_PREP_INTERRUPT)
+> +		csr |= TEGRA_APBDMA_CSR_IE_EOC;
+>  	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+>  
+>  	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+> @@ -1095,7 +1098,8 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+>  		mem += len;
+>  	}
+>  	sg_req->last_sg = true;
+> -	dma_desc->txd.flags = 0;
+> +	if (flags & DMA_CTRL_ACK)
+> +		dma_desc->txd.flags = DMA_CTRL_ACK;
+>  
+>  	/*
+>  	 * Make sure that mode should not be conflicting with currently
+> -- 
+> 1.7.1.1
+> 
