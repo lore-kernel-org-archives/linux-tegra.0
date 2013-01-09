@@ -1,104 +1,160 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
- allocation
-Date: Wed, 9 Jan 2013 08:07:45 +0100
-Message-ID: <20130109070745.GA12782@avionic-0098.adnet.avionic-design.de>
-References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
- <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
- <20130105080658.GA1315@core.coreip.homeip.net>
- <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
- <20130106195748.GA28212@core.coreip.homeip.net>
+From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
+Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Wed, 9 Jan 2013 13:13:11 +0530
+Message-ID: <50ED1F8F.4060700@ti.com>
+References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com><1357649263-1098-6-git-send-email-hdoyu@nvidia.com><50EC444B.5060206@arm.com> <20130109.075708.1662067562960541635.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130106195748.GA28212@core.coreip.homeip.net>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130109.075708.1662067562960541635.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 09 January 2013 11:27 AM, Hiroshi Doyu wrote:
+> Hi Marc,
+>
+> Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 17:07:39 +0100:
+>
+>> On 08/01/13 12:47, Hiroshi Doyu wrote:
+>>> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+>>> timer than TMR0. If it's available, it will be used for clock source
+>>> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+>>> necessary for clock event.
+>>>
+>>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>   .../bindings/arm/tegra/nvidia,tegra114-tsc.txt     |   11 ++++
+>>>   drivers/clocksource/tegra20_timer.c                |   65 +++++++++++++++++++-
+>>>   2 files changed, 75 insertions(+), 1 deletion(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+>>> new file mode 100644
+>>> index 0000000..9de936a
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+>>> @@ -0,0 +1,11 @@
+>>> +NVIDIA Tegra Timer Stamp Counter(TSC)
+>>> +
+>>> +Required properties:
+>>> +- compatible : "nvidia,tegra114-tsc
+>>> +- reg : Should contain 1 register ranges(address and length)
+>>> +
+>>> +Example:
+>>> +	tsc {
+>>> +		compatible = "nvidia,tegra114-tsc";
+>>> +		reg = <0x700f0000 0x20000>;
+>>> +	};
+>>> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+>>> index 1d25de8..564266d 100644
+>>> --- a/drivers/clocksource/tegra20_timer.c
+>>> +++ b/drivers/clocksource/tegra20_timer.c
+>>> @@ -30,6 +30,7 @@
+>>>   #include <asm/mach/time.h>
+>>>   #include <asm/smp_twd.h>
+>>>   #include <asm/sched_clock.h>
+>>> +#include <asm/arch_timer.h>
+>>>
+>>>   #define RTC_SECONDS            0x08
+>>>   #define RTC_SHADOW_SECONDS     0x0c
+>>> @@ -271,10 +272,72 @@ static void __init tegra20_init_tmr(void)
+>>>   	clockevents_register_device(&tegra_clockevent);
+>>>   }
+>>>
+>>> +#define TSC_CNTCR		0		/* TSC control registers */
+>>> +#define TSC_CNTCR_ENABLE	(1 << 0)	/* Enable */
+>>> +#define TSC_CNTCR_HDBG		(1 << 1)	/* Halt on debug */
+>>> +
+>>> +#define TSC_CNTCV0		0x8		/* TSC counter (LSW) */
+>>> +#define TSC_CNTCV1		0xc		/* TSC counter (MSW) */
+>>> +#define TSC_CNTFID0		0x20		/* TSC freq id 0 */
+>>> +
+>>> +static const struct of_device_id tegra_tsc_match[] __initconst = {
+>>> +	{ .compatible = "nvidia,tegra114-tsc" },
+>>> +	{}
+>>> +};
+>>> +
+>>> +/* FIXME: only secure mode is supported. */
+>>
+>> And this is a bug, as far as I'm concerned.
+>>
+>>> +static int tegra_arch_timer_init(void)
+>>> +{
+>>> +	int err;
+>>> +	struct device_node *np;
+>>> +	struct clk *clk;
+>>> +	void __iomem *tsc_base;
+>>> +	u32 freq, val;
+>>> +
+>>> +	np = of_find_matching_node(NULL, tegra_tsc_match);
+>>> +	if (!np)
+>>> +		return -ENODEV;
+>>> +
+>>> +	tsc_base = of_iomap(np, 0);
+>>> +	if (!tsc_base)
+>>> +		return -ENODEV;
+>>> +
+>>> +	clk = clk_get_sys("clk_m", NULL);
+>>> +	if (IS_ERR(clk)) {
+>>> +		freq = 12000000;
+>>> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
+>>> +	} else {
+>>> +		freq = clk_get_rate(clk);
+>>> +		clk_put(clk);
+>>> +	}
+>>> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
+>>> +
+>>> +	/* CNTFRQ */
+>>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+>>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+>>> +	BUG_ON(val != freq);
+>>
+>> No, not again! Like I said last year, this won't fly. So instead of
+>> trying to work around a broken firmware, let's do the right thing.
+>>
+>>> +
+>>> +	val = readl_relaxed(tsc_base + TSC_CNTCR);
+>>> +	val |= TSC_CNTCR_ENABLE | TSC_CNTCR_HDBG;
+>>> +	writel_relaxed(val, tsc_base + TSC_CNTCR);
+>>> +
+>>> +	err = arch_timer_of_register();
+>>
+>> What about adding an optional property to the binding, pointing to the
+>> required clock? That would solve the above problem in a sensible way,
+>> and your kernel wouldn't go bust.
+>
+> Could you explain a bit more? We have the follwing DT entries related to this:
+>
+> 	tsc {
+> 		compatible = "nvidia,tegra114-tsc";
+> 		reg = <0x700f0000 0x20000>;
+> 	};
+>
+> 	...
+>
+> 	timer {
+> 		compatible = "arm,armv7-timer";
+> 		interrupts = <1 13 0xf08>,
+> 			     <1 14 0xf08>,
+> 			     <1 11 0xf08>,
+> 			     <1 10 0xf08>;
+> 	};
+>
+Arch timer frequency can be specified in DT since the code
+already has provision to extract it. Below is extract
+from OMAP5 DT code.
 
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+timer {
+                                 compatible = "arm,armv7-timer";
 
-On Sun, Jan 06, 2013 at 11:57:48AM -0800, Dmitry Torokhov wrote:
-> On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
-> > On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wrote:
-> > > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan wrote:
-> > [...]
-> > > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct platform_de=
-vice *pdev)
-> > > >  	spin_lock_init(&kbc->lock);
-> > > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long=
-)kbc);
-> > > > =20
-> > > > -	res =3D request_mem_region(res->start, resource_size(res), pdev->=
-name);
-> > > > -	if (!res) {
-> > > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
-> > > > -		err =3D -EBUSY;
-> > > > -		goto err_free_mem;
-> > > > -	}
-> > > > -
-> > > > -	kbc->mmio =3D ioremap(res->start, resource_size(res));
-> > > > +	kbc->mmio =3D devm_request_and_ioremap(&pdev->dev, res);
-> > > >  	if (!kbc->mmio) {
-> > > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
-> > > > -		err =3D -ENXIO;
-> > > > -		goto err_free_mem_region;
-> > > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap address\n");
-> > > > +		return -EADDRNOTAVAIL;
-> > >=20
-> > > Erm, no, -EBUSY please.
-> >=20
-> > EADDRNOTAVAIL is the canonical error for devm_request_and_ioremap()
-> > failure. The kerneldoc comment in lib/devres.c even gives a short
-> > example that uses this error code.
->=20
-> I am sorry, but I do not consider a function that was added a little
-> over a year ago as a canon. If you look at the uses of EADDRNOTAVAIL it
-> is used predominantly in networking code to indicate that attempted
-> _network_ address is not available.
+                                 interrupts = <1 14 0x308>;
+                                 clock-frequency = <6144000>;
+                         };
 
-EBUSY might be misleading, though. devm_request_and_ioremap() can fail
-in both the request_mem_region() and ioremap() calls. Furthermore it'd
-be good to settle on a consistent error-code instead of doing it
-differently depending on subsystem and/or driver. Currently the various
-error codes used are:
+I think thats what Marc is pointing out.
 
-	EBUSY, EADDRNOTAVAIL, ENXIO, ENOMEM, ENODEV, ENOENT, EINVAL,
-	EIO, EFAULT, EADDRINUSE
-
-Also if we can settle on one error code we should follow up with a patch
-to make it consistent across the tree and also update that kerneldoc
-comment. I volunteer to do that if nobody else steps up. I'm also Cc'ing
-Wolfram (the original author), maybe he has some thoughts on this.
-
-Thierry
-
---qMm9M+Fa2AknHoGS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ7RdBAAoJEN0jrNd/PrOh0KEP/0IHiXOk8Csr1OOXsTv8Rs8g
-SdJ9H7y/a/Qc+O1pSA29uTBFVFl7y0fhpzvFAGWXJOl/AAbeBMW+as9gsW0hcO5I
-mfNl6j+99egfm2yxf6EDXLXIKylH92Zr+bHGZyqj4So2vpUODmxvFs3WPcuCXqiL
-EGQKOpt89EzxWIRCMViEc+cZ4hphmm0kqZ6fFc0iGI2zUa/Syao8lTsmmHomqD1p
-1mgH3SCSSolS6X/NY1DXkoMU8V3l94SXcuTGUxY8w/c0UlV0wNhh+KLIVTh8feq9
-TwRkhSRZIHz7MTCRW34JWf/KUr55fuWDEOm+Ndyf7H1A1X17G8YJY+PnfZR2V0P8
-hfT07HvpPLjNE6MCl8Ve3qFuWkCnVxWhiE8P6bzSPBRQ3yBjbK4T5kDaeTS8ehiH
-3siBNi1evqjSI0kx2vFbaOhDqup5QVNreiBCWnG6euazuGXIoASgK7ya5Vatj9gy
-x943j9SDZAft3TvWCmJ1PkLiUyDQKNOLqJbM6VA8xj10/KpSjwz+XQ62X+sAZJp6
-kDUxsW3jsonvXwTCfjRy5PvQJ6rxgQ1Zyr/f7Ajc+7UFGnC2YFH71Gm1835nsNC0
-f0Hx9GbIK5gwXTe+9oAxhh2oLc5YV4ap11pifeVd4fYIdG6WGty1K+t/8QdcB8Mu
-ux4f6Vtt0sKs9N5kstMd
-=ljO5
------END PGP SIGNATURE-----
-
---qMm9M+Fa2AknHoGS--
+Regards
+Santosh
