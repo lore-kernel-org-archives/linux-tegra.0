@@ -1,70 +1,44 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 00/14] Rewrite Tegra PCIe driver
-Date: Wed, 9 Jan 2013 22:25:17 +0100
-Message-ID: <20130109222517.3c590553@skate>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
+Date: Wed, 9 Jan 2013 21:28:47 +0000
+Message-ID: <20130109212847.GT3931@n2100.arm.linux.org.uk>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-6-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1357764194-12677-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1357764194-12677-6-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Thierry Reding,
+On Wed, Jan 09, 2013 at 09:43:05PM +0100, Thierry Reding wrote:
+> The I/O map cache is used to map large regions of physical memory in
+> smaller chunks to avoid running out of vmalloc()/ioremap() space.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-On Wed,  9 Jan 2013 21:43:00 +0100, Thierry Reding wrote:
-> This patch series contains an almost complete rewrite of the Tegra PCIe
-> driver. The code is moved to the drivers/pci/host directory and turned
-> into a proper platform driver, adding MSI and DT support while at it.
-> Other PCI host controller drivers can be added to that directory in an
-> attempt to make it easier to factor out common code.
+We already have a means where we record the mappings which ioremap()
+creates.  If you look at /proc/vmallocinfo, you'll notice lines such
+as:
 
-Thanks!
+0xf7b72000-0xf7b74000    8192 e1000_probe+0x291/0xa68 [e1000e] phys=fc025000 ioremap
 
-I have started basing the Marvell PCIe code on some of your earlier
-versions. But apparently in this final version, you no longer have the
-emulated Host bridge. Why so?
+which gives you the virtual address range, physical address and type
+of the mapping.  Why do we need a duplicated data structure?
 
-For the Marvell PCIe code, I've used your emulated Host bridge, and
-added an emulated PCI-to-PCI bridge implementation, in order to get the
-following hierarchy:
+Moreover, you seem to suggest that you want to break up a large
+ioremap() mapping into several smaller mappings.  Why?  The idea
+behind ioremap() is that this relationship holds true:
 
- + Host Bridge
-   + PCI-to-PCI bridge
-     + PCI Device
-   + PCI-to-PCI bridge
-     + PCI device
+	ptr = ioremap(cookie + n, size);
 
-So, I instantiate one unique emulated Host Bridge, and then one
-emulated PCI-to-PCI Bridge for each PCIe interface that I have.
+For any 'n' in the range 0 .. size, the location shall be accessible
+via ptr + n when using the IO space accessors.  If you're going to
+break up a mapping into several smaller ones, this no longer holds
+true.
 
-The nice thing about that is that I can then read the configuration
-space of the PCI-to-PCI bridge to find out how much I/O space and
-memory space is needed for the device connected to this interface, and
-at which address is has been mapped. This greatly helps my "address
-decoding" problem, and removes the ad-hoc virtual space allocator I had
-written.
-
-Is there a reason for having given up on this idea? Is there still a
-hope for a different PCIe implementation to use this idea?
-
-Thanks,
-
-Thomas
--- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+If the problem is that you're ioremapping huge address ranges because
+you're passing larger-than-required resources to devices, then that's
+part of the problem too.
