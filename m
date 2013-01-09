@@ -1,145 +1,57 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
-Date: Wed, 9 Jan 2013 06:57:08 +0100
-Message-ID: <20130109.075708.1662067562960541635.hdoyu@nvidia.com>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com><1357649263-1098-6-git-send-email-hdoyu@nvidia.com><50EC444B.5060206@arm.com>
+Date: Wed, 9 Jan 2013 07:00:31 +0100
+Message-ID: <20130109.080031.1063344100374199123.hdoyu@nvidia.com>
+References: <1357649263-1098-6-git-send-email-hdoyu@nvidia.com><50EC444B.5060206@arm.com><50ECA0A6.4090307@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50EC444B.5060206-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <50ECA0A6.4090307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marc,
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 8 Jan 2013 23:41:42 +0100:
 
-Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 17:07:39 +0100:
-
-> On 08/01/13 12:47, Hiroshi Doyu wrote:
-> > Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
-> > timer than TMR0. If it's available, it will be used for clock source
-> > and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
-> > necessary for clock event.
+> On 01/08/2013 09:07 AM, Marc Zyngier wrote:
+> > On 08/01/13 12:47, Hiroshi Doyu wrote:
+> >> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+> >> timer than TMR0. If it's available, it will be used for clock source
+> >> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+> >> necessary for clock event.
+> 
+> >> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+> 
+> >> +/* FIXME: only secure mode is supported. */
 > > 
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  .../bindings/arm/tegra/nvidia,tegra114-tsc.txt     |   11 ++++
-> >  drivers/clocksource/tegra20_timer.c                |   65 +++++++++++++++++++-
-> >  2 files changed, 75 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
+> > And this is a bug, as far as I'm concerned.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
-> > new file mode 100644
-> > index 0000000..9de936a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra114-tsc.txt
-> > @@ -0,0 +1,11 @@
-> > +NVIDIA Tegra Timer Stamp Counter(TSC)
-> > +
-> > +Required properties:
-> > +- compatible : "nvidia,tegra114-tsc
-> > +- reg : Should contain 1 register ranges(address and length)
-> > +
-> > +Example:
-> > +	tsc {
-> > +		compatible = "nvidia,tegra114-tsc";
-> > +		reg = <0x700f0000 0x20000>;
-> > +	};
-> > diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-> > index 1d25de8..564266d 100644
-> > --- a/drivers/clocksource/tegra20_timer.c
-> > +++ b/drivers/clocksource/tegra20_timer.c
-> > @@ -30,6 +30,7 @@
-> >  #include <asm/mach/time.h>
-> >  #include <asm/smp_twd.h>
-> >  #include <asm/sched_clock.h>
-> > +#include <asm/arch_timer.h>
-> >  
-> >  #define RTC_SECONDS            0x08
-> >  #define RTC_SHADOW_SECONDS     0x0c
-> > @@ -271,10 +272,72 @@ static void __init tegra20_init_tmr(void)
-> >  	clockevents_register_device(&tegra_clockevent);
-> >  }
-> >  
-> > +#define TSC_CNTCR		0		/* TSC control registers */
-> > +#define TSC_CNTCR_ENABLE	(1 << 0)	/* Enable */
-> > +#define TSC_CNTCR_HDBG		(1 << 1)	/* Halt on debug */
-> > +
-> > +#define TSC_CNTCV0		0x8		/* TSC counter (LSW) */
-> > +#define TSC_CNTCV1		0xc		/* TSC counter (MSW) */
-> > +#define TSC_CNTFID0		0x20		/* TSC freq id 0 */
-> > +
-> > +static const struct of_device_id tegra_tsc_match[] __initconst = {
-> > +	{ .compatible = "nvidia,tegra114-tsc" },
-> > +	{}
-> > +};
-> > +
-> > +/* FIXME: only secure mode is supported. */
+> >> +static int tegra_arch_timer_init(void)
 > 
-> And this is a bug, as far as I'm concerned.
+> >> +	clk = clk_get_sys("clk_m", NULL);
+> >> +	if (IS_ERR(clk)) {
+> >> +		freq = 12000000;
+> >> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
+> >> +	} else {
+> >> +		freq = clk_get_rate(clk);
+> >> +		clk_put(clk);
+> >> +	}
+> >> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
+> >> +
+> >> +	/* CNTFRQ */
+> >> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+> >> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+> >> +	BUG_ON(val != freq);
+> > 
+> > No, not again! Like I said last year, this won't fly. So instead of
+> > trying to work around a broken firmware, let's do the right thing.
 > 
-> > +static int tegra_arch_timer_init(void)
-> > +{
-> > +	int err;
-> > +	struct device_node *np;
-> > +	struct clk *clk;
-> > +	void __iomem *tsc_base;
-> > +	u32 freq, val;
-> > +
-> > +	np = of_find_matching_node(NULL, tegra_tsc_match);
-> > +	if (!np)
-> > +		return -ENODEV;
-> > +
-> > +	tsc_base = of_iomap(np, 0);
-> > +	if (!tsc_base)
-> > +		return -ENODEV;
-> > +
-> > +	clk = clk_get_sys("clk_m", NULL);
-> > +	if (IS_ERR(clk)) {
-> > +		freq = 12000000;
-> > +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
-> > +	} else {
-> > +		freq = clk_get_rate(clk);
-> > +		clk_put(clk);
-> > +	}
-> > +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
-> > +
-> > +	/* CNTFRQ */
-> > +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
-> > +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
-> > +	BUG_ON(val != freq);
-> 
-> No, not again! Like I said last year, this won't fly. So instead of
-> trying to work around a broken firmware, let's do the right thing.
-> 
-> > +
-> > +	val = readl_relaxed(tsc_base + TSC_CNTCR);
-> > +	val |= TSC_CNTCR_ENABLE | TSC_CNTCR_HDBG;
-> > +	writel_relaxed(val, tsc_base + TSC_CNTCR);
-> > +
-> > +	err = arch_timer_of_register();
-> 
-> What about adding an optional property to the binding, pointing to the
-> required clock? That would solve the above problem in a sensible way,
-> and your kernel wouldn't go bust.
+> OK, so I understand you want to firmware/bootloader/... to write the
+> value into that register instead, so this all works in non-secure mode
+> (which sounds like a fine objection), but ...
 
-Could you explain a bit more? We have the follwing DT entries related to this:
-
-	tsc {
-		compatible = "nvidia,tegra114-tsc";
-		reg = <0x700f0000 0x20000>;
-	};
-
-	...
-
-	timer {
-		compatible = "arm,armv7-timer";
-		interrupts = <1 13 0xf08>,
-			     <1 14 0xf08>,
-			     <1 11 0xf08>,
-			     <1 10 0xf08>;
-	};
-
-The above "tsc" is needed for platform specific enabler for ARM arch timer.
+If possible, I want to run kernel without bootloader initializing TSC
+. IOW, I want to allow legacy bootloaders to boot kernel with ARM arch
+timer.
