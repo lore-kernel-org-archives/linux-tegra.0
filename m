@@ -1,66 +1,104 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
-Date: Wed, 9 Jan 2013 07:55:36 +0100
-Message-ID: <20130109.085536.1185368963261877641.hdoyu@nvidia.com>
-References: <50ECA0A6.4090307@wwwdotorg.org><20130109.080031.1063344100374199123.hdoyu@nvidia.com><50ED10F1.30001@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
+ allocation
+Date: Wed, 9 Jan 2013 08:07:45 +0100
+Message-ID: <20130109070745.GA12782@avionic-0098.adnet.avionic-design.de>
+References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
+ <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
+ <20130105080658.GA1315@core.coreip.homeip.net>
+ <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
+ <20130106195748.GA28212@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50ED10F1.30001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130106195748.GA28212@core.coreip.homeip.net>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 9 Jan 2013 07:40:49 +0100:
 
-> On 01/08/2013 11:00 PM, Hiroshi Doyu wrote:
-> > Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 8 Jan 2013 23:41:42 +0100:
-> >> On 01/08/2013 09:07 AM, Marc Zyngier wrote:
-> >>> On 08/01/13 12:47, Hiroshi Doyu wrote:
-> >>>> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
-> >>>> timer than TMR0. If it's available, it will be used for clock source
-> >>>> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
-> >>>> necessary for clock event.
-> >>
-> >>>> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-> >>
-> >>>> +/* FIXME: only secure mode is supported. */
-> >>>
-> >>> And this is a bug, as far as I'm concerned.
-> >>>
-> >>>> +static int tegra_arch_timer_init(void)
-> >>
-> >>>> +	clk = clk_get_sys("clk_m", NULL);
-> >>>> +	if (IS_ERR(clk)) {
-> >>>> +		freq = 12000000;
-> >>>> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
-> >>>> +	} else {
-> >>>> +		freq = clk_get_rate(clk);
-> >>>> +		clk_put(clk);
-> >>>> +	}
-> >>>> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
-> >>>> +
-> >>>> +	/* CNTFRQ */
-> >>>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
-> >>>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
-> >>>> +	BUG_ON(val != freq);
-> >>>
-> >>> No, not again! Like I said last year, this won't fly. So instead of
-> >>> trying to work around a broken firmware, let's do the right thing.
-> >>
-> >> OK, so I understand you want to firmware/bootloader/... to write the
-> >> value into that register instead, so this all works in non-secure mode
-> >> (which sounds like a fine objection), but ...
-> > 
-> > If possible, I want to run kernel without bootloader initializing TSC
-> > . IOW, I want to allow legacy bootloaders to boot kernel with ARM arch
-> > timer.
-> 
-> Is it really hard to just fix the bootloader? Tegra114 is new enough,
-> and upstream support new enough, it should be fine to require a fixed
-> bootloader in order to run the upstream kernel even if we don't yet do
-> this right in the downstream kernels.
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I'll drop this part. Still kernel can boot up.
+On Sun, Jan 06, 2013 at 11:57:48AM -0800, Dmitry Torokhov wrote:
+> On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
+> > On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wrote:
+> > > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan wrote:
+> > [...]
+> > > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct platform_de=
+vice *pdev)
+> > > >  	spin_lock_init(&kbc->lock);
+> > > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long=
+)kbc);
+> > > > =20
+> > > > -	res =3D request_mem_region(res->start, resource_size(res), pdev->=
+name);
+> > > > -	if (!res) {
+> > > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
+> > > > -		err =3D -EBUSY;
+> > > > -		goto err_free_mem;
+> > > > -	}
+> > > > -
+> > > > -	kbc->mmio =3D ioremap(res->start, resource_size(res));
+> > > > +	kbc->mmio =3D devm_request_and_ioremap(&pdev->dev, res);
+> > > >  	if (!kbc->mmio) {
+> > > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+> > > > -		err =3D -ENXIO;
+> > > > -		goto err_free_mem_region;
+> > > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap address\n");
+> > > > +		return -EADDRNOTAVAIL;
+> > >=20
+> > > Erm, no, -EBUSY please.
+> >=20
+> > EADDRNOTAVAIL is the canonical error for devm_request_and_ioremap()
+> > failure. The kerneldoc comment in lib/devres.c even gives a short
+> > example that uses this error code.
+>=20
+> I am sorry, but I do not consider a function that was added a little
+> over a year ago as a canon. If you look at the uses of EADDRNOTAVAIL it
+> is used predominantly in networking code to indicate that attempted
+> _network_ address is not available.
+
+EBUSY might be misleading, though. devm_request_and_ioremap() can fail
+in both the request_mem_region() and ioremap() calls. Furthermore it'd
+be good to settle on a consistent error-code instead of doing it
+differently depending on subsystem and/or driver. Currently the various
+error codes used are:
+
+	EBUSY, EADDRNOTAVAIL, ENXIO, ENOMEM, ENODEV, ENOENT, EINVAL,
+	EIO, EFAULT, EADDRINUSE
+
+Also if we can settle on one error code we should follow up with a patch
+to make it consistent across the tree and also update that kerneldoc
+comment. I volunteer to do that if nobody else steps up. I'm also Cc'ing
+Wolfram (the original author), maybe he has some thoughts on this.
+
+Thierry
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ7RdBAAoJEN0jrNd/PrOh0KEP/0IHiXOk8Csr1OOXsTv8Rs8g
+SdJ9H7y/a/Qc+O1pSA29uTBFVFl7y0fhpzvFAGWXJOl/AAbeBMW+as9gsW0hcO5I
+mfNl6j+99egfm2yxf6EDXLXIKylH92Zr+bHGZyqj4So2vpUODmxvFs3WPcuCXqiL
+EGQKOpt89EzxWIRCMViEc+cZ4hphmm0kqZ6fFc0iGI2zUa/Syao8lTsmmHomqD1p
+1mgH3SCSSolS6X/NY1DXkoMU8V3l94SXcuTGUxY8w/c0UlV0wNhh+KLIVTh8feq9
+TwRkhSRZIHz7MTCRW34JWf/KUr55fuWDEOm+Ndyf7H1A1X17G8YJY+PnfZR2V0P8
+hfT07HvpPLjNE6MCl8Ve3qFuWkCnVxWhiE8P6bzSPBRQ3yBjbK4T5kDaeTS8ehiH
+3siBNi1evqjSI0kx2vFbaOhDqup5QVNreiBCWnG6euazuGXIoASgK7ya5Vatj9gy
+x943j9SDZAft3TvWCmJ1PkLiUyDQKNOLqJbM6VA8xj10/KpSjwz+XQ62X+sAZJp6
+kDUxsW3jsonvXwTCfjRy5PvQJ6rxgQ1Zyr/f7Ajc+7UFGnC2YFH71Gm1835nsNC0
+f0Hx9GbIK5gwXTe+9oAxhh2oLc5YV4ap11pifeVd4fYIdG6WGty1K+t/8QdcB8Mu
+ux4f6Vtt0sKs9N5kstMd
+=ljO5
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
