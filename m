@@ -1,66 +1,68 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH RESEND] dma: tegra: implement flags parameters for cyclic transfer
-Date: Wed, 9 Jan 2013 15:26:22 +0530
-Message-ID: <1357725382-25780-1-git-send-email-ldewangan@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
+Date: Wed, 9 Jan 2013 16:29:53 +0530
+Message-ID: <50ED4DA9.3090406@nvidia.com>
+References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org> <50EC8947.4080704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50EC8947.4080704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: djbw-b10kYP2dOMg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The flag parameter is added in the cyclic transfer request.
-Use the flag option of:
-- DMA_PREP_INTERRUPT for enabling interrupt.
-- DMA_CTRL_ACK for deciding whether ack is requred or not for
-  descriptor.
+On Wednesday 09 January 2013 02:31 AM, Stephen Warren wrote:
+> On 01/08/2013 11:49 AM, Stephen Warren wrote:
+>> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
+>>> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
+>>>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
+>>>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
+>>>>>> This patchset does following:
+>>>>>> 1. Decompose single tegra clock structure into multiple clocks.
+>>>>>> 2. Try to use standard clock types supported by common clock framework.
+>>>>>> 3. Use dynamic initialization.
+>>>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
+>>>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
+>>>>>> 6. Remove all legacy clock code from mach-tegra.
+>>>>> I think there are bugs here. I applied all your clock patches on top of
+>>>>> Tegra's for-next (see list below), and found that the following don't
+>>>>> work on Springbank:
+>>>>>
+>>>>> * HDMI display
+>>>>> * Audio playback
+>>>>> * WiFi
+>>>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@ instead...)
+>>>>
+>>>> Prashant, some updated testing results based off the "dev/ccf" branch
+>>>> you sent me on our internal git server:
+>> ...
+>>> I have updated the internal branch with all the above mentioned fixes.
+> ...
+>> The remaining item is the display issue on Tegra30, which I'll go look
+>> at now.
+> The USB3 clock, which isn't used by any drivers on Tegra30, and hence
+> was disabled at boot, was set up incorrectly and ended up mapping to the
+> disp1 clock, and hence turned off the display. The following fixes it:
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Vinod,
-This patch was sent before holiday and may be it is missed in you radar.
-You have already applied my other patches on dma which was sent later so
-resending this patch.
-Stephen wanted this to be part of stable branch also.
-This is against bug fixes and new feature added in K3.7 for cyclic transfer without
-interrupt.
+Stephen, thanks for the fix!! I have included this and PLLE fix; updated 
+internal branch.
 
- drivers/dma/tegra20-apb-dma.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
+Please let me know if it is good to merge now, I will send the patches.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index efdfffa..bf58bb8 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -266,6 +266,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
- 		if (async_tx_test_ack(&dma_desc->txd)) {
- 			list_del(&dma_desc->node);
- 			spin_unlock_irqrestore(&tdc->lock, flags);
-+			dma_desc->txd.flags = 0;
- 			return dma_desc;
- 		}
- 	}
-@@ -1050,7 +1051,9 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
--	csr |= TEGRA_APBDMA_CSR_FLOW | TEGRA_APBDMA_CSR_IE_EOC;
-+	csr |= TEGRA_APBDMA_CSR_FLOW;
-+	if (flags & DMA_PREP_INTERRUPT)
-+		csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
-@@ -1095,7 +1098,8 @@ struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		mem += len;
- 	}
- 	sg_req->last_sg = true;
--	dma_desc->txd.flags = 0;
-+	if (flags & DMA_CTRL_ACK)
-+		dma_desc->txd.flags = DMA_CTRL_ACK;
- 
- 	/*
- 	 * Make sure that mode should not be conflicting with currently
--- 
-1.7.1.1
+>> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+>> index f2f526e..0bac07c 100644
+>> --- a/drivers/clk/tegra/clk-tegra30.c
+>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>> @@ -1541,7 +1541,7 @@ static void __init tegra30_periph_clk_init(void)
+>>   
+>>   	/* usb3 */
+>>   	clk = tegra_clk_periph_gate("usb3", "clk_m", 0, clk_base, 0, 59,
+>> -				    &periph_l_regs, periph_clk_enb_refcnt);
+>> +				    &periph_h_regs, periph_clk_enb_refcnt);
+>>   	clk_register_clkdev(clk, NULL, "tegra-ehci.2");
+>>   	clks[usb3] = clk;
+> I wonder if there are any other similar issues?
+
+Reviewed, there were none.
