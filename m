@@ -1,27 +1,56 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v2 2/9] HACK: ARM: tegra: Use CLK_IGNORE_UNUSED for Tegra 114
- SoC
-Date: Tue, 08 Jan 2013 15:52:49 -0700
-Message-ID: <50ECA341.5020106@wwwdotorg.org>
-References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com> <1357649263-1098-3-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
+ HAVE_ARM_SCU
+Date: Wed, 9 Jan 2013 06:46:51 +0100
+Message-ID: <20130109.074651.1513003283585604525.hdoyu@nvidia.com>
+References: <1357649263-1098-1-git-send-email-hdoyu@nvidia.com><1357649263-1098-4-git-send-email-hdoyu@nvidia.com><20130108142651.GB3931@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357649263-1098-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130108142651.GB3931-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/08/2013 05:47 AM, Hiroshi Doyu wrote:
-> Use CLK_IGNORE_UNUSED for the Tegra 114 SoC to ensure
-> clk_disable_unused() is not called. Otherwise the system will die,
-> because the usecount of the clocks is incorrect. This patch will be
-> reverted once the Tegra 114 clocks are implemented.
+Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote @ Tue, 8 Jan 2013 15:26:51 +0100:
 
-> diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+> On Tue, Jan 08, 2013 at 02:47:37PM +0200, Hiroshi Doyu wrote:
+> > The method to detect the number of CPU cores on Cortex-A9 MPCore and
+> > Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
+> > information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
+> > have to read it from the system coprocessor(CP15), because the SCU on
+> > Cortex-A15 MPCore does not have software readable registers. This
+> > patch selects the correct method at runtime based on the CPU ID.
+> > 
+> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  arch/arm/mach-tegra/platsmp.c |   31 ++++++++++++++++++++++++++++---
+> >  1 file changed, 28 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> > index 1b926df..68e76ef 100644
+> > --- a/arch/arm/mach-tegra/platsmp.c
+> > +++ b/arch/arm/mach-tegra/platsmp.c
+> > @@ -23,6 +23,7 @@
+> >  #include <asm/hardware/gic.h>
+> >  #include <asm/mach-types.h>
+> >  #include <asm/smp_scu.h>
+> > +#include <asm/cputype.h>
+> >  
+> >  #include <mach/powergate.h>
+> >  
+> > @@ -34,9 +35,13 @@
+> >  #include "common.h"
+> >  #include "iomap.h"
+> >  
+> > +#define CPU_MASK		0xff0ffff0
+> > +#define CPU_CORTEX_A9		0x410fc090
+> > +#define CPU_CORTEX_A15		0x410fc0f0
+> 
+> NAK. There's some patches around to make this stuff generic, we don't
+> need more ifdefs springing up.  We need to get those generic patches
+> in.
 
-Just as an FYI, I'll almost certainly apply Prashant's common clock
-conversion before this series, so this patch will need some rework to be
-applied on top of that.
+Does anyone give some pointers to the above patches?
