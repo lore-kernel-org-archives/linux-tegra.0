@@ -1,150 +1,133 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH 08/14] ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
-Date: Wed,  9 Jan 2013 21:43:08 +0100
-Message-ID: <1357764194-12677-9-git-send-email-thierry.reding@avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
+Date: Wed, 09 Jan 2013 13:44:03 -0700
+Message-ID: <50EDD693.2060905@wwwdotorg.org>
+References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org> <50EC8947.4080704@wwwdotorg.org> <50ED4DA9.3090406@nvidia.com> <50EDAA39.3040609@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357764194-12677-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <50EDAA39.3040609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The PMC code already accesses to PMC registers so it makes sense to
-move this function there as well. While at it, rename the function to
-tegra_pmc_pcie_xclk_clamp() for consistency.
+On 01/09/2013 10:34 AM, Stephen Warren wrote:
+> On 01/09/2013 03:59 AM, Prashant Gaikwad wrote:
+>> On Wednesday 09 January 2013 02:31 AM, Stephen Warren wrote:
+>>> On 01/08/2013 11:49 AM, Stephen Warren wrote:
+>>>> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
+>>>>> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
+>>>>>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
+>>>>>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
+>>>>>>>> This patchset does following:
+>>>>>>>> 1. Decompose single tegra clock structure into multiple clocks.
+>>>>>>>> 2. Try to use standard clock types supported by common clock
+>>>>>>>> framework.
+>>>>>>>> 3. Use dynamic initialization.
+>>>>>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
+>>>>>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
+>>>>>>>> 6. Remove all legacy clock code from mach-tegra.
+>>>>>>> I think there are bugs here. I applied all your clock patches on
+>>>>>>> top of
+>>>>>>> Tegra's for-next (see list below), and found that the following don't
+>>>>>>> work on Springbank:
+>>>>>>>
+>>>>>>> * HDMI display
+>>>>>>> * Audio playback
+>>>>>>> * WiFi
+>>>>>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@
+>>>>>> instead...)
+>>>>>>
+>>>>>> Prashant, some updated testing results based off the "dev/ccf" branch
+>>>>>> you sent me on our internal git server:
+>>>> ...
+>>>>> I have updated the internal branch with all the above mentioned fixes.
+>>> ...
+>>>> The remaining item is the display issue on Tegra30, which I'll go look
+>>>> at now.
+>>> The USB3 clock, which isn't used by any drivers on Tegra30, and hence
+>>> was disabled at boot, was set up incorrectly and ended up mapping to the
+>>> disp1 clock, and hence turned off the display. The following fixes it:
+>>
+>> Stephen, thanks for the fix!! I have included this and PLLE fix; updated
+>> internal branch.
+> 
+> Almost everything works great now.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
----
-Changes in v3:
-- none
+I noticed a couple more issues.
 
-Changes in v2:
-- none
----
- arch/arm/mach-tegra/pcie.c | 30 ++++--------------------------
- arch/arm/mach-tegra/pmc.c  | 16 ++++++++++++++++
- arch/arm/mach-tegra/pmc.h  |  1 +
- 3 files changed, 21 insertions(+), 26 deletions(-)
+First, the clock rate rounding behaviour changes with your patch series
+for at least the I2C clocks.
 
-diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-index bffcd64..c2d55f8 100644
---- a/arch/arm/mach-tegra/pcie.c
-+++ b/arch/arm/mach-tegra/pcie.c
-@@ -42,6 +42,7 @@
- 
- #include "board.h"
- #include "iomap.h"
-+#include "pmc.h"
- 
- /* Hack - need to parse this from DT */
- #define INT_PCIE_INTR 130
-@@ -148,17 +149,6 @@
- #define  PADS_PLL_CTL_TXCLKREF_DIV10		(0 << 20)
- #define  PADS_PLL_CTL_TXCLKREF_DIV5		(1 << 20)
- 
--/* PMC access is required for PCIE xclk (un)clamping */
--#define PMC_SCRATCH42		0x144
--#define PMC_SCRATCH42_PCX_CLAMP	(1 << 0)
--
--static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
--
--#define pmc_writel(value, reg) \
--	__raw_writel(value, reg_pmc_base + (reg))
--#define pmc_readl(reg) \
--	__raw_readl(reg_pmc_base + (reg))
--
- /*
-  * Tegra2 defines 1GB in the AXI address map for PCIe.
-  *
-@@ -640,18 +630,6 @@ static int tegra_pcie_enable_controller(void)
- 	return 0;
- }
- 
--static void tegra_pcie_xclk_clamp(bool clamp)
--{
--	u32 reg;
--
--	reg = pmc_readl(PMC_SCRATCH42) & ~PMC_SCRATCH42_PCX_CLAMP;
--
--	if (clamp)
--		reg |= PMC_SCRATCH42_PCX_CLAMP;
--
--	pmc_writel(reg, PMC_SCRATCH42);
--}
--
- static void tegra_pcie_power_off(void)
- {
- 	tegra_periph_reset_assert(tegra_pcie.pcie_xclk);
-@@ -659,7 +637,7 @@ static void tegra_pcie_power_off(void)
- 	tegra_periph_reset_assert(tegra_pcie.pex_clk);
- 
- 	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
--	tegra_pcie_xclk_clamp(true);
-+	tegra_pmc_pcie_xclk_clamp(true);
- }
- 
- static int tegra_pcie_power_regate(void)
-@@ -668,7 +646,7 @@ static int tegra_pcie_power_regate(void)
- 
- 	tegra_pcie_power_off();
- 
--	tegra_pcie_xclk_clamp(true);
-+	tegra_pmc_pcie_xclk_clamp(true);
- 
- 	tegra_periph_reset_assert(tegra_pcie.pcie_xclk);
- 	tegra_periph_reset_assert(tegra_pcie.afi_clk);
-@@ -682,7 +660,7 @@ static int tegra_pcie_power_regate(void)
- 
- 	tegra_periph_reset_deassert(tegra_pcie.afi_clk);
- 
--	tegra_pcie_xclk_clamp(false);
-+	tegra_pmc_pcie_xclk_clamp(false);
- 
- 	clk_prepare_enable(tegra_pcie.afi_clk);
- 	clk_prepare_enable(tegra_pcie.pex_clk);
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index d4fdb5f..a335a93 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -24,6 +24,10 @@
- #define PMC_CTRL		0x0
- #define PMC_CTRL_INTR_LOW	(1 << 17)
- 
-+/* PMC access is required for PCIE xclk (un)clamping */
-+#define PMC_SCRATCH42		0x144
-+#define PMC_SCRATCH42_PCX_CLAMP	(1 << 0)
-+
- static inline u32 tegra_pmc_readl(u32 reg)
- {
- 	return readl(IO_ADDRESS(TEGRA_PMC_BASE + reg));
-@@ -74,3 +78,15 @@ void __init tegra_pmc_init(void)
- 		val &= ~PMC_CTRL_INTR_LOW;
- 	tegra_pmc_writel(val, PMC_CTRL);
- }
-+
-+void tegra_pmc_pcie_xclk_clamp(bool clamp)
-+{
-+	u32 reg;
-+
-+	reg = tegra_pmc_readl(PMC_SCRATCH42) & ~PMC_SCRATCH42_PCX_CLAMP;
-+
-+	if (clamp)
-+		reg |= PMC_SCRATCH42_PCX_CLAMP;
-+
-+	tegra_pmc_writel(reg, PMC_SCRATCH42);
-+}
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 8995ee4..2631c9a 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -19,5 +19,6 @@
- #define __MACH_TEGRA_PMC_H
- 
- void tegra_pmc_init(void);
-+void tegra_pmc_pcie_xclk_clamp(bool clamp);
- 
- #endif
--- 
-1.8.1
+With I2C, you specify how fast you want the bus to go. The bus shouldn't
+run any faster than that since the rate matches the max specification
+for the attached devices. So the clock framework should pick the
+smallest divider that yields a clock that doesn't exceed the request
+from clk_set_rate(). However, the new code seems to pick the smallest
+divider that yields at least the requested clock. I can certainly see
+that other clocks (say memory, CPU, or other internal
+performance-related clocks) might want to round the other way though.
+
+The I2C driver sets its module clock to 8 times the desired bus rate.
+This yields a request of:
+
+desired bus rate: 100 KHz
+desired clock rate: 800 KHz
+actual clock rate before your change: 800 KHz
+actual clock rate after your change: 800 KHz
+-> OK
+
+desired bus rate: 400 KHz
+desired clock rate: 3.2 MHz
+actual clock rate before your change: 3 MHz (so 375 KHz bus rate, OK)
+actual clock rate after your change: 4 MHZ (so 500 KHz bus rate, BAD)
+
+desired bus rate: 80 KHz (Toshiba AC100's nvec/I2C slave driver)
+desired clock rate: 640 KHz
+actual clock rate before your change: ~632 KHz (so ~79 KHz bus rate, OK)
+actual clock rate after your change: ~706 KHz (so ~88 KHz bus rate, BAD)
+
+Can this be fixed?
+
+Second, the Toshiba AC100 uses an alternative driver for the I2C HW,
+since it operates in I2C slave mode. So, the DT node for that driver
+needs to include the clocks properties so the driver can get the clocks
+through DT:
+
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+> index edef66c..6495425 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -278,6 +278,8 @@
+>                 clock-frequency = <50000>;
+>                 request-gpios = <&gpio 170 0>; /* gpio PV2 */
+>                 slave-addr = <138>;
+> +               clocks = <&tegra_car 67>, <&tegra_car 124>;
+> +               clock-names = "div-clk", "fast-clk";
+>         };
+>  
+>         i2c@7000d000 {
+
+Your changes don't actually cause the driver to break though, since it
+abuses clk_get_sys() to retrieve clocks under a different driver name,
+which matches what the clock driver provides. However, I think you
+should also include the following patch at the end of your series to fix
+this up, so the clock looking happens through device tree:
+
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index d8826ed..6d44076 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -770,7 +770,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+>                 return -ENODEV;
+>         }
+>  
+> -       i2c_clk = clk_get_sys("tegra-i2c.2", "div-clk");
+> +       i2c_clk = clk_get(&pdev->dev, "div-clk");
+>         if (IS_ERR(i2c_clk)) {
+>                 dev_err(nvec->dev, "failed to get controller clock\n");
+>                 return -ENODEV;
+
+Thanks.
