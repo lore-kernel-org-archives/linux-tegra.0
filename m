@@ -1,81 +1,62 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Wed, 9 Jan 2013 07:25:09 +0100
-Message-ID: <20130109.082509.2246926906796416372.hdoyu@nvidia.com>
-References: <20130108142651.GB3931@n2100.arm.linux.org.uk><20130109.074651.1513003283585604525.hdoyu@nvidia.com><1357711661.28383.1.camel@jlo-ubuntu-64.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
+Date: Tue, 08 Jan 2013 23:40:49 -0700
+Message-ID: <50ED10F1.30001@wwwdotorg.org>
+References: <1357649263-1098-6-git-send-email-hdoyu@nvidia.com><50EC444B.5060206@arm.com><50ECA0A6.4090307@wwwdotorg.org> <20130109.080031.1063344100374199123.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357711661.28383.1.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <20130109.080031.1063344100374199123.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "marc.zyngier-5wv7dgnIgG8@public.gmane.org" <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Joseph,
-
-Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 9 Jan 2013 07:07:41 +0100:
-
-> On Wed, 2013-01-09 at 13:46 +0800, Hiroshi Doyu wrote:
-> > Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote @ Tue, 8 Jan 2013 15:26:51 +0100:
-> > 
-> > > On Tue, Jan 08, 2013 at 02:47:37PM +0200, Hiroshi Doyu wrote:
-> > > > The method to detect the number of CPU cores on Cortex-A9 MPCore and
-> > > > Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
-> > > > information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
-> > > > have to read it from the system coprocessor(CP15), because the SCU on
-> > > > Cortex-A15 MPCore does not have software readable registers. This
-> > > > patch selects the correct method at runtime based on the CPU ID.
-> > > > 
-> > > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > ---
-> > > >  arch/arm/mach-tegra/platsmp.c |   31 ++++++++++++++++++++++++++++---
-> > > >  1 file changed, 28 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-> > > > index 1b926df..68e76ef 100644
-> > > > --- a/arch/arm/mach-tegra/platsmp.c
-> > > > +++ b/arch/arm/mach-tegra/platsmp.c
-> > > > @@ -23,6 +23,7 @@
-> > > >  #include <asm/hardware/gic.h>
-> > > >  #include <asm/mach-types.h>
-> > > >  #include <asm/smp_scu.h>
-> > > > +#include <asm/cputype.h>
-> > > >  
-> > > >  #include <mach/powergate.h>
-> > > >  
-> > > > @@ -34,9 +35,13 @@
-> > > >  #include "common.h"
-> > > >  #include "iomap.h"
-> > > >  
-> > > > +#define CPU_MASK		0xff0ffff0
-> > > > +#define CPU_CORTEX_A9		0x410fc090
-> > > > +#define CPU_CORTEX_A15		0x410fc0f0
-> > > 
-> > > NAK. There's some patches around to make this stuff generic, we don't
-> > > need more ifdefs springing up.  We need to get those generic patches
-> > > in.
-> > 
-> > Does anyone give some pointers to the above patches?
+On 01/08/2013 11:00 PM, Hiroshi Doyu wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 8 Jan 2013 23:41:42 +0100:
+>> On 01/08/2013 09:07 AM, Marc Zyngier wrote:
+>>> On 08/01/13 12:47, Hiroshi Doyu wrote:
+>>>> Add platform enabler for ARM arch_timer(TSC). TSC is more fine grained
+>>>> timer than TMR0. If it's available, it will be used for clock source
+>>>> and sched_clock. Otherwise, TMR0 is used. In any case TMR0 is
+>>>> necessary for clock event.
+>>
+>>>> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+>>
+>>>> +/* FIXME: only secure mode is supported. */
+>>>
+>>> And this is a bug, as far as I'm concerned.
+>>>
+>>>> +static int tegra_arch_timer_init(void)
+>>
+>>>> +	clk = clk_get_sys("clk_m", NULL);
+>>>> +	if (IS_ERR(clk)) {
+>>>> +		freq = 12000000;
+>>>> +		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
+>>>> +	} else {
+>>>> +		freq = clk_get_rate(clk);
+>>>> +		clk_put(clk);
+>>>> +	}
+>>>> +	writel_relaxed(freq, tsc_base + TSC_CNTFID0);
+>>>> +
+>>>> +	/* CNTFRQ */
+>>>> +	asm("mcr p15, 0, %0, c14, c0, 0\n" : : "r" (freq));
+>>>> +	asm("mrc p15, 0, %0, c14, c0, 0\n" : "=r" (val));
+>>>> +	BUG_ON(val != freq);
+>>>
+>>> No, not again! Like I said last year, this won't fly. So instead of
+>>> trying to work around a broken firmware, let's do the right thing.
+>>
+>> OK, so I understand you want to firmware/bootloader/... to write the
+>> value into that register instead, so this all works in non-secure mode
+>> (which sounds like a fine objection), but ...
 > 
-> Hi Hiroshi,
-> 
-> Please check "arch/arm/include/asm/cputype.h" in next-20130109. It just
-> be merged.
+> If possible, I want to run kernel without bootloader initializing TSC
+> . IOW, I want to allow legacy bootloaders to boot kernel with ARM arch
+> timer.
 
-I found the following commit. Thanks.
-
-commit cd8dde6fc347b56b6cb9afa7cc0f9073da163176
-Author: Christoffer Dall <c.dall-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-Date:   Tue Dec 18 04:06:37 2012 +0000
-
-    ARM: Define CPU part numbers and implementors
-    
-    Define implementor IDs, part numbers and Xscale architecture versions in
-    cputype.h.  Also create accessor functions for reading the implementor,
-    part number, and Xscale architecture versions from the CPUID regiser.
-    
-    Signed-off-by: Christoffer Dall <c.dall-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-    Signed-off-by: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Is it really hard to just fix the bootloader? Tegra114 is new enough,
+and upstream support new enough, it should be fine to require a fixed
+bootloader in order to run the upstream kernel even if we don't yet do
+this right in the downstream kernels.
