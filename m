@@ -1,14 +1,14 @@
 From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Wed, 9 Jan 2013 21:19:56 +0000
-Message-ID: <201301092119.57067.arnd@arndb.de>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Wed, 9 Jan 2013 21:22:07 +0000
+Message-ID: <201301092122.08011.arnd@arndb.de>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <1357764194-12677-6-git-send-email-thierry.reding@avionic-design.de>
+ <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1357764194-12677-6-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <1357764194-12677-11-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
@@ -24,15 +24,18 @@ Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.or
 List-Id: linux-tegra@vger.kernel.org
 
 On Wednesday 09 January 2013, Thierry Reding wrote:
-> The I/O map cache is used to map large regions of physical memory in
-> smaller chunks to avoid running out of vmalloc()/ioremap() space.
+> Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
+> directory. The motivation is to collect various host controller drivers
+> in the same location in order to facilitate refactoring.
+> 
+> The Tegra PCIe driver has been largely rewritten, both in order to turn
+> it into a proper platform driver and to add MSI (based on code by
+> Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>) as well as device tree support.
 > 
 > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-Can you explain why this is necessary and which problem it solves?
-The implementation looks reasonable, but it's not clear to me if
-we really need this new interface.
-
-In what cases does it actually save ioremap space?
+Can you split this patch into two patches, one that moves the file,
+and another one that does all the changes? It's a little hard to
+review when I can't easily see which code is actually new here.
 
 	Arnd
