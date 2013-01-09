@@ -1,44 +1,71 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Wed, 9 Jan 2013 21:28:47 +0000
-Message-ID: <20130109212847.GT3931@n2100.arm.linux.org.uk>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-6-git-send-email-thierry.reding@avionic-design.de>
+Date: Wed, 9 Jan 2013 22:54:28 +0100
+Message-ID: <20130109215428.GA13648@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <1357764194-12677-6-git-send-email-thierry.reding@avionic-design.de>
+ <201301092119.57067.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1357764194-12677-6-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <201301092119.57067.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 09, 2013 at 09:43:05PM +0100, Thierry Reding wrote:
-> The I/O map cache is used to map large regions of physical memory in
-> smaller chunks to avoid running out of vmalloc()/ioremap() space.
-> 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-We already have a means where we record the mappings which ioremap()
-creates.  If you look at /proc/vmallocinfo, you'll notice lines such
-as:
+--LQksG6bCIzRHxTLp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-0xf7b72000-0xf7b74000    8192 e1000_probe+0x291/0xa68 [e1000e] phys=fc025000 ioremap
+On Wed, Jan 09, 2013 at 09:19:56PM +0000, Arnd Bergmann wrote:
+> On Wednesday 09 January 2013, Thierry Reding wrote:
+> > The I/O map cache is used to map large regions of physical memory in
+> > smaller chunks to avoid running out of vmalloc()/ioremap() space.
+> >=20
+> > Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+>=20
+> Can you explain why this is necessary and which problem it solves?
+> The implementation looks reasonable, but it's not clear to me if
+> we really need this new interface.
+>=20
+> In what cases does it actually save ioremap space?
 
-which gives you the virtual address range, physical address and type
-of the mapping.  Why do we need a duplicated data structure?
+I briefly described this in the cover letter of this series and didn't
+realize I hadn't put more information in this patch's commit message.
 
-Moreover, you seem to suggest that you want to break up a large
-ioremap() mapping into several smaller mappings.  Why?  The idea
-behind ioremap() is that this relationship holds true:
+What happens on Tegra is that we need to map 256 MiB of physical memory
+to access all the PCIe extended configuration space. However, ioremap()
+on such a large region fails if not enough vmalloc() space is available.
 
-	ptr = ioremap(cookie + n, size);
+This was observed when somebody tested this on CardHu which has a 1 GiB
+of RAM and therefore remapping the full 256 MiB fails.
 
-For any 'n' in the range 0 .. size, the location shall be accessible
-via ptr + n when using the IO space accessors.  If you're going to
-break up a mapping into several smaller ones, this no longer holds
-true.
+Thierry
 
-If the problem is that you're ioremapping huge address ranges because
-you're passing larger-than-required resources to devices, then that's
-part of the problem too.
+--LQksG6bCIzRHxTLp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ7ecUAAoJEN0jrNd/PrOhIvQQALeDgfHITFn5nEXC12ikivTh
+Ql9DWEKt8sqdDq8AQ6sDm6lnadmQyYB3OwvP0/I76s3GSJWzBRacjyTVRzQ4sBDb
+3cOKPl4BHcXzifQKQqYB04XljdPSGmDsoUqQGVCprFb7uYgWv0xwaJrk6g1iKxGs
+wWDUHv7aND2yqombVTzzEZFC2mHahmTVrxftuSUeP3+lvL8TIeBZS+vf0ztr0A4M
+vTMPqcp6RO9omSC1VoLnh7uNNOBEVKhst2z2HFbh8INqPjAi4HAnHisb1lhCu1bN
+1nP/hjV9lNglzViPvX5sf7CuAAzTlhHBvZU5yF3U7eNVtokNPRgs7m/RZFqzHTEy
+MuIGuhDrRpbYon8CpoDsgu/+TVNUmBvhrN5Eph8a/1bHI/65rQ1QY9n4/Ke8Gk+I
++R//AolhiCpw9FJnKTG94flrH9EKLRWQU11FK/mjw42l32hdvsMm15LSYa5OAm1O
+EwK7n0X3hUscAti/BHEmygXd5c65EkMN0/x8v3dAMCn0YrJm5CfaSP2uq8VTtCvp
+YuFOgvJLn5OVsYcVTFAro1e+6sNTNwaVSewGkBrJYUReLJujgSgYsKrfL/wiGm5d
+UCWluDJX9iE2HvRbB4NyLhg7XTtK5RBYsS8dviA/4I8sV1wq3cm0WYe63tsmjb70
+DFoD7KlRp+wWVH5K4IWR
+=EcR+
+-----END PGP SIGNATURE-----
+
+--LQksG6bCIzRHxTLp--
