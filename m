@@ -1,133 +1,112 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
-Date: Wed, 09 Jan 2013 13:44:03 -0700
-Message-ID: <50EDD693.2060905@wwwdotorg.org>
-References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org> <50EC8947.4080704@wwwdotorg.org> <50ED4DA9.3090406@nvidia.com> <50EDAA39.3040609@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50EDAA39.3040609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: [PATCH 09/14] ARM: tegra: Move pmc.h to include/mach
+Date: Wed,  9 Jan 2013 21:43:09 +0100
+Message-ID: <1357764194-12677-10-git-send-email-thierry.reding@avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/09/2013 10:34 AM, Stephen Warren wrote:
-> On 01/09/2013 03:59 AM, Prashant Gaikwad wrote:
->> On Wednesday 09 January 2013 02:31 AM, Stephen Warren wrote:
->>> On 01/08/2013 11:49 AM, Stephen Warren wrote:
->>>> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
->>>>> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
->>>>>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
->>>>>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
->>>>>>>> This patchset does following:
->>>>>>>> 1. Decompose single tegra clock structure into multiple clocks.
->>>>>>>> 2. Try to use standard clock types supported by common clock
->>>>>>>> framework.
->>>>>>>> 3. Use dynamic initialization.
->>>>>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
->>>>>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
->>>>>>>> 6. Remove all legacy clock code from mach-tegra.
->>>>>>> I think there are bugs here. I applied all your clock patches on
->>>>>>> top of
->>>>>>> Tegra's for-next (see list below), and found that the following don't
->>>>>>> work on Springbank:
->>>>>>>
->>>>>>> * HDMI display
->>>>>>> * Audio playback
->>>>>>> * WiFi
->>>>>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@
->>>>>> instead...)
->>>>>>
->>>>>> Prashant, some updated testing results based off the "dev/ccf" branch
->>>>>> you sent me on our internal git server:
->>>> ...
->>>>> I have updated the internal branch with all the above mentioned fixes.
->>> ...
->>>> The remaining item is the display issue on Tegra30, which I'll go look
->>>> at now.
->>> The USB3 clock, which isn't used by any drivers on Tegra30, and hence
->>> was disabled at boot, was set up incorrectly and ended up mapping to the
->>> disp1 clock, and hence turned off the display. The following fixes it:
->>
->> Stephen, thanks for the fix!! I have included this and PLLE fix; updated
->> internal branch.
-> 
-> Almost everything works great now.
+In preparation for moving the PCIe driver into the drivers/pci/host
+directory, this header, which contains prototypes that are required by
+the PCIe driver, needs to be moved to a globally visible location.
 
-I noticed a couple more issues.
+Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+---
+Note that eventually the code in pmc.c and powergate.c should probably
+be split out into a separate driver. The PMC registers are also directly
+accessed from tegra20_clocks.c and tegra30_clocks.c, so that it might be
+required to provide that functionality through the new driver as well.
+---
+ arch/arm/mach-tegra/common.c           |  2 +-
+ arch/arm/mach-tegra/include/mach/pmc.h | 24 ++++++++++++++++++++++++
+ arch/arm/mach-tegra/pmc.h              | 24 ------------------------
+ 3 files changed, 25 insertions(+), 25 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/include/mach/pmc.h
+ delete mode 100644 arch/arm/mach-tegra/pmc.h
 
-First, the clock rate rounding behaviour changes with your patch series
-for at least the I2C clocks.
-
-With I2C, you specify how fast you want the bus to go. The bus shouldn't
-run any faster than that since the rate matches the max specification
-for the attached devices. So the clock framework should pick the
-smallest divider that yields a clock that doesn't exceed the request
-from clk_set_rate(). However, the new code seems to pick the smallest
-divider that yields at least the requested clock. I can certainly see
-that other clocks (say memory, CPU, or other internal
-performance-related clocks) might want to round the other way though.
-
-The I2C driver sets its module clock to 8 times the desired bus rate.
-This yields a request of:
-
-desired bus rate: 100 KHz
-desired clock rate: 800 KHz
-actual clock rate before your change: 800 KHz
-actual clock rate after your change: 800 KHz
--> OK
-
-desired bus rate: 400 KHz
-desired clock rate: 3.2 MHz
-actual clock rate before your change: 3 MHz (so 375 KHz bus rate, OK)
-actual clock rate after your change: 4 MHZ (so 500 KHz bus rate, BAD)
-
-desired bus rate: 80 KHz (Toshiba AC100's nvec/I2C slave driver)
-desired clock rate: 640 KHz
-actual clock rate before your change: ~632 KHz (so ~79 KHz bus rate, OK)
-actual clock rate after your change: ~706 KHz (so ~88 KHz bus rate, BAD)
-
-Can this be fixed?
-
-Second, the Toshiba AC100 uses an alternative driver for the I2C HW,
-since it operates in I2C slave mode. So, the DT node for that driver
-needs to include the clocks properties so the driver can get the clocks
-through DT:
-
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-> index edef66c..6495425 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -278,6 +278,8 @@
->                 clock-frequency = <50000>;
->                 request-gpios = <&gpio 170 0>; /* gpio PV2 */
->                 slave-addr = <138>;
-> +               clocks = <&tegra_car 67>, <&tegra_car 124>;
-> +               clock-names = "div-clk", "fast-clk";
->         };
->  
->         i2c@7000d000 {
-
-Your changes don't actually cause the driver to break though, since it
-abuses clk_get_sys() to retrieve clocks under a different driver name,
-which matches what the clock driver provides. However, I think you
-should also include the following patch at the end of your series to fix
-this up, so the clock looking happens through device tree:
-
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index d8826ed..6d44076 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -770,7 +770,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
->                 return -ENODEV;
->         }
->  
-> -       i2c_clk = clk_get_sys("tegra-i2c.2", "div-clk");
-> +       i2c_clk = clk_get(&pdev->dev, "div-clk");
->         if (IS_ERR(i2c_clk)) {
->                 dev_err(nvec->dev, "failed to get controller clock\n");
->                 return -ENODEV;
-
-Thanks.
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 3efe80b..2498f74 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -26,6 +26,7 @@
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/hardware/gic.h>
+ 
++#include <mach/pmc.h>
+ #include <mach/powergate.h>
+ 
+ #include "board.h"
+@@ -33,7 +34,6 @@
+ #include "common.h"
+ #include "fuse.h"
+ #include "iomap.h"
+-#include "pmc.h"
+ #include "apbio.h"
+ #include "sleep.h"
+ #include "pm.h"
+diff --git a/arch/arm/mach-tegra/include/mach/pmc.h b/arch/arm/mach-tegra/include/mach/pmc.h
+new file mode 100644
+index 0000000..2631c9a
+--- /dev/null
++++ b/arch/arm/mach-tegra/include/mach/pmc.h
+@@ -0,0 +1,24 @@
++/*
++ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#ifndef __MACH_TEGRA_PMC_H
++#define __MACH_TEGRA_PMC_H
++
++void tegra_pmc_init(void);
++void tegra_pmc_pcie_xclk_clamp(bool clamp);
++
++#endif
+diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
+deleted file mode 100644
+index 2631c9a..0000000
+--- a/arch/arm/mach-tegra/pmc.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/*
+- * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+- */
+-
+-#ifndef __MACH_TEGRA_PMC_H
+-#define __MACH_TEGRA_PMC_H
+-
+-void tegra_pmc_init(void);
+-void tegra_pmc_pcie_xclk_clamp(bool clamp);
+-
+-#endif
+-- 
+1.8.1
