@@ -1,44 +1,68 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH V4 0/4] input: keyboard: tegra: cleanups and DT supports
-Date: Thu, 10 Jan 2013 09:44:56 -0800
-Message-ID: <20130110174456.GA2797@core.coreip.homeip.net>
-References: <1357470900-12619-1-git-send-email-ldewangan@nvidia.com>
- <50EAFD36.9070909@wwwdotorg.org>
- <50EE603B.7080702@nvidia.com>
+From: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
+Date: Thu, 10 Jan 2013 11:20:07 -0700
+Message-ID: <20130110182007.GA28004@obsidianresearch.com>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130109231758.GA27065@obsidianresearch.com>
+ <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
+ <201301100917.19577.arnd@arndb.de>
+ <20130110102544.GA5546@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50EE603B.7080702@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <20130110102544.GA5546-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Laxman,
-
-On Thu, Jan 10, 2013 at 12:01:23PM +0530, Laxman Dewangan wrote:
-> Hi Dmitry,
+On Thu, Jan 10, 2013 at 11:25:44AM +0100, Thierry Reding wrote:
+> On Thu, Jan 10, 2013 at 09:17:19AM +0000, Arnd Bergmann wrote:
+> > On Thursday 10 January 2013, Thierry Reding wrote:
+> > > On Wed, Jan 09, 2013 at 04:17:58PM -0700, Jason Gunthorpe wrote:
+> > > > On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
+> > > > You could decrease the size of the mapping to only span the bus
+> > > > numbers that are configured for use via DT.
+> > > 
+> > > That won't work, unfortunately. The mapping is such that the bus number
+> > > is not encoded in the uppermost bits, the extended register number is.
+> > > So the only thing that we could do is decrease the size of the extended
+> > > register space for *all* devices.
+> > 
+> > But you could still a method to map 16 separate areas per bus, each 65536
+> > bytes long, which results in 1MB per bus. That is probably ok, since
+> > very few systems have more than a handful of buses in practice.
+> > 
+> > In theory, doing static mappings on a per-page base would let you
+> > do 16 devices at a time, but it's probably worth doing at this fine
+> > granularity.
 > 
-> On Monday 07 January 2013 10:22 PM, Stephen Warren wrote:
-> >On 01/06/2013 04:14 AM, Laxman Dewangan wrote:
-> >>This patch series:
-> >>  - fix build warning,
-> >>  - use devm_* for allocation,
-> >>  - make column/rows configuration through DT and
-> >>  - remove the rarely used  key mapping table.
-> >The series,
-> >Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> >
+> I don't understand how this would help. The encoding is like this:
 > 
-> If you are fine with this series then can it be apply please? I can
-> handle if there is any comment on this series to close this.
+> 	[27:24] extended register number
+> 	[23:16] bus number
+> 	[15:11] device number
+> 	[10: 8] function number
+> 	[ 7: 0] register number
 > 
+> So it doesn't matter whether I use separate areas per bus or not. As
+> soon as the whole extended configuration space needs to be accessed a
+> whopping 28 bits (256 MiB) are required.
 
-The patches are applied with minor edits to the 3rd and 4th (there was
-no point in having a separate keymap setup function anymore).
+You'd piece a mapping together, each bus requires 16 64k mappings, a
+simple 2d array of busnr*16 of pointers would do the trick. A more
+clever solution would be to allocate contiguous virtual memory and
+split that up..
 
-Thanks.
+> > Actually, AER probably needs this, and I believe some broken devices 
+> > need to mask interrupts using the PCI command word in the config space,
+> > it it can happen.
+> 
+> Ugh... that would kill any such dynamic mapping approach. Perhaps if we
+> could mark a device as requiring a static mapping we could pin that
+> cache entry. But that doesn't sound very encouraging.
 
--- 
-Dmitry
+AER applies to pretty much every PCI-E device these days.
+
+Jason
