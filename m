@@ -1,50 +1,34 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Wed, 9 Jan 2013 16:17:58 -0700
-Message-ID: <20130109231758.GA27065@obsidianresearch.com>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <201301092119.57067.arnd@arndb.de>
- <20130109215428.GA13648@avionic-0098.adnet.avionic-design.de>
- <201301092210.49452.arnd@arndb.de>
- <50EDF95F.4070209@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V4 0/4] input: keyboard: tegra: cleanups and DT supports
+Date: Thu, 10 Jan 2013 12:01:23 +0530
+Message-ID: <50EE603B.7080702@nvidia.com>
+References: <1357470900-12619-1-git-send-email-ldewangan@nvidia.com> <50EAFD36.9070909@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <50EDF95F.4070209@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <50EAFD36.9070909@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@avionic-design.de>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+Cc: "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>, Stephen Warren <swarren@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
-> On 01/09/2013 03:10 PM, Arnd Bergmann wrote:
-> > On Wednesday 09 January 2013, Thierry Reding wrote:
-> >> What happens on Tegra is that we need to map 256 MiB of physical memory
-> >> to access all the PCIe extended configuration space. However, ioremap()
-> >> on such a large region fails if not enough vmalloc() space is available.
-> >>
-> >> This was observed when somebody tested this on CardHu which has a 1 GiB
-> >> of RAM and therefore remapping the full 256 MiB fails.
-> ...
-> > Have you checked if the hardware supports an alternative config
-> > space access mechanism that does not depend on a huge address range?
-> > A lot of them provide an index/data register pair somewhere, as the
-> > original PC implementation did.
-> 
-> That would be nice, but I've talked to the HW engineers, and there's no
-> indication that any alternative mechanism exists.
+Hi Dmitry,
 
-It seems to be convention that extended config space is often only
-accessible through mmio space, that was true on x86 last I checked
-too..
+On Monday 07 January 2013 10:22 PM, Stephen Warren wrote:
+> On 01/06/2013 04:14 AM, Laxman Dewangan wrote:
+>> This patch series:
+>>   - fix build warning,
+>>   - use devm_* for allocation,
+>>   - make column/rows configuration through DT and
+>>   - remove the rarely used  key mapping table.
+> The series,
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>
 
-You could decrease the size of the mapping to only span the bus
-numbers that are configured for use via DT.
+If you are fine with this series then can it be apply please? I can 
+handle if there is any comment on this series to close this.
 
-Are there any concerns about these config registers being accessed
-from a context where a new mapping can't be made? Interrupt? Machine
-Check? PCI-E Advanced Error Reporting?
+Thanks,
+Laxman
 
-Cheers,
-Jason
