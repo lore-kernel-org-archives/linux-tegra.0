@@ -1,55 +1,89 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [v2 5/9] clocksource: tegra: Enable ARM arch_timer with TSC
-Date: Thu, 10 Jan 2013 15:10:31 +0000
-Message-ID: <50EED9E7.8000602@arm.com>
-References: <20130109.075708.1662067562960541635.hdoyu@nvidia.com><50ED1F8F.4060700@ti.com><79cf9366702f71f8c7add23b2aa0afec@localhost> <20130110.170300.1995294118512465281.hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o HAVE_ARM_SCU
+Date: Thu, 10 Jan 2013 09:54:13 -0700
+Message-ID: <50EEF235.7070200@wwwdotorg.org>
+References: <20130108171103.GA7417@e102568-lin.cambridge.arm.com><20130109.134641.1582472136842052082.hdoyu@nvidia.com><20130109151700.GB22147@e102568-lin.cambridge.arm.com> <20130110.145813.1159140334089730421.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130110.170300.1995294118512465281.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130110.145813.1159140334089730421.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "santosh.shilimkar-l0cyMroinI0@public.gmane.org" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "Mark.Rutland-5wv7dgnIgG8@public.gmane.org" <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/01/13 15:03, Hiroshi Doyu wrote:
-> Hi Mark,
+On 01/10/2013 05:58 AM, Hiroshi Doyu wrote:
+> Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 16:17:00 +0100:
+...
+> With your "[PATCH] ARM: kernel: DT cpu map validity check helper
+> function", my original patch gets as below. I think that the following
+> "smp_detect_ncores()" function may be so generic that it could be
+> moved in some common place than platform?
 > 
-> Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 10:01:05 +0100:
+> From f5f2a43952ce75fe061b3808b994c3ceb07f1af1 Mon Sep 17 00:00:00 2001
+> From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date: Mon, 26 Nov 2012 12:25:14 +0200
+> Subject: [PATCH 1/1] ARM: tegra: # of CPU cores detection w/ & w/o
+>  HAVE_ARM_SCU
 > 
->> Almost. I already proposed this in the past, but because the source clock
->> is variable in the Tegra case, this is not flexible enough.
->>
->> What I was suggesting was to do the following:
->>
->> timer {
->>         compatible = "arm,armv7-timer";
->>         [...]
->>         clocks = <&tsc>;
->> }
->>
->> tsc: tsc {
->>         compatible = "nvidia,tegra114-tsc";
->>         reg = <0x700f0000 0x20000>;
->>         freq-range = <... ...>;
->>         clock-output-names = "tsc";
->> }
->>
->> In the arch_timer code, start searching for the "clocks" property, and use
->> that if there is one. Otherwise, fall back to "clock-frequency", and
->> ultimately to reading CNTFRQ.
->>
->> This requires some changes (converting the tsc code to be a clock), but
->> this is at least a proper description of the hardware, and should give you
->> the required flexibility.
-> 
-> The above seems ok to me. I'll drop this original patch from this
-> series for now until T114 clock comes to implement correctly.
+> The method to detect the number of CPU cores on Cortex-A9 MPCore and
+> Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
+> information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
+> have to read it from the system coprocessor(CP15), because the SCU on
+> Cortex-A15 MPCore does not have software readable registers. This
+> patch selects the correct method at runtime based on the CPU ID.
 
-Thanks Hiroshi. Please Cc me when you have a patch implementing this
-functionality.
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> +static int __init smp_detect_ncores(void)
+> +{
+> +	unsigned int ncores, mpidr;
+> +	u32 l2ctlr;
+> +	phys_addr_t pa;
+> +
+> +	mpidr = read_cpuid_mpidr();
+> +	switch (mpidr) {
+> +	case ARM_CPU_PART_CORTEX_A15:
+> +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
+> +		ncores = ((l2ctlr >> 24) & 3) + 1;
+> +		break;
+> +	case ARM_CPU_PART_CORTEX_A9:
+> +		/* Get SCU physical base */
+> +		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
+> +		scu_base = IO_ADDRESS(pa);
+> +		ncores = scu_get_core_count(scu_base);
+> +		break;
+> +	default:
+> +		pr_warn("Unsupported mpidr\n");
+> +		ncores = 1;
+> +		break;
+> +	}
+> +
+> +	return ncores;
+> +}
+
+Why not just remove that function...
+
+>  /*
+>   * Initialise the CPU possible map early - this describes the CPUs
+>   * which may be present or become present in the system.
+>   */
+>  static void __init tegra_smp_init_cpus(void)
+>  {
+> -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> -
+> -	if (ncores > nr_cpu_ids) {
+> -		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
+> -			ncores, nr_cpu_ids);
+> -		ncores = nr_cpu_ids;
+> +	if (!arm_dt_cpu_map_valid()) {
+> +		unsigned int i, ncores;
+> +
+> +		ncores = smp_detect_ncores();
+
+And just say "ncores = 1" here?
+
+For Tegra, it's trivial to simply put the patch adding the required DT
+nodes before this patch, and then there's no need for any
+backwards-compatibility, since the nodes are guaranteed to be there.
