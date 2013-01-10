@@ -1,57 +1,58 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 00/14] Rewrite Tegra PCIe driver
-Date: Thu, 10 Jan 2013 09:34:47 +0100
-Message-ID: <20130110093447.646ed07c@skate>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
+Date: Thu, 10 Jan 2013 09:17:19 +0000
+Message-ID: <201301100917.19577.arnd@arndb.de>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
-	<20130109222517.3c590553@skate>
-	<20130110065537.GC15212@avionic-0098.adnet.avionic-design.de>
+ <20130109231758.GA27065@obsidianresearch.com>
+ <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130110065537.GC15212@avionic-0098.adnet.avionic-design.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130110071937.GG15212-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Thierry Reding,
-
-On Thu, 10 Jan 2013 07:55:37 +0100, Thierry Reding wrote:
-
-> The reason is that with the latest bindings the matching of root ports
-> to device tree nodes works as-is and nothing else indicates that the
-> emulated host bridge is actually required to make any of this work. So
-> in order not to introduce unneeded code I've left it out for now. If
-> somebody decides that we actually need this host bridge (for standards
-> compliance or whatnot) it could easily be added back.
-
-Ok.
-
-> However, before the emulated bridge implementation can be merged I think
-> the PCI ID issue needs to be resolved.
-
-Indeed. I am not sure yet how to solve that, though.
-
-> > So, I instantiate one unique emulated Host Bridge, and then one
-> > emulated PCI-to-PCI Bridge for each PCIe interface that I have.
+On Thursday 10 January 2013, Thierry Reding wrote:
+> On Wed, Jan 09, 2013 at 04:17:58PM -0700, Jason Gunthorpe wrote:
+> > On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
+> > You could decrease the size of the mapping to only span the bus
+> > numbers that are configured for use via DT.
 > 
-> Oh dear, that's even worse than on Tegra. The Marvell hardware doesn't
-> even expose the root ports as PCI devices on the bus?
+> That won't work, unfortunately. The mapping is such that the bus number
+> is not encoded in the uppermost bits, the extended register number is.
+> So the only thing that we could do is decrease the size of the extended
+> register space for *all* devices.
 
-My understanding is that no, it doesn't, but I am still figuring out
-many things in this PCIe topic.
+But you could still a method to map 16 separate areas per bus, each 65536
+bytes long, which results in 1MB per bus. That is probably ok, since
+very few systems have more than a handful of buses in practice.
 
-> I suppose that in your case it really makes sense because you already
-> need the emulated PCI-to-PCI bridges and therefore adding an emulated
-> host bridge doesn't add much. As I said, for Tegra everything still
-> works without, so I didn't see a reason to add needless code.
+In theory, doing static mappings on a per-page base would let you
+do 16 devices at a time, but it's probably worth doing at this fine
+granularity.
 
-Ok, thanks!
+> > Are there any concerns about these config registers being accessed
+> > from a context where a new mapping can't be made? Interrupt? Machine
+> > Check? PCI-E Advanced Error Reporting?
+> 
+> I haven't checked but I would expect configuration space accesses to not
+> happen in interrupt context. Usually they are limited to enumeration and
+> driver probe.
 
-Thomas
--- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Actually, AER probably needs this, and I believe some broken devices 
+need to mask interrupts using the PCI command word in the config space,
+it it can happen.
+
+	Arnd
