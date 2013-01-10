@@ -1,58 +1,72 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Thu, 10 Jan 2013 09:17:19 +0000
-Message-ID: <201301100917.19577.arnd@arndb.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130109231758.GA27065@obsidianresearch.com>
- <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
+ HAVE_ARM_SCU
+Date: Thu, 10 Jan 2013 09:51:15 +0000
+Message-ID: <20130110095115.GB4728@e102568-lin.cambridge.arm.com>
+References: <50EC7450.4070806@wwwdotorg.org>
+ <20130109.074946.1167125688535781408.hdoyu@nvidia.com>
+ <20130109113432.GA22147@e102568-lin.cambridge.arm.com>
+ <20130110.083143.258958175573018571.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130110071937.GG15212-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130110.083143.258958175573018571.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 10 January 2013, Thierry Reding wrote:
-> On Wed, Jan 09, 2013 at 04:17:58PM -0700, Jason Gunthorpe wrote:
-> > On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
-> > You could decrease the size of the mapping to only span the bus
-> > numbers that are configured for use via DT.
+On Thu, Jan 10, 2013 at 06:31:43AM +0000, Hiroshi Doyu wrote:
+> Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 12:34:32 +0100:
+
+[...]
+
+> > > > But that all said, I'm not convinced it's a good idea to force the
+> > > > information to be present in DT when it's just duplicating stuff that
+> > > > can be runtime-probed from the HW...
+> > > 
+> > > That's also my concern somewhat.
+> > > 
+> > > The main purpose to DT CPU core detection is for multiple CPU
+> > > clusters. SCU/MRC cannot know anything outside of their own
+> > > clusters. In tegra, we have 4 Cortex-A9/A15 core plus 1 shadow
+> > > core. Switching those clusters is done transparently. The last A9/A15
+> > > core is transparently switched back and forth to the shadow one. So in
+> > > this case, SCU/MRC detection seems to work fine.
+> > 
+> > You can probe the number of cores through SCU but remember
+> > that MPIDRs of existing CPUs are generated, not probed if the DT is not
+> > present (smp_setup_processor_id()). cpu_logical_map content, before the
+> > DT bindings were introduced, or even now if DT /cpu nodes are bogus, is
+> > simply generated as a sequential number but is not *probeable* per-se.
 > 
-> That won't work, unfortunately. The mapping is such that the bus number
-> is not encoded in the uppermost bits, the extended register number is.
-> So the only thing that we could do is decrease the size of the extended
-> register space for *all* devices.
+> Honestly I don't understand the above so well. Could you please
+> explain a little bit more?
 
-But you could still a method to map 16 separate areas per bus, each 65536
-bytes long, which results in 1MB per bus. That is probably ok, since
-very few systems have more than a handful of buses in practice.
+The DT /cpu bindings provide the kernel with a list of MPIDR ("reg"
+property) of all CPUs in the system. What I wanted to say is that, you
+can probe in HW the number of cores in some situations, but the DT
+provides more information than that, so I was debating the "duplicating
+stuff that can be runtime probed" point.
 
-In theory, doing static mappings on a per-page base would let you
-do 16 devices at a time, but it's probably worth doing at this fine
-granularity.
+In some platforms you can probe the number of cores in HW, but the MPIDR
+of existing CPUs is "generated" in smp_setup_processor_id() (you cannot
+probe the MPIDR of CPUs that are off or held in a pen), as a sequential number
+and stored in the cpu_logical_map. This works well for single cluster systems,
+since the MPIDR[23:0] of processors in a single cluster system is a sequential
+number starting from 0 (well, at least MPIDR[7:0], but let's not get bogged
+down into details).
 
-> > Are there any concerns about these config registers being accessed
-> > from a context where a new mapping can't be made? Interrupt? Machine
-> > Check? PCI-E Advanced Error Reporting?
-> 
-> I haven't checked but I would expect configuration space accesses to not
-> happen in interrupt context. Usually they are limited to enumeration and
-> driver probe.
+For multi-cluster systems this fails, and DT comes to the rescue along
+with its companion parsing function, arm_dt_init_cpu_maps().
 
-Actually, AER probably needs this, and I believe some broken devices 
-need to mask interrupts using the PCI command word in the config space,
-it it can happen.
+The long and short of it is: DT /cpu nodes are not there just for number
+of cores counting, but there is more. Probably on Tegra this is not
+needed at the moment, but this provides the groundwork for a generic and
+solid solution for all upcoming ARM platforms.
 
-	Arnd
+I hope this helps, let me know if it is not clear.
+
+Lorenzo
