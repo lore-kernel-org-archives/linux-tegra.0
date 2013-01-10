@@ -1,90 +1,102 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Thu, 10 Jan 2013 19:57:30 +0100
-Message-ID: <20130110185730.GB22944@avionic-0098.adnet.avionic-design.de>
+Date: Thu, 10 Jan 2013 20:03:27 +0100
+Message-ID: <20130110190327.GA23110@avionic-0098.adnet.avionic-design.de>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130109231758.GA27065@obsidianresearch.com>
+ <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
  <201301100917.19577.arnd@arndb.de>
  <20130110102544.GA5546@avionic-0098.adnet.avionic-design.de>
- <201301101826.56248.arnd@arndb.de>
+ <20130110182007.GA28004@obsidianresearch.com>
+ <20130110185505.GA22944@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <201301101826.56248.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20130110185505.GA22944@avionic-0098.adnet.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qcHopEYAB45HaUaB
+--BXVAT5kNtrzKuDFl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 10, 2013 at 06:26:55PM +0000, Arnd Bergmann wrote:
-> On Thursday 10 January 2013, Thierry Reding wrote:
-> > I don't understand how this would help. The encoding is like this:
+On Thu, Jan 10, 2013 at 07:55:05PM +0100, Thierry Reding wrote:
+> On Thu, Jan 10, 2013 at 11:20:07AM -0700, Jason Gunthorpe wrote:
+> > On Thu, Jan 10, 2013 at 11:25:44AM +0100, Thierry Reding wrote:
+> > > On Thu, Jan 10, 2013 at 09:17:19AM +0000, Arnd Bergmann wrote:
+> > > > On Thursday 10 January 2013, Thierry Reding wrote:
+> > > > > On Wed, Jan 09, 2013 at 04:17:58PM -0700, Jason Gunthorpe wrote:
+> > > > > > On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
+> > > > > > You could decrease the size of the mapping to only span the bus
+> > > > > > numbers that are configured for use via DT.
+> > > > >=20
+> > > > > That won't work, unfortunately. The mapping is such that the bus =
+number
+> > > > > is not encoded in the uppermost bits, the extended register numbe=
+r is.
+> > > > > So the only thing that we could do is decrease the size of the ex=
+tended
+> > > > > register space for *all* devices.
+> > > >=20
+> > > > But you could still a method to map 16 separate areas per bus, each=
+ 65536
+> > > > bytes long, which results in 1MB per bus. That is probably ok, since
+> > > > very few systems have more than a handful of buses in practice.
+> > > >=20
+> > > > In theory, doing static mappings on a per-page base would let you
+> > > > do 16 devices at a time, but it's probably worth doing at this fine
+> > > > granularity.
+> > >=20
+> > > I don't understand how this would help. The encoding is like this:
+> > >=20
+> > > 	[27:24] extended register number
+> > > 	[23:16] bus number
+> > > 	[15:11] device number
+> > > 	[10: 8] function number
+> > > 	[ 7: 0] register number
+> > >=20
+> > > So it doesn't matter whether I use separate areas per bus or not. As
+> > > soon as the whole extended configuration space needs to be accessed a
+> > > whopping 28 bits (256 MiB) are required.
 > >=20
-> >         [27:24] extended register number
-> >         [23:16] bus number
-> >         [15:11] device number
-> >         [10: 8] function number
-> >         [ 7: 0] register number
-> >=20
-> > So it doesn't matter whether I use separate areas per bus or not. As
-> > soon as the whole extended configuration space needs to be accessed a
-> > whopping 28 bits (256 MiB) are required.
-> >=20
-> > What you propose would work if only regular configuration space is
-> > supported. I'm not sure if that's an option.
+> > You'd piece a mapping together, each bus requires 16 64k mappings, a
+> > simple 2d array of busnr*16 of pointers would do the trick. A more
+> > clever solution would be to allocate contiguous virtual memory and
+> > split that up..
 >=20
-> I mean something like:
->=20
-> struct tegra_bus_private {
-> 	...
-> 	void __iomem *config_space[16];
-> };
->=20
->=20
-> void tegra_scan_bus(struct pci_bus *bus)
-> {
-> 	int i;
-> 	struct tegra_bus_private *priv =3D bus->dev->private;
->=20
-> 	for (i=3D0; i<16; i++)
-> 		priv->config_space[i] =3D ioremap(config_space_phys +
-> 				 65536 * bus->primary + i * SZ_1M, 65536);
->=20
-> 	...
-> }
+> Oh, I see. I'm not very familiar with the internals of remapping, so
+> I'll need to do some more reading. Thanks for the hints.
 
-Okay, I see. It's a bit kludgy, but I guess so was the I/O map cache.
-It'll take some more time to work this out and test, but I'll give it
-a shot.
+I forgot to ask. What's the advantage of having a contiguous virtual
+memory area and splitting it up versus remapping each chunk separately?
 
 Thierry
 
---qcHopEYAB45HaUaB
+--BXVAT5kNtrzKuDFl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ7w8aAAoJEN0jrNd/PrOhNLUP/AztOrBB2e4h5l0+VeuzpWxz
-4AiK84AP6TMOTGGgdgdCvpTWnZS4xLIL10c6QOiRIyT56gqN3aaVBtqQxph1W0mM
-2EvmiIGnQ4A9ub8FyF5kVpZvS4n5r8Ostb9trr7V7h1ISCe4WTLSm7+4zqV2lfFh
-xK6oOZCYIPf+yW6X2S5HVf/J4Aazci+wFfhdHYEE8jZn6Xi6Vi+PpCkUfiGncioq
-H+hIcumFGaJU+VgYWaW/vuy/rgiNrKejA4vBt68pQ8yNFbVWgr0ue5gLZVWKGbX2
-Cfok27eOITe3b+VA6SBZhWexafM92UzoB67VMzw9cMFsqRg7Mxc0wEqfrWiuup+8
-AG5RWCAaF2QY2lkRbF2die0Tbw0IVqU1tIOYQw4vaG9B8szeti4OFFIl8XYNVe8z
-jJpaj4H8992enDY0pDMAL2wfBEeTD+ZqIdfFsbM/h80UPWzr9bZDh5/rfhZ7GIwN
-ESbIpQa91OWEmr1hN7TcqfL4p4GMsVSqJHsB9TK1kHBlyOFPwGdm9V6U5lXMtXRj
-RVFw6UJ7Tvx0o4m4rXNQ0v9Z12ZDLSyLGwowVrRjXP2kuajr7bDU9I0eXDP1yq5Q
-Cnui+x9jJVwf3LfgOMxJgP1VvcrXLM3ORWkAinde9N68fj4eSNDvlctJZNSu41jZ
-xwvC4vWvB5CH8bBG2wxw
-=obUg
+iQIcBAEBAgAGBQJQ7xB/AAoJEN0jrNd/PrOhZpEP+we1xAuIrMAjE1b8jylJ+sbZ
+aWhd6eAMZOhhfC42ZimjnbE1foHY3LSVmqjYO+U9jKLw8TdwlmVzqXmkOmtekP/+
+tjwgymJO2TG7cOV4Au3uwhV5EsAOqynLNgDCOwkyZwAvVo+efiiKZKv+ePOHhCcu
+ZXCFJ7cMGdcvaXJfs8zEORTimvsfrqnPw+2GU28UdL2fQ18k1iOg/UQI0TdJvnRA
+TZMi55OYKWSrHb5H9QrP7UuDU8XYDK83BXl3U5jAJ6arYRCSIgByMZo63PVtSrp6
+22wY6ky4Zy20vRs1ji66NT/VxvcDWKdMTmf5z+wuyY6U1Skq2V14JCrlvuffH4jh
+AK8bJpeVqNmh2ccJlHXv08cq68wmXMv+OPoOz7dRlBD6AjcxhlGABZTU3rpAt49y
+ujf24T45sEDNKcPcKXlTjjL77P9L41k+VHSPSdKlIuAyFeRxl+2cwy61aneNV0qX
+Lk8FmpROusRGg4GFjhOHIz0HxmdkiauEawDp0crFnjwqq6zIgvCtt7M7D5Hz/F/x
+PCvCGNGe8akhCfgIXh3JIKYHERxWx2FRtfFjj+2ZG3zL7RR79ET4oQHTHCFH3TIF
+E6YdbRZ9eBitvmykZpiLkr7XSKMVEpTmk7tfJWQDBtJ4HVHivDSnn0+MkNgJcCdv
+3QhfUnzAiOpBqZnjmy/M
+=xrPE
 -----END PGP SIGNATURE-----
 
---qcHopEYAB45HaUaB--
+--BXVAT5kNtrzKuDFl--
