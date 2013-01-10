@@ -1,72 +1,126 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Thu, 10 Jan 2013 09:51:15 +0000
-Message-ID: <20130110095115.GB4728@e102568-lin.cambridge.arm.com>
-References: <50EC7450.4070806@wwwdotorg.org>
- <20130109.074946.1167125688535781408.hdoyu@nvidia.com>
- <20130109113432.GA22147@e102568-lin.cambridge.arm.com>
- <20130110.083143.258958175573018571.hdoyu@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
+Date: Thu, 10 Jan 2013 11:25:44 +0100
+Message-ID: <20130110102544.GA5546@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130109231758.GA27065@obsidianresearch.com>
+ <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
+ <201301100917.19577.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130110.083143.258958175573018571.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0857543750375467300=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <201301100917.19577.arnd-r2nGTMty4D4@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 10, 2013 at 06:31:43AM +0000, Hiroshi Doyu wrote:
-> Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 12:34:32 +0100:
 
-[...]
+--===============0857543750375467300==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Disposition: inline
 
-> > > > But that all said, I'm not convinced it's a good idea to force the
-> > > > information to be present in DT when it's just duplicating stuff that
-> > > > can be runtime-probed from the HW...
-> > > 
-> > > That's also my concern somewhat.
-> > > 
-> > > The main purpose to DT CPU core detection is for multiple CPU
-> > > clusters. SCU/MRC cannot know anything outside of their own
-> > > clusters. In tegra, we have 4 Cortex-A9/A15 core plus 1 shadow
-> > > core. Switching those clusters is done transparently. The last A9/A15
-> > > core is transparently switched back and forth to the shadow one. So in
-> > > this case, SCU/MRC detection seems to work fine.
-> > 
-> > You can probe the number of cores through SCU but remember
-> > that MPIDRs of existing CPUs are generated, not probed if the DT is not
-> > present (smp_setup_processor_id()). cpu_logical_map content, before the
-> > DT bindings were introduced, or even now if DT /cpu nodes are bogus, is
-> > simply generated as a sequential number but is not *probeable* per-se.
-> 
-> Honestly I don't understand the above so well. Could you please
-> explain a little bit more?
 
-The DT /cpu bindings provide the kernel with a list of MPIDR ("reg"
-property) of all CPUs in the system. What I wanted to say is that, you
-can probe in HW the number of cores in some situations, but the DT
-provides more information than that, so I was debating the "duplicating
-stuff that can be runtime probed" point.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In some platforms you can probe the number of cores in HW, but the MPIDR
-of existing CPUs is "generated" in smp_setup_processor_id() (you cannot
-probe the MPIDR of CPUs that are off or held in a pen), as a sequential number
-and stored in the cpu_logical_map. This works well for single cluster systems,
-since the MPIDR[23:0] of processors in a single cluster system is a sequential
-number starting from 0 (well, at least MPIDR[7:0], but let's not get bogged
-down into details).
+On Thu, Jan 10, 2013 at 09:17:19AM +0000, Arnd Bergmann wrote:
+> On Thursday 10 January 2013, Thierry Reding wrote:
+> > On Wed, Jan 09, 2013 at 04:17:58PM -0700, Jason Gunthorpe wrote:
+> > > On Wed, Jan 09, 2013 at 04:12:31PM -0700, Stephen Warren wrote:
+> > > You could decrease the size of the mapping to only span the bus
+> > > numbers that are configured for use via DT.
+> >=20
+> > That won't work, unfortunately. The mapping is such that the bus number
+> > is not encoded in the uppermost bits, the extended register number is.
+> > So the only thing that we could do is decrease the size of the extended
+> > register space for *all* devices.
+>=20
+> But you could still a method to map 16 separate areas per bus, each 65536
+> bytes long, which results in 1MB per bus. That is probably ok, since
+> very few systems have more than a handful of buses in practice.
+>=20
+> In theory, doing static mappings on a per-page base would let you
+> do 16 devices at a time, but it's probably worth doing at this fine
+> granularity.
 
-For multi-cluster systems this fails, and DT comes to the rescue along
-with its companion parsing function, arm_dt_init_cpu_maps().
+I don't understand how this would help. The encoding is like this:
 
-The long and short of it is: DT /cpu nodes are not there just for number
-of cores counting, but there is more. Probably on Tegra this is not
-needed at the moment, but this provides the groundwork for a generic and
-solid solution for all upcoming ARM platforms.
+	[27:24] extended register number
+	[23:16] bus number
+	[15:11] device number
+	[10: 8] function number
+	[ 7: 0] register number
 
-I hope this helps, let me know if it is not clear.
+So it doesn't matter whether I use separate areas per bus or not. As
+soon as the whole extended configuration space needs to be accessed a
+whopping 28 bits (256 MiB) are required.
 
-Lorenzo
+What you propose would work if only regular configuration space is
+supported. I'm not sure if that's an option.
+
+> > > Are there any concerns about these config registers being accessed
+> > > from a context where a new mapping can't be made? Interrupt? Machine
+> > > Check? PCI-E Advanced Error Reporting?
+> >=20
+> > I haven't checked but I would expect configuration space accesses to not
+> > happen in interrupt context. Usually they are limited to enumeration and
+> > driver probe.
+>=20
+> Actually, AER probably needs this, and I believe some broken devices=20
+> need to mask interrupts using the PCI command word in the config space,
+> it it can happen.
+
+Ugh... that would kill any such dynamic mapping approach. Perhaps if we
+could mark a device as requiring a static mapping we could pin that
+cache entry. But that doesn't sound very encouraging.
+
+Thierry
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ7pcoAAoJEN0jrNd/PrOhzWAQAJU8h6+cUFml8Y/ItAuxpx7X
+4JokweZ46zAbLIRfTn7XVX7ICa80iPbgf0eJjno2w9mDpr1NA6DUvNg4/IWncM1t
+3yQngkKc98gz0rRV7wjpzlTav8q1W5KjTK4WexEX+n6Z6rsjAtlxIzViAvSPOekH
+Nr/oHRaAYirdndAH8dmL8aifZKayaHDKYtVCIJ2xQOXTyplwZYIN5DWFWs4pdHta
+IE5ZUTc5qf8djpvrlIcjBrPPVSxS6B/04uU9ovbFxbrqIGhnnwfqlYNiU+j+p57x
+sRV0QsXk0XwAPvAdD3JzQsSB2U6ZEKlDleOWNO3yhFWobFQrLF9zktzm4wIvooo6
+e4aekihXMHjCN2CjRl7dk/NXw2dyFY4AIc1YEdDuXXt3N8eUhamvDVV9RMvx80wK
+CiiKA1M1SuEqHRKK7CBPSrGMBo3alogKNwAtPPfqAjPaiELtkmgjOGa4x/rzmVBH
+M4VsH/C+p231Hg5vdQ+GKYgPEV0OYZ90BJpGUSZMeYliAroVenXgo37NDozD+Mdu
+hW8lmae/L10twv36bZu720P16aU9RF60Mqa7x/RpLePt112VgyAA6vTc5V0ARGF5
+Im4zjmaPp6vG67byaXXJb5aokg0sIfo1ezFnS6oMrqV8Wg+2clhWu8KQ7JTcDjPV
+UhtFN0S5FBlhiZigRKGN
+=sViQ
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
+
+--===============0857543750375467300==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============0857543750375467300==--
