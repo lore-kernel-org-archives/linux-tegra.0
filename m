@@ -1,105 +1,104 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
- HAVE_ARM_SCU
-Date: Thu, 10 Jan 2013 07:53:25 +0100
-Message-ID: <20130110.085325.1587043402232324875.hdoyu@nvidia.com>
-References: <20130109113432.GA22147@e102568-lin.cambridge.arm.com><50ED980B.9060909@wwwdotorg.org><20130109180713.GC30931@e102568-lin.cambridge.arm.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 00/14] Rewrite Tegra PCIe driver
+Date: Thu, 10 Jan 2013 07:55:37 +0100
+Message-ID: <20130110065537.GC15212@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130109222517.3c590553@skate>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130109180713.GC30931-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130109222517.3c590553@skate>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: "Mark.Rutland-5wv7dgnIgG8@public.gmane.org" <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 19:07:13 +0100:
 
-> On Wed, Jan 09, 2013 at 04:17:15PM +0000, Stephen Warren wrote:
-> > On 01/09/2013 04:34 AM, Lorenzo Pieralisi wrote:
-> > > On Wed, Jan 09, 2013 at 05:49:46AM +0000, Hiroshi Doyu wrote:
-> > >> Hi,
-> > >>
-> > >> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 8 Jan 2013 20:32:32 +0100:
-> > >>
-> > >>> On 01/08/2013 09:21 AM, Mark Rutland wrote:
-> > >>>> On Tue, Jan 08, 2013 at 02:53:42PM +0000, Hiroshi Doyu wrote:
-> > >>>>> Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote @ Tue, 8 Jan 2013 15:28:28 +0100:
-> > >>>>>> On Tue, Jan 08, 2013 at 12:47:37PM +0000, Hiroshi Doyu wrote:
-> > >>>>>>> The method to detect the number of CPU cores on Cortex-A9 MPCore and
-> > >>>>>>> Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
-> > >>>>>>> information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
-> > >>>>>>> have to read it from the system coprocessor(CP15), because the SCU on
-> > >>>>>>> Cortex-A15 MPCore does not have software readable registers. This
-> > >>>>>>> patch selects the correct method at runtime based on the CPU ID.
-> > >>> ...
-> > >>>>>>>  static void __init tegra_smp_init_cpus(void)
-> > >>>>>>>  {
-> > >>>>>>> -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> > >>>>>>> +	unsigned int i, cpu_id, ncores;
-> > >>>>>>> +	u32 l2ctlr;
-> > >>>>>>> +	phys_addr_t pa;
-> > >>>>>>> +
-> > >>>>>>> +	cpu_id = read_cpuid(CPUID_ID) & CPU_MASK;
-> > >>>>>>> +	switch (cpu_id) {
-> > >>>>>>> +	case CPU_CORTEX_A15:
-> > >>>>>>> +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
-> > >>>>>>> +		ncores = ((l2ctlr >> 24) & 3) + 1;
-> > >>>>>>> +		break;
-> > >>>>>>
-> > >>>>>> [...]
-> > >>>>>>
-> > >>>>>> As mentioned last time [1], you should get this information from the dt
-> > >>>>>> instead.
-> > >>>>>
-> > >>>>> Most of platsmp.c:.smp_init_cpus() implementations seem just to
-> > >>>>> overwrite # of cores by SCU/MRC detection. Is there any implementation
-> > >>>>> to use the DT's # and skip SCU/MRC detection in .smp_init_cpus()?
-> > >>>>
-> > >>>> As far as I can see, there's no other platform which just relies on
-> > >>>> arm_dt_init_cpu_maps. Until recently, it didn't exist, so that makes some
-> > >>>> sense. As far as I can see, for the Tegra 114 you only need your smp_init_cpus
-> > >>>> to call set_smp_cross_call(gic_raise_softirq). Everything else you do seems to
-> > >>>> be handled by arm_dt_init_cpus.
-> > >>
-> > >> True.
-> > >>
-> > >>>> I think the best option would be to have a separate smp_ops for your dt
-> > >>>> platforms where we know cpu nodes are populated (e.g. Tegra 114), where
-> > >>>> smp_init_cpus is different to that for non-dt platforms. That way non dt
-> > >>>> platforms can keep the SCU hack for now, and won't be broken, and the dt
-> > >>>> platforms are far removed from the SCU hack and just use common
-> > >>>> infrastructure.
-> > >>>
-> > >>> Tegra doesn't have any non-DT support now.
-> > >>
-> > >> What about falling down to SCU/MRC hack only when DT detection fails
-> > >> or no /cpus entry in DT?
-> > >>
-> > >> Can arm_dt_init_cpu_maps() return if it suceeds or not?
-> > > 
-> > > I think the best solution to this problem consists in /me adding a
-> > > function, say, arm_dt_nb_cores(), that returns an error if DT probing
-> > > failed and the number of cores if it succeeded.
-> > 
-> > Well, if the primary mechanism needs to be DT-based going forward, I'd
-> > say just require the DT nodes to be present to use the new function, and
-> > outright fail if they aren't. That way, everything always works one way.
-> > It shouldn't be hard to add the CPU nodes for Tegra, right?
-> 
-> Adding /cpu nodes to DT is trivial, but I would like to keep a fall back
-> mechanism in place for existing platforms to carry out the transition
-> as smoothly as possible (eg people using new kernels with old DTS).
-> 
-> /cpu nodes will have priority over HW based probing for cores counting.
-> 
-> As discussed with Hiroshi I will post a patch to provide platforms with
-> a DT cpu map validity check so that the fall back mechanism can be
-> triggered properly.
+--kfjH4zxOES6UT95V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll add /cpu nodes for all tegra, anyway.
+On Wed, Jan 09, 2013 at 10:25:17PM +0100, Thomas Petazzoni wrote:
+> Dear Thierry Reding,
+>=20
+> On Wed,  9 Jan 2013 21:43:00 +0100, Thierry Reding wrote:
+> > This patch series contains an almost complete rewrite of the Tegra PCIe
+> > driver. The code is moved to the drivers/pci/host directory and turned
+> > into a proper platform driver, adding MSI and DT support while at it.
+> > Other PCI host controller drivers can be added to that directory in an
+> > attempt to make it easier to factor out common code.
+>=20
+> Thanks!
+>=20
+> I have started basing the Marvell PCIe code on some of your earlier
+> versions. But apparently in this final version, you no longer have the
+> emulated Host bridge. Why so?
 
-Until your patch comes, I'll make a code just consider a single core
-if DT fails at first. So T114 initial support patch could be merged as
-well.
+The reason is that with the latest bindings the matching of root ports
+to device tree nodes works as-is and nothing else indicates that the
+emulated host bridge is actually required to make any of this work. So
+in order not to introduce unneeded code I've left it out for now. If
+somebody decides that we actually need this host bridge (for standards
+compliance or whatnot) it could easily be added back.
+
+However, before the emulated bridge implementation can be merged I think
+the PCI ID issue needs to be resolved.
+
+> For the Marvell PCIe code, I've used your emulated Host bridge, and
+> added an emulated PCI-to-PCI bridge implementation, in order to get the
+> following hierarchy:
+>=20
+>  + Host Bridge
+>    + PCI-to-PCI bridge
+>      + PCI Device
+>    + PCI-to-PCI bridge
+>      + PCI device
+>=20
+> So, I instantiate one unique emulated Host Bridge, and then one
+> emulated PCI-to-PCI Bridge for each PCIe interface that I have.
+
+Oh dear, that's even worse than on Tegra. The Marvell hardware doesn't
+even expose the root ports as PCI devices on the bus?
+
+> The nice thing about that is that I can then read the configuration
+> space of the PCI-to-PCI bridge to find out how much I/O space and
+> memory space is needed for the device connected to this interface, and
+> at which address is has been mapped. This greatly helps my "address
+> decoding" problem, and removes the ad-hoc virtual space allocator I had
+> written.
+>=20
+> Is there a reason for having given up on this idea? Is there still a
+> hope for a different PCIe implementation to use this idea?
+
+I suppose that in your case it really makes sense because you already
+need the emulated PCI-to-PCI bridges and therefore adding an emulated
+host bridge doesn't add much. As I said, for Tegra everything still
+works without, so I didn't see a reason to add needless code.
+
+Thierry
+
+--kfjH4zxOES6UT95V
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ7mXpAAoJEN0jrNd/PrOhlVsP/jcXpyH5rON/7kzJSE1glNvK
+jFGOLe3BWaBkZyDyQ9XtsJ5xOgci8I0D4iVXJgY5jcJeS+fwNMwwPSXx3HlsM5v9
+bka1yhkobFAJRO1wsEC5sCa+FBq6QkbrvC32fUZiNpfC1tq5Rpc0HvkHcKefxaAP
+Jw3xuJOgS4B/W9VWahtgtXZUFyRik7w4yGkHJFT/25EtbP1AiqGPxJNc+PVaQgq+
+bXqh489xB6phdZT/04IvDijaVleoMJ/DOb1HE4VT6unM/blCkmccM+TpuQQsFPm/
+QGvtaSyePTI4ks8f3QIB98MC/2arTYSkeJdgLBhZuEZh93zXW0hn8yT4ZDVGYSNX
+kGSIaEwThR3OjwtFti8lucIFjB1akAO5dSf57rU9KbbnH9ahh/pmb1aR7mmTrdNi
+XArGZ8SucR2b28gLNZRV4CcmQfg0pA/sfiPLDKAutZy/JHsWgUJ3ZtU3P7mswUSu
+blnuyTe1dO9lSt5lLQ3KkOImWta4TO7+EVxzz9lQ4s17aXJsXl0AZAx6xPkEeutU
+9qymt/qkiGufU0d40uSMIZHF9k2jx39MrzU5WKbEJF4q0BrywJUt5SxhL8xM5+KZ
+hmqbXvWSqk+p/ezzL55oC99EYZKnHuuxRXOYzrMRH7qJA+nSoXVuBamOt7NP5QC+
+rNG12Dyn9WobzrH25JQ3
+=VwsQ
+-----END PGP SIGNATURE-----
+
+--kfjH4zxOES6UT95V--
