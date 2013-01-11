@@ -1,57 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3] staging: nvec: remove use of clk_get_sys
-Date: Fri, 11 Jan 2013 14:03:54 -0700
-Message-ID: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 06/10] ASoC: tegra: remove auxdata
+Date: Fri, 11 Jan 2013 21:05:09 +0000
+Message-ID: <20130111210509.GB8677@opensource.wolfsonmicro.com>
+References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
+ <1357891289-23500-6-git-send-email-pgaikwad@nvidia.com>
+ <50F07D30.9020102@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Pd0ReVV5GZGQvF3a"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50F07D30.9020102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-As clock information is added to device tree clock can be looked up
-using clk_get. Remove use of clk_get_sys.
+--Pd0ReVV5GZGQvF3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[swarren: updated TODO file to remove entry that requested this change]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Note: This patch needs to go through the Tegra tree due to dependencies
-on the clock driver rework there.
+On Fri, Jan 11, 2013 at 01:59:28PM -0700, Stephen Warren wrote:
+> On 01/11/2013 01:01 AM, Prashant Gaikwad wrote:
+> > Configlink clock information is added to device tree. Get the clocks
+> > using device node. Remove AUXDATA.
+>=20
+> Cc'ing in the ASoC maintainers as an FYI and for Acks; this patch needs
+> to go through the Tegra tree due to dependencies.
 
-v3: Added update to TODO file
+Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 
- drivers/staging/nvec/TODO   |    4 ----
- drivers/staging/nvec/nvec.c |    2 +-
- 2 files changed, 1 insertion(+), 5 deletions(-)
+--Pd0ReVV5GZGQvF3a
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/staging/nvec/TODO b/drivers/staging/nvec/TODO
-index f950ab8..e5ae42a 100644
---- a/drivers/staging/nvec/TODO
-+++ b/drivers/staging/nvec/TODO
-@@ -1,9 +1,5 @@
- ToDo list (incomplete, unordered)
- 	- add compile as module support
--	- fix clk usage
--	  should not be using clk_get_sys(), but clk_get(&pdev->dev, conn)
--	  where conn is either NULL if the device only has one clock, or
--	  the device specific name if it has multiple clocks.
- 	- move half of the nvec init stuff to i2c-tegra.c
- 	- move event handling to nvec_events
- 	- finish suspend/resume support
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index d51615b..9417941 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -770,7 +770,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	i2c_clk = clk_get_sys("tegra-i2c.2", "div-clk");
-+	i2c_clk = clk_get(&pdev->dev, "div-clk");
- 	if (IS_ERR(i2c_clk)) {
- 		dev_err(nvec->dev, "failed to get controller clock\n");
- 		return -ENODEV;
--- 
-1.7.10.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ8H5mAAoJELSic+t+oim9y7wP+wfkFvYWL5c3wxi5cTL2RY08
+wDbfTIjQz02icWMasqrKpfS3xhEvt/jSKyd6YQ53BqE8PfEYDz2d+UVDYRgy8NpD
+JNcn+VdB/JycFBSh7IrEM0KDpkktn4yXIsA/7VQSUCprv9eI4IeloYKmyOVnJf01
+nGq8BKjAFpBoOCpbAyphpPsT5Kfkz6vJOocHl0RbcVLSmDZ+tuNMX1QwDImSCDQN
+NhaPyGQi4GUMHfT2JolCZev7GnFhiz2YpJAze7CNekgI0de4rsj5+5pPFftVqGHA
+YD7J/qOdmvhzXfqlCsvI85qvConNo06S03jxL0ba7Lv9KrOxuhoyRgJr2EkrPldT
+OrCSqhRcH5bcv3taajVxUgVHLN16xPgZAsBjIY6x5S5KNm4sIUPLmUPSFYcw0Tt5
+H7DJHhdgTMGAtAe0T4XcRY6JeH7Cwup1p7hgqEUzPnjevEZkpCL7qKWr6av+/kA2
+q8WuJTe7GsDwJTDPn3Ngg508j0nRSqpkkcdp1+uFaiVy+Ma7EmtxbkrfjUKfgbip
+79KTs6O6RpCHgOYlbNk2BGnSHsPOGjMCbzNXUjkjf2/Ccn/ZZi6t4zBkaEgD+twu
+vI3wjBLurdVB2bF642GvRwa5/YKnpHI08d7qOloLBjnhE1WUXWxkto5UgoOcn0Cs
+ngn0pZFvv5INJliNmGTX
+=on54
+-----END PGP SIGNATURE-----
+
+--Pd0ReVV5GZGQvF3a--
