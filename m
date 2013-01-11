@@ -1,73 +1,148 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 12/14] ARM: tegra: tec: Add PCIe support
-Date: Thu, 10 Jan 2013 17:22:30 -0700
-Message-ID: <50EF5B46.8010806@wwwdotorg.org>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-13-git-send-email-thierry.reding@avionic-design.de>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Thu, 10 Jan 2013 17:48:46 -0700
+Message-ID: <50EF616E.7040609@wwwdotorg.org>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357764194-12677-13-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <1357764194-12677-11-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 01/09/2013 01:43 PM, Thierry Reding wrote:
-> Enable the first PCIe root port which is connected to an FPGA on the
-> Tamonten Evaluation Carrier and add device nodes for each of the PCI
-> endpoints available in the standard configuration.
+> Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
+> directory. The motivation is to collect various host controller drivers
+> in the same location in order to facilitate refactoring.
+> 
+> The Tegra PCIe driver has been largely rewritten, both in order to turn
+> it into a proper platform driver and to add MSI (based on code by
+> Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>) as well as device tree support.
 
-> diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
+> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
 
-> +	pcie-controller {
-> +		vdd-supply = <&pci_vdd_reg>;
-> +		pex-clk-supply = <&pci_clk_reg>;
-> +		status = "okay";
+>  static void __init trimslice_init(void)
+>  {
+>  #ifdef CONFIG_TEGRA_PCI
+> -	int ret;
+> -
+> -	ret = tegra_pcie_init(true, true);
+> -	if (ret)
+> -		pr_err("tegra_pci_init() failed: %d\n", ret);
+> +	platform_device_register(&tegra_pcie_device);
 
-Sorry this is also really picky. I'd prefer properties that exist in
-/include/d files and are overidden here to appear first, followed by new
-properties. In other words, move the status property to be first. I
-believe/hope all the other (Tegra) .dts files follow this convention.
+That struct doesn't actually exist anywhere; only an extern definition
+is added (and that extern definition isn't removed by patch 14 either).
 
-> +		pci@1,0 {
-> +			bus-range = <0x01 0x0a>;
-> +			status = "okay";
+> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+
+> +config PCI_TEGRA
+> +	bool "NVIDIA Tegra PCIe controller"
+> +	depends on ARCH_TEGRA_2x_SOC
+
+Perhaps depend on ARCH_TEGRA; that will save churn once this is ported
+to Tegra30, and shouldn't cause any problems before then.
+
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+
+> +#define AFI_INTR_CODE		0xb8
+> +#define  AFI_INTR_CODE_MASK	0xf
+> +#define  AFI_INTR_MASTER_ABORT	4
+> +#define  AFI_INTR_LEGACY	6
+
+Adding defines for at least some other codes here, would help further
+below ...
+
+> +static irqreturn_t tegra_pcie_isr(int irq, void *arg)
+
+> +	if (code == AFI_INTR_MASTER_ABORT) {
+> +		dev_dbg(pcie->dev, "%s, signature: %08x\n", err_msg[code],
+> +			signature);
+> +	} else
+> +		dev_err(pcie->dev, "%s, signature: %08x\n", err_msg[code],
+> +			signature);
 > +
-> +			pci@0,0 {
-> +				reg = <0x010000 0 0 0 0>;
+> +	if (code == 3 || code == 4 || code == 7) {
 
-Hmm. The unit address in that node name doesn't match the address in the
-reg property, although I suppose there's nothing we can do about it
-since those formats are both defined by the standard PCI binding?
+... i.e. here.
 
-What do the numbers "0,0" represent here; device/function? Is the same
-true for the "0,0" in the child nodes?
+> +		u32 fpci = afi_readl(pcie, AFI_UPPER_FPCI_ADDRESS) & 0xff;
+> +		u64 address = (u64)fpci << 32 | (signature & 0xfffffffc);
+> +		dev_dbg(pcie->dev, "  FPCI address: %10llx\n", address);
 
-> +				bus-range = <0x02 0x0a>;
+I'd suggest making that dev_err(), or at least something higher than
+debug, since the message indicating the error happened is dev_err(), so
+the complete details may as well be available since they're small.
+
+> +static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+> +{
+> +	unsigned int timeout;
+> +	unsigned long value;
 > +
-> +				compatible = "plda,pcie";
+> +	/* enable dual controller and both ports */
+> +	value = afi_readl(pcie, AFI_PCIE_CONFIG);
+> +	value &= ~(AFI_PCIE_CONFIG_PCIEC0_DISABLE_DEVICE |
+> +		   AFI_PCIE_CONFIG_PCIEC1_DISABLE_DEVICE |
+> +		   AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK);
+> +	value |= AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_DUAL;
+> +	afi_writel(pcie, value, AFI_PCIE_CONFIG);
 
-Are there DT binding documents for all these devices; plda,pcie,
-ad,pcie, ad,pcie-test, etc.?
+Eventually, we should probably derive the port enables from the state of
+the root port DT nodes, so that we can disable some and presumably save
+a little power. Also, I notice that the nvidia,num-lanes property isn't
+implemented yet. Still, we can probably take care of this later.
 
-> +				pci@4,0 {
-> +					reg = <0x022000 0 0 0 0>;
-> +					bus-range = <0x07 0x07>;
-> +
-> +					compatible = "ad,pcie";
-> +					device_type = "pci";
-> +
-> +					#address-cells = <3>;
-> +					#size-cells = <2>;
-> +
-> +					pci@0,0 {
-> +						compatible = "opencores,uart";
-> +						reg = <0x070000 0 0 0 0>;
-> +					};
-> +				};
+> +static void tegra_pcie_power_off(struct tegra_pcie *pcie)
 
-Do you need to include a node for the UART; I can see you need to for
-the SPI/I2C controllers so you can instantiate the appropriate devices
-on non-probe-able buses, but I think you can just let regular PCI device
-probing find the UART, Ethernet MAC, etc., can't you?
+> +	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
+
+Hmm. I think we should make supplies mandatory; it doesn't make sense
+for regulator support to be disabled on Tegra, and where a specific
+board doesn't actually have a regulator, you're supposed to provide a
+dummy fixed regulator so the driver doesn't have to care.
+
+The same comment obviously applies to tegra_pcie_power_on() and wherever
+regulator_get() happens.
+
+> +static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+
+> +	pcie->vdd_supply = devm_regulator_get(pcie->dev, "vdd");
+> +	if (IS_ERR(pcie->vdd_supply))
+> +		return PTR_ERR(pcie->vdd_supply);
+> +
+> +	pcie->pex_clk_supply = devm_regulator_get(pcie->dev, "pex-clk");
+> +	if (IS_ERR(pcie->pex_clk_supply))
+> +		return PTR_ERR(pcie->pex_clk_supply);
+
+Oh, I guess the regulator_get() calls are already strict.
+
+> +static int tegra_pcie_add_port(struct tegra_pcie *pcie, struct device_node *np)
+
+> +	port = devm_kzalloc(pcie->dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	INIT_LIST_HEAD(&port->list);
+> +	port->index = index;
+> +	port->pcie = pcie;
+> +
+> +	port->base = devm_request_and_ioremap(pcie->dev, &regs);
+> +	if (!port->base)
+> +		return -EADDRNOTAVAIL;
+> +
+> +	if (!tegra_pcie_port_check_link(port)) {
+> +		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+
+Perhaps devm_kfree(port)? Not a big leak, but equally if you don't, it's
+an unreferenced memory block.
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	list_add_tail(&port->list, &pcie->ports);
+> +
+> +	return 0;
+> +}
