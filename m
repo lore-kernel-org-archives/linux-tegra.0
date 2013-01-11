@@ -1,7 +1,7 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 06/10] ASoC: tegra: remove auxdata
-Date: Fri, 11 Jan 2013 13:31:25 +0530
-Message-ID: <1357891289-23500-6-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH v2 08/10] arm: tegra30: remove auxdata
+Date: Fri, 11 Jan 2013 13:31:27 +0530
+Message-ID: <1357891289-23500-8-git-send-email-pgaikwad@nvidia.com>
 References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,52 +12,56 @@ To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Configlink clock information is added to device tree. Get the clocks
-using device node. Remove AUXDATA.
+Remove AUXDATA as clocks are initialized from device node.
 
 Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra30_ahub.c |   14 ++------------
- 1 files changed, 2 insertions(+), 12 deletions(-)
+ arch/arm/mach-tegra/board-dt-tegra30.c |   31 +------------------------------
+ 1 files changed, 1 insertions(+), 30 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index bb31c41..2355630 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -299,15 +299,6 @@ static const char * const configlink_clocks[] = {
- 	"spdif_in",
- };
+diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
+index 92f6014..5b58b64 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra30.c
++++ b/arch/arm/mach-tegra/board-dt-tegra30.c
+@@ -38,38 +38,9 @@
+ #include "common.h"
+ #include "iomap.h"
  
--struct of_dev_auxdata ahub_auxdata[] = {
--	OF_DEV_AUXDATA("nvidia,tegra30-i2s", 0x70080300, "tegra30-i2s.0", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra30-i2s", 0x70080400, "tegra30-i2s.1", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra30-i2s", 0x70080500, "tegra30-i2s.2", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra30-i2s", 0x70080600, "tegra30-i2s.3", NULL),
--	OF_DEV_AUXDATA("nvidia,tegra30-i2s", 0x70080700, "tegra30-i2s.4", NULL),
+-static struct of_dev_auxdata tegra30_auxdata_lookup[] __initdata = {
+-	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000000, "sdhci-tegra.0", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000200, "sdhci-tegra.1", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000400, "sdhci-tegra.2", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-sdhci", 0x78000600, "sdhci-tegra.3", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C000, "tegra-i2c.0", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C400, "tegra-i2c.1", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C500, "tegra-i2c.2", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C700, "tegra-i2c.3", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000D000, "tegra-i2c.4", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-ahub", 0x70080000, "tegra30-ahub", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-apbdma", 0x6000a000, "tegra-apbdma", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000D400, "spi_tegra.0", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000D600, "spi_tegra.1", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000D800, "spi_tegra.2", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DA00, "spi_tegra.3", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DC00, "spi_tegra.4", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-slink", 0x7000DE00, "spi_tegra.5", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-host1x", 0x50000000, "host1x", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54200000, "tegradc.0", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-dc", 0x54240000, "tegradc.1", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-hdmi", 0x54280000, "hdmi", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-dsi", 0x54300000, "dsi", NULL),
+-	OF_DEV_AUXDATA("nvidia,tegra30-tvo", 0x542c0000, "tvo", NULL),
 -	{}
 -};
 -
- #define LAST_REG(name) \
- 	(TEGRA30_AHUB_##name + \
- 	 (TEGRA30_AHUB_##name##_STRIDE * TEGRA30_AHUB_##name##_COUNT) - 4)
-@@ -451,7 +442,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	 * Ensure that here.
- 	 */
- 	for (i = 0; i < ARRAY_SIZE(configlink_clocks); i++) {
--		clk = clk_get_sys(NULL, configlink_clocks[i]);
-+		clk = clk_get(&pdev->dev, configlink_clocks[i]);
- 		if (IS_ERR(clk)) {
- 			dev_err(&pdev->dev, "Can't get clock %s\n",
- 				configlink_clocks[i]);
-@@ -569,8 +560,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 			goto err_pm_disable;
- 	}
+ static void __init tegra30_dt_init(void)
+ {
+-	of_platform_populate(NULL, of_default_bus_match_table,
+-				tegra30_auxdata_lookup, NULL);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
  
--	of_platform_populate(pdev->dev.of_node, NULL, ahub_auxdata,
--			     &pdev->dev);
-+	of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
- 
- 	return 0;
- 
+ static const char *tegra30_dt_board_compat[] = {
 -- 
 1.7.4.1
