@@ -1,148 +1,69 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
 Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Thu, 10 Jan 2013 17:48:46 -0700
-Message-ID: <50EF616E.7040609@wwwdotorg.org>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
+Date: Fri, 11 Jan 2013 04:40:15 +0100
+Message-ID: <20130111034015.GA28094@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
+ <50EF54B6.6010100@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357764194-12677-11-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <50EF54B6.6010100@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/09/2013 01:43 PM, Thierry Reding wrote:
-> Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
-> directory. The motivation is to collect various host controller drivers
-> in the same location in order to facilitate refactoring.
-> 
-> The Tegra PCIe driver has been largely rewritten, both in order to turn
-> it into a proper platform driver and to add MSI (based on code by
-> Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>) as well as device tree support.
 
-> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  static void __init trimslice_init(void)
->  {
->  #ifdef CONFIG_TEGRA_PCI
-> -	int ret;
-> -
-> -	ret = tegra_pcie_init(true, true);
-> -	if (ret)
-> -		pr_err("tegra_pci_init() failed: %d\n", ret);
-> +	platform_device_register(&tegra_pcie_device);
+On Thu, Jan 10, 2013 at 04:54:30PM -0700, Stephen Warren wrote:
+> On 01/09/2013 01:43 PM, Thierry Reding wrote:
+> > Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
+> > directory. The motivation is to collect various host controller drivers
+> > in the same location in order to facilitate refactoring.
+> >=20
+> > The Tegra PCIe driver has been largely rewritten, both in order to turn
+> > it into a proper platform driver and to add MSI (based on code by
+> > Krishna Kishore <kthota@nvidia.com>) as well as device tree support.
+>=20
+> This driver doesn't compile unless CONFIG_PCI_MSI is also enabled.
+> Should it select that, or contain a few ifdefs?
+>=20
+> drivers/pci/host/pci-tegra.c:900: undefined reference to `write_msi_msg'
 
-That struct doesn't actually exist anywhere; only an extern definition
-is added (and that extern definition isn't removed by patch 14 either).
+Right, it'll need #ifdefs around the arch_{setup,teardown}_msi_irq(). Or
+select PCI_MSI unconditionally. Once this is merged I was going to post
+a patch that enables PCI_MSI in tegra_defconfig anyway. But it might be
+better to keep it optional anyway since the remainder of the code copes
+with it properly.
 
-> diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
+Thierry
 
-> +config PCI_TEGRA
-> +	bool "NVIDIA Tegra PCIe controller"
-> +	depends on ARCH_TEGRA_2x_SOC
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature
 
-Perhaps depend on ARCH_TEGRA; that will save churn once this is ported
-to Tegra30, and shouldn't cause any problems before then.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+iQIcBAEBAgAGBQJQ74mfAAoJEN0jrNd/PrOhjbsP/2W/s/cNZbYyUEqt7o5TBlFQ
+fthSHLtiGCfJ3L+20feBFQ0gS6sQqC4uqvBPJG28g0hwXnAuJrIpzvu0JXfTH+cZ
+USPeEIV/pJBhZV15b3v53wFbNvGAAr/44nm1XEyjtmNd/HEXH4hlupBWs+xzUA+z
+cJJPtu8HaMvS67D93cj5IEDHaC6YMs12xK52/IQThOxqV50sa6bsnwqB4X99W0bj
+TdJZBnUcVpOzHc2HXcuyqzMjwlH0k8RVJLq5sBz9+mjUwkLjrHy5a8DBQ0pnOQEF
+y7BmSEpwpqMl5aHN/7zr9WM5WWlmLNN0puTc0s81Xb8bEm6HfXjbLY1YEYQbOmTb
++maRcSNKKwmp7EPun7iTHxLOFCIKqSRUe4erV8SsG1IfRPFoc3LCmznNC6He+YaQ
+bu3H3+IcgId75p6fQ883TEWHlrYbzkaAgeudmVZguDTE8UbDw23C7YDeOP0UQMT1
+PAJNLCv5vDdcG++TqBa2T5gLQ1L6mrDu1HzYq+YyLnvOu+af+6NN/UakdDg7qHy8
+yXIhG0COBPc35fM0e/3UTp2fenEpGI9nNGk01tiRXCw0uURES/F7sw0MspQ0IgxF
+Y8z8cw8cQwIVSx11+qJOIhIRFNR/IsGOViMUZsyx2g1JPvzwXP2OgcCNv6gu0bgN
+j8Lgr4VVNq943c+Y6ds4
+=nSC6
+-----END PGP SIGNATURE-----
 
-> +#define AFI_INTR_CODE		0xb8
-> +#define  AFI_INTR_CODE_MASK	0xf
-> +#define  AFI_INTR_MASTER_ABORT	4
-> +#define  AFI_INTR_LEGACY	6
-
-Adding defines for at least some other codes here, would help further
-below ...
-
-> +static irqreturn_t tegra_pcie_isr(int irq, void *arg)
-
-> +	if (code == AFI_INTR_MASTER_ABORT) {
-> +		dev_dbg(pcie->dev, "%s, signature: %08x\n", err_msg[code],
-> +			signature);
-> +	} else
-> +		dev_err(pcie->dev, "%s, signature: %08x\n", err_msg[code],
-> +			signature);
-> +
-> +	if (code == 3 || code == 4 || code == 7) {
-
-... i.e. here.
-
-> +		u32 fpci = afi_readl(pcie, AFI_UPPER_FPCI_ADDRESS) & 0xff;
-> +		u64 address = (u64)fpci << 32 | (signature & 0xfffffffc);
-> +		dev_dbg(pcie->dev, "  FPCI address: %10llx\n", address);
-
-I'd suggest making that dev_err(), or at least something higher than
-debug, since the message indicating the error happened is dev_err(), so
-the complete details may as well be available since they're small.
-
-> +static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
-> +{
-> +	unsigned int timeout;
-> +	unsigned long value;
-> +
-> +	/* enable dual controller and both ports */
-> +	value = afi_readl(pcie, AFI_PCIE_CONFIG);
-> +	value &= ~(AFI_PCIE_CONFIG_PCIEC0_DISABLE_DEVICE |
-> +		   AFI_PCIE_CONFIG_PCIEC1_DISABLE_DEVICE |
-> +		   AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK);
-> +	value |= AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_DUAL;
-> +	afi_writel(pcie, value, AFI_PCIE_CONFIG);
-
-Eventually, we should probably derive the port enables from the state of
-the root port DT nodes, so that we can disable some and presumably save
-a little power. Also, I notice that the nvidia,num-lanes property isn't
-implemented yet. Still, we can probably take care of this later.
-
-> +static void tegra_pcie_power_off(struct tegra_pcie *pcie)
-
-> +	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
-
-Hmm. I think we should make supplies mandatory; it doesn't make sense
-for regulator support to be disabled on Tegra, and where a specific
-board doesn't actually have a regulator, you're supposed to provide a
-dummy fixed regulator so the driver doesn't have to care.
-
-The same comment obviously applies to tegra_pcie_power_on() and wherever
-regulator_get() happens.
-
-> +static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
-
-> +	pcie->vdd_supply = devm_regulator_get(pcie->dev, "vdd");
-> +	if (IS_ERR(pcie->vdd_supply))
-> +		return PTR_ERR(pcie->vdd_supply);
-> +
-> +	pcie->pex_clk_supply = devm_regulator_get(pcie->dev, "pex-clk");
-> +	if (IS_ERR(pcie->pex_clk_supply))
-> +		return PTR_ERR(pcie->pex_clk_supply);
-
-Oh, I guess the regulator_get() calls are already strict.
-
-> +static int tegra_pcie_add_port(struct tegra_pcie *pcie, struct device_node *np)
-
-> +	port = devm_kzalloc(pcie->dev, sizeof(*port), GFP_KERNEL);
-> +	if (!port)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&port->list);
-> +	port->index = index;
-> +	port->pcie = pcie;
-> +
-> +	port->base = devm_request_and_ioremap(pcie->dev, &regs);
-> +	if (!port->base)
-> +		return -EADDRNOTAVAIL;
-> +
-> +	if (!tegra_pcie_port_check_link(port)) {
-> +		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
-
-Perhaps devm_kfree(port)? Not a big leak, but equally if you don't, it's
-an unreferenced memory block.
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	list_add_tail(&port->list, &pcie->ports);
-> +
-> +	return 0;
-> +}
+--MGYHOYXEY6WxJCY8--
